@@ -6,26 +6,45 @@ namespace AiDe.Core.Sessions;
 
 /// <summary>
 /// The user-facing container Addendum A3 defines: named, workspace-bound, and carrying
-/// session-scoped config (Phase 1: which agent backends are enabled). R14 b2: "session" in this
-/// namespace names only this container — never a Watcher/Dispatch/Terminal-internal concept.
+/// session-scoped config (Ruling 105: which <b>accounts</b> this session may bill, and its default).
+/// R14 b2: "session" in this namespace names only this container — never a Watcher/Dispatch/
+/// Terminal-internal concept.
 /// </summary>
 /// <param name="SessionId">This session's id — see <see cref="Sessions.SessionId"/>.</param>
 /// <param name="Name">Operator-facing name (A4.3: default is a date-slug, renameable later).</param>
 /// <param name="WorkspaceId">The workspace this session is bound to. A session cannot exist unbound.</param>
 /// <param name="CreatedAt">Stamped once, at <see cref="SessionConfigStore.Create"/>.</param>
-/// <param name="EnabledBackends">
-/// The agent backends (ACP engine ids) enabled for THIS session. Mutated only through
-/// <see cref="SessionConfigStore.SetEnabledBackends"/>, which applies to new runs only (clause 3) —
-/// never in scope here: routing mode, autonomy, default policy, per-session MCP (Ruling 19 cut these
-/// from the Phase-1 sheet; F0 does not invent config surface the sheet will never offer).
+/// <param name="Accounts">
+/// The accounts selected for THIS session, by identity (provider, label) — Ruling 105 (1). The
+/// engine is <b>derived</b> from the provider through <see cref="AgentPlane.EngineCatalog"/> and is
+/// never stored here: two definitions of one mapping is a defect signature (DM7). Mutated only
+/// through <see cref="SessionConfigStore.SetAccounts"/>, which applies to new turns only (clause 3)
+/// — never in scope here: routing mode, autonomy, default policy, per-session MCP (Ruling 19).
+/// </param>
+/// <param name="DefaultAccount">
+/// The account a turn bills when the operator picks none on the composer, or <c>null</c> — "no
+/// default account — choose one" (a migrated session whose provider carried several; never a
+/// guessed label). Changed only through <see cref="SessionConfigStore.SetDefaultAccount"/>, new
+/// turns only: Type-2 by construction, no past turn's binding is rewritten (Ruling 105 condition 2).
 /// </param>
 public sealed record SessionConfig(
     string SessionId,
     string Name,
     string WorkspaceId,
     DateTimeOffset CreatedAt,
-    IReadOnlyList<string> EnabledBackends)
+    IReadOnlyList<AccountRef> Accounts,
+    AccountRef? DefaultAccount)
 {
+    /// <summary>
+    /// The engine ids an old <c>session.json</c> carried as <c>EnabledBackends</c>, until
+    /// <see cref="SessionConfigStore.MigrateLegacyBackends"/> maps them to accounts — empty on a
+    /// migrated or new session. <b>Never serialized as a member of this record</b>: the store keeps
+    /// the legacy key on disk verbatim until the migration succeeds (expand → migrate → contract), so
+    /// a session read with no provider file loses nothing.
+    /// </summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    public IReadOnlyList<string> LegacyEnabledBackends { get; init; } = [];
+
     /// <summary>
     /// Whether this session may attach files to a composed prompt (Security/Privacy <b>C21</b>).
     /// <b>Off by default</b>, confirmed by the human on 2026-09-10.
@@ -139,6 +158,20 @@ public sealed record SessionConfig(
 }
 
 /// <summary>
+/// One account by identity — (provider, label) — as a session refers to it (Ruling 105 (1)). A
+/// <b>reference</b>, never a copy: health, the observed auth label and the host live on the registry's
+/// <see cref="AgentPlane.ProviderAccount"/>, read at bind time, so a session never carries a stale
+/// health beside a label.
+/// </summary>
+/// <param name="Provider">The provider key in <c>~/.aide/providers.json</c> — <c>anthropic</c>, <c>openai</c>, <c>github</c>, <c>google</c>, <c>xai</c>.</param>
+/// <param name="Label">The account label the operator configured.</param>
+public sealed record AccountRef(string Provider, string Label)
+{
+    /// <summary>How the operator reads it: <c>provider · label</c>.</summary>
+    public override string ToString() => $"{Provider} · {Label}";
+}
+
+/// <summary>
 /// The <c>compile_mode</c> vocabulary a <see cref="SessionConfig"/> declares (ADR-0033 §A10.1;
 /// Ruling 68) — mechanical always runs; the two agentic rungs are opt-in behind an eval gate.
 /// </summary>
@@ -166,7 +199,7 @@ public static class SessionEventKinds
     /// <summary>A session was created (<see cref="SessionConfigStore.Create"/>).</summary>
     public const string Open = "session.open";
 
-    /// <summary>A session's config changed — currently only <c>EnabledBackends</c> toggles.</summary>
+    /// <summary>A session's config changed — accounts, the default account, attach, compile mode.</summary>
     public const string Config = "session.config";
 }
 
@@ -182,7 +215,7 @@ public static class SessionEventKinds
 /// <param name="Seq">Per-session monotonic ordinal, 1-based, assigned at append.</param>
 /// <param name="Ts">Append time.</param>
 /// <param name="Kind">A <see cref="SessionEventKinds"/> value.</param>
-/// <param name="Body">The event payload — currently the resulting <c>EnabledBackends</c> list.</param>
+/// <param name="Body">The event payload — the resulting accounts, default account and toggles.</param>
 public sealed record SessionEvent(long Seq, DateTimeOffset Ts, string Kind, JsonObject Body);
 
 /// <summary>

@@ -40,12 +40,10 @@ internal static class SessionComposerBinder
 {
     /// <summary>Binds the composer of <paramref name="config"/>'s open document, and returns what to announce.</summary>
     /// <param name="shell">The shell holding the document.</param>
-    /// <param name="config">The session whose document is open.</param>
-    /// <param name="routableBackends">
-    /// The enabled backends the router may bind — the sheet's list at create, or
-    /// <see cref="AiDe.Core.Presentation.Sessions.NewSessionSheetViewModel.RoutableAmong"/> over the
-    /// config on reopen. Exactly one is required; an ambiguous engine is refused, never resolved by
-    /// reading order.
+    /// <param name="config">
+    /// The session whose document is open — its <see cref="SessionConfig.DefaultAccount"/> is what
+    /// the composer binds (Ruling 105); a session with exactly one account and no default binds that
+    /// one; anything else is refused by name, never resolved by reading order.
     /// </param>
     /// <param name="taskClass">The run's task class, or null when the session has none on record (a reopen).</param>
     /// <param name="repositoryRoot">The window's open workspace root, or null when it has none.</param>
@@ -55,7 +53,6 @@ internal static class SessionComposerBinder
     internal static string Bind(
         WorkbenchShell shell,
         SessionConfig config,
-        IReadOnlyList<string> routableBackends,
         string? taskClass,
         string? repositoryRoot,
         string? dataDirectory,
@@ -64,7 +61,6 @@ internal static class SessionComposerBinder
     {
         ArgumentNullException.ThrowIfNull(shell);
         ArgumentNullException.ThrowIfNull(config);
-        ArgumentNullException.ThrowIfNull(routableBackends);
         ArgumentNullException.ThrowIfNull(affirmation);
 
         if (OnScreen(shell, config) is not { } composer)
@@ -95,20 +91,21 @@ internal static class SessionComposerBinder
                 + "so no run binding exists. The session is open; a governed run needs one");
         }
 
-        if (routableBackends.Count != 1)
+        // THE SESSION'S ACCOUNT (Ruling 105): the default, or the one account a session with no
+        // default carries. Two accounts and no default is "choose one", never the first.
+        var account = config.DefaultAccount ?? (config.Accounts.Count == 1 ? config.Accounts[0] : null);
+        if (account is null)
         {
             return Refuse(
-                config, composer, "engineId",
-                routableBackends.Count == 0
-                    ? "this session has no routable agent backend — every enabled engine reads "
-                      + "needs-login, which §4.3 treats as absent"
-                    : $"this session enables {routableBackends.Count} routable backends ("
-                      + string.Join(", ", routableBackends)
-                      + "). Enable exactly one: an ambiguous engine is refused rather than resolved "
-                      + "by reading order");
+                config, composer, "accountLabel",
+                config.Accounts.Count == 0
+                    ? "this session has no account, so no run binding exists. The session is open; "
+                      + "add one in Session settings"
+                    : $"this session has no default account — choose one in Session settings among "
+                      + string.Join(", ", config.Accounts.Select(a => a.ToString())));
         }
 
-        var binding = providers.Bind(routableBackends[0], out var refusal);
+        var binding = providers.Bind(account.Provider, account.Label, out var refusal);
         if (binding is null)
         {
             return Refuse(config, composer, refusal!.Field, refusal.Message);

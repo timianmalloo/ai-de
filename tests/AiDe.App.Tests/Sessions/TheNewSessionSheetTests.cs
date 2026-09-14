@@ -224,11 +224,12 @@ public sealed class TheNewSessionSheetTests : IDisposable
         sheet.SetBackendEnabled("claude-code", true);
         Assert.Contains("claude-code", sheet.EnabledBackends);
 
-        // ... but it is still refused for routing.
-        Assert.DoesNotContain("claude-code", sheet.RoutableBackends);
+        // ... but it is still refused for routing: it is never the created session's default.
+        var created = sheet.Create(DateTimeOffset.UtcNow);
+        Assert.NotEqual("anthropic", created.Config.DefaultAccount?.Provider);
 
         // A quota-degraded account is a pressure signal, not an absence — it still routes.
-        Assert.Contains("codex", sheet.RoutableBackends);
+        Assert.Equal("openai", created.Config.DefaultAccount?.Provider);
     }
 
     [Fact]
@@ -253,7 +254,7 @@ public sealed class TheNewSessionSheetTests : IDisposable
         Assert.Equal(["claude-code"], launched);
         Assert.True(sheet.HealthWasReprobed);
         Assert.Contains("ready", announced, StringComparison.Ordinal);
-        Assert.Contains("claude-code", sheet.RoutableBackends);
+        Assert.Contains(sheet.Backends, b => b.EngineId == "claude-code" && b.RoutableForThisSession);
     }
 
     // ── task class, budget, ceiling and lease (Rulings 19 → 72, 56, 63, 42 → 73) ────────

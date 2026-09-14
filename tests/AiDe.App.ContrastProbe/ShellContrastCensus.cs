@@ -218,7 +218,7 @@ internal static class ShellContrastCensus
 
         // 3. The session document, with every registered canvas mode shown in turn.
         var session = new AiDe.Core.Sessions.SessionConfig(
-            "20260911T000000Z-census", "Census session", workspace, DateTimeOffset.UtcNow, ["claude-code"]);
+            "20260911T000000Z-census", "Census session", workspace, DateTimeOffset.UtcNow, [new AiDe.Core.Sessions.AccountRef("anthropic", "max")], new AiDe.Core.Sessions.AccountRef("anthropic", "max"));
         log.Add("open session: " + shell.OpenSessionDocument(session));
 
         foreach (var surface in shell.Service.Current.AllStacks().SelectMany(s => s.Surfaces).ToList())

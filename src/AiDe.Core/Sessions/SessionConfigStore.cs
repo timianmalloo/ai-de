@@ -8,14 +8,23 @@ namespace AiDe.Core.Sessions;
 /// Reads and writes one session's <c>session.json</c> and <c>session-events.jsonl</c> (clauses 1-3).
 /// </summary>
 /// <remarks>
-/// <para><b>Toggles apply to new runs only (clause 3).</b> <see cref="SessionConfig"/> is an
-/// immutable record; <see cref="SetEnabledBackends"/> never mutates an existing instance, it writes a
-/// new one. A caller that already captured a <see cref="SessionConfig"/> (modelling a run reading its
-/// config at start) is holding a value a later toggle cannot reach — proven in
-/// <c>SessionConfigStoreTests.SetEnabledBackends_NeverMutatesAConfigARunAlreadyCaptured</c>. The
-/// append-only event log gives the same guarantee one layer down, at the persisted bytes: earlier
+/// <para><b>Changes apply to new turns only (clause 3; Ruling 105 condition 2).</b>
+/// <see cref="SessionConfig"/> is an immutable record; <see cref="SetDefaultAccount"/> and
+/// <see cref="SetAccounts"/> never mutate an existing instance, they write a new one. A caller that
+/// already captured a <see cref="SessionConfig"/> (a turn reading its config at start) is holding a
+/// value a later change cannot reach — proven in
+/// <c>SessionAccountsTests.SetDefaultAccount_NeverMutatesAConfigARunAlreadyCaptured_AndAppliesToTheNextTurnOnly</c>.
+/// The append-only event log gives the same guarantee one layer down, at the persisted bytes: earlier
 /// lines are never rewritten (<c>SessionEventsFile_EarlierEventsSurviveByteForByteAfterALaterToggle</c>).
 /// </para>
+///
+/// <para><b>The legacy <c>EnabledBackends</c> key is read, kept, and contracted only once mapped.</b>
+/// A <c>session.json</c> written before Ruling 105 carries engine ids. <see cref="Load"/> reads them
+/// into <see cref="SessionConfig.LegacyEnabledBackends"/> (no accounts, no default) and every write
+/// re-emits the key verbatim until <see cref="MigrateLegacyBackends"/> maps them against a provider
+/// file — an engine id maps to its provider's account only when the file names one
+/// (<c>engines.&lt;id&gt;.account</c>, the fallback default) or the provider carries exactly one;
+/// otherwise the session keeps "no default account — choose one" and the key stays. Never a guessed label.</para>
 ///
 /// <para>Idiom matches <c>Health.HealthIncidentSidecar</c>: a single lock around read-modify-write,
 /// plain <c>System.Text.Json</c>, tolerant JSONL reads.</para>
@@ -39,7 +48,8 @@ public sealed class SessionConfigStore
     /// <summary>Creates the session: writes <c>session.json</c> and emits <c>session.open</c>.</summary>
     /// <param name="name">The operator-facing name.</param>
     /// <param name="workspaceId">The workspace this session is bound to.</param>
-    /// <param name="enabledBackends">The agent backends enabled for it.</param>
+    /// <param name="accounts">The accounts selected for it (Ruling 105).</param>
+    /// <param name="defaultAccount">The default account, or null — no default until the operator chooses.</param>
     /// <param name="now">Stamps the config and the event.</param>
     /// <param name="fanOutCeiling">The session's fan-out ceiling (Ruling 56); <c>null</c> writes the ruled default.</param>
     /// <param name="budgetCap">An enforced cap, or <c>null</c> — bounded by the subscription (Ruling 72).</param>
@@ -55,7 +65,8 @@ public sealed class SessionConfigStore
     public SessionConfig Create(
         string name,
         string workspaceId,
-        IReadOnlyList<string> enabledBackends,
+        IReadOnlyList<AccountRef> accounts,
+        AccountRef? defaultAccount,
         DateTimeOffset now,
         int? fanOutCeiling = null,
         RunBudget? budgetCap = null,
@@ -64,7 +75,13 @@ public sealed class SessionConfigStore
     {
         lock (_gate)
         {
-            var config = new SessionConfig(SessionId, name, workspaceId, now, [.. enabledBackends]);
+            ArgumentNullException.ThrowIfNull(accounts);
+            if (defaultAccount is not null && !accounts.Contains(defaultAccount))
+            {
+                throw new ArgumentException($"the default account {defaultAccount} is not among the session's accounts", nameof(defaultAccount));
+            }
+
+            var config = new SessionConfig(SessionId, name, workspaceId, now, [.. accounts], defaultAccount);
             config = config with
             {
                 FanOutCeiling = fanOutCeiling ?? config.FanOutCeiling,
@@ -115,7 +132,7 @@ public sealed class SessionConfigStore
 
             try
             {
-                if (JsonSerializer.Deserialize<SessionConfig>(File.ReadAllText(file))?.Name is { } name)
+                if (Deserialize(File.ReadAllText(file))?.Name is { } name)
                 {
                     names.Add(name);
                 }
@@ -178,17 +195,106 @@ public sealed class SessionConfigStore
     }
 
     /// <summary>
-    /// Applies a backend toggle for new runs and emits <c>session.config</c>. Never mutates a
-    /// <see cref="SessionConfig"/> a caller already holds — see the remarks on this type.
+    /// Changes the default account for new turns only and emits <c>session.config</c> (Ruling 105
+    /// condition 2). Never mutates a <see cref="SessionConfig"/> a caller already holds — see the
+    /// remarks on this type.
     /// </summary>
-    public SessionConfig SetEnabledBackends(IReadOnlyList<string> enabledBackends, DateTimeOffset now)
+    /// <exception cref="ArgumentException">The account is not among the session's accounts.</exception>
+    public SessionConfig SetDefaultAccount(AccountRef? account, DateTimeOffset now)
     {
         lock (_gate)
         {
-            var updated = ReadConfigUnsafe() with { EnabledBackends = [.. enabledBackends] };
+            var current = ReadConfigUnsafe();
+            if (account is not null && !current.Accounts.Contains(account))
+            {
+                throw new ArgumentException($"the account {account} is not among this session's accounts", nameof(account));
+            }
+
+            var updated = current with { DefaultAccount = account };
             WriteConfigUnsafe(updated);
             AppendEventUnsafe(SessionEventKinds.Config, updated, now);
             return updated;
+        }
+    }
+
+    /// <summary>
+    /// Replaces the session's account list for new turns only and emits <c>session.config</c>. A
+    /// default no longer in the list is dropped to <c>null</c> — never kept as a phantom the next turn
+    /// would bill.
+    /// </summary>
+    public SessionConfig SetAccounts(IReadOnlyList<AccountRef> accounts, DateTimeOffset now)
+    {
+        ArgumentNullException.ThrowIfNull(accounts);
+
+        lock (_gate)
+        {
+            var current = ReadConfigUnsafe();
+            var updated = current with
+            {
+                Accounts = [.. accounts],
+                DefaultAccount = current.DefaultAccount is { } d && accounts.Contains(d) ? d : null,
+            };
+            WriteConfigUnsafe(updated);
+            AppendEventUnsafe(SessionEventKinds.Config, updated, now);
+            return updated;
+        }
+    }
+
+    /// <summary>
+    /// Maps a pre-Ruling-105 session's <c>EnabledBackends</c> engine ids to accounts against the
+    /// provider file: each id → its catalog row's provider → the file's fallback default for that
+    /// engine (<c>engines.&lt;id&gt;.account</c>) or the provider's sole account; the first mapped
+    /// account becomes the default. Contracts the legacy key and emits <c>session.config</c> only when
+    /// at least one id mapped; otherwise nothing is written — the session opens with "no default
+    /// account — choose one" and the key survives for a later, better-informed run.
+    /// </summary>
+    /// <returns>The config as it now reads.</returns>
+    public SessionConfig MigrateLegacyBackends(ProviderConfiguration providers, DateTimeOffset now)
+    {
+        ArgumentNullException.ThrowIfNull(providers);
+
+        lock (_gate)
+        {
+            var current = ReadConfigUnsafe();
+            if (current.LegacyEnabledBackends.Count == 0)
+            {
+                return current;
+            }
+
+            var mapped = new List<AccountRef>();
+            foreach (var engineId in current.LegacyEnabledBackends)
+            {
+                if (providers.FallbackDefaultAccount(engineId) is { } fallback
+                    && new AccountRef(fallback.Provider, fallback.Label) is { } account
+                    && !mapped.Contains(account))
+                {
+                    mapped.Add(account);
+                }
+            }
+
+            if (mapped.Count == 0)
+            {
+                return current;
+            }
+
+            var updated = current with
+            {
+                Accounts = mapped,
+                DefaultAccount = mapped[0],
+                LegacyEnabledBackends = [],
+            };
+            WriteConfigUnsafe(updated);
+            AppendEventUnsafe(SessionEventKinds.Config, updated, now);
+            return updated;
+        }
+    }
+
+    /// <summary>Appends a <c>session.open</c> line for a file a test wrote by hand (the file predates the code).</summary>
+    internal void AppendOpenForTests(DateTimeOffset now)
+    {
+        lock (_gate)
+        {
+            AppendEventUnsafe(SessionEventKinds.Open, ReadConfigUnsafe(), now, SessionOrigins.Direct);
         }
     }
 
@@ -362,20 +468,54 @@ public sealed class SessionConfigStore
         }
     }
 
+    /// <summary>The pre-Ruling-105 key, read and re-written verbatim until migrated.</summary>
+    private const string LegacyBackendsKey = "EnabledBackends";
+
     private SessionConfig ReadConfigUnsafe()
     {
         var path = SessionPaths.SessionFile(WorkspaceRoot, SessionId);
         var json = File.ReadAllText(path);
-        return JsonSerializer.Deserialize<SessionConfig>(json)
-            ?? throw new InvalidOperationException($"{path} deserialized to null");
+        return Deserialize(json) ?? throw new InvalidOperationException($"{path} deserialized to null");
+    }
+
+    /// <summary>
+    /// Reads a <c>session.json</c> of either shape: today's (<c>Accounts</c>, <c>DefaultAccount</c>) or
+    /// the legacy one (<c>EnabledBackends</c>), whose ids land on
+    /// <see cref="SessionConfig.LegacyEnabledBackends"/> with no accounts and no default.
+    /// </summary>
+    internal static SessionConfig? Deserialize(string json)
+    {
+        var node = JsonNode.Parse(json) as JsonObject;
+        if (node is null)
+        {
+            return null;
+        }
+
+        var legacy = node[LegacyBackendsKey] as JsonArray;
+        node.Remove(LegacyBackendsKey);
+        node[nameof(SessionConfig.Accounts)] ??= new JsonArray();
+
+        var config = node.Deserialize<SessionConfig>();
+        return config is null || legacy is null
+            ? config
+            : config with { LegacyEnabledBackends = [.. legacy.Select(n => n?.GetValue<string>()).OfType<string>()] };
     }
 
     private void WriteConfigUnsafe(SessionConfig config)
     {
         Directory.CreateDirectory(SessionPaths.SessionDirectory(WorkspaceRoot, SessionId));
+
+        // EXPAND, NOT CONTRACT: an unmigrated session's legacy key rides every write verbatim, so a
+        // toggle on a session read with no provider file cannot lose the ids a later migration maps.
+        var node = JsonSerializer.SerializeToNode(config, ConfigJsonOptions)!.AsObject();
+        if (config.LegacyEnabledBackends.Count > 0)
+        {
+            node[LegacyBackendsKey] = new JsonArray([.. config.LegacyEnabledBackends.Select(b => JsonValue.Create(b))]);
+        }
+
         File.WriteAllText(
             SessionPaths.SessionFile(WorkspaceRoot, SessionId),
-            JsonSerializer.Serialize(config, ConfigJsonOptions));
+            node.ToJsonString(ConfigJsonOptions));
     }
 
     private void AppendEventUnsafe(string kind, SessionConfig config, DateTimeOffset now, string? origin = null)
@@ -383,13 +523,17 @@ public sealed class SessionConfigStore
         Directory.CreateDirectory(SessionPaths.SessionDirectory(WorkspaceRoot, SessionId));
 
         var nextSeq = ReadEventsUnsafe() is { Count: > 0 } existing ? existing[^1].Seq + 1 : 1;
-        // The body carries the resulting config's toggles. `attachEnabled` joins `enabledBackends`
-        // rather than getting a kind of its own: C21 is a field on an existing record with an
-        // existing event kind, and its presence in a `session.config` line is what distinguishes an
-        // operator decision from the shipped default (C21(c)).
+        // The body carries the resulting config: the accounts and the default (Ruling 105 — a default
+        // change is this event, applying to new turns only), and the toggles. `attachEnabled` joins
+        // the same line rather than getting a kind of its own: C21 is a field on an existing record
+        // with an existing event kind, and its presence in a `session.config` line is what
+        // distinguishes an operator decision from the shipped default (C21(c)).
         var body = new JsonObject
         {
-            ["enabledBackends"] = new JsonArray([.. config.EnabledBackends.Select(b => JsonValue.Create(b))]),
+            ["accounts"] = new JsonArray([.. config.Accounts.Select(a => (JsonNode)new JsonObject { ["provider"] = a.Provider, ["label"] = a.Label })]),
+            ["defaultAccount"] = config.DefaultAccount is { } account
+                ? new JsonObject { ["provider"] = account.Provider, ["label"] = account.Label }
+                : null,
             ["attachEnabled"] = config.AttachEnabled,
             // The compile mode joins the same line (ADR-0036): its presence in a `session.config`
             // event is what distinguishes an operator's selection from the shipped default.

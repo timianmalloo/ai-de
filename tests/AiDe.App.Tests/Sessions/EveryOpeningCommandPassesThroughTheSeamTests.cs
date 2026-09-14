@@ -123,7 +123,7 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
         // And BindOnRecord is the binder, with the sheet's own routable derivation and no task class.
         var onRecord = Member(window, "private string BindOnRecord(");
         Assert.Contains("SessionComposerBinder.Refuse(Shell, config, \"providers\", reason)", onRecord, StringComparison.Ordinal);
-        Assert.Contains("BindComposer(config, RoutableBackendsOf(config), taskClass: null)", onRecord, StringComparison.Ordinal);
+        Assert.Contains("BindComposer(config, taskClass: null)", onRecord, StringComparison.Ordinal);
     }
 
     /// <summary>The member's text from its signature to the next member at method indentation.</summary>

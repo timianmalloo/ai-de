@@ -44,7 +44,7 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
         var surface = new ComposerSurface("composer:s-0001", "s-0001 — composer", announcer);
 
         surface.Configure(
-            new SessionConfig("s-0001", "first", "w-1", DateTimeOffset.UnixEpoch, ["claude-code"])
+            new SessionConfig("s-0001", "first", "w-1", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"))
             {
                 AttachEnabled = attachEnabled,
             },
@@ -319,7 +319,7 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
                 var catalog = TemplateCatalog.BuiltIn();
 
                 surface.Configure(
-                    new SessionConfig("s-0002", "second", "w-1", DateTimeOffset.UnixEpoch, ["claude-code"]),
+                    new SessionConfig("s-0002", "second", "w-1", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")),
                     Context(root),
                     ComposerFields.GoalBlock(),
                     new AttachmentGate(root, new AttachmentFileReader(), new NeverAsked(), "Anthropic (Claude Code)", "max-personal"),

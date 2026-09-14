@@ -29,7 +29,7 @@ internal static class ComposedCoding
         public SessionConfig Session(string name)
         {
             var now = DateTimeOffset.UtcNow;
-            return new SessionConfigStore(Root, SessionId.New(now)).Create(name, Root, [], now);
+            return new SessionConfigStore(Root, SessionId.New(now)).Create(name, Root, [], null, now);
         }
 
         public void Dispose()

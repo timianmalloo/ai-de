@@ -117,7 +117,7 @@ public sealed class TheTierIsTheMechanicalRulesProjectionTests
     {
         var draft = new ComposerDraft();
         draft.SwitchTo(ComposerShape.GoalBlock);
-        draft.UseSessionSettings(new SessionConfig("s", "n", "w", DateTimeOffset.UnixEpoch, ["claude-code"])
+        draft.UseSessionSettings(new SessionConfig("s", "n", "w", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"))
         {
             FanOutCeiling = 1,
             BudgetCap = new RunBudget(10, 40_000),

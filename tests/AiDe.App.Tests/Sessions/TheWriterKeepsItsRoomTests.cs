@@ -698,7 +698,7 @@ public sealed class TheWriterKeepsItsRoomTests(ITestOutputHelper output)
         surface.Draft.SetFreeFormText("Find out why typing into @src/AiDe.App/Web/composer.mjs reaches nothing.\nRead the handshake first.\nThen the router.\n");
 
         surface.Configure(
-            new SessionConfig("s-rest", "rest", "w-1", DateTimeOffset.UnixEpoch, ["claude-code"]),
+            new SessionConfig("s-rest", "rest", "w-1", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")),
             new ComposerSendContext(
                 RepositoryRoot: root,
                 DataDirectory: root,
@@ -766,7 +766,7 @@ public sealed class TheWriterKeepsItsRoomTests(ITestOutputHelper output)
         surface.Draft.SetFreeFormText(message);
 
         surface.Configure(
-            new SessionConfig("s-r96", "r96", "w-1", DateTimeOffset.UnixEpoch, ["claude-code"]),
+            new SessionConfig("s-r96", "r96", "w-1", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")),
             new ComposerSendContext(
                 RepositoryRoot: root,
                 DataDirectory: root,

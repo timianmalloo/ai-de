@@ -276,7 +276,7 @@ internal static partial class Program
             Directory.CreateDirectory(root);
 
             surface.Configure(
-                new SessionConfig("s-probe", "probe", "w-probe", DateTimeOffset.UnixEpoch, ["claude-code"]),
+                new SessionConfig("s-probe", "probe", "w-probe", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")),
                 new ComposerSendContext(
                     RepositoryRoot: root,
                     DataDirectory: root,

@@ -27,7 +27,7 @@ public sealed class TheShellsAnnouncerReachesTheSessionDocumentTests : IDisposab
 
     private SessionConfig Create(string name) =>
         new SessionConfigStore(_root, SessionId.New(DateTimeOffset.UtcNow))
-            .Create(name, _root, [], DateTimeOffset.UtcNow);
+            .Create(name, _root, [], null, DateTimeOffset.UtcNow);
 
     /// <summary>
     /// Opens a real session document through the real shell, opens its Console split (a document

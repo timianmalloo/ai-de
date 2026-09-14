@@ -26,7 +26,7 @@ public sealed class TheRegionCycleCommandsReachTheFocusedDocumentTests : IDispos
 
     private SessionConfig Create(string name) =>
         new SessionConfigStore(_root, SessionId.New(DateTimeOffset.UtcNow))
-            .Create(name, _root, [], DateTimeOffset.UtcNow);
+            .Create(name, _root, [], null, DateTimeOffset.UtcNow);
 
     [Fact]
     public void ExecutingSessionCycleRegion_MovesTheFocusedDocumentForwardOneRegion()

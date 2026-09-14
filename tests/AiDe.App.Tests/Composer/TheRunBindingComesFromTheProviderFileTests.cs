@@ -74,17 +74,20 @@ public sealed class TheRunBindingComesFromTheProviderFileTests
 
         // registry → sheet. The sheet reads THE SAME registry instance the binding will.
         var sheet = new NewSessionSheetViewModel(
-            "C:/repo", "w-1", providers.Registry, DateTimeOffset.UnixEpoch) { TaskClass = "investigate" };
+            "C:/repo", "w-1", providers.Registry, DateTimeOffset.UnixEpoch,
+            fallbackDefault: engine => providers.FallbackDefaultAccount(engine) is { } f ? new AccountRef(f.Provider, f.Label) : null)
+        { TaskClass = "investigate" };
 
-        // sheet → EnabledBackends. Both accounts are ready, so the engine is offered twice and
-        // enabled once — the engine set is distinct, the account set is not.
+        // sheet → the session's ACCOUNTS (Ruling 105): both accounts are selected; the first ready
+        // one is the default. No engine id is stored on the session.
         Assert.Equal(["claude-code"], sheet.EnabledBackends);
-        Assert.Equal(["claude-code"], sheet.RoutableBackends);
 
         var created = sheet.Create(DateTimeOffset.UnixEpoch);
+        Assert.Equal(2, created.Config.Accounts.Count);
+        Assert.NotNull(created.Config.DefaultAccount);
 
-        // EnabledBackends → binding.
-        var binding = providers.Bind(created.RoutableBackends[0], out var refusal);
+        // DefaultAccount → binding: the engine is derived from the account's provider.
+        var binding = providers.Bind(created.Config.DefaultAccount!.Provider, created.Config.DefaultAccount.Label, out var refusal);
         Assert.Null(refusal);
 
         // binding → ComposerSendContext → Send → GovernedRunRequest.

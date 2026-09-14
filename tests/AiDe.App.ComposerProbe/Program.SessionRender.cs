@@ -221,7 +221,7 @@ internal static partial class Program
             if (options.PriorDocument)
             {
                 var now = DateTimeOffset.UtcNow;
-                var prior = new SessionConfigStore(root, SessionId.New(now)).Create("prior session", root, ["claude-code"], now);
+                var prior = new SessionConfigStore(root, SessionId.New(now)).Create("prior session", root, [new AccountRef("anthropic", "probe-account")], new AccountRef("anthropic", "probe-account"), now);
                 var said = shell.OpenSessionDocument(prior);
                 var priorComposer = shell.SessionComposer(prior.SessionId)
                     ?? throw new InvalidOperationException("the shell opened the prior document but holds no composer for it");
@@ -311,7 +311,7 @@ internal static partial class Program
             Window window, WorkbenchShell shell, PerspectiveShell mode, string root, Options options)
         {
             var now = DateTimeOffset.UtcNow;
-            var config = new SessionConfigStore(root, SessionId.New(now)).Create("probe session", root, ["claude-code"], now);
+            var config = new SessionConfigStore(root, SessionId.New(now)).Create("probe session", root, [new AccountRef("anthropic", "probe-account")], new AccountRef("anthropic", "probe-account"), now);
 
             var graphReattachedBefore = Count("graph", "re-attached");
             var opened = shell.OpenSessionDocument(config);
@@ -427,7 +427,7 @@ internal static partial class Program
         {
             var now = DateTimeOffset.UtcNow;
             var store = new SessionConfigStore(root, RestoredActiveSessionId);
-            store.Create("Terrace session", root, ["claude-code"], now);
+            store.Create("Terrace session", root, [new AccountRef("anthropic", "probe-account")], new AccountRef("anthropic", "probe-account"), now);
             var config = store.Load();
             var providers = WriteProviderFile(root);
 
@@ -436,7 +436,6 @@ internal static partial class Program
                 ?? throw new InvalidOperationException("the shell reopened the document but holds no composer for it");
             said += " " + SessionComposerBinder.Bind(
                 shell, config,
-                NewSessionSheetViewModel.RoutableAmong(config.EnabledBackends, providers.Registry),
                 taskClass: null,
                 repositoryRoot: root, dataDirectory: root,
                 providers, new NeverAffirms());
@@ -491,14 +490,13 @@ internal static partial class Program
         private static async Task<int> BindOnRestoreAsync(WorkbenchShell shell, string root)
         {
             var now = DateTimeOffset.UtcNow;
-            new SessionConfigStore(root, RestoredActiveSessionId).Create("Terrace session", root, ["claude-code"], now);
+            new SessionConfigStore(root, RestoredActiveSessionId).Create("Terrace session", root, [new AccountRef("anthropic", "probe-account")], new AccountRef("anthropic", "probe-account"), now);
             var providers = WriteProviderFile(root);
 
             var revived = shell.ReviveRestoredSessionDocuments(root);
             shell.Adapter.Render();
             var bound = string.Join(" | ", revived.Select(config => SessionComposerBinder.Bind(
                 shell, config,
-                NewSessionSheetViewModel.RoutableAmong(config.EnabledBackends, providers.Registry),
                 taskClass: null,
                 repositoryRoot: root, dataDirectory: root,
                 providers, new NeverAffirms())));
@@ -585,7 +583,7 @@ internal static partial class Program
                     var said = shell.OpenSessionDocument(created.Config);
                     composer = shell.SessionComposer(created.Config.SessionId);
                     said = said + " " + SessionComposerBinder.Bind(
-                        shell, created.Config, created.RoutableBackends, created.TaskClass,
+                        shell, created.Config, created.TaskClass,
                         repositoryRoot: windowRoot, dataDirectory: windowRoot,
                         providers, new NeverAffirms());
                     Console.Out.WriteLine($"chooser: announced='{said}'");

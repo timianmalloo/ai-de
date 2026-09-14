@@ -159,7 +159,7 @@ public sealed class TheLeaseDerivesFromTheEditorsSourceTextTests
             var surface = new ComposerSurface("composer:s-0066", "s-0066 — composer");
 
             surface.Configure(
-                new SessionConfig("s-0066", "first", "w-1", DateTimeOffset.UnixEpoch, ["claude-code"]),
+                new SessionConfig("s-0066", "first", "w-1", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")),
                 Context(),
                 ComposerFields.GoalBlock(),
                 new AttachmentGate(

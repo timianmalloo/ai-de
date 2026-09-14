@@ -35,7 +35,7 @@ public sealed class TheDecorationTheRowTheBytesAndTheColumnAgreeTests
         var root = Path.Combine(Path.GetTempPath(), "aide-e7", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(root);
         var config = new SessionConfigStore(root, SessionId.New(new DateTimeOffset(2026, 9, 12, 15, 0, 0, TimeSpan.Zero)))
-            .Create("payments", "w-1", ["claude-code"], DateTimeOffset.UnixEpoch);
+            .Create("payments", "w-1", [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UnixEpoch);
         return (root, config);
     }
 

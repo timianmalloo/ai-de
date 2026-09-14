@@ -65,9 +65,6 @@ public sealed record AgentBackendRow(string EngineId, string ProviderId, Provide
 /// </remarks>
 /// <param name="Config">The session container, as written to <c>session.json</c>.</param>
 /// <param name="TaskClass">The operator's task class. Required — see the sheet's remarks.</param>
-/// <param name="RoutableBackends">
-/// The enabled backends the router may bind, with <c>needs-login</c> engines already excluded.
-/// </param>
 /// <param name="RenamedFrom">
 /// The name the operator asked for when Create had to add a counter to it (Ruling 99) — what the
 /// announcement names; null when the session got exactly the name that was typed.
@@ -75,7 +72,6 @@ public sealed record AgentBackendRow(string EngineId, string ProviderId, Provide
 public sealed record NewSessionResult(
     SessionConfig Config,
     string TaskClass,
-    IReadOnlyList<string> RoutableBackends,
     string? RenamedFrom = null);
 
 /// <summary>
@@ -112,6 +108,7 @@ public sealed class NewSessionSheetViewModel
     private readonly ProviderRegistry _initialRegistry;
     private readonly Func<string, bool>? _launchEngineNativeLogin;
     private readonly Func<ProviderRegistry>? _reprobe;
+    private readonly Func<string, AccountRef?>? _fallbackDefault;
     private readonly HashSet<string> _enabled = new(StringComparer.Ordinal);
 
     private ProviderRegistry _registry;
@@ -125,13 +122,19 @@ public sealed class NewSessionSheetViewModel
     /// no way to launch one, which <see cref="SignIn"/> reports rather than pretending.
     /// </param>
     /// <param name="reprobe">Re-reads provider health after a login. Null means health is not re-read.</param>
+    /// <param name="fallbackDefault">
+    /// The provider file's fallback default account for an engine (<c>engines.&lt;id&gt;.account</c>,
+    /// or the provider's sole account; Ruling 105 condition 8) — preferred as the session's initial
+    /// default when it is a ready row. Null when there is no file.
+    /// </param>
     public NewSessionSheetViewModel(
         string workspaceRoot,
         string workspaceId,
         ProviderRegistry registry,
         DateTimeOffset now,
         Func<string, bool>? launchEngineNativeLogin = null,
-        Func<ProviderRegistry>? reprobe = null)
+        Func<ProviderRegistry>? reprobe = null,
+        Func<string, AccountRef?>? fallbackDefault = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(workspaceRoot);
         ArgumentException.ThrowIfNullOrWhiteSpace(workspaceId);
@@ -143,6 +146,7 @@ public sealed class NewSessionSheetViewModel
         _initialRegistry = registry;
         _launchEngineNativeLogin = launchEngineNativeLogin;
         _reprobe = reprobe;
+        _fallbackDefault = fallbackDefault;
 
         // A4.3: the default name is a date slug, renameable later. Invariant culture so a session
         // directory listing sorts the same on every machine. Ruling 99: unique within the workspace
@@ -463,9 +467,24 @@ public sealed class NewSessionSheetViewModel
         var requested = Name.Trim();
         var name = SessionConfigStore.UniqueName(requested, SessionConfigStore.ExistingNames(WorkspaceRoot));
 
+        // Ruling 105: the session records ACCOUNTS (provider, label), never engine ids; the default
+        // is the first routable one — a needs-login account may be selected but is not the default.
+        var accounts = Backends
+            .Where(b => _enabled.Contains(b.EngineId))
+            .Select(b => new AccountRef(b.ProviderId, b.Account.Label))
+            .Distinct()
+            .ToList();
+        var routable = Backends
+            .Where(b => _enabled.Contains(b.EngineId) && b.RoutableForThisSession)
+            .Select(b => (b.EngineId, Account: new AccountRef(b.ProviderId, b.Account.Label)))
+            .ToList();
+        // The file's fallback default first (Ruling 105 c8: the operator wrote it), else the first ready.
+        var defaultAccount = routable.FirstOrDefault(r => _fallbackDefault?.Invoke(r.EngineId) == r.Account).Account
+            ?? routable.FirstOrDefault().Account;
+
         var store = new SessionConfigStore(WorkspaceRoot, SessionId.New(now));
         var config = store.Create(
-            name, WorkspaceId, EnabledBackends, now,
+            name, WorkspaceId, accounts, defaultAccount, now,
             fanOutCeiling: FanOutCeiling!.Value,
             budgetCap: BudgetCap,
             defaultTaskClass: TaskClass!.Trim(),
@@ -474,7 +493,7 @@ public sealed class NewSessionSheetViewModel
         // The result's class IS the config's default (Ruling 72; ADR-0033 §4) — one source, read
         // back from what was written, never a second copy of the sheet's field.
         return new NewSessionResult(
-            config, config.DefaultTaskClass, RoutableBackends,
+            config, config.DefaultTaskClass,
             RenamedFrom: string.Equals(config.Name, requested, StringComparison.Ordinal) ? null : requested);
     }
 

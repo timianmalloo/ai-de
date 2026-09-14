@@ -73,7 +73,10 @@ public sealed class ProviderConfigurationTests
     /// <summary>Every malformed shape names the file and the field, and none of them yields a registry.</summary>
     [Theory]
     // A top-level field the schema requires.
-    [InlineData("""{ "providers": {} }""", "adapterInstallRoot")]
+    // Ruling 104 (2): an ABSENT adapterInstallRoot is the default root, not a refusal — see
+    // SessionAccountsTests.AdapterInstallRoot_AbsentIsTheAdaptersDirectoryBesideTheFile_PresentOverrides;
+    // a blank one is still refused by name, because "" is not a directory and not an absence.
+    [InlineData("""{ "adapterInstallRoot": "", "providers": {} }""", "adapterInstallRoot")]
     [InlineData("""{ "adapterInstallRoot": "C:/a" }""", "providers")]
     // A key nobody declared — a typo, refused rather than ignored into an empty provider.
     [InlineData("""{ "adapterInstallRoot": "C:/a", "providers": {}, "provders": {} }""", "provders")]

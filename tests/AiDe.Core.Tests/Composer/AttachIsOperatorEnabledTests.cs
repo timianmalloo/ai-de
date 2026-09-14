@@ -41,7 +41,7 @@ public sealed class AttachIsOperatorEnabledTests : IDisposable
     [Fact]
     public void C21_TheShippedDefaultIsOff()
     {
-        var config = _store.Create("first", "w-1", ["claude-code"], DateTimeOffset.UnixEpoch);
+        var config = _store.Create("first", "w-1", [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UnixEpoch);
 
         Assert.False(config.AttachEnabled);
         Assert.False(_store.Load().AttachEnabled);
@@ -165,7 +165,7 @@ public sealed class AttachIsOperatorEnabledTests : IDisposable
     [Fact]
     public void C21c_OffIsDistinguishableFromNeverAskedByTheExistingEventLogAlone()
     {
-        _store.Create("first", "w-1", ["claude-code"], DateTimeOffset.UnixEpoch);
+        _store.Create("first", "w-1", [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UnixEpoch);
 
         // A never-toggled session's log carries no config event at all.
         Assert.DoesNotContain(_store.ReadEvents(), e => e.Kind == SessionEventKinds.Config);
@@ -191,7 +191,7 @@ public sealed class AttachIsOperatorEnabledTests : IDisposable
     [Fact]
     public void C21c_NoProvenanceFieldIsAddedToTheSessionConfig()
     {
-        var config = _store.Create("first", "w-1", ["claude-code"], DateTimeOffset.UnixEpoch);
+        var config = _store.Create("first", "w-1", [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UnixEpoch);
         var members = JsonDocument.Parse(JsonSerializer.Serialize(config)).RootElement
             .EnumerateObject().Select(p => p.Name).ToList();
 

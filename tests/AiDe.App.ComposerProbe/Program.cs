@@ -210,7 +210,7 @@ internal static partial class Program
             Directory.CreateDirectory(root);
 
             surface.Configure(
-                new SessionConfig("s-probe", "probe", "w-probe", DateTimeOffset.UnixEpoch, ["claude-code"]),
+                new SessionConfig("s-probe", "probe", "w-probe", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")),
                 new ComposerSendContext(
                     RepositoryRoot: root,
                     DataDirectory: root,
@@ -498,7 +498,7 @@ internal static partial class Program
             Directory.CreateDirectory(root);
 
             var config = new SessionConfigStore(root, SessionId.New(DateTimeOffset.UtcNow))
-                .Create("probe session", root, ["claude-code"], DateTimeOffset.UtcNow);
+                .Create("probe session", root, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"), DateTimeOffset.UtcNow);
 
             // THE PRODUCT'S COMPOSITION ROOT, line for line from MainWindow's constructor: the shell,
             // its docking host as the window's body, the dark dock theme, and the key bindings.

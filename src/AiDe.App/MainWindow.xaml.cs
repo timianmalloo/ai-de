@@ -278,6 +278,9 @@ public partial class MainWindow : Window
             showSheet: sheet => Workbench.Sessions.NewSessionSheetDialog.Show(
                 sheet, this, Shell.Announcer.Announce),
             registry: () => _providers?.Registry ?? new AiDe.Core.AgentPlane.ProviderRegistry([]),
+            fallbackDefault: engine => _providers?.FallbackDefaultAccount(engine) is { } fallback
+                ? new AiDe.Core.Sessions.AccountRef(fallback.Provider, fallback.Label)
+                : null,
             workspaceId: root => root,
             opened: created =>
             {
@@ -293,7 +296,7 @@ public partial class MainWindow : Window
                 // composer is bound. One sentence, because a live region read twice in a row is
                 // two interruptions.
                 Shell.Announcer.Announce(
-                    opened + " " + BindComposer(created.Config, created.RoutableBackends, created.TaskClass));
+                    opened + " " + BindComposer(created.Config, created.TaskClass));
                 RebuildMenu();
             });
 
@@ -336,15 +339,13 @@ public partial class MainWindow : Window
     /// itself is <see cref="Workbench.Sessions.SessionComposerBinder"/>, shared by every path that
     /// opens a session document (INV-0009 Phase 2).
     /// </summary>
-    private string BindComposer(
-        AiDe.Core.Sessions.SessionConfig config, IReadOnlyList<string> routableBackends, string? taskClass)
+    private string BindComposer(AiDe.Core.Sessions.SessionConfig config, string? taskClass)
     {
         var workspace = DataContext as MainWindowViewModel;
 
         return Workbench.Sessions.SessionComposerBinder.Bind(
             Shell,
             config,
-            routableBackends,
             taskClass,
             repositoryRoot: workspace?.WorkspaceRoot,
             dataDirectory: workspace?.DataDirectory,
@@ -431,26 +432,28 @@ public partial class MainWindow : Window
 
     /// <summary>
     /// Binds the composer of a session that already exists — a reopen, or a document a saved
-    /// arrangement restored — from what is on record: the routable set derived from the config's
-    /// enabled backends against the registry as it reads now, and no task class until the operator
-    /// chooses one for a prompt. A malformed provider file is a refusal on the composer, by name:
-    /// the session is shown, and a bound composer over an empty registry would be a wrong claim
-    /// about the file.
+    /// arrangement restored — from what is on record: the config's accounts and default (Ruling 105),
+    /// and no task class until the operator chooses one for a prompt. A session written before
+    /// Ruling 105 is migrated here first, against the provider file as it reads now — its engine ids
+    /// map to accounts only where the file names exactly one, never a guess. A malformed provider
+    /// file is a refusal on the composer, by name: the session is shown, and a bound composer over an
+    /// empty registry would be a wrong claim about the file.
     /// </summary>
-    private string BindOnRecord(AiDe.Core.Sessions.SessionConfig config, string? malformedProviders) =>
-        malformedProviders is { } reason
-            ? Workbench.Sessions.SessionComposerBinder.Refuse(Shell, config, "providers", reason)
-            : BindComposer(config, RoutableBackendsOf(config), taskClass: null);
+    private string BindOnRecord(AiDe.Core.Sessions.SessionConfig config, string? malformedProviders)
+    {
+        if (malformedProviders is { } reason)
+        {
+            return Workbench.Sessions.SessionComposerBinder.Refuse(Shell, config, "providers", reason);
+        }
 
-    /// <summary>
-    /// The backends a session on record may bind now: its enabled set, filtered by the registry's
-    /// login state — the sheet's own derivation, so a reopen cannot bind an engine the sheet would
-    /// have refused. Empty with no provider file, where the binder refuses by name anyway.
-    /// </summary>
-    private IReadOnlyList<string> RoutableBackendsOf(AiDe.Core.Sessions.SessionConfig config) =>
-        _providers is { } providers
-            ? AiDe.Core.Presentation.Sessions.NewSessionSheetViewModel.RoutableAmong(config.EnabledBackends, providers.Registry)
-            : [];
+        if (config.LegacyEnabledBackends.Count > 0 && _providers is { } providers)
+        {
+            config = new AiDe.Core.Sessions.SessionConfigStore(config.WorkspaceId, config.SessionId)
+                .MigrateLegacyBackends(providers, DateTimeOffset.UtcNow);
+        }
+
+        return BindComposer(config, taskClass: null);
+    }
 
     /// <summary>
     /// Opens a folder through the ordinary open path and returns null when it opened, or the path's

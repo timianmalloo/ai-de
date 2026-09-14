@@ -75,7 +75,7 @@ public sealed class ASendLaunchesAGovernedRunTests
                 using var document = new SessionDocumentSurface(model);
 
                 document.Composer.Configure(
-                    new SessionConfig("20260911T130000Z-runseam", "Run seam", "w-1", DateTimeOffset.UnixEpoch, ["claude-code"]),
+                    new SessionConfig("20260911T130000Z-runseam", "Run seam", "w-1", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")),
                     new ComposerSendContext(
                         RepositoryRoot: root,
                         DataDirectory: root,

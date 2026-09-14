@@ -110,7 +110,7 @@ public sealed class TheComposerIsOneValidationMechanismTests
     {
         var draft = GoalDraft(Block());
         draft.SetFreeFormText("Rename the helper in @src/Payments/Money.cs.\n");
-        draft.UseSessionSettings(new SessionConfig("s", "n", "w", DateTimeOffset.UnixEpoch, ["claude-code"])
+        draft.UseSessionSettings(new SessionConfig("s", "n", "w", DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max"))
         {
             FanOutCeiling = -1,
             BudgetCap = new RunBudget(0, 0),
