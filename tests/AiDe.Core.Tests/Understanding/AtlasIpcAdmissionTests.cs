@@ -11,6 +11,49 @@ namespace AiDe.Core.Tests.Understanding;
 public sealed class AtlasIpcAdmissionTests
 {
     [Fact]
+    public async Task EpochChangeWinsTheResponseCommitGate()
+    {
+        long epoch = 7;
+        var endpoint = new DaemonEndpoint("workspace", new CapabilityRegistry(), _ => epoch);
+        var peer = new IpcPeer("owner", 42, "connection");
+        var opened = endpoint.OpenWorkspace(new IpcRequest(IpcVersion.Current, "open", "open",
+            "workspace", 0, null, null), peer);
+        var capability = IpcPayload.Read<IpcOpenResult>(opened.Payload, WorkspaceOperations.Wire)!.Capability;
+        endpoint.RegisterAsync("atlas.commit-control", (_, _, _) => ValueTask.FromResult(IpcResponse.Success()));
+        var request = new IpcRequest(IpcVersion.Current, "atlas.commit-control", "request", "workspace", 7, capability, null);
+        var prepared = await endpoint.InvokeAsync(request, peer, CancellationToken.None);
+        Assert.True(prepared.Ok);
+        epoch = 8;
+        var committed = await endpoint.CommitResponseAsync(request, peer, prepared, CancellationToken.None);
+        Assert.False(committed.Ok);
+        Assert.Null(committed.Payload);
+    }
+
+    [Fact]
+    public async Task RealScopeTokenCannotCrossAuthenticatedConnections()
+    {
+        await using var fixture = await AtlasRuntimeFixture.StartAsync();
+        var (first, firstCapability) = await OpenRaw(fixture, atlas: true);
+        var (second, secondCapability) = await OpenRaw(fixture, atlas: true);
+        await using (first)
+        await using (second)
+        {
+            var admissionRequest = new AtlasAdmitRequestDto(1, fixture.Core!.Store.CoreEpoch);
+            await Send(first, fixture, firstCapability, AtlasWorkspaceOperations.Admit, admissionRequest);
+            using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            var response = JsonSerializer.Deserialize<IpcResponse>((await IpcFraming.ReadAsync(first, deadline.Token))!, WorkspaceOperations.Wire)!;
+            Assert.True(response.Ok);
+            var admission = IpcPayload.Read<AtlasAdmitDto>(response.Payload, WorkspaceOperations.Wire)!;
+            await Send(second, fixture, secondCapability, AtlasWorkspaceOperations.Inventory,
+                new AtlasInventoryRequestDto(1, admission.ScopeToken, admission.CoreEpoch, admission.InitialManifestToken, 0, 128));
+            var refused = JsonSerializer.Deserialize<IpcResponse>((await IpcFraming.ReadAsync(second, deadline.Token))!, WorkspaceOperations.Wire)!;
+            Assert.False(refused.Ok);
+            Assert.Equal("Atlas.ScopeInvalid", refused.ErrorCode);
+            Assert.Null(refused.Payload);
+        }
+    }
+
+    [Fact]
     public async Task EofCancelsWorkButConnectionOwnerWaitsForActualDrain()
     {
         await using var fixture = await AtlasRuntimeFixture.StartAsync();
@@ -97,22 +140,23 @@ public sealed class AtlasIpcAdmissionTests
         }
     }
 
-    private static async Task<(NamedPipeClientStream Pipe, string Capability)> OpenRaw(AtlasRuntimeFixture fixture)
+    private static async Task<(NamedPipeClientStream Pipe, string Capability)> OpenRaw(AtlasRuntimeFixture fixture, bool atlas = false)
     {
         var pipe = IpcPipeFactory.CreateClient(fixture.WorkspaceId);
         using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         await pipe.ConnectAsync(deadline.Token);
-        var request = new IpcRequest(IpcVersion.Current, "open", Guid.NewGuid().ToString("N"),
+        var request = new IpcRequest(IpcVersion.Current, atlas ? "atlas.open" : "open", Guid.NewGuid().ToString("N"),
             fixture.WorkspaceId, 0, null, null);
         await IpcFraming.WriteAsync(pipe, JsonSerializer.Serialize(new IpcMessage(IpcMessage.Open, request), WorkspaceOperations.Wire), deadline.Token);
         var response = JsonSerializer.Deserialize<IpcResponse>((await IpcFraming.ReadAsync(pipe, deadline.Token))!, WorkspaceOperations.Wire)!;
         return (pipe, IpcPayload.Read<IpcOpenResult>(response.Payload, WorkspaceOperations.Wire)!.Capability);
     }
 
-    private static Task Send(NamedPipeClientStream pipe, AtlasRuntimeFixture fixture, string capability, string operation) =>
+    private static Task Send(NamedPipeClientStream pipe, AtlasRuntimeFixture fixture, string capability, string operation, object? payload = null) =>
         IpcFraming.WriteAsync(pipe, JsonSerializer.Serialize(new IpcMessage(IpcMessage.Invoke,
             new IpcRequest(IpcVersion.Current, operation, Guid.NewGuid().ToString("N"), fixture.WorkspaceId,
-                fixture.Core!.Store.CoreEpoch, capability, null)), WorkspaceOperations.Wire), CancellationToken.None);
+                fixture.Core!.Store.CoreEpoch, capability, payload is null ? null : IpcPayload.From(payload, WorkspaceOperations.Wire))),
+            WorkspaceOperations.Wire), CancellationToken.None);
 
     [Fact]
     public async Task AwaitedDispatchPreservesAuthenticationAndLegacySyncBehavior()
