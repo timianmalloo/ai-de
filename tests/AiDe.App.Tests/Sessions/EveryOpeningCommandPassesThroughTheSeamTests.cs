@@ -36,8 +36,8 @@ public sealed class EveryOpeningCommandPassesThroughTheSeamTests
     /// </summary>
     private const string Handling = "OnDocumentOpening(";
 
-    /// <summary>The heads a command body starts at: a controller delegate assignment, or one of the two shared open methods (the derived "New/Show" opener since ADR-0030).</summary>
-    private static readonly string[] Heads = ["Requested = ", "private string OpenReferenceDocument(", "private string OpenKind("];
+    /// <summary>The heads a command body starts at: a controller delegate assignment, one of the two shared open methods (the derived "New/Show" opener since ADR-0030), or the console document's opener (Ruling 89).</summary>
+    private static readonly string[] Heads = ["Requested = ", "private string OpenReferenceDocument(", "private string OpenKind(", "private string OpenSessionConsole("];
 
     /// <summary>
     /// Document first, then the switch (ADR-0031 rule 2; US-C5): after every <c>AddSurface</c> in

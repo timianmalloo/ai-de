@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 32 types, 184 members, 72% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 33 types, 197 members, 73% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**32 public types · 184 public members · 72% documented.**
+**33 public types · 197 public members · 73% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -128,6 +128,44 @@ Appends a mode. Disposing the returned handle removes it again.
 **Remarks.** The handle exists so a registration has a lifetime. Without it the only way to prove "adding
 a mode is adding a row" would be to add a permanent row for the proof, which is a placeholder
 wearing a test's clothes.
+
+## `ConsoleDocumentHost`
+
+*class* — `ConsoleDocumentHost.cs`
+
+The console document's content (Ruling 89): one session's `ConsoleSurface` — the
+session document's own `Split`, the one instance — taken out
+of the document's grid and hosted as a document of its own in the Center zone, kept current from
+the same read model the thread renders (one derivation of the rows, `Coalesce`; no second
+store, Ruling 81).
+
+**Remarks.** **Why a host and not the split itself.** A WPF element has one parent: the split is
+built into the session document's body grid (CV-5.2's design, where it opened beside the thread),
+so docking it elsewhere means removing it from that grid first; it is released parentless
+when the console document closes. The document does not know it was hosted — with the shell's verb wired
+(`ConsoleRequested`) its own `OpenSplit` never runs, so
+the grid's column stays at zero and the split's absence from it is invisible to the document.
+
+
+
+
+**Refresh is the host's.** The document refreshes its split only while its own column is
+open (`IsSplitOpen`), which is never while the split is here; the host subscribes to the
+read model directly and shows every applied snapshot, marshalled to the UI thread, until it is
+disposed — which the shell does when the console document or its session closes.
+
+| Member | Summary |
+|---|---|
+| `string Kind = "console"` | The surface kind — `console`; the row is `Kinds`'s. |
+| `string SurfaceIdFor(string sessionId)` | The console surface id for a session: `console:<sessionId>`. |
+| `string? SessionIdOf(string surfaceId)` | The session id a console surface id names, or null for any other id. |
+| `string CaptionFor(string sessionName)` | The document's caption: *Console — <session name>*. |
+| `string ToggleName = "Console — open as a document in the Center"` | The header toggle's accessible name once the shell hosts the Console as a document (its CV-5.2 name said "beside the thread"). |
+| `string ToggleHelp = "Opens the Console as a document in the Center; press again, or close its tab, to close it."` | The header toggle's help once hosted: how it closes. (No chord named in operator copy — US-C10 b3; the View menu's row carries the gesture.) |
+| `ConsoleDocumentHost(SessionDocumentSurface document, int? at)` | **(gap)** |
+| `ConsoleSurface Split` | The hosted split — the document's own instance. |
+| `void ShowAt(int? ordinal)` | Brings the caret to 's heading (a turn's *Open the log*), or leaves it. |
+| `void Dispose()` | Stops following the thread and releases the split — parentless and collapsed, as the document keeps it closed — so the next console document for this session can take it. |
 
 ## `ConsoleSplitRow`
 
@@ -591,7 +629,10 @@ refusal is announced (`THR-0002`), never silent.
 | `EnvelopeStore? Envelopes` | The envelope store this document holds for its lifetime, or null with the reason on `HistoryState`. |
 | `ThreadFeed Thread` | The thread — the feed of turns. |
 | `RunChannelSessionThread ReadModel` | The read model the thread renders. CV-1's implementer; a test feeds it directly. |
-| `ConsoleSurface Split` | The Console split, whether or not it is open. |
+| `ConsoleSurface Split` | The Console split, whether or not it is open — and the console document's one instance when the shell hosts it (Ruling 89). |
+| `Action<int?>? ConsoleRequested { get; set; }` | The shell's verb (Ruling 89; SH-4.2's seam): when set, the header's Console toggle and a turn's *Open the log* open or focus the session's Console as a document in the Center zone through it — with the turn ordinal to… |
+| `Action? ConsoleDismissed { get; set; }` | The shell's close (the other half of the seam): when hosted, unchecking the header's toggle closes the Console document — the toggle's state is the document's open state, honestly, so an AT's Toggle pattern (which fli… |
+| `void ReflectConsole(bool open)` | Reflects the hosted Console's open state on the header's toggle WITHOUT dispatching the verb — the shell's, after an open, a focus, a close, or a refused open. |
 | `bool IsSplitOpen` | Whether the Console split is open beside the thread (Ruling 74: on demand). |
 | `string TurnCountCaption` | The header's turn-count button's caption: *5 turns* · *no turns yet*. |
 | `string BudgetState` | The header's budget state (Ruling 78): spend per session, derived. |
@@ -614,7 +655,7 @@ refusal is announced (`THR-0002`), never silent.
 | `Func<string, bool> PurgeConfirmation { get; set; } = plan` | The confirmation seam for `PurgeCompileHistory`: the plan's text in, yes or no out. The product asks with a message box; a test injects its answer. |
 | `int PurgedThisOpen` | How many times this document purged its compile history since it opened — the fact behind *history purged*. |
 | `string PurgeCompileHistory()` | Purges this session's compile history from the document that holds it — releases the handle, resolves the plan (the identity: name · id · workspace · file · count · newest), asks, deletes the one file, and reopens the… |
-| `void OpenSplit(int? ordinal = null)` | Opens the Console beside the thread — at 's heading, focused, or following the end. |
+| `void OpenSplit(int? ordinal = null)` | Opens the Console — as the shell's Center document when `ConsoleRequested` is wired, else beside the thread — at 's heading, focused, or following the end. |
 | `void CloseSplit()` | Closes the split; the thread keeps its rhythm. |
 | `Size MeasureOverride(Size constraint)` | The belt (DS-1 Q14), its value derived from the thread's need (Ruling 80): at 0 turns the thread is its two-line caption and the composer takes the rest of the body — the editor fills, no scrollbar before the operator… |
 | `void Dispose()` | Closes the document: its runs are cancelled, its lanes stop, its composer's browser is released. |

@@ -1,0 +1,134 @@
+
+Test run for C:\Projects\ai-de-lane-shell-sh4-2\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.19]     AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.TheConsoleKindsRow_IsCodingsManyInstancesVerbRow_HomedInTheCenter [FAIL]
+[xUnit.net 00:00:00.74]     AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheSessionAtLeft_TheSplitOpensInTheCenterZone_AsAConsoleDocument [FAIL]
+[xUnit.net 00:00:00.86]     AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheSessionInTheCenter_TheConsoleIsASiblingTab [FAIL]
+[xUnit.net 00:00:00.90]     AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.TheVerb_OpensTheFocusedSessionsConsole_AndRefusesWithNoSessionFocused [FAIL]
+[xUnit.net 00:00:00.91]     AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.TheSessionDocumentKindsRow_NamesTheLeftZone [FAIL]
+[xUnit.net 00:00:01.01]     AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.AReopenedSessionDocument_FollowsTheSameZoneRule_AndRearrangesNothing [FAIL]
+[xUnit.net 00:00:01.04]     AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.TheCodingLanding_IsTheSessionAtLeft_ElseTheCentersEmptyCopy_EachWithAFocusTarget [FAIL]
+[xUnit.net 00:00:01.11]     AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.ANewSessionDocument_OpensInTheLeftZone_Docked_WithMaximizedNull [FAIL]
+[xUnit.net 00:00:01.22]     AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.NewSessionPlacement_IsGone_AndTheCreatePathCarriesNoMaximize [FAIL]
+  Failed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.TheConsoleKindsRow_IsCodingsManyInstancesVerbRow_HomedInTheCenter [6 ms]
+  Error Message:
+   Assert.Single() Failure: The collection did not contain any matching items
+Expected:   (predicate expression)
+Collection: [SurfaceKind { Kind = canvas, Title = Graph, Summary = A windowed graph canvas over the workspace's code, data and architecture nodes., Build = System.Func`3[AiDe.App.Workbench.SurfaceContentFactory,AiDe.Core.Workbench.Surface,System.Windows.FrameworkElement], Perspectives = <>z__ReadOnlySingleElementList`1[AiDe.Core.Workbench.Perspective], Instances = One, Entry = Derived { Menu = _View }, Windowed = True, Zone =  }, SurfaceKind { Kind = view, Title = Evidence, Summary = The evidence list: every fact the workspace's daemon has indexed, searchable., Build = System.Func`3[AiDe.App.Workbench.SurfaceContentFactory,AiDe.Core.Workbench.Surface,System.Windows.FrameworkElement], Perspectives = <>z__ReadOnlySingleElementList`1[AiDe.Core.Workbench.Perspective], Instances = One, Entry = Derived { Menu = _View }, Windowed = False, Zone =  }, SurfaceKind { Kind = inspector, Title = Provenance, Summary = The selected evidence row's detail: where a fact came from and what cites it., Build = System.Func`3[AiDe.App.Workbench.SurfaceContentFactory,AiDe.Core.Workbench.Surface,System.Windows.FrameworkElement], Perspectives = <>z__ReadOnlySingleElementList`1[AiDe.Core.Workbench.Perspective], Instances = One, Entry = Derived { Menu = _View }, Windowed = False, Zone =  }, SurfaceKind { Kind = classdiagram, Title = Class diagram, Summary = The type hierarchy (classes and interfaces and their inheritance) of the open workspace., Build = System.Func`3[AiDe.App.Workbench.SurfaceContentFactory,AiDe.Core.Workbench.Surface,System.Windows.FrameworkElement], Perspectives = <>z__ReadOnlySingleElementList`1[AiDe.Core.Workbench.Perspective], Instances = Many, Entry = Derived { Menu = _View }, Windowed = False, Zone =  }, SurfaceKind { Kind = sequence, Title = Sequence diagram, Summary = Participant lifelines and the ordered messages exchanged between them., Build = System.Func`3[AiDe.App.Workbench.SurfaceContentFactory,AiDe.Core.Workbench.Surface,System.Windows.FrameworkElement], Perspectives = <>z__ReadOnlySingleElementList`1[AiDe.Core.Workbench.Perspective], Instances = Many, Entry = Derived { Menu = _View }, Windowed = False, Zone =  }, ···]
+  Stack Trace:
+  Failed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheSessionAtLeft_TheSplitOpensInTheCenterZone_AsAConsoleDocument [550 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Left
+Actual:   Center
+  Stack Trace:
+  Failed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.WithTheSessionInTheCenter_TheConsoleIsASiblingTab [121 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                                                                                              ↓ (pos 1)
+Expected: <generated>                          ["session-document:20260913T233815Z-3c97a7e1", "console:20260913T233815Z-3c97a7e1"]
+Actual:   IListSelectIterator<Surface, string> ["session-document:20260913T233815Z-3c97a7e1"]
+  Stack Trace:
+  Failed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.TheVerb_OpensTheFocusedSessionsConsole_AndRefusesWithNoSessionFocused [43 ms]
+  Error Message:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  Stack Trace:
+  Failed AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.TheSessionDocumentKindsRow_NamesTheLeftZone [1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Left
+Actual:   null
+  Stack Trace:
+  Failed AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.AReopenedSessionDocument_FollowsTheSameZoneRule_AndRearrangesNothing [103 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Left
+Actual:   Center
+  Stack Trace:
+  Failed AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.TheCodingLanding_IsTheSessionAtLeft_ElseTheCentersEmptyCopy_EachWithAFocusTarget [31 ms]
+  Error Message:
+   the Center's empty copy has no focus target — the landing falls through
+  Stack Trace:
+  Failed AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.ANewSessionDocument_OpensInTheLeftZone_Docked_WithMaximizedNull [71 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Left
+Actual:   Center
+  Stack Trace:
+  Failed AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.NewSessionPlacement_IsGone_AndTheCreatePathCarriesNoMaximize [108 ms]
+  Error Message:
+   NewSessionPlacement survives in:
+  src\AiDe.App\MainWindow.xaml.cs
+  src\AiDe.App\Workbench\Sessions\NewSessionPlacement.cs
+  tests\AiDe.App.ComposerProbe\Program.cs
+  tests\AiDe.App.ComposerProbe\Program.SessionRender.cs
+  Stack Trace:
+[xUnit.net 00:00:01.24]     AiDe.App.Tests.PerspectiveShellTests.TheLanding_IsTheRowsZonesActiveTab_LeftForCoordination_CenterForArchitecture_ElseTheViewsActive [FAIL]
+[xUnit.net 00:00:01.46]     AiDe.App.Tests.Shell.CodingsLeftExtentTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 2560, height: 1600, fixture: "prose", atLeast: 1) [FAIL]
+[xUnit.net 00:00:01.52]     AiDe.App.Tests.Shell.CodingsLeftExtentTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 2560, height: 1600, fixture: "five", atLeast: 1) [FAIL]
+[xUnit.net 00:00:01.60]     AiDe.App.Tests.Shell.CodingsLeftExtentTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 1440, height: 900, fixture: "prose", atLeast: 1) [FAIL]
+[xUnit.net 00:00:01.67]     AiDe.App.Tests.Shell.CodingsLeftExtentTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 1440, height: 900, fixture: "five", atLeast: 1) [FAIL]
+[xUnit.net 00:00:01.80]     AiDe.App.Tests.Shell.CodingsLeftExtentTests.CodingsLeftExtent_HoldsThe96chMeasureAtStartupSize [FAIL]
+[xUnit.net 00:00:01.88]     AiDe.App.Tests.Shell.CodingsLeftExtentTests.CodingsLeftExtent_HoldsThe96chMeasureAtTheOperatorsSize [FAIL]
+  Failed AiDe.App.Tests.PerspectiveShellTests.TheLanding_IsTheRowsZonesActiveTab_LeftForCoordination_CenterForArchitecture_ElseTheViewsActive [7 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "session:s1"
+Actual:   "welcome"
+           ↑ (pos 0)
+  Stack Trace:
+  Failed AiDe.App.Tests.Shell.CodingsLeftExtentTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 2560, height: 1600, fixture: "prose", atLeast: 1) [75 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Left
+Actual:   Center
+  Stack Trace:
+  Failed AiDe.App.Tests.Shell.CodingsLeftExtentTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 2560, height: 1600, fixture: "five", atLeast: 1) [65 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Left
+Actual:   Center
+  Stack Trace:
+  Failed AiDe.App.Tests.Shell.CodingsLeftExtentTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 1440, height: 900, fixture: "prose", atLeast: 1) [75 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Left
+Actual:   Center
+  Stack Trace:
+  Failed AiDe.App.Tests.Shell.CodingsLeftExtentTests.AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280(width: 1440, height: 900, fixture: "five", atLeast: 1) [72 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Left
+Actual:   Center
+  Stack Trace:
+  Failed AiDe.App.Tests.Shell.CodingsLeftExtentTests.CodingsLeftExtent_HoldsThe96chMeasureAtStartupSize [131 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Left
+Actual:   Center
+  Stack Trace:
+  Failed AiDe.App.Tests.Shell.CodingsLeftExtentTests.CodingsLeftExtent_HoldsThe96chMeasureAtTheOperatorsSize [79 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Left
+Actual:   Center
+  Stack Trace:
+[xUnit.net 00:00:01.96]     AiDe.App.Tests.Shell.CenterEmptyCopyTests.WhileARestoredSessionAtLeftCouldNotBeRevived_TheCenterSays_NothingOpenHere [FAIL]
+[xUnit.net 00:00:01.99]     AiDe.App.Tests.Shell.CenterEmptyCopyTests.WhileASessionIsOpenAtLeft_TheCenterSays_TheSessionIsDockedAtTheLeft_NeverNoSessionOpen [FAIL]
+  Failed AiDe.App.Tests.Shell.CenterEmptyCopyTests.WhileARestoredSessionAtLeftCouldNotBeRevived_TheCenterSays_NothingOpenHere [62 ms]
+  Error Message:
+   Assert.Contains() Failure: Item not found in collection
+Collection: ["“Welcome” is not available in this build."]
+Not found:  "Nothing open here."
+  Stack Trace:
+  Failed AiDe.App.Tests.Shell.CenterEmptyCopyTests.WhileASessionIsOpenAtLeft_TheCenterSays_TheSessionIsDockedAtTheLeft_NeverNoSessionOpen [32 ms]
+  Error Message:
+   Assert.Contains() Failure: Item not found in collection
+Collection: ["“Welcome” is not available in this build."]
+Not found:  "No session open."
+  Stack Trace:
+
+Failed!  - Failed:    18, Passed:     6, Skipped:     0, Total:    24, Duration: 1 s - AiDe.App.Tests.dll (net10.0)

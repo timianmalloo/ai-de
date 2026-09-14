@@ -24,8 +24,9 @@ public enum PerspectiveBody
 /// <param name="Landing">
 /// Where focus lands after a switch to this perspective (spec §C5; DESIGN.md's landing row): the
 /// zone whose active tab takes focus — Architecture lands on its Center (Graph), Coordination on
-/// its Left (Terminal sessions, the master list). Null for a body with another rule — Coding's
-/// active document, Explore's reader. A zone the arrangement has emptied or collapsed falls back to
+/// its Left (Terminal sessions, the master list), Coding on its Left (the session document, Ruling
+/// 83). Null for a body with another rule — Explore's reader. A zone the arrangement has emptied or
+/// collapsed falls back to the Center's active tab (the empty copy when the Center is empty), then
 /// the body's active surface. Stated on the row because the view's own notion of "active" after a
 /// body is first parented is whichever pane control realized last (measured, SH-4.1), which is not
 /// a landing anyone chose.
@@ -61,7 +62,8 @@ public static class PerspectiveSet
 {
     public static Perspective Coding { get; } = new(
         "coding", "Coding", 1, PerspectiveBody.DockHost, "perspective.coding",
-        "Agentic coding: the session documents, terminals and prompt drafts. The perspective the tool starts in.");
+        "Agentic coding: the session documents, terminals and prompt drafts. The perspective the tool starts in.",
+        Landing: ZoneId.Left);
 
     public static Perspective Explore { get; } = new(
         "explore", "Explore", 2, PerspectiveBody.FullWindow, "perspective.explore",

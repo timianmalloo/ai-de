@@ -47,6 +47,14 @@ public sealed class WorkbenchAdapter
     // DC-029); the shell only ever marks the stateless watcher read surfaces.
     private readonly HashSet<string> _pendingRebuild = new(StringComparer.Ordinal);
 
+    // Content the model still holds but the projection does not show — a collapsed zone's panes
+    // (Ruling 88's Bottom; a Left rail holding the session) — kept alive, detached, until the zone
+    // expands. Collapse is a HIDE, not a close: before this the projection alone decided what to keep,
+    // so collapsing a zone disposed its terminal's process and, on expand, handed the factory a
+    // retained session document still parented to the old island (WPF: "already the logical child of
+    // another element") — the WPF lens's two Majors on SH-4.2.
+    private readonly Dictionary<string, FrameworkElement> _parked = new(StringComparer.Ordinal);
+
     // The pane topology this adapter last SAW in the view - set by Render (what it just drew) and by
     // the drag watcher (what it just observed). Comparing against it is what turns WPF's very chatty
     // layout-pass event into "the arrangement actually changed", exactly once per change.
@@ -210,12 +218,34 @@ public sealed class WorkbenchAdapter
         }
     }
 
+    /// <summary>
+    /// Raised after a render for each surface the MODEL no longer holds — a tab the operator closed,
+    /// a document a command closed, every pre-render surface after a whole-arrangement replacement
+    /// — with the content that rendered it (already disposed when it was disposable). Never for a
+    /// surface a collapsed zone still holds: collapse hides, it does not close. The one funnel every
+    /// close passes through: AvalonDock's own close, the keyboard's, the shell's all end in a render,
+    /// which is why the shell listens here for a session document leaving (its console closes with
+    /// it, Ruling 89) rather than at each caller.
+    /// </summary>
+    public event Action<string, FrameworkElement?>? SurfaceClosed;
+
+    /// <summary>
+    /// Every surface the model holds — the projection's, plus what collapsed zones still hold — or
+    /// the projection's alone for a tree service with no zone model behind it.
+    /// </summary>
+    private HashSet<string> HeldByTheModel() =>
+        (_service is ZoneBackedLayoutService zones
+            ? zones.Zones.AllSurfaces().Select(s => s.SurfaceId)
+            : _service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.SurfaceId))
+        .ToHashSet(StringComparer.Ordinal);
+
     public void Render()
     {
         // Preserve which surface is active across the layout swap. Replacing Manager.Layout wholesale
         // otherwise drops AvalonDock's active-content tracking, so focus snaps to the first document
         // (the Explorer) — the "opening/closing a pane stole focus to explore" reports (#3-focus, #11).
         var preActive = ActiveSurfaceId;
+        var closed = new List<(string Id, FrameworkElement? Content)>();
 
         // Reconcile, do not rebuild (DC-029). Reuse the content element already realized for each
         // surface that still exists, so a mutation to ONE pane (opening a terminal, splitting,
@@ -225,6 +255,22 @@ public sealed class WorkbenchAdapter
         var keep = _service.Current.AllStacks()
             .SelectMany(s => s.Surfaces).Select(s => s.SurfaceId)
             .ToHashSet(StringComparer.Ordinal);
+        var held = HeldByTheModel();
+
+        // Parked content whose surface left the model while its zone was collapsed is closed now,
+        // the same way a rendered surface's is; the rest stays parked until its zone renders again.
+        foreach (var (id, parked) in _parked.ToList())
+        {
+            if (!held.Contains(id) || _pendingRebuild.Contains(id))
+            {
+                _parked.Remove(id);
+                (parked as IDisposable)?.Dispose();
+                if (!held.Contains(id))
+                {
+                    closed.Add((id, parked));
+                }
+            }
+        }
 
         var reuse = new Dictionary<string, FrameworkElement>(StringComparer.Ordinal);
         if (Manager.Layout is { } current)
@@ -236,25 +282,54 @@ public sealed class WorkbenchAdapter
                     continue;
                 }
 
-                if (keep.Contains(id) && !_pendingRebuild.Contains(id))
+                // The Center's placeholder is REBUILT on every render: its content is the empty copy
+                // the shell derives from the model — "No session open" / "The session is docked at
+                // the left" — and a reused element would keep the sentence of the render before
+                // (Ruling 83 condition 2). It holds no resource and no operator state.
+                var placeholder = string.Equals(id, ZonesToTree.WelcomePlaceholder.SurfaceId, StringComparison.Ordinal);
+
+                if (held.Contains(id) && !_pendingRebuild.Contains(id) && !placeholder)
                 {
-                    if (!reuse.ContainsKey(id))
+                    // Free the element so it can re-parent into the new tree without a "already has a
+                    // parent" fault when the layout is replaced below — into the next render when its
+                    // zone still shows, into the park when its zone collapsed (a hide, not a close).
+                    doc.Content = null;
+                    if (keep.Contains(id))
                     {
-                        // Free the element so it can re-parent into the new tree without a "already has a
-                        // parent" fault when the layout is replaced below.
-                        doc.Content = null;
-                        reuse[id] = fe;
+                        reuse.TryAdd(id, fe);
+                    }
+                    else
+                    {
+                        _parked.TryAdd(id, fe);
                     }
                 }
-                else if (fe is IDisposable disposable)
+                else
                 {
-                    // A surface that was closed - or one explicitly marked for rebuild (a workspace-
-                    // dependent read pane after the workspace attached) - is ended NOW rather than at a
-                    // finalizer, so a closed terminal's process stops deterministically. A rebuilt pane
-                    // that owns no resource (the watcher read surfaces) simply drops here and BuildPane
-                    // reconstructs it against the new content factory.
-                    disposable.Dispose();
+                    if (fe is IDisposable disposable)
+                    {
+                        // A surface that was closed - or one explicitly marked for rebuild (a workspace-
+                        // dependent read pane after the workspace attached) - is ended NOW rather than at a
+                        // finalizer, so a closed terminal's process stops deterministically. A rebuilt pane
+                        // that owns no resource (the watcher read surfaces) simply drops here and BuildPane
+                        // reconstructs it against the new content factory.
+                        disposable.Dispose();
+                    }
+
+                    if (!held.Contains(id) && !placeholder)
+                    {
+                        closed.Add((id, fe));
+                    }
                 }
+            }
+        }
+
+        // A zone that expanded again: its parked content is the content the pane gets back —
+        // the same terminal, the same session document — never a second build.
+        foreach (var id in keep)
+        {
+            if (_parked.Remove(id, out var parked))
+            {
+                reuse.TryAdd(id, parked);
             }
         }
 
@@ -277,6 +352,13 @@ public sealed class WorkbenchAdapter
         {
             _rendering = false;
             _lastSeenArrangement = ViewArrangementSignature() ?? string.Empty;
+        }
+
+        // After the render has settled, so a handler that closes a dependent surface and renders
+        // again nests a whole render rather than re-entering this one.
+        foreach (var (id, content) in closed)
+        {
+            SurfaceClosed?.Invoke(id, content);
         }
     }
 
@@ -746,9 +828,10 @@ public sealed class WorkbenchAdapter
     /// rearranges, and it would go stale exactly when a pane is moved or closed.
     /// </remarks>
     public FrameworkElement? ContentFor(string surfaceId) =>
-        Manager.Layout?.Descendents().OfType<LayoutDocument>()
+        (Manager.Layout?.Descendents().OfType<LayoutDocument>()
             .FirstOrDefault(d => string.Equals(d.ContentId, surfaceId, StringComparison.Ordinal))
-            ?.Content as FrameworkElement;
+            ?.Content as FrameworkElement)
+        ?? _parked.GetValueOrDefault(surfaceId);   // hidden by a collapsed zone, still this surface's live content
 
     /// <summary>
     /// The inner surface content of type <typeparamref name="T"/> for <paramref name="surfaceId"/>,
@@ -811,6 +894,14 @@ public sealed class WorkbenchAdapter
             .SelectMany(s => s.Surfaces)
             .ToDictionary(s => s.SurfaceId, StringComparer.Ordinal);
 
+        // The Center's placeholder is a document in the VIEW for as long as the last render left it
+        // there, whatever the model's Center holds now: a drag into the empty Center reconciles the
+        // model (no re-render — the view already shows the drop), so the projection stops carrying
+        // the placeholder while the view still does. Always readable, never counted (F-1; O-2's
+        // second half was "view-unreadable" without this — a silent revert).
+        var placeholder = ZonesToTree.WelcomePlaceholder.SurfaceId;
+        known.TryAdd(placeholder, ZonesToTree.WelcomePlaceholder);
+
         var mapped = MapNode(root.RootPanel, known);
         if (mapped is null) { return null; }
 
@@ -818,8 +909,8 @@ public sealed class WorkbenchAdapter
 
         // The strong guard: a reconcile that lost, duplicated or invented a surface is a corrupt
         // reconcile, and rendering it would drop a pane. Compare the surface SET, and refuse if it moved.
-        var before = known.Keys.ToHashSet(StringComparer.Ordinal);
-        var after = reconciled.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.SurfaceId).ToList();
+        var before = known.Keys.Where(id => id != placeholder).ToHashSet(StringComparer.Ordinal);
+        var after = reconciled.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.SurfaceId).Where(id => id != placeholder).ToList();
         if (after.Count != before.Count || !after.ToHashSet(StringComparer.Ordinal).SetEquals(before))
         {
             return null;
@@ -881,7 +972,15 @@ public sealed class WorkbenchAdapter
 
             if (surfaces.Count == 0) { return null; }
             var active = Math.Clamp(docPane.SelectedContentIndex, 0, surfaces.Count - 1);
-            return new StackNode(NewNodeId("stack"), [.. surfaces], active);
+
+            // The pane's IDENTITY, where it survived the gesture: BuildPane names every rendered pane
+            // with its zone's stack id, and AvalonDock moves DOCUMENTS between panes — a pane that is
+            // still here is the zone it was rendered as, whatever it now holds. A pane AvalonDock
+            // created for a split-off column carries no name and is minted fresh, so the mapping falls
+            // back to content and position for it (ZoneBackedLayoutService.TryMapByPosition; F-1).
+            var paneId = ((ILayoutPaneSerializable)docPane).Id;
+            var stackId = paneId is { Length: > 0 } && ZonesToTree.ZoneOfStackId(paneId) is not null ? paneId : NewNodeId("stack");
+            return new StackNode(stackId, [.. surfaces], active);
         }
 
         // Anchorable panes and anything else this workbench does not produce — fail safe.
@@ -910,6 +1009,12 @@ public sealed class WorkbenchAdapter
     private LayoutDocumentPane BuildPane(StackNode stack, IReadOnlyDictionary<string, FrameworkElement> reuse)
     {
         var pane = new LayoutDocumentPane();
+
+        // Named for the zone it renders (the projection's deterministic stack ids), so the reconcile
+        // can read a surviving pane's zone back by identity rather than guess it from its contents
+        // (MapNode above). AvalonDock's own serializer is the only other reader of this id.
+        ((ILayoutPaneSerializable)pane).Id = stack.Id;
+
         foreach (var surface in stack.Surfaces)
         {
             var content = reuse.TryGetValue(surface.SurfaceId, out var kept)

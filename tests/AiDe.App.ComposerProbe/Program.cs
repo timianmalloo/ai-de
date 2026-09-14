@@ -401,9 +401,9 @@ internal static partial class Program
 
     /// <summary>
     /// <b>INV-0007's reproduction:</b> after the product's own New Session choreography —
-    /// <c>OpenSessionDocument</c>, <c>Configure</c> exactly as <c>MainWindow.BindComposer</c> calls
-    /// it, then (on <c>main</c>) <c>NewSessionPlacement.GiveItTheWholeTree</c> and the re-render that
-    /// follows — the composer's entry areas are <b>perceivable and accept a keystroke</b>, in the
+    /// <c>OpenSessionDocument</c> (the document docked at Left by the kind's zone rule, Ruling 83),
+    /// <c>Configure</c> exactly as <c>MainWindow.BindComposer</c> calls it — the composer's entry
+    /// areas are <b>perceivable and accept a keystroke</b>, in the
     /// <b>real</b> <see cref="WorkbenchShell"/> with the real docking host, under the arrangement the
     /// operator's workbench log recorded at the moment of the gesture.
     /// </summary>
@@ -415,7 +415,7 @@ internal static partial class Program
     /// does not construct (DC-135), so this one constructs what the product constructs.</para>
     ///
     /// <para><b>Three traces, each measured, none reasoned about.</b> (a) SIZE: the WebView2's realised
-    /// bounds and its HWND rectangle, read after layout, before and after the maximize. (b) CONTRAST:
+    /// bounds and its HWND rectangle, read after layout and after the choreography. (b) CONTRAST:
     /// the page's field elements' computed colours, with the contrast ratio computed in-page, plus a
     /// <c>CapturePreviewAsync</c> PNG beside the window screenshot. (c) MOUNT: how many
     /// <c>editor.ready</c> messages the page posted, the router's drop count, whether a
@@ -429,14 +429,13 @@ internal static partial class Program
     /// </remarks>
     private static class ShellTyping
     {
-        /// <param name="Maximize">Run main's choreography (Ruling 47's maximize) rather than F5's.</param>
         /// <param name="RenderAfterMount">After the page mounts, render once more, as any later layout command does.</param>
         /// <param name="CapCompiled">The NECESSITY check: cap the compiled view's height from outside and re-measure.</param>
         /// <param name="ReloadAfterMount">After the page mounts and takes a keystroke, reload the document — crash recovery's shape — and read what came back.</param>
         /// <param name="EscapeAfterMount">After the page mounts, let the page try to navigate away (the policy cancels it) and type again.</param>
         /// <param name="WindowHeight">The window's height. 800 is a laptop; 1400 gives the document the ~1000px the operator's screenshot shows.</param>
         private sealed record Options(
-            bool Maximize, bool RenderAfterMount, bool CapCompiled, bool ReloadAfterMount, bool EscapeAfterMount, double WindowHeight);
+            bool RenderAfterMount, bool CapCompiled, bool ReloadAfterMount, bool EscapeAfterMount, double WindowHeight);
 
         private static double HeightArgument(string[] args)
         {
@@ -475,7 +474,6 @@ internal static partial class Program
         internal static int Run(string[] args)
         {
             var options = new Options(
-                Maximize: args.Contains("--maximize", StringComparer.Ordinal),
                 RenderAfterMount: args.Contains("--render-after-mount", StringComparer.Ordinal),
                 CapCompiled: args.Contains("--cap-compiled", StringComparer.Ordinal),
                 ReloadAfterMount: args.Contains("--reload-after-mount", StringComparer.Ordinal),
@@ -591,7 +589,7 @@ internal static partial class Program
 
         private static async Task<int> MeasureAsync(Window window, WorkbenchShell shell, SessionConfig config, string root, Options options)
         {
-            Console.Out.WriteLine($"options: maximize={options.Maximize} renderAfterMount={options.RenderAfterMount} capCompiled={options.CapCompiled} windowHeight={options.WindowHeight}");
+            Console.Out.WriteLine($"options: renderAfterMount={options.RenderAfterMount} capCompiled={options.CapCompiled} windowHeight={options.WindowHeight}");
             ArrangeAsTheOperatorHad(shell);
 
             // Let the arrangement settle before the gesture, as it has by the time an operator
@@ -675,16 +673,10 @@ internal static partial class Program
                 ComposerFields.GoalBlock(),
                 new AttachmentGate(root, new AttachmentFileReader(), new NeverAsked(), "anthropic", "probe-account"));
 
-            // GiveTheNewSessionTheWholeTree, exactly (main's choreography): maximize the document's
-            // stack, then render — in the SAME dispatcher operation as the open and the bind, which is
-            // how MainWindow's `opened` callback runs it. F5's tree ends at the bind.
+            // Main's choreography ends at the bind (Ruling 83: the document is docked at Left by
+            // the open's zone rule; Ruling 47's maximize-and-re-render is retired), so the F5 tree
+            // and main's are one choreography now.
             var said = opened;
-            if (options.Maximize)
-            {
-                said = NewSessionPlacement.GiveItTheWholeTree(shell.Service, config.SessionId, opened);
-                shell.Adapter.Render();
-            }
-
             Console.Out.WriteLine($"announced: {said}");
 
             // (a) SIZE, read after layout: what the choreography left on screen.

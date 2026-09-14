@@ -215,6 +215,12 @@ public sealed class TerminalSurfaceStopLineTests
             using var capture = new SinkCapture();
 
             using var shell = new WorkbenchShell(queries: null);
+
+            // Coding's default Bottom is collapsed and its terminal not started until the rail is
+            // expanded (Ruling 88; CollapsedBottomTests) — the operator's gesture, made here, so
+            // the shell holds a LIVE terminal to write a stop for.
+            Assert.True(shell.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.BottomStackId, StackState.Docked)).Applied);
+            shell.Adapter.Render();
             var ids = shell.Service.Current.AllStacks()
                 .SelectMany(s => s.Surfaces)
                 .Where(s => s.Kind == "terminal")
