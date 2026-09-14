@@ -12,8 +12,9 @@ links:
 review-by: 2026-12-13
 summary: >-
   The compiled public render seam and reviewed Shell lifetime component are joined.
-  Membership qualification remains blocked by native notification aborts. Component,
-  compile-only and detached proofs are not proof of the real daemon-to-MainWindow journey.
+  The native membership candidate now has a conditional qualification result, with
+  cleanup-timeout accounting still required before production use. Component, compile-only
+  and detached proofs are not proof of the real daemon-to-MainWindow journey.
 ---
 
 # Production adapter checkpoint
@@ -157,3 +158,62 @@ Git namespace mutation. It does **not** establish why the watch aborted.
 NQ is 15/22; seven leaves remain held pending Owner's cause-specific disposition. Regular
 Core remains 34/48. No error/overflow is ignored, no namespace is suppressed, and no
 Git-dependent production consumer has been admitted.
+
+## Qualified candidate after the coherent pass
+
+The preceding blocked checkpoints are retained as history. Owner turn 47 released a
+coherent pass; the writer used ten of eleven leaves, cumulative **NQ 29/30**, with regular
+Core still **34/48**. Candidate `c7c941537b34ab342071109c3f32a8b2a697c156` changes only
+`AtlasGitMembership.cs` and its tests. It remains unjoined pending the next disposition.
+
+Owner turn 48 subsequently authorizes the qualification-only join after committing these
+pending records. That is not production membership clearance: the cleanup-timeout condition
+below remains a blocking predecessor of any real consumer.
+
+Immutable issuer metadata is captured before thread death. Diagnostic failure is explicit
+and does not prevent cleanup. A bounded shared native issuer keeps the issuing thread alive
+for the operation lifetime and drains when the last ownership lease is released.
+
+The controlled cause run (`nq-owner47-cause.trx`) preserves the original three failures,
+18/21. The final author run is 350/350, including 24 NQ and 54 reader cases. Conductor
+independently built and replayed the Understanding set, 350 passed, zero skipped, in
+`files/atlas-nq-qualified-independent/nq-qualified-independent.trx`.
+
+| Raw receipt under `.artifacts/atlas-reader` | Observed distinction |
+|---|---|
+| `nq-owner47-cause/f749a1de3f484eabb05140a1c6308eaf.json` | Issuer 31064 is alive/pending at root pin, then dead/joined with error 995 after Git version; the handle and OVERLAPPED address remain unchanged and owned |
+| `nq-owner47-final/fe8a0fc202404ea2ba54ae4569cbf86f.json` | Fixed issuer 8792 stays alive/pending, error 996, across the same boundary with unchanged owned resources |
+| `nq-owner47-final/a32457ef3b9a42418654f53ad10f464a.json` | Canceled native creation records closed handle and released OVERLAPPED |
+
+The Test Architect opened the new lifetime oracles and cause/final receipts. The
+exited-owner control asserts zero explicit cancellation/disposal before the abort;
+live-owner mutation and explicit cancellation are separate controls. The shared issuer
+asserts one native thread/two leases, then zero/zero; canceled creation, pre-cancellation,
+diagnostic loss, hostile configuration, required repository forms and ABA remain covered.
+Conductor's compact raw table did not print the cancellation/disposal columns, so its
+printed table alone is not cited as independent observation of those zero counts.
+
+GATE NQ Test - PASS for the bounded qualification; no runtime/factory/MainWindow claim.
+GATE NQ Security - PASS WITH CONDITIONS for qualification evidence only. Production use
+still requires explicit cleanup-timeout accounting and confinement of the diagnostic sink.
+
+The Security condition is concrete: if native cancellation does not complete inside the
+two-second cleanup window, buffers must remain owned, but `PinSet.Dispose` can stop before
+all other safe pins and issuer accounting are released. Before production consumption,
+prove that timeout path or retain its unresolved native resources under a bounded, tracked
+failure owner while releasing all resources that are safe to release. The current green
+suite does not simulate a kernel/driver that refuses to complete cancellation.
+
+Qualification diagnostics contain administrative paths, native handles and notification
+names. They must remain qualification-only, never production telemetry, wire errors or
+audit content. Membership never grants content permission: the actual adapter still needs
+the separate existing-workspace content-eligibility policy.
+
+### Concrete runtime remainder
+
+Resolve the cleanup-timeout production condition, then implement and review the actual
+Core scope issuer, global limits, async endpoint/server, isolated remote reader and
+committed factory/ViewModel handoff. Shell must consume those exact signatures for real
+MainWindow attach/replacement/awaited close. Finally prove the daemon-backed Architecture
+file/member/source/Back path with cancellation, revocation, replacement and shutdown.
+Neither normative Addendum E acceptance nor main integration is granted by this checkpoint.

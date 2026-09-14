@@ -7489,6 +7489,13 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 
 ### DC-177 — Failure cleanup drops ownership before cleanup succeeds
 
+- **Additional native instance:** the Atlas qualification watch outlived its issuing
+  thread, and then diagnostic inspection of a dead issuer threw before cleanup. The
+  coherent candidate `c7c94153` captures immutable metadata while valid, keeps a bounded
+  shared issuer alive and tests explicit diagnostic loss/cleanup. The cause run preserved
+  three failures; Test inspected exited/live/cancel/mutation and shared-owner/drain oracles;
+  Conductor replayed 350/350. Native cleanup-timeout accounting remains a separate production
+  condition, not covered by those successful runs or the Shell control below.
 - **Signature:** an asynchronous owner clears its lease/reader before awaited disposal,
   chains later transitions onto a faulted task, or destroys cancellation/admission primitives
   while operations still use them. Error text can also hide retained activation state.

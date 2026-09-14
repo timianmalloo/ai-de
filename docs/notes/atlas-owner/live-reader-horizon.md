@@ -811,3 +811,81 @@ The closing audit includes the final recording calls. No further implementation 
 repair is silently released by that overrun: seven NQ calls remain held for Owner disposition.
 Future receipt handoffs must include the compact raw diagnostic values and exact artifact
 paths together, and reserve recording calls before spending the investigation allocation.
+
+## Native operation-lifetime discrimination, Owner turn 46
+
+The read-back 995/zero-byte results establish aborted notifications, not their cause.
+Owner releases the held seven NQ leaves within the existing ceiling of 22: first four for
+a controlled lifetime counterexample, then Conductor readback before up to three repair/
+replay leaves. The experiment records issuing-thread identity/liveness, handle/OVERLAPPED
+ownership, explicit cancellation/disposal and completion across the await/process boundary;
+a real namespace change remains its discriminating control.
+
+There is no permission to hide a watch abort by ignoring errors, suppressing namespaces or
+silently rearming. Any necessary lifetime owner must be bounded and drained. If its proven
+mechanism exceeds the remaining repair allowance, return the exact delta rather than
+improvising. Core regular work stays 34/48. The next runtime tranche and real factory/
+MainWindow handoff still need their own explicit release.
+
+## Coherent causal qualification pass, Owner turn 47
+
+The lifetime probe ran 15/20. Conductor opened its TRX, the failing expression and both
+surviving control receipts. Inspecting `IsThreadPoolThread` after issuer death throws;
+the diagnostic then obstructed cleanup. This is a separate probe defect, not yet proof
+of the original abort mechanism. Live issuers stayed pending across Git version lookup
+(native 996, zero bytes); a real mutation produced a 54-byte action record, while explicit
+cancellation produced 995 with a recorded cancel count of one.
+
+Owner changes the execution shape rather than repeating tiny releases. NQ receives eight
+prospective additional leaves: 19 charged, eleven available, ceiling thirty. In one pass
+the same writer corrects lifecycle-safe metadata and cleanup, executes the counterfactual,
+then may implement only the minimal bounded/drained correction that the evidence supports.
+No intermediate Owner roundtrip is required for mechanical corrections inside that pass.
+The parent raw-evidence and independent gates still precede production consumption; no
+namespace suppression, silent rearm or fail-open error handling is permitted.
+
+The new Conductor checkpoint is a fixed cumulative ceiling of 102 leaves. An immediate
+manual recount through this ruling found ninety leaves and fourteen parallel-wrapper
+calls separately; it excludes nested native commands from tool-leaf counts. This count
+is not model-request telemetry. The prior overrun remains visible. The funded remainder
+is candidate verification, reserved-review coordination, conditional join and records.
+It is not a release of the absent Core factory/MainWindow implementation.
+
+## Turn-47 qualification result and next decision
+
+Candidate `c7c94153` is committed in C's tree, not joined. The coherent pass used 10/11:
+NQ 29/30, regular C 34/48. Conductor read the literal cause/fixed/canceled-creation JSON
+receipts and independently built/replayed 350/350 Understanding cases. Test cleared the
+bounded qualification after reading source oracles and red/final receipts. Security
+conditionally cleared qualification, not production consumption.
+
+The remaining Security condition is cleanup-timeout accounting: failed native cancellation
+must not free live buffers, and safe remaining resources/issuer accounting need an explicit
+drained or retained-failure owner. Qualification diagnostic paths/handles/names must remain
+outside production logs and errors. This is the next admission decision, not a claim that
+the whole reader is ready. Actual Core factory and MainWindow integration remain absent.
+
+The qualification result and concrete runtime remainder are returned to Owner at the
+102-leaf checkpoint. The earlier overruns remain in the audit; no new allowance is inferred.
+
+## Qualification-only join and retained cleanup, Owner turn 48
+
+Owner opened the cleanup paths and permits the qualification candidate join only after
+pending records are committed through audit/regeneration. Native disposal must not free
+live buffers when cancellation is incomplete; stopping at the first failed pin and losing
+retryable issuer ownership are the remaining defects to address before production use.
+
+C receives ten existing regular leaves for that bounded correction and clearly labelled
+fault injection, reserving four for a code-grounded remaining-runtime estimate. Regular
+ceiling remains 48; NQ stays 29/30. Six new Security/Test review leaves are separate.
+Cleanup invalidates first, attempts all safe resources, strongly retains pending work and
+reservations under a bounded failure owner, and permits idempotent recovery after actual
+completion. New admission must not evade retained debt. A simulated timeout is not a claim
+to have stalled the kernel. Pin cleanup, canceled creation and final issuer drain all need
+falsifying cases; ordinary repository/namespace/ABA controls remain.
+
+Conductor receives a prospective cumulative ceiling of 126 leaves: six reserved for
+outstanding record and qualification-join mechanics, eighteen for cleanup evidence/review/
+conditional join and runtime-estimate disposition. The next outcome is that disposition
+and an actionable runtime funding request, not programme closure. No primary/push authority
+or full factory/MainWindow tranche is inferred.

@@ -4781,7 +4781,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5ad4d295cd308c7b1e855f5c7b9f551200a360c0eb54ab4e56848f0fddbe8a45"
+      "sourceSha256": "5ee773db4e2be0a6c83f84dfe69c65358a9f4fd49b56f68cd24b653121ea1524"
     },
     {
       "id": "note-atlas-reader-native-direction",
@@ -8444,7 +8444,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5b9697aa71ab10b08d77ceb6ef463298c09769f89397e976af2a6a54caf55e57"
+      "sourceSha256": "9ed7a21dde4fc943ff91d84d461bff7448ad4eb5d7e98f1f68ea4aea08b5b950"
     },
     {
       "id": "design-session-profiler",
@@ -10996,7 +10996,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2026-12-13",
       "reviewSuggested": [],
-      "summary": "The compiled public render seam and reviewed Shell lifetime component are joined. Membership qualification remains blocked by native notification aborts. Component, compile-only and detached proofs are not proof of the real daemon-to-MainWindow journey.",
+      "summary": "The compiled public render seam and reviewed Shell lifetime component are joined. The native membership candidate now has a conditional qualification result, with cleanup-timeout accounting still required before production use. Component, compile-only and detached proofs are not proof of the real daemon-to-MainWindow journey.",
       "tags": [
         "code-atlas",
         "proof",
@@ -11019,7 +11019,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "87f88f5bfee3ad086e2d97a5df9f6f64be14a441214fd34414691a8929a02aff"
+      "sourceSha256": "020f021fd5168bb9e4fa13860b7f506040590a9921149babe447513d992d73bf"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -11644,7 +11644,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9a582d8dee4a638a450ab986d0f6647aead3335fe76ad55a9afc2af2bb25db4b"
+      "sourceSha256": "e3848beb871068c5f3f48f8b6ded007290274779f637c7c4fe4da01f66c2938a"
     },
     {
       "id": "session-profiles",
@@ -18965,5 +18965,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "54722f2aa6b5397e9a07c39fa167c91ce599641dd15bd4d4277c3ae9e2737f4c"
+  "graphSha256": "bad86e7b68b7847b426760fcbcfee8c3ed7067ca12348b5d8fe27a8fb96ca49b"
 };

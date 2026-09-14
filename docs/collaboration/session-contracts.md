@@ -427,6 +427,50 @@ independently observed 90/90 both before and after joining as `639be9d3`. S's re
 MainWindow work stays unreleased until the committed C factory exists. Four NQ review
 leaves remain; neither failed membership source nor diagnostic-only source was joined.
 
+Owner turn 46 releases the seven remaining NQ leaves in two stages, still within **22**
+total. The first four, released now to the same C writer and two qualification files,
+compare native-operation lifetime across the await/process boundary. Record issuing-thread
+identity/liveness, handle/OVERLAPPED ownership, explicit cancellation/disposal and native
+completion results, with a genuine namespace-change control. Conductor reads the observations
+before releasing up to three cause-specific repair/replay leaves. No abort/overflow may be
+ignored, no silent rearm or fixture-only success is admitted, and any lifetime mechanism
+must be bounded and drained. Regular C remains 34/48; production admission remains closed.
+
+Owner turn 47 replaces those micro-releases with one coherent qualification pass in the
+same two files/tree: **19/30 NQ leaves charged, eleven available**, including eight newly
+authorized leaves. Capture immutable thread metadata while valid; diagnostic failure must
+not obstruct cleanup or become success. Execute exited/live/cancel/mutation controls and
+relate them to the original failures. Only if that evidence establishes the cause may the
+same pass implement and replay the minimal bounded/drained lifetime correction. The
+independent production-admission gate remains after the pass; four NQ review leaves are
+reserved. Regular C remains 34/48. Preserve every failed diagnostic and qualification run.
+
+Owner also fixes the next cumulative Conductor ceiling at **102 leaves**, not a fresh
+allowance. The immediate manual recount through the turn-47 ruling is **90 leaf calls**
+and **fourteen parallel-wrapper calls separately**. Native commands inside a PowerShell
+leaf are not counted as extra tool leaves. This is a manual transcript count, not
+harness-measured model requests. Remaining capacity at that point is twelve; the earlier
+72-to-82 overrun remains recorded. Only qualification verification/review, a conditional
+join and records are funded here, not the missing production factory/MainWindow scope.
+
+Owner turn 48 authorizes joining `d8d83de` plus its corrected `c7c94153` as qualification-only
+code after the pending records are committed. Production cleanup remains explicitly blocked.
+C receives **ten of its fourteen remaining regular calls** for retained-failure cleanup and
+fault oracles in the same membership source/test files, so regular use may reach **44/48**.
+Four regular calls are reserved for a code-grounded runtime estimate and executable commit
+sequence across the existing twenty-file ceiling. NQ remains 29/30; its unused call is not
+borrowed. Six new targeted Security/Test review leaves are separate.
+
+Invalidate first; attempt every independently safe cleanup; strongly retain pending native
+operations, buffers, handles, issuer lifetime and reservations in a bounded failure state.
+Fault oracles cover pin cleanup, canceled creation and final issuer drain. Label injected
+timeouts honestly; prove safe others release, pending debt remains charged, new admission
+cannot bypass it and later completion allows idempotent cleanup. No production consumer is
+admitted before raw evidence and targeted clearance. MainWindow still waits for real C code.
+Conductor's prospective cumulative ceiling is **126**, including six reserved record/join
+mechanics calls and eighteen cleanup/review/runtime-estimate-disposition calls; prior
+wrappers and overruns are retained, never reset.
+
 ### Core owns
 
 | Path | Why |

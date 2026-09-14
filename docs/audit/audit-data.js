@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-13T23:06:57Z",
+  "generated": "2026-09-14T00:07:33Z",
   "audit": [
     {
       "actor": null,
@@ -15579,6 +15579,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "5cfc28b48cec62e354de9c9eb963f767e486896f",
         "short": "5cfc28b48",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2EKV3EQB4WGKFX8FSRS3JTA",
+      "shortname": "atlas-qualification-disposition-cleanup-grant",
+      "datetime": "2026-09-14T00:07:32Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Preserve pending Owner46-48/proof/register updates before qualification-only join. Candidatec7c94153 cause/fixedrawreceiptsread; parentbuild350/350; TestPASS andSecurityconditionalqualification. Production cleanup-timeout accounting blocked. Owner48allocates10existingregularCleaves(cleanup) andreserves4runtimeestimate; sixnewreviewleaves;NQ29/30unchanged. Conductor cumulativeceiling126 prospectively, prior102and15wrappers/overrunsretained. Actualfactory/MainWindowunfunded.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve native cleanup qualification and obtain an actionable real-runtime funding request.",
+      "done_when": "Cleanup has an evidence-backed disposition and the remaining real Core-to-Shell implementation has an explicit executable funding request.",
+      "tier": "T2",
+      "main_calls": 106,
+      "main_budget": 126,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-13T23:10:55Z",
+      "duration_seconds": 3397.0,
+      "git": {
+        "sha": "6c119a3b91b00c7485de8fb3f40d9e4163431cc9",
+        "short": "6c119a3b9",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
