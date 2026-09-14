@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 120 · partially-controlled 67 · uncontrolled 33
+**Status counts:** controlled 122 · partially-controlled 67 · uncontrolled 33
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -8023,3 +8023,21 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Sweep:** every `WorkbenchDiagnostics.Sink =` in tests/ (32); every ledger reader that treats the per-run file as complete (the terminal-host gates read the ledger with the assumption that a stop always reaches it).
 - **Control (owed):** the default sink is the *base* every swapped sink forwards `terminal.*` lines to (or the ledger writer is a separate, never-swapped channel), and a test asserts the full-run ledger balances; until then the ledger's unmatched count is read as "not recorded" for lines that fired under a swapped sink, never as a leak.
 - **Status:** `uncontrolled` — registered 2026-09-14; the measurement gap is named, the mechanism is not.
+
+### DC-221 — A drain whose exit condition is re-evaluated only when the thing it drains produces something can outlive it: the terminal signal completes after the last event and the loop waits for an event that never comes
+
+- **Shape:** `await foreach (… in reader.ReadAllAsync(ct)) { …; if (prompt.IsCompleted && reader.Count == 0) break; }` — a second completion source (the prompt task) is checked only inside the loop body, so when it completes *after* the last event nothing wakes the loop and the drain hangs until the queue closes for another reason.
+- **Signature:** a run that concludes in the engine but never in the thread; two identical read-only turns recording 11 vs 12 events (the drain exited at the answer frame in one and at a trailing `usage_update` in the other); a hang under a stub adapter that stops emitting.
+- **Instance (2026-09-14, Ruling 95):** `GovernedRunHost.DrainAsync` — found by the lane's concurrency measurement and the stub-adapter STA rows (`docs/proof/send-while-running.md`); fixed to end when the prompt is done and nothing is queued, in either order.
+- **Sweep:** `grep -rn "IsCompleted && .*Count == 0" src/` — the one site, fixed.
+- **Control:** `TheDrainEndsWhenThePromptEndsTests` (3 rows: prompt completes before, after, and with no trailing event). The rule for the next drain: every completion source the exit depends on must be able to wake the loop (`Task.WhenAny` over the queue read and the signal).
+- **Status:** `controlled`.
+
+### DC-222 — An oracle reads a derived surface right after the source's condition became true, without letting the derivation run, and the failure reads as a wrong value rather than as staleness
+
+- **Shape:** `await Until(() => readModel.X); Assert(rows[i].Y)` with no pump between — the read model's condition holds, the derived row (a fold, a projection, a rendered item) has not yet been recomputed, and the assertion sees the previous value.
+- **Signature:** a row reading `0 events` for a turn the read model had already concluded; flaky under load, green when stepped; the message names a value, not a timing.
+- **Instance (2026-09-14, Ruling 95):** the STA rows for the queued turn's drain read the fold before it pumped (`docs/proof/send-while-running.md` finding 2).
+- **Sweep:** the App tests' `Until` helpers (`grep -rn "Until(" tests/AiDe.App.Tests`); the pattern is the test idiom, not `src/`.
+- **Control:** the helper pumps after the condition holds (`UntilAsync`); an oracle over a derived row asserts after a pump, never directly after the source condition.
+- **Status:** `controlled` — a test-idiom class.
