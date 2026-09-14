@@ -153,7 +153,10 @@ public static class CompileCallHost
 
     /// <summary>Runs one compile call against the real engine.</summary>
     public static Task<CompileResult> CompileAsync(CompileRequest request, CancellationToken cancellationToken = default)
-        => CompileAsync(request, StartEngine, cancellationToken);
+        => CompileAsync(
+            request,
+            (launch, root, report) => StartEngine(launch, root, report, ChildEnvironmentFor(request)),
+            cancellationToken);
 
     /// <summary>
     /// Runs one compile call with the engine <paramref name="startEngine"/> supplies — the product's
@@ -255,6 +258,8 @@ public static class CompileCallHost
             Report($"engine pid {pid}");
 
             var peer = new AcpPeer(engine.Output, engine.Input, new AcpRunEventMapper("compile", "compile"), diagnostics: Report);
+            // Told its engine (seam req-01M2GKC2RY667S51X22QVV7FGJ): the compile pin's `_meta` is the
+            // claude-code adapter's; a compile on another engine sends the standard frame and says so.
             var client = new AcpLaneClient(peer, choosePermission: parameters =>
             {
                 // Reject by kind, and COUNT: a request that arrives at all is a finding (§A13.4 C1).
@@ -262,7 +267,7 @@ public static class CompileCallHost
                 var chosen = RejectOption(parameters);
                 Report($"permission request rejected ({chosen}): the compile session holds no tool");
                 return chosen;
-            });
+            }, engine: EngineCatalog.Find(request.EngineId), diagnostics: Report);
 
             // The pump runs to END OF STREAM, not to the deadline: disposing the engine closes its
             // stdout, and every frame up to that point is read — so an answer that lands during the
@@ -393,15 +398,33 @@ public static class CompileCallHost
         }
     }
 
-    /// <summary>The product's engine: <see cref="AcpEngineProcess"/> rooted at the repository, its child carrying the output cap.</summary>
-    private static ICompileEngine StartEngine(EngineLaunch launch, string repositoryRoot, Action<string> report)
-        => new RealEngine(AcpEngineProcess.Start(launch, repositoryRoot, report, environment: CompileChildEnvironment));
+    /// <summary>The product's engine: <see cref="AcpEngineProcess"/> rooted at the repository, its child carrying the output cap and the account's host.</summary>
+    private static ICompileEngine StartEngine(EngineLaunch launch, string repositoryRoot, Action<string> report, IReadOnlyDictionary<string, string> environment)
+        => new RealEngine(AcpEngineProcess.Start(launch, repositoryRoot, report, environment: environment));
 
     /// <summary>What the compile child is given beyond the operator's environment: the output-token cap.</summary>
     internal static readonly IReadOnlyDictionary<string, string> CompileChildEnvironment = new Dictionary<string, string>(StringComparer.Ordinal)
     {
         [AcpEngineProcess.MaxOutputTokensVariable] = MaxOutputTokens.ToString(System.Globalization.CultureInfo.InvariantCulture),
     };
+
+    /// <summary>
+    /// The compile child's environment for one request: the output cap, plus the account's enterprise
+    /// host through the engine's own variable (the same lookup the run host makes, seam
+    /// <c>req-01M2GKC2RY667S51X22QVV7FGJ</c>) — a host the engine cannot honour is refused before the spawn.
+    /// </summary>
+    internal static IReadOnlyDictionary<string, string> ChildEnvironmentFor(CompileRequest request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        var environment = new Dictionary<string, string>(CompileChildEnvironment, StringComparer.Ordinal);
+        foreach (var (key, value) in EngineCatalog.LaunchEnvironment(EngineCatalog.Find(request.EngineId), request.Providers, request.AccountLabel))
+        {
+            environment[key] = value;
+        }
+
+        return environment;
+    }
 
     private sealed class RealEngine(AcpEngineProcess process) : ICompileEngine
     {

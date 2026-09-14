@@ -161,7 +161,19 @@ public static class GovernedRunHost
         var launch = EngineCatalog.ResolveLaunch(request.EngineId, request.AdapterInstallRoot);
         Report($"engine: {launch.FileName} {string.Join(' ', launch.Arguments)}");
 
-        using var engine = AcpEngineProcess.Start(launch, request.RepositoryRoot, Report);
+        // THE ROW AND THE ACCOUNT'S ENVIRONMENT, BEFORE THE SPAWN (seam req-01M2GKC2RY667S51X22QVV7FGJ,
+        // 2026-09-14): the engine starts before the binding is authorised — the auth the contract
+        // reads is observed on the running peer — so the one thing the child must be born with, an
+        // enterprise host on the account (Ruling 105), is looked up here without authorising anything.
+        // An account the registry does not carry yields nothing and is refused where it always was.
+        var row = EngineCatalog.Find(request.EngineId);
+        var environment = EnvironmentFor(request);
+        if (environment.Count > 0)
+        {
+            Report($"engine environment: {string.Join(", ", environment.Keys)} from account '{request.AccountLabel}'");
+        }
+
+        using var engine = AcpEngineProcess.Start(launch, request.RepositoryRoot, Report, environment: environment);
         Report($"engine pid {engine.ProcessId}");
 
         var provisioner = new WorktreeProvisioner(new ProcessRunner(), request.CoordCommand);
@@ -181,9 +193,13 @@ public static class GovernedRunHost
         // The permission policy IS the governance: an edit inside the lease is allowed, an edit
         // outside it is refused. A client that allows everything has removed the control the plane
         // exists to provide; one that refuses everything cannot do the work.
+        // Told its engine: the claude pin goes to the claude-code adapter and to nothing else, and a
+        // pin that is not sent is reported on this run's own lines, never dropped in silence.
         var client = new AcpLaneClient(
             peer,
-            choosePermission: parameters => Decide(parameters, request.Lease, worktree?.Path, Report));
+            choosePermission: parameters => Decide(parameters, request.Lease, worktree?.Path, Report),
+            engine: row,
+            diagnostics: Report);
 
         var pump = peer.RunAsync(cancellationToken);
 
@@ -462,6 +478,25 @@ public static class GovernedRunHost
         ArgumentNullException.ThrowIfNull(request);
         return new SpawnRequest(
             request.Goal, request.EngineId, request.Model, request.AccountLabel, observed, ReadOnly: request.IsReadOnly);
+    }
+
+    /// <summary>
+    /// The variables the engine's child is born with — the account's enterprise host through the
+    /// engine's own variable (<see cref="EngineCatalog.LaunchEnvironment"/>), or nothing.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>A lookup, not a binding.</b> <see cref="SpawnContract.Authorize"/> still decides whether
+    /// the account may run, after the peer's auth is observed; this only answers what the child must
+    /// carry to reach the right tenant, which cannot wait for a process that is already running. An
+    /// account the registry does not carry yields an empty environment — the contract's refusal is
+    /// the one that names it, as it always did — so this never invents a host and never pre-empts
+    /// that refusal. A host the engine cannot honour is refused here, before the spawn, by the
+    /// catalog's own rule.</para>
+    /// </remarks>
+    internal static IReadOnlyDictionary<string, string> EnvironmentFor(GovernedRunRequest request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        return EngineCatalog.LaunchEnvironment(EngineCatalog.Find(request.EngineId), request.Providers, request.AccountLabel);
     }
 
     /// <summary>
