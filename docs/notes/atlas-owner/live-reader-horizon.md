@@ -942,3 +942,19 @@ new tree's inherited driver/registry state and local derived checks are observed
 shared OWED markers still make `coord doctor` nonzero. No marker was erased. Owner was
 asked for a narrow recorded setup exception; no clean-doctor claim or runtime-gate waiver
 is inferred.
+
+## Exact shared-debt setup exception, Owner turn 51
+
+Owner permits C dispatch despite the six pre-existing shared OWED entries, with no
+clean-doctor claim and no runtime/authority-gate waiver. Section 2 now records the exact
+six paths, their first observed SHA-256 baseline, and the repeated unchanged hash. The
+marker's last-write time precedes the new runtime tree's gitfile creation; historical
+count-only observations are not retroactively promoted to earlier hash measurements.
+
+The new runtime session performed an exact authorized source-path claim/check/release.
+The actual common-dir pre-commit floor was opened and names the installed Python and
+primary coordination script. C's current source-writing capability is the retained
+general-purpose agent's observed recent `7d78e773` work in this CLI session, not the old
+S5 harness-version report. The local derived checks passed and the new tree remains
+clean. No global marker or hook was changed. Different/additional findings require
+their own disposition.

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T01:20:56Z",
+  "generated": "2026-09-14T01:30:39Z",
   "audit": [
     {
       "actor": null,
@@ -15712,6 +15712,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "1e96dd8e8ae06a42759ff14779eb95296edf0248",
         "short": "1e96dd8e8",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2ERK8XBXE07CGEYZSSKEDDA",
+      "shortname": "atlas-runtime-setup-exception",
+      "datetime": "2026-09-14T01:30:38Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner51permitsdispatchonlywithunchangedsharedOWEDdebt. Recordedexact6pathsandSHA238DA28A...F076E; lastwrite01:02:21Zpredatesruntimegitfilecreation01:13:27Z, repeatedhashstable. CurrentruntimeSID exactsourceclaim/check/releaseallowed; actualcommon-dirprecommithookread; retainedGPwriterrecent7d78sourcecapabilityobserved. HistoricalS5qualificationnotpromoted,currentdoctorstillnonzero. No marker/hook/install/primarymutation. Thisdurationmeasuresclosingrecordmechanicsonly,notearliersetupelapsed.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Release the verified runtime writer under the exact shared-debt setup exception.",
+      "done_when": "Exact marker baseline, current writer and commit-floor evidence are recorded without claiming a clean doctor.",
+      "tier": "T2",
+      "main_calls": 143,
+      "main_budget": 184,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T01:30:38Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "6792ea1c673fbb81ec5540f529fd2fc2556c6018",
+        "short": "6792ea1c6",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

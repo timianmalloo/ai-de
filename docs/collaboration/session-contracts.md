@@ -524,6 +524,25 @@ The fresh runtime tree's `regenerate-derived.py --check` passed all local checks
 marker was cleared or installation overwritten. Owner's narrow setup disposition is pending;
 this is not a waiver of a source, authority or runtime verification gate.
 
+Owner turn 51 permits dispatch with an exception only for that shared regeneration debt.
+The exact identities in `C:\Projects\ai-de\.agents\regen-owed.txt` are:
+`docs/_meta.json`, `docs/_site/index.html`, `docs/api/AiDe.App.Workbench.md`,
+`docs/api/AiDe.Core.AgentPlane.md`, `docs/audit/audit-data.js`, `docs/docs-index.js`.
+The first exact identity/hash baseline recorded here is SHA-256
+`238DA28A2DC48D4E477B388AA7AC8AA77DDEEE166A8DCB8878966211B87F076E`.
+Its last-write time `2026-09-14T01:02:21.9741078Z` precedes the new runtime gitfile creation
+`2026-09-14T01:13:27.9988158Z`; repeated hash reads through the current checks agree.
+Earlier checkpoints recorded the count, not this hash; no earlier measurement is invented.
+
+The current retained general-purpose C agent authored/committed the inspected `7d78e773`
+in this CLI session. In the new registered tree, an actual exact-path claim, identity-bound
+`coord check --json` allowance and release were exercised for `AtlasWorkspaceReadPolicy.cs`.
+The effective common-dir `pre-commit` hook was opened: it invokes the primary
+`coord-core.py precommit` floor through the installed Python. No hook installation,
+override, marker deletion or source edit was performed in this check. Historical hook
+enforcement qualification is still historical, not a fresh blanket enforcement claim.
+Any different marker set or additional doctor failure falls outside this exception.
+
 ### Core owns
 
 | Path | Why |
