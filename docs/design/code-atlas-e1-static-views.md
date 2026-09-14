@@ -14,13 +14,349 @@ links:
   - { to: proof-code-atlas-live-reader-candidate, rel: depends-on }
   - { to: proof-code-atlas-contract-grounding, rel: depends-on }
 summary: >
-  Proposed detailed design for a file-scoped class-occurrence view and exact
-  member-to-source navigation using the existing Atlas reader authority.
-  Defines a narrowly bounded first implementation tranche, explicit nonclaims,
-  source-review seams, falsifying tests and independent gates still required.
+  Proposed file-local classifier/member occurrence view, corrected against the
+  pinned E0 runtime. Consolidates producer, strict wire compatibility, capability,
+  ownership, native interaction and accounting contracts; identifies executable
+  blockers and a reconciled sixteen-path proposal without granting implementation.
 ---
 
 # E1 concrete static views — detailed design, not implementation authority
+
+## 0. Owner65 consolidated source-contract correction
+
+**Status: source-grounded proposal; execution and four independent reviews remain
+open.** This section is the current contract ledger. Sections 1-13 preserve the
+original design and its gaps; their R1-R16 receipts describe the original read,
+not a retroactively verified current implementation. Where an inherited statement
+conflicts with this correction, this section and the explicitly corrected rows
+below take precedence. Neither source inspection nor this document clears a gate.
+
+### 0.1 Pin, scope, method and correction history
+
+| Item | Exact record |
+|---|---|
+| Current source baseline | `b6e053c29629f53c5c670d6586213cdf09c3af08` |
+| Baseline subject | `docs(atlas): record footer closure and E1 review checkpoint` |
+| Original design import | `76d30b4252f9c66e735c5d009e4c9b4287df0d54`; one design file only |
+| Cherry-picked design in this tree | `e183f4463c78184f8da7ecc19d3ee53d2173c8a3`; source still equals the baseline |
+| Own branch/tree | `atlas/e1-source-contracts`; `C:\Projects\ai-de-atlas-e1-source-contracts` |
+| Session | `atlas-e1-source-contracts`; this Markdown is the only authored repository path |
+| Budget | Owner65: 16 author tool leaves, no nested agents; separate four review nodes, each four leaves, follow the corrected commit |
+| Terminal condition | All six areas below classified, manifest reconciled, corrected Markdown committed; not E1 implementation acceptance |
+| Exclusions | No product/UI/project/dependency/shared-doc edits, new spike files, renderer, AI, loader, migration, main integration or push |
+
+The graph is absent in this tree. Grounding therefore used bounded reads of the
+pinned source, following producer -> native query -> public projection -> isolated
+transport -> native consumer. Line citations in this section refer to the **source
+baseline**, not this changing Markdown. No product test was executed in this
+documentation tranche; no claim below is labelled measured runtime behavior.
+
+Evidence labels have deliberately different meanings:
+
+- **Source-observed:** the cited declaration/body was read at the pin.
+- **Measured:** execution and a retained result observed in this tranche. None.
+- **Proposed / Inferred:** a design choice or arithmetic model, not implemented.
+- **Unresolved:** a named executable contract remains to be established.
+
+The original author's broad unread-seam warnings were honest then. The following
+corrections preserve that history rather than changing R1-R16 into new receipts:
+
+| Original gap or overstatement | Current correction |
+|---|---|
+| Transport/registration paths not identified | The separate SELECT/RESTORE writers and capability consumer are identified; add `AtlasWorkspaceOperations.cs` and `AtlasRemoteReader.cs` to the proposal |
+| Optional metadata compatibility unspecified | Existing readers reject unknown properties; nullable alone is not backward compatibility. The explicit negotiation/omission matrix in 0.4 must pass |
+| A distinct decoded UTF-16 admission check asserted | The producer checks decoded length equality, not a separate decoded-memory quota. See 0.7 |
+| Event/factory ownership broadly unread | Existing events, theme resources, sequence guards and owner transition/disposal were read; rendered E1 behavior remains untested |
+| Native outline/page assumed sufficient for a file | Q currently takes the first 128 declarations; the UI requests source offset 0/length 32768. Full-file paging and distant member navigation remain executable blockers |
+| Ten production paths and a 2-4 day estimate | Twelve production paths are now proposed; the old estimate is not revalidated or funding-ready |
+
+This correction also records the defect shape locally within the sole admitted
+artifact: **an optional DTO addition can still break a strict old decoder, and a
+reservation constant can be mistaken for an allocation bound**. The sweep reached
+both SELECT and RESTORE writers, remote capability/request retention, Q charges,
+issuer allowances and process reservations. The proposed controls are SP1/SP4
+below; they have **not** been observed failing or implemented. No defect-register,
+audit or derived-index edit is authorized in this tranche; parent owns those.
+
+### 0.2 Six-area disposition ledger
+
+| ID / area | Source-observed writer -> reader and exact baseline citation | Disposition / remaining proof |
+|---|---|---|
+| S1 Producer and occurrence model | `CSharpDeclarationObservation.cs:244-319,321-377,395-474` -> `AtlasManifest.cs:322-353` -> `AtlasQueryContracts.cs:85-98` | Current occurrences, supported syntax and spans established. Lexical parent/flavor absent; SP2 must establish their producer semantics |
+| S2 DTO and strict codec | `AtlasReaderContracts.cs:28-41,58-59,79-103` -> `AtlasReaderProjection.cs:282-318,677-745` | Current signatures and strict validation established. Optional negotiated structural metadata not implemented; SP1 required |
+| S3 Capabilities and transport adoption | `AtlasWorkspaceOperations.cs:38-48,65-99,106-116` -> `AtlasRemoteReader.cs:54,367-378` and receipt-request adoption body | Current feature list, two response writers and discarded capabilities established. Negotiated preference retention/Restore is proposed, not proven |
+| S4 Selection, charge and publication ownership | `AtlasQueryService.cs:402-454,609-628`; `AtlasReadScopeIssuer.cs:250-275,456-468,500-568`; `DaemonEndpoint.cs:211,242-248`; `IpcServer.cs:417-437` | Existing authority and writer-drain ownership established from source. Incremental metadata charge, page-scoped parent issuance and fault replay need SP3/SP4 |
+| S5 WPF/native tokens, events and lifetime | `AtlasReaderView.cs:48-57,193-288,527-566,610,884-926`; `AtlasWorkspaceOwner.cs:25,149-201`; `SurfaceContentFactory.cs:137-141` | Existing source/member/Back routes and owned replacement established. New controls/rendered focus, automation and long-file navigation untested |
+| S6 Units, retained accounting and paging | `CSharpDeclarationObservation.cs:14-100`; `AtlasReadBudget.cs` reservations; `AtlasQueryService.cs:211,430-444,609-628`; issuer charge body above | Raw, UTF-16, page UTF-8, wire and charge units distinguished. No total Roslyn/CLR/process-memory bound established; SP3/SP4 required |
+
+All paths in S1/S2/S4/S6 without a directory are under
+`src\AiDe.Core\Understanding`, except `DaemonEndpoint.cs`/`IpcServer.cs`, which
+are under `src\AiDe.Core\Ipc`. S3 is under `src\AiDe.Core\Ipc`. S5's reader/owner
+are under `src\AiDe.App\Workbench\Understanding`; the registration is the existing
+Workbench `SurfaceContentFactory.cs`. These are inspection references, not grants.
+
+### 0.3 Producer facts and proposed lexical structure
+
+The actual producer entry is **internal**, not a new public project-analysis port:
+
+```csharp
+internal static CSharpDeclarationObservationResult Observe(
+    CSharpCompilation compilation, AtlasCompilationScope context,
+    IEnumerable<CSharpDeclarationSourceInput> sources,
+    CSharpDeclarationObservationLimits? limits = null,
+    CancellationToken cancellationToken = default)
+```
+
+`MapSources` requires one verified input per syntax tree by reference
+identity. The producer walks syntax descendants, binds supported nodes, validates
+identifier/declaration/body spans against `VerifiedSourceBuffer.FullText.Length`,
+deduplicates occurrence keys and stops at its declaration limit. A missing symbol
+records `declaration-symbol-unavailable` and emits no declaration for that node.
+
+Current supported output is base type declarations, constructors, properties,
+accessors and methods. Operators/conversions/destructors and fields/events have
+explicit unsupported limitations. Do not claim that delegates, enum members,
+local functions or primary constructors are observed because C# has those concepts.
+Partial method roles do not unify classifier occurrences. File-limited observation
+does not acquire a project, TFM or logical symbol identity by displaying a name.
+
+The current immutable `AtlasDeclaration` constructor carries occurrence/logical
+identity, source observation, context, source binding, kind, role, display
+signature, identifier and identifier/declaration/body spans plus unresolved reason.
+It carries **no lexical parent and no classifier flavor**. The native outline
+contains only occurrence key, display name, kind and span.
+
+**Chosen E1 model:** one node is one emitted declaration occurrence in one verified
+file/context. Classifier flavor and immediate lexical declaration parent come from
+that same producer's actual syntax associations. A parent is not a semantic
+`ContainingType`, a same-name match, App span nesting or a cross-file partial merge.
+Grammar containers may be traversed; an unsupported or ambiguous intervening
+declaration may not be skipped to fabricate direct class membership. A namespace
+or file boundary is explicitly not a declaration parent. Missing/truncated parent
+evidence is an omission/unknown state, not a root or an empty parent token.
+
+A bounded second association pass over **emitted occurrences** is proposed so
+parent references cannot target a declaration that the producer never emitted.
+SP2 must settle recovery syntax, nested classifiers, property/accessor parents,
+unsupported intervening declarations and classifier flavors before fixing new
+enum/constructor names. These names are not asserted as existing APIs.
+
+### 0.4 Public signatures, strict validation and compatibility
+
+Current public shapes, reproduced to pin the width of the existing contract:
+
+```csharp
+AtlasCapabilitiesRequestDto(int[] SupportedVersions)
+AtlasCapabilitiesDto(int[] Versions, string[] Features,
+    int MaxFrameBodyBytes, int MaxPageTextUtf8Bytes, int MaxPageItems)
+AtlasSelectRequestDto(int Version, string ScopeToken, long ExpectedCoreEpoch,
+    string ManifestToken, string FileToken, string? DeclarationToken,
+    int SourceOffset, int SourceLength, int OutlineOffset, int OutlineLimit)
+AtlasRestoreRequestDto(int Version, string ScopeToken, long ExpectedCoreEpoch,
+    string ReceiptToken)
+AtlasOutlineRowDto(string DeclarationToken, string DisplayName,
+    AtlasDeclarationKind Kind, AtlasSpanDto Span)
+```
+
+These are DTO constructor excerpts, not new declarations. `IAtlasReaderQueries`
+provides `ValueTask` Inventory/Select/Restore using their concrete request DTOs and
+cancellation tokens. `IAtlasWorkspaceReader.AdmitAsync(CancellationToken)` returns
+`ValueTask<IAtlasReaderLease>`. A lease exposes scope/initial manifest/epoch/expiry,
+queries, invalidation, terminal state and asynchronous disposal.
+
+`DeserializeSelection(ReadOnlyMemory<byte>, AtlasSelectRequestDto)` performs typed
+read followed by request-relative selection validation.
+`DeserializeSelect(ReadOnlyMemory<byte>)` validates the incoming request.
+The read pipeline checks the body bound, parses at depth 32, recursively rejects
+duplicate property names using ordinal equality, then deserializes. The options
+are camelCase, property-name case-sensitive, required-constructor-parameter and
+nullable-annotation respecting, with unknown members disallowed. Every current
+enum has an explicitly registered strict converter: exact-case strings only,
+no numeric or unknown enum values. New enum types need that same registration.
+
+Consequently an old reader does **not** ignore an unfamiliar structural property,
+even if its value is null. A nullable new constructor parameter without a default
+is not necessarily optional under the configured constructor validation.
+
+**Proposed compatibility decision, conditional on SP1:** keep the existing v1
+envelope only if a new feature value (proposed name `static-structure-v1`) can
+negotiate an explicit optional structural opt-in. That field must have a constructor
+default and be omitted on legacy requests. Unnegotiated response metadata must
+also be omitted, not written as null. Conditional JSON omission or an explicit
+legacy writer are candidates; current default serialization is not such a writer.
+
+| Consumer / provider | Required request and response behavior | Falsifying oracle |
+|---|---|---|
+| Old client / new server | No opt-in; server emits only E0 fields for SELECT and RESTORE | Frozen old decoder rejects any unexpected property, including null |
+| New client / old server | Missing feature means E0; omit new request fields entirely | Frozen old request decoder rejects a structural field |
+| New client / new server, no opt-in | Preserve E0 shape and behavior | Structural properties must not appear |
+| New / new, opted in | Fully validated producer metadata, explicit omission states, registered strict enums | Unknown/case-mismatched enum, duplicate/unknown field or incoherent parent must refuse |
+| RESTORE after opted-in SELECT | Use the retained original selection preference and binding | A new default or current UI mode must not silently alter the restored contract |
+| Malformed opted-in payload | Refuse atomically; preserve existing terminal/adoption rules | Must not downgrade malformed metadata into a plausible legacy success |
+
+Capabilities currently accept version 1 and advertise exactly
+`inventory`, `source`, `outline`, `receipts`. The remote reader parses capabilities
+but its callback currently discards them. Extra feature strings can be a
+negotiation channel **only after** SP1 proves old peers tolerate that value without
+a shape change. SELECT currently uses `SerializeSelection`; RESTORE separately
+uses `JsonSerializer.SerializeToUtf8Bytes(..., ReaderWire)`, whose Web defaults and
+string-enum converter are not the strict read options. Both emission paths must
+honor the same negotiated omission rules.
+
+`AtlasRemoteReader.DecodeSelection` validates using the returned manifest with the
+original request. Adoption retains receipt-to-original-request mappings, bounded
+at 100. New preferences must survive that mapping and be adopted with the response,
+not guessed from display state. If SP1 needs an envelope/framing/version or generic
+capability change, stop and return the exact additional path/contract for admission.
+
+### 0.5 Selection, opaque tokens and publication ownership
+
+Production Q builds a file-limited compilation named `AtlasFile` from one parsed
+tree and an object-assembly reference. This is not project loading. Its receipt
+retains the original source observation/binding; an old receipt never gains fresh
+authority. Verified source and failed/omitted outline remain independent outcomes.
+
+The issuer is the token writer. Binding and declaration strings are charged
+**before insertion**. Declaration token reuse is keyed by native occurrence and
+native manifest; the retained record also contains file/manifest associations.
+The App lease path calls its row property `ObservationKey`, but its value is the
+**opaque public DeclarationToken**, not a native observation key. Names and spans
+are not capabilities.
+
+Parent projection must therefore use the same scoped table and validate matching
+manifest/file/source/context. Proposed two-pass projection first establishes the
+bounded returned occurrence set, then resolves on-page parent tokens. An off-page
+parent is an explicit omission, not a newly minted usable token or fabricated root.
+An immediate lexical-parent relation is not inheritance or interface realization.
+
+Existing source publication requires a held publication entry. Preparation
+completion, actual writer completion and resource release are separate signals.
+Scope/operation/connection cancellation stay linked through the bounded writer;
+the full successful writer return is the publication linearization point. Final
+cleanup follows that return or cancellation plus actual writer drain. Scope Stop
+waits writer completion; client response completion alone does not prove cleanup.
+The post-write terminal cancellation poll is absent intentionally: late invalidation
+must not retroactively revoke a completed frame. Partial/unknown writes remain
+terminal, without an appended refusal or a claim that bytes were recalled.
+
+Structural metadata does not require changes to `DaemonEndpoint.cs` or
+`IpcServer.cs` under this proposal. It must remain inside their existing held,
+charged, cancellation-aware publication path. Logical idle scope lifetime is not
+permission to retain write/delete-excluding Git pins. Native cleanup debt and
+reservations remain owned until actual cleanup, not a timeout-shaped success.
+These are **source-observed constraints**, not a fresh replay of runtime gates.
+
+### 0.6 Actual native interaction and lifecycle
+
+The production view accepts `IAtlasReaderLease`; its internal overload also accepts
+`AtlasWorkspaceOwner?`. The public `(IAtlasQueries, string manifestToken)` constructor
+is a separate proof path, not a production authority substitute.
+
+The registered surface is kind `code-atlas`, title `Code Atlas`, Architecture-only,
+single instance, using `AtlasLoadingHost(factory.AtlasOwner)` and
+`ZonesToTree.CenterStackId`. There is no second renderer/factory to invent.
+`SurfaceBrush`, `SurfaceSunkenBrush`, `TextBrush` and `TextMutedBrush` are actual
+resource keys. The existing tree/list enables virtualization, recycling and
+content scrolling; controls have automation names and continue tab navigation.
+Those settings are source observations, not proof of a rendered E1 accessible UI.
+
+Actual event routes are Back click -> `GoBackAsync`, file Load More ->
+`LoadMoreAsync`, file selection only for `IsFile` while not restoring controls,
+and outline double-click or Enter -> `SelectDeclarationAsync`. Enter is handled.
+Unloading deactivates the lease view or cancels the proof request. A new E1 member
+activation must call the same declaration/source route; it must not fetch source
+from a path, reconstruct tokens, or acquire a separate lease.
+
+Request cancellation links caller, lease invalidation and owner token and increments
+the request sequence. Publication to the view requires the matching sequence,
+non-unloaded state and a nonterminal/noninvalidated lease. `ApplyReaderSelection`
+checks current sequence/cancellation before replacing rows. `ReaderEntry` preserves
+file/parent tokens. The production outline row maps `FileValue=fileToken` and
+`ObservationKey=DeclarationToken`; its accessible name uses kind, display name and
+span start. Display strings are never identity.
+
+`AtlasWorkspaceOwner.AttachAsync` is dispatcher-owned and serializes transitions.
+Replacement awaits the preceding transition, disposes the previous lease and
+reader, then checks generation/disposal before invoking a replacement factory.
+Disposal is dispatcher-owned, caches its close task and awaits close. New controls
+reuse this ownership; existing borrowed query/command interfaces are not disposed.
+
+Two limits invalidate an unqualified exact-navigation promise: the current
+`ReaderRequest` asks for `SourceOffset=0`, `SourceLength=32768`,
+`OutlineOffset=0` and the fixed page size; Q supplies only its first 128 declarations.
+SP3 must cover a selected member beyond 32768 UTF-16 units and a file with more than
+128 declarations. Full editor CRLF-to-offset behavior was not reread in this pass;
+it remains an explicit executed-navigation oracle, not a claimed source fact.
+
+### 0.7 Units and three different accounting systems
+
+| Quantity | Source-observed meaning | What it does not establish |
+|---|---|---|
+| 8 MiB source input | Maximum raw verified input; `VerifiedSourceBuffer` retains a cloned raw byte array and a decoded string | An 8 MiB decoded string, allocation ceiling or total analyzer/process bound |
+| Source offsets/lengths/spans | Decoded .NET string UTF-16 code units; decoded length is checked against the observation | UTF-8 byte offsets, line numbers or the 1..128 row-page contract |
+| 128 KiB source display | UTF-8 content-byte ceiling on the returned page | Raw verification limit or the serialized response size |
+| 1 MiB IPC body | Full escaped serialized frame body, with existing additional 4-byte length prefix | A 1 MiB text page; escaping/envelope/metadata still consume space |
+| Metadata content bytes | Inventory/outline `ReturnedContentBytes=0` | Zero wire size, zero heap or free retained metadata |
+| Declaration/row limits | Producer default 2048; native Q currently takes at most the first 128 for selection | Existing offsets enumerate all 2048 declarations |
+
+The source verifier decodes and records `.Length`, clones raw bytes with
+`ToArray()`, then checks binding/hash/raw length and decoded-length consistency.
+Disposal drops references; it is not a memory-wipe or immediate-GC measurement.
+For ASCII raw input of N bytes, N UTF-16 code units imply roughly 2N bytes of
+character storage **as an arithmetic model**, excluding headers/copies/parser
+objects. This is not measured live heap.
+
+Three separate budget mechanisms must not be collapsed into one:
+
+1. **Process reservation ledger (`AtlasReadBudget.cs`):** at most 4 scopes,
+   4 active operations and 16 pending operations, 64 MiB owned and 16 MiB retained
+   reservations. An operation reserves 14 MiB, a connection 2 MiB and a scope
+   4 MiB retained. These reserve/release counters are not allocator enforcement.
+2. **Native Q retained estimate (`AtlasQueryService.cs:211,609-628`):**
+   2 MiB manifests and 512 KiB receipts. `ChargeStrings` charges null as zero,
+   otherwise `128 + 4 * string.Length`; file/receipt charges include fixed 512-byte
+   components. This is a conservative encoded/storage estimate, **not actual UTF-8
+   bytes and not measured Roslyn/CLR retention**. Structural fields require explicit
+   additions to its charge inputs.
+3. **Issuer handle allowance (`AtlasReadScopeIssuer.cs:456-468`):**
+   cumulative UTF-8 encoded string allowance capped at 1 MiB, checked before
+   insertion. Its partition includes Q's 2 MiB manifests/512 KiB receipts and
+   100 reader receipts at 2 KiB allowance each under the 4 MiB scope reservation.
+   This is distinct from the Q formula and the operation reservation.
+
+No current-source inspection demonstrates a separate decoded-memory quota or a
+total Roslyn/CLR/process-memory upper bound. E1 must not advertise one. SP4 must
+measure incremental structural charges and full escaped output and report any
+unaccounted allocation, rather than relabeling the reservation counter as heap.
+Historical runtime measurements are not imported as measurements at this pin.
+
+### 0.8 Smallest executable blockers and independent review input
+
+These are future spikes/tests in the proposed manifest, **not files created or
+experiments run by this documentation tranche**. Execution requires implementation
+admission. Existing E0 suites remain regression floors, not proof of new metadata.
+
+| Spike | Exact proposed home / smallest executed case | Acceptance and failing input |
+|---|---|---|
+| SP1 Strict compatibility | `tests\AiDe.Core.Tests\Understanding\AtlasStaticReaderContractTests.cs`; frozen E0 request/response goldens through actual codec, capability registration and isolated reader for SELECT and RESTORE | All six rows of 0.4; fail on one emitted null unknown property, absent required/default handling, integer/unknown/case-mismatched enum, nested duplicate, lost retained opt-in or malformed fallback |
+| SP2 Lexical occurrence association | `tests\AiDe.Core.Tests\Understanding\AtlasStaticObservationTests.cs`; actual verified-buffer Roslyn producer for class/record class/struct/record struct/interface/enum, nesting, overloads, partial declarations, property/accessor and recovery syntax | Each emitted occurrence distinct; actual immediate parent/flavor or explicit omission; never merge names/partials, skip an unsupported declaration into direct membership or invent project context; fail on a single perturbed parent |
+| SP3 Paging and native navigation | Same Core contract test plus `tests\AiDe.App.Tests\Workbench\Understanding\AtlasStaticCompositionTests.cs`; real daemon/reader/view file with >128 declarations and a member after UTF-16 offset 32768 | True bounded outline offsets or an explicitly admitted first-page-only contract; exact source/highlight and reusable Back; off-page parent disclosed; source/outline independent; CRLF/non-BMP span and rendered automation/focus checked |
+| SP4 Incremental charge/publication | Same Core contract test through native Q -> token projection -> SELECT/RESTORE -> real frame writer, with one blocked writer/invalidation | New fields charged before retention/publication; full escaped body within 1 MiB; metadata content bytes stay zero; known fixture reservations/pins retained until matching actual writer drain, then exact released/debt state; no greater-than-zero proxy or total-heap claim |
+
+SP3 is a decision checkpoint: a deliberately first-page-only tranche is an
+alternative, not permission to silently weaken the chosen file-local journey.
+Its omission and navigation semantics must be accepted before implementation.
+The proposed paths already include Q and ReaderView; no extra file is presumed
+authorized if real tests expose another seam.
+
+The four subsequent independent review nodes receive this corrected commit:
+Core/security/concurrency; native UX/accessibility; UML/graph correctness; and
+test/composition/simplification. Each has four leaves under the parent grant.
+All remain **unreviewed here**. Their findings can reject the proposal; no author
+verdict, historical E0 green run or read-only source ledger substitutes for them.
+Sequence/activity E1 views remain required later. Bound inheritance,
+cross-file/project unification, invented TFM, project loading, AI and new renderer
+remain out of this first tranche.
 
 ## 1. Decision, authority and terminal condition
 
@@ -35,7 +371,8 @@ Addendum E/main grant, or permission to edit every E1 source file. The candidate
 spec remains `draft`; the architecture remains `proposed`. This document leaves
 their status unchanged.
 
-Baseline inspected: `8b9232d5c0f7bebcaada0cdc01e7eff193e98bb3`.
+Original author baseline: `8b9232d5c0f7bebcaada0cdc01e7eff193e98bb3`.
+Current source pin and corrected contracts are in §0; this is preserved provenance.
 Authored scope: this file only. Parent owns audit, derived index, collaboration
 registers, review dispatch and integration. Retain the design worktree for that
 handoff. No source, project, dependency, registry or generated artifact is changed.
@@ -45,7 +382,11 @@ implementation proposal, explicit contracts, negative oracles and unmet gates.
 **Done for implementation:** the independently admitted tranche passes the
 producer-to-real-window proof in §10. These are different terminal conditions.
 
-### Opening contract and execution graph
+### Original opening contract and execution graph (historical budget)
+
+The twelve-leaf budget below belongs to the imported authoring run. Owner65's
+separate sixteen-leaf correction and four review nodes at four leaves each are
+recorded in §0.1; the original counts are not reused as current funding.
 
 | Field | Contract |
 |---|---|
@@ -70,7 +411,7 @@ public outline lacks relationship evidence. Another alternative is a native
 file-local structural view; it preserves E0 and is chosen. Missing semantics are
 an explicit unsupported state, not an invitation to synthesize them.
 
-## 2. Grounding and evidence ledger
+## 2. Original grounding and historical evidence ledger
 
 Typed grounding path: this design `refines` candidate
 `spec-addendum-e-code-atlas`; that spec's architecture dependencies lead to
@@ -355,7 +696,7 @@ Do not convert an enumeration default into an enterprise capacity promise.
 
 | Axis | Established bound / proposed behavior | Measurement and refusal |
 |---|---|---|
-| Source input | R5/R12 declare 8 MiB input constants | Preserve the existing source verifier's raw/decoded accounting; **decoded UTF-16 accounting is a distinct admission check**, not “8 MiB UTF-8 = 8 MiB decoded” |
+| Source input | R5/R12 declared 8 MiB input constants; current source correction in §0.7 | Raw input is bounded; decoded UTF-16 length consistency is checked, but no separate decoded-memory quota or total CLR bound was established |
 | IPC body | `MaxFrameBodyBytes = 1 MiB` | Structural metadata shares the same frame budget; serialized bytes measured before publication |
 | Source page | `MaxPageTextUtf8Bytes = 128 KiB` | Separate from source-input size, UTF-16 requested window and metadata |
 | Outline page | `PageRequest.MaxLimit = 128` | Reuse existing requested/effective row contract; no new graph row cap |
@@ -365,11 +706,11 @@ Do not convert an enumeration default into an enterprise capacity promise.
 | Inventory | Existing bounded inventory pages | No project-wide type index, background repository crawl or automatic page draining |
 | Retention | Existing scope/receipt/operation budgets | Charge structural arrays, strings, serialization buffers and any retained page before allocation/publication; no independent uncharged diagram cache |
 
-**Flagged before source admission:** the full decoded-buffer charge rule and
-available headroom for structural strings were not directly read. The source
-review must reconcile the 8 MiB input constant with decoded UTF-16 allocation,
-Roslyn state, 1 MiB wire and 128 KiB source page. Neither this document nor a
-constant name establishes a decoded-memory proof.
+**Corrected by current source read:** §0.7 distinguishes the raw/decoded buffer,
+Q's retained estimate, issuer string allowance and process reservation ledger.
+Those bodies were read; incremental structural headroom and actual allocations
+remain SP4, not an unread-contract claim. Neither the 8 MiB input constant nor
+the 64 MiB owned reservation proves a total decoded/Roslyn/CLR memory bound.
 
 No novel latency, graph-size or memory number is adopted here. The bound for a
 static page derives from the existing page/frame limits and the one-parent
@@ -497,7 +838,8 @@ that changes purpose/retention/egress and needs separate privacy admission.
 
 ## 10. Test contract and operator evidence
 
-No product tests were run for this Markdown-only task. Every row below is a
+No product tests were run in either the original Markdown authoring or the Owner65
+source-contract correction. Source-observed is not measured. Every row below is a
 **planned falsifying test**, not a green result or an E1 proof claim. Observe red
 before green when the implementation is admitted.
 
@@ -572,6 +914,8 @@ dependency, database, broad namespace sweep or blanket E1 grant.
 | `src\AiDe.Core\Understanding\AtlasReaderContracts.cs` | Shared public seam: proposed negotiated structural metadata; compatibility review required |
 | `src\AiDe.Core\Understanding\AtlasReaderProjection.cs` | Core: bounded tokenized projection, validation and serialized-size accounting |
 | `src\AiDe.Core\Understanding\AtlasReadScopeIssuer.cs` | Core: token issuance/parent validation, existing operation charge/lifetime; no new authority |
+| `src\AiDe.Core\Ipc\AtlasWorkspaceOperations.cs` **added by source correction** | Core: actual capability advertisement, SELECT serializer and separate RESTORE writer; negotiated legacy omission on both |
+| `src\AiDe.Core\Ipc\AtlasRemoteReader.cs` **added by source correction** | Core: retain negotiated feature preference, omit unsupported request fields, validate/adopt metadata and retain original Restore request semantics |
 | `src\AiDe.App\Workbench\Understanding\AtlasStaticViewProjection.cs` **new, proposed** | Native owner: deterministic bounded card/member projection; no source reads |
 | `src\AiDe.App\Workbench\Understanding\AtlasStaticView.cs` **new, proposed** | Native owner: read-only class/member controls and accessible list |
 | `src\AiDe.App\Workbench\Understanding\AtlasReaderView.cs` | Native owner: explicit mode/selection/Back integration, reuse real owner and source actions |
@@ -582,6 +926,9 @@ dependency, database, broad namespace sweep or blanket E1 grant.
 
 Existing files in this table were encountered in source receipts. New test and
 view paths are proposed names, **not a claim that those files already exist**.
+Owner65's literal destination check found all ten listed existing production
+paths present and all six proposed new paths absent. This is a sixteen-path
+proposal, not sixteen existing files and not an authorization to create them.
 Fixture mechanics and actual existing test helpers require source review before
 construction; a mock that bypasses issuer/pipe/factory cannot clear composition.
 
@@ -591,17 +938,21 @@ CodeAtlas registration, Center/defaultCenter and owner composition. If the actua
 event/factory contract demands a factory change, return that exact diff for Shell
 admission rather than changing the manifest silently.
 
-**Unresolved transport seam:** any additional isolated-pipe capability/codec
-registration file is not yet in this source grant proposal. Core SourceReview
-must return exact existing paths and compatible changes, or reject the optional
-metadata approach. Do not invent a transport adapter based on naming intuition.
+**Reconciled transport seam:** the two actual missing paths are now listed:
+`AtlasWorkspaceOperations.cs` and `AtlasRemoteReader.cs`. The proposal is exactly
+**16 paths: 12 production (10 existing, 2 new views) and 4 new tests**. This remains
+a proposal, not a source grant. Codec/capability compatibility is SP1, not an
+unidentified-file excuse. Generic framing/client/capability, endpoint/server,
+workspace factory, owner, registration and project files remain unchanged unless
+a separately admitted exact contract finding requires them.
 
 ### Bounded first-tranche sequence and Inferred budget
 
-1. **Source-review checkpoint:** establish complete current DTO/serializer,
-   native selection and publication/charge contracts. Parent's four review leaves
-   cover Core/security/concurrency, native UX/accessibility, UML/graph correctness,
-   and test/composition/simplification. All relevant vetoes need named reviewers.
+1. **Source-review checkpoint:** §0 classifies current DTO/serializer, selection,
+   native events and publication/charge contracts and names executable gaps.
+   Parent's four review nodes, each four leaves, cover Core/security/concurrency,
+   native UX/accessibility, UML/graph correctness, and test/composition/simplification.
+   All relevant vetoes remain independent.
 2. **Core red → green:** the Box/nested/partial/malformed fixtures produce bounded
    lexical metadata; preserve every E0 source and identity invariant.
 3. **Wire red → green:** approved compatibility change carries metadata and honest
@@ -612,13 +963,12 @@ metadata approach. Do not invent a transport adapter based on naming intuition.
    keyboard/automation, late completion, stale source, blocked writer and telemetry.
    Parent publishes a new Proof Pack and decides acceptance.
 
-Estimated implementation: **four build/verification checkpoints after source
-review, ten production files and four new test files in the provisional manifest**.
-These counts describe the proposal, not an approved effort estimate. A **2–4
-focused engineering-day** envelope is **Inferred**, based on one producer/payload/
-native vertical path and explicit integration fixtures, not measured repository
-velocity. Unknown codec compatibility or native event seams can invalidate it.
-No budget increase is automatic; a discovered additional seam returns to Owner.
+The original **2-4 focused engineering-day** envelope was Inferred, not measured.
+It is **not revalidated** after the two missing production paths, strict legacy
+compatibility and paging/navigation findings. The corrected proposal has twelve
+production paths and four test paths. Resolve SP1-SP4 and independent reviews
+before a funding-ready execution estimate. No budget increase or extra source
+path is automatic.
 
 ## 12. Patterns, ladder and rejected alternatives
 
@@ -661,7 +1011,7 @@ wire and composition tests above, **not yet observed red or green**.
 | E2 | Domain/ER/layer/Azure later; no inferred conceptual elevation here |
 | E3 | Implementation/spec correspondence later |
 | E4 | Governed AI later; no AI capability or new egress authorized |
-| E0 footer follow-up | Separate synthetic-VM initialization work, untouched |
+| E0 footer follow-up | Historical separate item; current baseline commit records footer closure. This design does not reopen it |
 
 ### Definition-of-done disposition — no self-cleared gate
 
@@ -673,7 +1023,7 @@ so no claim is made that every stage-detail paragraph was read.
 | Checklist obligation | Status |
 |---|---|
 | Responsibility, model/grain/history/additivity, change reach and phase | Specified; physical migration/append-only enforcement N/A because no new durable shape |
-| Local conventions and every consumed contract | Partially established by R1–R16; **unmet** complete App event/factory, transport/codec and decoded-charge source review |
+| Local conventions and every consumed contract | Historical R1-R16 supplemented by current S1-S6 in §0; source contracts classified, SP1-SP4 and independent reviews **unmet**; no decoded-memory quota inferred |
 | Named patterns, ladder and both pattern/simplifier acceptance | Proposed; **unmet independent pattern/simplifier verdict** |
 | Failure modes, STRIDE, LINDDUN dispositions | Written; **unmet independent Security/Privacy/Distributed Systems review** |
 | UI design, tokens, native hard states, craft gate | Planned; **unmet rendered preview/token validation, accessibility/UML/graph review and measured viewport/performance proof** |
@@ -688,20 +1038,34 @@ so no claim is made that every stage-detail paragraph was read.
 source-grounded proposal and explicit gaps recorded · verdict: REVIEW REQUIRED ·
 vetoes: no independent acceptance claimed.`
 
-The parent should not authorize implementation until SourceReviews establish the
-unread load-bearing seams and the four funded leaves resolve their applicable
-gates. An incompatible codec or inability to charge/retain metadata correctly
-changes this proposal; it must not be patched around during implementation.
+The parent should dispatch the four funded review nodes against the corrected
+commit and S1-S6 ledger. SP1-SP4 identify the remaining executable contracts, not
+an invitation to repeat a broad source survey. An incompatible codec, missing
+lexical-parent evidence, unworkable paging contract or inability to charge/retain
+metadata correctly changes the implementation proposal. Resolve it explicitly
+before authorizing the dependent change; do not patch around it in a wider scope.
 
 ### Confidence and residual risk
 
-**Verified:** the direct wire contract, observation pass, displayed signatures,
-constants and source excerpts in R1–R16; the current public outline cannot express
-the required evidence. **Inferred:** the proposed minimal extension, native layout
-approach and effort envelope. **Flagged:** complete lifecycle/transport/native
-contracts, decoded charge semantics, review verdicts and all E1 execution proof.
-No enterprise, full-project, accessibility or multi-viewport success is asserted.
+**Source-observed at the current pin:** S1-S6 establish the existing producer,
+DTO/strict codec, actual capability/SELECT/RESTORE paths, ownership/charge bodies,
+native event/lifetime routes and distinct units. The public outline still lacks
+parent/flavor metadata. R1-R16 remain historical. **Measured this tranche:** none;
+no product tests or new spikes ran. **Proposed / Inferred:** negotiated omission,
+producer lexical association, bounded native layout and incremental charge design.
+The original effort envelope is retired pending the corrected scope. **Unresolved:**
+SP1 compatibility, SP2 parent/flavor semantics, SP3 paging/exact navigation, SP4
+incremental accounting/publication, all four independent reviews and E1 execution.
+No enterprise, total-memory, full-project, accessibility or multi-viewport success
+is asserted.
+
+Author budget receipt: sixteen leaves including skill, isolation/import, reads,
+claims, two edits, commit and release. One read exceeded the requested output
+bound and required a bounded recovery read; both count against the sixteen, not
+against a hidden retry allowance. No new product test, spike file or agent was
+used. The source comparison against `b6e053c29629f53c5c670d6586213cdf09c3af08`
+was empty for `src` and `tests`; the correction changes only this Markdown.
 
 | Completed | Remaining | Best next action |
 |---|---|---|
-| One bounded class/member detailed design with source receipts, explicit nonclaims, manifest, negative oracles and E1 sequence/activity ledger | SourceReviews; independent gates; parent audit/index/rollups; separate implementation funding | Parent dispatches its four funded review leaves against this file and exact baseline before any source grant |
+| S1-S6 classified against the full current pin; strict compatibility matrix, actual ownership/events/units and sixteen-path proposal reconciled; historical corrections preserved | SP1-SP4; four independent gates; parent audit/index/rollups; separate implementation funding; later E1 sequence/activity | Parent dispatches four review nodes, four leaves each, against the corrected Markdown commit and pinned source |
