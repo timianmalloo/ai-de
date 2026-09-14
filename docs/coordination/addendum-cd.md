@@ -347,11 +347,71 @@ ratio the parent plan measured for P1; the plan's implement figures were medians
 | SH-3 (sonnet) | 2,945 | 6,960 (agent wall; audit entry in its Proof Pack) | 2.4× | two reviews, one mid-slice merge from `main` |
 | CV-2 (opus) | 4,127 | **7,064** | 1.7× | four reviews (D&P, Security, TA, Simplifier), one mid-slice merge; below the CV-1 ratio — the store was the first commit and the reviews ran once |
 | X-2b DC-170/171 + the gate runner (conductor) | — | ≈ 2,400 (Inferred: 20:10Z–20:50Z) | — | unplanned; the regrowth path and two join defects |
+| PD-5 prep (sonnet) + three attended runs | 1,500 + 30 min attended | 1,375 + runs of 2 (operator), 6 (aborted), 5 min (conductor) | 0.9× | the pin held on the wire; strictMcpConfig admitted by run 2's measurement; run 3 GREEN |
+| X-3 Shell-lane seams + Rulings 85/86 (sonnet) | — | 1,690 (+ a review-fix entry without a marker) | — | unplanned; eight seam items, two status-bar defects |
+| D3 `/ui-design` elevate (opus, docs) | — | 4,504 | — | unplanned: the operator's five findings → Rulings 80–89, 26 errata rows, the ranked plan for CV-5/SH-4 |
+| CV-5.2 Coalesce (opus) | — | 3,074 | — | from D3's plan |
+| CV-3 compile call · pin · gate 1 · harness (opus) | 4,127 | 4,849 (+ the stop cap fired during review) | 1.2× | the Security veto cleared in the conductor's loop 2; the spike's run 2 runaway |
+| CV-5.3 the conversation (opus) | — | 5,021 | — | a real thought frame captured; the markdown subset by hand |
+| CV-4 admission's code (sonnet) | 2,945 | not recorded (marker set after grounding — DC-190) | — | edits first landed in the primary by mistake, rescued |
+| CV-5.4 the editor's rest (opus) | — | 3,147 | — | L6 measured 1 turn at both viewports (Ruling 88's ≥ 2 was the mockup's) |
+| SH-4.1 Coordination (opus) | — | 5,843 | — | two defects found and fixed on the way (DC-194/195); the census reaches hosts B and C |
+| X-4 Ruling 87 · X-5 thinking display · the join script (conductor) | — | ≈ 1,800 (Inferred) | — | unplanned T0s |
+| SH-4.2 Coding re-cut, left dock, reconcile, console zone rule (opus) | — | running | — | the last slice |
+
+**Joins (13 to date, each a whole-suite recount + both halves):** every join recounted; the join
+became a script at the 12th (`tools/conductor-join.py`, DC-113 rec. 4) after four hand-typed lines
+had hidden a red — one of them sealed a merge with conflict markers that a bare re-run caught before
+the push. 0 WT agent attaches born across every recount since DC-170. Worktrees: 12 merged trees
+removed one by one after `rev-list --count main..<branch> == 0` and a clean status — the cleanup's own
+report had labelled the frozen F5 tree (21 unique commits) *"merged"* (DC-142 rec. 2), so `--remove`
+was never run.
 
 **Rework at the joins:** register ids collided across branches (allocated at every join since;
 DC-163's lease shape delayed two joins ≈ 50 min); a merge left conflict markers in figure-patched
 `site/*.html` (DC-136; the marker gate now runs first in `regenerate-derived.py`); a stray file in the
 primary from a node's mangled scratchpad path (DC-150's shape, once more, removed at the X-2 join).
+
+## Stage 10 close — the programme delivered (2026-09-13 23:30Z, `main` `3e5b04f6`)
+
+**Delivered on `main`, from the operator's chair:** four perspectives on the rail (Coding · Explore ·
+Architecture · **Coordination**, Ctrl+1–4), each with its own layout slot and a derived View menu;
+the session document as **a conversation** — one message field, the thread of turns rendered as
+prose · thinking · tool call+result · outcome, one Console row per message, the editor filling the
+body at 0 turns and resting at 280 with turns, a new session docked Left and never maximized, the
+Console as a document in the Center; **the compile step** — mechanical tier/cap/lease/class on
+every prompt with Prepare's overrides recorded, an append-only envelope store with purge, `aide
+compile fold` / `aide session purge` from the exe, the pinned compile session verified on the wire
+three times (gate 1 open on this machine), gate 2/3's floors recomputed from real envelopes as they
+accrue; read-only turns need no lease (Ruling 73); UTF-8 replies; the status strip honest; the
+terminal-host population explained and closed at its four mechanisms (INV-0010, INV-0011); a
+contrast census over three hosts at 0 below floor.
+
+**Numbers:** 20 nodes (14 opus, 4 sonnet, 2 fable rulings-only) + 5 conductor side tracks; 14 joins,
+each a whole-suite recount + both halves; floors from App 781 / Core 2312 to **App 952 / Core 2632 =
+2462 + 170**; Rulings 50–90; DC-136 → DC-205 (70 classes); 0 Windows Terminal agent attaches born
+in any recount since DC-170. The W1–W3 planned-vs-actual median was **2.2×** (Inferred plan
+figures); the wave after the operator's findings (D3 → CV-5.2/5.3/5.4, SH-4.1/4.2, CV-3/4) ran
+without planned figures and is recorded as measured.
+
+**Rework passes:** 4 recurrences of a shell line hiding a red gate (DC-113) — the join is a script
+now; one hung App run (30 min, DC-165) and one runaway spike (6 min, DC-185) — both bounded now;
+two oracles corrected against the spec's letter (DC-178); the register allocated at every join after
+three collisions; one merge committed with markers and amended before the push.
+
+**Floors:** every hard veto convened and cleared by its holder (the Security lens's loop 2 on CV-3
+by the conductor, never the author); every control red-first or red-by-mutation with the run in a
+Proof Pack; every node's audit entry from its own tree; the census, the craft gate, the marker gate,
+the console-launch gate and the gate runner in the resolution path.
+
+**Not met at close — the operator's attended rows:** the F5 exit run (`feature/exit-evidence` @
+`135e05e1`, 21 commits kept); the visual rows of D3's O-1…O-11 on the final build; CV-0/1/2's GUI
+rows. Nothing else waits on a person.
+
+**Open, named:** Ruling 88's density unit (1 turn measured at both viewports — the Owner's word);
+the `agentic` rung (a calendar event: 50 + 50 real envelopes); DC-189's ring tuple (ADR-0036 gate 3
+amendment or a second ring); CV-5.3's routed findings (focus after the first Send; line wrapping;
+the send row under a short document); the Atlas fleet's 42 worktrees (the peer's).
 
 ## Status
 
