@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T17:38:27Z",
+  "generated": "2026-09-14T18:04:28Z",
   "audit": [
     {
       "actor": null,
@@ -15877,6 +15877,29 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T17:30:27Z",
       "duration_seconds": 480.0
+    },
+    {
+      "id": "al-01M2GHF1814E8JMCFA006FJN5J",
+      "shortname": "spike-engine-backends",
+      "datetime": "2026-09-14T18:04:28Z",
+      "session": "engine-spikes",
+      "prompt": "You are the domain-researcher node of the AI-DE Conductor programme: one spike record per engine (copilot, codex, gemini, grok, Higgsfield) plus the claude-code --ignore-scripts observation, answering the Owner's questions with observations.",
+      "summary": "copilot: observed (CLI 1.0.84-5, copilot --acp, initialize protocolVersion 1, authMethods copilot-login, session/new refused fresh / ok on stored login; --no-auto-login suppresses stored credential; enterprise via copilot login --host / GH_HOST). codex: observed (codex-acp 1.10.0 entry dist/index.js, bundles codex 0.153.4, authMethods api-key + chat-gpt, --ignore-scripts skips nothing). gemini: observed (0.58.0, --acp; --experimental-acp deprecated; personal Google login refused server-side since Antigravity transition; GEMINI_API_KEY path opens a session). grok: observed (npm @xai-official/grok@1.0.30, grok agent stdio, authMethods grok.com / xai.api_key; postinstall skipped, lazy bootstrap into GROK_HOME). Higgsfield: REST API + MCP server, not an agent (docs, Inferred). claude-code: --ignore-scripts install answers initialize (0.75.1); node and claude install instructions copied verbatim with citations. No sign-in performed; no prompt sent.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/spikes/engine-backends-2026-09-14.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "One observed spike record per engine answering Rulings 97/104/105's questions, plus the claude-code --ignore-scripts observation and the two verbatim install instructions.",
+      "done_when": "docs/spikes/engine-backends-2026-09-14.md exists with every question answered by an observation or 'not recorded'; probes and frames under spikes/engine-backends/<engine>/; audit entry; session ended; branch pushed.",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-09-14T17:42:05Z",
+      "duration_seconds": 1343.0
     }
   ],
   "changes": [
