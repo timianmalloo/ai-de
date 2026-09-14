@@ -2,7 +2,7 @@
 id: note-20260913-console-toggle-closes-on-second-press
 title: "The session header's Console toggle closes the Console document on its second press; the verb focuses it"
 type: decision-note
-status: draft
+status: accepted
 owner: "@timianmalloo"
 phase: "addendum-c"
 tags: [decision-note, addendum-c, shell-lane, sh-4-2, ruling-89, console-document, accessibility]
@@ -58,3 +58,5 @@ Holds until the conductor or the council rules on Ruling 89's letter. Reversal i
 ## Promotion rule
 If this call starts bearing load — multiple artifacts depend on it, or reversing it would be
 expensive — promote it to a ruling or an ADR; today it is one handler and one oracle.
+
+**Ratified by Ruling 90** (2026-09-13, the Owner): the toggle closes on its second press; the verb focuses; Ruling 89 amended.

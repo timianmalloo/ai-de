@@ -1992,7 +1992,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 92 types, 409 members, 73% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 94 types, 413 members, 73% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2005,7 +2005,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "eee6dd82da4de579593ec40aa2f57cc66cea87c7e9bee367a6086dc8fcba457d"
+      "sourceSha256": "6654284f570acc6f17f19fcd3becad39e5737e21de941009c3418921cdc3d5b0"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -2042,7 +2042,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 32 types, 184 members, 72% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 33 types, 197 members, 73% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2055,7 +2055,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b3818991eea0ccbe9562e68b595d1a838f7fed5da3a260f178cfd783b47651e8"
+      "sourceSha256": "c1ed6ad7ff2a580eaea46dbf91b1e74b5b0a5a6482aaa2367b6a5b765c36b721"
     },
     {
       "id": "api-aide-core",
@@ -2517,7 +2517,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Workbench: 78 types, 149 members, 58% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Workbench: 78 types, 151 members, 59% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2530,7 +2530,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ebdc7d9ec1d3233f36cdd84b8c3a4fdca401419e9dde46c4408aebc5b0439a8e"
+      "sourceSha256": "3ab36ba5498499979ac77af33700d2933c0987b6fc2b3c55dc4dbd0652052eba"
     },
     {
       "id": "api-aide-mcp",
@@ -3576,6 +3576,49 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "17a604d817395ebd49cb25ce288d6b9d0dd5de1e47af235fad2310cc28b53b45"
+    },
+    {
+      "id": "note-20260913-console-toggle-closes-on-second-press",
+      "path": "docs/notes/console-toggle-closes-on-second-press.md",
+      "title": "The session header's Console toggle closes the Console document on its second press; the verb focuses it",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [
+        {
+          "by": "proof-coding-recut-left-dock",
+          "on": "2026-09-13",
+          "reason": "SH-4.2 landed: Coding re-cut (Rulings 83/88/89), the console document, F-1's reconcile; inbound neighbours read the amended rows"
+        }
+      ],
+      "summary": "Ruling 89 says \"a second toggle focuses it\"; SH-4.2 ships the toggle as an honest ToggleButton whose state is the Console document's open state — a second press closes it — because a toggle that never releases lies to the UIA Toggle pattern (WCAG 4.1.2, the UX & Accessibility lens's Blocker). The verb `session.console`, the View menu row and a turn's Open the log focus the one open console; the count stays ≤ 1 either way. One line reverses it; the conductor ratifies.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "shell-lane",
+        "sh-4-2",
+        "ruling-89",
+        "console-document",
+        "accessibility"
+      ],
+      "links": [
+        {
+          "to": "proof-coding-recut-left-dock",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "refines"
+        },
+        {
+          "to": "ui-review-operator-findings-2026-09-13",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b09546bb66cdb19ea7eb74435419b0fa250b6a1d212fa7ae948e894c385e777a"
     },
     {
       "id": "note-addendum-a-ratification",
@@ -7970,7 +8013,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7ca59d30eb0ce088ed8f99a52151697b1349d56048c4069b0854ea93df8fc412"
+      "sourceSha256": "3c514c8a514c593d07d1a8018cba7640f32e0bd768fac711e75f12ee20cc3836"
     },
     {
       "id": "design-session-profiler",
@@ -9120,7 +9163,7 @@ window.DOCS_INDEX = {
     {
       "id": "note-addendum-c-council-rulings",
       "path": "docs/notes/addendum-c-council-rulings.md",
-      "title": "Decision note — Rulings 50–89: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
+      "title": "Decision note — Rulings 50–90: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
@@ -9183,7 +9226,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "afa95f1f468c747e700675ae1a49f5a2b4d8e8478c8cb2942f66903018348156"
+      "sourceSha256": "140a76d5231c0eb2d84d1eda2f5fcbae940910dbb261ff6878604c4c35d10c7b"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -10380,7 +10423,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8f127f720bc334fea0fd5fb8f0adbca00de9d8617df42c9fea774dc8913fa80d"
+      "sourceSha256": "ee7a5e0b1109ad3e8e1fd6c6da6d5f58050c462a0689168617346470f8cd8dee"
     },
     {
       "id": "session-profiles",
@@ -14693,6 +14736,72 @@ window.DOCS_INDEX = {
       "sourceSha256": "a92734fa7845b6e7ad4a33a691fe588436959f29a8ab7340d01343356a9def94"
     },
     {
+      "id": "proof-coding-recut-left-dock",
+      "path": "docs/proof/coding-recut-left-dock.md",
+      "title": "Proof Pack: SH-4.2 — Coding's re-cut and the left dock",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-13",
+      "reviewSuggested": [],
+      "summary": "Rulings 83, 88 and 89 landed on the Shell lane: a new session docks in Coding's Left zone (not maximized; NewSessionPlacement retired; the kind row carries the zone rule), CodingDefault is Left empty at 1.3 of the Center · Center empty · Bottom one terminal collapsed, the Center's empty copy is two true sentences by state, the reconcile reads the model's zones and anchors panes by identity (F-1: a drag while a collapsed zone holds panes or a stack is maximized is applied), the Console split is a `console` document in the Center that closes with its session (C5), Coding lands on the session at Left, and the Left extent and the thread's density are measured on the composed tree. L1–L6, F-1, C5 and the landing each seen red before green.",
+      "tags": [
+        "proof-pack",
+        "addendum-c",
+        "shell-lane",
+        "sh-4",
+        "sh-4-2",
+        "coding",
+        "left-dock",
+        "console-document",
+        "reconcile",
+        "ruling-83",
+        "ruling-88",
+        "ruling-89"
+      ],
+      "links": [
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "ui-review-operator-findings-2026-09-13",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-coordination-perspective",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-editor-rest",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-console-coalesce",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-perspective-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "77b76b3ca88a7416a173bcba7f68fa875082b1f8906ce902c227aa69cad0d6fb"
+    },
+    {
       "id": "proof-compile-admission-code",
       "path": "docs/proof/compile-admission-code.md",
       "title": "Proof Pack — CV-4, admission's code: Gate 2's reader recomputing every floor from num/den, ring.py's A6 re-score/demote/re-admit, the drift watermark readmitted_at, and compile.mode.changed{from,to,trigger}",
@@ -17889,5 +17998,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "9d194e60b96f82a77c7f2a5df6144add955aeaf4b5922a035fe1aa63ebd322f4"
+  "graphSha256": "7485e31c2ee99477de2ac0275ebbd4a98a5b245e9b98149ed1be0208bc756bc8"
 };
