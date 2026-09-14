@@ -72,6 +72,19 @@ actual wrapped glyph lines and accessible/full label text must be checked. No re
 source-grid/font/window-size or Core change is authorized. The candidate remains
 uncommitted and unaccepted until combined geometry/lifecycle/placement gates clear.
 
+The final four-file candidate `6591b5e9` now has UX/SRE/Test placement and wrapping
+clearance. Parent read the actual rendered glyph geometry and independently ran the
+combined UI/Sessions suite, 232/232; after joining as `dd84702b`, the same joined suite
+again reports 232/232, zero skipped. At both viewports all source/highlight bounds fit
+and the full selected label is represented by non-empty, finite wrapped glyph runs
+inside its 176-DIP viewport with unchanged 13-DIP typography and accessible name.
+
+This is not yet the independent actual-daemon pixel verdict. The proof tree adopted
+only the reviewed UI commit, preserving its prior uncommitted harness bytes and failed
+captures. Eight further proof calls are released for the normal new Center default,
+correct wrapped-line geometry and full real-runtime lifecycle replay—no maximization
+or private-layout workaround.
+
 This is an incomplete production Proof Pack. Addendum E remains candidate. No primary-main
 integration or push is claimed. The private proposal/TheTerrace corpus is not part of this
 delivery record.

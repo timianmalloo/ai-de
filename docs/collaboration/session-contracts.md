@@ -792,6 +792,20 @@ normal Center default, actual wrapped geometry, no legacy stack-max assertion, a
 daemon/lifecycle/UIA/capture replay. Mainline ceiling is prospectively 400, without resetting
 prior costs. No extra product, proof, primary/main or programme authority is implied.
 
+The combined Center/wrapping candidate `6591b5e9` cleared exact-source UX/SRE/Test gates.
+Parent ran the final combined UI/Sessions set 232/232, joined it as `dd84702b`, compared
+the four files with the reviewed candidate and repeated joined 232/232, zero skipped.
+The earlier pre-corrected geometry/session-focus failure remains separate historical
+evidence; no root cause for that historical session-focus failure is invented.
+
+The independent proof tree adopted only that reviewed UI commit as `f89822cb`; its
+uncommitted sole-file proof delta was hashed before/after and remained byte-identical.
+The eight conditional proof leaves are now released, **41/49**, to remove the legacy
+maximization oracle/workaround, use normal new Center placement and actual wrapped-glyph
+geometry, and rerun the real daemon/window/source/member/Back/replacement/release/shutdown
+and own-HWND capture path. No source, layout state, font/window-size or query-result
+substitution is permitted. Default readable-source acceptance still requires the new pixels.
+
 ### Core owns
 
 | Path | Why |

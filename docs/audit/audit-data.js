@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T18:51:35Z",
+  "generated": "2026-09-14T19:24:03Z",
   "audit": [
     {
       "actor": null,
@@ -16370,6 +16370,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "654a2a3be1a3bd070754f2238a0dc35c10307de4",
         "short": "654a2a3be",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GP0QVYFD5Z2V497ABSME4Z",
+      "shortname": "atlas-center-joined-default-proof-released",
+      "datetime": "2026-09-14T19:24:02Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep working and provide periodic todo refreshes showing in-flight and remaining work",
+      "summary": "UX/SRE/Testallcleared6591Center+wrapping; parent232/232independentandjoineddd84702b232/232,4filesidentical. ProofadoptedONLYreviewedUIasf89822cb; dirtysoleproofdeltaSHAunchanged. Releasedconditional8proofleaves41to49 fornormalCenterdefault+actualwrappedglyphs/realdaemon/lifecycle/UIA/memberPNG; removeslegacymaxoracle/workaround,nohiddenresize. Defaultreadabilityacceptanceawaitsnewpixels. Oldcombinedfailure/captures/forcedexitsretained; nohistoricalscopefigurespromoted.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Prove the reviewed normal Center default through the actual daemon and window.",
+      "done_when": "Normal-default source, member glyphs and highlight are visibly readable with real binding/lifecycle evidence and owned capture.",
+      "tier": "T2",
+      "main_calls": 373,
+      "main_budget": 400,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T19:24:02Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "dd84702b71d0a32ebe860f211b0a05b946726ccf",
+        "short": "dd84702b7",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
