@@ -19,10 +19,11 @@ summary: >-
 
 # Code Atlas coordination - isolated authoring active, integration not admitted
 
-**Current execution checkpoint:** Conductor `639be9d3` includes the accepted detached reader,
-main compatibility, public Core render seam and reviewed Shell component/lifetime repair.
-Core membership `d8d83de` remains blocked; diagnostics distinguish native notification abort
-995 from namespace mutation but do not yet establish its cause. The actual Core factory
+**Current execution checkpoint:** Conductor `acaf4dca` includes the accepted detached reader,
+main compatibility, public Core render seam, reviewed Shell component/lifetime repair and
+qualification-only native membership mechanism. The cause/fix distinguishes issuing-thread
+exit from a namespace change. Production membership remains blocked on retained ownership
+when native cleanup times out. The actual Core factory
 and real-window handoff remain absent. The **Production convergence checkpoint** below is current;
 earlier allocations and decisions are retained as history.
 
@@ -222,10 +223,10 @@ erasure of prior orchestration cost. No measured total runtime estimate is avail
 
 | Node | Capability | Input and exit condition | Dependency and current state |
 |---|---|---|---|
-| NQ diagnosis/repair | Reasoning | Actual abort cause, then required clone/linked/nested and hostile/ABA controls pass without weakening confinement | Special 15/22 after structural diagnostic correction; seven held. Parent read error-995 receipts; cause unverified. Regular Core remains 34/48 |
+| NQ diagnosis/repair | Reasoning | Actual abort cause, then required clone/linked/nested and hostile/ABA controls pass without weakening confinement | Qualified mechanism joined `acaf4dca`; parent pre/post join 350/350, NQ 29/30. Production cleanup condition remains |
 | Shell lifetime repair | Reasoning | Factory/dispose/clear/admission fault oracles, recovery and idempotent final drain/disposal | Complete at component level: 44/44; eleven semantic reds, parent 90/90 before and after join; SRE/Test conditions retained |
-| Membership gate | Independent review | Narrow Security/Test acceptance of qualified native/admin/currentness evidence | Depends on NQ repair, not Shell repair |
-| Production Core handoff | Reasoning | Actual committed issuer, async transport, remote reader and factory/view-model surface; no callable success stub | Git-dependent admission waits for membership gate |
+| Membership gate | Independent review | Narrow Security/Test acceptance of qualified native/admin/currentness evidence | Test PASS; Security conditional qualification, not production clearance. Retained-cleanup correction and six targeted review leaves released |
+| Production Core handoff | Reasoning | Actual committed issuer, async transport, remote reader and factory/view-model surface; no callable success stub | Git-dependent admission waits for cleanup clearance. C receives ten existing regular cleanup calls and four for a code-grounded runtime estimate; full runtime not funded yet |
 | Real-window integration | Reasoning | MainWindow attach/replacement/awaited close consumes the committed Core surface | Depends on Core handoff and repaired Shell owner |
 | Integrated proof | Independent review | Real Architecture opener to inventory/file/member/source/Back, replacement/revocation/cancellation/disposal | Depends on joined production source; component and detached proofs do not satisfy it |
 | Record/join | Deterministic mechanics | Scoped commits, audit then derived regeneration, exact evidence and remaining boundaries recorded | Conductor owns this; no primary merge or push |
@@ -259,3 +260,9 @@ leaves, without resetting cost: six Shell readback/join, three NQ disposition, t
 The Shell test-source limitation and local join are resolved. Four review leaves remain for
 NQ. The native abort receipt has been read; cause-specific release is with Owner, not silently
 inferred from a diagnostic success. The programme and implementation/verification tasks stay open.
+
+Owner turns 47-48 supersede that historical checkpoint: one coherent NQ pass completed the
+qualification, then the candidate joined with production cleanup explicitly blocked.
+The cumulative main-line ceiling is now 126, prospectively granted after the 102 checkpoint;
+six record/join mechanics and eighteen cleanup/review/runtime-estimate-disposition leaves.
+No past overrun is reset. Actual implementation, verification and coordination tasks remain open.

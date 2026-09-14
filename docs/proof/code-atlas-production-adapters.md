@@ -170,6 +170,13 @@ Owner turn 48 subsequently authorizes the qualification-only join after committi
 pending records. That is not production membership clearance: the cleanup-timeout condition
 below remains a blocking predecessor of any real consumer.
 
+The records were committed as `39b9b43d`, then qualification source joined as `df17c69a`
+and `acaf4dca9e96328711a1517a06964e76eafdd1c5`. Conductor compared both files with the
+reviewed `c7c94153` and observed no difference. The joined Understanding run recorded
+350 total, 350 passed, zero failed in
+`files/atlas-nq-qualified-joined/nq-qualified-joined.trx`. This supersedes the preceding
+unjoined status, not the production-cleanup block.
+
 Immutable issuer metadata is captured before thread death. Diagnostic failure is explicit
 and does not prevent cleanup. A bounded shared native issuer keeps the issuing thread alive
 for the operation lifetime and drains when the last ownership lease is released.
@@ -192,6 +199,9 @@ asserts one native thread/two leases, then zero/zero; canceled creation, pre-can
 diagnostic loss, hostile configuration, required repository forms and ABA remain covered.
 Conductor's compact raw table did not print the cancellation/disposal columns, so its
 printed table alone is not cited as independent observation of those zero counts.
+Before the qualification join, Conductor separately asserted the raw paired-stage fields:
+the original dead issuer retains the same handle/OVERLAPPED and zero explicit cancel/dispose;
+the fixed issuer stays alive/pending with zero cancel/dispose. A mismatch would abort the join.
 
 GATE NQ Test - PASS for the bounded qualification; no runtime/factory/MainWindow claim.
 GATE NQ Security - PASS WITH CONDITIONS for qualification evidence only. Production use
@@ -217,3 +227,10 @@ committed factory/ViewModel handoff. Shell must consume those exact signatures f
 MainWindow attach/replacement/awaited close. Finally prove the daemon-backed Architecture
 file/member/source/Back path with cancellation, revocation, replacement and shutdown.
 Neither normative Addendum E acceptance nor main integration is granted by this checkpoint.
+
+Owner turn 48 allocates ten existing regular C leaves to retained-failure cleanup and four
+to a code-grounded runtime estimate. Regular ceiling stays 48 and NQ stays 29/30. Six new
+targeted review leaves are separate. The next implementation must prove safe-other cleanup,
+strong bounded retention of pending native work and reservations, admission debt accounting,
+and idempotent recovery after completion, including canceled creation and final issuer drain.
+Injected timeout evidence must remain labelled as injection rather than a stalled-kernel run.

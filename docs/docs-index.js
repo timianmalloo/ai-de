@@ -8381,7 +8381,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "60caf2c7eab90acb422f2bd031782927b10a4d376cd99ec26f7ec9824ddc453f"
+      "sourceSha256": "96770898783c506cfdacd46682a734d8cf5bf7808404584b1df59f6c0dcf0cf2"
     },
     {
       "id": "coordination-code-atlas-resume",
@@ -11019,7 +11019,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "020f021fd5168bb9e4fa13860b7f506040590a9921149babe447513d992d73bf"
+      "sourceSha256": "b6d7ab55281059380cb72e63cb86f3584e6b3368faf1476b6f3104712fd690ba"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -18965,5 +18965,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "bad86e7b68b7847b426760fcbcfee8c3ed7067ca12348b5d8fe27a8fb96ca49b"
+  "graphSha256": "b27894364bc90d404c8f18c3916c6bea5aa5855322ee70343d51b253dd3420da"
 };

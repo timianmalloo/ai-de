@@ -1,9 +1,9 @@
 {
   "generated": "2026-09-13",
-  "documented_sha": "6c119a3b91b00c7485de8fb3f40d9e4163431cc9",
+  "documented_sha": "acaf4dca9e96328711a1517a06964e76eafdd1c5",
   "bundle_pages": 35,
   "api": {
-    "files_scanned": 322,
+    "files_scanned": 323,
     "public_symbols": 3536,
     "documented": 2413,
     "coverage_pct": 68.2
