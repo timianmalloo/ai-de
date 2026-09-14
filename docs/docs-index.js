@@ -2106,7 +2106,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 58 types, 155 members, 91% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 60 types, 163 members, 91% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2119,7 +2119,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c810b55db14487f5dea8384e98f2bd4b6e485ba0716404d47ffca546bad68923"
+      "sourceSha256": "2cc990f7dd8c7c9efcb43575514849baa070d07a2f7b269cf282cdf146abc957"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -4960,7 +4960,7 @@ window.DOCS_INDEX = {
       "phase": "1",
       "reviewBy": "2026-12-11",
       "reviewSuggested": [],
-      "summary": "Spec v1.0 names ~/.aide/providers.yaml in two places (§4.3 line 209, §14.2 lines 472-473). The reader built under Ruling 47 reads ~/.aide/providers.json, applying Ruling 23's ladder argument to the file Ruling 23 itself named as the open case. The schema is otherwise a one-for-one transcription, plus two fields marked in code as extending §14.2: adapterInstallRoot and a per-engine model. The spec HTML stays byte-frozen.",
+      "summary": "Spec v1.0 names ~/.aide/providers.yaml in two places (§4.3 line 209, §14.2 lines 472-473). The reader built under Ruling 47 reads ~/.aide/providers.json, applying Ruling 23's ladder argument to the file Ruling 23 itself named as the open case. The schema is otherwise a one-for-one transcription, plus two fields marked in code as extending §14.2: adapterInstallRoot and a per-engine model. The spec HTML stays byte-frozen. Amended 2026-09-14 (engines lane): the provider map accepts every provider the catalog's engine rows name — anthropic, openai, github, google, xai — and an account may carry `host`, the enterprise host it signs in against (Ruling 97 condition 3; Ruling 105 (1)), which the copilot launch passes as COPILOT_GH_HOST.",
       "tags": [
         "conductor",
         "spec",
@@ -4970,7 +4970,10 @@ window.DOCS_INDEX = {
         "yaml",
         "ruling-23",
         "ruling-36",
-        "ruling-47"
+        "ruling-47",
+        "ruling-97",
+        "ruling-105",
+        "engines"
       ],
       "links": [
         {
@@ -4988,10 +4991,22 @@ window.DOCS_INDEX = {
         {
           "to": "note-front-door-ruling-36",
           "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spike-engine-backends-2026-09-14",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-engines-on-the-wire",
+          "rel": "tested-by"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "569f2b8bfa93b44d9eb277254e153e3fe07320a484fcefea2fef652fbb69f616"
+      "sourceSha256": "a4606c7cab61aff066edfb1c3bfb5b4a6750bbb8bd649ea4567348b69c814492"
     },
     {
       "id": "note-conductor-spec-errata-session-thread",
@@ -15764,6 +15779,51 @@ window.DOCS_INDEX = {
       "sourceSha256": "9a358b808be4dff94ca1fbe52a8cf94ef5b223dc1c7816067f6bff7ebd4909ca"
     },
     {
+      "id": "proof-engines-on-the-wire",
+      "path": "docs/proof/engines-on-the-wire.md",
+      "title": "Proof Pack — engines on the wire: copilot, codex, gemini, grok",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-14",
+      "reviewSuggested": [],
+      "summary": "Rulings 97 (ii)(iii) and 105 landed as four commits on lane/agentplane-engines, in the ruled order copilot → codex → gemini → grok: EngineCatalog carries five rows and two launch paths (adapter under node; a native CLI resolved from PATH without a shell), AcpLaneClient sends the claude-code pin to the claude-code adapter only, and the enterprise host rides on the account as COPILOT_GH_HOST. Every launch line is one the spike observed, and each engine was spawned by the product's own ResolveLaunch → AcpEngineProcess.Start on this machine and answered initialize with protocolVersion 1 — copilot.exe 1.0.84-6, codex-acp 1.10.0, gemini-cli 0.58.0, grok 1.0.30. Not observed: session/prompt on any new engine, any sign-in, the host variable's effect at session/new. The hosts still construct the client without its row (seam request filed).",
+      "tags": [
+        "conductor",
+        "agent-plane",
+        "engines",
+        "acp",
+        "copilot",
+        "codex",
+        "gemini",
+        "grok",
+        "ruling-97",
+        "ruling-105",
+        "proof-pack"
+      ],
+      "links": [
+        {
+          "to": "spike-engine-backends-2026-09-14",
+          "rel": "tested-by"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "note-conductor-spec-errata-providers-json",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "31cb7a4623a60f79312767a0529ff02a87770d49506b4ecb2a88a56ca7445709"
+    },
+    {
       "id": "proof-explore-view-source",
       "path": "docs/proof/explore-view-source.md",
       "title": "Proof Pack: Rulings 92 and 93 — the edge row on one baseline; View source in Explore's reader",
@@ -18481,5 +18541,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "dff03d73eb63a0c60f202042766a5115184a4a6dd6c8318079542e2e74e0c342"
+  "graphSha256": "810a568f36c582f1c24b8d9c3a917acb9174224027105d500512844a0504994f"
 };

@@ -17,8 +17,9 @@ namespace AiDe.Core.Tests.AgentPlane;
 /// the catalog's <c>simplify:</c> trigger: "adapter launch only; upgrade trigger = first native-ACP
 /// (copilot) spawn". The engine-backends spike of 2026-09-14 observed <c>copilot --acp</c> answer
 /// <c>initialize</c> with <c>protocolVersion 1</c> (<c>spikes/engine-backends/copilot/fresh-home/frames.jsonl</c>),
-/// so the test was re-pointed here rather than deleted: the refusal it guarded now names the two
-/// modes that still have no launch path.</para>
+/// so the test was re-pointed rather than deleted or renamed: the refusal it guards now names the
+/// two non-adapter modes that still have no launch path, under the name the frozen F5 exit-evidence
+/// record cites.</para>
 ///
 /// <para><b>The pins come from the spike, not from memory.</b> Every launch line asserted below is
 /// one the spike record (<c>docs/spikes/engine-backends-2026-09-14.md</c>, "Catalog consequences")
@@ -328,15 +329,24 @@ public sealed class EngineCatalogTests
     }
 
     /// <summary>
-    /// The two modes with no launch path are still refused by name. The alarm the catalog's
-    /// <c>simplify:</c> comment named has fired (copilot is Native and launches), so this is the
-    /// re-pointed test: no catalog row carries either mode today, and the refusal is exercised on a
-    /// synthetic row so it cannot rot into an untested branch.
+    /// The two non-adapter modes with no launch path — <c>Observed</c>, <c>Deferred</c> — are still
+    /// refused by name. The alarm the catalog's <c>simplify:</c> comment named has fired (copilot is
+    /// Native and launches), so this is the <b>re-pointed</b> test: no catalog row carries either
+    /// mode today, and the refusal is exercised on a synthetic row so it cannot rot into an untested
+    /// branch.
     /// </summary>
+    /// <remarks>
+    /// <b>The name is kept on purpose.</b> The F5 exit-evidence record
+    /// (<c>spikes/conductor-front-door-exit-run/exit-evidence.json</c>, clause 8) and its verifier —
+    /// frozen at <c>1374401d</c> by its own clause 0 (Ruling 103) — cite this test by name as the
+    /// proof that only <c>claude-code</c> was exercised at F5; a rename would make a frozen record
+    /// point at nothing. What it guards moved from "every non-adapter mode" to "the two non-adapter
+    /// modes that still have no path", which is the same clause read after Ruling 97 (iii).
+    /// </remarks>
     [Theory]
     [InlineData(AcpMode.Observed)]
     [InlineData(AcpMode.Deferred)]
-    public void AnObservedOrDeferredModeIsRefusedWithANamedReason(AcpMode mode)
+    public void ANonAdapterModeIsRefusedWithANamedReason(AcpMode mode)
     {
         var row = new EngineRow("someday", "someone", mode, null, null, null);
 

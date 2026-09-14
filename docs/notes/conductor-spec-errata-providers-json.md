@@ -5,19 +5,26 @@ type: decision-note
 status: accepted
 owner: "@timianmalloo"
 phase: "1"
-tags: [conductor, spec, errata, front-door, providers, yaml, ruling-23, ruling-36, ruling-47]
+tags: [conductor, spec, errata, front-door, providers, yaml, ruling-23, ruling-36, ruling-47, ruling-97, ruling-105, engines]
 links:
   - { to: spec-conductor, rel: relates-to }
   - { to: note-conductor-spec-errata-policy, rel: relates-to }
   - { to: note-front-door-council-rulings, rel: relates-to }
   - { to: note-front-door-ruling-36, rel: relates-to }
+  - { to: note-addendum-c-council-rulings, rel: relates-to }
+  - { to: spike-engine-backends-2026-09-14, rel: relates-to }
+  - { to: proof-engines-on-the-wire, rel: tested-by }
 review-by: 2026-12-11
 summary: >-
   Spec v1.0 names ~/.aide/providers.yaml in two places (§4.3 line 209, §14.2 lines 472-473).
   The reader built under Ruling 47 reads ~/.aide/providers.json, applying Ruling 23's ladder
   argument to the file Ruling 23 itself named as the open case. The schema is otherwise a
   one-for-one transcription, plus two fields marked in code as extending §14.2:
-  adapterInstallRoot and a per-engine model. The spec HTML stays byte-frozen.
+  adapterInstallRoot and a per-engine model. The spec HTML stays byte-frozen. Amended 2026-09-14
+  (engines lane): the provider map accepts every provider the catalog's engine rows name —
+  anthropic, openai, github, google, xai — and an account may carry `host`, the enterprise host it
+  signs in against (Ruling 97 condition 3; Ruling 105 (1)), which the copilot launch passes as
+  COPILOT_GH_HOST.
 ---
 
 # Spec erratum — §4.3 / §14.2's `providers.yaml` is `providers.json` in this repository
@@ -105,6 +112,7 @@ is already admitted for a second reason — not on this file's account alone.
 | — | `"adapterInstallRoot"` | **EXTENDS §14.2** |
 | — | `"engines".<id>.model` | **EXTENDS §14.2** |
 | — | `"engines".<id>.account` | **EXTENDS §14.2** (only needed when a provider carries more than one account) |
+| — | `"providers".<id>.accounts[].host` | **EXTENDS §14.2** — the enterprise host on the **account** (Ruling 97 c3 / 105 (1)); see the 2026-09-14 amendment below |
 
 Both extensions are marked as such in `src/AiDe.Core/AgentPlane/ProviderConfiguration.cs`.
 `GovernedRunRequest` requires an adapter install root and a model; §14.2 supplies neither, and
@@ -127,9 +135,69 @@ with no accounts, which renders as "no agent backend is configured" — the *mis
 a file that exists. The four §14.2 names above (`engine`, `acp`, `metered`, `routing`) are accepted
 and not read, so a transcription of the spec's own example loads without being edited down.
 
+## Amendment 2026-09-14 — the engines lane: accepted providers, and `host` on the account
+
+**Filed by:** lane `agentplane-engines` (Rulings 97 (ii)(iii) and 105, as observed by
+`docs/spikes/engine-backends-2026-09-14.md`). Confidence: **Verified** for the reader and the catalog
+(the tests named below); **Inferred** for the copilot CLI's reading of the host at session time.
+
+**Accepted providers.** The `"providers"` map has no allowlist in the reader — it never had one — so
+"accepted" means *a provider some catalog engine names*, because a provider no engine maps to can
+never be bound (`ProviderRegistry.Bind` resolves the provider from `EngineRow.Provider`, never from
+the file). With the engine rows landed the set is:
+
+| Provider id | Engine (catalog row) | Launch (observed) | Sign-in gesture (attended; the operator's, never the product's) |
+| --- | --- | --- | --- |
+| `anthropic` | `claude-code` | adapter `@agentclientprotocol/claude-agent-acp@0.75.1`, `dist/index.js` | `claude` (browser) |
+| `github` | `copilot` | native `copilot --acp` (never `--no-auto-login`) | `copilot login`, or `copilot login --host https://<tenant>.ghe.com` |
+| `openai` | `codex` | adapter `@agentclientprotocol/codex-acp@1.10.0`, `dist/index.js` | `codex login` once, or `OPENAI_API_KEY` in the launch environment |
+| `google` | `gemini` | native `gemini --acp` (`--experimental-acp` is deprecated) | `GEMINI_API_KEY` in the launch environment — the only path observed to open a session |
+| `xai` | `grok` | native `grok agent stdio` (npm `@xai-official/grok@1.0.30`) | `grok login` once, or `XAI_API_KEY` in the launch environment |
+
+`engines.<id>` accepts the same five ids, because the reader checks each key against the catalog
+(`ProviderConfiguration.ReadEngines`). Nothing else in the schema changed.
+
+**`host` on the account — EXTENDS §14.2.** An account object may carry `"host": "<hostname>"`:
+
+```json
+"github": {
+  "auth": "subscription",
+  "accounts": [
+    { "label": "work", "health": "ready", "host": "mycompany.ghe.com" },
+    { "label": "personal", "health": "ready" }
+  ]
+}
+```
+
+- It is a field on the **account**, never on the provider or the engine row — Ruling 97 condition 3
+  and Ruling 105 (1) (`Account = (provider, label, health, host?)`). A login is what has a tenant.
+- Read onto `ProviderAccount.Host`; absent ⇒ `null` ⇒ the CLI's own default (`github.com`). A blank
+  value is refused by name, like every other blank string.
+- At launch, `EngineCatalog.LaunchEnvironment(row, account)` turns it into the CLI's own variable —
+  for copilot `COPILOT_GH_HOST`, "GitHub hostname used only by Copilot CLI for authentication and API
+  requests, overriding GH_HOST when set" (`copilot help environment`,
+  `spikes/engine-backends/copilot/copilot-help-environment.txt:51`). `COPILOT_GH_HOST` rather than
+  `GH_HOST` because it reaches Copilot alone and leaves any `gh` in the child's tree untouched. The
+  value is passed verbatim in hostname form, as the help text shows (`mycompany.ghe.com`).
+- A `host` on an account whose engine has no host variable (today: any non-copilot engine) is
+  **refused at launch**, not dropped — a launch that ignored it would sign in to the wrong tenant
+  and look like success.
+- **Not observed:** whether the copilot ACP server reads the variable at `session/new` — the spike
+  could not observe it without a data-residency tenant (spike §1, "Not recorded"). Reading (Inferred,
+  from the spike): an enterprise on github.com (Enterprise Cloud, incl. EMU) needs no `host` at all;
+  only `ghe.com` data-residency tenants do; GitHub Enterprise Server is not an auth target for this CLI.
+
+Tests: `EngineCatalogTests` (`ACopilotAccountWithAHostLaunchesWithCopilotGhHost`,
+`AHostOnAnEngineWithNoHostVariableIsRefusedRatherThanDropped`) and
+`AnAccountMayCarryAnEnterpriseHostTests`. Proof: `docs/proof/engines-on-the-wire.md`.
+
+**Deliberately not amended here:** the `adapterInstallRoot` default (`~/.aide/adapters`, Ruling 104
+(2)) and `engines.<id>.account` as a fallback default only (Ruling 105 condition 8) — both belong to
+the `sessions-accounts` lane's amendment, and this note carries one definition of each.
+
 ## Scope effect
 
 **Freezes** the spec HTML, as the policy requires. **Records** `~/.aide/providers.json` as the file
-this repository reads. **Records** the three extension fields and the required `health` as extensions
-to §14.2, marked in code. **Leaves** per-workspace overrides, `routing:`, `best_fit`, `metered:` and
+this repository reads. **Records** the three extension fields, the required `health`, and (2026-09-14) the
+account's `host` as extensions to §14.2, marked in code. **Leaves** per-workspace overrides, `routing:`, `best_fit`, `metered:` and
 `acp:` unbuilt and unread.

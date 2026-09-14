@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T18:11:58Z",
+  "generated": "2026-09-14T19:07:55Z",
   "audit": [
     {
       "actor": null,
@@ -16067,6 +16067,41 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T18:11:56Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2GN310C66JY2VXF37TKPFAR",
+      "shortname": "lane-agentplane-engines",
+      "datetime": "2026-09-14T19:07:49Z",
+      "session": "agentplane-engines",
+      "prompt": "You are a lane node of the AI-DE Conductor programme (repo root C:\\projects\\ai-de; the pack's rules in C:\\projects\\ai-de\\AGENTS.md apply). Work ONLY in your worktree C:\\Projects\\ai-de-lane-agentplane-engines on branch lane/agentplane-engines (based on main eb8cdee2).",
+      "summary": "Landed Rulings 97 (ii)(iii)/105 as four commits in the ruled order copilot (97353fa7) -> codex (17b4ba6e) -> gemini (fa4c89e7) -> grok (51bdce72), each red-first: EngineCatalog now carries five rows and two launch paths (adapter under node; native via NativeCommandLocator - PATH executable, npm shim resolved to its script, or the install root - measured with where on this machine: copilot.exe, gemini.cmd only, grok absent); AcpLaneClient(engine:) sends the claude _meta to the claude-code adapter only and reports the omission; ProviderAccount.Host read from providers.json and passed as COPILOT_GH_HOST by EngineCatalog.LaunchEnvironment; AP-0022 EngineNotOnPath. Each engine spawned by the product's own ResolveLaunch -> AcpEngineProcess.Start on this machine answered initialize with protocolVersion 1 (copilot.exe 1.0.84-6, codex-acp 1.10.0, gemini-cli 0.58.0, grok 1.0.30 via the scratch install; homes on scratch, nothing under ~/.copilot/.codex/.gemini/.grok). Grok is Native (the CLI speaks ACP itself; one mechanism for the three native CLIs; npm package recorded as the install source). The simplify: comment is retired; its alarm ANonAdapterModeIsRefusedWithANamedReason is re-pointed under its frozen-cited name. Not observed: session/prompt on any new engine, sign-in, COPILOT_GH_HOST's effect at session/new. Seam req-01M2GKC2RY667S51X22QVV7FGJ: the hosts still construct the client without its row. Core 2683/0 (baseline 2650), App 993/0; verify-test-run OK without --update; gate line green after regenerate-derived and the name restore. Proof: docs/proof/engines-on-the-wire.md; errata note amended (accepted providers, host on the account). Findings as placeholders DC-nnn (engines a-d) in the proof.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/engines-on-the-wire.md",
+        "docs/notes/conductor-spec-errata-providers-json.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land the engines as data rows plus one Native launch path, in the ruled order copilot -> codex -> gemini -> grok, one commit each, as observed by docs/spikes/engine-backends-2026-09-14.md (Rulings 97 (ii)(iii), 105).",
+      "done_when": "EngineCatalog carries five rows (claude-code unchanged; codex dist/index.js observed; copilot/gemini/grok Native) and ResolveLaunch resolves Native rows from PATH without a shell while still refusing Observed/Deferred and an unobserved adapter entry; AcpEngineProcess spawns a Native launch as it spawns node <entry>; AcpLaneClient sends the claude _meta to claude-code only; a providers.json account may carry host and copilot's launch passes it as COPILOT_GH_HOST; red-first per engine incl. a real-CLI initialize observation (protocolVersion 1) or an honest skip; run-verify-gates.py green on the committed tree; docs/proof/engines-on-the-wire.md and the errata note amended; the simplify: comment retired; branch pushed; audit entry; coord session ended.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T18:15:05Z",
+      "duration_seconds": 3164.0,
+      "git": {
+        "sha": "51bdce72e06ffc5d6409ed542d67577f5db4a6db",
+        "short": "51bdce72e",
+        "branch": "lane/agentplane-engines",
+        "pushed": null
+      }
     }
   ],
   "changes": [
