@@ -39,7 +39,12 @@ namespace AiDe.App.Workbench.Sessions;
 public static class NewSessionSheetDialog
 {
     /// <summary>Shows the sheet modally. Returns whether the operator pressed Create.</summary>
-    public static bool Show(NewSessionSheetViewModel sheet, Window? owner, Action<string>? announce = null)
+    /// <param name="configure">
+    /// Opens Configure… for a provider and returns whether the provider file changed (Ruling 104);
+    /// the sheet then re-derives its rows. Null in a build with no configure surface — the rows say
+    /// what to do in words.
+    /// </param>
+    public static bool Show(NewSessionSheetViewModel sheet, Window? owner, Action<string>? announce = null, Func<string, bool>? configure = null)
     {
         ArgumentNullException.ThrowIfNull(sheet);
 
@@ -47,7 +52,7 @@ public static class NewSessionSheetDialog
         // TC4: a #F9F1EF title bar with black text and a red close button, above a #12151A body,
         // because only MainWindow ever opted into DWM's dark mode.
         var window = DarkCaption.CreateDialog("New session", owner, width: 520);
-        window.Content = Build(sheet, announce, () => window.DialogResult = true);
+        window.Content = Build(sheet, announce, () => window.DialogResult = true, configure);
 
         return window.ShowDialog() == true;
     }
@@ -64,7 +69,7 @@ public static class NewSessionSheetDialog
     /// </remarks>
     /// <param name="onCreate">What Create does; the window supplies its own dialog result.</param>
     internal static FrameworkElement Build(
-        NewSessionSheetViewModel sheet, Action<string>? announce, Action onCreate)
+        NewSessionSheetViewModel sheet, Action<string>? announce, Action onCreate, Func<string, bool>? configure = null)
     {
         ArgumentNullException.ThrowIfNull(sheet);
         ArgumentNullException.ThrowIfNull(onCreate);
@@ -244,9 +249,30 @@ public static class NewSessionSheetDialog
             // with no account as one "no account — Configure…" row (97's nothing-hidden doctrine).
             foreach (var group in sheet.AccountGroups)
             {
-                var heading = new TextBlock { Text = group.Key, FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 8, 0, 2) };
+                var headingRow = new DockPanel { Margin = new Thickness(0, 8, 0, 2) };
+                var heading = new TextBlock { Text = group.Key, FontWeight = FontWeights.SemiBold, VerticalAlignment = VerticalAlignment.Center };
                 heading.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
-                backends.Children.Add(heading);
+
+                // Ruling 104: Configure… per provider — the first-use surface, and the one action the
+                // absence state gains. Present on every group (a configured provider may add an account).
+                var configureButton = new Button { Content = "Configure…", Padding = new Thickness(10, 2, 10, 2), MinWidth = 96, IsEnabled = configure is not null };
+                AutomationProperties.SetName(configureButton, $"Configure {group.Key}");
+                AutomationProperties.SetHelpText(configureButton, configure is null
+                    ? "This build has no configure surface; follow the row's instruction."
+                    : "Check prerequisites, choose the adapter root, install the pinned adapter, sign in, and write providers.json.");
+                var providerId = group.Key;
+                configureButton.Click += (_, _) =>
+                {
+                    if (configure!(providerId))
+                    {
+                        RenderBackends();
+                        Reflect();
+                    }
+                };
+                DockPanel.SetDock(configureButton, Dock.Right);
+                headingRow.Children.Add(configureButton);
+                headingRow.Children.Add(heading);
+                backends.Children.Add(headingRow);
 
                 foreach (var account in group)
                 {

@@ -111,8 +111,9 @@ public sealed class NewSessionSheetViewModel
     private readonly Func<string, bool>? _launchEngineNativeLogin;
     private readonly Func<ProviderRegistry>? _reprobe;
     private readonly Func<string, AccountRef?>? _fallbackDefault;
-    private readonly string? _adapterInstallRoot;
+    private string? _adapterInstallRoot;
     private readonly HashSet<AccountRef> _selected = [];
+    private readonly HashSet<AccountRef> _deselected = [];
 
     private ProviderRegistry _registry;
     private AccountRef? _defaultAccount;
@@ -306,16 +307,42 @@ public sealed class NewSessionSheetViewModel
         if (selected)
         {
             _selected.Add(account);
+            _deselected.Remove(account);
             _defaultAccount ??= AccountRows.FirstOrDefault(r => r.Ref == account && r.RoutableForThisSession)?.Ref;
         }
         else
         {
             _selected.Remove(account);
+            _deselected.Add(account);
         }
     }
 
     /// <summary>Whether this account is selected for the session.</summary>
     public bool IsAccountSelected(AccountRef account) => _selected.Contains(account);
+
+    /// <summary>
+    /// Re-derives the rows after Configure… wrote or changed the provider file (Ruling 104): the
+    /// registry and the adapter root as they read now; an account that appeared is selected, and a
+    /// missing default becomes the first ready row. Selections the operator made stand.
+    /// </summary>
+    public void Reload(ProviderRegistry registry, string? adapterInstallRoot)
+    {
+        ArgumentNullException.ThrowIfNull(registry);
+        _registry = registry;
+        _adapterInstallRoot = adapterInstallRoot;
+
+        var known = new HashSet<AccountRef>();
+        foreach (var row in AccountRows)
+        {
+            if (row.Ref is { } account && known.Add(account) && !_deselected.Contains(account))
+            {
+                _selected.Add(account);
+            }
+        }
+
+        _selected.RemoveWhere(a => !known.Contains(a));
+        _defaultAccount = DefaultAccount ?? AccountRows.FirstOrDefault(r => r.RoutableForThisSession && r.Ref is { } a && _selected.Contains(a))?.Ref;
+    }
 
     /// <summary>
     /// Ruling 104 (3): the footer when zero accounts are ready — the exact ruled sentence — or null.

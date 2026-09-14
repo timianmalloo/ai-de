@@ -276,8 +276,9 @@ public partial class MainWindow : Window
             chooseWorkspace: ChooseWorkspaceForSession,
             openWorkspace: OpenWorkspaceOrSayWhyAsync,
             showSheet: sheet => Workbench.Sessions.NewSessionSheetDialog.Show(
-                sheet, this, Shell.Announcer.Announce),
-            registry: () => _providers?.Registry ?? new AiDe.Core.AgentPlane.ProviderRegistry([]),
+                sheet, this, Shell.Announcer.Announce,
+                configure: provider => ConfigureProvider(sheet, provider)),
+            registry: CurrentRegistry,
             fallbackDefault: engine => _providers?.FallbackDefaultAccount(engine) is { } fallback
                 ? new AiDe.Core.Sessions.AccountRef(fallback.Provider, fallback.Label)
                 : null,
@@ -302,6 +303,33 @@ public partial class MainWindow : Window
             });
 
         return (await flow.StartAsync()).Announcement;
+    }
+
+    /// <summary>The registry as last read, or an empty one when there is no file — the one construction site the census counts.</summary>
+    private AiDe.Core.AgentPlane.ProviderRegistry CurrentRegistry() =>
+        _providers?.Registry ?? new AiDe.Core.AgentPlane.ProviderRegistry([]);
+
+    /// <summary>
+    /// The sheet's Configure… (Ruling 104): opens the provider's dialog against
+    /// <c>~/.aide/providers.json</c>, then re-reads the file and hands the sheet the registry and
+    /// adapter root as they read now. Returns whether the file changed.
+    /// </summary>
+    private bool ConfigureProvider(AiDe.Core.Presentation.Sessions.NewSessionSheetViewModel sheet, string providerId)
+    {
+        var written = Workbench.Sessions.ConfigureProviderDialog.Show(
+            providerId, this,
+            AiDe.Core.AgentPlane.ProviderConfiguration.DefaultPath,
+            _providers?.AdapterInstallRoot,
+            Shell.Announcer.Announce);
+
+        if (ReadProviders() is { } malformed)
+        {
+            Shell.Announcer.Announce(malformed);
+            return false;
+        }
+
+        sheet.Reload(CurrentRegistry(), _providers?.AdapterInstallRoot);
+        return written;
     }
 
     /// <summary>
