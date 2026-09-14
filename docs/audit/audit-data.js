@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T21:39:06Z",
+  "generated": "2026-09-14T21:57:19Z",
   "audit": [
     {
       "actor": null,
@@ -16599,6 +16599,38 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "c9617fb7d6911731def65a0fadbeaaa405f53eae",
         "short": "c9617fb7d",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GYSBXR9ARHK2T5XZX10D1V",
+      "shortname": "atlas-e1-candidate-review-held",
+      "datetime": "2026-09-14T21:57:18Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner70 grants12reviewleaves4eachTest/CSharp/CoreSecuritySRE andmain530. Candidate020f9622 onlytwoauthorizedtestfiles331lines, productunchanged; parentreadallsource and independentlyreplayed16executed16pass0fail, actualTRXread. No candidatejoin. Clearly unexercisedactualregistration/remoteRESTORE/Qissuerwriter paths notpromoted fromcodecfixture/queueledger tests. Vacuity, siblingversusintervening, frameboundary andfailurecleanup questions inindependentreview. Authoradmittedapprox35/24leaves+wrappers, furtherauthorcallsstopped; approxnotreconciledmeasurement. Three earlieroraclecorrection failuresclaimed, onlyfinalTRXfound; metadata-onlyno-toolrequestsent. Sourceprofile/newmetadata/nativeUI/SP3/incrementalSP4unqualified. Threefundedreviewerssamepinrunning; no newsource/main/pushpermission.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Evaluate the frozen test-only qualification without overstating its reach",
+      "done_when": "Actual tests, claim limits and independent review predicates are recorded before admission",
+      "tier": "T2",
+      "main_calls": 509,
+      "main_budget": 530,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T21:54:20Z",
+      "duration_seconds": 178.0,
+      "git": {
+        "sha": "7cc20382120aa87c757e750d3d55502c53c3a054",
+        "short": "7cc203821",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

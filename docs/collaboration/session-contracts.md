@@ -992,6 +992,35 @@ Parent owns documentation/Proof Pack/audit/graph updates; generated test receipt
 and owned fixtures are permitted in the worker's artifacts area. No nested agents,
 primary/source writes, new dependencies or self-admitted product work are allowed.
 
+Owner turn 70 grants twelve new qualification review leaves: four Test, four C#,
+four combined Core Security/SRE, on one frozen candidate after parent execution
+readback. Their scope is the tests and the actual claims exercised, not unimplemented
+E1 behavior. The Conductor cumulative ceiling rises prospectively to 530.
+
+The test author returned `020f9622457865d358780820a753a1bec0092958`. Parent verified
+only the two authorized files changed (331 lines), product source unchanged, and
+replayed 16 executed / 16 passed / zero failed. Parent TRX is
+`atlas-e1-independent/parent-e1-qualification.trx` in the session evidence root.
+No candidate join or qualification acceptance has occurred.
+
+The author's budget report is approximately 35 leaves against 24, plus wrappers;
+this is an admitted overrun, not retrospectively funded work or an independently
+reconciled exact count. Further author tool use is stopped. Only the final TRX was
+found; the claimed three earlier failures were described as oracle corrections,
+not product fixes, and their red attribution/raw receipts remain unverified.
+
+The three funded reviews now inspect that exact pin: Test
+`e8c73a03-3fa2-4a77-8d17-68cdf80188b1`, C#
+`679f5667-7121-462f-90d7-8987a0ffe858`, Core Security/SRE
+`cf522afd-1af4-42ef-a392-5af8ccb41074`, in their retained separate review trees.
+Parent supplied literal complete ranges, not broad searches:
+`AtlasStaticReaderContractTests.cs:1-153`, `AtlasStaticObservationTests.cs:1-178`.
+The green tests currently use codec fixtures, Roslyn producer inputs and a local
+reservation ledger. They do not execute actual capability registration, remote
+RESTORE retention, or the native Q/issuer/blocked writer. Boundary, empty-output,
+unsupported-parent and cleanup-oracle questions remain with the independent gates.
+No runtime vulnerability or full SP1/SP4 qualification follows from these greens.
+
 ### Core owns
 
 | Path | Why |
