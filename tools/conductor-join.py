@@ -115,6 +115,11 @@ def main(argv: list[str]) -> int:
                                             "--filter", "Platform!=Windows", "--key", "AiDe.Core.Tests.portable"], env)
         run(4, "recount — Core Windows", [PY, "tools/verify-test-run.py", "--update", "--only", "AiDe.Core.Tests",
                                            "--filter", "Platform=Windows", "--key", "AiDe.Core.Tests.nonportable"], env)
+        # `--update` re-baselines the counts even when a test FAILED (its job is the count); the
+        # check form exits non-zero on a failed test — so a red suite stops the join here, before
+        # the audit entry and the commit (the F5 join, 2026-09-14: one order-dependent red reached
+        # step 8 and left a join commit unpushed).
+        run(4, "recount — outcome", [PY, "tools/verify-test-run.py", "--no-run"], env)
     else:
         print("\n== step 4: recount skipped (--docs-only)")
     recount_seconds = int(time.monotonic() - recount_started)
