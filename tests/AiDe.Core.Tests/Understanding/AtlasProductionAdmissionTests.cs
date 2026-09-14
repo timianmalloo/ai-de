@@ -337,7 +337,7 @@ internal sealed class AtlasRuntimeFixture : IAsyncDisposable
     internal IpcServer? Server { get; private set; }
     internal DaemonEndpoint? Endpoint { get; private set; }
 
-    internal static async Task<AtlasRuntimeFixture> StartAsync(bool serve = true)
+    internal static async Task<AtlasRuntimeFixture> StartAsync(bool serve = true, IpcServerOptions? serverOptions = null)
     {
         var fixture = new AtlasRuntimeFixture();
         Directory.CreateDirectory(fixture.Repository);
@@ -368,7 +368,7 @@ internal sealed class AtlasRuntimeFixture : IAsyncDisposable
                     fixture.Repository, fixture.DataDirectory, GitPath,
                     Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(GitPath))), GitVersion);
                 fixture.Server = new IpcServer(fixture.WorkspaceId, fixture.Endpoint,
-                    new IpcServerOptions(IdleGrace: TimeSpan.FromMinutes(1), StartupGrace: TimeSpan.FromSeconds(20)));
+                    serverOptions ?? new IpcServerOptions(IdleGrace: TimeSpan.FromMinutes(1), StartupGrace: TimeSpan.FromSeconds(20)));
                 fixture._serverTask = fixture.Server.RunAsync(fixture._stop.Token);
             }
             return fixture;

@@ -82,6 +82,12 @@ public sealed class IpcServer
     private readonly IpcServerOptions _options;
     private readonly string _ownerSid;
 
+    internal sealed record PublicationProbe(
+        IpcRequest Request, IpcPeer Peer, IpcResponse Response,
+        CancellationToken OperationCancellation, Action CancelOperationForQualification);
+    internal Func<Stream, PublicationProbe, Stream>? PublicationWriterForQualification { get; set; }
+    internal Action<IpcResponse>? PublicationDrainedForQualification { get; set; }
+
     private int _active;
     private int _served;
     private long _idleSinceTicks = DateTimeOffset.UtcNow.UtcTicks;
@@ -349,6 +355,7 @@ public sealed class IpcServer
         var monitor = MonitorPeerAsync(pipe, monitorCancellation.Token);
         var work = _endpoint.InvokeAsync(request, peer, operation.Token).AsTask();
         IpcResponse? response = null;
+        IpcResponse? publicationResponse = null;
         try
         {
             if (await Task.WhenAny(work, monitor).ConfigureAwait(false) == monitor)
@@ -360,6 +367,7 @@ public sealed class IpcServer
             try
             {
                 response = await work.ConfigureAwait(false);
+                publicationResponse = response;
             }
             catch (OperationCanceledException) when (operation.IsCancellationRequested)
             {
@@ -403,13 +411,31 @@ public sealed class IpcServer
                     }
                 }
             }
-            await RespondWithinTimeout(pipe, response, connectionCancellation).ConfigureAwait(false);
+            var writer = PublicationWriterForQualification?.Invoke(pipe,
+                new PublicationProbe(request, peer, response, operation.Token, operation.Cancel)) ?? pipe;
+            using var writerCancellation = response.Ok
+                ? CancellationTokenSource.CreateLinkedTokenSource(
+                    connectionCancellation, operation.Token, _endpoint.PublicationCancellation(response))
+                : CancellationTokenSource.CreateLinkedTokenSource(connectionCancellation);
+            await RespondWithinTimeout(writer, response, writerCancellation.Token).ConfigureAwait(false);
+            writerCancellation.Token.ThrowIfCancellationRequested();
             return null;
         }
         finally
         {
-            await monitorCancellation.CancelAsync().ConfigureAwait(false);
-            await monitor.ConfigureAwait(false);
+            try
+            {
+                await monitorCancellation.CancelAsync().ConfigureAwait(false);
+                await monitor.ConfigureAwait(false);
+            }
+            finally
+            {
+                if (publicationResponse is not null)
+                {
+                    await _endpoint.FinishResponseWriteAsync(publicationResponse).ConfigureAwait(false);
+                    PublicationDrainedForQualification?.Invoke(publicationResponse);
+                }
+            }
         }
     }
 

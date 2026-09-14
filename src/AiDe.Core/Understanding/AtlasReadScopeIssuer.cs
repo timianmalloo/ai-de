@@ -475,6 +475,7 @@ internal sealed class AtlasReadScopeIssuer : IAsyncDisposable
             if (Active is { } active)
             {
                 await active.WorkFinished.WaitAsync(cancellationToken).ConfigureAwait(false);
+                await active.WriterFinished.WaitAsync(cancellationToken).ConfigureAwait(false);
                 await active.DisposeAsync().ConfigureAwait(false);
             }
             await Serial.WaitAsync(cancellationToken).ConfigureAwait(false);
@@ -496,13 +497,18 @@ internal sealed class AtlasReadScopeIssuer : IAsyncDisposable
         private readonly AtlasReadBudget.Reservation _work;
         private readonly long _started;
         private readonly TaskCompletionSource _workFinished = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource _writerFinished = new(TaskCreationOptions.RunContinuationsAsynchronously);
         private readonly SemaphoreSlim _disposeGate = new(1, 1);
+        private readonly CancellationToken _token;
         private AtlasMembershipSnapshot? _membership;
         private bool _disposed;
+        private bool _publicationRegistered;
+        private bool _writerStarted;
         internal AtlasMembershipSnapshot Membership => _membership ?? throw Invalid();
         internal bool HasMembership => _membership is not null;
-        internal CancellationToken Token => _cancellation.Token;
+        internal CancellationToken Token => _token;
         internal Task WorkFinished => _workFinished.Task;
+        internal Task WriterFinished => _writerFinished.Task;
         internal void CompleteWork() => _workFinished.TrySetResult();
         internal void SetMembership(AtlasMembershipSnapshot membership) => _membership = membership;
 
@@ -510,20 +516,56 @@ internal sealed class AtlasReadScopeIssuer : IAsyncDisposable
             AtlasReadBudget.Reservation work, long started)
         {
             _scope = scope; _cancellation = cancellation; _work = work; _started = started;
+            _token = cancellation.Token;
+        }
+
+        internal void RegisterPublication()
+        {
+            lock (_scope.Gate)
+            {
+                if (_disposed || _publicationRegistered || _writerFinished.Task.IsCompleted) throw Invalid();
+                _publicationRegistered = true;
+            }
         }
 
         internal void Commit()
         {
             lock (_scope.Gate)
             {
-                if (_disposed || !_scope.OperationCurrent()) throw Invalid();
+                if (_disposed || !_publicationRegistered || _writerStarted || _writerFinished.Task.IsCompleted
+                    || !_workFinished.Task.IsCompleted || !_scope.OperationCurrent()) throw Invalid();
                 Token.ThrowIfCancellationRequested();
+                _writerStarted = true;
             }
+        }
+
+        internal void CancelPublication()
+        {
+            lock (_scope.Gate)
+            {
+                if (_disposed) return;
+                _cancellation.Cancel();
+                if (!_writerStarted) _writerFinished.TrySetResult();
+            }
+        }
+
+        internal void FinishWriter()
+        {
+            lock (_scope.Gate)
+                _writerFinished.TrySetResult();
         }
 
         public async ValueTask DisposeAsync()
         {
             using var cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+            lock (_scope.Gate)
+            {
+                // A failed preparation owns the no-writer decision. Stop never manufactures
+                // this signal; a registered publication is finished only by its writer owner.
+                if (!_publicationRegistered) _writerFinished.TrySetResult();
+            }
+            await _workFinished.Task.WaitAsync(cleanup.Token).ConfigureAwait(false);
+            await _writerFinished.Task.WaitAsync(cleanup.Token).ConfigureAwait(false);
             await _disposeGate.WaitAsync(cleanup.Token).ConfigureAwait(false);
             try
             {
