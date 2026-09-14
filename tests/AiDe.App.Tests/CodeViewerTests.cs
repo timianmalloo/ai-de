@@ -65,6 +65,21 @@ public sealed class CodeViewerTests
         });
     }
 
+    // Ruling 93 froze the structural viewer: an .html node, now the Html kind, is still highlighted
+    // HTML source here — the sandboxed render is the Explorer reader's, not this pane's.
+    [Fact]
+    public void Show_Html_IsHighlightedHtmlSource()
+    {
+        OnSta(() =>
+        {
+            var v = new CodeViewerView();
+            v.Show(new NodeContent("F", NodeContentKind.Html, "html", "<h1>Hello</h1>"));
+            Assert.False(v.IsFallback);
+            Assert.Equal("HTML", v.HighlightingName);
+            Assert.Equal("<h1>Hello</h1>", v.ShownText);
+        });
+    }
+
     [Fact]
     public void Clear_ReturnsToFallback()
     {

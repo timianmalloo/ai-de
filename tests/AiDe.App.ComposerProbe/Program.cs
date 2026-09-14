@@ -105,6 +105,11 @@ internal static partial class Program
                 return ShellTyping.Run(args!);
             }
 
+            if (args is not null && args.Contains(HtmlSandboxArgument, StringComparer.Ordinal))
+            {
+                return HtmlSandbox.Run();
+            }
+
             return args is not null && args.Contains(HandshakeArgument, StringComparer.Ordinal)
                 ? Handshake.Run()
                 : Run();

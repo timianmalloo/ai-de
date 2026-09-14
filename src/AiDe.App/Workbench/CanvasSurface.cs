@@ -146,6 +146,13 @@ public sealed class CanvasSurface : ContentControl, IDisposable
     /// <summary>Raised when a node is right-clicked, so the host can show the contextual "Open as…" menu.</summary>
     public event EventHandler<NodeContextMenuRequest>? NodeContextMenuRequested;
 
+    /// <summary>
+    /// Raises <see cref="NodeContextMenuRequested"/> — the page's <c>node.contextmenu</c> message
+    /// lands here, and a test drives the same seam without a browser.
+    /// </summary>
+    internal void RequestNodeContextMenu(NodeContextMenuRequest request) =>
+        NodeContextMenuRequested?.Invoke(this, request);
+
     /// <summary>Loads the graph around <paramref name="rootId"/> and pushes it to the page.</summary>
     // Sentinel roots the page uses to ask, through the ONE GraphSource seam, for a view that is not a
     // node neighbourhood: the grouped semantic-zoom overview, or one group's contents. The shell
@@ -293,8 +300,7 @@ public sealed class CanvasSurface : ContentControl, IDisposable
         {
             if (!string.IsNullOrWhiteSpace(message.NodeId))
             {
-                NodeContextMenuRequested?.Invoke(
-                    this,
+                RequestNodeContextMenu(
                     new NodeContextMenuRequest(message.NodeId, message.NodeKind, message.IsKnowledge));
             }
 

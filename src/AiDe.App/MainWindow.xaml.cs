@@ -56,7 +56,9 @@ public partial class MainWindow : Window
         _perspectives = new PerspectiveShell(
             WorkbenchHost,
             Shell.Hosts,
-            () => new ExplorerSurface(Shell.CreateExplorerGraph(), new NodeReaderView()),
+            () => new ExplorerSurface(
+                Shell.CreateExplorerGraph(),
+                new NodeReaderView { ContentSource = Shell.ReadNodeContentAsync }),
             Shell.Announcer);
         Shell.CommandRouter = _perspectives.Execute;
 

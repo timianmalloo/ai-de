@@ -50,6 +50,20 @@ public sealed class CoreNodeContentSourceTests
     }
 
     [Fact]
+    public async Task TheHtmlKindReachesTheClientAsHtml()
+    {
+        // Ruling 93's Owner extension of the enum: the reader branches on Html for the sandbox, so
+        // the mirror must carry it rather than degrade it to None (which would render the shortfall
+        // sentence for every HTML node).
+        var queries = new OneNode(Content(Core.Projections.NodeContentKind.Html, "html"));
+
+        var result = await new CoreNodeContentSource(queries).GetAsync("docs-index");
+
+        Assert.Equal(Workbench.NodeContentKind.Html, result.RenderKind);
+        Assert.Equal("html", result.Language);
+    }
+
+    [Fact]
     public async Task TheRenderKindAndLanguageAreTheAuthoritysAndNotInferred()
     {
         // A client that decided "this looks like C#" from the id would be a second authority on what

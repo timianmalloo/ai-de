@@ -18,6 +18,14 @@ public enum NodeContentKind
 
     /// <summary>No inline content. The reader shows metadata and edges instead.</summary>
     None,
+
+    /// <summary>
+    /// An HTML document (Ruling 93 — an Owner extension of this enum, admitted because ADR-0018's
+    /// text names html among the render kinds). The Explorer reader renders it in a sandbox: script
+    /// disabled, no navigation, no network. On the wire the name travels, so an older reader
+    /// meets a new name rather than a renumbered value.
+    /// </summary>
+    Html,
 }
 
 /// <summary>

@@ -2,7 +2,7 @@
 id: adr-0018-node-content-reader-contract
 title: "ADR-0018 — The reader fetches node content on demand via a bounded Core query, not on the graph payload"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: ""
 tags: [architecture, reader, explorer, ipc, contract, transport-bound]
@@ -11,6 +11,8 @@ links:
   - { to: spec-knowledge-explorer-mode, rel: refines }
   - { to: adr-0017-primary-view-mode, rel: relates-to }
   - { to: spec-knowledge-exploration, rel: refines }
+  - { to: adr-0025-code-viewer-renderer, rel: relates-to }
+  - { to: proof-explore-view-source, rel: relates-to }
 review-by: 2027-02-28
 summary: >-
   The Explorer's reader needs a selected node's CONTENT (source/markdown/html) and metadata, which the
@@ -23,10 +25,41 @@ review-suggested:
 
 # ADR-0018 node-content-reader-contract: The reader fetches node content on demand via a bounded Core query
 
-- **Status:** Proposed 2026-08-30. Raised for the Explorer reader (`spec-knowledge-explorer-mode`
-  US-E4). Core-owned contract; the Design session consumes it. Coordinated per
-  `docs/collaboration/session-contracts.md`.
+- **Status:** **Accepted 2026-09-14** (Ruling 93, by the slice that built the consumer —
+  `docs/proof/explore-view-source.md`). Proposed 2026-08-30. Raised for the Explorer reader
+  (`spec-knowledge-explorer-mode` US-E4). Core-owned contract; the Design session consumes it.
+  Coordinated per `docs/collaboration/session-contracts.md`.
 - **Phase:** UI-shell / graph.
+
+## Erratum (Ruling 93, 2026-09-14)
+
+- **The consumer is Explore's reader, on a gesture.** The reader is `NodeReaderView` in the
+  Explore perspective; it calls `NodeContentAsync` on the operator's **View source** gesture
+  (Explore's node context menu, first item) for the node it is showing — not on every selection
+  change as the Decision's *"the reader calls it when the selection changes"* read. A selection
+  renders metadata and edges from the graph payload it already has; the content is a reading act
+  the operator asks for, and a reply whose `NodeId` is not the shown node's is discarded (the
+  echo the Decision specified is what makes that discard possible).
+- **`RenderKind` gains `Html`.** The Decision's parenthesis names *markdown / html / code+language
+  / text / none*; the enum shipped with `Code · Text · None` and `.html` classified as `Code`.
+  `Html` is added (Owner extension; `.html`/`.htm` are the one producer's, DM7) and the reader
+  renders it in a **sandbox** — script disabled, no navigation, no network, asserted by reading
+  the runtime's settings back before any document, falling back to highlighted source when it
+  cannot be asserted. Rendering repository HTML with script enabled would be executing workspace
+  code in the product process (Security floor). The code viewer (ADR-0025) still highlights it
+  as source: the structural view is unchanged.
+- **The code renderer is ADR-0025's.** Ruling 93 named *"the CodeMirror host already in
+  composer.html (one WebView2, read-only mode)"* for the `Code` kind, labelled Inferred and left
+  to measurement. Measured: the composer's WebView2 lives in a session document's visual tree
+  (Coding), not Explore's, and a WebView2 is never re-parented across trees (ADR-0015); the
+  vendored bundle carries no standalone-code mount (Security C7 narrowed it to the composer's
+  fences). ADR-0025 — accepted — chose native AvalonEdit for exactly this viewer. The reader
+  reuses `CodeViewerView` (read-only, highlighted by `Language`), so the reader's only WebView2 is
+  the HTML sandbox, created on the first HTML node. The private-bytes measurement is in the Proof
+  Pack (P-4's form).
+- **Phase 2 is delivered.** The *Delivery phasing* below described a stub-then-substitute plan;
+  the query has shipped on the seam since the code viewer landed, and this slice is the reader's
+  consumption of it.
 
 ## Context
 

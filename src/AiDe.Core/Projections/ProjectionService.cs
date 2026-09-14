@@ -1241,16 +1241,19 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
     }
 
     /// <summary>What a file is, by extension — the authority's call, so the reader does not guess.</summary>
-    private static NodeContentKind KindOf(string path) => Path.GetExtension(path).ToLowerInvariant() switch
+    internal static NodeContentKind KindOf(string path) => Path.GetExtension(path).ToLowerInvariant() switch
     {
         ".cs" or ".ts" or ".tsx" or ".js" or ".jsx" or ".py" or ".sql" or ".bicep"
             or ".json" or ".yml" or ".yaml" or ".xml" or ".csproj" or ".props" or ".targets"
-            or ".ps1" or ".sh" or ".razor" or ".css" or ".html" => NodeContentKind.Code,
+            or ".ps1" or ".sh" or ".razor" or ".css" => NodeContentKind.Code,
         ".md" or ".markdown" or ".txt" or ".log" => NodeContentKind.Text,
+        // A document to render, not source to highlight (Ruling 93). The reader's sandbox is
+        // the consumer; the code viewer still highlights it as html.
+        ".html" or ".htm" => NodeContentKind.Html,
         _ => NodeContentKind.None,
     };
 
-    private static string? LanguageOf(string path) => Path.GetExtension(path).ToLowerInvariant() switch
+    internal static string? LanguageOf(string path) => Path.GetExtension(path).ToLowerInvariant() switch
     {
         ".cs" => "csharp",
         ".ts" or ".tsx" => "typescript",
@@ -1263,7 +1266,7 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
         ".xml" or ".csproj" or ".props" or ".targets" => "xml",
         ".ps1" => "powershell",
         ".sh" => "shell",
-        ".razor" or ".html" => "html",
+        ".razor" or ".html" or ".htm" => "html",
         ".css" => "css",
         ".md" or ".markdown" => "markdown",
         _ => null,

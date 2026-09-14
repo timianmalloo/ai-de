@@ -68,6 +68,11 @@ public sealed class ExplorerSurface : Grid
         graph.NodeSelected += (_, selection) => reader.Show(selection.Node, selection.Edges);
         reader.OnWalk(targetId => _ = graph.RefreshAsync(targetId));
 
+        // Right-click a node: Explore's own menu (Ruling 93) — View source first, rendered in the
+        // reader's content area, never a routed codeviewer pane. The shell's "Open as…" menu is
+        // the docked canvases' (the raising host's grammar) and is not subscribed to this graph.
+        graph.NodeContextMenuRequested += (_, request) => ShowNodeMenu(request);
+
         // Phase 3 — the graph<->reader keyboard cycle (spec US-E7/E8). The canvas page traps Tab and
         // posts focus.leave at either boundary (ADR-0015); the Explorer routes that INTO the reader,
         // landing on the reader's first stop when the graph is left Forward and its last stop when
@@ -89,6 +94,60 @@ public sealed class ExplorerSurface : Grid
     public CanvasSurface Graph { get; }
 
     public NodeReaderView Reader { get; }
+
+    /// <summary>The node menu last built for a right-click, for a test that cannot open one.</summary>
+    internal ContextMenu? LastNodeMenu { get; private set; }
+
+    /// <summary>The View source gesture in flight, or a completed task.</summary>
+    internal Task PendingViewSource { get; private set; } = Task.CompletedTask;
+
+    /// <summary>Builds Explore's node menu for a right-click (<see cref="ExplorerNodeMenu"/>).</summary>
+    internal ContextMenu BuildNodeMenu(NodeContextMenuRequest request)
+    {
+        var menu = new ContextMenu { Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse };
+        foreach (var option in ExplorerNodeMenu.OptionsFor(request))
+        {
+            var item = new MenuItem { Header = option.Label };
+            var action = option.Action;
+            item.Click += (_, _) => PendingViewSource = RunAsync(action, request.NodeId);
+            menu.Items.Add(item);
+        }
+
+        return menu;
+    }
+
+    private void ShowNodeMenu(NodeContextMenuRequest request)
+    {
+        var menu = BuildNodeMenu(request);
+        LastNodeMenu = menu;
+
+        // A menu opens only under a presentation source; a headless surface (a test) builds it
+        // and reads it instead.
+        if (PresentationSource.FromVisual(this) is not null)
+        {
+            menu.IsOpen = true;
+        }
+    }
+
+    /// <summary>
+    /// Runs a menu action. Both begin by selecting the node — the reader follows the graph's
+    /// selection (one definition of what is selected, design D3) — and View source then asks the
+    /// reader for the node's content. A node the graph could not centre on is not read: the reader
+    /// would be showing something else.
+    /// </summary>
+    internal async Task RunAsync(ExplorerNodeAction action, string nodeId)
+    {
+        if (!string.Equals(Reader.SelectedNodeId, nodeId, StringComparison.Ordinal))
+        {
+            await Graph.RefreshAsync(nodeId);
+        }
+
+        if (action == ExplorerNodeAction.ViewSource
+            && string.Equals(Reader.SelectedNodeId, nodeId, StringComparison.Ordinal))
+        {
+            await Reader.ViewSourceAsync(nodeId);
+        }
+    }
 
     /// <summary>The width below which the panes stack instead of sitting side by side (US-E8).</summary>
     public double StackBelowWidth { get; set; } = 760;

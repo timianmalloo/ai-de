@@ -15,6 +15,13 @@ public enum NodeContentKind
 
     /// <summary>No inline content (a diagram/proof/binary node) — the reader falls back to metadata+edges.</summary>
     None,
+
+    /// <summary>
+    /// An HTML document (Ruling 93, an Owner extension of ADR-0018's enum). The Explorer reader
+    /// renders it in a sandbox (script off, no navigation, no network); the code viewer shows it as
+    /// highlighted source.
+    /// </summary>
+    Html,
 }
 
 /// <summary>

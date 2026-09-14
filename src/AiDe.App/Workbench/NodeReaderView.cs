@@ -3,27 +3,253 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using AiDe.App.Workbench.Sessions;
 using AiDe.Core.Presentation;
 using AiDe.Core.Workbench;
 
 namespace AiDe.App.Workbench;
 
 /// <summary>
-/// The reader half of the Explorer surface (spec-knowledge-explorer-mode US-E4; design D4). Phase 1
-/// renders a selected node's header, metadata and its walkable typed edges. The per-kind CONTENT view
-/// (rendered markdown/html, syntax-highlighted code) arrives in Phase 2 behind the node-content
-/// contract (ADR-0018 node-content-reader-contract), so the content area is an honest placeholder until then — never a blank. With
-/// no selection it shows an explicit empty state (US-E7).
+/// The reader half of the Explorer surface (spec-knowledge-explorer-mode US-E4; design D4): a
+/// selected node's header, metadata and walkable typed edges, and — below them, on the
+/// <b>View source</b> gesture (Ruling 93) — the node's content through ADR-0018's node-content
+/// query, rendered by the authority's <c>RenderKind</c>: code read-only and highlighted (the
+/// AvalonEdit viewer ADR-0025 chose), markdown as prose (links are text), HTML in a sandbox (script
+/// off, no navigation, no network — <see cref="HtmlSandboxHost"/>), and <c>None</c> as the
+/// shortfall sentence, verbatim. With no selection it shows an explicit empty state (US-E7).
 /// </summary>
-public sealed class NodeReaderView : ContentControl
+/// <remarks>
+/// <b>Two rows, one reader.</b> The top row (header · metadata · edges) scrolls on its own and is
+/// capped at <see cref="TopShare"/> of the reader once content is shown, so the content keeps a
+/// room of its own instead of being pushed below twenty-five edge rows (the writer-room lesson,
+/// DC-137, applied to a reader). With nothing shown the top row takes the whole reader.
+/// </remarks>
+public sealed class NodeReaderView : ContentControl, IDisposable
 {
     private Action<string>? _onWalk;
     private readonly List<UIElement> _focusStops = new();
+    private readonly Grid _layout = new();
+    private readonly ScrollViewer _top = new() { VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
+    private readonly ContentControl _contentArea = new() { IsTabStop = false };
+    private CodeViewerView? _code;
+    private HtmlSandboxHost? _html;
+    private NodeContent? _htmlShown;
+    private bool _disposed;
+
+    /// <summary>The share of the reader the top row may take once content is shown.</summary>
+    internal const double TopShare = 0.45;
+
+    /// <summary>The top row's floor once content is shown, so the header is never squeezed away.</summary>
+    internal const double TopMinHeight = 120;
+
+    /// <summary>The top row's cap: unbounded with no content, a share of the reader with it.</summary>
+    internal static double TopMaxHeight(double readerHeight, bool contentShown) =>
+        contentShown && readerHeight > 0
+            ? Math.Max(TopMinHeight, Math.Floor(readerHeight * TopShare))
+            : double.PositiveInfinity;
+
+    /// <summary>
+    /// The node-content query (ADR-0018's <c>NodeContentAsync</c>, behind the client seam), read
+    /// live on each gesture so a reader built before a workspace attached still reaches it (DC-040).
+    /// </summary>
+    public Func<string, CancellationToken, Task<NodeContent>>? ContentSource { get; set; }
+
+    /// <summary>What the content area shows (Ruling 93).</summary>
+    public NodeReaderContentState ContentState { get; private set; } = NodeReaderContentState.Idle;
+
+    /// <summary>
+    /// The "View source" gesture for the node the reader is showing: fetches its content through
+    /// <see cref="ContentSource"/> and renders it by kind. A reply for a node that is no longer the
+    /// shown one is discarded (ADR-0018 echoes the id for exactly this).
+    /// </summary>
+    public async Task ViewSourceAsync(string nodeId, CancellationToken cancellationToken = default)
+    {
+        if (!string.Equals(SelectedNodeId, nodeId, StringComparison.Ordinal)) { return; }
+
+        var source = ContentSource;
+        if (source is null) { return; }
+
+        SetContent(NodeReaderContentState.Loading, () => Sentence("Loading source…"));
+
+        NodeContent content;
+        try
+        {
+            content = await source(nodeId, cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            if (string.Equals(SelectedNodeId, nodeId, StringComparison.Ordinal)) { SetIdle(); }
+            return;
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            if (string.Equals(SelectedNodeId, nodeId, StringComparison.Ordinal))
+            {
+                SetContent(NodeReaderContentState.Failed, () => Sentence("The source could not be loaded: " + ex.Message));
+            }
+
+            return;
+        }
+
+        ShowContent(content);
+    }
+
+    /// <summary>
+    /// Renders one node's content in the content area, by its kind. A reply whose id is not the
+    /// shown node's is discarded: the selection moved on while the query was in flight.
+    /// </summary>
+    public void ShowContent(NodeContent content)
+    {
+        ArgumentNullException.ThrowIfNull(content);
+        if (!string.Equals(SelectedNodeId, content.NodeId, StringComparison.Ordinal)) { return; }
+
+        switch (content.RenderKind)
+        {
+            case NodeContentKind.None:
+                SetContent(NodeReaderContentState.None, () => Sentence(content.Shortfall ?? "No inline content for this node."));
+                break;
+
+            case NodeContentKind.Text when string.Equals(content.Language, "markdown", StringComparison.OrdinalIgnoreCase):
+                SetContent(NodeReaderContentState.Markdown, () => WithShortfall(content.Shortfall, new ScrollViewer
+                {
+                    VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                    HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                    Padding = new Thickness(16, 8, 16, 14),
+                    Content = new ProseView { Text = content.Content },
+                }));
+                break;
+
+            case NodeContentKind.Html:
+                ShowHtml(content);
+                break;
+
+            case NodeContentKind.Text:
+                SetContent(NodeReaderContentState.Text, () => Code(content), CodeFocusTarget());
+                break;
+
+            default:
+                SetContent(NodeReaderContentState.Code, () => Code(content), CodeFocusTarget());
+                break;
+        }
+    }
+
+    private void ShowHtml(NodeContent content)
+    {
+        if (_html is { Unavailable: { } reason })
+        {
+            ShowHtmlFallback(content, reason);
+            return;
+        }
+
+        if (_html is null)
+        {
+            var host = new HtmlSandboxHost("explorer-reader-html");
+            // The runtime reports once, at start; a host that failed stays failed, so every later
+            // HTML node takes the fallback at once rather than waiting on a sandbox that never comes.
+            host.SandboxUnavailable += why =>
+            {
+                if (ContentState == NodeReaderContentState.Html && SelectedNodeId is { } id && _htmlShown is { } shown && shown.NodeId == id)
+                {
+                    ShowHtmlFallback(shown, why);
+                }
+            };
+            _html = host;
+        }
+
+        _htmlShown = content;
+        _html.Show(content.Content);
+        SetContent(NodeReaderContentState.Html, () => WithShortfall(content.Shortfall, _html), _html.View);
+    }
+
+    private void ShowHtmlFallback(NodeContent content, string reason)
+    {
+        var fallback = content with { RenderKind = NodeContentKind.Code, Language = "html" };
+        SetContent(
+            NodeReaderContentState.HtmlFallback,
+            () => WithShortfall("Shown as source — the HTML sandbox is not available: " + reason, Code(fallback)),
+            CodeFocusTarget());
+    }
+
+    private CodeViewerView Code(NodeContent content)
+    {
+        _code ??= new CodeViewerView("Source");
+        _code.Show(content);
+        return _code;
+    }
+
+    private UIElement CodeFocusTarget() => (_code ??= new CodeViewerView("Source")).FocusTarget;
+
+    /// <summary>The authority's shortfall above the content, when there is one.</summary>
+    private static UIElement WithShortfall(string? shortfall, UIElement body)
+    {
+        if (string.IsNullOrEmpty(shortfall)) { return body; }
+
+        var panel = new DockPanel { LastChildFill = true };
+        var banner = Muted(shortfall, 12);
+        banner.Margin = new Thickness(16, 8, 16, 4);
+        DockPanel.SetDock(banner, Dock.Top);
+        panel.Children.Add(banner);
+        panel.Children.Add(body);
+        return panel;
+    }
+
+    private static TextBlock Sentence(string text)
+    {
+        var block = Muted(text, 12.5);
+        block.Margin = new Thickness(16, 10, 16, 14);
+        AutomationProperties.SetLiveSetting(block, AutomationLiveSetting.Polite);
+        return block;
+    }
+
+    private void SetIdle() =>
+        SetContent(NodeReaderContentState.Idle, () => Sentence("Right-click the node and choose View source to read it here."));
+
+    /// <summary>
+    /// Places what <paramref name="build"/> makes in the content area and re-caps the top row. The focus
+    /// stops end at <paramref name="focusable"/> when the content can take focus, so the Tab
+    /// boundary (spec US-E7/E8) stays truthful.
+    /// </summary>
+    private void SetContent(NodeReaderContentState state, Func<UIElement> build, UIElement? focusable = null)
+    {
+        ContentState = state;
+
+        // Release the previous element FIRST: a retained renderer (the code viewer, the sandbox
+        // host) may sit inside a wrapper the previous state built, and it can only be parented
+        // into the next one once it has left the last.
+        if (_contentArea.Content is UIElement old)
+        {
+            _contentArea.Content = null;
+            if (old is Panel wrapper) { wrapper.Children.Clear(); }
+        }
+
+        _contentArea.Content = build();
+
+        _focusStops.RemoveAll(stop => !ReferenceEquals(stop, this) && stop is not Button);
+        if (focusable is not null) { _focusStops.Add(focusable); }
+
+        _top.MaxHeight = TopMaxHeight(ActualHeight, state != NodeReaderContentState.Idle);
+    }
+
+    /// <summary>Releases the HTML sandbox's browser (a child process), if one was ever created.</summary>
+    public void Dispose()
+    {
+        if (_disposed) { return; }
+        _disposed = true;
+        _html?.Dispose();
+    }
 
     public NodeReaderView()
     {
         SetResourceReference(BackgroundProperty, "SurfaceBrush");
         AutomationProperties.SetName(this, "Node reader");
+
+        _layout.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        _layout.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        Grid.SetRow(_top, 0);
+        Grid.SetRow(_contentArea, 1);
+        _layout.Children.Add(_top);
+        _layout.Children.Add(_contentArea);
+        SizeChanged += (_, e) => _top.MaxHeight = TopMaxHeight(e.NewSize.Height, ContentState != NodeReaderContentState.Idle);
         // Focusable so a Tab off the graph canvas can land here even when the reader is empty — the
         // canvas is a keyboard trap (ADR-0015) and the reader is its escape while Explorer is active.
         Focusable = true;
@@ -131,6 +357,7 @@ public sealed class NodeReaderView : ContentControl
         WalkableEdgeCount = 0;
         _focusStops.Clear();
         _focusStops.Add(this);
+        SetIdle();
         Content = EmptyState();
     }
 
@@ -149,7 +376,11 @@ public sealed class NodeReaderView : ContentControl
         // in order. Build appends the buttons.
         _focusStops.Clear();
         _focusStops.Add(this);
-        Content = Build(node, visible);
+        _top.Content = Build(node, visible);
+        // Content belongs to a node: a new selection starts idle, and a reply still in flight for
+        // the previous one is discarded by ShowContent's id check.
+        SetIdle();
+        Content = _layout;
     }
 
     private static UIElement EmptyState()
@@ -187,12 +418,6 @@ public sealed class NodeReaderView : ContentControl
         root.Children.Add(Text(node.Label, 15, FontWeights.SemiBold));
         root.Children.Add(Muted(typeLabel + (node.Context is { Length: > 0 } c ? "  ·  " + c : ""), 12));
 
-        // Content placeholder — honest about what Phase 2 will add (ADR-0018 node-content-reader-contract).
-        root.Children.Add(Divider());
-        root.Children.Add(Muted(
-            "Rich content (rendered markdown/html, syntax-highlighted code) arrives with the "
-            + "node-content query (ADR-0018 node-content-reader-contract).", 12.5));
-
         // Metadata.
         root.Children.Add(Divider());
         root.Children.Add(MetaRow("id", node.Id));
@@ -221,35 +446,62 @@ public sealed class NodeReaderView : ContentControl
             }
         }
 
-        return new ScrollViewer
-        {
-            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-            Content = root,
-        };
+        root.Children.Add(Divider());
+        return root;
     }
 
+    /// <summary>The one size every block of an edge row renders at (Ruling 92: one baseline).</summary>
+    internal const double EdgeRowFontSize = 12;
+
+    /// <summary>The predicate column's minimum width, so the targets align down the list.</summary>
+    internal const double EdgeRowPredicateMinWidth = 104;
+
+    /// <summary>
+    /// One typed edge as a walkable row (Ruling 92): a three-column grid — predicate (Auto, min
+    /// <see cref="EdgeRowPredicateMinWidth"/>) · target (*) · status (Auto) — every block at
+    /// <see cref="EdgeRowFontSize"/> on one baseline, the status told apart by the muted ink and
+    /// never by a smaller size, inside a button whose own template stretches its presenter. The
+    /// App's implicit Button style centres its presenter and ignores
+    /// <c>HorizontalContentAlignment</c>, which is what floated every row to the middle and made
+    /// the status a superscript beside a larger target — so the row carries its template rather
+    /// than depending on the style.
+    /// </summary>
     private Button EdgeRow(string rel, string target, string status)
     {
-        var row = new DockPanel { LastChildFill = true, Margin = new Thickness(0, 1, 0, 1) };
-        var relText = Muted(rel, 12);
-        relText.MinWidth = 104;
-        DockPanel.SetDock(relText, Dock.Left);
+        var row = new Grid();
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto, MinWidth = EdgeRowPredicateMinWidth });
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+        var relText = Muted(rel, EdgeRowFontSize);
+        relText.TextWrapping = TextWrapping.NoWrap;
+        relText.VerticalAlignment = VerticalAlignment.Center;
+        Grid.SetColumn(relText, 0);
         row.Children.Add(relText);
-        var statusText = Muted(status, 11);
-        statusText.HorizontalAlignment = HorizontalAlignment.Right;
-        DockPanel.SetDock(statusText, Dock.Right);
+
+        var targetText = Text(target, EdgeRowFontSize, FontWeights.Normal);
+        targetText.VerticalAlignment = VerticalAlignment.Center;
+        Grid.SetColumn(targetText, 1);
+        row.Children.Add(targetText);
+
+        var statusText = Muted(status, EdgeRowFontSize);
+        statusText.TextWrapping = TextWrapping.NoWrap;
+        statusText.VerticalAlignment = VerticalAlignment.Center;
+        statusText.Margin = new Thickness(12, 1, 0, 1);
+        Grid.SetColumn(statusText, 2);
         row.Children.Add(statusText);
-        row.Children.Add(Text(target, 13, FontWeights.Normal));
 
         var button = new Button
         {
             Content = row,
-            Padding = new Thickness(8, 5, 8, 5),
+            Padding = new Thickness(0, 4, 0, 4),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
             HorizontalContentAlignment = HorizontalAlignment.Stretch,
             Background = Brushes.Transparent,
             BorderThickness = new Thickness(0),
             Cursor = System.Windows.Input.Cursors.Hand,
             Tag = target,
+            Template = EdgeRowTemplate(),
         };
         AutomationProperties.SetName(button, $"Walk {rel} {target}");
         button.Click += (_, _) =>
@@ -260,6 +512,53 @@ public sealed class NodeReaderView : ContentControl
             }
         };
         return button;
+    }
+
+    /// <summary>
+    /// The edge row's own button template: a chrome border whose presenter <b>stretches</b>, the
+    /// hover ground and the focus ring the App's chrome template gives every other button. Built
+    /// with <see cref="FrameworkElementFactory"/>, whose part names the template's own name scope
+    /// registers (DC-166 is the Style built without one).
+    /// </summary>
+    private static ControlTemplate EdgeRowTemplate()
+    {
+        var root = new FrameworkElementFactory(typeof(Grid));
+
+        // The chrome carries the padding and the hover ground; its border is zero so the row's
+        // first column starts exactly where the metadata labels start.
+        var chrome = new FrameworkElementFactory(typeof(Border), "Chrome");
+        chrome.SetValue(Border.CornerRadiusProperty, new CornerRadius(4));
+        chrome.SetValue(Border.BackgroundProperty, new TemplateBindingExtension(Control.BackgroundProperty));
+        chrome.SetValue(Border.PaddingProperty, new TemplateBindingExtension(Control.PaddingProperty));
+        chrome.SetValue(Border.BorderThicknessProperty, new Thickness(0));
+
+        var presenter = new FrameworkElementFactory(typeof(ContentPresenter), "Content");
+        presenter.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
+        presenter.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+        chrome.AppendChild(presenter);
+        root.AppendChild(chrome);
+
+        // The focus ring is an overlay drawn outside the chrome (the App's own idiom), never a
+        // border that would shift the content.
+        var ring = new FrameworkElementFactory(typeof(Border), "FocusRing");
+        ring.SetValue(FrameworkElement.MarginProperty, new Thickness(-1));
+        ring.SetValue(Border.BorderThicknessProperty, new Thickness(2));
+        ring.SetValue(Border.BorderBrushProperty, Brushes.Transparent);
+        ring.SetValue(Border.CornerRadiusProperty, new CornerRadius(4));
+        ring.SetValue(UIElement.IsHitTestVisibleProperty, false);
+        root.AppendChild(ring);
+
+        var template = new ControlTemplate(typeof(Button)) { VisualTree = root };
+
+        var hover = new Trigger { Property = UIElement.IsMouseOverProperty, Value = true };
+        hover.Setters.Add(new Setter(Border.BackgroundProperty, new DynamicResourceExtension("MenuHoverBrush"), "Chrome"));
+        template.Triggers.Add(hover);
+
+        var focused = new Trigger { Property = UIElement.IsKeyboardFocusedProperty, Value = true };
+        focused.Setters.Add(new Setter(Border.BorderBrushProperty, new DynamicResourceExtension("FocusBrush"), "FocusRing"));
+        template.Triggers.Add(focused);
+
+        return template;
     }
 
     private UIElement MetaRow(string key, string value)

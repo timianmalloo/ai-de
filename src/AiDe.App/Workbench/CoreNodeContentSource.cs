@@ -49,6 +49,7 @@ public sealed class CoreNodeContentSource(IWorkspaceQueries queries) : INodeCont
     {
         Core.Projections.NodeContentKind.Code => NodeContentKind.Code,
         Core.Projections.NodeContentKind.Text => NodeContentKind.Text,
+        Core.Projections.NodeContentKind.Html => NodeContentKind.Html,
 
         // Includes None, and anything a later Core adds. See the remarks: falling back to
         // metadata+edges is the honest answer to "this build does not know how to render that".
