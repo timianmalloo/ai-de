@@ -1,6 +1,6 @@
 ---
 id: note-addendum-c-council-rulings
-title: "Decision note — Rulings 50–90: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
+title: "Decision note — Rulings 50–91: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
 type: doc
 status: accepted
 owner: "@timianmalloo"
@@ -1515,3 +1515,30 @@ Issued by the **Owner** (`fable`) at `main` `3e5b04f6` on SH-4.2's recorded devi
 **CONDITIONS:** (1) C5 keeps asserting *unchecking closes* and *the verb focuses, count 1*. (2) The hosted help text stays state-neutral. (3) The decision note's status moves `draft` → accepted, citing this ruling.
 
 **RECORD AS:** Ruling 90 — the Console toggle closes on its second press, the verb focuses (Ruling 89 amended, UIA Toggle honesty); Ruling 88's "refuses every drag" premise corrected (Bottom kept-but-tied, Left/Right refused, 9 of 10 rows red); SH-4.2 deviation ratified.
+
+---
+
+## Ruling 91 — the operator's decision filed: F5 merges to `main` before its exit run; the gesture is performed on the current build (Ruling 79's "run on the frozen tree" superseded)
+
+**RULING (the operator's words, 2026-09-14: "merge F5 and proceed"):** `feature/exit-evidence`
+(frozen at `135e05e1`, 21 commits) merges to `main` now — the session-origin stamp, the nine-clause
+exit oracle and its CI gate, the front-door Proof Pack with its `RUN-PENDING` clauses intact. The
+exit run's gesture (Ruling 49: the operator's own File → New Session; no headless entry) is performed
+on the **current** build, so the front-door evidence is about the product the operator uses. The
+Proof Pack's clauses 2, 3, 5, 6 and 9 stay `RUN-PENDING` until that gesture; the pack's own words
+hold: nothing in it is evidence the front door works until a row says a gesture happened.
+
+**BECAUSE:** The frozen build predates every Addenda C/D slice — the six-field composer, no
+perspectives, the pre-Ruling-73 lease. A gesture on it would prove a front door that no longer
+exists as shipped. Ruling 79 froze the tree so the run could happen without the join's churn; the
+churn is over. Merging first costs one join; running frozen costs an obsolete proof.
+
+**CONFIDENCE:** Verified for the tree's state (`git rev-list --count main..feature/exit-evidence` =
+21); the merge's conflicts are the join's to measure.
+
+**SCOPE EFFECT:** Ruling 79's second clause superseded; Ruling 49 unchanged (the gesture remains the
+trigger). F5's oracle (`tools/verify-front-door-exit.py` or its equivalent) must run green on the
+merged tree in its self-test form and `RUN-PENDING` form.
+
+**RECORD AS:** Ruling 91 — F5 merges to `main` unrun; the exit run's gesture is performed on the
+current build; Ruling 79's "run on the frozen tree" superseded; Ruling 49 stands.
