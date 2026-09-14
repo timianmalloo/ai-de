@@ -481,3 +481,7 @@
 {"agent": "claude-conductor", "at": 1789392676.122348, "code": null, "kind": "allowed", "path": "site/model.html", "session": "claude-conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789392676.1283476, "code": null, "kind": "allowed", "path": "tools/expected-test-counts.json", "session": "claude-conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789392676.134851, "code": null, "kind": "allowed", "path": "tools/run-verify-gates.py", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789392866.3066235, "code": null, "kind": "allowed", "path": ".agents/decisions/claude-conductor-addendum-c.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789392866.3136227, "code": null, "kind": "allowed", "path": ".agents/decisions/copilot-atlas-fleet-45bbc625.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789392866.319694, "code": null, "kind": "allowed", "path": ".agents/log/copilot-atlas-fleet-45bbc625.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789392866.3256953, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/ConsoleSplitPlacementTests.cs", "session": "claude-conductor-addendum-c", "wi": ""}

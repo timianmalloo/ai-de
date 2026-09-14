@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T13:31:13Z",
+  "generated": "2026-09-14T13:41:37Z",
   "audit": [
     {
       "actor": null,
@@ -15498,6 +15498,34 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T13:23:39Z",
       "duration_seconds": 453.0
+    },
+    {
+      "id": "al-01M2G2DPY7XVRT1NQCGBJGVXRT",
+      "shortname": "join-f5-exit-evidence-2",
+      "datetime": "2026-09-14T13:41:36Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (the join of the resolved merge)",
+      "summary": "The F5 join, second pass: the first pass stopped at the runner (one order-dependent red - ConsoleSplitPlacementTests read Keyboard.FocusedElement, null when another class's window held the keyboard; now the document's focus scope) and the join script now reads the recount's outcome at step 4 before any commit. F5 (135e05e1) is on main under Ruling 91 with its oracle in self-test form until the gesture's record exists; X-6 (the caret, the disclosure rows) rides along. recount_seconds=429 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/conductor-front-door.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land F5 and X-6 on main green",
+      "done_when": "main pushed green through the runner; Release built",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T13:34:26Z",
+      "duration_seconds": 430.0
     }
   ],
   "changes": [
