@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T22:48:57Z",
+  "generated": "2026-09-14T22:55:45Z",
   "audit": [
     {
       "actor": null,
@@ -16729,6 +16729,38 @@ window.AUDIT_DATA = {
         "branch": "conductor/code-atlas",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2H24BQRANRVZ2MP7RJK5WWW",
+      "shortname": "atlas-owner74-budget-test-consolidation",
+      "datetime": "2026-09-14T22:55:44Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner74choosesB:16NEWleaves samewriter/tree now3EXACTtestfiles includingAtlasReadBudgetTests; unusedprior2nottransferred andold~35/24preserved. Deleteduplicatequeuefixture, repaircoupledclassacrossthreeexistingbudgettests withprimary-secondaryexceptionobjects andactualfailurecontrols. Rootpropertysets/valuesminusoutline, exactclassvalue, root+rowcorruptionmustfailbeforecodec. Same16leafwriterdispatched; nohelperfile/prod changes. Fresh12reviewleaves4each andmain590. Currentaa27/27rawbaselineunchanged, nojoin. Ledger39done4progress; E1productseamsstillopen, no main/push/normativeE.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Consolidate and qualify cleanup-safe nonvacuous test controls",
+      "done_when": "One budget-test home and exact JSON isolation survive retained fault controls and independent review",
+      "tier": "T2",
+      "main_calls": 563,
+      "main_budget": 590,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T22:55:44Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "24e8d1b7a43489c9462fb61862f3b21b82c8c9e6",
+        "short": "24e8d1b7a",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -20760,6 +20792,29 @@ window.AUDIT_DATA = {
           "c9617fb7 docs(atlas): reconcile E1 source and compatibility contracts",
           "502e1495 docs: design bounded E1 concrete class and member views"
         ]
+      }
+    },
+    {
+      "id": "cl-01M2H24BKTPXHX7HV17M0KR2WN",
+      "datetime": "2026-09-14T22:55:44Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "decision",
+      "skill": "implement",
+      "title": "Consolidate qualification resource controls into one budget-test home",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner74 explicitly grants existing AtlasReadBudgetTests as third test file, deletes duplicate new queue test, and scopes one 16-leaf consolidation. Fix inherited class once; whole-root JSON isolation and exact supplied values remain mandatory. No product changes.",
+      "rationale": "Parent and Owner observed the same assertion-before-release/permissive-charge shape in the copied prior-art test. Maintaining two helpers repeats the defect surface; one authoritative test home preserves scope and controls.",
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "24e8d1b7",
+        "after": "24e8d1b7a43489c9462fb61862f3b21b82c8c9e6",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
       }
     }
   ]

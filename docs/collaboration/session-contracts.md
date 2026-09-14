@@ -1046,6 +1046,29 @@ Security-SRE, after parent replay of one repaired pin. Earlier review budgets
 remain spent. Conductor's cumulative ceiling rises prospectively to 560.
 No main/push, normative Addendum E or programme closure follows.
 
+Owner turn 74 selects one authoritative budget-test home and grants sixteen new
+consolidation leaves to the same qualification writer/tree. Exactly one existing
+third file is newly admitted:
+`tests/AiDe.Core.Tests/Understanding/AtlasReadBudgetTests.cs`, alongside the two
+qualification files already assigned. No helper file or production edit is
+granted, and the two unused leaves from the preceding pass are not transferred.
+
+Claim all three paths. Delete the duplicate queue test from the new reader
+contract tests; repair the existing budget tests with exact charges, one cleanup
+path, every returned reservation/outcome captured, release/drain before assertions
+and original primary/secondary exception objects retained. Exercise unexpected
+success, fault, simultaneous failures and partial construction; sweep the newly
+admitted file's other tests for that same coupled acquisition/cleanup class.
+The row tests must compare the complete root after excluding only `outline`,
+preserve/assert exact supplied values, and reject old root-plus-row corruption
+independently of decoder rejection. Keep occurrence nonvacuity and context checks.
+Retain unique control/red receipts, freeze a single candidate and report actual
+counts. Existing E0 baseline evidence remains separate from missing E1 features.
+
+Twelve new reviews are funded, four each Test/Core Security-SRE/C#, against that
+same candidate after parent replay. Conductor's cumulative ceiling rises
+prospectively to 590. No E1 product, main/push, normative E or programme grant.
+
 ### Core owns
 
 | Path | Why |
