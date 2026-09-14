@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 122 · partially-controlled 67 · uncontrolled 33
+**Status counts:** controlled 125 · partially-controlled 67 · uncontrolled 33
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -8041,3 +8041,30 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Sweep:** the App tests' `Until` helpers (`grep -rn "Until(" tests/AiDe.App.Tests`); the pattern is the test idiom, not `src/`.
 - **Control:** the helper pumps after the condition holds (`UntilAsync`); an oracle over a derived row asserts after a pump, never directly after the source condition.
 - **Status:** `controlled` — a test-idiom class.
+
+### DC-223 — A launch resolver that composes a path without probing it lets "installed" be asserted by each caller's own probe, and one caller reads the wrong argument as the file
+
+- **Shape:** `EngineCatalog.ResolveLaunch` composes `<root>/node_modules/<package>/<entry>` (or a native command) and never touches disk, by design — its callers spawn the result and the spawn fails by name. Two other callers needed "is it installed?" and each probed `File.Exists` on its own reading of the launch: first use on the adapter entry; the New Session sheet on `Arguments[0]` — which for a Native row is `--acp`, not a file, so every native engine would have read *not configured* forever.
+- **Signature:** two `File.Exists(launch.Arguments[0])` sites with different meanings; a native engine that is installed and on PATH shown as *not configured*.
+- **Instance (2026-09-14):** the accounts lane's finding (a) and its seam request `req-01M2GQ9TCC65J8WAX0NZ55DA9X`; the sheet's `LaunchRefusal` (`NewSessionSheetViewModel.cs`) and `FirstUse.InstallAdapterAsync`.
+- **Sweep:** `grep -rn "Arguments\[0\]" src/` — the two sites, both repointed.
+- **Control:** `EngineCatalog.InstallRefusal(engineId, root[, locator])` — the one derivation: an adapter's entry on disk, a native CLI's executable resolved (a bare PATH name vouched for by the locator, a path checked on disk), a row that cannot launch reading its launch refusal; `TheCatalogKnowsWhatIsInstalledAndWhatModelTests` (the native row's reading contains no `--acp`). `ResolveLaunch` stays pure.
+- **Status:** `controlled`.
+
+### DC-224 — A catalog row with no default model forces the first-use writer to name one in code: two homes for "the engine's model"
+
+- **Shape:** the file's `engines.<id>.model` is written by first use from a value the catalog row did not carry, so a `switch` in a dialog named the model per engine — the DM7 signature (two definitions of one quantity), with the wire-observed value cited in a comment instead of held by the row.
+- **Signature:** `DefaultModelFor(engineId) => engineId switch { … }` in a view; the row's fields end at the launch.
+- **Instance (2026-09-14):** the accounts lane's finding (b) and seam request `req-01M2GQ9TF5T85K438JKWN8Q0DK`; `ConfigureProviderDialog.DefaultModelFor`.
+- **Sweep:** the model's other readers (`ProviderConfiguration.ReadEngines` reads the file; the run request carries the bound model) — one producer once the row holds it.
+- **Control:** `EngineRow.DefaultModel`, set per row from the spike's observed `currentModelId` / `availableModels` with the citation on the row; the dialog reads the row; the theory `EveryRowCarriesTheModelObservedOnItsWire` pins the five values and fails on a new row that carries none.
+- **Status:** `controlled`.
+
+### DC-225 — A PATH resolver that tries the bare name first on Windows picks an extensionless POSIX script over its `.cmd` shim, and CreateProcess refuses it
+
+- **Shape:** node's global bin directory holds both `npm` (a POSIX shell script, no extension) and `npm.cmd`; a resolver that probes `<dir>/<name>` before `<dir>/<name>.<PATHEXT>` finds the script first, and `CreateProcess` refuses a file Windows cannot execute. Unit tests whose stand-ins were `.cmd` files never saw it.
+- **Signature:** *"npm did not start: %1 is not a valid Win32 application"* (or the equivalent) from a machine where `npm --version` works in a shell; green unit tests, red on the first real run.
+- **Instance (2026-09-14):** found by the fresh-machine oracle on its first run (Ruling 104 condition 2); `FirstUse.Which` fixed to prefer `PATHEXT` extensions on Windows; `FirstUseTests.OnWindowsThePathResolverPrefersPathextOverAnExtensionlessScript`.
+- **Sweep:** `NativeCommandLocator` (the engines lane's, `EngineCatalog.cs:115-160`) resolves with the same rule — read, and it probes extensions first on Windows.
+- **Control:** the named test; the rule for the next resolver: on Windows, `PATHEXT` candidates before the bare name.
+- **Status:** `controlled`.

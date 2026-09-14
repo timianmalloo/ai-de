@@ -76,3 +76,17 @@ as `verify-stranded-audit` says), so the message should read git's own reason ba
 (2) DC-216: parallel lanes under one conductor overwrote each other's `audit-summary.txt` — a scratch
 path keyed by the harness session rather than the lane's `AGENT_SESSION`; every lane sets
 `AGENT_SESSION` first, so it is the right key.
+
+**The join and the coordination ledgers (2026-09-14, the accounts and engines joins).** Three joins
+in a row stopped at step 1 for the same reason and the script named none of them: the primary's
+`.agents/*.jsonl` ledgers (append-only, written by the pre-commit boundary on every commit — so the
+conductor's own decisions file is dirty the instant after it is committed) collide with a lane
+branch that carries older copies of the same files, and `git merge` refuses with *"Your local
+changes … would be overwritten"* or conflicts on them. The resolution is always the same: the
+primary's copy wins (it is the live append-only record). Two pack changes: (1) `conductor-join.py`
+step 1 reads git's own reason back and, for `.agents/` paths, commits the primary's copies first and
+resolves a ledger conflict to `--ours` automatically — a derived-or-ledger file is never resolved
+by hand; (2) the lane brief's "commit with `git add <paths>`, never `-A`" is not enough: a lane's
+*merge* of main stages every ledger the primary has since written, so the join contract should
+list `.agents/` as ledger-class paths the join owns, and `coord worktree new` should exclude them
+from the lane's index the way derived views are excluded.

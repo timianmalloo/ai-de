@@ -125,6 +125,17 @@ counts, per-event latency, the run's root count) — carried as residuals in
 | W-5 | **Cancel** on b2 | the row reads *cancelled by you · never sent*; your words are back in the editor | 95 |
 | W-6 | click **Start a parallel session** | a second tab *<this session> (2)* docks Left beside this one, same engine; your prompt is its b1, already sent; the Console shows two engine processes and both threads progress at once | 95 |
 
+### Accounts and first use (Rulings 105, 104, 97(i) — `docs/proof/accounts-and-first-use.md`; the build after main `b6cce995`)
+
+| # | Do | Expect | Proves |
+|---|---|---|---|
+| F-1 | on THIS machine: Ctrl+N | the sheet lists accounts under every provider (anthropic · github · openai · google · xai): *max* under anthropic reads *ready*; the others read *no account — Configure…* or *not configured* with the reason; Create is enabled; the footer sentence when nothing is ready | 105 · 97(i) |
+| F-2 | type a prompt; look at the decoration line | *This turn · account: max ▾*; open it: the session's accounts, non-ready ones disabled with their state | 105 |
+| F-3 | Session settings → change the default account | the next turn's decoration reads the new default; earlier turns unchanged | 105 |
+| F-4 | Configure… on `github` | the sign-in instruction reads `copilot login` (or `copilot login --host https://<tenant>.ghe.com`) and the install line for the CLI, cited to the spike | 104 · 97 |
+| F-5 | **on the second machine** (no `~/.aide/providers.json`): the six steps in the proof doc's attended table — record versions, the install's exit code and duration, the written path, the picker's value | first use end to end; this is Ruling 104 condition 4 and the one row only you can run | 104 |
+| F-6 | after F-5: `copilot login --host …` with the work account, then a session on the github account | a turn runs with no Claude account on that machine (Ruling 105 (4)'s second acceptance question) | 105 |
+
 ## What the conductor already ran (not yours)
 
 PD-5's runs 2 and 3 (the pin on the wire, `strictMcpConfig` verified), the dry runs, every headless oracle in every Proof Pack, the whole-suite recounts at every join (App 952 / Core 2632), the census (177 pairings, 0 below floor), the Release builds.
