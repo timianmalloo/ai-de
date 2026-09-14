@@ -26,6 +26,52 @@ internal sealed record AtlasMembershipWatchOwnership(
     bool OverlappedOwned, bool Disposed, int DisposeCalls, int ExplicitCancelCalls,
     bool? CancelSucceeded, int? CancelError);
 
+internal sealed class AtlasInjectedCleanupTimeout(string label) : IOException(label)
+{
+    internal string Label { get; } = label;
+}
+
+internal sealed class AtlasRetainedCleanupException(string label) : IOException(label);
+internal sealed record AtlasCleanupCharges(
+    int Capacity, int ChargedOwners, int RetainedOwners, int RetainedPins, int RetainedCreations,
+    int WatchBuffers, int IssuerLeases, int IssuerThreads);
+
+/// <summary>Labelled qualification faults before completion acknowledgement; not a simulated kernel stall.</summary>
+internal sealed class AtlasCleanupFaultPlan
+{
+    internal string? PinPath;
+    internal int PinTimeout;
+    internal int CanceledCreationTimeout;
+    internal int IssuerDrainTimeout;
+    internal Action? AfterNativeCreation;
+    internal WeakReference<IDisposable>? FailedResource;
+
+    internal void BeforePinCleanup(string path, IDisposable resource)
+    {
+        if (string.Equals(path, PinPath, StringComparison.OrdinalIgnoreCase)
+            && Interlocked.Exchange(ref PinTimeout, 0) != 0)
+        {
+            FailedResource = new(resource);
+            throw new AtlasInjectedCleanupTimeout("qualification-pin-completion-timeout");
+        }
+    }
+
+    internal void BeforeCanceledCreationCleanup(IDisposable resource)
+    {
+        if (Interlocked.Exchange(ref CanceledCreationTimeout, 0) != 0)
+        {
+            FailedResource = new(resource);
+            throw new AtlasInjectedCleanupTimeout("qualification-canceled-creation-completion-timeout");
+        }
+    }
+
+    internal void BeforeIssuerDrain()
+    {
+        if (Interlocked.Exchange(ref IssuerDrainTimeout, 0) != 0)
+            throw new AtlasInjectedCleanupTimeout("qualification-issuer-drain-completion-timeout");
+    }
+}
+
 /// <summary>
 /// Qualification-only capture. No issuer, scope grant, content permission or production registration
 /// consumes this candidate until the parent Security gate accepts NQ1 and NQ2.
@@ -49,6 +95,18 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
     internal Action<int>? ProcessStartedForQualification { get; set; }
     // Explicit qualification sink only. Paths and notification names never enter the ordinary metrics/reasons.
     internal Action<AtlasMembershipDiagnostic>? DiagnosticForQualification { get; set; }
+    internal AtlasCleanupFaultPlan? CleanupFaultsForQualification { get; set; }
+    internal static int LiveWatchBuffersForQualification => NativeDirectoryChange.LiveBuffers;
+    internal static AtlasCleanupCharges CleanupChargesForQualification => CleanupLedger.Read();
+    internal static AtlasCleanupCharges RetryRetainedCleanup()
+    {
+        foreach (var owner in CleanupLedger.RetryableOwners())
+        {
+            try { owner.Dispose(); }
+            catch (AtlasRetainedCleanupException) { }
+        }
+        return CleanupLedger.Read();
+    }
 
     internal async ValueTask<AtlasMembershipSnapshot> CaptureForQualificationAsync(
         string sourceRoot, AtlasObjectIdentity expectedRootIdentity, CancellationToken cancellationToken)
@@ -57,7 +115,7 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
         var invocations = 0;
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         deadline.CancelAfter(TimeSpan.FromSeconds(30));
-        var pins = new PinSet(DiagnosticForQualification, deadline.Token);
+        var pins = new PinSet(DiagnosticForQualification, deadline.Token, CleanupFaultsForQualification);
         try
         {
             deadline.Token.ThrowIfCancellationRequested();
@@ -143,20 +201,30 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
         catch (CaptureFailure failure)
         {
             Observe("capture-refused-" + failure.Code);
-            pins.Dispose();
-            return Finish(failure.State, failure.Code, [], null, null, null, null);
+            return Fail(failure.State, failure.Code);
         }
         catch (OperationCanceledException)
         {
-            pins.Dispose();
-            return Finish(cancellationToken.IsCancellationRequested ? AtlasMembershipCaptureState.Canceled
-                : AtlasMembershipCaptureState.BudgetExceeded, "capture-canceled-or-deadline", [], null, null, null, null);
+            return Fail(cancellationToken.IsCancellationRequested ? AtlasMembershipCaptureState.Canceled
+                : AtlasMembershipCaptureState.BudgetExceeded, "capture-canceled-or-deadline");
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or Win32Exception
             or DecoderFallbackException or ArgumentException or InvalidOperationException)
         {
-            pins.Dispose();
-            return Finish(AtlasMembershipCaptureState.Unavailable, "native-or-git-evidence-unavailable", [], null, null, null, null);
+            return Fail(AtlasMembershipCaptureState.Unavailable, "native-or-git-evidence-unavailable");
+        }
+
+        AtlasMembershipSnapshot Fail(AtlasMembershipCaptureState state, string reason)
+        {
+            try
+            {
+                pins.Dispose();
+                return Finish(state, reason, [], null, null, null, null);
+            }
+            catch (AtlasRetainedCleanupException)
+            {
+                return Finish(AtlasMembershipCaptureState.Unavailable, "native-cleanup-retained", [], null, null, null, pins);
+            }
         }
 
         AtlasMembershipSnapshot Finish(AtlasMembershipCaptureState state, string? reason, AtlasMembershipEntry[] entries,
@@ -377,16 +445,76 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
 
     internal sealed record Association(string Repository, string GitDirectory, string CommonDirectory, string Index);
 
+    /// <summary>One pre-reserved strong owner per capture. Retained debt blocks new admission.</summary>
+    private static class CleanupLedger
+    {
+        private static readonly object Gate = new();
+        private static readonly Dictionary<PinSet, bool> Owners = [];
+        internal const int Capacity = MaxNativeHandles / 2;
+
+        internal static void Reserve(PinSet owner)
+        {
+            lock (Gate)
+            {
+                Require(!Owners.Values.Any(retained => retained), AtlasMembershipCaptureState.Unavailable,
+                    "retained-cleanup-blocks-admission");
+                Require(Owners.Count < Capacity, AtlasMembershipCaptureState.BudgetExceeded, "cleanup-owner-budget");
+                Owners.Add(owner, false);
+            }
+        }
+
+        internal static void Retain(PinSet owner)
+        {
+            lock (Gate)
+            {
+                if (Owners.ContainsKey(owner))
+                    Owners[owner] = true;
+            }
+        }
+
+        internal static void Release(PinSet owner)
+        {
+            lock (Gate)
+                Owners.Remove(owner);
+        }
+
+        internal static PinSet[] RetryableOwners()
+        {
+            lock (Gate)
+                return Owners.Where(pair => pair.Value && pair.Key.CleanupStarted).Select(pair => pair.Key).ToArray();
+        }
+
+        internal static AtlasCleanupCharges Read()
+        {
+            KeyValuePair<PinSet, bool>[] owners;
+            lock (Gate)
+                owners = Owners.ToArray();
+            return new(Capacity, owners.Length, owners.Count(pair => pair.Value),
+                owners.Where(pair => pair.Value).Sum(pair => pair.Key.PinCount),
+                owners.Where(pair => pair.Value).Sum(pair => pair.Key.UnpublishedCount),
+                LiveWatchBuffersForQualification, NativeWatchIssuer.LiveLeases, NativeWatchIssuer.LiveThreads);
+        }
+    }
+
     internal sealed class PinSet(
-        Action<AtlasMembershipDiagnostic>? lifecycleSink = null, CancellationToken cancellationToken = default) : IDisposable
+        Action<AtlasMembershipDiagnostic>? lifecycleSink = null, CancellationToken cancellationToken = default,
+        AtlasCleanupFaultPlan? cleanupFaults = null) : IDisposable
     {
         private readonly Dictionary<string, NativePin> _pins = new(StringComparer.OrdinalIgnoreCase);
         private bool _disposed;
         private bool _diagnosticLoss;
         private NativeWatchIssuer.Lease? _issuerLease;
+        private readonly object _cleanupGate = new();
+        private readonly List<IDisposable> _unpublished = [];
+        private bool _registered;
+        private bool _cleanupStarted;
+        internal bool CleanupStarted => Volatile.Read(ref _cleanupStarted);
+        internal int PinCount => _pins.Count;
+        internal int UnpublishedCount => _unpublished.Count;
 
         internal NativePin Add(string path, bool trackChanges, string role = "ancestor")
         {
+            Require(!_disposed, AtlasMembershipCaptureState.Refused, "disposed-capture");
             path = OrdinaryPath(path);
             if (_pins.TryGetValue(path, out var existing))
             {
@@ -396,12 +524,22 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
             }
 
             Require(_pins.Count < MaxNativeHandles / 2, AtlasMembershipCaptureState.BudgetExceeded, "native-handle-budget");
-            _issuerLease ??= NativeWatchIssuer.Acquire();
-            var pin = new NativePin(path, trackChanges, _issuerLease.Owner, cancellationToken);
+            ReserveOwner();
+            _issuerLease ??= NativeWatchIssuer.Acquire(cleanupFaults);
+            var pin = new NativePin(path, trackChanges, _issuerLease.Owner, cancellationToken, cleanupFaults, RetainUnpublished);
             pin.DiagnosticForQualification = lifecycleSink;
             pin.DiagnosticRoles.Add(role);
             _pins.Add(path, pin);
             return pin;
+        }
+
+        internal void ReserveOwner()
+        {
+            Require(!_disposed, AtlasMembershipCaptureState.Refused, "disposed-capture");
+            if (_registered)
+                return;
+            CleanupLedger.Reserve(this);
+            _registered = true;
         }
 
         internal void AddAncestors(string path)
@@ -464,14 +602,76 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
 
         public void Dispose()
         {
-            _disposed = true;
-            foreach (var pin in _pins.Values.Reverse())
+            lock (_cleanupGate)
             {
-                pin.Dispose();
+                var retry = _cleanupStarted;
+                _disposed = true;
+                _cleanupStarted = true;
+                var failures = new List<Exception>();
+                foreach (var pair in _pins.Reverse().ToArray())
+                {
+                    try
+                    {
+                        pair.Value.Dispose();
+                        _diagnosticLoss |= pair.Value.DiagnosticLoss;
+                        _pins.Remove(pair.Key);
+                    }
+                    catch (Exception failure)
+                    {
+                        failures.Add(failure);
+                        CleanupLedger.Retain(this);
+                    }
+                }
+                if (retry)
+                {
+                    foreach (var resource in _unpublished.ToArray())
+                    {
+                        try
+                        {
+                            resource.Dispose();
+                            _unpublished.Remove(resource);
+                        }
+                        catch (Exception failure)
+                        {
+                            failures.Add(failure);
+                        }
+                    }
+                }
+                else if (_unpublished.Count > 0)
+                {
+                    failures.Add(new AtlasRetainedCleanupException("unpublished-cleanup-awaits-retry"));
+                }
+                if (_pins.Count == 0 && _unpublished.Count == 0)
+                {
+                    try
+                    {
+                        _issuerLease?.Dispose();
+                        _issuerLease = null;
+                    }
+                    catch (Exception failure)
+                    {
+                        failures.Add(failure);
+                    }
+                }
+                if (failures.Count > 0)
+                {
+                    CleanupLedger.Retain(this);
+                    var label = failures.OfType<AtlasInjectedCleanupTimeout>().FirstOrDefault()?.Label ?? "native-cleanup-retained";
+                    throw new AtlasRetainedCleanupException(label);
+                }
+                CleanupLedger.Release(this);
+                _registered = false;
             }
-            _pins.Clear();
-            _issuerLease?.Dispose();
-            _issuerLease = null;
+        }
+
+        private void RetainUnpublished(IDisposable resource)
+        {
+            lock (_cleanupGate)
+            {
+                if (!_unpublished.Contains(resource))
+                    _unpublished.Add(resource);
+                CleanupLedger.Retain(this);
+            }
         }
     }
 
@@ -508,19 +708,21 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
             }
         }
 
-        internal static Lease Acquire()
+        internal static Lease Acquire(AtlasCleanupFaultPlan? cleanupFaults = null)
         {
             lock (Gate)
             {
                 var owner = _shared ??= new NativeWatchIssuer();
                 Require(!owner._stopping, AtlasMembershipCaptureState.Unavailable, "native-issuer-shutdown-pending");
                 owner._references++;
-                return new Lease(owner);
+                return new Lease(owner, cleanupFaults);
             }
         }
 
-        internal T Invoke<T>(Func<T> create, CancellationToken cancellationToken) where T : IDisposable
+        internal T Invoke<T>(Func<T> create, CancellationToken cancellationToken,
+            Action<IDisposable> retainCleanupFailure, AtlasCleanupFaultPlan? cleanupFaults = null) where T : IDisposable
         {
+            ArgumentNullException.ThrowIfNull(retainCleanupFailure);
             var completion = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
             _commands.Add(() =>
             {
@@ -532,9 +734,20 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
                 try
                 {
                     var result = create();
+                    if (cleanupFaults is not null)
+                        Interlocked.Exchange(ref cleanupFaults.AfterNativeCreation, null)?.Invoke();
                     if (cancellationToken.IsCancellationRequested)
                     {
-                        result.Dispose();
+                        try
+                        {
+                            cleanupFaults?.BeforeCanceledCreationCleanup(result);
+                            result.Dispose();
+                        }
+                        catch
+                        {
+                            retainCleanupFailure(result);
+                            throw;
+                        }
                         completion.TrySetCanceled(cancellationToken);
                     }
                     else
@@ -567,26 +780,44 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
             }
         }
 
-        private void Release()
+        private void Release(AtlasCleanupFaultPlan? cleanupFaults)
         {
             lock (Gate)
             {
-                if (--_references != 0)
+                if (_references > 1)
+                {
+                    _references--;
                     return;
-                _stopping = true;
-                _commands.CompleteAdding();
+                }
+                if (!_stopping)
+                {
+                    _stopping = true;
+                    _commands.CompleteAdding();
+                }
+                cleanupFaults?.BeforeIssuerDrain();
                 if (!_thread.Join(TimeSpan.FromSeconds(2)))
                     throw new IOException("Native issuing thread did not drain; ownership remains retained.");
                 _commands.Dispose();
+                _references = 0;
                 _shared = null;
             }
         }
 
-        internal sealed class Lease(NativeWatchIssuer owner) : IDisposable
+        internal sealed class Lease(NativeWatchIssuer owner, AtlasCleanupFaultPlan? cleanupFaults) : IDisposable
         {
             private NativeWatchIssuer? _owner = owner;
+            private readonly object _releaseGate = new();
             internal NativeWatchIssuer Owner => _owner ?? throw new ObjectDisposedException(nameof(Lease));
-            public void Dispose() => Interlocked.Exchange(ref _owner, null)?.Release();
+            public void Dispose()
+            {
+                lock (_releaseGate)
+                {
+                    if (_owner is not { } current)
+                        return;
+                    current.Release(cleanupFaults);
+                    _owner = null;
+                }
+            }
         }
     }
 
@@ -602,6 +833,8 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
         private readonly byte[] _changeRecord;
         private readonly NativeWatchIssuer? _watchIssuer;
         private readonly CancellationToken _captureCancellation;
+        private readonly AtlasCleanupFaultPlan? _cleanupFaults;
+        private readonly Action<IDisposable>? _retainUnpublished;
         private NativeDirectoryChange? _directoryChange;
         private bool _trackChanges;
         internal SortedSet<string> DiagnosticRoles { get; } = new(StringComparer.Ordinal);
@@ -616,7 +849,8 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
                 {
                     _directoryChange = _watchIssuer is null
                         ? new NativeDirectoryChange(_path)
-                        : _watchIssuer.Invoke(() => new NativeDirectoryChange(_path), _captureCancellation);
+                        : _watchIssuer.Invoke(() => new NativeDirectoryChange(_path), _captureCancellation,
+                            _retainUnpublished ?? throw new InvalidOperationException("Native owner requires a cleanup retainer."), _cleanupFaults);
                 }
                 _trackChanges = value;
             }
@@ -625,11 +859,14 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
         internal bool IsDirectory { get; }
 
         internal NativePin(string path, bool trackChanges, NativeWatchIssuer? watchIssuer = null,
-            CancellationToken captureCancellation = default)
+            CancellationToken captureCancellation = default, AtlasCleanupFaultPlan? cleanupFaults = null,
+            Action<IDisposable>? retainUnpublished = null)
         {
             _path = path;
             _watchIssuer = watchIssuer;
             _captureCancellation = captureCancellation;
+            _cleanupFaults = cleanupFaults;
+            _retainUnpublished = retainUnpublished;
             _handle = CreateFileW(path, 0x80000000, 1, IntPtr.Zero, 3, 0x02000000 | 0x00200000, IntPtr.Zero);
             if (_handle.IsInvalid)
             {
@@ -650,8 +887,19 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
             }
             catch
             {
-                _directoryChange?.Dispose();
-                _handle.Dispose();
+                try
+                {
+                    _directoryChange?.Dispose();
+                }
+                catch
+                {
+                    _retainUnpublished?.Invoke(this);
+                    throw;
+                }
+                finally
+                {
+                    _handle.Dispose();
+                }
                 throw;
             }
         }
@@ -750,6 +998,7 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
             try
             {
                 EmitDisposalDiagnostic("explicit-dispose-before");
+                _cleanupFaults?.BeforePinCleanup(_path, this);
                 _directoryChange?.Dispose();
             }
             finally
@@ -802,6 +1051,8 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
     {
         private readonly SafeFileHandle _handle;
         private readonly EventWaitHandle _completed = new(false, EventResetMode.ManualReset);
+        private static int _liveBuffers;
+        internal static int LiveBuffers => Volatile.Read(ref _liveBuffers);
         private static long _nextWatchId;
         private readonly long _watchId = Interlocked.Increment(ref _nextWatchId);
         private readonly Thread _issuer = Thread.CurrentThread;
@@ -831,6 +1082,7 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
                 if (_handle.IsInvalid)
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 _buffer = Marshal.AllocHGlobal(4096);
+                Interlocked.Increment(ref _liveBuffers);
                 _overlapped = Marshal.AllocHGlobal(Marshal.SizeOf<OverlappedRecord>());
                 Marshal.StructureToPtr(new OverlappedRecord { Event = _completed.SafeWaitHandle.DangerousGetHandle() }, _overlapped, false);
                 // Held data handles exclude writes; this notification guards namespace insertion/removal.
@@ -949,7 +1201,10 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
             if (_overlapped != IntPtr.Zero)
                 Marshal.FreeHGlobal(_overlapped);
             if (_buffer != IntPtr.Zero)
+            {
                 Marshal.FreeHGlobal(_buffer);
+                Interlocked.Decrement(ref _liveBuffers);
+            }
         }
 
         private AtlasMembershipWatchOwnership CurrentOwnership() => new(
