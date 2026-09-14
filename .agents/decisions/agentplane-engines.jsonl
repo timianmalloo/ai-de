@@ -20,3 +20,15 @@
 {"agent": "claude-lane-engines", "at": 1789411752.8016653, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/EngineCatalogTests.cs", "session": "agentplane-engines", "wi": ""}
 {"agent": "claude-lane-engines", "at": 1789411752.8110077, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/TheEnginesAnswerInitializeOnTheWireTests.cs", "session": "agentplane-engines", "wi": ""}
 {"agent": "claude-lane-engines", "at": 1789411752.8200076, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/TheSessionNewFrameIsEngineAppropriateTests.cs", "session": "agentplane-engines", "wi": ""}
+{"agent": "claude-lane-engines", "at": 1789412899.562217, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "agentplane-engines", "wi": ""}
+{"agent": "claude-lane-engines", "at": 1789412899.5702167, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "agentplane-engines", "wi": ""}
+{"agent": "claude-lane-engines", "at": 1789412899.5801597, "code": null, "kind": "allowed", "path": "docs/api/AiDe.Core.AgentPlane.md", "session": "agentplane-engines", "wi": ""}
+{"agent": "claude-lane-engines", "at": 1789412899.5886664, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "agentplane-engines", "wi": ""}
+{"agent": "claude-lane-engines", "at": 1789412899.595224, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "agentplane-engines", "wi": ""}
+{"agent": "claude-lane-engines", "at": 1789412899.6043591, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "agentplane-engines", "wi": ""}
+{"agent": "claude-lane-engines", "at": 1789412899.611765, "code": null, "kind": "allowed", "path": "docs/notes/conductor-spec-errata-providers-json.md", "session": "agentplane-engines", "wi": ""}
+{"agent": "claude-lane-engines", "at": 1789412899.619918, "code": null, "kind": "allowed", "path": "docs/proof/engines-on-the-wire.md", "session": "agentplane-engines", "wi": ""}
+{"agent": "claude-lane-engines", "at": 1789412899.6269867, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "agentplane-engines", "wi": ""}
+{"agent": "claude-lane-engines", "at": 1789412899.634999, "code": null, "kind": "allowed", "path": "site/index.html", "session": "agentplane-engines", "wi": ""}
+{"agent": "claude-lane-engines", "at": 1789412899.6430264, "code": null, "kind": "allowed", "path": "site/model.html", "session": "agentplane-engines", "wi": ""}
+{"agent": "claude-lane-engines", "at": 1789412899.651163, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/EngineCatalogTests.cs", "session": "agentplane-engines", "wi": ""}

@@ -7,3 +7,4 @@
 {"agent": "claude-lane-engines", "at": 1789410252.9176266, "kind": "claim", "path": "src/AiDe.Core/AgentPlane/ProviderConfiguration.cs", "seq": 7, "session": "agentplane-engines", "ttl": 900.0, "wi": "agentplane-engines"}
 {"agent": "claude-lane-engines", "at": 1789410253.0172224, "kind": "claim", "path": "src/AiDe.Core/AgentPlane/RunEvent.cs", "seq": 8, "session": "agentplane-engines", "ttl": 900.0, "wi": "agentplane-engines"}
 {"agent": "claude-lane-engines", "at": 1789410253.1247854, "kind": "claim", "path": "tests/AiDe.Core.Tests/AgentPlane/EngineCatalogTests.cs", "seq": 9, "session": "agentplane-engines", "ttl": 900.0, "wi": "agentplane-engines"}
+{"agent": "claude-lane-engines", "at": 1789413028.9936962, "kind": "session-end", "path": "-", "seq": 10, "session": "agentplane-engines", "wi": "WI-0", "worktree": "C:/Projects/ai-de-lane-agentplane-engines"}

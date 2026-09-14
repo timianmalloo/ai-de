@@ -1,0 +1,11 @@
+{"agent": "claude-lane-accounts", "at": 1789413030.2256966, "code": null, "kind": "allowed", "path": "DESIGN.md", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789413030.2342143, "code": null, "kind": "allowed", "path": "src/AiDe.App/MainWindow.xaml.cs", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789413030.2417362, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/NewSessionFlow.cs", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789413030.2492623, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/NewSessionSheetDialog.cs", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789413030.257264, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Sessions/SessionComposerBinder.cs", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789413030.265317, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Presentation/Sessions/NewSessionSheetViewModel.cs", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789413030.2723162, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Composer/TheRunBindingComesFromTheProviderFileTests.cs", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789413030.2803748, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/InstalledAdapterRoot.cs", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789413030.2873745, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/TheBinderRecordsWhatItBoundTests.cs", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789413030.2938774, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/TheNewSessionSheetTests.cs", "session": "sessions-accounts", "wi": ""}
+{"agent": "claude-lane-accounts", "at": 1789413030.3015065, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Sessions/TheSheetListsAccountsWithDerivedStatesTests.cs", "session": "sessions-accounts", "wi": ""}
