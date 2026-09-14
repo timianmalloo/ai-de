@@ -10,3 +10,4 @@
 {"agent": "claude-lane-composer-95", "at": 1789408990.4291935, "kind": "claim", "path": "src/AiDe.App/Workbench/Sessions/ThreadFeed.cs", "seq": 10, "session": "composer-r95", "ttl": 180.0, "wi": "ruling-95"}
 {"agent": "claude-lane-composer-95", "at": 1789408990.5087101, "kind": "claim", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 11, "session": "composer-r95", "ttl": 180.0, "wi": "ruling-95"}
 {"agent": "claude-lane-composer-95", "at": 1789408990.5849667, "kind": "claim", "path": "src/AiDe.App/MainWindow.xaml.cs", "seq": 12, "session": "composer-r95", "ttl": 180.0, "wi": "ruling-95"}
+{"agent": "claude-lane-composer-95", "at": 1789409503.3571036, "kind": "claim", "path": "src/AiDe.Core/Compilation/EnvelopeEvents.cs", "seq": 13, "session": "composer-r95", "ttl": 60.0, "wi": "ruling-95"}

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T18:07:38Z",
+  "generated": "2026-09-14T18:11:58Z",
   "audit": [
     {
       "actor": null,
@@ -16011,6 +16011,62 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T18:07:37Z",
       "duration_seconds": 0.0
+    },
+    {
+      "id": "al-01M2GHWF5PQ7SNPEKKWJ38D502",
+      "shortname": "spike-engine-backends-signals",
+      "datetime": "2026-09-14T18:11:48Z",
+      "session": "engine-spikes",
+      "prompt": "One spike record per engine (copilot, codex, gemini, grok, Higgsfield) with observed command lines, handshakes and auth shapes; claude-code under --ignore-scripts",
+      "summary": "Correction carrying the signals the node's entry omitted (AL5b): every engine's initialize handshake observed on the wire and recorded under spikes/engine-backends/; session/prompt not observed for the four new engines; the record is docs/spikes/engine-backends-2026-09-14.md.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/spikes/engine-backends-2026-09-14.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "every engine's launch line observed before launch code lands",
+      "done_when": "five records with observed command line, handshake frames, auth method; the two --ignore-scripts observations; the two install instructions cited",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-14T17:42:53Z",
+      "duration_seconds": 1735.0,
+      "supersedes": "al-01M2GHF1814E8JMCFA006FJN5J"
+    },
+    {
+      "id": "al-01M2GHWQSHMG04YE12RC5N9KZT",
+      "shortname": "join-engine-spikes-2",
+      "datetime": "2026-09-14T18:11:57Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "The engine-spikes join's second run: the first stopped at step 8 on verify-audit-capture (the node's entry al-01M2GHF1814E8JMCFA006FJN5J carried no signals); a superseding entry al-01M2GHWF5PQ7SNPEKKWJ38D502 with the signals appended under the node's session; this run completes the join. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "the engine spikes' record on main",
+      "done_when": "38 gates; pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T18:11:56Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
