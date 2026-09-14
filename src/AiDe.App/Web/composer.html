@@ -48,6 +48,13 @@
   .field .required { color: var(--danger, #E07A6F); }
   .editor { border: 1px solid var(--border, #2A313B); border-radius: 4px; background: var(--surface-sunken, #0D1014); position: relative; }
   .editor .cm-editor { font: 13px/1.5 "Cascadia Mono", Consolas, ui-monospace, monospace; }
+  /* The caret and the selection carry the theme's ink and accent: CodeMirror's defaults are a
+     1.2px black caret and a light-grey selection, both invisible on the surface (the operator,
+     2026-09-14: "doesn't have a cursor so I can't see where I am typing"; census row "(caret)"). */
+  .editor .cm-editor .cm-cursor, .editor .cm-editor .cm-dropCursor { border-left: 2px solid var(--text, #E4E9EF); }
+  .editor .cm-editor .cm-content { caret-color: var(--text, #E4E9EF); }
+  .editor .cm-editor .cm-selectionBackground, .editor .cm-editor.cm-focused .cm-selectionBackground { background: color-mix(in srgb, var(--accent, #5B9DD9) 35%, transparent); }
+  .editor .cm-editor .cm-activeLine { background: transparent; }
   .editor .cm-focused { outline: 2px solid var(--focus, #8FC0EA); }
   /* The placeholder (DESIGN.md copy) is drawn, never typed into the document: an empty editor's value stays empty. */
   .editor.empty::before { content: attr(data-ph); position: absolute; left: 6px; top: 4px; font: 13px/1.5 "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; color: var(--text-muted, #98A3B2); pointer-events: none; }

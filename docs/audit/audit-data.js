@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T01:41:45Z",
+  "generated": "2026-09-14T13:17:24Z",
   "audit": [
     {
       "actor": null,
@@ -15470,6 +15470,47 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T01:41:44Z",
       "duration_seconds": 0.0
+    },
+    {
+      "id": "al-01M2G11CK2DAV1Z8JWZZVNXHDN",
+      "shortname": "1: yes it all works well, the only issue now is that the prompt text are…",
+      "datetime": "2026-09-14T13:17:23Z",
+      "session": "prompt-log",
+      "prompt": "1: yes it all works well, the only issue now is that the prompt text area doesnt have a cursor so I cant see where i am typing if I am attempting to move to edit something / 2: yes lets get the ai-forward pack updated / 3: merge F5 and proceed / 4: i didnt see a compiled prompt - not sure if that is just because it is not completed yet / keep going",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2G11CPYJ97S9CN0HE2SYDWX",
+      "shortname": "x-6-caret-and-disclosure",
+      "datetime": "2026-09-14T13:17:24Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "the prompt text area doesnt have a cursor ... / i didnt see a compiled prompt",
+      "summary": "X-6: the composer's caret was CodeMirror's default black on the dark surface (1.10:1, measured once the page census carried a '(caret)' probe row; DC-209) - the caret, drop cursor and selection now take the theme's ink and accent; census 34/34. The Compiled prompt disclosure is measured on screen at 0/1/40 turns (header 560-584 px in a 628 px composer at 0 turns; 364-388 in 432 with turns) and renders on every draft change - collapsed by default per Ruling 57; the operator's report reads as discoverability, not absence.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Answer the operator's two findings of 2026-09-14 with a measurement each",
+      "done_when": "the caret row red then green; the disclosure's position measured at three counts; both committed",
+      "tier": "T0",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
     }
   ],
   "changes": [

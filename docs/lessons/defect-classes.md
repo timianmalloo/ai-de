@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 115 · partially-controlled 66 · uncontrolled 27
+**Status counts:** controlled 116 · partially-controlled 66 · uncontrolled 27
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7860,3 +7860,25 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Control:** the resume template carries the `start` line; the profiler flags a node whose store
   span exceeds its audit duration by more than 30 min (SP-26, proposed) — red on six nodes today.
 - **Status:** `uncontrolled` — recorded by the profiler; the control is a pack proposal (F-24).
+
+### DC-209 — A component's non-text indicator (a caret, a selection, a drop cursor) inherits a library default the theme never covers, and a census that walks text never sees it
+
+- **Shape:** the theme tokens reach every text node (the census proves it) and every control the
+  app styles; a hosted library's own indicators — CodeMirror's caret (`border-left: 1.2px solid
+  black`), its selection background, its drop cursor — keep the library's light-theme defaults on
+  the dark surface. No text node carries them, so a text-pairing census reports 0 below floor while
+  the operator cannot see where they are typing.
+- **Signature:** *"there's no cursor in the text area"*; a selection that does not show; a black
+  caret on `#0D1014` at 1.10:1 measured only once the indicator is put in the census as a row.
+- **Instance (the operator, 2026-09-14):** *"the prompt text area doesn't have a cursor so I can't
+  see where I am typing if I am attempting to move to edit something"* — `composer.html` styled
+  the editor's font and the chip but not `.cm-cursor`; the page census walked text only.
+- **Sweep:** the composer page (the instance); the WPF side uses the platform caret with the
+  control's foreground — covered by the theme's `TextBox` style; the thread's `ListBox` selection is
+  the accent (ADR-0031's chrome templates).
+- **Control:** the page census places a probe element carrying CodeMirror's cursor classes inside
+  the editor root and measures the rule the real caret gets as a row `(caret)` — red at 1.10:1 on
+  the default, green at the text token; the caret, the drop cursor and the selection take
+  `var(--text)` / `color-mix(var(--accent) 35 %)`. The next hosted library gets the same probe row.
+- **Status:** `controlled`.
+

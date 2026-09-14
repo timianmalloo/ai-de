@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using AiDe.App.Tests.Sessions.Thread;
 using AiDe.App.Workbench.Composer;
@@ -89,6 +90,41 @@ public sealed class TheWriterKeepsItsRoomTests(ITestOutputHelper output)
 
     private static List<TurnView> Turns(int count) =>
         count == 40 ? ThreadFixtures.Forty() : ThreadFixtures.Five().Take(count).ToList();
+
+    /// <summary>
+    /// The operator's 2026-09-14 report — <i>"I didn't see a compiled prompt"</i>: the <b>Compiled
+    /// prompt</b> disclosure's header, the structure disclosure's header and the send row are on
+    /// screen at 0, 1 and 40 turns — each inside the composer, the composer inside the document,
+    /// nothing clipped by the editor's fill or rest. Measured, not assumed: the rows carry the
+    /// header's bottom edge against the composer's height.
+    /// </summary>
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(40)]
+    public void TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(int count)
+    {
+        Sta.Run(() =>
+        {
+            using var document = ThreadFixtures.Document(Turns(count));
+            var g = Layout(document, LeftWidth, StartupHeight);
+            var composer = document.Composer;
+            var disclosures = ThreadFixtures.Visuals<Expander>(composer).ToList();
+            var compiled = disclosures.SingleOrDefault(e => AutomationProperties.GetName(e) == "Compiled prompt");
+            Assert.True(compiled is not null, "the Compiled prompt disclosure is not in the composer's visual tree");
+            Assert.True(compiled!.IsVisible || compiled.Visibility == Visibility.Visible, "the Compiled prompt disclosure is hidden");
+
+            var header = ThreadFixtures.Visuals<ToggleButton>(compiled).FirstOrDefault() ?? (FrameworkElement)compiled;
+            var top = header.TransformToAncestor(composer).Transform(new Point(0, 0)).Y;
+            var bottom = top + header.ActualHeight;
+            output.WriteLine($"{count} turns at {LeftWidth}×{StartupHeight}: composer {g.Composer:F1} · editor {g.Editor:F1} · Compiled prompt header {top:F1}–{bottom:F1} · send row bottom {g.SendRowBottom:F1}");
+
+            Assert.True(header.ActualHeight > 0, "the Compiled prompt header has no height — it was never laid out");
+            Assert.True(bottom <= g.Composer + 0.5, $"{count} turns: the Compiled prompt header ends at {bottom:F1} px inside a {g.Composer:F1} px composer — clipped");
+            Assert.True(top >= g.Editor - 0.5, $"{count} turns: the Compiled prompt header ({top:F1}) sits above the editor's bottom ({g.Editor:F1}) — overlapped");
+            Assert.True(g.ComposerTop + g.Composer <= g.Height + 0.5, $"the composer ends at {g.ComposerTop + g.Composer:F1} px in a {g.Height} px document");
+        });
+    }
 
     /// <summary>
     /// <b>R1.</b> 0 turns: the thread is its two-line caption and the editor takes the rest of the
