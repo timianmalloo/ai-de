@@ -68,10 +68,15 @@ public sealed record AgentBackendRow(string EngineId, string ProviderId, Provide
 /// <param name="RoutableBackends">
 /// The enabled backends the router may bind, with <c>needs-login</c> engines already excluded.
 /// </param>
+/// <param name="RenamedFrom">
+/// The name the operator asked for when Create had to add a counter to it (Ruling 99) — what the
+/// announcement names; null when the session got exactly the name that was typed.
+/// </param>
 public sealed record NewSessionResult(
     SessionConfig Config,
     string TaskClass,
-    IReadOnlyList<string> RoutableBackends);
+    IReadOnlyList<string> RoutableBackends,
+    string? RenamedFrom = null);
 
 /// <summary>
 /// The New Session sheet (R13, A4.3), as state and rules with no view attached.
@@ -140,8 +145,13 @@ public sealed class NewSessionSheetViewModel
         _reprobe = reprobe;
 
         // A4.3: the default name is a date slug, renameable later. Invariant culture so a session
-        // directory listing sorts the same on every machine.
-        Name = now.UtcDateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + " session";
+        // directory listing sorts the same on every machine. Ruling 99: unique within the workspace
+        // by a counter — the date alone is what put two "2026-09-14 session" tabs (and two
+        // "Console — 2026-09-14 session" tabs) on the operator's screen — judged over every session
+        // the store holds, so the operator SEES the "(2)" in the name box before Create.
+        Name = SessionConfigStore.UniqueName(
+            now.UtcDateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + " session",
+            SessionConfigStore.ExistingNames(workspaceRoot));
 
         // Every listed backend starts enabled, and health is NOT consulted here.
         //
@@ -447,9 +457,15 @@ public sealed class NewSessionSheetViewModel
             throw new InvalidOperationException(reason);
         }
 
+        // Ruling 99: a typed duplicate gets the same counter the default does, at the moment of
+        // writing — the store is re-read here because a session may have been created since the
+        // sheet opened. Never a refusal; the result says what changed so the flow can announce it.
+        var requested = Name.Trim();
+        var name = SessionConfigStore.UniqueName(requested, SessionConfigStore.ExistingNames(WorkspaceRoot));
+
         var store = new SessionConfigStore(WorkspaceRoot, SessionId.New(now));
         var config = store.Create(
-            Name.Trim(), WorkspaceId, EnabledBackends, now,
+            name, WorkspaceId, EnabledBackends, now,
             fanOutCeiling: FanOutCeiling!.Value,
             budgetCap: BudgetCap,
             defaultTaskClass: TaskClass!.Trim(),
@@ -457,7 +473,9 @@ public sealed class NewSessionSheetViewModel
 
         // The result's class IS the config's default (Ruling 72; ADR-0033 §4) — one source, read
         // back from what was written, never a second copy of the sheet's field.
-        return new NewSessionResult(config, config.DefaultTaskClass, RoutableBackends);
+        return new NewSessionResult(
+            config, config.DefaultTaskClass, RoutableBackends,
+            RenamedFrom: string.Equals(config.Name, requested, StringComparison.Ordinal) ? null : requested);
     }
 
     /// <summary>The registry the sheet last read, so a re-probe is observable from outside.</summary>

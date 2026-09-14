@@ -251,7 +251,7 @@ internal static partial class Program
                 .ToHashSet(StringComparer.Ordinal);
             var persistence = new LayoutPersistence(
                 shell.Service, layoutPath, available,
-                restorableKinds: SurfaceContentFactory.KnownKinds.ToHashSet(StringComparer.Ordinal));
+                restorableKinds: SurfaceContentFactory.RestorableKinds);   // the shell's set (Ruling 94): a retired kind is dropped with a report, not at the store
             var restore = persistence.Restore();
             shell.Adapter.Render();
             await Task.Delay(1500);

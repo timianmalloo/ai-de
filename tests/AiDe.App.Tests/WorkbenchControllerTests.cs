@@ -239,7 +239,7 @@ public sealed class WorkbenchControllerTests
     public void Move_AppliesAndAnnounces()
     {
         var (controller, announcer, service) = Build();
-        var target = service.Current.FindStackOf("provenance")!.Id;
+        var target = service.Current.FindStackOf("sources")!.Id;
 
         controller.Move("explore", new DropTarget(target, DropKind.JoinStack));
 
@@ -262,7 +262,7 @@ public sealed class WorkbenchDragTests
         var service = new LayoutService();
         var announcer = new RecordingAnnouncer();
         var controller = new WorkbenchController(service, announcer);
-        var stackId = service.Current.FindStackOf("provenance")!.Id;
+        var stackId = service.Current.FindStackOf("sources")!.Id;
         return (controller, announcer, service, [new PaneHitBox(stackId, PaneBounds, 28)]);
     }
 

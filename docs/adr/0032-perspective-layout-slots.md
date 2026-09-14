@@ -161,7 +161,11 @@ We will:
    `contexts`, `joins` and `classdiagram` dropped, the report naming each by caption and kind and
    *Architecture* as the perspective that admits them, the event carrying the dropped count and
    kinds (US-C12 b3); a `classdiagram` or a `view` surviving in the Coding slot, a crash, or a silent
-   reset fails.
+   reset fails. **Extended by Ruling 94:** `inspector` is a *retired* kind — no perspective admits
+   it — so the same envelope reports it dropped with the retirement sentence (the ruling and where
+   its content went) in place of an admitting perspective; a retired kind dropped by the store in
+   silence (as an unrestorable kind is) fails — the shell's restorable set is the buildable kinds
+   plus the retired ones (`SurfaceContentFactory.RestorableKinds`).
 2. An envelope whose every surface is inadmissible restores the Coding default and reports so; an
    empty host with four empty zones fails.
 3. Two surfaces of a one-instance kind **with distinct `surfaceId`s** keep the first and report

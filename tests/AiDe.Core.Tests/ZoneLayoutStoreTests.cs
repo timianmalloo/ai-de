@@ -22,7 +22,7 @@ public sealed class ZoneLayoutStoreTests : IDisposable
     {
         // Arrange: a non-default arrangement — Right populated, Left collapsed, a custom Bottom extent.
         var layout = WorkbenchLayout.Default();
-        layout = ZoneLayoutService.OpenPane(layout, new Surface("outline", "inspector", "Outline"), ZoneId.Right).Layout;
+        layout = ZoneLayoutService.OpenPane(layout, new Surface("outline", "view", "Outline"), ZoneId.Right).Layout;
         layout = ZoneLayoutService.CollapseZone(layout, ZoneId.Left).Layout;
         layout = ZoneLayoutService.ResizeZone(layout, ZoneId.Bottom, 0.45).Layout;
 
@@ -30,7 +30,7 @@ public sealed class ZoneLayoutStoreTests : IDisposable
         store.Save(layout);
 
         // All kinds restorable so nothing is filtered.
-        var restored = store.Read(All, Kinds("view", "inspector", "canvas", "terminal", "sessions", "board", "leaderboard", "contexts", "joins")).Layout;
+        var restored = store.Read(All, Kinds("view", "canvas", "terminal", "sessions", "board", "leaderboard", "contexts", "joins")).Layout;
 
         Assert.NotNull(restored);
         Assert.True(restored!.Zone(ZoneId.Left).Collapsed);                 // collapsed state preserved
@@ -49,7 +49,7 @@ public sealed class ZoneLayoutStoreTests : IDisposable
 
         // "terminal" kind is NOT restorable and the id is not available → the agent terminal is dropped;
         // everything else (view/canvas/etc.) is restorable by kind.
-        var restored = new ZoneLayoutStore(Path_).Read(All, Kinds("view", "inspector", "canvas", "sessions", "board", "leaderboard", "contexts", "joins")).Layout;
+        var restored = new ZoneLayoutStore(Path_).Read(All, Kinds("view", "canvas", "sessions", "board", "leaderboard", "contexts", "joins")).Layout;
 
         Assert.NotNull(restored);
         Assert.DoesNotContain(restored!.AllSurfaces(), s => s.SurfaceId == "agent-terminal-xyz");
@@ -75,7 +75,7 @@ public sealed class ZoneLayoutStoreTests : IDisposable
     public void RestoreZones_OnTheService_ReplacesTheArrangement()
     {
         var svc = new ZoneBackedLayoutService();
-        var saved = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(), new Surface("outline", "inspector", "Outline"), ZoneId.Right).Layout;
+        var saved = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(), new Surface("outline", "view", "Outline"), ZoneId.Right).Layout;
 
         svc.RestoreZones(saved);
 
@@ -135,7 +135,7 @@ public sealed class ZoneLayoutStoreTests : IDisposable
         var text = File.ReadAllText(Path_).Replace("\"surfaceId\": \"terminal-1\"", "\"surfaceId\": \"graph\"", StringComparison.Ordinal);
         File.WriteAllText(Path_, text);
 
-        var read = store.Read(All, Kinds("canvas", "terminal", "view", "inspector", "contexts", "joins", "sessions", "board", "leaderboard", "ledger"));
+        var read = store.Read(All, Kinds("canvas", "terminal", "view", "contexts", "joins", "sessions", "board", "leaderboard", "ledger"));
 
         Assert.Null(read.Layout);
         Assert.Equal(ZoneLoadRefusal.Corrupt, read.Refusal);
@@ -184,7 +184,7 @@ public sealed class ZoneLayoutStoreTests : IDisposable
         var original = File.ReadAllBytes(Path_);
         var backup = Path_ + ".pre-perspectives.bak";
 
-        var second = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(), new Surface("outline", "inspector", "Outline"), ZoneId.Right).Layout;
+        var second = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(), new Surface("outline", "view", "Outline"), ZoneId.Right).Layout;
         store.Save(second, backupPath: backup);
 
         Assert.Equal(original, File.ReadAllBytes(backup));
@@ -204,7 +204,7 @@ public sealed class ZoneLayoutStoreTests : IDisposable
         var backup = Path_ + ".pre-perspectives.bak";
         Directory.CreateDirectory(backup);   // a directory where the backup file must go: unwritable as a file
 
-        var second = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(), new Surface("outline", "inspector", "Outline"), ZoneId.Right).Layout;
+        var second = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(), new Surface("outline", "view", "Outline"), ZoneId.Right).Layout;
 
         Assert.ThrowsAny<IOException>(() => store.Save(second, backupPath: backup));
         Assert.Equal(original, File.ReadAllBytes(Path_));

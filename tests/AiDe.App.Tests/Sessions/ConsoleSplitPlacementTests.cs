@@ -247,6 +247,45 @@ public sealed class ConsoleSplitPlacementTests : IDisposable
         Assert.False(DockHost.AdmissionFor(PerspectiveSet.Coordination).Admits("console"));
     }
 
+    /// <summary>
+    /// Ruling 99 CONDITIONS: the Console tab's caption derives from the session name, so the name
+    /// rule disambiguates both captions for free. Two sessions opened on one day through the sheet's
+    /// default name, both with their Console open: four distinct captions — the operator's screenshot
+    /// (two <i>2026-09-14 session</i> tabs, two <i>Console — 2026-09-14 session</i> tabs) cannot recur.
+    /// </summary>
+    [Fact]
+    public void TwoSessionsOpenedOnOneDay_HaveDistinctSessionAndConsoleCaptions()
+    {
+        var day = new DateTimeOffset(2026, 9, 14, 9, 3, 0, TimeSpan.Zero);
+        var registry = new AiDe.Core.AgentPlane.ProviderRegistry([]);
+        var first = new AiDe.Core.Presentation.Sessions.NewSessionSheetViewModel(_workspace.Root, _workspace.Root, registry, day).Create(day);
+        var second = new AiDe.Core.Presentation.Sessions.NewSessionSheetViewModel(_workspace.Root, _workspace.Root, registry, day.AddMinutes(1)).Create(day.AddMinutes(1));
+
+        Sta.Run(() =>
+        {
+            using var frame = ComposedCoding.Show(1440, 900);
+            var shell = frame.Shell;
+            foreach (var config in new[] { first.Config, second.Config })
+            {
+                shell.OpenSessionDocument(config);
+                frame.Settle();
+                Press(frame.Document(SessionDocumentSurface.SurfaceIdFor(config.SessionId)).ConsoleToggle);
+                frame.Settle();
+            }
+
+            var titles = shell.Coding.Service.Zones.AllSurfaces()
+                .Where(s => s.Kind is SessionDocumentSurface.Kind or ConsoleDocumentHost.Kind)
+                .Select(s => s.Title)
+                .OrderBy(t => t, StringComparer.Ordinal)
+                .ToList();
+
+            Assert.Equal(
+                ["2026-09-14 session", "2026-09-14 session (2)", "Console — 2026-09-14 session", "Console — 2026-09-14 session (2)"],
+                titles);
+            return 0;
+        }, 60);
+    }
+
     private static System.Windows.DependencyObject FocusScopeOf(System.Windows.DependencyObject element)
         => System.Windows.Input.FocusManager.GetFocusScope(element);
 
