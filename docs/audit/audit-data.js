@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T21:21:56Z",
+  "generated": "2026-09-14T21:39:06Z",
   "audit": [
     {
       "actor": null,
@@ -16569,6 +16569,39 @@ window.AUDIT_DATA = {
         "branch": "conductor/code-atlas",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2GXR0CABF4GGPPS30MSKKR4",
+      "shortname": "atlas-e1-test-qualification-start",
+      "datetime": "2026-09-14T21:39:05Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner69 UML2newreads finalT2designPASS, total6; Test3/4 UX4/4 Core4/4,17/18totalreviewleaves. Designjoins502e1495/c9617fb7 plus parent postreview disposition; current productveto SP1/SP4notcleared. Newregisteredverifiedtesttreec9617fb7; GPT5.5worker4c71df17 executing24leafTESTONLYtwofiles, no source/fakecodec/compileerrorred. Parentimplementskill+flow loaded; allpriorfailurespreserved. Ledger43tasks39done4progress (qualificationnowseparatetask), E0boundedcomplete. Existing canonical security/privacy documents have repository-specific names and remain unchanged; new design contains proposal-onlySTRIDE/LINDDUN, no implemented new processing/egress. No main/push/normativeE/privatehistory. AIDEcontractenvabsent, no invented episode event.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/code-atlas-e1-static-views.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Qualify current E1 codec and lexical contracts without product changes",
+      "done_when": "Two test files and actual receipts identify current behavior and missing seams, with independent gate disposition",
+      "tier": "T2",
+      "main_calls": 491,
+      "main_budget": 500,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T21:36:02Z",
+      "duration_seconds": 183.0,
+      "git": {
+        "sha": "c9617fb7d6911731def65a0fadbeaaa405f53eae",
+        "short": "c9617fb7d",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -20575,6 +20608,31 @@ window.AUDIT_DATA = {
         "branch": "conductor/code-atlas",
         "pushed": null,
         "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2GXR0873YPWCS0FSJ4Y5JRM",
+      "datetime": "2026-09-14T21:39:05Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "E1 source contracts admit test-only qualification",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Reviewed occurrence design and corrected strict codec, capability, publication, paging and charge ledger joined. Owner69 admits exactly two test files for SP1/SP2/currentSP4; no production metadata or E1 acceptance. UML gap repaired by actual exact-content reads.",
+      "rationale": "Actual strict old decoder and missing opt-in/lexical seams require current-contract execution before any new behavior. Preserve SP3 and incremental-newfield-SP4 gates and entire user journey.",
+      "artifacts": [
+        "docs/design/code-atlas-e1-static-views.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "e381cfd5a1a0218ead15d8769ac4a35799f0c4be",
+        "after": "c9617fb7d6911731def65a0fadbeaaa405f53eae",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": [
+          "c9617fb7 docs(atlas): reconcile E1 source and compatibility contracts",
+          "502e1495 docs: design bounded E1 concrete class and member views"
+        ]
       }
     }
   ]

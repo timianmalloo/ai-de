@@ -6569,6 +6569,49 @@ window.DOCS_INDEX = {
       "sourceSha256": "97d517658252e65e6cf51a7392d73986c9eb96aa4d78d91569aaeeead093e21e"
     },
     {
+      "id": "design-code-atlas-e1-static-views",
+      "path": "docs/design/code-atlas-e1-static-views.md",
+      "title": "Code Atlas E1: bounded concrete class and member views",
+      "type": "design",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "atlas-e1-detailed-design",
+      "reviewBy": "2026-09-21",
+      "reviewSuggested": [],
+      "summary": "Proposed file-local classifier/member occurrence view, corrected against the pinned E0 runtime. Consolidates producer, strict wire compatibility, capability, ownership, native interaction and accounting contracts; identifies executable blockers and a reconciled sixteen-path proposal without granting implementation.",
+      "tags": [
+        "code-atlas",
+        "concrete-code",
+        "static-views",
+        "native-wpf",
+        "source-provenance"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-e-code-atlas",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-code-atlas-shared-host-admission",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-code-atlas-live-reader-candidate",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-code-atlas-contract-grounding",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fa01b25b720b6b3a1f9b59e551c3cc02e5145d0e152c3b419722d05055d4e2e3"
+    },
+    {
       "id": "design-code-atlas-shared-host-admission",
       "path": "docs/design/code-atlas-shared-host-admission.md",
       "title": "Code Atlas — frozen walking-host implementation contract",
@@ -11761,7 +11804,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0f33445775719b61d32e2a2d06a79a47816247964a8b6070b6d5af52c90f6b0f"
+      "sourceSha256": "cbdfb9a7b710c7bb8546af3961da512cc8323ba517d684bf0aa84c2543993285"
     },
     {
       "id": "session-profiles",
@@ -19082,5 +19125,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "38c87a44c97520e0ec4b008d025726b55dfe7145602b3e096bfa67870517a019"
+  "graphSha256": "820a2fb757bea8b41f090e4e7218203b61a38c60dd7b9b9887e25f9ca5ea1395"
 };

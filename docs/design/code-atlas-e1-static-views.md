@@ -22,6 +22,54 @@ summary: >
 
 # E1 concrete static views — detailed design, not implementation authority
 
+## Conductor disposition after the source-contract and design reviews
+
+Owner turn 69 admits **test-only qualification**, not E1 product implementation.
+The reviewed design pin is `ed8511c2292f477d720cb8bbc21bd57404330094`; its product
+source equals `b6e053c29629f53c5c670d6586213cdf09c3af08`, independently checked
+by Conductor. The source-contract section below retains the author's original
+submission status and receipts. This disposition records what happened afterward,
+without relabelling an unexecuted contract as verified behavior.
+
+| Independent lens | Disposition and actual reported leaves | What it clears |
+|---|---|---|
+| Test/composition/simplification | Conditional PASS, 3/4; no wrappers | Falsifiable design input only. SP1-SP4 and real composition are still unexecuted |
+| Native UX/accessibility | Conditional PASS, 4/4; one wrapper separate | Specified journeys/states only. E1 geometry, keyboard/automation and long-file navigation still need execution |
+| Core security/concurrency/codec | BLOCK for product admission, 4/4 | Suitable for bounded test-only qualification. SP1 strict compatibility and SP4 incremental charge/publication remain hard obligations |
+| UML/graph | T2 design-only PASS, 6 cumulative | Read-only occurrence views, honest notation/provenance and exclusions. No runtime metadata or navigation acceptance |
+
+The UML result includes its failed first review: three worktree/ref reads followed
+by a truncated search did not cover the contract. Owner authorized two new direct
+reads of immutable design lines 464-567 and 333-360. Those reads, not the truncated
+search or Owner's own opinion, supplied the final design verdict. The earlier
+T1 label was corrected to T2. This is a review-coverage correction, not a product
+or UML-design defect.
+
+GATE E1 design input - independent Test, UX, Core Security and UML/graph -
+classification complete; product implementation remains BLOCKED by SP1/SP4 and
+the remaining execution obligations. No author clears its own product veto.
+
+### Active qualification boundary
+
+The separate GPT-5.5 test worker has 24 leaves and exactly two writable paths:
+`tests/AiDe.Core.Tests/Understanding/AtlasStaticReaderContractTests.cs` and
+`tests/AiDe.Core.Tests/Understanding/AtlasStaticObservationTests.cs`.
+Its verified base is `c9617fb7d6911731def65a0fadbeaaa405f53eae`, current Conductor
+plus the two design commits, in `atlas/e1-test-qualification`.
+
+It qualifies SP1/SP2 and existing SP4 baseline controls through actual current
+codecs, registrations, reader, verified buffers and producer/helpers. It may use
+expected-value oracles, but may not implement missing E1 behavior in test helpers.
+Compilation failure is not semantic red. A current-contract pass is not a new
+metadata pass; absent classifier/parent/opt-in seams must be named precisely.
+Product source, UI, dependencies and the proposed sixteen-path implementation
+manifest remain ungranted. SP3 and incremental new-field SP4 remain open, with
+no first-128 waiver. Sequence/activity remain required later in E1.
+
+Conductor owns subsequent source/evidence readback, independent execution gates,
+Proof Pack, audit and graph integration. The worker cannot promote this test-only
+tranche to product acceptance.
+
 ## 0. Owner65 consolidated source-contract correction
 
 **Status: source-grounded proposal; execution and four independent reviews remain

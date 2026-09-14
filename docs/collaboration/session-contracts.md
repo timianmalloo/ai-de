@@ -948,6 +948,50 @@ The next proposed work is test-only SP1/SP2 characterization plus existing SP4
 baseline controls, with actual codec/producer/ownership paths and no test-only
 replacement implementation; Owner admission remains pending.
 
+Owner turn 69 authorizes two new UML read leaves for exactly lines 464-567 and
+333-360 at the corrected design pin, no more metadata checks/searches, and a
+corrected T2 design-only verdict. The prior four spent remain recorded. Subsequent
+metadata-only replies establish Test 3/4 leaves (no wrappers) and UX 4/4 leaves
+(one wrapper separate); their technical verdicts did not change.
+
+After that UML disposition, Owner admits one 24-leaf general-purpose GPT-5.5
+TEST-ONLY qualification worker. Assigned session/branch:
+`atlas-e1-test-qualification` / `atlas/e1-test-qualification`; own new worktree
+`C:\Projects\ai-de-atlas-e1-test-qualification`, based on current Conductor
+`e381cfd5a1a0218ead15d8769ac4a35799f0c4be` plus only original design `76d30b42`
+and correction `ed8511c2`, with all pins checked before authoring.
+Only these authored paths are admitted:
+`tests/AiDe.Core.Tests/Understanding/AtlasStaticReaderContractTests.cs` and
+`tests/AiDe.Core.Tests/Understanding/AtlasStaticObservationTests.cs`.
+Scope is SP1, SP2 and existing SP4 baseline controls through actual frozen codecs,
+registrations, reader and verified-buffer producer/helpers. Expected-value oracles
+are permitted; a test-only implementation of missing production behavior is not.
+Compilation failure is not semantic red. Missing classifier/parent/opt-in seams
+must be reported exactly, not implemented. Current-contract tests may pass while
+proposed-behavior qualification remains blocked. SP3 and incremental new-field
+SP4 remain open; no first-128 waiver, production metadata, partial-name merge,
+invented project context or blanket sixteen-path authoring is granted.
+Freeze the test/evidence receipt for parent readback. Conductor receives a
+prospective 500 cumulative leaves for these existing nodes only.
+
+The targeted UML disposition is complete: T2 PASS for design only, after two exact
+reads (6 cumulative). Sections 3-4 explicitly prohibit composition/lifetime
+inference and editable derived views; SP2/SP3 remain execution gates. This closes
+the review-coverage defect without converting future metadata into current facts.
+The two design commits are joined as `502e1495` and `c9617fb7`.
+The test-only worker's realized base is
+`c9617fb7d6911731def65a0fadbeaaa405f53eae`, exactly the above Conductor baseline plus
+those two design changes; parent created, registered and verified the clean
+`atlas/e1-test-qualification` tree at that pin. Owner 69's conditional test-only
+grant is therefore active. No E1 product-implementation veto is cleared.
+
+The admitted test-only worker is
+`4c71df17-edde-4831-909d-b781d12a5d98` (`atlas-e1-test-qualification-gpt55`,
+general-purpose GPT-5.5), with 24 total leaves and the two exact test paths above.
+Parent owns documentation/Proof Pack/audit/graph updates; generated test receipts
+and owned fixtures are permitted in the worker's artifacts area. No nested agents,
+primary/source writes, new dependencies or self-admitted product work are allowed.
+
 ### Core owns
 
 | Path | Why |
