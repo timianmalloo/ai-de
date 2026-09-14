@@ -37,10 +37,21 @@ public sealed class SessionConfigStore
     public string SessionId { get; }
 
     /// <summary>Creates the session: writes <c>session.json</c> and emits <c>session.open</c>.</summary>
+    /// <param name="name">The operator-facing name.</param>
+    /// <param name="workspaceId">The workspace this session is bound to.</param>
+    /// <param name="enabledBackends">The agent backends enabled for it.</param>
+    /// <param name="now">Stamps the config and the event.</param>
     /// <param name="fanOutCeiling">The session's fan-out ceiling (Ruling 56); <c>null</c> writes the ruled default.</param>
     /// <param name="budgetCap">An enforced cap, or <c>null</c> — bounded by the subscription (Ruling 72).</param>
     /// <param name="defaultTaskClass">The session's default task class; <c>null</c> writes <c>free-form</c> (Ruling 72).</param>
-    /// <remarks>The sheet's three decisions at create (Rulings 56, 63, 72); absent, the record's own defaults apply.</remarks>
+    /// <param name="origin">
+    /// How this session came to exist — see <see cref="SessionOrigins"/>. <b>Defaulted to
+    /// <see cref="SessionOrigins.Direct"/> deliberately:</b> F5 clause 1's claim is that the front
+    /// door is distinguishable from every other way of reaching this method, and that is only
+    /// checkable if something which did not come through it reads differently. The default is what
+    /// makes the other value evidence.
+    /// </param>
+    /// <remarks>The sheet's three decisions at create (Rulings 56, 63, 72); absent, the record's own defaults apply. The origin is F5's clause 1.</remarks>
     public SessionConfig Create(
         string name,
         string workspaceId,
@@ -48,7 +59,8 @@ public sealed class SessionConfigStore
         DateTimeOffset now,
         int? fanOutCeiling = null,
         RunBudget? budgetCap = null,
-        string? defaultTaskClass = null)
+        string? defaultTaskClass = null,
+        string origin = SessionOrigins.Direct)
     {
         lock (_gate)
         {
@@ -61,7 +73,7 @@ public sealed class SessionConfigStore
             };
 
             WriteConfigUnsafe(config);
-            AppendEventUnsafe(SessionEventKinds.Open, config, now);
+            AppendEventUnsafe(SessionEventKinds.Open, config, now, origin);
             return config;
         }
     }
@@ -276,7 +288,7 @@ public sealed class SessionConfigStore
             JsonSerializer.Serialize(config, ConfigJsonOptions));
     }
 
-    private void AppendEventUnsafe(string kind, SessionConfig config, DateTimeOffset now)
+    private void AppendEventUnsafe(string kind, SessionConfig config, DateTimeOffset now, string? origin = null)
     {
         Directory.CreateDirectory(SessionPaths.SessionDirectory(WorkspaceRoot, SessionId));
 
@@ -293,6 +305,14 @@ public sealed class SessionConfigStore
             // event is what distinguishes an operator's selection from the shipped default.
             ["compileMode"] = config.CompileMode,
         };
+
+        // `origin` rides `session.open` ONLY. A config toggle has no origin — the session was
+        // already open — and writing one there would be a field carrying a value that answers no
+        // question, which is how a reader learns to stop trusting the field.
+        if (origin is not null)
+        {
+            body["origin"] = origin;
+        }
         var line = JsonSerializer.Serialize(new SessionEvent(nextSeq, now, kind, body));
 
         File.AppendAllText(SessionPaths.EventsFile(WorkspaceRoot, SessionId), line + Environment.NewLine);
