@@ -69,6 +69,11 @@ public sealed record NativeCommand(
 /// a spawn fails at runtime with a file-not-found instead of here.
 /// </param>
 /// <param name="Native">The native CLI's launch, for an <see cref="AcpMode.Native"/> row; null otherwise.</param>
+/// <param name="DefaultModel">
+/// The model the engine was observed to bind by default on its own wire — the value first use
+/// writes into <c>engines.&lt;id&gt;.model</c> (Ruling 104 (1)(e)) — cited per row to the spike record;
+/// <c>null</c> for a synthetic row. One home for "the engine's model" (DM7; DC-224).
+/// </param>
 public sealed record EngineRow(
     string Id,
     string Provider,
@@ -76,7 +81,8 @@ public sealed record EngineRow(
     string? AdapterPackage,
     string? AdapterVersion,
     string? AdapterEntryModule,
-    NativeCommand? Native = null)
+    NativeCommand? Native = null,
+    string? DefaultModel = null)
 {
     /// <summary>
     /// Whether this engine reads the claude-code adapter's <c>_meta.claudeCode.options</c> slot on
@@ -203,7 +209,9 @@ public static class EngineCatalog
             // Observed: spikes/acp-subscription-lane/probe-read.js spawns exactly this module, and
             // the committed frame corpus is what came back out of it. Observed again under
             // `npm install --ignore-scripts` (spike §6, spikes/engine-backends/claude-code/frames.jsonl).
-            "dist/index.js"),
+            "dist/index.js",
+            // Observed: engines.claude-code.model on this machine's provider file; PD-5's three runs.
+            DefaultModel: "claude-sonnet-5"),
         new(
             "codex",
             "openai",
@@ -217,7 +225,9 @@ public static class EngineCatalog
             // `node <that>` it answered initialize in 834 ms with agentInfo.name
             // "@agentclientprotocol/codex-acp" (spikes/engine-backends/codex/frames.jsonl). It bundles
             // @openai/codex@0.153.4 and needs no `codex` on PATH (dist/index.js:35040, :22098-22105).
-            "dist/index.js"),
+            "dist/index.js",
+            // Observed (spike §2): session/new's availableModels — the default the peer named.
+            DefaultModel: "gpt-6-astra"),
         new(
             "copilot",
             "github",
@@ -244,7 +254,9 @@ public static class EngineCatalog
                 // spikes/engine-backends/copilot/copilot-help-environment.txt:51. Chosen over GH_HOST
                 // because it reaches Copilot alone and leaves any `gh` in the child's tree untouched.
                 // Whether the ACP server reads it at session time was not observable without a tenant.
-                HostVariable: "COPILOT_GH_HOST")),
+                HostVariable: "COPILOT_GH_HOST"),
+            // Observed (spike §1): models.currentModelId on this machine's login.
+            DefaultModel: "claude-sonnet-5"),
         new(
             "gemini",
             "google",
@@ -268,7 +280,9 @@ public static class EngineCatalog
                 // Google" is refused server-side for individuals since 2026-06-18 (spike §3).
                 "npm install -g @google/gemini-cli  (then set GEMINI_API_KEY, from https://aistudio.google.com/apikey, in the environment the product launches with)",
                 NpmPackage: "@google/gemini-cli",
-                NpmEntryModule: "bundle/gemini.js")),
+                NpmEntryModule: "bundle/gemini.js"),
+            // Observed (spike §3): models.currentModelId on the API-key path.
+            DefaultModel: "auto"),
         new(
             "grok",
             "xai",
@@ -301,7 +315,9 @@ public static class EngineCatalog
                 // grok.com sign-in requires was not recorded.
                 "irm https://x.ai/cli/install.ps1 | iex  (Windows PowerShell; macOS/Linux: curl -fsSL https://x.ai/cli/install.sh | bash) — or: npm install -g @xai-official/grok@1.0.30; then: grok login, or set XAI_API_KEY in the environment the product launches with",
                 NpmPackage: "@xai-official/grok",
-                NpmEntryModule: "bin/grok")),
+                NpmEntryModule: "bin/grok"),
+            // Observed (spike §4): _meta.modelState.currentModelId.
+            DefaultModel: "grok-4.6"),
     ];
 
     /// <summary>The catalog, as data.</summary>
@@ -342,6 +358,53 @@ public static class EngineCatalog
     /// </summary>
     public static EngineLaunch ResolveLaunch(string engineId, string adapterInstallRoot, NativeCommandLocator locator)
         => ResolveLaunch(Find(engineId), adapterInstallRoot, locator);
+
+    /// <summary>
+    /// Why the engine is not installed here, or <c>null</c> when it is — the one reading the New
+    /// Session sheet's <i>not configured</i> state and first use's <i>installed</i> verdict both take
+    /// (DC-223: two callers probing <c>File.Exists</c> on a composed path each read it differently;
+    /// one read <c>Arguments[0]</c>, which for a native row is <c>--acp</c>, not a file).
+    /// </summary>
+    /// <remarks>
+    /// <see cref="ResolveLaunch(string, string)"/> stays a pure composition — its callers spawn the
+    /// result and the spawn is what fails when the file is missing, by name. This reads the disk
+    /// once, before any spawn, and names what is missing: an adapter's entry module under the install
+    /// root, or a native CLI's executable on PATH. A row that cannot launch at all reads its launch
+    /// refusal, unchanged.
+    /// </remarks>
+    public static string? InstallRefusal(string engineId, string adapterInstallRoot)
+        => InstallRefusal(engineId, adapterInstallRoot, NativeCommandLocator.FromEnvironment());
+
+    /// <summary><see cref="InstallRefusal(string, string)"/> with the PATH lookup injected.</summary>
+    public static string? InstallRefusal(string engineId, string adapterInstallRoot, NativeCommandLocator locator)
+    {
+        ArgumentNullException.ThrowIfNull(locator);
+
+        EngineRow row;
+        EngineLaunch launch;
+        try
+        {
+            row = Find(engineId);
+            launch = ResolveLaunch(row, adapterInstallRoot, locator);
+        }
+        catch (AgentPlaneException error)
+        {
+            return error.Message;
+        }
+
+        if (row.Acp == AcpMode.Adapter)
+        {
+            var entry = launch.Arguments[0];
+            return File.Exists(entry) ? null : $"adapter not installed: {entry} is not on disk";
+        }
+
+        // Native: ResolveLaunch already refused a CLI PATH does not carry (EngineNotOnPath); a
+        // resolved executable is the installed reading. A bare command name (no separator) is a
+        // PATH hit the locator vouched for; a path is checked on disk.
+        var executable = launch.FileName;
+        var isPath = executable.Contains(Path.DirectorySeparatorChar) || executable.Contains(Path.AltDirectorySeparatorChar);
+        return !isPath || File.Exists(executable) ? null : $"{row.Id} is not installed: {executable} is not on disk";
+    }
 
     /// <summary>Resolves a row that need not be in the catalog — the refusals are tested on synthetic rows.</summary>
     internal static EngineLaunch ResolveLaunch(EngineRow row, string adapterInstallRoot, NativeCommandLocator locator)
