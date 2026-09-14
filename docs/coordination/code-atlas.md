@@ -226,7 +226,7 @@ erasure of prior orchestration cost. No measured total runtime estimate is avail
 | NQ diagnosis/repair | Reasoning | Actual abort cause, then required clone/linked/nested and hostile/ABA controls pass without weakening confinement | Qualified mechanism joined `acaf4dca`; parent pre/post join 350/350, NQ 29/30. Production cleanup condition remains |
 | Shell lifetime repair | Reasoning | Factory/dispose/clear/admission fault oracles, recovery and idempotent final drain/disposal | Complete at component level: 44/44; eleven semantic reds, parent 90/90 before and after join; SRE/Test conditions retained |
 | Membership gate | Independent review | Narrow Security/Test acceptance of qualified native/admin/currentness evidence | Test PASS; Security conditional qualification, not production clearance. Retained-cleanup correction and six targeted review leaves released |
-| Production Core handoff | Reasoning | Actual committed issuer, async transport, remote reader and factory/view-model surface; no callable success stub | Git-dependent admission waits for cleanup clearance. C receives ten existing regular cleanup calls and four for a code-grounded runtime estimate; full runtime not funded yet |
+| Production Core handoff | Reasoning | Actual committed issuer, async transport, remote reader and factory/view-model surface; no callable success stub | Owner 50 funds sixty new C leaves, regular48/108, in fresh verified runtime tree; first leaf closes daemon/path readback. Setup marker exception pending |
 | Real-window integration | Reasoning | MainWindow attach/replacement/awaited close consumes the committed Core surface | Depends on Core handoff and repaired Shell owner |
 | Integrated proof | Independent review | Real Architecture opener to inventory/file/member/source/Back, replacement/revocation/cancellation/disposal | Depends on joined production source; component and detached proofs do not satisfy it |
 | Record/join | Deterministic mechanics | Scoped commits, audit then derived regeneration, exact evidence and remaining boundaries recorded | Conductor owns this; no primary merge or push |
@@ -266,3 +266,17 @@ qualification, then the candidate joined with production cleanup explicitly bloc
 The cumulative main-line ceiling is now 126, prospectively granted after the 102 checkpoint;
 six record/join mechanics and eighteen cleanup/review/runtime-estimate-disposition leaves.
 No past overrun is reset. Actual implementation, verification and coordination tasks remain open.
+
+### Actual runtime release, Owner turn 50
+
+The cleanup candidate joined as `c90a9cce`; Conductor observed 355/355 before and after.
+Runtime starts from the accepted `1e96dd8e` tree in
+`C:\Projects\ai-de-atlas-production-core-runtime`, not the predecessor tree's older Shell.
+The same C agent has sixty new leaves and the exact section-2 twenty-file ceiling.
+Blocking membership pins are operation-critical-section resources, not idle reader-lease
+resources. Real connection identity and explicit ownership of new readers are mandatory.
+
+The budget separates author work from eighteen independent review leaves (Security/DS/Test
+six each), sixteen conditional Shell handoff leaves and fifteen independent real daemon/
+MainWindow proof leaves. The Conductor ceiling is prospectively 184, without resetting the
+recorded 128 count or previous overruns. No main/push/private-reference import is granted.

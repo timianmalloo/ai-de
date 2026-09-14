@@ -485,6 +485,45 @@ throws before live buffer freeing; unpublished constructor cleanup retains its o
 The candidate may join under Owner 48's conditional gate, without admitting the unbuilt
 runtime factory or real-window integration.
 
+### Atlas actual runtime tranche, Owner turn 50
+
+C receives sixty new execution/verification leaves, regular **48/108**, across the same
+twenty-file ceiling above. NQ remains 29/30. The runtime successor session is
+`atlas-production-core-runtime-astra`, branch `atlas/production-core-runtime`, worktree
+`C:\Projects\ai-de-atlas-production-core-runtime`, using the retained C execution agent.
+Its exact starting HEAD was read back as `1e96dd8e8ae06a42759ff14779eb95296edf0248`, clean.
+The previous `atlas-production-core-exec-astra` registration ended; its tree and all raw
+proofs are retained. The new tree includes the accepted Shell and cleanup seams, rather
+than building runtime against the predecessor tree's older Shell.
+
+First writer leaf verifies the literal assigned paths and reads the daemon composition/
+shutdown body at that pin. At most the first eight leaves resolve necessary composition/
+lifetime decisions and executable controls. Continue through admission composition,
+awaited server/facade, isolated persistent reader, actual factory/ViewModel handoff and
+daemon proof, without artificial two-call releases. Stop only for a real unknown contract,
+scope conflict or veto. Generic `IpcClient` stays unchanged.
+
+Connection/workspace identity comes from `WorkspaceClient`'s actual connection state,
+not the ViewModel display name. Newly created Atlas readers transfer to the Shell workspace
+owner; borrowed queries/commands remain borrowed. Write/delete-excluding Git/admin/index/
+ref pins are held only in bounded capture/read/publication critical sections, never while
+the UI waits or throughout the logical lease. Later operations revalidate rather than
+consulting disposed-pin currentness. Git change/contention yields truthful retryable
+unavailability or invalidation; old receipts do not acquire new authority.
+
+Owner separately grants eighteen review leaves (Security six, DS six, Test six), sixteen
+new S handoff leaves only after an actual reviewed C commit, and fifteen independent real
+daemon/MainWindow proof leaves. The Shell eight-file ceiling remains. Conductor's
+prospective cumulative ceiling is 184, preserving the 128 count, control-plane overrun,
+and eighteen reported wrappers; first eight are reserved for records. Maximum two writers/
+width four; no primary/main integration, push or normative Addendum E acceptance.
+
+Setup readback: inherited merge drivers and registry are effective. `coord doctor` reports
+the same six pre-existing shared OWED markers and exits nonzero; it is not called clean.
+The fresh runtime tree's `regenerate-derived.py --check` passed all local checks. No global
+marker was cleared or installation overwritten. Owner's narrow setup disposition is pending;
+this is not a waiver of a source, authority or runtime verification gate.
+
 ### Core owns
 
 | Path | Why |

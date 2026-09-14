@@ -909,3 +909,36 @@ failed unpublished cleanup is retained, the safe data handle closes in `finally`
 notification timeout throws before buffers/OVERLAPPED are freed. The required readback is
 complete for this candidate. Actual stalled-kernel behavior, runtime content policy, real
 factory/MainWindow composition and production diagnostic confinement are not claimed.
+
+## Actual Core runtime and nonblocking idle lifetime, Owner turn 50
+
+Owner grants sixty new C leaves through an actual committed runtime handoff and daemon-path
+proof, regular ceiling 108 after 48 spent. The literal pending destinations are already in
+section 2; `src/AiDe.Daemon/Program.cs` was located by Owner and uses
+`IpcPipeName.ForWorkspace` when composing Core/capabilities/registrations. The writer still
+reads that body's exact baseline and shutdown ownership before implementation.
+
+The logical reader lease is not a licence to keep write/delete-excluding membership pins
+while a developer works. Those pins belong to bounded capture/read/publication critical
+sections. Later operations reacquire and revalidate; disposed-pin currentness is never
+reused. Git writes while idle must succeed, and contention/change during work must be
+truthful unavailability or invalidation. No old receipt is promoted under a fresh authority.
+
+New Atlas readers have explicit ownership transferred to the Shell workspace owner.
+Existing borrowed query/command interfaces remain borrowed. The real connection identity,
+not the ViewModel label, supplies workspace binding. Physical metadata visibility and
+content eligibility remain distinct and do not depend on semantic-index presence.
+
+The ordered tranche is admission/policy/budget/Q, awaited endpoint/server/daemon facade,
+isolated persistent client, real WorkspaceClient/ViewModel factory handoff, then daemon
+proof. Generic `IpcClient` is unchanged. Eighteen independent review leaves, sixteen
+conditional Shell handoff leaves and fifteen independent real-window proof leaves are
+separate; author verification cannot spend or satisfy them. Conductor receives a fixed
+cumulative ceiling of 184, retaining prior overruns and wrapper accounting.
+
+Runtime uses a fresh verified tree at `1e96dd8e`, with the same retained C agent and exact
+twenty-file ceiling. The prior registration ended without deleting its proof tree. The
+new tree's inherited driver/registry state and local derived checks are observed; six old
+shared OWED markers still make `coord doctor` nonzero. No marker was erased. Owner was
+asked for a narrow recorded setup exception; no clean-doctor claim or runtime-gate waiver
+is inferred.

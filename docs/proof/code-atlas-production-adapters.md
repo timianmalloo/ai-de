@@ -276,3 +276,10 @@ estimated 35-60 author/verification leaves, excluding independent reviews, but e
 flagged missing method-body and disposal grounding. Owner turn 49 releases the two unused
 regular calls to finish those reads and the exact twenty-file reconciliation. No runtime
 code may be authored from that provisional estimate.
+
+Owner turn 50 subsequently funds the actual runtime tranche, conditional on the first
+literal daemon/bootstrap read at the verified starting pin. This supersedes the funding
+hold, not the evidence requirements. The new operational oracle includes ordinary Git
+writes while Atlas is idle: qualification pins must not commandeer the developer workspace.
+Real Core connection identity and explicit new-reader ownership must survive the ViewModel
+and Shell handoff; borrowed interfaces do not silently become owned.
