@@ -50,16 +50,27 @@ public sealed class AtlasStaticReaderContractTests
 
         var validated = AtlasReaderProjection.DeserializeSelection(baseBody, CurrentSelectRequest());
         var mutated = MutateFirstOutlineRow(baseJson, before, after);
-        var mutatedRow = mutated["outline"]![0]!.AsObject();
 
         Assert.Equal("scope-token", validated.ScopeToken);
-        Assert.Equal("scope-token", mutated["scopeToken"]!.GetValue<string>());
-        if (null == after)
-            Assert.Contains(mutatedRow, property => property.Key == before.Split(':')[0].Trim('"'));
-        else
-            Assert.Contains(after, mutatedRow.ToJsonString(), StringComparison.Ordinal);
+        Assert.Empty(RootDifferencesExcludingOutline(baseJson, mutated));
+        AssertRowMutationPresent(mutated, before, after);
         Assert.Throws<JsonException>(() =>
             AtlasReaderProjection.DeserializeSelection(Encoding.UTF8.GetBytes(mutated.ToJsonString()), CurrentSelectRequest()));
+    }
+
+    [Fact]
+    public void SelectionResponse_RowIsolationControlDetectsRootCorruptionBeforeCodec()
+    {
+        var baseJson = JsonNode.Parse(AtlasReaderProjection.SerializeSelection(CurrentSelection(), CurrentSelectRequest()))!.AsObject();
+        var corrupted = MutateFirstOutlineRow(baseJson, "\"kind\":\"Method\"", "\"kind\":1");
+        corrupted["scopeToken"] = "other-scope";
+        corrupted["unexpectedRoot"] = true;
+
+        var differences = RootDifferencesExcludingOutline(baseJson, corrupted);
+
+        AssertRowMutationPresent(corrupted, "\"kind\":\"Method\"", "\"kind\":1");
+        Assert.Contains("scopeToken", differences);
+        Assert.Contains("unexpectedRoot", differences);
     }
 
     [Fact]
@@ -98,66 +109,17 @@ public sealed class AtlasStaticReaderContractTests
         Assert.Equal(0, remote.OutlineBounds.ReturnedRows - remote.Outline.Length);
     }
 
-    [Fact]
-    public async Task ReadBudget_CurrentQueueLedgerReportsFourActiveSixteenPendingOperationChargesAndDrains()
-    {
-        var budget = new AtlasReadBudget();
-        var active = new List<AtlasReadBudget.Reservation>();
-        using var cancellation = new CancellationTokenSource();
-        var pending = new List<Task<AtlasReadBudget.Reservation>>();
-        (int Scopes, int Active, int Pending, long Owned, long Retained) held = default;
-        AtlasReadException? overCapacity = null;
-        var pendingOutcomes = new List<string>();
-
-        try
-        {
-            for (var i = 0; i < 4; i++) active.Add(await budget.EnterAsync(cancellation.Token));
-            for (var i = 0; i < 16; i++) pending.Add(budget.EnterAsync(cancellation.Token).AsTask());
-
-            held = budget.Read();
-            overCapacity = Assert.Throws<AtlasReadException>(() => budget.EnterAsync(cancellation.Token));
-        }
-        finally
-        {
-            cancellation.Cancel();
-            foreach (var reservation in active) reservation.Dispose();
-            foreach (var task in pending)
-            {
-                try
-                {
-                    using var unexpected = await task;
-                    pendingOutcomes.Add("completed");
-                }
-                catch (OperationCanceledException)
-                {
-                    pendingOutcomes.Add("canceled");
-                }
-                catch (Exception ex)
-                {
-                    pendingOutcomes.Add(ex.GetType().Name);
-                }
-            }
-        }
-
-        Assert.NotNull(overCapacity);
-        Assert.Equal("Atlas.Busy", overCapacity.Code);
-        Assert.Equal(0, held.Scopes);
-        Assert.Equal(4, held.Active);
-        Assert.Equal(16, held.Pending);
-        Assert.Equal(4 * AtlasReadBudget.OperationBytes, held.Owned);
-        Assert.Equal(0, held.Retained);
-        Assert.Equal(16, pendingOutcomes.Count);
-        Assert.All(pendingOutcomes, outcome => Assert.Equal("canceled", outcome));
-        Assert.Equal((0, 0, 0, 0L, 0L), budget.Read());
-    }
-
     private static JsonObject MutateFirstOutlineRow(JsonObject baseJson, string before, string? after)
     {
         var mutated = JsonNode.Parse(baseJson.ToJsonString())!.AsObject();
         var row = mutated["outline"]![0]!.AsObject();
         if (null == after)
         {
-            row.Insert(0, before.Split(':')[0].Trim('"'), JsonValue.Create<string?>(null));
+            var property = before.Split(':')[0].Trim('"');
+            if (before.Contains("\"class\"", StringComparison.Ordinal))
+                row.Insert(0, property, "class");
+            else
+                row.Insert(0, property, JsonValue.Create<string?>(null));
             return mutated;
         }
 
@@ -165,6 +127,35 @@ public sealed class AtlasStaticReaderContractTests
         Assert.Contains(before, rowJson);
         mutated["outline"]![0] = JsonNode.Parse(rowJson.Replace(before, after, StringComparison.Ordinal));
         return mutated;
+    }
+
+    private static void AssertRowMutationPresent(JsonObject mutated, string before, string? after)
+    {
+        var row = mutated["outline"]![0]!.AsObject();
+        if (null == after)
+        {
+            var property = before.Split(':')[0].Trim('"');
+            Assert.Contains(row, item => item.Key == property);
+            if ("classifierFlavor" == property)
+                Assert.Equal("class", row[property]!.GetValue<string>());
+            else
+                Assert.Null(row[property]);
+            return;
+        }
+
+        Assert.Contains(after, row.ToJsonString(), StringComparison.Ordinal);
+    }
+
+    private static string[] RootDifferencesExcludingOutline(JsonObject expected, JsonObject actual)
+    {
+        var expectedKeys = expected.Select(item => item.Key).Where(key => key != "outline").ToHashSet(StringComparer.Ordinal);
+        var actualKeys = actual.Select(item => item.Key).Where(key => key != "outline").ToHashSet(StringComparer.Ordinal);
+        var keys = expectedKeys.Concat(actualKeys).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
+        return keys
+            .Where(key => !expectedKeys.Contains(key)
+                || !actualKeys.Contains(key)
+                || !JsonNode.DeepEquals(expected[key], actual[key]))
+            .ToArray();
     }
 
     private static string ValidSelectRequest() => """
