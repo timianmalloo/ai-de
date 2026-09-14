@@ -629,6 +629,22 @@ If ownership persists after the matching drain, the runtime finding stays open a
 repair scope needs explicit approval. After joined green, fresh Test/DS clearance and
 parent handoff confirmation, the already funded Shell sixteen may be released.
 
+Owner-55 exit conditions are met: the request-correlated test-only correction `3c097fa9`
+passed fresh Test/DS review and joined as `4cfb8450`. Conductor independently rebuilt and
+ran joined Core 459/459 and App/factory 96/96, zero skipped. Production source remains
+the reviewed `4d03bd19` implementation; its actual factory/ViewModel handoff was read.
+
+The held sixteen S leaves are now released, cumulative S **44/60**, to the retained Shell
+agent in fresh session `atlas-mainwindow-handoff-astra`, branch `atlas/mainwindow-handoff`,
+worktree `C:\Projects\ai-de-atlas-mainwindow-handoff`. Parent verified clean exact base
+`4cfb8450a7cda5448d3aa32923d95998fc22d36c`, local derived checks and an identity-bound
+MainWindow path allowance. The prior Shell registration ended; its proof tree remains.
+The same eight-file S ceiling applies. MainWindow consumes
+`MainWindowViewModel.AtlasReaderFactory` and transfers each created reader to
+`AtlasWorkspaceOwner`; existing borrowed query/command interfaces remain borrowed.
+The independent real daemon/MainWindow proof's fifteen leaves remain separate and held
+until the real handoff lands. No source grant, main/push or programme acceptance is implied.
+
 ### Core owns
 
 | Path | Why |

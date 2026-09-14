@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T14:28:26Z",
+  "generated": "2026-09-14T14:59:16Z",
   "audit": [
     {
       "actor": null,
@@ -16007,6 +16007,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "4855151f0328bd3c0623e3a5e23f58e2cb9c9248",
         "short": "4855151f0",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2G6VX7AYVPGGS1QYR7GRSXN",
+      "shortname": "atlas-joined-core-cleared-shell-released",
+      "datetime": "2026-09-14T14:59:15Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Reviewedtest-only3c097fa joined4cfb8450; independentlyjoinedCore459/459andApp96/96zero skipped. Prior458/459failurepreserved; specificRestorefull-receive vs matchingserverdrainproven. Owner55conditionalShellreleaseMET; S16newcalls44to60dispatchedretainedagentinNEWcleanverifiedatlas-mainwindow-handofftree4cfb8450,oldregistrationended/evidencekept. ActualCreateAtlasReader/VMfactoryhandoffpassed; borrowedinterfacesremainborrowed. Independentwindowproof15helduntilrealMainWindowcommit. Initialrecordpatchfailedbeforeanyedit; correctedsole§2/Ownernotesnowpersisted. No mainpush/programmeclaim.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Complete actual MainWindow attachment, replacement and awaited close over the reviewed Core reader.",
+      "done_when": "The real Architecture Code Atlas surface consumes the committed factory and passes independent daemon/window proof.",
+      "tier": "T2",
+      "main_calls": 248,
+      "main_budget": 256,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T14:59:15Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "4cfb8450a7cda5448d3aa32923d95998fc22d36c",
+        "short": "4cfb8450a",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

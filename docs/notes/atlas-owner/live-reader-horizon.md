@@ -1112,3 +1112,18 @@ Test and DS each receive two fresh review leaves. The failing joined TRX and all
 green runs stay. After the corrected joined Core and App gates, fresh review and actual
 factory handoff confirmation, the existing Shell sixteen may proceed. Current joined
 source is not yet accepted as a complete runtime.
+
+## Joined Core gate closes; real Shell handoff released
+
+The test-only `3c097fa9` correction received fresh Test and DS clearance. Parent read its
+request/scope/original-receipt/response-reference correlation and raw owned-resource
+observations, then joined it as `4cfb8450`. The current joined Core gate is 459/459 and
+the joined App/factory gate is 96/96, with zero skipped. The earlier 458/459 failure remains
+preserved; no runtime resource was released early to make the old oracle pass.
+
+This satisfies Owner 55's conditional Shell release. The retained Shell agent receives
+sixteen leaves, S 44/60, in a fresh verified tree at `4cfb8450` containing the real Core
+factory and accepted publication/cleanup semantics. It owns only the existing eight-file
+S ceiling. MainWindow attachment/replacement/final awaited close must use the actual
+`AtlasReaderFactory` and separately owned Atlas reader, not the borrowed query interfaces.
+Independent actual daemon/MainWindow proof remains a separate fifteen-leaf stage.
