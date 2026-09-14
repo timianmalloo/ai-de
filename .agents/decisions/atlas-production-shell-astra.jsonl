@@ -6,3 +6,6 @@
 {"agent": "copilot-atlas-production-shell", "at": 1789335885.7577255, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Understanding/AtlasWorkspaceOwner.cs", "session": "atlas-production-shell-astra", "wi": ""}
 {"agent": "copilot-atlas-production-shell", "at": 1789335885.7655802, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "session": "atlas-production-shell-astra", "wi": ""}
 {"agent": "copilot-atlas-production-shell", "at": 1789335885.771893, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Understanding/AtlasSharedHostAdmissionTests.cs", "session": "atlas-production-shell-astra", "wi": ""}
+{"agent": "copilot-atlas-production-shell", "at": 1789340048.8380136, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Understanding/AtlasLoadingHost.cs", "session": "atlas-production-shell-astra", "wi": ""}
+{"agent": "copilot-atlas-production-shell", "at": 1789340048.8440146, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Understanding/AtlasWorkspaceOwner.cs", "session": "atlas-production-shell-astra", "wi": ""}
+{"agent": "copilot-atlas-production-shell", "at": 1789340048.8511255, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Understanding/AtlasSharedHostAdmissionTests.cs", "session": "atlas-production-shell-astra", "wi": ""}

@@ -214,6 +214,7 @@ public sealed class PerspectiveMenuTests
         var expected = new (string Kind, string[] Admitting, SurfaceContentFactory.Instances Instances)[]
         {
             ("session-document", ["coding"], SurfaceContentFactory.Instances.Many),
+            ("console",          ["coding"], SurfaceContentFactory.Instances.Many),   // Ruling 89: the session's Console as a document
             ("terminal",         ["coding"], SurfaceContentFactory.Instances.Many),
             ("prompt",           ["coding"], SurfaceContentFactory.Instances.Many),
             ("sessions",         ["coordination"], SurfaceContentFactory.Instances.One),
@@ -243,21 +244,32 @@ public sealed class PerspectiveMenuTests
         }
     }
 
-    // A kind whose door is a catalog entry verb names one that exists and is offered everywhere;
-    // every other kind derives its entry under one of the six menus. Stated on the row, as a closed
-    // type, so an absence cannot hide a kind.
+    // A kind whose door is a catalog verb names one that exists: the two ENTRY verbs (terminal,
+    // session) are offered everywhere, in File; the console's verb (Ruling 89) is a companion of an
+    // open session, offered where a session document can be, in View. Every other kind derives its
+    // entry under one of the six menus. Stated on the row, as a closed type, so an absence cannot
+    // hide a kind.
     [Fact]
     public void EveryEntryVerbRowNamesAGlobalCatalogCommand_AndEveryOtherRowDerivesItsEntry()
     {
         var verbs = SurfaceContentFactory.Kinds.Where(k => k.Entry is SurfaceContentFactory.SurfaceEntry.Verb).ToList();
-        Assert.Equal(["terminal", "session-document"], verbs.Select(k => k.Kind));
+        Assert.Equal(["terminal", "session-document", "console"], verbs.Select(k => k.Kind));
 
         foreach (var row in verbs)
         {
             var verb = (SurfaceContentFactory.SurfaceEntry.Verb)row.Entry;
             var command = Assert.Single(WorkbenchCommandCatalog.All, c => c.Id == verb.CommandId);
-            Assert.Equal(CommandScope.Global, command.Scope);
-            Assert.Equal("_File", command.Menu);
+            if (row.Kind == "console")
+            {
+                Assert.Equal(CommandScope.Admits("session-document"), command.Scope);
+                Assert.Equal("_View", command.Menu);
+            }
+            else
+            {
+                Assert.Equal(CommandScope.Global, command.Scope);
+                Assert.Equal("_File", command.Menu);
+            }
+
             Assert.Throws<ArgumentException>(() => PerspectiveMenu.Opener(row));
         }
 
@@ -294,7 +306,7 @@ public sealed class PerspectiveMenuTests
             ["Coding perspective", "Explore perspective", "Architecture perspective", "Coordination perspective",
              "Next tab in pane", "Previous tab in pane", "Move tab left/right",
              "Clear the status message",
-             "Cycle session region", "Cycle session region backward",
+             "Cycle session region", "Cycle session region backward", "Session console",
              "New search", "New code viewer", "Show diagnostics"],
             Titles(coding, "_View"));
         Assert.Equal(["Dispatch prompt to terminal…", "New prompt draft"], Titles(coding, "_Prompt"));

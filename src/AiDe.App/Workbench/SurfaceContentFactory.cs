@@ -39,10 +39,16 @@ public sealed class SurfaceContentFactory(
     // pane says plainly rather than rendering an empty document.
     Func<Surface, Sessions.SessionDocumentSurface?>? sessionDocumentFor = null,
 
-    // Appended last, same reason as its neighbours. The Evidence(master)/Provenance(detail) seam
+    // Appended, same reason as its neighbours. The Evidence(master)/Provenance(detail) seam
     // (Ruling 61; US-C6): null lets production wire itself (lazily, in Selection below); a test
     // supplies its own so the pair is testable without a docking host.
-    EvidenceSelectionSource? evidenceSelection = null)
+    EvidenceSelectionSource? evidenceSelection = null,
+
+    // Appended last, same reason. Resolves the console DOCUMENT's content for a `console` surface
+    // (Ruling 89; CV-5.2's seam request): the live session document's own Split, hosted by the
+    // shell so it can leave the document's grid and dock in the Center; null in a build (or a
+    // test) with no session behind the surface, which the pane says plainly.
+    Func<Surface, FrameworkElement?>? consoleFor = null)
 {
     /// <summary>The one selection channel this factory's Evidence pair shares (lazily created).</summary>
     private EvidenceSelectionSource Selection => evidenceSelection ??= new EvidenceSelectionSource();
@@ -99,6 +105,13 @@ public sealed class SurfaceContentFactory(
     /// True for a kind whose content owns a child HWND (canvas, terminal). A windowed kind is
     /// returned UNWRAPPED — see the note at the end of <see cref="Create"/>.
     /// </param>
+    /// <param name="Zone">
+    /// <b>The zone rule (Rulings 83/89).</b> The zone a NEW surface of this kind opens in — the
+    /// session document's Left, the console document's Center — read by the shell's open in place
+    /// of the reference-document placement policy. Null for a kind the policy places (a code viewer
+    /// beside the graph, a prompt draft beside a terminal). A restore never reads it: a saved
+    /// arrangement is restored where it was saved (Ruling 83, "reopen is unchanged").
+    /// </param>
     public sealed record SurfaceKind(
         string Kind,
         string Title,
@@ -107,7 +120,8 @@ public sealed class SurfaceContentFactory(
         IReadOnlyList<Perspective> Perspectives,
         Instances Instances,
         SurfaceEntry Entry,
-        bool Windowed = false);
+        bool Windowed = false,
+        ZoneId? Zone = null);
 
     /// <summary>
     /// The surface kinds this factory builds — <b>a descriptor list, not a switch arm</b> (Ruling 22).
@@ -286,7 +300,22 @@ public sealed class SurfaceContentFactory(
         new(AiDe.App.Workbench.Sessions.SessionDocumentSurface.Kind, "Session",
             "One session: its composer and its canvas.",
             static (f, s) => f.SessionDocument(s),
-            Perspectives: [PerspectiveSet.Coding], Instances.Many, new SurfaceEntry.Verb("session.new")),
+            Perspectives: [PerspectiveSet.Coding], Instances.Many, new SurfaceEntry.Verb("session.new"),
+            // Ruling 83: a new session docks in the Left, docked, never maximized; the operator's
+            // own words and gesture ("new sessions should default into the left dock").
+            Zone: ZoneId.Left),
+
+        // The session's Console as a document (Ruling 89; CV-5.2's seam request): identity
+        // `console:<sessionId>`, caption "Console — <session>", one per session, opened into the
+        // Center by the `session.console` verb (the header's toggle, the View menu, the palette)
+        // and never inside the Left stack; it closes with its session (WorkbenchShell). Its content
+        // is the session document's own ConsoleSurface — one instance, one derivation of the rows
+        // (Coalesce, Ruling 81) — hosted here rather than beside the thread.
+        new(AiDe.App.Workbench.Sessions.ConsoleDocumentHost.Kind, "Console",
+            "One session's Console: every wire frame, one row per message.",
+            static (f, s) => f.ConsoleDocument(s),
+            Perspectives: [PerspectiveSet.Coding], Instances.Many, new SurfaceEntry.Verb("session.console"),
+            Zone: ZoneId.Center),
     ];
 
     /// <summary>Surface kinds this factory can build. An unknown kind still gets an honest pane.</summary>
@@ -332,9 +361,35 @@ public sealed class SurfaceContentFactory(
             return document;
         }
 
-        // The ordinary empty state, in the same voice as WorkspaceNeeded: this is "no session open",
-        // not a build or packaging defect, and saying "not available in this build" would point the
-        // reader at the wrong thing (UI-EMPTY-STATE).
+        // The ordinary empty state, in the same voice as WorkspaceNeeded: a session-document surface
+        // with no live document behind it is one the saved arrangement restored and the revive could
+        // not load (INV-0009 Phase 2b) — say so, name the session, and name the way out; never
+        // "not available in this build" (UI-EMPTY-STATE), and never "No session is open" while the
+        // Center says one is docked here (Ruling 83 condition 2; the UX lens on SH-4.2).
+        var text = new TextBlock
+        {
+            Text = $"“{surface.Title}” could not be restored — its files are missing or unreadable. Reopen it from File → Recent sessions, or close this tab.",
+            Margin = new Thickness(12),
+            TextWrapping = TextWrapping.Wrap,
+            Focusable = true,
+        };
+        text.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+        return text;
+    }
+
+    /// <summary>
+    /// The console document for a <c>console</c> surface — the live session's Console, hosted — or
+    /// the same empty state the session document shows when no session is behind the surface (a
+    /// saved arrangement can carry a console surface whose session was not reopened; the shell
+    /// closes it with the session, but a restore has no session to close it with).
+    /// </summary>
+    private FrameworkElement ConsoleDocument(Surface surface)
+    {
+        if (consoleFor?.Invoke(surface) is { } console)
+        {
+            return console;
+        }
+
         var text = new TextBlock
         {
             Text = "No session is open. Create one from File → New Session.",

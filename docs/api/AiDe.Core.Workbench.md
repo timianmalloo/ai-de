@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Workbench: 78 types, 149 members, 58% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Workbench: 78 types, 151 members, 59% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Workbench`
 
-**78 public types · 149 public members · 58% documented.**
+**78 public types · 151 public members · 59% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -904,6 +904,7 @@ unchanged from the tree model (only docked layout changes in ADR-0021).
 
 | Member | Summary |
 |---|---|
+| `double CodingLeftExtent = 1.3 / 2.3` | Coding's Left extent (Ruling 83 condition 1; DESIGN.md's errata row): the Left is **1.3 of the Center** — the mockup's `minmax(0,1.3fr) minmax(0,1fr)` — spelled as the zone's share of the columns row (1.3 ⁄ 2.3), whic… |
 | `WorkbenchLayout Default()` | The default arrangement: graph document in the Center, a terminal in the Bottom. |
 | `WorkbenchLayout Default(Perspective perspective)` | The per-perspective default (Addendum C §B4; Rulings 54/59/60/61/84) — each docking host's OWN table, never the combined seed `Default()` filtered down (the trap `ZoneBackedLayoutService` named: filtering one shared s… |
 | `WorkbenchLayout Empty()` | An empty frame — all four zones present, none with content. Used by the converter as a base. |
@@ -1056,4 +1057,5 @@ welcome placeholder, because the Center is never absent (AC-F3).
 | `string RootSplitId = "frame-root"` | **(gap)** |
 | `Surface WelcomePlaceholder = new("welcome", "welcome", "Welcome")` | The surface shown when the Center has no documents (kept out of the zone model itself). |
 | `Layout ToTree(WorkbenchLayout zones)` | Builds the fixed-shape tree for the current zones. |
+| `string StackIdOf(ZoneId zone)` | The projected stack id a zone renders as — the inverse of `ZoneOfStackId`; what an open names to land in a zone. |
 | `ZoneId? ZoneOfStackId(string stackId)` | Which zone a projected stack id belongs to, or null for an unknown id. |

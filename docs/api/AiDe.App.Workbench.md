@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 92 types, 409 members, 73% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 94 types, 413 members, 73% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**92 public types · 409 public members · 73% documented.**
+**94 public types · 413 public members · 73% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -144,6 +144,50 @@ and the browser's own focus traversal both see an ordinary key — which is what
 keyboard-trap contract is about. It does not exercise the OS→browser hop, so it cannot catch
 a regression where the host swallows the key before the browser sees it. That gap is stated
 rather than papered over.
+
+## `CenterEmptyState`
+
+*class* — `CenterEmptyState.cs`
+
+The Center's empty copy — what the projection's placeholder renders while a host's Center holds
+no document (Ruling 83 condition 2; DESIGN.md's *"The empty states — the Center's copy in
+Coding"* row, and the *Nothing open here* row). **Two true sentences, by state**: the
+copy is a function of the host's zones and of which session surfaces have a live document, so it
+is derived at every render rather than kept in step.
+
+**Remarks.** **Why the shell composes it and not the factory.** `WelcomePlaceholder`
+is a view-only surface — it has no `Kinds` row, because a row
+would make it openable and admissible — and the copy needs the zones, which the factory does not
+see. Before this the placeholder fell through to the factory's *"… is not available in this
+build"*, a build-defect sentence for the ordinary empty state (SH-4.2, L4's red).
+
+
+
+
+**No first action while a session is open.** The first action is the editor at Left,
+where focus lands; a *Maximize* here would hide the zone that offers it. The copy still
+carries a focus target — its heading — because the landing falls back to it when the Left is
+collapsed (`LandingSurfaceFor`), and a landing with nothing
+focusable falls through to an arbitrary tab header (the UX & Accessibility lens, SH-4.1).
+
+| Member | Summary |
+|---|---|
+| `FrameworkElement Build(Copy copy, Action newSession)` | The rendered copy: the `state.not-declared` shape — a heading, a line, the one action when offered. The heading is a Control-view text element (`ThreadText`) and, when no action is offered, the focus target: its sente… |
+
+### `FrameworkElement Build(Copy copy, Action newSession)`
+
+The rendered copy: the `state.not-declared` shape — a heading, a line, the one action
+when offered. The heading is a Control-view text element (`ThreadText`) and, when
+no action is offered, the focus target: its sentence IS its accessible name, the line its
+help — a panel with a Name is silent to an AT (no peer), the UX lens's finding on SH-4.2.
+
+- **`newSession`** — Runs the New session verb; only bound when the copy offers it.
+
+## `Copy`
+
+*record* — `CenterEmptyState.cs`
+
+The copy: a heading, a second line, and whether the New session action is offered.
 
 ## `ClassDiagramSurface`
 
@@ -932,7 +976,8 @@ that changes nothing writes nothing.
 | `event EventHandler<PerspectiveChange>? Changed` | Raised after the active perspective changes. Never for a no-op, never for a failed switch. |
 | `event EventHandler<PerspectiveBodyFailure>? BodyFailed` | Raised when a switch could not build its body; the active perspective is unchanged. |
 | `Func<Perspective, FrameworkElement, bool>? EntryFocus { get; set; }` | Where focus lands after a switch, once the new body has had its first layout pass (spec §C5: Coding — the active document; Explore — the reader, never the canvas trap; Architecture — the Center's active tab). Set by t… |
-| `string? LandingSurfaceFor(DockHost host)` | The surface a switch to 's perspective lands focus on (spec §C5): the active tab of the row's `Landing` zone when the row names one and the arrangement has that zone open with content; else the body's active surface a… |
+| `string? LandingSurfaceFor(DockHost host)` | The surface a switch to 's perspective lands focus on (spec §C5): the active tab of the row's `Landing` zone when the row names one and the arrangement has that zone open with content; else the Center's active tab — t… |
+| `bool FocusLanding(FrameworkElement content)` | Moves focus into a landing surface's content (spec §C5; DESIGN.md's landing row): a session document lands in its **editor** — the first action, where the operator types — and any other surface on its first focusable.… |
 | `string Activate(Perspective perspective, string trigger)` | Makes  the active one and returns what to announce. Activating the active perspective is a no-op that emits nothing (US-C1); a body that fails to build leaves the active perspective, the focus and the other bodies as … |
 | `bool Escape()` | Escape from the Explore surface's root restores the previous perspective (US-C1). Returns false — and does nothing — from a host, where Escape keeps its other roles. |
 | `void OnDocumentOpening(Perspective host)` | The shell's `DocumentOpening` seam (ADR-0017 amendment clause 4, generalised): a dock document is about to open in 's body; if that body is not on screen, it becomes the body — document first, then the switch, as one … |
@@ -944,6 +989,17 @@ that changes nothing writes nothing.
 - **`hosts`** — One `DockHost` per host-bodied perspective (ADR-0031: host A and host B; Ruling 84: host C).
 - **`explorerFactory`** — Builds the full-window Explore surface, once, on first entry.
 - **`announcer`** — The one live region every switch, refusal and failure is announced through.
+
+### `bool FocusLanding(FrameworkElement content)`
+
+Moves focus into a landing surface's content (spec §C5; DESIGN.md's landing row): a session
+document lands in its **editor** — the first action, where the operator types — and any
+other surface on its first focusable. Returns whether focus was placed.
+
+**Remarks.** `MoveFocus(First)` on a session document lands on the header's first button (the
+session settings), not the editor — the UX lens's finding on SH-4.2; the document's own
+`FocusRegion` knows where the editor is, page
+or first line.
 
 ### `string Activate(Perspective perspective, string trigger)`
 
@@ -1928,6 +1984,7 @@ rather than deleting. The comment was the defect; the code stays.
 | `DockingManager Manager { get; }` | **(gap)** |
 | `void Invalidate(IEnumerable<string> surfaceIds)` | Projects the current model into AvalonDock and names everything for assistive tech.  Marks surfaces to be REBUILT (not reused) on the next `Render`. Used by the shell when a workspace attaches and the watcher read pan… |
 | `void RefreshInPlace(IEnumerable<string> surfaceIds)` | Rebuilds the content of specific surfaces **in place** — replacing each `LayoutDocument`'s `Content` without swapping `Layout` — so refreshing one set of panes never disturbs the others. |
+| `event Action<string, FrameworkElement?>? SurfaceClosed` | Raised after a render for each surface the MODEL no longer holds — a tab the operator closed, a document a command closed, every pre-render surface after a whole-arrangement replacement — with the content that rendere… |
 | `void Render()` | **(gap)** |
 | `void ApplyAccessibleNames()` | **(gap)** |
 | `FrameworkElement? ContentFor(string surfaceId)` | The content element currently hosting , or null. |
@@ -2122,6 +2179,7 @@ is indistinguishable from a broken key.
 | `event Action? WorkspaceDataChanged` | Raised after a command that CHANGED what the store holds has finished. |
 | `CanvasFocusRouter? CanvasFocus { get; set; }` | Routes focus across the canvas boundary. Set when a graph canvas surface attaches. |
 | `Func<string?, int, CanvasFocusResult>? SessionRegionCycle { get; set; }` | Cycles the focused session document's regions — the registry rows `session.cycleRegion` (F6) / `session.cycleRegionBack` (Shift+F6) that DC-068 named as a seam request; the document's own `PreviewKeyDown` handler stay… |
+| `Func<string?, string>? SessionConsoleRequested { get; set; }` | The shell's `session.console` (Ruling 89): given the focused surface id, opens or focuses that session's Console document in the Center and returns what to announce; the shell resolves the session from the focused sur… |
 | `bool Execute(string commandId)` | Runs a catalog command by id. Returns false when the id is unknown. |
 | `bool Move(string surfaceId, DropTarget target)` | Applies a move produced either by a keyboard destination choice or by a drop. |
 | `DropTarget? HoveredTarget { get; private set; }` | The destination the in-flight drag currently points at, or null for none. |

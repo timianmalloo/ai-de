@@ -60,7 +60,7 @@ public sealed class KindAllowListsTests
         // Coding's remaining column: what it keeps after the five leave (the re-cut of its default is
         // SH-4.2's; the column is this slice's).
         Assert.Equal(
-            ["codeviewer", "diagnostics", "prompt", "search", "session-document", "terminal"],
+            ["codeviewer", "console", "diagnostics", "prompt", "search", "session-document", "terminal"],
             SurfaceContentFactory.Kinds.Where(k => k.Perspectives.Contains(PerspectiveSet.Coding)).Select(k => k.Kind).OrderBy(k => k, StringComparer.Ordinal));
     }
 }

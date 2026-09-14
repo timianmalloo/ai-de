@@ -1,4 +1,7 @@
 using System.Diagnostics;
+using System.IO;
+using AiDe.Core.Ipc;
+using AiDe.Core.Workbench;
 using AiDe.Tests.Shared;
 using Xunit.Abstractions;
 
@@ -17,6 +20,12 @@ namespace AiDe.App.Tests;
 /// App owns a headless console host, sends the window <c>WM_CLOSE</c> — the X button — and counts
 /// the hosts that still name the App as parent once it is gone.</para>
 ///
+/// <para><b>The terminal is seeded by a saved arrangement, not the default.</b> Coding's default
+/// Bottom is collapsed since Ruling 88, and a collapsed zone's terminal is not started until the
+/// rail is expanded (<c>CollapsedBottomTests</c>) — so a fresh workspace would open no host and
+/// this test would measure nothing. The workspace's Coding slot is written first with the Bottom
+/// expanded, the shape an operator who keeps a terminal open saves; the restore starts it.</para>
+///
 /// <para><b>What it costs.</b> A window on the desktop for a few seconds, one daemon for the
 /// throw-away workspace (detached by design, retires on its 30 s idle grace, reported by the
 /// census as <c>ours-detached</c>), and <c>app.start</c>/<c>terminal.start</c> lines in the
@@ -34,6 +43,7 @@ public sealed class AppWindowCloseLeavesNoTerminalHostTests(ITestOutputHelper ou
         var app = LocateApp();
         var workspace = Path.Combine(Path.GetTempPath(), "aide-inv0010-close-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(workspace);
+        SeedATerminalAcrossTheBottom(workspace);
 
         int liveCount;
         int afterCount;
@@ -123,6 +133,18 @@ public sealed class AppWindowCloseLeavesNoTerminalHostTests(ITestOutputHelper ou
             $"the App should have owned a conhost.exe --headless for its terminal while it ran; saw {liveCount}");
         Assert.True(afterCount == 0,
             $"{afterCount} headless console host(s) still alive 5s after the App's window was closed: {afterRows}");
+    }
+
+    /// <summary>The App's Coding slot for <paramref name="workspace"/> — the path the daemon and the window derive — holding the default with the Bottom expanded.</summary>
+    private static void SeedATerminalAcrossTheBottom(string workspace)
+    {
+        var dataDirectory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "AiDe", "workspaces", IpcPipeName.ForWorkspace(workspace));
+        Directory.CreateDirectory(dataDirectory);
+        var expanded = ZoneLayoutService.ExpandZone(WorkbenchLayout.Default(PerspectiveSet.Coding), ZoneId.Bottom);
+        Assert.True(expanded.Applied, "the default Bottom was not collapsed — the seed is redundant (DC-016)");
+        new ZoneLayoutStore(Path.Combine(dataDirectory, "layout.zones.json")).Save(expanded.Layout);
     }
 
     private static string LocateApp()

@@ -127,6 +127,15 @@ public sealed record WorkbenchLayout(
     ImmutableList<StackNode> Floating,
     MaximizeMemo? Maximized)
 {
+    /// <summary>
+    /// Coding's Left extent (Ruling 83 condition 1; DESIGN.md's errata row): the Left is <b>1.3 of
+    /// the Center</b> — the mockup's <c>minmax(0,1.3fr) minmax(0,1fr)</c> — spelled as the zone's
+    /// share of the columns row (1.3 ⁄ 2.3), which is what <see cref="ZoneState.Extent"/> is. A
+    /// document zone, not a tool rail: the thread's 96ch measure plus its gutter must fit at the
+    /// startup size, and the App's <c>CodingsLeftExtentTests</c> measures that on the composed tree.
+    /// </summary>
+    public const double CodingLeftExtent = 1.3 / 2.3;
+
     /// <summary>The default arrangement: graph document in the Center, a terminal in the Bottom.</summary>
     public static WorkbenchLayout Default()
     {
@@ -188,20 +197,24 @@ public sealed record WorkbenchLayout(
     }
 
     /// <summary>
-    /// Coding's default (Ruling 60 as re-cut by Rulings 83–84; US-C6): the session's own empty state
-    /// in the Center — never a fleet-view tab strip beside a session (Ruling 55d) — the Left empty
-    /// (Ruling 84 moved Terminal sessions to Coordination; Ruling 83 makes the Left the session
-    /// document's zone, empty until one opens — an empty <see cref="ZoneStack"/> is not
-    /// constructible, so the zone's content is null and it renders as its collapsed rail), one
-    /// terminal in the Bottom. No Loomkeeper caption and no Explore/Domain/Provenance/Graph/
-    /// Contexts/Joins caption anywhere in this host (US-C6's falsifier).
+    /// Coding's default (Ruling 60 as re-cut by Rulings 83, 84 and 88; US-C6): <b>Left = session
+    /// documents</b> — empty until one opens (an empty <see cref="ZoneStack"/> is not constructible,
+    /// so the content is null and the zone renders as its rail), cut at <see cref="CodingLeftExtent"/>
+    /// so the thread's 96ch measure fits at the startup size · <b>Center = the empty state</b> — the
+    /// session's own copy, never a fleet-view tab strip beside a session (Ruling 55d) · <b>Bottom =
+    /// one terminal, collapsed</b> (the operator's <i>Bottom (1)</i>; Ruling 88) · Right = empty.
+    /// No Loomkeeper caption and no Explore/Domain/Provenance/Graph/Contexts/Joins caption anywhere
+    /// in this host (US-C6's falsifier).
     /// </summary>
     /// <remarks>
-    /// The Bottom and the Center are as Ruling 60 left them; whether the Bottom starts collapsed is
-    /// the Owner's open question (SH-4.2, the review's density question). Only the Left changed
-    /// here, because Ruling 84 forces it: a default that seeds a kind its own host refuses is a
-    /// drop at construction, which <c>TheArchitectureAndCodingDefaults_SeedCleanly_WithNoDrops</c>
-    /// pins as a defect.
+    /// <para>The terminal is <b>one gesture away, not started</b>: a collapsed zone is absent from the
+    /// projection, so its pane's content — and the shell process a terminal pane starts — is built
+    /// when the rail is expanded, not at startup. Measured by the App's <c>CollapsedBottomTests</c>
+    /// (no <c>terminal.start</c> until the expand); the alternative — a started shell behind a rail
+    /// — costs a process for a pane the operator's five screenshots never showed open.</para>
+    /// <para>A default that seeds a kind its own host refuses is a drop at construction, which
+    /// <c>TheArchitectureAndCodingDefaults_SeedCleanly_WithNoDrops</c> pins as a defect; every kind
+    /// here is Coding's.</para>
     /// </remarks>
     private static WorkbenchLayout CodingDefault()
     {
@@ -209,11 +222,11 @@ public sealed record WorkbenchLayout(
 
         var zones = ImmutableDictionary.CreateRange(new[]
         {
-            KeyValuePair.Create(ZoneId.Left, new ZoneState(ZoneId.Left, Content: null, ZoneState.DefaultExtent, Collapsed: false)),
+            KeyValuePair.Create(ZoneId.Left, new ZoneState(ZoneId.Left, Content: null, CodingLeftExtent, Collapsed: false)),
             KeyValuePair.Create(ZoneId.Right, new ZoneState(ZoneId.Right, Content: null, ZoneState.DefaultExtent, Collapsed: false)),
-            KeyValuePair.Create(ZoneId.Bottom, new ZoneState(ZoneId.Bottom, bottom, 0.30, Collapsed: false)),
-            // The Center holds no surface: the session's own empty state answers "No session open",
-            // not a tab strip of Loomkeeper/graph panes a session shares the Center with.
+            KeyValuePair.Create(ZoneId.Bottom, new ZoneState(ZoneId.Bottom, bottom, 0.30, Collapsed: true)),
+            // The Center holds no surface: the shell's empty copy answers "No session open" /
+            // "The session is docked at the left", not a tab strip of Loomkeeper/graph panes.
             KeyValuePair.Create(ZoneId.Center, new ZoneState(ZoneId.Center, Content: null, Extent: 1.0, Collapsed: false)),
         });
 

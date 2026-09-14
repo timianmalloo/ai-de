@@ -142,8 +142,8 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
     /// <summary>
     /// <b>INV-0009 Phase 2b.</b> At workspace-open, a session document the saved arrangement restored
     /// is revived — live, its composer bound — where its <c>session.json</c> still loads; one whose
-    /// session is gone keeps the "No session is open" island; and the active tab the restore chose
-    /// stays active.
+    /// session is gone keeps the island (since SH-4.2: <i>“…” could not be restored …</i>, naming
+    /// the way out); and the active tab the restore chose stays active.
     /// </summary>
     /// <remarks>
     /// <b>Observed red before the binding half landed</b> (the revive alone, 2026-09-11): exit 34,
@@ -167,8 +167,12 @@ public sealed class ASessionDocumentIsShownWhereTheOperatorIsTests
         var documents = Line(stdout, "bind-on-restore: active document ");
         Assert.Contains("active document live=True renders='", documents, StringComparison.Ordinal);
         Assert.DoesNotContain("active document live=True renders='No session is open.", documents, StringComparison.Ordinal);
+        Assert.DoesNotContain("active document live=True renders='No session", documents, StringComparison.Ordinal);
         Assert.Contains("' active in view=session-document:20260911T175821Z-1edfa710;", documents, StringComparison.Ordinal);
-        Assert.Contains("gone document live=False renders='No session is open.", documents, StringComparison.Ordinal);
+        // The island's curly quotes do not survive the probe's console encoding either; the sentence's engine does.
+        var gone = documents[documents.IndexOf("gone document live=False renders='", StringComparison.Ordinal)..];
+        Assert.Contains("could not be restored", gone, StringComparison.Ordinal);
+        Assert.DoesNotContain("No session is open", gone, StringComparison.Ordinal);
 
         var composer = Line(stdout, "bind-on-restore: composer ");
         Assert.Contains(" configured=1 init-pushed=1 ", composer, StringComparison.Ordinal);

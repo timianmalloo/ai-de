@@ -334,23 +334,25 @@ public sealed class ZoneBackedLayoutServiceTests
     }
 
     /// <summary>
-    /// INV-0006 F3, measured: a collapsed tool zone that still HOLDS panes makes every native drag
-    /// revert. The zone is not rendered, so it is absent from the view the reconcile reads; the
-    /// surface-set guard sees its panes go missing and refuses the whole reconcile. The refusal is
-    /// correct — rendering the mapping would drop those panes — but before F3 nothing said so.
+    /// INV-0006 F3 as re-pointed by F-1 (Rulings 83/88; SH-4.2): a collapsed tool zone that still
+    /// HOLDS panes is absent from the view by design, and the reconcile keeps what it holds — the
+    /// drag is applied; the collapsed zone keeps its panes and stays collapsed. Before F-1 this
+    /// test pinned the opposite (the refusal, then the only honest outcome of a mapping that
+    /// pre-seeded the zone empty); <c>Workbench/ReconcileTests</c> carries the red record.
     /// </summary>
     [Fact]
-    public void ReconcileFromView_WithACollapsedZoneStillHoldingPanes_RefusesEveryDrag()
+    public void ReconcileFromView_WithACollapsedZoneStillHoldingPanes_AppliesTheDrag_AndKeepsTheRailsPanes()
     {
         var collapsed = ZoneLayoutService.CollapseZone(WorkbenchLayout.Default(), ZoneId.Left).Layout;
         var svc = new ZoneBackedLayoutService(collapsed);
-        var before = svc.Zones.Shape();
+        var held = svc.Zones.Zone(ZoneId.Left).Surfaces().Select(s => s.SurfaceId).ToList();
 
         var applied = svc.ReconcileFromView(DomainDraggedIntoTheBottom(svc.Current, withLeftColumn: false));
 
-        Assert.False(applied);
-        Assert.Equal(before, svc.Zones.Shape());       // untouched — the next render undoes the drag
-        Assert.Equal(ZoneId.Center, svc.Zones.FindZoneOf("domain"));
+        Assert.True(applied);
+        Assert.Equal(ZoneId.Bottom, svc.Zones.FindZoneOf("domain"));
+        Assert.Equal(held, svc.Zones.Zone(ZoneId.Left).Surfaces().Select(s => s.SurfaceId));
+        Assert.True(svc.Zones.Zone(ZoneId.Left).Collapsed);
     }
 
     /// <summary>

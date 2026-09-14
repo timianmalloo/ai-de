@@ -100,8 +100,8 @@ public sealed class ComposerHostIntegrationTests
 
     /// <summary>
     /// <b>INV-0007, finding 1 (the operator's symptom).</b> After the product's own New Session
-    /// choreography — the shell opens the document, <c>Configure</c> runs as <c>MainWindow.BindComposer</c>
-    /// calls it, the pane takes the tree (Ruling 47) — in the arrangement the operator's workbench log
+    /// choreography — the shell opens the document (docked at Left, Ruling 83), <c>Configure</c> runs as <c>MainWindow.BindComposer</c>
+    /// calls it — in the arrangement the operator's workbench log
     /// recorded, the composer's entry areas <b>keep their room</b>: the editor host is never smaller
     /// than the read-only compiled view, the compiled prompt (collapsed at rest, Ruling 57) never takes the editor's floor, the page
     /// mounts its one message field, and a keystroke reaches the draft.
@@ -125,7 +125,7 @@ public sealed class ComposerHostIntegrationTests
     [Fact]
     public void TheComposersEntryAreasKeepTheirRoomAfterTheNewSessionChoreography()
     {
-        var (exitCode, stdout, stderr) = RunProbe("--shell --maximize --height 800", TimeSpan.FromMinutes(6));
+        var (exitCode, stdout, stderr) = RunProbe("--shell --height 800", TimeSpan.FromMinutes(6));
 
         Assert.True(
             exitCode == 0,
@@ -169,7 +169,7 @@ public sealed class ComposerHostIntegrationTests
     [Fact]
     public void TheComposerPageSurvivesALaterRender()
     {
-        var (exitCode, stdout, stderr) = RunProbe("--shell --maximize --render-after-mount --height 800", TimeSpan.FromMinutes(6));
+        var (exitCode, stdout, stderr) = RunProbe("--shell --render-after-mount --height 800", TimeSpan.FromMinutes(6));
 
         Assert.True(
             exitCode == 0,
@@ -201,7 +201,7 @@ public sealed class ComposerHostIntegrationTests
     [Fact]
     public void AGenuineReloadRemountsThePageWithTheDraft()
     {
-        var (exitCode, stdout, stderr) = RunProbe("--shell --maximize --reload-after-mount --height 800", TimeSpan.FromMinutes(6));
+        var (exitCode, stdout, stderr) = RunProbe("--shell --reload-after-mount --height 800", TimeSpan.FromMinutes(6));
 
         Assert.True(exitCode == 0, $"the composer shell probe failed with exit {exitCode}. {stdout} {stderr}");
 
@@ -226,7 +226,7 @@ public sealed class ComposerHostIntegrationTests
     [Fact]
     public void ACancelledNavigationResetsNothing()
     {
-        var (exitCode, stdout, stderr) = RunProbe("--shell --maximize --escape-after-mount --height 800", TimeSpan.FromMinutes(6));
+        var (exitCode, stdout, stderr) = RunProbe("--shell --escape-after-mount --height 800", TimeSpan.FromMinutes(6));
 
         Assert.True(exitCode == 0, $"the composer shell probe failed with exit {exitCode}. {stdout} {stderr}");
 

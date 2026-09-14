@@ -1,0 +1,71 @@
+record: ReconcileTests run with src/AiDe.Core/Workbench/ZoneBackedLayoutService.cs checked out from 9b5d1062^ (the pre-F-1 mapping) under the re-cut CodingDefault; every other file as committed at 9b5d1062 plus the uncommitted loop-1 tests; 2026-09-13 ~17:14 local
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AiDe.Core -> C:\Projects\ai-de-lane-shell-sh4-2\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-lane-shell-sh4-2\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-lane-shell-sh4-2\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-lane-shell-sh4-2\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-lane-shell-sh4-2\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-lane-shell-sh4-2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-lane-shell-sh4-2\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.29]     AiDe.Core.Tests.Workbench.ReconcileTests.ADropBesideACollapsedHoldingZone_JoinsItAndExpandsIt [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.ReconcileTests.ADropOnTheBottomEdge_WhileTheBottomIsCollapsedHolding_JoinsTheBottomAndExpandsIt [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.ReconcileTests.TheSessionDraggedIntoTheEmptyCenterAndBack_IsAppliedBothWays_AndThePlaceholderNeverEntersTheModel [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.ReconcileTests.ADragWhileAZoneIsCollapsedHoldingPanes_IsApplied(collapsed: Bottom, dropInto: Left) [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.ReconcileTests.ADragWhileAZoneIsCollapsedHoldingPanes_IsApplied(collapsed: Right, dropInto: Left) [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.ReconcileTests.ADragWhileAZoneIsCollapsedHoldingPanes_IsApplied(collapsed: Left, dropInto: Bottom) [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.ReconcileTests.ADragWhileAStackIsMaximized_IsAppliedOrRefusedWithTheTrueCause [FAIL]
+[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Workbench.ReconcileTests.ACenterTabDraggedBesideTheSession_LeavesTheSessionInTheLeft [FAIL]
+  Failed AiDe.Core.Tests.Workbench.ReconcileTests.ADropBesideACollapsedHoldingZone_JoinsItAndExpandsIt [1 ms]
+  Error Message:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  Stack Trace:
+  Failed AiDe.Core.Tests.Workbench.ReconcileTests.ADropOnTheBottomEdge_WhileTheBottomIsCollapsedHolding_JoinsTheBottomAndExpandsIt [8 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                       ↓ (pos 0)
+Expected: <generated> ["session:s1"]
+Actual:   string[]    []
+  Stack Trace:
+  Failed AiDe.Core.Tests.Workbench.ReconcileTests.TheSessionDraggedIntoTheEmptyCenterAndBack_IsAppliedBothWays_AndThePlaceholderNeverEntersTheModel [< 1 ms]
+  Error Message:
+   the drag into the empty Center was refused
+  Stack Trace:
+  Failed AiDe.Core.Tests.Workbench.ReconcileTests.ADragWhileAZoneIsCollapsedHoldingPanes_IsApplied(collapsed: Bottom, dropInto: Left) [2 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Left
+Actual:   Center
+  Stack Trace:
+  Failed AiDe.Core.Tests.Workbench.ReconcileTests.ADragWhileAZoneIsCollapsedHoldingPanes_IsApplied(collapsed: Right, dropInto: Left) [< 1 ms]
+  Error Message:
+   the reconcile refused a drag because a collapsed zone still held panes (finding 4)
+  Stack Trace:
+  Failed AiDe.Core.Tests.Workbench.ReconcileTests.ADragWhileAZoneIsCollapsedHoldingPanes_IsApplied(collapsed: Left, dropInto: Bottom) [< 1 ms]
+  Error Message:
+   the reconcile refused a drag because a collapsed zone still held panes (finding 4)
+  Stack Trace:
+  Failed AiDe.Core.Tests.Workbench.ReconcileTests.ADragWhileAStackIsMaximized_IsAppliedOrRefusedWithTheTrueCause [< 1 ms]
+  Error Message:
+   the drag of a maximized document toward the left dock was refused — the reconcile is still blind to the collapsed zones' panes
+  Stack Trace:
+  Failed AiDe.Core.Tests.Workbench.ReconcileTests.ACenterTabDraggedBesideTheSession_LeavesTheSessionInTheLeft [< 1 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                       ↓ (pos 0)
+Expected: <generated> ["session:s1", "codeviewer#1"]
+Actual:   string[]    []
+  Stack Trace:
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Workbench.ReconcileTests.AVerticalRootThatIsNotColumnsOverBottom_IsRefused [FAIL]
+  Failed AiDe.Core.Tests.Workbench.ReconcileTests.AVerticalRootThatIsNotColumnsOverBottom_IsRefused [< 1 ms]
+  Error Message:
+   Assert.False() Failure
+Expected: False
+Actual:   True
+  Stack Trace:
+
+Failed!  - Failed:     9, Passed:     1, Skipped:     0, Total:    10, Duration: 61 ms - AiDe.Core.Tests.dll (net10.0)

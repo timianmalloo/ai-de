@@ -216,7 +216,8 @@ internal static partial class Program
             // ---- 22:33:28Z. File -> New Session with no workspace open in the window. ----
             // MainWindow.NewSession's `opened` callback ran OpenSessionDocument, then BindComposer
             // refused at its first guard ("this window has no open workspace") and Configure never
-            // ran, then GiveTheNewSessionTheWholeTree maximized the document's zone.
+            // ran. (Ruling 47's maximize followed at the time; Ruling 83 retired it — the document
+            // is docked at Left by the open, and the replay ends where main does.)
             if (options.PriorDocument)
             {
                 var now = DateTimeOffset.UtcNow;
@@ -226,8 +227,6 @@ internal static partial class Program
                     ?? throw new InvalidOperationException("the shell opened the prior document but holds no composer for it");
                 priorComposer.ShowFieldRefusal(
                     "repositoryRoot", "this window has no open workspace, so a run has no checkout to cut a worktree from");
-                said = NewSessionPlacement.GiveItTheWholeTree(shell.Service, prior.SessionId, said);
-                shell.Adapter.Render();
 
                 await WaitAsync(() => Count(priorComposer.SurfaceId, "page-ready") >= 1, TimeSpan.FromSeconds(30));
                 await Task.Delay(500);
@@ -334,11 +333,9 @@ internal static partial class Program
                 ComposerFields.GoalBlock(),
                 new AttachmentGate(root, new AttachmentFileReader(), new NeverAffirms(), "anthropic", "probe-account"));
 
-            var said = NewSessionPlacement.GiveItTheWholeTree(
-                shell.Service, config.SessionId, opened + " Composer bound to claude-code · probe-model · probe-account.");
-            shell.Adapter.Render();
+            var said = opened + " Composer bound to claude-code · probe-model · probe-account.";
             Console.Out.WriteLine($"new session (22:34:09Z replay): announced='{said}'");
-            Console.Out.WriteLine($"new session: zones after the maximize={Shape(shell)}");
+            Console.Out.WriteLine($"new session: zones after the open={Shape(shell)}");
 
             window.UpdateLayout();
             await WaitAsync(() => Count(composer.SurfaceId, "init-pushed") >= 1, TimeSpan.FromSeconds(20));
@@ -587,13 +584,10 @@ internal static partial class Program
                     order.Add("opened");
                     var said = shell.OpenSessionDocument(created.Config);
                     composer = shell.SessionComposer(created.Config.SessionId);
-                    said = NewSessionPlacement.GiveItTheWholeTree(
-                        shell.Service, created.Config.SessionId,
-                        said + " " + SessionComposerBinder.Bind(
-                            shell, created.Config, created.RoutableBackends, created.TaskClass,
-                            repositoryRoot: windowRoot, dataDirectory: windowRoot,
-                            providers, new NeverAffirms()));
-                    shell.Adapter.Render();
+                    said = said + " " + SessionComposerBinder.Bind(
+                        shell, created.Config, created.RoutableBackends, created.TaskClass,
+                        repositoryRoot: windowRoot, dataDirectory: windowRoot,
+                        providers, new NeverAffirms());
                     Console.Out.WriteLine($"chooser: announced='{said}'");
                 });
 

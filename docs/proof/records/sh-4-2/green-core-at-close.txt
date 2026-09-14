@@ -1,0 +1,3 @@
+
+Passed!  - Failed:     0, Passed:  2632, Skipped:     1, Total:  2633, Duration: 1 m 53 s - AiDe.Core.Tests.dll (net10.0)
+

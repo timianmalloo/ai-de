@@ -9,3 +9,4 @@
 {"agent": "claude-sh-4", "at": 1789336911.1395195, "kind": "claim", "path": "tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs", "seq": 9, "session": "sh-4", "ttl": 300.0, "wi": "SH-4"}
 {"agent": "claude-sh-4", "at": 1789337259.9917097, "kind": "release", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 10, "session": "sh-4", "wi": "SH-4"}
 {"agent": "claude-sh-4", "at": 1789337260.079815, "kind": "release", "path": "tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs", "seq": 11, "session": "sh-4", "wi": "SH-4"}
+{"agent": "claude-conductor", "at": 1789341012.9185896, "kind": "session-end", "path": "-", "seq": 12, "session": "sh-4", "wi": "WI-0", "worktree": "C:/Projects/ai-de"}

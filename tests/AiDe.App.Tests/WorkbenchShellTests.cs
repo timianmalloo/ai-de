@@ -45,12 +45,16 @@ public sealed class WorkbenchShellTests
     [Fact]
     public void Shell_ComposesTheWorkbenchWithEverySurfaceFromTheDefaultLayout_AcrossAllHosts()
     {
-        var (coding, architecture, coordination) = WithShell((shell, _) => (
+        var (coding, codingRendered, architecture, coordination) = WithShell((shell, _) => (
+            shell.Coding.Service.Zones.AllSurfaces().Select(s => s.Title).ToList(),
             shell.Coding.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Title).ToList(),
             shell.Architecture.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Title).ToList(),
             shell.Coordination.Service.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.Title).ToList()));
 
+        // Coding's terminal is in the model, held by the collapsed Bottom (Ruling 88) — and so
+        // absent from the projection until the rail is expanded (CollapsedBottomTests).
         Assert.Contains("Terminal — pwsh", coding);
+        Assert.DoesNotContain("Terminal — pwsh", codingRendered);
         Assert.DoesNotContain("Terminal sessions", coding);   // Ruling 84: the Loomkeeper kinds left Coding
         Assert.DoesNotContain("Graph", coding);
 

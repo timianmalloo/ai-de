@@ -69,6 +69,15 @@ public static class ZonesToTree
         return layout;
     }
 
+    /// <summary>The projected stack id a zone renders as — the inverse of <see cref="ZoneOfStackId"/>; what an open names to land in a zone.</summary>
+    public static string StackIdOf(ZoneId zone) => zone switch
+    {
+        ZoneId.Left => LeftStackId,
+        ZoneId.Right => RightStackId,
+        ZoneId.Bottom => BottomStackId,
+        _ => CenterStackId,
+    };
+
     /// <summary>Which zone a projected stack id belongs to, or null for an unknown id.</summary>
     public static ZoneId? ZoneOfStackId(string stackId) => stackId switch
     {

@@ -5,3 +5,4 @@
 {"agent": "claude-d3", "at": 1789318974.8148234, "kind": "claim", "path": "docs/mockups/perspective-shell.html", "seq": 5, "session": "d3-findings", "ttl": 300.0, "wi": "D3"}
 {"agent": "claude-d3", "at": 1789320910.7482154, "kind": "release", "path": "docs/mockups/session-conversation.html", "seq": 6, "session": "d3-findings", "wi": "D3"}
 {"agent": "claude-d3", "at": 1789320910.803214, "kind": "release", "path": "docs/mockups/perspective-shell.html", "seq": 7, "session": "d3-findings", "wi": "D3"}
+{"agent": "claude-conductor", "at": 1789341012.3945074, "kind": "session-end", "path": "-", "seq": 8, "session": "d3-findings", "wi": "WI-0", "worktree": "C:/Projects/ai-de"}

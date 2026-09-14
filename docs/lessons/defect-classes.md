@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 111 · partially-controlled 66 · uncontrolled 24
+**Status counts:** controlled 115 · partially-controlled 66 · uncontrolled 24
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 7.
@@ -7778,4 +7778,27 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 
 - **Shape, instance and control (D3, 2026-09-13; `docs/reviews/ui-operator-findings-2026-09-13.md` §Register):** *a generated accessible name built from unescaped text* (`esc()` escaped `&` and `<` but not `"`; six `aria-label="Detail of Grep "…"` names truncated at the quote): the control is an attribute-escaping helper used for every generated attribute, and the sweep's dangling-reference walk extended to names that end at a quote. (The UX & Accessibility lens's finding.)
 - **Status:** `controlled` — `esc()` escapes `"` (D3's A11-6); the in-page audit's dangling-ARIA check catches the shape
+
+### DC-202 — A content-majority anchor by raw count lets a large zone that lost one tab steal a small zone's column on a tie, moving the bystander
+
+- **Shape, instance and control (SH-4.2, 2026-09-13; `docs/proof/coding-recut-left-dock.md` §Defect classes):** *a content-majority anchor by raw count lets a large zone that lost one tab steal a small zone's column on a tie, moving the bystander* (DC-063's class by another mechanism): a Left of one surface and a Center of two after one moved both counted one in the Left's column; the Center won the tie by rule and the drag moved the SESSION to the Center. **Control:** anchors by pane identity first (`ILayoutPaneSerializable.Id`), then share-of-owned; `ReconcileTests.ACenterTabDraggedBesideTheSession_LeavesTheSessionInTheLeft`; the theory's Bottom row.
+- **Status:** `controlled` — the oracle named in the entry is red-first in the slice's records (`docs/proof/records/sh-4-2/`).
+
+
+### DC-203 — A view-only synthetic surface the projection drops after a model change becomes unknown to the view reader, and every later gesture is "unreadable" until a render
+
+- **Shape, instance and control (SH-4.2, 2026-09-13; `docs/proof/coding-recut-left-dock.md` §Defect classes):** *a view-only synthetic surface the projection drops after a model change becomes unknown to the view reader, and every later gesture is "unreadable" until a render*: the Center's placeholder stayed in the view after a drag into the empty Center reconciled the model; the drag back was `view-unreadable` — a silent revert with no sentence. **Control:** `ReadLayoutFromView` treats the placeholder as always known and never counts it; `WorkbenchDragCompletedHookTests.InCoding_TheSessionDraggedIntoTheCenterAndBack_…` (zero refusals of any cause).
+- **Status:** `controlled` — the oracle named in the entry is red-first in the slice's records (`docs/proof/records/sh-4-2/`).
+
+
+### DC-204 — A synthetic view surface with no kind row falls through to the factory's "not available in this build"
+
+- **Shape, instance and control (SH-4.2, 2026-09-13; `docs/proof/coding-recut-left-dock.md` §Defect classes):** *a synthetic view surface with no kind row falls through to the factory's "not available in this build"* — a build-defect sentence for the product's ordinary empty state, in every state. **Control:** the shell composes the Center's copy from the model (`CenterEmptyState`); `CenterEmptyCopyTests` assert the sentence is never rendered.
+- **Status:** `controlled` — the oracle named in the entry is red-first in the slice's records (`docs/proof/records/sh-4-2/`).
+
+
+### DC-205 — A refusal sentence names a mechanism as the cause after a fix removed that mechanism
+
+- **Shape, instance and control (SH-4.2, 2026-09-13; `docs/proof/coding-recut-left-dock.md` §Defect classes):** *a refusal sentence names a mechanism as the cause after a fix removed that mechanism* (`RefusedReconcileAnnouncement`'s "a collapsed panel still holds panes" after F-1). **Control:** the sentence names only what the code can still tell; `ADragWhileACollapsedZoneHoldsPanes_IsAppliedThroughTheDockingHost_…` asserts the old sentence is absent. Sweep: the same sentence is a fixture string in `TheStatusStripClearsOnSupersessionOrDwellTests` (X-3's; a fixture, not a claim — left).
+- **Status:** `controlled` — the oracle named in the entry is red-first in the slice's records (`docs/proof/records/sh-4-2/`).
 

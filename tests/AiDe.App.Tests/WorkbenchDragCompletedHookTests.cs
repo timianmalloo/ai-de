@@ -85,10 +85,10 @@ public sealed class WorkbenchDragCompletedHookTests
     public void ANativeDrag_ReachesTheModelImmediately_WithoutWaitingForAnUnrelatedCommand(
         string perspective, string dragged, string onto, ZoneId expectedBefore, ZoneId expectedAfter)
     {
-        // Two of the three hosts: the hook is wired per host (ADR-0031), so INV-0006 F1 is proven
-        // for host B and host C alike, each with a pair its own allow-list admits. Host A's default
-        // holds one surface since Rulings 83–84 (a terminal; the Left is empty until a session
-        // opens), so it has no pair to drag; its hook is the same line as the others'.
+        // Two of the three hosts here: the hook is wired per host (ADR-0031), so INV-0006 F1 is
+        // proven for host B and host C alike, each with a pair its own allow-list admits. Host A's
+        // default holds no pair (its Left is empty until a session opens, Ruling 83); its row is
+        // InCoding_TheSessionDraggedIntoTheCenterAndBack_… below, over a session it opens first.
         var (zoneBefore, zoneAfter) = WithRealizedWorkbench(h =>
         {
             var host = h.Shell.Hosts.Single(x => x.Row.Id == perspective);
@@ -233,14 +233,16 @@ public sealed class WorkbenchDragCompletedHookTests
     }
 
     /// <summary>
-    /// INV-0006 F3. A collapsed tool zone that still holds panes makes every native drag revert — the
-    /// zone is not rendered, so the reconcile sees its panes go missing and refuses. That refusal is
-    /// correct and was completely silent: the user's drag simply undid itself with no message.
+    /// INV-0006 F3 as re-pointed by F-1 (Rulings 83/88; SH-4.2), through the real docking host: a
+    /// collapsed tool zone that still holds panes is absent from the view by design, and the drag
+    /// is APPLIED — the rail keeps its panes, nothing is refused, nothing is announced as "a
+    /// collapsed panel still holds panes". Before F-1 this test pinned the refusal (then the only
+    /// honest outcome of a mapping that pre-seeded the zone empty); the operator hit it as finding 4.
     /// </summary>
     [Fact]
-    public void ADragThatCannotBeApplied_IsAnnouncedInsteadOfSilentlyReverting()
+    public void ADragWhileACollapsedZoneHoldsPanes_IsAppliedThroughTheDockingHost_AndNothingIsRefused()
     {
-        var (announcement, refusals) = WithRealizedWorkbench(h =>
+        var (announcement, refusals, provenance, held, collapsed) = WithRealizedWorkbench(h =>
         {
             var records = new List<string>();
             var previous = WorkbenchDiagnostics.Sink;
@@ -254,16 +256,149 @@ public sealed class WorkbenchDragCompletedHookTests
                 h.Zones.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed));
                 h.Adapter.Render();
                 Settle(h.Window, h.Adapter.Manager);
+                var heldBefore = h.Zones.Zones.Zone(ZoneId.Left).Surfaces().Select(s => s.SurfaceId).ToList();
 
                 DragDocumentIntoPane(h, "provenance", "graph");
-                return (h.Shell.Announcer.Last, records.Count(r => r.Contains("position-mapping-refused", StringComparison.Ordinal)));
+                return (
+                    h.Shell.Announcer.Last,
+                    records.Count(r => r.Contains("\"placement\":\"refused\"", StringComparison.Ordinal)),
+                    h.Zones.Zones.FindZoneOf("provenance"),
+                    (Before: heldBefore, After: h.Zones.Zones.Zone(ZoneId.Left).Surfaces().Select(s => s.SurfaceId).ToList()),
+                    h.Zones.Zones.Zone(ZoneId.Left).Collapsed);
             }
             finally { WorkbenchDiagnostics.Sink = previous; }
         });
 
-        Assert.Contains("could not be applied", announcement, StringComparison.Ordinal);
-        Assert.Contains("collapsed panel", announcement, StringComparison.Ordinal);
-        Assert.True(refusals >= 1, "the refused reconcile was not recorded");
+        Assert.Equal(ZoneId.Center, provenance);
+        Assert.Equal(0, refusals);
+        Assert.DoesNotContain("could not be applied", announcement, StringComparison.Ordinal);
+        Assert.Equal(2, held.Before.Count);                 // DC-016: the rail really held two
+        Assert.Equal(held.Before, held.After);
+        Assert.True(collapsed);
+    }
+
+    /// <summary>
+    /// O-2's gesture (Ruling 88 condition 1) through the real docking host, in Coding's re-cut: the
+    /// session document docked at Left is dragged into the empty Center — onto the placeholder's
+    /// pane — and then back into a new pane on the left; both reconcile as the operator dropped
+    /// them, the Bottom's collapsed terminal untouched, nothing refused.
+    /// </summary>
+    [Fact]
+    public void InCoding_TheSessionDraggedIntoTheCenterAndBack_FollowsTheDrops_WithTheBottomCollapsed()
+    {
+        var (afterFirst, afterSecond, refusals, bottom) = WithRealizedWorkbench(h =>
+        {
+            var host = h.Shell.Coding;
+            var hh = h with { HostOverride = host };
+            var records = new List<string>();
+            var previous = WorkbenchDiagnostics.Sink;
+            WorkbenchDiagnostics.Sink = records.Add;
+            try
+            {
+                Assert.True(host.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface("session:s1", "session-document", "S1"))).Applied);
+                host.Adapter.Render();
+                Settle(h.Window, host.Manager);
+                Assert.Equal(ZoneId.Left, host.Service.Zones.FindZoneOf("session:s1"));
+
+                // Into the Center: the placeholder is a real document in the Center pane until the next render.
+                DragDocumentIntoPane(hh, "session:s1", ZonesToTree.WelcomePlaceholder.SurfaceId);
+                var first = host.Service.Zones.FindZoneOf("session:s1");
+
+                // And back: a new pane to the LEFT of the Center's, as AvalonDock's side-drop makes one.
+                var root = host.Manager.Layout;
+                var document = root.Descendents().OfType<LayoutDocument>().Single(d => d.ContentId == "session:s1");
+                var center = (LayoutDocumentPane)document.Parent;
+                var group = (LayoutPanel)center.Parent;
+                var pane = new LayoutDocumentPane();
+                group.InsertChildAt(group.Children.IndexOf(center), pane);
+                center.RemoveChild(document);
+                pane.Children.Add(document);
+                Settle(h.Window, host.Manager);
+
+                return (first, host.Service.Zones.FindZoneOf("session:s1"),
+                    records.Count(r => r.Contains("\"placement\":\"refused\"", StringComparison.Ordinal)),
+                    host.Service.Zones.Zone(ZoneId.Bottom));
+            }
+            finally { WorkbenchDiagnostics.Sink = previous; }
+        });
+
+        Assert.Equal(ZoneId.Center, afterFirst);
+        Assert.Equal(ZoneId.Left, afterSecond);
+        Assert.Equal(0, refusals);
+        Assert.True(bottom.Collapsed);
+        Assert.Equal(["terminal-1"], bottom.Surfaces().Select(s => s.SurfaceId));
+    }
+
+    /// <summary>
+    /// INV-0006 F3, the refusal that remains: a frame the mapping cannot place without guessing —
+    /// two split-off columns and no Center column to place them beside — is refused, the panes
+    /// return, and the strip says so in the one sentence that is still true. Through the docking
+    /// host, so the shell's announcement is pinned by a real reconcile, not by a fixture literal.
+    /// </summary>
+    [Fact]
+    public void ADragThatCannotBePlacedWithoutGuessing_IsRefusedAndAnnounced_AndThePanesReturn()
+    {
+        var (announcement, refusals, shape, before, returned) = WithRealizedWorkbench(h =>
+        {
+            var host = h.Shell.Coding;
+            var records = new List<string>();
+            var previous = WorkbenchDiagnostics.Sink;
+            WorkbenchDiagnostics.Sink = records.Add;
+            try
+            {
+                foreach (var id in new[] { "session:a", "session:b", "session:c" })
+                {
+                    Assert.True(host.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface(id, "session-document", id))).Applied);
+                }
+
+                host.Adapter.Render();
+                Settle(h.Window, host.Manager);
+                var shapeBefore = host.Service.Zones.Shape();
+
+                // The view AvalonDock hands the hook after ONE drop: b and c each in a new, unnamed
+                // pane beside the Left pane and the Center pane gone with its placeholder — nothing
+                // says which of the two new columns is the Center. Built as one tree and swapped in
+                // whole, the way a drop lands, then poked once so the docking model reports it.
+                var docs = host.Manager.Layout.Descendents().OfType<LayoutDocument>().ToDictionary(d => d.ContentId!, StringComparer.Ordinal);
+                foreach (var doc in docs.Values)
+                {
+                    doc.Parent.RemoveChild(doc);
+                }
+
+                var left = new LayoutDocumentPane();
+                ((ILayoutPaneSerializable)left).Id = ZonesToTree.LeftStackId;
+                left.Children.Add(docs["session:a"]);
+                var second = new LayoutDocumentPane();
+                second.Children.Add(docs["session:b"]);
+                var third = new LayoutDocumentPane();
+                third.Children.Add(docs["session:c"]);
+                var columns = new LayoutPanel { Orientation = System.Windows.Controls.Orientation.Horizontal };
+                columns.Children.Add(left);
+                columns.Children.Add(second);
+                columns.Children.Add(third);
+                host.Manager.Layout = new LayoutRoot { RootPanel = columns };
+                Settle(h.Window, host.Manager);
+                columns.Children.Add(new LayoutDocumentPane());   // one docking-model update over the whole frame (an empty pane is skipped by the reader)
+                Settle(h.Window, host.Manager);
+                var said = h.Shell.Announcer.Last;
+                var refused = records.Count(r => r.Contains("position-mapping-refused", StringComparison.Ordinal));
+                var shapeAfter = host.Service.Zones.Shape();
+
+                // The panes return: the next render draws the untouched model — the Left pane holds
+                // the three again, the columns AvalonDock showed are gone.
+                host.Adapter.Render();
+                Settle(h.Window, host.Manager);
+                var leftPane = (LayoutDocumentPane)host.Manager.Layout.Descendents().OfType<LayoutDocument>().Single(d => d.ContentId == "session:a").Parent;
+                var returned = leftPane.Children.OfType<LayoutDocument>().Select(d => d.ContentId).ToList();
+                return (said, refused, shapeAfter, shapeBefore, returned);
+            }
+            finally { WorkbenchDiagnostics.Sink = previous; }
+        });
+
+        Assert.True(refusals >= 1, "the ambiguous frame was not refused: " + shape + " :: " + announcement);
+        Assert.Equal(before, shape);   // untouched by the refusal
+        Assert.Equal(["session:a", "session:b", "session:c"], returned);   // and back on screen after the render
+        Assert.Equal("That pane move could not be applied, so the panes will return to where they were.", announcement);
     }
 
     /// <summary>

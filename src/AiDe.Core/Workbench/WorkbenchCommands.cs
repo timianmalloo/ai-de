@@ -257,6 +257,16 @@ public static class WorkbenchCommandCatalog
             "Moves focus to the open session's previous region.",
             Menu: "_View", Scope: CommandScope.Admits("session-document")),
 
+        // The session's Console as a document (Ruling 89): the `console` kind's only door — the
+        // session header's toggle, this row in View and the palette all run it. Offered where a
+        // session document can be, since it needs one focused. A second run focuses the one open
+        // console; the tab's close is the way back. A layout operation (it adds a surface).
+        new("session.console", "Session console", "Ctrl+K, Ctrl+L",
+            nameof(LayoutOperation.AddSurface),
+            "Opens the focused session's Console — every wire frame, one row per message — as a "
+            + "document in the Center zone, or focuses it when it is already open.",
+            Menu: "_View", Scope: CommandScope.Admits("session-document")),
+
         // ── Window: the arrangement (a host only) ─────────────────────────────────────────────
 
         new("workbench.floatPane", "Float pane", "Ctrl+K, F",

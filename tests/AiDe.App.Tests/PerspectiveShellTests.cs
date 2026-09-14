@@ -125,13 +125,14 @@ public sealed class PerspectiveShellTests
         }, 30);
     }
 
-    // Spec §C5 / DESIGN.md's landing row (Ruling 84): a switch to Coordination lands on the Left
+    // Spec §C5 / DESIGN.md's landing row (Rulings 83/84): a switch to Coordination lands on the Left
     // zone's active tab (Terminal sessions — the master list), to Architecture on the Center's
-    // (Graph); a row with no landing zone (Coding) lands on the body's active surface as the view
-    // reports it; a landing zone the arrangement has emptied falls back the same way. Stated on the
-    // row because the view's own "active" after a body is first parented is whichever pane control
-    // realized last — measured in the census as Provenance (the Right) for Architecture and the
-    // Center's tab for Coordination, neither of them the design's landing.
+    // (Graph), to Coding on the Left's active tab — the session document (SH-4.2) — else the
+    // Center's active tab, which for an empty Center is its empty copy; a landing zone the
+    // arrangement has emptied or collapsed falls back the same way. Stated on the row because the
+    // view's own "active" after a body is first parented is whichever pane control realized last —
+    // measured in the census as Provenance (the Right) for Architecture and the Center's tab for
+    // Coordination, neither of them the design's landing.
     [Fact]
     public void TheLanding_IsTheRowsZonesActiveTab_LeftForCoordination_CenterForArchitecture_ElseTheViewsActive()
     {
@@ -144,19 +145,24 @@ public sealed class PerspectiveShellTests
 
             Assert.Equal("graph", PerspectiveShell.LandingSurfaceFor(f.B));
             Assert.Equal("sessions", PerspectiveShell.LandingSurfaceFor(f.C));
-            Assert.NotNull(f.A.Adapter.ActiveSurfaceId);                                    // DC-016: the fallback compares against a value
-            Assert.Equal(f.A.Adapter.ActiveSurfaceId, PerspectiveShell.LandingSurfaceFor(f.A));
+
+            // Coding (SH-4.2): the Left's active document when one is open, else the Center's
+            // empty copy — the placeholder's id, whose content the shell composes.
+            Assert.Equal(ZonesToTree.WelcomePlaceholder.SurfaceId, PerspectiveShell.LandingSurfaceFor(f.A));
+            Assert.True(f.A.Service.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface("session:s1", "session-document", "S1"))).Applied);
+            f.A.Adapter.Render();
+            Assert.Equal("session:s1", PerspectiveShell.LandingSurfaceFor(f.A));
 
             Assert.Equal(ZoneId.Left, f.C.Row.Landing);
             Assert.Equal(ZoneId.Center, f.B.Row.Landing);
-            Assert.Null(f.A.Row.Landing);
+            Assert.Equal(ZoneId.Left, f.A.Row.Landing);
 
             // The landing follows the zone's ACTIVE tab, not its first: activate the second Center
             // tab in Architecture and the landing moves with it.
             Assert.True(f.B.Service.Apply(new LayoutOperation.ActivateSurface("domain")).Applied);
             Assert.Equal("domain", PerspectiveShell.LandingSurfaceFor(f.B));
 
-            // A collapsed landing zone falls back to the view's active surface — the ledger the
+            // A collapsed landing zone falls back to the Center's active tab — the ledger the
             // operator activated, literally, never the collapsed Left's tab (the guard's falsifier).
             Assert.True(f.C.Service.Apply(new LayoutOperation.ActivateSurface("ledger")).Applied);
             f.C.Adapter.Render();
@@ -165,6 +171,11 @@ public sealed class PerspectiveShellTests
             Assert.True(f.C.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
             f.C.Adapter.Render();
             Assert.Equal("ledger", PerspectiveShell.LandingSurfaceFor(f.C));
+
+            // And in Coding, the Left collapsed with the session held: the Center's empty copy again.
+            Assert.True(f.A.Service.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed)).Applied);
+            f.A.Adapter.Render();
+            Assert.Equal(ZonesToTree.WelcomePlaceholder.SurfaceId, PerspectiveShell.LandingSurfaceFor(f.A));
             return 0;
         }, 30);
     }

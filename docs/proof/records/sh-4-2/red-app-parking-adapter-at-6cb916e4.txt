@@ -1,0 +1,27 @@
+record: WorkbenchAdapter.cs at HEAD 6cb916e4 (pre-parking: keep from the projection; SurfaceClosed for anything absent from it); every other file as on disk at 2026-09-14T00:27:51Z
+    0 Error(s)
+
+Test run for C:\Projects\ai-de-lane-shell-sh4-2\tests\AiDe.App.Tests\bin\Debug\net10.0-windows\AiDe.App.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.94]     AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen [FAIL]
+[xUnit.net 00:00:01.15]     AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.CollapsingTheLeftHoldingTheSession_ThenExpanding_GivesTheSameDocumentBack_AndClosesNothing [FAIL]
+[xUnit.net 00:00:01.30]     AiDe.App.Tests.Shell.CollapsedBottomTests.CollapsingTheBottomAfterUse_KeepsTheTerminal_AndExpandingGivesTheSameOneBack [FAIL]
+  Failed AiDe.App.Tests.Sessions.ConsoleSplitPlacementTests.CollapsingTheLeftHoldingTheSession_LeavesItsConsoleOpen [753 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Center
+Actual:   null
+  Stack Trace:
+  Failed AiDe.App.Tests.Sessions.SessionDocumentPlacementTests.CollapsingTheLeftHoldingTheSession_ThenExpanding_GivesTheSameDocumentBack_AndClosesNothing [211 ms]
+  Error Message:
+   Assert.Empty() Failure: Collection was not empty
+Collection: ["session-document:20260914T002756Z-e33d9891"]
+  Stack Trace:
+  Failed AiDe.App.Tests.Shell.CollapsedBottomTests.CollapsingTheBottomAfterUse_KeepsTheTerminal_AndExpandingGivesTheSameOneBack [155 ms]
+  Error Message:
+   Assert.Same() Failure: Values are not the same instance
+Expected: AiDe.App.Workbench.TerminalSurface
+Actual:   null
+  Stack Trace:
+
+Failed!  - Failed:     3, Passed:     0, Skipped:     0, Total:     3, Duration: 1 s - AiDe.App.Tests.dll (net10.0)
