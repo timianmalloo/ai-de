@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 92 types, 406 members, 73% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 92 types, 407 members, 73% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**92 public types · 406 public members · 73% documented.**
+**92 public types · 407 public members · 73% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -2562,6 +2562,7 @@ one layout while the view rendered another.
 | `Task<bool> DispatchToAsync(string sessionId, string body)` | Transfers a prompt-draft body to a NAMED ready session (spec-editor-surfaces US-ED6), by its session id, through the same choreography as the focused path. Returns whether the terminal accepted the write (PtyWriteAcce… |
 | `IReadOnlyList<PromptTarget> ReadyPromptTargets()` | The ready terminal sessions a prompt draft may transfer to (US-ED6), live. |
 | `event Action<Perspective>? DocumentOpening` | Raised just before a command adds a dock document to the layout — a terminal, a prompt draft, a reference document, a session document. |
+| `ValueTask DisposeAsync()` | **(gap)** |
 | `void Dispose()` | **(gap)** |
 
 ### `void AttachWorkspace(`

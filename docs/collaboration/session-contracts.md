@@ -670,6 +670,29 @@ counterexample establishes. Shared `Sta` stays unchanged; no timeout extension o
 cleanup. If a later product stage fails, expose it rather than attributing every failure
 to the pump. Full affected replay and fresh SRE/Test review remain required before join.
 
+Owner turn 57 funded five replacement source-coverage leaves (SRE three, Test two);
+the original four oversized-output reads remain spent. Both exact-source reviews now
+clear the fixture-backed MainWindow lifecycle. Parent independently executed 115
+shown/native/factory cases plus nine existing session-opening controls, then joined
+`2b3a4e72` as `28c5c5ea` and ran the combined 124/124 set with zero skipped.
+Production Core/ViewModel/shared `Sta` remained unchanged by the Shell delta.
+
+The reserved fifteen-call independent proof is released only to a separate verified
+post-join worktree. Its sole authored file is
+`tests/AiDe.App.Tests/Workbench/Understanding/AtlasDaemonMainWindowProofTests.cs`.
+It uses the legitimate existing test assembly and internal MainWindow constructor,
+not a spoofed friend assembly, new project, reflection bypass or normal profile-writing
+startup. No existing test, product, project or IVT file may be changed.
+
+The proof must launch the actual pinned daemon on owned source/config/data directories,
+connect actual `WorkspaceClient`/`CreateAtlasReader`, use real repository files and the
+existing Architecture opener, exercise file/member/source/Back, replacement, an explicitly
+identified revocation/currentness path and awaited shutdown, and observe own-HWND UIA and
+capture. A local bounded full dispatcher must outlive owned body and cleanup. No fake
+Atlas ports, DesktopRoot search, private UIA cache manipulation, source bodies/secrets in
+logs or user-profile writes are permitted. Parent owns the durable proof document and
+approved capture copy. The fifteen calls include authoring, execution and receipt.
+
 ### Core owns
 
 | Path | Why |

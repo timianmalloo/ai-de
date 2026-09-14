@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T15:41:12Z",
+  "generated": "2026-09-14T16:27:24Z",
   "audit": [
     {
       "actor": null,
@@ -16139,6 +16139,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "752295a9ca52a27a3f791a3854a27960db654001",
         "short": "752295a9c",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GBX93KDFQ6NFSMX0VTTKZV",
+      "shortname": "atlas-mainwindow-joined-real-proof-grant",
+      "datetime": "2026-09-14T16:27:23Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner57exactbuiltinSourceSRE3/Test2readsclearedfixture-backedMainWindowlifecycle. Joined2b3as28c5c5ea, exact3sourcefilecompare, combinedApp/native/factory/sessionroutes124/124zero skipped. SharedSta/Core/VMunchanged. Reserved15-callindependentproofassignedONEnewApp.TestsAtlasDaemonMainWindowProofTests.cs inpost-joinownworktree, realdaemon/client/reader/Architecturewindow, ownedconfig, ownHWNDUIA/nofakeports; noduplicateproject/IVT/reflection/profilewrites. Parentownsproofdoc/capture. Prior4failedreviewleavesretained.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Prove the joined reader through an actual daemon and MainWindow, not fixture Atlas ports.",
+      "done_when": "The real Architecture file/member/source/Back and replacement/revocation/shutdown journey has independent owned-window evidence.",
+      "tier": "T2",
+      "main_calls": 288,
+      "main_budget": 300,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T16:27:23Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "28c5c5ea5e5530b98408c66773377c7e1bf0509d",
+        "short": "28c5c5ea5",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
