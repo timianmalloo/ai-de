@@ -543,6 +543,25 @@ override, marker deletion or source edit was performed in this check. Historical
 enforcement qualification is still historical, not a fresh blanket enforcement claim.
 Any different marker set or additional doctor failure falls outside this exception.
 
+Owner turn 52 authorizes six additional independent Security review leaves after the
+original six were spent without reviewing runtime authority. The wrong-scope cleanup
+PASS was rejected; two corrective source reads also failed. That cost remains spent.
+The new scope is narrower: workspace read policy, all issuer authority branches,
+operations facade, daemon bootstrap/registration and the relevant Core eligibility method.
+
+Fresh reviewer `atlas-runtime-authority-fresh` uses registered read-only review session
+`atlas-runtime-authority-review`, branch `atlas/runtime-authority-review`, worktree
+`C:\Projects\ai-de-atlas-runtime-authority-review`. Parent verified exact
+`b1c6f74a0c5b0c7775420ac63ad814aa05c9bc0c` and a clean tree. Six literal built-in-view ranges
+are supplied; no ad-hoc range helper, source authoring or repeated native-cleanup review.
+No runtime join or Shell handoff occurs until this authority gate is resolved.
+
+C's committed runtime is `b1c6f74a`, nineteen authorized files, 58/60 new leaves used:
+regular 106/108, NQ 29/30. Parent independently built the daemon and observed 437/437
+Core/IPC and 96/96 App/factory cases with zero skipped. Test and DS reviews are conditional;
+the old 79-assertion IPC spike is not runtime evidence. Shell's sixteen leaves and the
+fifteen independent real-window proof leaves remain held. Mainline ceiling remains 184.
+
 ### Core owns
 
 | Path | Why |

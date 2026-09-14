@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T01:30:39Z",
+  "generated": "2026-09-14T04:31:53Z",
   "audit": [
     {
       "actor": null,
@@ -15745,6 +15745,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "6792ea1c673fbb81ec5540f529fd2fc2556c6018",
         "short": "6792ea1c6",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2F2Z414GJXB8WH004Z9H2YT",
+      "shortname": "atlas-runtime-independent-review-disposition",
+      "datetime": "2026-09-14T04:31:52Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Actualruntimeb1c6f74a iscommittedbutUNJOINED. Parentdaemonbuild437Core/96Appzero skipped, actualfactorydeltaread andfrozengenericIPCunchanged. Test/DSconditionalgates; parentreadIPC/budgettests. DS79assertionsarehistoricalspikeonly. RuntimeSecurity6waswastedonoldscope+failedreads; wrongPASSrejected. Owner52fundsfreshnarrowSecurity6 inverifiedread-onlyb1treecf522afd using6literalviews. No vulnerabilityassertedfrommissingcoverage; noShellreleasebeforeauthorityclearance.",
+      "kind": "command",
+      "skill": null,
+      "tool": "review",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve the actual runtime authority gate before joining Core or releasing Shell.",
+      "done_when": "An independent current-pin authority review supports the policy/issuer/facade/bootstrap path, or names an exact blocker.",
+      "tier": "T2",
+      "main_calls": 168,
+      "main_budget": 184,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T04:31:52Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "e9b8dbd94aeb421ed88bb942351b40dbafc6c5dd",
+        "short": "e9b8dbd94",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

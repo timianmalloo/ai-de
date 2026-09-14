@@ -283,3 +283,49 @@ hold, not the evidence requirements. The new operational oracle includes ordinar
 writes while Atlas is idle: qualification pins must not commandeer the developer workspace.
 Real Core connection identity and explicit new-reader ownership must survive the ViewModel
 and Shell handoff; borrowed interfaces do not silently become owned.
+
+## Actual Core runtime candidate, not yet joined
+
+The fresh runtime tree produced `d811cd829de89adfa4e0ca8fb02b7eeeb6bdad23`, then
+`b1c6f74a0c5b0c7775420ac63ad814aa05c9bc0c`, nineteen authorized source/test files.
+Author used 58/60 new leaves, regular 106/108; NQ remains 29/30.
+
+The public handoff exists in code, not a compile fixture:
+
+- `WorkspaceClient.CreateAtlasReader(): IAtlasWorkspaceReader` constructs a separately
+  owned Atlas connection from the client's actual workspace identity.
+- `MainWindowViewModel.AtlasReaderFactory: Func<IAtlasWorkspaceReader>?` is supplied from
+  that method independently of the displayed directory name.
+- Shell owns each new reader. Borrowed queries/commands remain borrowed. MainWindow was
+  not changed in this Core candidate.
+
+Conductor directly read those deltas and compared the frozen generic `IpcClient`,
+`IpcFraming`, `IpcContract` and `CapabilityRegistry`: unchanged.
+
+| Evidence | Observed result | Limit |
+|---|---|---|
+| Author `runtime-core-final.trx` | 437/437 | Author evidence |
+| Author `runtime-app-final.trx` | 81/81 | Its selector omits unchanged factory tests |
+| Parent `files/atlas-runtime-independent/runtime-core-independent.trx` | 437/437, zero skipped | Includes actual daemon launch/native-Q and IPC regressions |
+| Parent `files/atlas-runtime-independent/runtime-app-independent.trx` | 96/96, zero skipped | Adds existing `SurfaceContentTests`; not real MainWindow proof |
+| Actual daemon output | Derived pipe listening message; exit zero | The test-generated log is rewritten by reruns; preserve per-run TRXs for provenance |
+
+The author's `runtime-author-receipt.txt` names source/receipt continuity, idle Git writes,
+publication/cancellation/drain and charged-buffer controls. Its process measurements are
+approximately 90 MB peak working-set increment for the large-source scenario; the 64/16 MiB
+figures are charged buffer/encoded reservations, not a total CLR/Roslyn memory bound.
+
+Test conditionally cleared runtime oracles. Parent read the actual IPC and read-budget
+tests after the review's source extraction was truncated: peer-scope refusal, epoch change
+at commit, EOF drain ownership, unsolicited-byte refusal, deadline framing continuity,
+auth parity, duplicate-registration refusal, FIFO cancellation and retained reservations.
+DS conditionally cleared the inspected persistent/abort-on-dirty transport and awaited
+publication/drain implementation. Its historical 79-assertion spike citation is not counted
+as runtime proof.
+
+The runtime Security gate is still blocked on evidence coverage. The prior reviewer
+returned an old cleanup review; that PASS was rejected. Its corrective attempt exhausted
+the six-call allowance with two failed source reads and a limited factory inspection.
+Owner turn 52 funds a fresh six-call, narrowly scoped authority review in a separate clean
+tree at `b1c6f74a`. No runtime join or Shell handoff is authorized by an irrelevant review,
+and no code vulnerability is asserted merely because that review failed to cover the code.

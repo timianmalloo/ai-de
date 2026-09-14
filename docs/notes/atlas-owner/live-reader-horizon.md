@@ -958,3 +958,28 @@ general-purpose agent's observed recent `7d78e773` work in this CLI session, not
 S5 harness-version report. The local derived checks passed and the new tree remains
 clean. No global marker or hook was changed. Different/additional findings require
 their own disposition.
+
+## Actual runtime candidate and fresh authority gate, Owner turn 52
+
+C committed `d811cd82` then `b1c6f74a` in the fresh runtime tree, nineteen of twenty authorized
+paths. The actual public handoff is `WorkspaceClient.CreateAtlasReader()` returning
+`IAtlasWorkspaceReader`, and the nullable `MainWindowViewModel.AtlasReaderFactory` delegate.
+Conductor opened the source delta: it uses the client's real workspace/pipe identity while
+the display directory name is passed separately; existing query/command interfaces remain
+borrowed. The frozen generic IPC files were compared and unchanged.
+
+Author reports 437 Core/IPC and 81 App cases. Parent independently rebuilt the actual daemon,
+repeated 437/437 Core/IPC, and included the unchanged factory coverage for 96/96 App cases;
+zero skipped. This is not a MainWindow proof. Test's truncated IPC/budget source extraction
+was completed by Conductor reading both test files. DS inspected the actual new transport,
+but its reference to 79 assertions and old frame-byte observations belongs to the historical
+IPC experiment, not this runtime run; it is not promoted as new proof.
+
+The first runtime Security report continued the prior cleanup objective. Conductor rejected
+its PASS. The correction reported six calls spent: three on that old scope, two failed
+range-helper reads and one factory/ViewModel read. No runtime authority clearance existed.
+Owner grants six new leaves to a fresh, narrower reviewer/context, not a reset of the old six.
+The separate clean review tree is pinned at `b1c6f74a`; literal built-in views cover the
+actual policy, issuer, facade, daemon composition and Core eligibility. The gate stays closed
+until that report supports the current authority path. No vulnerability is invented from
+missing coverage and no source is joined on the strength of green counts alone.
