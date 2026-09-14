@@ -12,6 +12,172 @@ namespace AiDe.Core.Tests.Understanding;
 [Collection("Atlas runtime native resources")]
 public sealed class AtlasIpcAdmissionTests
 {
+    [Fact]
+    public async Task Owner54LateOperationCancellationPreservesCompletedAAndHealthyB()
+    {
+        await using var fixture = await AtlasRuntimeFixture.StartAsync();
+        var (pipe, capability) = await OpenRaw(fixture, atlas: true);
+        await using (pipe)
+        {
+            using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            await Send(pipe, fixture, capability, AtlasWorkspaceOperations.Admit,
+                new AtlasAdmitRequestDto(1, fixture.Core!.Store.CoreEpoch));
+            var admission = IpcPayload.Read<AtlasAdmitDto>((await ReadResponse(pipe, deadline.Token)).Payload, WorkspaceOperations.Wire)!;
+            var inventoryRequest = new AtlasInventoryRequestDto(1, admission.ScopeToken, admission.CoreEpoch, admission.InitialManifestToken, 0, 128);
+            await Send(pipe, fixture, capability, AtlasWorkspaceOperations.Inventory, inventoryRequest);
+            var inventoryResponse = await ReadResponse(pipe, deadline.Token);
+            var inventory = AtlasReaderProjection.DeserializeInventory(Encoding.UTF8.GetBytes(inventoryResponse.Payload!.Value.GetRawText()), inventoryRequest);
+            var file = Assert.Single(inventory.Files, item => item.RelativePath == "src/Widget.cs");
+            var returned = new TaskCompletionSource<IpcServer.PublicationProbe>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var order = new ConcurrentQueue<string>();
+            fixture.Server!.AfterWriterReturnedForQualification = async probe =>
+            {
+                if (probe.Request.Operation != AtlasWorkspaceOperations.Select) return;
+                order.Enqueue("full-writer-returned-before-terminal-poll");
+                returned.TrySetResult(probe);
+                await release.Task;
+            };
+            try
+            {
+                await Send(pipe, fixture, capability, AtlasWorkspaceOperations.Select,
+                    new AtlasSelectRequestDto(1, admission.ScopeToken, admission.CoreEpoch, inventory.ManifestToken,
+                        file.FileToken, null, 0, 4096, 0, 128));
+                var aRaw = await IpcFraming.ReadAsync(pipe, deadline.Token);
+                var a = JsonSerializer.Deserialize<IpcResponse>(aRaw!, WorkspaceOperations.Wire)!;
+                var probe = await returned.Task.WaitAsync(deadline.Token);
+                Assert.True(a.Ok);
+                Assert.Equal("IndexedMatch", a.Payload!.Value.GetProperty("source").GetProperty("state").GetString());
+                order.Enqueue("native-A-frame-received");
+                probe.CancelOperationForQualification();
+                order.Enqueue("late-operation-deadline-source-canceled");
+                var successor = a.Payload.Value.GetProperty("manifestToken").GetString()!;
+                var sendB = Send(pipe, fixture, capability, AtlasWorkspaceOperations.Inventory,
+                    inventoryRequest with { ManifestToken = successor });
+                order.Enqueue("B-enqueued-on-same-connection");
+                release.TrySetResult();
+                IpcResponse? b = null;
+                string? bError = null;
+                string? bRaw = null;
+                try
+                {
+                    await sendB.WaitAsync(deadline.Token);
+                    bRaw = await IpcFraming.ReadAsync(pipe, deadline.Token);
+                    b = bRaw is null ? null : JsonSerializer.Deserialize<IpcResponse>(bRaw, WorkspaceOperations.Wire);
+                }
+                catch (Exception exception) when (exception is IOException or OperationCanceledException)
+                {
+                    bError = exception.GetType().Name;
+                }
+                order.Enqueue(b?.Ok == true ? "healthy-B-frame-received" : "B-framing-or-connection-ended");
+                WriteOwner54Receipt("late-operation", new
+                {
+                    AOk = a.Ok, ABodyBytes = Encoding.UTF8.GetByteCount(aRaw!),
+                    OperationCanceled = probe.OperationCancellation.IsCancellationRequested,
+                    BOk = b?.Ok, BBodyBytes = bRaw is null ? 0 : Encoding.UTF8.GetByteCount(bRaw), BError = bError,
+                    Connections = fixture.Server.ServedConnections, Order = order.ToArray(),
+                });
+                Assert.True(b?.Ok == true, "Late cancellation after full A writer return must not terminate healthy B framing.");
+                Assert.Equal(1, fixture.Server.ServedConnections);
+            }
+            finally
+            {
+                release.TrySetResult();
+                fixture.Server.AfterWriterReturnedForQualification = null;
+            }
+        }
+    }
+
+    [Theory]
+    [InlineData(AtlasWorkspaceOperations.Admit)]
+    [InlineData(AtlasWorkspaceOperations.Inventory)]
+    [InlineData(AtlasWorkspaceOperations.Select)]
+    [InlineData(AtlasWorkspaceOperations.Restore)]
+    public async Task Owner54SuccessfulSourceOperationsRequireHeldPublication(string operation)
+    {
+        var endpoint = new DaemonEndpoint("workspace", new CapabilityRegistry(), _ => 7);
+        var peer = new IpcPeer("owner", 42, "connection");
+        var opened = endpoint.OpenWorkspace(new IpcRequest(IpcVersion.Current, "open", "open", "workspace", 0, null, null), peer);
+        var capability = IpcPayload.Read<IpcOpenResult>(opened.Payload, WorkspaceOperations.Wire)!.Capability;
+        endpoint.RegisterAsync(operation, (_, _, _) => ValueTask.FromResult(IpcResponse.Success()));
+        var request = new IpcRequest(IpcVersion.Current, operation, "missing-held-control", "workspace", 7, capability, null);
+        var unheld = await endpoint.InvokeAsync(request, peer, CancellationToken.None);
+        Assert.True(unheld.Ok);
+        var committed = await endpoint.CommitResponseAsync(request, peer, unheld, CancellationToken.None);
+        WriteOwner54Receipt("missing-held-" + operation, new
+        {
+            Operation = operation, committed.Ok, committed.ErrorCode,
+            Classification = "approved contract hardening; intentionally missing hold, not an observed disclosure",
+        });
+        Assert.False(committed.Ok);
+        Assert.Equal("Atlas.PublicationMissing", committed.ErrorCode);
+    }
+
+    [Fact]
+    public async Task Owner54HeldPublicationGuardExemptsCapabilitiesReleaseAndErrors()
+    {
+        var endpoint = new DaemonEndpoint("workspace", new CapabilityRegistry(), _ => 7);
+        var peer = new IpcPeer("owner", 42, "connection");
+        var opened = endpoint.OpenWorkspace(new IpcRequest(IpcVersion.Current, "open", "open", "workspace", 0, null, null), peer);
+        var capability = IpcPayload.Read<IpcOpenResult>(opened.Payload, WorkspaceOperations.Wire)!.Capability;
+        foreach (var operation in new[] { AtlasWorkspaceOperations.Capabilities, AtlasWorkspaceOperations.Release })
+        {
+            var response = IpcResponse.Success();
+            Assert.Same(response, await endpoint.CommitResponseAsync(
+                new IpcRequest(IpcVersion.Current, operation, "exempt", "workspace", 7, capability, null),
+                peer, response, CancellationToken.None));
+        }
+        foreach (var operation in new[] { AtlasWorkspaceOperations.Admit, AtlasWorkspaceOperations.Inventory,
+            AtlasWorkspaceOperations.Select, AtlasWorkspaceOperations.Restore })
+        {
+            var response = IpcResponse.Error("Atlas.Busy", "capacity occupied");
+            Assert.Same(response, await endpoint.CommitResponseAsync(
+                new IpcRequest(IpcVersion.Current, operation, "error", "workspace", 7, capability, null),
+                peer, response, CancellationToken.None));
+        }
+    }
+
+    [Theory]
+    [InlineData("Scopes")]
+    [InlineData("Active")]
+    [InlineData("NativeOwners")]
+    [InlineData("NativeBuffers")]
+    [InlineData("Owned")]
+    [InlineData("Retained")]
+    public void Owner54ExactResourceOracleRejectsSafeCounterMutants(string component)
+    {
+        var observed = new List<object>();
+        foreach (var (state, expected) in new[] { ("blocked", BlockedCharges), ("healthy", HealthyCharges), ("closed", ClosedCharges) })
+        {
+            AssertCharges(expected, expected);
+            var mutant = component switch
+            {
+                "Scopes" => expected with { Scopes = expected.Scopes + 1 },
+                "Active" => expected with { Active = expected.Active + 1 },
+                "NativeOwners" => expected with { NativeOwners = expected.NativeOwners + 1 },
+                "NativeBuffers" => expected with { NativeBuffers = expected.NativeBuffers + 1 },
+                "Owned" => expected with { Owned = expected.Owned + 1 },
+                _ => expected with { Retained = expected.Retained + 1 },
+            };
+            Assert.ThrowsAny<Xunit.Sdk.XunitException>(() => AssertCharges(expected, mutant));
+            observed.Add(new { State = state, Component = component, Expected = expected, Mutant = mutant, Rejected = true });
+        }
+        WriteOwner54Receipt("counter-mutant-" + component, observed);
+    }
+
+    private sealed record PublicationCharges(int Scopes, int Active, int NativeOwners, int NativeBuffers, long Owned, long Retained);
+    private static readonly PublicationCharges BlockedCharges = new(1, 1, 1, 5, 16 * 1024 * 1024, 4 * 1024 * 1024);
+    private static readonly PublicationCharges HealthyCharges = new(1, 0, 0, 0, 2 * 1024 * 1024, 4 * 1024 * 1024);
+    private static readonly PublicationCharges ClosedCharges = new(0, 0, 0, 0, 0, 0);
+    private static void AssertCharges(PublicationCharges expected, PublicationCharges actual) => Assert.Equal(expected, actual);
+    private static void WriteOwner54Receipt(string name, object value)
+    {
+        var directory = Environment.GetEnvironmentVariable("ATLAS_PUBLICATION_DIAGNOSTICS")
+            ?? Path.Combine(AppContext.BaseDirectory, ".artifacts", "publication-lifetime");
+        Directory.CreateDirectory(directory);
+        File.WriteAllText(Path.Combine(directory, "owner54-" + name + ".json"), JsonSerializer.Serialize(value));
+    }
+
     [Theory]
     [InlineData("ownership")]
     [InlineData("revoke")]
@@ -130,10 +296,10 @@ public sealed class AtlasIpcAdmissionTests
                     NativeOwners = afterNative.ChargedOwners, NativeBuffers = afterNative.WatchBuffers,
                     writer.BytesWritten, WriterCanceled = writer.WriterCancellation.IsCancellationRequested,
                     OperationCanceled = writer.Probe.OperationCancellation.IsCancellationRequested };
-                Assert.Equal(1, budget.Active);
-                Assert.True(native.ChargedOwners > 0);
-                Assert.Equal(1, afterBudget.Active);
-                Assert.True(afterNative.ChargedOwners > 0);
+                AssertCharges(BlockedCharges, new(budget.Scopes, budget.Active, native.ChargedOwners,
+                    native.WatchBuffers, budget.Owned, budget.Retained));
+                AssertCharges(BlockedCharges, new(afterBudget.Scopes, afterBudget.Active, afterNative.ChargedOwners,
+                    afterNative.WatchBuffers, afterBudget.Owned, afterBudget.Retained));
                 if (mode is "revoke" or "expire" or "partial" or "repeat" or "deadline" or "write-timeout" or "drain-timeout")
                     Assert.True(writer.WriterCancellation.IsCancellationRequested);
                 if (mode == "partial") Assert.Equal(4, writer.BytesWritten);
@@ -181,12 +347,19 @@ public sealed class AtlasIpcAdmissionTests
                     await fixture.Endpoint!.ConnectionEndedAsync(writer.Probe.Peer, AtlasConnectionEndReason.Revoked, retry.Token);
                     order.Enqueue("actual-writer-completion-allowed-idempotent-cleanup-retry");
                 }
+                if (mode is "disconnect" or "deadline" or "write-timeout")
+                {
+                    using var close = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+                    await fixture.Endpoint!.ConnectionEndedAsync(writer.Probe.Peer, AtlasConnectionEndReason.Disconnected, close.Token);
+                    order.Enqueue("connection-cleanup-awaited-after-writer-drain");
+                }
                 var drainedBudget = AtlasReadBudget.ProcessWide.Read();
                 var drainedNative = AtlasGitMembership.CleanupChargesForQualification;
                 afterDrain = new { drainedBudget.Scopes, drainedBudget.Active, drainedBudget.Owned, drainedBudget.Retained,
                     NativeOwners = drainedNative.ChargedOwners, NativeBuffers = drainedNative.WatchBuffers };
-                Assert.Equal(0, drainedBudget.Active);
-                Assert.Equal(0, drainedNative.ChargedOwners);
+                AssertCharges(mode == "ownership" ? HealthyCharges : ClosedCharges,
+                    new(drainedBudget.Scopes, drainedBudget.Active, drainedNative.ChargedOwners,
+                        drainedNative.WatchBuffers, drainedBudget.Owned, drainedBudget.Retained));
                 var destination = Environment.GetEnvironmentVariable("ATLAS_PUBLICATION_DIAGNOSTICS")
                     ?? Path.Combine(AppContext.BaseDirectory, ".artifacts", "publication-lifetime");
                 Directory.CreateDirectory(destination);
@@ -205,8 +378,8 @@ public sealed class AtlasIpcAdmissionTests
                 }));
                 if (mode == "ownership")
                 {
-                    Assert.Equal(1, budget.Active);
-                    Assert.True(native.ChargedOwners > 0, "Native publication ownership must survive preparation and the commit check.");
+                    AssertCharges(BlockedCharges, new(budget.Scopes, budget.Active, native.ChargedOwners,
+                        native.WatchBuffers, budget.Owned, budget.Retained));
                 }
                 else if (mode == "completed")
                 {

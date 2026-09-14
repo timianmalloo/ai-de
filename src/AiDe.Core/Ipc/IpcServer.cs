@@ -87,6 +87,7 @@ public sealed class IpcServer
         CancellationToken OperationCancellation, Action CancelOperationForQualification);
     internal Func<Stream, PublicationProbe, Stream>? PublicationWriterForQualification { get; set; }
     internal Action<IpcResponse>? PublicationDrainedForQualification { get; set; }
+    internal Func<PublicationProbe, ValueTask>? AfterWriterReturnedForQualification { get; set; }
 
     private int _active;
     private int _served;
@@ -418,7 +419,8 @@ public sealed class IpcServer
                     connectionCancellation, operation.Token, _endpoint.PublicationCancellation(response))
                 : CancellationTokenSource.CreateLinkedTokenSource(connectionCancellation);
             await RespondWithinTimeout(writer, response, writerCancellation.Token).ConfigureAwait(false);
-            writerCancellation.Token.ThrowIfCancellationRequested();
+            if (AfterWriterReturnedForQualification is { } afterWriter)
+                await afterWriter(new PublicationProbe(request, peer, response, operation.Token, operation.Cancel)).ConfigureAwait(false);
             return null;
         }
         finally
