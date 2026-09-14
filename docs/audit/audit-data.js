@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T00:48:42Z",
+  "generated": "2026-09-14T01:00:15Z",
   "audit": [
     {
       "actor": null,
@@ -15343,6 +15343,30 @@ window.AUDIT_DATA = {
         "short": "0b372d93c",
         "branch": "lane/shell-sh4-2",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2EPVKVAXNVKTT4KFQ6NR46F",
+      "shortname": "join-sh4-2",
+      "datetime": "2026-09-14T01:00:14Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "keep going (the join of the resolved merge)",
+      "summary": "Join: SH-4.2 (c1a301da) merged to main clean - the last Addenda C/D slice: a new session docks in Coding's Left, not maximized (Ruling 83; NewSessionPlacement deleted); Coding's default Bottom collapsed with the terminal started only on expand (Ruling 88); the reconcile reads identity, not rendered zones (F-1: 9 of 10 rows red before); the Console as a document in the Center (Ruling 89, CV-5.2's C5 green); the Center's copies; the Left extent measured (96ch at 1440x900: column 693 >= 672.6); the startup size set to the design's 1440x900. DC-202..205 allocated. One deviation for the Owner: the Console toggle's second press closes (UIA Toggle honesty) where Ruling 89 said focus.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/coding-recut-left-dock.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land the last slice on main with the floors recounted and the final Release build of the programme",
+      "done_when": "main pushed green through run-verify-gates; Release built",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
       }
     }
   ],
