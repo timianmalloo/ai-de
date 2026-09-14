@@ -13,6 +13,38 @@ namespace AiDe.Core.Tests.Understanding;
 public sealed class AtlasProductionAdmissionTests
 {
     [Fact]
+    public async Task ConcurrentReaderDisposalAwaitsTheSameInFlightDrain()
+    {
+        await using var fixture = await AtlasRuntimeFixture.StartAsync();
+        await using var reader = new AtlasRemoteReader(fixture.WorkspaceId);
+        var lease = await reader.AdmitAsync(CancellationToken.None);
+        var page = await lease.Queries.InventoryAsync(new AtlasInventoryRequestDto(
+            1, lease.ScopeToken, lease.CoreEpoch, lease.InitialManifestToken, 0, 128), CancellationToken.None);
+        var file = Assert.Single(page.Files, row => row.RelativePath == "src/Widget.cs");
+        using var compiler = await AtlasReadBudget.ProcessWide.EnterCompilerAsync(CancellationToken.None);
+        var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var listener = new ActivityListener
+        {
+            ShouldListenTo = source => source.Name == "AiDe.Core.AtlasRemoteReader",
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData,
+            ActivityStarted = activity =>
+            {
+                if ((string?)activity.GetTagItem("rpc.method") == AtlasWorkspaceOperations.Select) started.TrySetResult();
+            },
+        };
+        ActivitySource.AddActivityListener(listener);
+        var pending = lease.Queries.SelectAsync(new AtlasSelectRequestDto(
+            1, lease.ScopeToken, lease.CoreEpoch, page.ManifestToken, file.FileToken, null, 0, 4096, 0, 128), CancellationToken.None).AsTask();
+        await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        var first = reader.DisposeAsync().AsTask();
+        var second = reader.DisposeAsync().AsTask();
+        Assert.Same(first, second);
+        await Task.WhenAll(first, second).WaitAsync(TimeSpan.FromSeconds(5));
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => pending);
+        Assert.True(lease.IsTerminal);
+    }
+
+    [Fact]
     public async Task CompletedAttemptCancellationCannotCloseTheFollowingExchange()
     {
         await using var fixture = await AtlasRuntimeFixture.StartAsync();
@@ -234,6 +266,10 @@ public sealed class AtlasProductionAdmissionTests
             1, lease.ScopeToken, lease.CoreEpoch, selected.ReceiptToken!), CancellationToken.None);
         Assert.Equal(SourceProjectionState.IndexedMatch, restored.Source.State);
         Assert.NotEqual(selected.ReceiptToken, restored.ReceiptToken);
+        var restoredAgain = await lease.Queries.RestoreAsync(new AtlasRestoreRequestDto(
+            1, lease.ScopeToken, lease.CoreEpoch, selected.ReceiptToken!), CancellationToken.None);
+        Assert.Equal(SourceProjectionState.IndexedMatch, restoredAgain.Source.State);
+        Assert.NotEqual(restored.ReceiptToken, restoredAgain.ReceiptToken);
         Assert.Equal(1, fixture.Server!.ServedConnections);
         Assert.Equal(0, AtlasGitMembership.CleanupChargesForQualification.ChargedOwners);
         Assert.Equal(0, AtlasGitMembership.LiveWatchBuffersForQualification);

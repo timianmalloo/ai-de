@@ -24,6 +24,7 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
     private bool _terminal = true;
     private bool _disposed;
     private int _waiting;
+    private Task? _disposal;
 
     public async ValueTask<IAtlasReaderLease> AdmitAsync(CancellationToken cancellationToken)
     {
@@ -179,6 +180,7 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
         try
         {
             if (_terminal || !ReferenceEquals(_lease, lease) || lease.IsTerminal) throw Invalid();
+            lock (_state) lease.ValidateQueuedRequest(request);
             return await ExchangeCoreAsync(Request(operation, request), validate, adopt, linked.Token).ConfigureAwait(false);
         }
         finally { Exit(); }
@@ -201,6 +203,7 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
     {
         _lease?.Invalidate();
         if (_pipe is { } pipe) await pipe.DisposeAsync().ConfigureAwait(false);
+        _lease?.ReleaseCancellationOwnership();
         _pipe = null;
         _lease = null;
         _capability = null;
@@ -229,9 +232,20 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
         finally { Exit(); }
     }
 
-    public async ValueTask DisposeAsync()
+    public ValueTask DisposeAsync()
     {
-        if (_disposed) return;
+        lock (_state)
+        {
+            if (_disposal is null || _disposal.IsFaulted || _disposal.IsCanceled)
+                _disposal = DisposeCoreAsync();
+            return new ValueTask(_disposal);
+        }
+    }
+
+    private async Task DisposeCoreAsync()
+    {
+        // Start outside the state lock held while publishing the owned disposal task.
+        await Task.Yield();
         _disposed = true;
         MarkTerminal();
         await _shutdown.CancelAsync().ConfigureAwait(false);
@@ -251,6 +265,7 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
     {
         private readonly AtlasRemoteReader _owner;
         private readonly CancellationTokenSource _invalidated = new();
+        private readonly CancellationToken _invalidatedToken;
         private readonly CancellationTokenRegistration _expiry;
         private readonly Dictionary<string, AtlasSelectRequestDto> _receipts = new(StringComparer.Ordinal);
         private string _manifest;
@@ -260,7 +275,7 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
         public long CoreEpoch { get; }
         public DateTimeOffset ExpiresAt { get; }
         public IAtlasReaderQueries Queries => this;
-        public CancellationToken Invalidated => _invalidated.Token;
+        public CancellationToken Invalidated => _invalidatedToken;
         public bool IsTerminal => _invalidated.IsCancellationRequested;
 
         internal Lease(AtlasRemoteReader owner, AtlasAdmitDto admission)
@@ -270,6 +285,7 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
             InitialManifestToken = _manifest = admission.InitialManifestToken;
             CoreEpoch = admission.CoreEpoch;
             ExpiresAt = admission.ExpiresAt;
+            _invalidatedToken = _invalidated.Token;
             _expiry = _invalidated.Token.Register(() =>
             {
                 lock (owner._state)
@@ -283,6 +299,32 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
         {
             if (!_invalidated.IsCancellationRequested) _invalidated.Cancel();
             _receipts.Clear();
+        }
+
+        internal void ReleaseCancellationOwnership()
+        {
+            _expiry.Dispose();
+            _invalidated.Dispose();
+        }
+
+        internal void ValidateQueuedRequest(object request)
+        {
+            switch (request)
+            {
+                case AtlasInventoryRequestDto inventory:
+                    Match(inventory.ScopeToken, inventory.ExpectedCoreEpoch);
+                    if (inventory.ManifestToken != _manifest && inventory.ManifestToken != InitialManifestToken) throw Invalid();
+                    break;
+                case AtlasSelectRequestDto selection:
+                    Match(selection.ScopeToken, selection.ExpectedCoreEpoch);
+                    if (!_inventoryRead || selection.ManifestToken != _manifest) throw Invalid();
+                    break;
+                case AtlasRestoreRequestDto restore:
+                    Match(restore.ScopeToken, restore.ExpectedCoreEpoch);
+                    if (!_inventoryRead || !_receipts.ContainsKey(restore.ReceiptToken))
+                        throw new AtlasReadException("Atlas.ReceiptUnavailable", "The receipt is no longer retained.");
+                    break;
+            }
         }
 
         private void Match(string scope, long epoch)
@@ -310,9 +352,13 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
 
         public ValueTask<AtlasSelectionDto> RestoreAsync(AtlasRestoreRequestDto request, CancellationToken cancellationToken)
         {
-            Match(request.ScopeToken, request.ExpectedCoreEpoch);
-            if (!_inventoryRead || !_receipts.TryGetValue(request.ReceiptToken, out var original))
-                throw new AtlasReadException("Atlas.ReceiptUnavailable", "The receipt is not owned by this lease.");
+            AtlasSelectRequestDto original;
+            lock (_owner._state)
+            {
+                Match(request.ScopeToken, request.ExpectedCoreEpoch);
+                if (!_inventoryRead || !_receipts.TryGetValue(request.ReceiptToken, out original!))
+                    throw new AtlasReadException("Atlas.ReceiptUnavailable", "The receipt is not owned by this lease.");
+            }
             return _owner.QueryAsync(this, AtlasWorkspaceOperations.Restore, request,
                 element => DecodeSelection(element, original),
                 value => Adopt(value, original), cancellationToken);

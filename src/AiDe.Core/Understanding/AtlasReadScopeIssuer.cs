@@ -350,7 +350,8 @@ internal sealed class AtlasReadScopeIssuer : IAsyncDisposable
             {
                 foreach (var connection in _connections.Values)
                 {
-                    if (!connection.Terminal && DateTimeOffset.UtcNow < connection.ExpiresAt) continue;
+                    if (!connection.Terminal && connection.Scope?.Terminal is not true
+                        && DateTimeOffset.UtcNow < connection.ExpiresAt) continue;
                     connection.Terminal = true;
                     connection.Scope?.Invalidate();
                     using var cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(2));
@@ -419,6 +420,7 @@ internal sealed class AtlasReadScopeIssuer : IAsyncDisposable
         private long _handleBytes;
         private bool _terminal;
         private bool _stopped;
+        internal bool Terminal => _terminal || Invalidated.IsCancellationRequested;
 
         internal bool LogicalCurrent() => !_terminal && !Invalidated.IsCancellationRequested && !connection.Terminal && !owner._disposed
             && DateTimeOffset.UtcNow < ExpiresAt && owner._policy.IsEpochCurrent(Epoch);
@@ -534,6 +536,11 @@ internal sealed class AtlasReadScopeIssuer : IAsyncDisposable
                 _cancellation.Dispose();
                 Operations.Add(1);
                 Duration.Record(Stopwatch.GetElapsedTime(_started).TotalMilliseconds);
+            }
+            catch (IOException)
+            {
+                _scope.Invalidate();
+                throw;
             }
             finally { _disposeGate.Release(); }
         }

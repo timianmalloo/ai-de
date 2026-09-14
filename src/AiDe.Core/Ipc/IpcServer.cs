@@ -323,9 +323,18 @@ public sealed class IpcServer
             if (peer is not null)
             {
                 using var cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(2));
-                await _endpoint.ConnectionEndedAsync(peer,
-                    cancellationToken.IsCancellationRequested ? AtlasConnectionEndReason.Shutdown : endReason,
-                    cleanup.Token).ConfigureAwait(false);
+                try
+                {
+                    await _endpoint.ConnectionEndedAsync(peer,
+                        cancellationToken.IsCancellationRequested ? AtlasConnectionEndReason.Shutdown : endReason,
+                        cleanup.Token).ConfigureAwait(false);
+                }
+                catch (AggregateException)
+                {
+                    // The issuer retains failed drains and their reservations; a listener must not
+                    // turn a retained cleanup condition into loss of the other connections.
+                    span?.SetTag("atlas.cleanup.retained", true);
+                }
             }
         }
     }
