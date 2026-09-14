@@ -52,6 +52,10 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
     /// <summary>The epoch this client is bound to.</summary>
     public long Epoch => _epoch;
 
+    /// <summary>Creates a separate Atlas owner using this connection's actual workspace identity.
+    /// Ownership of the returned reader transfers to its caller; this client's query pipe is borrowed.</summary>
+    public Understanding.IAtlasWorkspaceReader CreateAtlasReader() => new AtlasRemoteReader(_workspaceId);
+
     /// <summary>Connects, handshakes, and returns a client ready to query.</summary>
     /// <remarks>
     /// The epoch comes from the handshake rather than from the caller: the daemon owns the store and

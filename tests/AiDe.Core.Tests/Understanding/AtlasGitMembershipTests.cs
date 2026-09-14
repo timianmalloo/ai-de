@@ -8,6 +8,7 @@ using Xunit.Abstractions;
 
 namespace AiDe.Core.Tests.Understanding;
 
+[Collection("Atlas runtime native resources")]
 public sealed class AtlasGitMembershipTests : IDisposable
 {
     private const string Git = @"C:\Program Files\Git\cmd\git.exe";
@@ -112,6 +113,26 @@ public sealed class AtlasGitMembershipTests : IDisposable
         File.Delete(reference);
         Assert.False(File.Exists(reference));
         Assert.False(snapshot.IsCurrent(), "Kernel namespace evidence must detect insertion/removal ABA even though HEAD bytes agree.");
+    }
+
+    [Fact]
+    public async Task ExclusiveSourceRootHandoffRetainsNamespaceInvalidationWithoutConflictingWithS()
+    {
+        var repository = await Clone();
+        await using var snapshot = await Capture(repository);
+        AssertCandidate(snapshot);
+        var source = new AtlasSource();
+        var conflicting = source.ObserveApprovedRootIdentity(repository, snapshot.IsCurrent, CancellationToken.None);
+        Assert.Equal(AtlasCompletionState.Refused, conflicting.Completion);
+        snapshot.PrepareExclusiveSourceRead(repository);
+        var observed = source.ObserveApprovedRootIdentity(repository, snapshot.IsCurrent, CancellationToken.None);
+        Assert.Equal(AtlasCompletionState.Complete, observed.Completion);
+        Assert.Equal(Identity(repository), observed.Identity);
+        Assert.True(snapshot.IsCurrent());
+        var changed = Path.Combine(repository, "src", "handoff-change.txt");
+        File.WriteAllText(changed, "namespace ABA");
+        File.Delete(changed);
+        Assert.False(snapshot.IsCurrent());
     }
 
     [Fact]

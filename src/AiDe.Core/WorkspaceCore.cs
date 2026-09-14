@@ -568,6 +568,23 @@ public sealed class WorkspaceCore : IDisposable
     /// <summary>The path compaction operates on. Compaction requires the store to be closed.</summary>
     public string DatabasePath => Path.Combine(DataDirectory, "workspace.db");
 
+    /// <summary>Matches NodeContent's workspace confinement and supported content kinds without an index-presence gate.</summary>
+    internal bool AllowsAtlasContent(string relativePath)
+    {
+        if (string.IsNullOrWhiteSpace(relativePath) || Path.IsPathRooted(relativePath)
+            || relativePath.Contains(':') || relativePath.Split('/', '\\').Contains(".."))
+            return false;
+        var root = Path.TrimEndingDirectorySeparator(Path.GetFullPath(RootPath));
+        var candidate = Path.GetFullPath(Path.Combine(root, relativePath));
+        if (!candidate.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+            return false;
+        // ProjectionService.KindOf is frozen in this slice; the parity test controls this shared policy boundary.
+        return Path.GetExtension(candidate).ToLowerInvariant() is
+            ".cs" or ".ts" or ".tsx" or ".js" or ".jsx" or ".py" or ".sql" or ".bicep"
+            or ".json" or ".yml" or ".yaml" or ".xml" or ".csproj" or ".props" or ".targets"
+            or ".ps1" or ".sh" or ".razor" or ".css" or ".html" or ".md" or ".markdown" or ".txt" or ".log";
+    }
+
     /// <summary>
     /// Closes what this object opened — both stores.
     /// </summary>

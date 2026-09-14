@@ -63,6 +63,7 @@ internal static class Program
         using (workspaceLock)
         {
             WorkspaceCore? core = null;
+            IAsyncDisposable? atlasLifetime = null;
 
             try
             {
@@ -83,8 +84,9 @@ internal static class Program
                 // Cheap enough to simply always ask.
                 Compact(workspacePath, Option(args, "--data"));
 
-                var (endpoint, opened) = OpenWorkspace(workspacePath, Option(args, "--data"));
+                var (endpoint, opened, atlas) = OpenWorkspace(workspacePath, Option(args, "--data"));
                 core = opened;
+                atlasLifetime = atlas;
 
                 var server = new IpcServer(pipeName, endpoint, options);
 
@@ -113,6 +115,8 @@ internal static class Program
             {
                 // Closed before the workspace lock is released, so the next daemon never finds the
                 // store still held by a process that has already given up its claim to the workspace.
+                if (atlasLifetime is not null)
+                    await atlasLifetime.DisposeAsync();
                 core?.Dispose();
             }
         }
@@ -145,7 +149,7 @@ internal static class Program
     /// path and can now pass the one it computed, rather than the two of them agreeing by
     /// coincidence for as long as both copies of the expression stay identical (DC-022).</para>
     /// </remarks>
-    private static (DaemonEndpoint Endpoint, WorkspaceCore Core) OpenWorkspace(
+    private static (DaemonEndpoint Endpoint, WorkspaceCore Core, IAsyncDisposable AtlasLifetime) OpenWorkspace(
         string workspacePath, string? dataDirectoryOverride)
     {
         var workspaceId = IpcPipeName.ForWorkspace(workspacePath);
@@ -211,7 +215,11 @@ internal static class Program
             return result.Assertions.Count;
         }).Register(endpoint);
 
-        return (endpoint, core);
+        var atlas = AtlasWorkspaceOperations.Register(endpoint, core, workspaceId, workspacePath, dataDirectory,
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Git", "cmd", "git.exe"),
+            "22FEAD8244EF3A7225FB800099A4E43ECA8BCEC0466774917669599C2F19A05A",
+            "git version 2.55.0.windows.2");
+        return (endpoint, core, atlas);
     }
 
     /// <summary>Reads a duration flag, ignoring anything malformed rather than failing to start.</summary>

@@ -72,6 +72,7 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
     private bool disposed;
     private bool shutdownSignaled;
     private bool resourcesDisposed;
+    private AtlasReadBudget? readerBudget;
 
     private AtlasQueryService(AtlasRootGrant grant, Func<bool> isCurrent, AtlasSource source,
         AtlasQueryLimits limits, CachedManifest initial)
@@ -155,6 +156,7 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
             Record("inventory", started);
             return EmptyInventory(request, refusal);
         }
+
         var acquired = false;
         try
         {
@@ -173,6 +175,100 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
         catch (OperationCanceledException) { return EmptyInventory(request, Code.Canceled); }
         finally { Release(acquired); Record("inventory", started); }
     }
+
+        internal static async ValueTask<(AtlasQueryService Queries, string Manifest)> CreateForScopeAsync(
+            AtlasRootGrant grant, Func<bool> current, AtlasReadBudget budget, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (!current()) throw new AtlasReadException("Atlas.ScopeInvalid", "The Atlas scope is not current.");
+            var enumerator = new AtlasDirectoryEnumerator(isGrantCurrent: candidate => ReferenceEquals(candidate, grant) && current());
+            var observation = await enumerator.EnumerateAsync(grant, EnumerationLimits.CandidateDefault, cancellationToken).ConfigureAwait(false);
+            if (!current()) throw new AtlasReadException("Atlas.ScopeInvalid", "The Atlas scope changed during inventory.");
+            var files = observation.Entries.Select(entry =>
+            {
+                var classification = Path.GetExtension(entry.RelativePath).ToLowerInvariant() switch
+                {
+                    ".cs" => AtlasFileClassification.CSharp,
+                    ".md" or ".txt" => AtlasFileClassification.Text,
+                    _ => AtlasFileClassification.Unknown,
+                };
+                var availability = entry.Kind switch
+                {
+                    AtlasDirectoryEntryKind.File or AtlasDirectoryEntryKind.Directory => AtlasFileAvailability.Available,
+                    AtlasDirectoryEntryKind.Unavailable => AtlasFileAvailability.Unavailable,
+                    AtlasDirectoryEntryKind.RejectedLink => AtlasFileAvailability.Refused,
+                    _ => AtlasFileAvailability.Unknown,
+                };
+                var slash = entry.RelativePath.LastIndexOf('/');
+                return new AtlasFileEntry(AtlasIdentityCodec.ForFile(grant.WorkspaceToken, grant.RootToken, entry.RelativePath),
+                    entry.RelativePath, slash < 0 ? grant.RootToken
+                        : AtlasIdentityCodec.ForFile(grant.WorkspaceToken, grant.RootToken, entry.RelativePath[..slash]),
+                    entry.Kind, classification, entry.ObjectIdentity, availability, entry.Reason);
+            }).ToImmutableArray();
+            var manifest = new AtlasManifest(NewToken("manifest"), grant, observation.ObservationKey,
+                files, [], [], observation.Completion, observation.Bounds);
+            var cached = Cache(manifest, null, []);
+            var limits = new AtlasQueryLimits(2 * 1024 * 1024, 512 * 1024);
+            if (cached.Bytes > limits.ManifestBytes)
+                throw new AtlasReadException("Atlas.Busy", "The Atlas inventory exceeds retained capacity.");
+            return (new AtlasQueryService(grant, current, new AtlasSource(), limits, cached) { readerBudget = budget }, manifest.Token);
+        }
+
+        internal ImmutableArray<AtlasFileEntry> ReaderFiles
+        {
+            get { lock (gate) return inventoryFiles; }
+        }
+
+        internal AtlasCompletionState ReaderCompletion
+        {
+            get { lock (gate) return manifests[currentToken].Value.Completion; }
+        }
+
+        internal bool HasReaderReceipt(string token)
+        {
+            lock (gate) return receipts.ContainsKey(token);
+        }
+
+        internal bool HasReaderManifest(string token)
+        {
+            lock (gate) return manifests.ContainsKey(token);
+        }
+
+        internal AtlasCountDto ReaderSourceTotal(SelectionProjection selection)
+        {
+            lock (gate)
+            {
+                if (manifests.TryGetValue(selection.ManifestToken, out var manifest))
+                {
+                    var observation = manifest.Value.SourceObservations.FirstOrDefault(item =>
+                        item.ObservationKey == selection.Source.ObservationKey && item.FileValue == selection.FileValue);
+                    if (observation?.DecodedUtf16Length is { } length)
+                        return new AtlasCountDto(AtlasDenominatorState.Known, length, null);
+                }
+                return new AtlasCountDto(AtlasDenominatorState.Unknown, null, "total not recorded");
+            }
+        }
+
+        internal AtlasOutlineState ReaderOutlineState(SelectionProjection selection)
+        {
+            lock (gate)
+            {
+                if (manifests.TryGetValue(selection.ManifestToken, out var manifest))
+                {
+                    if (manifest.Limitations.Contains("reader-outline-budget")) return AtlasOutlineState.BudgetExceeded;
+                    if (manifest.Limitations.Contains("reader-outline-unsupported")) return AtlasOutlineState.Unsupported;
+                }
+                return selection.Source.State is SourceProjectionState.IndexedMatch ? AtlasOutlineState.Available : AtlasOutlineState.Unavailable;
+            }
+        }
+
+        internal Task<SelectionProjection> SelectForReaderAsync(
+            SelectionRequest request, AtlasTextSpan window, CancellationToken cancellationToken) =>
+            RunSelection(request, null, request.RequestSequence, cancellationToken, window);
+
+        internal Task<SelectionProjection> RestoreForReaderAsync(
+            string receipt, long sequence, AtlasTextSpan window, CancellationToken cancellationToken) =>
+            RunSelection(null, receipt, sequence, cancellationToken, window);
 
     internal static InventoryPage ProjectInventory(PageRequest request, ImmutableArray<AtlasFileEntry> originalRows,
         ImmutableArray<AtlasFileEntry> currentRows, AtlasBounds inventoryBounds)
@@ -206,7 +302,7 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
     }
 
     private async Task<SelectionProjection> RunSelection(SelectionRequest? request, string? receiptToken,
-        long sequence, CancellationToken cancellationToken)
+        long sequence, CancellationToken cancellationToken, AtlasTextSpan? readerWindow = null)
     {
         using var activity = Activities.StartActivity("atlas.query.selection");
         var started = Stopwatch.GetTimestamp();
@@ -228,7 +324,7 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
             lock (gate) plan = Plan(request, receiptToken);
             if (plan is null) return Failure(SourceProjectionState.Refused, sequence, Code.Selection);
 
-            var prepared = await Task.Run(() => Prepare(plan, sequence, linked.Token), linked.Token).ConfigureAwait(false);
+            var prepared = await Task.Run(() => Prepare(plan, sequence, linked.Token, readerWindow), linked.Token).ConfigureAwait(false);
             if (BeforePublication is { } before) await before(linked.Token).ConfigureAwait(false);
             invalid = Invalid(sequence, linked.Token);
             if (invalid is { } finalState) return Failure(finalState, sequence, StateCode(finalState));
@@ -276,7 +372,7 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
         return new(basis, file, observation is null ? NewToken("manifest") : manifestToken, observation, binding, declaration);
     }
 
-    private async Task<PreparedSelection> Prepare(SelectionPlan plan, long sequence, CancellationToken ct)
+    private async Task<PreparedSelection> Prepare(SelectionPlan plan, long sequence, CancellationToken ct, AtlasTextSpan? readerWindow)
     {
         var request = new AtlasSourceReadRequest(grant, plan.File, plan.ManifestToken,
             plan.Observation?.ObservationKey ?? NewToken("source"),
@@ -294,27 +390,57 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
         if (plan.Observation is null)
         {
             CSharpDeclarationObservationResult? result = null;
+            string? readerOutlineFailure = null;
             if (plan.File.Classification is AtlasFileClassification.CSharp)
             {
-                var tree = CSharpSyntaxTree.ParseText(buffer.FullText, path: plan.File.RelativePath, cancellationToken: ct);
-                var compilation = CSharpCompilation.Create("AtlasFile", [tree],
-                    [MetadataReference.CreateFromFile(typeof(object).Assembly.Location)],
-                    new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-                using var input = CSharpDeclarationSourceInput.Create(tree, grant, plan.File, observation, binding,
-                    read.RawSnapshot.Span, plan.File.RelativePath);
-                result = CSharpDeclarationObservation.Observe(compilation,
-                    AtlasCompilationScope.ForFileLimited(grant.WorkspaceToken, grant.RootToken, null), [input],
-                    cancellationToken: ct);
-                if (result.Completion is AtlasCompletionState.Canceled)
-                    return new(plan.Basis, SourceProjection.Canceled(observation.ObservationKey), [], null);
+                using var compilerDeadline = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                if (readerBudget is not null) compilerDeadline.CancelAfter(TimeSpan.FromSeconds(2));
+                try
+                {
+                    using var compilerPermit = readerBudget is null ? null : await readerBudget.EnterCompilerAsync(compilerDeadline.Token).ConfigureAwait(false);
+                    var tree = CSharpSyntaxTree.ParseText(buffer.FullText, path: plan.File.RelativePath, cancellationToken: compilerDeadline.Token);
+                    var compilation = CSharpCompilation.Create("AtlasFile", [tree],
+                        [MetadataReference.CreateFromFile(typeof(object).Assembly.Location)],
+                        new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+                    using var input = CSharpDeclarationSourceInput.Create(tree, grant, plan.File, observation, binding,
+                        read.RawSnapshot.Span, plan.File.RelativePath);
+                    result = CSharpDeclarationObservation.Observe(compilation,
+                        AtlasCompilationScope.ForFileLimited(grant.WorkspaceToken, grant.RootToken, null), [input],
+                        cancellationToken: compilerDeadline.Token);
+                    if (result.Completion is AtlasCompletionState.Canceled)
+                    {
+                        if (readerBudget is null || ct.IsCancellationRequested)
+                            return new(plan.Basis, SourceProjection.Canceled(observation.ObservationKey), [], null);
+                        readerOutlineFailure = "reader-outline-budget";
+                    }
+                    else if (readerBudget is not null && result.Completion is AtlasCompletionState.BudgetExceeded)
+                    {
+                        readerOutlineFailure = "reader-outline-budget";
+                    }
+                }
+                catch (OperationCanceledException) when (readerBudget is not null && !ct.IsCancellationRequested)
+                {
+                    readerOutlineFailure = "reader-outline-budget";
+                }
             }
+            else if (readerBudget is not null) readerOutlineFailure = "reader-outline-unsupported";
             var manifest = new AtlasManifest(plan.ManifestToken, grant, plan.Basis.Value.DirectoryObservationKey,
-                plan.Basis.Value.Files, [observation], result?.Declarations ?? [], plan.Basis.Value.Completion, plan.Basis.Value.Bounds);
-            cached = Cache(manifest, result?.Bounds, result?.Limitations ?? ["non-CSharp file"]);
+                plan.Basis.Value.Files, [observation], readerOutlineFailure is null ? result?.Declarations ?? [] : [],
+                plan.Basis.Value.Completion, plan.Basis.Value.Bounds);
+            var declarationBounds = readerOutlineFailure is null ? result?.Bounds
+                : new AtlasBounds(128, 128, 0, 0, null, AtlasDenominatorState.Unknown, "reader outline incomplete", "declarations");
+            cached = Cache(manifest, declarationBounds,
+                readerOutlineFailure is null ? result?.Limitations ?? ["non-CSharp file"] : [readerOutlineFailure]);
         }
         var declarations = cached.Value.Declarations.Where(declaration => declaration.SourceObservationKey == observation.ObservationKey)
             .Take(PageRequest.MaxLimit).ToImmutableArray();
-        var span = plan.Declaration?.DeclarationSpan ?? new AtlasTextSpan(0, buffer.FullText.Length);
+        var span = readerWindow ?? plan.Declaration?.DeclarationSpan ?? new AtlasTextSpan(0, buffer.FullText.Length);
+        if (readerWindow is not null)
+        {
+            if (span.Start > buffer.FullText.Length)
+                throw new AtlasReadException("Atlas.Malformed", "The requested source window is outside the verified text.");
+            span = new AtlasTextSpan(span.Start, Math.Min(span.Length, buffer.FullText.Length - span.Start));
+        }
         var page = source.ReadPage(read, span, plan.Declaration is null ? [] : [plan.Declaration.IdentifierSpan]);
         return new(cached, page, declarations, plan.Declaration?.ObservationKey);
     }
