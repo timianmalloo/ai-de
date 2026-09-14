@@ -54,7 +54,7 @@ def count_workers():
         ["powershell", "-NoProfile", "-Command",
          "@(Get-CimInstance Win32_Process -Filter \"Name='dotnet.exe'\" | "
          "Where-Object { $_.CommandLine -like '*nodeReuse:true*' }).Count"],
-        capture_output=True, text=True, check=False)
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
     try:
         return int(out.stdout.strip())
     except ValueError:

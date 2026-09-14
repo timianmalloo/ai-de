@@ -48,7 +48,7 @@ TARGETS = (".aide/prompt-drafts.json", ".aide/nested/whatever.json")
 def repo_root() -> Path:
     return Path(subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True, check=True).stdout.strip())
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True).stdout.strip())
 
 
 def is_ignored(cwd: Path, relative: str) -> bool:
@@ -56,7 +56,7 @@ def is_ignored(cwd: Path, relative: str) -> bool:
     ignored" (exit 1) — only a git failure (anything else) is a genuine error."""
     result = subprocess.run(
         ["git", "check-ignore", "--quiet", relative],
-        cwd=cwd, capture_output=True, text=True)
+        cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace")
 
     if result.returncode not in (0, 1):
         raise RuntimeError(

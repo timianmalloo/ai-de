@@ -41,13 +41,13 @@ IGNORED = {GENERATION_FILE}
 
 def git(*args: str, cwd: Path) -> str:
     return subprocess.run(
-        ["git", *args], capture_output=True, text=True, cwd=cwd).stdout.strip()
+        ["git", *args], capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=cwd).stdout.strip()
 
 
 def repo_root() -> Path:
     return Path(subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True, check=True).stdout.strip())
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True).stdout.strip())
 
 
 def current_generation(root: Path) -> str | None:

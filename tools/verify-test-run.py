@@ -157,7 +157,7 @@ def run_tests(projects: list[Path], filter_expr: str | None = None, key: str | N
         environment["MSBUILDDISABLENODEREUSE"] = "1"
 
         subprocess.run(
-            command, cwd=REPO, capture_output=True, text=True, check=False, env=environment)
+            command, cwd=REPO, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False, env=environment)
 
     retire_build_servers()
 
@@ -193,7 +193,7 @@ def retire_build_servers() -> None:
     if not reaper.exists():
         return
     subprocess.run([sys.executable, str(reaper), "--reap"],
-                   cwd=REPO, capture_output=True, text=True, check=False)
+                   cwd=REPO, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
 
 
 def read_counts(project_name: str) -> tuple[dict[str, int], str] | None:

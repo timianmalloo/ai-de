@@ -73,7 +73,7 @@ def path_expression(method: str) -> re.Pattern[str]:
 def repo_root() -> Path:
     return Path(subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True, check=True).stdout.strip())
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True).stdout.strip())
 
 
 def unregistered(root: Path) -> list[tuple[str, str]]:
@@ -139,7 +139,7 @@ def main() -> int:
         # question about the same output directory.
         published = subprocess.run(
             ["dotnet", "publish", SHELL, "-c", "Release", "-o", str(out), "--nologo", "-v", "q"],
-            capture_output=True, text=True, cwd=root)
+            capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=root)
 
         if published.returncode != 0:
             print("verify-published-layout: FAILED")

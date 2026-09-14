@@ -73,7 +73,7 @@ EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"  # git's magic empty-tre
 def repo_root() -> Path:
     return Path(subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True, check=True).stdout.strip())
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True).stdout.strip())
 
 
 def resolve_base(root: Path, base: str | None) -> str:
@@ -82,17 +82,17 @@ def resolve_base(root: Path, base: str | None) -> str:
 
     verify = subprocess.run(
         ["git", "rev-parse", "--verify", "-q", "origin/main"],
-        capture_output=True, text=True, cwd=root)
+        capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=root)
 
     if verify.returncode == 0:
         origin_sha = verify.stdout.strip()
         head_sha = subprocess.run(
-            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=root).stdout.strip()
+            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=root).stdout.strip()
         return "HEAD~1" if origin_sha == head_sha else "origin/main"
 
     parent = subprocess.run(
         ["git", "rev-parse", "--verify", "-q", "HEAD~1"],
-        capture_output=True, text=True, cwd=root)
+        capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=root)
 
     return "HEAD~1" if parent.returncode == 0 else EMPTY_TREE
 

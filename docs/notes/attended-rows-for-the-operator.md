@@ -24,7 +24,9 @@ summary: >-
 # The attended rows — the operator's list
 
 **Build:** `C:\projects\ai-de\src\AiDe.App\bin\Release\net10.0-windows\AiDe.App.exe`, ProductVersion
-`1.0.0+3e5b04f6…` (Help → About shows the sha; rebuild with `dotnet build src/AiDe.App/AiDe.App.csproj
+`1.0.0+3e5b04f6…` when this list was written; you ran `1.0.0+51e806f8…` on 2026-09-14 and the rows
+below that you reported on are answered in `docs/reviews/ui-operator-findings-2026-09-14.md` — the
+2026-09-14 rulings' own attended rows are added here at each lane's join (Help → About shows the sha; rebuild with `dotnet build src/AiDe.App/AiDe.App.csproj
 -c Release` after any pull). Each row names the ruling it proves and where its steps live in full.
 Tell the conductor what you saw, in your words — a screenshot with a title is the evidence class
 that produced Rulings 80–90.
@@ -69,9 +71,16 @@ that produced Rulings 80–90.
 
 A question naming a file (*Explain what @src/… does*) with the lease line reading **read-only — nothing will be written** → Ctrl+Enter → then *Create docs/proof/probe.txt…* — the reply says it cannot write, no `Write`/`Edit`/`Bash` in the Console, `git status` unchanged, no `probe.txt`. (The pin itself is Verified on the wire by PD-5's three runs; this row is the lane's tree-delta path in the built app.)
 
-## The front door (F5; `feature/exit-evidence` @ `135e05e1`, kept with its 21 commits)
+## The front door (F5) — closed 2026-09-14 on your word
 
-The exit run the front-door slice was frozen for: File → New Session on that tree's build with `@hello.txt` in the goal and the workbench as the body; its Proof Pack names the frames. Until it is run, the tree stays and its merge waits.
+You performed File → New Session on build `1.0.0+51e806f8` at 09:01, sent one prompt, and wrote
+*"consider F5 done"* (Ruling 103). The record was assembled from that run's own files
+(`spikes/conductor-front-door-exit-run/exit-evidence.json`; the bare gate
+`tools/verify-front-door-exit-attended.py` reads it): the session carries the product's front-door
+stamp, the run completed, no terminal was hosted; five clauses read NOT MET because the product does
+not record what they ask (a scored cell for a governed run, the sent prompt's own digest, Console row
+counts, per-event latency, the run's root count) — carried as residuals in
+`docs/proof/conductor-front-door.md` §*The gesture happened*. Nothing further is yours here.
 
 ## What the conductor already ran (not yours)
 

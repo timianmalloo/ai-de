@@ -180,7 +180,7 @@ def snapshot():
         "@{n='Created';e={if($_.CreationDate){$_.CreationDate.ToString('o')}else{''}}},CommandLine | "
         "ConvertTo-Json -Compress -Depth 3")
     out = subprocess.run(["powershell", "-NoProfile", "-Command", ps],
-                         capture_output=True, text=True, check=False)
+                         capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
     try:
         rows = json.loads(out.stdout)
     except (ValueError, TypeError):
@@ -321,7 +321,7 @@ def repo_paths():
     """Every worktree of this repository, lowercased. Attribution by path, not by name."""
     paths = {str(ROOT).lower()}
     out = subprocess.run(["git", "-C", str(ROOT), "worktree", "list", "--porcelain"],
-                         capture_output=True, text=True, check=False)
+                         capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
     for line in out.stdout.splitlines():
         if line.startswith("worktree "):
             paths.add(line[len("worktree "):].strip().replace("/", "\\").lower())
@@ -621,7 +621,7 @@ def reap(procs, buckets):
         return 0
     print("\nretiring %d build server(s) with the documented mechanism:" % len(servers))
     out = subprocess.run(["dotnet", "build-server", "shutdown"],
-                         capture_output=True, text=True, check=False)
+                         capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
     said = (out.stdout.strip() or out.stderr.strip() or "(no output)")
     print("  " + said.replace("\n", "\n  "))
     for p, _why in stragglers:
@@ -964,7 +964,7 @@ def behaviour():
         print("--behaviour is Windows-only. Reporting rather than passing silently.")
         return 0
     print("BEHAVIOUR. A check that cannot fail proves nothing, so this runs the falsifier.\n")
-    subprocess.run(["dotnet", "build-server", "shutdown"], capture_output=True, text=True, check=False)
+    subprocess.run(["dotnet", "build-server", "shutdown"], capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
     time.sleep(2)
     base = len(_live_servers())
     print("  [1] after documented shutdown, build servers = %d" % base)
@@ -979,7 +979,7 @@ def behaviour():
     projects = sorted((ROOT / "src").glob("*/*.csproj"))
     target = str(projects[0]) if projects else str(ROOT / "AiDe.sln")
     subprocess.run(["dotnet", "build", target, "-c", "Debug", "--nologo", "--no-incremental"],
-                   capture_output=True, text=True, check=False, cwd=str(ROOT))
+                   capture_output=True, text=True, encoding="utf-8", errors="replace", check=False, cwd=str(ROOT))
     time.sleep(2)
     after_build = len(_live_servers())
     print("  [2] after a build,                  build servers = %d" % after_build)
@@ -993,7 +993,7 @@ def behaviour():
     seen = sum(1 for k, _p, _w in census(procs, repo_paths()) if k == BUILD_SERVER)
     print("  [3] the census attributes them:     build-server = %d" % seen)
 
-    subprocess.run(["dotnet", "build-server", "shutdown"], capture_output=True, text=True, check=False)
+    subprocess.run(["dotnet", "build-server", "shutdown"], capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
     time.sleep(2)
     final = len(_live_servers())
     print("  [4] after the documented shutdown,  build servers = %d" % final)

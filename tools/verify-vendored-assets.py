@@ -79,7 +79,7 @@ def repo_root() -> Path:
     """
     out = subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True, check=True)
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True)
     return Path(out.stdout.strip())
 
 
@@ -284,7 +284,7 @@ def _write_fixture(root: Path) -> None:
 def _run_from_subdirectory(root: Path) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [sys.executable, str(Path(__file__).resolve())],
-        cwd=root / "deep" / "dir", capture_output=True, text=True)
+        cwd=root / "deep" / "dir", capture_output=True, text=True, encoding="utf-8", errors="replace")
 
 
 def _break_hash(root: Path) -> None:

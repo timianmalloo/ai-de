@@ -67,7 +67,7 @@ SELF = "tools/verify-perf-assertions.py"
 def repo_root() -> Path:
     return Path(subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True, check=True).stdout.strip())
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True).stdout.strip())
 
 
 def assertion_spans(text: str) -> list[tuple[int, str]]:
@@ -134,7 +134,7 @@ def scan_file(relative: str, text: str) -> list[str]:
 
 
 def test_sources(root: Path) -> list[str]:
-    out = subprocess.run(["git", "ls-files", "tests"], capture_output=True, text=True, cwd=root)
+    out = subprocess.run(["git", "ls-files", "tests"], capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=root)
     return [f for f in out.stdout.split() if f.endswith(".cs") and f != SELF]
 
 

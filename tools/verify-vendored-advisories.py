@@ -66,7 +66,7 @@ def repo_root() -> Path:
     """The repository root, from git — never the caller's cwd (DC-071)."""
     out = subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True, check=True)
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True)
     return Path(out.stdout.strip())
 
 
@@ -104,7 +104,7 @@ def rerun_audit(working_directory: Path) -> tuple[dict[str, int] | None, str]:
     try:
         result = subprocess.run(
             [executable, "audit", "--package-lock-only", "--json"],
-            cwd=working_directory, capture_output=True, text=True, timeout=300)
+            cwd=working_directory, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=300)
     except (OSError, subprocess.TimeoutExpired) as exc:
         return None, f"the advisory scan could not be run: {exc}"
 
@@ -258,7 +258,7 @@ def _write_fixture(root: Path) -> None:
 def _run_from_subdirectory(root: Path) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [sys.executable, str(Path(__file__).resolve())],
-        cwd=root / "deep" / "dir", capture_output=True, text=True)
+        cwd=root / "deep" / "dir", capture_output=True, text=True, encoding="utf-8", errors="replace")
 
 
 def _break_no_record(root: Path) -> None:

@@ -55,12 +55,12 @@ PRODUCTION = ("src/", "tools/")
 def repo_root() -> Path:
     return Path(subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True, check=True).stdout.strip())
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True).stdout.strip())
 
 
 def tracked(root: Path) -> list[str]:
     out = subprocess.run(
-        ["git", "ls-files", "*.cs"], capture_output=True, text=True, check=True, cwd=root)
+        ["git", "ls-files", "*.cs"], capture_output=True, text=True, encoding="utf-8", errors="replace", check=True, cwd=root)
 
     return [p for p in out.stdout.splitlines() if p.startswith(PRODUCTION)]
 

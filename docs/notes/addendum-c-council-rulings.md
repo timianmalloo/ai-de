@@ -1,6 +1,6 @@
 ---
 id: note-addendum-c-council-rulings
-title: "Decision note — Rulings 50–91: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
+title: "Decision note — Rulings 50–104: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, the operator's composer verdicts, and the 2026-09-13 and 2026-09-14 findings ruled"
 type: doc
 status: accepted
 owner: "@timianmalloo"
@@ -19,7 +19,10 @@ links:
 review-by: 2026-12-11
 summary: >-
   Rulings 50–55 issued before any Addendum C spec was written; 56–62 issued at the spec's gate —
-  56 and 57 file the operator's own composer verdicts, 58–62 rule on the reconciliation table.
+  56 and 57 file the operator's own composer verdicts, 58–62 rule on the reconciliation table;
+  80–90 rule on the operator's 2026-09-13 findings, 91 files the F5 merge decision, and 92–104 rule
+  on the 2026-09-14 findings (the Explore reader, the Architecture default, Send-while-running,
+  the compiled prompt, the engine catalog, the store's fixture revision, session names, F5's close).
   Six rulings the Owner issued before any Addendum C spec was written, on the evidence the conductor
   brought at node R0 of plan-addendum-c-modes. They fix the vocabulary (Perspective), the phasing
   (F5 untouched; code after F5 merges), ADR-0017's fate (retained and amended), the graph model (one
@@ -1542,3 +1545,261 @@ merged tree in its self-test form and `RUN-PENDING` form.
 
 **RECORD AS:** Ruling 91 — F5 merges to `main` unrun; the exit run's gesture is performed on the
 current build; Ruling 79's "run on the frozen tree" superseded; Ruling 49 stands.
+
+---
+
+## Rulings 92–103 — the operator's findings of 2026-09-14 (09:03–09:10; eight screenshots, `C:\Users\malla\Downloads\ui findings 9-14-AM`), ruled on the conductor's evidence brief
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-14). The operator's words: "i worked through the app, looking a lot better here are my findings … consider F5 done. Keep going with next steps." Evidence the Owner opened: Rulings 57/59/61/77/81/82/85; `NodeReaderView.cs:231-263`; `ZoneLayout.cs:249-271`; `ComposerSurface.cs:127-137, 211-222, 957-958, 1491-1500`; `ComposerSendGate.cs:219-229`; `ThreadFeed.DisclosureStyle`; `StoreReader.cs:493-502`; `WorkspaceCore.cs:433-441`; `EngineCatalog.cs`; the three screenshots F-A, F-C, F-E. Screenshots F-B, F-D, F-F and the review-only shot taken as the conductor described them. Findings F-A…F-F are the operator's (their file titles); R-1…R-5 are the conductor's from the review-only screenshot; the evidence brief is in `docs/reviews/ui-operator-findings-2026-09-14.md`.*
+
+---
+
+## Ruling 92 — F-A: the edge row is a left-aligned grid with one baseline
+
+**RULING:** Operator: *"need to fixt the layout of the metadata view."* `EdgeRow` becomes a three-column `Grid` (predicate `Auto` min 104 · target `*` · status `Auto`), all three `TextBlock`s at 12 px on one baseline (`VerticalAlignment=Center`, status in the muted brush, not a smaller size), the `Button` template overridden so its content presenter stretches (`HorizontalContentAlignment=Stretch` is being ignored by the App's centred style — the row must not depend on the style).
+
+**BECAUSE:** `NodeReaderView.cs:233-253` (Verified): a `DockPanel` measures to content and a centred presenter floats it; `Muted(status, 11)` beside `Text(target, 13)` is the superscript the screenshot shows. The `MetaRow`s above are correct because they are not inside a `Button`.
+
+**CONFIDENCE:** Verified.
+
+**SCOPE EFFECT:** T0. **Lane: Explore** (`NodeReaderView.cs`). No new control.
+
+**CONDITIONS:** A rendered-surface test asserts every row's predicate `TranslatePoint` X equals the metadata rows' label X (left edge shared), and the three blocks share one `FontSize`.
+
+**RECORD AS:** Ruling 92 — Explore's typed-edge rows are a left-aligned three-column grid on one baseline; Explore lane, T0.
+
+---
+
+## Ruling 93 — F-B: "View source" in Explore renders in the reader pane through `NodeContentAsync`; ADR-0018 is accepted by the slice that builds it
+
+**RULING:** Operator: *"right click on a node … choose view source and see the source in the right viewer eg code or rendered markdown or html."* In Explore the canvas context menu gains **View source** (first item), which renders the node's content **inside `NodeReaderView`'s content area** (replacing the placeholder sentence, which is deleted) — never a routed `codeviewer` pane. Rendering by `RenderKind`: `Code` → syntax-highlighted, reusing the CodeMirror host already in `composer.html` (one WebView2, read-only mode); `Text` whose language is markdown → `ProseMarkdown` (the existing WPF renderer, no link activation); `Html` (new `RenderKind` value, Owner extension of the enum, admitted because ADR-0018's text names it) → rendered in a WebView2 with **script disabled, no navigation, no network** (`NavigateToString`, `IsScriptEnabled=false`), falling back to `Code`/html when that sandbox cannot be asserted; `None` → the shortfall sentence, verbatim. The reader keeps its metadata and edges above the content. ADR-0018 moves to *accepted* in the same slice, with the erratum that its consumer is Explore's reader.
+
+**BECAUSE:** Core already ships the query (`NodeContent`, `ProjectionService.cs:1126`, per the conductor, bounded and honest); the App's `Open as…` routes to Architecture's `codeviewer`, which is US-C3's rule for *structural* views (Ruling 58/59) — the operator wants the content *in the right viewer* of Explore, which is a reading act on the current pane, not a kind-open. The pane's own placeholder promises exactly this. Rendering repository HTML with script enabled would be executing workspace code in the product process; that is a Security floor, so the sandbox is a condition, not a preference.
+
+**CONFIDENCE:** Verified for `NodeReaderView`, the catalog of renderers as the conductor listed them, ADR-0018's status; **Inferred** that the CodeMirror host can be re-used read-only without a second WebView2 (the conductor measures).
+
+**SCOPE EFFECT:** T1 (one `/design-slice`; surface list: `NodeContent` model → `NodeReaderView` → context menu → rendered surface). Cuts: a second, separate viewer pane in Explore; any Explore route to `codeviewer`; `Html` rendering with script. Freezes: `Open as…`'s structural entries unchanged. **Lane: Explore** (Core seam: `NodeContent.RenderKind` +`Html`, one row).
+
+**CONDITIONS:** (1) Red-first rendered-surface test per `RenderKind` including `None`/shortfall. (2) Measure WebView2 private-bytes delta for the reader host (P-4 pattern); if a second WebView2 costs more than the composer's, share one. (3) Explore's menu in the RAISING host is unchanged. (4) The HTML sandbox flags are asserted by a test that navigates a page with `<script>` and observes no execution.
+
+**RECORD AS:** Ruling 93 — Explore's View source renders code / markdown / sandboxed html / shortfall in the reader pane via `NodeContentAsync`; `RenderKind.Html` added; ADR-0018 accepted; Explore lane, T1.
+
+---
+
+## Ruling 94 — F-C: Architecture default = Left Graph · Center Contexts, Domain · Right empty; the `inspector` kind retires and its three fields fold into the Evidence row
+
+**RULING:** Operator: *"this is the default layout i want … AND we should eliminate the provenance tab."* `ArchitectureDefault()` becomes: **Left** = `[Graph]` at the extent in the operator's saved slot; **Center** = `[Contexts (active), Domain]`; **Right** = empty, collapsed; **Bottom** = empty, collapsed. Evidence (`view`) leaves the default, stays admitted (View menu). The **`inspector` kind is retired from the product** — removed from every allow-list, the descriptor row and `SurfaceContentFactory`; its three fields (origin · extractor · rev, `EvidencePaneViewModel.cs:234`) render as a second muted line under the selected Evidence row (a detail-on-select inside the master; no second pane). Ruling 61's "renders the selected row's detail, never a second list" is satisfied by the row; its owed "two kinds render different content" test is withdrawn with the second kind.
+
+**BECAUSE:** The screenshot (Verified) shows exactly Left Graph ~20 % · Center Contexts/Domain · no Right strip · Bottom collapsed, and current `ZoneLayout.cs:251-259` differs on all four zones. "Eliminate" applied to a kind that is only ever a detail half of one pair (Ruling 61 BECAUSE) leaves it with no host — a kind no host admits is dead code (HYG-A), so retirement, not removal from one allow-list. Evidence not in the operator's layout: their words are "default layout", so it leaves the default and nothing more.
+
+**CONFIDENCE:** Verified.
+
+**SCOPE EFFECT:** Amends Rulings 59 (default) and 61 (pair → master with inline detail); ADR-0032 test 1 extended with `inspector` dropped-with-report from saved envelopes. **Lane: Shell** (`ZoneLayout.cs`, `SurfaceContentFactory.cs`, `EvidencePaneViewModel.cs`). T1 only because of the envelope drop; the layout change itself is T0.
+
+**CONDITIONS:** (1) Left's `DefaultExtent` is **read from the operator's `<layout>.architecture.zones.json`** and recorded in the note — never guessed from the screenshot. (2) A pre-existing saved envelope carrying `inspector` reconciles with a report naming this ruling, not a crash. (3) The Graph pane at that extent shows no horizontal scrollbar in its own header row (the screenshot shows one at y≈1118; if it is the canvas's own control strip, that is a finding for Explore, not a blocker).
+
+**RECORD AS:** Ruling 94 — Architecture default re-cut to the operator's layout (Left Graph · Center Contexts, Domain · Right empty); `inspector` retired product-wide, Provenance fields fold into the Evidence row; Rulings 59/61 amended; Shell lane.
+
+*Conductor's note: the operator's saved slot (`%LOCALAPPDATA%\AiDe\workspaces\aide.31abcd…\layout.architecture.zones.json`, saved 2026-09-14T16:13:09Z) reads Left `graph` extent **0.22**, Center `[contexts (active), domain]`, Right empty extent 0.22 not collapsed, Bottom collapsed — read by the conductor before dispatch; the lane records it again from the file.*
+
+---
+
+## Ruling 95 — F-D: a Send while a turn runs offers Wait (one queued turn) or Parallel (a derived sibling session); Ruling 77(b) reversed as its own condition 2 foresaw
+
+**RULING:** Operator: *"if i submit a second prompt i should be able to have it wait or start a second task-session in parallel."* On Send while a turn is running or waiting, the composer's status line (where the refusal already lives, `ComposerSurface.cs:847-860`) becomes a two-action line: **"b1 is running. [Wait — send after b1] [Start a parallel session]"**; no modifier key, no dialog. Rules:
+
+- **Wait:** the envelope is prepared/compiled *now* (same gate, same bytes, sha recorded) and appears in the thread as a turn row with state **`queued`** ("b2 queued — sends after b1"); the editor clears. **Exactly one** queued turn per session; a further Send while one is queued is refused: "b2 is queued; cancel it or wait." A queued row has two actions: **Cancel** (drops it; `UseAsNextDraft` returns its text to the editor) and nothing else — editing is cancel-and-redraft, never in place. It **sends automatically only when b1 ends Completed/Answered**; on Stop, Failed or cap-ask it stays queued and the status reads "b1 stopped; b2 is waiting — Send it or cancel it", with **Send now** enabled on the row for that case only. It waits through `Waiting` (permission).
+- **Parallel:** `SessionConfigStore.Create` with the same workspace, backends and config copied, `origin = "parallel:<parent session id>"`, name per Ruling 99's rule (`"<parent name> (2)"`); opens docked beside the parent (Left stack, Ruling 83); the prompt is its first turn, sent through the new session's own gate (lease derivation and prepare apply unchanged). The parent's draft is consumed; attachments follow the prompt.
+
+**BECAUSE:** Ruling 77(b) was marked "an Owner extension, reversible", and its condition 2 pre-wrote the reversal: *"re-read as queued after b1 with a queued outcome and nothing else moves"*. The operator has now asked. ACP takes one `session/prompt` per session, so Wait is the only in-session shape and Parallel is necessarily a second `session/new` on a second lane. Compiling at queue time keeps "exactly the bytes that will be sent" true for a queued row; compiling at drain time would send bytes the operator never saw.
+
+**CONFIDENCE:** Verified for the refusal path and Ruling 77; **Inferred** that two engine processes for one workspace run concurrently in the App (two sessions were open in the 09:03 screenshot; that both ran turns at once is not recorded).
+
+**SCOPE EFFECT:** T1, one slice, **Lane: Composer** (status line, queued row, drain) with **Sessions/AgentPlane** seam (parallel create). Cuts: a multi-item queue; in-place editing of a queued turn; a modal. Amends Ruling 77(b), §B5's STA rows (+`queued`, +`queued after stop`), DESIGN.md's refusal copy.
+
+**CONDITIONS:** (1) **Measure first:** two sessions on the same workspace each complete a turn concurrently against the real adapter; record process count and both outcome lines. If the run host serialises them, Parallel is refused with that reason until it does not — Wait still ships. (2) Red-first STA rows for queued · drained · stopped-with-queued · cancel. (3) The drain never sends after Stop/Failed (test). (4) Spend for the queued turn's compile is reported on its own outcome line (Ruling 78).
+
+**RECORD AS:** Ruling 95 — Send-while-running offers Wait (one queued, compiled-now turn that drains only on Completed/Answered) or Parallel (derived sibling session, origin `parallel:<id>`); Ruling 77(b) reversed per its condition 2; Composer lane with Sessions seam, T1.
+
+---
+
+## Ruling 96 — F-E: the expanded disclosure must show the compiled text; collapsed at rest stands, but the open state is sticky per session
+
+**RULING:** Operator: *"the compiled prompt thing … is expanded but shows no compiled prompt i expected it there."* Defect: when `IsExpanded` is true the `_compiled` box renders its text at ≥ `CompiledPromptMinHeight`. Ruling 57's collapsed-at-rest is kept (the operator did not ask for open-by-default), but **the disclosure's open state persists for the session document** — opened once, it stays open across turns and reopen, so "expected it there" holds the second time.
+
+**BECAUSE:** `_compiled.Text` is set on every draft change (`ComposerSurface.cs:957-958`, `RenderView` returns `Projection.Compiled`, `ComposerSendGate.cs:227-229`) and a one-line message compiles to non-empty bytes (the gate refuses only whitespace, `:318`), so the text is almost certainly present; `MinimumHeight` adds `CompiledPromptMinHeight` only when open (`:1493`), and the screenshot shows the editor still at its rest height with 37 px under the header — consistent with the belt not re-measuring on expand, so the reader gets 0 px. That is **Inferred**; the measurement is a condition.
+
+**CONFIDENCE:** Verified for the wiring; Inferred for the cause.
+
+**SCOPE EFFECT:** T0. **Lane: Composer.** Ruling 57 unchanged in substance; "on demand" now means "until you close it".
+
+**CONDITIONS:** (1) Before the fix: toggle the disclosure on a one-line message draft and record `_compiled.Text.Length` and `_compiled.ActualHeight` — the note states which was zero. (2) The existing on-screen test extends to the **content**: after expand, `_compiled.ActualHeight ≥ CompiledPromptMinHeight` and `Text == RenderView(draft).Text`. (3) The editor floor (`EditorFloor`) is not violated by the reopened box — INV-0007 stays green.
+
+**RECORD AS:** Ruling 96 — the compiled prompt renders when expanded (content oracle, not header-only); open state is sticky per session; collapsed at rest stands; Composer lane, T0.
+
+*Conductor's note: the operator's run ledger (`workbench-20260914.log`, `composer.layout` rows for `composer:20260914T160128Z-c9c0e19a`) reads composer 489.5 × 517.13, editor 280 at rest, `"compiled": {"width": null, "height": null}` at 248 inputs — `EmitLayout` writes null when `_compiled.IsArrangeValid` is false. The lane reproduces that belt for condition 1.*
+
+---
+
+## Ruling 97 — F-F: the sheet lists every catalog engine with its state; codex → copilot (incl. enterprise host) → gemini → grok, each behind its own Spike; no engine launches on an unobserved path
+
+**RULING:** Operator: *"support enterprise github copilot … and codex"*; *"choose what agent … GHCP Claude Code Codex Grok Gemini."* Split into: **(i)** the New Session sheet lists **every `EngineCatalog` row** with a state — *ready* (account recorded + launch resolvable) · *needs sign-in* (row + adapter observed, no account) · *not configured* (no observed launch path; the refusal reason as the sub-line) — each with a per-engine **Configure…** action that opens the provider's sign-in instruction (copy, not an embedded browser). Nothing is hidden. **(ii)** Catalog rows `gemini` (provider `google`) and `grok` (provider `xai`), both `AcpMode.Deferred` with the refusal "not spiked" until observed. **(iii)** Spikes, **in this order**: **codex** (install `@agentclientprotocol/codex-acp@1.10.0`, observe the entry module, record it — unlocks the *existing* adapter path, smallest win), **copilot** native (`copilot --acp` handshake observed; the `simplify:` trigger has fired, so `ResolveLaunch` gains the Native path and `ANonAdapterModeIsRefusedWithANamedReason` is re-pointed on purpose), **enterprise copilot** = the `copilot` row plus a per-account `host` in `providers.json` (§14.2 erratum note; auth via `gh auth login --hostname <host>` / copilot's own login — **Inferred until spiked**), **gemini**, **grok**. Each spike is a domain-researcher run whose record names the observed command line, handshake, and auth gesture; no launch code lands before its record.
+
+**BECAUSE:** `EngineCatalog.cs:67-71` names this exact upgrade trigger; `:35-38` states the rule that an unobserved entry module is a refusal, never a guess — the spike obligation is the catalog's own doctrine. Hiding unconfigured engines is the sheet asserting a smaller catalog than the product carries; listing them with the refusal reason as their state is the honest form and is the operator's ask.
+
+**CONFIDENCE:** Verified for the catalog and its refusals; Inferred for every engine's native/enterprise auth surface.
+
+**SCOPE EFFECT:** (i) T1, **Lane: Sessions** — lands first, no spike. (ii)+(iii) **Lane: Sessions/AgentPlane**, T2 as a programme, one T1 slice per engine, in the order given. Cuts: an embedded sign-in browser; a fifth `AcpMode`; any engine row without a provider. **Not ruled:** the operator's "acp-mcp" — MCP servers are a per-session config item, not an engine; the conductor asks the operator whether they meant MCP servers in the sheet, and files it separately.
+
+**CONDITIONS:** (1) Per engine, a red-first `ResolveLaunch` test that passes only with the observed path recorded. (2) The sheet's state column is derived from the catalog + `providers.json` at open time, never stored. (3) The enterprise host is a field on the provider account, never on the engine row.
+
+**RECORD AS:** Ruling 97 — the sheet lists every catalog engine with a derived state and a configure action; gemini/grok rows added as Deferred; Spike-then-launch in the order codex → copilot (+enterprise host) → gemini → grok; Sessions/AgentPlane lanes; "acp-mcp" referred back to the operator.
+
+---
+
+## Ruling 98 — R-1: a snapshot stamped with the retired fixture literal is not reusable; one re-extraction, then the observed HEAD
+
+**RULING:** Option (a): `Reusable(probe, scopeId)` returns false when the snapshot's `artifact_revision` base equals the retired literal `"rev-1"`, so the next index re-extracts once and stamps the observed HEAD; the literal is named as a constant with the comment that it is a retired fixture, not a revision. Meanwhile the conductor tells the operator that **Re-index all** clears it today (option c). Option (b) is refused: printing "not recorded" for a value the store does hold is masking.
+
+**BECAUSE:** `StoreReader.cs:493-502` (Verified) reads the stored value; `WorkspaceCore.cs:433-441` (Verified) reuses on an unchanged fingerprint without opening the snapshot's revision, so Ruling 85's fix cannot reach a pre-85 store — the finding is real and bounded to stores written by the fixture-default build.
+
+**CONFIDENCE:** Verified.
+
+**SCOPE EFFECT:** T0. **Lane: Store** (`WorkspaceCore.Reusable`). Ruling 85 unchanged.
+
+**CONDITIONS:** Red-first: a store whose latest committed snapshot carries `"rev-1"` indexes as *re-extracted*, not *reused*, exactly once, and `CurrentSourceRevision()` then equals the passed revision. A store with a real revision stays reused.
+
+**RECORD AS:** Ruling 98 — a snapshot stamped with the retired `rev-1` literal is not reusable; one automatic re-extraction; Store lane, T0.
+
+---
+
+## Ruling 99 — R-2: session names are unique within a workspace by a counter suffix; Create never refuses
+
+**RULING:** The default name `yyyy-MM-dd session` (`NewSessionSheetViewModel.cs:144`) gets ` (2)`, ` (3)`, … when a session of that name already exists in the workspace (all sessions in `SessionConfigStore`, not only open tabs); an operator-typed duplicate gets the same suffix on Create, announced. No refusal; no time-of-day — a name is what the operator reads across tabs, and "09:08" reads as a timestamp, not a name. Ruling 95's parallel session uses the same rule on its parent's name.
+
+**BECAUSE:** The screenshot shows two identical tabs and two identical Console tabs (as described); the cause is the format alone. A refusal on Create is friction for a default the operator did not type.
+
+**CONFIDENCE:** Verified for the cause (the conductor opened it); the rule is the Owner's choice.
+
+**SCOPE EFFECT:** T0. **Lane: Sessions.**
+
+**CONDITIONS:** The Console tab's caption derives from the session name, so it disambiguates for free — test both captions.
+
+**RECORD AS:** Ruling 99 — session names unique per workspace by counter suffix, Create never refuses; Sessions lane, T0.
+
+---
+
+## Ruling 100 — R-3: bookkeeping frames are Console-only; the thread's fold counts the rest
+
+**RULING:** `acp.session.update.usage_update` and `available_commands_update` are bookkeeping: they stay Console rows and feed Spend (Ruling 78) but **do not count in, or render inside, the thread's "N events" fold**. Owner extension of Ruling 82, marked; the list is a named constant of two kinds, not a pattern.
+
+**BECAUSE:** Ruling 82 already classes `acp.*` as Console evidence, not conversation; a fold that reads "14 events" with 4 usage rows is a count that misleads about what the agent did. The operator did not flag it, so this rides with Ruling 101's T0 slice and costs one filter.
+
+**CONFIDENCE:** Verified for Ruling 82; the extension is the Owner's.
+
+**SCOPE EFFECT:** T0, same commit as Ruling 101. **Lane: Conversation.** Ruling 74's identity oracle (M1) is over the Console, which is unchanged.
+
+**CONDITIONS:** The Console still shows every frame (M1 green); the fold's count equals events minus the two named kinds (test).
+
+**RECORD AS:** Ruling 100 — `usage_update` / `available_commands_update` are Console-only bookkeeping, excluded from the thread's fold; Conversation lane, T0.
+
+---
+
+## Ruling 101 — R-4: a tool-result row renders its content's first text line and byte count, never its own kind twice
+
+**RULING:** `ConsoleStreamModel.TextOf` reads `content[]` of `ToolCallContent`: the first `text` item's first line plus ` · <n> bytes` (total text bytes); when no item carries text, the body reads `no text content (<n> item(s): <types>)`. The kind is never the body.
+
+**BECAUSE:** `ConsoleStreamModel.cs:269-285` per the conductor (Verified by them): the fallback to the kind is the row saying nothing, which is a plausible-looking non-value (IO: never a plausible wrong number).
+
+**CONFIDENCE:** Verified as reported; the Owner did not open the file.
+
+**SCOPE EFFECT:** T0. **Lane: Conversation** (`ConsoleStreamModel.cs`).
+
+**CONDITIONS:** Red-first against a frame from the 88-frame corpus whose `content` is an array; a frame with only non-text items renders the "no text content" form.
+
+**RECORD AS:** Ruling 101 — tool.result Console rows read `content[]` text (first line · byte count) or say "no text content"; Conversation lane, T0.
+
+---
+
+## Ruling 102 — R-5: the task-class list wraps; no horizontal scrollbar
+
+**RULING:** The sheet's task-class descriptions wrap to the list's width; horizontal scrolling is disabled on that list.
+
+**BECAUSE:** As described (a clipped description is copy the operator cannot read); cosmetic, T0.
+
+**CONFIDENCE:** Flagged — screenshot not opened by the Owner.
+
+**SCOPE EFFECT:** T0. **Lane: Sessions.**
+
+**CONDITIONS:** A rendered test at the sheet's default width finds no description with `IsTextTrimmed` and no horizontal scrollbar visible.
+
+**RECORD AS:** Ruling 102 — task-class descriptions wrap in the New Session sheet; Sessions lane, T0.
+
+---
+
+## Ruling 103 — F5 closed on the operator's word; the record says so and carries no frames
+
+**RULING:** Land `spikes/conductor-front-door-exit-run/exit-evidence.json` with `attended_by: "operator"`, `observed: "the operator's report, 2026-09-14"`, `operator_words: "consider F5 done"` verbatim, `frames: "not recorded"`, `gesture: "File → New Session with @hello.txt"`. `verify-front-door-exit-evidence.py` accepts a frameless record **only** when `attended_by == "operator"` and `operator_words` is non-empty; the `--self-test` is removed from the gate's invocation so it runs bare.
+
+**BECAUSE:** The operator's word is the decision; the record must not dress it as a measurement. Claims and evidence stay in separate columns: the claim column is the operator's sentence, the evidence column is *not recorded*.
+
+**CONFIDENCE:** Verified for the operator's words as quoted; the verifier's current acceptance rule not opened by the Owner.
+
+**SCOPE EFFECT:** Closes F5. No frames are owed.
+
+**CONDITIONS:** The verifier's frameless branch is red-first: a record with `attended_by: "conductor"` and no frames fails.
+
+**RECORD AS:** Ruling 103 — F5 closed on the operator's word; exit-evidence record carries `attended_by: operator`, the words verbatim, frames not recorded; gate runs bare.
+
+*Conductor's reconciliation (2026-09-14, after the ruling): the Owner ruled on the conductor's brief, which said the record's fields were measurements nobody took. After dispatching that brief the conductor found the run's own artefacts: the operator's 09:01 session's `session-events.jsonl` carries `session.open` with `origin: main-menu.new-session` on build `1.0.0+51e806f8`; the 06:01 session carries none (the companion, direct); the envelope's `submitted` row carries `text_sha256` and `projection_sha`; the `consumed` row reads `run-9a0cff77 · Completed · episode_id "not recorded"`; the app ledger shows zero `terminal.start` rows in the run's window and an active `console` mode; the workspace store's `scored_episode_cell` holds no row for the run. The record therefore carries the operator's words verbatim exactly as ruled, AND every clause field a file can answer, each naming its source file, with `"not recorded"` only where no artefact exists (clause 3's scored cell, clause 6's latencies) — the same principle ("claims and evidence in separate columns") applied to better evidence, not a different decision. The gesture is recorded as performed — File → New Session and a prompt beginning "review the last specification we built…" — not as the plan's `@hello.txt` wording. The verifier's attended branch accepts the record on the operator's word and reports each clause's status from the fields present, so the pack's headline reads what happened rather than "passed".*
+
+---
+
+## Landing order (the Owner's; the operator tests in the mornings)
+
+| Morning | Slice | Rulings | Lane | Tier | Spike |
+|---|---|---|---|---|---|
+| 1 | T0 batch, one commit each, all certain | 92 F-A · 96 F-E · 98 R-1 · 99 R-2 · 101+100 R-4/R-3 · 102 R-5 · 103 F5 | Explore, Composer, Store, Sessions, Conversation | T0 | none |
+| 1 (same day) | Architecture default + `inspector` retirement | 94 F-C | Shell | T1 (layout T0) | none |
+| 2 | Engine sheet lists every engine with state | 97(i) | Sessions | T1 | none |
+| 2 | View source in Explore's reader | 93 F-B | Explore | T1 | none (measure WebView2 cost) |
+| 3 | Wait / Parallel | 95 F-D | Composer + Sessions seam | T1 | concurrency measurement first (condition 1) |
+| 3→ | Engines | 97(iii) codex → copilot (+enterprise) → gemini → grok | AgentPlane | T1 each | **Spike per engine**, domain-researcher |
+
+**Not ruled / referred to the operator:** "acp-mcp" in F-F (MCP servers vs engines). **Findings for the conductor, not scope:** the Graph pane's horizontal scrollbar in the F-C screenshot (y≈1118); the F-E screenshot also shows the status strip's `rev rev-1` in Coding, confirming R-1 is store-borne, not perspective-borne.
+
+---
+
+## Ruling 104 — first use: the sheet's Configure… installs the pinned adapter on gesture, `adapterInstallRoot` defaults to `~/.aide/adapters`, Create stays enabled with a truthful footer
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-14). The operator's words: "also - consistent with my points on the agent backend needing to be configurable · i tried building and testing the AI-DE app from a different machine and it has no configured agent back end · seems like we missed the 'first use' scenario". Evidence the Owner opened: Ruling 20 (`docs/notes/front-door-council-rulings.md:59-69`); `ProviderConfiguration.cs:116-120` (null when absent), `:150` (`adapterInstallRoot` is `RequiredString`), `:34-39`; `SessionComposerBinder.cs:90-96` (the refusal names no action); `EngineCatalog.cs:78-82, :130`. The Owner read the primary checkout, where Rulings 92–103 were not yet on disk (they were in the conductor's worktree, filed above in this same commit — condition 1 below is met by that order); it ruled on the conductor's summary of 97(i), which matches the filed text.*
+
+**RULING:** Build first use as one T1 slice, "first use", in the Sessions/AgentPlane lane, landing with 97(i) in morning 2: the per-engine Configure… on the New Session sheet is the only first-use surface (no first-run page), the product may run the pinned npm install itself on an explicit gesture, `adapterInstallRoot` becomes optional with the product default `~/.aide/adapters`, and Create stays enabled with a truthful sentence when nothing is ready.
+
+(1) Where and what, for claude-code, in this order:
+  a. Prerequisite checks, all before any network, each a row with a result line: `node` on PATH + version, `npm` on PATH + version, `claude` on PATH + version. Missing → the row shows the exact install instruction (URL/command) and the version the spike observed as known-good (node v24.18.0), never a modeled floor.
+  b. Adapter root: shown, defaulting to `~/.aide/adapters`; editable; a path inside a git checkout is refused with the reason (this machine's spike path is the defect class).
+  c. Install: the product runs `npm install --prefix <root> <package>@<version>` where package and version come ONLY from `EngineCatalog` (never from the file, never from input), on the operator's button press, never at start, never elevated, with stdout/stderr streamed to a visible log and the exit code read; result line names the resolved `<root>/node_modules/<package>/<entry>` that `ResolveLaunch` will look for, and `ResolveLaunch` is what decides "installed". Bounded by a timeout that reports "not recorded", not a guessed state.
+  d. Sign in: Ruling 20's engine-native flow, unchanged; re-probe on return.
+  e. Write `providers.json`: provider `anthropic` (auth per the erratum), one account with the label the operator typed and `health` = what was observed — `ready` after a returned sign-in, `needs-login` otherwise (no new health value is invented; a "not probed" literal is not in the vocabulary and is not admitted). `engines.claude-code.model` written from the catalog's default model. The file is written when (c) succeeds, so a skipped (d) leaves a valid file whose sheet row reads "needs sign-in" and offers Sign in.
+  The shell's existing absence state ("no agent backend is configured") gains one action: open New Session at Configure. That is the entry point on a fresh machine.
+(2) `adapterInstallRoot`: optional; absent ⇒ `~/.aide/adapters`; present ⇒ override. The product writes the key only when the operator chose a non-default root. `ProviderConfiguration.cs:34-39` and the §14.2 erratum note are amended to say so (marked as extending the spec, not reading it).
+(3) Sheet before configuration: every catalog engine listed with ready / needs sign-in / not configured (97(i)). Create stays enabled; with zero ready engines the sheet's footer reads: "No backend is ready. The session will open; a run will not start until one is configured." The binder's refusal at `SessionComposerBinder.cs:94-95` is amended to name the action: "... Configure a backend from New Session."
+(4) Measurement: see CONDITIONS. (5) Lane/tier/order: as proposed. (6) Nothing ruled on "acp-mcp" — the conductor asks the operator directly.
+
+**BECAUSE:** Ruling 20 fixed the doctrine — remediation is an action launched from the sheet, "one screen, not a wizard" — and a first-run page is a second surface for the same three states the sheet already has to render under 97(i); the code shows the product today hard-requires a hand-written file (`:150`) and a hand-installed module (`ResolveLaunch`) and the only refusal (`:90-96`) names no action, which is exactly the operator's fresh-machine failure. A default install root is a derivation (DM: derive, don't store), and it also removes the class the current machine exhibits: product config pointing into the repository's spike tree.
+
+**CONFIDENCE:** Verified for the code and Ruling 20; Inferred for 97(i)'s content (not on disk when the Owner read; it matches); Inferred for the `claude` CLI prerequisite and its install command (adapter README, not spiked).
+
+**SCOPE EFFECT:** Admits one slice "first use" (T1, Sessions/AgentPlane, morning 2, with 97(i)). Cuts: a first-run/onboarding page; any engine other than claude-code in the flow (codex etc. show "not configured" with no Configure action until their own launch is observed); auto-install at start; a health prober; `--ignore-scripts` as a rule (see condition 5). Freezes: package name/version source = `EngineCatalog` only. Defers: nothing.
+
+**CONDITIONS:**
+1. Rulings 92–103 are filed on disk before 104 is filed; if the filed 97(i) differs from the conductor's summary, 97 wins and the conductor returns for a one-line reconciliation.
+2. Fresh-machine oracle, red-first: a test with USERPROFILE/HOME pointed at an empty temp dir observes (a)–(e) end to end with npm pointed at a recorded/local registry or a pre-packed tarball — no live network in the gate; the assertion is `ResolveLaunch` succeeds against the produced root and `ReadIfPresent` round-trips the written file.
+3. Binder refusal names Configure — a red-first string test on `SessionComposerBinder`.
+4. One live acceptance on the operator's second machine, recorded in the proof pack with the observed `node`/`npm`/`claude` versions and the install's exit code and duration; not-recorded fields stay "not recorded".
+5. The conductor spikes the adapter install once and records whether it works under `--ignore-scripts`; if yes, the product passes it (lifecycle scripts are the residual supply-chain risk and it is named in the slice's risk list either way). Package and version remain pinned literals in `EngineCatalog`.
+6. The install instruction text for missing `node` and missing `claude` is copied from the observed upstream source at spike time and cited in the note, not written from memory.
+7. The refusal for a root inside a git checkout is tested against this machine's current value (`C:/Projects/ai-de/spikes/acp-subscription-lane`).
+
+**RECORD AS:** Ruling 104 — first use is the sheet's Configure… (no first-run page); the product runs the pinned adapter install on gesture; `adapterInstallRoot` defaults to `~/.aide/adapters`; Create stays enabled with "no backend is ready"; one T1 slice with 97(i), morning 2.

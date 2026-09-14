@@ -78,7 +78,7 @@ GUARD = re.compile(r"is\s+(Xunit\.Sdk\.)?XunitException\s*\)?\s*\{?\s*throw")
 def repo_root() -> Path:
     return Path(subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True, check=True).stdout.strip())
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True).stdout.strip())
 
 
 def check(root: Path) -> tuple[list[str], int]:
