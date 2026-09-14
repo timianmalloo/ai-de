@@ -4432,6 +4432,59 @@ window.DOCS_INDEX = {
       "sourceSha256": "7ea5df0924025831925b7064e9769adbb912fc28e69dc6a09ed91540e8cfdd8a"
     },
     {
+      "id": "note-attended-rows-for-the-operator",
+      "path": "docs/notes/attended-rows-for-the-operator.md",
+      "title": "The attended rows — everything that waits on the operator's own eyes at the programme's close, one list, with the build to run it on",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-addendum-c",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "The programme's RUN-PENDING rows whose evidence is what the operator sees — gathered from every Proof Pack into one list against the final build (main 3e5b04f6, Release 1.0.0+3e5b04f6…). Rows whose evidence was a file or an exit code were run by the conductor and are not here.",
+      "tags": [
+        "attended",
+        "operator",
+        "proof-pack",
+        "run-pending",
+        "addendum-c",
+        "addendum-d",
+        "conductor"
+      ],
+      "links": [
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-review-operator-findings-2026-09-13",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-coding-recut-left-dock",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-the-conversation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-editor-rest",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-coordination-perspective",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-mechanical-compile",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7daca09a2b886fc6de132c041cba7e53b894d8bee3022adbc91e3d05214ab345"
+    },
+    {
       "id": "note-avalondock-tab-styling",
       "path": "docs/notes/avalondock-tab-styling-decision.md",
       "title": "Decision — AvalonDock document-tab accent & corner styling",
@@ -5740,6 +5793,44 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "45e6e3b05e8adc435013bf5745ce7f2cbb68c481c7ee8741e4454ed1a207c3e2"
+    },
+    {
+      "id": "note-pack-findings-addendum-cd",
+      "path": "docs/notes/pack-findings-addendum-cd.md",
+      "title": "Pack findings from the Addenda C/D programme — what belongs in the AI-Forward Pack, with the defect class each one closes",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-addendum-c",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "The findings the Addenda C/D programme (2026-09-11 → 2026-09-13; 13 joins, 19 nodes, Rulings 50–89) produced about the pack itself, each with the class it closes and the control it proposes, for the next /updatepack. Nothing here is repo-specific; each item is a tool or a rule the pack ships.",
+      "tags": [
+        "pack",
+        "updatepack",
+        "coordination",
+        "worktree",
+        "audit",
+        "prompt-log",
+        "gates",
+        "conductor"
+      ],
+      "links": [
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-addendum-c-modes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a5c78cc2f5103e74dea2d458da96fc0b542fde2c3ce05f05674346ea3cd71bac"
     },
     {
       "id": "note-read-only-lane-runs-in-the-workspace-root",
@@ -18121,5 +18212,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c67d986c71db30a1973d424bee3d9d65b1a1a30c79a3a64aef93c562d85d4629"
+  "graphSha256": "773ddad8579139f919f3e63dda89f8df19bb9242940bf5e71b8312a92ed0a5f9"
 };

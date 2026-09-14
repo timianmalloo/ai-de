@@ -1,14 +1,14 @@
 ---
 id: note-attended-rows-for-the-operator
 title: "The attended rows — everything that waits on the operator's own eyes at the programme's close, one list, with the build to run it on"
-type: note
+type: decision-note
 status: accepted
 owner: "@timianmalloo"
 phase: "conductor-addendum-c"
 tags: [attended, operator, proof-pack, run-pending, addendum-c, addendum-d, conductor]
 links:
   - { to: coordination-addendum-cd, rel: relates-to }
-  - { to: ui-operator-findings-2026-09-13, rel: relates-to }
+  - { to: ui-review-operator-findings-2026-09-13, rel: relates-to }
   - { to: proof-coding-recut-left-dock, rel: relates-to }
   - { to: proof-the-conversation, rel: relates-to }
   - { to: proof-editor-rest, rel: relates-to }
