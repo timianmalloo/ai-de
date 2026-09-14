@@ -45,7 +45,13 @@ public enum ProviderAuth
 /// the other, and a mapping invented inside a control that exists because guessing is expensive is
 /// how the control starts lying.
 /// </param>
-public sealed record ProviderAccount(string Label, AccountHealth Health, string? ObservedAuthLabel = null);
+/// <param name="Host">
+/// The enterprise host this account signs in against — <c>mycompany.ghe.com</c> — or <c>null</c>
+/// for the provider's default. <b>On the account, never the engine row</b> (Ruling 97 condition 3;
+/// Ruling 105 (1)): it is a fact about a login, and <see cref="EngineCatalog.LaunchEnvironment"/>
+/// turns it into the CLI's own variable at launch. Extends §14.2.
+/// </param>
+public sealed record ProviderAccount(string Label, AccountHealth Health, string? ObservedAuthLabel = null, string? Host = null);
 
 /// <summary>
 /// One <c>providers.json</c> row (§14.2) — a provider, how it authenticates, and its accounts.
@@ -55,7 +61,7 @@ public sealed record ProviderAccount(string Label, AccountHealth Health, string?
 /// engine → provider mapping, and two definitions of one mapping is a defect signature (DM7): the
 /// day they disagree, a lane binds to one provider's catalog row and another provider's account.
 /// </remarks>
-/// <param name="ProviderId">The provider key — <c>anthropic</c>, <c>openai</c>, <c>github</c>.</param>
+/// <param name="ProviderId">The provider key — <c>anthropic</c>, <c>openai</c>, <c>github</c>, <c>google</c>, <c>xai</c>: whatever <see cref="EngineRow.Provider"/> names.</param>
 /// <param name="Auth">Subscription or API key.</param>
 /// <param name="Accounts">The configured accounts, as labels plus probe state.</param>
 public sealed record ProviderRow(

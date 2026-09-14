@@ -74,8 +74,10 @@ public sealed class ProviderConfiguration
     private static readonly HashSet<string> ProviderMembers =
         new(StringComparer.Ordinal) { "auth", "accounts", "engine", "acp", "metered" };
 
+    // `host` EXTENDS §14.2 (Ruling 97 condition 3; Ruling 105 (1)): the enterprise host an account
+    // signs in against, on the account and never on a provider or engine row.
     private static readonly HashSet<string> AccountMembers =
-        new(StringComparer.Ordinal) { "label", "health", "observedAuthLabel" };
+        new(StringComparer.Ordinal) { "label", "health", "observedAuthLabel", "host" };
 
     // BOTH MEMBERS EXTEND §14.2 — see the type's remarks. The spec's schema has no per-engine model.
     private static readonly HashSet<string> EngineMembers =
@@ -487,7 +489,14 @@ public sealed class ProviderConfiguration
                 + "ready, needs-login and quota-degraded"),
         };
 
-        return new ProviderAccount(label, health, OptionalString(path, element, "observedAuthLabel", where));
+        // A blank host looks configured and configures nothing; refused like a blank required string.
+        var host = OptionalString(path, element, "host", where);
+        if (host is not null && string.IsNullOrWhiteSpace(host))
+        {
+            throw Malformed(path, $"{where} account '{label}' has a blank \"host\"; omit the key for the provider's default host");
+        }
+
+        return new ProviderAccount(label, health, OptionalString(path, element, "observedAuthLabel", where), host);
     }
 
     private static JsonDocument Parse(string path, string text)

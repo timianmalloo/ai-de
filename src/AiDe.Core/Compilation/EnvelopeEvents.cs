@@ -246,6 +246,9 @@ public static class ConsumedReasons
     public const string StoppedByOperator = "stopped_by_operator";
     public const string DocumentClosed = "document_closed";
 
+    /// <summary>A queued turn the operator cancelled before it was sent (Ruling 95): submitted, never run.</summary>
+    public const string CancelledByOperator = "cancelled_by_operator";
+
     /// <summary><c>lane_exited{code}</c>, rendered with the exit code — or <c>lane_exited</c> alone when none was recorded.</summary>
     public static string LaneExited(int? code) => code is { } c
         ? string.Create(System.Globalization.CultureInfo.InvariantCulture, $"lane_exited{{{c}}}")

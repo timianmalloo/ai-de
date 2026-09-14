@@ -267,22 +267,36 @@ public sealed class AcpLaneClient
     private readonly AcpPeer _peer;
     private readonly AcpClientCapabilities _capabilities;
     private readonly Func<JsonObject, string> _choosePermission;
+    private readonly EngineRow? _engine;
+    private readonly Action<string> _diagnostics;
 
     /// <param name="peer">The transport. This client installs itself as its inbound handler.</param>
     /// <param name="capabilities">What to declare. Defaults to <see cref="AcpClientCapabilities.PhaseOne"/>.</param>
     /// <param name="choosePermission">
     /// Picks an <c>optionId</c> from a permission request's params. Defaults to the reject option.
     /// </param>
+    /// <param name="engine">
+    /// The catalog row this peer is, when the caller knows it. It decides whether
+    /// <see cref="LaneSessionOptions"/> reach the wire: the <c>_meta.claudeCode.options</c> slot is
+    /// the claude-code adapter's (<see cref="EngineRow.ReadsClaudeCodeMeta"/>), and every other
+    /// engine gets the ACP-standard <c>session/new</c> the spike observed it accept. <c>null</c> —
+    /// every caller that predates the catalog's native rows — sends the options as given.
+    /// </param>
+    /// <param name="diagnostics">Where a pin that was <b>not</b> sent is named. Defaults to stderr.</param>
     public AcpLaneClient(
         AcpPeer peer,
         AcpClientCapabilities? capabilities = null,
-        Func<JsonObject, string>? choosePermission = null)
+        Func<JsonObject, string>? choosePermission = null,
+        EngineRow? engine = null,
+        Action<string>? diagnostics = null)
     {
         ArgumentNullException.ThrowIfNull(peer);
 
         _peer = peer;
         _capabilities = capabilities ?? AcpClientCapabilities.PhaseOne;
         _choosePermission = choosePermission ?? RejectOption;
+        _engine = engine;
+        _diagnostics = diagnostics ?? Console.Error.WriteLine;
         _peer.InboundHandler = Handle;
     }
 
@@ -360,7 +374,21 @@ public sealed class AcpLaneClient
         // send — the frame every prior run sent stays byte-identical otherwise.
         if (options?.ToMeta() is { } meta)
         {
-            parameters["_meta"] = meta;
+            if (_engine is null || _engine.ReadsClaudeCodeMeta)
+            {
+                parameters["_meta"] = meta;
+            }
+            else
+            {
+                // The slot is the claude-code adapter's. Every other engine was observed accepting
+                // exactly {cwd, mcpServers: []} (spikes/engine-backends/<engine>/**/frames.sent.jsonl),
+                // and nothing observed says one reads _meta.claudeCode — so it is not sent, and
+                // SAID: a pin that vanished silently would read as governance on the recorded frame.
+                _diagnostics(
+                    $"session/new: engine '{_engine.Id}' has no claudeCode extension slot; the lane's tools pin was "
+                    + "not sent, and the frame is the ACP-standard one the spike observed this engine accept — "
+                    + "the lane's governance on this engine is the permission policy alone");
+            }
         }
 
         SessionNewParameters = parameters;

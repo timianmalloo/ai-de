@@ -121,8 +121,16 @@ public sealed class ThreadAnnouncementPolicy
 
         return now.State switch
         {
-            TurnState.Running when was is null => Accepted(now, label),
+            // A queued turn that starts is accepted NOW (Ruling 95): the send happened at the
+            // drain, and the operator hears what they would have heard had they pressed Send.
+            TurnState.Running when was is null || was.State == TurnState.Queued => Accepted(now, label),
             TurnState.Running => Status(now, "Turn " + now.DisplayOrdinal + " continues.", AnnouncementKind.Completed, label),
+
+            TurnState.Queued when was is null => Status(
+                now, "Turn " + now.DisplayOrdinal + " queued; it sends after the turn in flight.", AnnouncementKind.ItemAdded, label),
+
+            TurnState.Cancelled => Status(
+                now, "Turn " + now.DisplayOrdinal + " " + LowerFirst(TurnCopy.ReasonSentence(now)), AnnouncementKind.Aborted, label),
 
             TurnState.Waiting when was is null => Accepted(now, label),
             TurnState.Waiting => new Announcement(
@@ -203,6 +211,8 @@ public sealed class ThreadAnnouncementPolicy
         TurnActionKind.OpenLog => "Open the log",
         TurnActionKind.UseAsNextDraft => "Use as the next draft",
         TurnActionKind.OpenConsoleAt => "Open the Console at this turn",
+        TurnActionKind.Cancel => "Cancel",
+        TurnActionKind.SendNow => "Send now",
         _ => throw new ArgumentOutOfRangeException(nameof(action), action, "unknown turn action"),
     };
 

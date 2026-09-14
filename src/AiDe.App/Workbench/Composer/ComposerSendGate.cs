@@ -449,7 +449,13 @@ public sealed class ComposerSendGate
                 PromptTimeout: context.PromptTimeout);
 
             TryAppend([new Submitted(envelopeId, Accepted: true, Refusal: null, TextSha256: projection.TextSha256!, ProjectionSha: projection.ProjectionSha, ProjectorVersion: Projection.Version)]);
-            LastSubmission = new SubmittedEnvelope(envelopeId, projection.ProjectionSha, projection.TaskClassSource, Envelopes is not null && HistoryState is null);
+
+            // THE COMPILE'S COST TRAVELS WITH THE SUBMISSION (Ruling 78: `called.cost` is the turn's
+            // spend, on its own outcome line; Ruling 95 condition 4 for a queued turn): the fold's
+            // last `called` row, when a request was made — a reused call (0 requests) and a
+            // mechanical compile (no call) contribute nothing, never a zero.
+            var compileCost = envelope.LastCall?.Cost is { Requests: > 0 } cost ? cost : null;
+            LastSubmission = new SubmittedEnvelope(envelopeId, projection.ProjectionSha, projection.TaskClassSource, Envelopes is not null && HistoryState is null, compileCost);
             _abandoned = null;
             _prepared = null;
             State = PrepareState.Draft;
@@ -832,11 +838,13 @@ public sealed class ComposerSendGate
 /// <param name="ProjectionSha">The rebuild's oracle — what the <c>submitted</c> row recorded.</param>
 /// <param name="TaskClassSource"><c>session-default</c> or <c>operator</c> — the cohort attribute the leaderboard stamps (ADR-0028 amendment).</param>
 /// <param name="Recorded">Whether the rows reached the store; false when history is not recorded (the reason is on the gate).</param>
+/// <param name="CompileCost">What the compile step's model call cost for this envelope (the fold's last <c>called.cost</c> with at least one request), or null — no call, or a reused one.</param>
 public sealed record SubmittedEnvelope(
     string EnvelopeId,
     string ProjectionSha,
     string TaskClassSource,
-    bool Recorded);
+    bool Recorded,
+    RunEventCost? CompileCost = null);
 
 /// <summary>The four composer states of Prepare (§A11).</summary>
 public enum PrepareState

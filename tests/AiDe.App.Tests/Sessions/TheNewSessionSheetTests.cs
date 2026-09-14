@@ -210,7 +210,11 @@ public sealed class TheNewSessionSheetTests : IDisposable
 
         // Ruling 97(i)/105: claude-code (anthropic) and codex (openai) are configured; copilot's
         // provider (github) is not — it is still LISTED, as one "no account — Configure…" row.
-        Assert.Equal(["claude-code", "codex", "copilot"], sheet.AccountRows.Select(b => b.EngineId));
+        // Every catalog row, in catalog order — five since the engines lane joined (copilot, gemini,
+        // grok Native); pinned to the catalog, not to a literal, so a new row appears here for free.
+        Assert.Equal(EngineCatalog.Rows.Select(r => r.Id), sheet.AccountRows.Select(b => b.EngineId));
+        Assert.Contains("gemini", sheet.AccountRows.Select(b => b.EngineId));
+        Assert.Contains("grok", sheet.AccountRows.Select(b => b.EngineId));
         Assert.Null(sheet.AccountRows.Single(b => b.EngineId == "copilot").Account);
         Assert.All(sheet.AccountRows, b => Assert.Contains(
             EngineCatalog.Rows, row => row.Id == b.EngineId && row.Provider == b.ProviderId));

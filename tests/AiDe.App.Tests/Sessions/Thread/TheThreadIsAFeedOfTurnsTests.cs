@@ -6,6 +6,7 @@ using System.Windows.Input;
 using AiDe.App.Workbench;
 using AiDe.App.Workbench.Sessions;
 using AiDe.Core.Presentation.Sessions;
+using AiDe.Core.Sessions;
 using AiDe.Core.Workbench;
 
 namespace AiDe.App.Tests.Sessions.Thread;
@@ -447,9 +448,11 @@ public sealed class TheThreadIsAFeedOfTurnsTests
     }
 
     /// <summary>
-    /// <b>K9's twin (SC8; Ruling 77).</b> The refused gesture's reason names the turn as a LINK:
-    /// activating <i>b1, running</i> focuses b1's container — never an action on it — and the
-    /// refusal was spoken assertively through the document's one announcer.
+    /// <b>K9's twin (SC8; Ruling 77 condition 1, kept under Ruling 95).</b> The two-action line a
+    /// Send while running gets names the turn as a LINK: activating <i>b1, running</i> focuses b1's
+    /// container — never an action on it — and the line was spoken assertively through the
+    /// document's one announcer. (Ruling 95 re-pointed the sentence from Ruling 77(b)'s refusal to
+    /// the offer; the link and its target are unchanged.)
     /// </summary>
     [Fact]
     public void TheRunningLinkInTheRefusal_FocusesTheContainer_NeverAnAction()
@@ -458,6 +461,18 @@ public sealed class TheThreadIsAFeedOfTurnsTests
             create: () =>
             {
                 var document = new SessionDocumentSurface(new SessionDocumentViewModel("20260912T140000Z-link", "link", Path.GetTempPath(), ["console"]), null, new RecordingAnnouncer());
+
+                // Wired (Ruling 95's offer sits behind the gate, which needs a session): a context
+                // whose engine the catalog refuses — nothing is sent here, so nothing is spawned.
+                document.Composer.Configure(
+                    new AiDe.Core.Sessions.SessionConfig("20260912T140000Z-link", "link", Path.GetTempPath(), DateTimeOffset.UnixEpoch, [new AccountRef("anthropic", "max")], new AccountRef("anthropic", "max")),
+                    new AiDe.App.Workbench.Composer.ComposerSendContext(
+                        RepositoryRoot: Path.GetTempPath(), DataDirectory: Path.GetTempPath(), AdapterInstallRoot: Path.GetTempPath(),
+                        EngineId: "no-such-engine", Model: "sonnet", AccountLabel: "max", TaskClass: "free-form", ProofPackArtifacts: [], Providers: []),
+                    AiDe.App.Workbench.Composer.ComposerFields.FreeForm(),
+                    new AiDe.Core.Presentation.Composer.AttachmentGate(Path.GetTempPath(), new AiDe.Core.Presentation.Composer.AttachmentFileReader(), new NeverAffirms(), "Anthropic (Claude Code)", "max"));
+                document.Composer.Draft.SwitchTo(AiDe.Core.Presentation.Composer.ComposerShape.FreeForm);
+                document.Composer.Draft.SetFreeFormText("second");
                 var running = ThreadFixtures.Running(1, 3);
                 var o = document.ReadModel.Accept(running.SourceText, running.Decorations, running.SentBytes, running.At);
                 foreach (var line in running.Events)
@@ -475,17 +490,18 @@ public sealed class TheThreadIsAFeedOfTurnsTests
                 var before = announcer.Announcements.Count;
 
                 Assert.Null(document.Composer.Send());
-                Assert.Equal("b1 is running; the next turn waits for it.", document.Composer.Status);
+                Assert.Equal("b1 is running. Wait — send after b1, or start a parallel session.", document.Composer.Status);
 
                 // Spoken, assertively, through the document's announcer — never a silent status line.
                 var spoken = announcer.Announcements[^1];
                 Assert.Equal(before + 1, announcer.Announcements.Count);
-                Assert.Equal("b1 is running; the next turn waits for it.", spoken.Text);
+                Assert.Equal("b1 is running. Wait — send after b1, or start a parallel session.", spoken.Text);
                 Assert.Equal(Urgency.Assertive, spoken.Urgency);
 
-                // The ordinal is a link named for the turn; activating it lands on the CONTAINER.
+                // The ordinal is a link named for the turn; activating it lands on the CONTAINER
+                // (the two action links beside it are Ruling 95's, proven in their own class).
                 var status = ThreadFixtures.Visuals<TextBlock>(document.Composer).Single(t => AutomationProperties.GetName(t) == "Send status");
-                var link = Assert.Single(status.Inlines.OfType<System.Windows.Documents.Hyperlink>());
+                var link = status.Inlines.OfType<System.Windows.Documents.Hyperlink>().First();
                 Assert.Equal("b1, running", AutomationProperties.GetName(link));
                 link.RaiseEvent(new RoutedEventArgs(System.Windows.Documents.Hyperlink.ClickEvent));
                 document.UpdateLayout();
@@ -551,6 +567,11 @@ public sealed class TheThreadIsAFeedOfTurnsTests
                 Assert.Equal(document.Split.SelectedIndex, document.Split.Rows.TakeWhile(r => r is not ConsoleSplitRow.TurnHeading { Ordinal: 2 }).Count() + 1);
                 return Task.CompletedTask;
             });
+    }
+
+    private sealed class NeverAffirms : AiDe.Core.Presentation.Composer.IAttachmentAffirmation
+    {
+        public bool Confirm(AiDe.Core.Presentation.Composer.OutsideWorkspaceAffirmation affirmation) => false;
     }
 
     internal static void Press(UIElement target, Key key)
