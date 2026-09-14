@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T04:51:47Z",
+  "generated": "2026-09-14T05:22:46Z",
   "audit": [
     {
       "actor": null,
@@ -15844,6 +15844,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "af4c7248b4229c10f52eda2d2f89c10680b41f3b",
         "short": "af4c7248b",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2F5WA6YVR9BGARXAQV30F0C",
+      "shortname": "atlas-publication-red-observed-repair-released",
+      "datetime": "2026-09-14T05:22:46Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Parentreadnative-Qredreceipt/sourcehook/rawrevoke-partial-deadlineJSONandindependentlyreproduced6FAIL/2PASS. Active/nativeownershipalready0beforewrite; revocation/explicitexpiryreturns0chargeswhilewriteruncanceledand1693byteIndexedMatchbodycompletes; partial4byteprefixalsofinishes; operationdeadlinecancelnotlinkedwriter. No unauthorizeddisclosure/stalledclockclaim. Owner53conditionalplanmatched; releasedCremaining12regular114/126forwriter-ownedrepairandregressions. Core/Shellstillheldbeforeindependentreview.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/code-atlas-publication-lifetime.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Repair the observed native-Q publication lifetime defect without weakening its oracle.",
+      "done_when": "The original six red cases become green under retained writer ownership and independent current-pin review.",
+      "tier": "T2",
+      "main_calls": 191,
+      "main_budget": 208,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T05:22:46Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "bb28dc0f5ce1764728291531b0f09045843252e7",
+        "short": "bb28dc0f5",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

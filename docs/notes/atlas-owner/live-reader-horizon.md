@@ -1017,3 +1017,23 @@ not be appended, and transmitted bytes are not claimed recalled.
 Security, DS and Test each receive four new review leaves. Mainline ceiling becomes 208;
 Shell and independent-window allowances remain held. No runtime join, primary write,
 push or private-corpus access follows from this repair grant.
+
+## Publication red observed; conditional repair released
+
+C used eight investigation leaves and returned `owner53-publication-observed.trx`: eight
+cases, two controls pass and six semantic failures. Conductor copied the raw author traces
+before replay, read the source seam and failure messages, and independently reproduced the
+same six failures in `publication-red-independent.trx`.
+
+At the paused writer, active/native ownership is already zero. Revoke and explicit-expiry
+events complete cleanup without canceling the writer, then a complete 1,693-byte native
+`IndexedMatch` success body arrives (1,697 framed bytes). The partial case pauses after a
+four-byte prefix and also completes. Direct deadline-source cancellation leaves writer
+cancellation false. Disconnect and completed-write-before-revocation controls pass.
+These are labelled explicit events/stimuli, not elapsed-wall-clock or unauthorized-disclosure
+claims.
+
+The proposed preparation/writer/release separation matches Owner 53's conditional remedy.
+Conductor releases the remaining twelve leaves, C 114/126, for the exact five-file repair
+and replay. Failed drains retain ownership and debt; possible partial writes terminate.
+No Core join or Shell release occurs until the repaired current-pin gates clear.

@@ -585,6 +585,14 @@ Conductor's prospective cumulative ceiling is 208, with six calls reserved for r
 The prior 22 reported wrappers and all spent/failed work remain recorded. The checkpoint
 ends at a reviewed repair disposition and conditional Core join, not programme completion.
 
+The first eight publication leaves returned deterministic native-Q evidence: six semantic
+reds and two passing controls. Conductor read the receipt, source seam, raw revoke/partial/
+deadline traces and independently repeated the same 6/8 failures. C is **114/126**.
+The twelve reserved repair/replay leaves are now released under Owner 53's conditional
+approval, within the same five-file scope. Preparation/writer/release separation and the
+cancel-and-actual-drain plan match that approval; the oracle is not weakened. Runtime join
+and Shell handoff still await repaired evidence and the three independent reviews.
+
 ### Core owns
 
 | Path | Why |

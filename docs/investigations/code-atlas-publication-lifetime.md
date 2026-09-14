@@ -106,3 +106,38 @@ The bounded Atlas/endpoint/server marker search found no `assume:` or `simplify:
 A verified instance and its failing-first control must be added to the defect register
 after the counterexample; this draft does not invent the root cause to complete a template.
 Rollback is the isolated candidate branch; no main/push or production deployment occurred.
+
+## Executed counterexample and approved repair entry
+
+The provisional assessment above is superseded only to the extent of these new observations.
+C added an internal stream-wrapper seam and eight native-Q cases without changing production
+ownership/cancellation. The original code remains `b1c6f74a` plus that uncommitted seam/test
+diff. `owner53-publication-observed.trx` records six failures and two passing controls.
+Conductor preserved the raw author directory and independently repeated the same result:
+`files/atlas-publication-independent/publication-red-independent.trx`, exit one, total eight,
+passed two, failed six.
+
+| Stimulus | Observed ownership/cancellation | Actual frame outcome |
+|---|---|---|
+| Pause before first byte | Active work zero; native owners zero | Complete success, demonstrating resources released before writer completion |
+| Revoke or explicit expiry event | Scope cleanup returns with scope/active/native charges zero; writer cancellation false | Native `IndexedMatch` success body 1,693 bytes; wire 1,697 bytes |
+| Cancel actual operation deadline source | Operation cancellation true; writer cancellation false | Same complete native success |
+| Revoke after four-byte prefix | Prefix accepted; cleanup returns and writer remains uncanceled | Remaining body completes successfully |
+| Repeat cleanup | No retained publication owner blocks cleanup | Success still completes after revocation |
+| Disconnect control | Writer fails with `IOException` | No complete response |
+| Complete write before revocation | Completion ordered first | Existing completed response remains completed |
+
+Raw `revoke.json`, `partial.json` and `deadline.json` values were read directly. Expiry is
+an explicit real connection-ended event, and deadline uses cancellation of the actual
+operation deadline source. This is not a claim that a five-minute clock elapsed, that a
+kernel stalled, or that already-transmitted bytes can be recalled.
+
+The source mechanism now has a controlled, repeated failure observation: ownership and
+scope-linked cancellation end before the writer they must govern. The removal/correction
+half of the necessary-and-sufficient test remains for the repair's red-to-green replay.
+No broader disclosure classification is asserted.
+
+Owner turn 53 conditionally approved the described repair after parent red/plan readback.
+That gate is met; C's remaining twelve leaves are released. They cover only the stated
+five files and preserve the exact paused-write oracle. The independent Security/DS/Test
+gates and final runtime admission remain open.
