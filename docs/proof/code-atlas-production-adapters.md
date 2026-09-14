@@ -46,6 +46,20 @@ Both command handling and the intended stack's mutation must be observed, and fa
 post-action geometry must be retained. No product resizing or private-state change is
 authorized by this investigation.
 
+The next discriminator ruled out missing logical focus and missing command routing:
+Code Atlas's surface/`zone-right` were focused, exactly one maximize command was handled,
+and the left zone disappeared. The test's legacy `StackState.Maximized` assertion was
+invalid for the zone model and is retained as an oracle correction, not proof of layout
+failure. Parent read `ZoneLayoutService.Maximize`: it records a memo and collapses other
+non-Center zones without enlarging the selected tool-zone extent. Post-action source
+geometry remained empty independently of that wrong assertion.
+
+Owner turn 61 therefore authorizes a separate product-default correction: Code Atlas opens
+as Center reading content using the existing kind preference/placement override. Explicit
+and restored user placement must remain unchanged. The independent proof cannot manufacture
+that layout; it follows only a reviewed product commit and must demonstrate readable
+default source, selected label and highlight with the real daemon/window journey.
+
 This is an incomplete production Proof Pack. Addendum E remains candidate. No primary-main
 integration or push is claimed. The private proposal/TheTerrace corpus is not part of this
 delivery record.

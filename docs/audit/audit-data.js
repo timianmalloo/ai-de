@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T18:02:16Z",
+  "generated": "2026-09-14T18:25:52Z",
   "audit": [
     {
       "actor": null,
@@ -16304,6 +16304,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "6818642e34f3cedf515087650ef23f3098523d09",
         "short": "6818642e3",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GJP6T3EWFGSYEH3VRJNFEJ",
+      "shortname": "atlas-center-primary-reading-placement",
+      "datetime": "2026-09-14T18:25:51Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep working and provide periodic todo refreshes showing in-flight and remaining work",
+      "summary": "Owner61productCenter-defaultsliceS12new72to84dispatchedfreshverified10c7729tree,exactWorkbenchShell/SurfaceContentFactory/SharedHostTests. PreferredCenteronexistingkindrow/existingoverride,newopensonly; preservedexplicitrestoredplacement/Show-existing/otherdocpromptflows. NoCoremaximize/window/font/ReaderViewhack. Redclippedsourceand1280/declaredviewportreadabilityneeded; UX/SRE/Test2eachbeforejoin. Independentproof8new41to49heldforreviewedUIcommit,normaldefaultrealdaemonjourneynotmaximizeworkaround. Addedexplicitreadable-placementtodo; originaldata/lifecyclegreenpreserved.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Make newly opened Code Atlas readable as primary Center content without overriding user layouts.",
+      "done_when": "The existing placement mechanism yields readable source/member/highlight pixels in the normal default path and preserves other placement/lifecycle contracts.",
+      "tier": "T2",
+      "main_calls": 346,
+      "main_budget": 360,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T18:25:51Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "10c772964fd75405981833d0a05eb9f57293ce89",
+        "short": "10c772964",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

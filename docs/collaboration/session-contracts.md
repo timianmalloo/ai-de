@@ -752,6 +752,31 @@ captures and forced exits as failures. If the normal route cannot expose readabl
 return the exact failing seam and minimal Shell-file proposal for separate approval.
 Mainline ceiling becomes a prospective 360; visible-source acceptance remains withheld.
 
+Owner turn 61 authorizes a twelve-leaf Shell Center-placement slice, cumulative S
+**72/84**, in fresh session `atlas-center-reading-placement-astra`, branch
+`atlas/center-reading-placement`, worktree
+`C:\Projects\ai-de-atlas-center-reading-placement`. Parent verified clean exact base
+`10c772964fd75405981833d0a05eb9f57293ce89`, local derived gates and an identity-bound
+WorkbenchShell path allowance. Prior handoff registration ended; its proof tree remains.
+
+Only `src/AiDe.App/Workbench/WorkbenchShell.cs`,
+`src/AiDe.App/Workbench/SurfaceContentFactory.cs`, and
+`tests/AiDe.App.Tests/Workbench/Understanding/AtlasSharedHostAdmissionTests.cs` may change.
+Put preferred Center placement on the existing kind row and consume the existing placement
+override. Do not add a hidden kind-keyed branch or another placement framework. New opens
+use the default; restored/explicit user placement, existing tabs, Show-existing and other
+document/prompt rules remain. No maximize rewrite, window/font hack or reader-layout edit.
+Observe clipped-default red, then Center/readable text-label-highlight geometry at 1280
+and the declared target viewport. If Center is insufficient, return measured bounds and
+the minimal additional reader-layout proposal before editing it.
+
+UX/SRE/Test receive two review leaves each. After a reviewed UI commit, independent proof
+receives eight new leaves, **41/49**, in its existing sole file, to adopt that UI commit,
+remove the invalid legacy maximization assertion and prove the normal default journey.
+Canonical zone state replaces legacy stack flags when observed. Old captures/errors/forced
+exits remain; default-placement acceptance requires actual new readable default pixels.
+Mainline stays 360 and no main/push/normative/programme acceptance is granted.
+
 ### Core owns
 
 | Path | Why |
