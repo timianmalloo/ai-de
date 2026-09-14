@@ -998,3 +998,22 @@ oracle. Owner was asked to fund/disposition that proof and any supported repair,
 the Core candidate unjoined and Shell's sixteen calls held. The provisional report is
 `docs/investigations/code-atlas-publication-lifetime.md`; neither the old Security answer
 nor the DS historical spike citation clears this new boundary.
+
+## Actual-writer ownership repair, Owner turn 53
+
+Owner opened the server/endpoint/issuer path and confirms the source lifetime gap, while
+keeping disclosure/interleaving outcomes unverified until execution. C receives twenty
+available leaves, regular 106/126: two already unused plus eighteen prospective additions.
+The five exact issuer/endpoint/server/test files are recorded in section 2.
+
+The first deterministic actual-native-Q publication test pauses after commit check and
+before writing, then expires/revokes and inspects pins, reservations, cancellation and
+outcome. Parent reads that semantic red and the repair plan before implementation.
+The permitted structural remedy retains publication ownership through writing or
+cancel-and-drain, separates preparation and writer completion, and preserves debt and
+single-reader ordering. A partial frame makes the connection terminal; a refusal must
+not be appended, and transmitted bytes are not claimed recalled.
+
+Security, DS and Test each receive four new review leaves. Mainline ceiling becomes 208;
+Shell and independent-window allowances remain held. No runtime join, primary write,
+push or private-corpus access follows from this repair grant.

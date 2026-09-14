@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T04:41:26Z",
+  "generated": "2026-09-14T04:51:47Z",
   "audit": [
     {
       "actor": null,
@@ -15811,6 +15811,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "14844e24e8be83abf3af4a0dfcd5954af41cc783",
         "short": "14844e24e",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2F43JNVEVD7FG7DG77N2BS6",
+      "shortname": "atlas-publication-red-first-release",
+      "datetime": "2026-09-14T04:51:47Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner53 grantsC20available regular106to126; first8releaseddeterministicnative-Qpublicationred/plan, remaining12helduntilparentread. Exactissuer/endpoint/serverand2testfiles. Scopeexpiry/deadline/connectionmustcancelanddrainwriterbeforepins/reservationsrelease; partialframeterminal,nobyterecallclaim. Twelveindependentreviewleaves4each andConductor208prospective. No fix/runtimejoin/Shellreleaseyet. No externallyvisiblefailureclaimedbeforeexecution.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/code-atlas-publication-lifetime.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Establish and repair the actual writer lifetime before runtime admission.",
+      "done_when": "The native-Q paused-publication oracle is observed red, a supported ownership repair is reviewed, and Core is conditionally joinable.",
+      "tier": "T2",
+      "main_calls": 184,
+      "main_budget": 208,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T04:49:39Z",
+      "duration_seconds": 128.0,
+      "git": {
+        "sha": "af4c7248b4229c10f52eda2d2f89c10680b41f3b",
+        "short": "af4c7248b",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

@@ -562,6 +562,29 @@ Core/IPC and 96/96 App/factory cases with zero skipped. Test and DS reviews are 
 the old 79-assertion IPC spike is not runtime evidence. Shell's sixteen leaves and the
 fifteen independent real-window proof leaves remain held. Mainline ceiling remains 184.
 
+Owner turn 53 authorizes twenty C publication-lifetime diagnosis/repair leaves, comprising
+the two unused regular leaves plus eighteen new ones: regular **106/126**. Exact scope is
+`src/AiDe.Core/Understanding/AtlasReadScopeIssuer.cs`,
+`src/AiDe.Core/Ipc/DaemonEndpoint.cs`, `src/AiDe.Core/Ipc/IpcServer.cs`,
+`tests/AiDe.Core.Tests/Understanding/AtlasIpcAdmissionTests.cs`, and
+`tests/AiDe.Core.Tests/Understanding/AtlasProductionAdmissionTests.cs`.
+The same runtime writer/tree remains; no other source or generic IPC change is granted.
+
+Conductor releases the first eight for deterministic actual-native-Q paused-publication
+evidence and the repair plan. Parent must read the semantic red before the remaining
+twelve implementation/replay leaves are released. The described repair is conditionally
+approved: preparation completion, writer completion and resource release are distinct;
+scope expiry/revocation, operation deadline and connection cancellation remain linked
+through bounded writing; pins/reservations release only after completion or canceled-and-
+awaited writing. No self-awaiting stop path, appended refusal after a possible partial frame,
+recalled-byte claim or weakened oracle is permitted. Failed cleanup remains charged.
+
+Twelve new independent review leaves are separate (Security/DS/Test four each). NQ is
+unchanged; Shell sixteen and independent real-window proof fifteen remain held.
+Conductor's prospective cumulative ceiling is 208, with six calls reserved for records.
+The prior 22 reported wrappers and all spent/failed work remain recorded. The checkpoint
+ends at a reviewed repair disposition and conditional Core join, not programme completion.
+
 ### Core owns
 
 | Path | Why |
