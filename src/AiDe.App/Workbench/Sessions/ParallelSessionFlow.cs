@@ -86,7 +86,7 @@ public sealed class ParallelSessionFlow
     /// <param name="workspaceRoot">The workspace both sessions live in.</param>
     /// <param name="parent">The parent's config as it reads now.</param>
     /// <param name="request">The parent draft's words and attachments.</param>
-    public ParallelSessionOutcome Start(string workspaceRoot, SessionConfig parent, ParallelSessionRequest request)
+    public ParallelSessionOutcome Start(string workspaceRoot, SessionConfig parent, ParallelDraft request)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(workspaceRoot);
         ArgumentNullException.ThrowIfNull(parent);

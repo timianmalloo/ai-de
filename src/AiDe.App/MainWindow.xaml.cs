@@ -311,7 +311,7 @@ public partial class MainWindow : Window
     /// refuses before anything is created, as New Session does.
     /// </summary>
     private Workbench.Sessions.ParallelSessionOutcome StartParallelSession(
-        Workbench.Sessions.SessionDocumentSurface parent, Workbench.Composer.ParallelSessionRequest request)
+        Workbench.Sessions.SessionDocumentSurface parent, Workbench.Composer.ParallelDraft request)
     {
         if (ReadProviders() is { } malformed)
         {

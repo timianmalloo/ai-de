@@ -90,7 +90,7 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
                 time: new FixedTime(now.AddMinutes(1)));
 
             var attachment = new ComposerAttachment("notes.md", Path.Combine(root, "notes.md"), 11, "the notes\n", false, "sha");
-            var outcome = flow.Start(root, parent, new ParallelSessionRequest("second question", [attachment]));
+            var outcome = flow.Start(root, parent, new ParallelDraft("second question", [attachment]));
 
             // Created: the seam's name, the parent's config, the parallel origin.
             Assert.NotNull(outcome.Created);
@@ -138,7 +138,7 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
                 bind: _ => "The composer has no run binding — providers: there is no provider file.",
                 composerOf: id => documents.GetValueOrDefault(id)?.Composer);
 
-            var outcome = flow.Start(root, parent, new ParallelSessionRequest("second", []));
+            var outcome = flow.Start(root, parent, new ParallelDraft("second", []));
 
             Assert.NotNull(outcome.Created);
             Assert.Equal("payments (2)", outcome.Created!.Name);
@@ -257,7 +257,7 @@ public sealed class AParallelSessionIsADerivedSiblingTests : IDisposable
                 composerOf: id => documents.GetValueOrDefault(id)?.Composer,
                 uniqueName: name => SessionConfigStore.UniqueName(name, SessionConfigStore.ExistingNames(root)));
 
-            var outcome = flow.Start(root, parent, new ParallelSessionRequest("second", []));
+            var outcome = flow.Start(root, parent, new ParallelDraft("second", []));
             Assert.Equal("payments (3)", outcome.Created!.Name);
             documents[outcome.Created.SessionId].Dispose();
         });

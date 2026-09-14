@@ -627,7 +627,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     /// null — or the reason it did not, in which case the words stay here. Null when this composer
     /// has no shell (a document built alone), which is its own refusal.
     /// </summary>
-    public Func<ParallelSessionRequest, string?>? ParallelStarter { get; set; }
+    public Func<ParallelDraft, string?>? ParallelStarter { get; set; }
 
     /// <summary>
     /// Why <i>Start a parallel session</i> is refused before the shell is asked, or null when it is
@@ -1031,7 +1031,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             return;
         }
 
-        var request = new ParallelSessionRequest(_draft.SourceText, [.. _draft.Attachments]);
+        var request = new ParallelDraft(_draft.SourceText, [.. _draft.Attachments]);
         if (ParallelStarter(request) is { } notStarted)
         {
             // The words stay here: nothing was sent on their behalf.
@@ -2157,4 +2157,4 @@ public static class StructureDeriver
 /// </summary>
 /// <param name="SourceText">The draft's source text, verbatim.</param>
 /// <param name="Attachments">The draft's attachments, already read through the parent's attach gate.</param>
-public sealed record ParallelSessionRequest(string SourceText, IReadOnlyList<ComposerAttachment> Attachments);
+public sealed record ParallelDraft(string SourceText, IReadOnlyList<ComposerAttachment> Attachments);

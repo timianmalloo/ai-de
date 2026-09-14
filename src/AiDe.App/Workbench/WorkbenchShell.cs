@@ -80,7 +80,7 @@ public sealed class WorkbenchShell : IDisposable
     /// binder and Recent sessions — and the shell hands every registered document's composer a
     /// starter that runs it. Null means this build cannot start one, which the composer says.
     /// </summary>
-    internal Func<Sessions.SessionDocumentSurface, Composer.ParallelSessionRequest, Sessions.ParallelSessionOutcome>? ParallelSessionStarter { get; set; }
+    internal Func<Sessions.SessionDocumentSurface, Composer.ParallelDraft, Sessions.ParallelSessionOutcome>? ParallelSessionStarter { get; set; }
 
     private readonly Dictionary<string, Sessions.SessionDocumentSurface> _sessionDocuments =
         new(StringComparer.Ordinal);
@@ -3335,7 +3335,7 @@ public sealed class WorkbenchShell : IDisposable
     /// Runs the window's parallel-session flow for <paramref name="parent"/>'s draft (Ruling 95) and
     /// announces its outcome; returns the refusal the composer shows when the words were not sent.
     /// </summary>
-    private string? StartParallelSession(Sessions.SessionDocumentSurface parent, Composer.ParallelSessionRequest request)
+    private string? StartParallelSession(Sessions.SessionDocumentSurface parent, Composer.ParallelDraft request)
     {
         if (ParallelSessionStarter is null)
         {
