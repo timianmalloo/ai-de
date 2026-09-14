@@ -4120,7 +4120,7 @@ for both or split.*
   list them among its four). A file that is partly generated belongs to no gate's structural check by
   construction — *"is it regenerated correctly?"* is never asked of it, because nothing regenerates it
   whole.
-- **Control:** `tools/verify-no-conflict-markers.py`, on every push. It flags `<<<<<<<`, `>>>>>>>` and
+- **Control:** `docs/ai-forward-pack/scripts/verify-no-conflict-markers.py` (pack revision 70; the repo's `tools/` copy until 2026-09-14), on every push. It flags `<<<<<<<`, `>>>>>>>` and
   `|||||||` at line start in every tracked text file, and deliberately does **not** flag a bare
   `=======`, which is a valid Markdown setext underline — a gate that fires on real prose is a gate
   someone switches off. **Observed failing on the un-fixed shape rather than on a fixture:** run
@@ -4511,7 +4511,7 @@ for both or split.*
   discarded by a pipe. In each the mechanism reports success, and the absence has no signature. That
   meta-shape is the thing to look for, and it is why each was found by *measuring the control itself*
   rather than by trusting its green.
-- **Status:** `partially-controlled` — the join is a script (`tools/conductor-join.py`, recurrence 4) and the gate runner (`tools/run-verify-gates.py`, recurrence 3) gives any other line one status to chain on; the exposure remains every other shell line an agent types
+- **Status:** `partially-controlled` — the join is a script (`docs/ai-forward-pack/scripts/conductor-join.py` reading `docs/coordination/join.json` since pack revision 70; `tools/conductor-join.py` before, recurrence 4) and the gate runner (`tools/run-verify-gates.py`, recurrence 3) gives any other line one status to chain on; the exposure remains every other shell line an agent types
 
 ---
 
@@ -4548,10 +4548,10 @@ for both or split.*
   `git commit --no-edit` sealed a merge carrying `<<<<<<<` (DC-136's shape). Caught before the push
   only because the gate was re-run bare on a hunch, then the merge amended. Four recurrences, one
   cause: a hand-typed line at the join whose status belonged to a formatter. **Control:**
-  `tools/conductor-join.py` — merge → markers → register → recount → audit → regenerate → commit →
+  `conductor-join.py` (lifted into the pack at revision 70 as `docs/ai-forward-pack/scripts/conductor-join.py`, the repo's steps in `docs/coordination/join.json`) — merge → markers → register → recount → audit → regenerate → commit →
   the gate runner → push → Release, each a subprocess gated by its own return code, no pipes, a
   conflict stopping the script with the file list. The join line is now `python
-  tools/conductor-join.py <branch> …` and nothing else. Status moves to `controlled` for the join;
+  docs/ai-forward-pack/scripts/conductor-join.py <branch> …` and nothing else. Status moves to `controlled` for the join;
   the class stays live for every other shell line an agent types.
 - **Measured across the whole programme (the session profile `sp-0002`, 2026-09-13):** the shape
   — a gate's status behind `| tail`, `| head`, `| grep` with no `pipefail` on the main line — appeared
@@ -7237,7 +7237,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Control:** the launcher uses `CREATE_NO_WINDOW` (a headless console: the helper still owns a
   console, ConPTY still works, no tab exists to attach to) — the same 21 tests, 0 born; the whole
   `Platform=Windows` half (166), 0 born. The helper's exit code 4 ("no console window") and the four
-  assertions on it are retired with the premise. Gate: `tools/verify-no-new-console-launches.py`
+  assertions on it are retired with the premise. Gate: `docs/ai-forward-pack/scripts/verify-no-new-console-launches.py` (pack revision 70; `tools/` until 2026-09-14)
   (every `*.cs` under `src/` and `tests/`, code lines only, token `CREATE_NEW_CONSOLE`, no
   allowlist; `--self-test`), run by `run-verify-gates.py` and in CI.
 - **Status:** `controlled`.
@@ -7317,7 +7317,7 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   hit a prose token yet (their tokens do not read naturally in prose), recorded rather than fixed
   here (their files are other slices').
 - **Control:** `TheSendGateSendsWhatProjectionProjectsTests.Scan` reads lines and skips any whose
-  first non-blank characters are `//` (the shape `tools/verify-no-new-console-launches.py` already
+  first non-blank characters are `//` (the shape `verify-no-new-console-launches.py` already
   uses: code lines only); the census' four-part statement in the Proof Pack names the rule.
 - **Status:** `controlled`.
 

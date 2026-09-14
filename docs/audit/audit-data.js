@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T15:04:50Z",
+  "generated": "2026-09-14T15:24:47Z",
   "audit": [
     {
       "actor": null,
@@ -15626,6 +15626,35 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T14:45:40Z",
       "duration_seconds": 1141.0
+    },
+    {
+      "id": "al-01M2G8AM5S38YKDNNAJP88K13A",
+      "shortname": "join-updatepack-rev70",
+      "datetime": "2026-09-14T15:24:46Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "Joined chore/updatepack-rev70 (d5adbefd): the AI-Forward Pack at revision 70 in ai-de (68 -> 70: coord-core rev-list merged label and claim caps; UTF-8 audit and prompt scripts; the profiler reads sub-agent transcripts; the four lifted scripts delegated through docs/coordination/join.json with tools/run-verify-gates.py kept as the repo's line; CT27 docs, three skills whole, the managed block; the SessionStart/SubagentStart marker hook beside the re-read guard; DC-200's page box in six mockup audits and verify-mockup-audits.py). The register's six live control citations (DC-113, DC-136, DC-170) repointed at the pack paths in the join commit. This is the first join run by the pack's own script. recount_seconds=494 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/ai-forward-pack/INSTALL.md",
+        "docs/coordination/join.json"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "main carries pack revision 70 with every gate green and the Release build current",
+      "done_when": "merge clean; markers gate green; register sequence green; whole + Core portable + Core Windows recounts baselined and the --no-run outcome green; 36/36 gates on the committed tree; pushed; ProductVersion printed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T15:16:30Z",
+      "duration_seconds": 496.0
     }
   ],
   "changes": [

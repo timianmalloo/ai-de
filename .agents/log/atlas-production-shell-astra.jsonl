@@ -33,3 +33,4 @@
 {"agent": "copilot-atlas-production-shell", "at": 1789340048.9412973, "kind": "release", "path": "src/AiDe.App/Workbench/Understanding/AtlasWorkspaceOwner.cs", "seq": 33, "session": "atlas-production-shell-astra", "wi": "WI-0"}
 {"agent": "copilot-atlas-production-shell", "at": 1789340048.9990604, "kind": "release", "path": "src/AiDe.App/Workbench/Understanding/AtlasLoadingHost.cs", "seq": 34, "session": "atlas-production-shell-astra", "wi": "WI-0"}
 {"agent": "copilot-atlas-production-shell", "at": 1789340049.0556903, "kind": "release", "path": "tests/AiDe.App.Tests/Workbench/Understanding/AtlasSharedHostAdmissionTests.cs", "seq": 35, "session": "atlas-production-shell-astra", "wi": "WI-0"}
+{"agent": "copilot-atlas-production-shell", "at": 1789397581.30741, "kind": "session-end", "path": "-", "seq": 36, "session": "atlas-production-shell-astra", "wi": "WI-0", "worktree": "C:/Projects/ai-de-atlas-production-shell"}
