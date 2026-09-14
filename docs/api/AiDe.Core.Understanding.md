@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Understanding: 72 types, 222 members, 16% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Understanding: 73 types, 230 members, 16% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Understanding`
 
-**72 public types · 222 public members · 16% documented.**
+**73 public types · 230 public members · 16% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -563,6 +563,12 @@ selection; consumers must subsequently adopt the manifest token of an accepted s
 
 *No doc comment on this type.* **(gap)**
 
+## `AtlasConnectionEndReason`
+
+*enum* — `AtlasReaderContracts.cs`
+
+*No doc comment on this type.* **(gap)**
+
 ## `AtlasCapabilitiesRequestDto`
 
 *record* — `AtlasReaderContracts.cs`
@@ -728,6 +734,14 @@ This is not an admission, token-store, transport-registration or root-I/O implem
 | `byte[] SerializeSource(AtlasSourceDto value)` | Structural-only source encoding; selection publication additionally requires request bounds. |
 | `AtlasSourceDto DeserializeSource(ReadOnlyMemory<byte> body)` | **(gap)** |
 | `AtlasSelectRequestDto DeserializeSelect(ReadOnlyMemory<byte> body)` | **(gap)** |
+| `AtlasCapabilitiesRequestDto DeserializeCapabilitiesRequest(ReadOnlyMemory<byte> body)` | **(gap)** |
+| `AtlasCapabilitiesDto DeserializeCapabilities(ReadOnlyMemory<byte> body)` | **(gap)** |
+| `AtlasAdmitRequestDto DeserializeAdmitRequest(ReadOnlyMemory<byte> body)` | **(gap)** |
+| `AtlasAdmitDto DeserializeAdmit(ReadOnlyMemory<byte> body)` | **(gap)** |
+| `AtlasInventoryRequestDto DeserializeInventoryRequest(ReadOnlyMemory<byte> body)` | **(gap)** |
+| `AtlasRestoreRequestDto DeserializeRestoreRequest(ReadOnlyMemory<byte> body)` | **(gap)** |
+| `AtlasReleaseRequestDto DeserializeReleaseRequest(ReadOnlyMemory<byte> body)` | **(gap)** |
+| `AtlasReleasedDto DeserializeReleased(ReadOnlyMemory<byte> body)` | **(gap)** |
 
 ## `AtlasSourceBindingMismatch`
 

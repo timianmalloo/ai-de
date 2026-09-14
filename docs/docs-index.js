@@ -2170,7 +2170,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.ViewModels: 1 types, 14 members, 60% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.ViewModels: 1 types, 15 members, 62% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2183,7 +2183,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4f28aaddad560ff7e749be0c28296a69dc1e9dde0fc38bc26c456847020a233e"
+      "sourceSha256": "d104cb177c38ce77498f640adf2c9fc302dd4844aed99b0f2f83a25b4fe55dd5"
     },
     {
       "id": "api-aide-app-workbench",
@@ -2445,7 +2445,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Ipc: 51 types, 120 members, 64% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Ipc: 52 types, 132 members, 61% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2458,7 +2458,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6df911a0686ab51a2822be00ef456254514c288e792d09dc92ab4daf2e803b8c"
+      "sourceSha256": "51a59261a78e71497e9c745c6d07050a156507f7e2bbf5e437f922b9b012a30e"
     },
     {
       "id": "api-aide-core-mcp",
@@ -2695,7 +2695,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Understanding: 72 types, 222 members, 16% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Understanding: 73 types, 230 members, 16% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2708,7 +2708,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "eec1396d66cd4012f2395ca5ae3f7b62a8f4a6aa205397ceaf21c00362133d05"
+      "sourceSha256": "43ffda3f361fa259b517aca5d3757c2208081c7f8a1e46c68d0b4bee5ccf6989"
     },
     {
       "id": "api-aide-core-upgrade",
@@ -4781,7 +4781,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "70f80efa96846789cb708898e6e85cf49a6e775367673b4fb7bec885968acc11"
+      "sourceSha256": "ae10c8d5e7a72237890317720b36e391afd8db12cdff3c802e758b60edc0e436"
     },
     {
       "id": "note-atlas-reader-native-direction",
@@ -11096,7 +11096,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b9ae692c43425c07ff6c4f3afd019f3808976f1ded43a7cb023d25b49cb10696"
+      "sourceSha256": "221fdac7acf7533cd0513e9f17c84094be7a0f086c373e8220fa58b6cd78cbee"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -11721,7 +11721,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "49e39880853173c925ebcf4c9cd1bc86481c8cfe45c1988ed122c8f2f617621b"
+      "sourceSha256": "022ba9f2b45b97cd74ae4e05a5bb12e81473b724a58efdb916a9e420524b8c44"
     },
     {
       "id": "session-profiles",
@@ -19042,5 +19042,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "1afd9b4fefe82c24d55cf3ee4f30e9d07c97cc64b96865acf0f1c5d42fcd8790"
+  "graphSha256": "d508e78896f15f64bf44768e9047815632d880dd48f12c2de46aefd8af5ac073"
 };

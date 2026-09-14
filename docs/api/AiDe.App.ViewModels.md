@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.ViewModels: 1 types, 14 members, 60% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.ViewModels: 1 types, 15 members, 62% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.ViewModels`
 
-**1 public types · 14 public members · 60% documented.**
+**1 public types · 15 public members · 62% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -39,6 +39,7 @@ Phase-2 canvas — it is the permanent keyboard and screen-reader equivalent.
 | `MainWindowViewModel(WorkspaceCore core)` | Opens over the in-process core (ADR-0009's first hosting mode). |
 | `MainWindowViewModel(` | Opens over any read surface — in this process or a daemon's. |
 | `event PropertyChangedEventHandler? PropertyChanged` | **(gap)** |
+| `Func<AiDe.Core.Understanding.IAtlasWorkspaceReader>? AtlasReaderFactory { get; }` | Creates a new owned Atlas reader for the Shell owner. Existing query/command interfaces remain borrowed. |
 | `string WindowTitle` | **(gap)** |
 | `string Heading` | **(gap)** |
 | `ObservableCollection<EvidenceRow> Rows { get; } = []` | **(gap)** |

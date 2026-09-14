@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T13:31:20Z",
+  "generated": "2026-09-14T14:28:26Z",
   "audit": [
     {
       "actor": null,
@@ -15974,6 +15974,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "7be3be92b8c6785d88895927f7dbe0647bb75a49",
         "short": "7be3be92b",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2G53E2E1ZZKN63N9S7MV850",
+      "shortname": "atlas-conditional-join-idle-oracle",
+      "datetime": "2026-09-14T14:28:25Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Coregatescleared4d03; fourcodecommitsjoined4855151fand19sourcecomparisonempty. JoinedCore458/459: idleGitassertzeroowner immediatelyafterclientRestore observed1. Parentreadactualtest/server, no rerun-to-green. Owner55C6regular132to138releasedspecificmatchedRestore/client-complete/server-drain proof; onlydemonstratedoraclecorrection, productionlockcontractunchanged. Test2DS2freshreviews, joinedCoreANDApprequiredbeforeShell16. Partialallocationpatchupdatedsole§2; failedno-opnotehunkwasnotrepeated; actualnote/proofnowupdated.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Establish actual server-idle completion before accepting the joined runtime.",
+      "done_when": "The request-correlated drain oracle is proven and corrected joined Core and App gates support the real handoff.",
+      "tier": "T2",
+      "main_calls": 234,
+      "main_budget": 256,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T14:28:25Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "4855151f0328bd3c0623e3a5e23f58e2cb9c9248",
+        "short": "4855151f0",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

@@ -613,6 +613,22 @@ does not wait for guessed IDs. Mainline ceiling is prospectively 256, retaining 
 previous calls/overruns/wrappers. Shell sixteen and independent-window fifteen stay held
 until the actual repaired Core handoff is cleared and joined.
 
+Owner turn 55 grants six new C leaves, regular **132/138**, to establish the specific
+final-Restore receive-versus-drain ordering in the existing server qualification seams
+and `AtlasProductionAdmissionTests.cs`. Pause after its full writer return but before
+cleanup; correlate that request's ownership and matching drain signal, accounting for
+other global owners. Correct the idle assertion only if the controlled observation
+supports it, with a finite signal deadline and no sleeps/polling/early pin release.
+Real Git writes, stale-scope refusal and reusable receipts remain mandatory.
+
+Four new review leaves are separate (Test two, DS two). The conditionally joined
+`4855151f` code is identical to reviewed `4d03bd19`, but its Core run is 458/459 because
+the old test asserts zero native owners immediately after the client reply. That gate
+remains failed until corrected current-pin Core **and App** runs are observed.
+If ownership persists after the matching drain, the runtime finding stays open and its
+repair scope needs explicit approval. After joined green, fresh Test/DS clearance and
+parent handoff confirmation, the already funded Shell sixteen may be released.
+
 ### Core owns
 
 | Path | Why |

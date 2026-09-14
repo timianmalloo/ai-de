@@ -1091,3 +1091,24 @@ therefore this pass assigned no new canonical Atlas numbers or invented placehol
 Full semantic equivalence and replacement reservation remain named pending decisions.
 The two retired Atlas heading meanings and the publication class are not silently mapped
 to unrelated published classes. Product source/main integration is unaffected.
+
+## Joined receive-versus-drain oracle, Owner turn 55
+
+All required current-pin Core gates cleared for `4d03bd19`; Conductor conditionally joined
+only the four source commits as `564abd8a`, `dd982d0b`, `5b8562f5` and `4855151f`.
+The nineteen source files match the reviewed candidate. The joined Core run nevertheless
+reported 458/459: the idle-Git test expected zero native owners immediately after the
+client's final Restore reply and observed one. The App run did not proceed past that failure.
+
+Conductor opened the test and server ordering rather than rerunning until green. The
+client can receive a full frame before the server's publication-finalization path releases
+native ownership. Owner authorizes six C leaves (regular 132/138) to establish that ordering
+on the specific final Restore and its matching drain signal, with other global owners
+accounted for. Only if proven may the test synchronize to actual server idle; no sleep,
+polling-until-green or early release is allowed. Retained ownership after the matching
+drain remains a runtime finding needing its own repair scope.
+
+Test and DS each receive two fresh review leaves. The failing joined TRX and all earlier
+green runs stay. After the corrected joined Core and App gates, fresh review and actual
+factory handoff confirmation, the existing Shell sixteen may proceed. Current joined
+source is not yet accepted as a complete runtime.

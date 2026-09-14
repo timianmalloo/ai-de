@@ -10,17 +10,33 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Ipc: 51 types, 120 members, 64% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Ipc: 52 types, 132 members, 61% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Ipc`
 
-**51 public types · 120 public members · 64% documented.**
+**52 public types · 132 public members · 61% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
 > gap rather than given invented text. The extractor is a lexical reader, not a compiler:
 > it does not resolve generics, partial classes across files, or conditional compilation.
+
+## `AtlasWorkspaceOperations`
+
+*class* — `AtlasWorkspaceOperations.cs`
+
+The only production composition facade; native authority and scope state remain inside Core.
+
+| Member | Summary |
+|---|---|
+| `string Capabilities = "atlas.capabilities.v1"` | **(gap)** |
+| `string Admit = "atlas.admit.v1"` | **(gap)** |
+| `string Inventory = "atlas.inventory.v1"` | **(gap)** |
+| `string Select = "atlas.select.v1"` | **(gap)** |
+| `string Restore = "atlas.restore.v1"` | **(gap)** |
+| `string Release = "atlas.release.v1"` | **(gap)** |
+| `IAsyncDisposable Register(` | **(gap)** |
 
 ## `Capability`
 
@@ -112,6 +128,10 @@ caller whether a token is live on a workspace it has no business naming.
 | `void Register(string operation, Func<IpcRequest, IpcPeer, IpcResponse> handler)` | Registers an operation. Unregistered operations are rejected, never guessed at. |
 | `IpcResponse OpenWorkspace(IpcRequest request, IpcPeer peer)` | The opening exchange: agree a version and issue a capability, in that order. |
 | `IpcResponse Invoke(IpcRequest request, IpcPeer peer)` | Handles a command: every gate, in order, before any operation runs. |
+| `void RegisterAsync(string operation, Func<IpcRequest, IpcPeer, CancellationToken, ValueTask<IpcResponse>> handler)` | **(gap)** |
+| `ValueTask<IpcResponse> InvokeAsync(IpcRequest request, IpcPeer peer, CancellationToken cancellationToken)` | **(gap)** |
+| `void RegisterConnectionEnded(Func<IpcPeer, AtlasConnectionEndReason, CancellationToken, ValueTask> handler)` | **(gap)** |
+| `ValueTask ConnectionEndedAsync(IpcPeer peer, AtlasConnectionEndReason reason, CancellationToken cleanupToken)` | **(gap)** |
 
 ### `IpcResponse OpenWorkspace(IpcRequest request, IpcPeer peer)`
 
@@ -906,6 +926,7 @@ epoch would defeat it while appearing to work.
 | Member | Summary |
 |---|---|
 | `long Epoch` | The epoch this client is bound to. |
+| `Understanding.IAtlasWorkspaceReader CreateAtlasReader()` | Creates a separate Atlas owner using this connection's actual workspace identity. Ownership of the returned reader transfers to its caller; this client's query pipe is borrowed. |
 | `Task<WorkspaceClient> ConnectAsync(` | Connects, handshakes, and returns a client ready to query. |
 | `Task<DescribeResult> DescribeAsync(` | **(gap)** |
 | `Task<ImpactResult> ImpactAsync(` | **(gap)** |

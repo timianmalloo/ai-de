@@ -360,3 +360,22 @@ ID and title. No replacement number is guessed: numeric 209 is already allocated
 disposition remain pending. The current Conductor register passes the collision check
 against the pinned published revision; old worker branches are retained historical copies,
 not merged over that reconciled register. Source repair does not wait for pending numbers.
+
+## Conditional Core join: one idle-oracle failure remains
+
+The final publication guards/resource oracles cleared Test and DS, with Security's
+ownership/revocation contract unchanged. Conductor joined the four code-only commits;
+`4855151f0328bd3c0623e3a5e23f58e2cb9c9248` matches the reviewed nineteen-file candidate.
+No old worker register or private history was merged.
+
+`files/atlas-runtime-joined/joined-runtime-core.trx` records 458 passed, one failed, total
+459. `NativeScopeReusesConnectionPreservesQReceiptsAndReleasesGitPinsWhileIdle`, line 274,
+expected `ChargedOwners == 0` immediately after client Restore completion and observed one.
+Conductor read the exact assertion. There is no wait for the matching server publication
+drain before it, whereas the server releases resources after its full write.
+
+That supports a timing hypothesis, not yet a final classification. Owner turn 55 releases
+six calls to prove the specific request's client-complete/server-drain distinction and
+correct only the demonstrated error. Zero ownership after matching drain, real Git
+add/commit, stale-scope refusal and reusable receipts remain required. A persistent owner
+after drain is not relabelled test timing. App integration gates and Shell remain held.
