@@ -147,6 +147,38 @@ public sealed class AtlasDaemonMainWindowProofTests
                     Assert.Equal(memberSelection.Source.Highlights.Length, view.CurrentHighlights.Count);
                     Assert.True(File.ReadAllText(firstSourcePath).Substring(method.Span.Start, method.Span.Length).Contains("Answer()", StringComparison.Ordinal),
                         "The returned span must identify the method in the real owned bytes.");
+                    var selectedOutline = Assert.Single(view.OutlineRows,
+                        row => row.ObservationKey == method.DeclarationToken);
+                    view.OutlineControl.SelectedItem = selectedOutline;
+                    view.OutlineControl.ScrollIntoView(selectedOutline);
+                    window.UpdateLayout();
+                    await IdleAsync();
+                    Assert.True(view.FilesControl.Focus(), "The rendered Atlas files control must accept keyboard focus.");
+                    await IdleAsync();
+                    var atlas = Assert.Single(window.Shell.Architecture.Service.Zones.AllSurfaces(),
+                        surface => surface.Kind == "code-atlas");
+                    var canonicalZone = window.Shell.Architecture.Service.Zones.FindZoneOf(atlas.SurfaceId);
+                    receipt.Mark("normal-default.placement", new
+                    {
+                        atlas.SurfaceId, CanonicalZone = canonicalZone.ToString(),
+                        AtlasWidth = view.ActualWidth, WindowWidth = window.ActualWidth,
+                        view.IsVisible, view.IsKeyboardFocusWithin,
+                        window.Shell.Architecture.Controller.FocusedSurfaceId,
+                        window.Shell.Architecture.Controller.FocusedStackId,
+                        PlacementAction = "existing Architecture opener; normal new Center default",
+                        MaximizeInvoked = false,
+                    });
+                    try
+                    {
+                        _ = MeasureReading(window, view, actualSource, memberSelection.Source.Highlights,
+                            receipt, "normal-default-observed", requireReadable: false);
+                    }
+                    finally { Capture(window, evidence, receipt, "mainwindow-member-normal-default.png"); }
+                    Assert.True(canonicalZone == ZoneId.Center, "The real normal opener must place a new Atlas in canonical Center.");
+                    Assert.True(view.IsVisible && view.IsKeyboardFocusWithin);
+                    _ = MeasureReading(window, view, actualSource, memberSelection.Source.Highlights,
+                        receipt, "normal-default-verified", requireReadable: true);
+                    await ObserveAutomationAsync(new WindowInteropHelper(window).Handle, receipt);
                     Assert.True(view.CanGoBack);
                     await view.GoBackAsync();
                     var restored = Assert.IsType<AtlasSelectionDto>(firstLease.LastSelection);
@@ -363,7 +395,147 @@ public sealed class AtlasDaemonMainWindowProofTests
         receipt.Mark("uia.own-hwnd", new { Hwnd = hwnd.ToInt64(), ProcessId = Environment.ProcessId, Apartment = "MTA", Names = names });
     });
 
-    private static void Capture(Window window, string evidence, Receipt receipt)
+    private static double MeasureReading(Window window, AtlasReaderView view, string source,
+        IReadOnlyList<AtlasSpanDto> highlights, Receipt receipt, string stage, bool requireReadable)
+    {
+        var client = Assert.IsAssignableFrom<FrameworkElement>(window.Content);
+        var clientBounds = client.TransformToAncestor(window).TransformBounds(new Rect(client.RenderSize));
+        var textView = view.SourceControl.TextArea.TextView;
+        textView.EnsureVisualLines();
+        var viewport = VisibleBounds(textView, window, clientBounds);
+        Rect SourceRect(int start, int length)
+        {
+            var document = view.SourceControl.Document;
+            var first = new ICSharpCode.AvalonEdit.TextViewPosition(document.GetLocation(start));
+            var last = new ICSharpCode.AvalonEdit.TextViewPosition(document.GetLocation(start + length));
+            var top = textView.GetVisualPosition(first, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.LineTop)
+                - textView.ScrollOffset;
+            var bottom = textView.GetVisualPosition(last, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.LineBottom)
+                - textView.ScrollOffset;
+            return textView.TransformToAncestor(window).TransformBounds(new Rect(top, bottom));
+        }
+        var lineBounds = new List<Rect>();
+        var offset = 0;
+        foreach (var line in source.Split('\n'))
+        {
+            if (line.Length > 0) lineBounds.Add(SourceRect(offset, line.Length));
+            offset += line.Length + 1;
+        }
+        var highlightBounds = highlights.Select(span => SourceRect(span.Start, span.Length)).ToArray();
+        var container = Assert.IsType<ListBoxItem>(
+            view.OutlineControl.ItemContainerGenerator.ContainerFromItem(view.OutlineControl.SelectedItem));
+        var label = Assert.Single(Visuals<TextBlock>(container),
+            block => block.Text.Contains("Answer", StringComparison.Ordinal));
+        var drawing = VisualTreeHelper.GetDrawing(label);
+        Assert.NotNull(drawing);
+        var runs = RenderedLabelRuns(drawing, Matrix.Identity).ToArray();
+        var labelGlyphs = runs.Select(run => label.TransformToAncestor(window).TransformBounds(run.Bounds)).ToArray();
+        var labelViewport = VisibleBounds(label, window, clientBounds, startAtLayoutBounds: false);
+        var selected = Assert.IsType<OutlineRow>(view.OutlineControl.SelectedItem);
+        var accessibleText = AutomationProperties.GetName(container);
+        var expectedCharacters = new string(label.Text.Where(character => !char.IsWhiteSpace(character)).ToArray());
+        var renderedCharacters = new string(string.Concat(runs.Select(run => run.Characters))
+            .Where(character => !char.IsWhiteSpace(character)).ToArray());
+        var completeCharacters = expectedCharacters == renderedCharacters;
+        var completeLabel = selected.ToString() == label.Text && selected.AccessibleName == accessibleText;
+        var textFits = !viewport.IsEmpty && lineBounds.Count > 0 && lineBounds.All(viewport.Contains);
+        var highlightFits = !viewport.IsEmpty && highlightBounds.Length > 0 && highlightBounds.All(viewport.Contains);
+        var labelFits = !labelViewport.IsEmpty && labelGlyphs.Length > 0 && labelGlyphs.All(labelViewport.Contains);
+        var clientViewport = viewport;
+        if (!clientViewport.IsEmpty) clientViewport.Offset(-clientBounds.X, -clientBounds.Y);
+        receipt.Mark(stage + ".reading-geometry", new
+        {
+            CoordinateUnit = "WPF device-independent pixels", WindowClientBounds = Box(clientBounds),
+            SourceViewportWindow = Box(viewport), SourceViewportClient = Box(clientViewport),
+            SourceLineRectsWindow = lineBounds.Select(Box).ToArray(),
+            HighlightRectsWindow = highlightBounds.Select(Box).ToArray(),
+            SelectedLabelGlyphRunsWindow = labelGlyphs.Select(Box).ToArray(),
+            SelectedLabelViewportWindow = Box(labelViewport), RenderedRunCount = runs.Length,
+            SelectedLabelSha256 = Hash(Encoding.UTF8.GetBytes(label.Text)),
+            FullAccessibleTextSha256 = Hash(Encoding.UTF8.GetBytes(accessibleText)),
+            ExpectedCharactersSha256 = Hash(Encoding.UTF8.GetBytes(expectedCharacters)),
+            RenderedCharactersSha256 = Hash(Encoding.UTF8.GetBytes(renderedCharacters)),
+            CompleteGlyphCharacters = completeCharacters, CompleteLabelAndAccessibleText = completeLabel,
+            label.TextWrapping, label.TextTrimming,
+            label.FontSize, SourceFontSize = view.SourceControl.FontSize,
+            SourceScrollX = textView.ScrollOffset.X, SourceScrollY = textView.ScrollOffset.Y,
+            AllSourceLinesFit = textFits, HighlightFits = highlightFits, FullSelectedLabelFits = labelFits,
+            AtlasWidth = view.ActualWidth, ParentPixelAcceptancePending = true,
+        });
+        if (requireReadable)
+        {
+            Assert.True(textFits, "Every source text line must fit the client- and ancestor-clipped source viewport.");
+            Assert.True(highlightFits, "The selected identifier highlight must fully fit the visible source viewport.");
+            Assert.True(labelFits, "The full selected method label must fit its client- and ancestor-clipped viewport.");
+            Assert.True(completeCharacters && completeLabel,
+                "All non-whitespace label characters must be drawn and full accessible text preserved.");
+            Assert.Equal(TextWrapping.Wrap, label.TextWrapping);
+            Assert.Equal(TextTrimming.None, label.TextTrimming);
+            Assert.True(double.IsFinite(label.ActualWidth) && label.ActualWidth > 0
+                && labelViewport.Width <= view.OutlineControl.ActualWidth,
+                "Actual label clipping must stay bounded by the finite outline viewport.");
+            Assert.True(labelGlyphs.Select(bounds => bounds.Top).Distinct().Count() > 1,
+                "The complete real method label must render on multiple wrapped lines.");
+            Assert.All(labelGlyphs, bounds => Assert.True(double.IsFinite(bounds.Width)
+                && double.IsFinite(bounds.Height) && bounds.Width > 0 && bounds.Height > 0));
+            Assert.True(view.SourceControl.FontSize >= 12 && label.FontSize >= 11,
+                "Readability proof must use the real normal-size source and outline text.");
+        }
+        return view.ActualWidth;
+    }
+
+    private static IEnumerable<(Rect Bounds, string Characters)> RenderedLabelRuns(Drawing drawing, Matrix parent)
+    {
+        if (drawing is DrawingGroup group)
+        {
+            Assert.True(group.Opacity > 0);
+            var transform = group.Transform?.Value ?? Matrix.Identity;
+            transform.Append(parent);
+            foreach (var child in group.Children)
+                foreach (var run in RenderedLabelRuns(child, transform))
+                {
+                    if (group.ClipGeometry is { } clip)
+                        Assert.True(new MatrixTransform(transform).TransformBounds(clip.Bounds).Contains(run.Bounds),
+                            "A drawing-level clip must not hide any rendered label glyph.");
+                    yield return run;
+                }
+        }
+        else if (drawing is GlyphRunDrawing glyph)
+        {
+            Assert.NotNull(glyph.GlyphRun.Characters);
+            yield return (new MatrixTransform(parent).TransformBounds(glyph.Bounds),
+                new string(glyph.GlyphRun.Characters.ToArray()));
+        }
+    }
+
+    private static Rect VisibleBounds(FrameworkElement visual, Window window, Rect clientBounds,
+        bool startAtLayoutBounds = true)
+    {
+        var visible = startAtLayoutBounds
+            ? visual.TransformToAncestor(window).TransformBounds(new Rect(visual.RenderSize))
+            : clientBounds;
+        visible.Intersect(clientBounds);
+        for (DependencyObject? current = visual; current is not null && !ReferenceEquals(current, window);
+             current = VisualTreeHelper.GetParent(current))
+        {
+            if (current is not UIElement element) continue;
+            if (!element.IsVisible || element.Opacity == 0) return Rect.Empty;
+            if (element.ClipToBounds)
+                visible.Intersect(element.TransformToAncestor(window).TransformBounds(new Rect(element.RenderSize)));
+            if (VisualTreeHelper.GetClip(element) is { } clip)
+                visible.Intersect(element.TransformToAncestor(window).TransformBounds(clip.Bounds));
+            if (visible.IsEmpty) return visible;
+        }
+        return visible;
+    }
+
+    private static object Box(Rect value) => new
+    {
+        Empty = value.IsEmpty, X = value.IsEmpty ? 0 : value.X, Y = value.IsEmpty ? 0 : value.Y,
+        Width = value.IsEmpty ? 0 : value.Width, Height = value.IsEmpty ? 0 : value.Height,
+    };
+
+    private static void Capture(Window window, string evidence, Receipt receipt, string name = "mainwindow.png")
     {
         var width = (int)Math.Ceiling(window.ActualWidth);
         var height = (int)Math.Ceiling(window.ActualHeight);
@@ -376,7 +548,7 @@ public sealed class AtlasDaemonMainWindowProofTests
             "The owned-window capture must not be a transparent blank.");
         var encoder = new PngBitmapEncoder();
         encoder.Frames.Add(BitmapFrame.Create(bitmap));
-        var path = Path.Combine(evidence, "mainwindow.png");
+        var path = Path.Combine(evidence, name);
         using (var file = File.Create(path)) encoder.Save(file);
         receipt.Mark("capture.window-only", new { Path = path, Width = width, Height = height, Sha256 = Hash(File.ReadAllBytes(path)) });
     }
@@ -601,6 +773,7 @@ public sealed class AtlasDaemonMainWindowProofTests
                     Completed = Completed && FailureCount == 0, FailureCount,
                     SameLiveScopeServerIdleBarrier = "NOT ESTABLISHED; in-process idle-Git evidence is separate",
                     DeliberatelyHeldLatePublicationRace = "NOT EXERCISED; drained replacement and persistent clearing asserted",
+                    DefaultPlacement = "Reviewed normal Center placement; actual pixel acceptance belongs to parent",
                     Events = _events,
                 }, new JsonSerializerOptions { WriteIndented = true }));
         }
