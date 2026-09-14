@@ -29,6 +29,12 @@ namespace AiDe.App.Workbench.Composer;
 /// <param name="Providers">The provider rows, parsed from configuration by the caller.</param>
 /// <param name="CoordCommand">The coordination CLI, per machine.</param>
 /// <param name="PromptTimeout">How long the turn may take.</param>
+/// <param name="Accounts">
+/// The session's accounts as the composer's picker offers them (Ruling 105 (2)) — each with the
+/// engine and model its provider binds to and whether it is ready now; a non-ready one is offered
+/// disabled with its state, never hidden. <see cref="EngineId"/>/<see cref="Model"/>/<see cref="AccountLabel"/>
+/// are the session's default binding; an override at Send picks one of these instead.
+/// </param>
 public sealed record ComposerSendContext(
     string RepositoryRoot,
     string DataDirectory,
@@ -40,7 +46,25 @@ public sealed record ComposerSendContext(
     IReadOnlyList<string> ProofPackArtifacts,
     IReadOnlyList<ProviderRow> Providers,
     string CoordCommand = "coord",
-    TimeSpan? PromptTimeout = null);
+    TimeSpan? PromptTimeout = null,
+    IReadOnlyList<SessionAccountOption>? Accounts = null)
+{
+    /// <summary>The picker's rows; empty when the binder offered none.</summary>
+    public IReadOnlyList<SessionAccountOption> AccountOptions => Accounts ?? [];
+}
+
+/// <summary>
+/// One row of the composer's account picker (Ruling 105 (2)): the account by identity, the engine
+/// and model its provider binds to (derived through the catalog and the provider file), and its
+/// state as derived at bind time.
+/// </summary>
+/// <param name="Provider">The provider id.</param>
+/// <param name="Label">The account label — what the operator reads and what the wire carries.</param>
+/// <param name="EngineId">The catalog engine for the provider, or <c>not recorded</c> when the binding refused.</param>
+/// <param name="Model">The file's model for that engine, or <c>not recorded</c>.</param>
+/// <param name="Ready">Whether a turn may bind this account now.</param>
+/// <param name="StateWord">ready · needs sign-in · not configured — shown on a disabled row.</param>
+public sealed record SessionAccountOption(string Provider, string Label, string EngineId, string Model, bool Ready, string StateWord);
 
 /// <summary>Why a send did not happen. The field is a member, not a substring of prose.</summary>
 /// <param name="Errors">Field-level errors from the one validation mechanism.</param>
@@ -370,6 +394,31 @@ public sealed class ComposerSendGate
                 return null;
             }
 
+            // THE ACCOUNT (Ruling 105 condition 1): the operator's override — an `account` operator row
+            // the projection read back — or the session's default the context carries. An override
+            // is one of the context's own options (host-owned, C16), and a non-ready one is refused
+            // by name; the engine and model are the option's, derived, never typed.
+            var engineId = context.EngineId;
+            var model = context.Model;
+            var accountLabel = context.AccountLabel;
+            if (projection.AccountOverride is { } chosenAccount && !string.Equals(chosenAccount, context.AccountLabel, StringComparison.Ordinal))
+            {
+                var option = context.AccountOptions.FirstOrDefault(o => string.Equals(o.Label, chosenAccount, StringComparison.Ordinal));
+                if (option is null || !option.Ready)
+                {
+                    refusal = new ComposerSendRefusal(
+                        [],
+                        option is null
+                            ? $"account '{chosenAccount}' is not one of this session's accounts"
+                            : $"account '{chosenAccount}' is {option.StateWord}; choose a ready account or configure it from New Session");
+                    return null;
+                }
+
+                engineId = option.EngineId;
+                model = option.Model;
+                accountLabel = option.Label;
+            }
+
             // THE ANTI-CORRUPTION LAYER to the agent plane's Published Language (ADR-0033): the
             // projection maps onto Goal, Lease, Prompt and TaskClass; every other field is the host's
             // context (Security C16) — a hostile draft changes none of them.
@@ -377,9 +426,9 @@ public sealed class ComposerSendGate
                 RepositoryRoot: context.RepositoryRoot,
                 DataDirectory: context.DataDirectory,
                 AdapterInstallRoot: context.AdapterInstallRoot,
-                EngineId: context.EngineId,
-                Model: context.Model,
-                AccountLabel: context.AccountLabel,
+                EngineId: engineId,
+                Model: model,
+                AccountLabel: accountLabel,
                 TaskClass: projection.TaskClass,
 
                 // A Message carries no goal block (Ruling 75).

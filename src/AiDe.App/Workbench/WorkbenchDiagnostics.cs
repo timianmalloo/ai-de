@@ -243,12 +243,23 @@ public static class WorkbenchDiagnostics
     /// the one site that opens a lane's session, so the log holds it whether or not anyone watched.
     /// The unit test proves the shape; this line proves what was sent.
     /// </remarks>
-    public static void LaneSessionNew(string runId, string laneId, string sessionId, JsonObject? parameters)
+    /// <param name="runId">The run.</param>
+    /// <param name="laneId">The lane.</param>
+    /// <param name="sessionId">The ACP session id the peer answered.</param>
+    /// <param name="parameters">The <c>session/new</c> params as sent.</param>
+    /// <param name="engineId">The turn's engine (Ruling 105 condition 3) — the fact row of one turn's binding.</param>
+    /// <param name="model">The turn's model.</param>
+    /// <param name="accountLabel">The account the turn bills — so a per-turn switch is observable, not inferred.</param>
+    public static void LaneSessionNew(
+        string runId, string laneId, string sessionId, JsonObject? parameters,
+        string engineId = "not recorded", string model = "not recorded", string accountLabel = "not recorded")
     {
         using var activity = Source.StartActivity("lane.session-new");
         activity?.SetTag("lane.run", runId);
         activity?.SetTag("lane.id", laneId);
         activity?.SetTag("lane.session", sessionId);
+        activity?.SetTag("lane.engine", engineId);
+        activity?.SetTag("lane.account", accountLabel);
 
         Write(new
         {
@@ -257,6 +268,9 @@ public static class WorkbenchDiagnostics
             run = runId,
             lane = laneId,
             session = sessionId,
+            engine = engineId,
+            model,
+            account = accountLabel,
             @params = parameters,
         });
     }

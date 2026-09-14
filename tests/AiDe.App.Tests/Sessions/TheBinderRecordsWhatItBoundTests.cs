@@ -200,6 +200,42 @@ public sealed class TheBinderRecordsWhatItBoundTests : IDisposable
         Assert.Empty(Of(lines, "session-document.bound"));
     }
 
+    /// <summary>
+    /// Ruling 105 (2) and condition 2 at the surface: the bound composer offers the session's accounts
+    /// with their states (a needs-sign-in one disabled, not hidden); changing the default through the
+    /// composer's changer writes the store for NEW turns only — the config a turn captured is
+    /// untouched — and this composer's next binding reads the new default.
+    /// </summary>
+    [Fact]
+    public void Bind_OffersTheSessionsAccounts_AndADefaultChangeIsForNewTurnsOnly()
+    {
+        var config = Create([MaxWork, ChatGpt], MaxWork);
+        var providers = Providers();
+
+        var (result, _) = WithShell(shell =>
+        {
+            shell.OpenSessionDocument(config);
+            SessionComposerBinder.Bind(shell, config, "feature", repositoryRoot: _root, dataDirectory: _root, providers, new NeverAffirms());
+            var composer = shell.SessionComposer(config.SessionId)!;
+            var offered = composer.SessionAccounts.Select(o => $"{o.Label}:{o.EngineId}:{o.Ready}:{o.StateWord}").ToList();
+            var before = composer.DefaultAccountLabel;
+            var said = composer.ChangeDefaultAccount!("chatgpt");
+            return (offered, before, said, composer.DefaultAccountLabel, composer.Decorations.Single(d => d.Name == "account").Value);
+        });
+
+        // claude-code's adapter is not installed in this root, codex's launch is unobserved: both
+        // offered, neither ready — states carried, rows present (Ruling 105 (2): disabled, not hidden).
+        Assert.Equal(["max-work:claude-code:False:not configured", "chatgpt:codex:False:not configured"], result.offered);
+        Assert.Equal("max-work", result.before);
+        Assert.Contains("chatgpt", result.said, StringComparison.Ordinal);
+        Assert.Equal("chatgpt", result.Item4);
+        Assert.Equal("chatgpt", result.Item5);
+
+        // The store: the default changed for new turns; the captured config still says max-work.
+        Assert.Equal(ChatGpt, new SessionConfigStore(_root, config.SessionId).Load().DefaultAccount);
+        Assert.Equal(MaxWork, config.DefaultAccount);
+    }
+
     /// <summary>Ruling 104 condition 3: the no-provider refusal names the action — Configure a backend from New Session.</summary>
     [Fact]
     public void Bind_WithNoProviderFile_NamesConfigureAsTheAction()

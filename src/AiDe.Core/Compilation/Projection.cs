@@ -47,6 +47,14 @@ public sealed record CompiledProjection(
     /// <summary>Ruling 73's access projection: read-only when no lease was derived.</summary>
     public bool IsReadOnly => Lease is null;
 
+    /// <summary>
+    /// The account label the operator chose for this turn (<c>Current(account)</c> with
+    /// <c>source: operator</c>, Ruling 105 (2)), or null — the session's default account binds.
+    /// Carried beside the projection's facts, outside <see cref="ProjectionSha"/>: the sha is the
+    /// compiled prompt's identity and the account is the run-side binding the request carries.
+    /// </summary>
+    public string? AccountOverride { get; init; }
+
     /// <summary>The sent bytes, when rendered.</summary>
     public string? Prompt => Compiled?.Text;
 }
@@ -155,7 +163,12 @@ public static class Projection
             fanOutCap, ceiling, budget,
             block, lease, patterns,
             taskClassValue, taskClass.Source,
-            sha, compiled, textSha);
+            sha, compiled, textSha)
+        {
+            AccountOverride = envelope.Current(DecorationNames.Account) is { Source: DecorationSources.Operator } chosenAccount
+                ? chosenAccount.ValueAsString
+                : null,
+        };
     }
 
     /// <summary>

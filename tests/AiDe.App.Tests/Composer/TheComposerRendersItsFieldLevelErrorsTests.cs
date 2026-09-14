@@ -218,7 +218,7 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
 
                 // The decoration line in SC2's grammar: This turn · class · tier · lease · shape.
                 Assert.Contains("This turn", rendered, StringComparison.Ordinal);
-                Assert.Equal(["class", "tier", "lease", "shape"], surface.Decorations.Select(d => d.Name));
+                Assert.Equal(["class", "tier", "lease", "shape", "account"], surface.Decorations.Select(d => d.Name));   // Ruling 105 (2): the account row
                 Assert.Equal("implement", surface.Decorations[0].Value);
                 Assert.Equal("session-default", surface.Decorations[0].Source);
                 Assert.Equal("message", surface.Decorations[3].Value);

@@ -1,6 +1,7 @@
 using AiDe.App.Workbench.Composer;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Presentation.Composer;
+using AiDe.Core.Presentation.Sessions;
 using AiDe.Core.Sessions;
 
 namespace AiDe.App.Workbench.Sessions;
@@ -114,6 +115,39 @@ internal static class SessionComposerBinder
 
         composer.Draft.SwitchTo(ComposerShape.GoalBlock);
 
+        // THE PICKER'S ROWS (Ruling 105 (2)): the session's accounts with the sheet's own state
+        // rule — one derivation, two readers (DM7) — each carrying the engine and model its provider
+        // binds to, so an override at Send is a lookup, never a typed engine.
+        var rows = NewSessionSheetViewModel.RowsOf(providers.Registry, providers.AdapterInstallRoot);
+        var options = config.Accounts.Select(a =>
+        {
+            var row = rows.FirstOrDefault(r => r.Ref == a);
+            var bound = providers.Bind(a.Provider, a.Label, out _);
+            var ready = row is { RoutableForThisSession: true } && bound is not null;
+            return new SessionAccountOption(
+                a.Provider, a.Label,
+                bound?.EngineId ?? row?.EngineId ?? AiDe.Core.PromptCompilation.Envelope.NotRecorded,
+                bound?.Model ?? AiDe.Core.PromptCompilation.Envelope.NotRecorded,
+                ready,
+                row?.StateWord ?? "not configured");
+        }).ToList();
+
+        // Ruling 105 condition 2: a default change is the store's event, new turns only; this
+        // composer's next turn reads it, the turn in flight keeps its binding.
+        var store = new SessionConfigStore(config.WorkspaceId, config.SessionId);
+        composer.ChangeDefaultAccount = label =>
+        {
+            var chosen = config.Accounts.FirstOrDefault(a => string.Equals(a.Label, label, StringComparison.Ordinal));
+            if (chosen is null)
+            {
+                return $"'{label}' is not one of this session's accounts.";
+            }
+
+            store.SetDefaultAccount(chosen, DateTimeOffset.UtcNow);
+            composer.UseDefaultAccount(label);
+            return $"Default account is now {chosen} for new turns.";
+        };
+
         composer.Configure(
             config,
             new ComposerSendContext(
@@ -125,7 +159,8 @@ internal static class SessionComposerBinder
                 AccountLabel: binding.Account.Label,
                 TaskClass: taskClass ?? config.DefaultTaskClass,   // the session's default_task_class (Ruling 72; ADR-0033 rule 4) — never null, never a second literal
                 ProofPackArtifacts: [],
-                Providers: providers.Registry.Rows),
+                Providers: providers.Registry.Rows,
+                Accounts: options),
             ComposerFields.GoalBlock(),
             new AttachmentGate(
                 repositoryRoot,

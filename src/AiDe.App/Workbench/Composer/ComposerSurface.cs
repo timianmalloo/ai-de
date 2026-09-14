@@ -68,6 +68,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
     private readonly Button _cancelPrepare;
     private readonly ComboBox _tierControl;
     private readonly ComboBox _classControl;
+    private readonly ComboBox _accountControl;
     private bool _renderingControls;
     private readonly TextBlock _status;
     private readonly IWorkbenchAnnouncer _announcer;
@@ -211,6 +212,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         AutomationProperties.SetName(_decorationLine, "This turn");
         _tierControl = BuildTierControl();
         _classControl = BuildClassControl();
+        _accountControl = BuildAccountControl();
         _settingsLine = new TextBlock { FontSize = 12, MinHeight = 24, VerticalAlignment = VerticalAlignment.Center, TextWrapping = TextWrapping.Wrap };
         _settingsLine.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
         AutomationProperties.SetName(_settingsLine, "Settings");
@@ -315,7 +317,40 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
     /// <summary>The decoration rows this turn carries — the same projection the thread will show for it and the send gate will put on the wire (SC2; ADR-0033 rule 2).</summary>
     public IReadOnlyList<DecorationRow> Decorations =>
-        ComposerCompiler.Decorations(_draft, _taskClass, _template, _context?.EngineId, _gate.SessionId, _gate.CompileMode);
+        ComposerCompiler.Decorations(_draft, _taskClass, _template, _context?.EngineId, _gate.SessionId, _gate.CompileMode, _context?.AccountLabel);
+
+    /// <summary>The account control on the decoration line (Ruling 105 (2)): the session's accounts, a non-ready one disabled with its state; a choice is an <c>operator</c> row at Send.</summary>
+    public ComboBox AccountControl => _accountControl;
+
+    /// <summary>The session's accounts as the picker offers them — empty before the composer is bound.</summary>
+    public IReadOnlyList<SessionAccountOption> SessionAccounts => _context?.AccountOptions ?? [];
+
+    /// <summary>The session's default account label, or null before the composer is bound.</summary>
+    public string? DefaultAccountLabel => _context?.AccountLabel;
+
+    /// <summary>
+    /// Changes the session's default account for new turns (Ruling 105 condition 2) — set by the
+    /// binder to the store's own <c>SetDefaultAccount</c>; returns what to announce. Null in a build
+    /// that cannot write the session, which the settings popover says rather than pretending.
+    /// </summary>
+    public Func<string, string>? ChangeDefaultAccount { get; set; }
+
+    /// <summary>
+    /// Applies a new default to THIS composer's context for its next turn: the engine, model and
+    /// label become the chosen option's. The turn in flight, and every past turn, keep theirs.
+    /// </summary>
+    public void UseDefaultAccount(string accountLabel)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(accountLabel);
+        if (_context is null || _context.AccountOptions.FirstOrDefault(o => string.Equals(o.Label, accountLabel, StringComparison.Ordinal)) is not { } option)
+        {
+            return;
+        }
+
+        _context = _context with { EngineId = option.EngineId, Model = option.Model, AccountLabel = option.Label };
+        _gate.BindSession(_gate.SessionId, _gate.CompileMode, option.EngineId, _taskClass);
+        RenderCompiledView();
+    }
 
     /// <summary>The tier control on the decoration line (E2): <i>rule</i>, T0, T1, T2 — an override is an <c>operator</c> row at Send (§A11).</summary>
     public ComboBox TierControl => _tierControl;
@@ -999,7 +1034,7 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         foreach (var row in decorations)
         {
             var segment = new StackPanel { Orientation = System.Windows.Controls.Orientation.Horizontal, Margin = new Thickness(0, 0, 14, 0), MinHeight = 24 };
-            if (row.Name != "shape")
+            if (row.Name != "shape" && !(row.Name == "account" && SessionAccounts.Count == 0))
             {
                 segment.Children.Add(SegmentLabel(row.Name));
             }
@@ -1021,6 +1056,22 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
                 SyncControl(_classControl, _draft.TaskClassChoice ?? _taskClass);
                 segment.Children.Add(_classControl);
             }
+            else if (row.Name == "account")
+            {
+                // Ruling 105 (2): the session's accounts, a non-ready one disabled with its state (not
+                // hidden); the selected item IS the account shown — the default, or this turn's choice.
+                // With no accounts to offer (an unbound composer, or a session with none) the value is
+                // text, so the line keeps its one row (DESIGN.md: 24 px at rest) and the tests that
+                // hold the writer's room hold.
+                if (SessionAccounts.Count == 0)
+                {
+                    // Nothing to pick: the value reads on the settings line below; no segment here.
+                    continue;
+                }
+
+                SyncAccountControl(row.Value);
+                segment.Children.Add(_accountControl);
+            }
             else
             {
                 segment.Children.Add(DecorationValue(row));
@@ -1028,6 +1079,13 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
 
             // The provenance, inline: the current turn is confirmed at Send (SC2), so the source
             // and the reason are beside the value rather than a disclosure away.
+            if (row.Name == "account")
+            {
+                AutomationProperties.SetHelpText(_accountControl, $"The account this turn bills — {row.Reason}. The session's default unless you choose one for this turn; that never changes the default. A greyed account is not ready — its state is beside it.");
+                _decorationLine.Children.Add(segment);
+                continue;
+            }
+
             var provenance = new TextBlock
             {
                 Text = row.Name == "class" ? (row.Source == DecorationSources.Operator ? "chosen for this prompt" : "session default") : row.Reason,
@@ -1045,6 +1103,14 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
         // (ADR-0034 rules 2–3: a locked or broken file degrades Prepare visibly, never silently).
         var tier = decorations.First(d => d.Name == "tier").Value;
         var settings = ComposerCompiler.SettingsLine(tier, _draft.Ceilings.FanOutCeiling, _draft.Ceilings.BudgetCap);
+        // The account, in words, on the settings line (Ruling 105): the turn's binding with its
+        // provenance — the picker above changes it for this turn; the session's default is the store's.
+        var account = decorations.First(d => d.Name == "account");
+        if (account.Value != AiDe.Core.PromptCompilation.Envelope.NotRecorded)
+        {
+            settings += $" · account: {account.Value} ({account.Reason})";
+        }
+
         _settingsLine.Text = _gate.HistoryState is { } history ? settings + " · compile history: " + history : settings;
     }
 
@@ -1068,6 +1134,71 @@ public sealed class ComposerSurface : ContentControl, IComposerMessageSink, IHas
             RenderCompiledView();
         };
         return control;
+    }
+
+    private ComboBox BuildAccountControl()
+    {
+        var control = new ComboBox { FontSize = 12, MinWidth = 72, Margin = new Thickness(0, 0, 6, 0), VerticalAlignment = VerticalAlignment.Center, IsEditable = false };
+        AutomationProperties.SetName(control, "Account");
+        AutomationProperties.SetHelpText(control, "The account this turn bills. The session's default unless you choose one for this turn; that never changes the default. A greyed account is not ready — its state is beside it.");
+        control.SelectionChanged += (_, _) =>
+        {
+            if (_renderingControls || control.SelectedItem is not ComboBoxItem { Tag: string label })
+            {
+                return;
+            }
+
+            _draft.ChooseAccount(string.Equals(label, _context?.AccountLabel, StringComparison.Ordinal) ? null : label);
+            RenderCompiledView();
+        };
+        return control;
+    }
+
+    /// <summary>Rebuilds the account control's rows from the context's options and selects the shown value, without re-entering its handler.</summary>
+    private void SyncAccountControl(string selectedLabel)
+    {
+        _renderingControls = true;
+        try
+        {
+            var options = SessionAccounts;
+            var wanted = options.Select(o => o.Label + "|" + o.Ready).ToList();
+            var current = _accountControl.Items.OfType<ComboBoxItem>().Select(i => (i.Tag as string) + "|" + i.IsEnabled).ToList();
+            if (!wanted.SequenceEqual(current, StringComparer.Ordinal))
+            {
+                _accountControl.Items.Clear();
+                foreach (var option in options)
+                {
+                    var item = new ComboBoxItem
+                    {
+                        Content = option.Ready ? option.Label : $"{option.Label} — {option.StateWord}",
+                        Tag = option.Label,
+                        IsEnabled = option.Ready,
+                    };
+                    AutomationProperties.SetName(item, option.Ready ? option.Label : $"{option.Label}, {option.StateWord}");
+                    _accountControl.Items.Add(item);
+                }
+
+                if (options.Count == 0)
+                {
+                    _accountControl.Items.Add(new ComboBoxItem { Content = selectedLabel, Tag = selectedLabel, IsEnabled = false });
+                }
+            }
+
+            var match = _accountControl.Items.OfType<ComboBoxItem>().FirstOrDefault(i => string.Equals(i.Tag as string, selectedLabel, StringComparison.Ordinal));
+            if (!ReferenceEquals(_accountControl.SelectedItem, match))
+            {
+                _accountControl.SelectedItem = match;
+            }
+
+            if (_accountControl.Parent is Panel parent)
+            {
+                parent.Children.Remove(_accountControl);
+            }
+        }
+        finally
+        {
+            _renderingControls = false;
+        }
     }
 
     private ComboBox BuildClassControl()

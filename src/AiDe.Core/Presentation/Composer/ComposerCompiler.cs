@@ -168,13 +168,15 @@ public static class ComposerCompiler
     /// <param name="engineId">The bound engine, or null before the composer is bound.</param>
     /// <param name="sessionId">The session, or null before the composer is bound.</param>
     /// <param name="compileMode">The session's compile mode.</param>
+    /// <param name="defaultAccountLabel">The session's default account label (Ruling 105), or null before the composer is bound.</param>
     public static IReadOnlyList<Sessions.DecorationRow> Decorations(
         ComposerDraft draft,
         string taskClass,
         PromptTemplate? template = null,
         string? engineId = null,
         string? sessionId = null,
-        string compileMode = CompileModes.MechanicalOnly)
+        string compileMode = CompileModes.MechanicalOnly,
+        string? defaultAccountLabel = null)
     {
         ArgumentNullException.ThrowIfNull(draft);
         ArgumentException.ThrowIfNullOrWhiteSpace(taskClass);
@@ -185,11 +187,14 @@ public static class ComposerCompiler
             engineId ?? PromptCompilation.Envelope.NotRecorded,
             compileMode,
             taskClass);
-        return Decorations(PromptCompilation.Projection.Project(PromptCompilation.PreCompile.Live(input)), draft);
+        return Decorations(PromptCompilation.Projection.Project(PromptCompilation.PreCompile.Live(input)), draft, defaultAccountLabel);
     }
 
     /// <summary>The decoration rows of one projection — the one row builder the live line and a persisted envelope share (DM7).</summary>
-    public static IReadOnlyList<Sessions.DecorationRow> Decorations(PromptCompilation.CompiledProjection projection, ComposerDraft draft)
+    /// <param name="projection">The projection.</param>
+    /// <param name="draft">The draft.</param>
+    /// <param name="defaultAccountLabel">The session's default account label, or null — the <c>account</c> row then reads the override or <i>not recorded</i>.</param>
+    public static IReadOnlyList<Sessions.DecorationRow> Decorations(PromptCompilation.CompiledProjection projection, ComposerDraft draft, string? defaultAccountLabel = null)
     {
         ArgumentNullException.ThrowIfNull(projection);
         ArgumentNullException.ThrowIfNull(draft);
@@ -224,6 +229,11 @@ public static class ComposerCompiler
         {
             rows.Add(new("template", template, "operator", "picked from the template control"));
         }
+
+        // THE ACCOUNT (Ruling 105 (2)): this turn's binding — the operator's choice, else the session's default.
+        rows.Add(projection.AccountOverride is { } chosenAccount
+            ? new("account", chosenAccount, PromptCompilation.DecorationSources.Operator, "chosen for this turn")
+            : new("account", defaultAccountLabel ?? PromptCompilation.Envelope.NotRecorded, PromptCompilation.DecorationSources.SessionDefault, "session default"));
 
         return rows;
     }

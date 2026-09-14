@@ -916,8 +916,11 @@ into a read-only mono block, the exit code and duration on the result line, or *
 bound expires), **Sign in** (engine-native, re-probe on return), the account label, and **Write** —
 the sentence *"providers.json written: <path>"* names the file. The composer's decoration line gains
 **account** beside class and tier: *This turn · account: max ▾* lists the session's accounts, a
-non-ready one **disabled with its state word** (never hidden); a choice is an operator row at Send, the
-provenance beside it reads *chosen for this turn* or *session default*. The session-settings popover
+non-ready one **disabled with its state word** (never hidden); a choice is an operator row at Send. The
+provenance (*chosen for this turn* / *session default*) is the control's help text and rides the
+settings line in words — *· account: max (session default)* — so the decoration line keeps its one
+24 px row at rest (the writer-keeps-its-room budget); with no account to pick from, the settings line
+alone carries the value and the decoration line shows no picker. The session-settings popover
 gains *Default account* (a picker over the session's accounts; *no default account — choose one* when
 none) and applies to new turns only. Copy added: see the list at the end of this section.
 
@@ -961,7 +964,7 @@ Under reduced motion every row is 0ms and every announcement still fires.
 - `Compiled prompt` · `Compiled prompt — updated` · `Drop to attach` · `Attaching files is off for this session.`
 - `Accounts` · `no account — Configure…` · `ready` / `needs sign-in` / `not configured` · `as you recorded it, not probed` · `Default for this session` · `No backend is ready. The session will open; a run will not start until one is configured.`
 - `Configure…` · `Configure <provider>` · `Prerequisites` · `<tool>: <version> at <path>` / `<tool>: not on PATH. Install: <instruction> — known-good <version> (<citation>)` / `<tool>: on PATH at <path>; --version did not answer (not recorded)` · `Adapter root` · `<path> is inside the git checkout at <path>; an adapter install belongs under ~/.aide/adapters, never in a repository` · `Install` · `npm exited <n> in <s> s; installed: <entry>` / `not installed: <entry> is not on disk` / `exit code not recorded (bound <n> s exceeded after <s> s)` · `Sign in` · `Account label` · `Write providers.json` · `providers.json written: <path>` · `Configure a backend from New Session.` *(the binder's refusal names the action)*
-- `account` · `This turn · account: <label>` · `chosen for this turn` / `session default` · `<label> — <state word>` *(a disabled picker row)* · `Default account` · `no default account — choose one`
+- `account` · `This turn · account: <label>` · `chosen for this turn` / `session default` · `· account: <label> (<provenance>)` *(the settings line)* · `<label> — <state word>` *(a disabled picker row)* · `Default account` · `no default account — choose one`
 - `Editor starting…` · `Editor couldn't start — WebView2 runtime not found.` + `Retry`
 - `Couldn't send — the conductor closed the connection. Your draft is kept.` + `Try again`
 - `Sending block b3 as a goal block, tier T1.` *(announcement)*

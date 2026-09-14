@@ -144,6 +144,12 @@ public sealed partial class TheGovernedLaneHasNoShellTests
         }
     }
 
+    /// <summary>A turn's binding — (engine, model, account) — as the run host hands it to the session-open site.</summary>
+    private static LaneBinding Binding(string account) => new(
+        "claude-code", "claude-sonnet-5",
+        new ProviderAccount(account, AccountHealth.Ready),
+        new ProviderRow("anthropic", ProviderAuth.Subscription, [new ProviderAccount(account, AccountHealth.Ready)]));
+
     /// <summary>
     /// Ruling 71 (a): the frame the lane was opened with is recorded on the normal path — on the run's
     /// report and as a <c>lane.session-new</c> workbench log line — and what is recorded is what went
@@ -172,7 +178,7 @@ public sealed partial class TheGovernedLaneHasNoShellTests
         string session;
         try
         {
-            var open = GovernedRunHost.OpenSessionAsync(client, tree, "run-1", "lane-1", report.Add, CancellationToken.None);
+            var open = GovernedRunHost.OpenSessionAsync(client, tree, "run-1", "lane-1", Binding("max"), report.Add, CancellationToken.None);
             stdout.PushFrame("""{"jsonrpc":"2.0","id":1,"result":{"sessionId":"sess-9"}}""");
             session = await open;
         }
@@ -197,13 +203,19 @@ public sealed partial class TheGovernedLaneHasNoShellTests
         Assert.Contains("sess-9", line, StringComparison.Ordinal);
         Assert.Contains(sent, line, StringComparison.Ordinal);
 
-        // The log: evt lane.session-new, keyed by run, lane and session, carrying the same params.
+        // The log: evt lane.session-new, keyed by run, lane and session, carrying the same params —
+        // and the turn's binding (Ruling 105 condition 3): engine · model · account, the fact row a
+        // per-turn account switch is observed on, read here as a Console reader reads the log.
         var record = JsonDocument.Parse(Assert.Single(log)).RootElement;
         Assert.Equal("lane.session-new", record.GetProperty("evt").GetString());
         Assert.Equal("run-1", record.GetProperty("run").GetString());
         Assert.Equal("lane-1", record.GetProperty("lane").GetString());
         Assert.Equal("sess-9", record.GetProperty("session").GetString());
         Assert.Equal(sent, record.GetProperty("params").GetRawText());
+        Assert.Equal("claude-code", record.GetProperty("engine").GetString());
+        Assert.Equal("claude-sonnet-5", record.GetProperty("model").GetString());
+        Assert.Equal("max", record.GetProperty("account").GetString());
+        Assert.Contains("claude-code · claude-sonnet-5 · max", line, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -230,7 +242,7 @@ public sealed partial class TheGovernedLaneHasNoShellTests
         string session;
         try
         {
-            var open = GovernedRunHost.OpenReadOnlySessionAsync(client, root, "run-2", "lane-2", report.Add, CancellationToken.None);
+            var open = GovernedRunHost.OpenReadOnlySessionAsync(client, root, "run-2", "lane-2", Binding("work"), report.Add, CancellationToken.None);
             stdout.PushFrame("""{"jsonrpc":"2.0","id":1,"result":{"sessionId":"sess-ro"}}""");
             session = await open;
         }
@@ -272,6 +284,7 @@ public sealed partial class TheGovernedLaneHasNoShellTests
         Assert.Equal("lane-2", record.GetProperty("lane").GetString());
         Assert.Equal("sess-ro", record.GetProperty("session").GetString());
         Assert.Equal(sent, record.GetProperty("params").GetRawText());
+        Assert.Equal("work", record.GetProperty("account").GetString());   // the read-only turn's own binding, per turn
     }
 
     /// <summary>

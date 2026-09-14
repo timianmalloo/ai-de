@@ -361,8 +361,10 @@ public sealed class NewSessionSheetViewModel
     /// re-derivation of its rule — or the resolved entry module is not on disk; <i>needs sign-in</i>
     /// when launch observed and health is <c>needs-login</c> or there is no account; <i>ready</i> otherwise.
     /// </summary>
-    private static IReadOnlyList<AccountRow> RowsOf(ProviderRegistry registry, string? adapterInstallRoot)
+    public static IReadOnlyList<AccountRow> RowsOf(ProviderRegistry registry, string? adapterInstallRoot)
     {
+        ArgumentNullException.ThrowIfNull(registry);
+
         var rows = new List<AccountRow>();
         foreach (var engine in EngineCatalog.Rows)
         {
