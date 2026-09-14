@@ -2031,7 +2031,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 14 types, 113 members, 94% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench.Composer: 14 types, 114 members, 94% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2044,7 +2044,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "450cf88618b8e75fdd12ce1379466184490fa93bc9327886c01a494e8efac700"
+      "sourceSha256": "363a6171a643e7bf411b68a02064c902fb4b8438cefa27e6d7a5f972a9118d3d"
     },
     {
       "id": "api-aide-app-workbench-sessions",
@@ -2069,7 +2069,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c1ed6ad7ff2a580eaea46dbf91b1e74b5b0a5a6482aaa2367b6a5b765c36b721"
+      "sourceSha256": "f9a33712700795739783e5096bd0720c5035c8eaf8566b02ed926a46c144e5c1"
     },
     {
       "id": "api-aide-core",
@@ -2331,7 +2331,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 49 types, 143 members, 96% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 49 types, 146 members, 96% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2344,7 +2344,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f9e108623745e8f886986a9f76f0a123760407f8335b07787254299d563b13fd"
+      "sourceSha256": "4afa1768127fc6d9e2d712b4753bbe58978b492c5be335a1cfe38a2f2140420e"
     },
     {
       "id": "api-aide-core-projections",
@@ -15291,6 +15291,55 @@ window.DOCS_INDEX = {
       "sourceSha256": "b629c18cfb8ef2d80a5c62cbeb57c195d5ca24a1713503c9c66bf40bc74bcfa4"
     },
     {
+      "id": "proof-composer-compiled-prompt-and-console-rows",
+      "path": "docs/proof/composer-compiled-prompt-and-console-rows.md",
+      "title": "Proof Pack — Rulings 96, 101, 100: the compiled prompt opens on its header's click and keeps its floor (its open state the document's); a tool-result row never reads its kind twice; the two bookkeeping kinds are Console-only",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "addendum-c",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "Lane composer-r96-r100-r101 on main dda140ba. Ruling 96 (F-E): measured at the operator's belt (489.5 × 517.13, 1 turn, their one-line message) through the header's own click, the compiled box's height was 0 (IsArrangeValid false) while its text was present (69 chars) — both disclosure templates bound the header toggle to IsExpanded one-way (TemplateBinding), so a click rotated the chevron and opened nothing; the box also had no floor of its own (29.89 px under 48 when opened by the property). Fixed, with the open state persisted per session document. Ruling 101: a tool.result row reads content[]'s first text line and byte count, rawOutput in the same form, the no-text form otherwise — never its kind. Ruling 100: usage_update and available_commands_update are a named constant of two, Console-only, never in the fold. Three commits, red-first each; App 955 → 957, Core 2636 → 2640 executed.",
+      "tags": [
+        "proof-pack",
+        "conversation-lane",
+        "composer",
+        "console",
+        "thread",
+        "ruling-96",
+        "ruling-100",
+        "ruling-101",
+        "ruling-57",
+        "ruling-74",
+        "ruling-81",
+        "ruling-82",
+        "dc-187",
+        "red-first",
+        "measurement"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-composer-as-conversation",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-console-coalesce",
+          "rel": "refines"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1112706ed8ecb3117e25a4ffa116b9e4cb0ad8dc6a0ba05cdb16b280ad2b2b00"
+    },
+    {
       "id": "proof-composer-entry-areas",
       "path": "docs/proof/composer-entry-areas.md",
       "title": "Proof Pack — the composer's entry areas keep their room, and the page survives a render (INV-0007, phases 1–4)",
@@ -18342,5 +18391,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f7e3123747fe9a592d74526aef7e945b735db889f43986e72c5d3608d5bbff2e"
+  "graphSha256": "468bcb485acbbfc3411509c551e1b312ff3a249f6493f085d4bd16679c9a4033"
 };
