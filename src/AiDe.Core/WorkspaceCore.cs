@@ -354,18 +354,32 @@ public sealed class WorkspaceCore : IDisposable
     }
 
     /// <summary>
-    /// Whether the store still holds a committed snapshot for a scope we are about to skip.
+    /// Whether the store still holds a committed snapshot for a scope we are about to skip — one
+    /// with evidence in it, stamped with a revision that is a revision.
     /// </summary>
     /// <remarks>
-    /// The fingerprint says the INPUTS have not changed; it says nothing about whether the output
-    /// survived. A store rebuilt, compacted or replaced under an unchanged working tree would
-    /// otherwise leave the scope skipped forever and its evidence permanently missing.
+    /// <para>The fingerprint says the INPUTS have not changed; it says nothing about whether the
+    /// output survived. A store rebuilt, compacted or replaced under an unchanged working tree would
+    /// otherwise leave the scope skipped forever and its evidence permanently missing.</para>
+    ///
+    /// <para><b>Nor about what the output is stamped with (Ruling 98).</b> Ruling 85 moved the shell
+    /// off the fixture literal at the writer; a store the OLD writer had already written still carries
+    /// <see cref="SourceRevision.RetiredFixtureLiteral"/> on every snapshot, and a guard that reuses
+    /// on the fingerprint alone never opens the snapshot's revision — so the fix could not reach the
+    /// operator's workspace, which kept printing <i>rev rev-1</i> on a build that no longer attached
+    /// it. The base is compared (<see cref="SourceRevision.Base"/>: the stored value carries the
+    /// extractor generation); a match re-extracts the scope once under the caller's revision, after
+    /// which the snapshot is reusable like any other.</para>
     /// </remarks>
     private static bool Reusable(Store.StoreReader reader, string scopeId)
     {
         using (reader)
         {
-            return reader.LatestCommittedSnapshot(scopeId) is { AssertionCount: > 0 };
+            return reader.LatestCommittedSnapshot(scopeId) is { AssertionCount: > 0 } snapshot
+                && !string.Equals(
+                    SourceRevision.Base(snapshot.ArtifactRevision),
+                    SourceRevision.RetiredFixtureLiteral,
+                    StringComparison.Ordinal);
         }
     }
 
