@@ -2472,7 +2472,7 @@ path swallows its own failure.
 | `void TerminalStop(` | Records that a terminal pane ended — the other half of `TerminalStart`, keyed by the same surface id so the two lines pair and a census can subtract. |
 | `void Crash(string origin, Exception exception)` | Records an unhandled exception, with the context that says which gesture produced it. |
 | `void McpConfig(string outcome, string? path, string? detail)` | Records what contributing to `.mcp.json` did, and the detail that must not be announced. |
-| `void LaneSessionNew(string runId, string laneId, string sessionId, JsonObject? parameters)` | Records the `session/new` a governed lane was opened with — the params object the client sent, `_meta` included — keyed by run, lane and the ACP session id it came back with. |
+| `void LaneSessionNew(` | Records the `session/new` a governed lane was opened with — the params object the client sent, `_meta` included — keyed by run, lane and the ACP session id it came back with. |
 | `void AppStart(string theme, DpiScale dpi, double width, double height, string windowState)` | Records that the shell started, naming the binary it is: the informational version and the commit inside it, the build configuration, the docking theme, the DPI and the window. |
 | `void ComposerLayout(` | Records the composer's rendered bounds: the editor host, the read-only compiled view, and the composer they share — at first layout and whenever either part moves past the surface's threshold. |
 | `void WebSurfaceHandshake(` | Records one transition of a web surface's host↔page handshake, with the surface's counts as they stood at that moment. |
@@ -2598,10 +2598,18 @@ Written on EVERY outcome, not just the failures, because the question an operato
 first is which of the five things happened — and an event that only appears when something
 broke cannot answer "it did nothing, and that was correct".
 
-### `void LaneSessionNew(string runId, string laneId, string sessionId, JsonObject? parameters)`
+### `void LaneSessionNew(`
 
 Records the `session/new` a governed lane was opened with — the params object the client
 sent, `_meta` included — keyed by run, lane and the ACP session id it came back with.
+
+- **`runId`** — The run.
+- **`laneId`** — The lane.
+- **`sessionId`** — The ACP session id the peer answered.
+- **`parameters`** — The `session/new` params as sent.
+- **`engineId`** — The turn's engine (Ruling 105 condition 3) — the fact row of one turn's binding.
+- **`model`** — The turn's model.
+- **`accountLabel`** — The account the turn bills — so a per-turn switch is observable, not inferred.
 
 **Remarks.** **Why this exists (Ruling 71 (a)).** The F5 Proof Pack must carry the outgoing frame, and a
 frame someone had to remember to capture is "not recorded". Emitted on the normal path from

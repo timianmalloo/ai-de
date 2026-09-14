@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Sessions: 28 types, 84 members, 91% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Sessions: 29 types, 88 members, 91% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Sessions`
 
-**28 public types · 84 public members · 91% documented.**
+**29 public types · 88 public members · 91% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -122,11 +122,13 @@ one field to a consistent frame log).
 *record* — `SessionConfig.cs`
 
 The user-facing container Addendum A3 defines: named, workspace-bound, and carrying
-session-scoped config (Phase 1: which agent backends are enabled). R14 b2: "session" in this
-namespace names only this container — never a Watcher/Dispatch/Terminal-internal concept.
+session-scoped config (Ruling 105: which **accounts** this session may bill, and its default).
+R14 b2: "session" in this namespace names only this container — never a Watcher/Dispatch/
+Terminal-internal concept.
 
 | Member | Summary |
 |---|---|
+| `IReadOnlyList<string> LegacyEnabledBackends { get; init; } = []` | The engine ids an old `session.json` carried as `EnabledBackends`, until `MigrateLegacyBackends` maps them to accounts — empty on a migrated or new session. **Never serialized as a member of this record**: the store k… |
 | `bool AttachEnabled { get; init; }` | Whether this session may attach files to a composed prompt (Security/Privacy **C21**). **Off by default**, confirmed by the human on 2026-09-10. |
 | `int FanOutCeiling { get; init; } = DefaultFanOutCeiling` | The most sub-agents any turn in this session may convene — `fan_out_ceiling` in ADR-0033 §3 / `docs/architecture.md`'s vocabulary (Ruling 56). The eventual `FanOutCap = min(cap(tier), ceiling)` the compile step comput… |
 | `int DefaultFanOutCeiling = 2` | The ruled per-session default for `FanOutCeiling` — CT19's T1 cap, 2 — named once so the New Session sheet prefills what an unset file reads (derive, don't store; DM7). |
@@ -253,6 +255,19 @@ Default `FreeForm` (Ruling 72): "the basic should be free-form
 upon open, and then I can change it" — an explicit, operator-visible value present from the
 moment a session opens, never a null a caller must special-case.
 
+## `AccountRef`
+
+*record* — `SessionConfig.cs`
+
+One account by identity — (provider, label) — as a session refers to it (Ruling 105 (1)). A
+**reference**, never a copy: health, the observed auth label and the host live on the registry's
+`ProviderAccount`, read at bind time, so a session never carries a stale
+health beside a label.
+
+| Member | Summary |
+|---|---|
+| `string ToString()` | How the operator reads it: `provider · label`. |
+
 ## `CompileModes`
 
 *class* — `SessionConfig.cs`
@@ -279,7 +294,7 @@ IS the clause.
 | Member | Summary |
 |---|---|
 | `string Open = "session.open"` | A session was created (`Create`). |
-| `string Config = "session.config"` | A session's config changed — currently only `EnabledBackends` toggles. |
+| `string Config = "session.config"` | A session's config changed — accounts, the default account, attach, compile mode. |
 
 ## `SessionEvent`
 
@@ -336,14 +351,27 @@ is the scan that holds that to one site.
 
 Reads and writes one session's `session.json` and `session-events.jsonl` (clauses 1-3).
 
-**Remarks.** **Toggles apply to new runs only (clause 3).** `SessionConfig` is an
-immutable record; `SetEnabledBackends` never mutates an existing instance, it writes a
-new one. A caller that already captured a `SessionConfig` (modelling a run reading its
-config at start) is holding a value a later toggle cannot reach — proven in
-`SessionConfigStoreTests.SetEnabledBackends_NeverMutatesAConfigARunAlreadyCaptured`. The
-append-only event log gives the same guarantee one layer down, at the persisted bytes: earlier
+**Remarks.** **Changes apply to new turns only (clause 3; Ruling 105 condition 2).**
+`SessionConfig` is an immutable record; `SetDefaultAccount` and
+`SetAccounts` never mutate an existing instance, they write a new one. A caller that
+already captured a `SessionConfig` (a turn reading its config at start) is holding a
+value a later change cannot reach — proven in
+`SessionAccountsTests.SetDefaultAccount_NeverMutatesAConfigARunAlreadyCaptured_AndAppliesToTheNextTurnOnly`.
+The append-only event log gives the same guarantee one layer down, at the persisted bytes: earlier
 lines are never rewritten (`SessionEventsFile_EarlierEventsSurviveByteForByteAfterALaterToggle`).
 
+
+
+
+
+
+**The legacy `EnabledBackends` key is read, kept, and contracted only once mapped.**
+A `session.json` written before Ruling 105 carries engine ids. `Load` reads them
+into `LegacyEnabledBackends` (no accounts, no default) and every write
+re-emits the key verbatim until `MigrateLegacyBackends` maps them against a provider
+file — an engine id maps to its provider's account only when the file names one
+(`engines.<id>.account`, the fallback default) or the provider carries exactly one;
+otherwise the session keeps "no default account — choose one" and the key stays. Never a guessed label.
 
 
 
@@ -361,7 +389,9 @@ plain `System.Text.Json`, tolerant JSONL reads.
 | `SessionConfig Load()` | The current, live config — what a NEW run would pick up. |
 | `IReadOnlyList<string> ExistingNames(string workspaceRoot)` | The name of every session the workspace holds — every `session.json` under `SessionsRoot`, open tab or not. Empty when there is no sessions root yet; a session whose file cannot be read is skipped, never a throw. |
 | `string UniqueName(string requested, IEnumerable<string> existing)` | The one rule for a session name that is unique within its workspace (Ruling 99): the requested name when nothing holds it, else the name with a counter — `" (2)"`, `" (3)"`, … — counted up from 2 until it is free. A c… |
-| `SessionConfig SetEnabledBackends(IReadOnlyList<string> enabledBackends, DateTimeOffset now)` | Applies a backend toggle for new runs and emits `session.config`. Never mutates a `SessionConfig` a caller already holds — see the remarks on this type. |
+| `SessionConfig SetDefaultAccount(AccountRef? account, DateTimeOffset now)` | Changes the default account for new turns only and emits `session.config` (Ruling 105 condition 2). Never mutates a `SessionConfig` a caller already holds — see the remarks on this type. |
+| `SessionConfig SetAccounts(IReadOnlyList<AccountRef> accounts, DateTimeOffset now)` | Replaces the session's account list for new turns only and emits `session.config`. A default no longer in the list is dropped to `null` — never kept as a phantom the next turn would bill. |
+| `SessionConfig MigrateLegacyBackends(ProviderConfiguration providers, DateTimeOffset now)` | Maps a pre-Ruling-105 session's `EnabledBackends` engine ids to accounts against the provider file: each id → its catalog row's provider → the file's fallback default for that engine (`engines.<id>.account`) or the pr… |
 | `SessionConfig SetAttachEnabled(bool attachEnabled, DateTimeOffset now)` | Applies the attach toggle for new runs and emits `session.config` (C21). |
 | `SessionConfig SetCompileMode(string compileMode, CompileModeAvailability availability, DateTimeOffset now, string trigger = PromptCompilation.CompileModeChangeTriggers.Operator)` | Selects the session's `compile_mode` for new envelopes, **through the gate** (ADR-0036 rule 1): a rung the evaluated  does not admit is refused with the gate's own code and the file is not touched. Emits `session.conf… |
 | `IReadOnlyList<SessionEvent> ReadEvents()` | Every event this session has ever emitted, in append order. |
@@ -373,7 +403,8 @@ Creates the session: writes `session.json` and emits `session.open`.
 
 - **`name`** — The operator-facing name.
 - **`workspaceId`** — The workspace this session is bound to.
-- **`enabledBackends`** — The agent backends enabled for it.
+- **`accounts`** — The accounts selected for it (Ruling 105).
+- **`defaultAccount`** — The default account, or null — no default until the operator chooses.
 - **`now`** — Stamps the config and the event.
 - **`fanOutCeiling`** — The session's fan-out ceiling (Ruling 56); `null` writes the ruled default.
 - **`budgetCap`** — An enforced cap, or `null` — bounded by the subscription (Ruling 72).
@@ -401,6 +432,25 @@ part of the base, so `"X (2)"` over `{"X", "X (2)"}` is `"X (3)"`, never
 
 **Remarks.** Called by the sheet for its default name and for an operator-typed duplicate at Create, and by
 the later parallel-session slice on its parent's name — one function, so the three cannot drift.
+
+### `SessionConfig SetDefaultAccount(AccountRef? account, DateTimeOffset now)`
+
+Changes the default account for new turns only and emits `session.config` (Ruling 105
+condition 2). Never mutates a `SessionConfig` a caller already holds — see the
+remarks on this type.
+
+**Throws `ArgumentException`.** The account is not among the session's accounts.
+
+### `SessionConfig MigrateLegacyBackends(ProviderConfiguration providers, DateTimeOffset now)`
+
+Maps a pre-Ruling-105 session's `EnabledBackends` engine ids to accounts against the
+provider file: each id → its catalog row's provider → the file's fallback default for that
+engine (`engines.<id>.account`) or the provider's sole account; the first mapped
+account becomes the default. Contracts the legacy key and emits `session.config` only when
+at least one id mapped; otherwise nothing is written — the session opens with "no default
+account — choose one" and the key survives for a later, better-informed run.
+
+**Returns.** The config as it now reads.
 
 ### `SessionConfig SetAttachEnabled(bool attachEnabled, DateTimeOffset now)`
 

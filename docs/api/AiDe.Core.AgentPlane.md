@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.AgentPlane: 58 types, 155 members, 91% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.AgentPlane: 65 types, 179 members, 92% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.AgentPlane`
 
-**58 public types · 155 public members · 91% documented.**
+**65 public types · 179 public members · 92% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -245,6 +245,8 @@ still parses, and the meanings have moved underneath it.
 - **`peer`** — The transport. This client installs itself as its inbound handler.
 - **`capabilities`** — What to declare. Defaults to `PhaseOne`.
 - **`choosePermission`** — Picks an `optionId` from a permission request's params. Defaults to the reject option.
+- **`engine`** — The catalog row this peer is, when the caller knows it. It decides whether `LaneSessionOptions` reach the wire: the `_meta.claudeCode.options` slot is the claude-code adapter's (`ReadsClaudeCodeMeta`), and every other engine gets the ACP-standard `session/new` the spike observed it accept. `null` — every caller that predates the catalog's native rows — sends the options as given.
+- **`diagnostics`** — Where a pin that was **not** sent is named. Defaults to stderr.
 
 ### `Task<JsonObject> InitializeAsync(CancellationToken cancellationToken = default)`
 
@@ -595,7 +597,22 @@ How an engine speaks ACP, per spec §14.2's provider schema — the file this re
 and its `acp:` key is accepted and never read, because this enum is the catalog's fact.
 A closed set on purpose — the spec declares exactly these four, and unlike a run-event
 `kind` they do not evolve additively: a fifth would be a new launch path, which is a code
-change by definition.
+change by definition (Rulings 97 and 105 both cut a fifth).
+
+## `NativeCommand`
+
+*record* — `EngineCatalog.cs`
+
+A native CLI's launch, **as the spike observed it**: the command as the operator types it, the
+arguments that put it in ACP mode, and the install instruction copied from upstream.
+
+**Remarks.** **An npm-delivered CLI records its package and entry module** for the same reason
+`AdapterEntryModule` does: on Windows npm leaves a `.cmd` shim, and a
+`.cmd` cannot be spawned without `cmd.exe` — which DC-027 measured dropping this
+machine's 22,297-character PATH on the way through. So the shim is never run; the catalog runs
+`node <shim dir>/node_modules/<package>/<entry>`, the line the shim itself
+carries (read from `%APPDATA%\npm\gemini.cmd`, 2026-09-14). A CLI whose npm launch was
+never observed leaves both null, and its shim is a refusal.
 
 ## `EngineRow`
 
@@ -604,17 +621,59 @@ change by definition.
 One catalog row. **Engines are data, not code paths** (spec §4.1): a row declares how to
 speak to an engine, and adding or repairing one is a data change plus at most an adapter shim.
 
+| Member | Summary |
+|---|---|
+| `bool ReadsClaudeCodeMeta` | Whether this engine reads the claude-code adapter's `_meta.claudeCode.options` slot on `session/new`. Only the adapter whose `acp-agent.js` spreads that object into the SDK's options does (0.75.1, `:5964`); every othe… |
+
 ## `EngineLaunch`
 
 *record* — `EngineCatalog.cs`
 
-A resolved process launch: what to run, and with what arguments.
+A resolved process launch: what to run, and with what arguments. Exactly what is spawned.
+
+## `NativeCommandLocator`
+
+*class* — `EngineCatalog.cs`
+
+Finds a native CLI's command on PATH **without a shell**, and says which shape it found.
+
+**Remarks.** **Measured on this machine, 2026-09-14** (`where copilot` / `where gemini` /
+`where grok`): `copilot` resolves first to the winget `copilot.exe` and second to
+an npm `copilot.cmd`; `gemini` resolves only to npm's `gemini.cmd` (there is no
+`gemini.exe` anywhere); `grok` is not on PATH at all. `CreateProcess` appends only
+`.exe` when it searches PATH, so a `.cmd`-only CLI cannot be started by name, and a
+`.cmd` started through `cmd.exe` is the DC-027 shape. Hence three passes, in this
+order, and each returned launch is a file that exists:
+
+
+
+the executable — `<dir>/<command>.exe` on Windows, an executable file elsewhere — on any PATH entry;
+npm's shim on any PATH entry, resolved to the script beside it: `node <dir>/node_modules/<package>/<entry>`;
+the same script under the product's own install root (`npm install --prefix <root>`, Ruling 104's mechanism).
+
+
+
+The executable wins over the shim wherever each sits on PATH: a direct binary is the launch
+the spike observed for copilot, and a shim two entries earlier is not a reason to start
+`node` on a package whose launch was never seen.
+
+| Member | Summary |
+|---|---|
+| `NativeCommandLocator(IReadOnlyList<string> pathEntries, bool windows)` | **(gap)** |
+| `NativeCommandLocator FromEnvironment()` | The process's own PATH, split on the platform's separator, empty entries dropped. |
+| `string? FindExecutable(string command)` | Pass 1: the executable on PATH, or null. |
+| `string? FindNpmShim(string command)` | Pass 2: npm's shim for the command on PATH (`<command>.cmd` on Windows, the sh shim elsewhere), or null. |
+
+### `NativeCommandLocator(IReadOnlyList<string> pathEntries, bool windows)`
+
+- **`pathEntries`** — The directories to search, in order.
+- **`windows`** — Whether to look for `.exe` and `.cmd` (true) or executable files (false).
 
 ## `EngineCatalog`
 
 *class* — `EngineCatalog.cs`
 
-The engine catalog — three data rows, one launch path.
+The engine catalog — data rows, two launch paths.
 
 **Remarks.** **The pins are catalog facts, not spec text.** The spec names no adapter package at all
 (verified: zero hits for `zed-industries`, `@zed`, `claude-code-acp`), so package
@@ -626,15 +685,30 @@ at v0.16.2, so reaching for that name from memory silently yields a March build.
 
 
 
-**Every refusal names its reason.** An unknown engine, a non-adapter mode, and an
-adapter with no observed entry module each fail loudly and differently. A silent default here
-would launch the wrong engine, or the right one the wrong way, and look like success.
+**Every launch line is one the engine-backends spike observed**
+(`docs/spikes/engine-backends-2026-09-14.md`, "Catalog consequences"; the frame corpus under
+`spikes/engine-backends/<engine>/`). The catalog's former `simplify:` — "adapter
+launch only; upgrade trigger = first native-ACP (copilot) spawn" — was retired when that spike
+observed `copilot --acp` answer `initialize` with `protocolVersion 1`; the test
+it named as its alarm was re-pointed at the two modes that still have no path.
+
+
+
+
+
+**Every refusal names its reason.** An unknown engine, a mode with no launch path, an
+adapter with no observed entry module, and a native CLI that is not on PATH each fail loudly and
+differently. A silent default here would launch the wrong engine, or the right one the wrong
+way, and look like success.
 
 | Member | Summary |
 |---|---|
 | `IReadOnlyList<EngineRow> Rows` | The catalog, as data. |
 | `EngineRow Find(string engineId)` | Finds a row by id. |
-| `EngineLaunch ResolveLaunch(string engineId, string adapterInstallRoot)` | Resolves how to launch an engine. Exactly one path is implemented: an adapter package whose entry module has been observed on a real install. |
+| `EngineLaunch ResolveLaunch(string engineId, string adapterInstallRoot)` | Resolves how to launch an engine: an adapter package whose entry module has been observed on a real install, or a native CLI found on this process's PATH. |
+| `EngineLaunch ResolveLaunch(string engineId, string adapterInstallRoot, NativeCommandLocator locator)` | `ResolveLaunch(string, string)` with the PATH lookup injected, so the native path's rules are asserted on a PATH the test built rather than the one the machine has. |
+| `IReadOnlyDictionary<string, string> LaunchEnvironment(EngineRow row, ProviderAccount account)` | The environment an engine's child needs from the account it is bound to — today exactly one fact: an enterprise `host` becomes the CLI's own host variable (Ruling 97 condition 3; Ruling 105 (1): the host is on the acc… |
+| `IReadOnlyDictionary<string, string> LaunchEnvironment(` | The child's environment for a launch on an account named by label — the lookup both hosts make before they start an engine (one derivation, DM7), and a lookup only: it authorises nothing. An account the rows do not ca… |
 
 ### `EngineRow Find(string engineId)`
 
@@ -644,13 +718,131 @@ Finds a row by id.
 
 ### `EngineLaunch ResolveLaunch(string engineId, string adapterInstallRoot)`
 
-Resolves how to launch an engine. Exactly one path is implemented: an adapter package whose
-entry module has been observed on a real install.
+Resolves how to launch an engine: an adapter package whose entry module has been observed on
+a real install, or a native CLI found on this process's PATH.
 
 - **`engineId`** — The catalog id.
-- **`adapterInstallRoot`** — The directory whose `node_modules` holds the adapter.
+- **`adapterInstallRoot`** — The directory whose `node_modules` holds the adapter — or, for an npm-delivered native CLI that PATH lacks, the CLI.
 
-**Throws `AgentPlaneException`.** `UnknownEngine` for an id the catalog does not carry; `LaunchPathNotImplemented` for any mode but `Adapter`; `AdapterEntryModuleNotRecorded` for an adapter whose entry module has never been observed.
+**Throws `AgentPlaneException`.** `UnknownEngine` for an id the catalog does not carry; `LaunchPathNotImplemented` for `Observed` and `Deferred`, and for a native row with no command; `AdapterEntryModuleNotRecorded` for an adapter whose entry module has never been observed; `EngineNotOnPath` for a native CLI PATH does not carry.
+
+### `IReadOnlyDictionary<string, string> LaunchEnvironment(EngineRow row, ProviderAccount account)`
+
+The environment an engine's child needs from the account it is bound to — today exactly one
+fact: an enterprise `host` becomes the CLI's own host variable (Ruling 97 condition 3;
+Ruling 105 (1): the host is on the account, never the engine row).
+
+- **`row`** — The engine being launched.
+- **`account`** — The account the lane bills against.
+
+**Returns.** Variables to set on the child; empty when the account carries no host.
+
+**Throws `AgentPlaneException`.** `LaunchPathNotImplemented` when the account carries a host and the engine has no variable to honour it with — refused, because a launch that dropped the host would sign in to the wrong tenant and look like success.
+
+### `IReadOnlyDictionary<string, string> LaunchEnvironment(`
+
+The child's environment for a launch on an account named by label — the lookup both hosts
+make before they start an engine (one derivation, DM7), and a lookup only: it authorises
+nothing. An account the rows do not carry yields an empty environment; the spawn contract's
+refusal is the one that names it, as it always did.
+
+- **`row`** — The engine being launched.
+- **`providers`** — The configured provider rows.
+- **`accountLabel`** — The account the run names.
+
+## `FirstUse`
+
+*class* — `FirstUse.cs`
+
+First use (Rulings 104 and 105 (2)): what the New Session sheet's **Configure…** runs, as
+rules and processes with no view attached — prerequisite checks before any network, the adapter
+root rule, the pinned adapter install the product runs on the operator's gesture, and the
+`providers.json` writer. Engine-native only; no embedded browser; no credential handled.
+
+**Remarks.** **Package and version come from `EngineCatalog` only** (Ruling 104 (1)(c),
+frozen) — never from the file, never from input. The install line is
+`npm install --prefix <root> --ignore-scripts <package>@<version>`; the
+spike (`docs/spikes/engine-backends-2026-09-14.md` §6) observed that claude-code and codex
+declare no lifecycle scripts, so the flag skips nothing there and stands as the named residual
+supply-chain control (condition 5).
+
+
+
+
+
+**Copy is copied, not recalled** (condition 6): every install instruction on
+`Prerequisite` is quoted from the spike record with its citation, and the known-good
+version named is the one observed there (node v24.18.0; claude 2.1.268), never a modeled floor.
+
+
+
+
+
+**Every measurement degrades to "not recorded"**: a timed-out install reports no exit
+code and no guessed state; "installed" is decided by `ResolveLaunch`'s
+composed entry module being on disk, never by npm's exit code alone.
+
+| Member | Summary |
+|---|---|
+| `string DefaultAdapterRoot(string homeDirectory)` | The product default for the adapter root beneath a home directory: `~/.aide/adapters` (Ruling 104 (2)). |
+| `string ProviderFilePath(string homeDirectory)` | The provider file beneath a home directory: `~/.aide/providers.json`. |
+| `IReadOnlyList<string> ClaudeCodeTools = ["node", "npm", "claude"]` | The tools claude-code's first use needs on PATH, in the order the rows render (Ruling 104 (1)(a)). |
+| `IReadOnlyList<Prerequisite> CheckPrerequisites(` | Checks the prerequisites, **before any network**: each tool on PATH and its `--version`. |
+| `string? Which(string tool, string? path = null)` | Resolves a tool on PATH the way the shell would (PATHEXT on Windows), or null. |
+| `string? ReadVersion(string resolvedPath)` | Runs `<tool> --version` with a 15 s bound; the first non-blank line, or null. |
+| `string? AdapterRootRefusal(string root)` | Why a chosen adapter root is refused, or null when it is acceptable (Ruling 104 (1)(b)): a path inside a git checkout is refused with the reason — this machine's spike path (`C:/Projects/ai-de/spikes/acp-subscription-… |
+| `ProviderConfiguration WriteProviderFile(` | Writes `providers.json` for one provider and one account (Ruling 104 (1)(e)): the auth per the erratum, the label the operator typed, `health` as observed — `ready` after a returned sign-in, `needs-login` otherwise (n… |
+
+### `IReadOnlyList<Prerequisite> CheckPrerequisites(`
+
+Checks the prerequisites, **before any network**: each tool on PATH and its `--version`.
+
+- **`tools`** — The tools, in row order.
+- **`path`** — The PATH to search — the process's by default; a test passes its own.
+- **`version`** — Runs `<tool> --version` and returns the first line, or null; the default runs the real process.
+
+### `ProviderConfiguration WriteProviderFile(`
+
+Writes `providers.json` for one provider and one account (Ruling 104 (1)(e)): the auth
+per the erratum, the label the operator typed, `health` as observed — `ready` after
+a returned sign-in, `needs-login` otherwise (no new value) — and
+`engines.<id>.model` from the given default. `adapterInstallRoot` is written
+only when  is not the default beside the file (Ruling 104 (2)).
+
+**Returns.** The file as it reads back through `Read` — a round trip, not a hope.
+
+## `InstallInstruction`
+
+*record* — `FirstUse.cs`
+
+The install instruction for a missing tool — **copied from the observed upstream source at
+spike time and cited** (Ruling 104 condition 6; `docs/spikes/engine-backends-2026-09-14.md` §6).
+
+## `Prerequisite`
+
+*record* — `FirstUse.cs`
+
+One prerequisite row: the tool, where it resolved on PATH, its version, and — when missing — the cited instruction.
+
+| Member | Summary |
+|---|---|
+| `bool Satisfied` | Whether the tool is on PATH and answered its version. |
+| `string Result` | The result line the row shows. |
+
+## `ProviderSteps`
+
+*record* — `FirstUse.cs`
+
+What the operator must do for a provider, as the spike observed it — **copied, cited, never
+recalled** (`docs/spikes/engine-backends-2026-09-14.md`, the "What the operator must do
+(attended)" row of each engine section). The install step runs inside the product only for
+adapter engines (`Adapter`); a native CLI's install command is shown as copy.
+
+## `InstallResult`
+
+*record* — `FirstUse.cs`
+
+What the install produced.
 
 ## `RunBudget`
 
@@ -1272,12 +1464,18 @@ per the Ruling 23 precedent; see `docs/notes/conductor-spec-errata-policy.md`.
 
 
 
-**Two fields EXTEND §14.2, and both are marked where they are read.**
-`adapterInstallRoot` and `engines.<id>.model` are not in the spec's schema.
-`GovernedRunRequest` requires both, §14.2 supplies neither, and §14.2's own answer for
-the model — `routing.roles` / `best_fit` — is a routing engine this phase does not
-build. They are read here rather than defaulted in code, which is the whole point of the
-node.
+**Three fields EXTEND §14.2, and each is marked where it is read.**
+`adapterInstallRoot`, `engines.<id>.model` and `engines.<id>.account` are
+not in the spec's schema. `GovernedRunRequest` requires a root and a model, §14.2
+supplies neither, and §14.2's own answer for the model — `routing.roles` / `best_fit` —
+is a routing engine this phase does not build. The model is read here rather than defaulted in
+code. `adapterInstallRoot` is **optional since Ruling 104 (2)**: absent reads as the
+`adapters` directory beside this file (`~/.aide/adapters` at `DefaultPath`),
+present overrides, and the product writes the key only for a non-default root — a default root
+is a derivation, not a stored value (DM: derive, don't store). `engines.<id>.account`
+is the **fallback default only** (Ruling 105 condition 8): the session's own
+`DefaultAccount` is what a turn bills; this key decides an engine's account only when a
+session says nothing — the migration of a pre-105 session, and `Bind(string, out BindingRefusal?)`.
 
 
 
@@ -1301,13 +1499,18 @@ than defaulted: a defaulted `ready` is indistinguishable afterwards from an obse
 | Member | Summary |
 |---|---|
 | `string FileName = "providers.json"` | The file name, and the erratum's subject: `.json`, not `.yaml`. |
+| `string DefaultAdapterInstallRoot(string providerFilePath)` | The root an absent `adapterInstallRoot` means (Ruling 104 (2)): the `adapters` directory beside the provider file — `~/.aide/adapters` for a file at `DefaultPath`. |
 | `string DefaultPath` | Where the file is, by default: `~/.aide/providers.json` (§4.3). |
 | `string Path { get; }` | The file this configuration was read from. Every refusal names it. |
-| `string AdapterInstallRoot { get; }` | The directory whose `node_modules` holds the ACP adapter. **Extends §14.2.** |
+| `string AdapterInstallRoot { get; }` | The directory whose `node_modules` holds the ACP adapter. **Extends §14.2.** The file's value, or `DefaultAdapterInstallRoot` when the file carries none (Ruling 104 (2)). |
+| `bool AdapterInstallRootIsDefault { get; }` | Whether `AdapterInstallRoot` is the derived default (the file carries no key). |
 | `ProviderRegistry Registry { get; }` | The providers and accounts, as the registry §4.3 describes. |
 | `ProviderConfiguration? ReadIfPresent(string path)` | Reads the file, or answers `null` when there is none. |
 | `ProviderConfiguration Read(string path)` | Reads the file. The file must exist. |
 | `LaneBinding? Bind(string engineId, out BindingRefusal? refusal)` | Binds one engine to the `(engine, model, account)` triple a run needs, or says which field is missing. |
+| `LaneBinding? Bind(string provider, string accountLabel, out BindingRefusal? refusal)` | Binds a session's chosen account to the `(engine, model, account)` triple a turn needs (Ruling 105 (1)): the engine is the one catalog row whose provider is the account's — derived, never stored on the session — the m… |
+| `string? ModelFor(string engineId)` | The model the file names for an engine, or null when it names none. |
+| `(string Provider, string Label)? FallbackDefaultAccount(string engineId)` | The account the file makes an engine's **fallback default** (Ruling 105 condition 8): the `engines.<id>.account` key when the operator wrote one, else the provider's sole account; `null` for anything else — never one … |
 
 ### `ProviderConfiguration? ReadIfPresent(string path)`
 
@@ -1345,6 +1548,25 @@ anyone checks by hand and wrong in the case that bills the wrong account (DC-110
 provider, unknown account and `needs-login` are all `ProviderRegistry`'s
 refusals; this maps each to the field the operator must edit. A second opinion about what
 binds would be a second place for the rule to change.
+
+### `LaneBinding? Bind(string provider, string accountLabel, out BindingRefusal? refusal)`
+
+Binds a session's chosen account to the `(engine, model, account)` triple a turn needs
+(Ruling 105 (1)): the engine is the one catalog row whose provider is the account's — derived,
+never stored on the session — the model is `engines.<id>.model`, and the registry's
+rules decide the rest.
+
+- **`provider`** — The account's provider id.
+- **`accountLabel`** — The account label — the session's default, or the operator's per-turn override.
+- **`refusal`** — Why not, when the result is null.
+
+### `(string Provider, string Label)? FallbackDefaultAccount(string engineId)`
+
+The account the file makes an engine's **fallback default** (Ruling 105 condition 8): the
+`engines.<id>.account` key when the operator wrote one, else the provider's sole
+account; `null` for anything else — never one of several by reading order.
+
+**Returns.** The provider id and label, or null.
 
 ## `AccountHealth`
 
@@ -1494,6 +1716,7 @@ Stable error codes for the agent plane. Search-key stability is the whole point.
 | `string EngineDidNotStart = "AP-0019"` | The engine executable could not be started at all. |
 | `string GovernedEpisodeNotScored = "AP-0020"` | A governed lane's closed episode produced no scorecard, so it belongs to no cohort. Reported rather than absorbed: an episode that scores nowhere is indistinguishable from a lane that never ran. |
 | `string ProviderConfigurationMalformed = "AP-0021"` | `~/.aide/providers.json` exists and is wrong — a missing field, an unknown key, or a value outside a closed set. **Distinct from the file being absent**, which is not an error at all: an absent file is an operator who… |
+| `string EngineNotOnPath = "AP-0022"` | A native engine's command is not on PATH (nor, for an npm-delivered CLI, under the install root), or is there only as an npm `.cmd` shim the catalog has no observed launch for. The message carries the upstream install… |
 
 ## `RunEventCost`
 

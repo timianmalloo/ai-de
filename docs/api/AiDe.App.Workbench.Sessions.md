@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench.Sessions: 33 types, 197 members, 73% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench.Sessions: 36 types, 205 members, 74% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench.Sessions`
 
-**33 public types · 197 public members · 73% documented.**
+**36 public types · 205 public members · 74% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -128,6 +128,44 @@ Appends a mode. Disposing the returned handle removes it again.
 **Remarks.** The handle exists so a registration has a lifetime. Without it the only way to prove "adding
 a mode is adding a row" would be to add a permanent row for the proof, which is a placeholder
 wearing a test's clothes.
+
+## `ConfigureProviderDialog`
+
+*class* — `ConfigureProviderDialog.cs`
+
+The sheet's **Configure…** for one provider (Rulings 104 (1)(a)–(e), 105 (2)): one dialog, not
+a wizard — prerequisite rows before any network, the adapter root, Install on the operator's
+button press with its log visible, Sign in (engine-native), the account label, and Write.
+
+**Remarks.** **The rules are not here.** Every check, the root rule, the install line and the file
+writer live on `FirstUse`, testable without a window; this renders them. What is on
+screen is what ran: the exact npm line before it runs, every output line as it arrives, the
+exit code and the duration on the result line — or *not recorded* when the bound expires.
+
+
+
+
+
+**Install runs only for an adapter engine** (claude-code, codex); a native CLI's install
+command is shown as copy from the spike record with its citation, never run. **Sign in**
+launches the engine's own CLI in its own console (claude-code today: `claude`, per Ruling 20)
+and re-probes on return — `ready` after a returned sign-in, `needs-login` otherwise (no
+new health value). No credential is read, stored, or displayed here.
+
+| Member | Summary |
+|---|---|
+| `TimeSpan InstallBound = TimeSpan.FromMinutes(5)` | The bound on one install (Ruling 104 (1)(c)); on expiry the result reads "not recorded". |
+| `bool Show(string providerId, Window? owner, string providerFilePath, string? currentAdapterRoot, Action<string>? announce = null)` | Shows the dialog modally. Returns whether `providers.json` was written. |
+
+### `bool Show(string providerId, Window? owner, string providerFilePath, string? currentAdapterRoot, Action<string>? announce = null)`
+
+Shows the dialog modally. Returns whether `providers.json` was written.
+
+- **`providerId`** — The provider to configure.
+- **`owner`** — The owning window.
+- **`providerFilePath`** — Where the file is written — `DefaultPath` in the product; a test passes a temp home's.
+- **`currentAdapterRoot`** — The root the file names today, or null for the default beside the file.
+- **`announce`** — Where the result sentences are spoken.
 
 ## `ConsoleDocumentHost`
 
@@ -420,6 +458,7 @@ session exists.
 - **`workspaceId`** — Maps a workspace root to the key the session config records.
 - **`opened`** — Called once a session exists — where the shell opens its document and records it in Recent sessions.
 - **`time`** — Stamps the default name and the created session.
+- **`adapterInstallRoot`** — The provider file's adapter root (default or override), read fresh each time the sheet opens, or null when there is no file — the sheet's launch-path input (Ruling 105 (2)).
 
 ## `NewSessionSheetDialog`
 
@@ -465,9 +504,89 @@ boxes exist. **The fan-out ceiling is prefilled** (Ruling 56). **There is no tie
 re-probes, and re-renders the rows in place — the sheet is never left, and no credential is
 handled here.
 
+
+
+
+
+**Rows are accounts** (Ruling 105 (2)): grouped under their provider with the engine as
+the sub-line and a state derived at open; a provider with no account is one row, never hidden.
+**Create is never disabled by readiness** (Ruling 104 (3)): with nothing ready the footer says
+so in the ruled sentence and the session still opens.
+
 | Member | Summary |
 |---|---|
-| `bool Show(NewSessionSheetViewModel sheet, Window? owner, Action<string>? announce = null)` | Shows the sheet modally. Returns whether the operator pressed Create. |
+| `bool Show(NewSessionSheetViewModel sheet, Window? owner, Action<string>? announce = null, Func<string, bool>? configure = null)` | Shows the sheet modally. Returns whether the operator pressed Create. |
+
+### `bool Show(NewSessionSheetViewModel sheet, Window? owner, Action<string>? announce = null, Func<string, bool>? configure = null)`
+
+Shows the sheet modally. Returns whether the operator pressed Create.
+
+- **`configure`** — Opens Configure… for a provider and returns whether the provider file changed (Ruling 104); the sheet then re-derives its rows. Null in a build with no configure surface — the rows say what to do in words.
+
+## `ParallelSessionOutcome`
+
+*record* — `ParallelSessionFlow.cs`
+
+What *Start a parallel session* did (Ruling 95), as the shell announces it.
+
+## `ParallelSessionFlow`
+
+*class* — `ParallelSessionFlow.cs`
+
+*Start a parallel session* (Ruling 95): a derived sibling of the session whose composer
+offered it — the same workspace, backends and config, `origin = parallel:<parent id>`,
+its name by Ruling 99's rule on the parent's name — opened docked beside the parent
+(Ruling 83's Left zone, by the document kind's zone rule), its composer bound, and the parent's
+draft sent as its first turn through the sibling's own gate (lease derivation and prepare apply
+unchanged).
+
+**Remarks.** **Measured before it was built (Ruling 95 condition 1).** Two sessions on one workspace
+each completed a read-only turn concurrently against the live adapter — two engine processes
+alive together, both answered (`docs/proof/send-while-running.md`). Had the run host
+serialised them, this flow would not exist and the composer's action would carry that refusal.
+
+
+
+
+
+**One flow, injected edges, like `NewSessionFlow`.** The shell opens, the
+window binds, the store creates; this type only sequences them, so the sequence is testable
+without a window and the window has one place to wire it.
+
+
+
+
+
+**The name rule is Ruling 99's, not this type's.**  is a
+seam the window supplies — `SessionConfigStore.UniqueName(name, SessionConfigStore.ExistingNames(root))`,
+the Sessions lane's one function, so the sheet's default name, an operator-typed duplicate and a
+parallel session's name cannot drift; the default here, `"<parent name> (2)"`, is the
+rule's first counter for a caller with no store to ask.
+
+| Member | Summary |
+|---|---|
+| `ParallelSessionFlow(` | **(gap)** |
+| `string OriginOf(string parentSessionId)` | The origin every parallel session records: `parallel:<parent session id>`. |
+| `string FirstCounter(string parentName)` | Ruling 99's first counter — the default for a caller that supplies no rule. |
+| `ParallelSessionOutcome Start(string workspaceRoot, SessionConfig parent, ParallelDraft request)` | Runs the flow once for one parent and one draft. |
+
+### `ParallelSessionFlow(`
+
+- **`open`** — Opens the sibling's document in the shell and returns what to announce (the shell's `OpenSessionDocument`).
+- **`bind`** — Binds the sibling's composer to its run and returns what to announce (the window's binder).
+- **`composerOf`** — The composer of an open session's document, by session id (the shell's `SessionComposer`).
+- **`remember`** — Records the sibling in Recent sessions; null when this build keeps none.
+- **`uniqueName`** — Ruling 99's rule over the parent's name (`SessionConfigStore.UniqueName` over the workspace's names); null for the first counter, `"<name> (2)"`.
+- **`availability`** — The compile-mode ladder's availability, for copying an agentic parent's mode; null leaves the sibling mechanical-only and says so.
+- **`time`** — Stamps the created session.
+
+### `ParallelSessionOutcome Start(string workspaceRoot, SessionConfig parent, ParallelDraft request)`
+
+Runs the flow once for one parent and one draft.
+
+- **`workspaceRoot`** — The workspace both sessions live in.
+- **`parent`** — The parent's config as it reads now.
+- **`request`** — The parent draft's words and attachments.
 
 ## `ProseView`
 
@@ -894,10 +1013,12 @@ state of its own.
 | `int OtherEvents` | How many non-conversation rows the fold does not show; 0 when it shows them all. |
 | `bool HasOtherEvents` | **(gap)** |
 | `string TailText` | *the other 136, in the Console* — the tail button's text (the button is collapsed when the fold shows every line: `HasOtherEvents`). |
-| `IReadOnlyList<TurnActionKind> Actions` | The actions this turn offers, Deny first (SC7). A completed or past-failed turn offers none. |
+| `IReadOnlyList<TurnActionKind> Actions` | The actions this turn offers, Deny first (SC7). A completed or past-failed turn offers none. A queued turn offers Cancel — and *Send now* first, only while it waits on the operator after a Stop or a failure (Ruling 95… |
+| `string QueuedSentence` | The queued turn's sentence, from the snapshot it sits in (Ruling 95) — set by the feed on every merge, like `IsLast`. |
+| `bool QueuedAwaitsYou` | Whether the queued turn waits on the operator rather than on a run (Ruling 95: *Send now*) — the snapshot's derivation, set by the feed. |
 | `bool HasActions` | **(gap)** |
 | `bool IsLast` | Whether this is the thread's last turn — a failed PAST turn folds like a completed one (SC7). |
-| `bool ShowsReasonBox` | A boxed reason on a failed, stopped or waiting LAST turn; a past failure folds (SC7). |
+| `bool ShowsReasonBox` | A boxed reason on a failed, stopped, waiting or queued LAST turn; a past failure folds (SC7). |
 
 ### `int FoldLines = 4`
 

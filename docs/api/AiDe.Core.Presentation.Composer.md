@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Composer: 33 types, 97 members, 89% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Composer: 33 types, 99 members, 89% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Composer`
 
-**33 public types · 97 public members · 89% documented.**
+**33 public types · 99 public members · 89% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -268,7 +268,7 @@ order, and nothing reads a clock, a culture or the environment.
 | `int EffectiveFanOut(string tier, int ceiling)` | Effective fan-out = `min(cap(tier), ceiling)` (Ruling 64) — a projection, never stored, never raised from a prompt. A negative ceiling is NOT clamped to 0: it is a broken session setting, and the contract refuses the … |
 | `string SettingsLine(string tier, int ceiling, RunBudget? budgetCap)` | The composer's settings line (`DESIGN.md` copy): *fan-out cap 2 (ceiling 3) · budget: bounded by your subscription · from session settings*; at T0, *T0 — the ceiling of 3 does not apply to this turn*. Never a numeral … |
 | `IReadOnlyList<Sessions.DecorationRow> Decorations(` | The current turn's decoration rows in SC2's one grammar — `class · tier · lease · shape [· template]`, each with its source and reason — **read from `Project` over the live pre-compile** (ADR-0033 rule 2: the render s… |
-| `IReadOnlyList<Sessions.DecorationRow> Decorations(PromptCompilation.CompiledProjection projection, ComposerDraft draft)` | The decoration rows of one projection — the one row builder the live line and a persisted envelope share (DM7). |
+| `IReadOnlyList<Sessions.DecorationRow> Decorations(PromptCompilation.CompiledProjection projection, ComposerDraft draft, string? defaultAccountLabel = null)` | The decoration rows of one projection — the one row builder the live line and a persisted envelope share (DM7). |
 | `CompiledPrompt Compile(ComposerDraft draft, PromptTemplate? template = null)` | Compiles the draft.  is required only for a template draft. |
 | `CompiledPrompt Compile(ComposerDraft draft, PromptTemplate? template, GoalBlock? block)` | Compiles the draft around a projected block: `Project` renders the sent bytes through this overload with *its* block, so the tier in the block is the tier the projection computed (an override included) — one producer … |
 | `string RenderGoalBlock(GoalBlock block)` | The goal block as prompt text, in the order §14.3 lists the fields. |
@@ -329,6 +329,15 @@ line the operator confirms at Send is the projection the send gate puts on the w
 - **`engineId`** — The bound engine, or null before the composer is bound.
 - **`sessionId`** — The session, or null before the composer is bound.
 - **`compileMode`** — The session's compile mode.
+- **`defaultAccountLabel`** — The session's default account label (Ruling 105), or null before the composer is bound.
+
+### `IReadOnlyList<Sessions.DecorationRow> Decorations(PromptCompilation.CompiledProjection projection, ComposerDraft draft, string? defaultAccountLabel = null)`
+
+The decoration rows of one projection — the one row builder the live line and a persisted envelope share (DM7).
+
+- **`projection`** — The projection.
+- **`draft`** — The draft.
+- **`defaultAccountLabel`** — The session's default account label, or null — the `account` row then reads the override or *not recorded*.
 
 ### `CompiledPrompt Compile(ComposerDraft draft, PromptTemplate? template, GoalBlock? block)`
 
@@ -444,6 +453,8 @@ written one is overwritten with.
 | `string? TaskClassChoice { get; private set; }` | The task class this prompt chose (Ruling 70: changeable per prompt; the session's default is untouched), or null — the session's default applies with `source: session-default`. |
 | `void OverrideTier(string? tier)` | Overrides the tier (T0 / T1 / T2), or clears the override with null. Anything else is refused and the prior value stands (§A9 input 14). |
 | `void ChooseTaskClass(string? taskClass)` | Chooses this prompt's task class, or returns to the session's default with null or blank. |
+| `string? AccountChoice { get; private set; }` | The account label this turn chose on the composer's picker (Ruling 105 (2)), or null — the session's `DefaultAccount` applies. A choice becomes an `account` row with `source: operator` at Send; it never changes the se… |
+| `void ChooseAccount(string? accountLabel)` | Chooses this turn's account by label, or returns to the session's default with null or blank. |
 | `IReadOnlyDictionary<string, string> GoalValues` | The goal-block field values, by wire name. |
 | `IReadOnlyDictionary<string, IReadOnlyList<string>> TemplateValues` | The template field values, by field name. |
 | `IReadOnlyList<ComposerAttachment> Attachments` | Everything attached to this send, in the order it was affirmed. |

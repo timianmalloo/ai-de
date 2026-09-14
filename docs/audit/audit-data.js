@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T18:11:58Z",
+  "generated": "2026-09-14T20:31:43Z",
   "audit": [
     {
       "actor": null,
@@ -15985,79 +15985,210 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2GHMT8H2J2EJ5FBVVFS9DNS",
-      "shortname": "join-engine-spikes",
+      "actor": null,
+      "artifacts": [
+        "docs/spikes/engine-backends-2026-09-14.md"
+      ],
       "datetime": "2026-09-14T18:07:37Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "the join of origin/side/engine-spikes into main",
-      "summary": "Joined side/engine-spikes (60da3a2a): docs/spikes/engine-backends-2026-09-14.md and the frame corpus under spikes/engine-backends/. Observed: copilot CLI 1.0.84-5 speaks ACP natively (copilot --acp, protocolVersion 1, authMethods copilot-login; --no-auto-login refuses even a stored login so the product never passes it; enterprise = copilot login --host https://<tenant>.ghe.com, GH_HOST/COPILOT_GH_HOST); codex adapter 1.10.0 entry dist/index.js bundling @openai/codex 0.153.4 + codex.exe, auth api-key or chat-gpt; gemini 0.58.0 --acp (--experimental-acp deprecated), personal Google login refused server-side since 2026-06-18, GEMINI_API_KEY works; grok = @xai-official/grok 1.0.30, grok agent stdio, authMethods grok.com, XAI_API_KEY works; Higgsfield = REST API (Key id:secret) + an MCP server - a tool provider, not an engine; claude-code 0.75.1 under --ignore-scripts installs and answers initialize (no lifecycle scripts). Install instructions for claude and node copied with citations. Not recorded: session/prompt frames for the four new engines; the enterprise-tenant login; licensed Gemini OAuth. recount_seconds=0 (docs_only=True).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/spikes/engine-backends-2026-09-14.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "every engine's launch line observed before any launch code lands (Rulings 97, 104, 105)",
       "done_when": "the record and corpus on main; 38 gates; pushed",
-      "tier": "T1",
+      "duration_seconds": 0.0,
       "fan_out": 0,
+      "goal": "every engine's launch line observed before any launch code lands (Rulings 97, 104, 105)",
+      "id": "al-01M2GHMT8H2J2EJ5FBVVFS9DNS",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of origin/side/engine-spikes into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-engine-spikes",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-09-14T18:07:37Z",
-      "duration_seconds": 0.0
+      "summary": "Joined side/engine-spikes (60da3a2a): docs/spikes/engine-backends-2026-09-14.md and the frame corpus under spikes/engine-backends/. Observed: copilot CLI 1.0.84-5 speaks ACP natively (copilot --acp, protocolVersion 1, authMethods copilot-login; --no-auto-login refuses even a stored login so the product never passes it; enterprise = copilot login --host https://<tenant>.ghe.com, GH_HOST/COPILOT_GH_HOST); codex adapter 1.10.0 entry dist/index.js bundling @openai/codex 0.153.4 + codex.exe, auth api-key or chat-gpt; gemini 0.58.0 --acp (--experimental-acp deprecated), personal Google login refused server-side since 2026-06-18, GEMINI_API_KEY works; grok = @xai-official/grok 1.0.30, grok agent stdio, authMethods grok.com, XAI_API_KEY works; Higgsfield = REST API (Key id:secret) + an MCP server - a tool provider, not an engine; claude-code 0.75.1 under --ignore-scripts installs and answers initialize (no lifecycle scripts). Install instructions for claude and node copied with citations. Not recorded: session/prompt frames for the four new engines; the enterprise-tenant login; licensed Gemini OAuth. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2GHWF5PQ7SNPEKKWJ38D502",
-      "shortname": "spike-engine-backends-signals",
-      "datetime": "2026-09-14T18:11:48Z",
-      "session": "engine-spikes",
-      "prompt": "One spike record per engine (copilot, codex, gemini, grok, Higgsfield) with observed command lines, handshakes and auth shapes; claude-code under --ignore-scripts",
-      "summary": "Correction carrying the signals the node's entry omitted (AL5b): every engine's initialize handshake observed on the wire and recorded under spikes/engine-backends/; session/prompt not observed for the four new engines; the record is docs/spikes/engine-backends-2026-09-14.md.",
-      "kind": "skill",
-      "skill": "investigate",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/spikes/engine-backends-2026-09-14.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "every engine's launch line observed before launch code lands",
+      "datetime": "2026-09-14T18:11:48Z",
       "done_when": "five records with observed command line, handshake frames, auth method; the two --ignore-scripts observations; the two install instructions cited",
-      "tier": "T1",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "duration_source": "session-start-hook",
-      "started_at": "2026-09-14T17:42:53Z",
       "duration_seconds": 1735.0,
-      "supersedes": "al-01M2GHF1814E8JMCFA006FJN5J"
+      "duration_source": "session-start-hook",
+      "fan_out": 0,
+      "goal": "every engine's launch line observed before launch code lands",
+      "id": "al-01M2GHWF5PQ7SNPEKKWJ38D502",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "One spike record per engine (copilot, codex, gemini, grok, Higgsfield) with observed command lines, handshakes and auth shapes; claude-code under --ignore-scripts",
+      "session": "engine-spikes",
+      "shortname": "spike-engine-backends-signals",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "started_at": "2026-09-14T17:42:53Z",
+      "summary": "Correction carrying the signals the node's entry omitted (AL5b): every engine's initialize handshake observed on the wire and recorded under spikes/engine-backends/; session/prompt not observed for the four new engines; the record is docs/spikes/engine-backends-2026-09-14.md.",
+      "supersedes": "al-01M2GHF1814E8JMCFA006FJN5J",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2GHWQSHMG04YE12RC5N9KZT",
-      "shortname": "join-engine-spikes-2",
-      "datetime": "2026-09-14T18:11:57Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "the join of the resolved merge into main",
-      "summary": "The engine-spikes join's second run: the first stopped at step 8 on verify-audit-capture (the node's entry al-01M2GHF1814E8JMCFA006FJN5J carried no signals); a superseding entry al-01M2GHWF5PQ7SNPEKKWJ38D502 with the signals appended under the node's session; this run completes the join. recount_seconds=0 (docs_only=True).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [],
+      "datetime": "2026-09-14T18:11:57Z",
+      "done_when": "38 gates; pushed",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "the engine spikes' record on main",
+      "id": "al-01M2GHWQSHMG04YE12RC5N9KZT",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-engine-spikes-2",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T18:11:56Z",
+      "summary": "The engine-spikes join's second run: the first stopped at step 8 on verify-audit-capture (the node's entry al-01M2GHF1814E8JMCFA006FJN5J carried no signals); a superseding entry al-01M2GHWF5PQ7SNPEKKWJ38D502 with the signals appended under the node's session; this run completes the join. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/send-while-running.md",
+        "src/AiDe.App/Workbench/Sessions/ParallelSessionFlow.cs",
+        "tests/AiDe.App.Tests/Sessions/Thread/ASendWhileATurnRunsOffersWaitOrParallelTests.cs"
+      ],
+      "datetime": "2026-09-14T18:53:42Z",
+      "done_when": "Condition 1 measured and recorded before Parallel code; Wait red-first (queued, drained, stopped-with-queued, cancel); the drain never sends after Stop/Failed; the queued turn's compile spend on its own line; Parallel shipped or refused with the measured reason; DESIGN.md and the spec's STA rows amended; gates green; audit entry; session end",
+      "duration_seconds": 4238.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "lane/composer-r95",
+        "pushed": null,
+        "sha": "5d1442ff3652d557877f00bb875d031e60f99fbd",
+        "short": "5d1442ff3"
+      },
+      "goal": "Land Ruling 95: a Send while a turn runs offers Wait (one queued turn) or Parallel (a derived sibling session), condition 1 measured first",
+      "id": "al-01M2GM96PCGPBJCJ0RG5GBCP4H",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Lane node composer-r95 (worktree C:\\Projects\\ai-de-lane-composer-r95, branch lane/composer-r95, base c831113e). Ruling 95 — F-D: a Send while a turn runs offers Wait (one queued turn) or Parallel (a derived sibling session); Ruling 77(b) reversed as its own condition 2 foresaw. Conditions: (1) measure first — two sessions on the same workspace each complete a turn concurrently against the real adapter (record process count and both outcome lines; if serialised, Parallel is refused with that reason and only Wait ships); (2) red-first STA rows for queued · drained · stopped-with-queued · cancel; (3) the drain never sends after Stop/Failed (test); (4) spend for the queued turn's compile on its own outcome line (Ruling 78). Sessions seam: Ruling 99's name rule through a single Func<string,string> seam if not yet on main. Not in scope: the account picker (Ruling 105), the New Session sheet, the Explore reader, the store. Tier T1, fan-out 0.",
+      "session": "composer-r95",
+      "shortname": "lane-composer-r95",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "design-slice",
+      "started_at": "2026-09-14T17:43:04Z",
+      "summary": "Ruling 95 landed on lane/composer-r95 (base c831113e, merged origin/main eb8cdee2 mid-lane for Ruling 99). Condition 1 measured first with a probe mode (--parallel-turns): two session documents on one workspace, two live claude-code engine processes alive together in 14/14 census samples, node 41 → 43, both turns answered (3.5 s / 3.4 s) — the run host does not serialise, so Parallel ships. Wait: TurnState.Queued/Cancelled, TurnActionKind.Cancel/SendNow, Enqueue/Start, the snapshot's derived Queued/QueuedBehind/QueuedAwaitsYou; the composer's two-action status line; exactly one queued turn; the drain after Completed/Answered only; Send now after Stop/Failed; Cancel returns the words; the compile's called.cost seeded on its own turn (Ruling 78). Parallel: ParallelSessionFlow (create with origin parallel:<parent>, config copied, name by SessionConfigStore.UniqueName, docked Left, bound, sent through the sibling's own gate), wired in MainWindow. Found and fixed on the way: GovernedRunHost.DrainAsync re-checked its exit only on an event's arrival, so a prompt completing after the last event hung the run (red-first). Counts: App 987 → 1007, Core 2648 → 2660 (lane's own +14 / +10). Proof: docs/proof/send-while-running.md. Commits 5eb14d34, 8e1669a7, 5b62b759 (merge), f7599b4f, 5d1442ff.",
+      "tags": [
+        "ruling-95",
+        "composer",
+        "sessions"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/send-while-running.md"
+      ],
+      "datetime": "2026-09-14T19:05:43Z",
+      "done_when": "merge clean; recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "duration_seconds": 539.0,
+      "fan_out": 0,
+      "goal": "the operator's F-D answered on main: wait or a parallel session",
+      "id": "al-01M2GMZ67R2VAXQ4WGZFSQ1XMV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of origin/lane/composer-r95 into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-composer-r95",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T18:56:44Z",
+      "summary": "Joined lane/composer-r95 (866f1ab9): Ruling 95 - condition 1 measured first (two sessions, sends 59 ms apart, two lane.session-new rows, engine pids 34340/57860 alive together in 14/14 samples, both answered in ~3.4 s) so Parallel shipped; TurnState.Queued (Core seam), the two-action status line, one queued turn (Cancel returns the text; Send now after Stop/Failed), the drain only on Completed/Answered, compile spend on the queued turn's own line, Parallel via SessionConfigStore.Create(origin parallel:<parent>) with Ruling 99's UniqueName, docked Left beside the parent, sent through the sibling's gate; GovernedRunHost.DrainAsync hung when the prompt completed after the last event - fixed (waits on queue or prompt). App 993->1007, Core 2650->2660. Ruling 77(b) reversed as its condition 2 foresaw. recount_seconds=538 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/engines-on-the-wire.md",
+        "docs/notes/conductor-spec-errata-providers-json.md"
+      ],
+      "datetime": "2026-09-14T19:07:49Z",
+      "done_when": "EngineCatalog carries five rows (claude-code unchanged; codex dist/index.js observed; copilot/gemini/grok Native) and ResolveLaunch resolves Native rows from PATH without a shell while still refusing Observed/Deferred and an unobserved adapter entry; AcpEngineProcess spawns a Native launch as it spawns node <entry>; AcpLaneClient sends the claude _meta to claude-code only; a providers.json account may carry host and copilot's launch passes it as COPILOT_GH_HOST; red-first per engine incl. a real-CLI initialize observation (protocolVersion 1) or an honest skip; run-verify-gates.py green on the committed tree; docs/proof/engines-on-the-wire.md and the errata note amended; the simplify: comment retired; branch pushed; audit entry; coord session ended.",
+      "duration_seconds": 3164.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "lane/agentplane-engines",
+        "pushed": null,
+        "sha": "51bdce72e06ffc5d6409ed542d67577f5db4a6db",
+        "short": "51bdce72e"
+      },
+      "goal": "Land the engines as data rows plus one Native launch path, in the ruled order copilot -> codex -> gemini -> grok, one commit each, as observed by docs/spikes/engine-backends-2026-09-14.md (Rulings 97 (ii)(iii), 105).",
+      "id": "al-01M2GN310C66JY2VXF37TKPFAR",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "You are a lane node of the AI-DE Conductor programme (repo root C:\\projects\\ai-de; the pack's rules in C:\\projects\\ai-de\\AGENTS.md apply). Work ONLY in your worktree C:\\Projects\\ai-de-lane-agentplane-engines on branch lane/agentplane-engines (based on main eb8cdee2).",
+      "session": "agentplane-engines",
+      "shortname": "lane-agentplane-engines",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-14T18:15:05Z",
+      "summary": "Landed Rulings 97 (ii)(iii)/105 as four commits in the ruled order copilot (97353fa7) -> codex (17b4ba6e) -> gemini (fa4c89e7) -> grok (51bdce72), each red-first: EngineCatalog now carries five rows and two launch paths (adapter under node; native via NativeCommandLocator - PATH executable, npm shim resolved to its script, or the install root - measured with where on this machine: copilot.exe, gemini.cmd only, grok absent); AcpLaneClient(engine:) sends the claude _meta to the claude-code adapter only and reports the omission; ProviderAccount.Host read from providers.json and passed as COPILOT_GH_HOST by EngineCatalog.LaunchEnvironment; AP-0022 EngineNotOnPath. Each engine spawned by the product's own ResolveLaunch -> AcpEngineProcess.Start on this machine answered initialize with protocolVersion 1 (copilot.exe 1.0.84-6, codex-acp 1.10.0, gemini-cli 0.58.0, grok 1.0.30 via the scratch install; homes on scratch, nothing under ~/.copilot/.codex/.gemini/.grok). Grok is Native (the CLI speaks ACP itself; one mechanism for the three native CLIs; npm package recorded as the install source). The simplify: comment is retired; its alarm ANonAdapterModeIsRefusedWithANamedReason is re-pointed under its frozen-cited name. Not observed: session/prompt on any new engine, sign-in, COPILOT_GH_HOST's effect at session/new. Seam req-01M2GKC2RY667S51X22QVV7FGJ: the hosts still construct the client without its row. Core 2683/0 (baseline 2650), App 993/0; verify-test-run OK without --update; gate line green after regenerate-derived and the name restore. Proof: docs/proof/engines-on-the-wire.md; errata note amended (accepted providers, host on the account). Findings as placeholders DC-nnn (engines a-d) in the proof.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "id": "al-01M2GNTFZ2WXX6ST5SJQQ52Z79",
+      "shortname": "join-agentplane-engines",
+      "datetime": "2026-09-14T19:20:38Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "Joined lane/agentplane-engines (7cd0fc77): EngineCatalog carries five rows - copilot Native 'copilot --acp' (never --no-auto-login; COPILOT_GH_HOST from the account's host), codex Adapter with entry dist/index.js observed, gemini Native 'gemini --acp' (npm shim resolved to node bundle/gemini.js), grok Native 'grok agent stdio' (npm source @xai-official/grok 1.0.30, lazy bootstrap into GROK_HOME); ResolveLaunch resolves Native rows from PATH (exe first, .cmd shim via node, install root) with AP-0022 EngineNotOnPath; AcpLaneClient sends _meta.claudeCode.options only for a row that ReadsClaudeCodeMeta, byte-exact {cwd, mcpServers: []} otherwise (4-engine theory); initialize observed: copilot 1.0.84-6 in 1,012 ms, codex-acp 1.10.0 in 429 ms, gemini-cli 0.58.0 in 1,204 ms, grok 1.0.30 in 3,015 ms cold / 458 ms warm; simplify: comment retired; ProviderAccount.Host read; LaunchEnvironment refuses a host an engine cannot honour. Core 2650->2683. Not observed: session/prompt on the new engines, sign-in. Two derived site files regenerated. Seam request req-01M2GKC2RY667S51X22QVV7FGJ (the run and compile hosts construct the client without its row and start the engine before the binding is authorised) taken by the conductor as the next slice. recount_seconds=531 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/engines-on-the-wire.md"
+      ],
       "tags": [],
       "outcome": "success",
-      "goal": "the engine spikes' record on main",
-      "done_when": "38 gates; pushed",
+      "goal": "the four engines launchable from the product's catalog, each on an observed line",
+      "done_when": "recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -16065,8 +16196,92 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-09-14T18:11:56Z",
-      "duration_seconds": 1.0
+      "started_at": "2026-09-14T19:11:45Z",
+      "duration_seconds": 533.0
+    },
+    {
+      "id": "al-01M2GPXF95DJBM8HW4KVPMF43F",
+      "shortname": "join-conductor-seam-engine-row",
+      "datetime": "2026-09-14T19:39:44Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "the join of conductor/addendum-c into main",
+      "summary": "Joined conductor/addendum-c (502070d3): the engines lane's seam request resolved - GovernedRunHost and CompileCallHost construct AcpLaneClient with engine: EngineCatalog.Find(request.EngineId) and diagnostics: Report, and start the child with EngineCatalog.LaunchEnvironment(row, providers, label) (new overload; a lookup, never a binding; the compile child keeps its output cap); TheHostBindsItsClientToItsEngineTests (6, red-first CS0117; the source oracle scans by paren depth after a lambda's ';' stopped the regex). Also DC-221 (a drain that only wakes on an event) and DC-222 (an oracle over an unpumped derivation) from the r95 lane, its attended rows W-1..W-6, the liveness file. Full recount. recount_seconds=539 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/engines-on-the-wire.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "a non-claude engine gets its engine-appropriate session/new and its account's host from the product's own hosts",
+      "done_when": "merge clean; recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T19:30:43Z",
+      "duration_seconds": 541.0
+    },
+    {
+      "id": "al-01M2GS9KKEXPF2018MXVSYP8XM",
+      "shortname": "lane-sessions-accounts",
+      "datetime": "2026-09-14T20:21:19Z",
+      "session": "sessions-accounts",
+      "prompt": "One T1 slice 'accounts + first use' (Rulings 105, 104, 97(i)): the model, the sheet as account rows, Configure..., the composer's account picker, the fresh-machine oracle",
+      "summary": "Five commits red-first: the account is the session's unit (Accounts + DefaultAccount, engine derived, adapterInstallRoot optional with ~/.aide/adapters, expand-migrate-contract from enabledBackends); the sheet lists accounts under providers with derived states, Create stays enabled with the ruled footer, the binder's refusal names Configure; Configure... runs prerequisite rows, the root rule (a git checkout refused), the pinned install on gesture with --ignore-scripts and its log, engine-native Sign in, providers.json written; the per-turn account picker as an operator row at Send, lane.session-new carries engine/model/account, settings change the default for new turns only; the fresh-machine oracle against a local one-package npm registry (394 ms). Core 2650->2710 and App 993->1024 on the tree merged with main 7eb9fcde. The lane's node hit the weekly quota after the merge; the conductor finished its merge commit, renamed SessionAccountOption to AccountOption (R14 b2 gate) and fixed the session-thread spike's SessionConfig call (coverage gate), then pushed. Condition 4 (a live acceptance on the operator's second machine) RUN-PENDING.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/accounts-and-first-use.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "accounts as the operator-facing unit and first use on a fresh machine",
+      "done_when": "the five commits with red-first evidence; App and Core green; gates green on the tree; the proof pack with the attended rows; pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-14T18:16:13Z",
+      "duration_seconds": 7506.0
+    },
+    {
+      "id": "al-01M2GSWMFVBW7QM3J32VN5P909",
+      "shortname": "join-sessions-accounts",
+      "datetime": "2026-09-14T20:31:42Z",
+      "session": "claude-conductor-addendum-c",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "Joined lane/sessions-accounts (f833c43b): Ruling 105 (1) SessionConfig.Accounts + DefaultAccount, engine derived from provider, expand-migrate-contract from enabledBackends (singleton maps, otherwise 'choose one'); 104 (2) adapterInstallRoot optional, default ~/.aide/adapters, written only when overridden; 105 (2)/104 (3)/97(i) the sheet lists accounts under every catalog provider with derived states (not configured / needs sign-in / ready from launch path + health), Create enabled with the ruled footer, the binder's refusal names Configure; 104 (1)(a)-(e) Configure... per provider - node/npm/claude rows with cited install instructions, the root rule (a git checkout refused, tested against this machine's spike path), the pinned install on gesture with --ignore-scripts and a visible log, engine-native Sign in, providers.json written (ready after exit 0 else needs-login); 105 (2) the composer's per-turn account picker (non-ready rows disabled with their state), override as an operator row at Send, lane.session-new carries engine/model/account, settings change the default for new turns only; 104 condition 2 the fresh-machine oracle under an empty HOME against a local one-package npm registry (394 ms; a bare tarball does not work - 105 transitive deps). App 1013->1024, Core 2693->2710. The node stopped at the weekly quota after its merge with main; the conductor finished the merge commit, renamed SessionAccountOption->AccountOption (R14 b2) and fixed the session-thread spike (coverage), and pushed. Merge conflicts: three coordination ledgers, the primary's copies taken. Condition 4 (a live acceptance on the operator's second machine) RUN-PENDING. recount_seconds=503 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/accounts-and-first-use.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "first use on a fresh machine and per-session, per-turn account switching on main",
+      "done_when": "recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-14T20:23:18Z",
+      "duration_seconds": 504.0
     }
   ],
   "changes": [

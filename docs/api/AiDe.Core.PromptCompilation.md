@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.PromptCompilation: 47 types, 177 members, 82% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.PromptCompilation: 47 types, 180 members, 82% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.PromptCompilation`
 
-**47 public types · 177 public members · 82% documented.**
+**47 public types · 180 public members · 82% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -462,6 +462,7 @@ The decoration names this slice writes or reads — one spelling each (DM7).
 | `string Attachments = "attachments"` | **(gap)** |
 | `string HistoryWindow = "history_window"` | **(gap)** |
 | `string Constitution = "constitution"` | **(gap)** |
+| `string Account = "account"` | The operator's per-turn account choice (Ruling 105 (2)) — an `operator` row at Send; absent means the session's default account. |
 | `IReadOnlyList<string> StructureLines = [Goal, DoneWhen, NotInScope]` | The three structure lines, in §14.3 order. |
 | `IReadOnlyList<string> NeverOperator =` | Names an `operator` row may never carry (US-D1): the settings have one home, and a projection is never stored. Checked at `Append`. |
 
@@ -538,6 +539,7 @@ The `consumed.reason` codes (E6).
 | `string Completed = "completed"` | **(gap)** |
 | `string StoppedByOperator = "stopped_by_operator"` | **(gap)** |
 | `string DocumentClosed = "document_closed"` | **(gap)** |
+| `string CancelledByOperator = "cancelled_by_operator"` | A queued turn the operator cancelled before it was sent (Ruling 95): submitted, never run. |
 | `string LaneExited(int? code)` | `lane_exited{code}`, rendered with the exit code — or `lane_exited` alone when none was recorded. |
 
 ## `PurgePlan`
@@ -769,6 +771,7 @@ render and at Submit, stored nowhere (§A6; §A12.2).
 | Member | Summary |
 |---|---|
 | `bool IsReadOnly` | Ruling 73's access projection: read-only when no lease was derived. |
+| `string? AccountOverride { get; init; }` | The account label the operator chose for this turn (`Current(account)` with `source: operator`, Ruling 105 (2)), or null — the session's default account binds. Carried beside the projection's facts, outside `Projectio… |
 | `string? Prompt` | The sent bytes, when rendered. |
 
 ## `Projection`

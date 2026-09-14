@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation.Sessions: 49 types, 146 members, 96% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation.Sessions: 50 types, 158 members, 96% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation.Sessions`
 
-**49 public types · 146 public members · 96% documented.**
+**50 public types · 158 public members · 96% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -207,44 +207,31 @@ review's §7, the Simplifier's veto on D3's run-of-four grouping).
 | `IReadOnlyList<ConversationItem> Of(IReadOnlyList<TurnRow> rows, bool live)` | The items of a turn's rows, in the rows' order. : the turn is running or waiting, so a call with no terminal status is *running*, not *interrupted*. |
 | `string StatusWord(ToolStatus status)` | The status word: *running · done · failed · interrupted* — the member's name, lower-cased (the goldens pin the four words). |
 
-## `AgentBackendRow`
+## `AccountRowState`
+
+*enum* — `NewSessionSheetViewModel.cs`
+
+The derived state of one account row (Ruling 105 (2)): the weaker of (launch path observed?, account health).
+
+## `AccountRow`
 
 *record* — `NewSessionSheetViewModel.cs`
 
-One agent-backend row on the New Session sheet: a catalogued engine, the provider it
-authenticates against, and **the registry's own account object**.
+One account row on the New Session sheet (Ruling 105 (2)): a provider, the catalog engine that
+authenticates against it (the sub-line), **the registry's own account object** — or none, for
+a provider that carries no account yet — and the state derived at open time, never stored
+(Ruling 97 condition 2).
 
-**Remarks.** **The account is carried, never copied.** A4.3's sheet shows live per-account health, and the
-registry is where health is observed. Projecting health into a field of this row would be a
-second health model — the day the probe re-runs, the sheet would still show the value it copied,
-and nothing would say so. `TheSheetsHealthValuesAreReferenceEqualToTheRegistrys` asserts reference
-equality against the registry's instance, which is the only form of that claim a rename cannot
-weaken.
+**Remarks.** **The account is carried, never copied.** Health is read through the registry's instance, so a
+re-probe is visible here without a second health model.
 
 | Member | Summary |
 |---|---|
-| `AccountHealth Health` | What the last probe observed — read through the registry's object, never cached. |
-| `bool RoutableForThisSession` | Whether this backend may be offered to the router for this session. |
-| `string DisplayLabel` | The row as the sheet reads it: engine, account, health. |
-
-### `bool RoutableForThisSession`
-
-Whether this backend may be offered to the router for this session.
-
-**Remarks.** `needs-login` is an ABSENCE (§4.3), and Ruling 20 keeps that refusal even though the
-sheet now offers a Sign in action: the operator may enable the engine on the session, and the
-router still will not bind a lane to it until a re-probe says otherwise.
-
-### `string DisplayLabel`
-
-The row as the sheet reads it: engine, account, health.
-
-**Remarks.** **The health word carries its provenance, because nothing probes.** §4.3 describes a
-per-account liveness check and this phase builds none — the value comes from `health:` in
-`~/.aide/providers.json`, which is what the operator observed and wrote down. A bare
-"ready" on screen would read as "checked just now", a claim the product cannot make, and the
-operator would discover it was stale at the moment a run failed. Same posture as
-`ObservedAuthLabel`, applied to the value beside it.
+| `AccountRef? Ref` | The account by identity, or null for the "no account" row. |
+| `string AccountLabel` | What the row's first line reads: the label, or the zero-account sentence. |
+| `string StateWord` | The state as a word the operator reads. |
+| `bool RoutableForThisSession` | Whether a turn may bind this row now — `needs-login` is an absence (§4.3), an unobserved launch is not a backend. |
+| `string DisplayLabel` | The row as the sheet reads it: `label · state (reason)`. |
 
 ## `NewSessionResult`
 
@@ -314,15 +301,19 @@ the "Start from template" row, which would create a back-edge from the composer 
 | `void EnforceCap(RunBudget cap)` | Enforces a cap on this session — the operator's deliberate act (Ruling 72 (a)). |
 | `void ClearCap()` | Removes the cap: the session is bounded by the subscription again. |
 | `bool TaskClassAnswered` | Whether the task class is answered (RQ4) — true from open (Ruling 72), false only for a class cleared programmatically. |
-| `IReadOnlyList<AgentBackendRow> Backends` | The agent backends on offer: every catalog engine whose provider the registry carries, once per configured account, with the registry's live health. |
-| `IReadOnlyList<string> EnabledBackends` | The backends the operator has enabled for this session. |
-| `IReadOnlyList<string> RoutableBackends` | The enabled backends the router may bind — `needs-login` excluded (Ruling 20's "not cut" half). |
-| `IReadOnlyList<string> RoutableAmong(IEnumerable<string> enabled, ProviderRegistry registry)` | The backends in  the router may bind against — `needs-login` excluded (§4.3). |
+| `IReadOnlyList<AccountRow> AccountRows` | The account rows (Ruling 105 (2)): every catalog engine's provider, grouped by provider, one row per configured account — or one "no account — Configure…" row for a provider with none (97's nothing-hidden doctrine) — … |
+| `IReadOnlyList<IGrouping<string, AccountRow>> AccountGroups` | The account rows grouped by provider, in catalog order — what the dialog renders. |
+| `IReadOnlyList<AccountRef> SelectedAccounts` | The accounts the operator has selected for this session, in row order. |
+| `AccountRef? DefaultAccount` | The account a turn bills when the composer picks none (Ruling 105): the first ready account at open, or the operator's choice; null is "no default account — choose one". |
+| `void SetAccountSelected(AccountRef account, bool selected)` | Selects or deselects an account for this session; deselecting the default clears it. |
+| `bool IsAccountSelected(AccountRef account)` | Whether this account is selected for the session. |
+| `void Reload(ProviderRegistry registry, string? adapterInstallRoot)` | Re-derives the rows after Configure… wrote or changed the provider file (Ruling 104): the registry and the adapter root as they read now; an account that appeared is selected, and a missing default becomes the first r… |
+| `string? ReadinessFooter` | Ruling 104 (3): the footer when zero accounts are ready — the exact ruled sentence — or null. Create is never disabled by it. |
+| `string NoBackendReady =` | The ruled footer (Ruling 104 (3)). |
+| `IReadOnlyList<AccountRow> RowsOf(ProviderRegistry registry, string? adapterInstallRoot)` | The state rule (Ruling 105 (2)), derived: *not configured* when the engine's launch is unobserved — `ResolveLaunch`'s own refusal is the input, not a re-derivation of its rule — or the resolved entry module is not on … |
 | `string LeaseDisplay =` | What the sheet says about the lease. **A sentence, never a `Lease`** (Ruling 42; Ruling 73). |
 | `bool CanCreate` | Whether `Create` would succeed. |
 | `string? BlockedReason` | Why `Create` would refuse, or null when it would not. |
-| `void SetBackendEnabled(string engineId, bool enabled)` | Enables or disables a backend for this session. |
-| `bool IsBackendEnabled(string engineId)` | Whether this backend is enabled for the session. |
 | `bool CanSignIn(string engineId)` | Whether the sheet can offer a Sign in action for this engine (Ruling 20). |
 | `string SignIn(string engineId)` | Launches the engine's own login flow and re-probes health on return, without leaving the sheet (R13 b2, Ruling 20). |
 | `NewSessionResult Create(DateTimeOffset now)` | Creates the session: writes `session.json`, emits `session.open`, and hands back the two fields a run also needs. |
@@ -336,6 +327,8 @@ the "Start from template" row, which would create a back-edge from the composer 
 - **`now`** — Stamps the default name and the created session.
 - **`launchEngineNativeLogin`** — Launches the engine's own login flow and returns whether it was started. Null in a build with no way to launch one, which `SignIn` reports rather than pretending.
 - **`reprobe`** — Re-reads provider health after a login. Null means health is not re-read.
+- **`adapterInstallRoot`** — The directory whose `node_modules` holds the adapters (`ProviderConfiguration.AdapterInstallRoot`), or null when there is no provider file — every adapter engine then reads *not configured*.
+- **`fallbackDefault`** — The provider file's fallback default account for an engine (`engines.<id>.account`, or the provider's sole account; Ruling 105 condition 8) — preferred as the session's initial default when it is a ready row. Null when there is no file.
 
 ### `IReadOnlyList<TaskClassOption> TaskClassOptions`
 
@@ -362,27 +355,6 @@ class cleared programmatically.
 **Remarks.** A visible STATE rather than an asterisk, and read by the view as a word and a glyph so it is
 never carried by colour alone.
 
-### `IReadOnlyList<AgentBackendRow> Backends`
-
-The agent backends on offer: every catalog engine whose provider the registry carries,
-once per configured account, with the registry's live health.
-
-**Remarks.** **Read, not re-modelled.** The engine set is `Rows` and the
-account set is the registry's; an engine whose provider is not configured is simply absent,
-which is the same answer `Find` gives, rather than a row that
-renders and then refuses.
-
-### `IReadOnlyList<string> RoutableAmong(IEnumerable<string> enabled, ProviderRegistry registry)`
-
-The backends in  the router may bind against
-— `needs-login` excluded (§4.3).
-
-**Remarks.** **One derivation, two readers (DM7).** The sheet derives it at create from the operator's
-choices; a reopened or restored session derives it from the config's
-`EnabledBackends` and the registry as it reads
-now (INV-0009 Phase 2). A second spelling of "routable" in the binder is the shape that lets
-a session bind on reopen to an engine the sheet would have refused.
-
 ### `string LeaseDisplay =`
 
 What the sheet says about the lease. **A sentence, never a `Lease`** (Ruling 42;
@@ -406,14 +378,6 @@ run would have handed the exit run a lease covering everything, which
 `AiDe.Core.AgentPlane.Lease`'s own remarks refuse: it never seams, and therefore "looks
 like it is working". A `simplify:` whose stated ceiling is "the seam control does not
 discriminate" is not a bounded shortcut; it is a disabled control wearing one's clothes.
-
-### `void SetBackendEnabled(string engineId, bool enabled)`
-
-Enables or disables a backend for this session.
-
-**Remarks.** A `needs-login` engine may be enabled — A4.3 shows it, and Ruling 20 keeps the health
-display — but `RoutableBackends` still excludes it, so enabling one never puts it
-in front of the router.
 
 ### `string SignIn(string engineId)`
 
@@ -555,6 +519,8 @@ that marshals to a dispatcher never holds this lock across the hand-off.
 | `event Action<ThreadSnapshot>? Changed` | **(gap)** |
 | `void CatchUp()` | Ends the replay: the next snapshot is the folded history at `Version` 0, caught up. |
 | `int Accept(` | A send the conductor accepted: the next ordinal joins, running. |
+| `int Enqueue(` | A send the conductor accepted while another turn is in flight (Ruling 95's *Wait*): the next ordinal joins **queued** — compiled, submitted, not yet sent. Exactly one at a time. |
+| `void Start(int ordinal, DateTimeOffset at)` | The queued turn is sent: it runs from  (its duration counts from the send, never from the queue). |
 | `void Append(int ordinal, EventLine line, Spend? cost = null)` | One line of the turn's run.  is the event's measured usage, or null when the wire recorded none. |
 | `void Wait(int ordinal, WaitingRequest request)` | The turn is waiting on the operator (a permission or cap request, SC7). |
 | `void Resume(int ordinal)` | The request was answered; the turn runs again. |
@@ -568,7 +534,24 @@ that marshals to a dispatcher never holds this lock across the hand-off.
 
 A send the conductor accepted: the next ordinal joins, running.
 
+- **`compileSpend`** — What the compile step cost for this turn's envelope (Ruling 78: `called.cost` is part of the turn's spend, on its own outcome line), or null when no model was called for it.
+
 **Returns.** The turn's ordinal.
+
+### `int Enqueue(`
+
+A send the conductor accepted while another turn is in flight (Ruling 95's *Wait*): the
+next ordinal joins **queued** — compiled, submitted, not yet sent. Exactly one at a time.
+
+**Returns.** The turn's ordinal.
+
+**Throws `InvalidOperationException`.** A turn is already queued (Ruling 95: *cancel it or wait*).
+
+### `void Start(int ordinal, DateTimeOffset at)`
+
+The queued turn is sent: it runs from  (its duration counts from the send, never from the queue).
+
+**Throws `InvalidOperationException`.** The turn is not queued.
 
 ## `SessionDocumentEnvelope`
 
@@ -769,6 +752,9 @@ The read model's state after one applied event. Version 0 is the folded history 
 | Member | Summary |
 |---|---|
 | `TurnView? InFlight` | The in-flight turn (Ruling 77: at most one) — derived, never a member. |
+| `TurnView? Queued` | The queued turn (Ruling 95: exactly one or none) — derived, never a member. |
+| `TurnView? QueuedBehind` | The turn the queued one waits behind: the in-flight turn while one runs or waits, else the last turn that ran — the one whose Stop or failure left the queued turn waiting for the operator (Ruling 95: *b1 stopped; b2 i… |
+| `bool QueuedAwaitsYou` | Whether the queued turn waits on the operator rather than on a run (Ruling 95): nothing is in flight and the turn before it ended `Stopped` or `Failed` — the drain never sends after those, so *Send now* is the operato… |
 
 ## `TurnState`
 
@@ -856,6 +842,7 @@ the jump list, the UIA name and the announcement policy can never disagree on wh
 | `string Name(TurnView turn)` | The UIA name: *b2, Refactor the layout store's…* — the ordinal and the first 120 characters, *…* when truncated. |
 | `string DecorationLine(IReadOnlyList<DecorationRow> decorations)` | The decoration line as one string: *class free-form · tier T0 · lease src/** · goal block* — the item's `ItemStatus`. |
 | `string ReasonSentence(TurnView turn)` | The reason sentence a failed, stopped, waiting or not-recorded turn carries as its container's `HelpText` (SC10); empty for a completed or running turn — one content per property. |
+| `string QueuedSentence(ThreadSnapshot snapshot)` | The queued turn's sentence (Ruling 95), from the snapshot it sits in — *queued — sends after b1* while b1 runs or waits; *queued — b1 stopped; Send it or cancel it* when it waits on the operator. One derivation for th… |
 | `IReadOnlyList<string> Counts(TurnView turn)` | The counts with units (TQ2), in order: edits · tokens · duration · events. Edits are named on every write-capable outcome — *edits not recorded* when the run reported none — and omitted on an answered (read-only) turn… |
 | `string EditsText(int? edits)` | *3 edits* · *1 edit* · *0 edits*; *edits not recorded* for null. |
 | `string SpendText(Spend? spend)` | *12,400 tokens*; *tokens not recorded* for absent usage (Ruling 78 condition 1) — never 0. |
