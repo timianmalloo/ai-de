@@ -262,21 +262,117 @@ public sealed class AtlasProductionAdmissionTests
             SourceLength = Math.Max(1, member.Span.Length),
         }, CancellationToken.None);
         Assert.Equal(SourceProjectionState.IndexedMatch, memberSelection.Source.State);
-        var restored = await lease.Queries.RestoreAsync(new AtlasRestoreRequestDto(
-            1, lease.ScopeToken, lease.CoreEpoch, selected.ReceiptToken!), CancellationToken.None);
-        Assert.Equal(SourceProjectionState.IndexedMatch, restored.Source.State);
-        Assert.NotEqual(selected.ReceiptToken, restored.ReceiptToken);
-        var restoredAgain = await lease.Queries.RestoreAsync(new AtlasRestoreRequestDto(
-            1, lease.ScopeToken, lease.CoreEpoch, selected.ReceiptToken!), CancellationToken.None);
-        Assert.Equal(SourceProjectionState.IndexedMatch, restoredAgain.Source.State);
-        Assert.NotEqual(restored.ReceiptToken, restoredAgain.ReceiptToken);
-        Assert.Equal(1, fixture.Server!.ServedConnections);
+        var firstDrained = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var finalReturned = new TaskCompletionSource<IpcServer.PublicationProbe>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var finalDrained = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseFinalWriter = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var order = new System.Collections.Concurrent.ConcurrentQueue<string>();
+        var observations = new Dictionary<string, object?>();
+        var observedRestores = 0;
+        IpcResponse? firstResponse = null;
+        IpcResponse? finalResponse = null;
+        fixture.Server!.AfterWriterReturnedForQualification = async probe =>
+        {
+            if (probe.Request.Operation != AtlasWorkspaceOperations.Restore
+                || probe.Request.Payload is not { } payload
+                || payload.GetProperty("scopeToken").GetString() != lease.ScopeToken
+                || payload.GetProperty("receiptToken").GetString() != selected.ReceiptToken)
+                return;
+            if (Interlocked.Increment(ref observedRestores) == 1)
+            {
+                firstResponse = probe.Response;
+                return;
+            }
+            finalResponse = probe.Response;
+            order.Enqueue("specific-final-restore-full-writer-returned");
+            finalReturned.TrySetResult(probe);
+            await releaseFinalWriter.Task;
+        };
+        fixture.Server.PublicationDrainedForQualification = response =>
+        {
+            if (ReferenceEquals(response, firstResponse))
+                firstDrained.TrySetResult();
+            if (ReferenceEquals(response, finalResponse))
+            {
+                order.Enqueue("matching-final-restore-publication-drained");
+                finalDrained.TrySetResult();
+            }
+        };
+        var evidenceDirectory = Environment.GetEnvironmentVariable("ATLAS_IDLE_DRAIN_DIAGNOSTICS")
+            ?? Path.Combine(AppContext.BaseDirectory, ".artifacts", "atlas-runtime-proof");
+        Directory.CreateDirectory(evidenceDirectory);
+        var evidencePath = Path.Combine(evidenceDirectory, "matched-idle-drain.json");
+        AtlasSelectionDto restored;
+        try
+        {
+            restored = await lease.Queries.RestoreAsync(new AtlasRestoreRequestDto(
+                1, lease.ScopeToken, lease.CoreEpoch, selected.ReceiptToken!), CancellationToken.None);
+            Assert.Equal(SourceProjectionState.IndexedMatch, restored.Source.State);
+            Assert.NotEqual(selected.ReceiptToken, restored.ReceiptToken);
+            await firstDrained.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            var baselineNative = AtlasGitMembership.CleanupChargesForQualification;
+            var baselineWork = AtlasReadBudget.ProcessWide.Read();
+            observations["BaselineAfterPriorMatchingDrain"] = new
+            {
+                Owners = baselineNative.ChargedOwners, Buffers = baselineNative.WatchBuffers,
+                baselineWork.Active, baselineWork.Scopes, baselineWork.Owned,
+            };
+            var restoredAgain = await lease.Queries.RestoreAsync(new AtlasRestoreRequestDto(
+                1, lease.ScopeToken, lease.CoreEpoch, selected.ReceiptToken!), CancellationToken.None);
+            order.Enqueue("client-final-restore-completed");
+            var probe = await finalReturned.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            var heldNative = AtlasGitMembership.CleanupChargesForQualification;
+            var heldWork = AtlasReadBudget.ProcessWide.Read();
+            observations["Request"] = new { probe.Request.CommandId, ScopeMatches = probe.Request.Payload!.Value.GetProperty("scopeToken").GetString() == lease.ScopeToken,
+                OriginalReceiptMatches = probe.Request.Payload.Value.GetProperty("receiptToken").GetString() == selected.ReceiptToken,
+                ResponseReferenceMatched = ReferenceEquals(probe.Response, finalResponse) };
+            observations["ClientCompleteBeforeMatchingDrain"] = new
+            {
+                Owners = heldNative.ChargedOwners, Buffers = heldNative.WatchBuffers,
+                heldWork.Active, heldWork.Scopes, heldWork.Owned,
+                OtherOwners = baselineNative.ChargedOwners,
+                OwnOwnersDelta = heldNative.ChargedOwners - baselineNative.ChargedOwners,
+                OwnActiveDelta = heldWork.Active - baselineWork.Active,
+                MatchingDrainComplete = finalDrained.Task.IsCompleted,
+            };
+            Assert.False(finalDrained.Task.IsCompleted);
+            Assert.Equal(1, heldNative.ChargedOwners - baselineNative.ChargedOwners);
+            Assert.Equal(1, heldWork.Active - baselineWork.Active);
+            Assert.Equal(SourceProjectionState.IndexedMatch, restoredAgain.Source.State);
+            Assert.NotEqual(restored.ReceiptToken, restoredAgain.ReceiptToken);
+            Assert.Equal(1, fixture.Server.ServedConnections);
+        }
+        finally
+        {
+            order.Enqueue("release-final-writer-cleanup-barrier");
+            releaseFinalWriter.TrySetResult();
+            if (finalReturned.Task.IsCompletedSuccessfully)
+            {
+                await finalDrained.Task.WaitAsync(TimeSpan.FromSeconds(5));
+                var drainedNative = AtlasGitMembership.CleanupChargesForQualification;
+                var drainedWork = AtlasReadBudget.ProcessWide.Read();
+                observations["AfterMatchingDrain"] = new
+                {
+                    Owners = drainedNative.ChargedOwners, Buffers = drainedNative.WatchBuffers,
+                    drainedWork.Active, drainedWork.Scopes, drainedWork.Owned,
+                    MatchingDrainComplete = finalDrained.Task.IsCompletedSuccessfully,
+                };
+            }
+            fixture.Server.AfterWriterReturnedForQualification = null;
+            fixture.Server.PublicationDrainedForQualification = null;
+            observations["Order"] = order.ToArray();
+            File.WriteAllText(evidencePath, System.Text.Json.JsonSerializer.Serialize(observations));
+        }
+        Assert.True(finalDrained.Task.IsCompletedSuccessfully);
         Assert.Equal(0, AtlasGitMembership.CleanupChargesForQualification.ChargedOwners);
         Assert.Equal(0, AtlasGitMembership.LiveWatchBuffersForQualification);
+        Assert.Equal(0, AtlasReadBudget.ProcessWide.Read().Active);
 
         File.WriteAllText(Path.Combine(fixture.Repository, "new.cs"), "class Added {}", Encoding.UTF8);
         await fixture.GitAsync("add", "--", "new.cs");
         await fixture.GitAsync("commit", "--quiet", "-m", "ordinary development while Atlas is idle");
+        observations["IdleGit"] = new { AddExit = 0, CommitExit = 0, AfterMatchingDrain = finalDrained.Task.IsCompletedSuccessfully };
+        File.WriteAllText(evidencePath, System.Text.Json.JsonSerializer.Serialize(observations));
         await Assert.ThrowsAsync<AtlasReadException>(async () => await lease.Queries.InventoryAsync(
             new AtlasInventoryRequestDto(1, lease.ScopeToken, lease.CoreEpoch, restored.ManifestToken, 0, 128), CancellationToken.None));
         Assert.True(lease.IsTerminal);
@@ -284,6 +380,9 @@ public sealed class AtlasProductionAdmissionTests
         Assert.NotEqual(lease.ScopeToken, fresh.ScopeToken);
         await Assert.ThrowsAsync<AtlasReadException>(async () => await fresh.Queries.RestoreAsync(
             new AtlasRestoreRequestDto(1, lease.ScopeToken, lease.CoreEpoch, selected.ReceiptToken!), CancellationToken.None));
+        observations["ScopeLifecycle"] = new { OldScopeTerminal = lease.IsTerminal, FreshScopeDifferent = fresh.ScopeToken != lease.ScopeToken,
+            OldReceiptRejected = true, OriginalReceiptRestoredTwice = true };
+        File.WriteAllText(evidencePath, System.Text.Json.JsonSerializer.Serialize(observations));
     }
 
     [Fact]
