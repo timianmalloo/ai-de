@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T16:54:17Z",
+  "generated": "2026-09-15T17:16:24Z",
   "audit": [
     {
       "actor": null,
@@ -17333,6 +17333,71 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T16:54:15Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2K0HMS28QHK6YS111NHS324",
+      "shortname": "yes keep going finish remaining nodes",
+      "datetime": "2026-09-15T17:06:31Z",
+      "session": "prompt-log",
+      "prompt": "yes keep going finish remaining nodes",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2K13QBTAVSKMYC3AMS1DK44",
+      "shortname": "ownership-qualification-review",
+      "datetime": "2026-09-15T17:16:23Z",
+      "session": "codex-ownership-qualification-review",
+      "prompt": "Independently verify the published Core stranded-audit blocker fix and continuation plan without reimplementation; test self-test and normal mode, pin unchanged recursive gate and receipt inputs, and return Test Architect and Simplifier verdicts.",
+      "summary": "Qualified the published primary-log liveness fix: current self-test and normal linked-tree run passed; a temporary old-lookup mutant failed; recursive gate, .NET source/test inputs, and retained receipt hashes matched. Recorded external docs-link repair as pending integration dependency. The 12-call estimate was exceeded by two calls after a stale receipt patch context required inspection and retry.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/ownership-qualification-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Independently qualify the published Core blocker fix and continuation plan.",
+      "done_when": "Test Architect and Simplifier verdicts cite fixed stranded-check behavior, its self-test, unchanged recursive gate blob, actual plan/proof inputs, and the remaining integration boundary.",
+      "tier": "T1",
+      "main_calls": 14,
+      "main_budget": 12,
+      "main_over_budget": true,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T17:11:43Z",
+      "duration_seconds": 280.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 0,
+          "accepted": 0
+        }
+      ],
+      "git": {
+        "sha": "0b3644f22f16dffee32bd9a9a7fb212ad1639508",
+        "short": "0b3644f22",
+        "branch": "review/ownership-qualification",
+        "pushed": null
+      }
     }
   ],
   "changes": [

@@ -16310,6 +16310,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "0ce1c999eb408c194202fc11bc9cf17ed3b17d62b6ed956d5df84281d38085b0"
     },
     {
+      "id": "proof-ownership-qualification-review",
+      "path": "docs/proof/ownership-qualification-review.md",
+      "title": "Independent review of ownership qualification",
+      "type": "proof-pack",
+      "status": "current",
+      "owner": "@codex-sol-review",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Independent Test Architect and Simplifier qualification of the published stranded-audit fix and receipt-reuse boundary.",
+      "tags": [
+        "proof",
+        "ownership",
+        "review"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "66e8b16314eeda217934db71c767c5ac0f1c54fe1c1fba2ed3519b3e5aa5c38c"
+    },
+    {
       "id": "proof-perspective-content",
       "path": "docs/proof/perspective-content.md",
       "title": "Proof Pack: SH-3 — perspective content",
@@ -18989,5 +19014,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "8f2faf3565aa5aea3d93391e8c56ab50ebf5bc18ff5a9ff856e57482cbc3b020"
+  "graphSha256": "963f530e5cc4c528b41fe86f9f107f3add9b0d7e4e3253fb05c5583464c66aab"
 };
