@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T18:48:57Z",
+  "generated": "2026-09-15T19:23:25Z",
   "audit": [
     {
       "actor": null,
@@ -17473,6 +17473,37 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T18:39:43Z",
       "duration_seconds": 554.0
+    },
+    {
+      "id": "al-01M2K8CAA3DQ5V7J3EEZQKHHZQ",
+      "shortname": "atlas-rg10-original-render-guard",
+      "datetime": "2026-09-15T19:23:25Z",
+      "session": "atlas-e1-native-class-view",
+      "prompt": "IndependentnativeUMLPASS, C#boundedremainderadvisoryPASS(no identifiedbug); ASYNC/LIFETIME hardBLOCK on UNEXECUTEDconcreteoldcallbackinterleaving. NEW RG10 TENprospectivecalls SAMEwriter/tree, only existingStaticView.cs +existingStaticViewTests/CompositionTests asnecessary +Proof/audit; noCore/deps/authority/genericframework. FirstEXACTcommand supportedauditstart --session atlas-e1-native-class-view ownidentity/tree. Atfrozen4db: StaticView220capturesoccurrence inClick;231-237 onlyCURRENTprojection.CanNavigate;ShowState114-123clearsrefsnotcapture. Retainbutton ->ShowState/RenderlaterREADYsamevalidissuedtoken ->oldClick canemitDeclarationActivated/currentReader324-329 tokenmembershipaccepts. ReviewerlabelInferred; FIRSTEXECUTEred againstactualproductionStaticView viaNONSHOWNWPFfixture ifhelperprovesnoWindow.Show/UIA; no testfakepositive. Requiredoracle oldbutton AFTERsubsequentreadyRender cannotchangeSelectedOccurrence/emitactivation/issueSELECT orresurrectsource; currentnewbutton MUSTstillwork. IncludeRender-toRender andShowState-toReady, sameissuedtoken toavoidaccidentalrejectionbymembership. Ifredconfirms, smallestorig-renderidentityguard capturedinbuttoncallback; invalidateRenderandShowState andcheckBEFOREselection/event. Preferexistinggenerationidiom; keepnamespace/token/lifecyclebehavior otherwiseunchanged. No speculativefixifcannotreproduce. Red->green+singlefaultguardcontrol ifbounded; exactrestore/hash/nonincrementalcodeproof. ExistingstaleUnavailabletestaloneinsufficient. NO GUIwhileI IQV16ownsdesktop—headlessonly, elseendrestoredwithreadyoracle; rootwillhandoff. ALLtargetedsource/controlchangesmustbeexplicit, final113cohortnotrerunhereunlessproperdesktopgrant/within10; labeloldcohorthashesnotcurrentafterfix. At10oneactualreceiptpin/diff/redgreen/remaining andleasesreleased, no finalselfclearance/push. ThisdoesnotrestartotherqualificationorclearcombinedA/R. Rootwillre-reviewexactcallbackdelta withindependentlifetime lensafterward.",
+      "summary": "RG10 executed real staleButtoncallback red before fix: bothRender-toRender andShowState-toReady REUSEIDENTICALprojectionobject/issuedtoken, realproductionStaticView+Reader; expected0activations actual1 atStaticViewTests220 onunchangedA6. Fixonlylocalrendergeneration incrementedRender+ShowState, capturedperButton, checkedBEFOREActivate selection/event; noCore/token/lifecyclehook/deps/frameworkchange. Exact2casegreen proves staleactivation/SELECT/selection/source/binding/highlights/modeinert ANDcurrentnewButtonworks. Guardoperator==->!= singlefault repeatsbothsemanticreds; finallyexactrestoreECC8633E4EE2DCBD1C78747B65CFBAA96BC512875E804C2BF9DA94E823D285F9 thennonincrementalbuild0warnings/errors and2/2restoredgreen. Source/testSHA ECC863.../6FFD13602FFE67A1C90426B63F2222C47752C81825631211F0777F573A19EAD4. RedTRX752C64476289B3A627E5106E6A4C56227FD6CFF103E76B94AF64B19D8EE726A7; green53654CEF1E1A6321AADAC3270B9C150D28E165A86473BED5E578A9018E1C00A6; mutantred74E7E1226991618252662683D6244AA1AE3A1B653C73421AA08F440F495174C0; restoredgreenC95E1E2A1CDBD7F20C65191A6B6C6B56C96AF3F6FE5AEB4AF982D9AE0EFF98AF. RestoredAppDLL858559C5EBE8FEF9077CB2A403BEA433A80252F80E48C22A1A82B909D5165C09 TestDLL8D43B464187661109F2537E2AB3583CBBBE2923985E2AD904A6660515F86934E. ALLrunsnonshownSTAfixture/noWindow/Show/UIA/daemon; Idesktopnotused. Old113cohortpredatesguard NOTcurrent115claim. Independentlifetime exactdeltare-review andcombined/finalgates remainopen. No productrepairoutsideguard/no main/rebase/push.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src\\AiDe.App\\Workbench\\Understanding\\AtlasStaticView.cs",
+        "tests\\AiDe.App.Tests\\Workbench\\Understanding\\AtlasStaticViewTests.cs",
+        "docs\\proof\\code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Disconfirm and guard only retained callbacks from superseded renders",
+      "done_when": "Both actualsame-tokeninterleavings red beforeguard, currentbuttonpositivecontrol green, guardmutation discriminated and exactrestoredsource/binary green; independentreview remainsseparate",
+      "tier": "T2",
+      "main_calls": 9,
+      "main_budget": 10,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T19:07:57Z",
+      "duration_seconds": 928.0
     }
   ],
   "changes": [

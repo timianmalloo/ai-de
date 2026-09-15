@@ -1133,3 +1133,52 @@ self-accepted for shipping. Native Test/UX/UML/C#/SRE/DS/Security/Owner decision
 the final combined-tree A/R, release/platform obligations and any further
 required pixel coverage remain separate. No main update, rebase, push, cleanup,
 new source or dependency change occurred.
+
+## RG10 original-render callback identity — causal red before guard
+
+The independent async/lifetime reviewer identified a concrete unexecuted
+interleaving at frozen review pin
+`4dbd430a601002cab68b11c8432b5833750ea168`: retaining a compartment Button
+retains its occurrence-capturing Click delegate. A later ready projection can
+make the old callback's `Projection.CanNavigate` check true again, and the
+Reader's current-token membership check does not reject the same valid token.
+The report was Inferred until the following execution.
+
+`RetainedButton_AfterLaterReadyRender_IsInertWhileCurrentButtonWorks` exercises
+the actual production `AtlasStaticView` inside the actual Reader. It captures
+the real old Button, then reuses **the identical projection object and token**
+in a subsequent ready Render, with and without an intervening ShowState.
+This prevents accidental protection by projection-reference or token mismatch.
+The existing synthetic port is only the request-counting boundary; the callback,
+selection logic and Reader activation handler are production code.
+
+Both cases failed on unchanged StaticView hash
+`A6BC21418FA00B6BDE95C531DD7F16B38A8168B44522638E678DFC5C7BC31DCA`:
+at `AtlasStaticViewTests.cs:220`, expected **zero** activations, observed **one**.
+Raw `.artifacts/atlas-e1/rg10-old-render-red.trx`: 2 executed/2 failed/0 skipped,
+SHA-256 `752C64476289B3A627E5106E6A4C56227FD6CFF103E76B94AF64B19D8EE726A7`.
+Test source SHA-256:
+`6FFD13602FFE67A1C90426B63F2222C47752C81825631211F0777F573A19EAD4`.
+This is a demonstrated stale callback, not a test-fake positive or a guessed
+race. No Window/Show/UIA/daemon execution is used: the opened fixture runs only
+an STA dispatcher and real controls while integration holds the desktop.
+
+The strengthened oracle also requires no new SELECT, no changed selected token,
+selection, source, binding, highlights or presentation. After those assertions,
+the actual current Button must still emit exactly one activation, issue one
+SELECT and select the same current token. The two cases cover Render-to-Render
+and ShowState-to-ready; they do not claim every possible concurrent producer.
+
+The minimal correction is local UI render identity: increment a generation in
+both Render and ShowState; capture that generation when each compartment Button
+is created; check it before calling the existing selection/event path.
+No token, namespace, Core authority, renderer lifecycle hook, dependency or
+generic framework changes. Re-rendering the same projection still invalidates
+old callbacks. Current list activation and all other behavior remain unchanged.
+
+This section records the red and guard before its green/mutation execution.
+The closing RG10 audit and `rg10-*.trx` receipts record observed outcomes and
+exact restored source/binary hashes. The old NFP6 113-case cohort predates this
+guard and is not relabelled current; a full new cohort is not run while another
+programme holds the desktop. Final independent lifetime and combined gates
+remain open until their reviewers inspect the exact callback delta.

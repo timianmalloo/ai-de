@@ -20,6 +20,7 @@ public sealed class AtlasStaticView : UserControl
     private readonly List<Button> _buttons = [];
     private bool _rendering;
     private string? _activationOrigin;
+    private long _renderGeneration;
 
     public AtlasStaticView()
     {
@@ -108,6 +109,7 @@ public sealed class AtlasStaticView : UserControl
 
     public void ShowState(string text)
     {
+        ++_renderGeneration;
         _rendering = true;
         try
         {
@@ -128,6 +130,7 @@ public sealed class AtlasStaticView : UserControl
     public void Render(AtlasStaticViewProjection projection)
     {
         var started = Stopwatch.GetTimestamp();
+        ++_renderGeneration;
         _rendering = true;
         try
         {
@@ -217,7 +220,11 @@ public sealed class AtlasStaticView : UserControl
             button.SetResourceReference(ForegroundProperty, "TextBrush");
             button.SetResourceReference(BackgroundProperty, "SurfaceBrush");
             AutomationProperties.SetName(button, occurrence.AccessibleName);
-            button.Click += (_, _) => Activate(occurrence, "static-compartment");
+            var generation = _renderGeneration;
+            button.Click += (_, _) =>
+            {
+                if (generation == _renderGeneration) Activate(occurrence, "static-compartment");
+            };
             _buttons.Add(button);
             parent.Children.Add(button);
         }

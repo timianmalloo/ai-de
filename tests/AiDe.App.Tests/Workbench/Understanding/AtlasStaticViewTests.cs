@@ -173,6 +173,72 @@ public sealed class AtlasStaticViewTests
         return Task.CompletedTask;
     });
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public Task RetainedButton_AfterLaterReadyRender_IsInertWhileCurrentButtonWorks(bool showState) =>
+        AtlasStaticTestHost.RunAsync(async () =>
+        {
+            var requests = 0;
+            var port = new AtlasStaticPort
+            {
+                Select = request =>
+                {
+                    requests++;
+                    return AtlasStaticPort.Selection(request, [Class("c", 0), Member("m", "c", 1)]);
+                },
+            };
+            var reader = new AtlasReaderView(port);
+            try
+            {
+                await reader.LoadAsync();
+                await reader.SelectFileAsync(Assert.Single(reader.FileRoots));
+                await reader.SetPresentationAsync(AtlasPresentationMode.Class);
+                var view = reader.StaticView;
+                var projection = Assert.IsType<AtlasStaticViewProjection>(view.Projection);
+                var oldButton = Assert.Single(view.CompartmentButtons);
+                Assert.True(projection.CanNavigate);
+                if (showState) view.ShowState("Loading replacement render.");
+                view.Render(projection);
+                var currentButton = Assert.Single(view.CompartmentButtons);
+                Assert.NotSame(oldButton, currentButton);
+                var token = Assert.IsType<AtlasStaticOccurrence>(oldButton.Tag).Token;
+                Assert.Equal(token, Assert.IsType<AtlasStaticOccurrence>(currentButton.Tag).Token);
+                Assert.Contains(reader.CurrentSelection!.Outline, row => row.DeclarationToken == token);
+                var selection = reader.CurrentSelection;
+                var selectedToken = view.SelectedToken;
+                var source = reader.SourceText;
+                var binding = reader.CurrentBindingToken;
+                var highlights = reader.CurrentHighlights.ToArray();
+                var requestCount = requests;
+                var activations = 0;
+                view.DeclarationActivated += (_, _) => activations++;
+
+                oldButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                await reader.CurrentOperation;
+
+                Assert.Equal(0, activations);
+                Assert.Equal(requestCount, requests);
+                Assert.Equal(selectedToken, view.SelectedToken);
+                Assert.Same(selection, reader.CurrentSelection);
+                Assert.Equal(source, reader.SourceText);
+                Assert.Equal(binding, reader.CurrentBindingToken);
+                Assert.Equal(highlights, reader.CurrentHighlights);
+                Assert.Equal(AtlasPresentationMode.Class, reader.Presentation);
+
+                currentButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                await reader.CurrentOperation;
+                Assert.Equal(1, activations);
+                Assert.Equal(requestCount + 1, requests);
+                Assert.Equal(token, reader.CurrentSelection!.DeclarationToken);
+            }
+            finally
+            {
+                reader.RaiseEvent(new RoutedEventArgs(FrameworkElement.UnloadedEvent));
+                await port.DisposeAsync();
+            }
+        });
+
     [Fact]
     public Task PagingActions_ArePresentWithoutReplacingFileTree() => AtlasStaticTestHost.RunAsync(() =>
     {
