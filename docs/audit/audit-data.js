@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T19:33:26Z",
+  "generated": "2026-09-15T20:53:00Z",
   "audit": [
     {
       "actor": null,
@@ -21472,6 +21472,68 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T19:03:46Z",
       "duration_seconds": 1779.0
+    },
+    {
+      "id": "al-01M2KBFW9GXG8CAMSV7PQGB2XJ",
+      "shortname": "atlas-udg-uia-unreproduced",
+      "datetime": "2026-09-15T20:17:47Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "UDG10 exactdiagnostic-only carveout: preserve originalFindFirst/NotNull/visibility assertions; record expectedname andoriginalresult first, ownrootidentity, boundedpost-resultcensus; one targetedrun, norepairbeforecause.",
+      "summary": "Diagnostic sourceSHA20D6589E5DFF1073DCC2AB40FBAD171F18C2346534F66C820878172B8A8B82CE against baselineC9827383. Explicitdaemon nonincrementalbuild exit0; ONE targetedtest1/1PASS, ownedreceiptCompletedtrue/FailureCount0. TenoriginalFindFirst lookups(5names twice) allFoundtrue, owned/rootHWND38011826 andPID34692agree; no diagnostic-unavailable orcensusevents. ORIGINAL IQV nullNOTREPRODUCED: earliermissingname/causeUNKNOWN, no timing/race/geometry/fixclaim. Runner32192 start/end inUDG/atlas-udg-1789502728163030200/run.json; desktopreleased req-01M2KASSVC4X9PMG6TQ42NYQVF. Null-pathboundedcensus compiledbutnotexecuted; diagnostic canaffectlaterobservationtiming. Proposednextcontrolledred: separatelyadmitted ownblankWindow withunchangedmethod mustretainoriginalNotNull andrecordmissingexpectedname/boundedownroot beforefailure; notexecutedhere. Existingoriginalselector/root/assertions/timeouts unchanged; no product/MainWindow/Core/globalroot/fallback/retry edits. Source/proofdiagnosticreviewremainsuncommitted, no wholequalification/push.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Identify the exact UIA failure without altering the deciding query or assertion",
+      "done_when": "One run records missingname/ownedroot/timing or returns a precise unreproduced gap and scoped red-control proposal",
+      "tier": "T2",
+      "main_calls": 9,
+      "main_budget": 10,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T19:44:15Z",
+      "duration_seconds": 2012.0
+    },
+    {
+      "id": "al-01M2KDGAFRS2DM04QBG646RPH0",
+      "shortname": "atlas-uwq-diagnostic-control",
+      "datetime": "2026-09-15T20:52:59Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "UWQ20 prove one owned-blank-window diagnostic control and one valid semantic diagnostic-removal mutant with exact finally restoration/nonincremental green; retain UDG unreproduced truth before fresh unchanged qualification.",
+      "summary": "Controllednegative baseline1/1passed, knownoriginalAtlasfiles NotNull recordedafterexpectedname/root/census. First moved-after-assert shapefailedcompileCS8602 andwasnotcountedassemantic/killedmutant; exactsourcerestored. Singlevaliddiagnostic-removalmutant1/1semanticAssert.Single failure, originalNotNull stilloccurred, windowsdrained. FinallyrestoredSHA53B792E4775F76279F199CCCCEE485D9143CB044ABFBC3FFDC4F6D34573E2613; nonincrementalrestoredcontrol1/1green. Full rawUWQ control-1789505000009021200 andcontrol-1789505199283895200. UDGpreviousallfound1/1remainsUNREPRODUCED, notcause/fix. No source product/selector/assertion/timeout/fallback changes; fullmainjoin/qualificationnext, no publication.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Prove diagnostic failure-path preservation before unchanged full qualification",
+      "done_when": "Controlled original failure and one semantic mutant are observed, exact restoration passes, then fresh-main qualification runs once",
+      "tier": "T2",
+      "main_calls": 9,
+      "main_budget": 20,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T20:32:24Z",
+      "duration_seconds": 1235.0
     }
   ],
   "changes": [

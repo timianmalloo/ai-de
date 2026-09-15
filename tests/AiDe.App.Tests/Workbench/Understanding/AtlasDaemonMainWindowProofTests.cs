@@ -28,6 +28,73 @@ public sealed class AtlasDaemonMainWindowProofTests
     private const string Source = "namespace ProofOwned;\npublic sealed class Widget\n{\n    public int Answer() => 42;\n}\n";
 
     [Fact]
+    public async Task OwnedBlankWindowPreservesOriginalMissingNameFailureAndDiagnostics()
+    {
+        var directory = Path.Combine(Tree, "artifacts", "atlas-uia-diagnostic-control", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        var receipt = new Receipt(directory);
+        long hwnd = 0;
+        await RunDispatcherAsync(async () =>
+        {
+            var window = new Window
+            {
+                Title = "Owned blank UIA diagnostic control",
+                Content = new Border(), Width = 320, Height = 240,
+                Left = 40, Top = 40, WindowStartupLocation = WindowStartupLocation.Manual,
+                ShowInTaskbar = false, ShowActivated = false,
+            };
+            try
+            {
+                window.Show();
+                await IdleAsync();
+                hwnd = new WindowInteropHelper(window).Handle.ToInt64();
+                receipt.Mark("control.owned-window", new { Hwnd = hwnd, ProcessId = Environment.ProcessId });
+                var original = await Assert.ThrowsAsync<Xunit.Sdk.NotNullException>(
+                    () => ObserveAutomationAsync(new nint(hwnd), receipt));
+                receipt.Mark("control.original-not-null-failed", new { ExceptionType = original.GetType().FullName });
+            }
+            finally
+            {
+                window.Close();
+                await IdleAsync();
+            }
+        }, receipt);
+
+        using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(directory, "receipt.json")));
+        var events = document.RootElement.GetProperty("Events").EnumerateArray().ToArray();
+        static string? Stage(JsonElement item) => item.GetProperty("Stage").GetString();
+        var originalResult = Assert.Single(events, item => Stage(item) == "uia.find-first.original");
+        var root = Assert.Single(events, item => Stage(item) == "uia.owned-root.after-original");
+        var census = Assert.Single(events, item => Stage(item) == "uia.owned-root.census.after-original");
+        var failure = Assert.Single(events, item => Stage(item) == "control.original-not-null-failed");
+        Assert.True(Array.IndexOf(events, originalResult) < Array.IndexOf(events, root));
+        Assert.True(Array.IndexOf(events, root) < Array.IndexOf(events, census));
+        Assert.True(Array.IndexOf(events, census) < Array.IndexOf(events, failure));
+        var result = originalResult.GetProperty("Attributes");
+        Assert.Equal("Atlas files", result.GetProperty("ExpectedName").GetString());
+        Assert.False(result.GetProperty("OriginalFound").GetBoolean());
+        Assert.Equal(hwnd, result.GetProperty("OwnHwnd").GetInt64());
+        Assert.Equal(Environment.ProcessId, result.GetProperty("ExpectedProcessId").GetInt32());
+        var observedRoot = root.GetProperty("Attributes").GetProperty("Root");
+        Assert.Equal(hwnd, observedRoot.GetProperty("NativeWindowHandle").GetInt64());
+        Assert.Equal(Environment.ProcessId, observedRoot.GetProperty("ProcessId").GetInt32());
+        var bounded = census.GetProperty("Attributes");
+        Assert.Equal(hwnd, bounded.GetProperty("OwnHwnd").GetInt64());
+        Assert.False(bounded.GetProperty("OriginalFound").GetBoolean());
+        Assert.Equal(128, bounded.GetProperty("MaxNodes").GetInt32());
+        Assert.Equal(12, bounded.GetProperty("MaxDepth").GetInt32());
+        Assert.InRange(bounded.GetProperty("ObservedNodes").GetInt32(), 1, 128);
+        var nodes = bounded.GetProperty("Nodes").EnumerateArray().ToArray();
+        Assert.Equal(bounded.GetProperty("ObservedNodes").GetInt32(), nodes.Length);
+        Assert.Equal(hwnd, nodes[0].GetProperty("NativeWindowHandle").GetInt64());
+        Assert.All(nodes, node => Assert.InRange(node.GetProperty("Depth").GetInt32(), 0, 12));
+        Assert.DoesNotContain(events, item => Stage(item) == "uia.own-hwnd");
+        Assert.Equal(0, receipt.FailureCount);
+        receipt.Completed = true;
+        receipt.Mark("control.diagnostics-preserved", new { OriginalFailure = "NotNull", ExpectedMissingName = "Atlas files" });
+    }
+
+    [Fact]
     public async Task MainWindow_RealDaemonReplacement_AcknowledgesHealthyReleaseAndPreservesBorrowedClient()
     {
         var run = Environment.GetEnvironmentVariable("ATLAS_PROOF_RUN")
@@ -408,13 +475,132 @@ public sealed class AtlasDaemonMainWindowProofTests
         };
         foreach (var name in names)
         {
+            var queryStarted = Stopwatch.GetTimestamp();
             var element = root.FindFirst(TreeScope.Descendants,
                 new PropertyCondition(AutomationElement.NameProperty, name));
+            receipt.Mark("uia.find-first.original", new
+            {
+                ExpectedName = name, OwnHwnd = hwnd.ToInt64(), ExpectedProcessId = Environment.ProcessId,
+                OriginalFound = element is not null, ObservedUtc = DateTimeOffset.UtcNow,
+                QueryMilliseconds = Stopwatch.GetElapsedTime(queryStarted).TotalMilliseconds,
+                RootBinding = "original AutomationElement.FromHandle; original process assertion passed",
+            });
+            ObserveOwnedAutomationAfterOriginal(root, hwnd, name, element is not null, receipt);
             Assert.NotNull(element);
             Assert.False(element.Current.IsOffscreen, "Named Atlas control must be visible in the proof-owned HWND.");
         }
         receipt.Mark("uia.own-hwnd", new { Hwnd = hwnd.ToInt64(), ProcessId = Environment.ProcessId, Apartment = "MTA", Names = names });
     });
+
+    private static void ObserveOwnedAutomationAfterOriginal(
+        AutomationElement root, nint hwnd, string expectedName, bool originalFound, Receipt receipt)
+    {
+        try
+        {
+            var hasWindowPattern = root.TryGetCurrentPattern(WindowPattern.Pattern, out var pattern);
+            var windowState = hasWindowPattern ? ((WindowPattern)pattern).Current.WindowVisualState.ToString() : null;
+            receipt.Mark("uia.owned-root.after-original", new
+            {
+                ExpectedName = expectedName, OwnHwnd = hwnd.ToInt64(), ExpectedProcessId = Environment.ProcessId,
+                OriginalFound = originalFound, WindowPatternRecorded = hasWindowPattern, WindowState = windowState,
+                Root = AutomationDiagnosticNode(root, 0, 0, -1), ObservedUtc = DateTimeOffset.UtcNow,
+            });
+            if (!originalFound) ObserveBoundedOwnedAutomation(root, hwnd, expectedName, receipt);
+        }
+        catch (Exception error) when (error is ElementNotAvailableException
+            or InvalidOperationException or System.Runtime.InteropServices.COMException)
+        {
+            receipt.Mark("uia.diagnostic-unavailable", new
+            {
+                ExpectedName = expectedName, OwnHwnd = hwnd.ToInt64(),
+                ExceptionType = error.GetType().FullName, MessageSha256 = Hash(Encoding.UTF8.GetBytes(error.Message)),
+                OriginalFound = originalFound, OriginalAssertionStillApplies = true,
+            });
+        }
+    }
+
+    private static object AutomationDiagnosticNode(AutomationElement element, int ordinal, int depth, int parent)
+    {
+        const int maxNameCharacters = 160;
+        var current = element.Current;
+        var name = current.Name ?? "";
+        var automationId = current.AutomationId ?? "";
+        var rectangle = current.BoundingRectangle;
+        var boundsRecorded = !rectangle.IsEmpty && double.IsFinite(rectangle.X) && double.IsFinite(rectangle.Y)
+            && double.IsFinite(rectangle.Width) && double.IsFinite(rectangle.Height);
+        return new
+        {
+            Ordinal = ordinal, ParentOrdinal = parent, Depth = depth,
+            Name = name[..Math.Min(name.Length, maxNameCharacters)], NameLength = name.Length,
+            NameTruncated = name.Length > maxNameCharacters,
+            AutomationId = automationId[..Math.Min(automationId.Length, maxNameCharacters)],
+            AutomationIdTruncated = automationId.Length > maxNameCharacters,
+            current.ProcessId, current.NativeWindowHandle, current.IsOffscreen, current.IsEnabled,
+            ControlType = current.ControlType?.ProgrammaticName, RuntimeId = element.GetRuntimeId(),
+            BoundsRecorded = boundsRecorded,
+            Bounds = boundsRecorded ? new[] { rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height } : null,
+        };
+    }
+
+    private static void ObserveBoundedOwnedAutomation(AutomationElement root, nint hwnd, string expectedName, Receipt receipt)
+    {
+        const int maxNodes = 128;
+        const int maxDepth = 12;
+        const double betweenCallBudgetMilliseconds = 250;
+        var started = Stopwatch.GetTimestamp();
+        var queue = new Queue<(AutomationElement Element, int Depth, int Parent)>();
+        var nodes = new List<object>();
+        queue.Enqueue((root, 0, -1));
+        var truncated = false;
+        string? unavailable = null;
+        try
+        {
+            while (queue.Count != 0)
+            {
+                if (nodes.Count >= maxNodes || Stopwatch.GetElapsedTime(started).TotalMilliseconds >= betweenCallBudgetMilliseconds)
+                {
+                    truncated = true;
+                    break;
+                }
+                var (element, depth, parent) = queue.Dequeue();
+                var ordinal = nodes.Count;
+                nodes.Add(AutomationDiagnosticNode(element, ordinal, depth, parent));
+                if (depth >= maxDepth)
+                {
+                    truncated = true;
+                    continue;
+                }
+                var child = TreeWalker.RawViewWalker.GetFirstChild(element);
+                while (child is not null)
+                {
+                    if (nodes.Count + queue.Count >= maxNodes
+                        || Stopwatch.GetElapsedTime(started).TotalMilliseconds >= betweenCallBudgetMilliseconds)
+                    {
+                        truncated = true;
+                        break;
+                    }
+                    queue.Enqueue((child, depth + 1, ordinal));
+                    child = TreeWalker.RawViewWalker.GetNextSibling(child);
+                }
+            }
+        }
+        catch (Exception error) when (error is ElementNotAvailableException
+            or InvalidOperationException or System.Runtime.InteropServices.COMException)
+        {
+            unavailable = error.GetType().FullName;
+            truncated = true;
+        }
+        receipt.Mark("uia.owned-root.census.after-original", new
+        {
+            ExpectedName = expectedName, OwnHwnd = hwnd.ToInt64(), OriginalFound = false,
+            View = "RawView rooted at the original proof-owned AutomationElement",
+            MaxNodes = maxNodes, MaxDepth = maxDepth, BetweenCallBudgetMilliseconds = betweenCallBudgetMilliseconds,
+            BudgetIsBetweenCallsNotAnIndividualProviderCallTimeout = true,
+            ObservedNodes = nodes.Count, QueuedNotVisited = queue.Count, Truncated = truncated,
+            Unavailable = unavailable, ElapsedMilliseconds = Stopwatch.GetElapsedTime(started).TotalMilliseconds,
+            Nodes = nodes,
+        });
+    }
 
     private static double MeasureReading(Window window, AtlasReaderView view, string source,
         IReadOnlyList<AtlasSpanDto> highlights, Receipt receipt, string stage, bool requireReadable)

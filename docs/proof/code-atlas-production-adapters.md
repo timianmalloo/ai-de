@@ -809,3 +809,39 @@ Actual official-join host PID34192 ran `2026-09-15T19:11:34.997049Z` to
 `2026-09-15T19:23:02.549597Z`, exit4; shared start/end-release requests are
 `req-01M2K7PMM1RSQVR4Q1F060NAFT` and `req-01M2K8BM23CJ5FM0BY4RR8ENRF`.
 No main/ref movement was observed during qualification; desktop released.
+
+## UWQ20 - diagnostic failure-path control, not a product-cause claim
+
+The preceding UDG instrumented run passed 1/1 and found all ten original UIA queries. It did
+**not reproduce** the IQV null; the earlier missing name and cause remain unknown. Diagnostic
+reads may affect later observation timing. The existing selector, original result variable,
+NotNull/visibility assertions, HWND binding and timeouts remain unchanged.
+
+`OwnedBlankWindowPreservesOriginalMissingNameFailureAndDiagnostics`, in the same test file,
+now creates a shown, owned blank Window and invokes the unchanged `ObserveAutomationAsync`.
+The original `Atlas files` NotNull failure must occur. The control then reads the persisted
+receipt and asserts expected-name/original-false, owned HWND/process/root, and bounded own-root
+census records precede the caught original failure. It verifies node/depth bounds and closes the
+owned window in finally. This tests diagnostic preservation, not a fallback or alternative query.
+
+| Evidence | Observed result | Meaning |
+|---|---|---|
+| `UWQ/control-1789505000009021200/baseline` | 1/1 control passed | Known original missing-name assertion and prior diagnostic records were observed |
+| First attempted moved-after-assert shape | Compile failure CS8602; source restored | Invalid mutant, **not semantic red or a killed mutant** |
+| `UWQ/control-1789505199283895200/diagnostic-removed` | 1/1 semantic failure: Assert.Single found no original-result record | The single valid diagnostic-removal mutant is detected while the original NotNull still occurs |
+| Same directory, `restored` | 1/1 passed after explicit nonincremental build | Exact original bytes restored in finally; no mutant remains live |
+
+Restored test-source SHA256:
+`53B792E4775F76279F199CCCCEE485D9143CB044ABFBC3FFDC4F6D34573E2613`.
+The raw baseline, valid mutant, restored source snapshots, command JSON, TRX and summary are
+under `.artifacts/atlas-main-integration/UWQ/` in the directories above. Owned control receipts
+remain under `artifacts/atlas-uia-diagnostic-control/`; the mutant receipt records the original
+NotNull but lacks the diagnostic records, whereas the restored receipt records them in order.
+Actual test runner PIDs were 33292 (baseline), 31888 (valid mutant) and 18204 (restored);
+each run has its measured start/end and shared desktop announcements in `run.json`.
+
+The invalid compilation attempt was not run as a test and the baseline was not repeated merely
+to recover it. Only the diagnostic-removal mutant counts as the valid semantic mutation.
+This is a diagnostic/control checkpoint only. Fresh-main integration and the unchanged full
+recount/outcome/gates/Release sequence still decide qualification; no product cause or fix is
+inferred from the previous all-found run or this intentionally missing-control fixture.
