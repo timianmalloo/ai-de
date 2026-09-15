@@ -472,3 +472,153 @@ independent reviewer. The exact foundation/grant guard is conjunctive, not alter
 accepted foundation **and** exact grants **and** shared compatibility **and** independent
 design clearance are all required before implementation. Design-only context-seam
 consideration does not discharge that guard or supply the missing Azure context.
+
+## E1 structural experiment D1–D5 — 2026-09-15
+
+**Goal:** resolve five oracle ambiguities before the bounded E1 experiment author
+starts. **Done when:** exact node/edge/closure/cap choices return to the independent
+ledger reviewer. **Tier T2; fan-out 0; eight calls/twelve minutes, checkpoint six.**
+No executable CFG, production behavior, new file grant or native evidence is admitted.
+
+**Verified inputs:** reviewer ledger `0ed952832f076103c4c2b766e32169f59ecd865b`,
+`docs/proof/atlas-views-plan-review.md`, and E1 design §5 at
+`83e1139b580ef977bebcf68b38e84dd1a871da82`. The ledger freezes four literal fixtures,
+13 primary identities and page counts; it blocks author start pending D1–D5.
+The design establishes synthetic structural markers and page closure but leaves
+their exact attachment/representation unsettled. The following are **Owner design
+choices**, not assertions that existing code already implements them. They refine
+§5 explicitly; independent ledger and semantic vetoes remain uncleared.
+
+### Common identity and closure convention
+
+Retain the ledger's literal sources, selected methods, B1–B4/L1–L2/T1–T5/G1–G2,
+source spans/child paths and primary ordinals unchanged. Graph counts below concern
+structural nodes and relations, not separate Sequence participant metadata. No extra
+primary fact may be added to make an oracle convenient.
+
+Every fixture has auxiliary `Entry`, `Exit`, `MethodBody`. Their IDs are fixture
+observation + selected method + distinct boundary/body role. All three are owned by
+the selected method; MethodBody is the root region in this experiment. Entry/Exit
+are source-boundary markers, not execution entry/return/termination events.
+The method is selection metadata, not a fourth auxiliary graph node.
+
+Every auxiliary region records an owner (method or canonical primary ID) and parent
+region. Parent-region metadata determines transitive closure; it is not another
+implicit graph edge. Owning primary nodes outside the requested window are never
+pulled in as extra primary rows. Edges to those omitted owners use normal boundary
+stubs. All page views retain Entry/Exit/MethodBody, plus ancestor regions of included
+primary facts. No unselected sibling regions or bodies are added merely for context.
+
+Canonical auxiliary order: Entry, MethodBody, then remaining regions by owner source
+ordinal and fixed region-role/arm order, then Exit. Within these four fixtures this
+means true before false; try-statement before finally-body. Relation identity retains
+canonical endpoints/kind/arm; deterministic display ordering must not enter identity.
+
+### D1 — boundary, body and ordinary-block attachment
+
+Use exactly two common structural edges:
+`Contains(MethodBody,Entry)` and `Contains(MethodBody,Exit)`. They mean the source
+body has these boundaries. Do not add an Entry→first-fact, last-fact→Exit or other
+executable-successor edge. Direct supported statements/facts attach using the exact
+per-fixture relations below.
+
+Supported ordinary nested blocks get one region marker unless a specialized arm,
+loop, try-statement or finally-body region already represents that same admitted
+block role. Never add a duplicate generic block underneath a specialized region.
+The four fixed fixtures contain no additional standalone supported nested block.
+Generic nested-block correctness beyond these fixtures is not proved by this run.
+
+### D2 — loop condition, with no extra node
+
+`L1` retains a source-evidence value `conditionText = "more"` with its exact
+condition span. No condition primary or auxiliary node is added. The body region
+`L.body` is owned by L1 and has parent MethodBody.
+Both `LoopBodyRegion(L1,L.body)` and `LoopConditionSource(L1,L.body)` exist;
+the latter carries exact `more` source evidence and means the loop header contains
+that condition text. It does not claim evaluation, truth, entry or iteration.
+Distinct kinds preserve distinct identities despite sharing endpoints. No self-loop
+or loop-back edge exists.
+
+### D3 — explicit try-statement region and finally-body region
+
+Keep T1 (TryStatement) and T4 (FinallyClause) as primary nodes. Add two distinct
+auxiliaries: `T.try` is a **try-statement region**, owned by T1, parent MethodBody;
+`T.finally` is a **finally-body region**, owned by T4, parent T.try. T.try denotes
+the selected TryStatement's syntactic extent, including its associated finally
+clause; it is not mislabeled as only the try body. T.finally denotes the finally
+body and keeps T4's owner/source binding. Both markers are disclosed synthetic
+structure, not additional observed statements.
+
+**Explicit refinement of Contains:** it may connect an owner construct to its owned
+auxiliary region as well as a region to its direct represented facts. This is purely
+syntactic containment. T.try directly represents T2 and T4; T.finally represents T5.
+The precise edge is `FinallyDeclaration(T.try,T.finally)`, connecting associated
+regions. No call/throw/await is connected to a finally handler as execution.
+The fixed T fixture has no next lexical sibling after its await within the try body,
+so it has no ContinuationSource edge. T2 and T4 are not lexical sibling statements;
+do not add NextInSource between them.
+
+### D4 — opaque unsupported lock and skipped local-function body
+
+G1/G2 remain the ledger's two sourced gaps. Stop traversal at each gap construct
+for this admitted subset. Neither the Local body nor the empty lock body gets an
+auxiliary marker; nested Ping contributes no node, edge or target evidence.
+This explicitly narrows the design's empty-region rule: an empty region is shown
+only inside admitted structure, never by expanding an opaque unsupported subtree.
+The lock gap retains its source anchor and unsupported reason; omission is visible.
+
+### Exact uncapped inventories for independent ledger review
+
+Each row adds its listed edges to the two common D1 edges. These are **complete**
+sets for the four fixed fixtures, not lower bounds. No implicit ownership edge or
+duplicate generic block is to be supplied by the subject.
+
+| Fixture | Auxiliaries beyond Entry/Exit/MethodBody | Exact additional relations | Primary / auxiliary / total nodes / total edges |
+|---|---|---|---|
+| B | B.true (owner B2, parent MethodBody); B.false (owner B2, parent MethodBody) | Contains(MethodBody,B1); Contains(MethodBody,B2); NextInSource(B1,B2); WhenTrueRegion(B2,B.true); WhenFalseRegion(B2,B.false); Contains(B.true,B3); Contains(B.false,B4) | 4 / 5 / 9 / 9 |
+| L | L.body (owner L1, parent MethodBody) | Contains(MethodBody,L1); LoopBodyRegion(L1,L.body); LoopConditionSource(L1,L.body); Contains(L.body,L2) | 2 / 4 / 6 / 6 |
+| T | T.try (owner T1, parent MethodBody); T.finally (owner T4, parent T.try) | Contains(MethodBody,T1); Contains(T1,T.try); Contains(T.try,T2); AwaitOperand(T2,T3); Contains(T.try,T4); Contains(T4,T.finally); Contains(T.finally,T5); FinallyDeclaration(T.try,T.finally) | 5 / 5 / 10 / 10 |
+| G | None | Contains(MethodBody,G1); Contains(MethodBody,G2); NextInSource(G1,G2) | 2 / 3 / 5 / 5 |
+
+For closure, B1/B2 attach to MethodBody; B3 to B.true; B4 to B.false; L1 to
+MethodBody; L2 to L.body; T1 to MethodBody; T2/T3/T4 to T.try; T5 to T.finally;
+G1/G2 to MethodBody. T3's region chain includes T.try even when its owning await
+primary T2 is outside the window; AwaitOperand then becomes a boundary stub.
+Full-observation totals are 13 primary and 17 auxiliary nodes, with 30 structural
+edges. These are chosen expected counts, not executed measurements.
+
+Per-page edges/stubs follow §5.3 mechanically from these complete sets: both
+endpoints included → edge; exactly one included → one directional outside-window
+stub; neither included → absent. Auxiliary missing endpoints may have an owner
+ordinal but not their own primary ordinal: label that distinction and never
+fabricate a primary row index. Region closure and stub counts remain separate.
+The ledger's page counts for sizes 1/2/7/128 remain B 4/2/1/1, L 2/1/1/1,
+T 5/3/1/1 and G 2/1/1/1 under nonbinding caps. Recomposition must match the complete
+sets above plus independent identities/anchors/predicates/confidence, not just counts.
+
+### D5 — genuinely unrepresentable, test-only policy
+
+Admit a local experimental policy override; no production default changes. Request
+B window `[2,3)` (B3 only), primary limit 1. Mandatory auxiliaries are Entry, Exit,
+MethodBody and B.true: **four**, computed from actual closure. Set auxiliary cap 3;
+edge/stub caps 64 each, encoded result cap 65,536 bytes, traversal cap 10,000 and
+depth 64 so the fixture's first firing limit must be auxiliary closure. No pruning
+of B.true, substitution of a boundary stub for an owning region, or empty successful
+page may evade the failure. Return `window-unrepresentable` and no published result
+or synthetic restorable selection. No real Core token or receipt is created here.
+
+Two controls prevent a tautological rejection: the identical B3 request with
+auxiliary cap 4 must publish with all four auxiliaries; B window `[0,1)` (B1 only)
+with cap 3 must publish with Entry/Exit/MethodBody. Derive actual auxiliary counts
+from the projection, independently compare to these expectations, and show that
+always-refuse, omitted-region and ignored-cap mutations fail their intended oracles.
+These numbers are normative experiment inputs, not measured performance/capacity.
+
+### Dispatch boundary
+
+Conductor sends these precise choices back to the independent ledger reviewer and
+folds accepted wording into the E1 design/ledger before author dispatch. This note
+does not clear that review. The experiment stays in the existing four Ruling-121
+files, with four fixtures, no new packages, no production wire/source authority and
+no native/runtime/CFG claim. Any incompatible expected edge or count returns here;
+the author must not silently alter the oracle to fit generated output.

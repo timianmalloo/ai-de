@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:42:59Z",
+  "generated": "2026-09-15T21:05:17Z",
   "audit": [
     {
       "actor": null,
@@ -18471,6 +18471,42 @@ window.AUDIT_DATA = {
         "branch": "owner/atlas-views",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2KE6T7PMCDWQ2P44VY2X3XM",
+      "shortname": "atlas-owner-e1-structural-oracle-decisions",
+      "datetime": "2026-09-15T21:05:16Z",
+      "session": "codex-atlas-views-owner",
+      "prompt": "Owner decision needed before E1 experiment author. Independent oracle ledger0ed95283 in C:/Projects/ai-de-review-atlas-views-design/docs/proof/atlas-views-plan-review.md freezes4fixtures/13primary identities/pagecounts but BLOCKS5unresolved design semantics: Entry/Exit/methodblock attachment; loopconditionrepresentation; try/finallyregionendpoints; unsupported-lockblock marker; test-only cap to genuinely trigger window-unrepresentable. Read ledger + relevant83e1139b sections, make exact choices with evidence and what each constrains. Keep experimental structural-source semantics, no executableCFG/product scope. Smallest coherent existing design interpretation or explicitly amend Owner note; no invented facts. Record decisions own existingnote+audit/derived under lease if feasible budget8calls/12min checkpoint6. Conductor cannot dispatch author until decisions and independent ledger clearance. E2 relation experiment continues disjoint. No new HTML/source scope. Report precise accepted node/edge expectations and caps; reviewer hardveto not self-cleared.",
+      "summary": "Read frozen independent ledger and exact E1 structural rules. Chose D1-D5 and explicitly refined Contains, try-region scope and unsupported-subtree treatment. Preserved 13 primary identities; recorded B/L/T/G total nodes9/6/10/5 and edges9/6/10/5, closure ownership, unchanged page counts and non-tautological auxiliary cap3/4 controls. Requires independent ledger readback before author start; no experiment or product code executed.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "codex-astra-owner",
+      "artifacts": [
+        "docs/notes/atlas-views-owner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Resolve five structural-source oracle ambiguities blocking the bounded E1 experiment.",
+      "done_when": "Owner note fixes complete node/edge/closure and test-only cap expectations for independent ledger review without self-clearing semantics or expanding product scope.",
+      "tier": "T2",
+      "main_calls": 4,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T21:00:37Z",
+      "duration_seconds": 279.0,
+      "git": {
+        "sha": "a766afa88cb4cbbd20c84dc383b213a4ab4e5e94",
+        "short": "a766afa88",
+        "branch": "owner/atlas-views",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -22285,6 +22321,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "57a09ed6a2d2a3139cd1129b58294db92a74685a",
         "after": "57a09ed6a2d2a3139cd1129b58294db92a74685a",
+        "branch": "owner/atlas-views",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2KE6T431Z8FFP29W4TRFTZM",
+      "datetime": "2026-09-15T21:05:16Z",
+      "session": "codex-atlas-views-owner",
+      "kind": "decision",
+      "skill": "design-slice",
+      "title": "E1 structural oracle marker relation and refusal decisions",
+      "prompt": "Resolve D1 marker attachment, D2 loop condition, D3 try/finally regions, D4 unsupported lock block and D5 genuine window-unrepresentable trigger before E1 experiment dispatch. Preserve four fixtures, 13 primary identities and independent review.",
+      "summary": "Fixed Entry/Exit/body containment, loop source-evidence relation, separate try-statement/finally regions, opaque unsupported subtree and exact full node/edge sets. Chose B3 auxiliary cap3 refusal with cap4 success and B1 cap3 success controls. No executable CFG or product semantics admitted.",
+      "rationale": "The independent oracle ledger blocked author start on five underdetermined choices; exact prior expectations prevent subject-derived or tautological proof.",
+      "artifacts": [
+        "docs/notes/atlas-views-owner.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "a766afa88cb4cbbd20c84dc383b213a4ab4e5e94",
+        "after": "a766afa88cb4cbbd20c84dc383b213a4ab4e5e94",
         "branch": "owner/atlas-views",
         "pushed": null,
         "commits": []
