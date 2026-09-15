@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generator": "docs-graph.py derive",
+  "generator": "docs-graph.py flag",
   "rootId": "architecture",
   "artifactTypes": [
     "knowledge",
@@ -5911,6 +5911,47 @@ window.DOCS_INDEX = {
       "sourceSha256": "45e6e3b05e8adc435013bf5745ce7f2cbb68c481c7ee8741e4454ed1a207c3e2"
     },
     {
+      "id": "note-n8-solution-tree-direction",
+      "path": "docs/notes/n8-solution-tree-direction.md",
+      "title": "N8 direction: Solution tree is a WPF TreeView navigator; HTML is direction; Reveal lives on the node menu",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [
+        {
+          "by": "mockup-solution-tree",
+          "on": "2026-09-15",
+          "reason": "N8 ui-design: Solution tree mockup settles dual-activate, Unindexed chrome, and hard states; HTML is direction only"
+        }
+      ],
+      "summary": "N8 closes three below-ADR calls: HTML mockup is direction only; pointer Reveal in graph uses the existing node menu; default Left zone is Inferred pending design-slice. No new colour token — Unindexed stays {colors.unverified}.",
+      "tags": [
+        "decision-note",
+        "D-0",
+        "solution-tree",
+        "ui-design",
+        "N8"
+      ],
+      "links": [
+        {
+          "to": "mockup-solution-tree",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spike-d0-tree-toolkit",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3c834dd9885bd0c0d9ae507387afbeb6f940101054a907e15a347b7a86b65046"
+    },
+    {
       "id": "note-pack-findings-addendum-cd",
       "path": "docs/notes/pack-findings-addendum-cd.md",
       "title": "Pack findings from the Addenda C/D programme — what belongs in the AI-Forward Pack, with the defect class each one closes",
@@ -9585,6 +9626,55 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "8caa79a9e338fe7a9b7267b1571cc6ce6663421f658d571e8c98a907dc520cfc"
+    },
+    {
+      "id": "mockup-solution-tree",
+      "path": "docs/mockups/solution-tree.md",
+      "title": "Solution tree — Architecture navigator (D-0 mockup)",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "Self-contained mockup of the Architecture-pane Solution tree: F* nested tree, unindexed leaf, skip-omission chrome, Not recorded / Omitted (N), empty → Show Graph, loading, no-workspace, tree/View-source/Reveal errors with Retry, node menu for Reveal in graph. HTML is direction; native WPF TreeView is the product. Author does not clear the accessibility veto.",
+      "tags": [
+        "ui-design",
+        "mockup",
+        "D-0",
+        "solution-tree",
+        "architecture",
+        "understanding-views",
+        "wcag"
+      ],
+      "links": [
+        {
+          "to": "spec-understanding-views",
+          "rel": "implements"
+        },
+        {
+          "to": "spike-d0-tree-toolkit",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-perspective-shell",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-native-ui-solution-tree",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-n8-solution-tree-direction",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e50689e8cf20b62e4b6856a0138f67170c66ea402ee8dbd874cbc17120078fd8"
     },
     {
       "id": "mockup-uml-erm-surfaces",
@@ -16623,6 +16713,54 @@ window.DOCS_INDEX = {
       "sourceSha256": "0ce1c999eb408c194202fc11bc9cf17ed3b17d62b6ed956d5df84281d38085b0"
     },
     {
+      "id": "proof-native-ui-solution-tree",
+      "path": "docs/proof/native-ui-solution-tree.md",
+      "title": "Native UI Proof Pack — Solution tree (D-0)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [
+        {
+          "by": "mockup-solution-tree",
+          "on": "2026-09-15",
+          "reason": "N8 ui-design: Solution tree mockup settles dual-activate, Unindexed chrome, and hard states; HTML is direction only"
+        }
+      ],
+      "summary": "Native proof pack for the Architecture Solution tree. HTML mockup is direction only. Spike N7 Verified WPF TreeView attachments; product UIA, keyboard, High Contrast, DPI and signing stay Flagged until UV-1.",
+      "tags": [
+        "native-ui",
+        "proof-pack",
+        "accessibility",
+        "keyboard",
+        "dpi",
+        "wpf",
+        "D-0",
+        "solution-tree"
+      ],
+      "links": [
+        {
+          "to": "spec-understanding-views",
+          "rel": "tested-by"
+        },
+        {
+          "to": "mockup-solution-tree",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spike-d0-tree-toolkit",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1511fb621dd91bff3eadd117be07000998f21b70b7be0bd660213f4f3459579c"
+    },
+    {
       "id": "proof-perspective-content",
       "path": "docs/proof/perspective-content.md",
       "title": "Proof Pack: SH-3 — perspective content",
@@ -19120,6 +19258,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-workbench"
     },
     {
+      "id": "surface-mockups-solution-tree",
+      "path": "docs/mockups/solution-tree.html",
+      "title": "AI-DE — Solution tree mockup",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-solution-tree"
+    },
+    {
       "id": "surface-specs-ai-native-ide",
       "path": "docs/specs/ai-native-ide.html",
       "title": "AI-native IDE — Product specification",
@@ -19216,5 +19362,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "40a5f03fa8eff012572fd3674a5922031f6766eb778c5ca81c74c7f16817d2a5"
+  "graphSha256": "537663ff39b7569141a88f910fd85ee947bc909466c82bec7cdecaf50258098e"
 };

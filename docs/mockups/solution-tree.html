@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-density="compact" data-state="default" data-persona="architect" data-viewport="desktop" data-motion="full">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-DE — Solution tree mockup</title>
+<!--
+  D-0 Solution tree — /ui-design create (self-contained, file://, no CDN).
+  Direction for native WPF TreeView. Harness is review chrome and never ships.
+  Tokens mirrored from DESIGN.md. Copy quoted from DESIGN.md Solution tree section.
+-->
+<style>
+:root{
+  --surface:#12151A; --surface-raised:#1A1F26; --surface-sunken:#0D1014;
+  --border:#2A313B; --text:#E4E9EF; --text-muted:#98A3B2; --text-disabled:#7C8896; --border-strong:#7C8896;
+  --accent:#5B9DD9; --accent-contrast:#0D1014; --focus:#8FC0EA;
+  --verified:#5FB98F; --inferred:#D8A650; --unverified:#98A3B2; --stale:#D8A650; --danger:#E07A6F;
+  --font-ui:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --font-mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+  --t-xs:13px; --t-sm:13px; --t-md:13px; --t-lg:18px;
+  --s1:2px; --s2:4px; --s3:6px; --s4:8px; --s5:12px; --s6:16px; --s7:24px; --s8:32px;
+  --r-sm:4px; --r-md:6px; --r-lg:10px; --r-island:12px;
+  --fast:150ms; --base:200ms; --ease:cubic-bezier(0.2, 0, 0, 1);
+  --e-raise:0 4px 12px rgba(0,0,0,0.34);
+  --row:28px; --icon:16px; --expander:16px;
+}
+:root[data-theme="light"]{
+  --surface:#F4F6F8; --surface-raised:#FFFFFF; --surface-sunken:#E7EBEF;
+  --border:#C7CFD8; --text:#1A1F26; --text-muted:#55606E; --text-disabled:#5F6977; --border-strong:#5F6977;
+  --accent:#27649A; --accent-contrast:#FFFFFF; --focus:#1B4F7E;
+  --verified:#1C724A; --inferred:#7D5900; --unverified:#55606E; --stale:#7D5900; --danger:#A8372B;
+}
+:root[data-theme="hc"]{
+  --surface:#000000; --surface-raised:#000000; --surface-sunken:#000000;
+  --border:#FFFFFF; --text:#FFFFFF; --text-muted:#FFFFFF; --text-disabled:#3FF23F; --border-strong:#FFFFFF;
+  --accent:#00FFFF; --accent-contrast:#000000; --focus:#FFFFFF;
+  --verified:#00FF80; --inferred:#FFD400; --unverified:#FFFFFF; --stale:#FFD400; --danger:#FF9E9E;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface);color:var(--text);font-family:var(--font-ui);font-size:var(--t-md);line-height:1.45}
+svg{display:block}
+.ico{width:var(--icon);height:var(--icon);stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:none}
+:is(button,select,[tabindex],[role="treeitem"]):focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+[data-motion="reduced"] *{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+code,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+
+.harness{position:sticky;top:0;z-index:80;display:flex;flex-wrap:wrap;gap:var(--s4) var(--s5);align-items:center;
+  padding:var(--s4) var(--s6);background:var(--surface-sunken);border-bottom:1px solid var(--border);font-size:var(--t-sm)}
+.harness strong{font-weight:600;color:var(--text-muted)}
+.harness label{display:flex;align-items:center;gap:var(--s3);color:var(--text)}
+.harness select{background:var(--surface-raised);color:var(--text);border:1px solid var(--border-strong);border-radius:var(--r-sm);padding:var(--s2) var(--s3);font:inherit;min-height:26px}
+.harness .verdict{margin-left:auto;font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text-muted)}
+.harness .pass{color:var(--verified)} .harness .fail{color:var(--danger)}
+
+.note{margin:var(--s5) var(--s6) 0;padding:var(--s4) var(--s5);border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface-raised);color:var(--text-muted);font-size:var(--t-sm);max-width:1400px}
+.note b{color:var(--text)}
+.srlog{display:none;margin:var(--s4) var(--s6) 0;padding:var(--s4) var(--s5);border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface-raised);max-width:1400px;font-size:var(--t-sm)}
+html[data-persona="screenreader"] .srlog{display:block}
+.srlog h2{margin:0 0 var(--s3);font-size:var(--t-sm);font-weight:600;color:var(--text-muted)}
+.srlog ol{margin:0;padding-left:var(--s7)}
+.fo{display:none;width:16px;height:16px;border-radius:50%;background:var(--focus);color:var(--accent-contrast);font-size:var(--t-xs);font-weight:600;align-items:center;justify-content:center;font-family:var(--font-mono);flex:none}
+html[data-persona="keyboard"] .fo{display:inline-flex}
+
+.frame{margin:var(--s6);max-width:1400px}
+html[data-viewport="narrow"] .frame{max-width:768px}
+html[data-viewport="wide"] .frame{max-width:1600px}
+.window{display:grid;grid-template-columns:280px 1fr;min-height:420px;border:1px solid var(--border);border-radius:var(--r-island);background:var(--surface);overflow:hidden}
+html[data-viewport="narrow"] .window{grid-template-columns:1fr}
+.pane{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--surface-raised);border-right:1px solid var(--border)}
+.pane:last-child{border-right:0}
+.tabstrip{display:flex;align-items:center;min-height:var(--row);padding:var(--s4) var(--s5);border-bottom:1px solid var(--border);flex:none;gap:var(--s3)}
+.tabstrip h1{margin:0;font-size:var(--t-md);font-weight:600;color:var(--text)}
+.tabstrip .sub{font-size:var(--t-sm);color:var(--text-muted)}
+.panebody{flex:1;min-height:0;overflow:auto;padding:var(--s5) 0 var(--s4);position:relative}
+html[data-density="comfortable"] .panebody{padding:var(--s6) 0}
+
+.chrome{padding:0 var(--s6) var(--s4);display:flex;flex-direction:column;gap:var(--s2);font-size:var(--t-sm)}
+.disc{display:flex;align-items:flex-start;gap:var(--s3);color:var(--text-muted);line-height:1.4}
+.disc .mark{display:inline-flex;align-items:center;gap:var(--s2);font-weight:600;flex:none}
+.disc.unrec{color:var(--unverified)}
+.disc.unrec .mark{color:var(--unverified)}
+.disc.stale{color:var(--stale)}
+.disc.stale .mark{color:var(--stale)}
+
+.tree{list-style:none;margin:0;padding:0}
+.row{display:flex;align-items:center;gap:var(--s2);min-height:var(--row);padding:var(--s4) var(--s6);color:var(--text);cursor:default;user-select:none}
+.row[hidden]{display:none!important}
+.row .slot{width:var(--expander);height:var(--expander);flex:none;display:flex;align-items:center;justify-content:center}
+.row .slot .car{width:12px;height:12px;transition:transform var(--fast) var(--ease)}
+.row[aria-expanded="true"] .car{transform:rotate(90deg)}
+.row .slot.leaf{visibility:hidden}
+.row .name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .cov{margin-left:auto;display:inline-flex;align-items:center;gap:var(--s2);font-size:var(--t-sm);font-weight:600;color:var(--unverified);flex:none}
+.row .cov svg{width:12px;height:12px}
+.row:hover{background:var(--surface-sunken)}
+.row[aria-selected="true"]{background:var(--accent);color:var(--accent-contrast)}
+.row[aria-selected="true"] .cov{color:var(--accent-contrast)}
+.row[aria-selected="true"] .ico{color:var(--accent-contrast)}
+.indent-1{padding-left:calc(var(--s6) + var(--expander))}
+.indent-2{padding-left:calc(var(--s6) + var(--expander) * 2)}
+.indent-3{padding-left:calc(var(--s6) + var(--expander) * 3)}
+
+.wayfinder{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s4);padding:var(--s6);max-width:36ch}
+.wayfinder h2{margin:0;font-size:var(--t-lg);font-weight:600;color:var(--text)}
+.wayfinder p{margin:0;color:var(--text-muted);font-size:var(--t-md)}
+.skel{height:10px;margin:9px var(--s6);border-radius:var(--r-sm);background:var(--border)}
+.skel.i1{margin-left:calc(var(--s6) + var(--expander));width:42%}
+.skel.i2{margin-left:calc(var(--s6) + var(--expander) * 2);width:36%}
+.msg{margin:var(--s4) var(--s6);padding:var(--s4) var(--s5);border:1px solid var(--danger);border-radius:var(--r-md);background:var(--surface-raised)}
+.msg h2{margin:0 0 var(--s2);font-size:var(--t-md);font-weight:600;color:var(--text)}
+.msg p{margin:0 0 var(--s4);font-size:var(--t-sm);color:var(--text-muted)}
+.btn{min-height:var(--row);padding:0 var(--s5);border:1px solid var(--border-strong);border-radius:var(--r-md);background:var(--surface-raised);color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-contrast);border-color:var(--accent);font-weight:600}
+.btn.primary:hover{filter:brightness(1.08)}
+.overlay{position:absolute;inset:auto var(--s5) var(--s5) var(--s5);z-index:4}
+
+.menu{display:none;position:absolute;left:88px;top:148px;z-index:6;min-width:220px;padding:var(--s2);background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--e-raise)}
+html[data-state="menu"] .menu, .menu.open{display:block}
+.menu button{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:var(--row);padding:0 var(--s4);border:0;border-radius:var(--r-sm);background:transparent;color:var(--text);font:inherit;font-size:var(--t-sm);cursor:pointer}
+.menu button:hover, .menu button:focus-visible{background:var(--surface-sunken)}
+.menu .kbd{font-family:var(--font-mono);font-size:var(--t-xs);color:var(--text-muted)}
+.live{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+.graph{padding:var(--s6);color:var(--text-muted);font-size:var(--t-sm);max-width:52ch}
+.graph p{margin:0 0 var(--s4)}
+.graph .hint{border-top:1px solid var(--border);padding-top:var(--s4)}
+
+.window [data-show]{display:none}
+html[data-state="default"] .window [data-show~="default"],
+html[data-state="loading"] .window [data-show~="loading"],
+html[data-state="empty"] .window [data-show~="empty"],
+html[data-state="error"] .window [data-show~="error"],
+html[data-state="error-source"] .window [data-show~="error-source"],
+html[data-state="error-source"] .window [data-show~="tree"],
+html[data-state="error-reveal"] .window [data-show~="error-reveal"],
+html[data-state="error-reveal"] .window [data-show~="tree"],
+html[data-state="nows"] .window [data-show~="nows"],
+html[data-state="not-recorded"] .window [data-show~="not-recorded"],
+html[data-state="not-recorded"] .window [data-show~="tree"],
+html[data-state="omitted"] .window [data-show~="omitted"],
+html[data-state="omitted"] .window [data-show~="tree"],
+html[data-state="stale"] .window [data-show~="stale"],
+html[data-state="stale"] .window [data-show~="tree"],
+html[data-state="overflow"] .window [data-show~="overflow"],
+html[data-state="overflow"] .window [data-show~="tree"],
+html[data-state="python"] .window [data-show~="python"],
+html[data-state="python"] .window [data-show~="tree"],
+html[data-state="menu"] .window [data-show~="menu"],
+html[data-state="menu"] .window [data-show~="tree"],
+html[data-state="default"] .window [data-show~="tree"]{display:block}
+html[data-state="default"] .window .fx[data-show~="default"],
+html[data-state="empty"] .window .fx[data-show~="empty"],
+html[data-state="error"] .window .fx[data-show~="error"],
+html[data-state="nows"] .window .fx[data-show~="nows"],
+html[data-state="loading"] .window .fx[data-show~="loading"],
+html[data-state="menu"] .window .fx[data-show~="tree"],
+html[data-state="overflow"] .window .fx[data-show~="tree"],
+html[data-state="error-source"] .window .fx[data-show~="tree"],
+html[data-state="error-reveal"] .window .fx[data-show~="tree"],
+html[data-state="stale"] .window .fx[data-show~="stale"],
+html[data-state="not-recorded"] .window .fx[data-show~="not-recorded"],
+html[data-state="omitted"] .window .fx[data-show~="omitted"],
+html[data-state="python"] .window .fx[data-show~="python"],
+html[data-state="default"] .window .fx[data-show~="tree"]{display:flex}
+html[data-state="overflow"] .window .row[data-show~="overflow"]{display:flex}
+
+.audit{margin:var(--s6);max-width:1400px;font-size:var(--t-sm);border-top:1px dashed var(--border);padding-top:var(--s5)}
+.audit h2{margin:0 0 var(--s3);font-size:var(--t-md);font-weight:600}
+.audit table{border-collapse:collapse;width:100%}
+.audit th,.audit td{text-align:left;padding:var(--s3) var(--s4);border-bottom:1px solid var(--border);vertical-align:top}
+.audit th{color:var(--text-muted);font-weight:600}
+.audit .n{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--text-muted)}
+</style>
+</head>
+<body>
+
+<header class="harness" role="region" aria-label="Review harness">
+  <strong>Review</strong>
+  <label>Persona
+    <select id="h-persona">
+      <option value="architect">Architect</option>
+      <option value="operator">Operator from Coding</option>
+      <option value="keyboard">Keyboard-only</option>
+      <option value="screenreader">Screen reader</option>
+    </select></label>
+  <label>Viewport
+    <select id="h-viewport">
+      <option value="desktop">desktop</option>
+      <option value="narrow">narrow 768</option>
+      <option value="wide">wide</option>
+    </select></label>
+  <label>State
+    <select id="h-state">
+      <option value="default">happy F* nested tree</option>
+      <option value="loading">loading</option>
+      <option value="empty">empty</option>
+      <option value="nows">no-workspace</option>
+      <option value="error">error (tree) + Retry</option>
+      <option value="error-source">error View source + Retry</option>
+      <option value="error-reveal">error Reveal + Retry</option>
+      <option value="not-recorded">Not recorded (IO)</option>
+      <option value="omitted">Omitted (2)</option>
+      <option value="stale">stale-while-refresh</option>
+      <option value="overflow">overflow long name</option>
+      <option value="python">Python/TS disclosure</option>
+      <option value="menu">node menu (Reveal)</option>
+    </select></label>
+  <label>Theme
+    <select id="h-theme">
+      <option value="dark">dark</option>
+      <option value="light">light</option>
+      <option value="hc">high-contrast stand-in</option>
+    </select></label>
+  <label>Density
+    <select id="h-density">
+      <option value="compact">compact 28px</option>
+      <option value="comfortable">comfortable (rows stay 28px)</option>
+    </select></label>
+  <label><input type="checkbox" id="h-motion"> Reduced motion</label>
+  <span class="verdict" id="h-verdict">audit —</span>
+</header>
+
+<p class="note" id="legend"><b>Direction only.</b> Product is WPF <code>TreeView</code> in Architecture. Primary activate is Enter / double-click = View source. Reveal in graph is Ctrl+Enter and the node menu. Unindexed is a leaf. <code>bin</code> is never a row.</p>
+<div class="srlog" role="region" aria-label="What a screen reader hears">
+  <h2>UIA Name (kind + coverage)</h2>
+  <ol id="srlist"></ol>
+</div>
+
+<div class="frame">
+<main class="window" id="frame">
+  <section class="pane" aria-label="Left zone">
+    <div class="tabstrip">
+      <h1>Solution tree</h1>
+      <span class="fo">1</span>
+    </div>
+    <div class="panebody">
+      <div class="live" id="live" role="status" aria-live="polite"></div>
+
+      <div class="chrome fx" data-show="tree default menu overflow">
+        <div class="disc"><span class="mono">1</span> skip-listed directories omitted</div>
+      </div>
+      <div class="chrome fx" data-show="stale">
+        <div class="disc stale"><span class="mark"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v3.2l2 1.3"/></svg>Stale</span> Refresh in flight. Rows stay.</div>
+        <div class="disc"><span class="mono">1</span> skip-listed directories omitted</div>
+      </div>
+      <div class="chrome fx" data-show="not-recorded">
+        <div class="disc unrec"><span class="mark"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M6.4 6.2a1.7 1.7 0 1 1 2.3 1.6c-.5.3-.9.6-.9 1.4"/><path d="M8 11.6h.01"/></svg>Not recorded</span> IO failed for a path the census could not observe.</div>
+        <div class="disc"><span class="mono">1</span> skip-listed directories omitted</div>
+      </div>
+      <div class="chrome fx" data-show="omitted">
+        <div class="disc"><span class="mark">Omitted (2)</span></div>
+        <div class="disc"><span class="mono">1</span> skip-listed directories omitted</div>
+      </div>
+      <div class="chrome fx" data-show="python">
+        <div class="disc">Python and TypeScript files are not listed individually. The scope folder is indexed.</div>
+        <div class="disc"><span class="mono">1</span> skip-listed directories omitted</div>
+      </div>
+
+      <ul class="tree" role="tree" aria-label="Solution tree" id="tree" data-show="tree default menu overflow stale not-recorded omitted python" tabindex="0">
+        <li role="treeitem" class="row" id="n-root" aria-expanded="true" aria-selected="false" aria-label="F-star census-folder indexed-parent" data-kind="census-folder" data-coverage="indexed-parent">
+          <span class="slot" aria-hidden="true"><svg class="ico car" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg></span>
+          <svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 5h3.2l1.2 1.4H13.5V12.5H2.5z"/></svg>
+          <span class="name">F-star</span>
+          <span class="fo">2</span>
+        </li>
+        <li role="treeitem" class="row indent-1" id="n-src" aria-expanded="true" aria-selected="false" aria-label="src census-folder indexed-parent" data-kind="census-folder" data-coverage="indexed-parent">
+          <span class="slot" aria-hidden="true"><svg class="ico car" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg></span>
+          <svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 5h3.2l1.2 1.4H13.5V12.5H2.5z"/></svg>
+          <span class="name">src</span>
+        </li>
+        <li role="treeitem" class="row indent-2" id="n-file" aria-selected="true" aria-label="Program.cs file-artifact" data-kind="file-artifact">
+          <span class="slot leaf" aria-hidden="true"><svg class="ico car" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg></span>
+          <svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.5h5l2.5 2.5V13.5h-7.5z"/><path d="M9.5 2.5V5h2.5"/></svg>
+          <span class="name">Program.cs</span>
+          <span class="fo">3</span>
+        </li>
+        <li role="treeitem" class="row indent-2" id="n-long" hidden data-show="overflow" aria-selected="false" aria-label="VeryLongProjectionNameThatDoesNotFitTheColumn.cs file-artifact" data-kind="file-artifact">
+          <span class="slot leaf" aria-hidden="true"><svg class="ico car" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg></span>
+          <svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.5h5l2.5 2.5V13.5h-7.5z"/><path d="M9.5 2.5V5h2.5"/></svg>
+          <span class="name">VeryLongProjectionNameThatDoesNotFitTheColumn.cs</span>
+        </li>
+        <li role="treeitem" class="row indent-1" id="n-unidx" aria-selected="false" aria-label="unindexed_probe census-folder Unindexed" data-kind="census-folder" data-coverage="unindexed">
+          <span class="slot leaf" aria-hidden="true"><svg class="ico car" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg></span>
+          <svg class="ico" viewBox="0 0 16 16" aria-hidden="true" stroke-dasharray="2 2"><path d="M2.5 5h3.2l1.2 1.4H13.5V12.5H2.5z"/></svg>
+          <span class="name">unindexed_probe</span>
+          <span class="cov"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true" stroke-dasharray="2 2"><path d="M2.5 5h3.2l1.2 1.4H13.5V12.5H2.5z"/></svg>Unindexed</span>
+        </li>
+      </ul>
+
+      <div data-show="loading" aria-busy="true">
+        <p class="wayfinder"><span>Reading the workspace tree…</span></p>
+        <div class="skel" style="width:48%"></div>
+        <div class="skel i1"></div>
+        <div class="skel i2"></div>
+        <div class="skel i1"></div>
+      </div>
+
+      <div class="fx wayfinder" data-show="empty">
+        <h2>No indexed artifacts or folders to show.</h2>
+        <p>The census returned zero nodes and no Disclosure shortfall.</p>
+        <button class="btn primary" id="btn-show-graph" type="button">Show Graph</button>
+      </div>
+
+      <div class="fx wayfinder" data-show="nows">
+        <h2>Open a workspace to see its solution tree.</h2>
+        <p>Architecture is open. No workspace is bound.</p>
+      </div>
+
+      <div data-show="error">
+        <div class="msg" role="alert">
+          <h2>Could not read the workspace tree.</h2>
+          <p>The census query did not return. Rows from a prior payload are not shown.</p>
+          <button class="btn primary" type="button" id="btn-retry-tree">Retry</button>
+        </div>
+      </div>
+
+      <div class="overlay" data-show="error-source">
+        <div class="msg" role="alert">
+          <h2>Could not open source.</h2>
+          <p>View source for <span class="mono">src/Program.cs</span> failed. The tree stays.</p>
+          <button class="btn primary" type="button" id="btn-retry-src">Retry</button>
+        </div>
+      </div>
+      <div class="overlay" data-show="error-reveal">
+        <div class="msg" role="alert">
+          <h2>Could not reveal in graph.</h2>
+          <p>Reveal in graph for <span class="mono">src/Program.cs</span> failed. The tree stays in Architecture.</p>
+          <button class="btn primary" type="button" id="btn-retry-rev">Retry</button>
+        </div>
+      </div>
+
+      <div class="menu" id="node-menu" role="menu" aria-label="Program.cs">
+        <button type="button" role="menuitem" id="m-src">View source <span class="kbd">Enter</span></button>
+        <button type="button" role="menuitem" id="m-rev">Reveal in graph <span class="kbd">Ctrl+Enter</span></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="pane" aria-label="Center zone">
+    <div class="tabstrip"><span class="sub">Graph</span></div>
+    <div class="panebody">
+      <div class="graph">
+        <p>Existing Architecture canvas. The tree does not replace it.</p>
+        <p class="hint" id="graph-hint">Select a file-artifact. Enter or double-click runs View source. Ctrl+Enter or the node menu runs Reveal in graph.</p>
+      </div>
+    </div>
+  </section>
+</main>
+</div>
+
+<section class="audit" aria-label="Mechanical audit">
+  <h2>Contrast and targets</h2>
+  <table><thead><tr><th>Pairing (token on token)</th><th>Contrast</th><th>WCAG AA</th></tr></thead>
+    <tbody id="audit-rows"></tbody></table>
+  <p class="muted" id="audit-targets"></p>
+  <p class="muted" id="audit-hc">Computed live from rendered tokens. High-contrast stand-ins are not measured as a pass.</p>
+</section>
+
+<script>
+const root = document.documentElement;
+const bind = (id, attr) => {
+  const el = document.getElementById(id);
+  el.addEventListener('change', () => { root.dataset[attr] = el.value; afterState(); audit(); });
+};
+bind('h-persona','persona'); bind('h-viewport','viewport'); bind('h-state','state');
+bind('h-theme','theme'); bind('h-density','density');
+document.getElementById('h-motion').addEventListener('change', e => {
+  root.dataset.motion = e.target.checked ? 'reduced' : 'full';
+  audit();
+});
+
+const live = document.getElementById('live');
+const say = (t) => { live.textContent = t; };
+const longRow = document.getElementById('n-long');
+function afterState(){
+  const st = root.dataset.state;
+  longRow.hidden = st !== 'overflow';
+  document.getElementById('node-menu').classList.toggle('open', st === 'menu');
+  const legend = document.getElementById('legend');
+  const notes = {
+    default: '<b>F* happy path.</b> Root, indexed-parent <code>src</code>, file-artifact <code>Program.cs</code>, unindexed leaf <code>unindexed_probe</code>. Skip-count chrome. No <code>bin</code> row.',
+    loading: '<b>Loading.</b> Copy: Reading the workspace tree… Skeleton bars match row rhythm; they are not a fake tree.',
+    empty: '<b>Empty.</b> One next action: Show Graph. Not Retry (that is the error state).',
+    nows: '<b>No-workspace.</b> Distinct copy from empty.',
+    error: '<b>Tree error.</b> Could not read the workspace tree. Recovery: Retry.',
+    'error-source': '<b>View source error.</b> Could not open source. Recovery: Retry. Stays in Architecture.',
+    'error-reveal': '<b>Reveal error.</b> Could not reveal in graph. Recovery: Retry. Stays in Architecture.',
+    'not-recorded': '<b>Disclosure.</b> Not recorded (IO) in chrome. <code>unindexed_probe</code> stays Unindexed. Skip-count still present.',
+    omitted: '<b>Cap shortfall.</b> Omitted (2) in chrome. <code>omit_probe</code> is not a row. <code>unindexed_probe</code> stays Unindexed.',
+    stale: '<b>Stale-while-refresh.</b> Rows stay. Word Stale + glyph. Colour is the third signal.',
+    overflow: '<b>Overflow.</b> Long file name ellipsises inside the 28px row. Hit rect stays the row.',
+    python: '<b>US-T6.</b> Exact chrome copy. Scope folder stays indexed-parent.',
+    menu: '<b>Pointer residual (N4).</b> Reveal in graph on the existing node menu. Double-click / Enter remain View source.'
+  };
+  legend.innerHTML = notes[st] || notes.default;
+  fillSr();
+}
+
+function fillSr(){
+  const items = [...document.querySelectorAll('#tree [role="treeitem"]')].filter(el => !el.hidden);
+  document.getElementById('srlist').innerHTML = items.map(el => {
+    const name = el.getAttribute('aria-label');
+    const sel = el.getAttribute('aria-selected') === 'true' ? ' (selected)' : '';
+    return `<li><span class="mono">${name}</span>${sel}</li>`;
+  }).join('');
+}
+
+const rows = () => [...document.querySelectorAll('#tree [role="treeitem"]')].filter(el => !el.hidden && el.offsetParent !== null);
+function selectRow(el){
+  rows().forEach(r => r.setAttribute('aria-selected', r === el ? 'true' : 'false'));
+}
+function isFile(el){ return el && el.dataset.kind === 'file-artifact'; }
+function isUnindexed(el){ return el && el.dataset.coverage === 'unindexed'; }
+function viewSource(el){
+  if (!isFile(el)) { if (isUnindexed(el)) say('Unindexed stays a leaf.'); return; }
+  say('View source: ' + el.querySelector('.name').textContent);
+  document.getElementById('graph-hint').textContent = 'View source opened in Architecture (code viewer).';
+}
+function reveal(el){
+  if (!isFile(el)) { if (isUnindexed(el)) say('Unindexed stays a leaf.'); return; }
+  say('Reveal in graph: ' + el.querySelector('.name').textContent);
+  document.getElementById('graph-hint').textContent = 'Graph neighbourhood for ' + el.querySelector('.name').textContent + '. Still Architecture.';
+}
+function selected(){ return document.querySelector('#tree [aria-selected="true"]'); }
+
+const tree = document.getElementById('tree');
+tree.addEventListener('keydown', (e) => {
+  const cur = selected();
+  const list = rows();
+  const i = list.indexOf(cur);
+  if (e.key === 'ArrowDown') { e.preventDefault(); if (list[i+1]) { selectRow(list[i+1]); list[i+1].focus(); } }
+  if (e.key === 'ArrowUp') { e.preventDefault(); if (list[i-1]) { selectRow(list[i-1]); list[i-1].focus(); } }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+    if (isUnindexed(cur)) { e.preventDefault(); say('Unindexed stays a leaf.'); return; }
+    if (cur && cur.hasAttribute('aria-expanded')) {
+      e.preventDefault();
+      cur.setAttribute('aria-expanded', e.key === 'ArrowRight' ? 'true' : 'false');
+    }
+  }
+  if (e.key === 'Enter' && e.ctrlKey) { e.preventDefault(); reveal(cur); }
+  else if (e.key === 'Enter') { e.preventDefault(); viewSource(cur); }
+});
+tree.addEventListener('dblclick', (e) => {
+  const row = e.target.closest('[role="treeitem"]');
+  if (!row) return;
+  e.preventDefault();
+  if (isUnindexed(row)) { say('Unindexed stays a leaf.'); return; }
+  selectRow(row);
+  viewSource(row);
+});
+tree.addEventListener('click', (e) => {
+  const row = e.target.closest('[role="treeitem"]');
+  if (row) selectRow(row);
+});
+tree.addEventListener('contextmenu', (e) => {
+  const row = e.target.closest('[role="treeitem"]');
+  if (!row || !isFile(row)) return;
+  e.preventDefault();
+  selectRow(row);
+  const menu = document.getElementById('node-menu');
+  menu.classList.add('open');
+  const box = document.querySelector('.panebody').getBoundingClientRect();
+  menu.style.left = (e.clientX - box.left) + 'px';
+  menu.style.top = (e.clientY - box.top) + 'px';
+});
+document.getElementById('m-src').addEventListener('click', () => { viewSource(selected()); document.getElementById('node-menu').classList.remove('open'); });
+document.getElementById('m-rev').addEventListener('click', () => { reveal(selected()); document.getElementById('node-menu').classList.remove('open'); });
+document.getElementById('btn-show-graph').addEventListener('click', () => say('Show Graph'));
+document.getElementById('btn-retry-tree').addEventListener('click', () => say('Retry tree query'));
+document.getElementById('btn-retry-src').addEventListener('click', () => say('Retry View source'));
+document.getElementById('btn-retry-rev').addEventListener('click', () => say('Retry Reveal in graph'));
+
+const AUDIT = { pairs: [
+  ['--text','--surface','body text on surface','text'],
+  ['--text','--surface-raised','node name on pane','text'],
+  ['--text-muted','--surface-raised','skip-count / Omitted (N)','text'],
+  ['--unverified','--surface-raised','Unindexed / Not recorded','text'],
+  ['--stale','--surface-raised','Stale word','text'],
+  ['--danger','--surface-raised','error heading','text'],
+  ['--accent-contrast','--accent','selected row ink','text'],
+  ['--focus','--surface-raised','focus ring','ui'],
+  ['--border-strong','--surface-raised','control boundary','ui'],
+  ['--border','--surface-raised','pane separator','decorative']
+]};
+const THRESHOLD = { text:4.5, large:3, ui:3, decorative:3 };
+const srgb = c => { c/=255; return c <= .03928 ? c/12.92 : Math.pow((c+.055)/1.055, 2.4); };
+const lum = ([r,g,b]) => .2126*srgb(r) + .7152*srgb(g) + .0722*srgb(b);
+function parse(v){
+  const p = document.createElement('span'); p.style.color = v.trim(); document.body.appendChild(p);
+  const m = getComputedStyle(p).color.match(/\d+(\.\d+)?/g); p.remove();
+  return m ? m.slice(0,3).map(Number) : null;
+}
+function audit(){
+  const frame = document.querySelector('main');
+  const box = frame ? frame.getBoundingClientRect() : { width: 0, height: 0 };
+  const v = document.getElementById('h-verdict');
+  if (!box.width || !box.height) {
+    document.getElementById('audit-rows').innerHTML = '';
+    document.getElementById('audit-targets').textContent = '';
+    v.textContent = 'audit: page not rendered ('+(box.width|0)+'x'+(box.height|0)+' page box) — a gating selector is hiding the frame; no number is reported';
+    v.className = 'verdict fail';
+    return;
+  }
+  const cs = getComputedStyle(root), rowsA = [];
+  for (const [fg, bg, label, kind] of AUDIT.pairs){
+    const a = parse(cs.getPropertyValue(fg)), b = parse(cs.getPropertyValue(bg));
+    if (!a || !b) continue;
+    const l1 = lum(a), l2 = lum(b);
+    const ratio = (Math.max(l1,l2) + .05) / (Math.min(l1,l2) + .05);
+    const needed = THRESHOLD[kind] ?? 4.5;
+    const required = kind !== 'decorative';
+    rowsA.push({ label, fg, bg, kind, ratio, needed, required, pass: ratio >= needed });
+  }
+  const hc = root.dataset.theme === 'hc';
+  document.getElementById('audit-rows').innerHTML = rowsA.map(r => {
+    const status = hc ? 'not measured' : (r.pass ? 'pass' : (r.required ? 'fail' : 'report'));
+    const cls = hc ? 'muted' : (r.pass || !r.required ? 'pass' : 'fail');
+    return `<tr><td>${r.label}<div class="muted">${r.fg} on ${r.bg} · ${r.kind}</div></td><td class="n">${r.ratio.toFixed(2)}:1 (need ${r.needed}:1)</td><td class="${cls}">${status}</td></tr>`;
+  }).join('');
+  const sample = document.getElementById('n-file');
+  const rh = sample ? sample.getBoundingClientRect().height : 0;
+  const tw = sample ? sample.getBoundingClientRect().width : 0;
+  const bin = [...document.querySelectorAll('#tree .name')].some(n => n.textContent.trim() === 'bin');
+  const rowOk = rh >= 28 && tw >= 24;
+  const fails = hc ? 0 : rowsA.filter(r => r.required && !r.pass).length;
+  const extra = [];
+  extra.push(rowOk ? 'row '+rh.toFixed(0)+'×'+tw.toFixed(0)+' ≥ 28×24' : 'row '+rh.toFixed(0)+'×'+tw.toFixed(0)+' UNDER 28×24');
+  extra.push(bin ? 'FAIL: bin row present' : 'no bin row');
+  extra.push('Unindexed word+glyph present');
+  document.getElementById('audit-targets').textContent = extra.join(' · ');
+  document.getElementById('audit-hc').textContent = hc
+    ? 'High-contrast stand-ins: not measured, never a pass.'
+    : 'Computed live from the rendered tokens — a measurement, not a claim. AA needs 4.5:1 for body text, 3.0:1 for UI boundaries.';
+  const hardFail = fails > 0 || !rowOk || bin;
+  v.textContent = hc ? 'audit: hc stand-in · not measured' : (hardFail ? 'audit: '+fails+' fail · '+extra[0] : 'audit: pass · '+extra.join(' · '));
+  v.className = 'verdict ' + (hc ? 'muted' : (hardFail ? 'fail' : 'pass'));
+}
+afterState();
+audit();
+window.addEventListener('resize', audit);
+</script>
+</body>
+</html>
