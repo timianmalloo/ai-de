@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 103 types, 460 members, 72% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 103 types, 462 members, 71% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**103 public types · 460 public members · 72% documented.**
+**103 public types · 462 public members · 71% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1454,6 +1454,8 @@ One activate from the tree, mapped onto an existing `NodeViewKind`.
 | `string DisplayName` | **(gap)** |
 | `string KindWord` | **(gap)** |
 | `string CoverageLabel` | **(gap)** |
+| `Geometry KindGlyph` | **(gap)** |
+| `DoubleCollection KindGlyphDash` | **(gap)** |
 | `string AccessibleName` | **(gap)** |
 | `IReadOnlyList<SolutionTreeNodeItem> Nest(IReadOnlyList<SolutionTreeNode> nodes)` | Nest the flat DTO by parent census-folder already in the list. No path-split. |
 
