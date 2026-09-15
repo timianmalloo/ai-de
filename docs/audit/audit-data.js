@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T23:42:50Z",
+  "generated": "2026-09-15T14:33:20Z",
   "audit": [
     {
       "actor": null,
@@ -16310,6 +16310,71 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T23:34:34Z",
       "duration_seconds": 495.0
+    },
+    {
+      "id": "al-01M2JQPXCYB8G0WWR0008YDPX7",
+      "shortname": "recursive-surface-ownership-plan-review",
+      "datetime": "2026-09-15T14:32:06Z",
+      "session": "codex-surface-ownership-review",
+      "prompt": "Independent pre-author plan review for the recursive surface-ownership programme; return separate Test Architect, Simplifier, Python, SRE and Orchestrator verdicts, the Testing Strategy union, and exact join gates; do not implement or edit policy.",
+      "summary": "Cleared the corrected plan for one author. Frozen semantics use grouped same-cell context plus Ruling 113 unique standalone bare-name resolution; Ruling 114 assigns ProseView. Accepted the task join with empty .NET recount/build, no push, selected Python/register/docs gates and the full mandatory gate runner.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership-plan-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Independently review the recursive surface ownership plan across Test Architect, Simplifier, Python, and SRE/Orchestrator lenses without implementation or policy edits.",
+      "done_when": "Separate shaped verdicts, complete test-trigger union, exact join commands, veto-clear predicates, unresolved choices, and measured review cost are recorded and committed.",
+      "tier": "T1",
+      "main_calls": 19,
+      "main_budget": 25,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T14:24:43Z",
+      "duration_seconds": 443.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 2,
+          "accepted": 2
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "python-developer",
+          "raised": 2,
+          "accepted": 2
+        },
+        {
+          "persona": "sre-diagnostician",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "orchestrator",
+          "raised": 2,
+          "accepted": 2
+        }
+      ],
+      "git": {
+        "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
+        "short": "bab5035e7",
+        "branch": "review/surface-ownership",
+        "pushed": null
+      }
     }
   ],
   "changes": [

@@ -16340,6 +16340,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "6d8859bbc9cc1635e9b7aa19807ae8cb3c0ff07354368f08de9465546d2a1845"
     },
     {
+      "id": "proof-recursive-surface-ownership-plan-review",
+      "path": "docs/proof/recursive-surface-ownership-plan-review.md",
+      "title": "Recursive surface ownership: independent plan review",
+      "type": "proof-pack",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Independent pre-author review clears the bounded plan and fixes the task join gate floor.",
+      "tags": [
+        "proof",
+        "review",
+        "ownership",
+        "testing",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7f5d0fd0ec8cd33617414f7ed9112a21c331a035ae4859e272aa94234c2e6b57"
+    },
+    {
       "id": "proof-s2-settings-and-sentinels",
       "path": "docs/proof/s2-settings-and-sentinels.md",
       "title": "Proof Pack — S2: the settings and sentinels commit",
@@ -18634,5 +18665,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c098a7937db9de42729b1f524d005a86ab7ce5e85832d27fdc17ed24d0550635"
+  "graphSha256": "c36840be64e18ecf33826bf5676687f0465f6225b47157c10658bab89fd4ad78"
 };
