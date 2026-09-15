@@ -10022,7 +10022,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n G --> V --> C\n G --> Q --> C"
         }
       ],
-      "sourceSha256": "15e47e81f83af6fbce1d91f28c1c0b71d18317516cda4c1a7f99dc922ab26dd1"
+      "sourceSha256": "c38831c59ce3512cd1583f1b6553a98b33527e63f8c8afc909a96f61c2ee57d2"
     },
     {
       "id": "plan-recursive-surface-ownership",
@@ -10763,7 +10763,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ed117b69ab96f88534316d8a6ff15bc209f3fb59d7b9f2f0c6bdb6bb3e2b622e"
+      "sourceSha256": "8db1b8c2d263d7d044518d5aeb535b813a1f1856c838c9d72be80a885c9a615d"
     },
     {
       "id": "session-profiles",
@@ -11756,7 +11756,7 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
-          "to": "inv-0005-a-red-main-nobody-consumed",
+          "to": "INV-0005-the-gate-runs-everything-and-has-been-red-for-two-days",
           "rel": "relates-to"
         },
         {
@@ -11768,12 +11768,12 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         },
         {
-          "to": "addendum-c-council-rulings",
+          "to": "note-addendum-c-council-rulings",
           "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "40afa38a1853c0784d87a0a88a7bb4bd00cadec178d8e40c05497ec758d4c710"
+      "sourceSha256": "f7f512919b02fcbbc3adca4c48c208d1351022658d11bd9adfa68975b79d3fae"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -16372,10 +16372,39 @@ window.DOCS_INDEX = {
         {
           "to": "session-contracts",
           "rel": "relates-to"
+        },
+        {
+          "to": "proof-ownership-qualification-review",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5ea2e14338b78a310d7ad2535512e9c06290badc1da510944d345935642a12d9"
+      "sourceSha256": "4ef6dd2d6b26b8afcf023fa49423d722bfa870f18f66248d854ae5072a29061f"
+    },
+    {
+      "id": "proof-ownership-qualification-review",
+      "path": "docs/proof/ownership-qualification-review.md",
+      "title": "Independent review of ownership qualification",
+      "type": "proof-pack",
+      "status": "current",
+      "owner": "@codex-sol-review",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Independent Test Architect and Simplifier qualification of the published stranded-audit fix and receipt-reuse boundary.",
+      "tags": [
+        "proof",
+        "ownership",
+        "review"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "66e8b16314eeda217934db71c767c5ac0f1c54fe1c1fba2ed3519b3e5aa5c38c"
     },
     {
       "id": "proof-perspective-content",
@@ -19057,5 +19086,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "77280863b321fe8f35f5ef280831994dc55644dfb4f87b68e1e16726bf8022ea"
+  "graphSha256": "db1532f9ef0d7f53d726d476279cee34e569f9e47c7f893b060f645cba457ed6"
 };

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T17:11:51Z",
+  "generated": "2026-09-15T17:23:34Z",
   "audit": [
     {
       "actor": null,
@@ -17392,6 +17392,90 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T17:09:41Z",
       "duration_seconds": 129.0
+    },
+    {
+      "id": "al-01M2K151CMPGVH9GDD51JHVA7Y",
+      "shortname": "ownership-current-qualification",
+      "datetime": "2026-09-15T17:17:06Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "the join of 516f7d5ad39ba2f9f7dec4a563c7cfb2836023f7 into conductor/ownership-qualification",
+      "summary": "OwnerO8/O9 and Core request resolutions authorize exact docs-only corrections; source/tests/buildinputs unchanged, originalTRXhashes matched. Independent Test/SimplifierPASS3665e51f. Qualify isolated branch; no mainpush. recount_seconds=0 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Resolve former ownership qualification blocker and close obsolete documentation",
+      "done_when": "Integrated Core corrections and existing ownership gate pass mandatory qualification",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T17:17:04Z",
+      "duration_seconds": 2.0
+    },
+    {
+      "id": "al-01M2K1GCQT3GRHWYW1RWC3B49Y",
+      "shortname": "ownership-checkpoint-correction",
+      "datetime": "2026-09-15T17:23:18Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "Resolve the blocker and keep going with the next best action.",
+      "summary": "The join appended acceptance before its checkpoint. Step 7 was refused by peer register/derived leases, so full qualification had not run. Holder subsequently explicitly released both leases in atlas-e1-native-class-view log sequences 99 and 100. Continue through the prescribed join; no bypass or expiry-based consent.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "signals": {
+        "acceptance_met": false
+      },
+      "supersedes": "al-01M2K151CMPGVH9GDD51JHVA7Y",
+      "git": {
+        "sha": "51c5c9e18db750bb00cab0176a27c7b3654afcb6",
+        "short": "51c5c9e18",
+        "branch": "conductor/ownership-qualification",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K1GV0102SQXRWRP2TW82QH",
+      "shortname": "ownership-current-qualification",
+      "datetime": "2026-09-15T17:23:33Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "the join of the resolved merge into conductor/ownership-qualification",
+      "summary": "Owner O8/O9 authorize exact Core documentation corrections. Source, tests and build inputs unchanged; original TRX hashes matched. Independent Test Architect and Simplifier PASS at 3665e51f. Holder explicitly released blocking leases. Qualify isolated branch; no main push. recount_seconds=0 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md",
+        "docs/proof/ownership-qualification-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Resolve former ownership qualification blocker and close obsolete documentation",
+      "done_when": "Integrated Core corrections and existing ownership gate pass mandatory qualification",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T17:23:31Z",
+      "duration_seconds": 2.0
     }
   ],
   "changes": [

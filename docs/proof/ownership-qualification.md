@@ -9,6 +9,7 @@ links:
   - { to: plan-ownership-qualification, rel: implements }
   - { to: proof-recursive-surface-ownership, rel: relates-to }
   - { to: session-contracts, rel: relates-to }
+  - { to: proof-ownership-qualification-review, rel: relates-to }
 review-by: 2026-12-15
 summary: "Current qualification and status reconciliation after the Core coordinator published the recursive gate and repaired shared liveness lookup."
 ---
@@ -29,4 +30,8 @@ Owner O8 requires matching all relevant inputs before reusing runtime receipts. 
 
 ## Current status
 
-Independent review and required full qualification: pending. Earlier blocker prose remains historical evidence, not current truth. New Core request `req-01M2K0QEPYF0CEWHPBKYQ72GY6` covers the obsolete §2 paragraph only, with all ownership rows unchanged. No new tooling grant or main push is inferred.
+Independent Test Architect and Simplifier PASS at reviewer commit `3665e51f2d66d396ebbbe95c113a33ec7a956be4`. The fixed self-test and normal gate pass; the old-lookup mutation fails the registered-linked-tree assertion. Original surface gate blob remains `ce11ae27eb79b97f54a1cf0fec4e5036f7ad90c4`. Review receipt is imported verbatim, SHA-256 `66e8b16314eeda217934db71c767c5ac0f1c54fe1c1fba2ed3519b3e5aa5c38c`; source and destination matched. Original audit `al-01M2K13QBTAVSKMYC3AMS1DK44` remains on the retained reviewer branch. Reviewer actual cost: 14/12 calls; stale patch context caused the recorded estimate overrun.
+
+Core resolved request `req-01M2K0QEPYF0CEWHPBKYQ72GY6` with closure commit `ccd467ab`. Qualification also observed two pre-existing INV-0012 dangling link targets; Core resolved request `req-01M2K0WVDGCSWJH917GDPJF4N5` with `516f7d5a`. Conductor inspected the entire base-to-tip diff: eight added §2 history lines, two corrected canonical IDs, and a derived index. No ownership rows or source/build inputs changed. Owner O9 approved consumption of this frozen handoff through the repository join without waiting for batch publication. No main publication by Codex is authorized or claimed.
+
+The script joined `516f7d5a` and passed its source/self-test/regeneration checks. Step 7 was refused because native work item `atlas-nm12-evidence` held leases on `docs/audit/audit-log.jsonl` (register) and `docs/audit/audit-data.js` (derived). Core confirmed these leases are inappropriate and asked the holder to release; requests `req-01M2K16A5061KW8YAC4GTAXJXH` / `req-01M2K16A6NSVQBMN9GMJ2VQPM7` preserve the coordination. Staged records remain intact; no TTL wait, peer lease release, or hook bypass by Codex. Full gate qualification remains pending that commit checkpoint.
