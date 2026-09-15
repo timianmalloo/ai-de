@@ -1841,3 +1841,159 @@ current build; Ruling 79's "run on the frozen tree" superseded; Ruling 49 stands
 8. `ProviderConfiguration`'s `engines.<id>.account` key is documented as fallback default only; the erratum note is amended and marked as extending the spec.
 
 **RECORD AS:** Ruling 105 — the account is the operator-facing unit: session config holds account selections + a default, engine derived from provider; per-turn account picker on the composer's decoration line, override as an operator row at Send; sheet lists accounts with derived states and per-provider Configure…; binding written per turn to the ledger, Type-2 by construction; Higgsfield out pending spike "higgsfield-surface"; spike order copilot → codex → gemini → grok; one T1 slice "accounts", Sessions/AgentPlane, wave 2 with 97(i)+104; 97(i)'s engine states subsumed.
+
+
+---
+
+## Ruling 106 — Atlas main integration lands as a fast-forward of a gated, both-histories-preserved candidate
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-15, post-reboot). The operator's words, logged verbatim in the GHCP recovery session's audit log (`al-01M2JP02E3EZSKXFNRAK2QBSYA`, 14:02Z): "1: Lets merge and get main up to date with this work 2: Resume the existing native E1 worktree from its passing 26-test checkpoint and finish candidate qualification. make sure we are actively coordinating across sessions I am going to stress test our coordination by running sessions across GHCP, Grok, Claude Code and Codex". The live request: `req-01M2JP0X9RW2CK2E9N0CRS6MSX` (copilot-astra-atlas-recovery → claude-conductor). Rulings 106–111 were returned together; each is filed in its own section.*
+
+**RULING:** Admit the conductor's conditions (a)–(g) and add (h)–(j); the Atlas candidate lands on `main` only when all ten hold.
+
+**BECAUSE:** The operator's grant is verified (`ai-de-conductor-atlas-recovery/docs/audit/audit-log.jsonl:647`) and it authorizes *integration*, not a rewrite; the live request (`.agents/requests.jsonl:15`) itself forbids force, stash, cleanup and an understanding-views merge, and the recovery liveness already binds delegates not to push. The two audit-log copies diverge at line 647, which proves any "ours/theirs" resolution of a ledger would lose an operator prompt.
+
+**CONFIDENCE:** Verified (grant, request, liveness, ledger divergence); Inferred (candidate contents — branch not yet visible).
+
+**SCOPE EFFECT:** Freezes the landing shape. (a) restated as an invariant: at push, `main`'s tip is an ancestor of the candidate and the push is a fast-forward or a merge commit whose first parent is `main`'s tip — direction of the merge is the delegate's choice. (b) `session-contracts.md` resolved by append — §4ac and §9 both survive. (c) append-only ledgers unioned, derived views regenerated, in that order. (d) *[amended in place by the Owner the same hour, on the conductor's finding that `main` is red — Ruling 112]* `tools/run-verify-gates.py` green in the candidate tree **is necessary, not sufficient**; the candidate's Linux portable, Windows App and nonportable suites are run on the same runner shape as CI, and the receipt pasted per (j) **enumerates the failing set by test name**. The candidate lands only if that set is a subset of `main`'s red set at `bab5035e` (the 13 named in Ruling 112). The accounts / first-use oracle / catalog suites from `b6cce995`/`4094ec4c` remain the proof that newer work survived, with the `EngineCatalogTests` ×4 already in the red set noted as such, not as "passed". (e) announced in `.agents/requests.jsonl` (to `claude-conductor`) and in the integrator's liveness *before* the push. (f) fast-forward or merge commit only; no force-push, no history rewrite. (g) the native five-file E1 slice stays out of this candidate. Added: (h) every append-only ledger (`.agents/requests.jsonl`, `.agents/log/*`, `.agents/decisions/*`, `.agents/sessions/*`, `docs/audit/audit-log.jsonl`) is unioned by `tools/merge-append-only-log.py` with the *primary's dirty copy* as one input, then `tools/regenerate-derived.py`, and the union is checked for the presence of both `al-01M2JP02E3…` and `al-01M2JP7RMQ…`; (i) `tools/verify-id-allocators.py` green — 156 commits will have allocated DC/ADR/ruling ids against an older main; (j) the gate receipts named in (d) are pasted into the landing request as observed output, not "green".
+
+**CONDITIONS:** The candidate diff touches no file under `atlas/e1-native-class-view`'s five-file grant (g). If (i) finds an id collision, the candidate renumbers on its side, never `main`. If the candidate's `session-contracts.md` §2 rows conflict with main's §2, that is a seam decision — bring it back, do not choose.
+
+**RECORD AS:** Ruling 106 — Atlas main integration: fast-forward only, both histories preserved, ledgers unioned from the primary's dirty copy, ids and shipped suites re-proven.
+
+---
+
+## Ruling 107 — Claude Code is a coordination-only writer to `main` during the stress test
+
+**RULING:** Confirm: Claude lands only coordination artifacts on `main`, each after fetch-and-merge of the current tip with gates run, announced in its liveness before the push, and never product code.
+
+**BECAUSE:** The operator's instruction (`al-01M2JP7RMQKNWXGF1R7PSN3HY2`) gives Claude no workstream and a watching mandate; the recovery request asks to be told of "any competing main writer or exact shared-seam change", so Claude's own writes must be visible in the same channel it is arbitrating.
+
+**CONFIDENCE:** Verified.
+
+**SCOPE EFFECT:** Admits: liveness, `request-resolve` lines, ruling notes in `docs/notes/`, audit entries, and Claude's own §-answers appended to `session-contracts.md`. Cuts: any edit to `src/`, `tests/`, `DESIGN.md`, `docs/lessons/defect-classes.md` (the last is a register, but it allocates ids the Atlas candidate is also allocating — leave it until Ruling 106 lands).
+
+**CONDITIONS:** A Claude write to `session-contracts.md` is a shared-seam change under the recovery request's own wording — announce it by a `request-add` naming the section number *before* the push, not by liveness alone. Claude's landings union the primary's dirty ledgers exactly as Ruling 106(h) requires; a coordination push that drops a ledger line is a DataIntegrity trip, and that goes to the human.
+
+**RECORD AS:** Ruling 107 — Claude is a coordination-only main writer: fetch-merge-gate-announce-push, no product code, seam edits announced by request.
+
+---
+
+## Ruling 108 — Two main-bound programmes: the first landing-intent with a candidate SHA holds the slot
+
+**RULING:** First announced lands first, where "announced" means a `request-add` to `claude-conductor` carrying the candidate SHA and the `main` SHA it was gated against; the second re-merges the new main, re-runs gates and re-announces; the Claude conductor holds the order.
+
+**BECAUSE:** Both the recovery request and the Atlas liveness ask for exactly this pre-announcement; a slot held by intent without a gated SHA cannot be verified and would let a programme reserve `main` indefinitely.
+
+**CONFIDENCE:** Verified (request wording); Inferred (Grok's landing readiness — only the N4 PASS claim was seen).
+
+**SCOPE EFFECT:** Freezes the arbitration rule. The recovery request's "no understanding-views merge" binds the *contents of the Atlas candidate*; it does not bar Grok from landing. Symmetrically Grok's candidate must not touch Atlas paths (its liveness says so).
+
+**CONDITIONS:** Same-window tie (both announce before either lands): the conductor picks the candidate whose gate receipt is already on record; if both, the smaller diff against `main` goes first — and the conductor files the tie-break as a decision note. A programme that lands without an announced SHA has landed against Ruling 106(e); the conductor reports it, does not revert (a revert is a history action — Ruling 109's escalation class).
+
+**RECORD AS:** Ruling 108 — main sequencing: a landing intent is a request with candidate and base SHAs; first such lands first; the second re-merges and re-gates.
+
+---
+
+## Ruling 109 — The interrupted `atlas/e1-native-class-view` tree is its owner's alone; cleanup is report-only
+
+**RULING:** Only the GHCP session owning `atlas/e1-native-class-view` resumes it, re-claiming the expired leases before touching the five files; no other session touches, stashes, cleans or removes it; the Claude conductor runs worktree cleanup in report mode only for the stress test's duration.
+
+**BECAUSE:** The tree holds 1 modified + 4 untracked uncommitted files under leases claimed 2026-09-14 21:53 and never released; the operator's grant names this tree ("resume the existing native E1 worktree from its passing 26-test checkpoint") and the recovery liveness says "no cleanup or forced push is authorized".
+
+**CONFIDENCE:** Verified (grant, liveness); Inferred (tree state — reported by the conductor from `git status`, not opened by the Owner).
+
+**SCOPE EFFECT:** Freezes the tree. The owner should first make a WIP commit on its own branch so the uncommitted work exists somewhere; that is not a landing.
+
+**CONDITIONS:** Any proposal to delete this tree, `git clean` it, or discard the five files before they are committed is an irreversible action outside the approved plan — escalate to the human, do not bring it to the Owner. Expired leases re-claimed by *another* identity are a coordination violation the conductor reports in its liveness.
+
+**RECORD AS:** Ruling 109 — the E1 native tree is resumed only by its owner under re-claimed leases; cleanup is report-only during the stress test.
+
+---
+
+## Ruling 110 — An unregistered session has no standing; the answer is "register first"
+
+**RULING:** A session with no liveness file and no `AGENT_SESSION` identity has no standing: its edits are `COORD-NOT-CHECKED`, nothing is merged from it, and the conductor's reply to any such work is "register first", not a refusal of the work.
+
+**BECAUSE:** The recovery liveness records "no current Codex registration was observed" and the conductor observed none; the standard's transport is repository-visible pull, so an identity that never wrote to the repository cannot have been coordinated with.
+
+**CONFIDENCE:** Verified (recovery liveness); Codex absence is "not recorded", never "Codex is idle".
+
+**SCOPE EFFECT:** none beyond the rule.
+
+**CONDITIONS:** Once a Codex liveness file appears, the conductor posts the standing brief (Rulings 106–109) to it by `request-add`; work Codex did before registering becomes eligible only after it re-announces that work with a branch and SHA. Do not route messages to a guessed Codex identity.
+
+**RECORD AS:** Ruling 110 — no liveness plus no identity is no standing; unregistered work is COORD-NOT-CHECKED and the reply is "register first".
+
+---
+
+## Ruling 111 — Two stale Atlas requests are superseded by the grant; the shared-host admission request is not
+
+**RULING:** Resolve `req-01M2B86TXF7SHG61B31P4H4173` and `req-01M2BGHNCM6WRD4ZZMBBFEEB4K` as superseded by the operator's 2026-09-15 grant, pointing at `req-01M2JP0X9RW2CK2E9N0CRS6MSX` as the live thread; keep `req-01M2CAXKH01J8SMQV1…` open and re-route it to the same thread.
+
+**BECAUSE:** Lines 1 and 6 of `.agents/requests.jsonl` ask for authorization and a handoff of main integration — exactly what the grant gives. Line 7 asks for "exact Shell Architecture/factory/menu/host/layout/disposal admission and Core… production signatures" and says explicitly "not implied agreement from CV2/main cleanliness" — a design seam question the grant does not answer.
+
+**CONFIDENCE:** Verified (all three request texts opened).
+
+**SCOPE EFFECT:** Defers the shared-host admission seam to the integration itself: if the Atlas candidate modifies Shell- or Core-owned files named in §2 (`SurfaceContentFactory.cs`, `WorkbenchShell.cs`, `ZoneLayout*`, `WorkspaceClient*`), that is the "exact shared-seam change" the recovery request promised to announce, and the candidate names those files and signatures in its landing request before Ruling 106 applies. *(Conductor's note at filing: the integrator's own request `req-01M2JPF6S81A5EKREZPRTATPW4` (14:10Z) already names `SurfaceContentFactory.cs` and `WorkbenchShell.cs` among six conflicts — this condition is live.)*
+
+**CONDITIONS:** Line 1 also asks for Addendum E reservation and a §9 append; the conductor confirms in the resolution note whether E is registered, and Ruling 106(b) carries the §9 append. If the candidate's `docs/design/code-atlas-shared-host-admission.md` packet is inside the 156 commits with no Shell-owned file changed, `req-01M2CAXKH0…` closes as "answered by the integration"; otherwise it stays open past the landing.
+
+**RECORD AS:** Ruling 111 — req-…B86TXF and req-…BGHNCM superseded by the 2026-09-15 grant; req-…CAXKH0 (shared-host admission signatures) stays open on the live thread.
+
+
+---
+
+## Ruling 112 — `main` is red: "green" means no new failure and no lost test; one Claude repair lane; the join fails closed on an open `main-red` issue
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-15). The conductor's finding that prompted it, Verified from CI: `main` has been red on every Build run since `ebe18260` (2026-09-12T17:55Z, the last green) — 66 of the last 100 runs failed; the auto-issue `#13 main is red` has been open since 2026-09-12T18:26Z; every join landed 09-13/09-14 through `bab5035e` landed on a red trunk. The red set grew from 1 failing test (`b4e61022`, 09-12T18:06Z: `Conductor.TheGovernedLaneHasNoShellTests.TheFrameTheLaneWasOpenedWithIsRecordedOnTheReportAndInTheLog`) to 13 at `bab5035e` (run 34929322030, read from its `.trx` artifacts): **Core portable (Linux, 5)** — `AgentPlane.EngineCatalogTests.ADirectExecutableWinsOverAnNpmShimEarlierOnPath`, `…AnNpmShimWithoutItsScriptIsRefusedRatherThanHandedToNode`, `…TheNativeLaunchPathResolvesGeminiThroughTheNpmShimToItsScript`, `…AnNpmShimForACliWithNoObservedNpmLaunchIsRefusedRatherThanRunThroughAShell`, `PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.ASiblingHeldOpenRefusesTheDeleteWholeAndNothingIsOrphaned`; **App (Windows, 8)** — `Shell.CodingsLeftExtentTests` ×4 (`CodingsLeftExtent_HoldsThe96chMeasureAtStartupSize`, `…AtEveryViewportTheDisplayGives(1440×900)`, `AtStartupSizeDockedLeftBottomCollapsed_TheThreadHoldsOneTurn_WithTheEditorAt280` ×2 fixtures), `WorkbenchAdapterTests.EveryTab_IsNamedFromItsSurfaceTitle_NotItsTypeName`, `Sessions.TheWriterKeepsItsRoomTests` ×3 (`AtOneAndFortyTurns_TheEditorRestsAt280_WithEqualTopEdge`, `TheCompiledPromptDisclosure_IsOnScreen_AtEveryTurnCount(40)`, `TheCompiledPromptDisclosure_OpenedAtTheOperatorsBelt_RendersTheCompiledText`) — the last four all "the STA thread did not finish within 60s". Core nonportable: 174 executed, 0 failed; the gates job: green.*
+
+**RULING:** (1) A candidate (Atlas or understanding-views) is landable while `main` is red only if its enumerated failing set is a subset of the 13 tests red at `bab5035e`, every one of the 13 still *executes* in the candidate (none deleted, `[Skip]`ped, filtered or renamed), and the receipt names both sets. (2) Amend Ruling 107 by one exception: the Claude conductor opens `lane/main-red-0915` in its own worktree, scoped to the 13 tests and nothing else, registered by liveness and queued under Ruling 108 like any main-bound programme — it does not pre-empt the Atlas landing. (3) Record the 09-13/09-14 landings as a recurrence of the INV-0005 class; the control is a fail-closed check at the join, not another grounding line.
+
+**BECAUSE:** §4ab (`session-contracts.md:2612–2631`, Verified) already told every session to run `gh issue list --label main-red` at grounding on 2026-09-05, and the joins through `bab5035e` did not — so the class recurred *through* a prose control, which is CI6's memoir shape exactly; a second prose line is not a control. The 13-test set is the conductor's reading of the run's `.trx` artifacts (Inferred by the Owner — not opened; Verified by the conductor); nine of the 13 are `AgentPlane`/`PromptCompilation`/`Shell`/`Sessions` paths that §2 assigns to Claude-owned lanes and no other harness, so no other harness can repair them. The operator's grant orders the merge; a red trunk the operator does not know about is a fact the operator must be told, not a reason to silently hold the merge.
+
+**CONFIDENCE:** Verified (§4ab, INV-0005 exists at `docs/investigations/INV-0005-…`); Verified by the conductor / Inferred by the Owner (the 13-test set, the 66/100 count, issue #13 — CI evidence the Owner cannot open).
+
+**SCOPE EFFECT:** Admits the repair lane as the only product-code exception to Ruling 107. For each of the 13: red-first diagnosis classifying *regression* vs *runner-environment* (the four "STA thread did not finish within 60s" and the 1440×900 extent tests are candidates for the latter — that is a hypothesis, not a finding), then a fix, or a quarantine that carries the issue number, the date, the verbatim failure text and keeps the test executing in a non-blocking ring — never a bare skip (Testing-Strategy floor). Defers: the conductor's own §2 attribution of the 13 paths is to be confirmed by opening §2, not inferred from names. Cuts: no other test touched by the lane.
+
+**CONDITIONS:** (i) The lane's **first** deliverable, before any fix, is the diagnosis of `AnNpmShimForACliWithNoObservedNpmLaunchIsRefusedRatherThanRunThroughAShell`, `AnNpmShimWithoutItsScriptIsRefusedRatherThanHandedToNode` and `ASiblingHeldOpenRefusesTheDeleteWholeAndNothingIsOrphaned` — three "no throw" failures on tests whose names assert a refusal. If any is a real regression it is a Security or DataIntegrity floor trip: the conductor pauses the Ruling 108 landing queue and escalates to the human; the Owner does not rule on that. If runner-environment, say what the environment difference is, measured. (ii) The conductor reports "main has been red since 09-12; issue #13 open" to the operator in its next message, before the Atlas landing. (iii) The control: the join tool (`conductor-join.py` / `run-verify-gates.py` at join — Inferred which; open it) runs `gh issue list --label main-red --json number` and refuses to land unless the landing request cites the open issue number and the enumerated red set; `gh` absent or failing degrades to "not recorded" and the join still refuses, with the reason printed. The `defect-classes.md` entry names the class ("landing on red because the signal existed only as a grounding instruction"), cites §4ab as the control that recurred through, and the join check as the replacement; it is allocated by `tools/verify-id-allocators.py` after Ruling 106 lands, per Ruling 107's cut on that register. (iv) Rule (1) applies identically to Grok's candidate; the "13" is re-enumerated from `main`'s new tip after each landing, so the allowed set only shrinks.
+
+**RECORD AS:** Ruling 112 — main is red (13 tests at bab5035e): candidates may not widen or hide the red set; lane/main-red-0915 is Claude's one product-code exception, refusal-test diagnosis first; INV-0005 recurrence controlled by a fail-closed main-red check at the join.
+
+
+---
+
+## Ruling 113 — Codex gets a branch-local authoring grant on `tools/verify-surface-ownership.py` and its self-test; ownership stays in §2; the gate may populate, never assign
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-15, 14:35Z). Prompted by Codex's registration (`codex-surface-ownership-conductor`, `conductor/surface-ownership` @ `bab5035e`) and its request `req-01M2JQ113TK7HGE7YKQ4CB…`: "Request authoring tools/verify-surface-ownership.py and its existing self-tests only, plus programme proof/audit. Recursive Surface.cs/View.cs population, repository-relative identity, no invented assignments. Section 2 changes only separately agreed." The Owner opened the tool: line 40 fixes `SURFACES = "src/AiDe.App/Workbench"`, line 77 enumerates with `directory.iterdir()` (non-recursive) keyed by `f.name`, line 61's regex matches bare names in §2 tables, lines 24–26 state the gate "cannot decide who should own a new surface".*
+
+**RULING:** Grant `codex-surface-ownership-conductor` a branch-local authoring grant on exactly `tools/verify-surface-ownership.py` and its `--self-test` / `verify-gate-self-tests.py` entry; the §2 `tools/**` row is unchanged, and the grant lapses when the gate lands on `main` or the stress test ends, whichever is first.
+
+**BECAUSE:** The file is Core-owned (`session-contracts.md:119`), unleased and held by no Claude lane, so the grant costs nothing and its landing is reviewed at the join by a Claude conductor that did not author it. The gate's present shape is verifiably wrong for the tree Atlas is bringing: `iterdir()` at line 77 sees only the top level, and identity by `f.name` would make `Workbench/Understanding/AtlasReaderView.cs` and a top-level `AtlasReaderView.cs` one file. Codex's own request forbids invented assignments, which is the gate docstring's rule (lines 24–26) — the request and the file agree.
+
+**CONFIDENCE:** Verified (§2 row, liveness, tool source); Inferred (the Atlas candidate's exact `Understanding/*View.cs` set — 156 commits not opened).
+
+**SCOPE EFFECT:** Admits (a)–(f) as the conductor proposed — (a) no edit to §2 or any product path: a surface found unowned goes into UNASSIGNED with a reason or comes back as a `request-add`, never an invented assignment; (b) identity is the repository-relative path; (c) `--self-test` kept and extended for the recursive case; (d) lands under Rulings 107-style announce, 108 and 112; (e) the Atlas integrator told now; (f) a §2 change is a request to `claude-conductor` and a ruling from the Owner — with two concrete rules added. (g) Matching: a §2 row cited by repository-relative path matches that path only; a §2 row cited by bare name (line 121's `WorkbenchAdapter.cs` shape) matches only if exactly one populated file bears that name — two or more is a gate failure naming both, never a pick. (h) UNASSIGNED entries are keyed by repository-relative path and each carries the request id or ruling number that is meant to retire it. Cuts: no `--recursive` flag or configurable root — recursion is the behaviour, not an option. Defers: any §2 row for Atlas surfaces to a request from the Atlas integrator and a ruling from the Owner.
+
+**CONDITIONS:** (i) Codex claims an identity-bound lease on the file before editing and announces the landing under Ruling 108 with candidate and base SHAs; the landing receipt shows `verify-gate-self-tests.py` green including the new recursive and ambiguity cases, and the self-test count only rises. (ii) Cross-programme order: whichever of the Atlas candidate and this gate lands second re-merges `main` and carries the reconciliation — if the gate is already on `main`, the Atlas landing request carries UNASSIGNED entries (reason and pending-request id) or a §2 request to the Owner; if Atlas is already on `main`, Codex adds those entries itself with the same reason. The conductor sends this to `copilot-atlas-recovery-b0d0` now, by `request-add`, so it is not learned at the join. (iii) The Codex Owner's rulings bind Codex's programme only; a §2 change, a new UNASSIGNED reason that reads as an assignment, or any edit outside the two granted files is a `request-add` to `claude-conductor` and a ruling here. (iv) The conductor resolves `req-01M2JQ113TK7HGE7YKQ4CB…` citing this ruling; silence is not consent, and this is not silence.
+
+**RECORD AS:** Ruling 113 — Codex granted branch-local authoring of tools/verify-surface-ownership.py and its self-test (recursive, repo-relative identity, ambiguity fails, no invented owners); §2 unchanged; grant lapses at landing or end of stress test; Atlas told now.
+
+
+---
+
+## Ruling 114 — `Sessions/ProseView.cs` is Design's under the §2:165 row; the path cell is amended, no UNASSIGNED exception
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-15, 14:41Z). Prompted by Codex's `req-01M2JQ3T5VMQWJ59Q3M0ZE…`: "Owner inspection found 17 recursive Surface.cs/View.cs files, including Sessions/ProseView.cs absent from section2 path cells. Existing Sessions grouped row is not a directory grant. Please confirm its existing accountable owner and publish exact section2 row, or explicitly authorize a reasoned temporary UNASSIGNED exception. Codex will not infer Design from adjacency." The conductor's evidence: `ProseView.cs` created in `68dc6ab5` (2026-09-13, "feat(thread): the reply side renders the conversation — prose · reasoning · tool call+result · outcome, in event order (Ruling 82)"), touched by `dabd490e` (review cv-5.3); its doc comment cites Ruling 82. The Owner verified the §2 row at line 165 sits under `### Design owns` (line 132) and already cites Ruling 82.*
+
+**RULING:** Amend the §2 row at `session-contracts.md:165` to add `ProseView.cs` to its path cell; the accountable owner is that row's owner, Design; no UNASSIGNED entry for this file.
+
+**BECAUSE:** The row sits under `### Design owns` (line 132) and already cites Ruling 82; `ProseView.cs:9` names itself as the Ruling 82 renderer; the conductor's `git log` shows it created by the same cv-5 lane that authored the row's `ThreadFeed*`. The gap is a path cell written before the file existed, not an unowned surface — Codex was right not to infer from adjacency, and the evidence that decides it is the ruling cited in the file, not the directory.
+
+**CONFIDENCE:** Verified (heading, row, doc comment); Inferred by the Owner / Verified by the conductor (originating commits `68dc6ab5`/`dabd490e` — `git log --diff-filter=A`).
+
+**SCOPE EFFECT:** Admits one §2 landing that covers the whole set of Codex's unnamed files, not one per file. The Owner requires the originating-commit evidence before ruling on the rest: for each unnamed file, the `git log --diff-filter=A` commit and date, the ruling or ADR its doc comment cites (or "none"), and the lane in the commit message. A file whose doc comment cites a ruling already cited by a §2 row goes into that row by this same reasoning; a file citing nothing, or a ruling no row cites, comes back one by one — those may be genuine unowned surfaces and get a dated UNASSIGNED entry naming the request, not a row. Cuts: no new "Sessions/" directory grant — Codex's reading that the grouped row is not a directory grant is correct and stays so.
+
+**CONDITIONS:** (i) The §2 edit lands under Ruling 107 (announced by `request-add` before push, fetch-merge-gate) and Ruling 108's queue; if the full-set evidence has not arrived before the next landing window closes, ProseView's amendment lands alone and the rest follow in a second ruling. (ii) After the landing, Codex's recursive gate must pass on `main` with zero UNASSIGNED under `Workbench/Sessions/` — a remaining entry there is a finding, not a state. (iii) The conductor resolves `req-01M2JQ3T5VMQWJ59Q3M0ZE…` citing this ruling and asks for the evidence table for the other unnamed files in the same reply.
+
+**RECORD AS:** Ruling 114 — Sessions/ProseView.cs added to the §2:165 Design row (Ruling 82 renderer, same lane); one §2 landing for the set; originating-commit and cited-ruling evidence required per remaining unnamed file.

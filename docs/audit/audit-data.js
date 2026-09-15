@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T23:42:50Z",
+  "generated": "2026-09-15T14:26:33Z",
   "audit": [
     {
       "actor": null,
@@ -16310,6 +16310,62 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T23:34:34Z",
       "duration_seconds": 495.0
+    },
+    {
+      "id": "al-01M2JP7RMQKNWXGF1R7PSN3HY2",
+      "shortname": "it looks like my laptop rebooted while sessions were active. evaluate al…",
+      "datetime": "2026-09-15T14:06:21Z",
+      "session": "prompt-log",
+      "prompt": "it looks like my laptop rebooted while sessions were active. evaluate all sessions to understand what is going on. when we ended yesterday claude code did not have any active workstreams BUT we need your Owner-Conductor-Sub.Agents to be listening for messages as the other sessions continue and I want the Claude Code Owner and Conductor actively monitoring merges to main and understanding/coordinating across sessions. I am going to actively stress test our coordination capability by having sessions run in GHCP, Grok, Codex while you are watching and coordinating",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2JQCJRQCVRABT7AW8ZMMWYT",
+      "shortname": "conductor-watch-0915",
+      "datetime": "2026-09-15T14:26:28Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "it looks like my laptop rebooted while sessions were active. evaluate all sessions to understand what is going on. Owner-Conductor sub-agents listening for messages; Claude Code Owner and Conductor actively monitoring merges to main and coordinating across sessions during a GHCP/Grok/Codex stress test",
+      "summary": "Grounded 5 (then 8) live non-Claude sessions post-reboot; persistent watcher over main/lane tips, requests.jsonl, liveness, session log and primary git state (15 s poll) - proven two-way with GHCP and Codex within the hour; Owner sub-agent resident, Rulings 106-114 filed (Atlas landing contract; Claude coordination-only; landing-intent sequencing; E1 tree frozen; unregistered-session rule; stale requests; main-is-red rule; Codex tool grant; ProseView section-2 row). FOUND main RED since 2026-09-12 (issue #13; 13 tests at bab5035e, named) - every 09-13/09-14 join landed on red (INV-0005 recurrence). FIXED tools/merge-append-only-log.py (called auditlog._reserve, removed at pack rev 59; blocked the Atlas change-log union) with a --self-test on a real conflict under both allocators - the self-test's first run caught a write to ROOT instead of the conflict's repo (DC-104 shape). Section 10 appended; section 2 line 165 path cell + ProseView.cs; 6 requests resolved, 5 sent.",
+      "kind": "skill",
+      "skill": "conductor-watch",
+      "tool": null,
+      "actor": "claude-conductor",
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/addendum-c-council-rulings.md",
+        "tools/merge-append-only-log.py",
+        ".agents/sessions/claude-conductor.md"
+      ],
+      "tags": [
+        "coordination",
+        "stress-test",
+        "main-red"
+      ],
+      "outcome": "partial",
+      "goal": "Recover situational awareness after the reboot and stand the Claude Owner + Conductor back up as a live listener/coordinator over main and the cross-session ledgers",
+      "done_when": "per-session status table; Owner/Conductor provably receiving messages (request-add to claude-conductor answered within one poll); a merge-to-main watch active and reporting",
+      "tier": "T1",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T14:06:16Z",
+      "duration_seconds": 1212.0,
+      "git": {
+        "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
+        "short": "bab5035e7",
+        "branch": "conductor/watch-0915",
+        "pushed": null
+      }
     }
   ],
   "changes": [
