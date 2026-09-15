@@ -2,7 +2,7 @@
 id: proof-recursive-surface-ownership-review
 title: "Recursive surface ownership: independent implementation review"
 type: proof-pack
-status: blocked
+status: current
 owner: "@timianmalloo"
 tags: [proof, review, ownership, python, testing]
 links:
@@ -10,7 +10,7 @@ links:
   - { to: defect-classes, rel: relates-to }
   - { to: proof-recursive-surface-ownership-plan-review, rel: depends-on }
 review-by: 2026-12-15
-summary: "Frozen commit 18a4a19f is blocked by five executable parser-boundary counterexamples."
+summary: "The initial candidate was blocked by five counterexamples; final repair 676f63ed clears every recorded veto."
 ---
 
 # Recursive surface ownership: independent implementation review
@@ -252,3 +252,148 @@ One reviewer, no subdelegation and no .NET rerun. Audit entry
 `al-01M2JS1PYHM37VK5BK5DNQAZ7C` measured 481 seconds from grounding through audit close and
 recorded 14/25 main-line calls. Closing derivation and commit bookkeeping brought the transcript
 total to 18/25 calls. Token usage is not exposed and is recorded as `not recorded`.
+
+## Re-review of repair `1105bb83` — blocked
+
+This section preserves the second frozen review separately from the initial `18a4a19f` findings.
+The repair source came from `git show
+1105bb83:tools/verify-surface-ownership.py` through a Python subprocess with strict UTF-8 decoding.
+The byte snapshot is
+`C:/Users/malla/AppData/Local/Temp/codex-surface-review-1105bb83/verify-surface-ownership.py`.
+
+- Git blob: `3b66c0778c131b06bf7fd1adad01c888bf5b6b00`
+- SHA-256: `bb430ffdf3fb306f81b9196ca3d02f5d819722cdf0d6a38d515339a68dc8f2e8`
+- Bytes: 36,524
+
+Observed green evidence:
+
+- The prior independent harness passed 9/9, including all five original blockers and the four
+  retained adversarial boundaries.
+- A separate `Workbench/**` versus `Workbench/*.cs` fixture reported the expected Core/Design
+  conflict for `HiddenView.cs`.
+- The embedded self-test exited 0; syntax compilation and the 36-gate/10-frozen registry check
+  passed.
+- The base register remained honestly red only for ProseView. The Conductor Ruling 114 root passed
+  with 17 surfaces, 17 assigned and zero pending.
+- Source inspection found explicit suffix-population fixtures for `Surface.cs`, `View.cs`,
+  `_OddView.cs` and `ÉcranView.cs`. The live 17/17 run exercises the section-2 Path headers reused
+  after prose.
+- The repair diff adds only the gate/self-test, investigation, repair proof, one audit entry and
+  derived docs. The author tree was clean and `git diff --check` passed.
+
+The initial provisional PASS sent during this review was incorrect and is superseded. Inspection of
+the frozen mutation map showed exactly the original six mutations: recursion, basename identity,
+non-Path-cell contamination, bare-name ambiguity, cross-owner conflict and stale assigned
+exception. It contains no heading/context-reset mutation and no fully delimiter-free-row mutation.
+The initial BLOCK receipt's veto-clear predicate 3 required both. Green examples do not silently
+waive that requirement.
+
+```text
+PERSONA: test-architect   MODE: Adversary   TIER: T1
+VERDICT: BLOCK
+FINDINGS:
+  - [Blocker] (Verified) The frozen self-test has six original mutants and omits both new mutations required by the recorded veto-clear predicate.  evidence: mutation map at frozen lines 735-748  fix: add one mutation disabled by the #### context fixture and one disabled by the delimiter-free fixture; observe both mutant processes exit nonzero
+CLEARS-THE-VETO: no — example regressions are 9/9, but the two required mutation proofs are absent.
+RESIDUAL RISK: either repaired branch could become assertion-insensitive without the requested mutation observation.
+```
+
+```text
+PERSONA: python-developer   MODE: Adversary   TIER: T1
+VERDICT: PASS
+FINDINGS:
+  - [Minor] (Verified) The bounded parser repair uses one stripped heading classification and separates surface filenames from supported Workbench patterns.  evidence: frozen functions and 10 independent example oracles  fix: none
+CLEARS-THE-VETO: yes — the semantic Python defects from the first review are repaired without a dependency or policy expansion.
+RESIDUAL RISK: final acceptance still depends on the Test Architect's two mutation receipts.
+```
+
+```text
+PERSONA: the-simplifier   MODE: Adversary   TIER: T1
+VERDICT: PASS
+FINDINGS:
+  - [Nit] (Verified) The repair changes the existing parser and self-test only; no new parser layer or dependency was introduced.  evidence: bounded diff  fix: none
+CLEARS-THE-VETO: yes — every added predicate discharges a reproduced boundary.
+RESIDUAL RISK: duplicate parsing in `run()` remains minor and outside the bounded repair.
+```
+
+```text
+PERSONA: sre-diagnostician / data integrity   MODE: Adversary   TIER: T1
+VERDICT: PASS
+FINDINGS:
+  - [Minor] (Verified) Every formerly silent malformed declaration now emits a failure, and broad supported patterns participate in cross-owner conflict detection.  evidence: 9/9 harness plus broad-pattern probe  fix: none
+CLEARS-THE-VETO: yes — no plausible green remains in the reproduced parser/data-integrity boundary set.
+RESIDUAL RISK: full repository and integrated gate status remain Conductor-owned and are not claimed here.
+```
+
+Re-review veto clears only after a new frozen source runs the complete embedded self-test with both
+new targeted mutants present and observed nonzero. No semantic suite rerun is required if the next
+diff contains only those mutation oracles and their proof receipt.
+
+## Final mutation-only re-review `676f63ed` — pass
+
+The final frozen source was captured from
+`676f63ed3899cd5282f23db51eb582ebad169e17` with the same strict UTF-8 subprocess method.
+
+- Git blob: `ce11ae27eb79b97f54a1cf0fec4e5036f7ad90c4`
+- SHA-256: `00bacad13ad925019bf5118cb6b9c4676edafddfc3fb3b4a5c01e820eafcda08`
+- Bytes: 36,961
+- Snapshot:
+  `C:/Users/malla/AppData/Local/Temp/codex-surface-review-676f63ed/verify-surface-ownership.py`
+
+The diff from `1105bb83` adds exactly two mutation entries to the existing map and changes the
+success message from six implicit mutants to eight explicit mutants. The two new mutations are:
+
+1. `heading-context reset suppression`: changes the `MARKDOWN_HEADING` reset branch to an
+   unreachable branch. The `#### Notes` fixture kills it.
+2. `delimiter-free row suppression`: changes `row_without_pipes` to `False`. The line containing a
+   surface code token and no table delimiters kills it.
+
+`python <frozen-snapshot> --self-test` exited 0 and reported: `self-test OK — eight injected
+mutants plus recursive identities, §2 Path cells, patterns, exceptions, deterministic diagnostics,
+and CLI exits are proven.` The self-test returns 1 if any mutant subprocess returns 0, so this is
+an observed nonzero result for both new targeted mutants as well as the six retained mutants.
+`git hash-object` of the snapshot returned the expected `ce11ae27...` blob and the mutation-only
+diff passed `git diff --check`.
+
+The semantic parser source did not change after the observed 9/9 independent harness, broad
+`Workbench/*.cs` conflict, honest base ProseView red, live 17/17 Ruling 114 result, syntax check and
+gate-registry result recorded above. Those unaffected tests were not repeated.
+
+```text
+PERSONA: test-architect   MODE: Adversary   TIER: T1
+VERDICT: PASS
+FINDINGS:
+  - [Minor] (Verified) Both mutation controls required by the prior veto-clear predicate are present and killed by the full self-test.  evidence: frozen diff plus eight-mutant self-test exit 0  fix: none
+CLEARS-THE-VETO: yes — all five red-first examples, all four retained adversarial boundaries, the broad-pattern conflict and all eight injected mutations have observed verification paths.
+RESIDUAL RISK: integrated and full-repository gates remain Conductor-owned and are not certified by this review.
+```
+
+```text
+PERSONA: python-developer   MODE: Adversary   TIER: T1
+VERDICT: PASS
+FINDINGS:
+  - [Nit] (Verified) The final delta is test-only and preserves the byte-reviewed parser semantics.  evidence: 1105bb83..676f63ed source diff  fix: none
+CLEARS-THE-VETO: yes — the bounded stdlib implementation passes every required parser, identity, pattern and exception oracle.
+RESIDUAL RISK: this remains a bounded parser for the declared section-2 grammar.
+```
+
+```text
+PERSONA: the-simplifier   MODE: Adversary   TIER: T1
+VERDICT: PASS
+FINDINGS:
+  - [Nit] (Verified) Two direct source mutations are the smallest controls for the two missed branches.  evidence: mutation-only source diff  fix: none
+CLEARS-THE-VETO: yes — no dependency, abstraction, option or policy was added.
+RESIDUAL RISK: none beyond the bounded-parser scope already recorded.
+```
+
+```text
+PERSONA: sre-diagnostician / data integrity   MODE: Adversary   TIER: T1
+VERDICT: PASS
+FINDINGS:
+  - [Nit] (Verified) Both formerly silent failure branches now have controls proven able to fail.  evidence: eight-mutant self-test exit 0  fix: none
+CLEARS-THE-VETO: yes — every reproduced malformed-input loss has a deterministic diagnostic and regression control.
+RESIDUAL RISK: final integration can still fail unrelated mandatory gates; no full-repository green is claimed.
+```
+
+**Final bounded implementation verdict: PASS.** This supersedes the provisional PASS and the two
+documented BLOCK states only for frozen repair `676f63ed`. The history above remains the evidence
+for why the two additional controls exist.

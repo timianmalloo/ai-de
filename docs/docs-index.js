@@ -16375,12 +16375,12 @@ window.DOCS_INDEX = {
       "path": "docs/proof/recursive-surface-ownership-review.md",
       "title": "Recursive surface ownership: independent implementation review",
       "type": "proof-pack",
-      "status": "blocked",
+      "status": "current",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-15",
       "reviewSuggested": [],
-      "summary": "Frozen commit 18a4a19f is blocked by five executable parser-boundary counterexamples.",
+      "summary": "The initial candidate was blocked by five counterexamples; final repair 676f63ed clears every recorded veto.",
       "tags": [
         "proof",
         "review",
@@ -16403,7 +16403,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5071512a8472495eccbd8f067ec3138277ddccddb0287722ca9e3771de37d146"
+      "sourceSha256": "3fa78362c62e33417ccb65fd3db64f230fd348dcc1b8ea1ad88b5fe0c264c8e0"
     },
     {
       "id": "proof-s2-settings-and-sentinels",
@@ -18700,5 +18700,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "22a99f43a0e88e32d6d25f37ae7ce22a5a714c6255b2c7885e274c396f6b9d30"
+  "graphSha256": "44dd33e900687d9ff32f58422534d717a30399b1f768540416e4af9e160e43fa"
 };

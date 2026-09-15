@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:56:02Z",
+  "generated": "2026-09-15T15:12:56Z",
   "audit": [
     {
       "actor": null,
@@ -16437,6 +16437,71 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "8690c5fa83562d1204554be178c8a52b016e3293",
         "short": "8690c5fa8",
+        "branch": "review/surface-ownership",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JT1MJWEKKRFZGH04CWNG9K",
+      "shortname": "recursive-surface-ownership-final-review",
+      "datetime": "2026-09-15T15:12:55Z",
+      "session": "codex-surface-ownership-review",
+      "prompt": "Re-review frozen repairs 1105bb83 and 676f63ed. Preserve the initial BLOCK and corrected provisional PASS history; require the prior nine oracles, broad Workbench pattern conflict, live 17/17 state, and targeted heading/delimiter mutation proofs before clearing vetoes.",
+      "summary": "Final bounded PASS on 676f63ed. The 1105bb83 semantic repair passed 9/9 plus the broad pattern probe but remained blocked until 676f63ed added the two required mutation oracles. The byte-pinned final self-test reports all eight injected mutants killed. No full repository green is claimed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Independently re-review the frozen recursive surface ownership repair and clear no veto without observed semantic and mutation evidence.",
+      "done_when": "The frozen source hash, prior BLOCK history, nine semantic oracles, broad pattern conflict, two targeted mutations, eight-mutant self-test, scoped diff and final persona verdicts are recorded and committed.",
+      "tier": "T1",
+      "main_calls": 16,
+      "main_budget": 16,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T15:04:13Z",
+      "duration_seconds": 522.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 1,
+          "accepted": 1
+        },
+        {
+          "persona": "python-developer",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "sre-diagnostician",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "data-persistence-architect",
+          "raised": 0,
+          "accepted": 0
+        }
+      ],
+      "git": {
+        "sha": "3d9768bdfa5832acda572bb2eceb754831191285",
+        "short": "3d9768bdf",
         "branch": "review/surface-ownership",
         "pushed": null
       }
