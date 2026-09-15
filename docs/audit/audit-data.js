@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:36:45Z",
+  "generated": "2026-09-15T20:48:35Z",
   "audit": [
     {
       "actor": null,
@@ -18449,6 +18449,34 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T20:31:42Z",
       "duration_seconds": 303.0
+    },
+    {
+      "id": "al-01M2KD88TAGECNGQS4EJ5ESW6B",
+      "shortname": "atlas-e2-design-p0-revision",
+      "datetime": "2026-09-15T20:48:35Z",
+      "session": "codex-atlas-e2-architecture",
+      "prompt": "Bounded E2 design revision after frozen90189411. Read independent593c7650 and Owner supplement. Existing design Markdown and official records only; no spike source or new HTML until exact grant. Governing G6 valid signature and phases; shared scope/epoch/manifest/sequence observation/binding/completion/bounds/capability/version/Restore envelope; F1/F2 typed declared carrier/identity/authority/origin; hard state graph/list/inspector equality and keyboard/UIA/DPI oracles. Numeric targets not measurements, authoritative open2s/filter150ms. No producer/E3/ER;14call20min checkpoint11; commit for independent review, not own veto clearance.",
+      "summary": "Read Ownera766 and adopted exact G6 extensions/ReducedMotion,16ms continuous UI-work,20cold-view100warm sampling. Added typed schema/page, origin/authority separation, declaration-root versus deployment identity, request sequencing/distinct observation/source tokens and explicit partial Restore predicate. State/action/forbidden/focus table and per-view native equality/UIA/DPI controls plus numeric request/response/structural/layout limits. P0.1/2/8 design material supplied; P0.3/4foundation/codecs/grants and P0.5executableharness open; performance targets require measurement and review. No source or HTML edit.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "GPT-6 Astra E2 author",
+      "artifacts": [
+        "docs/design/atlas-architecture-views.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Make E2 design explicit enough for independent eight-P0 re-review under settled Owner decisions",
+      "done_when": "Finite design/schema/envelope/native/bounds revisions are committed with resolved-vs-open P0 dispositions",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false,
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T20:41:39Z",
+      "duration_seconds": 416.0
     }
   ],
   "changes": [
@@ -22219,6 +22247,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "c46e112a",
         "after": "c46e112a924a8a0a4c86e4552af1f0e30bfa851c",
+        "branch": "atlas/architecture-views",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2KD88PWQZPQBAM129FDQJ9N",
+      "datetime": "2026-09-15T20:48:35Z",
+      "session": "codex-atlas-e2-architecture",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Align E2 design to Owner G6 and shared envelope decisions",
+      "prompt": "Revise E2 design only for independent eight-P0 review593c7650 and Ownera766. Fold F1/F2 typed carrier/identity/authority, G6, shared logical envelope, hard states, native equality/focus/UIA and proposed caps; no production/spike/HTML changes.",
+      "summary": "Normalized single G6 signature and phase facets; typed carrier/page proposals; distinct projection/source tokens and partial Restore rules; per-view native oracles/state table; authoritative2s/150ms plus proposed16ms continuous UI-work and20cold/100warm protocol. Foundation/codecs/grants/harness and actual performance remain open.",
+      "rationale": "Resolve design omissions without inventing a foundation, producer or independent acceptance.",
+      "artifacts": [
+        "docs/design/atlas-architecture-views.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "90189411",
+        "after": "901894112b50d5cdd8cd272f1cb4cb3e886366a7",
         "branch": "atlas/architecture-views",
         "pushed": null,
         "commits": []
