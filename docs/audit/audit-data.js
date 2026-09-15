@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T18:30:10Z",
+  "generated": "2026-09-15T18:37:37Z",
   "audit": [
     {
       "actor": null,
@@ -17667,6 +17667,71 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "037e1427a7787c6969c9dcde1efa8a9fc38b755b",
         "short": "037e1427a",
+        "branch": "review/audit-gate-self-test",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K5REEWBT50CJCYH0JJR8HP",
+      "shortname": "audit-gate-focused-rereview",
+      "datetime": "2026-09-15T18:37:37Z",
+      "session": "codex-audit-gate-review",
+      "prompt": "Focused independent re-review of frozen repair 1581441d: reproduce inherited mutation environment, exact CLI argv, inherited Git repository environment, actual counts, cleanup, unchanged normal policy, ratchet and compilation.",
+      "summary": "Cleared the prior implementation vetoes. Inherited AUDIT_GATE_MUTANT ran all seven mutants; --self/--help/--other retained positional behavior; spectator Git variables were scrubbed with unchanged HEAD/index/config/status; isolated temp parent was empty. Normal audit gate, ratchet normal/self-test and compilation passed. Frozen blob and SHA-256 matched.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/audit-gate-self-test-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Independently re-review frozen audit-gate repair against the three recorded veto conditions.",
+      "done_when": "Exact flag behavior, inherited mutation and Git environments, actual counts, normal policy scope, ratchet state, cleanup and persona veto clearance are observed.",
+      "tier": "T1",
+      "main_calls": 6,
+      "main_budget": 6,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T18:35:27Z",
+      "duration_seconds": 130.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "python-developer",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "security-identity-architect",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "sre-systems-diagnostician",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 0,
+          "accepted": 0
+        }
+      ],
+      "git": {
+        "sha": "d27b69c55d04271dd99287d9d7d97b515c2f45ef",
+        "short": "d27b69c55",
         "branch": "review/audit-gate-self-test",
         "pushed": null
       }

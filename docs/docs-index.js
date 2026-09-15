@@ -15332,12 +15332,12 @@ window.DOCS_INDEX = {
       "path": "docs/proof/audit-gate-self-test-review.md",
       "title": "Independent implementation review: audit gate self-test",
       "type": "proof-pack",
-      "status": "blocked",
+      "status": "current",
       "owner": "@codex-sol-review",
       "phase": "",
       "reviewBy": "2026-12-15",
       "reviewSuggested": [],
-      "summary": "Frozen candidate review finds an inherited-environment proof bypass and an abbreviated CLI alias.",
+      "summary": "Initial frozen-candidate BLOCK and superseding PASS after exact CLI, mutation-control, and Git-environment repairs.",
       "tags": [
         "proof",
         "audit",
@@ -15351,7 +15351,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "790fa58fa5dd7b6f6f83389b1c13a8e2f322ae0958236e45fd02380579d381e6"
+      "sourceSha256": "f20487d86d5117836d7dc039997998806c32182031ee8c4c5b7d48d0e22193c6"
     },
     {
       "id": "proof-census-controls",
@@ -19138,5 +19138,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "72082f11e4d28893a78873d5193f0069335f18e442685e9107d0d4bd3290fa6e"
+  "graphSha256": "ba29b7981cb975f35f9cd9400ad5f9e98e2f100f8e585d9785c012c6a2105002"
 };

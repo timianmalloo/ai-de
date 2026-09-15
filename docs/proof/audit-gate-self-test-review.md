@@ -2,16 +2,76 @@
 id: proof-audit-gate-self-test-review
 title: "Independent implementation review: audit gate self-test"
 type: proof-pack
-status: blocked
+status: current
 owner: "@codex-sol-review"
 tags: [proof, audit, testing, review]
 links:
   - { to: session-contracts, rel: relates-to }
 review-by: 2026-12-15
-summary: "Frozen candidate review finds an inherited-environment proof bypass and an abbreviated CLI alias."
+summary: "Initial frozen-candidate BLOCK and superseding PASS after exact CLI, mutation-control, and Git-environment repairs."
 ---
 
 # Independent implementation review: audit gate self-test
+
+## Superseding focused re-review — PASS
+
+The initial review below BLOCKED author commit `8d431085` on an inherited
+mutation-proof bypass and argparse abbreviation, then added a Python/SRE Major
+when inherited Git repository variables redirected the disposable fixture. Owner
+A3/A4 authorized only those repairs. Frozen repair commit
+`1581441da13e9b46a75242276b23c465f91264b5` resolves the gate to blob
+`bcd042aec3de20c71096d148fca1385a0c708191` and SHA-256
+`8964a27a3de0fd26ed4535c5c6217815a9a0ed3342526c2ef6f3cdbe12f721b3`.
+
+The repair replaces ambient recursion control with an in-process private
+`self_test(False)` path for loaded mutants, derives case and mutant totals from
+completed work, and routes only the exact `argv == ["--self-test"]` vector. It
+also removes every repository-local variable named by
+`git rev-parse --local-env-vars` from both fixture Git and copied-gate child
+environments. The normal verifier functions and identifier regex remain
+unchanged; the overall tool scope remains the two authorized files.
+
+Independent focused observations:
+
+- With inherited `AUDIT_GATE_MUTANT=1`, self-test exited 0, emitted exactly seven
+  named mutant receipts, and reported 11 completed cases plus seven completed
+  mutants.
+- `--self`, `--help`, and `--other` each retained the parent positional-file
+  behavior: exit 0, named absent path, zero entries across one log, and no
+  self-test output.
+- With `GIT_DIR`, `GIT_WORK_TREE`, and `GIT_INDEX_FILE` pointing to a disposable
+  spectator repository, the full self-test exited 0 with 11 cases and seven
+  receipts. Spectator HEAD, index bytes, config bytes, and clean status were
+  unchanged.
+- Both full runs used one isolated `TEMP`/`TMP` parent. It contained zero children
+  after process exit.
+- Normal audit verification exited 0 with 694 audit plus 147 change records and
+  zero duplicates. Candidate-root ratchet normal exited 0 with 36 gates and nine
+  frozen names; ratchet self-test and compilation of both tools exited 0.
+
+Final persona verdicts:
+
+- **Test Architect: PASS.** Eleven focal cases and all seven named mutants ran;
+  actual counts drive the summary; inherited state cannot create false proof.
+- **Python Developer: PASS.** Exact-vector dispatch preserves every other argv;
+  private in-process mutant execution removes the ambient bypass; normal policy
+  functions remain untouched.
+- **Security & Identity Architect: PASS.** Ambient process state no longer
+  selects the private proof path, and Git-local variables are removed before
+  crossing into fixture subprocesses.
+- **SRE & Systems Diagnostician: PASS.** The spectator probe proves repository
+  isolation, and the isolated temp census proves cleanup for the observed runs.
+- **The Simplifier: PASS.** The repair stays inside the existing self-test and
+  dispatch seam, uses stdlib, adds no public option or dependency, and changes no
+  normal policy branch.
+
+CLEARS-THE-VETO: yes — all five predicates at the end of the historical BLOCK
+receipt are observed on the frozen repair. The valid-JSON primitive/array
+exception remains the authorized, unchanged residual. Conductor integration and
+the full required runner remain separate join evidence.
+
+The initial BLOCK, wrong-cwd ratchet correction, withdrawn shared-prefix cleanup
+attribution, and exact counterexamples remain below as historical evidence.
 
 ## Frozen inputs and scope
 
@@ -199,4 +259,3 @@ A repaired frozen candidate clears this receipt only when independent runs show:
    fidelity, allocator origin, and isolated cleanup remain passing; and
 5. the diff remains the exact two tooling files with no normal-policy branch
    change.
-
