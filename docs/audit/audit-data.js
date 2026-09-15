@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T17:29:56Z",
+  "generated": "2026-09-15T17:43:26Z",
   "audit": [
     {
       "actor": null,
@@ -17404,6 +17404,60 @@ window.AUDIT_DATA = {
         "branch": "understanding-views",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2K2N7G50RTSRN8HRRDYE2SS",
+      "shortname": "implement-d0-chrome",
+      "datetime": "2026-09-15T17:43:25Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "yes keep going finish remaining nodes — N13 join hygiene then D-0 chrome (glyph, Ctrl+Enter, zone). Do not admit D-1. Join stays understanding-views.",
+      "summary": "N13 derived-views + site-figures committed a6d65160. D-0 chrome 3d6ba76b: folder/file/dashed-folder glyphs, stale glyph, file double-click View source, dual-activate node menu, ArchitectureDefault pin View-menu-only. App.Tests SolutionTree+default 18 green. Physical Ctrl+Enter still Flagged. N10 review in flight. Recount next.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/SolutionTreeSurface.cs",
+        "tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs",
+        "tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs",
+        "docs/design/solution-tree.md",
+        "docs/proof/uv-1-solution-tree-shell.md",
+        "docs/proof/native-ui-solution-tree.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close remaining N13 join hygiene and D-0 chrome on understanding-views without admitting D-1",
+      "done_when": "derived-views and site-figures green; chrome tests green; recount + tools/run-verify-gates.py; N10 note filed; not main",
+      "tier": "T1",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T17:37:56Z",
+      "duration_seconds": 329.0,
+      "git": {
+        "sha": "3d6ba76bf67b3953586f7b1ae52820c5ead459c3",
+        "short": "3d6ba76bf",
+        "branch": "understanding-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K2N7NQ7HNX227PHD5HC9AA",
+      "shortname": "yes keep going finish remaining nodes",
+      "datetime": "2026-09-15T17:43:26Z",
+      "session": "prompt-log",
+      "prompt": "yes keep going finish remaining nodes",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
