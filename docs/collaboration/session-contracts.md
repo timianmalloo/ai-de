@@ -1193,6 +1193,17 @@ project/content-copy files require a new exact seam grant. No Core behavior edit
 Conductor's cumulative ceiling rises prospectively to 700; no source/native-UI/
 main/push/normative-E/programme acceptance is granted.
 
+Owner turn 81 separately grants three author leaves after the fixture-preparation
+checkpoint for `tests/AiDe.Core.Tests/Understanding/AtlasStaticObservationTests.cs`
+in the same `atlas/e1-legacy-fixture` branch, plus one targeted Test readback leaf.
+The sixteen fixture leaves are unchanged and cannot be borrowed. Claim the added
+path before editing. Assert exact identifier multisets `["add","remove"]` and
+`["get","set"]` before their respective loops, without deduplication that hides
+extra occurrences. Retain an empty-subset control exercising those same assertions
+and replay the actual producer test. Source/fixture checkpoint receipts and call
+counts remain separate; product pin `cea76307` is frozen. This closes a test
+vacuity, not a producer defect or a new production-field grant.
+
 ### Core owns
 
 | Path | Why |

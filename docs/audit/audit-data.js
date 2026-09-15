@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T01:23:14Z",
+  "generated": "2026-09-15T01:55:47Z",
   "audit": [
     {
       "actor": null,
@@ -16921,6 +16921,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "8178eaf48163bcd1009be9423646ffa683ab2605",
         "short": "8178eaf48",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HCE0JKYWZEN5DVQC3XFJEW",
+      "shortname": "atlas-fixture-provenance-gate-and-accessor-control",
+      "datetime": "2026-09-15T01:55:46Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner80fixture16/16stoppedcorrectly: genuinepatchedsourceequalacrosstwofreshroots, bothbuildsreportgreenbutbinaryhashesdifferacrossroots/referencepair. Parentindependentlyhashedoutputs/readactualSourceLink mappingambientcea despiteInformationalVersionb91; root-specificPDBpathsrecorded. No hashrelaxation/no fixturecommit/wiring, no cleancloneclaim. Requestedexplicitdeterministicpath/PDB/baselineSourceRoot/SourceLinkcontract, notarbitrarynewhashapproval. SeparateOwner81test-only1791f95d3/3 commits exactget-set/add-removemultisets+empty/duplicatecontrols; parent9/9actual andrawassertfailuresread, Test1leafreadbackactive. DScompletionpinconfirmedwithissuerprovenancecorrected, C#completionPASS; productCorecea unchanged andunjoined. Alloldfixturepresent494greenspreserved. No metadata/UI/main/normativeacceptance.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-core-metadata.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Establish reproducible legacy fixture provenance and close the separate accessor oracle",
+      "done_when": "Two-root hashes/provenance and actual accessor fault controls are recorded for Owner/Test disposition",
+      "tier": "T2",
+      "main_calls": 690,
+      "main_budget": 700,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T01:54:35Z",
+      "duration_seconds": 71.0,
+      "git": {
+        "sha": "d2cd73ce5cae987414f6c2b4342109ee43abcc2c",
+        "short": "d2cd73ce5",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

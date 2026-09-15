@@ -120,9 +120,9 @@ No fixture fetch, skip or weakened compatibility check was substituted.
 |---|---|
 | Security, 4/4 | Conditional source clearance; no authority-expansion/malformed-fallback defect in inspected paths. Fixture delivery remains open; invented RESTORE token limits adoption-state claims |
 | Data, 4 reported leaves | Conditional model clearance; pinned physical candidate, HEAD checked, not immutable blob reads. Unvalidated native record becomes a concern if reused by external/persistent producers |
-| Test, 4/4 | BLOCK on fixture delivery and unread SP2 range after a failed range command |
-| C#, 4/4 | Review incomplete after two failed readers and truncation; no established code defect, unread Q/issuer/remote paths |
-| DS, 4/4 | Prior clearance withdrawn: physical old runtime tree was read without establishing the candidate pin; no current DS clearance |
+| Test | Initial 4/4 BLOCK; one immutable SP2 completion read identifies an empty-accessor-subset oracle gap, with fixture delivery still blocked. Owner 81 correction/readback follows below |
+| C# | Initial 4/4 incomplete; three exact immutable packet views complete the unread paths and return PASS advisory. No runtime or clean-fixture acceptance inferred |
+| DS | Original 4/4 clearance withdrawn for wrong physical tree. Four new immutable packet views clear Q/transport/paging within scope; issuer insertion details are not independently source-read in that completion and remain separate Security/C#/parent evidence |
 
 Owner 80 funds exact completion reads: DS four, C# three, Test one. Parent
 generated session-local packets directly from immutable `cea76307` Git blobs
@@ -150,3 +150,59 @@ require a new exact grant.
 
 The source candidate, native view and programme remain unaccepted pending the
 completed source gates and fixture-delivery disposition.
+
+## Owner 80 fixture checkpoint: source reproduced, binary gate blocked
+
+The author stopped at the required gate after 16/16 leaves; fixture wiring and
+expected hash checks were not changed. Four candidate delivery files remain
+uncommitted in `atlas/e1-legacy-fixture`; no completed materializer is claimed.
+The author reports 524 own-repository build inputs with licensing/provenance.
+Parent read the blocked receipt and independently hashed both output roots and
+the exact patched peer source.
+
+| Input / output | Observed identity |
+|---|---|
+| Source archive | `4FBC05719148617AFA5D9C5D7D67B3CA5D84F0FD1294C575CBC0255941ED5D88` |
+| Normalized peer patch | `9639153170D247C8D0587DF09502E82414280D4EA5C77E080944FF18991DE0F4` |
+| Peer source, both roots | `6E7AC5C69FD1660B8E19D16BAA8ECB898F0E818599AB11DDD2C3B6668F78DC1B` |
+| `prepare-e` Core | `1D12914FA288AFE8C9DCE7C8268EF819083FB6DC1B15D9F959F6D32F75CA9720` |
+| `prepare-f` Core | `19A828C5BBA6128200C4CA9B0FEC56BC3DE93558E0DD99F594A3CC602B55AEF7` |
+| `prepare-e` peer tests | `DB554AB668F9C5F5BF6E4F2B49338314933E04223214E6ED3417C147BAF493DF` |
+| `prepare-f` peer tests | `1099315618CD60B58849557C5027F135A666E8FAFA2C03AEAF091BBC463F219E` |
+
+The two builds do not reproduce each other or the retained reference binary
+pair. Their informational versions name baseline `b91d4bb5`, but the generated
+SourceLink files, read by the parent, map the ambient fixture checkout to
+`cea76307`. The recorded PE observations also contain different absolute PDB
+paths for each preparation root. These are observed provenance differences,
+**not proof that every differing byte is explained**.
+
+The existing reference hashes remain intact. A deterministic compiler/PDB path
+mapping and explicit baseline SourceRoot/SourceLink contract has been requested
+from Owner. A new canonical hash pair cannot simply be whatever a build produces:
+two fresh roots must agree, source/tool/build provenance must remain pinned, and
+real compatibility must execute before any such decision.
+
+Retained evidence:
+`C:\Projects\ai-de-atlas-e1-legacy-fixture\.artifacts\owner80\`
+contains `blocked-delivery-receipt.json`, `two-root-v3-results.json`,
+`binary-path-observations.json`, patch-normalization results and per-root
+`preparation.json` / build logs. Ordinary test delivery, hostile-archive
+qualification, fixture wiring, independent delivery review and commit remain
+unmet. No clean-clone claim is made.
+
+## Separate Owner 81 accessor-oracle correction
+
+Commit `1791f95dde2116efc5e5f5ace1760f3cd10f6474` changes only
+`AtlasStaticObservationTests.cs`; it does not alter the product or the fixture
+checkpoint. Both accessor loops now require exact identifier multisets:
+`["get","set"]` and `["add","remove"]`, without deduplication. Empty and duplicate
+subsets exercise the same assertions and produce captured `Assert.Equal`
+failures. Parent read the diff and raw controls, then replayed the actual
+producer tests: **9 executed / 9 passed / zero failed**.
+
+The parent receipt is session files
+`atlas-e1-accessor-independent/parent-accessor-oracle.trx`. One immutable
+source/execution packet supplies the separately funded Test readback. Author
+usage is 3/3 leaves, separate from the blocked 16/16 fixture pass. Independent
+readback and any join remain pending at this checkpoint.
