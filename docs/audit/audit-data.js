@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:09:53Z",
+  "generated": "2026-09-15T20:25:13Z",
   "audit": [
     {
       "actor": null,
@@ -18391,6 +18391,35 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T20:03:28Z",
       "duration_seconds": 385.0
+    },
+    {
+      "id": "al-01M2KBXFMHKN5VR97DBYYBKGTS",
+      "shortname": "atlas-e2-contract-spike",
+      "datetime": "2026-09-15T20:25:13Z",
+      "session": "codex-atlas-e2-architecture",
+      "prompt": "E2-S bounded contract spike: explicit JSON role/layer intake and exact resource identity against synthetic observations. Exact grant Ruling121 on standalone net10 csproj/Program/fixture/RESULT and proof only. Six groups positive role/layer; duplicate/unknown/shape; stale/missing/out-of-scope anchors; hostile authority marker; aliases and different-scope names; source-as-data known versus partial resource identity. No invented deployment tuple; flag exact gap if source subset cannot supply it. Negative controls first, Windows run only, Conductor owns Linux/common coverage. No production/native/cloud/live source changes. Budget12calls15min12ktokens; report at10 if endangered. Return observations and commit for independent review.",
+      "summary": "Windows net10 build/run produced23 named synthetic checks with negative inputs first. Explicit roles/layers and declaration aliases accepted; duplicate/shape/authority violations rejected; stale/missing/foreign anchors unresolved. Literal Bicep type/name extraction cannot supply actual deployment scope; full known deployment equality positive remains unresolved, no invented tuple. Full output and limitations retained; no Atlas authorization/native/product acceptance. Independent review and Linux coverage pending.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "GPT-6 Astra E2 author",
+      "artifacts": [
+        "spikes/atlas-architecture-contract/RESULT.md",
+        "docs/proof/atlas-architecture-contract.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Qualify bounded synthetic role/layer and resource identity contracts without policy or production changes",
+      "done_when": "Six fixture groups are observed, source identity uncertainty named, positive fixture and evidence committed for independent review",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T20:19:21Z",
+      "duration_seconds": 352.0
     }
   ],
   "changes": [

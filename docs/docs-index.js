@@ -10360,6 +10360,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "2c0e0bbdcecc72079f6b8a801b7777b95b6c28834d8623bbe6aa2998ecb44925"
     },
     {
+      "id": "proof-atlas-architecture-contract",
+      "path": "docs/proof/atlas-architecture-contract.md",
+      "title": "Atlas E2 carrier and resource identity spike evidence",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "23 Windows synthetic contract checks; deployment equality positive remains unresolved.",
+      "tags": [
+        "atlas",
+        "proof",
+        "spike",
+        "domain",
+        "azure"
+      ],
+      "links": [
+        {
+          "to": "design-atlas-architecture-views",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3b2325f503a22413ceccb8868511d5ad0bb411eb13b8e94f0faaacb116733cf9"
+    },
+    {
       "id": "proof-pack-phase-1-walking-skeleton",
       "path": "docs/design/phase-1-proof-pack.md",
       "title": "Phase 1 walking skeleton — Proof Pack",
@@ -19333,5 +19360,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "2fcd6738e456860881a71113e56467d411423925c8779336ac0b916e50e2cf7e"
+  "graphSha256": "413f8d5cbaaa814aeb51a59055d0373fb092171c76b5c02e18c3a638343cba93"
 };
