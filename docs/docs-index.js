@@ -6816,6 +6816,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "e36d5ce6b0e6af2c3899ee3f7a5454f295992c7aba0636717c4dbcbe36bb5956"
     },
     {
+      "id": "note-understanding-views-ruling-115-desktop-hold",
+      "path": "docs/notes/understanding-views-ruling-115-desktop-hold.md",
+      "title": "Ruling 115 — desktop-serialization hold (as used on understanding-views)",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "Records the desktop-serialization clause of Owner Ruling 115 so citations on this branch resolve. One shown-window/UIA run at a time, announced with PID. Atlas A–E carve-outs in the same ruling are out of scope here.",
+      "tags": [
+        "decision-note",
+        "ruling-115",
+        "desktop-hold",
+        "understanding-views"
+      ],
+      "links": [
+        {
+          "to": "coordination-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "728aa2e25219b926793ae67398cc53ee4b8b47b3af6681bba299778337debaf0"
+    },
+    {
       "id": "note-watcher-substrate-framing",
       "path": "docs/notes/watcher-substrate-framing.md",
       "title": "Loomkeeper framing, score authority, and Observatory archetype",
@@ -8831,7 +8861,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "74eec1cb8f54bdbbbdaf7c66d98f319ab17cc1a41e3cd23e00be30854c456aa1"
+      "sourceSha256": "8e686fb31673a73a95410bc8bc7e9d5ff7fac4c6275bd01521e8a63505cf0f57"
     },
     {
       "id": "coordination-understanding-views-kickoff",
@@ -19780,5 +19810,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "0f80dccd76d4728114423edea149b8bd01e2c85bbf3d2aa8b58808e2471dd2a6"
+  "graphSha256": "7d0c976488382d0c662552d4daf10b40c2d0b556bb1165a34b121579a095070a"
 };
