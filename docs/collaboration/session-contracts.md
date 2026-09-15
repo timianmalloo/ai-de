@@ -1149,6 +1149,50 @@ on one candidate after parent replay, scheduled at total width four. Conductor
 receives a prospective 660 cumulative leaves. No UI release, E1 product acceptance,
 main/push, normative E, private import or programme closure follows from authoring.
 
+Owner turn 80 keeps Core candidate `cea76307fe75b943a945cf837139e6a80ea2595d`
+unjoined. The parent reproduced 494/494 with genuine legacy binaries, built the
+unchanged App, and verified all eleven source hashes. Missing-fixture invocation
+failed both peer cases; that is not a literal clean-clone run.
+Security and Data give bounded source/model clearance. Test blocks fixture
+delivery and has an unread SP2 section. C# has unread ranges after failed/truncated
+retrievals. DS withdrew its earlier clearance after confirming it read an older
+physical tree without establishing the requested pin. Those verdicts are not
+silently promoted into current-candidate evidence.
+
+Eight new completion-review leaves are granted: DS four, C# three, Test one.
+Parent may generate session-local excerpts directly from `cea76307` Git blobs,
+carrying commit/blob identity, path and original line ranges. Reviewers must use
+built-in views of those exact excerpts, not another bespoke range reader. Prior
+failed reads and costs remain spent. Total active width remains four, including
+the fixture author; no overlapping control-plane fan-out is added while full.
+
+Sixteen new fixture-delivery qualification leaves are assigned to retained
+Core Astra in session/branch `atlas-e1-legacy-fixture` /
+`atlas/e1-legacy-fixture`, tree `C:\Projects\ai-de-atlas-e1-legacy-fixture`.
+Parent created, registered and verified its exact `cea76307` HEAD; all five
+identity-checked predecessor queries returned allow. Exact authored paths:
+
+- `tools/materialize-atlas-legacy-peer.ps1`
+- `tests/AiDe.Core.Tests/Fixtures/AtlasLegacyV1/baseline-source.zip`
+- `tests/AiDe.Core.Tests/Fixtures/AtlasLegacyV1/peer.patch`
+- `tests/AiDe.Core.Tests/Fixtures/AtlasLegacyV1/manifest.json`
+- Fixture-preparation wiring only in
+  `tests/AiDe.Core.Tests/Understanding/AtlasStaticReaderContractTests.cs`
+
+First execute preparation from genuine retained source/patch/build inputs.
+Record every input, tool version, build setting, patch outcome and output hash.
+Archive only necessary own-repository source/build inputs, retaining provenance
+and licensing; exclude private corpus, credentials, caches and third-party binary
+bundles. Validate extraction paths and owned output boundaries. Prove two fresh
+owned output roots and ordinary test invocation without author `.artifacts` or
+environment-override prerequisites; no skip, muted gate or external-fetch fallback.
+If path/SDK/SourceLink differences change hashes, preserve the evidence and return
+the exact decision needed. Existing expected hashes cannot simply be replaced
+with whatever was produced. Missing declared tools fail explicitly. Additional
+project/content-copy files require a new exact seam grant. No Core behavior edit.
+Conductor's cumulative ceiling rises prospectively to 700; no source/native-UI/
+main/push/normative-E/programme acceptance is granted.
+
 ### Core owns
 
 | Path | Why |

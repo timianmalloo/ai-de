@@ -11103,6 +11103,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "ffd8c6ef083b86d964831eb493694e9aba70e94deab8c6ff2dedd5769b97fb0b"
     },
     {
+      "id": "proof-code-atlas-e1-core-metadata",
+      "path": "docs/proof/code-atlas-e1-core-metadata.md",
+      "title": "Code Atlas E1 Core metadata: candidate evidence and delivery gates",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-09-22",
+      "reviewSuggested": [],
+      "summary": "Frozen E1 Core candidate with executed metadata, compatibility, paging and publication evidence. The supplied-fixture 494-case replay is valid, but reproducible legacy-fixture delivery and incomplete reviews still block joining.",
+      "tags": [
+        "code-atlas",
+        "e1",
+        "core",
+        "compatibility",
+        "paging",
+        "proof"
+      ],
+      "links": [
+        {
+          "to": "design-code-atlas-e1-static-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-code-atlas-e1-qualification",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d30c19c0f6061f65fe1bed1a293b68d5d2bd0bc310c7ef45a48de2e3602f72db"
+    },
+    {
       "id": "proof-code-atlas-e1-qualification",
       "path": "docs/proof/code-atlas-e1-qualification.md",
       "title": "Code Atlas E1 qualification: evidence and unresolved gates",
@@ -11839,7 +11875,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "086d1e61c5e2c4d83b7fba6f2b47d39a93389a3de4f361f9637c2b6f75cd4b0e"
+      "sourceSha256": "2e6cb55a4b95afc5e222fd5595c2e8c505fd70abdad90c3e0ed9ea221bca2860"
     },
     {
       "id": "session-profiles",
@@ -19160,5 +19196,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a167ca46547e2a38b798c7553ba6dd4ef3035b83e83a6335c564ff9464fdb6bf"
+  "graphSha256": "35fac8d0066c5d3f2c2608633908cb71ffbd18f767d7ed3a61914396c0965b5f"
 };

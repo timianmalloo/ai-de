@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T23:55:36Z",
+  "generated": "2026-09-15T01:23:14Z",
   "audit": [
     {
       "actor": null,
@@ -16888,6 +16888,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "b91d4bb5b0f59352b7f90b94e0b2733a647452dc",
         "short": "b91d4bb5b",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HAJDPTGX5XAS8RZ9BSH8FZ",
+      "shortname": "atlas-core-candidate-fixture-and-review-closure",
+      "datetime": "2026-09-15T01:23:13Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "ceaCoreparent494/494fixturepresent andAppbuild0; source/binaryhashesverified. SourceCoreProofcapturessemanticred/SP1-4/limitations. Testblocksfixture+unreadSP2;DSWITHDREWwrongphysicaltreereview;CSharpunreadrangesaftertoolerrors;Data4reportedpinnedphysicalsource/metadatawrapperdescriptionnotimmutable;Securityconditionalsourceclear. Owner80funds8completionreadsDS4CSharp3Test1; parentdirectgitblobpackets withcommit/blob/path/lineheaders+actualTRXexcerpts generated in sessionfiles, built-inviewsdispatched. Separate16leafCoreAstrafixturewriternewcea tree exact5paths, allleasechecksALLOW, preservegenuinehashes/safeownsourcearchive/twofreshrootordinarytestproof; hashdriftreturnednotguessed. Main700. Fouractiveworknodescap; futureOwnerprogressrequests wait forcapacity. Clarified user Waiting on Core means thisCopilotfleet, notClaude. No sourcejoin/nativeUI/main/normativeE. Ledger45tasks40done5progress, notproductpercentage.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-core-metadata.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close Core review coverage and genuine legacy fixture delivery without widening product scope",
+      "done_when": "Correct-pin completion verdicts and reproducible fixture inputs/results resolve the held Core gate",
+      "tier": "T2",
+      "main_calls": 666,
+      "main_budget": 700,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T01:20:37Z",
+      "duration_seconds": 156.0,
+      "git": {
+        "sha": "8178eaf48163bcd1009be9423646ffa683ab2605",
+        "short": "8178eaf48",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
