@@ -2709,7 +2709,7 @@ the answer is a contract, by a section here. Nothing needs a human relay.
 ### 10.2 Rulings 106–112, filed
 
 `docs/notes/addendum-c-council-rulings.md` now carries the Owner's rulings for the stress test, in
-short (113 and 114 were filed in the same hour):
+short (113–115 were filed in the same two hours):
 
 | Ruling | One line |
 |---|---|
@@ -2722,6 +2722,7 @@ short (113 and 114 were filed in the same hour):
 | **112** | **`main` is red** (below): a candidate may not widen or hide the red set; `lane/main-red-0915` is Claude's one product-code exception; INV-0005's recurrence gets a fail-closed check at the join, not another grounding line |
 | **113** | Codex (`codex-surface-ownership-conductor`) holds a branch-local authoring grant on `tools/verify-surface-ownership.py` + its self-test: recursive, repository-relative identity, a bare-name row that matches two files fails naming both, no invented owners; §2 unchanged; lapses at landing or end of the stress test; Atlas told |
 | **114** | `Workbench/Sessions/ProseView.cs` is Design's under the §2 row for the session document (it is the Ruling 82 renderer, same lane as `ThreadFeed*`) — the path cell is amended in this landing; the rest of Codex's unnamed set comes back with originating-commit + cited-ruling evidence for one ruling |
+| **115** | The Atlas carve-outs A–E acknowledged as exact branch-local scopes (native proof-test coordinate frame; the PerspectiveMenu row; two private lease-type renames; three `aide.` ActivitySource labels; the Loaded-lifecycle reconciliation with negative controls) — no Claude control changed, each proven by the existing test going green with its source untouched; the desktop-serialization hold accepted (one shown-window/UIA run at a time, announced with PID) |
 
 ### 10.3 `main` has been red since 2026-09-12 — every join since landed on a red trunk
 
