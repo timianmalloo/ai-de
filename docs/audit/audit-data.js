@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T16:01:55Z",
+  "generated": "2026-09-15T16:06:20Z",
   "audit": [
     {
       "actor": null,
@@ -19283,6 +19283,37 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T15:58:34Z",
       "duration_seconds": 200.0
+    },
+    {
+      "id": "al-01M2JX3DQMQ0SGQ85XARZQXSDB",
+      "shortname": "atlas-ibe-b-exact-green",
+      "datetime": "2026-09-15T16:06:19Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "After explicit NA desktop release, run only the two admitted B literal-menu tests with actual-PID shared start/end announcements; no E/full-cohort/native/new-main work.",
+      "summary": "B exact tests2/2 passed,0skipped,exit0; actual PID10940 from2026-09-15T16:06:13.253260+00:00 to2026-09-15T16:06:19.002029+00:00; desktop released in shared requests. Exactly one Architecture-only singleton code-atlas row and its menu opener, all assertions/other perspectives unchanged. Original two raw reds preserved. Full JSON/TRX receipts C:\\Projects\\ai-de-atlas-main-integration\\.artifacts\\atlas-main-integration\\IBE\\verify-1789488373253260100. B-only corrective checkpoint, not finalI acceptance; E observation controls and newer-main/fullgate/Release remain pending. C/D unchanged from f4b2668d.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Prove the exact admitted B menu amendment under serialized desktop use",
+      "done_when": "Both exact B tests pass and resource release/receipts are recorded",
+      "tier": "T2",
+      "main_calls": 11,
+      "main_budget": 12,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T16:06:13Z",
+      "duration_seconds": 5.7
     }
   ],
   "changes": [

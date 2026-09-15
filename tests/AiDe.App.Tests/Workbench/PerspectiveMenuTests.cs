@@ -225,6 +225,7 @@ public sealed class PerspectiveMenuTests
             ("search",           ["coding"], SurfaceContentFactory.Instances.Many),
             ("codeviewer",       ["architecture", "coding"], SurfaceContentFactory.Instances.Many),
             ("diagnostics",      ["coding"], SurfaceContentFactory.Instances.One),
+            ("code-atlas",       ["architecture"], SurfaceContentFactory.Instances.One),
             ("canvas",           ["architecture"], SurfaceContentFactory.Instances.One),
             ("view",             ["architecture"], SurfaceContentFactory.Instances.One),
             ("classdiagram",     ["architecture"], SurfaceContentFactory.Instances.Many),
@@ -331,7 +332,7 @@ public sealed class PerspectiveMenuTests
             ["Coding perspective", "Explore perspective", "Architecture perspective", "Coordination perspective",
              "Next tab in pane", "Previous tab in pane", "Move tab left/right",
              "Focus graph canvas", "Clear the status message",
-             "Show graph", "Show evidence", "New class diagram", "New sequence diagram",
+             "Show code Atlas", "Show graph", "Show evidence", "New class diagram", "New sequence diagram",
              "Show contexts", "Show joins", "New code viewer"],                 // Ruling 94: no "Show provenance" — the kind is retired
             Titles(architecture, "_View"));
         Assert.Equal(Titles(coding, "_Edit"), Titles(architecture, "_Edit"));
