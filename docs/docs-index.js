@@ -8808,6 +8808,34 @@ window.DOCS_INDEX = {
       "sourceSha256": "55bf5b1e116bcd69a8ddb05ee1c3fd879b7a287f3575aad6b2da08a5f54edca5"
     },
     {
+      "id": "coordination-atlas-five-gates",
+      "path": "docs/coordination/atlas-five-gates.md",
+      "title": "Atlas five-gate repair coordination",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Exact blocker transfer; isolated repairs followed by GHCP-only main publication.",
+      "tags": [
+        "atlas",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "plan-atlas-five-gates",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "28e51e072d055a8276db2a671ece92b2c43d67b37049247a7a0d4eb5539de2fd"
+    },
+    {
       "id": "coordination-code-atlas",
       "path": "docs/coordination/code-atlas.md",
       "title": "Coordination plan - Code Atlas first delivery horizon",
@@ -11174,6 +11202,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "1e69075fe508c573e0487e1a1ae1973dbedc4331d09eecd65d4981e8cac3a590"
     },
     {
+      "id": "plan-atlas-five-gates",
+      "path": "docs/plans/atlas-five-gates.md",
+      "title": "Atlas five-gate repair graph",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Repair the five frozen Atlas integration failures before main publication and E1/E2 continuation.",
+      "tags": [
+        "atlas",
+        "execution-graph",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "coordination-atlas-five-gates",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Execution graph",
+          "mermaid": "graph TD\n A-->B-->C\n C-->D\n C-->E\n C-->F\n C-->G\n D-->H\n E-->H\n F-->H\n G-->H\n H-->I-->J"
+        }
+      ],
+      "sourceSha256": "cab00662bcd81a6d0bc4249245bf6b597188621f17b951bfbf1a42dcbc6c070b"
+    },
+    {
       "id": "plan-audit-gate-self-test",
       "path": "docs/plans/audit-gate-self-test.md",
       "title": "Audit verifier self-test: bounded execution graph",
@@ -11688,6 +11751,30 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "2c0e0bbdcecc72079f6b8a801b7777b95b6c28834d8623bbe6aa2998ecb44925"
+    },
+    {
+      "id": "proof-atlas-five-gates",
+      "path": "docs/proof/atlas-five-gates.md",
+      "title": "Atlas five-gate repair evidence",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Observed frozen failures, repair controls and qualification receipts; acceptance remains open.",
+      "tags": [
+        "atlas",
+        "proof"
+      ],
+      "links": [
+        {
+          "to": "plan-atlas-five-gates",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8bc7f784c42e17ec2abddd67389f3400619e6f184c368cc0eded0b797edfbb38"
     },
     {
       "id": "proof-code-atlas-contract-grounding",
@@ -21242,6 +21329,14 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     },
     {
+      "id": "surface-coordination-atlas-five-gates",
+      "path": "docs/coordination/atlas-five-gates.html",
+      "title": "Atlas five-gate coordination",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coordination-atlas-five-gates"
+    },
+    {
       "id": "surface-coordination-audit-gate-self-test",
       "path": "docs/coordination/audit-gate-self-test.html",
       "title": "Audit verifier self-test coordination",
@@ -21346,5 +21441,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d2e864ee1db05fa64be61ee3b20a3cd2cd02b29c927a7d6edea2563d605e9210"
+  "graphSha256": "7100db2e797619a43a5c3078a6097e55890ec868384913b538b66eca137c9038"
 };

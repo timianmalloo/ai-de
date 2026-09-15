@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T22:12:52Z",
+  "generated": "2026-09-15T22:37:44Z",
   "audit": [
     {
       "actor": null,
@@ -22596,6 +22596,51 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T22:08:55Z",
       "duration_seconds": 124.0
+    },
+    {
+      "id": "al-01M2KK0N8Q4CPZ1X8AH22H8BSW",
+      "shortname": "atlas-five-gates-first",
+      "datetime": "2026-09-15T22:29:17Z",
+      "session": "codex-atlas-five-gates",
+      "prompt": "ahh you did not pick them up? yes clear the five gates first then lets get main updated then continue with E1/E2",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2KKFP7636D5GARSETWRXDVA",
+      "shortname": "atlas-five-gates-plan",
+      "datetime": "2026-09-15T22:37:30Z",
+      "session": "codex-atlas-five-gates",
+      "prompt": "Yes—clear those five gates first. Then get main updated and continue E1/E2.",
+      "summary": "Published bounded five-gate graph; five red gates reproduced. Owner requires main first. Independent plan clearance and repairs pending. Coordination doctor found effective drivers and four derived artifacts owed.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": "codex-astra-gate-conductor",
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md",
+        "docs/coordination/atlas-five-gates.md",
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Clear five Atlas gates before GHCP publication and E1/E2",
+      "done_when": "Five repairs proven, independent gates clear, integrated qualification and Release complete, GHCP handoff ready",
+      "tier": "T2",
+      "fan_out": 4,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T22:29:17Z",
+      "duration_seconds": 493.0
     }
   ],
   "changes": [
