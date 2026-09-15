@@ -8045,6 +8045,34 @@ window.DOCS_INDEX = {
       "sourceSha256": "6549168b93046ac99c21691b61f11f8ca8e7baa58b4cf8ee2e82340e61b34615"
     },
     {
+      "id": "coord-audit-gate-self-test",
+      "path": "docs/coordination/audit-gate-self-test.md",
+      "title": "Audit verifier self-test coordination",
+      "type": "doc",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Exact tooling handoff, one author and independent review for existing audit verifier semantics.",
+      "tags": [
+        "coordination",
+        "testing"
+      ],
+      "links": [
+        {
+          "to": "plan-audit-gate-self-test",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a48fdb12c33ba5646703cdc17265e94b608c89ba1f9584c8596eac79b0a6c872"
+    },
+    {
       "id": "coord-recursive-surface-ownership",
       "path": "docs/coordination/recursive-surface-ownership.md",
       "title": "Recursive surface ownership: bounded Codex programme",
@@ -9798,6 +9826,41 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "1e69075fe508c573e0487e1a1ae1973dbedc4331d09eecd65d4981e8cac3a590"
+    },
+    {
+      "id": "plan-audit-gate-self-test",
+      "path": "docs/plans/audit-gate-self-test.md",
+      "title": "Audit verifier self-test: bounded execution graph",
+      "type": "doc",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "One tooling author followed by independent adversarial verification, with no audit policy expansion.",
+      "tags": [
+        "plan",
+        "testing",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "coord-audit-gate-self-test",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Goal and graph",
+          "mermaid": "flowchart LR\n G --> D --> A --> R --> J --> C"
+        }
+      ],
+      "sourceSha256": "9723750c589f000c2978c14940ac42a4f815472be4be1af805637d66a1258cf6"
     },
     {
       "id": "plan-conductor-front-door",
@@ -15302,6 +15365,35 @@ window.DOCS_INDEX = {
       "sourceSha256": "56dcbfeec074ea753ff0b3a0cc893aa0d3623122c7ac156afdce54071768f6fa"
     },
     {
+      "id": "proof-audit-gate-self-test",
+      "path": "docs/proof/audit-gate-self-test.md",
+      "title": "Audit verifier self-test programme evidence",
+      "type": "proof-pack",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Observed fixtures, independent review and integrated qualification for one frozen self-test debt item.",
+      "tags": [
+        "proof",
+        "testing",
+        "audit"
+      ],
+      "links": [
+        {
+          "to": "plan-audit-gate-self-test",
+          "rel": "implements"
+        },
+        {
+          "to": "coord-audit-gate-self-test",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d7a9d583dd55c5937e5cc28873d8706a333e7e9e14d6decedea66a5f752c3045"
+    },
+    {
       "id": "proof-census-controls",
       "path": "docs/proof/census-controls.md",
       "title": "Proof Pack - The census controls (INV-0008 phase 6, DC-147's control, the four legacy mockups)",
@@ -18998,6 +19090,14 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     },
     {
+      "id": "surface-coordination-audit-gate-self-test",
+      "path": "docs/coordination/audit-gate-self-test.html",
+      "title": "Audit verifier self-test coordination",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coord-audit-gate-self-test"
+    },
+    {
       "id": "surface-mockups-context-map-join",
       "path": "docs/mockups/context-map-join.html",
       "title": "Context Map & Join surfaces — Core→Design §4a (mockup)",
@@ -19086,5 +19186,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f9e137477ec8d7508a0a2560f1abaf3e80274198e0ebdc81d70ee8357a65a3f6"
+  "graphSha256": "599b49b25911571e7247365b3c0992c40ead2260e3db8a8c0ea34798995e769d"
 };
