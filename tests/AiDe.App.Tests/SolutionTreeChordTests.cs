@@ -12,6 +12,12 @@ public sealed class SolutionTreeChordTests
         var probe = ProbePath();
         Assert.True(File.Exists(probe), $"the solution-tree chord probe was not built at {probe}");
 
+        var occupant = DesktopHold.Occupant();
+        Assert.True(
+            occupant is null,
+            "Ruling 115 desktop hold is occupied — one shown-window/UIA run at a time. Occupant: "
+            + occupant);
+
         using var process = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(probe)
         {
             RedirectStandardOutput = true,
@@ -19,9 +25,19 @@ public sealed class SolutionTreeChordTests
             UseShellExecute = false,
         })!;
 
-        var stdout = process.StandardOutput.ReadToEnd();
-        var stderr = process.StandardError.ReadToEnd();
-        Assert.True(process.WaitForExit((int)TimeSpan.FromSeconds(30).TotalMilliseconds), "the chord probe hung");
+        DesktopHold.AnnounceStart("grok-uv-ctrl-enter", process.Id);
+        string stdout;
+        string stderr;
+        try
+        {
+            stdout = process.StandardOutput.ReadToEnd();
+            stderr = process.StandardError.ReadToEnd();
+            Assert.True(process.WaitForExit((int)TimeSpan.FromSeconds(30).TotalMilliseconds), "the chord probe hung");
+        }
+        finally
+        {
+            DesktopHold.AnnounceEnd("grok-uv-ctrl-enter", process.Id, process.HasExited ? process.ExitCode : -1);
+        }
 
         Assert.True(
             process.ExitCode == 0,
