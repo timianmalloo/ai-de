@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:12:34Z",
+  "generated": "2026-09-15T21:27:48Z",
   "audit": [
     {
       "actor": null,
@@ -18860,6 +18860,53 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "205d5da4f0f4ab0854c17732a18743778822f204",
         "short": "205d5da4f",
+        "branch": "review/atlas-views-design",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KFG2J2G48N7DXGG41ZRFSD",
+      "shortname": "atlas-e2-semantic-row-recheck",
+      "datetime": "2026-09-15T21:27:48Z",
+      "session": "codex-atlas-views-review",
+      "prompt": "Recheck E2 repair a9d86fc1 for the previously omitted source-backed dependency Basis, executing only the normal 57-check run and new Basis-only subject fault and superseding the incomplete semantic-row portion of dcc0e358.",
+      "summary": "Cleared the focused E2 semantic-row repair. Both fixed expected rows now compare every scalar, exact anchor sequence and assertion refs; normal 57 checks pass and the dependency-Basis-only fault fails the full-row oracle. Synthetic-only limits remain.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-sol-plan-review",
+      "artifacts": [
+        "docs/proof/atlas-views-plan-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "e2-semantic-row"
+      ],
+      "outcome": "success",
+      "goal": "Verify that E2 a9d86fc1 closes the dependency Basis oracle omission.",
+      "done_when": "The complete-row comparison is inspected, normal output and the Basis-only subject fault are executed, and the prior clearance is explicitly corrected.",
+      "tier": "T2",
+      "main_calls": 6,
+      "main_budget": 6,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T21:26:49Z",
+      "duration_seconds": 59.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 1,
+          "accepted": 1
+        }
+      ],
+      "git": {
+        "sha": "dcc0e35893cc717996ade44d673bd03457fbea10",
+        "short": "dcc0e3589",
         "branch": "review/atlas-views-design",
         "pushed": null
       }

@@ -538,3 +538,26 @@ This clearance proves a closed synthetic assertion registry and carrier projecti
 not prove a real producer, manifest/epoch authorization, production `EvidenceBinding`,
 authority/provenance promotion, cross-declaration deployment equality, wire/native behavior,
 performance or US-E8/product acceptance. Fully known deployment identity remains unresolved.
+
+### E2 semantic-row clearance correction
+
+The prior clearance at review commit `dcc0e358` was incomplete: E2 `ed7efe79` fixed
+full anchor equality, but its dependency-row pattern omitted `Basis`. Checking the first
+explicit row did not prove the second source-backed row. A subject changing only dependency
+Basis to `explicit-declaration` while retaining its label/reference would have passed.
+
+Reviewed focused repair `a9d86fc1350ac4c74d5d8ff39e9f39685b890f14`.
+`MatchesExpectedRelations` now compares both fixed rows across Id, From, To, Kind, State,
+Basis, Label, exact `AnchorEvidence` and assertion-reference sequences, plus row count/order
+and empty error/unresolved results. The Current-declared case changes only its expected State
+and still compares both complete rows.
+
+**CLEAR.** The independent normal run exited 0 with 57 checks. The focused
+`relation-dependency-basis` fault changed only the dependency Basis and exited 1 at
+`relation-produced-target-and-current`. The diff leaves the seven earlier fault controls and
+validation logic unchanged; they were not redundantly rerun. The author's pre-repair false
+pass is historical author evidence; final normal behavior and fault sensitivity were executed
+independently. This supersedes only the incomplete semantic-row portion of `dcc0e358`.
+
+The bounded synthetic clearance is restored. No real producer/authority, deployment equality,
+production binding, wire/native behavior, performance, US-E8 or product acceptance follows.
