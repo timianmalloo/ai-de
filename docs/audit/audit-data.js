@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T18:15:35Z",
+  "generated": "2026-09-15T18:58:24Z",
   "audit": [
     {
       "actor": null,
@@ -20777,6 +20777,68 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T17:17:40Z",
       "duration_seconds": 3474.0
+    },
+    {
+      "id": "al-01M2K624SBCN5YV0H9ASHM0GZY",
+      "shortname": "atlas-ial-admission-listeners-green",
+      "datetime": "2026-09-15T18:42:54Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "IAL8 exact acknowledged three ActivitySource selector prefixes; whole three-identity consumer sweep; full production-admission and related headless controls; unchanged assertions/timeouts/protocol and protected guards.",
+      "summary": "Exact3prefixes only in AtlasProductionAdmissionTests; full requested headless selections passed 211 tests, zero skipped, both commands exit0. Full class named results/counts and protected-source SHA256 in C:\\Projects\\ai-de-atlas-main-integration\\.artifacts\\atlas-main-integration\\IAL\\verify-1789497723929103200; original IJ three-red TRX preserved. Pre/post whole tracked-text sweeps retain hits/empty results; old Meter names and correct MeterListener untouched. No GUI/wholecohort/newmain/main/push/gate/dependency changes. Targeted corrective checkpoint only, next unchanged join and final reviews remain required.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Repair all acknowledged stale remote-reader ActivitySource consumers without weakening tests",
+      "done_when": "Exact3literal diff and full admission/related controls pass; no additional stale ActivitySource consumer",
+      "tier": "T2",
+      "main_calls": 7,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T18:25:26Z",
+      "duration_seconds": 1048.0
+    },
+    {
+      "id": "al-01M2K6YG24T6XTP6KYA8WT8G3Z",
+      "shortname": "atlas-icq-listener-repair-checkpoint",
+      "datetime": "2026-09-15T18:58:23Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "ICQ6 mechanical close of completed IAL repair: verify exact3literal diff, preserved211targetedgreen/protectedhashes/fullconsumer sweep, ownregen/check and corrective commit; no tests/GUI/newjoin/push.",
+      "summary": "Verified exact3prefix-only AtlasProductionAdmissionTests diff, allassertions/timeouts/protocolunchanged. Read savedIAL mint1/1 and fullCoreadmission/related210/210 green,0skip, protectedmint/privacySHA256 unchanged; no tests rerun. Currentwhole3identity sweep sweep-1789498557771960600 findsnostaleActivitySourceconsumer; unchangedMeters/correctMeterListener preserved. Actualaudit/data/siteboundariesallow, no registerleaseclaimed/noTTLassumption. Mechanicalcheckpoint includesactualrepair plusIALproof/audit/derived; finalunchangedjoin/gates/Release/independentreviewstillrequired. Mainadvancedtoe8611df5 externallybeforeICQ, notjoined/mutatedbyworker.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Persist the completed and verified IAL three-selector repair without repeating qualification",
+      "done_when": "Exact repair/proof committed with own derived checks and clean state, or actual resource refusal returned",
+      "tier": "T2",
+      "main_calls": 3,
+      "main_budget": 6,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T18:52:04Z",
+      "duration_seconds": 379.0
     }
   ],
   "changes": [

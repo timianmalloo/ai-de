@@ -728,3 +728,26 @@ Actual official-join host PID32564 ran from `2026-09-15T17:51:29.887151Z` to
 `req-01M2K3404F5YZP5S855DCTY2B9` / `req-01M2K3T05EMCRG9E2575F10T9V` record desktop release.
 Ref checks recorded no main/candidate movement during qualification. Final publication and final
 Security/Test/I review remain blocked; this is evidence of a failed gate, not a qualified release.
+
+## IAL8 - acknowledged complete ActivitySource-consumer reconciliation
+
+The closer verified exact acknowledgement of `req-01M2K4R9EWESN0WY1EXZCN6TB6` under
+R116(1). This separate eight-call allocation changes only the three ActivityListener selector
+prefixes at lines28/60/92 of `AtlasProductionAdmissionTests.cs`. Every assertion, timeout,
+protocol call and other line remains unchanged. No product API or emitter changes are made.
+
+The read-only whole tracked-text sweep covered **all three** old D identities, retaining every
+hit filename and explicit runtime/test/config empty results in
+`.artifacts/atlas-main-integration/IAL/sweep-1789496847945503100/all-three-source-identities.json`.
+Only the three acknowledged ActivitySource selectors were stale. The old directory identity had
+no remaining runtime/test/config hit. `AtlasQueryServiceTests.cs:398` is a MeterListener that
+correctly follows the deliberately unchanged Meter name; it and both production Meter names
+remain unchanged. Historical proof/audit/coordination mentions and binary fixture exclusions are
+listed separately, never counted as repaired runtime consumers.
+
+The retained IJ whole/split three-red receipts are the pre-fix evidence. The next run selects the
+**entire** production-admission class plus related Core lifecycle/IPC/query/budget controls and
+unchanged mint/privacy guards, not just the earlier narrower 182-case selection. It is headless;
+native retains the desktop. Fresh counts, semantic outcomes, protected-source hashes and any
+commit are recorded in the closing audit/raw IAL receipt. No whole cohort, GUI, newer-main join,
+gate change, dependency change, final review clearance or publication is part of this repair.

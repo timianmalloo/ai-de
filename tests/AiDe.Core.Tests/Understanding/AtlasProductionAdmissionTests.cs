@@ -25,7 +25,7 @@ public sealed class AtlasProductionAdmissionTests
         var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         using var listener = new ActivityListener
         {
-            ShouldListenTo = source => source.Name == "AiDe.Core.AtlasRemoteReader",
+            ShouldListenTo = source => source.Name == "aide.Core.AtlasRemoteReader",
             Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData,
             ActivityStarted = activity =>
             {
@@ -57,7 +57,7 @@ public sealed class AtlasProductionAdmissionTests
         var sending = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         using var listener = new ActivityListener
         {
-            ShouldListenTo = source => source.Name == "AiDe.Core.AtlasRemoteReader",
+            ShouldListenTo = source => source.Name == "aide.Core.AtlasRemoteReader",
             Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData,
             ActivityStarted = activity =>
             {
@@ -89,7 +89,7 @@ public sealed class AtlasProductionAdmissionTests
         using var canceled = new CancellationTokenSource();
         using (var listener = new ActivityListener
         {
-            ShouldListenTo = source => source.Name == "AiDe.Core.AtlasRemoteReader",
+            ShouldListenTo = source => source.Name == "aide.Core.AtlasRemoteReader",
             Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData,
             ActivityStarted = activity =>
             {
