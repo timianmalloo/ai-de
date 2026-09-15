@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:26:33Z",
+  "generated": "2026-09-15T15:13:33Z",
   "audit": [
     {
       "actor": null,
@@ -16363,6 +16363,45 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
         "short": "bab5035e7",
+        "branch": "conductor/watch-0915",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JT2HVQQXAN0QCFRT002XY7",
+      "shortname": "conductor-watch-0915-join2",
+      "datetime": "2026-09-15T15:13:25Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "(continuation of al-01M2JP7RMQ: the watch's second landing)",
+      "summary": "verify-stranded-audit.py read its own tree's .agents/log (the committed snapshot) while coord-core writes the session log under the primary, so from any linked worktree every registered session read as stranded (Codex req-01M2JQY0G3 and the conductor's own run) - live_trees() now resolves against the primary; --self-test extended with the linked-worktree case, red on the old check(), green on the new. Ruling 115 filed: the Atlas A-E carve-outs acknowledged by the section-2 owner with no Claude control changed; desktop-serialization hold accepted; the three requests resolved.",
+      "kind": "skill",
+      "skill": "conductor-watch",
+      "tool": null,
+      "actor": "claude-conductor",
+      "artifacts": [
+        "tools/verify-stranded-audit.py",
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "tags": [
+        "coordination",
+        "stress-test"
+      ],
+      "outcome": "success",
+      "goal": "Land the second coordination batch the live sessions are waiting on: the verify-stranded-audit.py repair and Ruling 115",
+      "done_when": "main carries 553bb9bc and Ruling 115; the three Atlas carve-out requests resolved; gates green in the primary; pushed",
+      "tier": "T1",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-15T15:10:52Z",
+      "duration_seconds": 153.0,
+      "git": {
+        "sha": "553bb9bcee1301994bcb3db1c3eda352d2033a7f",
+        "short": "553bb9bce",
         "branch": "conductor/watch-0915",
         "pushed": null
       }
