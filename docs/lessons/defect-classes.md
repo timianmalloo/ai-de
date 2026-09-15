@@ -4071,6 +4071,8 @@ for both or split.*
 - **Status:** `controlled` — self-test present and CI-invoked for `mutation-replay`; the
   convention itself is unenforced
 
+- **2026-09-15, audit verifier self-test (Ruling 119):** the frozen verifier accepted `--self-test` as an absent positional file and exited 0; this was not a self-test execution. A disposable-copy harness first failed on whitespace-specific output and mutation metadata matching its own targets. The corrected control requires each mutation site exactly once and each negative's named semantic diagnostic, while accepted-shape cases reject an always-failing verifier. Seven planted normal-verification faults were then rejected before production insertion. Scope: this one frozen gate; other names remain debt. Class -> sweep: advertised identity/preservation/JSON policies and both CLI modes; derive: use the canonical allocator for valid ULIDs and actual Git HEAD for preservation; prevent: executable fixture/mutation self-test plus the existing named ratchet. Evidence: `docs/proof/audit-gate-self-test-author.md` and the independent review captured by `docs/proof/audit-gate-self-test.md`. The frozen debt count changes from ten to nine only with the paired tooling commit.
+
 ### DC-105 — Calling non-compliance "discipline" without checking whether the rule was ever stated
 
 - **Shape:** a rule is not being followed, and the diagnosis reached for is that people are not

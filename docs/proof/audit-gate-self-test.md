@@ -40,3 +40,9 @@ Diff from original runtime234af00c to basebbd1bece over src, tests, projects, pr
 ## Coordination incident
 
 Unexpected audit-only commits c9706410 and f02e964b appeared on this active conductor branch. Core denies authoring them and reports no identity-bearing precommit record for either (resolution req-01M2K42GXYR0Y24221DD764MWA); actor remains unidentified. Preserve commits and checkpoint promptly; never reset or attribute them without evidence. Explicit session registration was renewed. No product edits resulted. The incident is reported to Core/operator, not an expansion into framework repair.
+
+## Author checkpoint and Conductor observations
+
+Author candidate8d4310852b9014163174423522b888aa8d8b0086 has parent8b164757e1db9da44bfe0ec5907cd8d6a6765fa6. Both tooling changes occur in that single commit: the verifier gains self-test support/dispatch, and the ratchet removes only its frozen name. Conductor opened the complete diff and author Proof Pack, then ran the frozen self-test: all seven named mutant rejection lines were printed; final9-case/7-mutant result exited0 with SHA25606b949ec329c268747f1c99ea93e1dd3b9e2ed4802bcc3f8c4a1abb6cddf3845. Normal policy functions and regex are unchanged in the inspected diff. This is not independent review clearance; two CLI/environment questions were sent to the reviewer.
+
+Author23/20 calls and641 measured seconds, recorded without enlarging the estimate. A guessed expansion of a short Git SHA caused a false outside-commit alert in the author track; actual HEAD was unchanged. That alert was withdrawn and its correction is in the author proof; it is distinct from the observed conductor-tree incident above. The retained rehearsal directory outside the repository could not be removed because automatic execution review rejected deletion twice, even after a resolved-path check. Do not infer cleanup or bypass the rejection.
