@@ -221,9 +221,43 @@ Concurrency remains4 total. Oracle author/reviewer uses Sol high (independent fi
 
 Variant: unmet finite ledger assertions; each implementation pass must decrease them, and the three deliberately broken subject variants must refute their own dependent oracle. A failed API contract or non-decrease returns to investigate/Owner; no widen-until-green or budget-as-acceptance. The earlier normalized cost estimate described the pre-review graph and is now historical; these evidence-driven nodes add work for correctness, no speedup claim. Planned versus actual receipts and call counts remain the measurement.
 
-## Final experiment joins and actuals
+## Human-granted mock harness stage
 
-Correction to the graph above: shared lesson-register append rights come directly from section2; only the two new Design-owned HTML paths await a grant. Independent review precedes final platform qualification to avoid repeating broad builds before source freezes. E1-S3 -> review finding -> Owner18cc relation-set scope -> docs96c115e0 -> independent narrowed receipt; unchanged source1ab5d9e9 passed Linux and final coverage. E2-S3 -> binding repair -> review Basis omission -> complete-row repair a9d86fc1 -> review53ed3844 -> final Linux/coverage. These are evidence-driven repair nodes, not permission to expand to product.
+Human message "Grant these three docs-only paths" resolves req-01M2KCTTG4ZWAC2K01PB1HYWGK for the exact behavior HTML, architecture HTML and recurrence-only lesson additions. No product/main/policy grant. Existing design/specification/architecture and Owner G6/envelope decisions satisfy those stages; new artifacts are the executable synthetic HTML harnesses and proof supplements in existing lane proof/design documents. Conductor alone serializes shared lesson additions.
+
+Optimized graph: grant -> {E1-M, E2-M} -> independent UX/IA/accessibility/Test review -> bounded repairs -> inspected evidence -> branch commits/handoff. Owner confirms scope and resolves genuine decisions; never clears author vetoes. Serial authoring before review is the naive graph; removing only the incidental E1-before-E2 edge preserves all floors. No measured duration prediction: inferred work units E1=1,E2=1,review=1,close=1 yields serial4 and span3 at width2 authoring; this is a planning model, not measured speedup. Authors share no file or live desktop; automated browser verification must be headless and uses separate outputs. Any interactive native proof remains excluded and scheduler-owned.
+
+| Node | Objective/exit | Budget | Oracle/floors |
+|---|---|---|---|
+| E1-M | Self-contained Sequence/Activity harness using approved design, complete hard states and consistent graph/list/inspector | Astra,24calls/30min,checkpoint18 | Real state/select/filter/Source/Back simulation; nonzero rendered pages; token/craft/contrast/target checks; no runtime or display-order acceptance claim |
+| E2-M | Self-contained domain/layer/Azure harness using approved design and explicit synthetic evidence distinctions | Astra,24calls/30min,checkpoint18 | Real per-view states and selection/evidence consistency; declared/current/target and unresolved identity; same rendered/craft/a11y floors |
+| R-M | Independent UX/IA/accessibility/Test/SRE/Simplifier review of both frozen harnesses | Sol high,16calls/20min,checkpoint12 | Read actual audit matrix values and normal-path timing/count output; reject console-only, placeholder-only or zero-page evidence. Browser timings are mock-only, not product performance. Browser-observed behavior and hard-state matrix; author cannot clear veto; HTML never clears native gates |
+| C-M | Inspect outputs, resolve actual defects, preserve lessons/audit/graph, record handoff | Conductor,checkpoint after each returned lane | Missing evidence or unmet hard veto blocks completion; no main join |
+
+Fan-out cap4 including Conductor/Owner. One transient retry only after a diagnosed external failure; syntax/tool-contract failures invoke investigation, not blind retry. Variant is finite unmet declared harness assertions/review findings; two non-decreasing repair passes escalate to Owner. A partial author result is retained, not joined as accepted. No broadened paths/dependencies/fixtures to manufacture green. Peer authoring, independent adversarial review, normal-path in-artifact audits and official audit/derived scripts remain mandatory. Recorded grants and existing isolated trees are reused; no unnecessary new checkout or coordination installation.
+
+```mermaid
+flowchart LR
+  G[Recorded human grant and Owner scope] --> E1[E1-M author and rendered checks]
+  G --> E2[E2-M author and rendered checks]
+  E1 --> R[R-M independent review of frozen artifacts]
+  E2 --> R
+  R -->|unmet assertion| F[Bounded author repair]
+  F --> R
+  R -->|all mock floors met| C[C-M inspect evidence and commit handoff]
+```
+
+Before/after: same four execution nodes and all floors; serial width1 becomes author width2 (programme cap4). Both have one bounded repair loop; deterministic gates are unchanged. The dependency model removes one incidental author edge and no data or decision edge. Re-plan triggers are a changed approved semantic contract, an unavailable required verification mechanism or two repair passes without decreasing findings.
+
+Mock-stage actuals: Owner4calls; E2 author19/24; E1 approximately21/24 execution boundaries and measured audit1262seconds. Harness node outputs: E1 63 normal/five red controls, E2 229 normal/three fault modes; both rendered and craft floors executed. Cost counts are author-reported where noted, not independently reconstructed token usage. Conductor inspected source/proof/JSON and screenshots; independent reviewer added real Edge CDP keys rather than promoting synthetic keyboard events. Review plan finding added explicit SRE/audit-matrix floors to R-M before acceptance.
+
+R-M completed all six lens verdicts for HTML only, but consumed22/16calls after unavailable CUA and CDP setup retries. The cap fired and remains a recorded plan defect; it was not raised or used to imply acceptance. The real-key mechanism is now observed and must be reused rather than rediscovered in a future review. One receipt transcription mislabeled a normal expired-restore refusal as a planted fault; Conductor compared actual JSON and requested a documentation-only correction. No test or source change was needed for that correction. Remaining C-M work is the final audit/derived/commit and factual handoff; product nodes stay blocked on their earlier dependencies.
+
+Generator preflight is required before the closing write: tools/verify-site-figures.py (without --update) names stale authored wrappers; claim every reported exact wrapper before tools/regenerate-derived.py. Inspect resulting diffs for figure-only changes. E1's late discovery of site/model.html is retained as a failed pre-edit coordination step, not fixed by its later commit lease. No coordination framework refactor is in scope.
+
+## Prior experiment joins and actuals
+
+At that checkpoint, shared lesson-register append rights came directly from section2 and only the two new Design-owned HTML paths awaited a grant (resolved in the newer mock stage above). Independent review precedes final platform qualification to avoid repeating broad builds before source freezes. E1-S3 -> review finding -> Owner18cc relation-set scope -> docs96c115e0 -> independent narrowed receipt; unchanged source1ab5d9e9 passed Linux and final coverage. E2-S3 -> binding repair -> review Basis omission -> complete-row repair a9d86fc1 -> review53ed3844 -> final Linux/coverage. These are evidence-driven repair nodes, not permission to expand to product.
 
 E1 author completed its four fixed literals with30nodes/30relations/28pages/16recompositions and10 dependent rejections across8faults. E2 has57normal checks/eight subject faults. E2 last repair consumed5calls against10; Owner order decision8against8; no cap is acceptance. Separate Astra Owner decided scope, Astra authors handled path/semantic work, and Sol independently reviewed implementation. The reviewer originally authored E1's expected ledger, not its subject; that involvement is disclosed. The missed E2 Basis assertion corrected an earlier review clearance, retained as history rather than erased.
 

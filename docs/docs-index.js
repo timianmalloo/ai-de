@@ -8249,7 +8249,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0474b68ef774fad794fafd923ca7bff07d5118a022edcd456f8fac7ad2a644b4"
+      "sourceSha256": "56a7ad4c84b4fe3546c8c0100055c5312eb1ff3f0524e96223e3607d81a49d57"
     },
     {
       "id": "defect-classes",
@@ -8278,7 +8278,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d6eadcd0600f04d76bec83ed07c60fd10613668136e77a16619c5554cefc7d2f"
+      "sourceSha256": "0306dca3c0238a0bc796222487c0fcf27f031785893249f0cdaf6aecd6d6ed59"
     },
     {
       "id": "design-session-profiler",
@@ -9912,9 +9912,14 @@ window.DOCS_INDEX = {
           "kind": "flowchart",
           "title": "Nodes, dependencies, exits and oracles",
           "mermaid": "flowchart LR\n G --> O\n O --> D1[E1-D]\n O --> D2[E2-D]\n D1 --> S1[E1-S]\n D2 --> S2[E2-S]\n S1 --> C\n S2 --> C\n C --> RD[R-D]\n RD --> I1[E1-I]\n RD --> I2[E2-I]\n I1 --> P1[E1-P]\n I2 --> P2[E2-P]\n P1 --> R1[R-I E1]\n P2 --> R2[R-I E2]\n R1 --> J\n R2 --> J\n J --> H"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Human-granted mock harness stage",
+          "mermaid": "flowchart LR\n  G[Recorded human grant and Owner scope] --> E1[E1-M author and rendered checks]\n  G --> E2[E2-M author and rendered checks]\n  E1 --> R[R-M independent review of frozen artifacts]\n  E2 --> R\n  R -->|unmet assertion| F[Bounded author repair]\n  F --> R\n  R -->|all mock floors met| C[C-M inspect evidence and commit handoff]"
         }
       ],
-      "sourceSha256": "fb05eeefb47268e2ceb84afc9c701e97961c51f7f2f4bd4eac02e6ec18ab1263"
+      "sourceSha256": "cb55b3c033de02f0f0b3f0691bb27dfeaeb2a5ba11e5bc874bb443eb5c3b912b"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -15480,7 +15485,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5e3ac49d6fc8d2e16b68699fbe8f65f5691839db8ac9094046fa4e20d8241212"
+      "sourceSha256": "a8345f84f0bdacaf1792c8224d2cf3fccf2aa3c6069554967bfc65ec55e3d774"
     },
     {
       "id": "proof-audit-gate-plan-review",
@@ -19402,5 +19407,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "4357a6926c4dd6f1c38e40fb77feeacae792f072316912e32cf0831f8e77c30f"
+  "graphSha256": "d5a8f5ffdf8b24dfe5430c951425a68bb58519ed1f5613df91bca7684d8807f2"
 };

@@ -5485,6 +5485,17 @@ for both or split.*
   review and Linux execution observed final fault sensitivity. The earlier clearance is
   explicitly superseded for this omission; class-wide status remains partially-controlled.
 
+- **Same-class rendered journey recurrence, 2026-09-15 (E1 `0bdd16d7`, E2 `27642bf8`).**
+  **Class:** an oracle reads metadata or calls an internal helper while the actual toolbar
+  focus path, filtered graph endpoint or visible binding is wrong. **Sweep:** both linked
+  graph/list origins, inspector text and filtered relation endpoints were examined. **Derive:**
+  retain selected origin across Source-button focus; assert visible binding fields; retain
+  E2 endpoint nodes and E1 explicit outside-filter boundary evidence. **Prevent:** actual
+  focus/button-click journey checks and dependent evidence-drift/Back-focus/erased-boundary
+  faults now fail the corresponding rendered oracle. E1 additionally rejects graph loss,
+  missing canceled recovery and a zero page. Full source-backed/native behavior is excluded;
+  these controls do not change the class-wide partially-controlled status.
+
 ### DC-128 — Citing a commit proves a file existed, not that it was unchanged, so "committed before" is attested rather than mechanical
 
 - **Shape:** a process requires that an artifact — an oracle, a spec, a baseline — be **fixed before
@@ -5703,6 +5714,14 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   repeated unchanged patch-context attempts are recorded in `docs/plans/atlas-views.md` as
   failed execution, not acceptance; no automated retry-governance control is claimed.
 
+- **Same-class review harness recurrence, 2026-09-15 (R-M).** **Class:** unavailable
+  browser adapters and setup retries consumed a bounded node before its behavioral work;
+  review used22/16calls. **Sweep/derive:** distinguish environment-contract failures from
+  UI defects, retain the observed Edge CDP route and do not rediscover unsupported adapters.
+  **Prevent:** the existing mock verifier's browser discovery fails closed, and the independent
+  review subsequently used real browser key input and read actual DOM results. The cap firing
+  remains an execution defect; no automated retry-budget enforcement or native proof is claimed.
+
 ### PACK-O-FRONT-MATTER- - PACK-O front-matter presence + scope-drift review
 - **Control:** Presence (mechanical): every substantive turn records done_when (CT19); a missing one skipped the front matter. Satisfaction: review each done_when->summary pair where the summary exceeds the goal (scope drift, PACK-O). The audit done_when field + this miner ARE the rung-2 control (CI6). (automated control)
 - **Boundary:** Presence is mechanical; 'summary exceeds goal' is surfaced for human review, not auto-judged. Trivial/conversational turns are exempt from logging (AL5b).
@@ -5764,6 +5783,16 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   release-versus-expiry cause stayed Unknown. The always-loaded agreement-grounding instruction
   remains the procedural control; there is no new automatic detector of unnecessary permission
   requests. Only the two Design-owned mock HTML paths still require the requested grant.
+
+- **Same-class generator-boundary recurrence, 2026-09-15, E1 mock (`0bdd16d7`).**
+  **Class:** an expected wrapper list omitted site/model.html, so regeneration touched an
+  authored file before its lease. A claim before commit does not repair that earlier timing.
+  **Sweep/derive:** enumerate the official figure verifier's actual changed wrapper population
+  before mutation. **Prevent:** tools/verify-site-figures.py read-only preflight returned the
+  three stale figures in collaboration.html/index.html for the Conductor close; exact claims
+  precede regeneration, and the commit hook checks all staged authored paths. This is an
+  executable stale-path control plus the always-read coordination plan rule, not an automatic
+  guarantee that every harness intercepted every earlier write. No framework repair is claimed.
 
 ### A-COLLABORATION-CHAN - A collaboration channel accumulates repeated same-shape requests against one seam, each handled individually
 - **Control:** CI2 (class, not instance) applies to the collaboration channel, not only to defects. When a session opens the Nth request of the same shape against the same seam, it raises the CLASS — the missing capability behind all N — rather than the N+1th request. The channel's own review asks 'how many of these are one thing?' before it asks 'which is next?'. (knowledge doc)

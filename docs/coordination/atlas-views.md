@@ -125,7 +125,13 @@ Owner a766afa8 admits E1-D2 and E2-D2 in existing Markdown paths after shared G6
 
 Revised E1 83e1139b and E2 15b53fe9 cleared at design-text level by d062650d. Owner admits finite structural/page and typed-relation experiments within Ruling121. E1 independent oracle ledger precedes authoring; E2 source experiment runs independently. No mock file, shared register or product authoring has begun beyond its grant. Human exact3doc-path question remains pending. Main-watch route is copilot-main-watch; accepted-Atlas publisher remains recovery closer. Main integration authority does not transfer by Claude usage cap.
 
-## Current handoff: bounded experiments, no product publication
+## Mock-stage grant and frozen author handoff
+
+The human granted both exact HTML paths and recurrence-only lessons; request req-01M2KCTTG4ZWAC2K01PB1HYWGK is resolved. Owner212d3bca confirms existing design/proof hubs and all independent gates. E1 author0bdd16d7 and E2 author27642bf8 are frozen in their existing separate worktrees. Exact leases were released. E1/E2 artifact links are respectively docs/mockups/atlas-behavior-views.html and docs/mockups/atlas-architecture-views.html in their lane branches. Conductor reviewed their committed proof supplements and rendered screenshots. Independent combined R-M clears the bounded HTML stage across all six lenses, including real browser key journeys; four Minor craft findings remain advisory. All product/foundation/main constraints remain unchanged.
+
+Generated site wrappers are authored with derived figures. E1 discovered site/model.html only after regeneration and claimed it before commit; this was not a pre-edit lease and is recorded as a coordination defect, not retroactively compliant. Future generator edits in this stage must first run tools/verify-site-figures.py in read-only mode, inspect every reported wrapper and acquire the exact authored claims. No broad site lease, automatic ownership transfer or framework change is allowed.
+
+## Prior checkpoint: bounded experiments, no product publication
 
 | Lane | Frozen work | Observed state | Remaining |
 |---|---|---|---|

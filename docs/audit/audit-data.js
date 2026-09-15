@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:32:27Z",
+  "generated": "2026-09-15T22:16:32Z",
   "audit": [
     {
       "actor": null,
@@ -18641,6 +18641,85 @@ window.AUDIT_DATA = {
         "acceptance_met": false
       },
       "supersedes": "al-01M2KASA7G27MYVBT6KT9P0Y3J"
+    },
+    {
+      "id": "al-01M2KGF8X2VEYHZ2DDTRRT220T",
+      "shortname": "atlas-mock-path-grant",
+      "datetime": "2026-09-15T21:44:50Z",
+      "session": "codex-atlas-views-conductor",
+      "prompt": "Grant these three docs-only paths",
+      "summary": "Human answered the exact pending grant: branch-local behavior HTML, architecture HTML, and recurrence-only lesson additions; no product/main/policy grant.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2KGJMEXTA7SKBFYXNZCM4V4",
+      "shortname": "atlas-mock-stage-plan",
+      "datetime": "2026-09-15T21:46:40Z",
+      "session": "codex-atlas-views-conductor",
+      "prompt": "Grant these three docs-only paths",
+      "summary": "Human exact grant resolved req-01M2KCTTG4ZWAC2K01PB1HYWGK; plan activates two independent existing worktrees, preserves UX/IA/a11y/Test review and measured audits, serializes lesson writes. Owner confirms scope. Reuse existing spec/arch/design; newHTML and evidence only. Inferred workunit model4serial/3span is not timing evidence. Actual harness proof pending.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": "codex-astra-conductor",
+      "artifacts": [
+        "docs/plans/atlas-views.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Build and qualify the two branch-local synthetic mock review harnesses.",
+      "done_when": "Both exact HTML artifacts pass applicable rendered and independent gates with committed evidence; product/main remain excluded.",
+      "tier": "T2",
+      "fan_out": 4,
+      "signals": {
+        "verification_path": false,
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T21:44:35Z",
+      "duration_seconds": 125.0
+    },
+    {
+      "id": "al-01M2KJ8YVN8MZTZ8647GKKGZ6S",
+      "shortname": "atlas-mock-harness-close",
+      "datetime": "2026-09-15T22:16:21Z",
+      "session": "codex-atlas-views-conductor",
+      "prompt": "Grant these three docs-only paths",
+      "summary": "Human grant recorded; Owner212d3bca. E1 0bdd16d7:63checks,fivefaults,22contrastpairs,32defaulttargets; E2 27642bf8:229checks,faultfailures27/15/15. Both exactmock/craft/token checks passed with oneE1/threeE2Minor advisory findings. Conductor inspected source/proof/JSON and screenshots. Independent final d69323b5 clears all6mock lenses, realEdgekeys forselection/Source/Back/filter; corrects originalfault-list transcription without rerunning unchangedsource. Review22/16call overrun recorded, not acceptance. Shared recurrences capture focus/endpoint/visible-oracle and generatorboundary failures; preflight names exactstale wrappers before closinggeneration. No product/native/main acceptance. Branches retained for authorized laterjoin; sourcefoundation/productiongrants remainopen.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": "codex-astra-conductor",
+      "artifacts": [
+        "docs/proof/atlas-views-grounding.md",
+        "docs/coordination/atlas-views.md",
+        "docs/plans/atlas-views.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Build and qualify the two branch-local synthetic mock review harnesses.",
+      "done_when": "Both exact HTML artifacts pass applicable rendered and independent gates with committed evidence; product/main remain excluded.",
+      "tier": "T2",
+      "fan_out": 4,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T21:46:41Z",
+      "duration_seconds": 1780.0,
+      "git": {
+        "sha": "82cbe67edb7b8bf30ab2e9e2519c4ed7f6f7e61c",
+        "short": "82cbe67ed",
+        "branch": "conductor/atlas-views",
+        "pushed": null
+      }
     }
   ],
   "changes": [
