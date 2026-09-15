@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T15:50:49Z",
+  "generated": "2026-09-15T16:08:05Z",
   "audit": [
     {
       "actor": null,
@@ -17155,6 +17155,60 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "33e9ae7e00e3edb2d44ecec006e5a3c354e69efd",
         "short": "33e9ae7e0",
+        "branch": "conductor/watch-0915",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JWJBW25M89NXRMSDET5EZH",
+      "shortname": "B — diagnose the 13 red tests now (read-only, no lane), fix after the At…",
+      "datetime": "2026-09-15T15:57:00Z",
+      "session": "prompt-log",
+      "prompt": "B — diagnose the 13 red tests now (read-only, no lane), fix after the Atlas landing",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2JX6MC750ZFEF0Z65V58M4M",
+      "shortname": "main-red-diagnosis",
+      "datetime": "2026-09-15T16:08:04Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "B — diagnose the 13 red tests now (read-only, no lane), fix after the Atlas landing",
+      "summary": "Swept all 50 Build runs on main since the last green (ebe18260) from their .trx artifacts: 9 deterministic reds, each born red at a join (CV-2 c59eac66: purge sibling-held-open, Linux; sh4-2 3e5b04f6: CodingsLeftExtentTests x4, Windows runner; engines 9f2044bc: EngineCatalogTests x4, Linux) and 4 intermittent STA timeouts. Local Windows runs: 38/38 Core, 32/32 App (under the desktop hold, announced). Mechanisms opened: the locator tells shim from executable only by Windows suffix; the delete cascade's refusal is a Windows directory-move semantics; the runner's 96ch measure is 673 px vs a 451 px column. Ruling 117: no floor trip on the shipped platform; Platform=Windows scoping with residuals as tests; extent tests measured then pinned or quarantined; STA quarantined executing; the join closes only on the landed SHA's recorded CI result. The Owner caught one false fixture claim in the conductor's proposal (recorded, 117 (ii)).",
+      "kind": "skill",
+      "skill": "main-red-diagnosis",
+      "tool": null,
+      "actor": "claude-conductor",
+      "artifacts": [
+        "docs/investigations/INV-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins.md",
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "tags": [
+        "main-red",
+        "diagnosis",
+        "inv-0005"
+      ],
+      "outcome": "success",
+      "goal": "Classify each of the 13 red tests as regression vs runner/platform-environment with measured evidence; refusal tests first; escalate if any is a real regression",
+      "done_when": "INV-0012 on main with per-test first-red run/commit, local-run results and mechanism; the Owner has ruled on the fix order (Ruling 117)",
+      "tier": "T1",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T15:57:00Z",
+      "duration_seconds": 664.0,
+      "git": {
+        "sha": "500cfac9639b5e78ea5aab1322b39ff44c187e78",
+        "short": "500cfac96",
         "branch": "conductor/watch-0915",
         "pushed": null
       }

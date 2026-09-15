@@ -9409,7 +9409,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0644c7fca077aa82f94c410efa172a4bdb3017d4bc57b07c6410cd5890d86730"
+      "sourceSha256": "6cb85ea6d59ce8ec2b69badad8ae615aacd113bdf135622b1628cc1ab5ee10ee"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -11693,6 +11693,52 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "2122bcb7ecb421695f758e544427505235dd28a09b7511b1dca941c4d61d772f"
+    },
+    {
+      "id": "inv-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins",
+      "path": "docs/investigations/INV-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins.md",
+      "title": "main has been red since 2026-09-12 — 13 tests, 9 of them born red at three joins whose recount ran only on Windows, 4 flaky on the runner; none a regression on the shipped platform",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-watch-0915",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "Option B of the operator's 2026-09-15 main-red decision: diagnose read-only, fix after the Atlas landing. Measured from all 50 Build runs on main since the last green (ebe18260, 09-12T17:55Z), two local runs on a real Windows desktop, and the code. The 13 red tests at bab5035e are 9 deterministic reds — each first red on the CI run that first executed it, at a join — and 4 intermittent STA timeouts. All 13 pass on Windows here (38/38 Core, 32/32 App). The five Linux-only Core reds are Windows semantics encoded in a locator (.exe vs .cmd) and a delete cascade (a directory move refused while a file inside is open); the eight Windows-runner reds are the hosted runner's fonts/DPI and its flaky UI suite. Ruling 117 holds the fix order.",
+      "tags": [
+        "main-red",
+        "ci",
+        "inv-0005",
+        "join",
+        "recount",
+        "linux",
+        "runner",
+        "engine-catalog",
+        "envelope-store",
+        "codings-left-extent",
+        "sta",
+        "dc-104"
+      ],
+      "links": [
+        {
+          "to": "inv-0005-a-red-main-nobody-consumed",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "40afa38a1853c0784d87a0a88a7bb4bd00cadec178d8e40c05497ec758d4c710"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -18943,5 +18989,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ab4b236008a56aa5af457ed7dd4ffe4a05b59e54dec34b395c9580d084faf1dd"
+  "graphSha256": "e5fcf28c09d67d65ac84dce06f69baa6c4e3f526c1065d142aa77068151e226e"
 };
