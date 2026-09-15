@@ -136,6 +136,6 @@ ADR-0030 trigger, quoted not paraphrased: *"Add an explicit `Perspectives` colum
 
 | | |
 |---|---|
-| **Completed** | Execution graph; this plan; HTML twin; kickoff; N0 Owner (D-0 only); N1 inventory; N2 comparables; N1 census disposition; N3 spec; N4 PASS (`note-understanding-views-n4-pass`; spec still draft). |
-| **Remaining** | N5 architecture + ADR; N6 council; N7 spike; N8 ui-design; N9–N10 design; N11 core-query then shell-surface; N12 Proof Pack; N13 join onto `understanding-views`; N14. |
-| **Best next action** | N5 `/define-architecture` in `understanding-views-architecture`. Do not open core or shell. Do not `coord regen` from a worktree. |
+| **Completed** | Execution graph; this plan; kickoff; N0–N4; N5 ADR-0038 proposed (`a03fb622`); N6 PASS after Security re-review (`note-understanding-views-n6-council`). Spec still draft. |
+| **Remaining** | Join architecture onto `understanding-views`; N7 toolkit spike; N8 ui-design; N9–N10 design; N11 core-query then shell-surface; N12 Proof Pack; N13; N14. |
+| **Best next action** | Join `understanding-views-architecture` (`--docs-only`), then N7 Spike Protocol on the tree toolkit. Do not open core or shell. |

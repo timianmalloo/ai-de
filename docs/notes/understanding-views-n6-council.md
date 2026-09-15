@@ -1,6 +1,6 @@
 ---
 id: note-understanding-views-n6-council
-title: "N6 council on ADR-0038: Security BLOCK; Data PASS; Simplifier and Tech Lead conditions"
+title: "N6 council on ADR-0038: PASS after Security re-review of a03fb622"
 type: decision-note
 status: accepted
 owner: "@timianmalloo"
@@ -13,10 +13,10 @@ links:
 review-by: 2027-03-15
 review-suggested: []
 summary: >-
-  N6 width-4 on ADR-0038 at 46160f21. Security hard BLOCK (path confinement,
-  junctions, skip fail-closed, DropRelativePaths on the wire). Data PASS with
-  projection-join majors. Simplifier PASS-WITH-CONDITIONS. Tech Lead conditions
-  on skip binding. Authors do not self-clear. N7 not opened.
+  N6 width-4 on ADR-0038. First pass: Security BLOCK. Repair a03fb622.
+  Re-review: Security PASS, Tech Lead PASS. Data PASS and Simplifier
+  PASS-WITH-CONDITIONS already held. Authors did not self-clear. ADR stays
+  proposed. N7 (toolkit spike) is unblocked.
 ---
 
 # N6 council on ADR-0038: Security BLOCK; Data PASS; Simplifier and Tech Lead conditions
@@ -27,14 +27,14 @@ summary: >-
 
 ## Panel (width 4)
 
-| Lens | Session | Verdict | Clears veto? |
-|---|---|---|---|
-| Data & Persistence Architect | `01a0a578-9ed7-7ad1-8d94-557f59cee6c6` | **PASS** | yes — grain/Coverage/no-store hold; majors are join rules |
-| Security & Identity Architect | `01a0a579-0208-7463-937a-a6cefd5834cc` | **BLOCK** | **no** — hard veto |
-| The Simplifier | `01a0a579-0208-7463-937a-a6d27bc14307` | **PASS-WITH-CONDITIONS** | yes |
-| Tech Lead | `01a0a579-0209-7343-83dc-acc003dac114` | **PASS-WITH-CONDITIONS** | **no** until skip binding + drop-set leave the wire |
+| Lens | Session | First pass | Re-review (`a03fb622`) | Clears veto? |
+|---|---|---|---|---|
+| Data & Persistence Architect | `01a0a578-9ed7-7ad1-8d94-557f59cee6c6` | **PASS** | not re-run (grain held) | yes |
+| Security & Identity Architect | `01a0a579-0208-7463-937a-a6cefd5834cc` then `01a0a588-9dbb-7df3-b50a-2bb41f13564d` | **BLOCK** | **PASS** | **yes** |
+| The Simplifier | `01a0a579-0208-7463-937a-a6d27bc14307` | **PASS-WITH-CONDITIONS** | conditions landed in repair | yes |
+| Tech Lead | `01a0a579-0209-7343-83dc-acc003dac114` then `01a0a588-9dbb-7df3-b50a-2bc466fff218` | **PASS-WITH-CONDITIONS** | **PASS** | **yes** |
 
-Conductor does not override a hard veto. **N7 is not opened.** Author repairs ADR-0038; Security re-reviews. Author does not mark the ADR accepted.
+Conductor does not override a hard veto. First-pass Security BLOCK stopped N7. Repair `a03fb622` closed the six Security blockers and the Tech Lead skip/drop-set conditions. Re-review cleared both. **N7 (toolkit spike) may start.** ADR-0038 stays **proposed** (authors did not mark accepted).
 
 ## Security blockers (must land in the ADR before re-review)
 
@@ -64,8 +64,17 @@ Harness counted **119** tool calls on N5 vs plan budget **40**. Author reported 
 
 ## What the Conductor may do next
 
-Resume architecture author on `understanding-views-architecture` with the blocker list. Then spawn Security (and Tech Lead on skip/drop-set) for re-review. Do not open N7 until Security PASS.
+1. `conductor-join.py` `understanding-views-architecture` onto `understanding-views` (`--docs-only`; not `main`).
+2. N7 Spike Protocol: tree toolkit (WPF TreeView vs alternative). Skip-widen of other walkers onto `UnanalysedLanguages.Skip` is optional after UV-0.
+3. Then N8 `/ui-design`. Do not open core-query until N7 toolkit is named.
 
 ## What the Conductor must not do
 
-Override Security. Join ADR-0038 to `understanding-views` while BLOCK stands. Implement UV-0 on the unrepaired text. `coord regen` from a worktree.
+Mark ADR-0038 accepted from this note (council PASS ≠ author self-accept). Implement UV-0 before N7 toolkit spike. `coord regen` / `coord install` from a worktree. Join to `main`. Atlas paths.
+
+## Residual (do not reopen N6)
+
+- Draft spec US-T11 still says a **process** probe; ADR §4 is App-assembly. Align spec on next spec edit (Security minor).
+- `File.Exists` follows file reparse points — existing `ResolveWithinWorkspace` behaviour, not a new D-0 primitive.
+- Caps 2000/5000 remain **Inferred**.
+- N5 budget 119 vs plan 40 (GO9 finding).

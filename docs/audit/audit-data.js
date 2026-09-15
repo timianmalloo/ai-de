@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:39:18Z",
+  "generated": "2026-09-15T14:53:53Z",
   "audit": [
     {
       "actor": null,
@@ -16627,6 +16627,33 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "cb868bce441246f0aa921aec649901dc755b56ce",
         "short": "cb868bce4",
+        "branch": "understanding-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JRYS6MGB7PJ887T3G8BBHF",
+      "shortname": "understanding-views-n6-pass",
+      "datetime": "2026-09-15T14:53:53Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "yes do your sequence... start in the ai-de-understanding-views worktree as you suggested above",
+      "summary": "N6 re-review PASS at a03fb622. Security six blockers closed. Tech Lead skip/drop-set closed. ADR stays proposed.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n6-council.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Record N6 re-review PASS on ADR-0038",
+      "done_when": "Security and Tech Lead clear; N7 unblocked",
+      "tier": "T2",
+      "fan_out": 4,
+      "git": {
+        "sha": "08a77aee068aa735dfe45d81f1c556b90355267a",
+        "short": "08a77aee0",
         "branch": "understanding-views",
         "pushed": null
       }

@@ -6333,14 +6333,14 @@ window.DOCS_INDEX = {
     {
       "id": "note-understanding-views-n6-council",
       "path": "docs/notes/understanding-views-n6-council.md",
-      "title": "N6 council on ADR-0038: Security BLOCK; Data PASS; Simplifier and Tech Lead conditions",
+      "title": "N6 council on ADR-0038: PASS after Security re-review of a03fb622",
       "type": "decision-note",
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "understanding-views",
       "reviewBy": "2027-03-15",
       "reviewSuggested": [],
-      "summary": "N6 width-4 on ADR-0038 at 46160f21. Security hard BLOCK (path confinement, junctions, skip fail-closed, DropRelativePaths on the wire). Data PASS with projection-join majors. Simplifier PASS-WITH-CONDITIONS. Tech Lead conditions on skip binding. Authors do not self-clear. N7 not opened.",
+      "summary": "N6 width-4 on ADR-0038. First pass: Security BLOCK. Repair a03fb622. Re-review: Security PASS, Tech Lead PASS. Data PASS and Simplifier PASS-WITH-CONDITIONS already held. Authors did not self-clear. ADR stays proposed. N7 (toolkit spike) is unblocked.",
       "tags": [
         "decision-note",
         "addendum-c",
@@ -6364,7 +6364,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "dd2c0ad0579d25d061505a65ab472e5f356e7f1aae12b18aba8ac04ea2fea1c1"
+      "sourceSha256": "54995978c362c7d4388ece73d264d03af8cec27c29f02b1347cc768c407c6445"
     },
     {
       "id": "note-understanding-views-owner-n1-disposition",
@@ -8391,7 +8391,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "09d2a81783ac8c59843d05176863ae7e1a4624151acc123abae080a7542bfca0"
+      "sourceSha256": "cdf030c7715792225138b2583ad0e278bb0240b9c663cc85626c4e5c2b68994e"
     },
     {
       "id": "coordination-understanding-views-kickoff",
@@ -19099,5 +19099,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ba9b847327b4f0cea41b7cebd89cdf1fd9b25e1c825f85370213187ed386bec3"
+  "graphSha256": "fce42e728671a4798d63e32897fd835103e1579900d6d59b21c53fca580d99e9"
 };
