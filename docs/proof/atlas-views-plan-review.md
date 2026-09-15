@@ -649,8 +649,10 @@ bounded-repair/Conductor join is dependency-correct; native and foundation gates
   removal; no relation stub is expected for that Sequence filtering observation.
 - The 16 hard states, Sequence/Activity switch, source-bound inspector, refusal copy,
   selection invalidation and source receipt/Back behavior are present in rendered
-  controls. The five negative controls cover hidden page, corrupt binding, missing
-  recovery, removed filtered-boundary evidence and expired restore.
+  controls. The five planted negative controls cover dropped graph fact, corrupt
+  inspector binding, missing canceled-state recovery, hidden page and removed
+  filtered-boundary evidence. Expired restore is a normal refusal case, not a planted
+  fault.
 
 ### E2 architecture harness
 

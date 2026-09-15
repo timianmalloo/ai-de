@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T22:14:07Z",
+  "generated": "2026-09-15T22:15:25Z",
   "audit": [
     {
       "actor": null,
@@ -19027,6 +19027,48 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "ce4f913ac5179459ba5805263ad443bad5e911d8",
         "short": "ce4f913ac",
+        "branch": "review/atlas-views-design",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KJ78GNFRAM58BG2GWMW32X",
+      "shortname": "atlas-mock-receipt-correction",
+      "datetime": "2026-09-15T22:15:25Z",
+      "session": "codex-atlas-views-review",
+      "prompt": "Correct the E1 receipt transcription: list the five planted negative controls from review-checks.json and classify expired restore as a normal refusal case.",
+      "summary": "Corrected the E1 R-M receipt to name drop-graph-fact, corrupt-inspector-binding, remove-canceled-recovery, hide-page and erase-filter-boundary as the five planted controls. Expired restore is now accurately described as a normal refusal case. Clearance is unchanged.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": "codex-sol-plan-review",
+      "artifacts": [
+        "docs/proof/atlas-views-plan-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "correction"
+      ],
+      "outcome": "success",
+      "goal": "Correct one evidence-classification sentence in the frozen R-M receipt.",
+      "done_when": "The receipt exactly separates the five planted E1 faults from the normal expired-restore refusal case.",
+      "tier": "T1",
+      "main_calls": 2,
+      "main_budget": 3,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T22:15:02Z",
+      "duration_seconds": 23.0,
+      "supersedes": "al-01M2KJ4W0NF5BXN8PNHHD8B7T1",
+      "git": {
+        "sha": "fb5c5496c681c1aaf3cc36ceb707babc5bdac691",
+        "short": "fb5c5496c",
         "branch": "review/atlas-views-design",
         "pushed": null
       }
