@@ -11770,6 +11770,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "ff71dbe76956b39245cdb544b102aa05b5dda15741ff768a2fe8e9065fedfebd"
     },
     {
+      "id": "investigation-recursive-surface-ownership",
+      "path": "docs/investigations/recursive-surface-ownership.md",
+      "title": "Recursive surface ownership parser review block",
+      "type": "investigation",
+      "status": "complete",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Reproduces and traces five independent parser failures on author commit 18a4a19f, records the necessary and sufficient causes, and defines the same-scope repair that preserves live section 2 header reuse and exact surface-token jurisdiction.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "parser",
+        "verification"
+      ],
+      "links": [
+        {
+          "to": "proof-recursive-surface-ownership-author",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "adb50226c350725f59d0554f4a9c86b1beb1167e87619b1533fdce0626cc93a2"
+    },
+    {
       "id": "investigation-redraw-isolation",
       "path": "docs/investigations/redraw-isolation.md",
       "title": "Investigation — redraw isolation and UI jitter",
@@ -16465,6 +16499,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "ab031bc9e534075c87f21ec25b47dd9e075de303954c4c51ee782ef3009e772f"
     },
     {
+      "id": "proof-recursive-surface-ownership-author",
+      "path": "docs/proof/recursive-surface-ownership-author.md",
+      "title": "Recursive surface ownership: author proof",
+      "type": "proof-pack",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "recursive surface-ownership gate authoring",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Records red-first, mutation, temporary-filesystem, CLI, and live-register evidence for the recursive Workbench surface-ownership gate. The author base remains honestly red only for ProseView; the read-only Ruling 114 Conductor register is green at 17 of 17.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "python",
+        "verification"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6e7bfcc4ebaa673a7ff2456ae0ef8e53427b383c788196ab0afecdf0eba6db7d"
+    },
+    {
       "id": "proof-recursive-surface-ownership-plan-review",
       "path": "docs/proof/recursive-surface-ownership-plan-review.md",
       "title": "Recursive surface ownership: independent plan review",
@@ -16494,6 +16558,40 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "7f5d0fd0ec8cd33617414f7ed9112a21c331a035ae4859e272aa94234c2e6b57"
+    },
+    {
+      "id": "proof-recursive-surface-ownership-repair",
+      "path": "docs/proof/recursive-surface-ownership-repair.md",
+      "title": "Recursive surface ownership parser repair proof",
+      "type": "proof-pack",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Records failing-first and green evidence for the five independent parser findings, the expanded relevance boundary, and the unchanged real-register outcomes. Independent acceptance remains open.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "python",
+        "verification"
+      ],
+      "links": [
+        {
+          "to": "investigation-recursive-surface-ownership",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-recursive-surface-ownership-author",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d9b5e5d3bdd5ff4a18a765bb84e12fb75bb9be1a046542c2b9a23ca4bb164acc"
     },
     {
       "id": "proof-s2-settings-and-sentinels",
@@ -18798,5 +18896,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "2411013d0680a27cda11fe7676a0166f8d61606168ca15469b891e314dfdbfcb"
+  "graphSha256": "8972c01f52a5d7fa940c81ef68ff9390d624f0544829c3a6cef829fb56a997ba"
 };
