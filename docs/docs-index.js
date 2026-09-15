@@ -8224,6 +8224,34 @@ window.DOCS_INDEX = {
       "sourceSha256": "55bf5b1e116bcd69a8ddb05ee1c3fd879b7a287f3575aad6b2da08a5f54edca5"
     },
     {
+      "id": "coordination-atlas-views",
+      "path": "docs/coordination/atlas-views.md",
+      "title": "Codex Atlas E1 and E2 coordination",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Separate E1/E2 lanes behind shared authority, foundation and native-proof gates.",
+      "tags": [
+        "atlas",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "plan-atlas-views",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "166408cd2c8aa7f61c16599c0976fc1fb31130e33de681387271c7762cbdbdc3"
+    },
+    {
       "id": "defect-classes",
       "path": "docs/lessons/defect-classes.md",
       "title": "Defect-class register",
@@ -9852,6 +9880,41 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "1e69075fe508c573e0487e1a1ae1973dbedc4331d09eecd65d4981e8cac3a590"
+    },
+    {
+      "id": "plan-atlas-views",
+      "path": "docs/plans/atlas-views.md",
+      "title": "Atlas E1 behavior and E2 architecture views execution graph",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "User-directed E1 Sequence/Activity and E2 domain/layer/Azure programme. Grounding is admitted; implementation requires exact contracts, grants and independent gates.",
+      "tags": [
+        "atlas",
+        "execution-graph",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "coordination-atlas-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Nodes, dependencies, exits and oracles",
+          "mermaid": "flowchart LR\n G --> O\n O --> D1[E1-D]\n O --> D2[E2-D]\n D1 --> C\n D2 --> C\n C --> RD[R-D]\n RD --> I1[E1-I]\n RD --> I2[E2-I]\n I1 --> R1[R-I E1]\n I2 --> R2[R-I E2]\n R1 --> J\n R2 --> J\n J --> H"
+        }
+      ],
+      "sourceSha256": "46a84fc3ffdb7ca56093f16fd2e01027ef4798322d8bdf310a84d72e19857705"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -19206,6 +19269,14 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     },
     {
+      "id": "surface-coordination-atlas-views",
+      "path": "docs/coordination/atlas-views.html",
+      "title": "Atlas E1/E2 coordination",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coordination-atlas-views"
+    },
+    {
       "id": "surface-coordination-audit-gate-self-test",
       "path": "docs/coordination/audit-gate-self-test.html",
       "title": "Audit verifier self-test coordination",
@@ -19302,5 +19373,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "cdd88612eb547c1c59d7cd30ad6c280de4af5e4a93295e495173f86740d6f50d"
+  "graphSha256": "76ca3946e287c1956ddf18a6394de8c64be77c58f1a5d4e7cdfb8ef0cb019852"
 };

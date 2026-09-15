@@ -1,0 +1,158 @@
+---
+id: plan-atlas-views
+title: "Atlas E1 behavior and E2 architecture views execution graph"
+type: doc
+status: proposed
+owner: "@timianmalloo"
+tags: [atlas, execution-graph, coordination]
+links:
+  - { to: coordination-atlas-views, rel: relates-to }
+  - { to: session-contracts, rel: depends-on }
+review-by: 2026-12-15
+summary: >-
+  User-directed E1 Sequence/Activity and E2 domain/layer/Azure programme.
+  Grounding is admitted; implementation requires exact contracts, grants and independent gates.
+---
+
+# Goal and completion contract
+
+**Goal:** deliver remaining E1 Sequence/Activity and E2 domain/layer/Azure views from existing
+Atlas and repository evidence, using updated Addendum E and mockups.
+**Done when:** all five views meet agreed slice acceptance through actual native composition,
+source navigation and consistent evidence; triggered independent gates clear; Proof Packs,
+audit and coordination records are committed and handed to the serialized integrator.
+**Not in scope:** GHCP Class-view qualification or recovery repairs, Grok's Understanding Views,
+E3 comparison, E4 model enrichment, execution of analyzed code, live Azure access, new graph
+substrates, other sessions' worktrees, or ungranted main publication.
+**Tier:** T2 confirmed by Owner decision `8c9fa47cc19574f43f7c206251e19af67553b8be`. **Fan-out cap:** four including Owner and
+Conductor; grounding starts at two, then distinct E1/E2 bounded workers after scope review.
+ER remains a separate outstanding item; five-view delivery is not completion of all Addendum E E2.
+
+## Grounding and uncertainty
+
+- [Verified] Primary main grounding pin: `c46e112a924a8a0a4c86e4552af1f0e30bfa851c`.
+- [Verified] GHCP's supplied intent pin: `92e025ae8cacd0a2fc8580f865a2172c4a9bdeb4`.
+  Read `docs/specs/addendum-e-code-atlas.md` US-E6/7/8, its typed links to
+  `docs/architecture/code-atlas-proposed.md`, then `docs/design/code-atlas-e1-static-views.md`.
+  These are candidate intent, not blanket production acceptance.
+- [Verified] Current coordination layer: 11 registry patterns and effective merge drivers;
+  pack doctor: 10 PASS, 3 WARN, 0 FAIL. Warnings: python3 alias (use python), Copilot global
+  context/effort settings, graph freshness/orphans. Do not reinstall an already effective layer.
+- [Verified] Shared session fold: no current file leases; active GHCP native and integration
+  sessions and Grok lanes remain registered. Liveness is descriptive, not ownership authority.
+- [Verified] `kb-graph-and-loop-engineering` is absent: official context command returned
+  ROOT_NOT_FOUND. The referenced evidence directory is absent. Use the installed GO instructions
+  and measured local audit history; record the missing graph node as a finding, not repair scope.
+- [Verified] Local audit history shows scoped review found real environment/CLI defects and
+  re-review cleared them. Native recovery still has its own qualification boundary. This warrants
+  independent review and early seam checks; it does not justify an invented duration prediction.
+- [Flagged] Implementation foundation pin awaits GHCP's explicit acceptance/handoff; no worker
+  consumes a moving candidate as an accepted contract.
+
+## Nodes, dependencies, exits and oracles
+
+| Node | Goal and inputs | Depends on | Exit / falsifier | Tier |
+|---|---|---|---|---|
+| G | Read constitution, current peers, pinned intent and actual existing views | User assignment | Inventory cites current pins; conflicting or missing authority remains named | T1 |
+| O | Owner decides horizon, tier and contested seams | G | Recorded bounded ruling; no self-cleared reviewer veto | T2 |
+| E1-D | Separate worker reconciles Sequence/Activity spec, mocks, code and source-to-native trace | O | Every US-E6 obligation mapped; exact proposed paths/signatures; no unsupported runtime claims | T2 |
+| E2-D | Separate worker reconciles domain/layer/Azure spec, mocks, code and evidence rules | O | US-E7/8 mapped; grain, identity, provenance, unknowns and declaration semantics explicit | T2 |
+| C | Settle shared contracts and exact section-2 grants; choose accepted foundation | E1-D, E2-D, peers | No path has two writers; every cross-lane guard jointly satisfiable; new surfaces assigned | T2 |
+| R-D | Independent design/graph/UX/architecture review | C | Trigger union reviewed, falsifiable veto exits satisfied | T2 |
+| E1-I | Red-first, minimal Sequence/Activity vertical slices | R-D | Production source→model→wire→native→Source/Back proven; mutants/negative states exercised | T2 |
+| E2-I | Red-first domain, layer, Azure vertical slices | R-D | Source-backed meaning, no inferred domain truth or deployed-state claims; actual native path proven | T2 |
+| R-I | Independent implementation/native review per frozen slice | respective I | Actual results inspected, all triggered vetoes cleared; partial remains unaccepted | T2 |
+| J | Integrate dependency order, regenerate after audit, official join checks | R-I, GHCP landing | Integrated proof and actual test results; no failures beyond agreed baseline; Owner close | T2 |
+| H | Agreed serialized publication handoff | J | Candidate/base/evidence request acknowledged; no direct main push without grant | T1 |
+
+```mermaid
+flowchart LR
+ G --> O
+ O --> D1[E1-D]
+ O --> D2[E2-D]
+ D1 --> C
+ D2 --> C
+ C --> RD[R-D]
+ RD --> I1[E1-I]
+ RD --> I2[E2-I]
+ I1 --> R1[R-I E1]
+ I2 --> R2[R-I E2]
+ R1 --> J
+ R2 --> J
+ J --> H
+```
+
+All arrows are data or decision dependencies. E2 does not wait for E1 behavior implementation
+unless contract grounding discovers a genuine dependency. Native shown-window tests and main
+joins are exclusive resources and always serialized. Core/Ipc, factory, Shell and shared menu
+tests are retained seams; a worker cannot silently grow into them.
+
+## Floor nodes and method
+
+Reuse Addendum E, architecture, accepted ADRs and existing mockups when they supply the needed
+contract. Each lane must state what remains valid and what needs a new artifact. New lane design
+and evidence records are required. `/specify` resolves missing functional/UX acceptance before UI;
+`/define-architecture` is used for actual new model/representation decisions; `/design-slice`
+settles the slice; `/ui-design` begins in review mode over existing views/mocks; `/implement`
+uses red-first controls; `/investigate` diagnoses observed failures before repair.
+
+Surface list, required before code: source evidence → identity/snapshot/provenance → extraction
+or existing facts → query/projection → wire → client type → native view → compute reader →
+selection/Source/Back → diagnostics/telemetry → tests → Proof Pack and audit.
+
+Testing trigger union must be computed from actual design. Expected floors: D0; D1 for projections;
+D2 for parsing/validation; D3 for composition/layer contracts; D4 for source/store integration;
+D5/D6 for query/wire; D7 for any substitute. No generated AI feature is admitted. Native UI,
+technical visualization, tokens, accessibility, incomplete/unknown/stale/error/overflow states,
+normal-path instrumentation and source-to-render consistency remain mandatory.
+
+Review lenses: Test, UML/ERM/domain, UX/IA and UX/accessibility, data, Security/Privacy where
+source/work data crosses boundaries, Distributed Systems for wire/lifetime, native/C#, SRE,
+Simplifier, Release. Author never clears its own veto. Exact triggered matrix is lane output.
+Each defect uses class → sweep → derive → prevent, existing register/allocator and an executable
+red-first control; unrelated findings go to their owner.
+
+## Optimization, budget and loop contract
+
+Naive order: all E1 grounding/design/implementation/review, then all E2 work, then join. Optimized:
+one shared authority/foundation pass; independent lane grounding and later implementation only
+after fixed shared contracts; independent review as soon as each frozen slice is ready.
+
+Cost model is **Inferred**, in normalized node units, not minutes or tokens: G=1, O=1,
+each D=2, C=1, R-D=1, each I=4, each R-I=2, J=2, H=1. T1=23; T∞=15;
+two execution lanes yield Brent bound (23−15)/2+15=19 and lower bound 15. The ceiling is eight
+units before overhead; no measured speedup is claimed. Shared contracts and desktop slots can
+erase that ceiling. Four total agents provide only two author slots. Pause completed workers
+to admit independent reviewers; Owner does not become an implementer.
+
+Initial Owner grounding budget20 calls/20min/20k tokens; E1/E2 grounding each16 calls/20min/18k
+tokens. These are circuit breakers, not acceptance tests. Convergence: every assigned criterion
+has code/mock/spec evidence, an exact gap, or a precise seam request. Stop research then.
+Implementation budgets are set after design, not guessed before file population is known.
+Context ceiling400k per worker, compact or split before reaching it.
+
+Fan-out contract: cap4; no shared authored paths; transient tool timeout/429/529 gets at most
+two retries with bounded backoff; deterministic failure invokes investigate. Join all required
+evidence, never quorum. A failed lane remains isolated while independent work continues.
+Grounding variant: unmapped acceptance obligations. Implementation variant: remaining predeclared
+slice obligations. Review variant: unresolved findings on a frozen revision. Non-decrease across
+two passes triggers re-plan with evidence; caps never clear gates.
+
+Re-plan at foundation change, newly shared file/decision edge, failed independence, scope change,
+or exhausted budget. Do not rerun optimize-graph merely for status. Planned versus actual is
+appended at each phase close: calls, exposed tokens, elapsed time, rework, boundaries and gates.
+
+## Plan review
+
+Owner grounding completed at `8c9fa47c`: five-view scope and two design lanes confirmed. Independent plan review pending. This graph authorizes bounded grounding
+only. Product implementation is held at C/R-D until accepted foundation, exact grants and
+independent design gates exist.
+
+## Grounding checkpoint actuals
+
+Owner returned19/20 calls,6m53s through commit; audit measured387seconds through close entry.
+No product tests or runtime acceptance were claimed. E1 worker uses Sol high for bounded existing
+sequence/producer mapping. E2 uses Astra high for domain/resource evidence and architecture semantics.
+Both have their own main-based worktrees and16-call design inventories. The harness refused a new
+E2 thread at its thread limit; resumed an available completed agent with a new explicit E2 role and
+task/session/worktree instead. No fourth concurrent worker was added; E2 never reviews its own work.
