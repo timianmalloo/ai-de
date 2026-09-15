@@ -239,9 +239,19 @@ public sealed class StoreReader : IDisposable
     /// chooses one: a declaration before a reference, then lowest id for determinism. A file holds
     /// many nodes and the hit needs somewhere to go, not everywhere it could go.</para>
     /// </remarks>
-    public IReadOnlyList<(string NodeId, string ScopeId, string ArtifactPath)> FilesToSearch(int limit)
+    public IReadOnlyList<(string NodeId, string ScopeId, string ArtifactPath)> FilesToSearch(int limit) =>
+        ReadFilesToSearch(limit);
+
+    /// <summary>
+    /// Same grain as <see cref="FilesToSearch(int)"/> with no silent LIMIT — the tree projection
+    /// ranks and omits, and a store cap would drop files without <c>OmittedByCap</c>.
+    /// </summary>
+    public IReadOnlyList<(string NodeId, string ScopeId, string ArtifactPath)> FilesToSearch() =>
+        ReadFilesToSearch(limit: null);
+
+    private IReadOnlyList<(string NodeId, string ScopeId, string ArtifactPath)> ReadFilesToSearch(int? limit)
     {
-        using var command = Command($"""
+        var sql = $"""
             {LatestCte}
             SELECT a.scope_id, a.artifact_path_id, MIN(a.subject) AS node
             FROM evidence_assertion_fact a
@@ -249,8 +259,10 @@ public sealed class StoreReader : IDisposable
             WHERE a.artifact_path_id <> '' AND a.predicate IN ('has_type', 'declared_in')
             GROUP BY a.scope_id, a.artifact_path_id
             ORDER BY a.scope_id, a.artifact_path_id
-            LIMIT $limit;
-            """, ("$limit", limit));
+            """;
+        using var command = limit is { } cap
+            ? Command(sql + "\nLIMIT $limit;", ("$limit", cap))
+            : Command(sql + ";");
 
         using var reader = command.ExecuteReader();
         var files = new List<(string, string, string)>();
@@ -282,6 +294,26 @@ public sealed class StoreReader : IDisposable
             """, ("$scope", scopeId));
 
         return command.ExecuteScalar() as string;
+    }
+
+    /// <summary>Every latest-generation <c>declared_at</c>, so coverage can join without a second walk.</summary>
+    public IReadOnlyList<(string ScopeId, string DeclaredAt)> AllScopeLocations()
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT a.subject, a.object FROM evidence_assertion_fact a
+            JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+            WHERE a.predicate = 'declared_at';
+            """);
+
+        using var reader = command.ExecuteReader();
+        var locations = new List<(string, string)>();
+        while (reader.Read())
+        {
+            locations.Add((reader.GetString(0), reader.GetString(1)));
+        }
+
+        return locations;
     }
 
     /// <summary>

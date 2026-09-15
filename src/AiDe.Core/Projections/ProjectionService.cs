@@ -676,6 +676,161 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
     }
 
     /// <summary>
+    /// Census join of disk-now folders and latest-generation file-artifacts.
+    /// </summary>
+    public SolutionTreeResult SolutionTree(SolutionTreeQuery query) =>
+        SolutionTree(query, omitRelativePaths: null, censusChildren: null, CancellationToken.None);
+
+    public SolutionTreeResult SolutionTree(SolutionTreeQuery query, CancellationToken cancellationToken) =>
+        SolutionTree(query, omitRelativePaths: null, censusChildren: null, cancellationToken);
+
+    internal SolutionTreeResult SolutionTree(
+        SolutionTreeQuery query,
+        IEnumerable<string>? omitRelativePaths,
+        Func<string, IEnumerable<string>>? censusChildren = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+
+        using var activity = Activity.StartActivity("aide.projection.query");
+        activity?.SetTag("projection", "solution-tree");
+        var shrinkAttempts = 0;
+
+        try
+        {
+            using var reader = store.BeginRead();
+            var files = new List<SolutionTreeProjection.JoinedFile>();
+            var joinDisclosures = new List<SolutionTreeDisclosure>();
+
+            foreach (var (nodeId, scopeId, artifactPath) in reader.FilesToSearch())
+            {
+                if (SolutionTreeProjection.IsPythonOrTypeScriptScope(scopeId)) continue;
+
+                var candidate = CandidateWithinWorkspace(reader, scopeId, artifactPath);
+                if (candidate is not null && File.Exists(candidate) && workspaceRoot is not null)
+                {
+                    var relative = SolutionTreeProjection.NormalizeRelative(
+                        Path.GetRelativePath(Path.GetFullPath(workspaceRoot), candidate));
+                    files.Add(new SolutionTreeProjection.JoinedFile(
+                        relative, nodeId, reader.ReadNodeKind(nodeId)));
+                    continue;
+                }
+
+                if (candidate is not null && Directory.Exists(candidate)) continue;
+
+                if (IsHostileArtifactPath(artifactPath) || IsFilenameOnly(artifactPath))
+                {
+                    joinDisclosures.Add(SolutionTreeProjection.Disclosure(
+                        SolutionTreeShortfallCause.UnresolvablePath,
+                        SolutionTreeProjection.NotRecordedCopy,
+                        artifactPath));
+                }
+            }
+
+            var scopes = reader.AllScopeLocations()
+                .Select(s => new SolutionTreeProjection.ScopeDeclaredAt(
+                    s.ScopeId, SolutionTreeProjection.NormalizeRelative(s.DeclaredAt)))
+                .ToList();
+
+            var projection = new SolutionTreeProjection(omitRelativePaths, censusChildren);
+            var computed = projection.Compute(
+                workspaceRoot, query, files, scopes, joinDisclosures,
+                reader.CurrentSourceRevision(), cancellationToken);
+
+            var result = ShrinkTree(projection, computed, ref shrinkAttempts);
+
+            TagSolutionTree(activity, result, shrinkAttempts);
+            activity?.SetTag("outcome", "ok");
+            return result;
+        }
+        catch (OperationCanceledException)
+        {
+            activity?.SetTag("outcome", "canceled");
+            throw;
+        }
+    }
+
+    private SolutionTreeResult ShrinkTree(
+        SolutionTreeProjection projection, SolutionTreeResult computed, ref int attempts)
+    {
+        SolutionTreeResult Pack(IReadOnlyList<SolutionTreeNode> nodes, int omitted) =>
+            new(
+                nodes,
+                computed.SkipListedDirectoriesOmitted,
+                omitted,
+                SolutionTreeProjection.FinalizeDisclosures(computed.Disclosures.ToList(), omitted),
+                computed.SourceRevision);
+
+        if (FramedCost(Pack(computed.Nodes, computed.OmittedByCap)) <= MaxFramedGraphBytes)
+        {
+            return computed;
+        }
+
+        var counter = 0;
+        var shrunk = projection.ShrinkRankedPrefix(
+            computed.Nodes,
+            computed.OmittedByCap,
+            (nodes, omitted, _) =>
+            {
+                counter++;
+                return Pack(nodes, omitted);
+            },
+            FramedCost,
+            MaxFramedGraphBytes);
+
+        attempts = counter;
+        var omitted = computed.OmittedByCap + (computed.Nodes.Count - shrunk.Count);
+        return Pack(shrunk, omitted);
+    }
+
+    private static void TagSolutionTree(Activity? activity, SolutionTreeResult result, int shrinkAttempts)
+    {
+        if (activity is null) return;
+
+        var folders = 0;
+        var files = 0;
+        var indexed = 0;
+        var unindexed = 0;
+        foreach (var node in result.Nodes)
+        {
+            if (node.Kind == SolutionTreeNodeKind.FileArtifact) { files++; continue; }
+            folders++;
+            if (node.Coverage == CensusFolderCoverage.IndexedParent) indexed++;
+            else if (node.Coverage == CensusFolderCoverage.Unindexed) unindexed++;
+        }
+
+        activity.SetTag("returned.census_folders", folders);
+        activity.SetTag("returned.file_artifacts", files);
+        activity.SetTag("returned.indexed_parent", indexed);
+        activity.SetTag("returned.unindexed", unindexed);
+        activity.SetTag("skip.omitted", result.SkipListedDirectoriesOmitted);
+        activity.SetTag("omitted.by_cap", result.OmittedByCap);
+        activity.SetTag("returned.bytes", FramedCost(result));
+        activity.SetTag("shrunk.attempts", shrinkAttempts);
+
+        if (result.Disclosures.Count > 0)
+        {
+            var causes = string.Join(',', result.Disclosures
+                .Select(d => d.Cause.ToString())
+                .Distinct()
+                .Order(StringComparer.Ordinal));
+            activity.SetTag("shortfall.causes", causes);
+        }
+    }
+
+    private static bool IsFilenameOnly(string artifactPath)
+    {
+        var n = SolutionTreeProjection.NormalizeRelative(artifactPath);
+        return n.Length > 0 && n.IndexOf('/') < 0;
+    }
+
+    private static bool IsHostileArtifactPath(string artifactPath)
+    {
+        var n = artifactPath.Replace('\\', '/');
+        return n.Contains("..", StringComparison.Ordinal) || Path.IsPathRooted(artifactPath);
+    }
+
+    /// <summary>
     /// The workspace at a distance: groups rather than nodes, for a graph too large to draw.
     /// </summary>
     /// <remarks>
@@ -1194,7 +1349,13 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
     /// those it was is an operator question, and answering it in the reply would describe the
     /// filesystem to whoever asked.
     /// </remarks>
-    private string? ResolveWithinWorkspace(Store.StoreReader reader, string scopeId, string artifactPath)
+    internal string? ResolveWithinWorkspace(Store.StoreReader reader, string scopeId, string artifactPath)
+    {
+        var candidate = CandidateWithinWorkspace(reader, scopeId, artifactPath);
+        return candidate is not null && File.Exists(candidate) ? candidate : null;
+    }
+
+    internal string? CandidateWithinWorkspace(Store.StoreReader reader, string scopeId, string artifactPath)
     {
         if (string.IsNullOrWhiteSpace(workspaceRoot)) return null;
 
@@ -1217,7 +1378,7 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
             // `..` plus an artifact path spelled with the workspace's name in another case lands
             // OUTSIDE the workspace, and folding admits it - the separator-terminated prefix test
             // above defeated by the comparison beside it. See PathComparison.
-            return candidate.StartsWith(rooted, PathComparison.ForThisFileSystem) && File.Exists(candidate)
+            return candidate.StartsWith(rooted, PathComparison.ForThisFileSystem)
                 ? candidate
                 : null;
         }
@@ -1365,6 +1526,37 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
 
         return Encoding.UTF8.GetByteCount(System.Text.Json.JsonSerializer.Serialize(
             Ipc.IpcResponse.Success(graph, Wire), Wire));
+    }
+
+    private static int FramedCost(SolutionTreeResult tree)
+    {
+        var estimate = Weigh(tree);
+
+        if (estimate * 3 <= FrameBytes) return estimate;
+
+        return Encoding.UTF8.GetByteCount(System.Text.Json.JsonSerializer.Serialize(
+            Ipc.IpcResponse.Success(tree, Wire), Wire));
+    }
+
+    private static int Weigh(SolutionTreeResult tree)
+    {
+        var bytes = 128;
+        foreach (var node in tree.Nodes)
+        {
+            bytes += Encoding.UTF8.GetByteCount(node.Path)
+                + Encoding.UTF8.GetByteCount(node.NodeId ?? "")
+                + Encoding.UTF8.GetByteCount(node.NodeKind ?? "")
+                + 96;
+        }
+
+        foreach (var disclosure in tree.Disclosures)
+        {
+            bytes += Encoding.UTF8.GetByteCount(disclosure.Message)
+                + Encoding.UTF8.GetByteCount(disclosure.Path ?? "")
+                + 48;
+        }
+
+        return bytes;
     }
 
     private static int Weigh(WorkspaceGraph graph)
