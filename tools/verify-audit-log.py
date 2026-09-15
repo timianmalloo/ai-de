@@ -35,8 +35,10 @@ Exit 0 clean, 1 on any finding.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import hashlib
 import importlib.util
+import io
 import json
 import os
 import re
@@ -224,17 +226,34 @@ def _audit_next_id():
     return module.next_id
 
 
-def _fixture_command(args: list[str], root: Path) -> subprocess.CompletedProcess[str]:
+def _fixture_environment() -> dict[str, str]:
+    """Remove every repository-local variable reported by the installed Git."""
     environment = os.environ.copy()
+    local_variables = subprocess.run(
+        ["git", "rev-parse", "--local-env-vars"], capture_output=True, text=True,
+        encoding="utf-8", errors="replace", timeout=30, check=False, env=environment)
+    if local_variables.returncode != 0:
+        raise RuntimeError(
+            "git rev-parse --local-env-vars failed: "
+            + local_variables.stderr.strip())
+    for variable in local_variables.stdout.splitlines():
+        environment.pop(variable.strip(), None)
     environment["GIT_CONFIG_GLOBAL"] = os.devnull
     environment["GIT_CONFIG_NOSYSTEM"] = "1"
+    return environment
+
+
+def _fixture_command(args: list[str], root: Path) -> subprocess.CompletedProcess[str]:
     return subprocess.run(args, cwd=root, capture_output=True, text=True, encoding="utf-8",
-                          errors="replace", timeout=30, check=False, env=environment)
+                          errors="replace", timeout=30, check=False,
+                          env=_fixture_environment())
 
 
-def self_test() -> int:
+def _self_test(run_mutants: bool) -> int:
     """Exercise the real CLI against isolated files and a real local Git HEAD."""
     failures: list[str] = []
+    cases_completed = 0
+    mutants_completed = 0
     source_path = Path(__file__).resolve()
     source = source_path.read_bytes()
     source_text = source.decode("utf-8")
@@ -261,20 +280,16 @@ def self_test() -> int:
             (entry if isinstance(entry, str) else json.dumps(entry, sort_keys=True)) + "\n"
             for entry in entries), encoding="utf-8")
 
-    def run_gate(root: Path, *arguments: str,
-                 environment: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
-        child_environment = os.environ.copy()
-        if environment:
-            child_environment.update(environment)
-        child_environment["GIT_CONFIG_GLOBAL"] = os.devnull
-        child_environment["GIT_CONFIG_NOSYSTEM"] = "1"
+    def run_gate(root: Path, *arguments: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
             [sys.executable, str(root / "tools" / "verify-audit-log.py"), *arguments],
             cwd=root, capture_output=True, text=True, encoding="utf-8", errors="replace",
-            timeout=30, check=False, env=child_environment)
+            timeout=30, check=False, env=_fixture_environment())
 
     def observe(case: str, result: subprocess.CompletedProcess[str], expected_exit: int,
                 required: tuple[str, ...]) -> None:
+        nonlocal cases_completed
+        cases_completed += 1
         output = result.stdout + result.stderr
         require(case, result.returncode == expected_exit,
                 f"expected exit {expected_exit}, got {result.returncode}; output={output!r}")
@@ -336,6 +351,12 @@ def self_test() -> int:
         observe("missing optional log accepted", run_gate(root), 0,
                 ("change-log.jsonl", "(absent)", "OK — 2 entr(ies) across 2 log(s)"))
 
+        observe("--self remains a positional path", run_gate(root, "--self"), 0,
+                ("--self", "(absent)", "OK — 0 entr(ies) across 1 log(s)"))
+
+        observe("--help remains a positional path", run_gate(root, "--help"), 0,
+                ("--help", "(absent)", "OK — 0 entr(ies) across 1 log(s)"))
+
         write_log(audit, baseline_audit + [{"id": "al-0001"}])
         observe("duplicate id rejected", run_gate(root, str(audit)), 1,
                 ("id 'al-0001' is claimed by 2 entries",))
@@ -356,8 +377,7 @@ def self_test() -> int:
         observe("invalid id rejected", run_gate(root, str(audit)), 1,
                 ("id 'bad id' is neither <prefix>-<number> nor <prefix>-<ULID>",))
 
-    if not os.environ.get("AUDIT_GATE_MUTANT"):
-        mutations = {
+    mutations = {
             "duplicate guard disabled": (
                 "duplicates = " + "{i: n for i, n in Counter(ids).items() if n > 1}",
                 "duplicates = " + "{}", "duplicate id rejected"),
@@ -388,6 +408,7 @@ def self_test() -> int:
                 '          "claimed by exactly one entry.\")\n    return 1\n\n\ndef _audit_next_id',
                 "valid default logs accepted"),
         }
+    if run_mutants:
         for mutant_name, (old, new, killing_case) in mutations.items():
             count = source_text.count(old)
             require(f"{mutant_name} mutation applied exactly once", count == 1,
@@ -404,18 +425,35 @@ def self_test() -> int:
                 for name in ("audit-log.py", "coord_ids.py"):
                     installed = REPO / "docs" / "ai-forward-pack" / "scripts" / name
                     (scripts / name).write_bytes(installed.read_bytes())
-                result = run_gate(mutant_root, "--self-test",
-                                  environment={"AUDIT_GATE_MUTANT": "1"})
-                output = result.stdout + result.stderr
+                output_stream = io.StringIO()
+                try:
+                    spec = importlib.util.spec_from_file_location(
+                        f"audit_gate_mutant_{mutants_completed}", mutant_gate)
+                    if spec is None or spec.loader is None:
+                        raise RuntimeError(f"cannot load mutant module from {mutant_gate}")
+                    module = importlib.util.module_from_spec(spec)
+                    with contextlib.redirect_stdout(output_stream), \
+                            contextlib.redirect_stderr(output_stream):
+                        spec.loader.exec_module(module)
+                        result_code = module.self_test(False)
+                    output = output_stream.getvalue()
+                except Exception as error:
+                    result_code = -1
+                    output = output_stream.getvalue() + f"mutant module error: {error!r}"
+                mutants_completed += 1
                 marker = f"SELF-TEST CASE FAILED [{killing_case}]"
-                require(mutant_name, result.returncode != 0,
+                require(mutant_name, result_code != 0,
                         f"mutant survived with exit 0; output={output!r}")
                 require(mutant_name, marker in output,
                         f"named killing oracle {marker!r} did not fail; output={output!r}")
                 require(mutant_name, "Traceback" not in output,
                         f"mutant produced a traceback instead of a named oracle; output={output!r}")
-                if result.returncode != 0 and marker in output and "Traceback" not in output:
-                    print(f"mutant rejected: {mutant_name} -> {killing_case} (exit {result.returncode})")
+                if result_code != 0 and marker in output and "Traceback" not in output:
+                    print(f"mutant rejected: {mutant_name} -> {killing_case} (exit {result_code})")
+
+    require("all semantic mutants executed",
+            not run_mutants or mutants_completed == len(mutations),
+            f"completed {mutants_completed} of {len(mutations)} configured mutants")
 
     if failures:
         print("verify-audit-log: SELF-TEST FAILED", file=sys.stderr)
@@ -423,21 +461,35 @@ def self_test() -> int:
             print(f"  - {failure}", file=sys.stderr)
         return 1
 
-    print("verify-audit-log: self-test OK — 9 fixed Git/CLI cases and 7 semantic mutants; "
-          f"source sha256 {source_hash}")
+    print(f"verify-audit-log: self-test OK — {cases_completed} fixed Git/CLI cases and "
+          f"{mutants_completed} semantic mutants; source sha256 {source_hash}")
     return 0
 
 
+def self_test(run_mutants: bool = True) -> int:
+    """Run full mutation proof by default; the private false path serves loaded mutants."""
+    if not run_mutants:
+        return _self_test(False)
+
+    marker = object()
+    inherited = os.environ.get("AUDIT_GATE_MUTANT", marker)
+    os.environ["AUDIT_GATE_MUTANT"] = "inherited-state-regression"
+    try:
+        return _self_test(True)
+    finally:
+        if inherited is marker:
+            os.environ.pop("AUDIT_GATE_MUTANT", None)
+        else:
+            os.environ["AUDIT_GATE_MUTANT"] = inherited
+
+
 def dispatch(argv: list[str]) -> int:
-    parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument("--self-test", action="store_true")
-    arguments, paths = parser.parse_known_args(argv)
-    if arguments.self_test:
-        if paths:
-            print("verify-audit-log: --self-test does not accept log paths", file=sys.stderr)
-            return 2
+    if argv == ["--self-test"]:
+        parser = argparse.ArgumentParser(add_help=False, allow_abbrev=False)
+        parser.add_argument("--self-test", action="store_true")
+        parser.parse_args(argv)
         return self_test()
-    return main(paths)
+    return main(argv)
 
 
 if __name__ == "__main__":

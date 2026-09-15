@@ -67,6 +67,55 @@ all seven named mutation receipts:
 Every replacement target was required to occur exactly once. A nonzero status counted only when the
 named oracle appeared and the output contained no traceback.
 
+## Independent BLOCK repair: ambient state and exact dispatch
+
+Independent review of commit `8d4310852b9014163174423522b888aa8d8b0086` found three self-test
+harness defects. All were reproduced before the follow-up repair:
+
+| Red case | Blocked result |
+|---|---|
+| inherited `AUDIT_GATE_MUTANT=1` | exit 0, claimed 7 mutants, printed 0 mutant rejection receipts |
+| positional `--self` | argparse abbreviation ran the self-test and exited 0 instead of checking an absent path |
+| spectator `GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE` | exit 1; fixture Git reinitialized the spectator repository and could not stage fixture paths |
+
+The spectator red run recorded unchanged HEAD, index SHA-256, porcelain status, and local config.
+The failure was still a hermeticity defect because fixture commands targeted the wrong repository.
+
+The narrow repair makes `self_test(run_mutants=True)` call an explicit private execution path.
+Mutant modules are loaded with `importlib` and call `self_test(False)` in process, so ambient
+environment state is never a recursion control. The public full path deliberately sets and restores
+`AUDIT_GATE_MUTANT`, ensuring every ordinary self-test exercises the inherited-state regression.
+Completed case and mutant counters increment from actual executions; the full path also requires the
+completed mutant count to equal the configured mutation map size.
+
+Dispatch enters argparse only when `argv` is exactly `["--self-test"]`. All other argument vectors
+go directly to the original `main(argv)`. Executable fixtures prove `--self` and `--help` remain
+ordinary absent positional paths. A direct check also proved `--other` has the same behavior.
+
+Every fixture Git and Python child receives a copied environment with all repository-local variables
+reported by the installed `git rev-parse --local-env-vars` removed. Global/system Git configuration
+is still disabled for fixture commands; local fixture identity, signing, and hook controls remain.
+
+| Green case | Result |
+|---|---|
+| inherited `AUDIT_GATE_MUTANT=1` | exit 0 in 6.11 s; 11 completed cases; 7 mutant receipts |
+| `--self`, `--help`, `--other` | each exit 0 as an absent positional path; no self-test output |
+| private spectator environment | exit 0 in 8.04 s; 11 completed cases; 7 mutant receipts |
+| spectator integrity | HEAD, index bytes, status, and local config all unchanged |
+
+- **Repaired source SHA-256:** `8964a27a3de0fd26ed4535c5c6217815a9a0ed3342526c2ef6f3cdbe12f721b3`
+- **Normal gate after A3 repair:** exit 0; 693 audit + 147 change = 840 entries; zero duplicates.
+- **Frozen ratchet after A3 repair:** exit 0; 36 gates; 9 frozen names.
+
+Additional proposed DC-104 instance text for the Conductor-owned lesson update:
+
+> A self-test recursion switch inherited through ambient environment can silently skip the proof it
+> reports, and permissive option parsing can widen a tooling-only flag into existing positional CLI
+> behavior. Use an explicit private recursion parameter, derive receipts from completed work, and
+> route only the exact new argument vector. Fixture subprocesses must also clear the complete
+> repository-local environment contract reported by the installed Git; changing the current working
+> directory alone does not isolate `GIT_DIR`, `GIT_WORK_TREE`, or `GIT_INDEX_FILE`.
+
 ## Fixed real-boundary cases
 
 The harness creates a temporary repository, disables global and system Git configuration for every

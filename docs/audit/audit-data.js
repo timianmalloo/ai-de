@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T18:23:17Z",
+  "generated": "2026-09-15T18:34:39Z",
   "audit": [
     {
       "actor": null,
@@ -17581,6 +17581,49 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "8b164757e1db9da44bfe0ec5907cd8d6a6765fa6",
         "short": "8b164757e",
+        "branch": "fix/audit-verifier-proof",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K5K1DBSNYX96MMC41ETH43",
+      "shortname": "audit-gate-self-test-block-repair",
+      "datetime": "2026-09-15T18:34:39Z",
+      "session": "codex-audit-verifier-author",
+      "prompt": "Repair independent BLOCK on 8d431085: prevent inherited AUDIT_GATE_MUTANT from skipping mutation proof, preserve exact positional argv behavior instead of argparse abbreviation, and sanitize every fixture Git and Python child using git rev-parse --local-env-vars; preserve normal audit policy and the paired ratchet commit.",
+      "summary": "Replaced ambient recursion control with explicit in-process mutant execution, actual case/mutant counters, exact self-test dispatch, and installed-Git-derived local environment scrubbing. Inherited-flag and spectator runs both pass 11 cases and 7 mutants; positional options and spectator state remain unchanged.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "codex-sol-author",
+      "artifacts": [
+        "docs/proof/audit-gate-self-test-author.md",
+        "tools/verify-audit-log.py"
+      ],
+      "tags": [
+        "audit",
+        "mutation-testing",
+        "dc-104"
+      ],
+      "outcome": "success",
+      "goal": "Repair the self-test harness so inherited state cannot skip mutants or redirect fixture Git, while only exact --self-test activates it.",
+      "done_when": "Both reviewer cases and the private spectator case reproduce red, the repaired full run reports actual 11-case/7-mutant completion, positional arguments retain baseline behavior, spectator state stays unchanged, and a narrow follow-up commit is frozen.",
+      "tier": "T1",
+      "main_calls": 10,
+      "main_budget": 8,
+      "main_over_budget": true,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T18:27:35Z",
+      "duration_seconds": 424.0,
+      "git": {
+        "sha": "8d4310852b9014163174423522b888aa8d8b0086",
+        "short": "8d4310852",
         "branch": "fix/audit-verifier-proof",
         "pushed": null
       }
