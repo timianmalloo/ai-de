@@ -15302,6 +15302,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "56dcbfeec074ea753ff0b3a0cc893aa0d3623122c7ac156afdce54071768f6fa"
     },
     {
+      "id": "proof-audit-gate-plan-review",
+      "path": "docs/proof/audit-gate-plan-review.md",
+      "title": "Independent plan review: audit gate self-test",
+      "type": "proof-pack",
+      "status": "current",
+      "owner": "@codex-sol-review",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Initial plan block and superseding PASS after the executable red-first and Ruling 119 constraints were added.",
+      "tags": [
+        "proof",
+        "audit",
+        "testing",
+        "review"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "940fa9cef7a88623184e7196ffa83facbc1d8ab3b231666b722051427148e177"
+    },
+    {
       "id": "proof-census-controls",
       "path": "docs/proof/census-controls.md",
       "title": "Proof Pack - The census controls (INV-0008 phase 6, DC-147's control, the four legacy mockups)",
@@ -19086,5 +19112,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f9e137477ec8d7508a0a2560f1abaf3e80274198e0ebdc81d70ee8357a65a3f6"
+  "graphSha256": "b1bcb393bbf4c026fd12685687518cb6ffaae8cc36a29b5b6f986721a21af151"
 };

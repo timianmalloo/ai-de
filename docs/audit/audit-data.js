@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T17:29:21Z",
+  "generated": "2026-09-15T18:11:48Z",
   "audit": [
     {
       "actor": null,
@@ -17540,6 +17540,71 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T17:29:19Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2K495Q25KRANG6BKXFTQCS7",
+      "shortname": "audit-gate-plan-review",
+      "datetime": "2026-09-15T18:11:48Z",
+      "session": "codex-audit-gate-review",
+      "prompt": "Independently review the audit verifier self-test plan under Ruling 119; require real temporary Git fixtures, canonical allocator-generated ULIDs, discriminating CLI oracles, red-first mutation evidence, and no normal-policy expansion.",
+      "summary": "Initially blocked the plan after observing that the old CLI treated --self-test as an absent positional file and exited 0. Re-reviewed a95a8182 and 11d9f8a7; the latter supplied the Owner-approved disposable-copy red sequence, seven exact mutants, fixed cases, allocator and scope boundaries. Cleared Test, Simplifier, Python, SRE and Orchestrator plan verdicts while preserving the initial BLOCK history.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/audit-gate-plan-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Independently review the audit-gate self-test plan against Ruling 119 and real verifier contracts.",
+      "done_when": "Test Architect, Simplifier, Python, SRE and Orchestrator verdicts cover D0/D1/D2/D4, fixture fidelity, CLI diagnostics and scope boundaries before author dispatch.",
+      "tier": "T1",
+      "main_calls": 9,
+      "main_budget": 6,
+      "main_over_budget": true,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T18:06:24Z",
+      "duration_seconds": 324.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 2,
+          "accepted": 2
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 1,
+          "accepted": 1
+        },
+        {
+          "persona": "python-developer",
+          "raised": 1,
+          "accepted": 1
+        },
+        {
+          "persona": "sre-systems-diagnostician",
+          "raised": 1,
+          "accepted": 1
+        },
+        {
+          "persona": "orchestrator",
+          "raised": 1,
+          "accepted": 1
+        }
+      ],
+      "git": {
+        "sha": "bbd1bece3b0f83148a66696a0e778ef2cd20235e",
+        "short": "bbd1bece3",
+        "branch": "review/audit-gate-self-test",
+        "pushed": null
+      }
     }
   ],
   "changes": [
