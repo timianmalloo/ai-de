@@ -674,6 +674,71 @@ public sealed class SolutionTreeSurfaceTests
     }
 
     [Fact]
+    public void ViewSourceFault_ShowsCouldNotOpenSource_RetryReinvokes_SelectionUnchanged()
+    {
+        var queries = new RecordingTreeQueries
+        {
+            Result = StarDto(),
+            ContentFault = new InvalidOperationException("denied"),
+        };
+
+        OnSta(() =>
+        {
+            using var shell = new WorkbenchShell(queries);
+            var window = new Window
+            {
+                Content = new ContentControl(),
+                Width = 1000,
+                Height = 640,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Left = -10000,
+                Top = -10000,
+                ShowInTaskbar = false,
+                ShowActivated = false,
+            };
+            var host = (ContentControl)window.Content;
+            var mode = new PerspectiveShell(host, shell.Hosts, () => new Grid(), shell.Announcer);
+            shell.CommandRouter = mode.Execute;
+            shell.DocumentOpening += h => mode.OnDocumentOpening(h);
+            window.Show();
+
+            try
+            {
+                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Architecture, "test");
+                Assert.True(shell.Execute("surface.show.solution-tree"));
+                var id = shell.Architecture.Service.Zones.AllSurfaces()
+                    .Single(s => s.Kind == "solution-tree").SurfaceId;
+                var surface = shell.Architecture.Adapter.SurfaceContent<SolutionTreeSurface>(id);
+                Assert.NotNull(surface);
+                surface!.Measure(new Size(480, 360));
+                surface.Arrange(new Rect(0, 0, 480, 360));
+                surface.UpdateLayout();
+                ExpandIndexed(surface.Tree);
+                window.UpdateLayout();
+
+                var file = FindItem(surface.Tree, n => n.Node.Path == "src/Program.cs");
+                Assert.True(file is not null, "file-artifact container was not generated");
+                file!.IsSelected = true;
+                surface.HandleKey(Key.Return, ModifierKeys.None);
+                PumpUntil(() => VisibleText(surface).Contains("Could not open source.", StringComparison.Ordinal));
+
+                Assert.Contains("Could not open source.", VisibleText(surface), StringComparison.Ordinal);
+                Assert.True(file.IsSelected);
+                Assert.True(queries.ContentCalls >= 1);
+                var calls = queries.ContentCalls;
+                ClickNamed(surface, "Retry");
+                PumpUntil(() => queries.ContentCalls > calls);
+                Assert.True(queries.ContentCalls > calls);
+                Assert.True(file.IsSelected);
+            }
+            finally
+            {
+                window.Close();
+            }
+        });
+    }
+
+    [Fact]
     public void FactoryRow_IsArchitectureOne_DerivedView()
     {
         var row = Assert.Single(SurfaceContentFactory.Kinds, k => k.Kind == "solution-tree");
@@ -694,7 +759,23 @@ public sealed class SolutionTreeSurfaceTests
 
         public int GraphCalls { get; private set; }
 
+        public int ContentCalls { get; private set; }
+
+        public Exception? ContentFault { get; set; }
+
         public SolutionTreeQuery? LastQuery { get; private set; }
+
+        public override Task<AiDe.Core.Projections.NodeContent> NodeContentAsync(
+            string nodeId, CancellationToken cancellationToken)
+        {
+            ContentCalls++;
+            if (ContentFault is not null)
+            {
+                return Task.FromException<AiDe.Core.Projections.NodeContent>(ContentFault);
+            }
+
+            return base.NodeContentAsync(nodeId, cancellationToken);
+        }
 
         public override Task<SolutionTreeResult> SolutionTreeAsync(
             SolutionTreeQuery query, CancellationToken cancellationToken)
@@ -805,6 +886,24 @@ public sealed class SolutionTreeSurfaceTests
 
             return null;
         }
+    }
+
+    private static void PumpUntil(Func<bool> settled, int timeoutMs = 2000)
+    {
+        var dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+        var deadline = DateTime.UtcNow.AddMilliseconds(timeoutMs);
+        while (DateTime.UtcNow < deadline)
+        {
+            dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Background);
+            if (settled())
+            {
+                return;
+            }
+
+            Thread.Sleep(20);
+        }
+
+        Assert.Fail("timed out waiting for the activate-error overlay");
     }
 
     private static void ClickNamed(DependencyObject root, string name)
