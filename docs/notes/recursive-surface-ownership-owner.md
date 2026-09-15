@@ -51,19 +51,23 @@ visual UI specification is N/A. The slice is discovery through diagnostics and e
    ends the preceding owner context.
 3. Explicit repository-relative paths are exact identities. In a grouped Path cell, a bare token
    inherits the nearest preceding explicit path's directory in that same cell. A new qualified
-   path resets that directory. A bare first token is malformed; never search all basenames.
+   path resets that directory. Under Core Ruling 113, a standalone bare filename resolves only
+   when exactly one recursively populated file has that basename; record its full relative
+   identity. Zero matches fails as unresolved; multiple matches fail naming every candidate,
+   even when another explicit row covers a candidate. Do not use basename identity afterwards.
 4. Support the existing segment-local `*` and trailing directory `/**` forms. A single star
    cannot cross a slash. Directory coverage preserves path-segment boundaries. Do not introduce
    broader glob syntax or a general Markdown parser. Relevant unsupported forms must fail with
    a diagnostic rather than masquerade as coverage.
 5. A surface-relevant malformed path row must be visible as a failure: missing delimiters or
-   code-token structure, orphan shorthand, unsupported glob form, absolute/traversing path, or
+   code-token structure, unresolved/ambiguous shorthand, unsupported glob form, absolute/traversing path, or
    absent owner context must not silently disappear. Unrelated non-surface rows remain outside
    this gate's jurisdiction. Missing section/contract and zero population fail closed.
 6. Repeated matching declarations under the same owner deduplicate. Different owners matching
    one exact discovered path are a contradiction; there is no specificity precedence that can
    silently choose one. A recorded exception cannot suppress this contradiction.
-7. UNASSIGNED uses exact repository-relative paths and nonblank reasons. It records only that
+7. UNASSIGNED uses exact repository-relative paths and nonblank reasons carrying the pending
+   request id/ruling and retirement condition, as required by Core Ruling 113. It records only that
    a decision is pending. An exception is stale when its file disappears or section 2 assigns
    it. Preserve existing decisions and obtain the prescribed handoff before changing section 2.
 
@@ -109,9 +113,25 @@ selection against the trigger union. This decision does not authorize skipping a
 
 ## Conditions and residual risk
 
-PASS-WITH-CONDITIONS for the bounded plan; T1 confirmed. Core tooling handoff and ProseView's
-ownership disposition are pending at this decision. Concurrent changes require rechecking the
+PASS-WITH-CONDITIONS for the bounded plan; T1 confirmed. Core tooling handoff is granted by
+Ruling 113 in request `req-01M2JQ113TK7HGE7YKQ4CB92GA`; ProseView's ownership disposition is
+pending request `req-01M2JQ3T5VMQWJ59Q3M0ZE420T`. Concurrent changes require rechecking the
 inventory and declarations at join. The Conductor reports the missing graph-and-loop-engineering
 evidence folder; treat that as a marked grounding gap and continue under the existing normative
 GO protocol without inventing costs or measurements. No implementation or independent acceptance
 is claimed by this note.
+
+### Amendment: Core Ruling 113
+
+Verified: the primary shared request ledger's resolution grants branch-local authoring on the
+gate and its self-test entry, requires unique-population resolution for standalone bare names,
+and requires exact exception identities with request/ruling provenance. This supersedes this
+note's initial bare-first refusal. It is a new binding coordination decision, not permission
+to infer ownership. The implementation must fixture both unique and ambiguous standalone names,
+alongside grouped shorthand and duplicate basename isolation.
+
+The grant lapses at main landing or stress-test end; section 2 changes still require a request
+to the Claude conductor and an Owner ruling. Atlas may add `Workbench/Understanding/*View.cs`;
+the second lander re-merges main and reconciles those declarations or recorded pending exceptions.
+Candidate/base SHA and main-red Rulings 108/112 remain integration conditions; this programme
+does not repair or conceal unrelated .NET failures.

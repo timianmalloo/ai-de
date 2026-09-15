@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:23:48Z",
+  "generated": "2026-09-15T14:25:41Z",
   "audit": [
     {
       "actor": null,
@@ -16333,6 +16333,29 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-09-15T14:20:29Z",
       "duration_seconds": 199.0
+    },
+    {
+      "id": "al-01M2JQB4XGFHSA2PTN53Q8QZNG",
+      "shortname": "recursive-owner-ruling113",
+      "datetime": "2026-09-15T14:25:41Z",
+      "session": "codex-surface-ownership-owner",
+      "prompt": "Handle Ruling113 reconciliation. Read primary request resolution req-01M2JQ113TK7HGE7YKQ4CB92GA: standalone bare-name allowed only unique populated filename; ambiguity fails naming both. Amend Owner O1 to honor Core grant preserving grouped row directory semantics. Need updated verdict before author. Start new design-slice audit marker; same own worktree and identity; no tool authoring. Commit note and audit updates.",
+      "summary": "Observed Core grant and superseded earlier bare-first refusal with unique populated-basename resolution followed by exact relative identity. Multiple matches fail naming all; zero unresolved. Exceptions carry pending request/ruling and retirement condition. Recorded second-lander Atlas reconciliation and integration conditions. Independent review remains required.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "GPT-6 Astra Owner",
+      "artifacts": [
+        "docs/notes/recursive-surface-ownership-owner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Reconcile bounded parser decision with binding Core Ruling113",
+      "done_when": "Owner note and explicit verdict incorporate unique standalone bare-name resolution before author dispatch",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-09-15T14:24:49Z",
+      "duration_seconds": 52.0
     }
   ],
   "changes": [
