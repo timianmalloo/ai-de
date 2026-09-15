@@ -6221,6 +6221,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "1019c9d98b854b04b2fc784cada4bdea68e34249dba7f30ffe4979e750f397b4"
     },
     {
+      "id": "note-understanding-views-n1-inventory",
+      "path": "docs/notes/understanding-views-n1-inventory.md",
+      "title": "N1 inventory — D-0 Solution/tree substrate (Architecture kinds, artifact_path_id, unindexed folders)",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "Current-state inventory for D-0. No SolutionTree/WorkspaceTree. OverviewAsync/GraphAsync are the wrong grain. artifact_path_id is assertion provenance, not an artifact dimension; several extractors do not store file paths. Existing facts cannot emit §A5 unindexed folders without a Core-side disk census. STOP-BEFORE-N5.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "inventory",
+        "D-0"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-ruling",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8f89ef429007a2435a892df2eed14e4435c4261af02c79e9f77f29da3f3ec97c"
+    },
+    {
       "id": "note-understanding-views-n2-comparables",
       "path": "docs/notes/understanding-views-n2-comparables.md",
       "title": "D-0 Solution/tree view comparables (Architecture-pane indexed artifacts)",
@@ -6253,6 +6284,45 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "5fa1011362f424dbe1caf1d90556e592360a2ee8443fbf8d39c55b3604e85060"
+    },
+    {
+      "id": "note-understanding-views-owner-n1-disposition",
+      "path": "docs/notes/understanding-views-owner-n1-disposition.md",
+      "title": "Admit a query-time Core census as D-0 unindexed substrate; skip-list omitted; Python/TS file grain disclosed not rewritten; specify may proceed",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "N0 STOP-BEFORE-N5 stands on current facts; D-0 still admitted. Unindexed folders come from a query-time Core census (not stored folder facts, not App I/O). Blast radius: specify + later one Core query; no extractor provenance rewrite; no Atlas; no main; no D-1…D-6.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "owner",
+        "D-0"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-n1-inventory",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-ruling",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-n2-comparables",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ca364ca44c5b351012336203307d689afd891098997ef12ab38d6bfc63853deb"
     },
     {
       "id": "note-understanding-views-owner-ruling",
@@ -18862,5 +18932,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "1249715c9850d09e8a0d996ff98be94ff054d3c5ff65272209eb6c541ee83525"
+  "graphSha256": "a9d5a7c97363c136813230b47c718024946e79933075bd96cbb5fb666427c69f"
 };
