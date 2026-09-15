@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T18:11:48Z",
+  "generated": "2026-09-15T18:30:10Z",
   "audit": [
     {
       "actor": null,
@@ -17602,6 +17602,71 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "bbd1bece3b0f83148a66696a0e778ef2cd20235e",
         "short": "bbd1bece3",
+        "branch": "review/audit-gate-self-test",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K5AS8TJH31K3MJ2X9PQW3P",
+      "shortname": "audit-gate-implementation-review",
+      "datetime": "2026-09-15T18:30:09Z",
+      "session": "codex-audit-gate-review",
+      "prompt": "Independently review frozen author commit 8d431085 against Ruling 119, execute self-test and normal/ratchet gates, probe argparse abbreviation and inherited mutation-control environment, and return persona vetoes without editing author source.",
+      "summary": "Blocked the frozen candidate after observing inherited AUDIT_GATE_MUTANT skip all seven mutants while reporting success and argparse abbreviation route --self into self-test. Verified the nine-case/seven-mutant normal run, canonical allocator seam, unchanged normal logic, candidate-root ratchets, compilation and isolated cleanup. Corrected a wrong-cwd ratchet run and withdrew a shared-prefix cleanup attribution after isolated disconfirmation.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/audit-gate-self-test-review.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Independently review frozen audit-gate self-test implementation against Ruling 119 and the approved plan.",
+      "done_when": "Test Architect, Python, SRE, Simplifier and Security verdicts cite observed gates, adversarial environment/CLI probes, policy scope, allocator fidelity and fixture isolation.",
+      "tier": "T1",
+      "main_calls": 9,
+      "main_budget": 12,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false,
+        "regression": true
+      },
+      "started_at": "2026-09-15T18:25:02Z",
+      "duration_seconds": 307.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 2,
+          "accepted": 0
+        },
+        {
+          "persona": "python-developer",
+          "raised": 2,
+          "accepted": 0
+        },
+        {
+          "persona": "security-identity-architect",
+          "raised": 1,
+          "accepted": 0
+        },
+        {
+          "persona": "sre-systems-diagnostician",
+          "raised": 1,
+          "accepted": 0
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 1,
+          "accepted": 0
+        }
+      ],
+      "git": {
+        "sha": "037e1427a7787c6969c9dcde1efa8a9fc38b755b",
+        "short": "037e1427a",
         "branch": "review/audit-gate-self-test",
         "pushed": null
       }

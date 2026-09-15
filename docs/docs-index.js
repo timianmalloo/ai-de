@@ -15328,6 +15328,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "940fa9cef7a88623184e7196ffa83facbc1d8ab3b231666b722051427148e177"
     },
     {
+      "id": "proof-audit-gate-self-test-review",
+      "path": "docs/proof/audit-gate-self-test-review.md",
+      "title": "Independent implementation review: audit gate self-test",
+      "type": "proof-pack",
+      "status": "blocked",
+      "owner": "@codex-sol-review",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Frozen candidate review finds an inherited-environment proof bypass and an abbreviated CLI alias.",
+      "tags": [
+        "proof",
+        "audit",
+        "testing",
+        "review"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "790fa58fa5dd7b6f6f83389b1c13a8e2f322ae0958236e45fd02380579d381e6"
+    },
+    {
       "id": "proof-census-controls",
       "path": "docs/proof/census-controls.md",
       "title": "Proof Pack - The census controls (INV-0008 phase 6, DC-147's control, the four legacy mockups)",
@@ -19112,5 +19138,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "b1bcb393bbf4c026fd12685687518cb6ffaae8cc36a29b5b6f986721a21af151"
+  "graphSha256": "72082f11e4d28893a78873d5193f0069335f18e442685e9107d0d4bd3290fa6e"
 };
