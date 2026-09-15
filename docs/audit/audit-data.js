@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T18:33:22Z",
+  "generated": "2026-09-15T19:00:28Z",
   "audit": [
     {
       "actor": null,
@@ -17557,6 +17557,50 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "40c431bd38f324832dff7d60c8e3ee2de2c41ad4",
         "short": "40c431bd3",
+        "branch": "understanding-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K729PV7V5DF1563910Y8S7",
+      "shortname": "understanding-views-n10-patterns",
+      "datetime": "2026-09-15T19:00:28Z",
+      "session": "understanding-views-n10",
+      "prompt": "N10 Patterns Expert for D-0 Solution tree. Adversary Mode. Are named patterns the right ones (Query-time join, derived menu ADR-0030, WPF TreeView, wrap VM not Presentation twin)? Any invented pattern that should be a named one? Soft veto on unjustified complexity. Write docs/notes/understanding-views-n10-patterns.md. Verdict PASS / PASS-WITH-CONDITIONS / BLOCK. Do not implement src/. Do not admit D-1. Do not join main. Do not mark the design Accepted.",
+      "summary": "PASS. Query-time join, derived menu (ADR-0030), WPF TreeView, wrap-VM-not-Presentation-twin are the right named patterns. Soft veto not raised. No BLOCK. Design stays draft. P13 wrap-not-twin is a table-row Minor. SRE still unsat. No D-1. No main.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n10-patterns.md"
+      ],
+      "tags": [
+        "N10",
+        "patterns-expert",
+        "D-0"
+      ],
+      "outcome": "success",
+      "goal": "Write N10 Patterns Expert decision note for D-0 Solution tree; verdict PASS / PASS-WITH-CONDITIONS / BLOCK; do not accept the design",
+      "done_when": "docs/notes/understanding-views-n10-patterns.md exists with verdict, named patterns, and any BLOCK; that note committed; design stays draft",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "persona_yield": [
+        {
+          "persona": "patterns-expert",
+          "raised": 1,
+          "accepted": 0
+        }
+      ],
+      "git": {
+        "sha": "ac584d9b08b3bf1a085aaf99f3454faf83e45911",
+        "short": "ac584d9b0",
         "branch": "understanding-views",
         "pushed": null
       }
