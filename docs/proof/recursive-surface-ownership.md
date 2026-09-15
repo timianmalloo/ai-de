@@ -64,4 +64,23 @@ DC-118 control half (b): the scan's root, recursion, suffix set and exceptions m
 
 ## Completion state
 
-Implementation, frozen candidate review and final join: pending. No full-green, main-integration or final acceptance claim is made by this intermediate proof.
+Implementation candidate `18a4a19f` is independently BLOCKED; repair, re-review and final join are pending. No full-green, main-integration or final acceptance claim is made by this intermediate proof. Reviewer reports five concrete parser counterexamples despite the passing author self-test. Owner O7 admits a bounded investigation and repair; this does not clear the independent veto.
+
+## Mandatory runtime receipts
+
+Owner O6 admitted one non-updating `python tools/verify-test-run.py` because the mandatory join runner requires runtime receipts in this new worktree. Observed exit 0: App 1,024 executed and passed; Core 2,719 executed and passed. Core reports 2,720 total, with one NotExecuted test: `AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched`. The existing `tools/expected-test-counts.json` minimum is 2,719; no baseline was edited. This is 3,743 executed tests, not a claim that every discovered test executed.
+
+The run used Conductor HEAD `234af00ce0942ba73809ea1aa78d5cf3fdf7a261`. Source tree `0926cff7e383574cc05e7224e70497352dca6198` and tests tree `f0a4813e8b3a03f6b8cce49b9d585109d2be0072` match main. `git diff main -- src tests` was empty. The unchanged terminal-host receipt gate then passed all five exit paths: window close, owner exit, owner killed, tab close, and child exit returning to zero headless hosts.
+
+Ignored runtime files remain in the retained Conductor worktree; they are not claimed as committed artifacts:
+
+| Receipt | SHA-256 |
+|---|---|
+| `artifacts/test-results/AiDe.App.Tests.trx` | `413018b9cc52f61cdcbf5768f818d3c469a09903f90c63c7375525ac5b1de0d6` |
+| `artifacts/test-results/AiDe.Core.Tests.trx` | `477490f36ef6278daf2ec5acf8625be7c451195ca1cb101d593d73400b594b14` |
+
+## Frozen author receipt
+
+Author commit `18a4a19f82eff6130c9938bdf401539cd2a8944f` contains gate blob `0f53658b30857222d8207b9b6fdfe706039b6e8b`. Conductor independently checked the full base, plan and blob identities against Git. The author proof records 22 observed baseline failures, final self-test exit 0, six killed mutants and the Ruling 114 population result of 17/17. Independent implementation review remains the acceptance boundary; a reported result is not promoted solely by citation.
+
+The author's audit records 981 measured seconds, 47 calls against a 35-call estimate; final handoff reports 58 calls including later status and completion work. This overrun is a planning defect, not a raised budget. Tokens are not recorded. The author also reports its commit hook lacked `AGENT_SESSION`; separately granted/checked leases do not prove commit-time enforcement. This repeats the identity-order defect already recorded above and in DC-088. Conductor joins must set identity before their first mutation.

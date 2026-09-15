@@ -8196,7 +8196,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f45b9723e7235ad05657bf0fddc01d06918b10e84174160c6ebe5d3e95af85a8"
+      "sourceSha256": "474ab4ed8fb4a325f9292c5ee1e377108da955a6631fa433140e35478ec9ce66"
     },
     {
       "id": "design-session-profiler",
@@ -10020,9 +10020,14 @@ window.DOCS_INDEX = {
           "kind": "flowchart",
           "title": "Execution graph",
           "mermaid": "flowchart LR\n G --> O --> P --> A --> R --> J\n G --> P"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Material-evidence re-plan: independent parser veto",
+          "mermaid": "flowchart LR\n R[Review BLOCK] --> I[Investigate: reproduce five cases] --> A2[Bounded same-author repair] --> R2[Independent review] --> J[Join]"
         }
       ],
-      "sourceSha256": "bd1792f9d53bf7fb60dfc9b8f36f63b440e136f6fa6b0bc33e241c00d529087b"
+      "sourceSha256": "44418d38ef3f3f7bad3a1b2cab9d6ec3c6bf058b41bbae6bf0cec611cc4eb355"
     },
     {
       "id": "plan-ui-and-windowing",
@@ -16457,7 +16462,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c3c48429dae124049699aa5f93adecf13f29a9ca6d79434cd289518ffe2540f0"
+      "sourceSha256": "ab031bc9e534075c87f21ec25b47dd9e075de303954c4c51ee782ef3009e772f"
     },
     {
       "id": "proof-recursive-surface-ownership-plan-review",
@@ -18793,5 +18798,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "e0d2ab5cfc672d288f86b073f7830b43769d9dd3adb4cfdecd8ce5710bb12b4e"
+  "graphSha256": "3993734f7b909232870c73e6b8d64a573487d0a2a4ed75f6b657888d299fd505"
 };

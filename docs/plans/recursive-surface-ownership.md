@@ -39,4 +39,21 @@ Re-plan on a refused lease, altered ownership semantics, new shared seam, failin
 
 Grounding: normative execution-graph-optimization instructions and DC-118 control half (b). The referenced docs/knowledge/graph-and-loop-engineering directory is absent at this baseline; no graph traversal or empirical speedup from it is claimed. Audit history shows shared log merge conflicts; one serialization point is retained for registers/derived outputs.
 
-Plan gate and actual cost/evidence: pending independent review and completion; see coordination plan for live status.
+## Material-evidence re-plan: independent parser veto
+
+Independent review of `18a4a19f` reported Test/Python BLOCK: five counterexamples for heading context, missing Path header, missing row delimiters, unrelated exact non-surface rows and indented section termination. Owner O7 confirms these are existing obligations, not new policy. The author must reproduce before repairing. The independent reviewer retains its veto.
+
+```mermaid
+flowchart LR
+ R[Review BLOCK] --> I[Investigate: reproduce five cases] --> A2[Bounded same-author repair] --> R2[Independent review] --> J[Join]
+```
+
+This adds two material nodes and one rework pass; no added parallel implementer. I exit: observed failures and verified causal branches with disconfirmation. A2 exit: five red-to-green oracles plus all existing tests. R2 exit: independent Test/Python clearance, Simplifier/SRE results, original regression evidence retained. J is unchanged. Unresolved reproduced counterexamples must decrease from five to zero; two nondecreasing passes trigger diagnosis, not acceptance. Investigation budget is 12 calls/10 minutes, Inferred; token usage remains not recorded. No cost or speedup benefit is asserted for rework. The added boundary preserves the investigator/repair decision and independent hard veto. User authorization covers routine repair; O7 confirms scope and does not waive a reviewer veto.
+
+## Planned versus actual
+
+G, O and P completed: Core Rulings 113/114 resolve the tooling grant and the only newly discovered assignment gap; Owner confirmed T1; independent Test/Simplifier/Python/SRE plan receipts are recorded in the programme proof. A completed at `18a4a19f`: 22 red-first failures and six killed mutants are recorded by the author. R is evaluating that frozen commit; J remains dependent on its verdict.
+
+One author preserved the planned dependency spine. Model allocation: Astra Owner and Conductor for scope and decisions; Sol with high reasoning for the bounded Python author and independent adversarial reviewer. No second implementer or unnecessary extra lane was created. Author actual: 981 measured seconds at its audit close, final reported 58 calls versus 35 planned. This is an estimate overrun; it does not authorize more scope. Token cost is not recorded. Plan reviewer actual: 443 seconds, 25/25 calls.
+
+Material evidence added a required join prerequisite: fresh-worktree mandatory gates require .NET runtime receipts despite no .NET changes. Owner O6 authorized a single non-updating receipt run. It completed with 3,743 executed tests passing, one existing nonexecuted test, unchanged baselines, and five terminal-host paths passing. This closes the observed receipt gaps without weakening the join. The global stranded-audit finding remains a peer coordination dependency, not permission to modify another session's records.
