@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 103 types, 462 members, 71% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 103 types, 463 members, 71% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**103 public types · 462 public members · 71% documented.**
+**103 public types · 463 public members · 71% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1474,6 +1474,7 @@ Architecture Solution tree: WPF TreeView over `SolutionTreeAsync`.
 | `void ShowLoading()` | **(gap)** |
 | `void ShowNoWorkspace()` | **(gap)** |
 | `void ShowError(string _)` | **(gap)** |
+| `void ShowActivateError(NodeViewKind kind)` | View source / Reveal failed on that surface's overlay. Retry re-raises the last activate. Tree selection is not changed. |
 | `void MarkStale()` | **(gap)** |
 | `void Show(SolutionTreeResult result)` | **(gap)** |
 
