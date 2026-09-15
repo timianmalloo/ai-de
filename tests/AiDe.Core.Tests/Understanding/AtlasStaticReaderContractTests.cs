@@ -110,23 +110,74 @@ public sealed class AtlasStaticReaderContractTests(ITestOutputHelper testOutput)
     }
 
     [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
+    [InlineData(true, false)]
+    [InlineData(false, false)]
+    [InlineData(true, true)]
     [SupportedOSPlatform("windows")]
     [Trait("Platform", "Windows")]
     [Trait("Qualification", "FrozenLegacy")]
-    public async Task GenuineFrozenPeerPreservesSelectAndRestoreCompatibility(bool legacyServer)
+    public async Task GenuineFrozenPeerPreservesSelectAndRestoreCompatibility(bool legacyServer, bool expectPeerFailure)
     {
         using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(90));
-        var root = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..",
-            ".artifacts", "owner78-core-metadata"));
-        var frozen = Environment.GetEnvironmentVariable("ATLAS_FROZEN_LEGACY_DIRECTORY")
-            ?? Path.Combine(root, "legacy-peer-qualified-bin");
+        var repository = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
+        var root = Path.Combine(repository, ".artifacts", "atlas-legacy-qualification");
+        Directory.CreateDirectory(root);
+        using var fixtureManifest = JsonDocument.Parse(await File.ReadAllTextAsync(Path.Combine(repository,
+            "tests", "AiDe.Core.Tests", "fixtures", "AtlasLegacyV1", "manifest.json"), deadline.Token));
+        var pair = fixtureManifest.RootElement.GetProperty("canonicalCandidate");
+        var status = pair.GetProperty("status").GetString();
+        Assert.Contains(status, new[] { "QualificationOnly", "Approved" });
+        var preparation = Path.Combine(root, "prepared-" + Guid.NewGuid().ToString("N"));
+        var execution = Path.Combine(repository, ".artifacts", "lp-" + Guid.NewGuid().ToString("N"));
+        var prepare = new ProcessStartInfo("pwsh")
+        {
+            WorkingDirectory = repository, UseShellExecute = false, RedirectStandardOutput = true,
+            RedirectStandardError = true, CreateNoWindow = true
+        };
+        foreach (var argument in new[] { "-NoProfile", "-NonInteractive", "-File",
+            Path.Combine(repository, "tools", "materialize-atlas-legacy-peer.ps1"),
+            "-Mode", status == "Approved" ? "Approved" : "Qualify", "-OutputRoot", preparation,
+            "-ExecutionRoot", execution })
+            prepare.ArgumentList.Add(argument);
+        using (var builder = Process.Start(prepare) ?? throw new InvalidOperationException("Fixture preparation did not start."))
+        {
+            var buildOutput = builder.StandardOutput.ReadToEndAsync();
+            var buildError = builder.StandardError.ReadToEndAsync();
+            try
+            {
+                await builder.WaitForExitAsync(deadline.Token);
+                Assert.Equal(0, builder.ExitCode);
+            }
+            finally
+            {
+                if (!builder.HasExited)
+                {
+                    builder.Kill(entireProcessTree: true);
+                    await builder.WaitForExitAsync();
+                }
+                await File.WriteAllTextAsync(preparation + ".stdout.log", await buildOutput);
+                await File.WriteAllTextAsync(preparation + ".stderr.log", await buildError);
+            }
+        }
+        var frozen = execution;
+        using var preparationReceipt = JsonDocument.Parse(await File.ReadAllTextAsync(
+            Path.Combine(preparation, "preparation.json"), deadline.Token));
+        var copied = preparationReceipt.RootElement.GetProperty("runtimeClosure");
+        Assert.NotEqual(0, copied.GetArrayLength());
+        foreach (var item in copied.EnumerateArray())
+        {
+            var relative = item.GetProperty("path").GetString()!;
+            Assert.DoesNotContain(".artifacts", relative.Split(Path.DirectorySeparatorChar));
+            var path = Path.GetFullPath(Path.Combine(execution, relative));
+            Assert.StartsWith(execution + Path.DirectorySeparatorChar, path, StringComparison.OrdinalIgnoreCase);
+            Assert.Equal(item.GetProperty("sha256").GetString(),
+                Convert.ToHexString(SHA256.HashData(await File.ReadAllBytesAsync(path, deadline.Token))));
+        }
         var binary = Path.Combine(frozen, "AiDe.Core.Tests.dll");
-        Assert.True(File.Exists(binary), "The genuine pre-change peer must be frozen before this qualification.");
-        Assert.Equal("6353AE7ED46937FE3D47CB510BD41D192DA53C0F7E38EF5F5731726E8EB1A0DB",
+        Assert.True(File.Exists(binary), "The repository-owned fixture must be prepared before qualification.");
+        Assert.Equal(pair.GetProperty("coreSha256").GetString(),
             Convert.ToHexString(SHA256.HashData(await File.ReadAllBytesAsync(Path.Combine(frozen, "AiDe.Core.dll"), deadline.Token))));
-        Assert.Equal("641BDFADB1834748BBAF758F41508A593EEF300CB0960B286BB57C00623030DA",
+        Assert.Equal(pair.GetProperty("peerSha256").GetString(),
             Convert.ToHexString(SHA256.HashData(await File.ReadAllBytesAsync(binary, deadline.Token))));
         var controlName = "atlas-legacy-" + Guid.NewGuid().ToString("N");
         await using var control = new NamedPipeServerStream(controlName, PipeDirection.InOut, 1,
@@ -145,6 +196,10 @@ public sealed class AtlasStaticReaderContractTests(ITestOutputHelper testOutput)
         using var process = Process.Start(start) ?? throw new InvalidOperationException("Legacy peer did not start.");
         var stdout = process.StandardOutput.ReadToEndAsync();
         var stderr = process.StandardError.ReadToEndAsync();
+        Exception? primaryFailure = null;
+        Exception? cleanupFailure = null;
+        var forcedTermination = false;
+        var graceElapsed = TimeSpan.Zero;
         try
         {
             await control.WaitForConnectionAsync(deadline.Token);
@@ -153,7 +208,7 @@ public sealed class AtlasStaticReaderContractTests(ITestOutputHelper testOutput)
             string report;
             if (legacyServer)
             {
-                await output.WriteLineAsync("server".AsMemory(), deadline.Token);
+                await output.WriteLineAsync((expectPeerFailure ? "invalid-role" : "server").AsMemory(), deadline.Token);
                 var workspace = await input.ReadLineAsync(deadline.Token) ?? throw new EndOfStreamException();
                 var values = await PeerJourneyAsync(workspace, deadline.Token, true);
                 report = JsonSerializer.Serialize(values, WorkspaceOperations.Wire);
@@ -175,16 +230,68 @@ public sealed class AtlasStaticReaderContractTests(ITestOutputHelper testOutput)
             await process.WaitForExitAsync(deadline.Token);
             Assert.Equal(0, process.ExitCode);
         }
+        catch (Exception exception)
+        {
+            primaryFailure = exception;
+        }
         finally
         {
-            if (!process.HasExited)
+            try
             {
-                process.Kill(entireProcessTree: true);
-                await process.WaitForExitAsync();
+                if (!process.HasExited)
+                {
+                    var graceStarted = Stopwatch.GetTimestamp();
+                    using var grace = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                    try { await process.WaitForExitAsync(grace.Token); }
+                    catch (OperationCanceledException) when (grace.IsCancellationRequested)
+                    {
+                        forcedTermination = true;
+                        process.Kill(entireProcessTree: true);
+                        await process.WaitForExitAsync();
+                    }
+                    graceElapsed = Stopwatch.GetElapsedTime(graceStarted);
+                }
+                var streams = await Task.WhenAll(stdout, stderr);
+                await File.WriteAllTextAsync(Path.Combine(results, "stdout.log"), streams[0]);
+                await File.WriteAllTextAsync(Path.Combine(results, "stderr.log"), streams[1]);
             }
-            await File.WriteAllTextAsync(Path.Combine(results, "stdout.log"), await stdout);
-            await File.WriteAllTextAsync(Path.Combine(results, "stderr.log"), await stderr);
+            catch (Exception exception)
+            {
+                cleanupFailure = exception;
+                testOutput.WriteLine($"Peer cleanup failed: {exception}");
+            }
+            try
+            {
+                var receipt = JsonSerializer.Serialize(new
+                {
+                    legacyServer, expectPeerFailure, preparation, execution, process.Id, forcedTermination,
+                    graceMilliseconds = graceElapsed.TotalMilliseconds,
+                    trxPresent = File.Exists(Path.Combine(results, "peer.trx")),
+                    primaryFailure = primaryFailure?.ToString(), cleanupFailure = cleanupFailure?.ToString()
+                });
+                await File.WriteAllTextAsync(Path.Combine(results, "lifetime.json"), receipt);
+                testOutput.WriteLine(receipt);
+            }
+            catch (Exception exception)
+            {
+                cleanupFailure ??= exception;
+                testOutput.WriteLine($"Peer receipt write failed: {exception}");
+            }
         }
+        if (expectPeerFailure)
+        {
+            var primary = Assert.IsType<EndOfStreamException>(primaryFailure);
+            Assert.Null(cleanupFailure);
+            Assert.False(forcedTermination);
+            var childResult = System.Xml.Linq.XDocument.Load(Path.Combine(results, "peer.trx"));
+            Assert.Contains("Unknown frozen-peer role.", childResult.ToString(), StringComparison.Ordinal);
+            var thrown = Assert.Throws<EndOfStreamException>(() =>
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(primary).Throw());
+            Assert.Same(primary, thrown);
+            return;
+        }
+        if (primaryFailure is not null) System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(primaryFailure).Throw();
+        if (cleanupFailure is not null) System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(cleanupFailure).Throw();
     }
 
     [Theory]

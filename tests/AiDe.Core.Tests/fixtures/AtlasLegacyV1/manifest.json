@@ -1,0 +1,2723 @@
+{
+  "schema": 1,
+  "sourcePin": "b91d4bb5b0f59352b7f90b94e0b2733a647452dc",
+  "sourcePolicy": "Transitive six-project own-repository C#/project/embedded-template/build inputs, shared C# links and licenses; no binaries, caches or fixture corpus",
+  "archiveSha256": "4FBC05719148617AFA5D9C5D7D67B3CA5D84F0FD1294C575CBC0255941ED5D88",
+  "patchSha256": "9639153170D247C8D0587DF09502E82414280D4EA5C77E080944FF18991DE0F4",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "length": 18250,
+      "sha256": "65F15FCF24AB557F59E559AB600642D73FD91C99CE591606BC01875EE6912A90"
+    },
+    {
+      "path": ".gitattributes",
+      "length": 2841,
+      "sha256": "1DFB68D39DCAE2B8FE6CA9A749AC4CA2798BDC92B37CBE8BC5E61A8E994C2D45"
+    },
+    {
+      "path": "Directory.Build.props",
+      "length": 194,
+      "sha256": "43D0FD406351A125E58AA5282409B22E528185BAE595CD2938E1B427BC409E69"
+    },
+    {
+      "path": "Directory.Build.rsp",
+      "length": 178,
+      "sha256": "1821FC79AECD48D18A0AE1D766030ADAAC2FEF5E2D104D7A43A8629EC5E944A5"
+    },
+    {
+      "path": "Directory.Packages.props",
+      "length": 2674,
+      "sha256": "A57D2EE58BD9787119F5D71C07B956A72F986FEF30287647AABCA25212E95F64"
+    },
+    {
+      "path": "LICENSE",
+      "length": 1069,
+      "sha256": "BA3D99FB593B3947A6E46982F02267A9C9688CF3135DB507420B84B6B3086E86"
+    },
+    {
+      "path": "global.json",
+      "length": 111,
+      "sha256": "9A043B1D3955EFBB205F9DBD351E25DD0C7F060F9A9A08E03A54BA51A0971190"
+    },
+    {
+      "path": "src/AiDe.Core/AgentPlane/AcpEngineProcess.cs",
+      "length": 11914,
+      "sha256": "90F332D6CAF1463324481F62B8FC710A909C05B08F7AE4A131AA4C2D2CA08BB8"
+    },
+    {
+      "path": "src/AiDe.Core/AgentPlane/AcpJson.cs",
+      "length": 905,
+      "sha256": "CA3CD90369C39764768DE9C426EA52C11E804E3D296BA420FFB65AB702691991"
+    },
+    {
+      "path": "src/AiDe.Core/AgentPlane/AcpLaneClient.cs",
+      "length": 15333,
+      "sha256": "AE7486D977D388D06E3FC9A18F16D5BFC75FB5C0BE9B20B522B93193AEBD6A84"
+    },
+    {
+      "path": "src/AiDe.Core/AgentPlane/AcpPeer.cs",
+      "length": 32179,
+      "sha256": "F324C8F2BC848C91CE42E3D49F228180A062C100EF5297295416CE0D0748E0E1"
+    },
+    {
+      "path": "src/AiDe.Core/AgentPlane/AcpRunEventMapper.cs",
+      "length": 7492,
+      "sha256": "6293335AEA0A97FE1E34094B785D96F7C36147E31CAF69F862C21856F89C8400"
+    },
+    {
+      "path": "src/AiDe.Core/AgentPlane/EngineCatalog.cs",
+      "length": 7599,
+      "sha256": "65D244CF1C7FAA7530D5BD25DC7BFF95CBA627664308AA5D661FF72D2F15D107"
+    },
+    {
+      "path": "src/AiDe.Core/AgentPlane/GoalBlock.cs",
+      "length": 18086,
+      "sha256": "0044DB6715645546E54552E8A4E64AA57C2B3A58FDD223732825ABA7C3615C5A"
+    },
+    {
+      "path": "src/AiDe.Core/AgentPlane/GovernedLaneSource.cs",
+      "length": 13189,
+      "sha256": "D5AF50DB43FB59A0AC8A7951A20217A74E0FAC1189EA45DFDB70FD8E77F6B0BA"
+    },
+    {
+      "path": "src/AiDe.Core/AgentPlane/LaneCohort.cs",
+      "length": 7169,
+      "sha256": "01F6C66F79B426EE65FB254807803EA85EC3BA6405E32375DAB571CAD095B703"
+    },
+    {
+      "path": "src/AiDe.Core/AgentPlane/LeaseAndSeams.cs",
+      "length": 13763,
+      "sha256": "7592C78BE5E2DB110424DD93B0E51504F5D5A74E0480204D6B55000466566EE7"
+    },
+    {
+      "path": "src/AiDe.Core/AgentPlane/ProviderConfiguration.cs",
+      "length": 19124,
+      "sha256": "1E8AABA03E10952E3B911A6BB470135880FE2BAED1129B0EF4E5002E32FE0067"
+    },
+    {
+      "path": "src/AiDe.Core/AgentPlane/ProviderRegistry.cs",
+      "length": 10414,
+      "sha256": "85686339C6E66507F2A3A07345EE693925F685EA120C8AE8B457578380090CCE"
+    },
+    {
+      "path": "src/AiDe.Core/AgentPlane/RunEvent.cs",
+      "length": 8754,
+      "sha256": "44E92C6A74E2CE1111A00D2C18B0F50FECC6606E0998273ED1D1DEB9E2F00933"
+    },
+    {
+      "path": "src/AiDe.Core/AgentPlane/RunTriage.cs",
+      "length": 4904,
+      "sha256": "426C966A971A46ED2F600C77EAC7969B8C91BBF15390C9B93B99F19BE4E5A187"
+    },
+    {
+      "path": "src/AiDe.Core/AgentPlane/TerminalHostingLedger.cs",
+      "length": 4455,
+      "sha256": "C4DBD415C52DE14CD25350BD660B48B9C216FE54F0DEBABC2E45EFDAF49A6602"
+    },
+    {
+      "path": "src/AiDe.Core/AgentPlane/WorktreeProvisioner.cs",
+      "length": 14578,
+      "sha256": "00AA55B4D35DE501835AC952F27C225B694AE88F338C13F560D4D4C4178D95EE"
+    },
+    {
+      "path": "src/AiDe.Core/AiDe.Core.csproj",
+      "length": 2274,
+      "sha256": "18AC2DF8BBCAFCEE887247F01685D93ACA22CD1A925E621FC605E23767EE554C"
+    },
+    {
+      "path": "src/AiDe.Core/Compilation/CompileContract.cs",
+      "length": 4244,
+      "sha256": "33A610B20692183369B194898330851457850A2C491660C15631F56CE1368B41"
+    },
+    {
+      "path": "src/AiDe.Core/Compilation/CompileOutputValidator.cs",
+      "length": 8698,
+      "sha256": "CD2F419F4BCA539A2A6C0EFEC0FB06C1E266F18B7209166DDE4D6B1A811D95C3"
+    },
+    {
+      "path": "src/AiDe.Core/Compilation/CompilePromptAssembler.cs",
+      "length": 5933,
+      "sha256": "A54ECC25E7DAC594B3B83CCA5273FEEC6614818A83BCA03086790C763B0FBC36"
+    },
+    {
+      "path": "src/AiDe.Core/Compilation/CompileSignal.cs",
+      "length": 2978,
+      "sha256": "2354D37B02FFDB5143AF4665DEE8C474ABB20D46051E24858B39E23AE2551289"
+    },
+    {
+      "path": "src/AiDe.Core/Compilation/Envelope.cs",
+      "length": 9301,
+      "sha256": "2C74555301C3229D64243F30290B56932A5161B3061CDBFC6101EDCA59CA7AA5"
+    },
+    {
+      "path": "src/AiDe.Core/Compilation/EnvelopeEvents.cs",
+      "length": 12094,
+      "sha256": "A51E2DCF65787FCD10C0511D4A802703000A3EAF518C586C273AAF539EC42BF8"
+    },
+    {
+      "path": "src/AiDe.Core/Compilation/EnvelopePurge.cs",
+      "length": 7862,
+      "sha256": "9FBF3A0AC3A65A37041B0020AC6EBAEC1C7E5FC980C6082CA47A280A9C23FC0F"
+    },
+    {
+      "path": "src/AiDe.Core/Compilation/EnvelopeRowCodec.cs",
+      "length": 11430,
+      "sha256": "5C644688F13B72334860D04E37BF9E6902AFBC4AA2761348B8CFD48F07FB3C8E"
+    },
+    {
+      "path": "src/AiDe.Core/Compilation/EnvelopeStore.cs",
+      "length": 24210,
+      "sha256": "D33E43A2730C17CEAEBA395BA1EF05943AC43C0C1539502950CAA6BE69E5110A"
+    },
+    {
+      "path": "src/AiDe.Core/Compilation/EnvelopeStoreException.cs",
+      "length": 3082,
+      "sha256": "CED3DDCA995A86138342306972CB1FC668DD7A5D97FBF526C1E0459A66660D7B"
+    },
+    {
+      "path": "src/AiDe.Core/Compilation/PreCompile.cs",
+      "length": 9586,
+      "sha256": "C1288922048BE524DCAAF1BB6E0F31E71DAC41C564A6760300DFD599B92434AD"
+    },
+    {
+      "path": "src/AiDe.Core/Compilation/Projection.cs",
+      "length": 14044,
+      "sha256": "FD30D8A80BB86C6A9225FD50814D65EDF57B2F7C7CA9AA970FCEC2EF95D695D9"
+    },
+    {
+      "path": "src/AiDe.Core/Dispatch/BoundaryDispatcher.cs",
+      "length": 9218,
+      "sha256": "650BBE81B2865B5CACAF6D73FA5DC9B48F1581FA804871E1FC85AD3027BC5204"
+    },
+    {
+      "path": "src/AiDe.Core/Dispatch/DispatchService.cs",
+      "length": 7231,
+      "sha256": "261B8084B2660D39B43C83C0C8461D8F601C1C19737479FEB7FE4D1E622C52B3"
+    },
+    {
+      "path": "src/AiDe.Core/Dispatch/ITerminalSession.cs",
+      "length": 4525,
+      "sha256": "970A07561739D44BC4514538B020543C3B028D048DCA66AA0AA7BDF9B0904486"
+    },
+    {
+      "path": "src/AiDe.Core/Dispatch/SessionReadiness.cs",
+      "length": 5484,
+      "sha256": "0FF55446E4AC124E9677EE57D0E217922E2377AA80990534DEFCB43CE0D45E6E"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/BicepConstantFolder.cs",
+      "length": 15123,
+      "sha256": "CE1539ACA08F0F815159CE5D4D90C5674C032C83CD71F4029CD5FDC70FA10526"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/BicepExtractor.cs",
+      "length": 17745,
+      "sha256": "EAB3962C40C72084E3FA10629046455EF849440F3D3415CE7061F0D9568313B3"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/BoundedContextMap.cs",
+      "length": 13509,
+      "sha256": "7EE00C15F95EA12518E6D7FDA733750D237D509A98A8E2ED3642AF91B121A354"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/CSharpExtractor.cs",
+      "length": 82621,
+      "sha256": "E0C97FC6AA05D1A72A99BD90BA75C674BE1E1BB1DE26EE3EE0416CAD354025B8"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/CSharpProjectReader.cs",
+      "length": 35509,
+      "sha256": "6BCF2A7D2DE2B32CD21914CB9C285F703A60324D2177E4DBE93AF5A8CE8C561D"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/CSharpScopeDiscovery.cs",
+      "length": 20174,
+      "sha256": "242635ACF0A45328901EB6181CAC7FE21E480CE7F1AD13C2CB034526D06880A8"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/EfSchemaExtractor.cs",
+      "length": 14875,
+      "sha256": "FB0F8D32FFA531EEF0E802E1071EBFB6C55C96B23CD3DE33FB0B7759DD9F45D6"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/ExtractionFacts.cs",
+      "length": 2255,
+      "sha256": "23A1C772E8D4EB7FB947DEFDB8BA23486C14DFA7DC0317515414FF7A33555270"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/FixtureExtractor.cs",
+      "length": 12909,
+      "sha256": "E90DBFF96D24B343C43D78A76096CAD6629034CFBD6F1B53ECB63E969E0073A4"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/KnowledgeBody.cs",
+      "length": 11469,
+      "sha256": "2E32E415641F7F312140D0820B715CB8E52EEF9A153E8299C8A464BA93F9321B"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/KnowledgeExtractor.cs",
+      "length": 34619,
+      "sha256": "1F56E1AABC8EECEF236C52721A73C1D9A1BCCE9FCDFB373F01C933D77A658D85"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/KnowledgeFrontmatter.cs",
+      "length": 6273,
+      "sha256": "EC169D0B03A15371630634011BBDBFE43A54837DD8D09EB27297BF1178CDCFAA"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/ModuleNaming.cs",
+      "length": 2169,
+      "sha256": "6CDA6470188EA4FF23493FB0C44DE6E3B8F7DE0AA787A11D3DDC439302BF35FD"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/NodeBuiltinModules.cs",
+      "length": 4625,
+      "sha256": "5E24FDCFDAFB42FB275FF3F27B1BE48EE07E5EAF3D134AF8E6101CA25787912C"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/PythonExtractor.cs",
+      "length": 22186,
+      "sha256": "BE680F1B3C04AAC07E234B74AE381260CF03FBA089F40E3DCF8FB1FF69CCC3F5"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/PythonStandardLibrary.cs",
+      "length": 5281,
+      "sha256": "4508F9F9F4B346F5C1653A6FDCEA730E497D207500449D91A28A007FF5D627AC"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/ScopeFingerprints.cs",
+      "length": 14762,
+      "sha256": "8A77F502B3B90105DE848DE18785EF119EB16635134ACA3EAAFAA6EC5E40EC2C"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/SourceRevision.cs",
+      "length": 3285,
+      "sha256": "4457FC46BB679C7195B7566B98735E63356A7814766C17C19F766052235E37D8"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/SourceText.cs",
+      "length": 6595,
+      "sha256": "A196248165911F0FDB8D15F5743C2AEB4FFC7E98BA58AA65BDD003F83F6E5897"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/SqlSchemaExtractor.cs",
+      "length": 18046,
+      "sha256": "34B65AD9A0DDE70793BA62757DF1F0D1F566DD43EA3D0E9D37D315123A45D8A6"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/SyntaxTreeCache.cs",
+      "length": 4643,
+      "sha256": "B630AF51AE11EDCAAA6602CEB2537739541BB4F5C7DD7DE3BC1B68A7FED27783"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/TypeScriptExtractor.cs",
+      "length": 53670,
+      "sha256": "39C442C8DD66D1CABC4183AAEF24BF349A3363239D3C9A8E2A83AC0E2C912E2F"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/UnanalysedLanguages.cs",
+      "length": 5008,
+      "sha256": "E6ED5FE83EE947D29556D308DC2C3E4D570E06E951321EA268F64E779253B8E5"
+    },
+    {
+      "path": "src/AiDe.Core/Extraction/WorkspaceExtractors.cs",
+      "length": 2389,
+      "sha256": "22E680B1C5EEC0BEF7E2E0155F7DD3688B0410E2D575558C690FD8E98CC59B73"
+    },
+    {
+      "path": "src/AiDe.Core/Facts/DisclosureKinds.cs",
+      "length": 7212,
+      "sha256": "D41A4E6024032E961A2244E6EFC78057E070DE913F8AF47A8991A03138DCFB4D"
+    },
+    {
+      "path": "src/AiDe.Core/Facts/DisclosureSummary.cs",
+      "length": 7076,
+      "sha256": "0A9A8BF2788B4AAB6473EECDC42641AD0B730301E19B35572980CBF3943786F0"
+    },
+    {
+      "path": "src/AiDe.Core/Facts/Dispatch.cs",
+      "length": 2632,
+      "sha256": "F22E2FBBA42A9B66AD088D450BE5AD4899A0176F386292BA0E2AD4BCDC81FD80"
+    },
+    {
+      "path": "src/AiDe.Core/Facts/EvidenceAssertion.cs",
+      "length": 2183,
+      "sha256": "BAF98B45D177BC00F4BF6488BF1068BE4027C2712C55E5E8E7EC02DEBE721B92"
+    },
+    {
+      "path": "src/AiDe.Core/Facts/EvidencePredicates.cs",
+      "length": 5957,
+      "sha256": "E34CB4638C19A64AD82DDDF867891A7DCBC1F81744B52FA39D76944D45503632"
+    },
+    {
+      "path": "src/AiDe.Core/Health/FreshnessProber.cs",
+      "length": 2636,
+      "sha256": "42698F3137D9AD9C07F7165CD7825835E27569F0A4C2C1742A9C6C8417A30553"
+    },
+    {
+      "path": "src/AiDe.Core/Health/HealthIncidentSidecar.cs",
+      "length": 4779,
+      "sha256": "44AE86532D84EF2683374EF1211DB03B428CEF98CF704E38EFCF1653842DF1D5"
+    },
+    {
+      "path": "src/AiDe.Core/Ipc/AtlasRemoteReader.cs",
+      "length": 17790,
+      "sha256": "4E8B954D31ABF17AB27CFE0DE1DFF2E5217F6C763428967B5AFD1666C04F64F7"
+    },
+    {
+      "path": "src/AiDe.Core/Ipc/AtlasWorkspaceOperations.cs",
+      "length": 8270,
+      "sha256": "FDCDAAFEF9A6AF43A3053ED7218AD486F566A04D0DF715347A3125743063BD97"
+    },
+    {
+      "path": "src/AiDe.Core/Ipc/CapabilityRegistry.cs",
+      "length": 6984,
+      "sha256": "A6D3E43C4206232BC4780D922DF8B6AEEAAB2A2265EA00C22C8E10D162219FA5"
+    },
+    {
+      "path": "src/AiDe.Core/Ipc/DaemonEndpoint.cs",
+      "length": 14182,
+      "sha256": "536C396BF7E188541B24D9B90EF0EF6218A04E197BF7041CB97068AA51FDC021"
+    },
+    {
+      "path": "src/AiDe.Core/Ipc/IWorkspaceCommands.cs",
+      "length": 9081,
+      "sha256": "2C293FE6B66081A7C7BDF19E21B2F7E0CF2A5CE05EE656C2A0FBF80BC0836A9D"
+    },
+    {
+      "path": "src/AiDe.Core/Ipc/IWorkspaceDispatch.cs",
+      "length": 1440,
+      "sha256": "568F6F95594C1284414AF9DB74E38CD215A7B4A07A000029D87E3768A60FB02A"
+    },
+    {
+      "path": "src/AiDe.Core/Ipc/IpcClient.cs",
+      "length": 5808,
+      "sha256": "A0129DF834853D48C90BFFEB87D59B44D75F38475EBDD3B3496CD82D8E61BF18"
+    },
+    {
+      "path": "src/AiDe.Core/Ipc/IpcContract.cs",
+      "length": 9724,
+      "sha256": "EF8FFB62EC761DCB077C9B05461B93D86A61967D56C3CD46BF30252F047ED276"
+    },
+    {
+      "path": "src/AiDe.Core/Ipc/IpcFraming.cs",
+      "length": 7139,
+      "sha256": "2A3BD269280A75E17E632E1F18A40C4C6C74FB0597841A1A63DA300CAD1869DC"
+    },
+    {
+      "path": "src/AiDe.Core/Ipc/IpcPipe.cs",
+      "length": 10394,
+      "sha256": "C77C658611A4EE51334F52E9C368DE703EC2179C61818A1152E7D4DBB20173CA"
+    },
+    {
+      "path": "src/AiDe.Core/Ipc/IpcServer.cs",
+      "length": 26565,
+      "sha256": "A96B6D4CA3744EF5ECFDC65B8F1D2E3247CAC0CF0922CFCA58F459695EE93AFC"
+    },
+    {
+      "path": "src/AiDe.Core/Ipc/ScopeRefreshService.cs",
+      "length": 15878,
+      "sha256": "9F5A3A3E92E0753B2C7977CBAA55985B002567598F281CF67B66E326087549FF"
+    },
+    {
+      "path": "src/AiDe.Core/Ipc/ShellBootstrap.cs",
+      "length": 8467,
+      "sha256": "8E8A998C10CE5F6B873C19E5E124AC3BF3EE244B6442A5C90A2D6299F739B789"
+    },
+    {
+      "path": "src/AiDe.Core/Ipc/WorkspaceClient.cs",
+      "length": 12381,
+      "sha256": "DC78A712B8FFBB2F59660F843A4677DBEF9C32DDDE980819E8BA8E4A8C79B652"
+    },
+    {
+      "path": "src/AiDe.Core/Ipc/WorkspaceOperations.cs",
+      "length": 16141,
+      "sha256": "33494A81BB408D2214C52E6A3C09F71D123DA2A48FE98164B1BB08E3F6EC559E"
+    },
+    {
+      "path": "src/AiDe.Core/Mcp/McpToolGateway.cs",
+      "length": 10214,
+      "sha256": "D63F2147616EE8559BD04C2243D1B117C18FAEF10B48A31332B15A97F26CE41F"
+    },
+    {
+      "path": "src/AiDe.Core/PathComparison.cs",
+      "length": 2549,
+      "sha256": "21A717E86E28E3C0A49D1AB87543AEE68230A76E7C579761B004F3A6DF33B25C"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/CanvasGraphViewModel.cs",
+      "length": 32228,
+      "sha256": "835C56D44CBC7EA664036833931CCFD5A761808E9129EA3E17292AB1532AFB98"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Composer/AttachmentGate.cs",
+      "length": 11518,
+      "sha256": "7F2AC67CD7B9685F737C57499C54E83BAE24898306FBE410ABF9C5ADD19C2DB3"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Composer/AttachmentPolicy.cs",
+      "length": 12627,
+      "sha256": "A0B0C5C0FFF4006819A8E95E67D2A5EB3A7EFB87DFE6F22DFB0B6F4953B4C56A"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Composer/ComposerCompiler.cs",
+      "length": 20629,
+      "sha256": "9251C041A029B1FD5CE8056B8409DA95F639A4CBA72CF4818A854C1DEB503CE3"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Composer/ComposerDraft.cs",
+      "length": 16156,
+      "sha256": "56CAA9025711B0BD78457D5D360109F180B01450489018EB1B338F35D66740E9"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Composer/ComposerDraftStore.cs",
+      "length": 5187,
+      "sha256": "3EB7AEE70A8A0A3F969980677D9F4DDC2C560A2122F5C2ED0B0AB81D6B28DD68"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Composer/ComposerFieldWidget.cs",
+      "length": 4320,
+      "sha256": "65DBA011A43FBB5602D6E97F227D56583E081C5D2B8E79E75FADB5E730F06B41"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Composer/ComposerFormEngine.cs",
+      "length": 3909,
+      "sha256": "EE8236DF38B371E3F3CB3A44ABC0D036BC8812CE1BA573C4ECCB3BFAA158976D"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Composer/ComposerMessageRouter.cs",
+      "length": 15672,
+      "sha256": "668F7F2A4EF2F198E072A6565963DD534EF21EF53E2CC895E3202D3B24B4BCBD"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Composer/ComposerSendRecord.cs",
+      "length": 4788,
+      "sha256": "B92B44128095BE46E7DE4839E6124D589F4FFABB892A3381C3236004DD239F52"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Composer/ComposerTemplatePicker.cs",
+      "length": 2966,
+      "sha256": "815BEBAADBB8ADDA2FB63BD4F361FA2AE38A55B0DB7D4B640D24F34863D19435"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Composer/ComposerVocabulary.cs",
+      "length": 3280,
+      "sha256": "25D75559CFA534535CDE473CE379941B00DF737B112A53985C28690AE34B78D0"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Composer/LeaseDerivation.cs",
+      "length": 7554,
+      "sha256": "8A038B4F2FD8134938396473461BBE5B7BB832D501881F270ADDC1C03B412A97"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Composer/MentionSources.cs",
+      "length": 3579,
+      "sha256": "2E06719DCC2D02A52A3595373B4E0161A375D9A6AF821E4AFAA1660C0CB33B10"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/EvidencePaneViewModel.cs",
+      "length": 13612,
+      "sha256": "891D6211CA054A36D37E1C0A2F881AADA71627FBE36C041188AC6BDB83858782"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Sessions/ConsoleStreamModel.cs",
+      "length": 11467,
+      "sha256": "891D2300B7D5B247C9A6C4E55D9F98FB7D9CC061CCAA4E9D4036B8B237C5158F"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Sessions/NewSessionSheetViewModel.cs",
+      "length": 23494,
+      "sha256": "F1218FF4FF8878B729072D673F3275EC2A215CA97C247B762CF0997BBAFB1661"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Sessions/RunChannelSessionThread.cs",
+      "length": 10457,
+      "sha256": "B8EBCB39013E5AB79FB2CD307458AF605D4495A0D73D0E3934CC23DA1167F429"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Sessions/SessionDocumentStore.cs",
+      "length": 3944,
+      "sha256": "D41059697335797ACAFEE81F8EFFE4C0875AAB505F63243F6FE868F07F62BD1C"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Sessions/SessionDocumentViewModel.cs",
+      "length": 10535,
+      "sha256": "1B21055A5A2C9F84D1859F6769492DD8A6C916843DF1D3C54C6A4E110B752EB1"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Sessions/SessionPermissionSurface.cs",
+      "length": 3890,
+      "sha256": "1882E6CC5A308A36EF54A9340BAA69DF983E491F64A80DBCFEACD0CA3BF1B11C"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Sessions/SessionThread.cs",
+      "length": 16482,
+      "sha256": "2C4812F8C8CBE14C2C097EF5BCF28609EDFC27030809A8253943786433A4FC0F"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Sessions/SessionZonePreset.cs",
+      "length": 2566,
+      "sha256": "E6F3E9140C9D133271FB72E139D58C11E1F6AB2237828E08A40CEFC27B78B7AC"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Sessions/TaskClassVocabulary.cs",
+      "length": 4791,
+      "sha256": "6F8B6E1125EFD943D43C768C8B976E3AA2DEE9ED9B54A2A9443BC574BE8644DF"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/Sessions/ThreadAnnouncementPolicy.cs",
+      "length": 9116,
+      "sha256": "8ED4C9030F8E2744369E789A9C2705343820BF24A0547E71280316B0D075DCD7"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/WatcherBoardPaneViewModel.cs",
+      "length": 5185,
+      "sha256": "7AA226BB2D14005ADC040E9E256014DB7797F16C98593679189118F7DB8B178B"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/WatcherDaydreamPaneViewModel.cs",
+      "length": 11479,
+      "sha256": "DBA3F922283E1BA2EDBB9C82FCAC9AE881904D6A887378412CF5B77496F4E3DD"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/WatcherLeaderboardPaneViewModel.cs",
+      "length": 7333,
+      "sha256": "E4C334F206A3CEBD3FE8DD851FA20BC45D592CC02206FDD58775EEDA5D9DFC0F"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/WatcherSessionsPaneViewModel.cs",
+      "length": 9668,
+      "sha256": "50B5B0126913EC993E629253074079096D3102D46F45FD768B2464545AC71D7F"
+    },
+    {
+      "path": "src/AiDe.Core/Presentation/WorkspaceDiagnosticsViewModel.cs",
+      "length": 5076,
+      "sha256": "BFDA9F773D20411F4BEBF6D46BBFED96A20524F2558EFEEFA2B0E482EFE701C2"
+    },
+    {
+      "path": "src/AiDe.Core/Projections/ContentSearch.cs",
+      "length": 1164,
+      "sha256": "F7C1DBD76933E738CA3CD29C5C14EC89EFFB9D56AAC3CB847FAB757E9218E2D2"
+    },
+    {
+      "path": "src/AiDe.Core/Projections/ContextProjection.cs",
+      "length": 10797,
+      "sha256": "B526D6D60859C062620C40D418F18894EF3426F2C2CAE4DC17BF824661A18892"
+    },
+    {
+      "path": "src/AiDe.Core/Projections/EvidenceRead.cs",
+      "length": 3050,
+      "sha256": "C6F641A55AEA2AD873B7D64D3EFE18722D6819E036BE23B2C941517C2BC547DA"
+    },
+    {
+      "path": "src/AiDe.Core/Projections/GraphOverview.cs",
+      "length": 11144,
+      "sha256": "D2A8A156BE0FC5679E097BF429D53937FB4003286BFDB76279FE46AA90007CF1"
+    },
+    {
+      "path": "src/AiDe.Core/Projections/GraphPaths.cs",
+      "length": 7981,
+      "sha256": "2D818A162F51BFA48AC252968128C50977BEB153FA825E29E2445B2580BBEF37"
+    },
+    {
+      "path": "src/AiDe.Core/Projections/GraphProjection.cs",
+      "length": 20143,
+      "sha256": "64E1031718F87A43D16725CD2A522C96D8527591CA28BBB1C575DC6F568A16E0"
+    },
+    {
+      "path": "src/AiDe.Core/Projections/IWorkspaceQueries.cs",
+      "length": 8251,
+      "sha256": "FEFF0A9C48F3573D37F85FE1CB3AE8544E8B454DE9B64BDEC65B3634F73A11B9"
+    },
+    {
+      "path": "src/AiDe.Core/Projections/Interaction.cs",
+      "length": 1106,
+      "sha256": "D7E65918F431173FDCFDFD905FBD4791D5993C576750A676C3051433FC51A951"
+    },
+    {
+      "path": "src/AiDe.Core/Projections/JoinProjection.cs",
+      "length": 13078,
+      "sha256": "848D05D42DAFC9E3243CAF37F50DA5797EE6C9DF38C248D8258D3BFF0A0AD4A5"
+    },
+    {
+      "path": "src/AiDe.Core/Projections/NodeContent.cs",
+      "length": 2329,
+      "sha256": "7D741C0C739D7373903985BEED275D66613538BF0FFA979932781694C514F0D3"
+    },
+    {
+      "path": "src/AiDe.Core/Projections/ProjectionService.cs",
+      "length": 63859,
+      "sha256": "46152F4ED4821F8BB76926CE9F1525CB24ACFB14DF2208F371237E50F0ED539C"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/BuiltIn/benchmark.template.md",
+      "length": 915,
+      "sha256": "1C50002A1ABBBF44BD197F8FD4CEAE67ABC6EB413CD11EC2CFC632D0D3840DC0"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/BuiltIn/change-order.template.md",
+      "length": 1037,
+      "sha256": "477E2F49509ECDA684A7479FF647A82270E723E5DA6C11FC5E9A7A6B2F7DD2D8"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/BuiltIn/converge.template.md",
+      "length": 840,
+      "sha256": "6EDCB415C5047337037AD99D6BD10D98EDEC4940E58D1853C8915AB72C437291"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/BuiltIn/debug.template.md",
+      "length": 954,
+      "sha256": "6264862B44563EEC08B0F412F63A1FE9BADBDB5981749B63C00D89AFD6E0E66D"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/BuiltIn/design-decision.template.md",
+      "length": 953,
+      "sha256": "5495749432A70E15D73E57187A2ED3DC5EA8F7A4D82D364061EECCDF7974ED0E"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/BuiltIn/goal-block.template.md",
+      "length": 1296,
+      "sha256": "AA32A1AB979B1F0A4A1ED628E7C88ED67360F073EF78034F05D066772853EAB9"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/BuiltIn/investigation.template.md",
+      "length": 981,
+      "sha256": "7030EC4D88BEE1C049D265C230B9478165C5B8309B72BF12B4ACAEEC44574BD0"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/BuiltIn/launch.template.md",
+      "length": 1021,
+      "sha256": "A660D583D714CEEEB5D00B5AF96548515EE98AFDB43E057858228E7F1E0CBF67"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/BuiltIn/resume.template.md",
+      "length": 864,
+      "sha256": "6ADB0CFE58BFB87ACEB452BBCF6D9D2828BF84C847305D3830853408EF0F580E"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/BuiltIn/retro.template.md",
+      "length": 795,
+      "sha256": "7B5FD92C86C179D0CF87C94C178F72A1C515CD8A540FCF29AE48168915B6DCB8"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/BuiltIn/review.template.md",
+      "length": 875,
+      "sha256": "ED242945E3718CE6F29E4CD50DC98BA21ED58EADA124F8247D7C26B3E66D437B"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/BuiltIn/ruling-request.template.md",
+      "length": 1543,
+      "sha256": "1B971A36E4BB9482D4BB625D69CD1977201789E596B2D7DDED3C83AFF36253EB"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/SessionConfig.cs",
+      "length": 11239,
+      "sha256": "E5104533FC9E25A6199A5D67E31CC46EA02067185AB3DE25C798EC871A21D371"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/SessionConfigStore.cs",
+      "length": 12188,
+      "sha256": "BCAF24BC40065070718C3C7D74BD29EA6A34115C6B226071E0733ACF8087715A"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/SessionId.cs",
+      "length": 2860,
+      "sha256": "615B4F0E28741118EEF675AB3FEBEBBDAD5A07C31DC807E52321ECE70946BE9D"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/SessionPaths.cs",
+      "length": 4643,
+      "sha256": "D67B8B56CD36C2008B1B6FF6BE191689DFFDE05C6F8C2E5399EA7CC3F673D164"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/TemplateCatalog.cs",
+      "length": 6108,
+      "sha256": "BF98E655270C7DF9ACE5E17CBA8E5EBEF7D4FD2824A62A61BF81AD8F2CE64918"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/TemplateCompiler.cs",
+      "length": 3793,
+      "sha256": "DE688269CC56A857B869F770866FA45657797CF49B9298C20573871823A3374D"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/TemplateFrontmatterReader.cs",
+      "length": 12092,
+      "sha256": "14EB0EC3F2E6B203F0DDA3B408A1EBEACAD597F6A511A4B36CEED2B31803FD7D"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/TemplateLoader.cs",
+      "length": 9562,
+      "sha256": "68A08F89A4EEAD64A0EC00B4FB86F9ED0A6384B02FE9D733E1578939C1D82CED"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/TemplateSchema.cs",
+      "length": 7852,
+      "sha256": "363BEBEC52AB815EC460E6EDB73057E772E02CFDB4161B8B2F4C135DF216ECE8"
+    },
+    {
+      "path": "src/AiDe.Core/Sessions/TemplateSources.cs",
+      "length": 6755,
+      "sha256": "906E704D9DFB46A219556F4CEA6D0C003BFF7532CF5F245152F4E88EAA637756"
+    },
+    {
+      "path": "src/AiDe.Core/Store/NodeSearchHit.cs",
+      "length": 929,
+      "sha256": "6A591E60298DC41D5FC18B2C40800807DB4F78CA3A571CCB51B548F8C8B648C2"
+    },
+    {
+      "path": "src/AiDe.Core/Store/StoreCompactor.cs",
+      "length": 11751,
+      "sha256": "156D0E7A72C23614DAAE00242E73E86856E728F2EFF377BBF4161B8D67A44A85"
+    },
+    {
+      "path": "src/AiDe.Core/Store/StoreReader.cs",
+      "length": 36282,
+      "sha256": "E0169B9BF589A2EC356854B3022C45863810B24F325B53A0FF2C742FBEB6D65D"
+    },
+    {
+      "path": "src/AiDe.Core/Store/StoreWriter.cs",
+      "length": 12257,
+      "sha256": "2FCB0D72F7C29A37F57FDC43A532B5060F658F3201ED507E8BA25901B4B7A7F4"
+    },
+    {
+      "path": "src/AiDe.Core/Store/WorkspaceSchema.cs",
+      "length": 10213,
+      "sha256": "27EE5100165D0CD729CD90C847761D0A33A94F12240DA3EB0F2BF688D192FA65"
+    },
+    {
+      "path": "src/AiDe.Core/Store/WorkspaceStore.cs",
+      "length": 6619,
+      "sha256": "A643174FE2140AEBCFE0658D46925FA9954D88FEBA853B54E4E3B52BB2F6DDA7"
+    },
+    {
+      "path": "src/AiDe.Core/Terminal/AgentReadinessProfiles.cs",
+      "length": 11036,
+      "sha256": "E78E33027C027452CBB5E5E2BD35F23BE56D0816286699D40BBE0989A0996427"
+    },
+    {
+      "path": "src/AiDe.Core/Terminal/AgentReadinessWatcher.cs",
+      "length": 9220,
+      "sha256": "274DB7EAF433D57F925EBB32C051C1ABDF1679955EA207BD577324733DB1BD63"
+    },
+    {
+      "path": "src/AiDe.Core/Terminal/ConPtyInterop.cs",
+      "length": 18285,
+      "sha256": "86B7F549BC20F5C73E69BCCD5C616C3D47FF0970A7106E925B2AA7AFF440F590"
+    },
+    {
+      "path": "src/AiDe.Core/Terminal/ConPtyTerminalSession.cs",
+      "length": 30504,
+      "sha256": "69205E38AF326E3092DA69588F6963E968CFFB136FAC16DDCEBEDBBBBE8DDC9F"
+    },
+    {
+      "path": "src/AiDe.Core/Terminal/EnvironmentHealth.cs",
+      "length": 10414,
+      "sha256": "6F7A7BA4FE4D146FCB172BDB1992C185D4455E5A86F2049051C20E756A4F048F"
+    },
+    {
+      "path": "src/AiDe.Core/Terminal/OscParser.cs",
+      "length": 15261,
+      "sha256": "51EAD936DCB2935AEFC29890A31AFDBE1D27082A724B28633E7DA6937460C363"
+    },
+    {
+      "path": "src/AiDe.Core/Terminal/ShellIntegration.cs",
+      "length": 12018,
+      "sha256": "A474B6492BCBE0A0680E0153061FCA0E39EC5509DD42D927C1E679565F87F4F9"
+    },
+    {
+      "path": "src/AiDe.Core/Terminal/TerminalActivityState.cs",
+      "length": 3285,
+      "sha256": "2CA4404CDFC728C15AF279C5E70C29D7FAF1ECBA735D0158EA0DA84E6273D4ED"
+    },
+    {
+      "path": "src/AiDe.Core/Terminal/TerminalScreen.cs",
+      "length": 21901,
+      "sha256": "BC04DAD97D3FF3FF52CB629FE3ADD65CC76FFC2069D21FE99F0987BE418D15C4"
+    },
+    {
+      "path": "src/AiDe.Core/Terminal/VtParser.cs",
+      "length": 17677,
+      "sha256": "285B3612C8321258802EF919044DF685482DD7246450E1553F64B87C0FFE8D88"
+    },
+    {
+      "path": "src/AiDe.Core/Understanding/AtlasDirectoryEnumerator.cs",
+      "length": 15929,
+      "sha256": "C205738E09D3F512763C1BFDDD815B8A43FCFDFE36D14A175BDB466E06651D1F"
+    },
+    {
+      "path": "src/AiDe.Core/Understanding/AtlasGitMembership.cs",
+      "length": 60768,
+      "sha256": "39B90F0C555C7D75CE6C19F810136535B8FF0E6D915A05B88394936468B690BD"
+    },
+    {
+      "path": "src/AiDe.Core/Understanding/AtlasIdentity.cs",
+      "length": 3203,
+      "sha256": "ECEB7B4247F8F161DA4A9F4E2DC44E46AB778F5C0364AD6D8C049CED36B62D88"
+    },
+    {
+      "path": "src/AiDe.Core/Understanding/AtlasIdentityCodec.cs",
+      "length": 9981,
+      "sha256": "12F9B47C14B39A174656726A4BD3318E0C8AAAE18589287A2FF677AB9C8B3E0C"
+    },
+    {
+      "path": "src/AiDe.Core/Understanding/AtlasInventory.cs",
+      "length": 6178,
+      "sha256": "2CA340BAD0E024018240AA37B3401201E672E1D9578C2FB4A576F0BAFA57CF15"
+    },
+    {
+      "path": "src/AiDe.Core/Understanding/AtlasManifest.cs",
+      "length": 23054,
+      "sha256": "4386927B860B7C71E443672FCC3B3EADC7E32B79AFFAC6BEFA60A9BDBD0AE264"
+    },
+    {
+      "path": "src/AiDe.Core/Understanding/AtlasQueryContracts.cs",
+      "length": 15268,
+      "sha256": "98A124D96AA27E6F2CA2DEDD53255E186AD7840CAA852DC4779F0FFA62F4E8AC"
+    },
+    {
+      "path": "src/AiDe.Core/Understanding/AtlasQueryService.cs",
+      "length": 38428,
+      "sha256": "24E0CF1ED23EB674E68C0A2997212EBCC45C3FC2E35E088807AB7F215DB9986B"
+    },
+    {
+      "path": "src/AiDe.Core/Understanding/AtlasReadBudget.cs",
+      "length": 4949,
+      "sha256": "013EAED7803A113B360F8A50592F9F7A6E284FC33382AD0ECB5D837BB463E061"
+    },
+    {
+      "path": "src/AiDe.Core/Understanding/AtlasReadScopeIssuer.cs",
+      "length": 29240,
+      "sha256": "5D8A8B1D8F0D17B8D3591A24D9EE880BBDB462BA2F750B03C806BBBBAB82CC7A"
+    },
+    {
+      "path": "src/AiDe.Core/Understanding/AtlasReaderContracts.cs",
+      "length": 5088,
+      "sha256": "83190C5C3812155382945CF6692A82636EEC21A2004083F927C72A8E8544F2C8"
+    },
+    {
+      "path": "src/AiDe.Core/Understanding/AtlasReaderProjection.cs",
+      "length": 38058,
+      "sha256": "5C13533CA6EC83106E341691DA26644DA9D4A7CEFB65449B37E5368938139E63"
+    },
+    {
+      "path": "src/AiDe.Core/Understanding/AtlasSource.cs",
+      "length": 28774,
+      "sha256": "35894D1570D08F92BBE48A14AC7610FFFBDE83BE2338057BCD8573EAF74149A3"
+    },
+    {
+      "path": "src/AiDe.Core/Understanding/AtlasSourceBinding.cs",
+      "length": 5973,
+      "sha256": "13042E1A0C323035A65CFE86D91FF2EDAAF77A5B56AF418A92A24C7A9C0490F4"
+    },
+    {
+      "path": "src/AiDe.Core/Understanding/AtlasWorkspaceReadPolicy.cs",
+      "length": 2791,
+      "sha256": "4E9A237E2EABC9BD9CF8469173A836A5EE4AE1DFDFD98D5B45456ABD9D16ABB6"
+    },
+    {
+      "path": "src/AiDe.Core/Understanding/CSharpDeclarationObservation.cs",
+      "length": 24850,
+      "sha256": "68EC56124F71728F554F6A35970133BDA0D0E9553BB46B93B2C3517886FB5E5A"
+    },
+    {
+      "path": "src/AiDe.Core/Upgrade/DaemonInstallation.cs",
+      "length": 6560,
+      "sha256": "FC4B08FE31583461FCEB72F145771166973F762DD95F24FAE4B7CFA229BB3F32"
+    },
+    {
+      "path": "src/AiDe.Core/Upgrade/HealthGate.cs",
+      "length": 3573,
+      "sha256": "977308C51356818DCCDF33C0572DB19F68E4F183D1D88D1B60323C3E5CB0AEF6"
+    },
+    {
+      "path": "src/AiDe.Core/Upgrade/MigrationJournal.cs",
+      "length": 7217,
+      "sha256": "3FD4F25C383D39CC57F8F17FD6F1493802BFD162D6DCDC9A178A7B8B8A479FEC"
+    },
+    {
+      "path": "src/AiDe.Core/Upgrade/UpgradeCoordinator.cs",
+      "length": 8223,
+      "sha256": "28916F3C43F72F1D8998B57F283AA07C63F8F47C8BAB0866B78EBC71440BB9E6"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/AdvisoryEvaluators.cs",
+      "length": 9135,
+      "sha256": "689ADAE6CAE12E497D40EF5455F7C5F0DC807CE3D3D765825EE080A059ADE737"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/AdvisoryScoring.cs",
+      "length": 9029,
+      "sha256": "82A8A155D17FF37248F062CA41C9421FAC37B99C82C179FC8D9C43E3D9CC15F0"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/AgentProtocolDocument.cs",
+      "length": 11924,
+      "sha256": "A55A0DB0BE3D9BB93B5F81D9E90144F87B650748F8ACC7D9FFE3BE47917FD419"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/AuditLogEpisodeSource.cs",
+      "length": 8014,
+      "sha256": "464E8FD0310698879288C69397D663E60EB289B0CB858C6D2781134F5F0FFFB2"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/BoardPublisher.cs",
+      "length": 5308,
+      "sha256": "B9D59E07681428D8F34C6EB2A8059B9FDE8D267D77620C2C213A9DA8ACA16B4D"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/ClosedEpisodeScoring.cs",
+      "length": 12380,
+      "sha256": "053B6B408E1B99D813C1C2A17898F581445BB2E51DA4FB95295F1650FE0EB9CF"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/CoordinationContract.cs",
+      "length": 31275,
+      "sha256": "5198CD119D5079E91FD130774981593BD09E8D8D03D530EC3A50F4BD959CFBAA"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/CoordinationContractLog.cs",
+      "length": 11902,
+      "sha256": "C9FDB639D1F2DED724D08AAA8FFEAA25DE4010E89FE4D28E900E5EDC2E5F2F2F"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/DaydreamCandidate.cs",
+      "length": 14611,
+      "sha256": "54B72705B6F5A668EA078B30C5A664AB72324D652E752012BCFA09236A2763DF"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/DaydreamObservation.cs",
+      "length": 6693,
+      "sha256": "C678AE8AF33D51B406691AA5BF69D640D0C0E16F1EB288C849EF824C41DA4EE6"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/DaydreamReachProbe.cs",
+      "length": 7419,
+      "sha256": "18F079E43A8A17821B7BDC6E3074ECFBCCCF87331A4B277C9ACC1C256B854838"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/DaydreamRecorder.cs",
+      "length": 10725,
+      "sha256": "07A04A2506D0C6F792B5EDAE739EA52DD424C6EDC2BF3AF0E434A8AABF4C0CD2"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/DaydreamRepositoryRecord.cs",
+      "length": 16067,
+      "sha256": "6BA1DB18BD9ED2D0C644B874C73675D895582370CD14FF31F66D8BF71940341A"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/DeclaredEpisodeArtifact.cs",
+      "length": 4868,
+      "sha256": "29C3478459E210271A875A281EA3BC0610073F972A4214B4F9D763749D37CBBE"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/DeterministicSignalsDeriver.cs",
+      "length": 5553,
+      "sha256": "F022F20F237966EC51006343B727EB632BC4B573559629B8FC52596203F6BCB2"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/DisputeService.cs",
+      "length": 3748,
+      "sha256": "75CF9B25D204B8FC8C32FCCE8E81A992DB9F2812367ADFE76C494641319EF5CE"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/DreamCorpusReader.cs",
+      "length": 6583,
+      "sha256": "7F66808873766253BC1AD9120A1F7B18715B63116B3CC480C8DB47F2B2044D8D"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/EgressGate.cs",
+      "length": 1686,
+      "sha256": "B06A201529940B2466ED6E48F237CAE771E0BD267FCA0B02AB8F533B06E486BA"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/FleetAggregator.cs",
+      "length": 2355,
+      "sha256": "4215120BED6004B9FB8CDC684902185C872EF47B6A32911DBA472EA8AE4D645D"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/IngestHost.cs",
+      "length": 18158,
+      "sha256": "EADC24CB644BC8C2155A9182962DA9B4462D2B7340297B48DFF2EE987B5BFFB8"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/Leaderboard.cs",
+      "length": 19796,
+      "sha256": "9B29035D633D1582C63B30A9F76D21DD4AE98C7D6BB7C2A0C9967518AD157E42"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/LivenessProjection.cs",
+      "length": 1605,
+      "sha256": "9E0C68C30619C1226709B8CE99ED5971774390884B35E1411FA8A3108AD4A0DF"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/McpConfigWriter.cs",
+      "length": 11886,
+      "sha256": "824D25E09BCC2FBFB410A67C74CB4E3F4955F012C1059057210C0F513453E1F2"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/MessageBoard.cs",
+      "length": 7712,
+      "sha256": "B9843DFD7E1DF08DEFD24E958E2D9D58B61FC76465A570DF2D48C46F1E33E005"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/MonotonicClock.cs",
+      "length": 933,
+      "sha256": "3FACE6DB381DE90F0F876FAF4268A87EB78898D8AA129B3D4C5F11CFD4360806"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/ObservedSpan.cs",
+      "length": 1638,
+      "sha256": "D8BAFB986D420C91301AC7E6DD0FC1B9C3D824349BA143DFEE31D5F389FF7441"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/OtelSpanMapper.cs",
+      "length": 5138,
+      "sha256": "CFA085268B68BDCF5738A88266BB00E3D9FF5D34CB1FBF0F8FE1610F1C79AC21"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/OtlpReceiver.cs",
+      "length": 10127,
+      "sha256": "FA39D546BE8BE9046EFE9E36D2161CB271DC873D3BD4BCEBD5F1EFF0B53A3504"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/ProofPackVerifier.cs",
+      "length": 13424,
+      "sha256": "35CE21A7C2290B02D9FF4F93D4B9D4E3E8243B867958CBD839DFE425949E26E2"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/RegistrationPublisher.cs",
+      "length": 4483,
+      "sha256": "0BBFD1806AFDEDFBFD4733FBF9F4CA3683E87FA8207057AD618B195E46E74BCD"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/RepositoryCorrection.cs",
+      "length": 12274,
+      "sha256": "492DF16FBD5EF26A83C836374129F10EE55F7C7305839EB92F819D81E9476542"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/ScoreDispute.cs",
+      "length": 2930,
+      "sha256": "41B39C304922BDC6A7E9CBE265D882C532D3744DCFE1328DD089D52A1C1514C7"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/ScoringService.cs",
+      "length": 6307,
+      "sha256": "85CA9C9C8E1C92F859FDEA4058ABD93B82A7A26B4AA5F79598A211DD08EC94AE"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/SessionCapability.cs",
+      "length": 1690,
+      "sha256": "57467AF2291D7BB5AD792882BED3CC5C0C2C6DD6304DBE424E8F3F274CD85A42"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/SessionCoordinationEmitter.cs",
+      "length": 6599,
+      "sha256": "E5C9AF92EE2D2CDD4A96AE6E9D6E910DC7B27549B1C6D62A72D909E84AD56CC2"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/SpanIngest.cs",
+      "length": 1660,
+      "sha256": "D200A06EB6338F7E557520645F89FC7193A6C851789E380D67D04274BA6FD8F3"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
+      "length": 65511,
+      "sha256": "462188EC8116302E1B5A0FBDB1BAF01BAAB35FBC2A7449021EF3988D2E7E0816"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/StandingPublisher.cs",
+      "length": 7051,
+      "sha256": "954A53961E4C172826C3EE894A340409081A0FDADD093C595119B9F4034B7399"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/TrustedRegistrar.cs",
+      "length": 7784,
+      "sha256": "AE8B3BAAC979A87512DA8DD2492F28ADC9510D9A2C71682936B166971BD114DC"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/WatcherException.cs",
+      "length": 498,
+      "sha256": "697C60D48D5401F87A2C5A8E5367CCA287678737A309670BFFFD83600DBB362C"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/WatcherHost.cs",
+      "length": 11052,
+      "sha256": "B7B63C2DBE8CA15F1C1A320A729E01E2F902AEE013923CD7DCB4D617DE492B72"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/WatcherIdentity.cs",
+      "length": 12222,
+      "sha256": "DB96A3DE5ADE1D0C68EACB71FCA5224A40F5119FB1C97FD27A755BFD72BEFBDD"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/WatcherObservationStore.cs",
+      "length": 22584,
+      "sha256": "725EDFAD68B9DE35489889F7FDC9F5A024A3457D0827FAC82E0B22B433160D89"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/WeaveScore.cs",
+      "length": 12942,
+      "sha256": "066D48A879121EB899E5536AAD10EE90117EDB4BD8245EA930D445B3931129E7"
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/WorkEpisode.cs",
+      "length": 11494,
+      "sha256": "381460F5AD7AC8674F0160E4DBC0377640F67974E854760DF46D92F97AB3D43E"
+    },
+    {
+      "path": "src/AiDe.Core/Workbench/AgentWorktree.cs",
+      "length": 4743,
+      "sha256": "7D7A0A23A5AFB7469CE6ACEFF72BA85AB75C573E56CE466C6A6C062C934A8E09"
+    },
+    {
+      "path": "src/AiDe.Core/Workbench/CanvasFocusRouter.cs",
+      "length": 8142,
+      "sha256": "D918ECA10EC967DABB983E4136FBBE41DE97BDB5996AF9E13A8881FEDFB83E0F"
+    },
+    {
+      "path": "src/AiDe.Core/Workbench/DropTargetResolver.cs",
+      "length": 6580,
+      "sha256": "3A9711F93FA0D268397C428B35DECACE4F063A9A50A8300B4F6B3A560151905C"
+    },
+    {
+      "path": "src/AiDe.Core/Workbench/LayoutMigrations.cs",
+      "length": 6535,
+      "sha256": "5C397FA233F889D7EC1D03A6E3F4CF92C811840CA7B2F7542A52212B57020812"
+    },
+    {
+      "path": "src/AiDe.Core/Workbench/LayoutModel.cs",
+      "length": 8916,
+      "sha256": "1471AE1431262217458CFA2D3C24EDF0C79A2ED2A564E3F93E0A330C335274B4"
+    },
+    {
+      "path": "src/AiDe.Core/Workbench/LayoutService.cs",
+      "length": 21747,
+      "sha256": "D8C28E025AFA8EA2EC7F93FC6436236391BB2A04A4441D69F7005C93AA78A82D"
+    },
+    {
+      "path": "src/AiDe.Core/Workbench/LayoutStore.cs",
+      "length": 13764,
+      "sha256": "F4661CF71E5DAC062BC2A070693FAC8B143AB205858C41A72306498D463DFAAD"
+    },
+    {
+      "path": "src/AiDe.Core/Workbench/Perspectives.cs",
+      "length": 4389,
+      "sha256": "F40E561C55D1C14013474449217A120A362CA68B6C8A5BC3120ED87FA8530969"
+    },
+    {
+      "path": "src/AiDe.Core/Workbench/SurfaceAdmission.cs",
+      "length": 8149,
+      "sha256": "65E13A457B65492E876B6EB4DD18C1A0917AD822993A2864FB15DF398D56B994"
+    },
+    {
+      "path": "src/AiDe.Core/Workbench/TreeToZones.cs",
+      "length": 3353,
+      "sha256": "92D54248B0EBA90F481A8DC9DC31CE0C2C62E68029C86BC95B846DB9D59754C5"
+    },
+    {
+      "path": "src/AiDe.Core/Workbench/WorkbenchCommands.cs",
+      "length": 21333,
+      "sha256": "D2A9AE48A4CBB18EA238A599D237C28F366DBBE7E08FE0E6F69AEE4C9B051F19"
+    },
+    {
+      "path": "src/AiDe.Core/Workbench/ZoneBackedLayoutService.cs",
+      "length": 26399,
+      "sha256": "050990D7B1596801387337BF53754ABCEA42EF1E383AA9555D925226D2480202"
+    },
+    {
+      "path": "src/AiDe.Core/Workbench/ZoneLayout.cs",
+      "length": 14601,
+      "sha256": "20D176244278409F1437AFCD52AA9D7DCB72E4B189840AB49CB2340AA16215D5"
+    },
+    {
+      "path": "src/AiDe.Core/Workbench/ZoneLayoutService.cs",
+      "length": 12691,
+      "sha256": "2D3112F58129C1607E70964C882E19932C2F7FA3B92ABD2A952466F7477253A3"
+    },
+    {
+      "path": "src/AiDe.Core/Workbench/ZoneLayoutStore.cs",
+      "length": 11703,
+      "sha256": "366F0FD521DF4518691572D66467BEF2E068103BB1B91A49A65EF05F02EF65DD"
+    },
+    {
+      "path": "src/AiDe.Core/Workbench/ZonesToTree.cs",
+      "length": 5227,
+      "sha256": "840CC0F97416E001C7B2BA73CD0C3213693B498F4925E23B053A8060B299E78D"
+    },
+    {
+      "path": "src/AiDe.Core/WorkspaceCore.cs",
+      "length": 35982,
+      "sha256": "D695F0AB7A2F51685D3FAF58EC830D31AB7F252AB37164705E9D356FCEE75492"
+    },
+    {
+      "path": "src/AiDe.Daemon/AiDe.Daemon.csproj",
+      "length": 799,
+      "sha256": "F40728FCF1B8A2A4DF696392EAE6312F5D38AC0353366E56BF564E1F4D4A59FA"
+    },
+    {
+      "path": "src/AiDe.Daemon/Program.cs",
+      "length": 14173,
+      "sha256": "9F236B73056F61BBFC72F7B8876FFED0EE26735C67FDEA670524965D733B0AF6"
+    },
+    {
+      "path": "src/AiDe.Mcp/AiDe.Mcp.csproj",
+      "length": 1354,
+      "sha256": "C7C0B953C60DD8CF638E8725FB10FFC9B709F0B76AD52267553BFFC70AA68AB0"
+    },
+    {
+      "path": "src/AiDe.Mcp/BoardTools.cs",
+      "length": 10150,
+      "sha256": "FFED802495DA9C1A0A8233CFF54B0A0EBAC519FC84730EADD1E4FD4EA2754787"
+    },
+    {
+      "path": "src/AiDe.Mcp/EpisodeTools.cs",
+      "length": 5833,
+      "sha256": "E3CA822763DA5E26ECAFB7FEDC4C538ECB70EA45B78E653CF9D6407EE1087C4C"
+    },
+    {
+      "path": "src/AiDe.Mcp/Program.cs",
+      "length": 7774,
+      "sha256": "79612C9F5814B0942A7542D91C1AE7C03281DAF96328A4DD769BB15C6B20182D"
+    },
+    {
+      "path": "src/AiDe.Mcp/ServerContext.cs",
+      "length": 4389,
+      "sha256": "279E2BC7031F8549C1D8C8E46FF88582AE3540E9838B09D3B29D561F11FC0303"
+    },
+    {
+      "path": "src/AiDe.Mcp/SessionIdentity.cs",
+      "length": 8392,
+      "sha256": "1A9B6E408CBE7D40666675F03A292A4E0F444F4004A3B444017F283E92E2C441"
+    },
+    {
+      "path": "src/AiDe.Mcp/Tools.cs",
+      "length": 16008,
+      "sha256": "DF0392728417885766D0D1A581F6E78DFD3A612D932FB0487B3069C18893C8FC"
+    },
+    {
+      "path": "tests/AiDe.Core.AcpProbe/AiDe.Core.AcpProbe.csproj",
+      "length": 1310,
+      "sha256": "677C9F7A5DCAF1758EAF3E5B40443B10D6150670BAE69290F79461EFEBD7D111"
+    },
+    {
+      "path": "tests/AiDe.Core.AcpProbe/Program.cs",
+      "length": 16290,
+      "sha256": "8B47A28D6D793ECCEAD0485586D4CAB2715CB8E7B90B0BE77407DB8A1BFFAC9D"
+    },
+    {
+      "path": "tests/AiDe.Core.TerminalHost/AiDe.Core.TerminalHost.csproj",
+      "length": 1005,
+      "sha256": "FF8848E54A7A5C465C38EA50F57741761389E7E07CC6C34669C7C76425360B15"
+    },
+    {
+      "path": "tests/AiDe.Core.TerminalHost/DispatchProbe.cs",
+      "length": 12368,
+      "sha256": "92D38C63A83341CFD64ADA036158CCF29980E88AF27E8509D85D4456050C670B"
+    },
+    {
+      "path": "tests/AiDe.Core.TerminalHost/ObserveProbe.cs",
+      "length": 6358,
+      "sha256": "A230A2BDF2E5B9F2FEE8BAD7F29ACB55F3074605285DB4634315D2286F2907EB"
+    },
+    {
+      "path": "tests/AiDe.Core.TerminalHost/Program.cs",
+      "length": 40237,
+      "sha256": "2DD6FC869D24B9D99A04C5EAC06B66B9FD02E086A2A336C3346FAF11B526CA5E"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ABoundedDescribeKeepsIdentityTests.cs",
+      "length": 6881,
+      "sha256": "E3E5F72D5BED40D965E81FF142F10FB5393E132ED890B5E825E00FFD2DC47EE6"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentLaunchSurvivesIntegrationTests.cs",
+      "length": 5768,
+      "sha256": "4B63A7443D83F14C250FF609A21C373D3F018E857444BEA9F92988DAE16E9BDC"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/AProvisionedWorktreeIsARealOneTests.cs",
+      "length": 4290,
+      "sha256": "B396C894F3DD8CDB1C6A256971B855262BC098AF6843C7D5544CC2C71CB522ED"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/ATierZeroRunSkipsPlanAndCouncilTests.cs",
+      "length": 4931,
+      "sha256": "9830DE67186B43F7205BF099C5B1D134FDED601959E08F4602F7CE4102295F99"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/AcpEngineProcessTests.cs",
+      "length": 4707,
+      "sha256": "BEFBFACAA338F476EE604EA13B69B7FA6564C39448883E8452B62CCDBC1B5554"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/AcpEventQueueTests.cs",
+      "length": 4624,
+      "sha256": "E026C7EA478184807C9838F44F25A592ED22BA69B7FD1F048E22060A14826DCE"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/AcpLaneClientTests.cs",
+      "length": 14478,
+      "sha256": "4D97038DC58F940BBEE8B966C7C312EE3D0E5C99F8DB918630EB24C072EF7AB9"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/AcpPeerTests.cs",
+      "length": 19455,
+      "sha256": "9C94F6940BD0A211F8CE766EDE551963356EFB1A478C657F190DFACBB88042EE"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/AcpProbeLauncher.cs",
+      "length": 2499,
+      "sha256": "6CFFE162CCDE2BC939482B2685194BDD503FBFA8BBA23E106F10B18BA6472BBB"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/AcpProbeSelfTestTests.cs",
+      "length": 2337,
+      "sha256": "774443B5E1B6E0AE2FD1107BB16AA6A8039C2E8A41495877FE884C246447DF69"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/AcpRunEventMapperTests.cs",
+      "length": 18479,
+      "sha256": "C719817EEB0755A0E0CCA1ED309D1045FA90C7AD9BBE5C8936F815001A539FC1"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/AcpTestDoubles.cs",
+      "length": 4550,
+      "sha256": "F71AA54503A4F9D7CECD7D3EA2B25D5F95EE5822C60F70FCC917E261D2E0322E"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/EngineCatalogTests.cs",
+      "length": 6501,
+      "sha256": "1152D59C9D7425334C6866E6EF3DDE35448A447C8EB0762F7BBF3A4E854314B2"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/GovernedAndObservedShareOneCellTests.cs",
+      "length": 10231,
+      "sha256": "55E31CE408402E7D2446B17E0035315277AF90AC10627F245C2FECE70C6B922D"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/GovernedLaneSourceTests.cs",
+      "length": 10801,
+      "sha256": "490C704C852AFA15988BF662B2780C2DE6B15418FDC830DB98455B0B739C8FCF"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/LeasesRaiseSeamsTests.cs",
+      "length": 12200,
+      "sha256": "46CD30E4135A058174D0CB6BC09E4042D7320D6CC9AE94295E543C7176FA872C"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/ProcessRunnerBoundsTheReadTests.cs",
+      "length": 2557,
+      "sha256": "9EA5F53F788F7A2B3B346BBA15284A725F51A800EA2086092385419E75BB0F09"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/ProviderConfigurationTests.cs",
+      "length": 17127,
+      "sha256": "EFFCC4E3F28D79A4F2F3DEC80AEAAE0228C8D0BCD3FF488C681AD67E7E021040"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/ProviderRegistryTests.cs",
+      "length": 6231,
+      "sha256": "D9C66F00228C5D9FFDD125C64E2A707E170F4A11E526F05B2A82DEBF34C8BDA5"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/SpawnContractTests.cs",
+      "length": 20662,
+      "sha256": "DF3D4C859134F3BAF67E4C93B4D07D06C7BFCC6433DE210B8727203780F5B860"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/TerminalHostingLedgerTests.cs",
+      "length": 5812,
+      "sha256": "3ACA97270118C3FA3AE2EAF9C2C56347A2CE910500C14F6634F75C1F091F9D4C"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/TheAcpSessionRunsInTheProvisionedWorktreeTests.cs",
+      "length": 5301,
+      "sha256": "092E3E6BAE39299C0813564BFFB9605124B11F95F69F8D9D43F53D32A601193D"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AgentPlane/WorktreeProvisionerTests.cs",
+      "length": 11246,
+      "sha256": "A1BBB3C3A4A4E09243D5ABDDDA8EE3DF4C3B70DE6F53117A4873D56784ECE9EB"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj",
+      "length": 4750,
+      "sha256": "FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AssemblyInfo.cs",
+      "length": 631,
+      "sha256": "DB280EFF0C93D1D752CB5BC491F2045E7E424648D1587AEDC5D64CC43BA1C8BE"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/BicepConstantFoldingTests.cs",
+      "length": 18604,
+      "sha256": "B7ECA6E53611201287226B8495488976FA2A44C7BFC27E4D08FB2E73C73FE958"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/BoundaryDispatchTests.cs",
+      "length": 11047,
+      "sha256": "5D053B605D2CC8C9863314EB32A0DB9495CB0A96CA7290F31C8F6F02D445BDA7"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/CallEdgeTests.cs",
+      "length": 20506,
+      "sha256": "8779FFBEEAB63A1E74ABCD48C5126A280E5A41096649C8A8293857526C263751"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/CanvasFocusRouterTests.cs",
+      "length": 8357,
+      "sha256": "ED9131A2F8437E7596425A1A9C64A49FEB9D0D5B01CCFC38429FBE8761E247BF"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/CanvasGraphViewModelTests.cs",
+      "length": 16334,
+      "sha256": "F445A644042C5EB5469FDD16A7FC8A5BEFFF40669581AF3B17419E62C1E49E73"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/CanvasRouteTests.cs",
+      "length": 4841,
+      "sha256": "815E8337C65276D0C672BAB124A104EACD51F5CFF589865D5DEC8E6B7AD4E1A9"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ClassMemberProjectionTests.cs",
+      "length": 2539,
+      "sha256": "A6F20A98FAB5901BC774D38051F6B364BA9FAE84D9CAB8468D4DCB653563D1B6"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Compilation/PurgeAndTheSessionDeleteCascadeTests.cs",
+      "length": 14571,
+      "sha256": "CBADC96F848F5E46B778B295AFACFCB450A7310EAEA14F9964817014BC8191A9"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Compilation/TheEnvelopeStoreIsAppendOnlyTests.cs",
+      "length": 27194,
+      "sha256": "467D2AEFFC67243A5620B53312033CCE1F80762C6B7D5725B3112FA89428472E"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Compilation/TheProjectionIsTheOneProducerTests.cs",
+      "length": 20019,
+      "sha256": "80F22DB8A79EBDC1183CA2A791D34C6263066962C67F86C5946BD845852133D3"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Compilation/TheTierRuleHasFourteenInputsTests.cs",
+      "length": 10224,
+      "sha256": "271AD3CC3F24BD82E0601900D54FA0C404961EEC74D0C1807ED682FDBCE46D10"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/CSharpExtractorTests.cs",
+      "length": 11472,
+      "sha256": "D80952EB58681882BFE44C41DEA5F61CBE934081297095DBEF46342B8D6F5D17"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Compilation/TheTypedBoundaryIsInertButRealTests.cs",
+      "length": 14473,
+      "sha256": "8C0D2A5F64FAF05F65859056F84C6CAFF3607D460E94B0FD7B44C13BA2A0CB7B"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Composer/AttachIsOperatorEnabledTests.cs",
+      "length": 11605,
+      "sha256": "B198BC8491350D03DD2B298FDC01BCE08A86E76CB39FD895AD51FEF70C735676"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Composer/AttachmentFixture.cs",
+      "length": 4682,
+      "sha256": "C548A97F626690ADDB7854CFCED6E516CF9AEAF2BC1B6B7E3B1AD66DB141A6E7"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Composer/AttachmentsAreBoundedVisibleAndLiteralTests.cs",
+      "length": 19309,
+      "sha256": "CBC43443FBC6840002610F453923C245E0B43594FCB1A83DAE9A46CAAE47B901"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Composer/ComposerCanarySweep.cs",
+      "length": 2343,
+      "sha256": "7356929CDE718C3FC772EB037702279B797B9C40FE09AFA048CC7A0FC3B66CFB"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Composer/TheCommittedChannelCarriesCountsOnlyTests.cs",
+      "length": 7211,
+      "sha256": "0CD52336B3AB840962459B72938F23B0678255B16BCE4518E3AA18F7DB673AC1"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Composer/TheCompiledBlockRendersItsShapeTests.cs",
+      "length": 5430,
+      "sha256": "0CA7FDEABC1FA3AC04898944E773AACAA5CBDEFD90C4FF0B3B6429FD19095432"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Composer/TheComposerIsOneValidationMechanismTests.cs",
+      "length": 16658,
+      "sha256": "A77CDC0BDBA6934073E4481D6706001FFC368B4EA6D805664E3BB77612EF64D5"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Composer/TheLeaseIsASiblingOfTheGoalBlockTests.cs",
+      "length": 5112,
+      "sha256": "56E82775BF77250A0E0B4D036B17D11DF4839D7AF587CF6BB746A25D250C3FF1"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Composer/ThePrivacyResidualsAreCoveredTests.cs",
+      "length": 8163,
+      "sha256": "EACDEA11FC2826A3257D79C05A9EC367FB8052DDD706CA5A3825D60BA06199ED"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Composer/TheTemplatePickerShowsWhenToUseAndWhyTests.cs",
+      "length": 5001,
+      "sha256": "AA5190A49401BDAF3C756B572E637525E7F5DED3B1E4EBF04E760DAF37FD3F23"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Composer/TheTierIsTheMechanicalRulesProjectionTests.cs",
+      "length": 7886,
+      "sha256": "053FBD8D785B847E60BC825395392A70873C9EF4BC3569335FCA9C332DC76111"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Composer/TheVendoredBundleIsPinnedAndNoticedTests.cs",
+      "length": 7220,
+      "sha256": "F62955DFBD2C5117968777CE78918F1F3F47B17DB30CEDB3711D46562B484BCD"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Composer/TheVocabularyIsClosedTests.cs",
+      "length": 14020,
+      "sha256": "13331A9516D097AA5BC96E6DFDE28A274DD38D38D86B02531598F1382AED826B"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ConPtyChildStandardHandlesTests.cs",
+      "length": 6983,
+      "sha256": "1FDD96DC8C6EEE62ED3F006E725B26D84213EDF44C608D4D338E52E963BB75A8"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ConsumersReadWhatProducersEmitTests.cs",
+      "length": 7301,
+      "sha256": "28E5121363D4A14EBC7CF8590ADAA909C2BAD62E48385AF44F70B92287270C36"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ContainmentBoundariesFoldCaseOnlyWhereTheFileSystemDoesTests.cs",
+      "length": 7365,
+      "sha256": "25F29E0A1783F4123269FD3A023F2F927E1EDE47739D10A42C6D83D7DD0D697A"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ContentSearchTests.cs",
+      "length": 7269,
+      "sha256": "6EE50B71A2D4BE945E20D44F90D9916F3CC00D76FD499771197E08F41A1A73B7"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/DaemonInstallationTests.cs",
+      "length": 9500,
+      "sha256": "0107F30979ED01CE3291B81598AF382862A0075F5310C820142FD4FCDF873960"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/DaemonOperationsTests.cs",
+      "length": 12618,
+      "sha256": "3607B7AFB63DAB3A4168C27086D600C15289A2C77715EE9F751BDCF0F4844650"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/DaemonProcessTests.cs",
+      "length": 25017,
+      "sha256": "A994D23988CB5B3B18B2CA94DA97851842D3E4228C07FCC3170EC8EAF9B0A9B9"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/DaemonStateDirectory.cs",
+      "length": 1232,
+      "sha256": "EA7650CA4D300B75CF01F897AEE1E7586FBEAFE3F73B54495397AD504FFC0D64"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/DeclaredTotalsAreDenominatorsTests.cs",
+      "length": 5616,
+      "sha256": "90704EDE214BE26AF27BC8FCCDC4D4306EB708428CDD65C23576CAD25951A565"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/DescribeCarriesKnowledgeTests.cs",
+      "length": 6781,
+      "sha256": "5AC9CAC30600A18432DB0CC8965BB7B85EF0282F945CA3385154C1D5A0D7DF85"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/DisclosureKindTests.cs",
+      "length": 5152,
+      "sha256": "0D779B9AF4DF853EB95511A4111E2D794C14DC31ACBD2F79EC72F2B2575C7A92"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/DisclosureSummaryTests.cs",
+      "length": 5006,
+      "sha256": "10724403EEE71A97497EF39426E8AB672872AD3AD78800E45C18516BA04780EF"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/DispatchLiveSessionTests.cs",
+      "length": 2497,
+      "sha256": "CF6E307BF21C38BFF9CCF04196399AF577920E9375D1C63F929ED36D068C5C27"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/DispatchTests.cs",
+      "length": 9978,
+      "sha256": "B6C0F703AFBE83E9533C1B89150E0D79BC604F8263A69BAD2437E3B7B9769DEF"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/DropTargetResolverTests.cs",
+      "length": 7205,
+      "sha256": "7A81A74C820944516742703FCBD8596527F17F818656C3A7A4D3D27D1487A6A8"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/EnvironmentPairLimitTests.cs",
+      "length": 5225,
+      "sha256": "F85D153FE0A81F1C2CE3408042003AA7DAD56D28C1CA487132B707C8D147DC44"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/EveryOperationFitsTheFrameTests.cs",
+      "length": 7739,
+      "sha256": "7A76FAB92CF58EF61C369E8B922D14656DE649C378A9DEF928632E4D3B8D6000"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/EvidencePaneTests.cs",
+      "length": 9421,
+      "sha256": "280CA226FAD022A4F19C7FC7CD56E210967D308262E124914A6DAB6D9C44413A"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ExtractorsDoNotInventTests.cs",
+      "length": 12221,
+      "sha256": "8031550FAF9CA58CA4C6E8811F3D6495A8C229155164BC15DDAA0E5B9F235668"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/FieldsSurviveTheClientBoundaryTests.cs",
+      "length": 14051,
+      "sha256": "A2A2799913CCAD5664AE620FF0AD66820441DB2FAA0CA14940100FA4287AF23E"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/FixtureRepository.cs",
+      "length": 3749,
+      "sha256": "B6574EE3D9B01F26312922EE60F79049C84D288C67B65F0FE9C4B654F14B666A"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/FixtureTerminalSession.cs",
+      "length": 6095,
+      "sha256": "B38D694BF3A437FA5337AFF905E4D82825612C87BE7A36FBDB017E0E7053F022"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/GraphDrillDownTests.cs",
+      "length": 5874,
+      "sha256": "28616389136022E52D2B59597C73FFCD9C90C5A7384FC66FEFC5C3B8960063D5"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/GraphEdgeKindFilterTests.cs",
+      "length": 7220,
+      "sha256": "7C4747ED859B3441C148EFB639C5488EC29BB3B685E07D224EA9541E840C4974"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/GraphOverviewTests.cs",
+      "length": 7554,
+      "sha256": "5E62E7977E319D588FA33164A7424093E66217F5EBBC916BB7C68312EE3E821E"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/GraphPathsTests.cs",
+      "length": 6768,
+      "sha256": "730FE95FAB45E1FC9FB5F41689CD9D157D1E69A8AEDDBB616176911FF52D56DF"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/GraphProjectionTests.cs",
+      "length": 12981,
+      "sha256": "C5000C4278413D2738C81588873252BB24CD8E84D723CC64C6B4E6E8E94FEC59"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/InteractionTests.cs",
+      "length": 7322,
+      "sha256": "6165643FC16B030CD7C30FF82C8A3E3D8F8579E9C047BF6E0CAEBD08235BF6D3"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/IpcBoundaryTests.cs",
+      "length": 14787,
+      "sha256": "4F6D5704BB9D9FD2F898518AD205033C6C3DA8DBC957F1A1678AB15BFEB6CD1B"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/IpcFramingTests.cs",
+      "length": 7930,
+      "sha256": "62D9B2E3E724780947D408304044496FCBA137502C6C1FA3DFAFEA7F573E6532"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/IpcPayloadTestExtensions.cs",
+      "length": 1249,
+      "sha256": "07B56B6267A78B0070477AC024194B9C938440C609DA3B3DC44CFC1BDA6C8F70"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/IpcTransportTests.cs",
+      "length": 23837,
+      "sha256": "DFF35A7C69A768BB1225B31D1F21B39C694A378E4CC2D3A81E9CDDC5F1C29ED5"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/JobContainmentTests.cs",
+      "length": 2690,
+      "sha256": "A06ADF790978EEE30264562822CF162D6CBF6B73A4091A39B31C9C7777521574"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/KnowledgeBodyTests.cs",
+      "length": 22698,
+      "sha256": "E56405926E46E82DBD17C0C4590DEDF484B2AEDAE3D460D44F73D8691DB25656"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/KnowledgeExtractorTests.cs",
+      "length": 9300,
+      "sha256": "053C79BFB72B098BBED8F934C32F56FB62176AFB193B380AE154189E970043F9"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/KnowledgeScopesDoNotOverlapTests.cs",
+      "length": 10113,
+      "sha256": "533A762C8FCF6FCC383EC86F4F39BE0D3638A3E4F8EDBC6C17BBB1DD411B6042"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/KnowledgeSearchSeesEveryDocumentTests.cs",
+      "length": 5368,
+      "sha256": "8BCB692371E101EF91782DFEA529129FDAB7A8CB3521D8FACAF922B5210C94B0"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/LackingWorkspaceTests.cs",
+      "length": 30162,
+      "sha256": "C113C9336AD7489DB2370D01498965E060BE2647C1E346ADB38AC8ACBE7E4A07"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/LayoutUpgradeTests.cs",
+      "length": 14266,
+      "sha256": "F032722B722D9C711588337B296F23990BEF99D248728F360FD79208FAA79B43"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/McpToolNamesAreDerivedTests.cs",
+      "length": 2827,
+      "sha256": "C2FCBFC347B4784D51B290A6F1D226B4952C90EBC8199AF3311A3C1AA4371028"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ModuleNamingTests.cs",
+      "length": 5682,
+      "sha256": "8A021EC3E1FD683D6CF0E5848B27E6F954FDAC8E0A418762975BB187B7B2DC1A"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/NodeContentTests.cs",
+      "length": 9533,
+      "sha256": "2F1EC6ECEAEFE41C3684FC336DA932A92D6FF206DB8A56C97351B84044F932EE"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/OscParserTests.cs",
+      "length": 10912,
+      "sha256": "658E0074C7C558F6BA1E2099115DE7D1F1F1736042A98F494BA9C20A082916B9"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/OscRoundTripTests.cs",
+      "length": 3718,
+      "sha256": "009B473A060DC18BDABB1AA071A03743057AC68460C385A1AB1F1A71BDF4F737"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/OversizedResponseTests.cs",
+      "length": 5469,
+      "sha256": "72D28AE1F6B49F59B9977800E4C57C2B7C6ED82087FC537AA2184CE6F7FD3157"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Phase3ExtractorTests.cs",
+      "length": 21156,
+      "sha256": "0517EF9D0D21BF063F0BD692CC19F480D5B0E977D752755D3EBE7A0F6AC3FFBF"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Phase3ProjectionTests.cs",
+      "length": 20592,
+      "sha256": "BDDA7ACFA069D4230A2800B811D978A25AFFC9964E40EB9FA8D5751E09C0D1B1"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Phase3SurfacingTests.cs",
+      "length": 48406,
+      "sha256": "A7DC40A31762AFAA8247966C86E372217DA96B7C64661A6375B4CECA0F6DDD59"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/PrivacyMarkerTests.cs",
+      "length": 12601,
+      "sha256": "51B431EDA5BECC91D985CC829A80A22EEF7B9151361A0C4F2F668CC407A2B993"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/PythonImportBoundaryTests.cs",
+      "length": 5819,
+      "sha256": "19E92924FDC42B127503D43E4F0421CF3732AAB2F6A266CD2069060B968D9AE9"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/PythonMethodTests.cs",
+      "length": 6486,
+      "sha256": "2DCCCD22C69AADD3523A1DF03DBBB1260A609B3D46B52B464A20216ED71B5337"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/RawSqlDisclosureTests.cs",
+      "length": 6371,
+      "sha256": "7BD2023A1749D0D85B9854B728151C8158023BB75A093114320A0581A4949EF1"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/RefreshMetricsTests.cs",
+      "length": 5859,
+      "sha256": "4D780C0A93B350FC09DE46E831DEFB83A4A882BF5EE7D7FC538787DFB6689621"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ResponseByteBoundTests.cs",
+      "length": 9561,
+      "sha256": "4CC2E742507530532C75F24189C4BF4DBF90595F652A3075E55FAFE8EF0C473E"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ScopeRefreshTests.cs",
+      "length": 13787,
+      "sha256": "55F3E520969B12C413A5AC2976E7ABD72D9324DD44360993770008BDDD4CA8A7"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/SearchBreadthTests.cs",
+      "length": 6526,
+      "sha256": "DB7E6EAAE7025B520F05701C4EBDF54B1C9681557CA2CC42941866345FA6A9D4"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Sessions/AddendumB.cs",
+      "length": 3614,
+      "sha256": "C90F2FA36562431DD9ED97C9A6C3FF720C10C6DEA9D70AB3BE885CF84FDAEB3F"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Sessions/BuiltInCatalogIsTranscribedTests.cs",
+      "length": 9746,
+      "sha256": "E534F8E3C6A3B68792C7882068CF973785371376973316BA60A280E6C3E4E14A"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Sessions/GoalBlockTemplateTests.cs",
+      "length": 3586,
+      "sha256": "4E2F2D6D8F8365B781FBD5745220A935FCC72A249C6A4BBF22BB363AB11E2ABD"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Sessions/RepoFiles.cs",
+      "length": 1245,
+      "sha256": "A150E55A9704648B61BC0514DBD7C068CF1B9448AE06A0183660EDA81111E2AF"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Sessions/SessionConfigStoreTests.cs",
+      "length": 11534,
+      "sha256": "1FA6FB278230DF02BE357898415986F6BF5999AE16C59E58C21399DE1BA06922"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Sessions/SessionEventEnvelopeTests.cs",
+      "length": 1923,
+      "sha256": "BEABE75DD651DC01EFA02CE6D41718201FC23BDA31658E39E91292C7A8475810"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Sessions/SessionIdTests.cs",
+      "length": 1862,
+      "sha256": "B584C1128AC71A1323FB2E9CE75A66327721F23704841B8BDFE47FB17E884250"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Sessions/SessionPathContractTests.cs",
+      "length": 9588,
+      "sha256": "44949DD1D3694F1B74C4DBBEA5899E0A5967E1FC14337595D83E865B2BEF100A"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Sessions/TemplateCompileIsDeterministicTests.cs",
+      "length": 6497,
+      "sha256": "EC5C8F685BEB281614F5AC462AA0F669109D53A89090292B64B1D66A66249079"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Sessions/TemplateContractTests.cs",
+      "length": 4765,
+      "sha256": "240D3F54D9150DE0CA6088577170D6427CFAEF1386BB8AD9124FF9E07D7DBA9E"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Sessions/TemplateFrontmatterParserTests.cs",
+      "length": 7443,
+      "sha256": "AA5F9DFB2C3BAD63291F5A8185CAD9B6B7F1BB6010FA69214A54FE0576C525E1"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Sessions/TemplateLoadIsBlockingTests.cs",
+      "length": 5389,
+      "sha256": "F9CF98240DD5E8F6F073C2107FA0EF8211F4E14F7F4547D05DD3902FA2E84DAD"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Sessions/TemplateSourcePrecedenceTests.cs",
+      "length": 6604,
+      "sha256": "CBD68CF5CEDB24BEA1E79E67911B48DAB25D5F496313AE1B76AE401E9A8A98D2"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Sessions/Thread/TheReadModelPublishesOneSnapshotPerAppliedEventTests.cs",
+      "length": 8931,
+      "sha256": "FB7BD782B455BB4FAE2AB0BAF661CB851EAE9CB8F84DA9B19765CD7E0D47E02A"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Sessions/Thread/TheThreadAnnouncesByTransitionTests.cs",
+      "length": 12722,
+      "sha256": "D2B7106A97BD7F4DBFD1CC5E1E426D6FBC3284784E039DB89989D7FC40EC4394"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ShellBootstrapTests.cs",
+      "length": 13489,
+      "sha256": "E7A5D1B62B992AF8234C117118D4A269F91C2BCAFA02E83655CAB73EFA19F3B4"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ShellEnvironmentTests.cs",
+      "length": 2823,
+      "sha256": "B9F0403FD1C6654CBBF357F6E3754B485A4C9688C3D786F298912EA33398B27F"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ShellIntegrationRoundTripTests.cs",
+      "length": 3827,
+      "sha256": "68A9CE26FDDA5B9866D901E6099A58CADF88A9544981BA295ECCF033E45C577D"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ShellIntegrationTests.cs",
+      "length": 10126,
+      "sha256": "2F2D614E679FA9180113E7BB6AE5FE109066678B01AAD98D99EE8AFCB6767CEE"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/SiteRuleFixtureTests.cs",
+      "length": 11904,
+      "sha256": "8389FA7AB62D7D0C72F5DF27854CFD6ECDB7C70D36678D39A22A982DF9900F15"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/SplitMeansBesideTests.cs",
+      "length": 7225,
+      "sha256": "8E24E7BD1C29C8C49CC19F8D254D1CE3B8D17A0223CB5275EBCA62AA125A785F"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/SqlSchemaExtractorTests.cs",
+      "length": 10403,
+      "sha256": "7232E62C81A02C1312033CBE292EA874AF76246F63FC48B563A1AF740B8E53DF"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/SqlUsageTests.cs",
+      "length": 9412,
+      "sha256": "1FE808E7A300E145D023EEAD0289E7FE76A122B7A04C3DC56A3F71E2E2B4B027"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/StoreCompactionTests.cs",
+      "length": 10032,
+      "sha256": "50BD690B3BBFA041A02B4A7A0EC03AEC00C623494B9B17E834D32E747479F732"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/StoreImmutabilityTests.cs",
+      "length": 6665,
+      "sha256": "5E63C929BCA3FE66A1DFE9738EA1DB0C38E2A9A1727FAFCFEFCA4ADF8B3ADDA1"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/SurfaceAdmissionTests.cs",
+      "length": 9605,
+      "sha256": "3BB04B1D2BEC740E248484AFB11A3D3EEFBC030A5A5A03ADC47E4CDC1C98B102"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TelemetryTests.cs",
+      "length": 6632,
+      "sha256": "CE0BDDD6FD283280D02C39B3ECA8B52BB18E14ED6DA46C49C1F117FB9B0A5382"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Terminal/EnvironmentBlockTests.cs",
+      "length": 8749,
+      "sha256": "019EFC0598DAAAFB87FA294EA1ADC8705BE854FA708EAAB394F601DD9BA3845C"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TerminalActivityStateTests.cs",
+      "length": 5485,
+      "sha256": "89AEB9EFE6D8ADE78205CF5A4838675A7470954E531CB6B7E30AA88DE1FAC64A"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TerminalChildEnvironmentTests.cs",
+      "length": 2188,
+      "sha256": "540E50759CB3201FBD8B367968519A74E3A402D61107ED0DB8E6A51B7BCC5F10"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TerminalHostExitPathTests.cs",
+      "length": 5799,
+      "sha256": "F9FAFD7BE4DAD258C79464B7097A1EC957F2B34FBD61F2C08514ED9E1A0803B1"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TerminalHostInLifePathTests.cs",
+      "length": 5499,
+      "sha256": "C1CEC760354FEB520B8A7EA3889BE9C9E3B9ABF2CF42875F7D96F7148811C1C9"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TerminalHostLauncher.cs",
+      "length": 9534,
+      "sha256": "2A01D8CEFD62D917667CD28FD60DCDBFD44D199F665F11AD24B455D26E1C4B63"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TerminalHostLauncherConfigurationTests.cs",
+      "length": 1878,
+      "sha256": "DF8BDE6DF00F253C34B870CC47BF178DD1A47972C8BB2047F89B6D25F173FBDE"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TerminalPrivacyTests.cs",
+      "length": 3953,
+      "sha256": "C66CA1BE1133B52F02C492C7AC688ECAC5CEE877B683B098BE2075941AADE1C7"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TerminalScreenTests.cs",
+      "length": 19771,
+      "sha256": "24D95C8AA8FDB15D3770771AE7EDF50617F07BB9B3D7F5222C3E64C6657673EC"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TerminalSessionConformanceTests.cs",
+      "length": 16676,
+      "sha256": "92370176C92F3E4E3A1C8522D826F71D61D1B93A8DA1A0BA567752EB934D29B3"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TerminalStopEventTests.cs",
+      "length": 6560,
+      "sha256": "C959AF4D3350C1476184198B899774A818F7B331587F58C9677E7E3124AA9281"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TestWorkspace.cs",
+      "length": 2790,
+      "sha256": "D4E48E8A63C8320D9E87EB61BD061D2CF8489D4C0878EBFB6A00A8DF30E52223"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TheEvidencePaneDoesNotInventConfidenceTests.cs",
+      "length": 4684,
+      "sha256": "ADC4667281982E9C55629F8CB3F31E680BBDF104A77B9D01C3FE66D95CCE9DE5"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TheGraphAlwaysFitsInAFrameTests.cs",
+      "length": 11469,
+      "sha256": "82335E6B6FBC884EA2F859CF60483EA949F94E262A8CB2B010E875A7757BAE9A"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TreeToZonesTests.cs",
+      "length": 3031,
+      "sha256": "91308EFA66DA6A6051D9EBF7E6792919466E86094146D23F05C504EDE0098802"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TypeMembersTests.cs",
+      "length": 8519,
+      "sha256": "3DFC0A3B422277F7BA29D90D2BCC19848109A9F108CBE1A1E82CBC3D81CCF91A"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TypeScriptDeclarationCoverageTests.cs",
+      "length": 7164,
+      "sha256": "754FF18365FA179218484C9271310C2455BC4DD8CEA1BC29EB02956D955CD819"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TypeScriptDynamicImportTests.cs",
+      "length": 6052,
+      "sha256": "88B62BB6E0D62412A1457D188C29CA393790BF4647408636DD836E110B68AF62"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TypeScriptExportFormsTests.cs",
+      "length": 6032,
+      "sha256": "5C96E42E52EE5F31D6282FFACFB624912B29BE26CEB4129CA7F432CDACEAB8D8"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TypeScriptGeneratedSourceTests.cs",
+      "length": 7116,
+      "sha256": "9942FE859C642EE83805F7D04688872163DF2C7FE378A4A89B28525AC29A3B44"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TypeScriptImportBoundaryTests.cs",
+      "length": 8900,
+      "sha256": "8D1A504E99D28EDA8D785A76744052CE6FD6CF7FE2E1588ED33E6D7C8F1B23B5"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TypeScriptImportPrecisionTests.cs",
+      "length": 7595,
+      "sha256": "A32710BF5191996BB763ED74E4AA572572CF29FE9904144093D058BCBFBEEC71"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/TypeScriptMemberTests.cs",
+      "length": 13648,
+      "sha256": "D373F6476244E4415738657F333E1CFDBD72969003BA5D42B89CF86E7924A6DF"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasDirectoryEnumeratorTests.cs",
+      "length": 18869,
+      "sha256": "95A5624F599C0579AB3E37A590392D7F160D3EBC43CE84F90BA42B5D330C7346"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasGitMembershipTests.cs",
+      "length": 33771,
+      "sha256": "B1B6D05D6714C6B3437BE03895747949E9BE078C6C402079B339E2205056CA1D"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasIdentityCodecTests.cs",
+      "length": 3755,
+      "sha256": "C1949A4C8755FDD460FFD4888B644DDD77B3711361B74D0BF98250877857270E"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasIdentityTests.cs",
+      "length": 9963,
+      "sha256": "9D730B7593F3C5E1476292B39BB3E1AB5DDC18D2778FCFB752273DECB3790B27"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasInventoryTests.cs",
+      "length": 8037,
+      "sha256": "D616CE59BB35648CDA9E042B5260609043F56C13CF9ADB6F4477C7A5944B3FAC"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasIpcAdmissionTests.cs",
+      "length": 40063,
+      "sha256": "973F9DCCACDA3BF2508CFC758B4377BCD5E2877421C7C917C08133B64EB17762"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasManifestTests.cs",
+      "length": 7513,
+      "sha256": "1E42402684DD10A17C65CDE0775EEB2D4CFD72C4EEFEAC1758AB48541E467AFF"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasProductionAdmissionTests.cs",
+      "length": 31456,
+      "sha256": "F6C1323545BB4D68179AA9BD9E5CF17BCA8F1CBAE16FDDCB1F3E9D3B9D5E1915"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasQueryContractsTests.cs",
+      "length": 9282,
+      "sha256": "359DCFB5F5871D31077A5E8137C7AE421A06D68C146B2E52CD6D23B88715CC89"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasQueryServiceTests.cs",
+      "length": 28870,
+      "sha256": "5466BB65C36AD7D5974C8F14FF21D0E4873FAA9AFD2B8842771B0591E3B38CAC"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasReadBudgetTests.cs",
+      "length": 14625,
+      "sha256": "9C4F5CE3D6FCBC98CC77E4CBDC5474765C902A208943C5CFD31AE01532B42F97"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasReaderWireTests.cs",
+      "length": 41208,
+      "sha256": "D9B278B8023994CDA11F86002E38903A50608B4BE56D6627AFDF951CAC57D008"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasSourceBindingTests.cs",
+      "length": 9977,
+      "sha256": "B2E44258D5A1FF67B1AF01BBF95C55A095530BD79FF810E6E18C2EA57412DA45"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasSourceTests.cs",
+      "length": 42647,
+      "sha256": "F096650F6C86A3127F5B9925B60F1045DE6810D2634810BA2773402B8A9DDAFD"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasStaticObservationTests.cs",
+      "length": 13690,
+      "sha256": "548A82A03EF31CC42E10EB8A3C9833BB39FD6A81AA8C95F7FE18C659478AE951"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasStaticReaderContractTests.cs",
+      "length": 9735,
+      "sha256": "D6F511445B8712F0C4DD6FEDAF871F7385430861FCC1BA1AD644539ABECE5FA5"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Understanding/CSharpDeclarationObservationTests.cs",
+      "length": 20221,
+      "sha256": "A36AD76B33598B2CB2DA16B3618F6AD5A0AFDF9273C1FB8C7D1CAE5FF1FF3413"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/UpgradeTests.cs",
+      "length": 16917,
+      "sha256": "064BEAA19D88E5339D5B6881337C1FDB65A17FF146D70A0CBB9B4B1E1A6F7B42"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/UpgradingTheExtractorReExtractsTests.cs",
+      "length": 6114,
+      "sha256": "43335EBBFD3A7F094BFBCBAC70F38186E4BCC08FB7FD56D2BAA49E051C7FF63D"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/VtParserTests.cs",
+      "length": 13903,
+      "sha256": "488CDD54FD7B1CDBAC5A5F7F399D0B03362D25D020EA1B5BE8EA126E490AB068"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/WalkingSkeletonTests.cs",
+      "length": 12628,
+      "sha256": "A029BFF0AC995C17A2DFD2449DBEEA5EA08ED9D5D6CBAE81FA25E917CA0E922D"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/AGovernedLaneIsCreditedForItsOwnBranchTests.cs",
+      "length": 12171,
+      "sha256": "F93263AB3F7864A0104CDB5ECBDD069864FE57ED280D870615BD985741AF730B"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/AWorktreeRegistrationIsCorrectedAndSaidSoTests.cs",
+      "length": 11070,
+      "sha256": "0B2C335E09E08CF9BE28CAF1438B26962E7DC403A6AF2C2ABE008DFC69207E76"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/AdvisoryEvaluatorsTests.cs",
+      "length": 7990,
+      "sha256": "C79D6D7918642720194E424150C467B76AF2A871774648E4360AFA8F4EA2526E"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/AdvisoryScoringTests.cs",
+      "length": 7886,
+      "sha256": "EAD32FB7937994A333CF01A9C2A82C6D73980C8C55A19558295DA6A28F8D5893"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/AgentProtocolDocumentTests.cs",
+      "length": 6216,
+      "sha256": "959AABC0B80C3DA7BC317981C2EA1A6AAC6162F10EB9310C6BDDE75A93FE4EFB"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/AnAgentCanPullItsOwnStandingTests.cs",
+      "length": 6287,
+      "sha256": "001855CAA933EFBF84264AC71CC40236C9C746B884FE3E014E0225C70511C8F0"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/AnEvidencedAgentEpisodeIsScoredTests.cs",
+      "length": 7874,
+      "sha256": "C2F81CDB97FAE1387E822F2B1E982B5C6C9824884BC0856C5639275D7492B123"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/AuditLogEpisodeSourceTests.cs",
+      "length": 4941,
+      "sha256": "C286C77A855C9312274538B68893790283EE64468D68CAA45A73BB4A014CE4C6"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/BoardPublisherTests.cs",
+      "length": 7070,
+      "sha256": "349F1C58B1F677FDA5E745CB2DC23D096ED56F774DD7BFF64772A4A46A2491C3"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/ContractBoardPostTests.cs",
+      "length": 10705,
+      "sha256": "3C60E87CC3B8262226DB415A802475E8B5EE005B49B04A52911275879252B20A"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/ContractDeclaredArtifactTests.cs",
+      "length": 9525,
+      "sha256": "D586B9A639AC01456B36836FB97BB80D8F6A1AF1A2D0B701E08D8CE3A82C441F"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/ContractEpisodeTests.cs",
+      "length": 13893,
+      "sha256": "E821423C39657F219A107DB0C599D23D3E4AD360EE6633FC3EF2681D2F478E74"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/ContractUpdateTests.cs",
+      "length": 5916,
+      "sha256": "CE2C864214DA2FA036638D1062D8563D32DD5EB84480FC3A9D3FCBB3F0A14AB1"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/CoordLogSurvivesASessionIdWithAColonTests.cs",
+      "length": 6858,
+      "sha256": "32EAC3672FBB21C353F121738A24421F1623B8FEE9BB2112F06E91F1800B6196"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/CoordinationContractLogTests.cs",
+      "length": 5987,
+      "sha256": "84B670FE610B5822FD4D93480AF777466300EF39F1DAF73EBB7402BF4667EB46"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/CoordinationContractTests.cs",
+      "length": 14991,
+      "sha256": "70A76C069B9ED3B3308721DEEB9024096D2DDB228BEB23A1A3F26EA232D51136"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/DaydreamCandidateTests.cs",
+      "length": 13139,
+      "sha256": "B98C95C18BA65ACCA22ED4885B5A9A76EC78B8E5C91F4312DEFC31B9E7661D39"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/DaydreamObservationTests.cs",
+      "length": 10890,
+      "sha256": "9BFFDFA076B2F77ED24C0B2D5FD36340F985F1F20E23322D0997165690C061FF"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/DaydreamPersistenceTests.cs",
+      "length": 10369,
+      "sha256": "B73E28AAB19D4FE8131F41B99D4ED480C8EA56B4BD30135D57EBBC371A69726E"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/DaydreamReachProbeTests.cs",
+      "length": 12618,
+      "sha256": "6BBEDDB4BFF404C6AEF99458426D80D3D697A646B42DDF9BBE475FB05EC24BB0"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/DaydreamRecorderTests.cs",
+      "length": 12646,
+      "sha256": "ADB628E1D68485C8915FD7C3EC7AFA252E510859FD3AB9F6C05494D932EFD8EE"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/DaydreamRepositoryRecordTests.cs",
+      "length": 15019,
+      "sha256": "9D070FA125E0B1D2621106B79E53980B8532B8D2F91BF2EE9487FB2126EEB98F"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/DeclaredArtifactTests.cs",
+      "length": 5995,
+      "sha256": "A89A7EA04739F8205E4FCEE3EFD222D3D43BED86548D7B17A69F9A7A91B7F534"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/DeterministicSignalsDeriverTests.cs",
+      "length": 12393,
+      "sha256": "1B2647009CFEB7C3DB4ED4DA28402BF6E05BF7DD7B5A56742544E77178F38AC2"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/DisputeServiceTests.cs",
+      "length": 6963,
+      "sha256": "8FD8577452E94EDCB2E05C5FC29A1367F0D85CCFF1222DD3DFBF097A4C587319"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/DreamCorpusReaderTests.cs",
+      "length": 6897,
+      "sha256": "3C353D2754312E07C74683795961A34AECE90F4BDD06633BD28572AE56E4E595"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/EgressGateTests.cs",
+      "length": 1266,
+      "sha256": "44456844BFA48BA473066A215BFC935D0A4E863B4C942454A777A5CEC903A35C"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/FleetAggregatorTests.cs",
+      "length": 4452,
+      "sha256": "185BDF3EA57A207EFBE48CCB212C3B0AD671D589F2F7687C99AD14CBABA93777"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/IngestHostTests.cs",
+      "length": 6486,
+      "sha256": "054A7F459D0BB920DAE8BF9A6E5523FE69AB0B973CC0998CF14F5A15CBC7A1B9"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/LeaderboardTests.cs",
+      "length": 9394,
+      "sha256": "71A135130E29220BD848E5BB1A973B146191FE40DBF9FB5705C1D83D12464DBB"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/LivenessProjectionTests.cs",
+      "length": 2657,
+      "sha256": "4F61115042F5010268682ED556F9DFB499F40BED40E1D17CA32CB7C471B6AD68"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/McpConfigWriterTests.cs",
+      "length": 23717,
+      "sha256": "22332FBA77049EEBBE945C53BA04D1F52EB7BA10BF3CA2B4255CB447889C0A79"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/McpMatchesTheJsonlPathTests.cs",
+      "length": 18060,
+      "sha256": "124E931B64336D48090F4217B30FE4BC30EEDA156089623BB2EDB53DA900E399"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/McpSessionIdentityTests.cs",
+      "length": 8127,
+      "sha256": "E12D76961B51425F5BEDFCF73DF166A5398FE9C2D9C9FA18700DC72006AB787A"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/MessageBoardTests.cs",
+      "length": 11617,
+      "sha256": "0C9EC4AC55A4AE5F10C56F02AAB00D3B81F4B8C0D19E428F1AD7D648DA325FF3"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/OneRepositoryIsOneRepositoryTests.cs",
+      "length": 5488,
+      "sha256": "42EA4BB9E8839E84BAEE049504EBA2074951FFB8704FC2CD8B27A50739FCE2DD"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/OtelSpanMapperTests.cs",
+      "length": 6675,
+      "sha256": "F58AD9BBF2606B08840B7F719A273411039C7B99EE0D11C0568365A5CD74DD31"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/OtlpReceiverTests.cs",
+      "length": 9939,
+      "sha256": "879786B76291AB1D25C8372FDFB05A881C7B16DBEE02015D5E3554E6EABE01B3"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/ProofPackVerifierAcrossCheckoutsTests.cs",
+      "length": 6384,
+      "sha256": "19BCAC22967E93E14EAEF260D36E7B6E840C2109651B134FED8697FAD2EBF360"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/ProofPackVerifierTests.cs",
+      "length": 12286,
+      "sha256": "109BBB54026AEFAEF1EC65CC616AB763ED89F86473CE02525E3C4C430DCC0862"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/RestartDoesNotMultiplySessionsTests.cs",
+      "length": 6244,
+      "sha256": "87098DC91CEC23EA8402801ED25B450A1E26D6875344DD7C650BB98B17F7AFA4"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/ScoreDisputeTests.cs",
+      "length": 9083,
+      "sha256": "10A435725E5C9776DA60EBDE8F1CEECBCF80BD46FEC8D06D08071EE16DA47BC3"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/ScorePersistenceTests.cs",
+      "length": 8879,
+      "sha256": "5A3498832038029D04B266C20BAC75FB40B60E036D3FB173F80796F1A3C78074"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/ScoredEpisodeModeMigrationTests.cs",
+      "length": 12970,
+      "sha256": "D3C2B2B01EBA7E92FA7215F19D0C46A37E7888157766A0940508815D03540E14"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/ScoringServiceTests.cs",
+      "length": 7499,
+      "sha256": "A787AF333692A626F8A02890F612BC116702897F34BCEFC4629ECB18A8872180"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/SessionCoordinationEmitterTests.cs",
+      "length": 7394,
+      "sha256": "D17F5BC9A5EFC382D4460B9E755F5A9598A86336F5EDCD52F85E048F3FBF8F13"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/SpanIngestTests.cs",
+      "length": 4219,
+      "sha256": "220B1625310BB6CDEEAEE296F2882BACEBCA9EC6409B8BE287C12787A706F7AC"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/SqliteWatcherObservationStoreTests.cs",
+      "length": 7196,
+      "sha256": "55383D3C57128996B620F936536E197A61DEB255B37871D2A049A78862690D08"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/StandingReachesTheAgentTests.cs",
+      "length": 6285,
+      "sha256": "8D03D9E9FE076BD58D3CFD92F2843714FC13CD6F55C2562BF9A706EEB0E6F6E4"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/TaskClassSourceCohortColumnTests.cs",
+      "length": 12908,
+      "sha256": "1D3BE69131891FE5D61425B42520AA746066C8563BED7DBA0AD38A402483BD90"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/TestWorkspaces.cs",
+      "length": 944,
+      "sha256": "8C9AF89059A13A185C8BF640D1401E56E039B073B37128000DDE0528BF4D1500"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/TheAgentCollaborationCircuitTests.cs",
+      "length": 11110,
+      "sha256": "3D7CA3C2019061E5A1A37564613C7EF0239FCF467DC30F82E193F5B7DCE64953"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/TheFileSystemRepositoryLocatorTests.cs",
+      "length": 12816,
+      "sha256": "3ECFCF163094F7BBA5D553E4CD375F86BA1814A22385D2F8EB557962AD14A027"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/TrustedRegistrarTests.cs",
+      "length": 4876,
+      "sha256": "51CD2EEF7895673432F0A543F21124D3648069A253C7A6234A27EF26EEC9A564"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/WatcherBoardPaneViewModelTests.cs",
+      "length": 4884,
+      "sha256": "2A1015D22B4B695B509592273CBDDA26E83E53EDB23248851F9D5E4696268B07"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/WatcherCompositionTests.cs",
+      "length": 2534,
+      "sha256": "B7B248578BA9C868868C2D70DEEDE789A94303EFD6551DAC549A7AA2C117FFAD"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/WatcherDaydreamPaneTests.cs",
+      "length": 14481,
+      "sha256": "E40CA3157274656DC489484EA03D7280D319E01AE6F40B9DA164E0EB98FA10BB"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/WatcherHostTests.cs",
+      "length": 6487,
+      "sha256": "63A8FDEA75AB89B315E6F5EB3365DE489A294AD19E81901103D832E75E7FD281"
+    },
+    {
+      "path": "THIRD-PARTY-NOTICES.md",
+      "length": 5241,
+      "sha256": "3F62422A671406085A20F9126DFB14E51EF49A32CE89D3A7A82D77330E460363"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/WatcherLeaderboardPaneViewModelTests.cs",
+      "length": 5994,
+      "sha256": "5494C8491B44FB47968DFA684E877BF44EF7F7585D6F9E8BE0BC181175C014A3"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/WatcherSessionsPaneViewModelTests.cs",
+      "length": 7913,
+      "sha256": "007D6862DFED9838FB8033DD76464957101CE215811851060D9914943713BCD4"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/WatcherTestDoubles.cs",
+      "length": 3342,
+      "sha256": "449C16CAA5D03B8A034E5DA92B4E6161FC1D1A17DC1B28963A66578951F353E0"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/WeaveScorerTests.cs",
+      "length": 11551,
+      "sha256": "1EFABBC399B27DB60B72D7C6C3BAE115696640660C5B5241199207DA260280FE"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/WhatDaydreamSeesInAnAgentEpisodeTests.cs",
+      "length": 6718,
+      "sha256": "50160ECEE815E7C46BB932C0812D0F4BDA9181EA66E907CF05B6ED496AD9B325"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/WhatTheRealCorpusCanProduceTests.cs",
+      "length": 10249,
+      "sha256": "10B2707567D931A0A07DE7BE71FA6366F827DAF31FDAE72CB87DDAA8DEC5E1EF"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/WorkEpisodeTests.cs",
+      "length": 14498,
+      "sha256": "775E0E9F750490B85BEEEF96C380D0C0FCCBB7B0D508816FEC6A350A404ED571"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Workbench/AgentWorktreeTests.cs",
+      "length": 7783,
+      "sha256": "89ECB0234641F91DA9DB65702F0BE3CC1A26C982A99820A452D76E1C65B9E627"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Workbench/HarnessSessionCommandsAreDerivedTests.cs",
+      "length": 3858,
+      "sha256": "5BFD15B5EB67AC5F06EB27B52939C0437E82D1BB7236DF9A308ACEA4CC266D5F"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Workbench/PerspectiveSetTests.cs",
+      "length": 4507,
+      "sha256": "57A2CBE92F1647DEA828F090141A7B3128924856979A0C608FF4205E427C7344"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/WorkbenchCommandTests.cs",
+      "length": 6291,
+      "sha256": "714F90DEF9C6AEDA4F6174365B256A11654B3246046F3C6034C830FD6E228A52"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/WorkbenchDragReconcileOracleTests.cs",
+      "length": 10037,
+      "sha256": "0C6B12D8670F62BDBD8371C781D67BD5EC04930EB80056285EEB62BC1805AB4E"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/WorkbenchLayoutTests.cs",
+      "length": 16900,
+      "sha256": "ADB75BC3B492A2853177070FEE8CB881A0C5F338F83DA5108F29957ECC608281"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/WorkbenchStoreTests.cs",
+      "length": 8900,
+      "sha256": "2A2FE629834477B68848BB61F651BA0E90B5B06C17C181A5253AA66FF3EFD627"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/WorkspaceDiagnosticsTests.cs",
+      "length": 4533,
+      "sha256": "883C2192B3F67AAD2D8B1ECC5BE01D3D63E5787C5D632CB6CDDE63E57EF9CEB3"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/WorkspaceIndexTests.cs",
+      "length": 7424,
+      "sha256": "761A6A6916BAD7B934F69D97F6464889320B3180E21B757BBC284947EAD1F6A7"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/WorkspaceLockTests.cs",
+      "length": 4523,
+      "sha256": "85F3B3851B730D4DB4B17FAAED33F0FA5333D68E586F40DCB4C755E045EE6CBB"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ZoneBackedLayoutServiceTests.cs",
+      "length": 24526,
+      "sha256": "23CD4E0D2070589B425E646CBC44ADCDBBC9468C3D828A083D64C3A80B5558F8"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ZoneLayoutServiceTests.cs",
+      "length": 8781,
+      "sha256": "0FAC1AD9406B9DE4C22E5F786ED8CC6E4E7D3D30BEAEAE62BBC8D339E8CA5F8A"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ZoneLayoutStoreTests.cs",
+      "length": 10124,
+      "sha256": "78C298747E5B2FBCE5E0D127F1EF39D6190EB14805C9ED72CBA066D09B7FD438"
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/ZonesToTreeTests.cs",
+      "length": 3141,
+      "sha256": "56FD248C3795C76E510C605D3D82A1C38DFDAAE5738A5FDC1621B8C34CF2CF6F"
+    },
+    {
+      "path": "tests/Shared/ConsoleHostCensus.cs",
+      "length": 6765,
+      "sha256": "B02982D8C4C6085ECFA6555794DE5BFE3C3E8795CC9BB5B94A6E997211419831"
+    },
+    {
+      "path": "tests/Shared/FakeWorkspaceQueries.cs",
+      "length": 3465,
+      "sha256": "82CF11242C86D5700147D9BA277499B957732ADB50A12AD0DDC7DC9467838E33"
+    }
+  ],
+  "expectedCoreSha256": "6353AE7ED46937FE3D47CB510BD41D192DA53C0F7E38EF5F5731726E8EB1A0DB",
+  "expectedPeerSha256": "641BDFADB1834748BBAF758F41508A593EEF300CB0960B286BB57C00623030DA",
+  "sdk": "10.0.303",
+  "git": "git version 2.55.0.windows.2",
+  "powershell": "7.6.5",
+  "qualification": "Owner83 author qualification: 497/497 relevant Core/IPC cases; both mixed roles; EOF identity/TRX control; thirteen hostile/output controls. Separate normal-pair approval and independent reviews remain pending.",
+  "qualifiedPeerSourceSha256": "6E7AC5C69FD1660B8E19D16BAA8ECB898F0E818599AB11DDD2C3B6668F78DC1B",
+  "retainedSourceChecks": [
+    {
+      "archiveSha256": "4386927B860B7C71E443672FCC3B3EADC7E32B79AFFAC6BEFA60A9BDBD0AE264",
+      "retainedSha256": "4386927B860B7C71E443672FCC3B3EADC7E32B79AFFAC6BEFA60A9BDBD0AE264",
+      "matches": true,
+      "path": "src/AiDe.Core/Understanding/AtlasManifest.cs"
+    },
+    {
+      "archiveSha256": "98A124D96AA27E6F2CA2DEDD53255E186AD7840CAA852DC4779F0FFA62F4E8AC",
+      "retainedSha256": "98A124D96AA27E6F2CA2DEDD53255E186AD7840CAA852DC4779F0FFA62F4E8AC",
+      "matches": true,
+      "path": "src/AiDe.Core/Understanding/AtlasQueryContracts.cs"
+    },
+    {
+      "archiveSha256": "24E0CF1ED23EB674E68C0A2997212EBCC45C3FC2E35E088807AB7F215DB9986B",
+      "retainedSha256": "24E0CF1ED23EB674E68C0A2997212EBCC45C3FC2E35E088807AB7F215DB9986B",
+      "matches": true,
+      "path": "src/AiDe.Core/Understanding/AtlasQueryService.cs"
+    },
+    {
+      "archiveSha256": "83190C5C3812155382945CF6692A82636EEC21A2004083F927C72A8E8544F2C8",
+      "retainedSha256": "83190C5C3812155382945CF6692A82636EEC21A2004083F927C72A8E8544F2C8",
+      "matches": true,
+      "path": "src/AiDe.Core/Understanding/AtlasReaderContracts.cs"
+    },
+    {
+      "archiveSha256": "5C13533CA6EC83106E341691DA26644DA9D4A7CEFB65449B37E5368938139E63",
+      "retainedSha256": "5C13533CA6EC83106E341691DA26644DA9D4A7CEFB65449B37E5368938139E63",
+      "matches": true,
+      "path": "src/AiDe.Core/Understanding/AtlasReaderProjection.cs"
+    },
+    {
+      "archiveSha256": "5D8A8B1D8F0D17B8D3591A24D9EE880BBDB462BA2F750B03C806BBBBAB82CC7A",
+      "retainedSha256": "5D8A8B1D8F0D17B8D3591A24D9EE880BBDB462BA2F750B03C806BBBBAB82CC7A",
+      "matches": true,
+      "path": "src/AiDe.Core/Understanding/AtlasReadScopeIssuer.cs"
+    },
+    {
+      "archiveSha256": "4E8B954D31ABF17AB27CFE0DE1DFF2E5217F6C763428967B5AFD1666C04F64F7",
+      "retainedSha256": "4E8B954D31ABF17AB27CFE0DE1DFF2E5217F6C763428967B5AFD1666C04F64F7",
+      "matches": true,
+      "path": "src/AiDe.Core/Ipc/AtlasRemoteReader.cs"
+    },
+    {
+      "archiveSha256": "548A82A03EF31CC42E10EB8A3C9833BB39FD6A81AA8C95F7FE18C659478AE951",
+      "retainedSha256": "548A82A03EF31CC42E10EB8A3C9833BB39FD6A81AA8C95F7FE18C659478AE951",
+      "matches": true,
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasStaticObservationTests.cs"
+    },
+    {
+      "archiveSha256": "D6F511445B8712F0C4DD6FEDAF871F7385430861FCC1BA1AD644539ABECE5FA5",
+      "retainedSha256": "D6F511445B8712F0C4DD6FEDAF871F7385430861FCC1BA1AD644539ABECE5FA5",
+      "matches": true,
+      "path": "tests/AiDe.Core.Tests/Understanding/AtlasStaticReaderContractTests.cs"
+    },
+    {
+      "archiveSha256": "FDCDAAFEF9A6AF43A3053ED7218AD486F566A04D0DF715347A3125743063BD97",
+      "retainedSha256": "FDCDAAFEF9A6AF43A3053ED7218AD486F566A04D0DF715347A3125743063BD97",
+      "matches": true,
+      "path": "src/AiDe.Core/Ipc/AtlasWorkspaceOperations.cs"
+    },
+    {
+      "archiveSha256": "68EC56124F71728F554F6A35970133BDA0D0E9553BB46B93B2C3517886FB5E5A",
+      "retainedSha256": "68EC56124F71728F554F6A35970133BDA0D0E9553BB46B93B2C3517886FB5E5A",
+      "matches": true,
+      "path": "src/AiDe.Core/Understanding/CSharpDeclarationObservation.cs"
+    }
+  ],
+  "canonicalCandidate": {
+    "approval": "Owner86 recorded decision (2026-09-14; Conductor session-contracts section 2): normal canonical pair approved under the recorded deterministic source/build provenance, following final Security 2/2 and prior Test/SRE clearance. Historical hashes remain references; canonical bytes are not identical originals. This is not E1 acceptance.",
+    "status": "Approved",
+    "overridesSha256": "44663180D9F9F1B1E1870A81E63421559A0FC274744DF2F495C08F9A34B3AB53",
+    "coreSha256": "ED7F23CDA7DBB749511D1D879CF0886543E4E76680009749398D19CA9E445EC5",
+    "peerSha256": "8E95C84ED6887572B62F35664222A771E0EF283980E430B69F64AFEA5BC583BA",
+    "sourcePin": "b91d4bb5b0f59352b7f90b94e0b2733a647452dc",
+    "sourceLinkSha256": "B77938A03B6CCCD666E664C2035F430BE3ACC80B5B03701954E204C77D8676B3"
+  },
+  "runtimeStagingContract": {
+    "copy": "Declared regular-file closure; every copied hash and fixed Core/peer hashes verified",
+    "derivedMaximumExecutionRoot": 135,
+    "excludedSegment": ".artifacts",
+    "gitLooseObjectSuffix": ".git\\objects\\<2 hex>\\<38 hex>",
+    "globalLongPathsChanged": false,
+    "legacySuffix": ".artifacts\\atlas-runtime\\<32-character N GUID>\\repository",
+    "maximumFilePath": 259,
+    "buildAndExecutionSeparate": true
+  }
+}
