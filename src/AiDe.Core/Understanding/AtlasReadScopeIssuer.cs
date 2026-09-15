@@ -18,6 +18,7 @@ internal sealed class AtlasReadScopeIssuer : IAsyncDisposable
     private static readonly Counter<long> Admissions = Meter.CreateCounter<long>("atlas.scope.admissions");
     private static readonly Counter<long> Operations = Meter.CreateCounter<long>("atlas.scope.operations");
     private static readonly Histogram<double> Duration = Meter.CreateHistogram<double>("atlas.scope.operation.duration", "ms");
+    private static readonly Histogram<long> HandleCharges = Meter.CreateHistogram<long>("atlas.scope.handle_charge", "By");
     private readonly AtlasWorkspaceReadPolicy _policy;
     private readonly AtlasGitMembership _membership;
     private readonly AtlasReadBudget _budget;
@@ -269,7 +270,11 @@ internal sealed class AtlasReadScopeIssuer : IAsyncDisposable
                     && pair.Value.Manifest == native.ManifestToken).Key;
                 if (found is not null) return found;
                 var token = NewToken();
-                scope.Charge(token, declaration.ObservationKey, native.FileValue, native.ManifestToken);
+                var charged = scope.Charge(token, declaration.ObservationKey, native.FileValue, native.ManifestToken,
+                    declaration.Structure?.ParentObservationKey ?? "", declaration.Structure?.Reason ?? "",
+                    declaration.Structure?.ClassifierFlavor?.ToString() ?? "",
+                    declaration.Structure?.ParentState.ToString() ?? "", declaration.Structure?.Provenance.ToString() ?? "");
+                HandleCharges.Record(charged, new KeyValuePair<string, object?>("kind", "declaration"));
                 scope.Declarations[token] = new Declaration(declaration.ObservationKey, native.FileValue, native.ManifestToken);
                 return token;
             });
@@ -453,7 +458,7 @@ internal sealed class AtlasReadScopeIssuer : IAsyncDisposable
             && Queries!.HasReaderManifest(native) ? native
             : throw new AtlasReadException("Atlas.StaleManifest", "The retained manifest is no longer available.");
 
-        internal void Charge(params string[] values)
+        internal long Charge(params string[] values)
         {
             var bytes = values.Sum(value => (long)Encoding.UTF8.GetByteCount(value));
             // A reserved encoded allowance: 2 MiB Q manifests + 512 KiB Q receipts +
@@ -461,6 +466,7 @@ internal sealed class AtlasReadScopeIssuer : IAsyncDisposable
             if (_handleBytes + bytes > 1024 * 1024)
                 throw new AtlasReadException("Atlas.Busy", "The encoded Atlas handle allowance is occupied.");
             _handleBytes += bytes;
+            return bytes;
         }
         internal void CheckRetention()
         {

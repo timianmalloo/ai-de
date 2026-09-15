@@ -14,6 +14,7 @@ public static class AtlasReaderProjection
     public const int FramePrefixBytes = sizeof(int);
     public const int MaxPageTextUtf8Bytes = 128 * 1024;
     public const int MaxSourceInputBytes = 8 * 1024 * 1024;
+    public const string StaticStructureFeature = "static-structure-v1";
 
     private static readonly UTF8Encoding ContentEncoding = new(false, true);
     private static readonly Dictionary<string, string> ReasonMessages = new(StringComparer.Ordinal)
@@ -36,6 +37,10 @@ public static class AtlasReaderProjection
         ["outline unavailable"] = "outline unavailable",
         ["outline refused"] = "outline refused",
         ["source display limit"] = "source display limit",
+        ["recovery syntax"] = "recovery syntax",
+        ["parent not observed"] = "parent not observed",
+        ["unsupported lexical parent"] = "unsupported lexical parent",
+        ["parent outside page"] = "parent outside page",
     };
     private static readonly JsonSerializerOptions WireOptions = CreateWireOptions();
 
@@ -183,11 +188,13 @@ public static class AtlasReaderProjection
         var available = phase.OutlineState is AtlasOutlineState.Available;
         Require(!available || phase.OutlineReason is null, "Available outline has no failure reason.");
         var outlineLimit = available ? Math.Min(request.OutlineLimit, native.Bounds.EffectiveLimit) : 0;
-        var outline = available
-            ? native.Outline.Declarations.Skip(request.OutlineOffset).Take(outlineLimit).Select(declaration => new AtlasOutlineRowDto(
-                issueDeclarationToken(declaration), declaration.DisplayName, declaration.Kind,
-                new AtlasSpanDto(declaration.Span.Start, declaration.Span.Length))).ToArray()
-            : [];
+        var pageDeclarations = available
+            ? native.Outline.Declarations.Skip(request.OutlineOffset).Take(outlineLimit).ToArray() : [];
+        var tokens = pageDeclarations.ToDictionary(item => item.ObservationKey, issueDeclarationToken, StringComparer.Ordinal);
+        var outline = pageDeclarations.Select(declaration => new AtlasOutlineRowDto(
+            tokens[declaration.ObservationKey], declaration.DisplayName, declaration.Kind,
+            new AtlasSpanDto(declaration.Span.Start, declaration.Span.Length),
+            request.StaticStructure is true ? ProjectStructure(declaration.Structure, tokens) : null)).ToArray();
         var outlineCut = available && Math.Max(0, native.Outline.Declarations.Length - request.OutlineOffset) > outline.Length;
         var outlineBounds = new AtlasBoundsDto(
             AtlasBoundsDimension.OutlineRows, request.OutlineLimit,
@@ -207,6 +214,21 @@ public static class AtlasReaderProjection
             native.Limitations.Select(reason => SafeReason(reason) ?? "not recorded").ToArray());
         ValidateSelection(result, request);
         return result;
+    }
+
+    private static AtlasStructureDto ProjectStructure(AtlasDeclarationStructure? native, IReadOnlyDictionary<string, string> tokens)
+    {
+        if (native is null)
+            return new(null, AtlasLexicalParentState.Unavailable, null, AtlasStructureProvenance.Unavailable, "not recorded");
+        if (native.ParentState is AtlasLexicalParentState.Present)
+        {
+            if (native.ParentObservationKey is null)
+                throw new JsonException("An observed lexical parent requires its occurrence.");
+            return tokens.TryGetValue(native.ParentObservationKey, out var parent)
+                ? new(native.ClassifierFlavor, native.ParentState, parent, native.Provenance, null)
+                : new(native.ClassifierFlavor, AtlasLexicalParentState.OutsidePage, null, native.Provenance, "parent outside page");
+        }
+        return new(native.ClassifierFlavor, native.ParentState, null, native.Provenance, SafeReason(native.Reason));
     }
 
     private static (AtlasSourceDto Source, bool ByteCut, bool WindowCut) SelectionSource(
@@ -611,7 +633,10 @@ public static class AtlasReaderProjection
             _ = ContentBytes(row.DisplayName);
             Require(row.Span.Start >= 0 && row.Span.Length >= 0
                 && (long)row.Span.Start + row.Span.Length <= int.MaxValue, "Invalid outline span.");
+            Require(request.StaticStructure is true ? row.Structure is not null : row.Structure is null,
+                "Structural metadata must match the negotiated request.");
         }
+        if (request.StaticStructure is true) ValidateStructure(value.Outline);
 
         Require(value.Coverage is not null && Enum.IsDefined(value.Coverage.State), "Invalid coverage.");
         Require(value.Coverage.State is AtlasDenominatorState.Known
@@ -623,6 +648,47 @@ public static class AtlasReaderProjection
         {
             Require(disclosure is not null, "Null disclosure.");
             RequireSafeReason(disclosure);
+        }
+    }
+
+    private static void ValidateStructure(AtlasOutlineRowDto[] rows)
+    {
+        Require(rows.Select(row => row.DeclarationToken).Distinct(StringComparer.Ordinal).Count() == rows.Length,
+            "Duplicate declaration tokens.");
+        var byToken = rows.ToDictionary(row => row.DeclarationToken, StringComparer.Ordinal);
+        foreach (var row in rows)
+        {
+            var structure = row.Structure!;
+            Require(Enum.IsDefined(structure.ParentState) && Enum.IsDefined(structure.Provenance)
+                && (structure.ClassifierFlavor is null || Enum.IsDefined(structure.ClassifierFlavor.Value)),
+                "Undefined structural metadata.");
+            RequireSafeReason(structure.Reason);
+            Require(structure.Provenance is AtlasStructureProvenance.Unavailable
+                ? structure.ParentState is AtlasLexicalParentState.Unavailable && structure.ClassifierFlavor is null
+                : structure.ParentState is not AtlasLexicalParentState.Unavailable, "Structural evidence is incoherent.");
+            Require(row.Kind is AtlasDeclarationKind.Type && structure.Provenance is AtlasStructureProvenance.Extracted
+                ? structure.ClassifierFlavor is not null : structure.ClassifierFlavor is null,
+                "Extracted classifiers require a flavor; other occurrences cannot claim one.");
+            Require(structure.ParentState is AtlasLexicalParentState.Unavailable or AtlasLexicalParentState.OutsidePage
+                ? structure.Reason is not null : structure.Reason is null, "Structural omission requires a reason.");
+            if (structure.ParentState is not AtlasLexicalParentState.Present)
+            {
+                Require(structure.ParentDeclarationToken is null, "Absent parents cannot carry authority.");
+                continue;
+            }
+            RequireToken(structure.ParentDeclarationToken);
+            Require(byToken.TryGetValue(structure.ParentDeclarationToken!, out var parent) && !ReferenceEquals(parent, row),
+                "Parent must be another returned occurrence.");
+            Require(row.Kind is AtlasDeclarationKind.Accessor
+                ? parent.Kind is AtlasDeclarationKind.Property : parent.Kind is AtlasDeclarationKind.Type,
+                "Invalid immediate lexical parent kind.");
+            var visited = new HashSet<string>(StringComparer.Ordinal) { row.DeclarationToken };
+            var current = row;
+            while (current.Structure!.ParentDeclarationToken is { } token)
+            {
+                Require(visited.Add(token) && byToken.TryGetValue(token, out current!),
+                    "Structural parent cycle or missing parent.");
+            }
         }
     }
 
@@ -722,6 +788,9 @@ public static class AtlasReaderProjection
         options.Converters.Add(new StrictEnumConverter<SourceProjectionState>());
         options.Converters.Add(new StrictEnumConverter<AtlasOutlineState>());
         options.Converters.Add(new StrictEnumConverter<AtlasDeclarationKind>());
+        options.Converters.Add(new StrictEnumConverter<AtlasClassifierFlavor>());
+        options.Converters.Add(new StrictEnumConverter<AtlasLexicalParentState>());
+        options.Converters.Add(new StrictEnumConverter<AtlasStructureProvenance>());
         return options;
     }
 

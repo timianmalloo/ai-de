@@ -260,10 +260,11 @@ public static class CSharpDeclarationObservation
                 cancellationToken.ThrowIfCancellationRequested();
                 var input = sourceMap[tree];
                 var semanticModel = compilation.GetSemanticModel(input.SyntaxTree);
+                var emitted = new Dictionary<SyntaxNode, AtlasDeclaration>(ReferenceEqualityComparer.Instance);
                 foreach (var node in input.SyntaxTree.GetRoot(cancellationToken).DescendantNodes(descendIntoChildren: static _ => true))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    if (!TryCreateDeclaration(node, input, semanticModel, context, limitations, out var occurrenceKey, out var declaration))
+                    if (!TryCreateDeclaration(node, input, semanticModel, context, limitations, emitted, out var occurrenceKey, out var declaration))
                     {
                         continue;
                     }
@@ -280,11 +281,14 @@ public static class CSharpDeclarationObservation
                     }
 
                     declarations.Add(declaration);
+                    emitted.Add(node, declaration);
                 }
             }
 
             activity?.SetTag("atlas.declarations.count", declarations.Count);
             activity?.SetTag("atlas.declarations.limitations", limitations.Distinct(StringComparer.Ordinal).Count());
+            activity?.SetTag("atlas.declarations.structures", declarations.Count(item => item.Structure?.Provenance is AtlasStructureProvenance.Extracted));
+            activity?.SetTag("atlas.declarations.structure-unavailable", declarations.Count(item => item.Structure?.Provenance is AtlasStructureProvenance.Unavailable));
             return Complete(declarations, limitations, AtlasCompletionState.Complete, limits.MaxDeclarations);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -318,7 +322,7 @@ public static class CSharpDeclarationObservation
         return map;
     }
 
-    private static bool TryCreateDeclaration(SyntaxNode node, CSharpDeclarationSourceInput input, SemanticModel semanticModel, AtlasCompilationScope context, List<string> limitations, out string occurrenceKey, out AtlasDeclaration declaration)
+    private static bool TryCreateDeclaration(SyntaxNode node, CSharpDeclarationSourceInput input, SemanticModel semanticModel, AtlasCompilationScope context, List<string> limitations, IReadOnlyDictionary<SyntaxNode, AtlasDeclaration> emitted, out string occurrenceKey, out AtlasDeclaration declaration)
     {
         occurrenceKey = string.Empty;
         declaration = null!;
@@ -357,8 +361,42 @@ public static class CSharpDeclarationObservation
             ValidateSpan(identifier.Span, input.Buffer),
             declarationSpan,
             BodySpan(node, input.Buffer),
-            symbolValue is null ? UnresolvedReason(context) : null);
+            symbolValue is null ? UnresolvedReason(context) : null,
+            Structure(node, emitted));
         return true;
+    }
+
+    private static AtlasDeclarationStructure Structure(SyntaxNode node, IReadOnlyDictionary<SyntaxNode, AtlasDeclaration> emitted)
+    {
+        var parent = node.Parent;
+        while (parent is not null && parent is not (MemberDeclarationSyntax or AccessorDeclarationSyntax
+            or LocalFunctionStatementSyntax or CompilationUnitSyntax))
+            parent = parent.Parent;
+        if (node.ContainsDiagnostics || parent?.ContainsDiagnostics == true)
+            return new(null, AtlasLexicalParentState.Unavailable, null, AtlasStructureProvenance.Unavailable, "recovery syntax");
+        if (parent is not null && emitted.TryGetValue(parent, out var uncertain)
+            && uncertain.Structure?.Provenance is AtlasStructureProvenance.Unavailable)
+            return new(null, AtlasLexicalParentState.Unavailable, null, AtlasStructureProvenance.Unavailable,
+                uncertain.Structure.Reason ?? "parent not observed");
+
+        AtlasClassifierFlavor? flavor = node switch
+        {
+            RecordDeclarationSyntax record when record.ClassOrStructKeyword.IsKind(SyntaxKind.StructKeyword) => AtlasClassifierFlavor.RecordStruct,
+            RecordDeclarationSyntax => AtlasClassifierFlavor.RecordClass,
+            ClassDeclarationSyntax => AtlasClassifierFlavor.Class,
+            StructDeclarationSyntax => AtlasClassifierFlavor.Struct,
+            InterfaceDeclarationSyntax => AtlasClassifierFlavor.Interface,
+            EnumDeclarationSyntax => AtlasClassifierFlavor.Enum,
+            _ => null
+        };
+        if (parent is CompilationUnitSyntax or BaseNamespaceDeclarationSyntax)
+            return new(flavor, AtlasLexicalParentState.NotApplicable, null, AtlasStructureProvenance.Extracted, null);
+        if (parent is not null && emitted.TryGetValue(parent, out var declaration))
+            return new(flavor, AtlasLexicalParentState.Present, declaration.ObservationKey, AtlasStructureProvenance.Extracted, null);
+        var supported = parent is BaseTypeDeclarationSyntax or ConstructorDeclarationSyntax or PropertyDeclarationSyntax
+            or AccessorDeclarationSyntax or MethodDeclarationSyntax;
+        return new(null, AtlasLexicalParentState.Unavailable, null, AtlasStructureProvenance.Unavailable,
+            supported ? "parent not observed" : "unsupported lexical parent");
     }
 
     private static AtlasDeclarationKind? DeclarationKind(SyntaxNode node, List<string> limitations, out AtlasDeclarationRole role)
@@ -502,5 +540,3 @@ public static class CSharpDeclarationObservation
         }
     }
 }
-
-

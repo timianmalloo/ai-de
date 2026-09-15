@@ -19,6 +19,7 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
     private NamedPipeClientStream? _pipe;
     private string? _capability;
     private long _epoch;
+    private bool _staticStructure;
     private Lease? _lease;
     private Attempt? _attempt;
     private bool _terminal = true;
@@ -51,7 +52,9 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
                 result => { _capability = result.Capability; _epoch = result.Epoch; }, waiting.Token).ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(open.Capability) || open.Epoch < 0) throw new JsonException("Invalid handshake.");
             _ = await ExchangeCoreAsync(Request(AtlasWorkspaceOperations.Capabilities, new AtlasCapabilitiesRequestDto([1])),
-                element => AtlasReaderProjection.DeserializeCapabilities(Bytes(element)), _ => { }, waiting.Token).ConfigureAwait(false);
+                element => AtlasReaderProjection.DeserializeCapabilities(Bytes(element)),
+                value => _staticStructure = value.Features.Contains(AtlasReaderProjection.StaticStructureFeature, StringComparer.Ordinal),
+                waiting.Token).ConfigureAwait(false);
             var admission = await ExchangeCoreAsync(Request(AtlasWorkspaceOperations.Admit, new AtlasAdmitRequestDto(1, _epoch)),
                 element =>
                 {
@@ -345,6 +348,7 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
         {
             Match(request.ScopeToken, request.ExpectedCoreEpoch);
             if (!_inventoryRead || request.ManifestToken != _manifest) throw Invalid();
+            request = request with { StaticStructure = _owner._staticStructure && request.StaticStructure is true ? true : null };
             return _owner.QueryAsync(this, AtlasWorkspaceOperations.Select, request,
                 element => DecodeSelection(element, request),
                 value => Adopt(value, request), cancellationToken);
