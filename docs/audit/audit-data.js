@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:07:12Z",
+  "generated": "2026-09-15T21:12:34Z",
   "audit": [
     {
       "actor": null,
@@ -18813,6 +18813,53 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "0ed952832f076103c4c2b766e32169f59ecd865b",
         "short": "0ed952832",
+        "branch": "review/atlas-views-design",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KEM5TMNVNJF429SYSWAAWG",
+      "shortname": "atlas-e2-relation-spike-review",
+      "datetime": "2026-09-15T21:12:34Z",
+      "session": "codex-atlas-views-review",
+      "prompt": "Independently review E2 relation spike 63e68e8f and focused complete-binding correction ed7efe79 against design 15b53fe9, execute the normal run and binding-corruption fault, and preserve synthetic-only limits without product acceptance.",
+      "summary": "Cleared the bounded E2 synthetic relation spike. Normal Windows run passed 57 checks; six original subject faults were previously observed failing, and the corrected full AnchorEvidence equality rejects the new relation-corrupt-binding fault. Seven-collection 224/225 bounds, projected endpoints/state/basis, declared-current labeling and synthetic assertion/binding refusals are qualified; real producer, authority, deployment equality, wire/native and product claims remain open.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-sol-plan-review",
+      "artifacts": [
+        "docs/proof/atlas-views-plan-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "e2-relation-spike"
+      ],
+      "outcome": "success",
+      "goal": "Determine whether the E2 relation spike and its focused repair prove the bounded synthetic relation-carrier contract.",
+      "done_when": "Normal output, subject-fault sensitivity, relation refusals, complete binding equality and 224/225 bounds have a committed scoped CLEAR/BLOCK disposition.",
+      "tier": "T2",
+      "main_calls": 5,
+      "main_budget": 5,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T21:11:44Z",
+      "duration_seconds": 50.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 1,
+          "accepted": 1
+        }
+      ],
+      "git": {
+        "sha": "205d5da4f0f4ab0854c17732a18743778822f204",
+        "short": "205d5da4f",
         "branch": "review/atlas-views-design",
         "pushed": null
       }

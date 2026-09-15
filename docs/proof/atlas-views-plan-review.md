@@ -497,3 +497,44 @@ expected-result authorship, not subject authorship. Clearance is limited to expe
 structural/page feasibility; it grants no production token, wire, UI, executable CFG, runtime,
 product or native acceptance, and final P0.7 semantic acceptance still needs the executed
 result plus independent review.
+
+## Independent E2 relation-spike review
+
+Reviewed original relation spike `63e68e8f8f378594232b2ec05fa44af1203966f8`
+and focused correction `ed7efe792beb1e3a1a64942e58c1f669aea7cb68` against
+design `15b53fe9`. This reviewer did not author the E2 subject.
+
+**CLEAR — bounded synthetic relation-carrier qualification only.** The normal Windows
+run rebuilt and exited 0 with 57 checks. The original three alias/scope faults and three
+relation faults were independently observed at `63e68e8f`, each exiting 1 at its dependent
+oracle. The correction changes only complete binding equality and adds the seventh subject
+fault; the six earlier faults were not redundantly rerun in the focused recheck.
+
+Verified behavior:
+
+- Missing seventh collection, invalid collection shapes, endpoint shape/type/kind,
+  unsupported kind, missing/stale synthetic anchor binding, missing/mismatched assertion
+  reference and mismatched predicate/endpoints/binding yield named refusal or unresolved
+  state with zero projected edges.
+- The 7×32 = 224-row boundary produces 32 bounded relations. A 33rd row in each named
+  collection produces both its per-collection and 225-total diagnostics and no edges.
+- Produced output contains the explicit target domain relation and current synthetic
+  source-backed dependency with typed endpoints, kind, state, basis, label, exact anchor
+  record and assertion reference. Changing an explicit declaration to Current preserves
+  `explicit-declaration` and `Declared relationship`; it does not become extracted truth.
+- At `63e68e8f`, the positive oracle checked anchor count, ID and target but not scope,
+  hash or span. That was a hard evidence gap because the proof claimed complete binding.
+  At `ed7efe79`, expected `AnchorEvidence` fixes ID `a`, target `synthetic:abc`, scope
+  `fixture`, the SHA-256 of `abc`, start 0 and length 3. The independently run normal case
+  passed; `relation-corrupt-binding` retained ID/target while changing scope/hash/start/length
+  and exited 1 at `relation-produced-target-and-current`.
+
+The author's pre-fix missing-collection red and pre-repair corrupt-binding false pass are
+reported historical observations, not independently replayed states. The final rejection
+behavior and corruption sensitivity were independently executed. Linux and project coverage
+remain Conductor evidence.
+
+This clearance proves a closed synthetic assertion registry and carrier projection. It does
+not prove a real producer, manifest/epoch authorization, production `EvidenceBinding`,
+authority/provenance promotion, cross-declaration deployment equality, wire/native behavior,
+performance or US-E8/product acceptance. Fully known deployment identity remains unresolved.
