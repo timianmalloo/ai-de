@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T04:21:51Z",
+  "generated": "2026-09-15T04:35:57Z",
   "audit": [
     {
       "actor": null,
@@ -17183,6 +17183,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "2b818f144980a0e2acecbaddc0795864a00673a3",
         "short": "2b818f144",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HNK97556778ZDN9X71G9FN",
+      "shortname": "atlas-owner88-native-class-view-start",
+      "datetime": "2026-09-15T04:35:56Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner88acceptsCore/fixtureboundedclosure4a581204 andadmits48nativeauthorleaves5paths toretainedShellAstra0425. Newtree/baseverified4a581204, all5predecessorchecksALLOW; §2exactownership/directionrecorded. UI-designcreateextension: grounded/readable/ordered, VSfilemetaphor+scopedUMLcompartments, inheritE0Centerandtokens. TriggersUI-T1expertprecision/UI-T4WindowsWPF; no generatedassets/modelUI. Existingapprovedproposal/UXreusedwithoutprivateimport; noextraHTML/DESIGN/chromeauthoring. Fullrealdaemon/pipe/nativejourneys, >128/farUTF16/CRLFnonBMP, exacttoken/source/Back, hardstates/nativeUIA/geometry/scale/DPI conditionssent.20newreviewleaves4eachUX/UML/CSharp/Test/SRE;main870. Parentdesign direction edit preceded its renewed lease but no overlap observed; currentcommitclaimed. Ledger46tasks42done4progress, no native/main/normativeEacceptance.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/design/code-atlas-e1-static-views.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Build native file-first and visual-first class/member/source journeys on the delivered Core ports",
+      "done_when": "Five-file native candidate carries real composition, source consistency, geometry and accessibility evidence for independent gates",
+      "tier": "T2",
+      "main_calls": 802,
+      "main_budget": 870,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T04:35:56Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "4a5812044a38a6fe365fb7929104f51dbc973fc5",
+        "short": "4a5812044",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

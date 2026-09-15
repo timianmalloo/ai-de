@@ -24,6 +24,42 @@ summary: >
 
 ## Current delivery checkpoint
 
+### Native direction before implementation (Owner 88)
+
+Mode: **create the class-view extension**, preserving the accepted reader rather
+than redesigning the shell. Audience: a file-first developer locating concrete
+code, or a visual-first developer/architect orienting within an unfamiliar file.
+Both must reach the same exact source, not two incompatible descriptions.
+Direction: **grounded, not speculative; readable, not decorative; ordered, not
+a dashboard of competing cards**.
+
+References are VS/VS Code's familiar solution/file hierarchy and member-to-source
+navigation, UML's evidence-supported class compartments, and this application's
+accepted Code Atlas Center reader. Adapt those interaction patterns; do not
+clone a product skin or present a source occurrence as a whole-project type model.
+The core composition is file hierarchy -> selected classifier/member -> source,
+with a Source/Class presentation pivot and visible file-limited provenance.
+
+Typography and color reuse the actual design language and existing WPF resources,
+including `SurfaceBrush`, `SurfaceSunkenBrush`, `TextBrush` and `TextMutedBrush`;
+no global token change is admitted. Preserve full labels and source legibility.
+Space serves the reading task: one selected classifier's current member page,
+clear hierarchy and stable source order, not an unbounded force graph.
+Motion is unnecessary for this slice; no interaction may depend on animation.
+
+Trigger union: UI-T1 applies to expert technical navigation with precise row,
+byte and UTF-16 bounds; chart/colormap-specific rules are N/A. UI-T4 applies:
+native-desktop / Windows / WPF, existing application distribution, UI Automation
+and established Windows keyboard/window conventions. UI-T2 generated imagery and
+UI-T3 model-fronting behavior do not apply. AI enrichment remains a later phase.
+The settled flows/states in section 7 still govern. Existing approved proposal/
+mockup direction is reused; no private corpus or new HTML artifact is imported.
+Actual native code and runtime evidence, not a mockup image, must clear this slice.
+
+Owner 88's five-file source grant is recorded in the sole collaboration register.
+The writer records native proof and unsupported tool coverage for parent review;
+it cannot edit DESIGN, the shell or specification to relax a failing surface.
+
 The bounded E1 Core implementation and genuine legacy-fixture delivery are joined
 at `2b818f144980a0e2acecbaddc0795864a00673a3`. Independent source/model/transport/
 test/security dispositions and joined plus fresh-owned-worktree ordinary runs

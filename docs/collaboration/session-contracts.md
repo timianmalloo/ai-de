@@ -1327,6 +1327,43 @@ Core/fixture Proof Pack preserves the failed 4e34 checkout and all earlier runs.
 The Core/fixture nodes may close within scope. Native source authoring still
 requires its own Owner grant; no main/push or normative E acceptance follows.
 
+Owner turn 88 accepts the persisted bounded Core/fixture checkpoint and grants
+48 native E1 author leaves to retained Shell/native Astra
+`0425e614-83e6-4140-bfa1-9b7789042a28`. New session/branch:
+`atlas-e1-native-class-view` / `atlas/e1-native-class-view`; new worktree
+`C:\Projects\ai-de-atlas-e1-native-class-view`, exact post-closure base
+`4a5812044a38a6fe365fb7929104f51dbc973fc5`. Parent created, registered and verified
+the tree; all five identity-checked predecessor queries returned allow.
+Exact authored paths:
+
+- `src/AiDe.App/Workbench/Understanding/AtlasStaticViewProjection.cs`
+- `src/AiDe.App/Workbench/Understanding/AtlasStaticView.cs`
+- `src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs`
+- `tests/AiDe.App.Tests/Workbench/Understanding/AtlasStaticViewTests.cs`
+- `tests/AiDe.App.Tests/Workbench/Understanding/AtlasStaticCompositionTests.cs`
+
+Reuse Architecture/CodeAtlas/Center, tokens/resources, owner and lease. No factory,
+MainWindow, chrome, project or dependency changes. Preserve file-explorer
+navigation and explicit Source/Class opt-in semantics. Cards/compartments come
+only from admitted occurrence/flavor/parent evidence; OutsidePage is not authority.
+The equivalent accessible list and visual members activate the same issued token
+and verified UTF-16 source window. Back preserves page, mode, selection, focus
+and original request preference. No guessed parent, name-merged partial,
+project semantics, inheritance or call graph.
+
+Require semantic red and real daemon/pipe/native composition for both entrances,
+over 128 declarations, a member beyond offset 32768, CRLF/non-BMP and off-page
+parents. Prove source/list/class consistency, actual readable geometry/complete
+labels at 1280 and smaller/larger supported viewports, keyboard/UIA, themes,
+reduced motion, text scale and DPI with gaps explicit. An IsOffscreen/bounds-string
+proxy cannot clear native proof. Unlisted seams return before edits.
+Sequence/activity and later E2/E3/E4 remain outside this tranche.
+
+Twenty review leaves are funded, four each UX, UML/graph, C#, Test and SRE,
+against one candidate after parent replay. Maintain width four and separate
+author/reviewer counts. Conductor's cumulative ceiling rises prospectively to
+870. No native acceptance, main/push, normative E or programme closure follows.
+
 ### Core owns
 
 | Path | Why |
