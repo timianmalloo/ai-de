@@ -14,8 +14,8 @@ links:
 review-by: 2027-03-15
 summary: >-
   Native proof pack for the Architecture Solution tree. HTML mockup is direction only.
-  Spike N7 Verified WPF TreeView attachments; product UIA, keyboard, High Contrast,
-  DPI and signing stay Flagged until UV-1.
+  Spike N7 Verified WPF TreeView attachments. UV-1 shipped product UIA Name, 28px header,
+  recycling virtualization, and unindexed leaf tests. High Contrast, DPI, and signing stay Flagged.
 review-suggested:
   - { by: mockup-solution-tree, on: 2026-09-15, reason: "N8 ui-design: Solution tree mockup settles dual-activate, Unindexed chrome, and hard states; HTML is direction only" }
 ---
@@ -41,22 +41,22 @@ HTML mockup and `ui-craft-gate.py` **cannot** clear native PASS (UI-T4, DX9a). T
 |---|---|---|---|---|---|---|
 | Platform HIG is honored | Tree uses List/ListItem, or 44px rail rows, or Explorer CRUD | WPF Tree/TreeItem; 28px compact rows; read-only navigator | Spike rejected ListView/ItemsControl (wrong UIA role). Product UV-1 **not run** | planned | Spike **Verified**; product **Flagged** | HTML analogue is not HIG proof |
 | Keyboard traversal works | Pointer required for View source / Reveal / expand | Enter View source; Ctrl+Enter Reveal; arrows; unindexed does not expand | Spike F8/F11/F13 PreviewKeyDown + arrows. Physical Ctrl+Enter **Inferred** (F12) | planned | **Verified** (Enter, arrows) / **Inferred** (Ctrl+Enter) | UV-1 attended or SendInput oracle |
-| Accessibility tree is correct | Name is path only; role not TreeItem; unindexed reports Expanded | Name includes kind+coverage; unindexed LeafNode | Spike F4/F5/F9. Product binding **not shipped** | planned | Spike **Verified**; product **Flagged** | |
+| Accessibility tree is correct | Name is path only; role not TreeItem; unindexed reports Expanded | Name includes kind+coverage; unindexed LeafNode | Spike F4/F5/F9. UV-1 `Show_StarDto_…` binds Name | yes (kind-row reds) | Spike **Verified**; product **Verified** (Name) | High Contrast still Flagged |
 | Theme/high contrast works | HC selected row vanishes (black on black) | System Highlight / HighlightText on selected row; glyph+word remain | Mockup `hc` is a stand-in; audit *not measured* | planned | **Flagged** | UV-1 HighContrast resources |
-| DPI/windowing works | 28px header clips or shrinks below 24×24 at 150% | Header MinHeight 28 DIP; hit ≥24×24 | Spike F7 at default DPI only | planned | **Flagged** (DPI not in spike) | Mixed-DPI UV-1 |
-| Large native lists remain responsive | 400 roots realize 400 containers | Recycling virtualization; ~18/400 in 280px | Spike F2/F3 | planned | Spike **Verified**; product must set attached properties | Default TreeView is not virtualizing |
-| OS integration is scoped | Tree walks disk from the App process | PROBE-APP-ENUM | Spec probe; not this mockup | planned | **Flagged** | Architecture + UV-0 |
+| DPI/windowing works | 28px header clips or shrinks below 24×24 at 150% | Header MinHeight 28 DIP; hit ≥24×24 | Spike F7 at default DPI only | planned | **Flagged** (DPI not in this slice) | Mixed-DPI |
+| Large native lists remain responsive | 400 roots realize 400 containers | Recycling virtualization; ~18/400 in 280px | Spike F2/F3. UV-1 sets Recycling on the instance | yes | Spike **Verified**; product **Verified** (attached properties) | 400-item live measure not re-run in App.Tests |
+| OS integration is scoped | Tree walks disk from the App process | PROBE-APP-ENUM | `SolutionTreeProbeTests.ProbeAppEnum_…` | yes | **Verified** | FILE-READ is a pinned source scan |
 | Distribution trust is handled | Unsigned slice artifact | Existing app signing | Out of D-0 | n/a | **Flagged** (release, not this slice) | |
 
 ## 3. WPF-specific rows
 
 | claim | failing input or condition | oracle | evidence | red observed | confidence | residual risk |
 |---|---|---|---|---|---|---|
-| UIA metadata | Unbound Name = header only | `AutomationProperties.Name` → kind+coverage | Spike F5 | planned | Spike **Verified** | UV-1 ItemContainerStyle |
-| Keyboard accelerators | Enter does nothing (platform default) | Tree `PreviewKeyDown` handles Return and Ctrl+Return | Spike F11 | planned | **Verified** (handler shape) | Do not steal composer Ctrl+Enter when tree is not focused |
+| UIA metadata | Unbound Name = header only | `AutomationProperties.Name` → kind+coverage | Spike F5. UV-1 ItemContainerStyle | yes | **Verified** | |
+| Keyboard accelerators | Enter does nothing (platform default) | Tree `PreviewKeyDown` handles Return and Ctrl+Return | Spike F11. UV-1 `HandleKey` | yes (Enter) | **Verified** (Enter); Ctrl chord **Inferred** | Do not steal composer Ctrl+Enter when tree is not focused |
 | HighContrast resources | Raw hex in item template | DynamicResource / system brushes | Not in spike | planned | **Flagged** | |
-| 28px full-row hit | `Height=28` on TreeViewItem clips children; default row 16px | Header content `MinHeight=28`, never item Height | Spike F6/F7 | planned | Spike **Verified** | UV-1 template |
-| Unindexed non-expanding leaf | Double-click sets IsExpanded with 0 children | Empty Children; swallow second click | Spike F10/F8 | planned | Spike **Verified** | UV-1 must mark Handled |
+| 28px full-row hit | `Height=28` on TreeViewItem clips children; default row 16px | Header content `MinHeight=28`, never item Height | Spike F6/F7. `Header_MinHeightIs28_NotHeightOnTheItem` | yes | **Verified** (default DPI) | |
+| Unindexed non-expanding leaf | Double-click sets IsExpanded with 0 children | Empty Children; swallow second click | Spike F10/F8. UV-1 Preview+bubble Handled | yes | **Verified** | |
 
 ## 4. Exemplar/license references used
 

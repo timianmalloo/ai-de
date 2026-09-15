@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T16:23:49Z",
+  "generated": "2026-09-15T16:45:45Z",
   "audit": [
     {
       "actor": null,
@@ -17235,6 +17235,47 @@ window.AUDIT_DATA = {
         "sha": "18d7db368d5a86c4fe5cc9192fe51f9cd49bcf54",
         "short": "18d7db368",
         "branch": "understanding-views-core-query",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JZBM6WSKRKPTXNVWTRZPZ4",
+      "shortname": "uv-1-solution-tree-shell",
+      "datetime": "2026-09-15T16:45:45Z",
+      "session": "understanding-views-shell",
+      "prompt": "UV-1 /implement for D-0 Solution tree Shell surface. One SurfaceKind row solution-tree + WPF TreeView that binds SolutionTreeAsync. AR3. N7 attachments. App tests US-C4, visual-tree T3/T5c Fake DTO, PROBE-APP-ENUM, PROBE-ATLAS, PROBE-FILE-READ. Commit. T2 fan-out 0.",
+      "summary": "UV-1 Solution tree shell: one Architecture SurfaceKind solution-tree (Instances.One, Derived _View) and WPF TreeView with N7 attachments. US-C4 table tests red (Expected 19 Actual 18; menu missing Show solution tree) then green. T5c visual-tree uses Fake omit-set DTO, not Core omit ctor or DropRelativePaths. PROBE-APP-ENUM / PROBE-ATLAS / PROBE-FILE-READ passed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "src/AiDe.App/Workbench/SolutionTreeSurface.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs",
+        "tests/AiDe.App.Tests/SolutionTreeProbeTests.cs",
+        "tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs",
+        "docs/proof/uv-1-solution-tree-shell.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "One SurfaceKind row solution-tree plus WPF TreeView surface that binds SolutionTreeAsync. AR3: the kind exists because the row is added; menu is derived.",
+      "done_when": "Row in SurfaceContentFactory.Kinds with Perspectives Architecture, Instances.One, Derived _View; surface uses N7 attachments; App tests for US-C4 mutation, visual-tree T3/T5c via Fake DTO, PROBE-APP-ENUM, PROBE-ATLAS, PROBE-FILE-READ; committed.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T16:25:39Z",
+      "duration_seconds": 1206.0,
+      "git": {
+        "sha": "23b182509db5da73578f6cc9d9d5f4db2b05bff2",
+        "short": "23b182509",
+        "branch": "understanding-views-shell",
         "pushed": null
       }
     }

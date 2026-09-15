@@ -997,6 +997,8 @@ public sealed class WorkbenchShell : IDisposable
         // Class diagrams derive from the graph; (re)populate any that are open (early-returns when none).
         BindClassDiagrams();
 
+        BindSolutionTrees();
+
         // Code viewers show node source (a labelled sample until Core's content query ships).
         BindCodeViewers();
 
@@ -1241,6 +1243,8 @@ public sealed class WorkbenchShell : IDisposable
                     break;
             }
         }
+
+        RefreshSolutionTrees();
     }
 
     /// <summary>Centres the graph on a join's endpoint.</summary>
@@ -1872,6 +1876,7 @@ public sealed class WorkbenchShell : IDisposable
         BindContexts();
         BindJoins();
         BindClassDiagrams();
+        BindSolutionTrees();
         BindCodeViewers();
         BindDiagnostics();
         BindSearchSurfaces();
@@ -2122,6 +2127,105 @@ public sealed class WorkbenchShell : IDisposable
         if (surfaces.Count == 0) { return; }
 
         _ = PopulateClassDiagramsAsync(surfaces);
+    }
+
+    internal void BindSolutionTrees()
+    {
+        var all = SurfaceContents<SolutionTreeSurface>("solution-tree").ToList();
+        foreach (var tree in all)
+        {
+            tree.ActivateRequested -= OnSolutionTreeActivateRequested;
+            tree.ActivateRequested += OnSolutionTreeActivateRequested;
+            tree.ShowGraphRequested -= OnSolutionTreeShowGraphRequested;
+            tree.ShowGraphRequested += OnSolutionTreeShowGraphRequested;
+            tree.RetryRequested -= OnSolutionTreeRetryRequested;
+            tree.RetryRequested += OnSolutionTreeRetryRequested;
+        }
+
+        if (_queries is null)
+        {
+            foreach (var tree in all.Where(s => s.NeedsInitialBind))
+            {
+                tree.ShowNoWorkspace();
+            }
+
+            return;
+        }
+
+        var toLoad = all.Where(s => s.NeedsInitialBind || s.IsNoWorkspace).ToList();
+        if (toLoad.Count == 0)
+        {
+            return;
+        }
+
+        _ = PopulateSolutionTreesAsync(toLoad, staleWhileRefresh: false);
+    }
+
+    private void RefreshSolutionTrees()
+    {
+        var loaded = SurfaceContents<SolutionTreeSurface>("solution-tree").Where(s => s.HasLoaded).ToList();
+        if (loaded.Count == 0)
+        {
+            return;
+        }
+
+        _ = PopulateSolutionTreesAsync(loaded, staleWhileRefresh: true);
+    }
+
+    private async Task PopulateSolutionTreesAsync(
+        IReadOnlyList<SolutionTreeSurface> surfaces, bool staleWhileRefresh)
+    {
+        foreach (var surface in surfaces)
+        {
+            if (staleWhileRefresh && surface.HasLoaded)
+            {
+                surface.MarkStale();
+            }
+            else
+            {
+                surface.ShowLoading();
+            }
+        }
+
+        if (_queries is null)
+        {
+            foreach (var surface in surfaces)
+            {
+                surface.ShowNoWorkspace();
+            }
+
+            return;
+        }
+
+        try
+        {
+            var result = await _queries.SolutionTreeAsync(new SolutionTreeQuery(), CancellationToken.None);
+            foreach (var surface in surfaces)
+            {
+                surface.Show(result);
+            }
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            foreach (var surface in surfaces)
+            {
+                surface.ShowError(ex.Message);
+            }
+        }
+    }
+
+    private void OnSolutionTreeActivateRequested(object? sender, SolutionTreeActivate request) =>
+        OpenNodeView(request.NodeId, request.Kind);
+
+    private void OnSolutionTreeShowGraphRequested(object? sender, EventArgs e) =>
+        Announcer.Announce(OpenKind(Architecture, "canvas", showExisting: true));
+
+    private void OnSolutionTreeRetryRequested(object? sender, EventArgs e)
+    {
+        if (sender is SolutionTreeSurface surface)
+        {
+            _ = PopulateSolutionTreesAsync([surface], staleWhileRefresh: false);
+        }
     }
 
     private async Task PopulateClassDiagramsAsync(IReadOnlyList<ClassDiagramSurface> surfaces)

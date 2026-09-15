@@ -16813,7 +16813,7 @@ window.DOCS_INDEX = {
           "reason": "N8 ui-design: Solution tree mockup settles dual-activate, Unindexed chrome, and hard states; HTML is direction only"
         }
       ],
-      "summary": "Native proof pack for the Architecture Solution tree. HTML mockup is direction only. Spike N7 Verified WPF TreeView attachments; product UIA, keyboard, High Contrast, DPI and signing stay Flagged until UV-1.",
+      "summary": "Native proof pack for the Architecture Solution tree. HTML mockup is direction only. Spike N7 Verified WPF TreeView attachments. UV-1 shipped product UIA Name, 28px header, recycling virtualization, and unindexed leaf tests. High Contrast, DPI, and signing stay Flagged.",
       "tags": [
         "native-ui",
         "proof-pack",
@@ -16843,7 +16843,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1511fb621dd91bff3eadd117be07000998f21b70b7be0bd660213f4f3459579c"
+      "sourceSha256": "27088a05396f124219a6959d435eb0717e5aed7eb4214059df3186b868862bb6"
     },
     {
       "id": "proof-perspective-content",
@@ -17458,6 +17458,55 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "70cd148d2f18b0c7a41bcbc83097d5c817b4815c2fae920b705c1c53de016531"
+    },
+    {
+      "id": "proof-uv-1-solution-tree-shell",
+      "path": "docs/proof/uv-1-solution-tree-shell.md",
+      "title": "Proof Pack — UV-1 Solution tree kind row and TreeView",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "UV-1: one Architecture SurfaceKind solution-tree (Instances.One, Derived _View) and a WPF TreeView with N7 attachments. T5c visual-tree uses a Fake omit-set DTO. US-C4 table tests seen red (18 kinds, no Show solution tree) then green (19).",
+      "tags": [
+        "proof-pack",
+        "D-0",
+        "solution-tree",
+        "UV-1",
+        "wpf",
+        "treeview",
+        "AR3"
+      ],
+      "links": [
+        {
+          "to": "spec-understanding-views",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-solution-tree",
+          "rel": "tested-by"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spike-d0-tree-toolkit",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-uv-0-solution-tree-core-query",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-native-ui-solution-tree",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "145a4c754e71ccf9e1f1d87ea1fcb821243bee3bdba03a6d535e9c61e147af92"
     },
     {
       "id": "proof-watcher-advisory-evaluator",
@@ -19492,5 +19541,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c2c39123439d97b22c2f3a42ade7e1e78480ee3815449b5e569a1613f58018c5"
+  "graphSha256": "60fa3d9710ec7a051be7b09f148fe174ea08e73a4e7290841c4ee96194a75b44"
 };
