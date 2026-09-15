@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T19:45:31Z",
+  "generated": "2026-09-15T20:03:21Z",
   "audit": [
     {
       "actor": null,
@@ -18363,6 +18363,42 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T19:45:30Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2KAND1TC5MAFMCN0WZ1WSG0",
+      "shortname": "atlas-five-view-owner-grounding",
+      "datetime": "2026-09-15T20:03:20Z",
+      "session": "codex-atlas-views-owner",
+      "prompt": "Accept recommended five-view scope and two separate bounded DESIGN/contract lanes; ER remains explicitly outside current five-view delivery, tracked as remainder for GHCP. You are Owner: record this decision and T2 programme in allowed note, no product acceptance. Plan now exists at C:/Projects/ai-de-conductor-atlas-views/docs/plans/atlas-views.md and coordination/atlas-views.md/html. Read as Owner and identify concrete gaps, not self-clear independent plan veto. E1/E2 grounding workers will get separate main-based worktrees and read pinned92e025ae reference until explicit foundation base. Shared renderer/identity/source/bounds/history seams must be settled before implementation. Please include why existing mocks/spec reused yet lane-specific designs required, source-only honesty, ER excluded, native Class remains GHCP. Commit note with official audit/derived after lease and return full SHA, actual calls/time and residuals. No broad exploration; you have supplied the key decision inventory.",
+      "summary": "Mapped all five views to US-E6/7/8, architecture and source/mocks at pinned references. Recorded T2 scope, explicit ER remainder, GHCP Class/recovery boundaries, producer and rendering reuse limitations, shared prerequisites, test/native/security/data floors and concrete plan gaps. Source/document inspection only; no product or native acceptance.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "codex-astra-owner",
+      "artifacts": [
+        "docs/notes/atlas-views-owner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Ground and record the five-view Owner scope and prerequisite decisions without implementing or self-clearing product gates.",
+      "done_when": "All five views map to existing contracts, phased prerequisites and floor decisions; Owner note and official audit are committed for Conductor review.",
+      "tier": "T2",
+      "main_calls": 17,
+      "main_budget": 20,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T19:56:53Z",
+      "duration_seconds": 387.0,
+      "git": {
+        "sha": "c46e112a924a8a0a4c86e4552af1f0e30bfa851c",
+        "short": "c46e112a9",
+        "branch": "owner/atlas-views",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -22115,6 +22151,28 @@ window.AUDIT_DATA = {
         ]
       },
       "audit_ref": "al-01M2DZ3GA6T04XHQ6EAD7HRY8R"
+    },
+    {
+      "id": "cl-01M2KANCY1Q91QP1DMJZ7PRFDY",
+      "datetime": "2026-09-15T20:03:20Z",
+      "session": "codex-atlas-views-owner",
+      "kind": "decision",
+      "skill": "design-slice",
+      "title": "Atlas five-view design admission and shared prerequisite gates",
+      "prompt": "Accept recommended five-view scope and two separate bounded DESIGN/contract lanes; ER remains explicitly outside current five-view delivery, tracked as remainder for GHCP. You are Owner: record this decision and T2 programme in allowed note, no product acceptance.",
+      "summary": "Admitted separate E1 Sequence/Activity and E2 domain/layer/Azure design lanes; retained ER, native Class and recovery boundaries; recorded pinned evidence, reuse limits, shared contract and independent gate prerequisites.",
+      "rationale": "Existing source and mock direction supply reusable contracts but do not establish method behavior, domain semantics, resource identity or native five-view acceptance.",
+      "artifacts": [
+        "docs/notes/atlas-views-owner.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "c46e112a924a8a0a4c86e4552af1f0e30bfa851c",
+        "after": "c46e112a924a8a0a4c86e4552af1f0e30bfa851c",
+        "branch": "owner/atlas-views",
+        "pushed": null,
+        "commits": []
+      }
     }
   ]
 };

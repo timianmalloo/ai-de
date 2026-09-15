@@ -4446,6 +4446,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "7ea5df0924025831925b7064e9769adbb912fc28e69dc6a09ed91540e8cfdd8a"
     },
     {
+      "id": "note-atlas-views-owner",
+      "path": "docs/notes/atlas-views-owner.md",
+      "title": "Atlas five-view programme: Owner scope and design prerequisites",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Admits two bounded design and contract lanes for Sequence/Activity and domain/layer/Azure. Records evidence, reuse, shared prerequisites and required independent gates without granting product edits or accepting implementation.",
+      "tags": [
+        "atlas",
+        "owner-decision",
+        "e1",
+        "e2",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0f3a3347ad739aef51d6e10417d4c3877f8c522a9e3194e713691570fb0d9e2e"
+    },
+    {
       "id": "note-attended-rows-for-the-operator",
       "path": "docs/notes/attended-rows-for-the-operator.md",
       "title": "The attended rows — everything that waits on the operator's own eyes at the programme's close, one list, with the build to run it on",
@@ -19302,5 +19333,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "cdd88612eb547c1c59d7cd30ad6c280de4af5e4a93295e495173f86740d6f50d"
+  "graphSha256": "9a5441b4e4fc3abef5f4161f05a52799e6664b14b997fa2221b43ab253892f23"
 };
