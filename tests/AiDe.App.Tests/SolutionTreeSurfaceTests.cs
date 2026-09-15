@@ -128,7 +128,9 @@ public sealed class SolutionTreeSurfaceTests
                 Assert.Contains("unindexed_probe", text, StringComparison.Ordinal);
                 Assert.Contains("Unindexed", text, StringComparison.Ordinal);
                 Assert.Contains("1 skip-listed directories omitted", text, StringComparison.Ordinal);
-                Assert.DoesNotContain("bin", text, StringComparison.Ordinal);
+                Assert.DoesNotContain(
+                    Flatten((IEnumerable<SolutionTreeNodeItem>)surface.Tree.ItemsSource!),
+                    n => n.Node.Path is "bin" or "bin/");
 
                 var unindexed = FindItem(surface.Tree, n => n.Node.Path == "unindexed_probe");
                 Assert.NotNull(unindexed);
@@ -167,6 +169,88 @@ public sealed class SolutionTreeSurfaceTests
                 window.Close();
             }
         });
+    }
+
+    [Fact]
+    public void Show_IoDto_ChromeSaysNotRecorded_NoIoProbeRow_UnindexedProbeRemainsLeaf()
+    {
+        OnSta(() =>
+        {
+            var dto = StarDto() with
+            {
+                Disclosures =
+                [
+                    new SolutionTreeDisclosure(
+                        SolutionTreeShortfallCause.Io, "Not recorded", null, "io_probe"),
+                ],
+            };
+            var (surface, window) = Mount(dto);
+            try
+            {
+                var text = VisibleText(surface);
+                Assert.Contains("Not recorded", text, StringComparison.Ordinal);
+                Assert.DoesNotContain("io_probe", text, StringComparison.Ordinal);
+                var unindexed = FindItem(surface.Tree, n => n.Node.Path == "unindexed_probe");
+                Assert.NotNull(unindexed);
+                Assert.False(unindexed!.HasItems);
+                Assert.Contains("Unindexed", VisibleText(unindexed), StringComparison.Ordinal);
+            }
+            finally
+            {
+                window.Close();
+            }
+        });
+    }
+
+    [Fact]
+    public void Show_PermissionDto_ChromeSaysNotRecorded_NoOmitProbeRow_UnindexedProbeRemainsLeaf()
+    {
+        OnSta(() =>
+        {
+            var dto = StarDto() with
+            {
+                Disclosures =
+                [
+                    new SolutionTreeDisclosure(
+                        SolutionTreeShortfallCause.Permission, "Not recorded", null, "omit_probe"),
+                ],
+            };
+            var (surface, window) = Mount(dto);
+            try
+            {
+                var text = VisibleText(surface);
+                Assert.Contains("Not recorded", text, StringComparison.Ordinal);
+                Assert.DoesNotContain("omit_probe", text, StringComparison.Ordinal);
+                Assert.Contains("1 skip-listed directories omitted", text, StringComparison.Ordinal);
+                var unindexed = FindItem(surface.Tree, n => n.Node.Path == "unindexed_probe");
+                Assert.NotNull(unindexed);
+                Assert.False(unindexed!.HasItems);
+                Assert.Contains("Unindexed", VisibleText(unindexed), StringComparison.Ordinal);
+            }
+            finally
+            {
+                window.Close();
+            }
+        });
+    }
+
+    [Fact]
+    public void NodeItem_CarriesEverySolutionTreeNodeField_SourceRevisionStaysOnTheResult()
+    {
+        var node = File("src/Program.cs", "Program", "class");
+        var item = new SolutionTreeNodeItem(node);
+        Assert.Same(node, item.Node);
+        Assert.Equal(node.Path, item.Node.Path);
+        Assert.Equal(node.Kind, item.Node.Kind);
+        Assert.Equal(node.Coverage, item.Node.Coverage);
+        Assert.Equal(node.NodeId, item.Node.NodeId);
+        Assert.Equal(node.NodeKind, item.Node.NodeKind);
+        var fields = typeof(SolutionTreeNode).GetProperties()
+            .Select(p => p.Name)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+        Assert.Equal(["Coverage", "Kind", "NodeId", "NodeKind", "Path"], fields);
+        Assert.Equal("rev-star", StarDto().SourceRevision);
     }
 
     [Fact]
@@ -379,6 +463,60 @@ public sealed class SolutionTreeSurfaceTests
     }
 
     [Fact]
+    public void ShowActivateError_ViewSourceAndReveal_RetryReraises_SelectionUnchanged()
+    {
+        OnSta(() =>
+        {
+            var (surface, window) = Mount(StarDto());
+            try
+            {
+                var file = FindItem(surface.Tree, n => n.Node.Path == "src/Program.cs");
+                Assert.NotNull(file);
+                file!.IsSelected = true;
+                surface.HandleKey(Key.Return, ModifierKeys.None);
+
+                SolutionTreeActivate? seen = null;
+                surface.ActivateRequested += (_, a) => seen = a;
+                surface.ShowActivateError(NodeViewKind.Source);
+                Assert.Contains("Could not open source.", VisibleText(surface), StringComparison.Ordinal);
+                Assert.True(file.IsSelected);
+
+                ClickNamed(surface, "Retry");
+                Assert.NotNull(seen);
+                Assert.Equal(NodeViewKind.Source, seen!.Kind);
+                Assert.Equal("Program", seen.NodeId);
+                Assert.True(file.IsSelected);
+
+                seen = null;
+                surface.HandleKey(Key.Return, ModifierKeys.Control);
+                surface.ShowActivateError(NodeViewKind.GraphNeighbourhood);
+                Assert.Contains("Could not reveal in graph.", VisibleText(surface), StringComparison.Ordinal);
+                ClickNamed(surface, "Retry");
+                Assert.Equal(NodeViewKind.GraphNeighbourhood, seen!.Kind);
+                Assert.True(file.IsSelected);
+            }
+            finally
+            {
+                window.Close();
+            }
+        });
+    }
+
+    [Fact]
+    public void Empty_ShowGraph_RaisesShowGraphRequested()
+    {
+        OnSta(() =>
+        {
+            var surface = new SolutionTreeSurface();
+            var raised = false;
+            surface.ShowGraphRequested += (_, _) => raised = true;
+            surface.Show(RootOnlyDto());
+            ClickNamed(surface, "Show Graph");
+            Assert.True(raised);
+        });
+    }
+
+    [Fact]
     public void MarkStale_ChromeCarriesStaleWordAndGlyph()
     {
         OnSta(() =>
@@ -438,6 +576,95 @@ public sealed class SolutionTreeSurfaceTests
                 var text = VisibleText(surface!);
                 Assert.Contains("Omitted (2)", text, StringComparison.Ordinal);
                 Assert.DoesNotContain("omit_probe", text, StringComparison.Ordinal);
+            }
+            finally
+            {
+                window.Close();
+            }
+        });
+    }
+
+    [Fact]
+    public void ShowGraph_OpensExistingCanvasKind_OnArchitecture()
+    {
+        var queries = new RecordingTreeQueries { Result = RootOnlyDto() };
+
+        OnSta(() =>
+        {
+            using var shell = new WorkbenchShell(queries);
+            var window = new Window
+            {
+                Content = new ContentControl(),
+                Width = 1000,
+                Height = 640,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Left = -10000,
+                Top = -10000,
+                ShowInTaskbar = false,
+                ShowActivated = false,
+            };
+            var host = (ContentControl)window.Content;
+            var mode = new PerspectiveShell(host, shell.Hosts, () => new Grid(), shell.Announcer);
+            shell.CommandRouter = mode.Execute;
+            shell.DocumentOpening += h => mode.OnDocumentOpening(h);
+            window.Show();
+
+            try
+            {
+                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Architecture, "test");
+                Assert.True(shell.Execute("surface.show.solution-tree"));
+                var id = shell.Architecture.Service.Zones.AllSurfaces()
+                    .Single(s => s.Kind == "solution-tree").SurfaceId;
+                var surface = shell.Architecture.Adapter.SurfaceContent<SolutionTreeSurface>(id);
+                Assert.NotNull(surface);
+                ClickNamed(surface!, "Show Graph");
+                Assert.Contains(
+                    shell.Architecture.Service.Zones.AllSurfaces(),
+                    s => s.Kind == "canvas");
+            }
+            finally
+            {
+                window.Close();
+            }
+        });
+    }
+
+    [Fact]
+    public void SwitchingToExplore_LeavesExplorerAsGraphAndReader()
+    {
+        var queries = new RecordingTreeQueries { Result = StarDto() };
+
+        OnSta(() =>
+        {
+            using var shell = new WorkbenchShell(queries);
+            var window = new Window
+            {
+                Content = new ContentControl(),
+                Width = 1000,
+                Height = 640,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Left = -10000,
+                Top = -10000,
+                ShowInTaskbar = false,
+                ShowActivated = false,
+            };
+            var host = (ContentControl)window.Content;
+            var mode = new PerspectiveShell(host, shell.Hosts, () => new Grid { Name = "ExploreBody" }, shell.Announcer);
+            shell.CommandRouter = mode.Execute;
+            shell.DocumentOpening += h => mode.OnDocumentOpening(h);
+            window.Show();
+
+            try
+            {
+                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Architecture, "test");
+                Assert.True(shell.Execute("surface.show.solution-tree"));
+                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Explore, "test");
+                Assert.IsType<Grid>(mode.ExplorerSurface);
+                Assert.Equal("ExploreBody", ((Grid)mode.ExplorerSurface!).Name);
+                Assert.IsNotType<SolutionTreeSurface>(mode.ExplorerSurface);
+                Assert.Same(
+                    AiDe.Core.Workbench.PerspectiveSet.Architecture,
+                    Assert.Single(SurfaceContentFactory.Kinds.Single(k => k.Kind == "solution-tree").Perspectives));
             }
             finally
             {
@@ -577,6 +804,61 @@ public sealed class SolutionTreeSurfaceTests
             }
 
             return null;
+        }
+    }
+
+    private static void ClickNamed(DependencyObject root, string name)
+    {
+        foreach (var button in LogicalButtons(root))
+        {
+            if (button.Visibility != Visibility.Visible || !IsShown(button))
+            {
+                continue;
+            }
+
+            if (string.Equals(AutomationProperties.GetName(button), name, StringComparison.Ordinal)
+                || (button.Content as string) == name)
+            {
+                if (button.Command is { } command && command.CanExecute(null))
+                {
+                    command.Execute(null);
+                    return;
+                }
+
+                button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                return;
+            }
+        }
+
+        Assert.Fail($"no visible button named {name}");
+    }
+
+    private static bool IsShown(DependencyObject node)
+    {
+        for (var d = node; d is not null; d = LogicalTreeHelper.GetParent(d))
+        {
+            if (d is UIElement { Visibility: not Visibility.Visible })
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static IEnumerable<Button> LogicalButtons(DependencyObject root)
+    {
+        if (root is Button button)
+        {
+            yield return button;
+        }
+
+        foreach (var child in LogicalTreeHelper.GetChildren(root).OfType<DependencyObject>())
+        {
+            foreach (var nested in LogicalButtons(child))
+            {
+                yield return nested;
+            }
         }
     }
 

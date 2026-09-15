@@ -88,5 +88,5 @@ summary: >-
 | | |
 |---|---|
 | **Completed** | Kind row, TreeView + N7, US-C4, T3/T5c Fake DTO, probes. Red: 19 vs 18 kinds. Green: 15 SolutionTree tests + 89 menu/factory-related. |
-| **Remaining** | Physical Ctrl+Enter attended/SendInput (RaiseEvent is not the chord). N10 design acceptance (authors do not self-clear). Join recount + gates. |
-| **Best next action** | N10 non-author review. Recount App/Core baselines. Do not admit D-1. |
+| **Remaining** | Physical Ctrl+Enter attended/SendInput (RaiseEvent is not the chord). N10 design stays draft. |
+| **Best next action** | Do not admit D-1. Physical Ctrl+Enter stays Flagged until SendInput/attended. |

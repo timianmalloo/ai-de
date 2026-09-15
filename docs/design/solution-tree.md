@@ -36,14 +36,14 @@ Stage 4 council skipped (N10). Status remains draft. Authors do not self-clear.
 
 - **Status:** Draft (N10 review is later; authors do **not** mark Accepted)
 - **Spec / architecture:** [`docs/specs/understanding-views.md`](../specs/understanding-views.md) · [`docs/architecture.md`](../architecture.md) §Understanding views / D-0 · [`docs/adr/0038-d0-solution-tree-census-and-kind.md`](../adr/0038-d0-solution-tree-census-and-kind.md)
-- **Delivery phase / vertical slice:** Understanding views **UV-0 Core query** (walking skeleton, first) then **UV-1 Shell surface + one kind row** (serial after UV-0 reds — AR3). Toolkit frozen by N7 spike (`spike-d0-tree-toolkit`). Zone/layout **not** frozen. D-1…D-6, Atlas, extractor rewrites, `main` join: out.
+- **Delivery phase / vertical slice:** Understanding views **UV-0 Core query** (walking skeleton, first) then **UV-1 Shell surface + one kind row** (serial after UV-0 reds — AR3). Toolkit frozen by N7 spike (`spike-d0-tree-toolkit`). Zone frozen **View-menu-only** (Ruling 94 Left stays Graph; `Zone` column `null`; not in `ArchitectureDefault`). D-1…D-6, Atlas, extractor rewrites, `main` join: out.
 - **Author(s) / date:** N9 `/design-slice` (patterns-expert with csharp-developer), session `understanding-views-design`, 2026-09-15. Git at grounding: `2089e02522bceb0e118beee1583b853d2381e011` (`understanding-views-design`).
 
 ## Goal state
 
 - **Goal:** contracts, grain, failure modes, telemetry, test plan, E7 list, and file lists for UV-0 then UV-1 in this file.
 - **Done when:** this file exists, quotes ADR-0038 and the spec, names patterns, has a red-first test plan mapped to US-T1–T7 / T5a–c / T11, committed on this branch, status **draft**.
-- **Not in scope:** implementing `src/`; Atlas; D-1…D-6; joining `main`; public `IWorkspaceDirectoryCensus`; `DropRelativePaths` on the wire; marking this design accepted; N8 chrome; N10 council; freezing Zone/layout; rewriting extractors.
+- **Not in scope:** implementing `src/`; Atlas; D-1…D-6; joining `main`; public `IWorkspaceDirectoryCensus`; `DropRelativePaths` on the wire; marking this design accepted; N8 chrome; N10 council; putting the tree on Left; rewriting extractors.
 - **Tier:** T2 · **Fan-out cap:** 0.
 
 ## Quoted authorities (not thinned)
@@ -74,7 +74,7 @@ Stage 4 council skipped (N10). Status remains draft. Authors do not self-clear.
 
 **UV-1** is responsible for one Architecture `SurfaceKind` row (`solution-tree`, `Perspectives` = `{Architecture}`, `Instances` = `One`) whose derived menu entry is **Show Solution tree**, and for projecting the DTO onto a WPF `TreeView` with N7 attachments. Activate is two existing paths (View source / Reveal in graph). Hard states are distinct.
 
-It is **not** responsible for: a stored census / `folder_dim`; a public census or skip interface; `DropRelativePaths` on the wire; App disk walks; Atlas / `AiDe.Core.Understanding`; Overview/Graph as the tree; D-1…D-6 rows; `MainMenuBuilder` lists; default Zone/layout choreography; Python/TS per-file extractor rewrite; glyph-to-kind chrome (N8); widening other extractors’ skip lists (N7 optional, not a UV-0 blocker).
+It is **not** responsible for: a stored census / `folder_dim`; a public census or skip interface; `DropRelativePaths` on the wire; App disk walks; Atlas / `AiDe.Core.Understanding`; Overview/Graph as the tree; D-1…D-6 rows; `MainMenuBuilder` lists; adding the tree to `ArchitectureDefault` (View-menu-only freeze); Python/TS per-file extractor rewrite; per-`NodeKind` icons; widening other extractors’ skip lists (N7 optional, not a UV-0 blocker).
 
 **Boundary set:** F\* (indexed-parent + `unindexed_probe` + `omit_probe` + `omit_probe_2` + `io_probe` + `bin`); T5a IO on `io_probe/` (not `unindexed_probe`, not `bin`); T5b ACL on `omit_probe`; T5c named omit of both `omit_probe` dirs with `unindexed_probe` surviving; hostile `..` assertion path; Bicep filename-only resolvable and not; Python/TS `declared_at` = census `P`; reparse/junction; empty / loading / error / no-workspace / stale-while-refresh; IPC failure; frame overflow; extra JSON `dropRelativePaths`; App-assembly enum/read/Atlas probes.
 
@@ -117,7 +117,7 @@ Other aggregates referenced **by identity only:** file-artifact `NodeId` (repres
 | **service** | `IWorkspaceQueries.SolutionTreeAsync`. Census + `ResolveWithinWorkspace`. Consumes `UnanalysedLanguages.Skip`. Named drop-set on the projection/test host only. | UV-0 |
 | **projection/wire** | IPC `solution-tree` / one `SolutionTreeQuery` (two ints) → `SolutionTreeResult`. Count caps **and** frame shrink. `Omitted (N)` from `OmittedByCap`. No `SolutionTreeRequest` twin. No `DropRelativePaths`. | UV-0 |
 | **client type** | Architecture docking-host tree. WPF `TreeView` (N7 freeze). VM-nested forest of the flat DTO. | UV-1 |
-| **UI** | Architecture pane. Hard states: empty, loading, unindexed leaf, error, no-workspace, stale-while-refresh; skip-count; US-T6 copy. Empty → Show Graph. Zone **not** frozen. | UV-1 |
+| **UI** | Architecture pane. Hard states: empty, loading, unindexed leaf, error, no-workspace, stale-while-refresh; skip-count; US-T6 copy. Empty → Show Graph. Zone frozen View-menu-only. | UV-1 |
 | **compute reader** | View source → `NodeContentAsync` / `codeviewer`. Reveal in graph → `GraphAsync` / `DescribeAsync`. No third path. No Atlas. | UV-1 |
 
 ## Delivery phasing
@@ -127,7 +127,7 @@ Serial. UV-1 kind row **must not** land before UV-0 reds exist (AR3).
 | Phase | Proves | Real | Mocked | Human | E2E | Unblocks |
 |---|---|---|---|---|---|---|
 | **UV-0 Core query** | F\* grain: indexed-parent, `unindexed_probe` Unindexed, `bin` absent + skip-count, T5a–c Disclosures, Python/TS honesty, Bicep resolve, frame fit | `SolutionTreeAsync`, IPC integer caps, consume `UnanalysedLanguages.Skip`, `ResolveWithinWorkspace`, no-follow reparse | Shell surface (none); no kind row; T5c omit set on the test-constructed projection | (headless) | US-T1, T2, T3 query-DTO, T4, T5a–c query-DTO (T5c via projection host), T6, T7, T11 minus visual-tree; `EveryOperationFitsTheFrameTests` | UV-1 |
-| **UV-1 Shell + one kind row** | Show Solution tree derived; visual-tree oracles; activate | One `solution-tree` row `{Architecture}`; `SolutionTreeSurface`; Enter / Ctrl+Enter | Default-zone choreography still unfrozen; N8 glyph chrome | Open Architecture, Show Solution tree on F\* | US-T3/T5 visual-tree, T8, T9, T10, T13; PROBE-* | Proof Pack; join onto `understanding-views` |
+| **UV-1 Shell + one kind row** | Show Solution tree derived; visual-tree oracles; activate | One `solution-tree` row `{Architecture}`; `SolutionTreeSurface`; Enter / Ctrl+Enter | Zone View-menu-only; physical Ctrl+Enter Flagged | Open Architecture, Show Solution tree on F\* | US-T3/T5 visual-tree, T8, T9, T10, T13; PROBE-* | Proof Pack; join onto `understanding-views` |
 
 Mock-substitutable seams: `IWorkspaceQueries.SolutionTreeAsync` (Fake refuse / recording stub); UV-0 projection constructor omit set (T5c Core only); internal census-children enumerator (T5a/b when real FS cannot throw). **UV-1 T5c does not construct the projection and does not send `DropRelativePaths`:** App.Tests feeds a Fake/recording stub (or a committed UV-0 golden `SolutionTreeResult` JSON) that already is the omit-set DTO. Do **not** add `InternalsVisibleTo` `AiDe.App.Tests` on Core.
 
@@ -306,7 +306,7 @@ internal delegate IEnumerable<string> CensusChildren(string absoluteDirectory);
 | `Instances` | `One` → **Show Solution tree** |
 | `Entry` | `Derived("_View")` |
 | `Windowed` | `false` |
-| `Zone` | **not frozen** (`null`, like Evidence). Reachability = derived Show (UX-1 ≤ 2 steps). Do not edit `ZoneLayout`. Do not replace `canvas`. |
+| `Zone` | **frozen View-menu-only** (`null`, like Evidence). Reachability = derived Show (UX-1 ≤ 2 steps). Do not edit `ZoneLayout`. Do not replace `canvas`. |
 
 Place the row in the Architecture block of `Kinds` (row order is menu order — `SurfaceContentFactory.cs:130-134` **Verified**), after existing Architecture kinds, before Coding.
 
@@ -314,7 +314,7 @@ Place the row in the Architecture block of `Kinds` (row order is menu order — 
 
 Index census-folders **present in `Nodes`**. Hang each node under the folder whose path is the parent of its path. If that parent is not a census-folder in the DTO: drop the file-artifact (join step 4 — Core should already have dropped it; VM defends); a census-folder with a missing intermediate becomes a **forest root** (still shown; do not invent `deep` from `deep/nested`). **Verified** spike F15.
 
-`SolutionTreeRow`: `Path`, `Kind`, `Coverage`, `NodeId`, `NodeKind`, `Children`, plus presentation `IsStale`. No behaviour that recomputes Coverage.
+App client is `SolutionTreeNodeItem` wrapping Core `SolutionTreeNode` (no Presentation `SolutionTreeRow`). Fields `Path`, `Kind`, `Coverage`, `NodeId`, `NodeKind` stay on `Node`. `Children` and `IsStale` are presentation. `SourceRevision` stays on `SolutionTreeResult` (chrome, not a row). No behaviour that recomputes Coverage.
 
 ## Error & concurrency model
 
@@ -578,7 +578,7 @@ Unit of work: one `SolutionTreeAsync` invocation. Span: existing `ActivitySource
 | Kind row `{Architecture}`; Show Solution tree via `PerspectiveMenu.For`; **no** `MainMenuBuilder` list edit; Coding/Explore/Coordination do not admit; US-C4 mutation still holds; `TheAllowListsEqualTheSpecsTable` updated | US-T10 | |
 | PROBE-APP-ENUM (App assembly / non-`IWorkspaceQueries` callers, **not PID**); PROBE-ATLAS; PROBE-FILE-READ | US-T11, B14 | IL/source: `AiDe.App` types must not call `Directory.EnumerateFileSystemEntries` / `EnumerateDirectories` / `EnumerateFiles` / `GetDirectories` / `GetFiles` / `GetFileSystemEntries` / **`DirectoryInfo.EnumerateDirectories` / `EnumerateFileSystemInfos` / `GetFileSystemInfos`**. Core census inside `LocalWorkspaceQueries` / `ProjectionService` / `SolutionTreeProjection` allowed in-process. View source must not `File.ReadAllText`/`OpenRead` the workspace path. No type with namespace prefix `AiDe.Core.Understanding`. |
 | Explore body still ADR-0017 graph+reader | US-T13 | |
-| `FieldsSurviveTheClientBoundaryTests` pair `SolutionTreeNode` → `SolutionTreeRow` | DC-016 class | `SourceRevision` may be deliberately dropped (chrome, not row) — name it |
+| App wrap: `SolutionTreeNode` fields on `SolutionTreeNodeItem.Node`; `SourceRevision` on Result chrome | DC-016 class | No Presentation twin — FieldsSurvive enumerates `AiDe.Core.Presentation` only |
 | `ui-craft-gate.py` against the built surface | CD8 | accessibility Major-min / token Major-min. N8 may add tokens first; UV-1 still must not use off-token hex. |
 
 ## Conformance notes
@@ -586,7 +586,7 @@ Unit of work: one `SolutionTreeAsync` invocation. Span: existing `ActivitySource
 - **LOA:** product host unchanged (F). This addition: **no model**; archetype **none**; tier **T0** deterministic projection. C1 N/A for cognition. P1 cheapest sufficient (one query + one kind). P2 derived menu, one skip policy, query-time join. P8 read-only. P11 App still cannot read workspace files. P5 Coverage vs Disclosure.
 - **C#:** sealed records; `JsonStringEnumConverter`; kebab IPC id; `Task.FromResult` adapter; lift visibility rather than copy; `InternalsVisibleTo` already `AiDe.Core.Tests` (`AiDe.Core.csproj:52` **Verified**). Do **not** add `InternalsVisibleTo` `AiDe.App.Tests` on Core — UV-1 T5c uses a Fake/golden DTO, not the internal omit set.
 - **AR3 / ADR-0030:** kind row only in UV-1; menu derived.
-- **Deviations:** Stage 4 council skipped (N10) — authors do not self-clear. DESIGN.md not rewritten (N8). Pact not added (T6). Zone/layout not frozen (Owner/user). `docs/security/threat-model.md` template path unused — repo rollup lives in `docs/security/ai-native-ide-threat-model.md` / `ai-native-ide-privacy-review.md`.
+- **Deviations:** Stage 4 council skipped (N10) — authors do not self-clear. Pact not added (T6). Physical Ctrl+Enter Flagged. `docs/security/threat-model.md` template path unused — repo rollup lives in `docs/security/ai-native-ide-threat-model.md` / `ai-native-ide-privacy-review.md`.
 
 ## Implementer file lists (seam, not this turn’s code)
 
@@ -664,9 +664,9 @@ Unit of work: one `SolutionTreeAsync` invocation. Span: existing `ActivitySource
 
 | | |
 |---|---|
-| **Completed** | N9 repair of N10 Test Architect BLOCK. UV-0 + UV-1 walking skeleton. N8 chrome: kind glyphs, stale glyph, file double-click View source, dual-activate node menu. Zone frozen View-menu-only (Ruling 94). Status remains **draft**. |
-| **Remaining** | N10 re-review (authors do **not** self-clear). Physical Ctrl+Enter attended/SendInput. Join recount + `tools/run-verify-gates.py` on `understanding-views`. Not `main`. |
-| **Best next action** | N10 Test Architect + remaining lenses re-read this file and the chrome tests. Do not admit D-1. |
+| **Completed** | N9 repair. UV-0 + UV-1. N8 chrome. Zone View-menu-only. N10 C1 T5a/b visual Fake DTOs; C2 App wrap pair; C3 activate-error overlay + Show Graph + US-T13 pin; C5 freeze prose. Status remains **draft**. |
+| **Remaining** | Physical Ctrl+Enter Flagged (C4). N10 Patterns/SRE panel. Authors do **not** mark Accepted. Not `main`. |
+| **Best next action** | Do not admit D-1. Keep Ctrl+Enter Flagged until SendInput/attended. |
 
 ## Gate record
 

@@ -185,7 +185,10 @@ public sealed class SolutionTreeSurface : ContentControl
     private readonly StackPanel _empty;
     private readonly TextBlock _loading;
     private readonly StackPanel _error;
+    private readonly StackPanel _activateError;
+    private readonly TextBlock _activateErrorTitle;
     private readonly TextBlock _noWorkspace;
+    private SolutionTreeActivate? _pendingActivate;
     private IReadOnlyList<SolutionTreeNodeItem> _roots = [];
     private bool _stale;
     private enum LoadState { Unloaded, NoWorkspace, Loading, Shown, Error }
@@ -204,12 +207,30 @@ public sealed class SolutionTreeSurface : ContentControl
         _error = Wayfinder(
             "Could not read the workspace tree.",
             Action("Retry", () => RetryRequested?.Invoke(this, EventArgs.Empty)));
+        _activateErrorTitle = new TextBlock
+        {
+            FontSize = 18,
+            FontWeight = FontWeights.SemiBold,
+            TextWrapping = TextWrapping.Wrap,
+            Margin = new Thickness(0, 0, 0, 12),
+        };
+        _activateErrorTitle.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
+        _activateError = new StackPanel
+        {
+            Margin = new Thickness(24),
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Center,
+            MaxWidth = 420,
+        };
+        _activateError.Children.Add(_activateErrorTitle);
+        _activateError.Children.Add(Action("Retry", RetryActivate));
         _noWorkspace = Muted("Open a workspace to see its solution tree.");
 
         _body.Children.Add(Tree);
         _body.Children.Add(_empty);
         _body.Children.Add(_loading);
         _body.Children.Add(_error);
+        _body.Children.Add(_activateError);
         _body.Children.Add(_noWorkspace);
 
         var root = new DockPanel { LastChildFill = true };
@@ -261,8 +282,7 @@ public sealed class SolutionTreeSurface : ContentControl
     private MenuItem ActivateItem(string label, NodeViewKind kind, string nodeId)
     {
         var item = new MenuItem { Header = label };
-        item.Click += (_, _) =>
-            ActivateRequested?.Invoke(this, new SolutionTreeActivate(nodeId, kind));
+        item.Click += (_, _) => RaiseActivate(new SolutionTreeActivate(nodeId, kind));
         return item;
     }
 
@@ -301,6 +321,37 @@ public sealed class SolutionTreeSurface : ContentControl
 
         _chrome.Children.Clear();
         ShowPane(_error);
+    }
+
+    /// <summary>
+    /// View source / Reveal failed on that surface's overlay. Retry re-raises the last activate.
+    /// Tree selection is not changed.
+    /// </summary>
+    public void ShowActivateError(NodeViewKind kind)
+    {
+        _activateErrorTitle.Text = kind == NodeViewKind.GraphNeighbourhood
+            ? "Could not reveal in graph."
+            : "Could not open source.";
+        foreach (UIElement child in _body.Children)
+        {
+            child.Visibility = ReferenceEquals(child, Tree) || ReferenceEquals(child, _activateError)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+    }
+
+    private void RaiseActivate(SolutionTreeActivate request)
+    {
+        _pendingActivate = request;
+        ActivateRequested?.Invoke(this, request);
+    }
+
+    private void RetryActivate()
+    {
+        if (_pendingActivate is { } pending)
+        {
+            ActivateRequested?.Invoke(this, pending);
+        }
     }
 
     public void MarkStale()
@@ -357,7 +408,7 @@ public sealed class SolutionTreeSurface : ContentControl
             var kind = (modifiers & ModifierKeys.Control) == ModifierKeys.Control
                 ? NodeViewKind.GraphNeighbourhood
                 : NodeViewKind.Source;
-            ActivateRequested?.Invoke(this, new SolutionTreeActivate(item.Node.NodeId, kind));
+            RaiseActivate(new SolutionTreeActivate(item.Node.NodeId, kind));
             return;
         }
 
@@ -508,7 +559,7 @@ public sealed class SolutionTreeSurface : ContentControl
         if (vm.Node.Kind == SolutionTreeNodeKind.FileArtifact
             && !string.IsNullOrEmpty(vm.Node.NodeId))
         {
-            ActivateRequested?.Invoke(this, new SolutionTreeActivate(vm.Node.NodeId, NodeViewKind.Source));
+            RaiseActivate(new SolutionTreeActivate(vm.Node.NodeId, NodeViewKind.Source));
             e.Handled = true;
             return;
         }
