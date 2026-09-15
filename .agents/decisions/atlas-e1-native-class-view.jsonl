@@ -24,3 +24,10 @@
 {"agent": "copilot-astra-native-e1-recovery", "at": 1789486052.9559932, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Understanding/AtlasStaticViewProjection.cs", "session": "atlas-e1-native-class-view", "wi": ""}
 {"agent": "copilot-astra-native-e1-recovery", "at": 1789486052.967107, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Understanding/AtlasStaticCompositionTests.cs", "session": "atlas-e1-native-class-view", "wi": ""}
 {"agent": "copilot-astra-native-e1-recovery", "at": 1789486052.9779997, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Understanding/AtlasStaticViewTests.cs", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789487007.8662527, "code": null, "kind": "allowed", "path": "docs/proof/code-atlas-e1-qualification.md", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789487007.9977999, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789487008.1303573, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789487172.4488435, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789487172.459415, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789487172.4684315, "code": null, "kind": "allowed", "path": "docs/proof/code-atlas-e1-qualification.md", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789487172.8808982, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Understanding/AtlasDaemonMainWindowProofTests.cs", "session": "atlas-e1-native-class-view", "wi": ""}

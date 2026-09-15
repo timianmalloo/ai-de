@@ -14,3 +14,5 @@
 {"agent": "claude-conductor", "at": 1789485226.8871162, "kind": "release", "path": "docs/collaboration/session-contracts.md", "seq": 14, "session": "claude-conductor-watch-0915", "wi": "WI-0"}
 {"agent": "claude-conductor", "at": 1789485226.9528706, "kind": "release", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 15, "session": "claude-conductor-watch-0915", "wi": "WI-0"}
 {"agent": "claude-conductor", "at": 1789485227.0408423, "kind": "release", "path": "tools/verify-stranded-audit.py", "seq": 16, "session": "claude-conductor-watch-0915", "wi": "WI-0"}
+{"agent": "claude-conductor", "at": 1789487377.7224522, "kind": "claim", "path": "docs/collaboration/session-contracts.md", "seq": 17, "session": "claude-conductor-watch-0915", "ttl": 600.0, "wi": "ruling-116-row"}
+{"agent": "claude-conductor", "at": 1789487407.3423083, "kind": "claim", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 18, "session": "claude-conductor-watch-0915", "ttl": 600.0, "wi": "ruling-116"}
