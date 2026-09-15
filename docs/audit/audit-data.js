@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T15:46:12Z",
+  "generated": "2026-09-15T15:51:03Z",
   "audit": [
     {
       "actor": null,
@@ -17325,6 +17325,36 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T15:38:02Z",
       "duration_seconds": 490.0
+    },
+    {
+      "id": "al-01M2JW7F9NSSNK8FSXX1VBJYWY",
+      "shortname": "atlas-na10-coordinate-fix-green",
+      "datetime": "2026-09-15T15:51:03Z",
+      "session": "atlas-e1-native-class-view",
+      "prompt": "Execute acknowledged R115 A only after separately committed earlier RED; bind actual returned-page/full-source/highlight coordinate frame, preserve every existing expected value and numeric/readability assertion; one fresh owned GREEN shown run, PID/start/end shared announcement; commit coordinate-only fix after exact green; no broader native qualification.",
+      "summary": "Earlierredcommit481676ab7ea82465dd47d38a6c9a02b705a222f4 parent7c8ce, RED1/1 offset48/document26. Coordinate-only MeasureReading fix binds current returned page, equality-checks full-source substring/returned/rendered text and issued highlights, draws only page lines, subtracts page.Start from global highlights; no clamping/expected-value change/deletedassertion. ExplicitDaemon+nonincrementaltestbuild0warnings/errors. GREEN1/1, nativeCompletedtrue FailureCount0, allsource/highlight/label/character geometry assertions pass, returnedpageStart=55 length=26. GreenTRXSHA=3C64BB2479BF5D713EA9BE9D3A33756B28217C7523207B88F793AD95B5DE1674 sourceSHA=05EB3C1374ACF14B2E631523A42A12B7B96D7F8B085E2838589E20B4E7281855 runnerPID=3148 GUIhostPID=34728 daemonPIDs=3312,7856 start=2026-09-15T15:50:55.9266986Z end=2026-09-15T15:51:03.1484933Z desktopreleased. Native rawreceipt=artifacts\\atlas-real-daemon-window-proof\\na10-green-fb6c0e211b9d415fa317d570fdad705b\\receipt.json. No full73/111, otherfunctionalrepair, B-E work, main/rebase/push/nativeacceptance; old1180/focus/remainingmutation/visual/combinedR gates stayopen. Red PID-summary schema and PowerShell expression issues corrected without rerun; rawprecise receipts retained.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests\\AiDe.App.Tests\\Workbench\\Understanding\\AtlasDaemonMainWindowProofTests.cs",
+        "docs\\proof\\code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Repair only acknowledged legacy proof coordinate-frame computation",
+      "done_when": "Separate earlier red commit and fresh unchanged-oracle green followed by exact fix commit readback; remaining gates explicit",
+      "tier": "T2",
+      "main_calls": 9,
+      "main_budget": 10,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T15:46:12Z",
+      "duration_seconds": 291.0
     }
   ],
   "changes": [

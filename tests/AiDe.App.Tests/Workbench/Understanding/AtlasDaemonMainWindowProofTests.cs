@@ -424,6 +424,12 @@ public sealed class AtlasDaemonMainWindowProofTests
         var textView = view.SourceControl.TextArea.TextView;
         textView.EnsureVisualLines();
         var viewport = VisibleBounds(textView, window, clientBounds);
+        var selection = Assert.IsType<AtlasSelectionDto>(view.CurrentSelection);
+        var page = Assert.IsType<AtlasSpanDto>(selection.Source.PageSpan);
+        var pageText = source.Substring(page.Start, page.Length);
+        Assert.Equal(pageText, selection.Source.Text);
+        Assert.Equal(pageText, view.SourceText);
+        Assert.Equal<AtlasSpanDto>(selection.Source.Highlights, highlights);
         Rect SourceRect(int start, int length)
         {
             var document = view.SourceControl.Document;
@@ -437,12 +443,12 @@ public sealed class AtlasDaemonMainWindowProofTests
         }
         var lineBounds = new List<Rect>();
         var offset = 0;
-        foreach (var line in source.Split('\n'))
+        foreach (var line in pageText.Split('\n'))
         {
             if (line.Length > 0) lineBounds.Add(SourceRect(offset, line.Length));
             offset += line.Length + 1;
         }
-        var highlightBounds = highlights.Select(span => SourceRect(span.Start, span.Length)).ToArray();
+        var highlightBounds = highlights.Select(span => SourceRect(span.Start - page.Start, span.Length)).ToArray();
         var container = Assert.IsType<ListBoxItem>(
             view.OutlineControl.ItemContainerGenerator.ContainerFromItem(view.OutlineControl.SelectedItem));
         var label = Assert.Single(Visuals<TextBlock>(container),
@@ -467,6 +473,7 @@ public sealed class AtlasDaemonMainWindowProofTests
         receipt.Mark(stage + ".reading-geometry", new
         {
             CoordinateUnit = "WPF device-independent pixels", WindowClientBounds = Box(clientBounds),
+            SourcePageStart = page.Start, SourcePageLength = page.Length,
             SourceViewportWindow = Box(viewport), SourceViewportClient = Box(clientViewport),
             SourceLineRectsWindow = lineBounds.Select(Box).ToArray(),
             HighlightRectsWindow = highlightBounds.Select(Box).ToArray(),
