@@ -34,8 +34,10 @@ own register is how you get one.**
 
 ## Live sessions
 
-| File | Session | Worktree |
-|---|---|---|
-| `claude-core.md` | Session 1 — core capabilities | `ai-de-session-phase3-pane-probes` |
-| `claude-ui-experience.md` | Session 3 — UI & experience | `ai-de-feature-ui-experience-refinement` |
-| _(none yet)_ | Session 2 — main UI, `copilot-design-4d24d94a` | `ai-de-facelift` |
+**The files in this directory are the list.** A file whose `Last updated` is older than the current
+work is stale liveness, not a live session — `claude-core.md` and `claude-ui-experience.md` (Sessions
+1 and 3, ended 2026-09-01) were retired on 2026-09-15 after another harness read them as the current
+Core/Design acknowledgers. Today the Claude side is one session, `claude-conductor.md` (Core and
+Design both, per §2 after the horizon rows retired on 2026-09-13); the other harnesses' files name
+themselves. A session that ends removes or dates its file; the next Claude join retires any it finds
+older than a week.

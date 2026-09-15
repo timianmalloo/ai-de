@@ -1,0 +1,5 @@
+{"agent": "grok-understanding-views-conductor", "at": 1789437426.5406451, "kind": "session-start", "path": "-", "seq": 1, "session": "understanding-views-owner", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-understanding-views-owner"}
+{"agent": "understanding-views-owner", "at": 1789437922.9521585, "kind": "claim", "path": "docs/notes/understanding-views-owner-ruling.md", "seq": 2, "session": "understanding-views-owner", "ttl": 600.0, "wi": "owner"}
+{"agent": "understanding-views-owner", "at": 1789437931.3072557, "kind": "release", "path": "docs/notes/understanding-views-owner-ruling.md", "seq": 3, "session": "understanding-views-owner", "wi": "WI-0"}
+{"agent": "understanding-views-owner", "at": 1789438658.8484569, "kind": "claim", "path": "docs/notes/understanding-views-owner-n1-disposition.md", "seq": 4, "session": "understanding-views-owner", "ttl": 600.0, "wi": "owner"}
+{"agent": "understanding-views-owner", "at": 1789438660.0138943, "kind": "release", "path": "docs/notes/understanding-views-owner-n1-disposition.md", "seq": 5, "session": "understanding-views-owner", "wi": "WI-0"}

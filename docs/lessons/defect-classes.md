@@ -906,6 +906,14 @@ for both or split.*
 - **Status:** `partially-controlled`
 
 ### DC-025 — Absence rendered as success
+
+- **Instance (Codex ownership programme, 2026-09-15):** planning audit records carried goals and
+  completion conditions but omitted both proof paths and explicit evidence signals. The existing
+  `verify-audit-capture.py` control rejected the records. Sweep: both Conductor planning records
+  and both Owner decision records; derive: absent evidence is distinct from an explicit
+  `verification_path: false`; prevent: official append-only superseding records carry that
+  explicit value and the same capture gate was observed red then green. No historic entry was
+  rewritten. Evidence: `docs/proof/recursive-surface-ownership.md`.
 - **Signature:** a projection computes over a set that is **empty because nothing was collected**,
   and the arithmetic is correct: zero uncovered symbols, zero omitted nodes, zero unread files. The
   surface then renders that zero with the vocabulary of completeness — *"every declared symbol
@@ -3393,6 +3401,18 @@ for both or split.*
 
 ### DC-088 — A launcher omits an identity, and a downstream guard degrades to advisory rather than refusing
 
+- **Same-programme recurrence:** the author reported commit `18a4a19f` also printed that
+  `AGENT_SESSION` was unset. Separate lease receipts are not commit-time enforcement. The repair
+  assignment requires identity as the first executable shell lines and inspection of the actual
+  commit hook output; the original limitation remains recorded in the programme proof.
+- **Instance (Codex ownership programme, 2026-09-15):** a shell set `AGENT_SESSION` after its merge
+  commit instead of before it; the hook printed NOT CHECKED and accepted commit `978b4eb5`.
+  Sweep: all remaining mutating shell calls, not only calls to `coord`; derive: identity belongs
+  at the first executable line of the shell, before Git or any writer. Prevention for this lane:
+  every remaining mutation shell begins with both identity assignments, and its checked commit
+  output is inspected. This does not repair the advisory fallback or retroactively enforce the
+  original commit; that residual remains explicit. Evidence: `docs/proof/recursive-surface-ownership.md`.
+
 - **Shape:** process A launches process B and hands it an environment. A capability B depends on is
   keyed on one variable A does not set. B's *reads* fail visibly enough — "no identity to check" —
   but somewhere downstream a **guard** that also reads it is written to degrade gracefully rather
@@ -4050,6 +4070,10 @@ for both or split.*
   newest and least-proven tool is the part missing its proof.
 - **Status:** `controlled` — self-test present and CI-invoked for `mutation-replay`; the
   convention itself is unenforced
+
+- **2026-09-15, audit verifier self-test (Ruling 119):** the frozen verifier accepted `--self-test` as an absent positional file and exited 0; this was not a self-test execution. A disposable-copy harness first failed on whitespace-specific output and mutation metadata matching its own targets. The corrected control requires each mutation site exactly once and each negative's named semantic diagnostic, while accepted-shape cases reject an always-failing verifier. Seven planted normal-verification faults were then rejected before production insertion. Scope: this one frozen gate; other names remain debt. Class -> sweep: advertised identity/preservation/JSON policies and both CLI modes; derive: use the canonical allocator for valid ULIDs and actual Git HEAD for preservation; prevent: executable fixture/mutation self-test plus the existing named ratchet. Evidence: `docs/proof/audit-gate-self-test-author.md` and the independent review captured by `docs/proof/audit-gate-self-test.md`. The frozen debt count changes from ten to nine only with the paired tooling commit.
+
+- **Same slice, independent review:** ambient recursion flags silently skipped mutation work while a constant summary still claimed it; CLI abbreviation widened the intended exact flag; inherited Git repository variables redirected supposedly temporary commands. The repaired self-test uses private mutation control, counts completed work, tests positional compatibility, and sanitizes fixture children using Git's reported local-variable set. An isolated spectator regression checks HEAD, index, configuration and status unchanged. A global-prefix temporary-directory census was itself a false-positive control when another run was active; the corrected census uses a unique parent for the observed run. These are measured in the independent receipt, not policy changes to normal verification.
 
 ### DC-105 — Calling non-compliance "discipline" without checking whether the rule was ever stated
 
@@ -4847,6 +4871,37 @@ for both or split.*
   still hangs silently
 
 ### DC-118 — Transcription is a width-changing step, and nothing checks the width: a ruling becomes a clause, a clause becomes a guard, and the scope silently moves
+
+- **Recurrence (ownership parser review, 2026-09-15):** the first recursive repair passed its own
+  self-test while a reviewer found five width changes: owner context leaked across a deeper
+  heading; two malformed declaration shapes disappeared; unrelated non-surface paths entered
+  jurisdiction; and an indented next-section heading failed to end ownership parsing. Conductor
+  reproduced the reviewer harness at 4/9 passing, exit 1, against `18a4a19f`. Sweep: section
+  boundaries, every heading transition, Path-header presence, malformed-row admission, token
+  relevance and existing header reuse after prose. Derive: parser recognition and discovery must
+  share the same surface boundary while preserving the register's actual table syntax. Prevent:
+  five red-first regression fixtures and independent re-review before joining; the author's
+  passing self-test alone was insufficient. Evidence: `docs/proof/recursive-surface-ownership.md`.
+- **Verification-handoff recurrence in the same programme:** a provisional re-review PASS omitted
+  two controls explicitly required by the earlier veto-clear predicate. The Conductor compared
+  the receipt with that predicate and the reviewer corrected PASS to BLOCK before any join.
+  Prevention: heading-reset and delimiter-free-row suppression mutants are now permanent members
+  of the gate's eight-mutant self-test; independent final review observed them rejected. The same
+  task also required correcting stale CLI/patch-context assumptions; open the exact contract and
+  source before each dependent edit, and record budget overruns instead of raising the estimate.
+- **Instance (recursive ownership programme, 2026-09-15):** the gate promised every Workbench
+  `*Surface.cs`/`*View.cs` but scanned only the directory top level and used basenames as identity.
+  At `bab5035e` it passed 13 files while a recursive inventory found 17. Sweep: discovery,
+  declaration Path cells, pattern boundaries, exception keys, and diagnostics. Derive: one
+  repository-relative identity throughout; recursion does not authorize changing the suffix set.
+  Prevention is the existing gate's expanded red-first self-test and independent mutation
+  evidence, tracked in `docs/proof/recursive-surface-ownership.md`; do not infer final acceptance
+  from this instance entry while that proof remains in progress.
+- **Related transcription correction in the same programme:** an uninspected metadata vocabulary
+  was rendered as `type: coordination-plan`; docs-graph rejected it and its inbound link. The
+  bounded plan was corrected to supported `doc`, and derive went clean. Sweep all programme
+  frontmatter; keep `docs-graph.py validate` in the join rather than interpreting a generator's
+  exit status alone as validation. No unsupported artifact type was committed.
 
 > **Heading widened 2026-09-10, and the reason is this class applied to its own entry.** It first read *"a ruling-level collision check passes while the FAIL-CLAUSES derived from those rulings contradict on a declared shared surface"* — which is the **first instance**, not the class. The entry then grew a second instance in the opposite direction and a third in a gate, all sharing one mechanism, while the heading still named only the first. **A heading narrower than its own content is the same defect the class describes.**
 >

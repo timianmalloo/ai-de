@@ -1,0 +1,123 @@
+---
+id: coord-recursive-surface-ownership
+title: "Recursive surface ownership: bounded Codex programme"
+type: doc
+status: complete
+owner: "@timianmalloo"
+tags: [coordination, ownership, tooling]
+links:
+  - { to: session-contracts, rel: depends-on }
+  - { to: plan-recursive-surface-ownership, rel: relates-to }
+review-by: 2026-12-15
+summary: "One tooling author, an Astra Owner and Conductor, and independent review close recursive ownership coverage without changing ownership policy."
+---
+
+# Recursive surface ownership
+
+## Superseding status — 2026-09-15
+
+The original reviewed candidate landed through Core at `33e9ae7e`. Core repaired the shared-liveness lookup; the holder explicitly released the conflicting audit leases. Current qualification passed 38/38 required gates at `3284acc55d906cdd5beb7e80527200b8bdf3f491`, with independent Test Architect/Simplifier PASS. See [qualification proof](../proof/ownership-qualification.md). Historical blocked checkpoints below are superseded. The isolated `conductor/ownership-qualification` branch is for Core's serialized documentation handoff; Codex has not pushed main. Retain worktrees for provenance.
+
+## Goal contract
+
+**Goal:** Make surface-ownership verification cover nested Workbench surfaces without inventing ownership.
+**Done when:** recursive discovery and repository-relative identity are proven red-first; §2 remains sole authority; ambiguities are resolved by owners or reported; applicable checks and independent gates pass; proof and audit records accompany a committed programme branch ready for integration handoff.
+**Not in scope:** product changes, Atlas/Grok implementation, ownership policy changes, another session's worktrees, or main integration.
+**Tier:** T1 (Owner confirmed). **Concurrency cap:** four including Owner/Conductor; normally three, one author at a time.
+
+## Layer state
+
+Grounding base: `bab5035e75a1`. Conductor tree `C:/Projects/ai-de-conductor-surface-ownership`, branch `conductor/surface-ownership`, identity `codex-surface-ownership-conductor`. Owner tree `C:/Projects/ai-de-owner-surface-ownership`; reviewer tree `C:/Projects/ai-de-review-surface-ownership`.
+
+Verified: pack-doctor reports revision 70, 10 PASS, 3 WARN, 0 FAIL; 11 classified patterns and registered drivers. Warnings concern Windows python3 alias, Copilot long context defaults and docs graph freshness. No installation/configuration change warranted. `coord doctor` completed exit 0: registry 11 patterns, both coord-regen and coord-register declared and registered, no regeneration owed. Its historical Claude/Copilot capability statements do not certify Codex. Do not install/classify in a linked tree: inherited installation exists. Preflight must inspect the final doctor result before author dispatch.
+
+Coordination transport is the primary checkout's shared pull log, never a branch-local stale copy. Request `req-01M2JQ113TK7HGE7YKQ4CB92GA` was granted by Claude under Ruling 113 for the gate and self-test only. `req-01M2JQ3T5VMQWJ59Q3M0ZE420T` asks the accountable owner to resolve `Sessions/ProseView.cs`, absent from §2 path rows. Silence is not consent.
+
+Observed delegate mechanism: a separately selected Astra Owner received its bounded contract and returned source-based decisions. Separate Git trees are verified. Absolute cwd/path compliance is observed-only, not a filesystem sandbox; author and reviewer run serially, with path diffs checked before joins. Model selection: Astra Owner/Conductor as requested; Sol high for a small Python author and independent parser/Test review, with escalation to Owner on semantic uncertainty. No unsupported automatic enforcement is claimed.
+
+## Artifact classes
+
+| path | class | mechanism | coordination needed |
+|---|---|---|---|
+| `tools/verify-surface-ownership.py` | authored | exact short lease; Core handoff | yes |
+| `docs/collaboration/session-contracts.md` | authored | sole §2 authority; peer owns assignment resolution | yes; no Codex edit without exact grant |
+| programme plan, decision and proof files | authored | distinct named paths, short leases | yes |
+| `docs/lessons/defect-classes.md` | authored append-only by convention | reuse DC-118; append an instance only | yes |
+| `docs/audit/*.jsonl`, `.agents/log/*.jsonl`, `.agents/decisions/*.jsonl` | register | mandated append/union | no lease; isolated storage and controlled join |
+| docs index, audit data, API docs, viewer outputs | derived | repository regeneration tools | no authorship lease; serialize generation per tree |
+
+## Tracks
+
+| track | owns authored | depends on | tier | fan-out cap | budget | exit evidence | harness |
+|---|---|---|---|---|---|---|---|
+| owner | own decision note; no product/gate authoring | grounded contract | T1 | 0 | 20 calls / 20 min / 20k tokens, inferred | scope and semantic rulings; escalations decided | GPT-6 Astra, separate tree and receipt |
+| conductor | this plan, graph, programme join/proof records | all receipts at joins | T1 | 3 | 70 calls / 60 min / 40k tokens, inferred | frozen plan, inspected checks, committed handoff | GPT-6 Astra, main thread |
+| author | gate including existing self-test; author proof | Core grant, Owner semantics, independent plan gate | T1 | 0 | 35 calls / 30 min / 25k tokens, inferred | red-before-green, real-register census, commit | GPT-5.6 Sol high, dedicated tree |
+| review | own review/proof artifact only | plan before author; frozen candidate after author | T1 | 0 | 25 calls per phase / 20 min / 20k tokens, inferred | separate Test, Simplifier, Python, SRE/Orchestrator verdicts; mutation/CLI receipts | GPT-5.6 Sol high, dedicated tree |
+
+Budgets are circuit breakers; firing requires diagnosis/re-plan, never omission of proof. Context ceiling 400k; compact or split before it. No sub-agent calls EnterWorktree. Every dispatch starts its audit marker, states absolute cwd, exact writes, forbidden neighboring scope and receipt conditions.
+
+## Serial spine
+
+Ground and handoff → Owner semantics and plan → independent plan gate → author red/green → frozen candidate independent review → conductor script join and proof → handoff. Owner decision work can overlap Conductor coordination; implementation cannot overlap unsettled semantics. Review cannot self-clear an authored gate.
+
+## Seams
+
+| from -> to | request | resolved by |
+|---|---|---|
+| Codex -> Claude Core | exact gate handoff and ProseView assignment | shared request resolution and sole §2 record |
+| Owner -> author | path-cell-only semantics, no inferred ownership | Owner note + accepted design below |
+| author -> reviewer | commit, red/green receipts, census and scope diff | independent observed review |
+| conductor -> Atlas recovery/Claude | integration-ready notice, no main mutation | later explicit integration arrangement |
+
+## Specification and design slice
+
+Reuse §2 and the gate's existing contract as the functional specification; architecture remains one stdlib Python gate reading the same durable Markdown register. No new aggregate, schema, service or ADR. UX is the existing CLI success/failure diagnostic and exit status; UI N/A. The design-slice narrows a parser and discovery defect, not a product surface. Investigation is triggered only by unexpected failures.
+
+Bounded context: repository ownership verification. One discovered item is exactly one root-relative POSIX file path. One ownership declaration associates a path/pattern with an owner in §2. The derived owner set must have one owner, or an explicit unresolved exception; a cross-owner conflict always fails. Counts are additive across disjoint file populations; ownership itself is non-additive. No new persistence; derive from §2 on every run.
+
+Discovery root `src/AiDe.App/Workbench`; recursion enabled; suffix token set exactly `Surface.cs`, `View.cs`; no added Page/Builder/Dialog suffix. Parser scans §2 `### <owner> owns` table Path cells only, never prose/Why/later sections/shared headers. Explicit repo-relative paths establish row-local directory context; following bare tokens inherit only that directory. Per Core Ruling 113 and amended Owner O1, a standalone bare filename resolves only if exactly one recursive populated path has that basename; zero or multiple matches fail, naming candidates. Explicit new paths reset context. Support only existing segment-local `*` and recursive directory `/**` patterns; ordinary stars never cross `/`. Unsupported or escaping surface-relevant paths are diagnosed. Same-owner overlap deduplicates; different-owner overlap fails without precedence. Exceptions use full paths and nonblank reasons carrying request/ruling provenance and a retirement condition; absent or newly owned exceptions are stale.
+
+Affected surface list: filesystem discovery → path identity → §2 parsing → owner decision → diagnostic/exit → real-file fixtures → unchanged CI invocation → proof/audit.
+
+Testing union: T1/T2/T4 (+ CLI T6), D0 deterministic hermetic tests, D1 mutation resistance, D2 generated invariants, D4 real temporary filesystem, provider CLI compatibility. Existing CI calls normal CLI and `--self-test`; preserve both. Oracle mutations: remove recursion, reduce identity to basename, include Why/prose, suppress cross-owner conflict, suppress stale exception check. Test additions/removals and declaration order invariance with deterministic generated fixtures. Observed baseline: CLI passes 13/13; recursive inventory contains 17 including unassigned ProseView. No .NET product code changes.
+
+Class → sweep → derive → prevent: DC-118 control half (b) already describes a scan narrower than its claim. Sweep all recursive matching files and the declaration grammar; derive exact identity and scope invariants; enforce through real-file red-first fixtures. Do not allocate a new class for this existing shape.
+
+## Struck tracks
+
+| track | reason |
+|---|---|
+| parallel parser and discovery authors | same small file, coupled identity contract |
+| new language parser dependency | stdlib and bounded existing grammar suffice |
+| product ownership reassignment | outside authority; request instead |
+| UI authoring or general coordination rewrite | outside goal |
+| main integration | not granted; Atlas recovery owns active integration |
+
+## Order of operations
+
+Frozen author handoff must cite Owner amendment `171791f` and Core Rulings 113/114, not the superseded bare-first refusal. Programme-local join contract: `recursive-surface-ownership-join.json`. The independent Test Architect required the full existing `tools/run-verify-gates.py` floor in addition to Python and documentation checks; it remains present. Only .NET recount/build are omitted for this Python-only change. No baseline failure is silently waived.
+
+1. Finish doctor/ownership preflight; record exact source confidence.
+2. Obtain independent plan gate and Core grant; resolve ProseView without inference.
+3. Provision author tree, dispatch frozen design, observe red then green.
+4. Freeze commit and run independent review with mutation oracles and real register.
+5. Join through conductor-join.py using an agreed task-scoped contract; no push/main change. Inspect actual states and regenerate with repository tools.
+6. Complete proof, audit, DC-118 instance and mitigation capture; commit handoff; retain unmerged worktrees by name/reason.
+
+## Status
+
+| Completed | Remaining | Best next action |
+|---|---|---|
+| recursive gate and eight-mutant self-test; Core Rulings 113/114; Owner O1–O7; independent final PASS; script merge; runtime receipts | mandatory join qualification blocked by shared audit state; latest finding is active Understanding Views spike logs | peer preserves records and coordinator reconciles liveness under req-01M2JTQ5G3YVP0D81XBH2ZQK6E, then qualification; no main integration grant |
+
+## Planned versus actual
+
+Baseline observed 13 gate files versus 17 recursively discovered. Author `18a4a19f` recorded 22 baseline failures and six killed mutants; independent reviewer then exposed five parser counterexamples, also reproduced by Conductor. Owner O7 confirmed same-scope repair after diagnosis. The re-plan in `plan-recursive-surface-ownership` retains independent veto clearance and the full join runner. One author, no additional implementation lane.
+
+Actual receipts: first author audit 981 seconds, final report 58 calls against 35 planned; plan reviewer 443 seconds and 25/25 calls. Repair 18/18 calls; final two-mutant unit 222 seconds and 14/6 calls; final review 16/16 calls. Tokens are not recorded. Overruns are estimate defects, not increased budgets. A single Owner-approved non-updating .NET run supplied the mandatory fresh-worktree receipts: 3,743 tests executed and passed, one existing nonexecuted test, five terminal-host paths passed. Baselines and product sources are unchanged.
+
+Final implementation `676f63ed` independently passed all triggered vetoes; the two missing mutation controls were added before acceptance. Conductor script merge `7fdf6ab0` and checkpoint `df050caf` preserve the reviewed code. The mandatory runner passed 37/38 twice; the sole failure is primary `docs/audit/audit-log.jsonl` becoming uncommitted after an earlier stranded-audit PASS. The coordinator received the exact seam request. The script's premature acceptance audit was officially superseded as blocked. See the programme proof for receipt hashes, provenance and retained worktree reasons. No primary source mutation, peer-log repair or main publication was performed.
+
+Latest observation after `327528e2`: primary logs no longer fail the standalone stranded-audit gate; the gate now names Understanding Views spike audit/change logs. Coord simultaneously lists the spike active, so its "nobody live" diagnostic is a finding to reconcile, not evidence of abandonment. Grok received request `req-01M2JTQ5G3YVP0D81XBH2ZQK6E`. Qualification remains blocked on that shared state; no review or implementation acceptance was revoked.
+

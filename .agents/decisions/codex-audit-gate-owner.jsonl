@@ -1,0 +1,5 @@
+{"agent": "codex-astra-owner", "at": 1789495541.1932304, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-audit-gate-owner", "wi": ""}
+{"agent": "codex-astra-owner", "at": 1789495541.2038555, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-audit-gate-owner", "wi": ""}
+{"agent": "codex-astra-owner", "at": 1789495541.215707, "code": null, "kind": "allowed", "path": "docs/audit/change-log.jsonl", "session": "codex-audit-gate-owner", "wi": ""}
+{"agent": "codex-astra-owner", "at": 1789495541.2285147, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "codex-audit-gate-owner", "wi": ""}
+{"agent": "codex-astra-owner", "at": 1789495541.2411044, "code": null, "kind": "allowed", "path": "docs/notes/audit-gate-self-test-owner.md", "session": "codex-audit-gate-owner", "wi": ""}

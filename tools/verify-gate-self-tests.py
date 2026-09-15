@@ -44,7 +44,6 @@ GATES = ("verify-*.py", "mutation-replay.py")
 # is a visible act rather than an omission nobody can see. Removing a name requires giving that gate
 # a self-test, which is the only edit this check will accept.
 KNOWN_WITHOUT_SELF_TEST = {
-    "verify-audit-log.py",
     "verify-bounds-are-enforced.py",
     "verify-defect-register.py",
     "verify-embedded-scripts.py",

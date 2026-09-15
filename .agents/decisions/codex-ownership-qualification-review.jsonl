@@ -1,0 +1,9 @@
+{"agent": "codex-sol-review", "at": 1789492587.9843721, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "codex-ownership-qualification-review", "wi": ""}
+{"agent": "codex-sol-review", "at": 1789492587.9955094, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "codex-ownership-qualification-review", "wi": ""}
+{"agent": "codex-sol-review", "at": 1789492588.0067313, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-ownership-qualification-review", "wi": ""}
+{"agent": "codex-sol-review", "at": 1789492588.0197387, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-ownership-qualification-review", "wi": ""}
+{"agent": "codex-sol-review", "at": 1789492588.031842, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "codex-ownership-qualification-review", "wi": ""}
+{"agent": "codex-sol-review", "at": 1789492588.0418603, "code": null, "kind": "allowed", "path": "docs/proof/ownership-qualification-review.md", "session": "codex-ownership-qualification-review", "wi": ""}
+{"agent": "codex-sol-review", "at": 1789492588.0541334, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-ownership-qualification-review", "wi": ""}
+{"agent": "codex-sol-review", "at": 1789492588.0657103, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-ownership-qualification-review", "wi": ""}
+{"agent": "codex-sol-review", "at": 1789492588.0770407, "code": null, "kind": "allowed", "path": "site/model.html", "session": "codex-ownership-qualification-review", "wi": ""}
