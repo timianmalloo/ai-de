@@ -8831,7 +8831,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "14515d43da89d21ca7b10e63e655d88e4fd09ddb75b23079312dcbbb16261a61"
+      "sourceSha256": "74eec1cb8f54bdbbbdaf7c66d98f319ab17cc1a41e3cd23e00be30854c456aa1"
     },
     {
       "id": "coordination-understanding-views-kickoff",
@@ -17696,7 +17696,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3b7fff24d8514aa1702a5d75e51cad95524fd0e32909ef9b28bf4cd15051c983"
+      "sourceSha256": "4a740c7295c0def310a32b86787be468abb1f47d765c585ecd1854f87c6e37aa"
     },
     {
       "id": "proof-uv-1-solution-tree-shell",
@@ -19780,5 +19780,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "b09bb3b650e911069cc6cdfef0772fbeca70966fd043f43a61d666e6d4067d9a"
+  "graphSha256": "0f80dccd76d4728114423edea149b8bd01e2c85bbf3d2aa8b58808e2471dd2a6"
 };
