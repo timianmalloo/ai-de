@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace AiDe.Core.Understanding;
 
 public enum AtlasBoundsDimension
@@ -33,9 +35,11 @@ public sealed record AtlasAdmitDto(
     int Version, string ScopeToken, string InitialManifestToken, long CoreEpoch, DateTimeOffset ExpiresAt);
 public sealed record AtlasInventoryRequestDto(
     int Version, string ScopeToken, long ExpectedCoreEpoch, string ManifestToken, int Offset, int Limit);
+/// <summary>Structural metadata is explicit opt-in; the remote reader omits it when the peer lacks the feature.</summary>
 public sealed record AtlasSelectRequestDto(
     int Version, string ScopeToken, long ExpectedCoreEpoch, string ManifestToken, string FileToken,
-    string? DeclarationToken, int SourceOffset, int SourceLength, int OutlineOffset, int OutlineLimit);
+    string? DeclarationToken, int SourceOffset, int SourceLength, int OutlineOffset, int OutlineLimit,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] bool? StaticStructure = null);
 public sealed record AtlasRestoreRequestDto(
     int Version, string ScopeToken, long ExpectedCoreEpoch, string ReceiptToken);
 public sealed record AtlasReleaseRequestDto(int Version, string ScopeToken, long ExpectedCoreEpoch);
@@ -56,7 +60,12 @@ public sealed record AtlasSourceDto(
     SourceProjectionState State, string ObservationToken, string? BindingToken, string? DecoderId,
     string? Text, AtlasSpanDto? PageSpan, AtlasSpanDto[] Highlights, int? NextOffset, string? Reason);
 public sealed record AtlasOutlineRowDto(
-    string DeclarationToken, string DisplayName, AtlasDeclarationKind Kind, AtlasSpanDto Span);
+    string DeclarationToken, string DisplayName, AtlasDeclarationKind Kind, AtlasSpanDto Span,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] AtlasStructureDto? Structure = null);
+/// <summary>Descriptive, page-scoped syntax evidence. An omitted parent never carries an authority token.</summary>
+public sealed record AtlasStructureDto(
+    AtlasClassifierFlavor? ClassifierFlavor, AtlasLexicalParentState ParentState,
+    string? ParentDeclarationToken, AtlasStructureProvenance Provenance, string? Reason);
 public sealed record AtlasSpanDto(int Start, int Length);
 public sealed record AtlasCountDto(AtlasDenominatorState State, long? Value, string? Reason);
 public sealed record AtlasCoverageDto(AtlasDenominatorState State, double? Value, string? Reason);

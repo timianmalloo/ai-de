@@ -43,7 +43,7 @@ public static class AtlasWorkspaceOperations
             if (!offered.SupportedVersions.Contains(1))
                 throw new AtlasReadException("Atlas.UnsupportedVersion", "No supported Atlas version was offered.");
             return ValueTask.FromResult(IpcResponse.Success(new AtlasCapabilitiesDto([1],
-                ["inventory", "source", "outline", "receipts"], AtlasReaderProjection.MaxFrameBodyBytes,
+                ["inventory", "source", "outline", "receipts", AtlasReaderProjection.StaticStructureFeature], AtlasReaderProjection.MaxFrameBodyBytes,
                 AtlasReaderProjection.MaxPageTextUtf8Bytes, PageRequest.MaxLimit), WorkspaceOperations.Wire));
         }));
         endpoint.RegisterAsync(Admit, (request, peer, token) => Execute(async () =>

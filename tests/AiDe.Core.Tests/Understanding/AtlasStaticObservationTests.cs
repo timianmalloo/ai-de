@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using AiDe.Core.Understanding;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -9,6 +11,83 @@ namespace AiDe.Core.Tests.Understanding;
 
 public sealed class AtlasStaticObservationTests
 {
+    [Fact]
+    public void ActualRetainedManifestPricingIncludesEveryStructuralValue()
+    {
+        const string source = "public class Box { public int Value { get; set; } }";
+        using var fixture = Fixture("src\\Charges.cs", source, SuppliedContext());
+        var result = CSharpDeclarationObservation.Observe(fixture.Compilation, fixture.Context, [fixture.Input]);
+        AtlasManifest Manifest(IEnumerable<AtlasDeclaration> declarations) => new("manifest:1", Grant(), "directory",
+            [fixture.Input.File], [fixture.Input.Buffer.SourceObservation], declarations, AtlasCompletionState.Complete, BoundsKnown(1));
+        var unstructured = result.Declarations.Select(item => new AtlasDeclaration(
+            item.ObservationKey, item.LogicalSymbolValue, item.SourceObservationKey, item.ContextKey, item.SourceBinding,
+            item.Kind, item.Role, item.DisplaySignature, item.Identifier, item.IdentifierSpan,
+            item.DeclarationSpan, item.BodySpan, item.UnresolvedReason));
+        var actual = AtlasQueryService.RetainedManifestCharge(Manifest(result.Declarations))
+            - AtlasQueryService.RetainedManifestCharge(Manifest(unstructured));
+        var expected = result.Declarations.Sum(item =>
+        {
+            var metadata = item.Structure!;
+            var strings = new[] { metadata.ParentObservationKey, metadata.Reason, metadata.ClassifierFlavor?.ToString(),
+                metadata.ParentState.ToString(), metadata.Provenance.ToString() };
+            return 128L + strings.Where(value => value is not null).Sum(value => 128 + 4L * value!.Length);
+        });
+        Assert.True(expected > 0);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Observe_ImmediateLexicalStructureUsesVerifiedOccurrences()
+    {
+        const string source = """
+            namespace Demo {
+              public class Box {
+                public int Count { get; set; }
+                public class Inner { public void M() { } }
+                public event System.Action Changed { add { } remove { } }
+              }
+              public record class Receipt(int Id);
+              public struct Size { }
+              public record struct Point(int X, int Y);
+              public interface IThing { void Run(); }
+              public enum State { Ready }
+            }
+            """;
+        using var fixture = Fixture("src\\Structure.cs", source, SuppliedContext());
+        var result = CSharpDeclarationObservation.Observe(fixture.Compilation, fixture.Context, [fixture.Input]);
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new JsonStringEnumConverter());
+        JsonElement Structure(AtlasDeclaration declaration)
+        {
+            using var json = JsonDocument.Parse(JsonSerializer.Serialize(declaration, options));
+            Assert.True(json.RootElement.TryGetProperty("Structure", out var structure),
+                "The verified occurrence has no producer-derived structural metadata.");
+            return structure.Clone();
+        }
+
+        var box = result.Declarations.Single(item => item.Identifier == "Box");
+        var property = result.Declarations.Single(item => item.Identifier == "Count");
+        var inner = result.Declarations.Single(item => item.Identifier == "Inner");
+        Assert.Equal("NotApplicable", Structure(box).GetProperty("ParentState").GetString());
+        foreach (var child in result.Declarations.Where(item => item.Identifier is "get" or "set"))
+            Assert.Equal(property.ObservationKey, Structure(child).GetProperty("ParentObservationKey").GetString());
+        Assert.Equal(box.ObservationKey, Structure(inner).GetProperty("ParentObservationKey").GetString());
+        Assert.Equal(inner.ObservationKey, Structure(result.Declarations.Single(item => item.Identifier == "M"))
+            .GetProperty("ParentObservationKey").GetString());
+        foreach (var accessor in result.Declarations.Where(item => item.Identifier is "add" or "remove"))
+        {
+            Assert.Equal("Unavailable", Structure(accessor).GetProperty("ParentState").GetString());
+            Assert.Equal(JsonValueKind.Null, Structure(accessor).GetProperty("ParentObservationKey").ValueKind);
+        }
+        foreach (var (name, flavor) in new[] { ("Box", "Class"), ("Receipt", "RecordClass"),
+            ("Size", "Struct"), ("Point", "RecordStruct"), ("IThing", "Interface"), ("State", "Enum") })
+        {
+            var metadata = Structure(result.Declarations.Single(item => item.Identifier == name));
+            Assert.Equal(flavor, metadata.GetProperty("ClassifierFlavor").GetString());
+            Assert.Equal("Extracted", metadata.GetProperty("Provenance").GetString());
+        }
+    }
+
     [Fact]
     public void Observe_SupportedDeclarations_EmitsDistinctOccurrencesFromVerifiedSource()
     {
@@ -66,7 +145,6 @@ public sealed class AtlasStaticObservationTests
         var saveOccurrences = result.Declarations.Where(declaration => declaration.Identifier == "Save").ToArray();
         var expectedRoles = new[] { AtlasDeclarationRole.PartialDefinition, AtlasDeclarationRole.PartialImplementation };
         var expectedFiles = fixture.Inputs.Select(input => input.File.FileValue).ToArray();
-        var declarationProperties = typeof(AtlasDeclaration).GetProperties().Select(property => property.Name).ToArray();
 
         Assert.NotEmpty(saveOccurrences);
         Assert.Equal(2, result.Declarations.Count(declaration => declaration.Kind == AtlasDeclarationKind.Type && declaration.Identifier == "Box"));
@@ -77,8 +155,8 @@ public sealed class AtlasStaticObservationTests
         Assert.Single(saveOccurrences.Select(declaration => declaration.LogicalSymbolValue).Distinct(StringComparer.Ordinal));
         Assert.Contains(result.Declarations, declaration => declaration.Identifier == "Inner" && declaration.SourceBinding.ManifestFileIdentity == fixture.Inputs[1].File.FileValue);
         Assert.Contains(result.Declarations, declaration => declaration.Kind == AtlasDeclarationKind.Accessor && declaration.Identifier is "get" or "set");
-        Assert.DoesNotContain(declarationProperties, property => property.Contains("Parent", StringComparison.OrdinalIgnoreCase));
-        Assert.DoesNotContain(declarationProperties, property => property.Contains("Flavor", StringComparison.OrdinalIgnoreCase));
+        Assert.All(saveOccurrences, declaration => Assert.NotNull(declaration.Structure));
+        Assert.Equal(2, saveOccurrences.Select(declaration => declaration.Structure!.ParentObservationKey).Distinct(StringComparer.Ordinal).Count());
     }
 
     [Fact]
@@ -139,6 +217,12 @@ public sealed class AtlasStaticObservationTests
             Assert.InRange(declaration.DeclarationSpan.Start + declaration.DeclarationSpan.Length, 1, source.Length);
         });
         Assert.Contains(result.Declarations, declaration => declaration.Identifier == "Count");
+        Assert.All(result.Declarations, declaration =>
+        {
+            Assert.Equal(AtlasStructureProvenance.Unavailable, declaration.Structure!.Provenance);
+            Assert.Equal(AtlasLexicalParentState.Unavailable, declaration.Structure.ParentState);
+            Assert.Null(declaration.Structure.ParentObservationKey);
+        });
     }
 
     private static string Slice(string source, AtlasTextSpan span) => source.Substring(span.Start, span.Length);

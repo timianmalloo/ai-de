@@ -318,10 +318,19 @@ public sealed class AtlasSourceObservation
         value is null ? null : AtlasBounds.NonNegative(value.Value, name);
 }
 
+public enum AtlasClassifierFlavor { Class, RecordClass, Struct, RecordStruct, Interface, Enum }
+public enum AtlasLexicalParentState { NotApplicable, Present, Unavailable, OutsidePage }
+public enum AtlasStructureProvenance { Extracted, Unavailable }
+
+/// <summary>Descriptive syntax evidence; occurrence and source-binding identities remain unchanged.</summary>
+public sealed record AtlasDeclarationStructure(
+    AtlasClassifierFlavor? ClassifierFlavor, AtlasLexicalParentState ParentState,
+    string? ParentObservationKey, AtlasStructureProvenance Provenance, string? Reason);
+
 /// <summary>Declaration metadata. Logical symbol value can be absent when the compiler identity is unavailable.</summary>
 public sealed class AtlasDeclaration
 {
-    public AtlasDeclaration(string observationKey, string? logicalSymbolValue, string sourceObservationKey, string contextKey, AtlasSourceBinding sourceBinding, AtlasDeclarationKind kind, AtlasDeclarationRole role, string displaySignature, string identifier, AtlasTextSpan identifierSpan, AtlasTextSpan declarationSpan, AtlasTextSpan? bodySpan, string? unresolvedReason)
+    public AtlasDeclaration(string observationKey, string? logicalSymbolValue, string sourceObservationKey, string contextKey, AtlasSourceBinding sourceBinding, AtlasDeclarationKind kind, AtlasDeclarationRole role, string displaySignature, string identifier, AtlasTextSpan identifierSpan, AtlasTextSpan declarationSpan, AtlasTextSpan? bodySpan, string? unresolvedReason, AtlasDeclarationStructure? structure = null)
     {
         ObservationKey = AtlasIdentityCodec.RequiredToken(observationKey, nameof(observationKey));
         LogicalSymbolValue = AtlasIdentityCodec.OptionalToken(logicalSymbolValue, nameof(logicalSymbolValue));
@@ -336,6 +345,7 @@ public sealed class AtlasDeclaration
         DeclarationSpan = declarationSpan;
         BodySpan = bodySpan;
         UnresolvedReason = AtlasIdentityCodec.OptionalToken(unresolvedReason, nameof(unresolvedReason));
+        Structure = structure;
     }
 
     public string ObservationKey { get; }
@@ -351,6 +361,7 @@ public sealed class AtlasDeclaration
     public AtlasTextSpan DeclarationSpan { get; }
     public AtlasTextSpan? BodySpan { get; }
     public string? UnresolvedReason { get; }
+    public AtlasDeclarationStructure? Structure { get; }
 }
 
 /// <summary>In-memory manifest for detached reader producers; no source body or compiler object is retained.</summary>

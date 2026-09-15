@@ -432,17 +432,26 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
             cached = Cache(manifest, declarationBounds,
                 readerOutlineFailure is null ? result?.Limitations ?? ["non-CSharp file"] : [readerOutlineFailure]);
         }
+        var outlineLimit = readerWindow is null ? PageRequest.MaxLimit : CSharpDeclarationObservationLimits.Default.MaxDeclarations;
         var declarations = cached.Value.Declarations.Where(declaration => declaration.SourceObservationKey == observation.ObservationKey)
-            .Take(PageRequest.MaxLimit).ToImmutableArray();
+            .Take(outlineLimit).ToImmutableArray();
         var span = readerWindow ?? plan.Declaration?.DeclarationSpan ?? new AtlasTextSpan(0, buffer.FullText.Length);
         if (readerWindow is not null)
         {
             if (span.Start > buffer.FullText.Length)
                 throw new AtlasReadException("Atlas.Malformed", "The requested source window is outside the verified text.");
             span = new AtlasTextSpan(span.Start, Math.Min(span.Length, buffer.FullText.Length - span.Start));
+            if (span.Start > 0 && span.Start < buffer.FullText.Length
+                && char.IsHighSurrogate(buffer.FullText[span.Start - 1]) && char.IsLowSurrogate(buffer.FullText[span.Start]))
+                throw new AtlasReadException("Atlas.Malformed", "The source start splits a Unicode scalar.");
+            if (span.End > 0 && span.End < buffer.FullText.Length
+                && char.IsHighSurrogate(buffer.FullText[span.End - 1]) && char.IsLowSurrogate(buffer.FullText[span.End]))
+                span = new AtlasTextSpan(span.Start, span.Length - 1);
+            if (span.Length == 0 && span.Start < buffer.FullText.Length)
+                throw new AtlasReadException("Atlas.Malformed", "The source window cannot contain a Unicode scalar.");
         }
         var page = source.ReadPage(read, span, plan.Declaration is null ? [] : [plan.Declaration.IdentifierSpan]);
-        return new(cached, page, declarations, plan.Declaration?.ObservationKey);
+        return new(cached, page, declarations, plan.Declaration?.ObservationKey, outlineLimit);
     }
 
     private SelectionProjection Publish(SelectionPlan plan, PreparedSelection prepared, long sequence)
@@ -476,7 +485,7 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
         var totalKnown = manifest.DeclarationBounds?.TotalState is not AtlasDenominatorState.Unknown and not AtlasDenominatorState.Withheld;
         var total = manifest.Value.Declarations.Length;
         var truncated = total > prepared.Declarations.Length;
-        var bounds = new AtlasBounds(PageRequest.MaxLimit, PageRequest.MaxLimit, prepared.Declarations.Length,
+        var bounds = new AtlasBounds(prepared.OutlineLimit, prepared.OutlineLimit, prepared.Declarations.Length,
             Encoding.UTF8.GetByteCount(prepared.Source.Page!.Text), totalKnown ? total : null,
             totalKnown ? AtlasDenominatorState.Known : AtlasDenominatorState.Unknown,
             !totalKnown ? "declaration population unknown" : truncated ? Code.Page : null,
@@ -484,11 +493,11 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
         var limitations = manifest.Limitations.AddRange(new[] { "FileLimited", "project not established",
             "TFM not established", "observation-only symbol identity" });
         if (truncated) limitations = limitations.Add("outline truncated; no outline continuation port");
-        if (prepared.Source.Page.PageSpan.End < observation.DecodedUtf16Length)
+        if (readerBudget is null && prepared.Source.Page.PageSpan.End < observation.DecodedUtf16Length)
             limitations = limitations.Add("source page bounded; no arbitrary source continuation port");
         return new(receipt.Token, manifest.Value.Token, plan.File.FileValue, sequence,
             new SelectionOutline(prepared.Declarations.Select(declaration =>
-                new OutlineDeclaration(declaration.ObservationKey, declaration.DisplaySignature, declaration.Kind, declaration.DeclarationSpan))),
+                new OutlineDeclaration(declaration.ObservationKey, declaration.DisplaySignature, declaration.Kind, declaration.DeclarationSpan, declaration.Structure))),
             prepared.Source, bounds, SelectionCoverage.Unknown("file-limited observation"), limitations);
     }
 
@@ -607,10 +616,10 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
 
     // Conservative retained-payload charges, not a measurement of CLR heap/RSS. Bodies and compiler objects never enter these caches.
     private static CachedManifest Cache(AtlasManifest manifest, AtlasBounds? declarationBounds, ImmutableArray<string> limitations) =>
-        new(manifest, Charge(manifest) + ChargeStrings(limitations.ToArray())
+        new(manifest, RetainedManifestCharge(manifest) + ChargeStrings(limitations.ToArray())
             + ChargeStrings(declarationBounds?.OmissionReason, declarationBounds?.LimitingDimension),
             declarationBounds, limitations);
-    private static long Charge(AtlasManifest manifest) =>
+    internal static long RetainedManifestCharge(AtlasManifest manifest) =>
         1024 + ChargeStrings(manifest.Token, manifest.DirectoryObservationKey, manifest.RootGrant.ApprovedAbsoluteRoot,
             manifest.RootGrant.GrantVersion, manifest.RootGrant.WorkspaceToken, manifest.RootGrant.RootToken,
             manifest.RootGrant.PolicyToken, manifest.RootGrant.SessionToken,
@@ -622,7 +631,9 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
             declaration.SourceObservationKey, declaration.ContextKey, declaration.DisplaySignature, declaration.Identifier,
             declaration.SourceBinding.ManifestIdentity, declaration.SourceBinding.ManifestFileIdentity,
             declaration.SourceBinding.PolicyIdentity, declaration.SourceBinding.RootIdentity, declaration.SourceBinding.FileIdentity,
-            declaration.SourceBinding.ContentHash, declaration.UnresolvedReason));
+            declaration.SourceBinding.ContentHash, declaration.UnresolvedReason)
+            + (declaration.Structure is { } structure ? 128 + ChargeStrings(structure.ParentObservationKey,
+                structure.Reason, structure.ClassifierFlavor?.ToString(), structure.ParentState.ToString(), structure.Provenance.ToString()) : 0));
     private static long ChargeFile(AtlasFileEntry file) =>
         512 + ChargeStrings(file.FileValue, file.RelativePath, file.ParentPathKey, file.Reason);
     private static long ChargeStrings(params string?[] values) => values.Sum(value => value is null ? 0L : 128 + 4L * value.Length);
@@ -653,5 +664,5 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
     private sealed record SelectionPlan(CachedManifest Basis, AtlasFileEntry File, string ManifestToken,
         AtlasSourceObservation? Observation, AtlasSourceBinding? Binding, AtlasDeclaration? Declaration);
     private sealed record PreparedSelection(CachedManifest Manifest, SourceProjection Source,
-        ImmutableArray<AtlasDeclaration> Declarations, string? DeclarationKey);
+        ImmutableArray<AtlasDeclaration> Declarations, string? DeclarationKey, int OutlineLimit = PageRequest.MaxLimit);
 }

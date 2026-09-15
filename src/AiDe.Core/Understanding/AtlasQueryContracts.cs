@@ -84,18 +84,20 @@ public sealed class SelectionCoverage
 /// <summary>One addressable declaration in a selection outline.</summary>
 public sealed class OutlineDeclaration
 {
-    public OutlineDeclaration(string observationKey, string displayName, AtlasDeclarationKind kind, AtlasTextSpan span)
+    public OutlineDeclaration(string observationKey, string displayName, AtlasDeclarationKind kind, AtlasTextSpan span, AtlasDeclarationStructure? structure = null)
     {
         ObservationKey = AtlasIdentityCodec.RequiredToken(observationKey, nameof(observationKey));
         DisplayName = AtlasIdentityCodec.RequiredToken(displayName, nameof(displayName));
         Kind = AtlasBounds.Defined(kind, nameof(kind));
         Span = span;
+        Structure = structure;
     }
 
     public string ObservationKey { get; }
     public string DisplayName { get; }
     public AtlasDeclarationKind Kind { get; }
     public AtlasTextSpan Span { get; }
+    public AtlasDeclarationStructure? Structure { get; }
 }
 
 /// <summary>Structured, addressable outline. Empty outlines are valid.</summary>
