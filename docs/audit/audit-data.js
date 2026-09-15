@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T18:48:57Z",
+  "generated": "2026-09-15T19:44:42Z",
   "audit": [
     {
       "actor": null,
@@ -17767,6 +17767,21 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T18:45:21Z",
       "duration_seconds": 0.0
+    },
+    {
+      "id": "al-01M2K9K9PBCJWR729NHY84ZBKB",
+      "shortname": "keep going",
+      "datetime": "2026-09-15T19:44:42Z",
+      "session": "codex-review-receipt-handoff",
+      "prompt": "keep going\nis everything you could push to main pushed and merged",
+      "summary": "Verified code/proof publication; identified twelve original Owner/reviewer audit rows still local and requested an audit-only serialized Core handoff.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
