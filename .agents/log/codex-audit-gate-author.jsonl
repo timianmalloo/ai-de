@@ -1,0 +1,2 @@
+{"agent": "codex-audit-gate-author", "at": 1789495597.2820106, "kind": "session-start", "path": "-", "seq": 1, "session": "codex-audit-gate-author", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-fix-audit-gate-self-test"}
+{"agent": "codex-sol-author", "at": 1789495907.8135548, "kind": "session-end", "path": "-", "seq": 2, "session": "codex-audit-gate-author", "wi": "WI-0", "worktree": "C:/Projects/ai-de-fix-audit-gate-self-test"}

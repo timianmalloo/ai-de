@@ -296,3 +296,15 @@
 {"agent": "claude-conductor", "at": 1789493348.9420896, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "claude-conductor-watch-0915", "wi": ""}
 {"agent": "claude-conductor", "at": 1789493348.9537632, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "claude-conductor-watch-0915", "wi": ""}
 {"agent": "claude-conductor", "at": 1789493348.9646075, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789493364.4893577, "code": null, "kind": "allowed", "path": ".agents/decisions/claude-conductor-watch-0915.jsonl", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789493364.5004177, "code": null, "kind": "allowed", "path": ".agents/log/codex-ownership-qualification-review.jsonl", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789493364.5095303, "code": null, "kind": "allowed", "path": ".agents/log/codex-ownership-qualification.jsonl", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789493364.5201433, "code": null, "kind": "allowed", "path": ".agents/regen-owed.txt", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789493364.5307674, "code": null, "kind": "allowed", "path": ".agents/sessions/codex-ownership-qualification.md", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789493364.5405197, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789493364.5505674, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789493364.5606005, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789493364.5693042, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789493364.5805953, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789493364.5929053, "code": null, "kind": "allowed", "path": "site/index.html", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789495415.9806747, "code": null, "kind": "allowed", "path": "docs/notes/addendum-c-council-rulings.md", "session": "claude-conductor-watch-0915", "wi": ""}

@@ -1,0 +1,4 @@
+{"agent": "codex-astra-conductor", "at": 1789495333.6192663, "kind": "session-start", "path": "-", "seq": 1, "session": "codex-audit-gate-owner", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-owner-audit-gate-self-test"}
+{"agent": "codex-astra-owner", "at": 1789495417.8517396, "kind": "claim", "path": "docs/notes/audit-gate-self-test-owner.md", "seq": 2, "session": "codex-audit-gate-owner", "ttl": 300.0, "wi": "audit-gate-self-test-owner"}
+{"agent": "codex-astra-owner", "at": 1789495521.027658, "kind": "release", "path": "docs/notes/audit-gate-self-test-owner.md", "seq": 3, "session": "codex-audit-gate-owner", "wi": "WI-0"}
+{"agent": "codex-astra-owner", "at": 1789497876.866949, "kind": "session-end", "path": "-", "seq": 4, "session": "codex-audit-gate-owner", "wi": "WI-0", "worktree": "C:/Projects/ai-de-owner-audit-gate-self-test"}
