@@ -1,6 +1,6 @@
 ---
 id: proof-atlas-harness-gate-review
-title: "G4 independent review: EDI guard masking remains blocked"
+title: "G4 independent review: correlated EDI correction cleared"
 type: proof-pack
 status: proposed
 owner: "@timianmalloo"
@@ -9,10 +9,63 @@ links:
   - { to: session-contracts, rel: depends-on }
   - { to: proof-atlas-harness-gate-repair, rel: relates-to }
 review-by: 2026-12-15
-summary: "Independent review of frozen f43ff83: helper evidence supports the exception repair, but an executed mixed-method fixture demonstrates the EDI guard still exempts an unrelated wrapped failure."
+summary: "Independent retained review clears G4 at 301bc67 after the original mixed-method masking probe is rejected, all scanner controls pass, and unchanged helper evidence is retained. The original BLOCK is preserved below."
 ---
 
-# Verdict: BLOCK
+# Current verdict: CLEAR at 301bc67
+
+**Verified; high confidence:** G4-R1 is cleared at corrected author commit
+`301bc67a61228a9c944d6ba778db98d241b75087`. Independent retained review reopened
+only the original G4 predicate under a four-call continuation. This supersedes
+the original BLOCK below; it does not clear integration or publication.
+
+The exact independent reproducer was rerun against the corrected source:
+
+```text
+MIXED_EDI {"problems": ["tests/MixedEdiTests.cs rethrows a captured failure wrapped, with no XunitException guard before it. ..."], "wrapped_files": 1, "must_reject": true}
+```
+
+The diagnostic is abbreviated above; full output is retained in
+`C:/Users/malla/AppData/Local/Temp/atlas-g4-independent-rereview.log`.
+The original probe and false-clean output remain documented below. This is an
+observed change from zero findings to one finding for the same mixed-method file.
+
+Source diff inspection confirms EDI qualification now evaluates every wrapper,
+requires the same innermost callable, and correlates either the same original
+identifier or the foreach item from the wrapped collection. Adjacent guard and
+wrapper matching rejects intervening ordinary statements. The actual retained
+array loop and its nonempty check remain accepted. Legacy direct-throw guard
+behavior remains unchanged; this is bounded lexical recognition, not proof of
+arbitrary C# control flow or aliasing.
+
+Reviewer executed both corrected scanner commands. Normal output remains four
+STA files: two wrapping, zero plain rethrows, one original TCS handoff, one
+exception-subject file. Self-test reports success for **11 TCS and nine EDI
+fixtures**, with planted findings for the exact mixed-method probe, same-name
+parameters across methods, unrelated original and unrelated collection. Healthy
+same-original and same-collection positives are accepted. Existing unguarded,
+qualified-wrapper, multiple-STA, TCS replacement and mixed-setter controls remain.
+
+The commit diff is exactly scanner plus author proof. There is **no App helper
+or test-file diff** between f43ff83 and 301bc67, and the author working tree was
+clean. The previously inspected real-helper red/green and five compiled mutation
+TRXs remain the applicable evidence; no App run was repeated for this scanner-only
+correction. Original test-log observations below are retained, not replaced by
+the scanner result.
+
+Test Architect, SRE and Language Developer clear the retained G4-R1 veto against
+this corrected source. The unchanged scoped Distributed Systems and Security
+observations below remain applicable; no new data/persistence trigger is added.
+This independent reviewer authored no scanner/helper repair and does not assert
+self-clearance of this review document.
+
+Retained execution: inspect correction and unchanged helper → replay original
+probe plus normal/self-test → update receipt → commit/release/end. Four tool
+boundaries; no additional agents, shared audit/lesson/derived writes, or unrelated
+gates. Conductor captures this proof in its episode. Remaining work belongs to
+the programme: advanced-main integrated qualification and GHCP publication.
+
+## Historical verdict: BLOCK at f43ff83
 
 **Verified:** frozen author commit `f43ff83ce16fbacc9db585a2ee5befc0ec4d9bf7`
 does not satisfy the explicit predicate that an EDI guard must not exempt another
