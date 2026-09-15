@@ -590,7 +590,7 @@ public sealed class WorkspaceCore : IDisposable
             return false;
         var root = Path.TrimEndingDirectorySeparator(Path.GetFullPath(RootPath));
         var candidate = Path.GetFullPath(Path.Combine(root, relativePath));
-        if (!candidate.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+        if (!candidate.StartsWith(root + Path.DirectorySeparatorChar, PathComparison.ForThisFileSystem))
             return false;
         // ProjectionService.KindOf is frozen in this slice; the parity test controls this shared policy boundary.
         return Path.GetExtension(candidate).ToLowerInvariant() is

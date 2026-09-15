@@ -430,8 +430,8 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
         return Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
     }
 
-    private static bool UnderOrSame(string root, string path) => string.Equals(root, path, StringComparison.OrdinalIgnoreCase)
-        || path.StartsWith(Path.TrimEndingDirectorySeparator(root) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+    private static bool UnderOrSame(string root, string path) => string.Equals(root, path, PathComparison.ForThisFileSystem)
+        || path.StartsWith(Path.TrimEndingDirectorySeparator(root) + Path.DirectorySeparatorChar, PathComparison.ForThisFileSystem);
 
     private static void Require(bool condition, AtlasMembershipCaptureState state, string code)
     {

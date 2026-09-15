@@ -64,6 +64,46 @@ APPLIED_ELSEWHERE = {
         "stops there",
 }
 
+# One checked indirect seam, not a reason-only exemption or a general C# call-graph analyzer.
+# Exact file and adjacent statements connect the pinned index to its bound, and the digest length
+# guard to hashing. The real CaptureAsync boundary test is the behavioral oracle for this syntax.
+INDEX_SOURCE = "src/AiDe.Core/Understanding/AtlasGitMembership.cs"
+INDEX_CALL = '''var index = pins.Add(association.Index, trackChanges: true, role: "worktree-index");
+var indexDigest = index.Digest(MaxIndexBytes, deadline.Token);'''
+INDEX_GUARD = '''internal string Digest(long maximumBytes, CancellationToken cancellationToken)
+{
+var length = RandomAccess.GetLength(_handle);
+Require(length <= maximumBytes, AtlasMembershipCaptureState.BudgetExceeded, "index-byte-budget");
+using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);'''
+
+
+def index_bound_enforced(body: str) -> bool:
+    """Fail closed when either side of this specific indirect contract changes."""
+    code = re.sub(r"\s+", "", strip_comments(body))
+    return all(re.sub(r"\s+", "", required) in code for required in (INDEX_CALL, INDEX_GUARD))
+
+
+def self_test() -> int:
+    body = INDEX_CALL + "\n" + INDEX_GUARD
+    cases = {
+        "checked caller and guard": (body, True),
+        "forwarded unlimited": (body.replace("Digest(MaxIndexBytes,", "Digest(long.MaxValue,"), False),
+        "deleted clamp": (body.replace('Require(length <= maximumBytes, AtlasMembershipCaptureState.BudgetExceeded, "index-byte-budget");', ""), False),
+        "strict boundary": (body.replace("length <= maximumBytes", "length < maximumBytes"), False),
+        "unrelated pin": (body.replace("pins.Add(association.Index,", "pins.Add(executable,"), False),
+        "guard after hashing": (INDEX_CALL + INDEX_GUARD.replace(
+            'Require(length <= maximumBytes, AtlasMembershipCaptureState.BudgetExceeded, "index-byte-budget");', "")
+            + 'Require(length <= maximumBytes, AtlasMembershipCaptureState.BudgetExceeded, "index-byte-budget");', False),
+        "comment only": ("/*" + body + "*/", False),
+        "caller only": (INDEX_CALL, False),
+        "helper only": (INDEX_GUARD, False),
+    }
+    failed = [name for name, (source, expected) in cases.items() if index_bound_enforced(source) != expected]
+    for name in failed:
+        print(f"FAIL: {name}")
+    print(f"verify-bounds-are-enforced self-test: {len(cases) - len(failed)}/{len(cases)} passed")
+    return int(bool(failed))
+
 
 def repo_root() -> Path:
     out = subprocess.run(
@@ -90,7 +130,10 @@ def strip_comments(text: str) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--list", action="store_true", help="show every bound and where it is enforced")
+    parser.add_argument("--self-test", action="store_true", help="exercise checked indirect enforcement and its mutants")
     args = parser.parse_args()
+    if args.self_test:
+        return self_test()
 
     root = repo_root()
     sources = tracked_sources(root)
@@ -112,12 +155,15 @@ def main() -> int:
     unenforced = []
 
     for name, declared_in in sorted(bounds.items()):
-        applied = name in APPLIED_ELSEWHERE or any(
+        indirect = name in APPLIED_ELSEWHERE or (
+            name == "MaxIndexBytes" and declared_in == root / INDEX_SOURCE
+            and index_bound_enforced(bodies[declared_in]))
+        applied = indirect or any(
             re.search(rule.pattern.format(name=re.escape(name)), everything)
             for rule in ENFORCEMENT)
 
         if args.list:
-            how = "indirect" if name in APPLIED_ELSEWHERE else ("applied " if applied else "DECLARED")
+            how = "indirect" if indirect else ("applied " if applied else "DECLARED")
             print(f"  {how:8} {name}  ({declared_in.relative_to(root)})")
 
         if not applied:

@@ -418,6 +418,35 @@ public sealed class AtlasProductionAdmissionTests
 [CollectionDefinition("Atlas runtime native resources", DisableParallelization = true)]
 public sealed class AtlasRuntimeNativeCollection;
 
+public sealed class AtlasContentContainmentTests
+{
+    [Theory]
+    [InlineData("src/Widget.cs", true)]
+    [InlineData("SRC/Widget.cs", true)]
+    [InlineData("../outside.cs", false)]
+    [InlineData("src/../../outside.cs", false)]
+    [InlineData("..\\outside.cs", false)]
+    [InlineData("/outside.cs", false)]
+    [InlineData("C:\\outside.cs", false)]
+    [InlineData("src/file.cs:stream", false)]
+    public void AllowsAtlasContent_ReachableRelativePaths_EnforcesAdmission(string relative, bool expected)
+    {
+        var fixture = Path.Combine(Path.GetTempPath(), "atlas-content-boundary", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(fixture);
+        try
+        {
+            using var core = WorkspaceCore.Open("atlas-boundary", Path.Combine(fixture, "root"), Path.Combine(fixture, "data"));
+
+            Assert.Equal(expected, core.AllowsAtlasContent(relative));
+            Assert.False(core.AllowsAtlasContent(Path.Combine(fixture, "root-other", "outside.cs")));
+        }
+        finally
+        {
+            Directory.Delete(fixture, recursive: true);
+        }
+    }
+}
+
 [SupportedOSPlatform("windows")]
 internal sealed class AtlasRuntimeFixture : IAsyncDisposable
 {
