@@ -8833,7 +8833,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "28e51e072d055a8276db2a671ece92b2c43d67b37049247a7a0d4eb5539de2fd"
+      "sourceSha256": "289b844d1efa08c62f8686be3765a11aef69701072bfe56cccab4e2f12aee18d"
     },
     {
       "id": "coordination-code-atlas",
@@ -11230,11 +11230,11 @@ window.DOCS_INDEX = {
       "diagrams": [
         {
           "kind": "flowchart",
-          "title": "Execution graph",
+          "title": "Exact repair ledger (dispatch contract)",
           "mermaid": "graph TD\n A-->B-->C\n C-->D\n C-->E\n C-->F\n C-->G\n D-->H\n E-->H\n F-->H\n G-->H\n H-->I-->J"
         }
       ],
-      "sourceSha256": "cab00662bcd81a6d0bc4249245bf6b597188621f17b951bfbf1a42dcbc6c070b"
+      "sourceSha256": "76ca76eb0371d376e6e1bcffe1be2d0f6d2a98985df6663cc7033293714faf7a"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -11774,7 +11774,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8bc7f784c42e17ec2abddd67389f3400619e6f184c368cc0eded0b797edfbb38"
+      "sourceSha256": "4bb73e0d81df17b161bd3a1416fadb30cef4acaa316669e719793b8ea5aafadc"
     },
     {
       "id": "proof-code-atlas-contract-grounding",
@@ -21441,5 +21441,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "b00a2c29a3462ca035c5a0e93f57b91064507a462b1afd6c4655fdead9b67a87"
+  "graphSha256": "ad3d34b8c3ae0d438863b3bd4fc33ca12871e2026f86ddbf6eee4a23a7938f79"
 };

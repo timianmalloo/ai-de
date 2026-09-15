@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T22:38:35Z",
+  "generated": "2026-09-15T22:44:16Z",
   "audit": [
     {
       "actor": null,
@@ -21794,6 +21794,33 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T22:38:33Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2KKSY1HJHP4NBCP8K9VDJEK",
+      "shortname": "atlas-five-gates-prep-join-result",
+      "datetime": "2026-09-15T22:43:05Z",
+      "session": "codex-atlas-five-gates",
+      "prompt": "Clear those five gates first, then main, then E1/E2.",
+      "summary": "Correct prep join result: main ancestry incorporated, seven of38 gates failed (original5 plus missing TRX gates), no Release/push. Original pre-gate acceptance retained but superseded. Audit union conserved all semantic payloads, normalized33 alias IDs. Actual executor Codex; configured join trailer wrongly named Claude; future joins use an accurate explicit trailer.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": "codex-astra-gate-conductor",
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Reconcile main and record actual pre-repair gate state",
+      "done_when": "Main ancestry and honest failed qualification evidence recorded; no acceptance inferred",
+      "tier": "T2",
+      "fan_out": 4,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "supersedes": "al-01M2KKHMZ4QQR23YW7S7M17CCX"
     }
   ],
   "changes": [

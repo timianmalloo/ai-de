@@ -32,13 +32,15 @@ Primary is untouched. New tree C:/Projects/ai-de-conductor-atlas-five-gates, bra
 |---|---|---|---|---|---|---|---|
 | Conductor | Task graph/coordination/proof, integrated records | User transfer | T2 | 4 total | 60 calls | Inspected joins, receipts and qualification | Astra; own tree observed |
 | Owner | Scope decisions, no implementation | Grounded evidence | T2 | 1 | 12 read calls | Evidence-backed rulings | Separate Astra; read-only |
-| Audit repair | Exact corrective records; manifest pending | Main join/design | T1 | 1 | 24 | Preserved originals and truthful capture | Own provisioned tree required |
+| Audit repair | Exact corrective records in plan repair ledger | Main join/design and conserved-payload readback | T1 | 1 | 24 | Preserved originals and truthful capture | Own provisioned tree required |
 | Parser repair | verify-surface-ownership.py and task receipt | Main join/design | T1 | 1 | 24 | Red-first fixtures and existing controls | Own provisioned tree required |
-| Core repair | Exact bound/containment source/tests; manifest pending | Main join/design | T2 | 1 | 24 | Real boundary/path controls | Own provisioned tree required |
-| Harness repair | Exact diagnostic source/tests; manifest pending | Main join/design | T2 | 1 | 24 | Failure propagation controls | Own provisioned tree required |
+| Core repair | Exact bound/containment source/tests in plan repair ledger | Main join/design | T2 | 1 | 24 | Real boundary/path controls | Own provisioned tree required |
+| Harness repair | Exact diagnostic source/tests in plan repair ledger | Main join/design | T2 | 1 | 24 | Failure propagation controls | Own provisioned tree required |
 | Review | Independent receipt only | Frozen authored returns | T2 | 1 | 16 | Triggered gate decisions | Separate tree; no author self-clear |
 
 ## Serial spine
+
+Retained independent reviewer cleared Test Architect, Simplifier, SRE plan and Orchestrator gates after exact ledger corrections. Actual implementation gates remain open. Conductor independently confirmed both audit parents conserve every fingerprint:861/828 and713/713 input rows/distinct payloads,829/829 merged, zero missing payloads,33 ID aliases. Audit design prerequisite is satisfied. Owner accepted normalization; no framework repair is admitted.
 
 Current main → repair contract → independent authors → independent review → official qualification/Release → GHCP publication. At most two workers run alongside Owner and Conductor. Source semantics settle before author dispatch. Track rows divide work, not ownership; session-contracts §2 remains the sole authority.
 
