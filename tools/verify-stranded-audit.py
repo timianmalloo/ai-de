@@ -144,10 +144,17 @@ def _key(path: Path) -> str:
 
 def check(root: Path, now: float | None = None) -> list[str]:
     now = time.time() if now is None else now
-    live = live_trees(root, now)
+    trees = worktrees(root)
+    # The session log is per REPOSITORY: coord-core.py writes it under the PRIMARY checkout, and a
+    # linked worktree carries only the committed snapshot. Reading `root/.agents/log` from a linked
+    # tree therefore saw no session as live and reported every other tree as stranded — first observed
+    # 2026-09-15 with four registered sessions (Codex, `req-01M2JQY0G3…`), and by the conductor the
+    # same hour. Resolve against the primary, as coord-core.py does.
+    primary = trees[0][0] if trees else root
+    live = live_trees(primary, now)
     problems: list[str] = []
 
-    for tree, is_primary in worktrees(root):
+    for tree, is_primary in trees:
         if not tree.exists():
             continue
 
@@ -225,6 +232,28 @@ def self_test() -> int:
 
         stranded = check(place)
 
+        # The linked-worktree case: a session registered in the PRIMARY's log is live in its own
+        # tree, and the gate must see that even when it runs FROM that linked tree (whose own
+        # .agents/log is only the committed snapshot). Restore the primary first so it is clean.
+        log.write_text('{"id": "al-0001"}\n', encoding="utf-8")
+        linked = place.parent / (place.name + "-linked")
+        subprocess.run(["git", "worktree", "add", "-q", "-b", "linked", str(linked)],
+                       cwd=place, capture_output=True, check=True)
+        (linked / "docs" / "audit" / "audit-log.jsonl").write_text(
+            '{"id": "al-0001"}\n{"id": "al-0003"}\n', encoding="utf-8")
+
+        unregistered = check(linked)
+
+        (place / ".agents" / "log").mkdir(parents=True)
+        (place / ".agents" / "log" / "s.jsonl").write_text(json.dumps({
+            "kind": "session-start", "session": "s", "at": time.time(), "worktree": str(linked)}) + "\n",
+            encoding="utf-8")
+
+        registered = check(linked)
+
+        subprocess.run(["git", "worktree", "remove", "--force", str(linked)],
+                       cwd=place, capture_output=True, check=True)
+
     for problem in stranded:
         print(f"  planted -> {problem.splitlines()[0]}")
 
@@ -238,7 +267,20 @@ def self_test() -> int:
               "primary checkout was not reported.")
         return 1
 
-    print("verify-stranded-audit: self-test OK — a stranded entry fails, a clean tree does not.")
+    if not any("nobody is live in" in p for p in unregistered):
+        print("verify-stranded-audit: SELF-TEST FAILED — a dirty log in a linked worktree with no "
+              "registered session was not reported.")
+        return 1
+
+    if registered:
+        print("verify-stranded-audit: SELF-TEST FAILED — a session registered in the PRIMARY's log "
+              "was reported stranded when the gate ran from its own linked worktree:")
+        for problem in registered:
+            print(f"  {problem.splitlines()[0]}")
+        return 1
+
+    print("verify-stranded-audit: self-test OK — a stranded entry fails, a clean tree does not, and "
+          "a session registered in the primary's log is live from any worktree.")
     return 0
 
 
