@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T02:17:39Z",
+  "generated": "2026-09-15T02:29:24Z",
   "audit": [
     {
       "actor": null,
@@ -16490,6 +16490,35 @@ window.AUDIT_DATA = {
         "sha": "6ad70a82bc41540c7c0b404ef44ab92c5449692e",
         "short": "6ad70a82b",
         "branch": "understanding-views-owner",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HEBKBNYNV1YKN3CY24N4J7",
+      "shortname": "specify-understanding-views",
+      "datetime": "2026-09-15T02:29:24Z",
+      "session": "understanding-views-specify",
+      "prompt": "N3 specify D-0 only",
+      "summary": "D-0 spec Parts A/B/C; US-T3/T4/T5 distinct; D-1-D-6 quoted; ~66/50 overrun",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/understanding-views.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Specify D-0 only",
+      "done_when": "Three layers; grain from Owner N1 disposition; falsifiable Gherkin",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-15T02:29:23Z",
+      "duration_seconds": 1.0,
+      "git": {
+        "sha": "d22f056ca3702f3752ec3525ca34d75fa4b00bae",
+        "short": "d22f056ca",
+        "branch": "understanding-views-specify",
         "pushed": null
       }
     }
