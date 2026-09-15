@@ -76,7 +76,7 @@ Stage 4 council skipped (N10). Status remains draft. Authors do not self-clear.
 
 It is **not** responsible for: a stored census / `folder_dim`; a public census or skip interface; `DropRelativePaths` on the wire; App disk walks; Atlas / `AiDe.Core.Understanding`; Overview/Graph as the tree; D-1…D-6 rows; `MainMenuBuilder` lists; default Zone/layout choreography; Python/TS per-file extractor rewrite; glyph-to-kind chrome (N8); widening other extractors’ skip lists (N7 optional, not a UV-0 blocker).
 
-**Boundary set:** F\* (indexed-parent + `unindexed_probe` + `omit_probe` + `omit_probe_2` + `bin`); T5a IO on a named path that is not `unindexed_probe` or `bin`; T5b ACL on `omit_probe`; T5c named omit of both `omit_probe` dirs with `unindexed_probe` surviving; hostile `..` assertion path; Bicep filename-only resolvable and not; Python/TS `declared_at` = census `P`; reparse/junction; empty / loading / error / no-workspace / stale-while-refresh; IPC failure; frame overflow; extra JSON `dropRelativePaths`; App-assembly enum/read/Atlas probes.
+**Boundary set:** F\* (indexed-parent + `unindexed_probe` + `omit_probe` + `omit_probe_2` + `io_probe` + `bin`); T5a IO on `io_probe/` (not `unindexed_probe`, not `bin`); T5b ACL on `omit_probe`; T5c named omit of both `omit_probe` dirs with `unindexed_probe` surviving; hostile `..` assertion path; Bicep filename-only resolvable and not; Python/TS `declared_at` = census `P`; reparse/junction; empty / loading / error / no-workspace / stale-while-refresh; IPC failure; frame overflow; extra JSON `dropRelativePaths`; App-assembly enum/read/Atlas probes.
 
 ## Data model (settled first — DM1–DM18)
 
@@ -129,7 +129,7 @@ Serial. UV-1 kind row **must not** land before UV-0 reds exist (AR3).
 | **UV-0 Core query** | F\* grain: indexed-parent, `unindexed_probe` Unindexed, `bin` absent + skip-count, T5a–c Disclosures, Python/TS honesty, Bicep resolve, frame fit | `SolutionTreeAsync`, IPC integer caps, consume `UnanalysedLanguages.Skip`, `ResolveWithinWorkspace`, no-follow reparse | Shell surface (none); no kind row; T5c omit set on the test-constructed projection | (headless) | US-T1, T2, T3 query-DTO, T4, T5a–c query-DTO (T5c via projection host), T6, T7, T11 minus visual-tree; `EveryOperationFitsTheFrameTests` | UV-1 |
 | **UV-1 Shell + one kind row** | Show Solution tree derived; visual-tree oracles; activate | One `solution-tree` row `{Architecture}`; `SolutionTreeSurface`; Enter / Ctrl+Enter | Default-zone choreography still unfrozen; N8 glyph chrome | Open Architecture, Show Solution tree on F\* | US-T3/T5 visual-tree, T8, T9, T10, T13; PROBE-* | Proof Pack; join onto `understanding-views` |
 
-Mock-substitutable seams: `IWorkspaceQueries.SolutionTreeAsync` (Fake refuse / recording stub); projection constructor omit set (T5c); internal census-children enumerator (T5a/b when real FS cannot throw).
+Mock-substitutable seams: `IWorkspaceQueries.SolutionTreeAsync` (Fake refuse / recording stub); UV-0 projection constructor omit set (T5c Core only); internal census-children enumerator (T5a/b when real FS cannot throw). **UV-1 T5c does not construct the projection and does not send `DropRelativePaths`:** App.Tests feeds a Fake/recording stub (or a committed UV-0 golden `SolutionTreeResult` JSON) that already is the omit-set DTO. Do **not** add `InternalsVisibleTo` `AiDe.App.Tests` on Core.
 
 ## Contracts
 
@@ -332,7 +332,7 @@ Index census-folders **present in `Nodes`**. Hang each node under the folder who
 | Failure mode | From which choice | Disposition | How it's addressed | Detection | Test |
 |---|---|---|---|---|---|
 | Null/missing workspace root | query with no open workspace | prevent (App) | App does not call the query; no-workspace copy | UI state | US-T9 B5 |
-| Empty workspace (root only, no children, no shortfall Disclosure) | root-in + B6 | mitigate | Surface empty copy + Show Graph; DTO still has root `""` **[Inferred mapping — see Flagged]** | UI empty ≠ Unindexed | US-T9 B6 |
+| Empty workspace (root-only DTO, no non-root nodes, no shortfall Disclosure) | root-in + B6 | mitigate | Surface empty copy + Show Graph. Do **not** render the root as an Unindexed tree row. | UI empty ≠ Unindexed root | US-T9 B6 |
 | Malformed IPC JSON | untrusted payload | detect | `Handle` → `ipc.malformed_envelope` | error code | `DaemonOperationsTests` malformed |
 | Extra JSON `dropRelativePaths` | hostile/curious client | prevent | field does not exist; extra properties ignored; folders still present | JSON golden | T5c JSON has no `dropRelativePaths` |
 | Integer cap 0 / negative | caller-chosen caps | prevent | `Clamp` like other projections | tags `omitted.by_cap` | clamp facts |
@@ -522,7 +522,7 @@ Unit of work: one `SolutionTreeAsync` invocation. Span: existing `ActivitySource
 
 **Red-first.** UV-0 reds compile/fail before UV-1 kind row (AR3). Query-only green is **not** a pass for US-T3/T5 (spec oracle: DTO **and** visual-tree) — visual-tree lands in UV-1; UV-0 still ships the DTO half.
 
-**F\* (one real-disk workspace):** indexed-parent dir + joinable file; `unindexed_probe/` (not skip-listed, zero joinable files, not `declared_at`, **not `docs/`**); `omit_probe/` + `omit_probe_2/`; `bin/` with files; skip set is production `UnanalysedLanguages.Skip`.
+**F\* (one real-disk workspace):** indexed-parent dir + joinable file; `unindexed_probe/` (not skip-listed, zero joinable files, not `declared_at`, **not `docs/`**); `omit_probe/` + `omit_probe_2/`; **`io_probe/`** (T5a — not skip-listed, not `unindexed_probe`, not `bin`; Core census IO seam fails on this path); `bin/` with files; skip set is production `UnanalysedLanguages.Skip`.
 
 ### UV-0 (headless Core) — map to US-T*
 
@@ -536,9 +536,9 @@ Unit of work: one `SolutionTreeAsync` invocation. Span: existing `ActivitySource
 | F\* DTO: indexed-parent + file-artifact; `unindexed_probe` coverage `unindexed`; no `bin` node; skip-count ≥ 1 | US-T1, T2, T3 DTO, T4 | real F\* | Overview clusters as rows; `bin` as Unindexed; `unindexed_probe` missing |
 | Collapse two assertions → one file-artifact | US-T1 | two facts, one path | two nodes |
 | Directory-valued assertion is census-folder not file-artifact | US-T1 | `File.Exists` false | file node |
-| US-T5a: Core arrange IO on `io_probe` (not `unindexed_probe`, not `bin`) | US-T5a DTO | enumerator hook throws `IOException` (or real FS if deterministic) | silent drop; minted folder; labelled Unindexed |
+| US-T5a: Core arrange IO on F\* `io_probe/` (not `unindexed_probe`, not `bin`) | US-T5a DTO | F\* includes `io_probe/`; enumerator hook throws `IOException` (or real FS if deterministic) | silent drop; minted folder; labelled Unindexed |
 | US-T5b: ACL deny `omit_probe` (not `unindexed_probe`) | US-T5b DTO | real ACL (D4) or hook `UnauthorizedAccessException` | denied dir is a node; `unindexed_probe` missing; skip-count 0 |
-| US-T5c: construct projection with omit `{omit_probe, omit_probe_2}` | US-T5c DTO | constructor/`internal` omit set | those paths absent; `OmittedByCap` ≥ 2; Disclosure `Omitted (N)` derived; `unindexed_probe` remains Unindexed; skip-count ≥ 1 |
+| US-T5c: construct projection with omit `{omit_probe, omit_probe_2}` | US-T5c DTO | constructor/`internal` omit set on Core test host only | generic cap-below-count that drops `unindexed_probe`; `omit_probe` still present; truncation with no `Omitted (N)`; cap treated as Coverage `unindexed` |
 | `SolutionTreeQuery` JSON has no `dropRelativePaths`; extra field does not omit | US-T5c / N6 | serialize; deserialize with extra property | production hide API |
 | Lowering `MaxCensusFolders` until `unindexed_probe` disappears is **not** the T5c arrange (document as forbidden; a guard test that this arrange is **insufficient** to claim T5c) | US-T5c residual | — | using only the integer cap as T5c |
 | Production skip: F\* `bin` omitted with **no** test-injected skip set | US-T4 | production Skip | injected `bin` |
@@ -555,23 +555,28 @@ Unit of work: one `SolutionTreeAsync` invocation. Span: existing `ActivitySource
 | Path normalisation identity: `.` → `""`; `\` → `/`; no trailing slash; `Normalize(Normalize(p))==Normalize(p)` | D2 | examples | Windows/POSIX comparison uses `PathComparison` |
 | Cancel mid-walk throws OCE | concurrency | CT | empty success |
 
-**UV-0 does not:** add a kind row; visual-tree walk; PROBE-APP-ENUM runtime (static IL scan of `AiDe.App` for `Directory.Enumerate*` / `GetDirectories` / `GetFiles` / `GetFileSystemEntries` **may** land in UV-0 as a D3 tripwire — App currently has **zero** such calls **Verified** grep).
+**UV-0 does not:** add a kind row; visual-tree walk; PROBE-APP-ENUM runtime (static IL scan of `AiDe.App` for the PROBE-APP-ENUM API set **may** land in UV-0 as a D3 tripwire — App currently has **zero** such calls **Verified** grep).
 
 ### UV-1 (App, after UV-0 green)
 
+**UV-1 T5c visual-tree arrange (Test Architect, load-bearing).** `AiDe.App.Tests` does **not** construct `SolutionTreeProjection` / the internal omit set and does **not** send `DropRelativePaths` (that field is not on the query). Arrange: a `FakeWorkspaceQueries` / recording stub, **or** a committed UV-0 golden `SolutionTreeResult` JSON, that already returns the Core omit-set DTO (`omit_probe` and `omit_probe_2` absent, `OmittedByCap` ≥ 2, Cap disclosure `Omitted (N)`, `unindexed_probe` present coverage `unindexed`). Then: chrome shows `Omitted (N)`; no `omit_probe` row; `unindexed_probe` is an Unindexed leaf. Do **not** add `InternalsVisibleTo` `AiDe.App.Tests` on Core (`AiDe.Core.csproj` stays `AiDe.Core.Tests` only for this seam).
+
 | Test | Maps to | Notes |
 |---|---|---|
-| Headless visual-tree walk of Solution tree on F\* | US-T3, T5a–c visual half | `Sta.Run` like `ClassDiagramSurfaceTests`. Query-only green is not a pass. |
+| Headless visual-tree walk of Solution tree on F\* | US-T3, T5a–b visual half | `Sta.Run` like `ClassDiagramSurfaceTests`. Query-only green is not a pass. T5c is the next row — not this F\* walk with a lowered cap. |
 | Unindexed row visible text includes `unindexed_probe` and `Unindexed`; zero child rows; UIA Name includes coverage | US-T3, UI-9 | |
 | Skip: no `bin` row; chrome `N skip-listed directories omitted` N ≥ 1 | US-T4, UI-3 | |
-| T5a/b/c Disclosures visible; T3 still holds | US-T5a–c | T5c via projection host, not IPC list |
+| T5a/b Disclosures visible; T3 still holds | US-T5a–b | T5a on F\* `io_probe/`; T5b on `omit_probe`. Core-arranged DTO or Fake that carries that Disclosure. |
+| T5c visual-tree: Fake/recording stub or UV-0 golden JSON (Core omit-set DTO). Chrome `Omitted (N)`; no `omit_probe` row; `unindexed_probe` Unindexed leaf. **Not** App constructing the omit set. **Not** `DropRelativePaths` on the wire. | US-T5c | Failing: generic cap drops `unindexed_probe`; `omit_probe` still present; cap as Coverage; query-only green |
+| US-T6 / UI-8 exact copy in the tree chrome | US-T6, UI-8 | Failing input: copy absent or paraphrased |
 | UIA Name of file-artifact includes kind word (`NodeKind` or `file-artifact`) | US-T1, UI-9 | glyph chrome N8; Name is UV-1 |
 | Header hit rect 28px, ≥24×24; not 44px; not 16px chevron-only | UI-10 | N7 F7 |
 | Enter → View source (`NodeContentAsync` / `codeviewer`); Ctrl+Enter → Reveal in graph; tree selection unchanged on reveal error + Retry | US-T8 | Do **not** treat synthetic RaiseEvent as proof of the Ctrl chord (spike residual). PreviewKeyDown + `Keyboard.Modifiers` on real input; attended/SendInput when available. |
 | Indexed-parent Right expands; unindexed Enter/Right/Left do not; double-click does not expand unindexed | US-T8, UX-5 | N7 F8/F10 |
-| Empty / loading / error+Retry / no-workspace / stale-while-refresh distinct | US-T9, UI-1 | empty’s only next action is Show Graph |
+| Empty / loading / error+Retry / no-workspace / stale-while-refresh distinct | US-T9, UI-1 | |
+| US-T9 B6 empty: arrange root-only DTO (census-folder `""` only, no non-root nodes, no shortfall Disclosure). Then empty copy + Show Graph. | US-T9 B6 | Failing input: empty copy replaced by an Unindexed root row |
 | Kind row `{Architecture}`; Show Solution tree via `PerspectiveMenu.For`; **no** `MainMenuBuilder` list edit; Coding/Explore/Coordination do not admit; US-C4 mutation still holds; `TheAllowListsEqualTheSpecsTable` updated | US-T10 | |
-| PROBE-APP-ENUM (App assembly / non-`IWorkspaceQueries` callers, **not PID**); PROBE-ATLAS; PROBE-FILE-READ | US-T11, B14 | IL/source: `AiDe.App` types must not call `Directory.EnumerateFileSystemEntries` / `EnumerateDirectories` / `EnumerateFiles` / `GetDirectories` / `GetFiles` / `GetFileSystemEntries`. Core census inside `LocalWorkspaceQueries` / `ProjectionService` / `SolutionTreeProjection` allowed in-process. View source must not `File.ReadAllText`/`OpenRead` the workspace path. No type with namespace prefix `AiDe.Core.Understanding`. |
+| PROBE-APP-ENUM (App assembly / non-`IWorkspaceQueries` callers, **not PID**); PROBE-ATLAS; PROBE-FILE-READ | US-T11, B14 | IL/source: `AiDe.App` types must not call `Directory.EnumerateFileSystemEntries` / `EnumerateDirectories` / `EnumerateFiles` / `GetDirectories` / `GetFiles` / `GetFileSystemEntries` / **`DirectoryInfo.EnumerateDirectories` / `EnumerateFileSystemInfos` / `GetFileSystemInfos`**. Core census inside `LocalWorkspaceQueries` / `ProjectionService` / `SolutionTreeProjection` allowed in-process. View source must not `File.ReadAllText`/`OpenRead` the workspace path. No type with namespace prefix `AiDe.Core.Understanding`. |
 | Explore body still ADR-0017 graph+reader | US-T13 | |
 | `FieldsSurviveTheClientBoundaryTests` pair `SolutionTreeNode` → `SolutionTreeRow` | DC-016 class | `SourceRevision` may be deliberately dropped (chrome, not row) — name it |
 | `ui-craft-gate.py` against the built surface | CD8 | accessibility Major-min / token Major-min. N8 may add tokens first; UV-1 still must not use off-token hex. |
@@ -579,7 +584,7 @@ Unit of work: one `SolutionTreeAsync` invocation. Span: existing `ActivitySource
 ## Conformance notes
 
 - **LOA:** product host unchanged (F). This addition: **no model**; archetype **none**; tier **T0** deterministic projection. C1 N/A for cognition. P1 cheapest sufficient (one query + one kind). P2 derived menu, one skip policy, query-time join. P8 read-only. P11 App still cannot read workspace files. P5 Coverage vs Disclosure.
-- **C#:** sealed records; `JsonStringEnumConverter`; kebab IPC id; `Task.FromResult` adapter; lift visibility rather than copy; `InternalsVisibleTo` already `AiDe.Core.Tests` (`AiDe.Core.csproj:52` **Verified**).
+- **C#:** sealed records; `JsonStringEnumConverter`; kebab IPC id; `Task.FromResult` adapter; lift visibility rather than copy; `InternalsVisibleTo` already `AiDe.Core.Tests` (`AiDe.Core.csproj:52` **Verified**). Do **not** add `InternalsVisibleTo` `AiDe.App.Tests` on Core — UV-1 T5c uses a Fake/golden DTO, not the internal omit set.
 - **AR3 / ADR-0030:** kind row only in UV-1; menu derived.
 - **Deviations:** Stage 4 council skipped (N10) — authors do not self-clear. DESIGN.md not rewritten (N8). Pact not added (T6). Zone/layout not frozen (Owner/user). `docs/security/threat-model.md` template path unused — repo rollup lives in `docs/security/ai-native-ide-threat-model.md` / `ai-native-ide-privacy-review.md`.
 
@@ -614,19 +619,19 @@ Unit of work: one `SolutionTreeAsync` invocation. Span: existing `ActivitySource
 | **not** `MainMenuBuilder` lists | derived |
 | **not** `ZoneLayout` | do not freeze default layout |
 | `tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs` | `TheAllowListsEqualTheSpecsTable` expected row; US-C4 still holds |
-| `tests/AiDe.App.Tests/` | visual-tree, menu mutation, PROBE-APP-ENUM / ATLAS / FILE-READ |
+| `tests/AiDe.App.Tests/` | visual-tree (T5c via Fake/golden DTO, **not** Core omit ctor); menu mutation; PROBE-APP-ENUM (incl. `DirectoryInfo.EnumerateDirectories` / `EnumerateFileSystemInfos` / `GetFileSystemInfos`) / ATLAS / FILE-READ |
 | `tests/AiDe.Core.Tests/FieldsSurviveTheClientBoundaryTests.cs` | node → row pair |
 
 ### Must not touch this horizon
 
-`src/AiDe.Core/Understanding/**`; Atlas; `session-contracts.md` as a D-0 seam; extractor Python/TS provenance rewrite; Addenda C/D compile types; D-1…D-6 rows; a tenth Skip HashSet; public `IDirectorySkipPolicy` / `IWorkspaceDirectoryCensus`; `DropRelativePaths` on the wire.
+`src/AiDe.Core/Understanding/**`; Atlas; `session-contracts.md` as a D-0 seam; extractor Python/TS provenance rewrite; Addenda C/D compile types; D-1…D-6 rows; a tenth Skip HashSet; public `IDirectorySkipPolicy` / `IWorkspaceDirectoryCensus`; `DropRelativePaths` on the wire; `InternalsVisibleTo` `AiDe.App.Tests` on Core.
 
 ## Flagged risks & residual unknowns
 
 | Unknown | Label | Disposition |
 |---|---|---|
 | Production caps 2000/5000 | **Inferred** | Retune when UV-0 emits counts. Honest `Omitted (N)` meanwhile. |
-| Empty UI vs root-in | **Inferred** | DTO always includes root `""` when enumerable; empty **surface** is root-only, no non-root folders, no file-artifacts, no shortfall Disclosure. Spec B6 says “zero nodes” — N10 may tighten. |
+| Empty UI vs root-in | **closed (N10 Test Architect)** | Arrange B6 as root-only DTO + no non-root nodes + no shortfall. Failing input: empty copy replaced by an Unindexed root row. |
 | Physical Ctrl+Enter | **Flagged** (spike) | PreviewKeyDown is the control; RaiseEvent is not proof. |
 | Other walkers vs Skip | **Flagged** | N7 optional widen; UV-0 binds Skip. |
 | Glyph-to-kind map | **Flagged** (N8) | UV-1 UIA Name still includes `NodeKind` word. |
@@ -659,13 +664,13 @@ Unit of work: one `SolutionTreeAsync` invocation. Span: existing `ActivitySource
 
 | | |
 |---|---|
-| **Completed** | Draft design for D-0 Solution tree: UV-0 Core query contracts/grain/walk/join/cap/shrink/T5c-off-wire; UV-1 kind row + WPF TreeView attachments; failure modes; STRIDE-lite; telemetry; red-first test plan mapped to US-T1–T7 / T5a–c / T11; E7; file lists. |
-| **Remaining** | N10 Stage 4 council (Patterns Expert ⇄ Simplifier, Test Architect, Security, Distributed Systems, SRE) — **do not self-clear**. N8 `/ui-design` chrome. `/implement` UV-0 (reds first) then UV-1. Optional N7 skip-list widen. Join target `understanding-views`, not `main`. |
-| **Best next action** | N10 review of this draft, then `/implement` UV-0 from the file list (Fake refuse + StubQueries + `EveryOperationFitsTheFrameTests` as the first reds). |
+| **Completed** | N9 repair of N10 Test Architect BLOCK in this draft: UV-1 T5c Fake/golden arrange (no App omit ctor, no `DropRelativePaths`, no `InternalsVisibleTo` App.Tests); US-T6/UI-8 visual-tree exact copy; B6 root-only empty; F\* `io_probe/`; PROBE-APP-ENUM + `DirectoryInfo` APIs; UV-0 T5c falsifying inputs. Status remains **draft**. |
+| **Remaining** | N10 re-review of this repair (authors do **not** self-clear). Other N10 lenses. N8 `/ui-design` chrome. `/implement` UV-0 then UV-1. Join target `understanding-views`, not `main`. |
+| **Best next action** | N10 Test Architect re-reads this file against the six closes, then remaining N10 lenses. |
 
 ## Gate record
 
-`GATE design · 2026-09-15 · N9 author (patterns-expert + csharp-developer, Peer Mode) · Stage 4 council **skipped** (N10) · criteria met: data model, E7, contracts, patterns, failure/STRIDE/LINDDUN, telemetry, test plan · unmet: hard vetoes by non-author, DESIGN.md rewrite · verdict: **draft, not accepted** · vetoes→resolution: N10.`
+`GATE design · 2026-09-15 · N9 author repair (Peer Mode) of N10 Test Architect BLOCK · status **draft, not accepted** · authors do not self-clear · six closes in the test plan (UV-1 T5c Fake/golden; US-T6/UI-8; B6; `io_probe/`; DirectoryInfo PROBE-APP-ENUM; T5c failing inputs).`
 
 Authors did not self-clear.
 
