@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T23:29:42Z",
+  "generated": "2026-09-15T23:32:01Z",
   "audit": [
     {
       "actor": null,
@@ -21893,6 +21893,32 @@ window.AUDIT_DATA = {
       "signals": {
         "verification_path": true,
         "acceptance_met": false
+      }
+    },
+    {
+      "id": "al-01M2KPKGEVEXBA1SCPQ9Z7ZMCG",
+      "shortname": "atlas-peer-proposal-questions",
+      "datetime": "2026-09-15T23:32:01Z",
+      "session": "codex-atlas-five-gates",
+      "prompt": "FYI given the need for better handoff and coordination ... note and honor this from the watcher:\n\nI’ve now required a direct peer handshake covering producer ownership, graph-ID ↔ Atlas-symbol/source mapping, scope/revision/bounds, unclassified cases, and selection/source/Back behavior—with exact artifact pins and consumer acknowledgment.\n\nThe watcher will distinguish notice sent → peer acknowledged → contract frozen → implemented. Sending a notice alone will no longer count as confirmed coordination.",
+      "summary": "Owner-admitted bounded read-only comparison completed. Independent reviewer and conductor source readback found D1 type node_id/Interaction proposal does not satisfy pinned E1 method observation, source token and Restore contract. Eight numbered questions/deltas sent directly req-01M2KPHSMKYHQB5B3B2ME12M29 against producerblob661c92a3. No consumer ACK, freeze, source authorship or integration acceptance. E2 N/A, revised sameblob bilateral acceptance required. Component repairs remain independently clear; GHCP current-main integration response pending.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "Codex",
+      "artifacts": [
+        "docs/coordination/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Compare the exact producer proposal against pinned E1/E2 contracts and return evidence-backed questions without inventing identity.",
+      "done_when": "Direct numbered questions or accepted exact contract are sent with inspected pins and truthful coordination state.",
+      "tier": "T1",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
       }
     }
   ],

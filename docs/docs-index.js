@@ -8833,7 +8833,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d35958847edddc871079873d126ef6d0c3bb1b4b4f2c9d01e2ba759249f65f78"
+      "sourceSha256": "d93ba5cf71e80ec9475d54af23bdffe2c78cf4f52a1fed1d6f549b15ebd0c5e5"
     },
     {
       "id": "coordination-code-atlas",
@@ -21441,5 +21441,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "596e81ea09aad92aef01a97cac173d0008d5b70b2a70470d4e33371bdbb156c1"
+  "graphSha256": "a364dbc2a0d2c0146a9ff8c35d987e78233e0ac24e6de56938a97eb72eb3f9a7"
 };

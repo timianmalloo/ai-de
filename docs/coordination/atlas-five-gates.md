@@ -84,10 +84,37 @@ must inspect it and explicitly acknowledge accepted pins before freezing the con
 | Milestone | Evidence/status |
 |---|---|
 | Notice sent | req-01M2KP0WB4VEVFMVGNMAYNYVNN |
-| Producer proposal received | Crossed request req-01M2KNGXJ6DWV4TQHYTJWZS0Y9; f073e2a0d8cc033e759c8e32fb0b77f10b8a6162:docs/notes/d1-codex-entry-point-handshake.md, blob661c92a3d13c1ab1637ad115fa321b9907f56295; file opened, acceptance review pending |
+| Producer proposal received | Crossed request req-01M2KNGXJ6DWV4TQHYTJWZS0Y9; f073e2a0d8cc033e759c8e32fb0b77f10b8a6162:docs/notes/d1-codex-entry-point-handshake.md, blob661c92a3d13c1ab1637ad115fa321b9907f56295; opened and compared |
+| Consumer questions returned | req-01M2KPHSMKYHQB5B3B2ME12M29; QUESTIONS ONLY, no consumer acceptance |
 | Peer acknowledged | Pending; receipt of either crossed proposal is not acceptance |
 | Contract frozen | No; exact artifacts and both acknowledgment references required |
 | Implemented | No shared E1/E2 implementation admitted by this notice |
+
+### Consumer comparison outcome
+
+Owner admitted a read-only six-call/ten-minute comparison after the component handoff. The
+independent reviewer returned QUESTIONS ONLY, and Conductor read the producer blob and E1
+identity/envelope/legacy/Restore requirements. The decisive mismatch is the proposed selected
+type `node_id` → `InteractionAsync`: pinned E1 §§3.1,4,5.1,6 and rejected alternative1 require a
+Core-issued method declaration observation and retain Interaction as a legacy type dependency
+sketch. No graph-node-to-method map or production DTO is invented to bridge them.
+
+Reply req-01M2KPHSMKYHQB5B3B2ME12M29 requests eight exact corrections/questions:
+
+1. An admitted zero/one/many graph-node-to-supported-method mapping, with unsupported/ambiguous outcomes.
+2. Distinct graph, declaration/observation, occurrence, projection, row-source and Restore domains and minting authorities.
+3. Scope/epoch/manifest/source correlation and stale/mixed/changed/revoked/remapped refusal semantics.
+4. Listing/mapping cardinalities, continuation and truncation that compose with E1 bounds; legacy maxMessages is insufficient.
+5. Classified rows enable E1 only after valid method mapping; retain unclassified/unavailable rows, reasons and counts.
+6. D1 origin navigation composed explicitly with E1 hash-bound occurrence Source and Core Restore, including row/mode/scroll/focus.
+7. E2 consumption N/A in this contract; any later relationship requires a separately admitted contract.
+8. Replace consumer placeholders with the four exact pins above; both peers accept the same revised blob before freeze.
+
+The experiments mint no production authority. This comparison changes no product files, API,
+ownership or accepted design. The outcome is a precise seam request, not acceptance with assumed
+future corrections. Main integration remains the priority and its executor/scheduling request is
+still awaiting an actual response. Records handoff78d61c04 and correction15c14d5c are on
+conductor/atlas-five-gates; GHCP received manifest req-01M2KPD0GV75KDESDM00F6RHGK.
 
 User approved five-gate transfer, replying explicitly to GHCP handoff dd9b338f. Shared request req-01M2KJ979VVS7AVET8D2RCTZ9A acknowledged. GHCP retains final publication and desktop scheduling. Main changes force ancestry/readiness reconciliation. E1/E2 docs and spikes remain frozen for separate post-Atlas Ruling121 landing. No frozen native paths or Grok source is admitted.
 
