@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T02:47:00Z",
+  "generated": "2026-09-15T02:52:33Z",
   "audit": [
     {
       "actor": null,
@@ -16545,6 +16545,31 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "8657ff5fdb277632151f780206f3614aaa279f0c",
         "short": "8657ff5fd",
+        "branch": "understanding-views-specify",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HFP02HVP3QY1ADWVV1T1H6",
+      "shortname": "specify-understanding-views-t5c",
+      "datetime": "2026-09-15T02:52:33Z",
+      "session": "understanding-views-specify",
+      "prompt": "T5c omit_probe fixture pin",
+      "summary": "F* omit_probe dirs; US-T5c pins unindexed_probe survivor",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/understanding-views.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "tier": "T2",
+      "fan_out": 0,
+      "git": {
+        "sha": "a1fe989f9aaf744857222751b22a0082463dacef",
+        "short": "a1fe989f9",
         "branch": "understanding-views-specify",
         "pushed": null
       }

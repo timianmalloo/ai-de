@@ -345,11 +345,12 @@ The production cap value is architecture’s; tests inject a **test-overridable 
 | On disk | Role |
 |---|---|
 | A census directory containing at least one joinable file-artifact (e.g. `src/` + a file the fixture extractor indexes) | indexed-parent |
-| `unindexed_probe/` — not skip-listed, zero joinable file-artifacts, not a `declared_at` path. **Not `docs/`.** | unindexed leaf |
+| `unindexed_probe/` — not skip-listed, zero joinable file-artifacts, not a `declared_at` path. **Not `docs/`.** | unindexed leaf — **must survive** US-T5b/c |
+| `omit_probe/` and `omit_probe_2/` — not skip-listed, zero joinable file-artifacts, not a `declared_at` path. Exist **only** to be dropped (US-T5c cap omits them; US-T5b may deny one). They are not `unindexed_probe`. | shortfall fodder |
 | `bin/` with files on disk, name on the surviving skip set | omitted node + skip-count |
-| One shortfall arranged at query time via a Core seam (US-T5a IO, US-T5b permission, or US-T5c cap) | Disclosure |
+| One shortfall arranged at query time via a Core seam (US-T5a IO on a path that is not `unindexed_probe` or `bin`; US-T5b permission; US-T5c cap on `omit_probe/` dirs) | Disclosure |
 
-Three observable outcomes on F\* (plus the indexed-parent context): `unindexed_probe` is Unindexed; `bin` is absent and skip-count ≥ 1; the arranged shortfall’s Disclosure is present.
+Three observable outcomes on F\* (plus the indexed-parent context): `unindexed_probe` is Unindexed; `bin` is absent and skip-count ≥ 1; the arranged shortfall’s Disclosure is present. A cap-below-count that may drop `unindexed_probe` is **not** a valid US-T5c arrange.
 
 **Oracle for US-T3 and US-T5a–c:** (1) the tree-query DTO **and** (2) a **headless visual-tree walk** of the Solution tree surface. A query-only green is not a pass.
 
@@ -377,12 +378,12 @@ Three observable outcomes on F\* (plus the indexed-parent context): `unindexed_p
 - **Failing input:** silent drop; a minted folder for the unobserved path; the IO shortfall labelled `Unindexed`; query-only pass without visual-tree walk.
 
 **US-T5b — As an architect, I want a permission shortfall disclosed.**
-- **Given** F\* **And** the Core census permission seam denies a named directory **When** the Solution tree opens **Then** Disclosure includes `Not recorded` with cause permission **And** that directory is not a node **And** a headless visual-tree walk shows that Disclosure.
-- **Failing input:** denied directory appears as Unindexed; no Disclosure; fake folder.
+- **Given** F\* **And** the Core census permission seam denies a named directory that is `omit_probe/` or `omit_probe_2/` (not `unindexed_probe`, not `bin`) **When** the Solution tree opens **Then** Disclosure includes `Not recorded` with cause permission **And** that denied directory is not a node **And** `unindexed_probe` remains coverage `unindexed` **And** skip-count is ≥ 1 **And** a headless visual-tree walk shows that Disclosure **And** that walk still satisfies US-T3 (`unindexed_probe` row with visible text `Unindexed` and zero child rows).
+- **Failing input:** denied directory is `unindexed_probe`; `unindexed_probe` missing or labelled `Not recorded`; skip-count 0; no Disclosure; fake folder; query-only pass without T3 visual-tree walk.
 
 **US-T5c — As an architect, I want a cap shortfall disclosed.**
-- **Given** F\* **And** the **test-overridable cap** is set below F\*’s uncapped node count **When** the Solution tree opens **Then** Disclosure includes exact copy `Omitted (N)` with integer N > 0 **And** a headless visual-tree walk shows that copy **And** the tree is not presented as complete.
-- **Failing input:** truncation with no `Omitted (N)`; cap treated as Coverage `unindexed`; production cap hard-coded so the test cannot arrange the shortfall.
+- **Given** F\* **And** the **test-overridable cap** is arranged so that every `omit_probe/` and `omit_probe_2/` census-folder is omitted **and** `unindexed_probe` is not omitted **When** the Solution tree opens **Then** Disclosure includes exact copy `Omitted (N)` with integer N ≥ 2 **And** no node has path `omit_probe` or `omit_probe_2` **And** `unindexed_probe` remains coverage `unindexed` **And** skip-count is ≥ 1 **And** a headless visual-tree walk shows `Omitted (N)` **And** that walk still satisfies US-T3 (`unindexed_probe` row with visible text `Unindexed` and zero child rows).
+- **Failing input:** generic cap-below-count that drops `unindexed_probe`; `omit_probe/` still present while `unindexed_probe` is gone; truncation with no `Omitted (N)`; skip-count 0; cap treated as Coverage `unindexed`; production cap hard-coded so the test cannot arrange the named drop set; query-only pass without T3 visual-tree walk.
 
 **US-T6 — As an architect, I want Python/TypeScript scopes as indexed-parent census-folders without fake per-file rows, so that the tree does not look complete for those languages.**
 - **Given** a workspace whose census emitted a directory `P` **And** a Python or TypeScript scope has `declared_at` equal to `P` **And** assertions store `ScopeId` as `ArtifactPathId` **When** the tree opens **Then** `P` is a census-folder with coverage `indexed-parent` **And** zero `kind=file-artifact` nodes have extensions `.py` or `.ts` **And** the rendered surface contains the exact copy `Python and TypeScript files are not listed individually. The scope folder is indexed.`
@@ -453,8 +454,8 @@ The test matrix. Each row is a distinct oracle.
 | B2 | F\* `unindexed_probe/` | census-folder coverage `unindexed`, non-expanding leaf | B3, B4 |
 | B3 | F\* `bin/` | **No node**; skip-count ≥ 1 | B2, B4 |
 | B4a | Core census IO seam fail | Disclosure `Not recorded` cause IO; no minted folder | B2, B5, B6 |
-| B4b | Core census permission seam deny | Disclosure `Not recorded` cause permission; no node | B2 |
-| B4c | Test-overridable cap below node count | Disclosure `Omitted (N)` N>0 | B2, B6 |
+| B4b | Permission seam denies `omit_probe/` (not `unindexed_probe`) | Disclosure `Not recorded` cause permission; `unindexed_probe` still Unindexed; skip-count ≥ 1; T3 visual-tree walk | B2 |
+| B4c | Cap omits `omit_probe/` + `omit_probe_2/` only | `Omitted (N)` N≥2; `unindexed_probe` still Unindexed; skip-count ≥ 1; T3 visual-tree walk | B2, B6 |
 | B5 | No workspace | No-workspace copy | B6 |
 | B6 | Workspace, zero nodes, no Disclosure shortfall | Empty copy + Show Graph | B2, B4 |
 | B7 | First open, query in flight | Loading | B6, B7s |
