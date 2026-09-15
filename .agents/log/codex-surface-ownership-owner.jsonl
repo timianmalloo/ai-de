@@ -1,0 +1,5 @@
+{"agent": "codex-astra-conductor", "at": 1789482009.8318555, "kind": "session-start", "path": "-", "seq": 1, "session": "codex-surface-ownership-owner", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-owner-surface-ownership"}
+{"agent": "codex-astra-owner", "at": 1789482146.202124, "kind": "claim", "path": "docs/notes/recursive-surface-ownership-owner.md", "seq": 2, "session": "codex-surface-ownership-owner", "ttl": 300.0, "wi": "recursive-surface-ownership-owner"}
+{"agent": "codex-astra-owner", "at": 1789482228.6481109, "kind": "release", "path": "docs/notes/recursive-surface-ownership-owner.md", "seq": 3, "session": "codex-surface-ownership-owner", "wi": "WI-0"}
+{"agent": "codex-astra-owner", "at": 1789482324.2622163, "kind": "claim", "path": "docs/notes/recursive-surface-ownership-owner.md", "seq": 4, "session": "codex-surface-ownership-owner", "ttl": 300.0, "wi": "recursive-surface-ownership-owner"}
+{"agent": "codex-astra-owner", "at": 1789482341.245655, "kind": "release", "path": "docs/notes/recursive-surface-ownership-owner.md", "seq": 5, "session": "codex-surface-ownership-owner", "wi": "WI-0"}

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T23:42:50Z",
+  "generated": "2026-09-15T14:18:39Z",
   "audit": [
     {
       "actor": null,
@@ -16310,6 +16310,81 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T23:34:34Z",
       "duration_seconds": 495.0
+    },
+    {
+      "id": "al-01M2HAG1G4X73F91RF00S2748Z",
+      "shortname": "ground yourself in the repo; there is a claude code session and a github…",
+      "datetime": "2026-09-15T01:21:55Z",
+      "session": "prompt-log",
+      "prompt": "ground yourself in the repo; there is a claude code session and a github copilot session already underway using coordination skills; go through the specs, architecture and outstanding work and give me a table of things still to be done",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2HBP0R4J0VYHPCXNJVTWVKY",
+      "shortname": "lets get started with Addendum C deferred understanding views; create a …",
+      "datetime": "2026-09-15T01:42:40Z",
+      "session": "prompt-log",
+      "prompt": "lets get started with Addendum C deferred understanding views; create a kickoff prompt for a Grok owner-conductor-subagent fleet with own worktrees, owner grok-4.6 xhigh, conductor grok-4.6 high, using optimize-graph, prepare-for-coordination, execute-with-coordination and the pack skills",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2HCDB62Q4P04A4KTXWFRSJH",
+      "shortname": "You are the Conductor for AI-DE's Addendum C deferred understanding view…",
+      "datetime": "2026-09-15T01:55:24Z",
+      "session": "prompt-log",
+      "prompt": "You are the Conductor for AI-DE's Addendum C deferred understanding views (execute kickoff: N0 Owner first)",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2JNKZQNJ99QQYD91MKMBDG0",
+      "shortname": "looks like my laptop rebooted over night; take stock of where the last G…",
+      "datetime": "2026-09-15T13:55:33Z",
+      "session": "prompt-log",
+      "prompt": "looks like my laptop rebooted over night; take stock of where the last Grok session was working in the repo; give me a summary of what was done not done (tabular form); key next steps and recommended sequence of events to continue",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2JNSY77A2406WDGSEX7T409",
+      "shortname": "yes do your sequence... start in the ai-de-understanding-views worktree …",
+      "datetime": "2026-09-15T13:58:48Z",
+      "session": "prompt-log",
+      "prompt": "yes do your sequence... start in the ai-de-understanding-views worktree as you suggested above",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [

@@ -1,0 +1,23 @@
+# Atlas recovery coordinator
+
+- Agent: GitHub Copilot CLI / GPT-6 Astra
+- Session: copilot-atlas-recovery-b0d0
+- Worktree: C:\Projects\ai-de-conductor-atlas-recovery
+- Branch: conductor/atlas-recovery
+- Updated: 2026-09-15T14:28Z
+- Addressable closing coordinator: ed7d1cd1-d8e4-437a-83bc-f39eb926c352 (copilot-astra-atlas-recovery-closer). Sole publisher transferred from the foreground coordinator; foreground performs no operational writes.
+- Status: accepted-source integrator still converging; native qualification BLOCKED, final receipt received and raw TRX/source hashes verified
+- Goal: integrate accepted conductor/code-atlas work into current main and finish qualification of the retained native E1 candidate.
+- Authority: the user's 2026-09-15 request explicitly authorizes main integration; native acceptance still requires its gates. Ownership remains solely in docs/collaboration/session-contracts.md section 2.
+- Doing: integration delegate atlas-main-integration-b0d0 is merging only frozen accepted Atlas with current main in C:\Projects\ai-de-atlas-main-integration. Native qualifier atlas-e1-native-class-view resumes the existing five-file grant and retained 26/26 evidence. Independent Security and Test gates are reviewing the recovery contracts.
+- To GHCP, Grok, Claude Code and Codex: do not edit or discard retained Atlas files. Publish your current objective and worktree in your own liveness file, use identity-bound short leases and the shared request log, and announce any main update before integration. I will re-read requests at each candidate/join boundary.
+- To Grok: understanding-views remains separate; this recovery does not author or merge its programme.
+- To Claude/Core/Design: preparing a current-main integration candidate for the accepted Atlas reader/Core/fixture work. Newer session, engine/account and UI work must survive; conflicts require exact seam decisions, not choosing one whole file.
+- To Codex: no current Codex registration was observed during grounding. Coordination transport is repository-visible pull, not guaranteed live message delivery.
+- Coordination preflight: registered regeneration completed and doctor reported clean before dispatch. Historical hook qualification is not re-certified for today's four harnesses; workers explicitly check identities, paths and short leases.
+- Shared request IDs: req-01M2JP0X9RW2CK2E9N0CRS6MSX (Claude); req-01M2JP0XBFXGRRPQKTNAASFXT3 (Grok).
+- Publication: recovery coordinator alone advances main after integrated gates, fresh shared-request/ref checks, and preservation of primary append-only work. Delegates do not mutate primary or push.
+- Native receipt: unchanged HEAD `4a5812044a38a6fe365fb7929104f51dbc973fc5`, original 26/26 intact; restored qualification 108/111 and scoped 70/71. Missing retained-old-action invalidation proof. Native writer exhausted 40/40 calls; no new allocation or ungranted sixth-file repair.
+- Evidence: `C:\Projects\ai-de-atlas-e1-native-class-view\docs\proof\code-atlas-e1-qualification.md` and `.artifacts/atlas-e1/`. Native author's C# lens does not clear independent C# acceptance.
+- Gate conflict: `req-01M2JQCTNBGY5D7YD9QTAJQ4X6` records Ruling106/112 native-out/baseline-failure conditions against the user's unchanged combined-candidate floor. No relaxation adopted.
+- Waiting on: corrected Zone-only integration closing receipt. Combined application, independent final gates and publication remain BLOCKED; no cleanup or forced push is authorized.
