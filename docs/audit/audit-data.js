@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T17:20:12Z",
+  "generated": "2026-09-15T17:29:56Z",
   "audit": [
     {
       "actor": null,
@@ -17371,6 +17371,37 @@ window.AUDIT_DATA = {
         "sha": "9e4945906a7fbdf9d3dd37972c5f865ea9f34daf",
         "short": "9e4945906",
         "branch": "understanding-views-owner-n14",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K1WGEEG603R37FJ0Q748G8",
+      "shortname": "understanding-views-n13-hygiene",
+      "datetime": "2026-09-15T17:29:55Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "yes keep going finish remaining nodes",
+      "summary": "SolutionTreeSurface in session-contracts 2; ExtractorGeneration 2026-09-15.1; docs-graph derive + build-doc-viewer.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "src/AiDe.Core/Extraction/ScopeFingerprints.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "N13 join hygiene: ownership, generation, derived views",
+      "done_when": "surface-ownership, extractor-generation, derived-views, site-figures green on this tree",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true
+      },
+      "git": {
+        "sha": "5802a83c7ebbc98581b4de0d35115bd577ba5677",
+        "short": "5802a83c7",
+        "branch": "understanding-views",
         "pushed": null
       }
     }

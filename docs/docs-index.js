@@ -2068,7 +2068,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 101 types, 442 members, 74% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 103 types, 460 members, 72% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2081,7 +2081,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5e3a02e03268952794cf35d7b8856dc96b48f81585fc2e2923ffe63ee8ccdff4"
+      "sourceSha256": "57fcdae1996950334d7a276447d8a4dfe6787a9a8a97a5fdcf51ed4414712c6e"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -2293,7 +2293,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Ipc: 51 types, 120 members, 64% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Ipc: 51 types, 122 members, 64% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2306,7 +2306,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6df911a0686ab51a2822be00ef456254514c288e792d09dc92ab4daf2e803b8c"
+      "sourceSha256": "20140e09bbfea5cdb03ae8749198c7674a77952c8fc213d073050a68a1318759"
     },
     {
       "id": "api-aide-core-mcp",
@@ -2418,7 +2418,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Projections: 47 types, 66 members, 65% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Projections: 55 types, 71 members, 63% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2431,7 +2431,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b3bd7d072b23497d38f1a5fb961a00ba10c2879cc5b8d5b8af7af70ac88454e5"
+      "sourceSha256": "d4283ca09dd9e1aa340b44062fc92973caef82941e66427d1689271532d02387"
     },
     {
       "id": "api-aide-core-promptcompilation",
@@ -2493,7 +2493,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Store: 10 types, 52 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Store: 10 types, 54 members, 70% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2506,7 +2506,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1037958b2aeb2ce11acdf117e8510d915797da3cb67546908c0db04801d921ff"
+      "sourceSha256": "0d469cef4f0065f4b03dbcdcce3bed5089b47061a95d4bbfc9bcac2e3995d3ac"
     },
     {
       "id": "api-aide-core-terminal",
@@ -8662,7 +8662,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cdf030c7715792225138b2583ad0e278bb0240b9c663cc85626c4e5c2b68994e"
+      "sourceSha256": "d537e451c6a899896b541f10c4ec5922d6169c7450cc9e93380a8ac15445780f"
     },
     {
       "id": "coordination-understanding-views-kickoff",
@@ -11324,7 +11324,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ee7a5e0b1109ad3e8e1fd6c6da6d5f58050c462a0689168617346470f8cd8dee"
+      "sourceSha256": "c95f7237666f6027917d8513a78859a0e528cfee08ce651fefb7a8c952d49fd1"
     },
     {
       "id": "session-profiles",
@@ -19611,5 +19611,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6ea85dafafd381ce5fb9de671db37a2a160b40c30cc0da4b44d861eab75c3322"
+  "graphSha256": "f1cbfc9ceef6f441e073b4297e9ee41d6ea2e138d40e8523ff131d7e4e1f2a83"
 };

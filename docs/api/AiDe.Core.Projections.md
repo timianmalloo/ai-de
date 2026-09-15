@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Projections: 47 types, 66 members, 65% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Projections: 55 types, 71 members, 63% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Projections`
 
-**47 public types · 66 public members · 65% documented.**
+**55 public types · 71 public members · 63% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -568,6 +568,7 @@ is not there.
 | `Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken cancellationToken)` | **(gap)** |
 | `Task<PathResult> PathsAsync(PathQuery query, CancellationToken cancellationToken)` | **(gap)** |
 | `Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken cancellationToken)` | **(gap)** |
+| `Task<SolutionTreeResult> SolutionTreeAsync(` | **(gap)** |
 
 ## `InteractionMessage`
 
@@ -791,6 +792,8 @@ content, so a count-only cap still admits an unbounded payload.
 | `EvidencePage Evidence(string? cursor, int maxAssertions)` | One page of every current assertion, for a caller that wants the whole set. |
 | `WorkspaceGraph Graph(int maxNodes)` | The whole workspace as a graph. |
 | `WorkspaceGraph Graph(GraphQuery query)` | The graph the query asks for — filtered before the cap applies. |
+| `SolutionTreeResult SolutionTree(SolutionTreeQuery query)` | Census join of disk-now folders and latest-generation file-artifacts. |
+| `SolutionTreeResult SolutionTree(SolutionTreeQuery query, CancellationToken cancellationToken)` | **(gap)** |
 | `WorkspaceOverview Overview(OverviewQuery query)` | The workspace at a distance: groups rather than nodes, for a graph too large to draw. |
 | `PathResult Paths(PathQuery query)` | How one node reaches another, within the graph the query names. |
 | `FindResult Find(string term, int maxResults)` | **(gap)** |
@@ -1080,3 +1083,63 @@ The most files one content search will open.
 
 **Remarks.** A person is waiting on this. TheTerrace has 1,178 indexed artifacts; reading all of them on
 every keystroke is not a search box, it is a build step.
+
+## `SolutionTreeQuery`
+
+*record* — `SolutionTreeProjection.cs`
+
+How many census-folders and file-artifacts a tree query asks for.
+
+**Remarks.** Two integers only. A named drop-set is a projection/test-host parameter, never a field here
+and never an IPC member (ADR-0038 N6).
+
+## `SolutionTreeNodeKind`
+
+*enum* — `SolutionTreeProjection.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `CensusFolderCoverage`
+
+*enum* — `SolutionTreeProjection.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `SolutionTreeShortfallCause`
+
+*enum* — `SolutionTreeProjection.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `SolutionTreeNode`
+
+*record* — `SolutionTreeProjection.cs`
+
+One tree node is exactly one `(Path, Kind)`.
+
+## `SolutionTreeDisclosure`
+
+*record* — `SolutionTreeProjection.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `SolutionTreeResult`
+
+*record* — `SolutionTreeProjection.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `SolutionTreeProjection`
+
+*class* — `SolutionTreeProjection.cs`
+
+Query-time census join: disk-now folders minus `Skip`, plus
+latest-generation files that `ResolveWithinWorkspace` accepts.
+
+**Remarks.** Pattern: Query-time join (DM7; ADR-0038). No `folder_dim`. Named omit is a constructor
+argument so production IPC cannot hide folders behind `Omitted (N)`.
+
+| Member | Summary |
+|---|---|
+| `int DefaultMaxCensusFolders = 2_000` | Production folder count default. Inferred — no measured census cardinality yet; retune when the query emits counts. |
+| `int DefaultMaxFileArtifacts = 5_000` | Aligned with `DefaultMaxNodes`. |

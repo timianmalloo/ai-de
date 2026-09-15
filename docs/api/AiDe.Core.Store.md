@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Store: 10 types, 52 members, 69% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Store: 10 types, 54 members, 70% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Store`
 
-**10 public types · 52 public members · 69% documented.**
+**10 public types · 54 public members · 70% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -136,7 +136,9 @@ accident (spike S6).
 | `StoredAssertion? DeclaringAssertion(string nodeId)` | Assertions with a given predicate — the knowledge projection's entry point.  The assertion that says where a node was DECLARED — its scope and its path within it. |
 | `IReadOnlyList<(string Callee, string Member, string Location)> OutgoingCallsInOrder(` | One caller's outgoing calls, in the order they are written. |
 | `IReadOnlyList<(string NodeId, string ScopeId, string ArtifactPath)> FilesToSearch(int limit)` | The distinct files the graph knows about, each with a node that is declared in it. |
+| `IReadOnlyList<(string NodeId, string ScopeId, string ArtifactPath)> FilesToSearch()` | Same grain as `FilesToSearch(int)` with no silent LIMIT — the tree projection ranks and omits, and a store cap would drop files without `OmittedByCap`. |
 | `string? ScopeLocation(string scopeId)` | Where a scope's files live, relative to the workspace root, or null when it never said. |
+| `IReadOnlyList<(string ScopeId, string DeclaredAt)> AllScopeLocations()` | Every latest-generation `declared_at`, so coverage can join without a second walk. |
 | `(IReadOnlyList<(string NodeId, string Type)> Rows, int TotalMatched) KnowledgeNodes(` | The ids currently classified as knowledge.  The knowledge nodes a query asks for, with their declared type, and how many matched in all. |
 | `IReadOnlySet<string> KnowledgeNodeIds(int limit)` | **(gap)** |
 | `IReadOnlyList<StoredAssertion> AssertionsWithPredicate(string predicate, int limit)` | **(gap)** |

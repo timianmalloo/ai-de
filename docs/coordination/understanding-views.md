@@ -136,6 +136,6 @@ ADR-0030 trigger, quoted not paraphrased: *"Add an explicit `Perspectives` colum
 
 | | |
 |---|---|
-| **Completed** | Execution graph; this plan; kickoff; N0–N4; N5 ADR-0038 proposed (`a03fb622`); N6 PASS after Security re-review (`note-understanding-views-n6-council`). Spec still draft. |
-| **Remaining** | Join architecture onto `understanding-views`; N7 toolkit spike; N8 ui-design; N9–N10 design; N11 core-query then shell-surface; N12 Proof Pack; N13; N14. |
-| **Best next action** | Join `understanding-views-architecture` (`--docs-only`), then N7 Spike Protocol on the tree toolkit. Do not open core or shell. |
+| **Completed** | N0–N11 walking skeleton on `understanding-views` (UV-0 query + UV-1 kind/TreeView). ADR-0038 Accepted. N14 stop: D-1…D-4 keep-deferred. Spec stays draft. Not `main`. |
+| **Remaining** | N12 Proof Pack (red 19/6 recaptured; re-review in flight). N13 full `conductor-join.py` gates if stranded-audit and App.Tests recount are green. D-0 chrome (glyph, physical Ctrl+Enter, zone) may follow; it does not reopen N14. |
+| **Best next action** | Confirm N12 PASS on 19/6 capture. Finish App.Tests recount. Do not admit D-1. |
