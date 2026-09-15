@@ -1204,6 +1204,32 @@ and replay the actual producer test. Source/fixture checkpoint receipts and call
 counts remain separate; product pin `cea76307` is frozen. This closes a test
 vacuity, not a producer defect or a new production-field grant.
 
+Owner turn 82 adopts deterministic source-and-build provenance for the legacy
+fixture. The original path-dependent binary hashes remain historical references;
+they are not falsely described as reproducible. Fixed canonical compiler/PDB
+path mapping and explicit baseline source/SourceLink identity are permitted.
+Patched peer bytes must not be attributed to an unchanged baseline file: retain
+accurate patch provenance and embedded own-source evidence where needed.
+Generated build overrides are allowed only inside declared, hashed owned staging/
+output directories, never as an unlisted product/project edit.
+
+Sixteen new fixture qualification leaves are granted in the same five-file scope
+and existing `atlas/e1-legacy-fixture` tree. Require equal canonical Core and peer
+bytes from two fresh roots, inspect PE/PDB/SourceLink and effective build settings,
+and record unexplained differences. Only after that evidence may the author pin
+an explicitly qualification-only candidate pair before actual mixed-version
+SELECT/RESTORE runs. Owner must approve that pair before it becomes the normal
+expected fixture pair; never accept whichever bytes a build happens to produce.
+Ordinary autopreparation, hostile-archive/output-boundary checks and removal of
+author-artifact/environment prerequisites remain mandatory. No skip/mute, Core
+behavior change, third-party binary bundle or network-source fallback is granted.
+Preserve blocked two-root outputs and prior fixture-present greens.
+
+Conductor's cumulative ceiling rises prospectively to 740. Owner 81's separate
+accessor correction used 3/3 and its targeted Test readback used 1/1, clearing
+the accessor-vacuity predicate; those counts do not fund fixture work. No source
+join, native-phase/main/push/normative-E/programme acceptance is implied.
+
 ### Core owns
 
 | Path | Why |

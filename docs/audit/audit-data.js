@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T01:55:47Z",
+  "generated": "2026-09-15T02:06:59Z",
   "audit": [
     {
       "actor": null,
@@ -16957,6 +16957,38 @@ window.AUDIT_DATA = {
         "branch": "conductor/code-atlas",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2HD2H96W7N0434V241A8W7Y",
+      "shortname": "atlas-owner82-deterministic-fixture-contract",
+      "datetime": "2026-09-15T02:06:58Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner82new16leafsamefixturewriter/tree5paths, old16/16andseparate3/3accessorcostsretained. Canonicalpaths/PDBbaselineSourceLinkandpatched-sourceidentityrequired; output/stagingoverridesdeclaredhashedonly. Historicalhashesstayreferences. Onlyafterequality/provenancechecksmayfixedqualificationpairbepinnedBEFOREruns; Ownerseparatelyapprovesnormalpair. No arbitraryenvhashacceptance, SourceLinkfalsebaselineclaim, disablingprovenance, private/thirdparty/caches/fetch/mutedtests. Remainingordinaryautoprep/extractionhostiletests/contextseamgatesexplicit. Test1/1clearedaccessororacle afterparent9/9. Coreceastaysunjoined/nativeUIungranted, main740.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Make genuine legacy fixture builds reproducible without weakening identity or provenance",
+      "done_when": "Twofreshrootcanonicalbyteequality/provenance andrealcompatibilitysupportanexplicitnormalhashdecision",
+      "tier": "T2",
+      "main_calls": 697,
+      "main_budget": 740,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T02:06:58Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "dec1ec131e250b7337225816e309ddd9abb1d69a",
+        "short": "dec1ec131",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -21039,6 +21071,29 @@ window.AUDIT_DATA = {
           "3ca57f89 Repair Atlas E1 qualification tests",
           "2a05bbaf Add Atlas E1 static qualification tests"
         ]
+      }
+    },
+    {
+      "id": "cl-01M2HD2H5MS1K6SFEH1H3MNJZS",
+      "datetime": "2026-09-15T02:06:58Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "decision",
+      "skill": "implement",
+      "title": "Legacy fixture uses deterministic source-and-build provenance",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner82permitscanonicalcompiler/PDBpathsandaccuratebaselineSourceRoot/SourceLink, preservingpatchedpeerprovenance/embeddedownsource. Same5file16leafqualification; twofreshrootequality+realcompatibilitybeforeseparateOwnercanonicalhashapproval. Oldpath-dependentreferencepairkept.",
+      "rationale": "Samegenuinesourcesbuiltin2rootshavedifferentPE/PDBpathsandambientSourceLinkidentity. Controlledprovenancecanonicalizationisnotarbitraryhashreplacementorclaimoforiginalbyteidentity.",
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-e1-core-metadata.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "dec1ec13",
+        "after": "dec1ec131e250b7337225816e309ddd9abb1d69a",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
       }
     }
   ]
