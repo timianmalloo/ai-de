@@ -92,7 +92,9 @@ public sealed class ScopeFingerprints
     // with it; no extractor's output changes. The bump is the gate's trade, taken as the 2026-09-05.1
     // note explains — and it is not wasted: one re-index on every workspace is exactly the migration
     // a pre-Ruling-85 store needs to leave `rev-1` behind, so the guard and the generation agree.
-    public const string ExtractorGeneration = "2026-09-14.1";
+    // 2026-09-15.1 — `UnanalysedLanguages.Skip` visibility `private` → `internal` so UV-0 census
+    // consumes the same instance (ADR-0038). Members unchanged; the gate keys off the file.
+    public const string ExtractorGeneration = "2026-09-15.1";
 
     private const string FileName = "scope-fingerprints.json";
 

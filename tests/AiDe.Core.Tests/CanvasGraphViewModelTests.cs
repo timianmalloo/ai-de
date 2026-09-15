@@ -68,6 +68,9 @@ public sealed class CanvasGraphViewModelTests
         public Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken ct) =>
             throw new NotSupportedException();
 
+        public Task<SolutionTreeResult> SolutionTreeAsync(SolutionTreeQuery query, CancellationToken ct) =>
+            throw new NotSupportedException();
+
         /// <summary>Every <see cref="GraphQuery"/> this stub has received, in order — the recording
         /// half of US-C8's oracle ("a recording FakeWorkspaceQueries sees the kind filter … on every
         /// GraphQuery it receives").</summary>

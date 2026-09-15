@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:56:27Z",
+  "generated": "2026-09-15T22:30:16Z",
   "audit": [
     {
       "actor": null,
@@ -16313,6 +16313,1472 @@ window.AUDIT_DATA = {
     },
     {
       "actor": null,
+      "artifacts": [
+        "docs/coordination/understanding-views.md",
+        "docs/coordination/understanding-views.html",
+        "docs/coordination/understanding-views-kickoff.md"
+      ],
+      "datetime": "2026-09-15T01:50:30Z",
+      "done_when": "Pasteable prompt plus committed plan/graph; Owner not yet spawned",
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
+        "short": "bab5035e7"
+      },
+      "goal": "A kickoff prompt and coordination plan that starts Addendum C deferred understanding views under owner-conductor-sub-agent, one worktree per agent",
+      "id": "al-01M2HC4C4TCNPZZGE5SCNHMS3E",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "lets get started with Addendum C deferred understanding views; create a kickoff prompt for a Grok owner-conductor-subagent fleet",
+      "session": "grok-understanding-views-kickoff",
+      "shortname": "coordination-understanding-views",
+      "skill": "prepare-for-coordination",
+      "summary": "6 tracks (owner, specify, architecture, core-query, shell-surface, conductor); serial spine Owner-then-spec-then-arch-then-spike-then-core-then-shell; struck 7-way parallel, D-5/D-6, Atlas, Tests, main; kickoff prompt written",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/plans/understanding-views.md"
+      ],
+      "datetime": "2026-09-15T01:50:38Z",
+      "done_when": "Graph with capabilities, floors, fan-out and loop contracts",
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
+        "short": "bab5035e7"
+      },
+      "goal": "Optimized execution graph for D-0..D-6 re-admission",
+      "id": "al-01M2HC4KW95Y4Q3F7BNE7H3RTD",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "lets get started with Addendum C deferred understanding views; create a kickoff prompt for a Grok owner-conductor-subagent fleet",
+      "session": "grok-understanding-views-kickoff",
+      "shortname": "optimize-graph-understanding-views",
+      "skill": "optimize-graph",
+      "summary": "before: 5 unbounded nodes / 7 parallel implementers; after: 15 nodes, span 13, width 2 after N0 plus review panels cap 4, one-view loop bounded cap 7, floors F-OWNER through F-JOIN present",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-owner-ruling.md"
+      ],
+      "datetime": "2026-09-15T02:05:23Z",
+      "done_when": "Ruling note names one view, Atlas seam, D-5/D-6, join target",
+      "duration_seconds": 0.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-owner",
+        "pushed": null,
+        "sha": "2b5bc50964e1ad5bc4cc52295c9190cb41522b9a",
+        "short": "2b5bc5096"
+      },
+      "goal": "Rule the first admitted understanding view",
+      "id": "al-01M2HCZKQTNDKK80C1XB71Y9AP",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "N0 Owner ruling for Addendum C deferred views",
+      "session": "understanding-views-owner",
+      "shortname": "understanding-views-owner-ruling",
+      "skill": "owner",
+      "started_at": "2026-09-15T02:05:23Z",
+      "summary": "Admit D-0 Solution/tree this horizon; not Atlas; D-1..D-6 deferred; join understanding-views; Owner 25/20 calls (overrun recorded)",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n2-comparables.md"
+      ],
+      "datetime": "2026-09-15T02:09:32Z",
+      "done_when": "docs/notes/understanding-views-n2-comparables.md exists with sourced table and unindexed lesson",
+      "duration_seconds": 172.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-comparables",
+        "pushed": null,
+        "sha": "475d46e6a7e19b746ea9f9cf8449fd84119bae9e",
+        "short": "475d46e6a"
+      },
+      "goal": "Named, sourced comparables for D-0 Solution/tree view of indexed code/data/architecture artifacts",
+      "id": "al-01M2HD76Y4QAD3N7H8ZQ2Q1ETG",
+      "kind": "skill",
+      "main_budget": 25,
+      "main_calls": 24,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "N2 of plan-understanding-views: domain research for D-0 Solution/tree view comparables. Read-only. Named, sourced comparables for a solution/tree view of code, data, and architecture artifacts in an Architecture host. Done when docs/notes/understanding-views-n2-comparables.md exists.",
+      "session": "understanding-views-comparables",
+      "shortname": "collectknowledge-d0-tree-comparables",
+      "signals": {
+        "acceptance_met": true
+      },
+      "skill": "collectknowledge",
+      "started_at": "2026-09-15T02:06:40Z",
+      "summary": "Six named comparables for D-0: VS Solution Explorer, Rider Explorer (no-index label), IntelliJ Project view (Excluded), VS Code Explorer vs C# Dev Kit Solution Explorer, Eclipse Package/Project Explorer, Structurizr model/tree. Key lesson: unindexed must be a visible state (Rider), never silent omission. Architecture-pane tree is not ADR-0017 Explorer.",
+      "tags": [
+        "understanding-views",
+        "d-0",
+        "comparables"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n1-inventory.md"
+      ],
+      "datetime": "2026-09-15T02:12:37Z",
+      "done_when": "STOP-BEFORE-N5 answered with citations",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-inventory",
+        "pushed": null,
+        "sha": "475d46e6a7e19b746ea9f9cf8449fd84119bae9e",
+        "short": "475d46e6a"
+      },
+      "goal": "File:line inventory of D-0 substrate",
+      "id": "al-01M2HDCVGG79M0A6ZRHQVHAZ1C",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "N1 D-0 current-state inventory",
+      "session": "understanding-views-inventory",
+      "shortname": "understanding-views-n1-inventory",
+      "skill": "explore",
+      "started_at": "2026-09-15T02:12:36Z",
+      "summary": "STOP-BEFORE-N5: artifact_path_id cannot list folders or unindexed dirs without Core census; 52/25 overrun",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-owner-n1-disposition.md"
+      ],
+      "datetime": "2026-09-15T02:17:38Z",
+      "done_when": "Census admitted or refused; specify yes/no",
+      "duration_seconds": 0.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-owner",
+        "pushed": null,
+        "sha": "6ad70a82bc41540c7c0b404ef44ab92c5449692e",
+        "short": "6ad70a82b"
+      },
+      "goal": "Dispose N1 STOP-BEFORE-N5",
+      "id": "al-01M2HDP2CS1SFN6P9Y6R5WX7FS",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Owner N1 STOP-BEFORE-N5 disposition",
+      "session": "understanding-views-owner",
+      "shortname": "understanding-views-owner-n1-disposition",
+      "skill": "owner",
+      "started_at": "2026-09-15T02:17:38Z",
+      "summary": "Admit query-time Core census; specify may proceed; Python/TS extractor rewrite cut; N5 after N4",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/understanding-views.md"
+      ],
+      "datetime": "2026-09-15T02:29:24Z",
+      "done_when": "Three layers; grain from Owner N1 disposition; falsifiable Gherkin",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-specify",
+        "pushed": null,
+        "sha": "d22f056ca3702f3752ec3525ca34d75fa4b00bae",
+        "short": "d22f056ca"
+      },
+      "goal": "Specify D-0 only",
+      "id": "al-01M2HEBKBNYNV1YKN3CY24N4J7",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "N3 specify D-0 only",
+      "session": "understanding-views-specify",
+      "shortname": "specify-understanding-views",
+      "skill": "specify",
+      "started_at": "2026-09-15T02:29:23Z",
+      "summary": "D-0 spec Parts A/B/C; US-T3/T4/T5 distinct; D-1-D-6 quoted; ~66/50 overrun",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/understanding-views.md"
+      ],
+      "datetime": "2026-09-15T02:47:00Z",
+      "done_when": "Data/Test/UX blockers have failing inputs",
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-specify",
+        "pushed": null,
+        "sha": "8657ff5fdb277632151f780206f3614aaa279f0c",
+        "short": "8657ff5fd"
+      },
+      "goal": "Repair D-0 spec to clear N4 hard vetoes",
+      "id": "al-01M2HFBT5K8MF3267Y3GR3GSW7",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "N4 spec repair after BLOCK",
+      "session": "understanding-views-specify",
+      "shortname": "specify-understanding-views-n4-repair",
+      "skill": "specify",
+      "summary": "N4 repair: grain (path,kind); US-T5a/b/c; F*; View source vs Reveal in graph; ~42/40 overrun",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/understanding-views.md"
+      ],
+      "datetime": "2026-09-15T02:52:33Z",
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-specify",
+        "pushed": null,
+        "sha": "a1fe989f9aaf744857222751b22a0082463dacef",
+        "short": "a1fe989f9"
+      },
+      "id": "al-01M2HFP02HVP3QY1ADWVV1T1H6",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T5c omit_probe fixture pin",
+      "session": "understanding-views-specify",
+      "shortname": "specify-understanding-views-t5c",
+      "skill": "specify",
+      "summary": "F* omit_probe dirs; US-T5c pins unindexed_probe survivor",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n4-pass.md",
+        "docs/specs/understanding-views.md"
+      ],
+      "datetime": "2026-09-15T14:02:36Z",
+      "done_when": "Gate record and decision note on understanding-views; spec stays draft",
+      "duration_seconds": 192.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "962ad56e78ccae76ffc1cb9d8937f75d69796f8f",
+        "short": "962ad56e7"
+      },
+      "goal": "Record N4 PASS from non-author receipts and unblock N5",
+      "id": "al-01M2JP0W9B791HV36560236TN8",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "yes do your sequence... start in the ai-de-understanding-views worktree as you suggested above",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "understanding-views-n4-pass",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T13:59:24Z",
+      "summary": "N4 PASS recorded: Data/UX-IA/Test (after T5c) PASS; UX&A PASS-WITH-CONDITIONS. Spec remains draft. N5 may start.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n6-council.md"
+      ],
+      "datetime": "2026-09-15T14:39:18Z",
+      "done_when": "Four receipts recorded; Security BLOCK stops N7",
+      "fan_out": 4,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "cb868bce441246f0aa921aec649901dc755b56ce",
+        "short": "cb868bce4"
+      },
+      "goal": "N6 council on ADR-0038",
+      "id": "al-01M2JR42W1K48C5KJDFC28P74Q",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "yes do your sequence... start in the ai-de-understanding-views worktree as you suggested above",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "understanding-views-n6-council",
+      "skill": "execute-with-coordination",
+      "summary": "N6: Data PASS; Security BLOCK (confinement, junctions, skip, DropRelativePaths on wire); Simplifier PWC; Tech Lead conditions. N5 budget 119/40.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n6-council.md"
+      ],
+      "datetime": "2026-09-15T14:53:53Z",
+      "done_when": "Security and Tech Lead clear; N7 unblocked",
+      "fan_out": 4,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "08a77aee068aa735dfe45d81f1c556b90355267a",
+        "short": "08a77aee0"
+      },
+      "goal": "Record N6 re-review PASS on ADR-0038",
+      "id": "al-01M2JRYS6MGB7PJ887T3G8BBHF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "yes do your sequence... start in the ai-de-understanding-views worktree as you suggested above",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "understanding-views-n6-pass",
+      "skill": "execute-with-coordination",
+      "summary": "N6 re-review PASS at a03fb622. Security six blockers closed. Tech Lead skip/drop-set closed. ADR stays proposed.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md"
+      ],
+      "change": "cl-01M2JQ7S3EDVEHP93AHEFXZMXW",
+      "datetime": "2026-09-15T14:24:14Z",
+      "done_when": "Architecture section + proposed ADR for D-0 admission; allow-list described not implemented; committed on understanding-views-architecture.",
+      "duration_seconds": 1027.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-architecture",
+        "pushed": null,
+        "sha": "cb868bce441246f0aa921aec649901dc755b56ce",
+        "short": "cb868bce4"
+      },
+      "goal": "N5 /define-architecture amendment: one new kind, derived menu, no second store.",
+      "id": "al-01M2JQ8GAT99FQJJY3WMZEZ24V",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "N5: /define-architecture amendment: one new kind, derived menu, no second store.\n\nDone when: Architecture section + ADR for D-0 admission. Allow-list change described, not implemented. Status of ADR is proposed (you do not self-clear; N6 council is a later Conductor panel).\n\nTier: T2. Fan-out cap: 0. Skip Stage 4 council.",
+      "session": "understanding-views-architecture",
+      "shortname": "define-architecture-understanding-views-d0",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": false
+      },
+      "skill": "define-architecture",
+      "started_at": "2026-09-15T14:07:07Z",
+      "summary": "ADR-0038 proposed + architecture.md §Understanding views / D-0. Kind solution-tree described not implemented. Query SolutionTreeAsync / IPC solution-tree. Stage 4 skipped (N6). Spec stays draft.",
+      "tags": [
+        "understanding-views",
+        "D-0"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md"
+      ],
+      "change": "cl-01M2JRF7PFTH07QDQPXB6VSF52",
+      "datetime": "2026-09-15T14:45:36Z",
+      "done_when": "Majors 1-11 closed in ADR + architecture section; ADR still proposed; committed on understanding-views-architecture.",
+      "duration_seconds": 320.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-architecture",
+        "pushed": null,
+        "sha": "46160f215e96d5a8e4f05076b029ebdd546aa381",
+        "short": "46160f215"
+      },
+      "goal": "Repair ADR-0038 after N6 Security BLOCK so re-review can pass.",
+      "id": "al-01M2JRFM31VF877D2MAHMH08TF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Resume N5 architecture author. Repair ADR-0038 after N6 Security BLOCK. Do not mark the ADR accepted. Close majors 1-11 (ResolveWithinWorkspace, no-follow reparse/EnvelopePurge, consume UnanalysedLanguages.Skip, DropRelativePaths off IPC, PROBE-APP-ENUM not PID, byte/frame bound, PathComparison identity, ancestor indexed-parent, drop orphan files, one OmittedByCap, collapse Query/Request).",
+      "session": "understanding-views-architecture",
+      "shortname": "define-architecture-d0-n6-repair",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": false
+      },
+      "skill": "define-architecture",
+      "started_at": "2026-09-15T14:40:16Z",
+      "summary": "N6 Security BLOCK repaired in ADR-0038 + architecture UV section. Majors 1-11 closed in text. ADR remains proposed. No src/.",
+      "tags": [
+        "understanding-views",
+        "D-0",
+        "N6"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md",
+        "docs/architecture.md"
+      ],
+      "datetime": "2026-09-15T14:54:17Z",
+      "done_when": "ADR-0038 and UV.1-11 on understanding-views; not main",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Join N5/N6 architecture onto understanding-views",
+      "id": "al-01M2JRZGGNJ62DJVAX9D55WZAV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of understanding-views-architecture into understanding-views",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "join-understanding-views-architecture",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T14:54:16Z",
+      "summary": "ADR-0038 + D-0 architecture section; N6 Security PASS after repair a03fb622 recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T15:29:11Z",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "fan_out": 0,
+      "goal": "AL5b correction of al-01M2HC4C4TCNPZZGE5SCNHMS3E",
+      "id": "al-01M2JTZDEE6S0HY213CCYEPD4G",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "al5b-supersede",
+      "signals": {
+        "verification_path": false
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Supersedes al-01M2HC4C4TCNPZZGE5SCNHMS3E: docs-only skill run; no Proof Pack.",
+      "supersedes": "al-01M2HC4C4TCNPZZGE5SCNHMS3E",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T15:29:11Z",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "fan_out": 0,
+      "goal": "AL5b correction of al-01M2HC4KW95Y4Q3F7BNE7H3RTD",
+      "id": "al-01M2JTZDHCF0VYFQ0H15676DRC",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "al5b-supersede",
+      "signals": {
+        "verification_path": false
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Supersedes al-01M2HC4KW95Y4Q3F7BNE7H3RTD: docs-only skill run; no Proof Pack.",
+      "supersedes": "al-01M2HC4KW95Y4Q3F7BNE7H3RTD",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T15:29:11Z",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "fan_out": 0,
+      "goal": "AL5b correction of al-01M2HCZKQTNDKK80C1XB71Y9AP",
+      "id": "al-01M2JTZDM6BBCEB61QTMX9AMG0",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "al5b-supersede",
+      "signals": {
+        "verification_path": false
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Supersedes al-01M2HCZKQTNDKK80C1XB71Y9AP: docs-only skill run; no Proof Pack.",
+      "supersedes": "al-01M2HCZKQTNDKK80C1XB71Y9AP",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T15:29:11Z",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "fan_out": 0,
+      "goal": "AL5b correction of al-01M2HDCVGG79M0A6ZRHQVHAZ1C",
+      "id": "al-01M2JTZDQ4F03P8NDB9D6TPNAJ",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "al5b-supersede",
+      "signals": {
+        "verification_path": false
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Supersedes al-01M2HDCVGG79M0A6ZRHQVHAZ1C: docs-only skill run; no Proof Pack.",
+      "supersedes": "al-01M2HDCVGG79M0A6ZRHQVHAZ1C",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T15:29:11Z",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "fan_out": 0,
+      "goal": "AL5b correction of al-01M2HDP2CS1SFN6P9Y6R5WX7FS",
+      "id": "al-01M2JTZDT2Q7T7PGW815V3797E",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "al5b-supersede",
+      "signals": {
+        "verification_path": false
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Supersedes al-01M2HDP2CS1SFN6P9Y6R5WX7FS: docs-only skill run; no Proof Pack.",
+      "supersedes": "al-01M2HDP2CS1SFN6P9Y6R5WX7FS",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T15:29:11Z",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "fan_out": 0,
+      "goal": "AL5b correction of al-01M2HEBKBNYNV1YKN3CY24N4J7",
+      "id": "al-01M2JTZDWXQ9513JZG38FM7PZ0",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "al5b-supersede",
+      "signals": {
+        "verification_path": false
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Supersedes al-01M2HEBKBNYNV1YKN3CY24N4J7: docs-only skill run; no Proof Pack.",
+      "supersedes": "al-01M2HEBKBNYNV1YKN3CY24N4J7",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T15:29:11Z",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "fan_out": 0,
+      "goal": "AL5b correction of al-01M2HFBT5K8MF3267Y3GR3GSW7",
+      "id": "al-01M2JTZDZVR3NJVB0N7F4F6A6S",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "al5b-supersede",
+      "signals": {
+        "verification_path": false
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Supersedes al-01M2HFBT5K8MF3267Y3GR3GSW7: docs-only skill run; no Proof Pack.",
+      "supersedes": "al-01M2HFBT5K8MF3267Y3GR3GSW7",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T15:29:11Z",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "fan_out": 0,
+      "goal": "AL5b correction of al-01M2HFP02HVP3QY1ADWVV1T1H6",
+      "id": "al-01M2JTZE2SRM96J40PVCY4PJAC",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "al5b-supersede",
+      "signals": {
+        "verification_path": false
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Supersedes al-01M2HFP02HVP3QY1ADWVV1T1H6: docs-only skill run; no Proof Pack.",
+      "supersedes": "al-01M2HFP02HVP3QY1ADWVV1T1H6",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T15:29:11Z",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "fan_out": 0,
+      "goal": "AL5b correction of al-01M2JP0W9B791HV36560236TN8",
+      "id": "al-01M2JTZE5N81PYDC2JDWW3VMHN",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "al5b-supersede",
+      "signals": {
+        "verification_path": false
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Supersedes al-01M2JP0W9B791HV36560236TN8: docs-only skill run; no Proof Pack.",
+      "supersedes": "al-01M2JP0W9B791HV36560236TN8",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T15:29:11Z",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "fan_out": 0,
+      "goal": "AL5b correction of al-01M2JR42W1K48C5KJDFC28P74Q",
+      "id": "al-01M2JTZE8H3QMP0SCK6C0TBMX8",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "al5b-supersede",
+      "signals": {
+        "verification_path": false
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Supersedes al-01M2JR42W1K48C5KJDFC28P74Q: docs-only skill run; no Proof Pack.",
+      "supersedes": "al-01M2JR42W1K48C5KJDFC28P74Q",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T15:29:12Z",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "fan_out": 0,
+      "goal": "AL5b correction of al-01M2JRYS6MGB7PJ887T3G8BBHF",
+      "id": "al-01M2JTZEBGA6WA43XERQ85NX04",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "al5b-supersede",
+      "signals": {
+        "verification_path": false
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Supersedes al-01M2JRYS6MGB7PJ887T3G8BBHF: docs-only skill run; no Proof Pack.",
+      "supersedes": "al-01M2JRYS6MGB7PJ887T3G8BBHF",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T15:22:27Z",
+      "id": "al-01M2JTK3CZCP84DYMZMEDV0HYS",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "N7 spike for AI-DE D-0 Solution tree. Spike Protocol (read AND run). T1. Establish the tree toolkit contract for D-0 so UV-1 can bind to it. ADR-0038 forbade freezing WPF TreeView in architecture; freeze it only if read+run evidence says so. Done when docs/spikes/d0-tree-toolkit/RESULT.md exists and is committed.",
+      "session": "understanding-views-spike",
+      "shortname": "n7-d0-tree-toolkit",
+      "skill": null,
+      "summary": "N7 D-0 tree toolkit spike request",
+      "tags": [
+        "D-0",
+        "spike",
+        "N7"
+      ],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/spikes/d0-tree-toolkit/RESULT.md",
+        "spikes/d0-tree-toolkit/RESULT-raw.txt",
+        "spikes/d0-tree-toolkit/Program.cs"
+      ],
+      "datetime": "2026-09-15T15:22:27Z",
+      "done_when": "docs/spikes/d0-tree-toolkit/RESULT.md exists (findings, Verified/Inferred/Flagged, chosen option + rejected, PoC disposal) and is committed on this branch.",
+      "duration_seconds": 743.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-spike",
+        "pushed": null,
+        "sha": "b3b3aef4ac3528a1586e3308fdd43d1a9136c4ee",
+        "short": "b3b3aef4a"
+      },
+      "goal": "Establish the D-0 tree toolkit contract so UV-1 can bind to it.",
+      "id": "al-01M2JTK3G3M92P2TQ23H5P7249",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "N7 spike for AI-DE D-0 Solution tree. Spike Protocol (read AND run). T1. Establish the tree toolkit contract for D-0 so UV-1 can bind to it. ADR-0038 forbade freezing WPF TreeView in architecture; freeze it only if read+run evidence says so. Done when docs/spikes/d0-tree-toolkit/RESULT.md exists and is committed.",
+      "session": "understanding-views-spike",
+      "shortname": "n7-d0-tree-toolkit",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "define-architecture",
+      "started_at": "2026-09-15T15:10:04Z",
+      "summary": "N7 Spike Protocol froze WPF TreeView as the D-0 toolkit. Read+run on installed PresentationFramework 10.0.0.0 / .NET 10.0.11: opt-in recycling virtualization (18/400 realized), UIA Tree/TreeItem with AutomationProperties.Name kind+coverage, 28px header content (Height=28 clips children), unindexed leaf Hidden expander + LeafNode (double-click still sets IsExpanded), PreviewKeyDown for Enter/Ctrl+Enter. VM nests the flat DTO under census-folders present in the DTO; no path-split. ListView/ItemsControl and WebView2 HTML trees rejected. PoC throwaway at spikes/d0-tree-toolkit/. No src/ product.",
+      "tags": [
+        "D-0",
+        "spike",
+        "N7",
+        "TreeView"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/solution-tree.html",
+        "docs/mockups/solution-tree.md",
+        "DESIGN.md",
+        "docs/proof/native-ui-solution-tree.md",
+        "docs/notes/n8-solution-tree-direction.md"
+      ],
+      "datetime": "2026-09-15T15:39:49Z",
+      "done_when": "docs/mockups/solution-tree.html + hub exist; hard states rendered; tokens from DESIGN.md; craft/lint gates run; committed",
+      "duration_seconds": 865.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-ui-design",
+        "pushed": null,
+        "sha": "2089e02522bceb0e118beee1583b853d2381e011",
+        "short": "2089e0252"
+      },
+      "goal": "Self-contained Architecture-pane Solution tree mockup with hard states and review harness",
+      "id": "al-01M2JVJWK53X6880RW6K55F4AC",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "N8 /ui-design create for D-0 Solution tree. Self-contained mockup of the Architecture-pane Solution tree with hard states and review harness. Toolkit already spiked: WPF TreeView. Done when docs/mockups/solution-tree.html + hub exist; hard states rendered; tokens from DESIGN.md; ui-craft-gate.py / design-lint.py run; committed on this branch.",
+      "session": "understanding-views-ui-design",
+      "shortname": "ui-design-solution-tree",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "ui-design",
+      "started_at": "2026-09-15T15:25:24Z",
+      "summary": "Created docs/mockups/solution-tree.html + hub with F* hard states and review harness. DESIGN.md copy section added (no new colour). Native proof pack Flagged until UV-1. Craft gate: 1 Minor cramped-padding (CD16, 16px expander slot). design-lint clean. UX & Accessibility veto PASS-WITH-CONDITIONS; author does not clear.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/design/solution-tree.md",
+        "docs/security/ai-native-ide-threat-model.md",
+        "docs/security/ai-native-ide-privacy-review.md"
+      ],
+      "datetime": "2026-09-15T15:39:55Z",
+      "done_when": "file exists, quotes ADR-0038 and spec, names patterns, red-first test plan mapped to US-T1-T7/T5a-c/T11, committed, status draft",
+      "duration_seconds": 872.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-design",
+        "pushed": null,
+        "sha": "2089e02522bceb0e118beee1583b853d2381e011",
+        "short": "2089e0252"
+      },
+      "goal": "docs/design/solution-tree.md contracts, grain, failure modes, telemetry, test plan, E7, UV-0 then UV-1 file lists",
+      "id": "al-01M2JVK2GYYJ6RVGWZ99CY8PG1",
+      "kind": "skill",
+      "main_budget": 40,
+      "main_calls": 40,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "You are N9 /design-slice for D-0 Solution tree (UV-0 Core query + UV-1 Shell). Persona: patterns-expert with csharp-developer. Reason at high. T2. Fan-out 0. Budget 40 tool calls.\n\nGoal: docs/design/solution-tree.md: contracts, grain, failure modes, telemetry, test plan, E7 list, file lists for UV-0 then UV-1.\n\nDone when: that file exists, quotes ADR-0038 and the spec, names patterns, has a red-first test plan mapped to US-T1–T7/T5a–c/T11, committed on this branch. Status draft (N10 review is later).\n\nMust include: data model first (no folder_dim; census query-time; grain (path,kind)); UV-0 walking skeleton SolutionTreeAsync / IPC solution-tree / SolutionTreeQuery two ints only; consume UnanalysedLanguages.Skip; ResolveWithinWorkspace; no-follow reparse; frame shrink; T5c omit set constructor/internal not IPC; FakeWorkspaceQueries virtual refuse; CanvasGraphViewModelTests.StubQueries compile tax; UV-1 one SurfaceKind solution-tree, Perspectives {Architecture}, Instances One; WPF TreeView attachments from N7; not MainMenuBuilder lists; PROBE-APP-ENUM = App assembly; serial UV-0 reds before UV-1 kind row (AR3); failure modes + STRIDE-lite (DC-022, path confinement, skip re-entry); telemetry per ADR IO1; Testing Strategy union.\n\nNot in scope: Implementing. Atlas. D-1…D-6. main. Public IWorkspaceDirectoryCensus. DropRelativePaths on the wire. Marking design accepted.\n\nFollow design-slice Stages 0–3 and 5. Skip Stage 4 council (N10). Leave status draft.",
+      "session": "understanding-views-design",
+      "shortname": "design-slice-solution-tree",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "design-slice",
+      "started_at": "2026-09-15T15:25:23Z",
+      "summary": "Draft design for D-0 Solution tree: UV-0 Core query-time census join (SolutionTreeAsync / IPC solution-tree / one SolutionTreeQuery of two ints; Skip consumed; ResolveWithinWorkspace; no-follow reparse; T5c omit off-wire) then UV-1 one Architecture kind + WPF TreeView. Status draft; N10 later.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/design/solution-tree.md"
+      ],
+      "datetime": "2026-09-15T15:56:13Z",
+      "done_when": "six closes landed, status draft, committed",
+      "duration_seconds": 142.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-design",
+        "pushed": null,
+        "sha": "dd6026c2a959a280e84fc109d3236d0fd78f7bb7",
+        "short": "dd6026c2a"
+      },
+      "goal": "Repair docs/design/solution-tree.md for N10 Test Architect BLOCK",
+      "id": "al-01M2JWGXRESZNJH0G0065CJXNB",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Resume N9 design author. Peer Mode. Repair docs/design/solution-tree.md for N10 Test Architect BLOCK. Do not mark accepted. Do not implement src/. Six closes: UV-1 T5c Fake/golden arrange; US-T6/UI-8 visual-tree; B6 root-only empty; F* io_probe/; DirectoryInfo PROBE-APP-ENUM; UV-0 T5c falsifying inputs.",
+      "session": "understanding-views-design",
+      "shortname": "design-slice-solution-tree-ta-repair",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "design-slice",
+      "started_at": "2026-09-15T15:53:51Z",
+      "summary": "N9 repair of N10 Test Architect BLOCK on design-solution-tree: six closes; status remains draft.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/SolutionTreeProjection.cs",
+        "src/AiDe.Core/Projections/ProjectionService.cs",
+        "src/AiDe.Core/Projections/IWorkspaceQueries.cs",
+        "src/AiDe.Core/Ipc/WorkspaceOperations.cs",
+        "src/AiDe.Core/Ipc/WorkspaceClient.cs",
+        "src/AiDe.Core/Store/StoreReader.cs",
+        "src/AiDe.Core/Extraction/UnanalysedLanguages.cs",
+        "tests/AiDe.Core.Tests/SolutionTreeProjectionTests.cs",
+        "tests/AiDe.Core.Tests/EveryOperationFitsTheFrameTests.cs",
+        "tests/AiDe.Core.Tests/DaemonOperationsTests.cs",
+        "tests/Shared/FakeWorkspaceQueries.cs",
+        "docs/proof/uv-0-solution-tree-core-query.md"
+      ],
+      "datetime": "2026-09-15T16:23:49Z",
+      "done_when": "tests failed first then pass; IPC solution-tree; Fake refuse; StubQueries compile; F* T1-T7 T5a/b/c; production Skip; T5c omit internal; EveryOperationFitsTheFrameTests; committed",
+      "duration_seconds": 1496.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-core-query",
+        "pushed": null,
+        "sha": "18d7db368d5a86c4fe5cc9192fe51f9cd49bcf54",
+        "short": "18d7db368"
+      },
+      "goal": "Red-then-green Core SolutionTreeAsync per ADR-0038 and design/solution-tree.md",
+      "id": "al-01M2JY3EXH1QFBMGHHFGECVFN7",
+      "kind": "skill",
+      "main_budget": 50,
+      "main_calls": 55,
+      "main_over_budget": true,
+      "outcome": "success",
+      "prompt": "You are UV-0 /implement for D-0 Solution tree Core query only. Pair: csharp-developer ⇄ test-architect. Reason at high. TDD red→green→refactor. T2. Fan-out 0. Budget 50 tool calls.\n\nGoal: Red-then-green Core SolutionTreeAsync as specified in docs/adr/0038-d0-solution-tree-census-and-kind.md and docs/design/solution-tree.md (HEAD).\n\nDone when: tests exist that failed first then pass; IPC solution-tree; Fake refuse; StubQueries compile; F* T1–T4, T5a/b/c DTO, T6, T7; skip bin via production UnanalysedLanguages.Skip; T5c omit internal not on wire; EveryOperationFitsTheFrameTests includes the method; committed on this branch.",
+      "session": "understanding-views-core-query",
+      "shortname": "implement-uv-0-solution-tree",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-15T15:58:53Z",
+      "summary": "UV-0 Core SolutionTreeAsync red-then-green: IPC solution-tree, production Skip, T5c omit off the wire, F* T1-T7 DTO. Proof Pack docs/proof/uv-0-solution-tree-core-query.md. Red 19/25 empty stub then green 28.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "src/AiDe.App/Workbench/SolutionTreeSurface.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs",
+        "tests/AiDe.App.Tests/SolutionTreeProbeTests.cs",
+        "tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs",
+        "docs/proof/uv-1-solution-tree-shell.md"
+      ],
+      "datetime": "2026-09-15T16:45:45Z",
+      "done_when": "Row in SurfaceContentFactory.Kinds with Perspectives Architecture, Instances.One, Derived _View; surface uses N7 attachments; App tests for US-C4 mutation, visual-tree T3/T5c via Fake DTO, PROBE-APP-ENUM, PROBE-ATLAS, PROBE-FILE-READ; committed.",
+      "duration_seconds": 1206.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-shell",
+        "pushed": null,
+        "sha": "23b182509db5da73578f6cc9d9d5f4db2b05bff2",
+        "short": "23b182509"
+      },
+      "goal": "One SurfaceKind row solution-tree plus WPF TreeView surface that binds SolutionTreeAsync. AR3: the kind exists because the row is added; menu is derived.",
+      "id": "al-01M2JZBM6WSKRKPTXNVWTRZPZ4",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "UV-1 /implement for D-0 Solution tree Shell surface. One SurfaceKind row solution-tree + WPF TreeView that binds SolutionTreeAsync. AR3. N7 attachments. App tests US-C4, visual-tree T3/T5c Fake DTO, PROBE-APP-ENUM, PROBE-ATLAS, PROBE-FILE-READ. Commit. T2 fan-out 0.",
+      "session": "understanding-views-shell",
+      "shortname": "uv-1-solution-tree-shell",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-15T16:25:39Z",
+      "summary": "UV-1 Solution tree shell: one Architecture SurfaceKind solution-tree (Instances.One, Derived _View) and WPF TreeView with N7 attachments. US-C4 table tests red (Expected 19 Actual 18; menu missing Show solution tree) then green. T5c visual-tree uses Fake omit-set DTO, not Core omit ctor or DropRelativePaths. PROBE-APP-ENUM / PROBE-ATLAS / PROBE-FILE-READ passed.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/uv-0-red-run.txt",
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md"
+      ],
+      "datetime": "2026-09-15T17:10:03Z",
+      "done_when": "uv-0-red-run.txt exists; ADR-0038 status accepted",
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "d6574c93b528e282be8ceb2522e07394b4384826",
+        "short": "d6574c93b"
+      },
+      "goal": "Capture a real UV-0 red run and record ADR-0038 Accepted after N6",
+      "id": "al-01M2K0R3WZXH8B35SBNX36QES1",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "yes keep going finish remaining nodes",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "understanding-views-n12-red-capture",
+      "signals": {
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Captured SolutionTreeProjectionTests red 14/11/25; stub reverted. ADR-0038 Accepted after N6 Security/Tech Lead PASS.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/uv-0-red-run.txt",
+        "docs/proof/uv-0-green-run.txt",
+        "tests/AiDe.App.Tests/BoundsReachTheSurfaceTests.cs"
+      ],
+      "datetime": "2026-09-15T17:19:59Z",
+      "done_when": "uv-0-red-run 19/6; uv-0-green-run 26+15; BoundsReachTheSurfaceTests green",
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "05ed4a865ed5bc65693ecc02481bb702c67e1229",
+        "short": "05ed4a865"
+      },
+      "goal": "N12 captured internal-stub red 19/6; N13 cover SolutionTree bound fields",
+      "id": "al-01M2K1AA3B2KDYQ5T258VS2BDW",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "yes keep going finish remaining nodes",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "understanding-views-n12-n13-hygiene",
+      "signals": {
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Internal empty SolutionTree stub: Failed 19 Passed 6 Total 25. Green logs committed. SolutionTreeResult.Disclosures and Message covered on the surface.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-owner-n14.md"
+      ],
+      "datetime": "2026-09-15T17:20:11Z",
+      "done_when": "Written ruling: stop horizon; D-1..D-4 keep-deferred; variant 4 to 0",
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-owner-n14",
+        "pushed": null,
+        "sha": "9e4945906a7fbdf9d3dd37972c5f865ea9f34daf",
+        "short": "9e4945906"
+      },
+      "goal": "N14 dispose remaining views or stop",
+      "id": "al-01M2K1AP5QJ4Y2J76G84ZVZ05P",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "N14 Owner next-view or stop",
+      "session": "understanding-views-owner-n14",
+      "shortname": "understanding-views-owner-n14",
+      "signals": {
+        "verification_path": true
+      },
+      "skill": "owner",
+      "summary": "Stop this horizon. D-1..D-4 keep-deferred. No main. D-0 remains the admitted view.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "src/AiDe.Core/Extraction/ScopeFingerprints.cs"
+      ],
+      "datetime": "2026-09-15T17:29:55Z",
+      "done_when": "surface-ownership, extractor-generation, derived-views, site-figures green on this tree",
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "5802a83c7ebbc98581b4de0d35115bd577ba5677",
+        "short": "5802a83c7"
+      },
+      "goal": "N13 join hygiene: ownership, generation, derived views",
+      "id": "al-01M2K1WGEEG603R37FJ0Q748G8",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "yes keep going finish remaining nodes",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "understanding-views-n13-hygiene",
+      "signals": {
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "SolutionTreeSurface in session-contracts 2; ExtractorGeneration 2026-09-15.1; docs-graph derive + build-doc-viewer.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/SolutionTreeSurface.cs",
+        "tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs",
+        "tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs",
+        "docs/design/solution-tree.md",
+        "docs/proof/uv-1-solution-tree-shell.md",
+        "docs/proof/native-ui-solution-tree.md"
+      ],
+      "datetime": "2026-09-15T17:43:25Z",
+      "done_when": "derived-views and site-figures green; chrome tests green; recount + tools/run-verify-gates.py; N10 note filed; not main",
+      "duration_seconds": 329.0,
+      "fan_out": 1,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "3d6ba76bf67b3953586f7b1ae52820c5ead459c3",
+        "short": "3d6ba76bf"
+      },
+      "goal": "Close remaining N13 join hygiene and D-0 chrome on understanding-views without admitting D-1",
+      "id": "al-01M2K2N7G50RTSRN8HRRDYE2SS",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "yes keep going finish remaining nodes — N13 join hygiene then D-0 chrome (glyph, Ctrl+Enter, zone). Do not admit D-1. Join stays understanding-views.",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "implement-d0-chrome",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-15T17:37:56Z",
+      "summary": "N13 derived-views + site-figures committed a6d65160. D-0 chrome 3d6ba76b: folder/file/dashed-folder glyphs, stale glyph, file double-click View source, dual-activate node menu, ArchitectureDefault pin View-menu-only. App.Tests SolutionTree+default 18 green. Physical Ctrl+Enter still Flagged. N10 review in flight. Recount next.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T17:43:26Z",
+      "id": "al-01M2K2N7NQ7HNX227PHD5HC9AA",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "yes keep going finish remaining nodes",
+      "session": "prompt-log",
+      "shortname": "yes keep going finish remaining nodes",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n10-design-acceptance.md"
+      ],
+      "datetime": "2026-09-15T17:55:20Z",
+      "done_when": "decision note committed with PASS / PASS-WITH-CONDITIONS / BLOCK; design stays draft unless evidenced to accept; no src/; no D-1; no main",
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "44ed80607724f8a60665e0b1f5a1acbf5d36e33a",
+        "short": "44ed80607"
+      },
+      "goal": "N10 adversarial review of D-0 Solution tree design (Test Architect hard veto + Simplifier)",
+      "id": "al-01M2K3B1MTTVRK7AYWG6VC9VSC",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "N10 design adversarial review for D-0 Solution tree on branch understanding-views. Persona: Test Architect (hard veto) with Simplifier. Adversary Mode. Write docs/notes/understanding-views-n10-design-acceptance.md. Verdict: PASS / PASS-WITH-CONDITIONS / BLOCK. Do not implement src/. Do not admit D-1. Do not join main.",
+      "session": "understanding-views-n10",
+      "shortname": "understanding-views-n10-design-acceptance",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "design-slice",
+      "summary": "PASS-WITH-CONDITIONS. Six N9 closes Verified in tests. Design stays draft. T5a/b visual, FieldsSurvive pair, US-T8 error+Retry, US-T13, physical Ctrl+Enter Flagged, Zone-prose contradiction. Panel incomplete (Patterns, SRE). No D-1. No main.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/understanding-views.md",
+        "tools/expected-test-counts.json"
+      ],
+      "datetime": "2026-09-15T18:09:50Z",
+      "done_when": "38/38 tools/run-verify-gates.py; chrome tests green; N10 note filed; recount updated; not main",
+      "fan_out": 1,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "c421fc682bb1a140601fd60fd94afd195cf1d7ba",
+        "short": "c421fc682"
+      },
+      "goal": "Close remaining N13 join hygiene and D-0 chrome on understanding-views without admitting D-1",
+      "id": "al-01M2K45K2M19774CPAGKSYT965",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "yes keep going finish remaining nodes",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "n13-join-38",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "N13 38/38 on understanding-views (c421fc68). Recount App 1041 Core 2745 portable 2570 nonportable 175 (3786). D-0 chrome landed (glyphs, menu, double-click View source, zone View-menu-only, StaleBrush). N10 PASS-WITH-CONDITIONS, design stays draft. N14 stop holds. Physical Ctrl+Enter still Flagged. Not main. Not D-1.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs",
+        "src/AiDe.App/Workbench/SolutionTreeSurface.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "docs/design/solution-tree.md"
+      ],
+      "datetime": "2026-09-15T18:33:21Z",
+      "done_when": "C1-C3 and C5 evidenced in tests or design; C4 still Flagged; recount updated; not main",
+      "duration_seconds": 540.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "40c431bd38f324832dff7d60c8e3ee2de2c41ad4",
+        "short": "40c431bd3"
+      },
+      "goal": "Close remaining D-0 N10 conditions on understanding-views without admitting D-1",
+      "id": "al-01M2K5GMP623YDNG9DT8PERZXS",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going — close remaining D-0 N10 conditions on understanding-views without admitting D-1",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "implement-n10-c1-c3",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-15T18:24:21Z",
+      "summary": "Closed N10 C1 T5a/b visual Fake DTOs (Not recorded chrome, unindexed leaf); C2 App wrap pair (no Presentation twin); C3 activate-error overlay + Retry, Show Graph opens canvas, US-T13 Explore pin; C5 freeze prose. C4 physical Ctrl+Enter stays Flagged. App.Tests 1048. HEAD 40c431bd. Not main. Not D-1.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n10-patterns.md"
+      ],
+      "datetime": "2026-09-15T19:00:28Z",
+      "done_when": "docs/notes/understanding-views-n10-patterns.md exists with verdict, named patterns, and any BLOCK; that note committed; design stays draft",
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "ac584d9b08b3bf1a085aaf99f3454faf83e45911",
+        "short": "ac584d9b0"
+      },
+      "goal": "Write N10 Patterns Expert decision note for D-0 Solution tree; verdict PASS / PASS-WITH-CONDITIONS / BLOCK; do not accept the design",
+      "id": "al-01M2K729PV7V5DF1563910Y8S7",
+      "kind": "skill",
+      "outcome": "success",
+      "persona_yield": [
+        {
+          "accepted": 0,
+          "persona": "patterns-expert",
+          "raised": 1
+        }
+      ],
+      "prompt": "N10 Patterns Expert for D-0 Solution tree. Adversary Mode. Are named patterns the right ones (Query-time join, derived menu ADR-0030, WPF TreeView, wrap VM not Presentation twin)? Any invented pattern that should be a named one? Soft veto on unjustified complexity. Write docs/notes/understanding-views-n10-patterns.md. Verdict PASS / PASS-WITH-CONDITIONS / BLOCK. Do not implement src/. Do not admit D-1. Do not join main. Do not mark the design Accepted.",
+      "session": "understanding-views-n10",
+      "shortname": "understanding-views-n10-patterns",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "design-slice",
+      "summary": "PASS. Query-time join, derived menu (ADR-0030), WPF TreeView, wrap-VM-not-Presentation-twin are the right named patterns. Soft veto not raised. No BLOCK. Design stays draft. P13 wrap-not-twin is a table-row Minor. SRE still unsat. No D-1. No main.",
+      "tags": [
+        "N10",
+        "patterns-expert",
+        "D-0"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n10-sre.md"
+      ],
+      "datetime": "2026-09-15T19:02:34Z",
+      "done_when": "decision note committed with PASS / PASS-WITH-CONDITIONS / BLOCK; design stays draft; no src/; no D-1; no main",
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "d7888f377713b045f51f6ded818e2c71683114e8",
+        "short": "d7888f377"
+      },
+      "goal": "N10 SRE adversary review of D-0 Solution tree telemetry, caps, cancel, and failure modes",
+      "id": "al-01M2K764PS7E6GFY0PZX27KAVF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "N10 SRE / Observability for D-0 Solution tree. Adversary Mode. Write docs/notes/understanding-views-n10-sre.md. Verdict PASS / PASS-WITH-CONDITIONS / BLOCK. Do not implement src/. Do not admit D-1. Do not join main. Do not mark the design Accepted.",
+      "session": "understanding-views-n10",
+      "shortname": "understanding-views-n10-sre",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "design-slice",
+      "summary": "PASS-WITH-CONDITIONS. Operator questions named; success path emits duration, counts, shortfall causes, outcome ok. Caps 2000/5000 stay Inferred. Cancel throws in Core; shell passes None. Design stays draft. No D-1. No main.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n10-patterns.md",
+        "docs/notes/understanding-views-n10-sre.md",
+        "tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs"
+      ],
+      "datetime": "2026-09-15T19:07:53Z",
+      "done_when": "Patterns and SRE notes committed; View-source fault E2E green; C4 still Flagged; not main",
+      "duration_seconds": 801.0,
+      "fan_out": 2,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "aab4f9ae42ddcaa2c53d3e2f247194407d7fe49f",
+        "short": "aab4f9ae4"
+      },
+      "goal": "Finish remaining D-0 follow-through: N10 Patterns+SRE receipts and proveable Ctrl+Enter",
+      "id": "al-01M2K7FW1K7BRH6J0N1X834QKD",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going — N10 Patterns+SRE, View-source fault E2E, Ctrl+Enter stays Flagged",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "n10-panel-c4-flagged",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-15T18:54:32Z",
+      "summary": "N10 panel complete: Patterns PASS (9e3c1108), SRE PASS-WITH-CONDITIONS (d7888f37). View-source fault overlay E2E green. Physical Ctrl+Enter remains Flagged (DC-014 testhost foreground). Design stays draft. Not D-1. Not main.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "tests/AiDe.Core.Tests/SolutionTreeProjectionTests.cs",
+        "tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs"
+      ],
+      "datetime": "2026-09-15T19:52:18Z",
+      "done_when": "Span tags and cancel outcome tested; overlapping populate drops stale result; recount updated; C4 Flagged; not main",
+      "duration_seconds": 555.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "c97a8a0f925afdae1ff6359c4b1fb3cc6fa1c2e1",
+        "short": "c97a8a0f9"
+      },
+      "goal": "Close remaining D-0 SRE conditions on understanding-views without admitting D-1",
+      "id": "al-01M2KA16C07DA2VJM4AAH5WT6Y",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going — close SRE D-0 conditions: telemetry tags, cancel/stale populate. Not D-1.",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "implement-sre-stale-populate",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-15T19:43:03Z",
+      "summary": "SRE closes: full SolutionTree span tags including omit-if-none shortfall.causes; outcome=canceled omits counts; TelemetryTests privacy calls SolutionTree; overlapping populate drops older Show (CTS+generation). App 1050 Core 2746. Ctrl+Enter still Flagged. Design stays draft. Not D-1. Not main.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.SolutionTreeProbe/Program.cs",
+        "tests/AiDe.App.Tests/SolutionTreeChordTests.cs"
+      ],
+      "datetime": "2026-09-15T20:03:48Z",
+      "done_when": "Out-of-process probe green; C4 no longer Flagged; recount updated; not main",
+      "duration_seconds": 397.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "1bfb250aeee2fe11b06fb7de0b3fafaef1ceaea4",
+        "short": "1bfb250ae"
+      },
+      "goal": "Prove physical Ctrl+Enter on understanding-views without admitting D-1",
+      "id": "al-01M2KAP8WR2QR5V1KM9QW1JS8K",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going — prove physical Ctrl+Enter on D-0 Solution tree without admitting D-1",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "implement-ctrl-enter-probe",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-15T19:57:11Z",
+      "summary": "C4 closed: GUI-subsystem probe SendInput Ctrl+Enter requests Reveal in graph (exit 0, stdout ctrl+enter reveal). RaiseEvent is still not the chord. App.Tests 1051. Design stays draft. Not D-1. Not main.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/DesktopHold.cs",
+        "tests/AiDe.App.Tests/SolutionTreeChordTests.cs"
+      ],
+      "datetime": "2026-09-15T20:12:27Z",
+      "done_when": "Hold announced; probe gated; seam requests resolved; no unannounced desktop run this turn",
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "fc97072f1385cf66f04e21667681d811ea81dadf",
+        "short": "fc97072f1"
+      },
+      "goal": "Honor Ruling 115 desktop hold and answer other sessions on the ledger",
+      "id": "al-01M2KB634HSDGYXAS49W4XWGKJ",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "just a reminder to coordinate with the other sessions — Astra observed unannounced SendInput",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "coord-r115-desktop-hold",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Ruling 115 miss acknowledged. Late desktop START/END on the shared ledger (req-01M2KB1GN5, req-01M2KB1GPT). Atlas/Claude notified. Chord test now refuses if Occupant() is set and announces ActualPID start/end. Resolved seven open requests to this session (no main intent; no D-1; no Atlas overlap). Desktop RELEASED. Did not re-run SendInput.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
       "artifacts": [],
       "datetime": "2026-09-15T01:21:55Z",
       "id": "al-01M2HAG1G4X73F91RF00S2748Z",
@@ -17674,710 +19140,710 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2K5VFX7G51FM03JSS1SVJ1G",
-      "shortname": "join-audit-verifier-self-test",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/audit-gate-self-test.md",
+        "docs/proof/audit-gate-self-test-author.md",
+        "docs/proof/audit-gate-self-test-review.md"
+      ],
       "datetime": "2026-09-15T18:39:16Z",
-      "session": "codex-audit-gate-conductor",
-      "prompt": "the join of 1581441da13e9b46a75242276b23c465f91264b5 into conductor/audit-gate-self-test",
-      "summary": "Core Ruling119 and frozen8b164757 handoff authorized. OwnerA1-A4 decisions, independent plan and repaired implementation reviews PASS7094c147. Conductor observed11cases7namedmutants under inherited flag; normal policy and product inputs unchanged. Original runtime receipts hash-verified reused, not a fresh runtime run. No main push. recount_seconds=0 (docs_only=False).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/audit-gate-self-test.md",
-        "docs/proof/audit-gate-self-test-author.md",
-        "docs/proof/audit-gate-self-test-review.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Add meaningful audit verifier self-test without policy changes",
       "done_when": "Reviewed self-test and ratchet shrink pass required integrated qualification",
-      "tier": "T1",
+      "duration_seconds": 8.0,
       "fan_out": 0,
+      "goal": "Add meaningful audit verifier self-test without policy changes",
+      "id": "al-01M2K5VFX7G51FM03JSS1SVJ1G",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of 1581441da13e9b46a75242276b23c465f91264b5 into conductor/audit-gate-self-test",
+      "session": "codex-audit-gate-conductor",
+      "shortname": "join-audit-verifier-self-test",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-09-15T18:39:08Z",
-      "duration_seconds": 8.0
+      "summary": "Core Ruling119 and frozen8b164757 handoff authorized. OwnerA1-A4 decisions, independent plan and repaired implementation reviews PASS7094c147. Conductor observed11cases7namedmutants under inherited flag; normal policy and product inputs unchanged. Original runtime receipts hash-verified reused, not a fresh runtime run. No main push. recount_seconds=0 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2K627DH1P4TM52X7SPRPV7C",
-      "shortname": "close-audit-verifier-self-test",
-      "datetime": "2026-09-15T18:42:57Z",
-      "session": "codex-audit-gate-conductor",
-      "prompt": "yes do this next",
-      "summary": "Complete bounded audit verifier self-test under Ruling119. Initial paired tooling commit8d431085 plus OwnerA3/A4 selftest-only repair1581441d independently PASS7094c147. Conductor observed11cases7mutants with inherited flag, inspected unchanged policy/product inputs; scripted integrated full38 PASS6fab1416. Frozen debt10 to9. Old runtime receipts reused after matching inputs/hashes; no fresh .NET run. Historical BLOCKs and harness errors preserved; known normal-policy gaps reported to Core. Final records regenerated; clean candidate handed to Core for serialized join, no Codex main push.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/audit-gate-self-test.md",
         "docs/proof/audit-gate-self-test-author.md",
         "docs/proof/audit-gate-self-test-review.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Add meaningful self-tests to the audit-log verifier without changing its policy",
+      "datetime": "2026-09-15T18:42:57Z",
       "done_when": "Red-first fixtures, independent review, applicable checks and committed evidence support a Core handoff",
-      "tier": "T1",
-      "fan_out": 4,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-09-15T18:14:31Z",
       "duration_seconds": 1706.0,
+      "fan_out": 4,
       "git": {
-        "sha": "6fab141625fbe110b8b35ca710f03d793a560b66",
-        "short": "6fab14162",
         "branch": "conductor/audit-gate-self-test",
-        "pushed": null
-      }
+        "pushed": null,
+        "sha": "6fab141625fbe110b8b35ca710f03d793a560b66",
+        "short": "6fab14162"
+      },
+      "goal": "Add meaningful self-tests to the audit-log verifier without changing its policy",
+      "id": "al-01M2K627DH1P4TM52X7SPRPV7C",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "yes do this next",
+      "session": "codex-audit-gate-conductor",
+      "shortname": "close-audit-verifier-self-test",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T18:14:31Z",
+      "summary": "Complete bounded audit verifier self-test under Ruling119. Initial paired tooling commit8d431085 plus OwnerA3/A4 selftest-only repair1581441d independently PASS7094c147. Conductor observed11cases7mutants with inherited flag, inspected unchanged policy/product inputs; scripted integrated full38 PASS6fab1416. Frozen debt10 to9. Old runtime receipts reused after matching inputs/hashes; no fresh .NET run. Historical BLOCKs and harness errors preserved; known normal-policy gaps reported to Core. Final records regenerated; clean candidate handed to Core for serialized join, no Codex main push.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2K66MAE24P2DY7ENPJQ3Y4X",
-      "shortname": "join-codex-audit-verifier-self-test",
-      "datetime": "2026-09-15T18:45:21Z",
-      "session": "claude-conductor-watch-0915",
-      "prompt": "the join of conductor/audit-gate-self-test into main",
-      "summary": "Join #8 of the 2026-09-15 stress test: Codex's candidate 0cffbbad (base bbd1bece) reviewed by the Claude conductor against Ruling 119 - outside docs the diff is exactly tools/verify-audit-log.py (a --self-test, no policy line removed, valid fixtures minted via the pack's next_id) and the one-line shrink of tools/verify-gate-self-tests.py's frozen list; self-test green, ratchet 9 remaining, failing set empty. Carries Ruling 119's definition. recount_seconds=0 (docs_only=True).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "tools/verify-audit-log.py",
         "docs/proof/audit-gate-self-test.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land Codex's reviewed audit-verifier self-test on main under Rulings 108/119 - the DC-104 ratchet's debt shrinks from 10 to 9",
+      "datetime": "2026-09-15T18:45:21Z",
       "done_when": "main carries 0cffbbad; verify-audit-log.py --self-test green on main; verify-gate-self-tests.py reads 9; gates 38 green in the primary; pushed",
-      "tier": "T1",
+      "duration_seconds": 0.0,
       "fan_out": 0,
+      "goal": "Land Codex's reviewed audit-verifier self-test on main under Rulings 108/119 - the DC-104 ratchet's debt shrinks from 10 to 9",
+      "id": "al-01M2K66MAE24P2DY7ENPJQ3Y4X",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of conductor/audit-gate-self-test into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-codex-audit-verifier-self-test",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-09-15T18:45:21Z",
-      "duration_seconds": 0.0
+      "summary": "Join #8 of the 2026-09-15 stress test: Codex's candidate 0cffbbad (base bbd1bece) reviewed by the Claude conductor against Ruling 119 - outside docs the diff is exactly tools/verify-audit-log.py (a --self-test, no policy line removed, valid fixtures minted via the pack's next_id) and the one-line shrink of tools/verify-gate-self-tests.py's frozen list; self-test green, ratchet 9 remaining, failing set empty. Carries Ruling 119's definition. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2JQ7PYW3WYGXM3N3R05K0M5",
-      "shortname": "recursive-surface-owner-decisions",
+      "actor": "GPT-6 Astra Owner",
+      "artifacts": [
+        "docs/notes/recursive-surface-ownership-owner.md"
+      ],
       "datetime": "2026-09-15T14:23:48Z",
-      "session": "codex-surface-ownership-owner",
-      "prompt": "Act as separate Owner for the bounded recursive surface-ownership programme. Confirm T1, inspect current code and section 2, decide recursive discovery, relative identity, grouped declarations, ambiguity and malformed rows. Review grounding/handoff to design review to single author red/green to independent review to join/proof/commit graph. Write only the bounded Owner decision note; no implementation or main integration. Evaluate Python-only programme-local join contract without .NET recount/build or push.",
-      "summary": "Confirmed T1 and bounded interpretation. Observed existing gate passing 13 while independent recursive inventory has 17, including unassigned Sessions/ProseView.cs. Required path-cell-only parsing, exact relative identities, grouped same-cell directory inheritance, cross-owner ambiguity failure, stale exceptions, and independent plan review. Approved programme-local join scope conditional on Test Architect gate selection. No implementation acceptance.",
-      "kind": "skill",
-      "skill": "optimize-graph",
-      "tool": null,
-      "actor": "GPT-6 Astra Owner",
-      "artifacts": [
-        "docs/notes/recursive-surface-ownership-owner.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Give the Conductor a bounded evidence-grounded decision contract",
       "done_when": "Owner semantics, scope, graph conditions, and join scope are recorded for independent review",
-      "tier": "T1",
+      "duration_seconds": 199.0,
       "fan_out": 0,
+      "goal": "Give the Conductor a bounded evidence-grounded decision contract",
+      "id": "al-01M2JQ7PYW3WYGXM3N3R05K0M5",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Act as separate Owner for the bounded recursive surface-ownership programme. Confirm T1, inspect current code and section 2, decide recursive discovery, relative identity, grouped declarations, ambiguity and malformed rows. Review grounding/handoff to design review to single author red/green to independent review to join/proof/commit graph. Write only the bounded Owner decision note; no implementation or main integration. Evaluate Python-only programme-local join contract without .NET recount/build or push.",
+      "session": "codex-surface-ownership-owner",
+      "shortname": "recursive-surface-owner-decisions",
+      "skill": "optimize-graph",
       "started_at": "2026-09-15T14:20:29Z",
-      "duration_seconds": 199.0
+      "summary": "Confirmed T1 and bounded interpretation. Observed existing gate passing 13 while independent recursive inventory has 17, including unassigned Sessions/ProseView.cs. Required path-cell-only parsing, exact relative identities, grouped same-cell directory inheritance, cross-owner ambiguity failure, stale exceptions, and independent plan review. Approved programme-local join scope conditional on Test Architect gate selection. No implementation acceptance.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2JQB4XGFHSA2PTN53Q8QZNG",
-      "shortname": "recursive-owner-ruling113",
-      "datetime": "2026-09-15T14:25:41Z",
-      "session": "codex-surface-ownership-owner",
-      "prompt": "Handle Ruling113 reconciliation. Read primary request resolution req-01M2JQ113TK7HGE7YKQ4CB92GA: standalone bare-name allowed only unique populated filename; ambiguity fails naming both. Amend Owner O1 to honor Core grant preserving grouped row directory semantics. Need updated verdict before author. Start new design-slice audit marker; same own worktree and identity; no tool authoring. Commit note and audit updates.",
-      "summary": "Observed Core grant and superseded earlier bare-first refusal with unique populated-basename resolution followed by exact relative identity. Multiple matches fail naming all; zero unresolved. Exceptions carry pending request/ruling and retirement condition. Recorded second-lander Atlas reconciliation and integration conditions. Independent review remains required.",
-      "kind": "skill",
-      "skill": "design-slice",
-      "tool": null,
       "actor": "GPT-6 Astra Owner",
       "artifacts": [
         "docs/notes/recursive-surface-ownership-owner.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Reconcile bounded parser decision with binding Core Ruling113",
+      "datetime": "2026-09-15T14:25:41Z",
       "done_when": "Owner note and explicit verdict incorporate unique standalone bare-name resolution before author dispatch",
-      "tier": "T1",
+      "duration_seconds": 52.0,
       "fan_out": 0,
+      "goal": "Reconcile bounded parser decision with binding Core Ruling113",
+      "id": "al-01M2JQB4XGFHSA2PTN53Q8QZNG",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Handle Ruling113 reconciliation. Read primary request resolution req-01M2JQ113TK7HGE7YKQ4CB92GA: standalone bare-name allowed only unique populated filename; ambiguity fails naming both. Amend Owner O1 to honor Core grant preserving grouped row directory semantics. Need updated verdict before author. Start new design-slice audit marker; same own worktree and identity; no tool authoring. Commit note and audit updates.",
+      "session": "codex-surface-ownership-owner",
+      "shortname": "recursive-owner-ruling113",
+      "skill": "design-slice",
       "started_at": "2026-09-15T14:24:49Z",
-      "duration_seconds": 52.0
+      "summary": "Observed Core grant and superseded earlier bare-first refusal with unique populated-basename resolution followed by exact relative identity. Multiple matches fail naming all; zero unresolved. Exceptions carry pending request/ruling and retirement condition. Recorded second-lander Atlas reconciliation and integration conditions. Independent review remains required.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2JQPXCYB8G0WWR0008YDPX7",
-      "shortname": "recursive-surface-ownership-plan-review",
-      "datetime": "2026-09-15T14:32:06Z",
-      "session": "codex-surface-ownership-review",
-      "prompt": "Independent pre-author plan review for the recursive surface-ownership programme; return separate Test Architect, Simplifier, Python, SRE and Orchestrator verdicts, the Testing Strategy union, and exact join gates; do not implement or edit policy.",
-      "summary": "Cleared the corrected plan for one author. Frozen semantics use grouped same-cell context plus Ruling 113 unique standalone bare-name resolution; Ruling 114 assigns ProseView. Accepted the task join with empty .NET recount/build, no push, selected Python/register/docs gates and the full mandatory gate runner.",
-      "kind": "skill",
-      "skill": "optimize-graph",
-      "tool": null,
       "actor": "codex-sol-review",
       "artifacts": [
         "docs/proof/recursive-surface-ownership-plan-review.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Independently review the recursive surface ownership plan across Test Architect, Simplifier, Python, and SRE/Orchestrator lenses without implementation or policy edits.",
+      "datetime": "2026-09-15T14:32:06Z",
       "done_when": "Separate shaped verdicts, complete test-trigger union, exact join commands, veto-clear predicates, unresolved choices, and measured review cost are recorded and committed.",
-      "tier": "T1",
-      "main_calls": 19,
-      "main_budget": 25,
-      "main_over_budget": false,
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "started_at": "2026-09-15T14:24:43Z",
       "duration_seconds": 443.0,
-      "persona_yield": [
-        {
-          "persona": "test-architect",
-          "raised": 2,
-          "accepted": 2
-        },
-        {
-          "persona": "the-simplifier",
-          "raised": 0,
-          "accepted": 0
-        },
-        {
-          "persona": "python-developer",
-          "raised": 2,
-          "accepted": 2
-        },
-        {
-          "persona": "sre-diagnostician",
-          "raised": 0,
-          "accepted": 0
-        },
-        {
-          "persona": "orchestrator",
-          "raised": 2,
-          "accepted": 2
-        }
-      ],
+      "fan_out": 0,
       "git": {
+        "branch": "review/surface-ownership",
+        "pushed": null,
         "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
-        "short": "bab5035e7",
-        "branch": "review/surface-ownership",
-        "pushed": null
-      }
-    },
-    {
-      "id": "al-01M2JQW7K5E5SH3FBVKKYMKRDW",
-      "shortname": "owner-decision-capture-correction",
-      "datetime": "2026-09-15T14:35:01Z",
-      "session": "codex-surface-ownership-owner",
-      "prompt": "Correct Owner decision-only audit capture after verify-audit-capture observed missing signals; preserve original entry.",
-      "summary": "Correction class: decision-only audit records omitted explicit verification-path=false. Original decision scope completed; no implementation Proof Pack or product acceptance was claimed. Existing verify-audit-capture is the executable control and now forms the pre-commit check for these correction records.",
-      "kind": "manual",
-      "skill": null,
-      "tool": null,
-      "actor": "GPT-6 Astra Owner",
-      "artifacts": [
-        "docs/notes/recursive-surface-ownership-owner.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Give the Conductor a bounded evidence-grounded decision contract",
-      "done_when": "Owner semantics, scope, graph conditions, and join scope are recorded for independent review",
-      "tier": "T1",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": false,
-        "verification_executed": false,
-        "acceptance_met": true
+        "short": "bab5035e7"
       },
-      "supersedes": "al-01M2JQ7PYW3WYGXM3N3R05K0M5"
-    },
-    {
-      "id": "al-01M2JQW7PC3RX7R3DQ4B01ED4S",
-      "shortname": "owner-ruling113-capture-correction",
-      "datetime": "2026-09-15T14:35:01Z",
-      "session": "codex-surface-ownership-owner",
-      "prompt": "Correct Owner Ruling113 decision-only audit capture after verify-audit-capture observed missing signals; preserve original entry.",
-      "summary": "Correction class: decision-only audit records omitted explicit verification-path=false. Ruling113 reconciliation completed; no implementation Proof Pack or product acceptance was claimed. Swept both Owner entries and added explicit evidence absence; verify-audit-capture is the existing recurrence control.",
-      "kind": "manual",
-      "skill": null,
-      "tool": null,
-      "actor": "GPT-6 Astra Owner",
-      "artifacts": [
-        "docs/notes/recursive-surface-ownership-owner.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Reconcile bounded parser decision with binding Core Ruling113",
-      "done_when": "Owner note and explicit verdict incorporate unique standalone bare-name resolution before author dispatch",
-      "tier": "T1",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": false,
-        "verification_executed": false,
-        "acceptance_met": true
-      },
-      "supersedes": "al-01M2JQB4XGFHSA2PTN53Q8QZNG"
-    },
-    {
-      "id": "al-01M2JS1PYHM37VK5BK5DNQAZ7C",
-      "shortname": "recursive-surface-ownership-implementation-review",
-      "datetime": "2026-09-15T14:55:29Z",
-      "session": "codex-surface-ownership-review",
-      "prompt": "Independently review frozen author commit 18a4a19f with a byte-pinned snapshot, adversarial parser and ownership oracles, real 17-file register state, author proof and exact scope; do not edit author code or rerun .NET.",
-      "summary": "Blocked 18a4a19f after a 4/9 independent adversarial run. Five fixtures expose missing heading resets, missing Path-header and delimiter diagnostics, overbroad non-surface relevance, and indented section-end parsing. Built-in self-test and 17/17 live register still pass but do not cover these failures.",
+      "goal": "Independently review the recursive surface ownership plan across Test Architect, Simplifier, Python, and SRE/Orchestrator lenses without implementation or policy edits.",
+      "id": "al-01M2JQPXCYB8G0WWR0008YDPX7",
       "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": "codex-sol-review",
-      "artifacts": [
-        "docs/proof/recursive-surface-ownership-review.md"
-      ],
-      "tags": [],
-      "outcome": "blocked",
-      "goal": "Independently review frozen commit 18a4a19f for recursive surface ownership correctness, Python quality, simplicity, and bounded evidence.",
-      "done_when": "Byte-pinned tests, real-register outcomes, scope inspection, shaped persona verdicts, executable counterexamples, and veto-clear predicates are recorded and committed.",
-      "tier": "T1",
-      "main_calls": 14,
       "main_budget": 25,
+      "main_calls": 19,
       "main_over_budget": false,
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": false,
-        "regression": false
-      },
-      "started_at": "2026-09-15T14:47:28Z",
-      "duration_seconds": 481.0,
+      "outcome": "success",
       "persona_yield": [
         {
+          "accepted": 2,
           "persona": "test-architect",
-          "raised": 2,
-          "accepted": 2
+          "raised": 2
         },
         {
-          "persona": "python-developer",
-          "raised": 3,
-          "accepted": 3
-        },
-        {
+          "accepted": 0,
           "persona": "the-simplifier",
-          "raised": 1,
-          "accepted": 1
+          "raised": 0
         },
         {
+          "accepted": 2,
+          "persona": "python-developer",
+          "raised": 2
+        },
+        {
+          "accepted": 0,
           "persona": "sre-diagnostician",
-          "raised": 1,
-          "accepted": 1
+          "raised": 0
         },
         {
-          "persona": "data-persistence-architect",
-          "raised": 1,
-          "accepted": 1
+          "accepted": 2,
+          "persona": "orchestrator",
+          "raised": 2
         }
       ],
-      "git": {
-        "sha": "8690c5fa83562d1204554be178c8a52b016e3293",
-        "short": "8690c5fa8",
-        "branch": "review/surface-ownership",
-        "pushed": null
-      }
+      "prompt": "Independent pre-author plan review for the recursive surface-ownership programme; return separate Test Architect, Simplifier, Python, SRE and Orchestrator verdicts, the Testing Strategy union, and exact join gates; do not implement or edit policy.",
+      "session": "codex-surface-ownership-review",
+      "shortname": "recursive-surface-ownership-plan-review",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "optimize-graph",
+      "started_at": "2026-09-15T14:24:43Z",
+      "summary": "Cleared the corrected plan for one author. Frozen semantics use grouped same-cell context plus Ruling 113 unique standalone bare-name resolution; Ruling 114 assigns ProseView. Accepted the task join with empty .NET recount/build, no push, selected Python/register/docs gates and the full mandatory gate runner.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2JT1MJWEKKRFZGH04CWNG9K",
-      "shortname": "recursive-surface-ownership-final-review",
-      "datetime": "2026-09-15T15:12:55Z",
-      "session": "codex-surface-ownership-review",
-      "prompt": "Re-review frozen repairs 1105bb83 and 676f63ed. Preserve the initial BLOCK and corrected provisional PASS history; require the prior nine oracles, broad Workbench pattern conflict, live 17/17 state, and targeted heading/delimiter mutation proofs before clearing vetoes.",
-      "summary": "Final bounded PASS on 676f63ed. The 1105bb83 semantic repair passed 9/9 plus the broad pattern probe but remained blocked until 676f63ed added the two required mutation oracles. The byte-pinned final self-test reports all eight injected mutants killed. No full repository green is claimed.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
+      "actor": "GPT-6 Astra Owner",
+      "artifacts": [
+        "docs/notes/recursive-surface-ownership-owner.md"
+      ],
+      "datetime": "2026-09-15T14:35:01Z",
+      "done_when": "Owner semantics, scope, graph conditions, and join scope are recorded for independent review",
+      "fan_out": 0,
+      "goal": "Give the Conductor a bounded evidence-grounded decision contract",
+      "id": "al-01M2JQW7K5E5SH3FBVKKYMKRDW",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "Correct Owner decision-only audit capture after verify-audit-capture observed missing signals; preserve original entry.",
+      "session": "codex-surface-ownership-owner",
+      "shortname": "owner-decision-capture-correction",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": false
+      },
+      "skill": null,
+      "summary": "Correction class: decision-only audit records omitted explicit verification-path=false. Original decision scope completed; no implementation Proof Pack or product acceptance was claimed. Existing verify-audit-capture is the executable control and now forms the pre-commit check for these correction records.",
+      "supersedes": "al-01M2JQ7PYW3WYGXM3N3R05K0M5",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": "GPT-6 Astra Owner",
+      "artifacts": [
+        "docs/notes/recursive-surface-ownership-owner.md"
+      ],
+      "datetime": "2026-09-15T14:35:01Z",
+      "done_when": "Owner note and explicit verdict incorporate unique standalone bare-name resolution before author dispatch",
+      "fan_out": 0,
+      "goal": "Reconcile bounded parser decision with binding Core Ruling113",
+      "id": "al-01M2JQW7PC3RX7R3DQ4B01ED4S",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "Correct Owner Ruling113 decision-only audit capture after verify-audit-capture observed missing signals; preserve original entry.",
+      "session": "codex-surface-ownership-owner",
+      "shortname": "owner-ruling113-capture-correction",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": false
+      },
+      "skill": null,
+      "summary": "Correction class: decision-only audit records omitted explicit verification-path=false. Ruling113 reconciliation completed; no implementation Proof Pack or product acceptance was claimed. Swept both Owner entries and added explicit evidence absence; verify-audit-capture is the existing recurrence control.",
+      "supersedes": "al-01M2JQB4XGFHSA2PTN53Q8QZNG",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
       "actor": "codex-sol-review",
       "artifacts": [
         "docs/proof/recursive-surface-ownership-review.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Independently re-review the frozen recursive surface ownership repair and clear no veto without observed semantic and mutation evidence.",
-      "done_when": "The frozen source hash, prior BLOCK history, nine semantic oracles, broad pattern conflict, two targeted mutations, eight-mutant self-test, scoped diff and final persona verdicts are recorded and committed.",
-      "tier": "T1",
-      "main_calls": 16,
-      "main_budget": 16,
-      "main_over_budget": false,
+      "datetime": "2026-09-15T14:55:29Z",
+      "done_when": "Byte-pinned tests, real-register outcomes, scope inspection, shaped persona verdicts, executable counterexamples, and veto-clear predicates are recorded and committed.",
+      "duration_seconds": 481.0,
       "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
+      "git": {
+        "branch": "review/surface-ownership",
+        "pushed": null,
+        "sha": "8690c5fa83562d1204554be178c8a52b016e3293",
+        "short": "8690c5fa8"
       },
-      "started_at": "2026-09-15T15:04:13Z",
-      "duration_seconds": 522.0,
+      "goal": "Independently review frozen commit 18a4a19f for recursive surface ownership correctness, Python quality, simplicity, and bounded evidence.",
+      "id": "al-01M2JS1PYHM37VK5BK5DNQAZ7C",
+      "kind": "skill",
+      "main_budget": 25,
+      "main_calls": 14,
+      "main_over_budget": false,
+      "outcome": "blocked",
       "persona_yield": [
         {
+          "accepted": 2,
           "persona": "test-architect",
-          "raised": 1,
-          "accepted": 1
+          "raised": 2
         },
         {
+          "accepted": 3,
           "persona": "python-developer",
-          "raised": 0,
-          "accepted": 0
+          "raised": 3
         },
         {
+          "accepted": 1,
           "persona": "the-simplifier",
-          "raised": 0,
-          "accepted": 0
+          "raised": 1
         },
         {
+          "accepted": 1,
           "persona": "sre-diagnostician",
-          "raised": 0,
-          "accepted": 0
+          "raised": 1
         },
         {
+          "accepted": 1,
           "persona": "data-persistence-architect",
-          "raised": 0,
-          "accepted": 0
+          "raised": 1
         }
       ],
-      "git": {
-        "sha": "3d9768bdfa5832acda572bb2eceb754831191285",
-        "short": "3d9768bdf",
-        "branch": "review/surface-ownership",
-        "pushed": null
-      }
+      "prompt": "Independently review frozen author commit 18a4a19f with a byte-pinned snapshot, adversarial parser and ownership oracles, real 17-file register state, author proof and exact scope; do not edit author code or rerun .NET.",
+      "session": "codex-surface-ownership-review",
+      "shortname": "recursive-surface-ownership-implementation-review",
+      "signals": {
+        "acceptance_met": false,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-15T14:47:28Z",
+      "summary": "Blocked 18a4a19f after a 4/9 independent adversarial run. Five fixtures expose missing heading resets, missing Path-header and delimiter diagnostics, overbroad non-surface relevance, and indented section-end parsing. Built-in self-test and 17/17 live register still pass but do not cover these failures.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2K13QBTAVSKMYC3AMS1DK44",
-      "shortname": "ownership-qualification-review",
-      "datetime": "2026-09-15T17:16:23Z",
-      "session": "codex-ownership-qualification-review",
-      "prompt": "Independently verify the published Core stranded-audit blocker fix and continuation plan without reimplementation; test self-test and normal mode, pin unchanged recursive gate and receipt inputs, and return Test Architect and Simplifier verdicts.",
-      "summary": "Qualified the published primary-log liveness fix: current self-test and normal linked-tree run passed; a temporary old-lookup mutant failed; recursive gate, .NET source/test inputs, and retained receipt hashes matched. Recorded external docs-link repair as pending integration dependency. The 12-call estimate was exceeded by two calls after a stale receipt patch context required inspection and retry.",
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership-review.md"
+      ],
+      "datetime": "2026-09-15T15:12:55Z",
+      "done_when": "The frozen source hash, prior BLOCK history, nine semantic oracles, broad pattern conflict, two targeted mutations, eight-mutant self-test, scoped diff and final persona verdicts are recorded and committed.",
+      "duration_seconds": 522.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/surface-ownership",
+        "pushed": null,
+        "sha": "3d9768bdfa5832acda572bb2eceb754831191285",
+        "short": "3d9768bdf"
+      },
+      "goal": "Independently re-review the frozen recursive surface ownership repair and clear no veto without observed semantic and mutation evidence.",
+      "id": "al-01M2JT1MJWEKKRFZGH04CWNG9K",
       "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
+      "main_budget": 16,
+      "main_calls": 16,
+      "main_over_budget": false,
+      "outcome": "success",
+      "persona_yield": [
+        {
+          "accepted": 1,
+          "persona": "test-architect",
+          "raised": 1
+        },
+        {
+          "accepted": 0,
+          "persona": "python-developer",
+          "raised": 0
+        },
+        {
+          "accepted": 0,
+          "persona": "the-simplifier",
+          "raised": 0
+        },
+        {
+          "accepted": 0,
+          "persona": "sre-diagnostician",
+          "raised": 0
+        },
+        {
+          "accepted": 0,
+          "persona": "data-persistence-architect",
+          "raised": 0
+        }
+      ],
+      "prompt": "Re-review frozen repairs 1105bb83 and 676f63ed. Preserve the initial BLOCK and corrected provisional PASS history; require the prior nine oracles, broad Workbench pattern conflict, live 17/17 state, and targeted heading/delimiter mutation proofs before clearing vetoes.",
+      "session": "codex-surface-ownership-review",
+      "shortname": "recursive-surface-ownership-final-review",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-15T15:04:13Z",
+      "summary": "Final bounded PASS on 676f63ed. The 1105bb83 semantic repair passed 9/9 plus the broad pattern probe but remained blocked until 676f63ed added the two required mutation oracles. The byte-pinned final self-test reports all eight injected mutants killed. No full repository green is claimed.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
       "actor": "codex-sol-review",
       "artifacts": [
         "docs/proof/ownership-qualification-review.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Independently qualify the published Core blocker fix and continuation plan.",
+      "datetime": "2026-09-15T17:16:23Z",
       "done_when": "Test Architect and Simplifier verdicts cite fixed stranded-check behavior, its self-test, unchanged recursive gate blob, actual plan/proof inputs, and the remaining integration boundary.",
-      "tier": "T1",
-      "main_calls": 14,
-      "main_budget": 12,
-      "main_over_budget": true,
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "started_at": "2026-09-15T17:11:43Z",
       "duration_seconds": 280.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/ownership-qualification",
+        "pushed": null,
+        "sha": "0b3644f22f16dffee32bd9a9a7fb212ad1639508",
+        "short": "0b3644f22"
+      },
+      "goal": "Independently qualify the published Core blocker fix and continuation plan.",
+      "id": "al-01M2K13QBTAVSKMYC3AMS1DK44",
+      "kind": "skill",
+      "main_budget": 12,
+      "main_calls": 14,
+      "main_over_budget": true,
+      "outcome": "success",
       "persona_yield": [
         {
+          "accepted": 0,
           "persona": "test-architect",
-          "raised": 0,
-          "accepted": 0
+          "raised": 0
         },
         {
+          "accepted": 0,
           "persona": "the-simplifier",
-          "raised": 0,
-          "accepted": 0
+          "raised": 0
         }
       ],
-      "git": {
-        "sha": "0b3644f22f16dffee32bd9a9a7fb212ad1639508",
-        "short": "0b3644f22",
-        "branch": "review/ownership-qualification",
-        "pushed": null
-      }
+      "prompt": "Independently verify the published Core stranded-audit blocker fix and continuation plan without reimplementation; test self-test and normal mode, pin unchanged recursive gate and receipt inputs, and return Test Architect and Simplifier verdicts.",
+      "session": "codex-ownership-qualification-review",
+      "shortname": "ownership-qualification-review",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T17:11:43Z",
+      "summary": "Qualified the published primary-log liveness fix: current self-test and normal linked-tree run passed; a temporary old-lookup mutant failed; recursive gate, .NET source/test inputs, and retained receipt hashes matched. Recorded external docs-link repair as pending integration dependency. The 12-call estimate was exceeded by two calls after a stale receipt patch context required inspection and retry.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2K3XBYV34EXG1QW3EYBQTRW",
-      "shortname": "audit-gate-self-test-owner",
-      "datetime": "2026-09-15T18:05:21Z",
-      "session": "codex-audit-gate-owner",
-      "prompt": "New bounded programme Astra Owner no implementation. Start design-slice audit in provisioned isolated worktree. Confirm T1 objective bounded acceptance and design with unchanged policy. Inspect verifier and repo guidance. Decide fixture strategy real temporary Git repo, valid legacy/ULID/appends, duplicates/deletion/malformed/missing/invalid-ID and mutant-proof diagnostic/status assertions. Author only docs/notes/audit-gate-self-test-owner.md plus official audit/derived outputs using short exact lease. Budget10 calls/12min/12k tokens. End with committed decision receipt and scope/gates. No spawn, EnterWorktree or main push. Core grant request pending; no author before grant. Independent reviewer clears veto.",
-      "summary": "T1 design scope confirmed. Source-inspected existing policy and real HEAD comparison; selected isolated real-Git CLI fixtures and semantic mutants. Missing means missing id; absent file stays accepted. Primitive JSON potential crash explicitly outside scope. Core grant and independent reviews remain conditions. Decision artifact only; no implementation evidence claimed.",
-      "kind": "skill",
-      "skill": "design-slice",
-      "tool": null,
       "actor": "GPT-6 Astra Owner",
       "artifacts": [
         "docs/notes/audit-gate-self-test-owner.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Define bounded audit-gate self-test acceptance without policy changes",
+      "datetime": "2026-09-15T18:05:21Z",
       "done_when": "Owner decision receipt defines fixture oracles, scope, and independent review floors for Conductor execution",
-      "tier": "T1",
+      "duration_seconds": 153.0,
       "fan_out": 0,
+      "goal": "Define bounded audit-gate self-test acceptance without policy changes",
+      "id": "al-01M2K3XBYV34EXG1QW3EYBQTRW",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "New bounded programme Astra Owner no implementation. Start design-slice audit in provisioned isolated worktree. Confirm T1 objective bounded acceptance and design with unchanged policy. Inspect verifier and repo guidance. Decide fixture strategy real temporary Git repo, valid legacy/ULID/appends, duplicates/deletion/malformed/missing/invalid-ID and mutant-proof diagnostic/status assertions. Author only docs/notes/audit-gate-self-test-owner.md plus official audit/derived outputs using short exact lease. Budget10 calls/12min/12k tokens. End with committed decision receipt and scope/gates. No spawn, EnterWorktree or main push. Core grant request pending; no author before grant. Independent reviewer clears veto.",
+      "session": "codex-audit-gate-owner",
+      "shortname": "audit-gate-self-test-owner",
       "signals": {
-        "verification_path": false,
+        "acceptance_met": true,
         "verification_executed": false,
-        "acceptance_met": true
+        "verification_path": false
       },
+      "skill": "design-slice",
       "started_at": "2026-09-15T18:02:48Z",
-      "duration_seconds": 153.0
+      "summary": "T1 design scope confirmed. Source-inspected existing policy and real HEAD comparison; selected isolated real-Git CLI fixtures and semantic mutants. Missing means missing id; absent file stays accepted. Primitive JSON potential crash explicitly outside scope. Core grant and independent reviews remain conditions. Decision artifact only; no implementation evidence claimed.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2K495Q25KRANG6BKXFTQCS7",
-      "shortname": "audit-gate-plan-review",
-      "datetime": "2026-09-15T18:11:48Z",
-      "session": "codex-audit-gate-review",
-      "prompt": "Independently review the audit verifier self-test plan under Ruling 119; require real temporary Git fixtures, canonical allocator-generated ULIDs, discriminating CLI oracles, red-first mutation evidence, and no normal-policy expansion.",
-      "summary": "Initially blocked the plan after observing that the old CLI treated --self-test as an absent positional file and exited 0. Re-reviewed a95a8182 and 11d9f8a7; the latter supplied the Owner-approved disposable-copy red sequence, seven exact mutants, fixed cases, allocator and scope boundaries. Cleared Test, Simplifier, Python, SRE and Orchestrator plan verdicts while preserving the initial BLOCK history.",
-      "kind": "skill",
-      "skill": "design-slice",
-      "tool": null,
       "actor": "codex-sol-review",
       "artifacts": [
         "docs/proof/audit-gate-plan-review.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Independently review the audit-gate self-test plan against Ruling 119 and real verifier contracts.",
+      "datetime": "2026-09-15T18:11:48Z",
       "done_when": "Test Architect, Simplifier, Python, SRE and Orchestrator verdicts cover D0/D1/D2/D4, fixture fidelity, CLI diagnostics and scope boundaries before author dispatch.",
-      "tier": "T1",
-      "main_calls": 9,
-      "main_budget": 6,
-      "main_over_budget": true,
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "started_at": "2026-09-15T18:06:24Z",
       "duration_seconds": 324.0,
-      "persona_yield": [
-        {
-          "persona": "test-architect",
-          "raised": 2,
-          "accepted": 2
-        },
-        {
-          "persona": "the-simplifier",
-          "raised": 1,
-          "accepted": 1
-        },
-        {
-          "persona": "python-developer",
-          "raised": 1,
-          "accepted": 1
-        },
-        {
-          "persona": "sre-systems-diagnostician",
-          "raised": 1,
-          "accepted": 1
-        },
-        {
-          "persona": "orchestrator",
-          "raised": 1,
-          "accepted": 1
-        }
-      ],
+      "fan_out": 0,
       "git": {
+        "branch": "review/audit-gate-self-test",
+        "pushed": null,
         "sha": "bbd1bece3b0f83148a66696a0e778ef2cd20235e",
-        "short": "bbd1bece3",
-        "branch": "review/audit-gate-self-test",
-        "pushed": null
-      }
-    },
-    {
-      "id": "al-01M2K5AS8TJH31K3MJ2X9PQW3P",
-      "shortname": "audit-gate-implementation-review",
-      "datetime": "2026-09-15T18:30:09Z",
-      "session": "codex-audit-gate-review",
-      "prompt": "Independently review frozen author commit 8d431085 against Ruling 119, execute self-test and normal/ratchet gates, probe argparse abbreviation and inherited mutation-control environment, and return persona vetoes without editing author source.",
-      "summary": "Blocked the frozen candidate after observing inherited AUDIT_GATE_MUTANT skip all seven mutants while reporting success and argparse abbreviation route --self into self-test. Verified the nine-case/seven-mutant normal run, canonical allocator seam, unchanged normal logic, candidate-root ratchets, compilation and isolated cleanup. Corrected a wrong-cwd ratchet run and withdrew a shared-prefix cleanup attribution after isolated disconfirmation.",
-      "kind": "skill",
-      "skill": "forensicreview",
-      "tool": null,
-      "actor": "codex-sol-review",
-      "artifacts": [
-        "docs/proof/audit-gate-self-test-review.md"
-      ],
-      "tags": [],
-      "outcome": "blocked",
-      "goal": "Independently review frozen audit-gate self-test implementation against Ruling 119 and the approved plan.",
-      "done_when": "Test Architect, Python, SRE, Simplifier and Security verdicts cite observed gates, adversarial environment/CLI probes, policy scope, allocator fidelity and fixture isolation.",
-      "tier": "T1",
-      "main_calls": 9,
-      "main_budget": 12,
-      "main_over_budget": false,
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": false,
-        "regression": true
+        "short": "bbd1bece3"
       },
-      "started_at": "2026-09-15T18:25:02Z",
-      "duration_seconds": 307.0,
-      "persona_yield": [
-        {
-          "persona": "test-architect",
-          "raised": 2,
-          "accepted": 0
-        },
-        {
-          "persona": "python-developer",
-          "raised": 2,
-          "accepted": 0
-        },
-        {
-          "persona": "security-identity-architect",
-          "raised": 1,
-          "accepted": 0
-        },
-        {
-          "persona": "sre-systems-diagnostician",
-          "raised": 1,
-          "accepted": 0
-        },
-        {
-          "persona": "the-simplifier",
-          "raised": 1,
-          "accepted": 0
-        }
-      ],
-      "git": {
-        "sha": "037e1427a7787c6969c9dcde1efa8a9fc38b755b",
-        "short": "037e1427a",
-        "branch": "review/audit-gate-self-test",
-        "pushed": null
-      }
-    },
-    {
-      "id": "al-01M2K5REEWBT50CJCYH0JJR8HP",
-      "shortname": "audit-gate-focused-rereview",
-      "datetime": "2026-09-15T18:37:37Z",
-      "session": "codex-audit-gate-review",
-      "prompt": "Focused independent re-review of frozen repair 1581441d: reproduce inherited mutation environment, exact CLI argv, inherited Git repository environment, actual counts, cleanup, unchanged normal policy, ratchet and compilation.",
-      "summary": "Cleared the prior implementation vetoes. Inherited AUDIT_GATE_MUTANT ran all seven mutants; --self/--help/--other retained positional behavior; spectator Git variables were scrubbed with unchanged HEAD/index/config/status; isolated temp parent was empty. Normal audit gate, ratchet normal/self-test and compilation passed. Frozen blob and SHA-256 matched.",
+      "goal": "Independently review the audit-gate self-test plan against Ruling 119 and real verifier contracts.",
+      "id": "al-01M2K495Q25KRANG6BKXFTQCS7",
       "kind": "skill",
-      "skill": "forensicreview",
-      "tool": null,
-      "actor": "codex-sol-review",
-      "artifacts": [
-        "docs/proof/audit-gate-self-test-review.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Independently re-review frozen audit-gate repair against the three recorded veto conditions.",
-      "done_when": "Exact flag behavior, inherited mutation and Git environments, actual counts, normal policy scope, ratchet state, cleanup and persona veto clearance are observed.",
-      "tier": "T1",
-      "main_calls": 6,
       "main_budget": 6,
-      "main_over_budget": false,
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "started_at": "2026-09-15T18:35:27Z",
-      "duration_seconds": 130.0,
+      "main_calls": 9,
+      "main_over_budget": true,
+      "outcome": "success",
       "persona_yield": [
         {
+          "accepted": 2,
           "persona": "test-architect",
-          "raised": 0,
-          "accepted": 0
+          "raised": 2
         },
         {
-          "persona": "python-developer",
-          "raised": 0,
-          "accepted": 0
-        },
-        {
-          "persona": "security-identity-architect",
-          "raised": 0,
-          "accepted": 0
-        },
-        {
-          "persona": "sre-systems-diagnostician",
-          "raised": 0,
-          "accepted": 0
-        },
-        {
+          "accepted": 1,
           "persona": "the-simplifier",
-          "raised": 0,
-          "accepted": 0
+          "raised": 1
+        },
+        {
+          "accepted": 1,
+          "persona": "python-developer",
+          "raised": 1
+        },
+        {
+          "accepted": 1,
+          "persona": "sre-systems-diagnostician",
+          "raised": 1
+        },
+        {
+          "accepted": 1,
+          "persona": "orchestrator",
+          "raised": 1
         }
       ],
-      "git": {
-        "sha": "d27b69c55d04271dd99287d9d7d97b515c2f45ef",
-        "short": "d27b69c55",
-        "branch": "review/audit-gate-self-test",
-        "pushed": null
-      }
+      "prompt": "Independently review the audit verifier self-test plan under Ruling 119; require real temporary Git fixtures, canonical allocator-generated ULIDs, discriminating CLI oracles, red-first mutation evidence, and no normal-policy expansion.",
+      "session": "codex-audit-gate-review",
+      "shortname": "audit-gate-plan-review",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "design-slice",
+      "started_at": "2026-09-15T18:06:24Z",
+      "summary": "Initially blocked the plan after observing that the old CLI treated --self-test as an absent positional file and exited 0. Re-reviewed a95a8182 and 11d9f8a7; the latter supplied the Owner-approved disposable-copy red sequence, seven exact mutants, fixed cases, allocator and scope boundaries. Cleared Test, Simplifier, Python, SRE and Orchestrator plan verdicts while preserving the initial BLOCK history.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2K9MRY6CT65D2PYN2AYSJT7",
-      "shortname": "join-conductor-watch-0915-9",
-      "datetime": "2026-09-15T19:45:31Z",
-      "session": "claude-conductor-watch-0915",
-      "prompt": "the join of conductor/watch-0915 into main",
-      "summary": "Ninth coordination join: Codex's Owner/reviewer sub-lanes had logged 12 audit entries on owner/* and review/* branches that never merged; unioned by id into main's audit log, verbatim, nothing rewritten; verify-audit-log OK (858 entries, every id claimed once); derived regenerated. Docs only. recount_seconds=0 (docs_only=True).",
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/audit-gate-self-test-review.md"
+      ],
+      "datetime": "2026-09-15T18:30:09Z",
+      "done_when": "Test Architect, Python, SRE, Simplifier and Security verdicts cite observed gates, adversarial environment/CLI probes, policy scope, allocator fidelity and fixture isolation.",
+      "duration_seconds": 307.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/audit-gate-self-test",
+        "pushed": null,
+        "sha": "037e1427a7787c6969c9dcde1efa8a9fc38b755b",
+        "short": "037e1427a"
+      },
+      "goal": "Independently review frozen audit-gate self-test implementation against Ruling 119 and the approved plan.",
+      "id": "al-01M2K5AS8TJH31K3MJ2X9PQW3P",
       "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
+      "main_budget": 12,
+      "main_calls": 9,
+      "main_over_budget": false,
+      "outcome": "blocked",
+      "persona_yield": [
+        {
+          "accepted": 0,
+          "persona": "test-architect",
+          "raised": 2
+        },
+        {
+          "accepted": 0,
+          "persona": "python-developer",
+          "raised": 2
+        },
+        {
+          "accepted": 0,
+          "persona": "security-identity-architect",
+          "raised": 1
+        },
+        {
+          "accepted": 0,
+          "persona": "sre-systems-diagnostician",
+          "raised": 1
+        },
+        {
+          "accepted": 0,
+          "persona": "the-simplifier",
+          "raised": 1
+        }
+      ],
+      "prompt": "Independently review frozen author commit 8d431085 against Ruling 119, execute self-test and normal/ratchet gates, probe argparse abbreviation and inherited mutation-control environment, and return persona vetoes without editing author source.",
+      "session": "codex-audit-gate-review",
+      "shortname": "audit-gate-implementation-review",
+      "signals": {
+        "acceptance_met": false,
+        "regression": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "forensicreview",
+      "started_at": "2026-09-15T18:25:02Z",
+      "summary": "Blocked the frozen candidate after observing inherited AUDIT_GATE_MUTANT skip all seven mutants while reporting success and argparse abbreviation route --self into self-test. Verified the nine-case/seven-mutant normal run, canonical allocator seam, unchanged normal logic, candidate-root ratchets, compilation and isolated cleanup. Corrected a wrong-cwd ratchet run and withdrew a shared-prefix cleanup attribution after isolated disconfirmation.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/audit-gate-self-test-review.md"
+      ],
+      "datetime": "2026-09-15T18:37:37Z",
+      "done_when": "Exact flag behavior, inherited mutation and Git environments, actual counts, normal policy scope, ratchet state, cleanup and persona veto clearance are observed.",
+      "duration_seconds": 130.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/audit-gate-self-test",
+        "pushed": null,
+        "sha": "d27b69c55d04271dd99287d9d7d97b515c2f45ef",
+        "short": "d27b69c55"
+      },
+      "goal": "Independently re-review frozen audit-gate repair against the three recorded veto conditions.",
+      "id": "al-01M2K5REEWBT50CJCYH0JJR8HP",
+      "kind": "skill",
+      "main_budget": 6,
+      "main_calls": 6,
+      "main_over_budget": false,
+      "outcome": "success",
+      "persona_yield": [
+        {
+          "accepted": 0,
+          "persona": "test-architect",
+          "raised": 0
+        },
+        {
+          "accepted": 0,
+          "persona": "python-developer",
+          "raised": 0
+        },
+        {
+          "accepted": 0,
+          "persona": "security-identity-architect",
+          "raised": 0
+        },
+        {
+          "accepted": 0,
+          "persona": "sre-systems-diagnostician",
+          "raised": 0
+        },
+        {
+          "accepted": 0,
+          "persona": "the-simplifier",
+          "raised": 0
+        }
+      ],
+      "prompt": "Focused independent re-review of frozen repair 1581441d: reproduce inherited mutation environment, exact CLI argv, inherited Git repository environment, actual counts, cleanup, unchanged normal policy, ratchet and compilation.",
+      "session": "codex-audit-gate-review",
+      "shortname": "audit-gate-focused-rereview",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "forensicreview",
+      "started_at": "2026-09-15T18:35:27Z",
+      "summary": "Cleared the prior implementation vetoes. Inherited AUDIT_GATE_MUTANT ran all seven mutants; --self/--help/--other retained positional behavior; spectator Git variables were scrubbed with unchanged HEAD/index/config/status; isolated temp parent was empty. Normal audit gate, ratchet normal/self-test and compilation passed. Frozen blob and SHA-256 matched.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
       "actor": null,
       "artifacts": [
         "docs/audit/audit-log.jsonl"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Complete the publication of Codex's review history on main as the ledger's append-only union requires",
+      "datetime": "2026-09-15T19:45:31Z",
       "done_when": "main carries the 12 rows; verify-audit-log OK; gates 38 green; pushed",
-      "tier": "T1",
+      "duration_seconds": 1.0,
       "fan_out": 0,
+      "goal": "Complete the publication of Codex's review history on main as the ledger's append-only union requires",
+      "id": "al-01M2K9MRY6CT65D2PYN2AYSJT7",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of conductor/watch-0915 into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-conductor-watch-0915-9",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-09-15T19:45:30Z",
-      "duration_seconds": 1.0
+      "summary": "Ninth coordination join: Codex's Owner/reviewer sub-lanes had logged 12 audit entries on owner/* and review/* branches that never merged; unioned by id into main's audit log, verbatim, nothing rewritten; verify-audit-log OK (858 entries, every id claimed once); derived regenerated. Docs only. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2K9K9PBCJWR729NHY84ZBKB",
-      "shortname": "keep going",
-      "datetime": "2026-09-15T19:44:42Z",
-      "session": "codex-review-receipt-handoff",
-      "prompt": "keep going\nis everything you could push to main pushed and merged",
-      "summary": "Verified code/proof publication; identified twelve original Owner/reviewer audit rows still local and requested an audit-only serialized Core handoff.",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
       "actor": null,
       "artifacts": [],
+      "datetime": "2026-09-15T19:44:42Z",
+      "id": "al-01M2K9K9PBCJWR729NHY84ZBKB",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "keep going\nis everything you could push to main pushed and merged",
+      "session": "codex-review-receipt-handoff",
+      "shortname": "keep going",
+      "skill": null,
+      "summary": "Verified code/proof publication; identified twelve original Owner/reviewer audit rows still local and requested an audit-only serialized Core handoff.",
       "tags": [],
-      "outcome": "success"
+      "tool": null
     }
   ],
   "changes": [
@@ -22071,65 +23537,258 @@ window.AUDIT_DATA = {
       "title": "SH-1: a Scope column on the catalog row, an Entry column on the kind row, derived surface.new/show.<kind> openers, the four chord collisions, a non-checkable radio item with a Toggle peer, and one OnDocumentOpening rule"
     },
     {
-      "id": "cl-01M2BBKPRD59256PKGCQ70W5T2",
-      "datetime": "2026-09-12T17:45:57Z",
-      "session": "sh-2",
-      "kind": "decision",
-      "skill": "implement",
-      "title": "SH-2: ten decisions below ADR weight for the second host, the presenter/router, the slots and the rail",
-      "prompt": "SH-2 (/implement): the second docking host, PerspectiveShell, one layout slot per host, the rail",
-      "summary": "The router reads the catalog's CommandScope (no switch on an id); DocumentOpening names its host and follows the APPLIED add (document first, then the switch); a kind-open asks from the host that raised it; host B's interim default is today's default filtered to its kinds until SH-3's Default(perspective); the switch is two log lines (shell.mode, shell.mode.shown); the rail is a ListBox with one writer of its selection and a tab index that puts the selected destination first; a refused file is preserved every time and the pre-perspective bytes once; a reconcile keeps the view's active tab; focus after a switch is the window's EntryFocus hook; the admission's refusal codes live beside the rule.",
-      "rationale": "Each is defended in docs/notes/sh2-presenter-router-and-slots.md with the reviewer finding that shaped it; the ADR-0032 text items (the .bak once-rule's scope, the rollback-re-upgrade loss, ReplaceFile partial failures, the zone-walk order) are relayed to the ADR's owner rather than edited here.",
       "artifacts": [
         "docs/notes/sh2-presenter-router-and-slots.md",
         "docs/proof/perspective-shell.md"
       ],
+      "audit_ref": "al-01M2BBK33XE20A69BHZ9F3XJ55",
+      "datetime": "2026-09-12T17:45:57Z",
+      "git": {
+        "after": "b0e092b5f4176766f2e1870124665d9f74748d00",
+        "before": "b0e092b5",
+        "branch": "lane/shell-sh2",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2BBKPRD59256PKGCQ70W5T2",
+      "kind": "decision",
+      "prompt": "SH-2 (/implement): the second docking host, PerspectiveShell, one layout slot per host, the rail",
+      "rationale": "Each is defended in docs/notes/sh2-presenter-router-and-slots.md with the reviewer finding that shaped it; the ADR-0032 text items (the .bak once-rule's scope, the rollback-re-upgrade loss, ReplaceFile partial failures, the zone-walk order) are relayed to the ADR's owner rather than edited here.",
+      "session": "sh-2",
+      "skill": "implement",
+      "summary": "The router reads the catalog's CommandScope (no switch on an id); DocumentOpening names its host and follows the APPLIED add (document first, then the switch); a kind-open asks from the host that raised it; host B's interim default is today's default filtered to its kinds until SH-3's Default(perspective); the switch is two log lines (shell.mode, shell.mode.shown); the rail is a ListBox with one writer of its selection and a tab index that puts the selected destination first; a refused file is preserved every time and the pre-perspective bytes once; a reconcile keeps the view's active tab; focus after a switch is the window's EntryFocus hook; the admission's refusal codes live beside the rule.",
       "tags": [
         "addendum-c",
         "shell-lane",
         "adr-0031",
         "adr-0032"
       ],
-      "git": {
-        "before": "b0e092b5",
-        "after": "b0e092b5f4176766f2e1870124665d9f74748d00",
-        "branch": "lane/shell-sh2",
-        "pushed": null,
-        "commits": []
-      },
-      "audit_ref": "al-01M2BBK33XE20A69BHZ9F3XJ55"
+      "title": "SH-2: ten decisions below ADR weight for the second host, the presenter/router, the slots and the rail"
     },
     {
-      "id": "cl-01M2DZ46Z1X43CV79JQN2C9JG8",
-      "datetime": "2026-09-13T18:05:30Z",
-      "session": "d3-findings",
-      "kind": "design",
-      "skill": "ui-design",
-      "title": "D3: the conversation's item grammar, the reasoning line, the split's Center home, Coding's Center copy, Coordination's glyph — Rulings 80–84/87 rendered",
-      "prompt": "D3 — /ui-design elevate: the session conversation and the perspective shell against the operator's five 2026-09-13 findings and Rulings 80–87 — the editor's rest height, the Console's message grain, the conversation (prose · reasoning · tool call+result · outcome) like the CLI, a new session docked in Coding's Left, and the Coordination perspective (host C) for the five Loomkeeper kinds. Inputs: the five screenshot titles verbatim (C:\\Users\\malla\\Downloads\\ui findings 9-13-am\\), Rulings 80–87 (docs/notes/addendum-c-council-rulings.md, main 4b8d379c). Stages: direction in words; DESIGN.md errata rows; the two mockups with every ruled state and the review harness, measured by ui-craft-gate.py (0 findings on both is the floor) and verify-mockup-audits.py; the rubric critique with UX Researcher/IA and UX & Accessibility verdicts (hard veto); the ranked plan with named oracles for CV-5 and SH-4 and what each slice must not touch; the attended rows for the operator's next build. Docs only: DESIGN.md, docs/mockups/**, docs/reviews/**, docs/specs/addendum-c-perspectives.md (errata only), docs/notes/. No product code, no tests, no stash, no rebase, no push to main.",
-      "summary": "The reply side renders Coalesce(events) as prose · a collapsed dim Thinking line (the CLI's idiom; never announced; no duration) · tool call+result items (a decorative marker, the kind as a word, the mono title, the status word incl. interrupted, one detail disclosure as a keyboard-scrollable region) · the outcome line last; links are text with the URL visible; the Console split at Left opens in the Center zone (Inferred, for the Owner); the Center's copy while a session is open at Left has no first action; IconCoordination is a ring with three nodes; D3's tool-run grouping rule was deleted at the Simplifier's veto (+0 turns at 1440x900); the startup default's density (thread 0px at 1440x900) goes to the Owner with the five screenshots.",
-      "rationale": "Rulings 80-87 (the Owner, 2026-09-13) and the two lenses' pass-2 verdicts; measured on the rendered mockups (headless Edge), not asserted.",
       "artifacts": [
         "DESIGN.md",
         "docs/mockups/session-conversation.html",
         "docs/mockups/perspective-shell.html",
         "docs/reviews/ui-operator-findings-2026-09-13.md"
       ],
+      "audit_ref": "al-01M2DZ3GA6T04XHQ6EAD7HRY8R",
+      "datetime": "2026-09-13T18:05:30Z",
+      "git": {
+        "after": "b71a2d5b826a07751086bdb6d94e6213fddc9f65",
+        "before": "4b8d379c",
+        "branch": "design/operator-findings-0913",
+        "commits": [
+          "b71a2d5b design(D3): pass-1 applications â€” the density rule deleted, the split's Center home, interrupted tool status, kind as text, URL-as-text links, keyboard-scrollable details, the Coordination glyph, the operator's-layout restore state, the shell mockup's body-hiding selector scoped (a pre-existing DC-147-class defect), the review draft",
+          "ee1a124a design(D3): DESIGN.md errata for Rulings 80â€“84/87, the two mockups elevated (the conversation, Coalesce identity, the editor's rest, Coding re-cut, Coordination host C), the spec errata block, the ADR amendment note"
+        ],
+        "pushed": null
+      },
+      "id": "cl-01M2DZ46Z1X43CV79JQN2C9JG8",
+      "kind": "design",
+      "prompt": "D3 — /ui-design elevate: the session conversation and the perspective shell against the operator's five 2026-09-13 findings and Rulings 80–87 — the editor's rest height, the Console's message grain, the conversation (prose · reasoning · tool call+result · outcome) like the CLI, a new session docked in Coding's Left, and the Coordination perspective (host C) for the five Loomkeeper kinds. Inputs: the five screenshot titles verbatim (C:\\Users\\malla\\Downloads\\ui findings 9-13-am\\), Rulings 80–87 (docs/notes/addendum-c-council-rulings.md, main 4b8d379c). Stages: direction in words; DESIGN.md errata rows; the two mockups with every ruled state and the review harness, measured by ui-craft-gate.py (0 findings on both is the floor) and verify-mockup-audits.py; the rubric critique with UX Researcher/IA and UX & Accessibility verdicts (hard veto); the ranked plan with named oracles for CV-5 and SH-4 and what each slice must not touch; the attended rows for the operator's next build. Docs only: DESIGN.md, docs/mockups/**, docs/reviews/**, docs/specs/addendum-c-perspectives.md (errata only), docs/notes/. No product code, no tests, no stash, no rebase, no push to main.",
+      "rationale": "Rulings 80-87 (the Owner, 2026-09-13) and the two lenses' pass-2 verdicts; measured on the rendered mockups (headless Edge), not asserted.",
+      "session": "d3-findings",
+      "skill": "ui-design",
+      "summary": "The reply side renders Coalesce(events) as prose · a collapsed dim Thinking line (the CLI's idiom; never announced; no duration) · tool call+result items (a decorative marker, the kind as a word, the mono title, the status word incl. interrupted, one detail disclosure as a keyboard-scrollable region) · the outcome line last; links are text with the URL visible; the Console split at Left opens in the Center zone (Inferred, for the Owner); the Center's copy while a session is open at Left has no first action; IconCoordination is a ring with three nodes; D3's tool-run grouping rule was deleted at the Simplifier's veto (+0 turns at 1440x900); the startup default's density (thread 0px at 1440x900) goes to the Owner with the five screenshots.",
       "tags": [
         "addendum-c",
         "rulings-80-87"
       ],
+      "title": "D3: the conversation's item grammar, the reasoning line, the split's Center home, Coding's Center copy, Coordination's glyph — Rulings 80–84/87 rendered"
+    },
+    {
+      "artifacts": [
+        "docs/notes/understanding-views-n2-comparables.md"
+      ],
+      "datetime": "2026-09-15T02:09:32Z",
       "git": {
-        "before": "4b8d379c",
-        "after": "b71a2d5b826a07751086bdb6d94e6213fddc9f65",
-        "branch": "design/operator-findings-0913",
-        "pushed": null,
-        "commits": [
-          "b71a2d5b design(D3): pass-1 applications â€” the density rule deleted, the split's Center home, interrupted tool status, kind as text, URL-as-text links, keyboard-scrollable details, the Coordination glyph, the operator's-layout restore state, the shell mockup's body-hiding selector scoped (a pre-existing DC-147-class defect), the review draft",
-          "ee1a124a design(D3): DESIGN.md errata for Rulings 80â€“84/87, the two mockups elevated (the conversation, Coalesce identity, the editor's rest, Coding re-cut, Coordination host C), the spec errata block, the ADR amendment note"
-        ]
+        "after": "475d46e6a7e19b746ea9f9cf8449fd84119bae9e",
+        "before": "475d46e6a7e19b746ea9f9cf8449fd84119bae9e",
+        "branch": "understanding-views-comparables",
+        "commits": [],
+        "pushed": null
       },
-      "audit_ref": "al-01M2DZ3GA6T04XHQ6EAD7HRY8R"
+      "id": "cl-01M2HD77670WF79KAKXZVQ90HT",
+      "kind": "knowledge",
+      "prompt": "N2 of plan-understanding-views: domain research for D-0 Solution/tree view comparables. Read-only. Named, sourced comparables for a solution/tree view of code, data, and architecture artifacts in an Architecture host. Done when docs/notes/understanding-views-n2-comparables.md exists.",
+      "rationale": "N3 /specify for D-0 needs sourced navigator lessons (grain, unindexed state, activate) before design; distinguishes Architecture-pane tree from ADR-0017 Explorer.",
+      "session": "understanding-views-comparables",
+      "skill": "collectknowledge",
+      "summary": "Six named comparables for D-0: VS Solution Explorer, Rider Explorer (no-index label), IntelliJ Project view (Excluded), VS Code Explorer vs C# Dev Kit Solution Explorer, Eclipse Package/Project Explorer, Structurizr model/tree. Key lesson: unindexed must be a visible state (Rider), never silent omission. Architecture-pane tree is not ADR-0017 Explorer.",
+      "tags": [
+        "understanding-views",
+        "d-0"
+      ],
+      "title": "D-0 Solution/tree view comparables established"
+    },
+    {
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md"
+      ],
+      "datetime": "2026-09-15T14:23:50Z",
+      "git": {
+        "after": "cb868bce441246f0aa921aec649901dc755b56ce",
+        "before": "cb868bce441246f0aa921aec649901dc755b56ce",
+        "branch": "understanding-views-architecture",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2JQ7S3EDVEHP93AHEFXZMXW",
+      "kind": "architecture",
+      "prompt": "N5: /define-architecture amendment: one new kind, derived menu, no second store.\n\nDone when: Architecture section + ADR for D-0 admission. Allow-list change described, not implemented. Status of ADR is proposed (you do not self-clear; N6 council is a later Conductor panel).\n\nTier: T2. Fan-out cap: 0. Skip Stage 4 council.",
+      "rationale": "Owner N1 census admission + N4 PASS grain close + AR3/ADR-0030 derived menu + DC-022 + Ruling 53. Rejected OverviewAsync, App disk walk, folder_dim, path-split, Atlas, D-1..D-6 scaffolding.",
+      "session": "understanding-views-architecture",
+      "skill": "define-architecture",
+      "summary": "Admitted D-0 as SurfaceKind solution-tree (described, not added) whose payload is IWorkspaceQueries.SolutionTreeAsync / IPC solution-tree. Coverage two-valued; Disclosure for shortfalls; test-overridable DropRelativePaths for US-T5c; skip policy consumed not copied (survivor N7). Addenda C/D slices still exclude D-0. ADR status proposed; Stage 4 skipped (N6).",
+      "tags": [],
+      "title": "ADR-0038 proposed: D-0 Solution tree is one Architecture kind over one query-time Core census"
+    },
+    {
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md"
+      ],
+      "datetime": "2026-09-15T14:45:23Z",
+      "git": {
+        "after": "46160f215e96d5a8e4f05076b029ebdd546aa381",
+        "before": "46160f215e96d5a8e4f05076b029ebdd546aa381",
+        "branch": "understanding-views-architecture",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2JRF7PFTH07QDQPXB6VSF52",
+      "kind": "architecture",
+      "prompt": "Resume N5 architecture author. Repair ADR-0038 after N6 Security BLOCK. Do not mark the ADR accepted. Close majors 1-11 (ResolveWithinWorkspace, no-follow reparse/EnvelopePurge, consume UnanalysedLanguages.Skip, DropRelativePaths off IPC, PROBE-APP-ENUM not PID, byte/frame bound, PathComparison identity, ancestor indexed-parent, drop orphan files, one OmittedByCap, collapse Query/Request).",
+      "rationale": "N6 Security BLOCK. Conductor does not override. Close majors 1-11 in text so re-review can pass. Authors do not self-clear.",
+      "session": "understanding-views-architecture",
+      "skill": "define-architecture",
+      "summary": "Repaired proposed ADR-0038 and architecture §Understanding views / D-0. File-artifacts via ResolveWithinWorkspace; census does not follow reparse points (EnvelopePurge class); UV-0 consumes UnanalysedLanguages.Skip; DropRelativePaths off IPC; count+frame bounds; PathComparison identity; ancestor indexed-parent; one OmittedByCap. Status remains proposed.",
+      "tags": [],
+      "title": "ADR-0038 N6 Security BLOCK repair: containment, skip bind, drop-set off wire"
+    },
+    {
+      "artifacts": [
+        "docs/spikes/d0-tree-toolkit/RESULT.md",
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md"
+      ],
+      "audit_ref": "al-01M2JTK3G3M92P2TQ23H5P7249",
+      "datetime": "2026-09-15T15:22:35Z",
+      "git": {
+        "after": "b3b3aef4ac3528a1586e3308fdd43d1a9136c4ee",
+        "before": "b3b3aef4",
+        "branch": "understanding-views-spike",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2JTKBA9ZV89MT62C05N2VMG",
+      "kind": "architecture",
+      "prompt": "N7 spike for AI-DE D-0 Solution tree. Spike Protocol (read AND run). T1. Establish the tree toolkit contract for D-0 so UV-1 can bind to it. ADR-0038 forbade freezing WPF TreeView in architecture; freeze it only if read+run evidence says so. Done when docs/spikes/d0-tree-toolkit/RESULT.md exists and is committed.",
+      "rationale": "ADR-0038 left the control unfrozen. Installed WPF TreeView met UIA Tree/TreeItem, 28px header hit, arrows, Enter bubbling, opt-in virtualization, and unindexed LeafNode. ListView/ItemsControl fail TreeItem role. WebView2 is the wrong host.",
+      "session": "understanding-views-spike",
+      "skill": "define-architecture",
+      "summary": "N7 Spike Protocol froze WPF TreeView as the D-0 toolkit. Read+run on installed PresentationFramework 10.0.0.0 / .NET 10.0.11: opt-in recycling virtualization (18/400 realized), UIA Tree/TreeItem with AutomationProperties.Name kind+coverage, 28px header content (Height=28 clips children), unindexed leaf Hidden expander + LeafNode (double-click still sets IsExpanded), PreviewKeyDown for Enter/Ctrl+Enter. VM nests the flat DTO under census-folders present in the DTO; no path-split. ListView/ItemsControl and WebView2 HTML trees rejected. PoC throwaway at spikes/d0-tree-toolkit/. No src/ product.",
+      "tags": [
+        "D-0",
+        "N7",
+        "TreeView"
+      ],
+      "title": "N7 freeze WPF TreeView as D-0 toolkit"
+    },
+    {
+      "artifacts": [
+        "docs/mockups/solution-tree.html",
+        "docs/mockups/solution-tree.md",
+        "DESIGN.md"
+      ],
+      "audit_ref": "al-01M2JVJWK53X6880RW6K55F4AC",
+      "datetime": "2026-09-15T15:39:57Z",
+      "git": {
+        "after": "2089e02522bceb0e118beee1583b853d2381e011",
+        "before": "2089e025",
+        "branch": "understanding-views-ui-design",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2JVK4T1Z75RH7EMQCN326XW",
+      "kind": "design",
+      "prompt": null,
+      "rationale": "Spec Part C required /ui-design before UV-1. N4 residual: pointer path for Reveal. Spike froze TreeView; this turn freezes chrome and copy.",
+      "session": "understanding-views-ui-design",
+      "skill": "ui-design",
+      "summary": "Keyboard-Velocity navigator mockup in Architecture: F* hard states, Unindexed as {colors.unverified} word+glyph, skip-count chrome, dual-activate Enter/Ctrl+Enter, Reveal on node menu. HTML is direction; native PASS Flagged. No new colour token.",
+      "tags": [],
+      "title": "N8 Solution tree mockup (D-0 direction)"
+    },
+    {
+      "artifacts": [
+        "docs/design/solution-tree.md"
+      ],
+      "audit_ref": "al-01M2JVK2GYYJ6RVGWZ99CY8PG1",
+      "datetime": "2026-09-15T15:40:01Z",
+      "git": {
+        "after": "2089e02522bceb0e118beee1583b853d2381e011",
+        "before": "2089e02522bceb0e118beee1583b853d2381e011",
+        "branch": "understanding-views-design",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2JVK83ZH5SQHW1NMV4RAG02",
+      "kind": "design",
+      "prompt": "You are N9 /design-slice for D-0 Solution tree (UV-0 Core query + UV-1 Shell). Persona: patterns-expert with csharp-developer. Reason at high. T2. Fan-out 0. Budget 40 tool calls.\n\nGoal: docs/design/solution-tree.md: contracts, grain, failure modes, telemetry, test plan, E7 list, file lists for UV-0 then UV-1.\n\nDone when: that file exists, quotes ADR-0038 and the spec, names patterns, has a red-first test plan mapped to US-T1–T7/T5a–c/T11, committed on this branch. Status draft (N10 review is later).\n\nMust include: data model first (no folder_dim; census query-time; grain (path,kind)); UV-0 walking skeleton SolutionTreeAsync / IPC solution-tree / SolutionTreeQuery two ints only; consume UnanalysedLanguages.Skip; ResolveWithinWorkspace; no-follow reparse; frame shrink; T5c omit set constructor/internal not IPC; FakeWorkspaceQueries virtual refuse; CanvasGraphViewModelTests.StubQueries compile tax; UV-1 one SurfaceKind solution-tree, Perspectives {Architecture}, Instances One; WPF TreeView attachments from N7; not MainMenuBuilder lists; PROBE-APP-ENUM = App assembly; serial UV-0 reds before UV-1 kind row (AR3); failure modes + STRIDE-lite (DC-022, path confinement, skip re-entry); telemetry per ADR IO1; Testing Strategy union.\n\nNot in scope: Implementing. Atlas. D-1…D-6. main. Public IWorkspaceDirectoryCensus. DropRelativePaths on the wire. Marking design accepted.\n\nFollow design-slice Stages 0–3 and 5. Skip Stage 4 council (N10). Leave status draft.",
+      "rationale": "ADR-0038 and spec-understanding-views already closed the grain (path, kind), no folder_dim, query-time census, and AR3 serial phasing. This design names the C# seams, N7 TreeView attachments, failure/STRIDE/telemetry, and the red-first test plan so UV-0 implementers can write reds without inventing a public census interface or a wire DropRelativePaths field.",
+      "session": "understanding-views-design",
+      "skill": "design-slice",
+      "summary": "Draft design for D-0 Solution tree: UV-0 Core query-time census join (SolutionTreeAsync / IPC solution-tree / one SolutionTreeQuery of two ints; Skip consumed; ResolveWithinWorkspace; no-follow reparse; T5c omit off-wire) then UV-1 one Architecture kind + WPF TreeView. Status draft; N10 later.",
+      "tags": [],
+      "title": "D-0 Solution tree designed (UV-0 query then UV-1 kind, draft)"
+    },
+    {
+      "artifacts": [
+        "docs/design/solution-tree.md"
+      ],
+      "audit_ref": "al-01M2JWGXRESZNJH0G0065CJXNB",
+      "datetime": "2026-09-15T15:56:18Z",
+      "git": {
+        "after": "dd6026c2a959a280e84fc109d3236d0fd78f7bb7",
+        "before": "dd6026c2a959a280e84fc109d3236d0fd78f7bb7",
+        "branch": "understanding-views-design",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2JWH2MSDPYNMWBFZ6F2ZY4W",
+      "kind": "design",
+      "prompt": "Resume N9 design author. Peer Mode. Repair docs/design/solution-tree.md for N10 Test Architect BLOCK. Do not mark accepted. Do not implement src/. Six closes: UV-1 T5c Fake/golden arrange; US-T6/UI-8 visual-tree; B6 root-only empty; F* io_probe/; DirectoryInfo PROBE-APP-ENUM; UV-0 T5c falsifying inputs.",
+      "rationale": "App.Tests must not construct the Core omit set or send DropRelativePaths; B6 empty must not render Unindexed root; F* T5a needs io_probe/; PROBE-APP-ENUM must cover DirectoryInfo; T5c falsifying column must list failing inputs.",
+      "session": "understanding-views-design",
+      "skill": "design-slice",
+      "summary": "Six Test Architect closes in docs/design/solution-tree.md. Status remains draft.",
+      "tags": [],
+      "title": "N10 Test Architect BLOCK closed in D-0 solution-tree design (draft)"
+    },
+    {
+      "id": "cl-01M2K3B8ZED661R3EGA749E4TA",
+      "datetime": "2026-09-15T17:55:28Z",
+      "session": "understanding-views-n10",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "N10 D-0 Solution tree PASS-WITH-CONDITIONS; design stays draft",
+      "prompt": "N10 design adversarial review for D-0 Solution tree. Test Architect + Simplifier. Adversary Mode.",
+      "summary": "PASS-WITH-CONDITIONS. Six N9 closes held. Design docs/design/solution-tree.md stays draft. Conditions: T5a/b visual-tree, FieldsSurvive pair, US-T8 error+Retry, US-T13, Ctrl+Enter Flagged, Zone-prose reconcile. Patterns/SRE unsat.",
+      "rationale": "N10 DoD ticked against opened tests and proofs. Previous BLOCK's six closes have tests. Remaining gaps have named paths so this is not a design-contract Blocker; accepting would mint a second definition of UV-1 done. Owner N14 keeps spec draft and forbids D-1/main.",
+      "artifacts": [
+        "docs/notes/understanding-views-n10-design-acceptance.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "44ed80607724f8a60665e0b1f5a1acbf5d36e33a",
+        "after": "44ed80607724f8a60665e0b1f5a1acbf5d36e33a",
+        "branch": "understanding-views",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M2K3B1MTTVRK7AYWG6VC9VSC"
     }
   ]
 };

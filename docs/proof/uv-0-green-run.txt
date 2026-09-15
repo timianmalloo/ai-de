@@ -1,0 +1,10 @@
+N12 captured green — 2026-09-15 — joined tree C:\Projects\ai-de-understanding-views (implementation restored).
+
+dotnet test tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj --filter FullyQualifiedName~SolutionTree
+Passed!  - Failed:     0, Passed:    26, Skipped:     0, Total:    26
+
+dotnet test tests/AiDe.App.Tests/AiDe.App.Tests.csproj --filter FullyQualifiedName~SolutionTree
+Passed!  - Failed:     0, Passed:    15, Skipped:     0, Total:    15
+
+dotnet test tests/AiDe.App.Tests/AiDe.App.Tests.csproj --filter FullyQualifiedName~EveryBoundCarryingFieldIsCoveredOrAllowed
+Passed!  - Failed:     0, Passed:     1

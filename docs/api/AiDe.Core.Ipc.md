@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Ipc: 51 types, 120 members, 64% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Ipc: 51 types, 122 members, 64% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Ipc`
 
-**51 public types · 120 public members · 64% documented.**
+**51 public types · 122 public members · 64% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -921,6 +921,7 @@ epoch would defeat it while appearing to work.
 | `Task<InteractionResult> InteractionAsync(` | **(gap)** |
 | `Task<KnowledgeResult> KnowledgeAsync(` | **(gap)** |
 | `Task<NodeContent> NodeContentAsync(string nodeId, CancellationToken cancellationToken)` | **(gap)** |
+| `Task<SolutionTreeResult> SolutionTreeAsync(` | **(gap)** |
 | `Task<ScopeRefreshStatus> RefreshScopeAsync(` | Asks the daemon to re-index a scope, and waits for it to finish. |
 | `Task<IndexSummary> IndexSolutionAsync(` | Re-reads the daemon's epoch, for a caller recovering from a stale-epoch rejection. |
 | `Task<long> EpochAsync(CancellationToken cancellationToken)` | **(gap)** |
@@ -1110,6 +1111,7 @@ bound, and two definitions of one quantity is a defect signature.
 | `string Graph = "graph"` | **(gap)** |
 | `string Paths = "paths"` | **(gap)** |
 | `string Overview = "overview"` | **(gap)** |
+| `string SolutionTree = "solution-tree"` | Census join of disk-now folders and indexed file-artifacts (ADR-0038). |
 | `string DispatchBegin = "dispatch.begin"` | **(gap)** |
 | `string DispatchFinalize = "dispatch.finalize"` | **(gap)** |
 | `string IndexSolution = "index.solution"` | **(gap)** |

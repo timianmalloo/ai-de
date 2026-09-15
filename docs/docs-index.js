@@ -1897,6 +1897,68 @@ window.DOCS_INDEX = {
       "sourceSha256": "92658f5a21220d232e56dd004be03f4e3f4e03482e87ff9c6408730016e864d7"
     },
     {
+      "id": "adr-0038-d0-solution-tree-census-and-kind",
+      "path": "docs/adr/0038-d0-solution-tree-census-and-kind.md",
+      "title": "ADR-0038 — D-0 Solution tree: one Architecture kind, one query-time census, no second store",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "Admit D-0 as one Architecture-only SurfaceKind (solution-tree) whose payload is one new Core query-time census join (SolutionTreeAsync / IPC solution-tree / one SolutionTreeQuery). File-artifacts resolve through ResolveWithinWorkspace; census does not follow reparse points; UV-0 consumes UnanalysedLanguages.Skip. Named drop-set is projection/test-host only, not IPC. Status accepted after N6 Security and Tech Lead re-review (conductor recorded).",
+      "tags": [
+        "architecture",
+        "D-0",
+        "solution-tree",
+        "census",
+        "allow-list",
+        "ipc",
+        "adr-0030",
+        "understanding-views"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-n4-pass",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-n1-disposition",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-ruling",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b5a123e86a10cc8f903d389150dc2deb41c42d3a5948574250313e7277af2265"
+    },
+    {
       "id": "api-aide-app",
       "path": "docs/api/AiDe.App.md",
       "title": "API: AiDe.App",
@@ -2006,7 +2068,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 101 types, 442 members, 74% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 103 types, 463 members, 71% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2019,7 +2081,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5e3a02e03268952794cf35d7b8856dc96b48f81585fc2e2923ffe63ee8ccdff4"
+      "sourceSha256": "f41d04141e472c3d5b270717fa41e4b074d1f8e99f9ca35a4e3042cee200f21e"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -2169,7 +2231,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "41068e2bf16ffaffeb8651fa4919a9a6f163adc19ea6e82aac50c9e2fb47a67a"
+      "sourceSha256": "46c2dc197d63a0829f2ef9e48a307ddf4f75996c0430b44ed21a597da9f194ff"
     },
     {
       "id": "api-aide-core-facts",
@@ -2231,7 +2293,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Ipc: 51 types, 120 members, 64% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Ipc: 51 types, 122 members, 64% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2244,7 +2306,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6df911a0686ab51a2822be00ef456254514c288e792d09dc92ab4daf2e803b8c"
+      "sourceSha256": "20140e09bbfea5cdb03ae8749198c7674a77952c8fc213d073050a68a1318759"
     },
     {
       "id": "api-aide-core-mcp",
@@ -2356,7 +2418,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Projections: 47 types, 66 members, 65% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Projections: 55 types, 71 members, 63% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2369,7 +2431,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b3bd7d072b23497d38f1a5fb961a00ba10c2879cc5b8d5b8af7af70ac88454e5"
+      "sourceSha256": "d4283ca09dd9e1aa340b44062fc92973caef82941e66427d1689271532d02387"
     },
     {
       "id": "api-aide-core-promptcompilation",
@@ -2431,7 +2493,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Store: 10 types, 52 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Store: 10 types, 54 members, 70% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2444,7 +2506,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1037958b2aeb2ce11acdf117e8510d915797da3cb67546908c0db04801d921ff"
+      "sourceSha256": "0d469cef4f0065f4b03dbcdcce3bed5089b47061a95d4bbfc9bcac2e3995d3ac"
     },
     {
       "id": "api-aide-core-terminal",
@@ -2579,7 +2641,7 @@ window.DOCS_INDEX = {
       "status": "in-review",
       "owner": "@timianmalloo",
       "phase": "0",
-      "reviewBy": "2027-03-11",
+      "reviewBy": "2027-03-15",
       "reviewSuggested": [
         {
           "by": "spec-ai-native-ide",
@@ -2595,9 +2657,14 @@ window.DOCS_INDEX = {
           "by": "adr-0013-layout-persistence-envelope",
           "on": "2026-09-11",
           "reason": "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback"
+        },
+        {
+          "by": "adr-0038-d0-solution-tree-census-and-kind",
+          "on": "2026-09-15",
+          "reason": "ADR-0038 proposed: D-0 Solution tree kind + query-time census; Addenda C/D slices still exclude D-0"
         }
       ],
-      "summary": "Defines AI-DE as a WPF+WebView2 workspace shell over a per-workspace local authority core that builds provenance-labelled facts from repository artifacts, serves derived visual projections and session-class-governed MCP tools, delivers prompts under a write-ahead two-phase receipt, and keeps agent/model capability outside deterministic source truth. Supersedes the 2026-08-25 draft; resolves the council review's three hard and two soft vetoes. Amended 2026-09-11 for Addenda C and D: the Perspective shell (ADR-0017 as amended; ADR-0030–0032) and the Prompt Compilation bounded context (ADR-0033–0037).",
+      "summary": "Defines AI-DE as a WPF+WebView2 workspace shell over a per-workspace local authority core that builds provenance-labelled facts from repository artifacts, serves derived visual projections and session-class-governed MCP tools, delivers prompts under a write-ahead two-phase receipt, and keeps agent/model capability outside deterministic source truth. Supersedes the 2026-08-25 draft; resolves the council review's three hard and two soft vetoes. Amended 2026-09-11 for Addenda C and D: the Perspective shell (ADR-0017 as amended; ADR-0030–0032) and the Prompt Compilation bounded context (ADR-0033–0037). Amended 2026-09-15 for Understanding views D-0 (ADR-0038 proposed): one Architecture kind, query-time census, no second store. Addenda C/D slices still exclude D-0; see §Understanding views / D-0.",
       "tags": [
         "architecture",
         "ai-native-ide",
@@ -2736,6 +2803,18 @@ window.DOCS_INDEX = {
           "rel": "depends-on"
         },
         {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "implements"
+        },
+        {
+          "to": "note-understanding-views-n4-pass",
+          "rel": "relates-to"
+        },
+        {
           "to": "note-addendum-cd-architecture-p1-inputs",
           "rel": "relates-to"
         },
@@ -2759,9 +2838,14 @@ window.DOCS_INDEX = {
           "kind": "flowchart",
           "title": "C/D.5 Component map — the compile step",
           "mermaid": "flowchart LR\n  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2\n  classDef store fill:#0D1014,stroke:#D8A650,color:#D8A650\n\n  Editor[\"Composer editor<br/>source_text (the only lease source — Ruling 66)\"]:::app\n  Pre[\"PreCompile (T0, debounced, in memory)<br/>shape · tier rule · cap · lease display · profile ·<br/>constitution manifest · history window · snapshots\"]:::core\n  Send1[\"Send gesture #1<br/>opens the envelope\"]:::app\n  Call[\"CompileCallHost (App/Conductor, T3)<br/>ResolveLaunch → process → handshake → Authorize →<br/>session/new tools:[] → prompt ≤ 60 s → counts<br/>(ADR-0035)\"]:::app\n  TB{{\"CompileOutputValidator (T0)<br/>schema · allow-list · open lines · type ·<br/>mention scan · spans (ADR-0033)\"}}:::core\n  Env[(\"EnvelopeStore<br/>envelope-events.jsonl · append-only ·<br/>FileShare.None · prev_sha (ADR-0034)\")]:::store\n  Prep[\"Prepare (App, WPF controls)<br/>marks · tier control · what-was-read ·<br/>operator rows\"]:::app\n  Proj[\"Project(Fold(events)) (T0)<br/>shape · tier+rationale · cap · GoalBlock ·<br/>lease · prompt · task class · projection_sha\"]:::core\n  Gate[\"ComposerSendGate.Send<br/>the 2nd named construction site of<br/>GovernedRunRequest — unchanged\"]:::app\n  Root[\"GovernedRunHost.RunAsync<br/>the one run root (agent-plane §4)\"]:::app\n  Adapter[\"claude-agent-acp 0.75.1<br/>sha pinned\"]:::ext\n  Profile[\"craft-profiles/<family>@<version>.md<br/>pack-owned Type-2 (ADR-0037)\"]:::store\n  Gates[\"Deployment gates (ADR-0036)<br/>compile-pin-spike.json ·<br/>compile-eval-admission.json\"]:::store\n\n  Editor --> Pre --> Send1 --> Env\n  Send1 -->|\"mode admits\"| Call --> Adapter\n  Adapter --> Call --> TB --> Env\n  Env --> Prep --> Env\n  Env --> Proj --> Gate --> Root\n  Profile -.-> Pre\n  Gates -.->|\"settings model reads\"| Send1\n  Root -.->|\"consumed {run_id}\"| Env"
+        },
+        {
+          "kind": "flowchart",
+          "title": "UV.2 Chosen shape",
+          "mermaid": "flowchart LR\n  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  disk[Workspace disk now] --> census[Core census walk]\n  skip[UnanalysedLanguages.Skip] --> census\n  facts[node_dim + evidence_assertion_fact + scope snapshots] --> join[Latest-generation join]\n  census --> join\n  join --> dto[SolutionTreeResult]\n  dto --> ipc[\"IPC solution-tree\"]\n  ipc --> tree[Architecture Solution tree]\n  tree -->|Enter| src[NodeContentAsync / codeviewer]\n  tree -->|Ctrl+Enter| graph[GraphAsync / DescribeAsync]"
         }
       ],
-      "sourceSha256": "abb24e6209073378930d8129f8a546faa1605e1e6fea60058b4b377aeb752729"
+      "sourceSha256": "62e13cac0ca2cfe5eb93879e785c48a690d0458e0fa4bdf698e68bda5b888875"
     },
     {
       "id": "architecture-agent-plane",
@@ -5853,6 +5937,47 @@ window.DOCS_INDEX = {
       "sourceSha256": "45e6e3b05e8adc435013bf5745ce7f2cbb68c481c7ee8741e4454ed1a207c3e2"
     },
     {
+      "id": "note-n8-solution-tree-direction",
+      "path": "docs/notes/n8-solution-tree-direction.md",
+      "title": "N8 direction: Solution tree is a WPF TreeView navigator; HTML is direction; Reveal lives on the node menu",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [
+        {
+          "by": "mockup-solution-tree",
+          "on": "2026-09-15",
+          "reason": "N8 ui-design: Solution tree mockup settles dual-activate, Unindexed chrome, and hard states; HTML is direction only"
+        }
+      ],
+      "summary": "N8 closes three below-ADR calls: HTML mockup is direction only; pointer Reveal in graph uses the existing node menu; default Left zone is Inferred pending design-slice. No new colour token — Unindexed stays {colors.unverified}.",
+      "tags": [
+        "decision-note",
+        "D-0",
+        "solution-tree",
+        "ui-design",
+        "N8"
+      ],
+      "links": [
+        {
+          "to": "mockup-solution-tree",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spike-d0-tree-toolkit",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3c834dd9885bd0c0d9ae507387afbeb6f940101054a907e15a347b7a86b65046"
+    },
+    {
       "id": "note-pack-findings-addendum-cd",
       "path": "docs/notes/pack-findings-addendum-cd.md",
       "title": "Pack findings from the Addenda C/D programme — what belongs in the AI-Forward Pack, with the defect class each one closes",
@@ -6271,6 +6396,506 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "1019c9d98b854b04b2fc784cada4bdea68e34249dba7f30ffe4979e750f397b4"
+    },
+    {
+      "id": "note-understanding-views-n1-inventory",
+      "path": "docs/notes/understanding-views-n1-inventory.md",
+      "title": "N1 inventory — D-0 Solution/tree substrate (Architecture kinds, artifact_path_id, unindexed folders)",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "Current-state inventory for D-0. No SolutionTree/WorkspaceTree. OverviewAsync/GraphAsync are the wrong grain. artifact_path_id is assertion provenance, not an artifact dimension; several extractors do not store file paths. Existing facts cannot emit §A5 unindexed folders without a Core-side disk census. STOP-BEFORE-N5.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "inventory",
+        "D-0"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-ruling",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8f89ef429007a2435a892df2eed14e4435c4261af02c79e9f77f29da3f3ec97c"
+    },
+    {
+      "id": "note-understanding-views-n10-design-acceptance",
+      "path": "docs/notes/understanding-views-n10-design-acceptance.md",
+      "title": "N10 D-0 Solution tree: PASS-WITH-CONDITIONS; design stays draft",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [
+        {
+          "by": "design-solution-tree",
+          "on": "2026-09-15",
+          "reason": "N10 PASS-WITH-CONDITIONS; design stays draft; Zone-not-frozen prose vs View-menu-only freeze; N12 still owes T5a/b visual-tree"
+        }
+      ],
+      "summary": "N10 Test Architect (hard) + Simplifier (soft) on D-0 Solution tree: PASS-WITH-CONDITIONS. The six N9 test-plan closes hold. Design docs/design/solution-tree.md stays draft. Blast radius: no design Accepted, no D-1, no main; N12 cannot PASS on the named residuals.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "N10",
+        "D-0",
+        "solution-tree"
+      ],
+      "links": [
+        {
+          "to": "design-solution-tree",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-owner-n14",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-uv-0-solution-tree-core-query",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-uv-1-solution-tree-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-native-ui-solution-tree",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3766b1af9dd680b874988ee28f0a57eaf9b3d0e179279e0df8e2b2a4205bdb90"
+    },
+    {
+      "id": "note-understanding-views-n10-patterns",
+      "path": "docs/notes/understanding-views-n10-patterns.md",
+      "title": "N10 D-0 Solution tree: Patterns Expert PASS; four named patterns hold",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [
+        {
+          "by": "design-solution-tree",
+          "on": "2026-09-15",
+          "reason": "N10 Patterns Expert PASS; wrap-not-twin belongs in the P-table; design stays draft"
+        }
+      ],
+      "summary": "N10 Patterns Expert (advisory, Adversary Mode) on D-0 Solution tree: PASS. Query-time join, derived menu (ADR-0030), WPF TreeView, wrap-VM-not-Presentation-twin are the right named patterns. Soft veto not raised. Blast radius: no design Accepted, no D-1, no main; SRE still unsat.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "N10",
+        "D-0",
+        "solution-tree",
+        "patterns"
+      ],
+      "links": [
+        {
+          "to": "design-solution-tree",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spike-d0-tree-toolkit",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-n10-design-acceptance",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-owner-n14",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1df6ac37c0cb24ae89ca5823b9e87914f79bdb8e234dbd25510844da2aef8f56"
+    },
+    {
+      "id": "note-understanding-views-n10-sre",
+      "path": "docs/notes/understanding-views-n10-sre.md",
+      "title": "N10 D-0 Solution tree SRE: PASS-WITH-CONDITIONS; design stays draft",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [
+        {
+          "by": "design-solution-tree",
+          "on": "2026-09-15",
+          "reason": "N10 SRE PASS-WITH-CONDITIONS; design stays draft; O12 tag table incomplete in TelemetryTests; production cancel not wired; caps stay Inferred"
+        }
+      ],
+      "summary": "N10 SRE & Systems Diagnostician (advisory) on D-0 Solution tree: PASS-WITH-CONDITIONS. Operator questions are named and mostly emitted on the success path. Caps 2000/5000 stay honestly Inferred. Cancel throws, not a partial tree, but the shell never cancels. Blast radius: no design Accepted, no D-1, no main.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "N10",
+        "D-0",
+        "solution-tree",
+        "sre",
+        "telemetry"
+      ],
+      "links": [
+        {
+          "to": "design-solution-tree",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-n10-design-acceptance",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-owner-n14",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-uv-0-solution-tree-core-query",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b12c23d3f493f2c47f8c08ae7214f89543ce762f50b404b99fb1d6acc58b4fd8"
+    },
+    {
+      "id": "note-understanding-views-n2-comparables",
+      "path": "docs/notes/understanding-views-n2-comparables.md",
+      "title": "D-0 Solution/tree view comparables (Architecture-pane indexed artifacts)",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "Named, sourced comparables for D-0 Solution/tree: VS Solution Explorer, Rider/IntelliJ Project views, VS Code Explorer vs C# Dev Kit Solution Explorer, Eclipse Package/Project Explorer, Structurizr model/tree. Distinguishes Architecture-pane indexed tree from ADR-0017 Explorer. Key lesson: show unindexed folders as an explicit state (Rider no-index).",
+      "tags": [
+        "decision-note",
+        "understanding-views",
+        "comparables",
+        "d-0"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-ruling",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5fa1011362f424dbe1caf1d90556e592360a2ee8443fbf8d39c55b3604e85060"
+    },
+    {
+      "id": "note-understanding-views-n4-pass",
+      "path": "docs/notes/understanding-views-n4-pass.md",
+      "title": "N4 hard vetoes cleared for D-0 spec; architecture (N5) may start; spec stays draft",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [
+        {
+          "by": "spec-understanding-views",
+          "on": "2026-09-15",
+          "reason": "N4 PASS recorded; N5 architecture unblocked"
+        }
+      ],
+      "summary": "Conductor records N4 PASS from non-author receipts on docs/specs/understanding-views.md at 962ad56e. Authors did not self-clear. Spec status stays draft. Blast radius: N5 architecture may open; no src/, no allow-list row, no main.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "N4",
+        "D-0"
+      ],
+      "links": [
+        {
+          "to": "spec-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-owner-ruling",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-n1-disposition",
+          "rel": "depends-on"
+        },
+        {
+          "to": "plan-understanding-views",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "77e2be52378643c1105ad047ebb4e0dd4c28278415cb3601f7f8880e16292c56"
+    },
+    {
+      "id": "note-understanding-views-n6-council",
+      "path": "docs/notes/understanding-views-n6-council.md",
+      "title": "N6 council on ADR-0038: PASS after Security re-review of a03fb622",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "N6 width-4 on ADR-0038. First pass: Security BLOCK. Repair a03fb622. Re-review: Security PASS, Tech Lead PASS. Data PASS and Simplifier PASS-WITH-CONDITIONS already held. Authors did not self-clear. ADR stays proposed. N7 (toolkit spike) is unblocked.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "N6",
+        "D-0",
+        "adr-0038"
+      ],
+      "links": [
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-n4-pass",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "54995978c362c7d4388ece73d264d03af8cec27c29f02b1347cc768c407c6445"
+    },
+    {
+      "id": "note-understanding-views-owner-n1-disposition",
+      "path": "docs/notes/understanding-views-owner-n1-disposition.md",
+      "title": "Admit a query-time Core census as D-0 unindexed substrate; skip-list omitted; Python/TS file grain disclosed not rewritten; specify may proceed",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "N0 STOP-BEFORE-N5 stands on current facts; D-0 still admitted. Unindexed folders come from a query-time Core census (not stored folder facts, not App I/O). Blast radius: specify + later one Core query; no extractor provenance rewrite; no Atlas; no main; no D-1…D-6.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "owner",
+        "D-0"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-n1-inventory",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-ruling",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-n2-comparables",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ca364ca44c5b351012336203307d689afd891098997ef12ab38d6bfc63853deb"
+    },
+    {
+      "id": "note-understanding-views-owner-n14",
+      "path": "docs/notes/understanding-views-owner-n14.md",
+      "title": "Stop this horizon: D-1…D-4 keep-deferred; no further admission; join stays understanding-views",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [
+        {
+          "by": "spec-understanding-views",
+          "on": "2026-09-15",
+          "reason": "N14 stop; D-1…D-4 remain quoted §A5 deferred; spec stays draft"
+        },
+        {
+          "by": "plan-understanding-views",
+          "on": "2026-09-15",
+          "reason": "N14 loop exit; variant 4→0"
+        }
+      ],
+      "summary": "N14 stops this horizon. D-1…D-4 are keep-deferred with §A5 admitted-when intact. Blast radius: no next view, no D-1 kind, no main; D-0 chrome may finish on understanding-views without reopening the N14 loop.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "owner",
+        "N14"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-ruling",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-n1-disposition",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-uv-0-solution-tree-core-query",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-uv-1-solution-tree-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-native-ui-solution-tree",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-understanding-views",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ef1d9bd958372f12eccdac3df9ce7c87c64acfc1499717760e4c9d9bff5a9297"
+    },
+    {
+      "id": "note-understanding-views-owner-ruling",
+      "path": "docs/notes/understanding-views-owner-ruling.md",
+      "title": "Admit D-0 Solution/tree view this horizon; D-0 is not Atlas; D-1…D-6 stay deferred; join onto understanding-views",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "Admit only D-0 (Solution/tree) this cycle as an Architecture pane over indexed artifacts. Blast radius: one kind, one allow-list column, one derived-menu pickup, join onto understanding-views — not Atlas, not main, not D-1…D-6.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "owner"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "plan-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0036-compile-mode-ladder-deployment-gates",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e36d5ce6b0e6af2c3899ee3f7a5454f295992c7aba0636717c4dbcbe36bb5956"
+    },
+    {
+      "id": "note-understanding-views-ruling-115-desktop-hold",
+      "path": "docs/notes/understanding-views-ruling-115-desktop-hold.md",
+      "title": "Ruling 115 — desktop-serialization hold (as used on understanding-views)",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "Records the desktop-serialization clause of Owner Ruling 115 so citations on this branch resolve. One shown-window/UIA run at a time, announced with PID. Atlas A–E carve-outs in the same ruling are out of scope here.",
+      "tags": [
+        "decision-note",
+        "ruling-115",
+        "desktop-hold",
+        "understanding-views"
+      ],
+      "links": [
+        {
+          "to": "coordination-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "728aa2e25219b926793ae67398cc53ee4b8b47b3af6681bba299778337debaf0"
     },
     {
       "id": "note-watcher-substrate-framing",
@@ -6849,6 +7474,82 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "910ca00625a52fa49f3333a77f8303b0672468c81c8f7402da71727e20d8aded"
+    },
+    {
+      "id": "design-solution-tree",
+      "path": "docs/design/solution-tree.md",
+      "title": "D-0 Solution tree — UV-0 Core query then UV-1 Architecture kind",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "Walking-skeleton design for D-0: UV-0 adds one Core query-time census join (SolutionTreeAsync / IPC solution-tree / one SolutionTreeQuery of two ints) with grain (path, kind), no folder_dim, T5c omit off the wire; UV-1 then admits one Architecture SurfaceKind and a WPF TreeView. Status draft — N10 review is later.",
+      "tags": [
+        "design",
+        "D-0",
+        "solution-tree",
+        "census",
+        "ipc",
+        "wpf",
+        "treeview",
+        "UV-0",
+        "UV-1",
+        "understanding-views"
+      ],
+      "links": [
+        {
+          "to": "spec-understanding-views",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spike-d0-tree-toolkit",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0009-in-process-first-daemon",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-n1-inventory",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "depends-on"
+        },
+        {
+          "to": "threat-model-ai-native-ide",
+          "rel": "relates-to"
+        },
+        {
+          "to": "privacy-review-ai-native-ide",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a9c28834b798483b3cf4f88dff797d02dfdc6cd86254ef2c6896f2c564532728"
     },
     {
       "id": "design-watcher-advisory-evaluator",
@@ -8224,6 +8925,89 @@ window.DOCS_INDEX = {
       "sourceSha256": "55bf5b1e116bcd69a8ddb05ee1c3fd879b7a287f3575aad6b2da08a5f54edca5"
     },
     {
+      "id": "coordination-understanding-views",
+      "path": "docs/coordination/understanding-views.md",
+      "title": "Coordination plan - Addendum C deferred understanding views",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-14",
+      "reviewSuggested": [],
+      "summary": "Owner rules first; then one serial spine (specify → architecture → spike → ui-design → design-slice → implement → join) for a single admitted view. Two read-only tracks may run after the ruling. Seven parallel implementers and a D-5/D-6 code track are struck. Atlas files stay with the Copilot fleet.",
+      "tags": [
+        "coordination",
+        "worktrees",
+        "parallelism",
+        "addendum-c",
+        "understanding-views",
+        "grok"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "plan-understanding-views",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8e686fb31673a73a95410bc8bc7e9d5ff7fac4c6275bd01521e8a63505cf0f57"
+    },
+    {
+      "id": "coordination-understanding-views-kickoff",
+      "path": "docs/coordination/understanding-views-kickoff.md",
+      "title": "Kickoff prompt — Addendum C deferred understanding views (Owner–Conductor–sub-agents)",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-14",
+      "reviewSuggested": [],
+      "summary": "Paste-ready prompt that starts the Owner–Conductor–sub-agent fleet for Addendum C deferred understanding views. Conductor is Grok 4.6 high; Owner is Grok 4.6 xhigh; each agent has its own coord worktree.",
+      "tags": [
+        "coordination",
+        "kickoff",
+        "grok",
+        "addendum-c",
+        "understanding-views"
+      ],
+      "links": [
+        {
+          "to": "coordination-understanding-views",
+          "rel": "documents"
+        },
+        {
+          "to": "plan-understanding-views",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c50ec10e22accd66cb2f85263d2808c81dca4eca722375e9f2da176c5334173a"
+    },
+    {
       "id": "defect-classes",
       "path": "docs/lessons/defect-classes.md",
       "title": "Defect-class register",
@@ -9298,6 +10082,55 @@ window.DOCS_INDEX = {
       "sourceSha256": "8caa79a9e338fe7a9b7267b1571cc6ce6663421f658d571e8c98a907dc520cfc"
     },
     {
+      "id": "mockup-solution-tree",
+      "path": "docs/mockups/solution-tree.md",
+      "title": "Solution tree — Architecture navigator (D-0 mockup)",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "Self-contained mockup of the Architecture-pane Solution tree: F* nested tree, unindexed leaf, skip-omission chrome, Not recorded / Omitted (N), empty → Show Graph, loading, no-workspace, tree/View-source/Reveal errors with Retry, node menu for Reveal in graph. HTML is direction; native WPF TreeView is the product. Author does not clear the accessibility veto.",
+      "tags": [
+        "ui-design",
+        "mockup",
+        "D-0",
+        "solution-tree",
+        "architecture",
+        "understanding-views",
+        "wcag"
+      ],
+      "links": [
+        {
+          "to": "spec-understanding-views",
+          "rel": "implements"
+        },
+        {
+          "to": "spike-d0-tree-toolkit",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-perspective-shell",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-native-ui-solution-tree",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-n8-solution-tree-direction",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e50689e8cf20b62e4b6856a0138f67170c66ea402ee8dbd874cbc17120078fd8"
+    },
+    {
       "id": "mockup-uml-erm-surfaces",
       "path": "docs/mockups/uml-erm-surfaces.md",
       "title": "UML & ERM Surfaces — derived views (mockup)",
@@ -10187,6 +11020,63 @@ window.DOCS_INDEX = {
       "sourceSha256": "2d5ebde012f5c21f85aaa095489501b42cd9371ffcced0c19292c6e3dbb37797"
     },
     {
+      "id": "plan-understanding-views",
+      "path": "docs/plans/understanding-views.md",
+      "title": "Execution graph — Addendum C deferred understanding views (D-0…D-6)",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2026-12-14",
+      "reviewSuggested": [],
+      "summary": "Optimized execution graph for re-admitting Addendum C's deferred understanding views. Ruling 54 admits one view at a time. Owner rules first. Spec, architecture, spike, UX, design, implement, join follow for that view only. D-5/D-6 stay deferred until the compile ladder can host a deriver.",
+      "tags": [
+        "execution-graph",
+        "addendum-c",
+        "understanding-views",
+        "coordination",
+        "grok"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Optimized graph",
+          "mermaid": "flowchart TD\n  N0[N0 Owner ruling]\n  N1[N1 Current-state inventory]\n  N2[N2 Comparables research]\n  N3[N3 Specify admitted view]\n  N4[N4 Spec adversarial review]\n  N5[N5 Architecture + ADR]\n  N6[N6 Architecture council]\n  N7[N7 Spike unfamiliar contracts]\n  N8[N8 UX Part B + ui-design]\n  N9[N9 design-slice]\n  N10[N10 Design adversarial]\n  N11[N11 implement TDD]\n  N12[N12 Proof Pack review]\n  N13[N13 conductor-join]\n  N14[N14 Owner next-view or stop]\n  N0 --> N1\n  N0 --> N2\n  N1 --> N3\n  N2 --> N3\n  N3 --> N4\n  N4 --> N5\n  N5 --> N6\n  N6 --> N7\n  N7 --> N8\n  N8 --> N9\n  N9 --> N10\n  N10 --> N11\n  N11 --> N12\n  N12 --> N13\n  N13 --> N14"
+        }
+      ],
+      "sourceSha256": "9e61d57a0e9a194f671837afc66f920506b2d30c472c4b5bdb2a5cb396d4272c"
+    },
+    {
       "id": "profile-addendum-cd",
       "path": "docs/profiles/addendum-cd.md",
       "title": "Session profile — the Addenda C/D programme",
@@ -10852,7 +11742,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8db1b8c2d263d7d044518d5aeb535b813a1f1856c838c9d72be80a885c9a615d"
+      "sourceSha256": "4e0c3f3532d0a8e0ddddad82477d0d42f2a943a2768710354de1be7bcba8280f"
     },
     {
       "id": "session-profiles",
@@ -10878,6 +11768,39 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "fbf372e37e6df30d58ad671051def9d2f9fd7848f0c02db8b3af8ba41cc69df7"
+    },
+    {
+      "id": "spike-d0-tree-toolkit",
+      "path": "docs/spikes/d0-tree-toolkit/RESULT.md",
+      "title": "Spike — D-0 Solution tree toolkit (WPF TreeView)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "N7 Spike Protocol (read + run on installed WPF net10.0-windows / PresentationFramework 10.0.0.0 / .NET 10.0.11): freeze WPF TreeView as the D-0 toolkit. HierarchicalDataTemplate over a VM-nested forest of the flat SolutionTreeResult.Nodes list. Opt-in recycling virtualization, 28px header content (never Height on TreeViewItem), AutomationProperties.Name bound to kind+coverage, PreviewKeyDown for Enter / Ctrl+Enter. Custom ListView/ItemsControl and WebView2 HTML trees are rejected.",
+      "tags": [
+        "spike",
+        "D-0",
+        "solution-tree",
+        "treeview",
+        "wpf",
+        "N7",
+        "understanding-views"
+      ],
+      "links": [
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "696b7d3e687865530477a591904360764c266fcb46c7979aeae8abc61f36bc4b"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -15240,6 +16163,11 @@ window.DOCS_INDEX = {
           "by": "spec-ai-native-ide",
           "on": "2026-08-26",
           "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        },
+        {
+          "by": "design-solution-tree",
+          "on": "2026-09-15",
+          "reason": "N9 draft design for D-0 UV-0 then UV-1 (SolutionTreeAsync + Architecture kind)"
         }
       ],
       "summary": "Defines the privacy posture for local AI-IDE workspace data: data inventory, purpose, retention, deletion, indirect model egress, and LINDDUN-lite dispositions. It is a pre-implementation gate for the AI-native IDE specification.",
@@ -15258,10 +16186,14 @@ window.DOCS_INDEX = {
         {
           "to": "knowledge-hub",
           "rel": "relates-to"
+        },
+        {
+          "to": "design-solution-tree",
+          "rel": "documents"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "32b4814e4d2bd7463961ca3f0822adde409eddbe18b8fa45b47ff68df81968ba"
+      "sourceSha256": "c9c01e5d12468641b20f2b6ff70fe7e98cc1c8aaa68f48d8f2cfc23645cb2e41"
     },
     {
       "id": "privacy-review-conductor",
@@ -16553,6 +17485,54 @@ window.DOCS_INDEX = {
       "sourceSha256": "0ce1c999eb408c194202fc11bc9cf17ed3b17d62b6ed956d5df84281d38085b0"
     },
     {
+      "id": "proof-native-ui-solution-tree",
+      "path": "docs/proof/native-ui-solution-tree.md",
+      "title": "Native UI Proof Pack — Solution tree (D-0)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [
+        {
+          "by": "mockup-solution-tree",
+          "on": "2026-09-15",
+          "reason": "N8 ui-design: Solution tree mockup settles dual-activate, Unindexed chrome, and hard states; HTML is direction only"
+        }
+      ],
+      "summary": "Native proof pack for the Architecture Solution tree. HTML mockup is direction only. Spike N7 Verified WPF TreeView attachments. UV-1 shipped product UIA Name, 28px header, recycling virtualization, and unindexed leaf tests. High Contrast, DPI, and signing stay Flagged.",
+      "tags": [
+        "native-ui",
+        "proof-pack",
+        "accessibility",
+        "keyboard",
+        "dpi",
+        "wpf",
+        "D-0",
+        "solution-tree"
+      ],
+      "links": [
+        {
+          "to": "spec-understanding-views",
+          "rel": "tested-by"
+        },
+        {
+          "to": "mockup-solution-tree",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spike-d0-tree-toolkit",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fbbcbf911fa324d431399f3c3ffaa9d7bc8a2ea27f55b9018f012dfe7e7a49a5"
+    },
+    {
       "id": "proof-ownership-qualification",
       "path": "docs/proof/ownership-qualification.md",
       "title": "Published ownership gate qualification",
@@ -17363,6 +18343,91 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "305365f383e220a689a6a688c2d326ef35a65d0b087a5e355256d9440d86569f"
+    },
+    {
+      "id": "proof-uv-0-solution-tree-core-query",
+      "path": "docs/proof/uv-0-solution-tree-core-query.md",
+      "title": "Proof Pack — UV-0 Core SolutionTreeAsync census join",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "UV-0 walking skeleton: Core SolutionTreeAsync / IPC solution-tree, production UnanalysedLanguages.Skip, ResolveWithinWorkspace join, T5c omit off the wire. F* DTO tests: captured red on empty INTERNAL SolutionTree overload — Failed 19 / Passed 6 / Total 25 (docs/proof/uv-0-red-run.txt). T5a/T5b/T5c/Cancel are in that fail list. Green: Core+App SolutionTree filters (see body).",
+      "tags": [
+        "proof-pack",
+        "D-0",
+        "solution-tree",
+        "UV-0",
+        "census",
+        "ipc"
+      ],
+      "links": [
+        {
+          "to": "spec-understanding-views",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-solution-tree",
+          "rel": "tested-by"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4a740c7295c0def310a32b86787be468abb1f47d765c585ecd1854f87c6e37aa"
+    },
+    {
+      "id": "proof-uv-1-solution-tree-shell",
+      "path": "docs/proof/uv-1-solution-tree-shell.md",
+      "title": "Proof Pack — UV-1 Solution tree kind row and TreeView",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "UV-1: one Architecture SurfaceKind solution-tree (Instances.One, Derived _View) and a WPF TreeView with N7 attachments. T5c visual-tree uses a Fake omit-set DTO. US-C4 table tests seen red (18 kinds, no Show solution tree) then green (19).",
+      "tags": [
+        "proof-pack",
+        "D-0",
+        "solution-tree",
+        "UV-1",
+        "wpf",
+        "treeview",
+        "AR3"
+      ],
+      "links": [
+        {
+          "to": "spec-understanding-views",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-solution-tree",
+          "rel": "tested-by"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spike-d0-tree-toolkit",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-uv-0-solution-tree-core-query",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-native-ui-solution-tree",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "89f132b54ad94dd2dcb2c9b6c4024ca9631a7e8adf140493bd4f92e35ca00742"
     },
     {
       "id": "proof-watcher-advisory-evaluator",
@@ -19035,6 +20100,92 @@ window.DOCS_INDEX = {
       "sourceSha256": "6c93704c427bfade09fe56d333323118227d06b282a0fb2d6f9a841119e947cb"
     },
     {
+      "id": "spec-understanding-views",
+      "path": "docs/specs/understanding-views.md",
+      "title": "Understanding views — D-0 Solution tree (spec)",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [
+        {
+          "by": "note-understanding-views-n4-pass",
+          "on": "2026-09-15",
+          "reason": "N4 gate record for D-0 spec"
+        }
+      ],
+      "summary": "Admits D-0 Solution tree this horizon: Architecture-pane navigator of (path, kind) nodes, kind ∈ {file-artifact, census-folder}. Coverage is indexed-parent | unindexed only; not-recorded is Disclosure. D-1…D-6 stay named-and-deferred with §A5 quoted. N4 repair: grain closed, US-T5 split, fixture F*. N4 PASS recorded by conductor from non-author receipts (note-understanding-views-n4-pass). Status remains draft.",
+      "tags": [
+        "understanding-views",
+        "D-0",
+        "solution-tree",
+        "architecture",
+        "addendum-c",
+        "census",
+        "unindexed"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "refines"
+        },
+        {
+          "to": "note-understanding-views-owner-ruling",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-n1-disposition",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-n1-inventory",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-n2-comparables",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-n4-pass",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "depends-on"
+        },
+        {
+          "to": "conceptual-model-ai-native-ide",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "class",
+          "title": "Conceptual domain model (DM1 / DM4 — before UX/UI)",
+          "mermaid": "classDiagram\n  class SolutionTreeProjection {\n    queryTime\n    invariant one path at most one node\n    invariant skip-listed directories are not nodes\n    invariant folder exists iff census emitted it minus skip\n    invariant declared_at never creates a folder\n    invariant census is not stored\n  }\n  class TreeNode {\n    path\n    kind\n  }\n  class FileArtifact {\n    path\n  }\n  class CensusFolder {\n    path\n    coverage\n  }\n  class Coverage {\n    indexedParent\n    unindexed\n  }\n  class Disclosure {\n    pythonTsPerFile\n    skipOmittedCount\n    shortfallIo\n    shortfallPermission\n    shortfallCap\n    unresolvablePath\n  }\n  SolutionTreeProjection --> TreeNode : projects many\n  SolutionTreeProjection --> Disclosure : carries\n  TreeNode --> FileArtifact : kind file-artifact\n  TreeNode --> CensusFolder : kind census-folder\n  CensusFolder --> Coverage : has exactly one"
+        },
+        {
+          "kind": "flowchart",
+          "title": "User flows (happy + alternate + error + recovery)",
+          "mermaid": "flowchart TD\n  start([Operator in Architecture]) --> ws{Workspace open?}\n  ws -->|no| nows[No-workspace: Open a workspace to see its solution tree.]\n  nows --> openWs[Operator opens a workspace]\n  openWs --> ws\n  ws -->|yes| prior{Prior payload?}\n  prior -->|no| load[Loading: Reading the workspace tree…]\n  prior -->|yes| stale[Rows stay, marked Stale]\n  load --> q{Census plus join}\n  stale --> q\n  q -->|IPC or daemon error| err[Error: Could not read the workspace tree.]\n  err --> retry[Retry]\n  retry --> load\n  q -->|zero nodes and no Disclosure| empty[Empty copy]\n  empty --> showG[Show Graph]\n  q -->|payload| tree[Tree of path-kind nodes plus chrome Disclosures]\n  tree --> skipDisc[N skip-listed directories omitted if N greater than 0]\n  tree --> py{Python/TS scopes present?}\n  py -->|yes| disc[Exact US-T6 copy]\n  py -->|no| nodes\n  disc --> nodes[For each node]\n  nodes --> kind{kind}\n  kind -->|census-folder unindexed| unidx[Unindexed leaf — no children]\n  kind -->|census-folder indexed-parent| parent[Expand or collapse]\n  kind -->|file-artifact| art[Kind glyph plus name]\n  art --> act{Activate}\n  act -->|Enter View source| src[NodeContentAsync then codeviewer]\n  act -->|Ctrl+Enter Reveal in graph| graph[GraphAsync / DescribeAsync]\n  src -->|error| srcErr[Could not open source]\n  srcErr --> srcRetry[Retry] --> src\n  graph -->|error| graphErr[Could not reveal in graph]\n  graphErr --> graphRetry[Retry] --> graph\n  src -->|ok| done([Goal: understand this artifact])\n  graph -->|ok| done\n  unidx --> done2([Goal: coverage is honest])\n  skipDisc --> done2"
+        }
+      ],
+      "sourceSha256": "b7c3cef292938edaac48bed3d58b43df104e51361b642e04133997ead2e9ca45"
+    },
+    {
       "id": "threat-model-ai-native-ide",
       "path": "docs/security/ai-native-ide-threat-model.md",
       "title": "AI-DE threat model",
@@ -19053,6 +20204,11 @@ window.DOCS_INDEX = {
           "by": "spec-ai-native-ide",
           "on": "2026-08-26",
           "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        },
+        {
+          "by": "design-solution-tree",
+          "on": "2026-09-15",
+          "reason": "N9 draft design for D-0 UV-0 then UV-1 (SolutionTreeAsync + Architecture kind)"
         }
       ],
       "summary": "Disposes STRIDE threats across workspace IPC, filesystem identity, terminal and rendering content, prompt delivery, MCP, audit evidence, and dependency acquisition with required negative controls.",
@@ -19075,10 +20231,14 @@ window.DOCS_INDEX = {
         {
           "to": "privacy-review-ai-native-ide",
           "rel": "relates-to"
+        },
+        {
+          "to": "design-solution-tree",
+          "rel": "documents"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b8bd5ee4e4b5516c7b3bf7bb0994e6016d7bea411c248a0302d8f077639b5cb0"
+      "sourceSha256": "7baa01e81338efdea1745c56efa2c18e578ee37a061a814dc8f58d5879265d34"
     }
   ],
   "surfaces": [
@@ -19198,6 +20358,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-workbench"
     },
     {
+      "id": "surface-mockups-solution-tree",
+      "path": "docs/mockups/solution-tree.html",
+      "title": "AI-DE — Solution tree mockup",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-solution-tree"
+    },
+    {
       "id": "surface-specs-ai-native-ide",
       "path": "docs/specs/ai-native-ide.html",
       "title": "AI-native IDE — Product specification",
@@ -19228,6 +20396,14 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "coordination-addendum-cd"
+    },
+    {
+      "id": "surface-coordination-understanding-views",
+      "path": "docs/coordination/understanding-views.html",
+      "title": "Coordination plan - Addendum C deferred understanding views",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coordination-understanding-views"
     },
     {
       "id": "surface-mockups-editor-surfaces",
@@ -19302,5 +20478,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3a9cfec4413bdb1eac5d900eec916ead8273c887dcecdc98cbb40dd2788a1807"
+  "graphSha256": "d835155d07f75e4983887e0f6cd3d7b7716282d981e68c8c5d55b097de52f2cb"
 };

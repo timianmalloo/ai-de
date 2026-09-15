@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    A GUI-SUBSYSTEM host that owns the foreground so SendInput can prove Ctrl+Enter.
+
+    RaiseEvent cannot set Keyboard.Modifiers (N7 spike F12). A `dotnet test` host cannot
+    take the foreground (DC-014). Same control as CanvasProbe / ComposerProbe: run out of
+    process, report by exit code. Absence must fail, never skip (DC-012).
+  -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>AiDe.App.SolutionTreeProbe</AssemblyName>
+    <IsTestProject>false</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AiDe.App\AiDe.App.csproj" />
+  </ItemGroup>
+
+</Project>

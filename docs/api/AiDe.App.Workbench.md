@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 101 types, 442 members, 74% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 103 types, 463 members, 71% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**101 public types · 442 public members · 74% documented.**
+**103 public types · 463 public members · 71% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1438,6 +1438,45 @@ stale/ended terminals that otherwise bury the sessions collaborating now — the
 showed 3 "✓ Alive" agents leading but ~13 "~ Stale" terminals cluttering the same section
 (partitioning Stale as live was too generous). Leading with Alive and collapsing everything else
 is the fix. Pure and dependency-free (UX-SESSIONS-GRAVEYARD).
+
+## `SolutionTreeActivate`
+
+*record* — `SolutionTreeSurface.cs`
+
+One activate from the tree, mapped onto an existing `NodeViewKind`.
+
+| Member | Summary |
+|---|---|
+| `SolutionTreeNodeItem(SolutionTreeNode node)` | **(gap)** |
+| `SolutionTreeNode Node { get; }` | **(gap)** |
+| `ObservableCollection<SolutionTreeNodeItem> Children { get; }` | **(gap)** |
+| `bool IsStale { get; set; }` | **(gap)** |
+| `string DisplayName` | **(gap)** |
+| `string KindWord` | **(gap)** |
+| `string CoverageLabel` | **(gap)** |
+| `Geometry KindGlyph` | **(gap)** |
+| `DoubleCollection KindGlyphDash` | **(gap)** |
+| `string AccessibleName` | **(gap)** |
+| `IReadOnlyList<SolutionTreeNodeItem> Nest(IReadOnlyList<SolutionTreeNode> nodes)` | Nest the flat DTO by parent census-folder already in the list. No path-split. |
+
+## `SolutionTreeSurface`
+
+*class* — `SolutionTreeSurface.cs`
+
+Architecture Solution tree: WPF TreeView over `SolutionTreeAsync`.
+
+| Member | Summary |
+|---|---|
+| `SolutionTreeSurface(string title = "Solution tree")` | **(gap)** |
+| `event EventHandler<SolutionTreeActivate>? ActivateRequested` | **(gap)** |
+| `event EventHandler? ShowGraphRequested` | **(gap)** |
+| `event EventHandler? RetryRequested` | **(gap)** |
+| `void ShowLoading()` | **(gap)** |
+| `void ShowNoWorkspace()` | **(gap)** |
+| `void ShowError(string _)` | **(gap)** |
+| `void ShowActivateError(NodeViewKind kind)` | View source / Reveal failed on that surface's overlay. Retry re-raises the last activate. Tree selection is not changed. |
+| `void MarkStale()` | **(gap)** |
+| `void Show(SolutionTreeResult result)` | **(gap)** |
 
 ## `SurfaceChrome`
 

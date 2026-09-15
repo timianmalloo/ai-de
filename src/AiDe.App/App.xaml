@@ -48,6 +48,7 @@
         <SolidColorBrush x:Key="AccentContrastBrush" Color="#0D1014" />
         <SolidColorBrush x:Key="VerifiedBrush" Color="#5FB98F" />
         <SolidColorBrush x:Key="InferredBrush" Color="#D8A650" />
+        <SolidColorBrush x:Key="StaleBrush" Color="#D8A650" />
         <SolidColorBrush x:Key="UnverifiedBrush" Color="#98A3B2" />
         <SolidColorBrush x:Key="DangerBrush" Color="#E07A6F" />
         <SolidColorBrush x:Key="FocusBrush" Color="#8FC0EA" />

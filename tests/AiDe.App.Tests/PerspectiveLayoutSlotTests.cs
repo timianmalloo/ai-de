@@ -406,6 +406,9 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         Assert.Equal("canvas", layout.Zone(ZoneId.Left).Surfaces().Single().Kind);
         Assert.Equal(["contexts", "classdiagram"], layout.Zone(ZoneId.Center).Surfaces().Select(s => s.Kind));
         Assert.DoesNotContain(layout.AllSurfaces(), s => s.Kind is "view" or "inspector");
+        // D-0 freeze (Owner N14 + Ruling 94): admitted, View-menu-only, not a default tab.
+        Assert.DoesNotContain(layout.AllSurfaces(), s => s.Kind == "solution-tree");
+        Assert.True(DockHost.AdmissionFor(PerspectiveSet.Architecture).Admits("solution-tree"));
 
         // Evidence is one View-menu gesture away, not gone; Provenance is gone from the product.
         Assert.True(DockHost.AdmissionFor(PerspectiveSet.Architecture).Admits("view"));

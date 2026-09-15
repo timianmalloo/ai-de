@@ -55,6 +55,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiDe.App.ComposerProbe", "t
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiDe.App.ContrastProbe", "tests\AiDe.App.ContrastProbe\AiDe.App.ContrastProbe.csproj", "{3EEB1462-B2EE-46B2-A9E1-844920330D2A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiDe.App.SolutionTreeProbe", "tests\AiDe.App.SolutionTreeProbe\AiDe.App.SolutionTreeProbe.csproj", "{B8D3B4B1-CAF2-4597-9303-415E4C30095F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -281,6 +283,18 @@ Global
 		{3EEB1462-B2EE-46B2-A9E1-844920330D2A}.Release|x64.Build.0 = Release|Any CPU
 		{3EEB1462-B2EE-46B2-A9E1-844920330D2A}.Release|x86.ActiveCfg = Release|Any CPU
 		{3EEB1462-B2EE-46B2-A9E1-844920330D2A}.Release|x86.Build.0 = Release|Any CPU
+		{B8D3B4B1-CAF2-4597-9303-415E4C30095F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8D3B4B1-CAF2-4597-9303-415E4C30095F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8D3B4B1-CAF2-4597-9303-415E4C30095F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B8D3B4B1-CAF2-4597-9303-415E4C30095F}.Debug|x64.Build.0 = Debug|Any CPU
+		{B8D3B4B1-CAF2-4597-9303-415E4C30095F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B8D3B4B1-CAF2-4597-9303-415E4C30095F}.Debug|x86.Build.0 = Debug|Any CPU
+		{B8D3B4B1-CAF2-4597-9303-415E4C30095F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8D3B4B1-CAF2-4597-9303-415E4C30095F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8D3B4B1-CAF2-4597-9303-415E4C30095F}.Release|x64.ActiveCfg = Release|Any CPU
+		{B8D3B4B1-CAF2-4597-9303-415E4C30095F}.Release|x64.Build.0 = Release|Any CPU
+		{B8D3B4B1-CAF2-4597-9303-415E4C30095F}.Release|x86.ActiveCfg = Release|Any CPU
+		{B8D3B4B1-CAF2-4597-9303-415E4C30095F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -308,5 +322,6 @@ Global
 		{91341CFE-E36C-4460-9E01-E51920A4E933} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{7C41A9D2-5E88-4B12-9E44-3F6A2C1D8B01} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{3EEB1462-B2EE-46B2-A9E1-844920330D2A} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{B8D3B4B1-CAF2-4597-9303-415E4C30095F} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal

@@ -2,6 +2,7 @@ using System.Diagnostics;
 using AiDe.Core;
 using AiDe.Core.Facts;
 using AiDe.Core.Mcp;
+using AiDe.Core.Projections;
 
 namespace AiDe.Core.Tests;
 
@@ -116,6 +117,7 @@ public sealed class TelemetryTests : IDisposable
                 "cmd-secret", "draft-1", 1, $"please review {seededSecret}", "session-1", 1),
             session);
         core.Projections.Describe("Order", 50);
+        core.Projections.SolutionTree(new SolutionTreeQuery());
 
         foreach (var activity in _captured)
         {

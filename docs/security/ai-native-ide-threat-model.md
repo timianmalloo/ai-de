@@ -10,10 +10,12 @@ links:
   - { to: architecture, rel: documents }
   - { to: spec-ai-native-ide, rel: implements }
   - { to: privacy-review-ai-native-ide, rel: relates-to }
+  - { to: design-solution-tree, rel: documents }
 review-by: 2027-02-21
 review-suggested:
   - { by: architecture, on: 2026-08-25, reason: "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture" }
   - { by: spec-ai-native-ide, on: 2026-08-26, reason: "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice" }
+  - { by: design-solution-tree, on: 2026-09-15, reason: "N9 draft design for D-0 UV-0 then UV-1 (SolutionTreeAsync + Architecture kind)" }
 summary: >-
   Disposes STRIDE threats across workspace IPC, filesystem identity, terminal and rendering
   content, prompt delivery, MCP, audit evidence, and dependency acquisition with required
@@ -51,3 +53,9 @@ summary: >-
 Every negative proof runs red before its control exists and green after. HTTP MCP remains unavailable
 until its Origin/caller suite passes. Any control that cannot run on a fresh Windows runner is not
 accepted as a security control.
+
+## Pending design: D-0 Solution tree
+
+`design-solution-tree` (draft, 2026-09-15) adds census/IPC and App-assembly probe boundaries.
+STRIDE-lite lives on that design (`Adversarial analysis (STRIDE-lite)`). Refresh the full
+component register with `python docs/ai-forward-pack/scripts/docs-graph.py rollup --heading "Adversarial analysis (STRIDE-lite)" --type design`. N10 reviews before this model absorbs the rows as accepted risk.

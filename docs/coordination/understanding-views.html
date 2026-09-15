@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coordination plan - Addendum C deferred understanding views</title>
+<style>
+:root{
+  --surface:#F4F6F8;--raised:#FFFFFF;--sunken:#E7EBEF;--border:#C7CFD8;--border-strong:#5F6977;
+  --text:#1A1F26;--muted:#55606E;--accent:#27649A;--on-accent:#FFFFFF;--focus:#1B4F7E;
+  --verified:#1C724A;--inferred:#7D5900;--danger:#A8372B;
+  --font:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+  --r-sm:4px;--r-md:6px;--r-lg:10px;
+  --resting:0 1px 3px rgba(0,0,0,0.12);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --surface:#12151A;--raised:#1A1F26;--sunken:#0D1014;--border:#2A313B;--border-strong:#7C8896;
+  --text:#E4E9EF;--muted:#98A3B2;--accent:#5B9DD9;--on-accent:#0D1014;--focus:#8FC0EA;
+  --verified:#5FB98F;--inferred:#D8A650;--danger:#E07A6F;--resting:0 1px 3px rgba(0,0,0,0.28);}}
+*{box-sizing:border-box}
+html{color-scheme:light dark}
+body{margin:0;background:var(--surface);color:var(--text);font:13px/1.5 var(--font)}
+a{color:var(--accent)}
+a:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.shell{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}
+nav{position:sticky;top:0;height:100vh;overflow:auto;padding:16px 12px;border-right:1px solid var(--border);background:var(--sunken)}
+nav h2{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+nav ul{list-style:none;margin:0;padding:0}
+nav a{display:block;padding:3px 6px;border-radius:var(--r-sm);text-decoration:none;color:var(--text)}
+nav a:hover{background:var(--raised)}
+main{padding:24px 32px 64px;max-width:1200px}
+h1{font-size:22px;font-weight:600;margin:0 0 8px}
+h2{font-size:16px;margin:28px 0 8px;border-bottom:1px solid var(--border);padding-bottom:4px}
+p,li{max-width:72rem}
+.muted{color:var(--muted)}
+table{border-collapse:collapse;width:100%;margin:8px 0 16px;font-size:12px;background:var(--raised);box-shadow:var(--resting);border-radius:var(--r-md);overflow:hidden}
+th,td{border:1px solid var(--border);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:var(--sunken);font-weight:600}
+code{font-family:var(--mono);font-size:11px}
+.banner{background:var(--raised);border:1px solid var(--border);border-radius:var(--r-lg);padding:12px 16px;margin:12px 0 20px}
+.status dt{font-weight:600}
+.status dd{margin:0 0 8px}
+</style>
+</head>
+<body>
+<div class="shell">
+<nav>
+  <h2>On this page</h2>
+  <ul>
+    <li><a href="#layer">Layer state</a></li>
+    <li><a href="#classes">Artifact classes</a></li>
+    <li><a href="#tracks">Tracks</a></li>
+    <li><a href="#spine">Serial spine</a></li>
+    <li><a href="#seams">Seams</a></li>
+    <li><a href="#struck">Struck tracks</a></li>
+    <li><a href="#order">Order of operations</a></li>
+    <li><a href="#status">Status</a></li>
+    <li><a href="understanding-views-kickoff.md">Kickoff prompt</a></li>
+  </ul>
+</nav>
+<main>
+<header>
+  <h1>Coordination plan — Addendum C deferred understanding views</h1>
+  <p class="muted">Canonical: <code>docs/coordination/understanding-views.md</code> · branch <code>understanding-views</code> · session <code>grok-understanding-views-kickoff</code></p>
+</header>
+<div class="banner">
+  <p><strong>Finding.</strong> Ruling 54 re-admits <em>one view at a time, not the set</em>. AR3 forbids a menu row with nothing behind it. D-0…D-4 share the Architecture allow-list. D-5/D-6 are blocked on ADR-0036. Parallel implementers fail GO5.</p>
+  <p><strong>Width.</strong> Owner + Conductor + at most two read-only tracks after the ruling + one code spine (core query, then shell). The 15× orchestrator-worker multiplier is paid for isolation from the live Atlas fleet, not for speed.</p>
+  <p>Kickoff prompt (paste into a Grok 4.6 high Conductor session): <a href="understanding-views-kickoff.md"><code>understanding-views-kickoff.md</code></a>. Execution graph: <code>docs/plans/understanding-views.md</code>.</p>
+</div>
+
+<h2 id="layer">Layer state</h2>
+<p>Measured 2026-09-15. <code>coord doctor</code> exit 1 because regeneration is owed. Do not <code>coord regen</code> or <code>coord install</code> from a worktree. Use <code>python</code>, not <code>python3</code>.</p>
+<table>
+<thead><tr><th>check</th><th>result</th><th>meaning</th></tr></thead>
+<tbody>
+<tr><td>registry</td><td>ok — 11 patterns</td><td>classified; inherited by linked worktrees</td></tr>
+<tr><td>merge driver</td><td>effective</td><td>coord-regen / coord-register</td></tr>
+<tr><td>regeneration</td><td>8 artifacts OWED</td><td>not cleared by this session</td></tr>
+<tr><td>Grok edit boundary</td><td>unsupported as enforced</td><td>commit floor is the control</td></tr>
+<tr><td>Grok isolation=worktree</td><td>do not use</td><td>does not join via conductor-join.py; use coord worktrees + spawn cwd</td></tr>
+<tr><td>live Atlas fleet</td><td>active; e1-legacy-fixture holds claims</td><td>out of bounds</td></tr>
+</tbody>
+</table>
+
+<h2 id="classes">Artifact classes</h2>
+<table>
+<thead><tr><th>path</th><th>class</th><th>coordination</th></tr></thead>
+<tbody>
+<tr><td>new spec / ADR / design / mockup / Core query / App surface</td><td>authored</td><td>one owner per file</td></tr>
+<tr><td>docs/audit/*.jsonl, .agents/log|decisions, defect-classes.md</td><td>register</td><td>no claim; append-only</td></tr>
+<tr><td>docs-index, audit-data, docs/api, _site, _meta</td><td>derived</td><td>no claim; regen at join</td></tr>
+<tr><td>src/AiDe.Core/Understanding/** and Atlas App/spikes</td><td>authored by Atlas</td><td>out of bounds</td></tr>
+</tbody>
+</table>
+
+<h2 id="tracks">Tracks</h2>
+<table>
+<thead><tr><th>track</th><th>owns</th><th>depends</th><th>tier</th><th>fan-out</th><th>budget</th><th>exit evidence</th><th>harness</th></tr></thead>
+<tbody>
+<tr><td>owner</td><td>ruling note only</td><td>—</td><td>T2</td><td>0</td><td>20</td><td>one admitted view; Atlas seam; D-5/D-6 disposition</td><td>Grok 4.6 xhigh, owner</td></tr>
+<tr><td>specify</td><td>docs/specs/understanding-views.md</td><td>owner</td><td>T2</td><td>4 reviews</td><td>50</td><td>Parts A/B/C; falsifiable Gherkin; others still §A5</td><td>Grok 4.6 high, product-strategist</td></tr>
+<tr><td>architecture</td><td>architecture.md + one ADR</td><td>specify</td><td>T2</td><td>4 council</td><td>40</td><td>one new kind described, not implemented; no second store</td><td>Grok 4.6 high, enterprise-architect</td></tr>
+<tr><td>core-query</td><td>named Core query/IPC/tests</td><td>architecture + spike</td><td>T2</td><td>0</td><td>40</td><td>red-then-green; unindexed/unclassified states</td><td>Grok 4.6 high, csharp-developer</td></tr>
+<tr><td>shell-surface</td><td>one surface + one allow-list row</td><td>core-query</td><td>T2</td><td>0</td><td>50</td><td>§A5 criterion observed; derived menu, no second list</td><td>Grok 4.6 high, native-desktop + csharp</td></tr>
+<tr><td>conductor</td><td>plan, joins, trees</td><td>all</td><td>T1</td><td>4</td><td>30 + join</td><td>conductor-join.py; planned vs actual</td><td>Grok 4.6 high, orchestrator</td></tr>
+</tbody>
+</table>
+
+<h2 id="spine">Serial spine</h2>
+<table>
+<thead><tr><th>item</th><th>why it cannot be parallel</th><th>who</th></tr></thead>
+<tbody>
+<tr><td>Owner ruling</td><td>decision edge — later shape depends on which view is in-scope</td><td>owner</td></tr>
+<tr><td>Specify</td><td>data + decision into architecture</td><td>specify</td></tr>
+<tr><td>Architecture + ADR</td><td>decision into spike, files, contracts</td><td>architecture</td></tr>
+<tr><td>Spike</td><td>unfamiliar contract</td><td>architecture helper</td></tr>
+<tr><td>Core query then shell</td><td>data edge; AR3; ADR-0030 one column</td><td>core-query → shell-surface</td></tr>
+<tr><td>Join / next view</td><td>one integrator; Owner only for N14</td><td>conductor / owner</td></tr>
+</tbody>
+</table>
+
+<h2 id="seams">Seams</h2>
+<table>
+<thead><tr><th>from → to</th><th>request</th><th>resolved by</th></tr></thead>
+<tbody>
+<tr><td>owner → specify</td><td>the one admitted view</td><td>ruling note</td></tr>
+<tr><td>specify → architecture</td><td>Gherkin the architecture must satisfy</td><td>quoted spec statements</td></tr>
+<tr><td>architecture → core-query</td><td>query name, DTO, bounds</td><td>seam request; exact files</td></tr>
+<tr><td>core-query → shell-surface</td><td>frozen query + IPC</td><td>Shell binds; no second query</td></tr>
+<tr><td>any → Atlas</td><td>none this horizon</td><td>coord request only</td></tr>
+</tbody>
+</table>
+<p>ADR-0030 trigger, quoted: “Add an explicit <code>Perspectives</code> column to the App's <code>SurfaceKind</code> row — a non-defaulted <code>IReadOnlySet&lt;string&gt;</code> of perspective ids” and “an empty set fails the build test” (ADR-0030 §Decision 2 / US-C3 b5).</p>
+
+<h2 id="struck">Struck tracks</h2>
+<table>
+<thead><tr><th>track</th><th>why</th></tr></thead>
+<tbody>
+<tr><td>Seven parallel D-0…D-6 implementers</td><td>Ruling 54; shared allow-list; AR3</td></tr>
+<tr><td>D-5 / D-6 implementers</td><td>eval harness / reply-channel not this horizon</td></tr>
+<tr><td>Atlas integration</td><td>different conductor; live claims</td></tr>
+<tr><td>Tests perspective</td><td>Ruling 54 non-goal</td></tr>
+<tr><td>core ∥ shell</td><td>data edge</td></tr>
+<tr><td>main integration</td><td>not granted</td></tr>
+</tbody>
+</table>
+
+<h2 id="order">Order of operations</h2>
+<ol>
+<li>Paste the kickoff prompt into a Grok 4.6 <strong>high</strong> Conductor session.</li>
+<li><code>coord doctor</code> in the conductor tree. Do not install from a worktree.</li>
+<li>Spawn Owner (Grok 4.6 xhigh) in <code>understanding-views-owner</code>.</li>
+<li>After the ruling: inventory ∥ comparables, then specify, architecture, spike, core, shell, review, join.</li>
+<li>Owner N14: next view or stop. Variant must decrease. Cap 7.</li>
+</ol>
+
+<h2 id="status">Status</h2>
+<dl class="status">
+  <dt>Completed</dt>
+  <dd>Execution graph, this plan, kickoff, N0–N4, N5 ADR-0038 proposed, N6 PASS after Security re-review (<code>note-understanding-views-n6-council</code>). Spec still draft.</dd>
+  <dt>Remaining</dt>
+  <dd>Join architecture onto <code>understanding-views</code>; N7 toolkit spike; N8 ui-design; N9–N10 design; N11 core-query then shell-surface; N12 Proof Pack; N13; N14.</dd>
+  <dt>Best next action</dt>
+  <dd>Join <code>understanding-views-architecture</code> (<code>--docs-only</code>), then N7 Spike Protocol on the tree toolkit. Do not open core or shell.</dd>
+</dl>
+</main>
+</div>
+</body>
+</html>
