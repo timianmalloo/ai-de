@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T19:45:31Z",
+  "generated": "2026-09-15T20:09:53Z",
   "audit": [
     {
       "actor": null,
@@ -18363,6 +18363,34 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T19:45:30Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2KB1CPPF1KD020WZ4PSTVAX",
+      "shortname": "atlas-e2-architecture-design",
+      "datetime": "2026-09-15T20:09:53Z",
+      "session": "codex-atlas-e2-architecture",
+      "prompt": "E2 Domain/Layer/Azure DESIGN author independent of E1. Ground AGENTS and spec/architecture/design/ui-design/rigor/test workflows, conductor plan and coordination records. Pinned inputs92e025ae AddendumE US-E7/8, architecture sections8/13 and E1 static design; existing graph/store/projections/Bicep/EF/SQL/context/canvas/tests and read-only mocks. Map source through identity/provenance/projection/wire/native/source/back. No DDD from namespace, resources as C4 containers, declarations as deployed, lookup as permission, invented service roots. Send grounded manifest before authoring. Only docs/design/atlas-architecture-views.md plus official records after agreement. No product/cloud/analyzed code/desktop/main writes;16call20min18ktoken budget. Return committed design, observed sources and gaps; no self-review.",
+      "summary": "Conductor approved design authoring after manifest. Read source and pinned contracts; mapped applicableUS-E7/8, retained ER exclusion, proposed exact DTO/port/file seams and source-bound native oracles. F1 domain/layer authority producer, F2 resource-root and typed relationship evidence, F3 accepted Atlas foundation/revision bridge remain explicit implementation blockers. No runtime tests or native rendering claimed. Corrected mock directory and ContextMap filename lookup mistakes; read actual mock Markdown and ContextProjection before drawing conclusions.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "GPT-6 Astra E2 author",
+      "artifacts": [
+        "docs/design/atlas-architecture-views.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Ground three E2 views and propose source-bound vertical designs without inventing evidence",
+      "done_when": "Every applicable US-E7/8 criterion has opened source or exact gap; proposed manifest and design are committed for Owner and independent review",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T20:03:28Z",
+      "duration_seconds": 385.0
     }
   ],
   "changes": [
@@ -22115,6 +22143,28 @@ window.AUDIT_DATA = {
         ]
       },
       "audit_ref": "al-01M2DZ3GA6T04XHQ6EAD7HRY8R"
+    },
+    {
+      "id": "cl-01M2KB1CK8K1ZMXFY4P7N5ADCY",
+      "datetime": "2026-09-15T20:09:53Z",
+      "session": "codex-atlas-e2-architecture",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Atlas E2 views require explicit evidence and pinned source contracts",
+      "prompt": "Ground Domain, Layer/component and Azure declaration views in existing source and pinned Addendum E US-E7/8; propose exact seams before design authoring, no implementation.",
+      "summary": "Proposed three vertical view designs. Existing context/schema/resource facts cannot establish DDD roles, layer membership or resource alias roots. Requires Owner forks for evidence intake/authority, Azure identity/predicate producer and accepted Atlas snapshot bridge. ER remains outside horizon and outstanding.",
+      "rationale": "Display semantics must follow cited source and authority rather than namespaces, folded names, latest-state joins or mock vocabulary.",
+      "artifacts": [
+        "docs/design/atlas-architecture-views.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "c46e112a",
+        "after": "c46e112a924a8a0a4c86e4552af1f0e30bfa851c",
+        "branch": "atlas/architecture-views",
+        "pushed": null,
+        "commits": []
+      }
     }
   ]
 };

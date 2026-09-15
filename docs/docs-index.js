@@ -8253,6 +8253,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "ca1c9fa5828cf6d1c8c551fb565e4d4de9685e4619e1aea53967269a1bfb53c0"
     },
     {
+      "id": "design-atlas-architecture-views",
+      "path": "docs/design/atlas-architecture-views.md",
+      "title": "Atlas E2 domain, layer, and Azure declaration views",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Source-grounded vertical design and producer-gap ledger for three E2 views. Requires a pinned Atlas foundation and explicit evidence contracts before product implementation.",
+      "tags": [
+        "atlas",
+        "domain",
+        "architecture",
+        "azure",
+        "design"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-uml-erm-surfaces",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "60b9cab0232ae713b0991c0826aac526bb99e5f8d8fc8d97079cfe284090ae8c"
+    },
+    {
       "id": "design-session-profiler",
       "path": "docs/design/session-profiler.md",
       "title": "Design — /session-profiler",
@@ -19302,5 +19333,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "cdd88612eb547c1c59d7cd30ad6c280de4af5e4a93295e495173f86740d6f50d"
+  "graphSha256": "2fcd6738e456860881a71113e56467d411423925c8779336ac0b916e50e2cf7e"
 };
