@@ -8,10 +8,41 @@ tags: [atlas, spike, domain, azure]
 links:
   - { to: design-atlas-architecture-views, rel: relates-to }
 review-by: 2026-12-15
-summary: "57 synthetic checks and six rejected subject faults; relation projection qualified only against synthetic assertions."
+summary: "57 synthetic checks and seven rejected subject faults; full relation anchor equality is now observed."
 ---
 
 # E2 contract spike result
+
+## Relation binding proof correction — 2026-09-15
+
+Independent review of `63e68e8f` correctly blocked the full binding claim:
+the relation oracle checked only count, ID and target. The subject emitted more
+fields, but emission alone did not prove their correctness. That claim is superseded.
+
+Added one subject fault, `relation-corrupt-binding`, which changes produced
+Scope to `wrong-scope`, Hash to `wrong-hash`, Start to 1 and Length to 2,
+while preserving ID and target. Before repairing the oracle, the rebuilt fault
+run exited 0 with `PASS 57 contract checks`; its emitted records visibly carried
+those wrong values. After replacing the partial check with record equality against
+an independently fixed expected AnchorEvidence, the same rebuilt command exited 1:
+`FAIL InvalidOperationException: relation-produced-target-and-current`.
+
+The expected record fixes every field: ID `a`, Target `synthetic:abc`, Scope
+`fixture`, Hash `ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad`,
+Start 0, Length 3. Sequence equality also checks the exact one-anchor population
+for each produced relation. Expected values do not come from fixture readback.
+
+Commands: `dotnet run --project spikes/atlas-architecture-contract/AtlasArchitectureContractSpike.csproj -- --fault relation-corrupt-binding`
+before and after oracle repair; then the same project command without fault rebuilt
+and passed all 57 controls (exit 0). All six earlier faults were rerun with
+`--no-build` after that rebuild and exited 1 at their named oracles below.
+There are now **seven rejected subject faults**, with 57 default checks unchanged.
+
+Class/control: partial output equality can falsely prove full provenance binding.
+Swept the relation and existing alias evidence comparisons; alias already checks
+all fields. Relation record equality and the new corruption fault prevent this
+specific recurrence. Independent re-review remains required. No producer, design,
+deployment identity or authority scope changed.
 
 ## Relation experiment — 2026-09-15
 

@@ -10369,7 +10369,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2026-12-15",
       "reviewSuggested": [],
-      "summary": "57 Windows synthetic checks and six rejected subject faults; relation evidence remains synthetic.",
+      "summary": "57 Windows synthetic checks and seven rejected faults, including full relation binding corruption.",
       "tags": [
         "atlas",
         "proof",
@@ -10384,7 +10384,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5f11190cd5a3800988030f4d8d4e96de3ff86f302dbb4c54716c7722364a6d79"
+      "sourceSha256": "7e52f8829cb8f504813a9167061a9ff0e3d4ecd756f0e8cb1d099f3acf6d4c45"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -19360,5 +19360,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "bf2b85df63ca533a7ea0c6277de336ac0c4d7560780610aedae67f796a4640e3"
+  "graphSha256": "4c6c665372281a917efef1b91226fdf562055c884dde70631dbecbf99003920b"
 };

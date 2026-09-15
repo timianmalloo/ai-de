@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:06:25Z",
+  "generated": "2026-09-15T21:11:24Z",
   "audit": [
     {
       "actor": null,
@@ -18549,6 +18549,51 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T20:57:10Z",
       "duration_seconds": 555.0
+    },
+    {
+      "id": "al-01M2KEJ1ND6DPPFC9KBX5DPCJA",
+      "shortname": "Repair E2 relation binding proof only: independently fixed full anchor e…",
+      "datetime": "2026-09-15T21:11:24Z",
+      "session": "prompt-log",
+      "prompt": "Repair E2 relation binding proof only: independently fixed full anchor equality, one subject corruption fault red then normal green, preserve earlier controls and audit evidence, no scope expansion.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2KEJ1RNG0PQCQQCYNSD9JYB",
+      "shortname": "atlas-e2-relation-binding-proof",
+      "datetime": "2026-09-15T21:11:24Z",
+      "session": "codex-atlas-e2-architecture",
+      "prompt": "Independent reviewer blocked partial relation anchor oracle; assert all fields against fixed expected binding and add one corruption fault.",
+      "summary": "Corrupt Scope Hash Start Length fault initially falsely passed57; full record equality then rejected it. Normal rebuild57 PASS; all six prior faults rerun exit1, seven total rejected. Prior full binding claim superseded; independent re-review pending.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "GPT-6 Astra E2 author",
+      "artifacts": [
+        "spikes/atlas-architecture-contract/RESULT.md",
+        "docs/proof/atlas-architecture-contract.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Prove full emitted relation anchor binding.",
+      "done_when": "Corrupted binding rejected, normal controls preserved, proof and correction committed for independent review.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T21:09:53Z",
+      "duration_seconds": 91.0,
+      "supersedes": "al-01M2KE8Y0HC2MDQ5ZGQC4FWSQR"
     }
   ],
   "changes": [

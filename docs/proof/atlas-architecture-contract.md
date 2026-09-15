@@ -8,10 +8,24 @@ tags: [atlas, proof, spike, domain, azure]
 links:
   - { to: design-atlas-architecture-views, rel: relates-to }
 review-by: 2026-12-15
-summary: "57 Windows synthetic checks and six rejected subject faults; relation evidence remains synthetic."
+summary: "57 Windows synthetic checks and seven rejected faults, including full relation binding corruption."
 ---
 
 # Bounded E2 contract evidence
+
+## Latest binding proof correction (2026-09-15)
+
+Independent review blocked `63e68e8f` because its relation oracle omitted
+Scope/Hash/Start/Length equality. The new `relation-corrupt-binding` subject fault
+first passed that old oracle despite visibly corrupt output (exit 0), then failed
+the repaired full-record equality oracle at `relation-produced-target-and-current`
+(exit 1). A subsequent normal rebuild passed 57 checks. All six prior faults
+were rerun and rejected; total subject faults now seven.
+
+[RESULT.md](../../spikes/atlas-architecture-contract/RESULT.md#relation-binding-proof-correction--2026-09-15)
+records exact expected binding, commands, observations and limits. Independent
+review remains pending; the earlier full-binding claim is superseded, not silently
+treated as previously proven. Deployment identity and production authority remain open.
 
 ## Latest relation experiment (2026-09-15)
 

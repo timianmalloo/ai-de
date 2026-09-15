@@ -16,7 +16,7 @@ internal static class Program
         {
             if (args.Length != 0)
             {
-                if (args.Length != 2 || args[0] != "--fault" || args[1] is not ("alias-drop" or "alias-wrong-root" or "scope-drop" or "relation-drop" or "relation-wrong-endpoint" or "relation-admit-mismatch"))
+                if (args.Length != 2 || args[0] != "--fault" || args[1] is not ("alias-drop" or "alias-wrong-root" or "scope-drop" or "relation-drop" or "relation-wrong-endpoint" or "relation-admit-mismatch" or "relation-corrupt-binding"))
                     throw new ArgumentException("Only named experimental fault injections are accepted.");
                 _fault = args[1];
             }
@@ -297,6 +297,7 @@ internal static class Program
                 // Registry predicate depends_on binds this exact typed pair, kind and anchor in one synthetic observation.
                 if (_fault != "relation-admit-mismatch" && (kind != "deployment-dependency" || from != "resource:resource-a" || to != "resource:resource-b" || state != "current" || !anchors.SequenceEqual(["a"]))) errors.Add("assertion-mismatch");
             }
+            if (_fault == "relation-corrupt-binding") evidence = evidence.Select(a => a with { Scope = "wrong-scope", Hash = "wrong-hash", Start = 1, Length = 2 }).ToList();
             edges.Add(new(Text(r, "id")!, from, _fault == "relation-wrong-endpoint" ? from : to, kind!, state!, basis!, basis == "explicit-declaration" ? "Declared relationship" : "Synthetic supported depends_on", evidence.ToArray(), assertions));
         }
         return new(errors.ToArray(), unresolved.ToArray(), errors.Count != 0 || unresolved.Count != 0 || _fault == "relation-drop" ? [] : edges.ToArray());
@@ -337,10 +338,12 @@ internal static class Program
             Assert("cap-" + collection, p.Errors.Contains("bound:" + collection) && p.Errors.Contains("bound:total") && p.Edges.Length == 0, "225 total; 33 in named collection; no output");
         }
         var positive = ProjectRelations(valid);
+        var expectedBinding = new AnchorEvidence("a", "synthetic:abc", "fixture",
+            "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad", 0, 3);
         Assert("relation-produced-target-and-current", positive.Errors.Length == 0 && positive.Unresolved.Length == 0 && positive.Edges.Length == 2
             && positive.Edges[0] is { From: "concept:order", To: "concept:money", Kind: "domain-association", State: "target", Basis: "explicit-declaration", Label: "Declared relationship" }
             && positive.Edges[1] is { From: "resource:resource-a", To: "resource:resource-b", Kind: "deployment-dependency", State: "current", Label: "Synthetic supported depends_on" }
-            && positive.Edges.All(e => e.Anchors.Length == 1 && e.Anchors[0].Id == "a" && e.Anchors[0].Target == "synthetic:abc")
+            && positive.Edges.All(e => e.Anchors.SequenceEqual([expectedBinding]))
             && positive.Edges[1].Assertions.SequenceEqual(["synthetic-dependency"]), JsonSerializerOutput(positive));
         var current = (JsonObject)valid.DeepClone(); current["relations"]![0]!["state"] = "current";
         var declaration = ProjectRelations(current);
