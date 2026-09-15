@@ -39,13 +39,17 @@ links:
   - { to: adr-0035-compile-session-binding-and-pin, rel: depends-on }
   - { to: adr-0036-compile-mode-ladder-deployment-gates, rel: depends-on }
   - { to: adr-0037-family-craft-profile-dimension, rel: depends-on }
+  - { to: adr-0038-d0-solution-tree-census-and-kind, rel: depends-on }
+  - { to: spec-understanding-views, rel: implements }
+  - { to: note-understanding-views-n4-pass, rel: relates-to }
   - { to: note-addendum-cd-architecture-p1-inputs, rel: relates-to }
   - { to: architecture-agent-plane, rel: relates-to }
-review-by: 2027-03-11
+review-by: 2027-03-15
 review-suggested:
   - { by: spec-ai-native-ide, on: 2026-08-26, reason: "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice" }
   - { by: adr-0017-primary-view-mode, on: 2026-09-11, reason: "ADR-0017 accepted as amended (Ruling 52): the closed set is the Perspective set; a body may be a docking host; second-host clause discharged by spikes/second-dock-host-unparent" }
   - { by: adr-0013-layout-persistence-envelope, on: 2026-09-11, reason: "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback" }
+  - { by: adr-0038-d0-solution-tree-census-and-kind, on: 2026-09-15, reason: "ADR-0038 proposed: D-0 Solution tree kind + query-time census; Addenda C/D slices still exclude D-0" }
 summary: >-
   Defines AI-DE as a WPF+WebView2 workspace shell over a per-workspace local authority core that
   builds provenance-labelled facts from repository artifacts, serves derived visual projections and
@@ -53,7 +57,9 @@ summary: >-
   keeps agent/model capability outside deterministic source truth. Supersedes the 2026-08-25 draft;
   resolves the council review's three hard and two soft vetoes. Amended 2026-09-11 for Addenda C
   and D: the Perspective shell (ADR-0017 as amended; ADR-0030–0032) and the Prompt Compilation
-  bounded context (ADR-0033–0037).
+  bounded context (ADR-0033–0037). Amended 2026-09-15 for Understanding views D-0
+  (ADR-0038 proposed): one Architecture kind, query-time census, no second store.
+  Addenda C/D slices still exclude D-0; see §Understanding views / D-0.
 ---
 
 # Architecture: AI-DE
@@ -61,7 +67,7 @@ summary: >-
 - **Status:** In review
 - **Tier:** T2
 - **Driving spec:** [`docs/specs/ai-native-ide.md`](specs/ai-native-ide.md)
-- **Author(s) / date:** @timianmalloo · 2026-08-26 (v2) · amended 2026-09-11 (Addenda C and D, §Addenda C and D below)
+- **Author(s) / date:** @timianmalloo · 2026-08-26 (v2) · amended 2026-09-11 (Addenda C and D, §Addenda C and D below) · amended 2026-09-15 (Understanding views D-0, §Understanding views / D-0; ADR-0038 proposed)
 - **Baseline:** `src/AiDe.App` is a .NET 10 WPF starter with no daemon, persistence, runtime AI,
   terminal, or extraction components. This architecture is the target shape; it does not claim the
   target is implemented.
@@ -639,9 +645,12 @@ The decisions below are recorded as **ADR-0030…0037** plus in-place amendments
 - **Boundary drawn:** the shell (App) composes hosts and the compile call; Core holds the perspective
   rows, the layout services, the Prompt Compilation context (fold · projection · validator · store);
   the agent plane is **unchanged in contract** (fourteen `GovernedRunRequest` parameters, two named
-  construction sites); the adapter process is outside, pinned at 0.75.1. **Excluded:** Use Case 4
+  construction sites); the adapter process is outside, pinned at 0.75.1. **Excluded from these Addenda C/D slices:** Use Case 4
   (Tests), the deferred understanding views D-0…D-6, a second engine (D-D4), lifecycle/expiry of the
   envelope file (D-D5), any model-authored decoration beyond the three structure lines (D-D2/D-D3).
+  **Drift (2026-09-15):** this exclusion still holds for C-0…D-3. D-0 is admitted in a **later**
+  horizon — §Understanding views / D-0 and ADR-0038 (proposed) — not by rewriting these C/D slices
+  as if they now include it. D-1…D-6 remain excluded.
 
 ### C/D.3 Candidate shapes considered (Stage 1), and the leverage point
 
@@ -955,6 +964,10 @@ lands red before green.
 Addendum D; a per-prompt task-class *refinement* by a model; a numeric budget required anywhere; a
 second graph store; a chord-prefix key handler; the census's design.
 
+**Drift (2026-09-15):** the C-0…D-3 table above still does **not** include D-0. Do not read C-1's
+kind rows as if they now contain `solution-tree`. D-0 is admitted later in §Understanding views / D-0
+(ADR-0038 proposed). That later admission does not reopen D-1…D-6, Use Case 4, or a second graph store.
+
 ### C/D.13 The E7 surface list for the whole refactor (written once; P1 carries it)
 
 **Perspectives:** store (`ZoneLayoutStore` ×2, file per host) → model (`PerspectiveSet`;
@@ -1040,6 +1053,140 @@ red-first in the slices named in §C/D.12; conditions that are *runtime measurem
 Pack items named there (P-4, P-7, P-D4, P-D5, P-D8, P-D9). Findings for the Owner and for
 `/design-slice` are consolidated in `note-addendum-cd-architecture-p1-inputs` §6.
 
+## Understanding views / D-0 (2026-09-15)
+
+*Amendment from `/define-architecture` of `spec-understanding-views` (session
+`understanding-views-architecture`). N4 PASS is `note-understanding-views-n4-pass`. N6 Security
+BLOCK repaired in ADR-0038 text the same day. Status of ADR-0038 remains **proposed** — authors
+do not self-clear. Allow-list change is **described, not implemented.***
+
+**Drift from §C/D.2 and §C/D.12.** Those sections excluded D-0…D-6 from Addenda C/D slices. They
+still do. This section admits **D-0 only** in a later horizon. It does not rewrite C-1's kind rows
+or C/D phasing as if they now include the Solution tree. D-1…D-6, Use Case 4, Atlas, and a second
+graph store stay out. Decision record: [ADR-0038](adr/0038-d0-solution-tree-census-and-kind.md)
+(proposed).
+
+### UV.1 Grain (quoted, not thinned)
+
+Spec (`docs/specs/understanding-views.md`):
+
+> One tree node is exactly one Core-named workspace-relative path: **either** one indexed artifact (a file/document resolved from latest assertions) **or** one census folder (a directory Core observed).
+
+N4 close: identity is `(path, kind)` with `kind ∈ {file-artifact, census-folder}`. Coverage of a
+census-folder is only `indexed-parent` | `unindexed`. Owner’s `not-recorded` is **Disclosure**,
+never a Coverage value and never a reason to mint a folder. This architecture implements the
+**close**, not the unclosed Owner quote.
+
+### UV.2 Chosen shape
+
+One new Architecture kind + one new Core query-time census join. No second store.
+
+**Rejected in writing** (Owner / spec / this turn): reuse `OverviewAsync`; App disk walk (DC-022);
+stored `folder_dim` this horizon; path-split from `artifact_path_id`; Atlas / `Understanding/**`;
+scaffold D-1…D-6 kind rows (AR3). Remaining honest shape: Core query-time census + latest-generation
+assertion join, bounded, disclosed shortfalls.
+
+```mermaid
+flowchart LR
+  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF
+  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF
+  disk[Workspace disk now] --> census[Core census walk]
+  skip[UnanalysedLanguages.Skip] --> census
+  facts[node_dim + evidence_assertion_fact + scope snapshots] --> join[Latest-generation join]
+  census --> join
+  join --> dto[SolutionTreeResult]
+  dto --> ipc["IPC solution-tree"]
+  ipc --> tree[Architecture Solution tree]
+  tree -->|Enter| src[NodeContentAsync / codeviewer]
+  tree -->|Ctrl+Enter| graph[GraphAsync / DescribeAsync]
+```
+
+### UV.3 Kind (described, not added)
+
+| | |
+|---|---|
+| Kind id | `solution-tree` |
+| Title | `Solution tree` |
+| Perspectives | `{Architecture}` only |
+| Instances | `One` → derived **Show Solution tree** |
+| Entry | `Derived("_View")` |
+| When | the **building slice** (UV-1), never earlier (AR3) |
+
+Menu, palette, rail and routing stay the ADR-0030 join (`PerspectiveMenu.For`). No second
+hand-written list. Coding / Explore / Coordination do not admit the kind. US-C4 mutation test
+remains the oracle. D-1…D-6 rows are not scaffolded.
+
+Opened type: shipped `SurfaceKind.Perspectives` is `IReadOnlyList<Perspective>`
+(`SurfaceContentFactory.cs:108-117`); ADR-0030 named `IReadOnlySet<string>`. Membership is
+`{Architecture}` on that column — not a type change.
+
+### UV.4 Query
+
+| | |
+|---|---|
+| Method | `IWorkspaceQueries.SolutionTreeAsync(SolutionTreeQuery, CancellationToken)` → `SolutionTreeResult` |
+| IPC | `solution-tree` (`WorkspaceOperations` catalog; not `overview` / `graph`) |
+| DTOs | **one** `SolutionTreeQuery` (integer caps only) / `SolutionTreeNode` / `SolutionTreeDisclosure` / `SolutionTreeResult`. No `SolutionTreeRequest` twin. No `DropRelativePaths` on the wire. |
+| Production caps **[Inferred]** | `DefaultMaxCensusFolders = 2_000`; `DefaultMaxFileArtifacts = 5_000` (aligned with `GraphProjection.DefaultMaxNodes` **[Verified]**). Retune when counts are emitted. |
+| Byte bound | After count trim, shrink like `ProjectionService.Graph` to `MaxFramedGraphBytes` (`IpcFraming.MaxFrameBytes` − 64 KiB). `EveryOperationFitsTheFrameTests` covers `SolutionTreeAsync`. |
+| T5c seam | Named drop-set (`omit_probe`, `omit_probe_2`) on the **projection/test host**, not IPC. Forbidden: prefix-integer cap + alphabetical walk that drops `unindexed_probe`. Production cannot hide folders via a query field. |
+| Shortfalls | `Not recorded` (Io / Permission / UnresolvablePath / ReparsePoint); `Omitted (N)` **derived from** one `OmittedByCap`; skip-count on the result; exact US-T6 Python/TS copy |
+| Census | query-time Core, confined to the workspace root. Consumes **`UnanalysedLanguages.Skip`** (fail-closed: `bin`, `node_modules`, `.git`, `obj` in production). Does **not** copy a HashSet. Does **not** follow reparse points (`EnvelopePurge` class). Does **not** reuse `UnanalysedLanguages.Enumerate`. No public `IDirectorySkipPolicy` / `IWorkspaceDirectoryCensus`. |
+| File join | Existing `ResolveWithinWorkspace` (containment + `File.Exists`). Directory/ScopeId rows are not file-artifact nodes. Drop file-artifacts whose parent census-folder is absent from `Nodes`. |
+| Identity | `/` no-trailing-slash paths; `PathComparison.ForThisFileSystem` for identity, collapse, `declared_at`. |
+| Coverage | `indexed-parent` also if a descendant census-folder is `indexed-parent`. |
+
+N7 may widen other walkers onto `UnanalysedLanguages.Skip`. UV-0 is already bound.
+
+### UV.5 Activate
+
+Primary: View source — `NodeContentAsync` / `NodeViewKind.Source` / admitted `codeviewer`.
+Secondary: Reveal in graph — `GraphAsync` / `DescribeAsync` / `NodeViewKind.GraphNeighbourhood`.
+No third path. No Atlas types. Census-folders expand/collapse (indexed-parent) or stay leaves
+(unindexed).
+
+### UV.6 Durable representation (DM13)
+
+Existing facts stay. Census is derived disk-now (DM7). **No new stored aggregate this horizon.**
+Python/TS `ScopeId`-as-path extractor rewrite is **cut**. Disclose, do not complete those languages.
+
+### UV.7 E7 surface list (Owner N0 as closed by the spec)
+
+**store** (`node_dim`, `evidence_assertion_fact`, scope snapshots — no `folder_dim`) →
+**model** (`(path, kind)` node; Coverage two-valued including ancestor indexed-parent; Disclosure ≠ Coverage) →
+**service** (`SolutionTreeAsync`; consume `UnanalysedLanguages.Skip`; `ResolveWithinWorkspace`; named drop-set on projection/test host only) →
+**projection/wire** (IPC `solution-tree` / one `SolutionTreeQuery`; count caps **and** frame shrink; `Omitted (N)` from `OmittedByCap`) →
+**client type** (Architecture dock-host tree; toolkit N7) →
+**UI** (hard states + skip-count + US-T6 copy; empty → Show Graph) →
+**compute reader** (`NodeContentAsync` / `GraphAsync`+`DescribeAsync`; no Atlas). PROBE-APP-ENUM is App-assembly / non-`IWorkspaceQueries` callers, not PID (ADR-0009).
+
+### UV.8 LOA for this addition
+
+Product host unchanged: **F — Copilot Aside Hot Path**. This addition uses **no model** (spec
+allocation honoured): archetype **none**; tier **T0** deterministic projection. Rejected for D-0:
+**D** Grounded Synthesizer, **A** Cascade as the tree, **B** Adversarial Ensemble, T3/T4 on this
+path. P1 cheapest sufficient (one query + one kind). P2 determinism at the floor (derived menu,
+query-time join).
+
+### UV.9 Vertical phasing (not this turn’s code)
+
+Serial. **UV-0** Core query (red tests on F*) then **UV-1** Shell surface + one kind row. Toolkit
+spike is N7, between architecture council (N6) and UV-1. Join target remains `understanding-views`,
+not `main`.
+
+### UV.10 N7 spikes (named, not executed)
+
+1. Tree toolkit (WPF `TreeView` vs alternative).
+2. Widen other walkers onto `UnanalysedLanguages.Skip` (UV-0 already binds that set).
+
+No unfamiliar SDK. Do not freeze a control in ADR-0038.
+
+### UV.11 Gate
+
+`GATE define-architecture (Understanding views D-0) · 2026-09-15 · session understanding-views-architecture
+· N6 Security BLOCK repaired in ADR-0038 text · ADR-0038 remains proposed (authors do not self-clear).`
+Residual: other walkers still disagree until N7; production folder-cap unmeasured; toolkit unfrozen.
+
 ## LOA conformance check
 
 | Criterion | Status |
@@ -1099,9 +1246,9 @@ Pack items named there (P-4, P-7, P-D4, P-D5, P-D8, P-D9). Findings for the Owne
 
 | | |
 |---|---|
-| **Completed** | Superseded the 2026-08-25 draft; **executed and committed the SQLite, MCP (stdio + hostile-Origin), and ConPTY spikes**; recovered and committed the release plan; fixed the `.gitignore` rules that hid `docs/release/` and `spikes/`; resolved the three hard and two soft vetoes and the verified contradictions; added ADR-0008..0011; produced the revised component architecture, durable model, phasing, and Phase-1 proof plan. |
-| **Remaining** | Phases 1–5 in order; Phase 1 first resolves the in-process core, write-ahead dispatch, knowledge projection, and MCP egress design. **Addenda C and D (2026-09-11):** slices C-0 → C-1 → C-2 → C-3 → D-1 → D-2 → D-3 (§C/D.12), gated spike → advisory → measured → agentic. |
-| **Best next action** | `/prepare-for-coordination` (P1) over §C/D.12 and `note-addendum-cd-architecture-p1-inputs`, then `/design-slice` of C-0 + C-1 (the prerequisites and the perspective mechanism — the walking skeleton of the perspective shell). |
+| **Completed** | Superseded the 2026-08-25 draft; **executed and committed the SQLite, MCP (stdio + hostile-Origin), and ConPTY spikes**; recovered and committed the release plan; fixed the `.gitignore` rules that hid `docs/release/` and `spikes/`; resolved the three hard and two soft vetoes and the verified contradictions; added ADR-0008..0011; produced the revised component architecture, durable model, phasing, and Phase-1 proof plan. **Addenda C and D (2026-09-11):** ADR-0030–0037. **Understanding views D-0 (2026-09-15):** ADR-0038 proposed; §Understanding views / D-0; allow-list described not implemented. |
+| **Remaining** | Phases 1–5 in order; Phase 1 first resolves the in-process core, write-ahead dispatch, knowledge projection, and MCP egress design. **Addenda C and D (2026-09-11):** slices C-0 → C-1 → C-2 → C-3 → D-1 → D-2 → D-3 (§C/D.12), gated spike → advisory → measured → agentic. **Understanding views D-0:** N6 council (ADR-0038 stays proposed until that panel); N7 toolkit + skip-set spikes; N8 ui-design; UV-0 Core query then UV-1 Shell surface + one kind row. |
+| **Best next action** | Conductor: N6 re-review of repaired ADR-0038 (authors do not self-clear; do not mark accepted). |
 
 ## Review resolution
 
