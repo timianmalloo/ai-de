@@ -5456,6 +5456,18 @@ for both or split.*
   the real table shape specifically, but nothing gates the class: the next reader written beside its
   own fixture will pass the same way
 
+- **Recurrence, 2026-09-15, Atlas E2 contract spike (review `8eb44853`, repair `90189411`).**
+  **Class:** an input-only alias check, a scope check that also changed the file, and a constant
+  authority check could pass without the behavior they claimed. **Sweep:** independent review
+  examined all 23 assertions and also found missing layer/text/row/blank rejection cases.
+  **Derive:** assertions now read validated `ProjectResources` output; the scope fixture changes
+  only scope; the constant authority assertion is removed. **Prevent:** committed subject faults
+  `alias-drop`, `alias-wrong-root`, and `scope-drop` each fail their dependent output assertion;
+  28 normal checks pass. Independent `acdf4894` observed both results. The experiment remains
+  synthetic contract proof, not real Atlas authorization; this recurrence does not change the
+  class-wide partially-controlled status. Evidence: `docs/proof/atlas-architecture-contract.md`
+  in the architecture lane and `docs/proof/atlas-views-plan-review.md` in the review lane.
+
 ### DC-128 — Citing a commit proves a file existed, not that it was unchanged, so "committed before" is attested rather than mechanical
 
 - **Shape:** a process requires that an artifact — an oracle, a spec, a baseline — be **fixed before
@@ -5663,6 +5675,17 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
 - **Confidence:** i  - **Source:** fleet (drm-0009/p4)
 
+- **Recurrence, 2026-09-15, Atlas E1 preflight (`5d361f2a`).** **Class:** a reflection adapter
+  guessed the declaring type and exact overload despite compile-time SDK calls working.
+  **Sweep:** all four preflight probes were compared with installed Roslyn 4.14 XML/reflection;
+  GetDeclaredSymbol, GetSymbolInfo and ParseText mismatches were corrected. **Derive:** inspect
+  installed declarations before matching; the preflight prints the actual selected signatures.
+  **Prevent:** the retained signature preflight was observed failing before fixtures, then six
+  fixture groups and three negative controls completed on Windows and Linux. It remains a
+  local compatibility control, not a proof of executable CFG. Earlier budget overruns and
+  repeated unchanged patch-context attempts are recorded in `docs/plans/atlas-views.md` as
+  failed execution, not acceptance; no automated retry-governance control is claimed.
+
 ### PACK-O-FRONT-MATTER- - PACK-O front-matter presence + scope-drift review
 - **Control:** Presence (mechanical): every substantive turn records done_when (CT19); a missing one skipped the front matter. Satisfaction: review each done_when->summary pair where the summary exceeds the goal (scope drift, PACK-O). The audit done_when field + this miner ARE the rung-2 control (CI6). (automated control)
 - **Boundary:** Presence is mechanical; 'summary exceeds goal' is surfaced for human review, not auto-judged. Trivial/conversational turns are exempt from logging (AL5b).
@@ -5712,6 +5735,18 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Control:** Extend E15 in end-to-end-integrity.md from code to AGREEMENTS: never assert the shape of our own contracts, ownership, or seam from memory — open the register or label the claim Inferred. The tell is one session summarising another session's ownership without a citation, and the cheap check is that every cross-session claim about who owns what carries the register line it came from. (always-loaded instruction)
 - **Boundary:** Applies to claims about shared, written agreements. It does not apply to a session describing its OWN in-flight work, which has no register to cite yet.
 - **Confidence:** v  - **Source:** fleet (drm-0009/p15)
+
+- **Recurrence, 2026-09-15, Atlas coordination.** **Class:** the Conductor treated the shared
+  append-only lesson register as needing a Core-exclusive grant, and described authored site
+  wrappers as whole-file generated. **Sweep:** opened section 2's shared/design tables and
+  inspected the exact staged site diff. **Derive:** the register's explicit shared append rule
+  governs recurrence records; site wrappers keep authored status while their marked figures
+  come from the official generator. **Prevent:** existing identity-bound commit hooks refused
+  live cross-session leases; after coordination, exact claims and a figure-only diff inspection
+  admitted commit `902ec1c4`. No lease was released on another session's behalf and the
+  release-versus-expiry cause stayed Unknown. The always-loaded agreement-grounding instruction
+  remains the procedural control; there is no new automatic detector of unnecessary permission
+  requests. Only the two Design-owned mock HTML paths still require the requested grant.
 
 ### A-COLLABORATION-CHAN - A collaboration channel accumulates repeated same-shape requests against one seam, each handled individually
 - **Control:** CI2 (class, not instance) applies to the collaboration channel, not only to defects. When a session opens the Nth request of the same shape against the same seam, it raises the CLASS — the missing capability behind all N — rather than the N+1th request. The channel's own review asks 'how many of these are one thing?' before it asks 'which is next?'. (knowledge doc)

@@ -175,3 +175,10 @@ The generated audit-data lease mistakenly held by E1 blocked Conductor and E2 co
 ## Design-text clearance and continuing proof
 
 Revised E1 83e1139b and E2 15b53fe9 cleared at design-text level by d062650d. Owner admits finite structural/page and typed-relation experiments within Ruling121. E1 independent oracle ledger precedes authoring; E2 source experiment runs independently. No mock file, shared register or product authoring has begun beyond its grant. Human exact3doc-path question remains pending. Main-watch route is copilot-main-watch; accepted-Atlas publisher remains recovery closer. Main integration authority does not transfer by Claude usage cap.
+
+
+## Ownership-grounding correction and recurrence capture
+
+The sole register section 2 explicitly makes docs/lessons/defect-classes.md shared append-only. The earlier request for an additional Core grant was unnecessary and is resolved as a correction, not as implied consent.35 new lines append dated recurrences under existing DC-127, PACK-Q and agreement-grounding entries; every prior line/status/count remains. Register gate passed 225 classes. Existing executable controls are named with observed reds; no new automatic retry/permission detector is claimed. Only the two Design-owned mock HTML files still await the requested grant.
+
+Site wrappers are authored, with generated data-figure contents. After the watcher observed the earlier conflicting lease absent (cause Unknown), exact own claims and an inspected figure-only diff allowed commit902ec1c4; all own claims were released. No other session lease or ownership was changed. git check-attr reports no automatic merge driver for the lesson register; the integration handoff must use the documented coord merge-register mechanism, not a hand merge. No coordination framework change is made here.

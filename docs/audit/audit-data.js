@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:58:09Z",
+  "generated": "2026-09-15T21:07:15Z",
   "audit": [
     {
       "actor": null,
@@ -18515,6 +18515,36 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "7c96752814096aefc019f5317da480a9d4e5b3ed",
         "short": "7c9675281",
+        "branch": "conductor/atlas-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KEADQEJSPGHS74FHFEP4N8",
+      "shortname": "atlas-recurrence-capture",
+      "datetime": "2026-09-15T21:07:14Z",
+      "session": "codex-atlas-views-conductor",
+      "prompt": "Honor repository coordination, continuous improvement and ownership guidance while continuing E1/E2.",
+      "summary": "Reopened sole section2 table and corrected unnecessary Core permission request for shared append-only lesson register. Appended35recurrence lines to existing DC127/PACKQ/agreement-grounding classes, deleting no prior text and changing no statuses/counts. Recorded observed signature/fixture fault controls and procedural limits. Exact mock2path grant remains pending. Authored site wrappers receive only official generated figures under exact claims; earlier overlap coordinated and current hook admitted902ec1c4. No automatic register merge driver observed; handoff requires supported coord merge-register.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md",
+        "docs/proof/atlas-views-grounding.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Capture observed defect classes under actual shared ownership rules without overwriting peer entries",
+      "done_when": "Append-only recurrence receipts preserve existing entries and counts, cite observed controls, and pass repository checks",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-15T21:04:23Z",
+      "duration_seconds": 171.0,
+      "git": {
+        "sha": "902ec1c422d8e39a740645f5a7689c5c276520cb",
+        "short": "902ec1c42",
         "branch": "conductor/atlas-views",
         "pushed": null
       }
