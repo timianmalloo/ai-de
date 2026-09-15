@@ -25,7 +25,7 @@ Surface list: pinned Git index → capture budget/refusal → snapshot entries/a
 
 - `AtlasGitMembership.CaptureAsync` calls `CaptureForQualificationAsync`. The latter refuses non-Windows execution with `windows-native-evidence-required` before ordinary-path checks or pin acquisition. This repair does **not** claim a production POSIX membership exploit.
 - The original production caller already passed `MaxIndexBytes` (8,388,608) to `NativePin.Digest`. Its `RandomAccess.GetLength` comparison refused oversize input before creating the hash. Baseline boundary tests passed **before** the detector repair. G2 was a scanner false positive, not a missing production clamp.
-- The detector retains its original scan root (`src/` tracked C# files), recursion/census, bound-name expressions, direct-enforcement expressions, and existing `OverviewNodeCap` exception. `MaxIndexBytes` receives no reason-only exception. The initial checked seam used global substring matching within that file; independent review blocked it because unrelated classes could supply its evidence. The corrected seam extracts the direct `AtlasGitMembership.CaptureForQualificationAsync` method and the direct `Digest` method of its nested `NativePin` class. It requires adjacent index pin/call statements, exactly one real `index.Digest` invocation, and the digest length guard at the start of the helper, before hashing. Class/member recognition masks comments and literals and rejects missing, ambiguous, or unbalanced scopes. This remains a narrow lexical contract, not general C# control-flow analysis; behavioral tests remain necessary.
+- The detector retains its original scan root (`src/` tracked C# files), recursion/census, bound-name expressions, direct-enforcement expressions, and existing `OverviewNodeCap` exception. `MaxIndexBytes` receives no reason-only exception. Independent review rejected both the initial global substring matcher and the later class/member-scoped matcher. Both attempts are retained below as historical evidence. The Owner-selected final control checks that the **reviewed indirect implementation is unchanged**, using the exact whole-file SHA-256 pin described below. It does not infer C# flow.
 - G3 replaces the root equality and separator prefix in `UnderOrSame`, plus the prefix in `AllowsAtlasContent`, with existing `PathComparison.ForThisFileSystem`. It preserves rooted, colon, and traversal refusal. Windows behavior is preserved. Admission cannot reach a case-distinct sibling using rooted or traversal input because those forms are rejected first.
 - New admission cases use a real `WorkspaceCore` and store. The nested decoder cases exercise its callable boundary with ordinary relative records: `src`, `src-other`, and `SRC`. The POSIX expected result is encoded in the portable test but was not run on POSIX in this episode.
 
@@ -129,7 +129,40 @@ The last row runs the predicate on the actual production file and mutated copies
 
 Class → sweep → derive → prevent: **DC-102/DC-118 recurrence proposal** — lexical evidence from an unrelated scope satisfied a claim about the real producer. Sweep the caller, owning class, nested helper class, helper method, and literal-decoy paths. Derive class/member-scoped evidence with a unique real digest invocation. Prevent with the reviewer decoys and additional scope/literal negatives in the executable self-test, plus actual-source mutant readback. This is an author-created detector defect, corrected after independent review; no author clearance is claimed.
 
-The earlier 9/9 self-test row is historical and was insufficient. The corrected self-test is 15/15. Production/test-source `git diff HEAD` was empty during correction, so the Conductor explicitly retained the earlier 55-test result without rerunning unchanged product tests. The same independent reviewer must still clear the correction.
+The earlier 9/9 self-test row is historical and was insufficient. The scoped attempt passed 15/15 but was subsequently rejected as recorded below. Production/test-source `git diff HEAD` was empty during correction, so the Conductor explicitly retained the earlier 55-test result without rerunning unchanged product tests.
+
+## Owner-selected replacement: reviewed source unchanged
+
+The retained reviewer found a same-method local-function decoy bypass in the scoped parser. This episode reproduced it against the actual source: `pin-review-red.log` reports `same-method local-function decoy accepted: True`, followed by the failed rejection assertion, exit 1. A casted unlimited live call plus a never-called local function containing the expected snippets satisfied that parser. The previous 15/15 result was insufficient.
+
+The Owner selected alternative B: stop growing the C# parser and pin the reviewed product implementation. All now-dead parser helpers and `INDEX_CALL`/`INDEX_GUARD` constants were removed. The sole normalized source representation is the exact file bytes with **CRLF replaced by LF only**. Comments, other whitespace, UTF-8 bytes, the cap declaration, dispatch, caller, helper, and all unrelated code remain covered by the hash.
+
+Frozen product source: `src/AiDe.Core/Understanding/AtlasGitMembership.cs` at commit `74f2ec0e06c9451093d52475ba6b6e6429aba473`. The author's working source matched that commit byte-for-byte after the sole newline normalization: **60,819 bytes**. Reviewed SHA-256:
+
+```text
+5993639d5838ccc9a4319f428dbb8dbcc8c7eab71788ae7bfff435f481627dd1
+```
+
+Provenance is the real at/over-limit `CaptureAsync` tests and the separately killed unlimited-forwarding/deleted-clamp mutants recorded above, together with independent review. The hash states **reviewed indirect implementation unchanged**; it is neither a C# flow proof nor an exemption based on prose.
+
+The normal gate checks the pin before the generic source scan. Missing, unreadable, or changed source fails even if the cap declaration disappears or other code contains a generic `MaxIndexBytes` comparison. The per-bound path also refuses generic fallback for `MaxIndexBytes`. There is no automatic pin refresh. **Any edit, including comments or unrelated changes in this source file, requires behavioral requalification and independent review before a manual pin update.** This intentionally broad invalidation is the accepted tradeoff for a small, deterministic control.
+
+| Current evidence | Observed result | Exit |
+|---|---|---:|
+| `pin-review-red.log` | Reproduced old parser's same-method local-function decoy bypass | 1 |
+| `pin-self-test.log` | 17/17: actual frozen LF and CRLF pass; wrong-class/unbounded/cross-class/local-function/literal decoys, cap/helper/dispatch/comment/lone-CR changes, generic fallback, missing, and unreadable-as-file negatives pass | 0 |
+| `pin-normal.log` | 30 constants; reviewed indirect implementation unchanged | 0 |
+| `pin-entry-negatives.log` | Actual `main()` returns 1 for missing, changed-with-generic-comparison, and unreadable-as-file source before generic scanning | 0 (all three expected refusals observed) |
+
+The entry-negative harness directs `main()` to isolated temporary roots and makes generic scanning raise if reached; it does not edit production. The unreadable-as-file case is a directory at the file path, which produces a real `read_bytes` error; it does not claim an ACL-denial experiment. Raw output ends:
+
+```text
+{'missing': 1, 'changed_with_generic_comparison': 1, 'unreadable_as_file': 1}
+```
+
+Class → sweep → derive → prevent, **DC-102/DC-118 recurrence proposal**: the author again let code from a non-executing path satisfy evidence about the producer. Sweep the entire reviewed source boundary instead of increasingly approximating C# execution. Derive an explicit immutable implementation identity backed by the existing behavioral tests. Prevent with exact-byte pinning, no generic fallback, all reviewer decoys, and actual entry-point refusal tests. Historical failed attempts remain in this receipt; the current executable controls replace them.
+
+Only the detector and this receipt changed in the six-call Owner B unit. Production/test source stayed unchanged, so no repeated 55-test run was performed. The retained independent reviewer still owns hard-veto clearance; the author does not clear it.
 
 ## Handoff and remaining gates
 

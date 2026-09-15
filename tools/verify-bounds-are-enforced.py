@@ -28,9 +28,11 @@ Exit 0 when clean, 1 otherwise. Stdlib only.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 # A constant whose NAME claims it limits something.
@@ -64,95 +66,77 @@ APPLIED_ELSEWHERE = {
         "stops there",
 }
 
-# One checked indirect seam, not a reason-only exemption or a general C# call-graph analyzer.
-# Exact class/member scopes and adjacent statements connect the pinned index to its bound and the
-# NativePin digest guard to hashing. CaptureAsync boundary tests remain the behavioral oracle.
+# Reviewed indirect implementation unchanged; no C# flow is inferred here.
+# Provenance: product source at 74f2ec0e; CaptureAsync at/over-limit tests and killed forwarding /
+# deleted-clamp mutants in docs/proof/atlas-core-gate-repair.md. Normalize CRLF to LF ONLY.
+# Any change, including comments/unrelated code, requires behavioral requalification AND independent
+# review before a manual pin update. There is deliberately no automatic refresh command.
 INDEX_SOURCE = "src/AiDe.Core/Understanding/AtlasGitMembership.cs"
-INDEX_CALL = '''var index = pins.Add(association.Index, trackChanges: true, role: "worktree-index");
-var indexDigest = index.Digest(MaxIndexBytes, deadline.Token);'''
-INDEX_GUARD = '''internal string Digest(long maximumBytes, CancellationToken cancellationToken)
-{
-var length = RandomAccess.GetLength(_handle);
-Require(length <= maximumBytes, AtlasMembershipCaptureState.BudgetExceeded, "index-byte-budget");
-using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);'''
+INDEX_REVIEWED_SHA256 = "5993639d5838ccc9a4319f428dbb8dbcc8c7eab71788ae7bfff435f481627dd1"
 
 
-CS_NONCODE = re.compile(
-    r'//[^\n]*|/\*[\s\S]*?\*/|(?P<raw>"{3,})[\s\S]*?(?P=raw)'
-    r'|@"(?:""|[^"])*"|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'')
+def reviewed_index_unchanged(path: Path) -> bool:
+    try:
+        body = path.read_bytes()
+    except OSError:
+        return False
+    return hashlib.sha256(body.replace(b"\r\n", b"\n")).hexdigest() == INDEX_REVIEWED_SHA256
 
 
-def mask_noncode(body: str) -> str:
-    """Keep offsets but hide comments/literals from declaration and brace recognition."""
-    return CS_NONCODE.sub(lambda match: " " * len(match.group()), body)
-
-
-def member_body(body: str, declaration: str) -> str:
-    """Extract one direct member, rejecting missing/ambiguous/unbalanced declarations."""
-    masked = mask_noncode(body)
-    matches = [match for match in re.finditer(declaration + r"\s*\{", masked)
-               if masked[:match.start()].count("{") == masked[:match.start()].count("}")]
-    if len(matches) != 1:
-        return ""
-    start = matches[0].end()
-    depth = 1
-    for offset in range(start, len(masked)):
-        depth += (masked[offset] == "{") - (masked[offset] == "}")
-        if depth == 0:
-            return body[start:offset]
-    return ""
-
-
-def index_bound_enforced(body: str) -> bool:
-    """Recognize only the real Atlas capture and its nested NativePin digest, not decoys."""
-    owner = member_body(body, r"\bclass\s+AtlasGitMembership\b[^;{}]*")
-    caller = member_body(owner, r"\binternal\s+async\s+ValueTask<AtlasMembershipSnapshot>\s+"
-                        r"CaptureForQualificationAsync\s*\([^)]*\)")
-    native_pin = member_body(owner, r"\bclass\s+NativePin\s*:\s*IDisposable")
-    digest = member_body(native_pin, r"\binternal\s+string\s+Digest\s*\(\s*long\s+maximumBytes\s*,"
-                         r"\s*CancellationToken\s+cancellationToken\s*\)")
-    # Exactly one real index.Digest call prevents a live unlimited call being paired with a decoy.
-    caller_code = mask_noncode(caller)
-    call = re.sub(r"\s+", "", mask_noncode(INDEX_CALL))
-    guard = INDEX_GUARD.split("{", 1)[1]
-    return (len(re.findall(r"\bindex\s*\.\s*Digest\s*\(", caller_code)) == 1
-            and call in re.sub(r"\s+", "", caller_code)
-            and re.sub(r"\s+", "", strip_comments(digest)).startswith(re.sub(r"\s+", "", guard)))
+def bound_applied(name: str, declared_in: Path, root: Path, everything: str) -> bool:
+    # The reviewed bound cannot fall back to an unrelated generic comparison or registration.
+    if name == "MaxIndexBytes":
+        return declared_in == root / INDEX_SOURCE and reviewed_index_unchanged(declared_in)
+    return name in APPLIED_ELSEWHERE or any(
+        re.search(rule.pattern.format(name=re.escape(name)), everything) for rule in ENFORCEMENT)
 
 
 def self_test() -> int:
-    def fixture(call: str = INDEX_CALL, guard: str = INDEX_GUARD) -> str:
-        return ('internal sealed class AtlasGitMembership { '
-                'internal async ValueTask<AtlasMembershipSnapshot> CaptureForQualificationAsync('
-                'string sourceRoot, AtlasObjectIdentity expectedRootIdentity, CancellationToken cancellationToken) {'
-                + call + '} internal sealed class NativePin : IDisposable {' + guard + ' } } }')
-
-    body = fixture()
+    try:
+        body = (repo_root() / INDEX_SOURCE).read_bytes().replace(b"\r\n", b"\n")
+    except OSError as error:
+        print(f"self-test fixture unreadable: {error}")
+        return 1
+    call = b"var indexDigest = index.Digest(MaxIndexBytes, deadline.Token);"
+    unbounded = body.replace(call, b"var indexDigest = ((NativePin)index).Digest(long.MaxValue, deadline.Token);")
+    decoy = b'var index = pins.Add(association.Index, trackChanges: true, role: "worktree-index");' + call
     cases = {
-        "wrong class": (body.replace("class AtlasGitMembership", "class DecoyMembership"), False),
-        "live unbounded plus decoy": (body.replace("Digest(MaxIndexBytes,", "Digest(long.MaxValue,")
-                                      + body.replace("class AtlasGitMembership", "class DecoyMembership"), False),
-        "wrong caller method": (body.replace("CaptureForQualificationAsync", "DecoyCapture"), False),
-        "wrong nested class": (body.replace("class NativePin", "class DecoyPin"), False),
-        "wrong digest method": (body.replace("string Digest(", "string DecoyDigest("), False),
-        "live unbounded plus literal decoy": (fixture(INDEX_CALL.replace("Digest(MaxIndexBytes,", "Digest(long.MaxValue,")
-                                                     + '\nvar decoy = """' + INDEX_CALL + '""";'), False),
-        "checked caller and guard": (body, True),
-        "forwarded unlimited": (body.replace("Digest(MaxIndexBytes,", "Digest(long.MaxValue,"), False),
-        "deleted clamp": (body.replace('Require(length <= maximumBytes, AtlasMembershipCaptureState.BudgetExceeded, "index-byte-budget");', ""), False),
-        "strict boundary": (body.replace("length <= maximumBytes", "length < maximumBytes"), False),
-        "unrelated pin": (body.replace("pins.Add(association.Index,", "pins.Add(executable,"), False),
-        "guard after hashing": (fixture(guard=INDEX_GUARD.replace(
-            'Require(length <= maximumBytes, AtlasMembershipCaptureState.BudgetExceeded, "index-byte-budget");', "")
-            + 'Require(length <= maximumBytes, AtlasMembershipCaptureState.BudgetExceeded, "index-byte-budget");'), False),
-        "comment only": ("/*" + body + "*/", False),
-        "caller only": (INDEX_CALL, False),
-        "helper only": (INDEX_GUARD, False),
+        "real frozen LF": (body, True),
+        "real frozen CRLF": (body.replace(b"\n", b"\r\n"), True),
+        "wrong class": (body.replace(b"class AtlasGitMembership", b"class DecoyMembership"), False),
+        "live unbounded": (unbounded, False),
+        "live unbounded plus cross-class decoy": (unbounded + body.replace(b"class AtlasGitMembership", b"class DecoyMembership"), False),
+        "live unbounded plus local-function decoy": (unbounded.replace(b"var indexDigest =", b"void NeverCalled() {" + decoy + b"} var indexDigest ="), False),
+        "live unbounded plus literal decoy": (unbounded + b'var decoy = """' + decoy + b'""";', False),
+        "cap changed": (body.replace(b"MaxIndexBytes = 8", b"MaxIndexBytes = 9"), False),
+        "helper changed": (body.replace(b"length <= maximumBytes", b"true"), False),
+        "dispatch changed": (body.replace(b"CaptureForQualificationAsync(sourceRoot,", b"OtherCapture(sourceRoot,"), False),
+        "comment changed": (body + b"\n// unrelated edit\n", False),
+        "lone CR is not normalized": (body + b"\r", False),
     }
-    failed = [name for name, (source, expected) in cases.items() if index_bound_enforced(source) != expected]
-    for name in failed:
-        print(f"FAIL: {name}")
-    print(f"verify-bounds-are-enforced self-test: {len(cases) - len(failed)}/{len(cases)} passed")
+    results = {}
+    with tempfile.TemporaryDirectory(prefix="atlas-bound-pin-") as directory:
+        root = Path(directory)
+        path = root / INDEX_SOURCE
+        path.parent.mkdir(parents=True)
+        for name, (source, expected) in cases.items():
+            path.write_bytes(source)
+            results[name] = reviewed_index_unchanged(path) == expected
+        path.write_bytes(unbounded)
+        results["generic comparison cannot bypass changed pin"] = not bound_applied(
+            "MaxIndexBytes", path, root, "value <= MaxIndexBytes")
+        path.unlink()
+        results["missing source"] = not reviewed_index_unchanged(path)
+        results["missing source cannot use generic fallback"] = not bound_applied(
+            "MaxIndexBytes", path, root, "value <= MaxIndexBytes")
+        path.mkdir()
+        results["unreadable as file"] = not reviewed_index_unchanged(path)
+        results["unreadable source cannot use generic fallback"] = not bound_applied(
+            "MaxIndexBytes", path, root, "value <= MaxIndexBytes")
+    failed = [name for name, passed in results.items() if not passed]
+    for name, passed in results.items():
+        print(f"{'PASS' if passed else 'FAIL'}: {name}")
+    print(f"verify-bounds-are-enforced self-test: {len(results) - len(failed)}/{len(results)} passed")
     return int(bool(failed))
 
 
@@ -181,12 +165,16 @@ def strip_comments(text: str) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--list", action="store_true", help="show every bound and where it is enforced")
-    parser.add_argument("--self-test", action="store_true", help="exercise checked indirect enforcement and its mutants")
+    parser.add_argument("--self-test", action="store_true", help="exercise the reviewed source pin and its mutants")
     args = parser.parse_args()
     if args.self_test:
         return self_test()
 
     root = repo_root()
+    if not reviewed_index_unchanged(root / INDEX_SOURCE):
+        print("verify-bounds-are-enforced: FAILED — reviewed Atlas indirect implementation is missing, unreadable, or changed.")
+        print("  Requalify the boundary/mutation tests and obtain independent review before manually updating the source pin.")
+        return 1
     sources = tracked_sources(root)
 
     bodies = {path: strip_comments(path.read_text(encoding="utf-8", errors="replace")) for path in sources}
@@ -206,15 +194,11 @@ def main() -> int:
     unenforced = []
 
     for name, declared_in in sorted(bounds.items()):
-        indirect = name in APPLIED_ELSEWHERE or (
-            name == "MaxIndexBytes" and declared_in == root / INDEX_SOURCE
-            and index_bound_enforced(bodies[declared_in]))
-        applied = indirect or any(
-            re.search(rule.pattern.format(name=re.escape(name)), everything)
-            for rule in ENFORCEMENT)
+        applied = bound_applied(name, declared_in, root, everything)
 
         if args.list:
-            how = "indirect" if indirect else ("applied " if applied else "DECLARED")
+            how = "reviewed" if name == "MaxIndexBytes" and applied else (
+                "indirect" if name in APPLIED_ELSEWHERE else ("applied " if applied else "DECLARED"))
             print(f"  {how:8} {name}  ({declared_in.relative_to(root)})")
 
         if not applied:
@@ -232,11 +216,11 @@ def main() -> int:
         return 1
 
     print(
-        f"verify-bounds-are-enforced: OK — {len(bounds)} bound constant(s), every one compared, "
-        "clamped or taken against in code.")
+        f"verify-bounds-are-enforced: OK — {len(bounds)} bound constant(s); direct/registered checks passed; "
+        "reviewed indirect implementation unchanged.")
     print(
-        "  Note: this checks that a bound is APPLIED, not that a comment describing it is true. "
-        "The prose half of the class still needs a reader.")
+        "  Direct checks recognize syntax; the reviewed pin recognizes unchanged bytes. "
+        "Behavioral claims still require their tests and independent review.")
     return 0
 
 
