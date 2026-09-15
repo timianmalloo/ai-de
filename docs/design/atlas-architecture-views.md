@@ -605,6 +605,46 @@ satisfiable and shared-file writers unique.
 
 ## 9. Exit and residuals
 
+### E2-M direction brief — human-granted synthetic review harness
+
+Mode: create. Grant `req-01M2KCTTG4ZWAC2K01PB1HYWGK` admits the exact
+[architecture harness](../mockups/atlas-architecture-views.html); this existing design
+is its graph hub. Specification, G6 architecture and F1/F2 semantics above are reused.
+No DESIGN.md change, new hub, image generation, runtime producer or native acceptance.
+
+User: an architect arriving with incomplete evidence and limited attention. Job:
+compare explicit domain/layer declarations and resource identities, inspect the exact
+selected evidence, and return from Source without losing context. Direction:
+precise rather than suggestive; calm rather than decorative; compact rather than cramped.
+References are the repository UML/ERM mock's permanent derived/read-only disclosure,
+the ContextMap source-selection interaction, and the existing DESIGN.md workstation
+typography/chrome. These are internal references, not claims of external platform proof.
+
+G6 signature and phases in section 7 govern: parallel graph/list/inspector reading,
+serial Source/Back detail, explicit hard-state recovery. Typography uses existing UI
+and monospace stacks; color uses only existing dark/light semantic tokens; space uses
+the existing scale with flat panels. Selection/evidence is the single focal point.
+No generated imagery, gradients, decorative statistics, service invention or deployment
+claim. Motion inventory: none; reduced-motion remains explicit and respected.
+
+Triggers: U/DX/CD and specification UX/UI floors apply. UI-T1 applies to expert
+technical evidence/provenance, using G6; no quantitative colormap is needed. UI-T2
+does not apply (no generated assets). UI-T3 does not apply (no model invocation).
+UI-T4 applies to the eventual native product: this HTML is direction evidence only,
+and cannot clear native keyboard/UIA/DPI/performance gates. Existing tokens are reused.
+
+Peer-mode lenses: UX/IA requires identical selection across the three representations;
+accessibility requires visible focus, semantic controls and honest unavailable actions;
+Test requires independent expected rows plus hard-state/focus faults; Simplifier limits
+this to one file and no dependencies. Independent adversarial clearance remains separate.
+
+Surface inventory: review controls; three view selectors; filter; per-view diagram,
+evidence list, inspector; Source panel and Back; state/recovery messages; mechanical
+audit. Ready, unselected, loading/cancelled, empty, failed/retry, partial, overflow,
+unsupported, stale, invalid, no-workspace, needs-index, denied, changed-source and
+disconnected states must not turn missing evidence into authority. Fixtures are synthetic;
+full deployment identity remains unresolved even when a declaration is selected.
+
 Completed as design material for re-review: normalized Owner G6/facets, F1/F2 typed carrier and
 provenance/identity rules, logical envelope including projection observation/partial Restore,
 hard-state/per-view native oracles, proposed caps and Owner20cold/100warm protocol.

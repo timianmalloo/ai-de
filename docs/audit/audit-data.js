@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:26:32Z",
+  "generated": "2026-09-15T21:59:22Z",
   "audit": [
     {
       "actor": null,
@@ -18639,6 +18639,54 @@ window.AUDIT_DATA = {
       "started_at": "2026-09-15T21:24:48Z",
       "duration_seconds": 103.0,
       "supersedes": "al-01M2KEJ1RNG0PQCQQCYNSD9JYB"
+    },
+    {
+      "id": "al-01M2KH9W2VNHBEQDEA2PV54JGR",
+      "shortname": "E2-M granted self-contained Domain Layer Azure synthetic HTML harness: r…",
+      "datetime": "2026-09-15T21:59:22Z",
+      "session": "prompt-log",
+      "prompt": "E2-M granted self-contained Domain Layer Azure synthetic HTML harness: reuse approved G6 design and tokens; working graph list inspector filter Source Back; hardstate persona viewport theme density capability motion and normalpath measured audits; exact docs paths only, no production or spike edits; independent review after freeze.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2KH9WAYSJES0DSVXC3NP7N2",
+      "shortname": "atlas-e2-mock-harness",
+      "datetime": "2026-09-15T21:59:22Z",
+      "session": "codex-atlas-e2-architecture",
+      "prompt": "Create granted E2-M synthetic architecture mock with all3 views, exact evidence consistency, state and accessibility audits, no production authority.",
+      "summary": "Headless229 controls PASS; three subject faults produce27/15/15 failures. Craft0 blockers3minors, mockaudit1page0findings, tokenlintclean. Five screenshots inspected. Actualtoolbar focus and dangling-filter endpoints corrected; timings emitted as synthetic only. Independent review pending.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": "GPT-6 Astra E2 author",
+      "artifacts": [
+        "docs/mockups/atlas-architecture-views.html",
+        "docs/proof/atlas-architecture-contract.md",
+        "docs/design/atlas-architecture-views.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Render and measure bounded synthetic Domain Layer Azure review harness.",
+      "done_when": "Three views and hard states observable; consistent selection and Source Back controls, red fault results, proof and branch commit ready for independent review.",
+      "tier": "T2",
+      "main_calls": 18,
+      "main_budget": 24,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T21:46:14Z",
+      "duration_seconds": 788.0
     }
   ],
   "changes": [
@@ -22453,6 +22501,29 @@ window.AUDIT_DATA = {
       "git": {
         "before": "ea21b6b6",
         "after": "ea21b6b6985dc12bfbabb966060cdc76b0701f13",
+        "branch": "atlas/architecture-views",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2KH9W7HP9HHWJ9NR28VSWNK",
+      "datetime": "2026-09-15T21:59:22Z",
+      "session": "codex-atlas-e2-architecture",
+      "kind": "design",
+      "skill": "ui-design",
+      "title": "Atlas E2 synthetic architecture review harness",
+      "prompt": "Create E2-M within human exact HTML grant.",
+      "summary": "Reuse existing G6/tokens and design hub. Three views, explicit synthetic authority, graph/list/inspector and Source/Back controls. No new production design contract.",
+      "rationale": "Render approved direction and refusal states for independent UX and Test review; HTML never clears native gates.",
+      "artifacts": [
+        "docs/mockups/atlas-architecture-views.html",
+        "docs/design/atlas-architecture-views.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "a9d86fc1350ac4c74d5d8ff39e9f39685b890f14",
+        "after": "a9d86fc1350ac4c74d5d8ff39e9f39685b890f14",
         "branch": "atlas/architecture-views",
         "pushed": null,
         "commits": []

@@ -8281,7 +8281,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1f2703681aefe98d9aac9c2452679a73c1ef7667023f057b41002e58c04379f4"
+      "sourceSha256": "0b0f5f7dc738cde2daf2fb3af2b8e05a7101ebd5ad2f7b0cbeccb8a6b516e18a"
     },
     {
       "id": "design-session-profiler",
@@ -10384,7 +10384,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9d14cd0c0599271ee17b010f706ab8d37f416aa78511532d83bfb9230584b6c3"
+      "sourceSha256": "1615fde399ac382c0068bf5bc58a6203c0c61bbc1563bf250eb4c5db3ef2f409"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -19264,6 +19264,13 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     },
     {
+      "id": "surface-mockups-atlas-architecture-views",
+      "path": "docs/mockups/atlas-architecture-views.html",
+      "title": "Atlas architecture — synthetic review harness",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
       "id": "surface-coordination-audit-gate-self-test",
       "path": "docs/coordination/audit-gate-self-test.html",
       "title": "Audit verifier self-test coordination",
@@ -19360,5 +19367,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3248d96db55efd8fa54174077f17bf7544c81772bfa4386f0cd56bc451dd2689"
+  "graphSha256": "64584c1bedb93d29f582b2884456400a0dabee755352932951e60a706c4c113d"
 };
