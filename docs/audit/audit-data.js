@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T17:43:26Z",
+  "generated": "2026-09-15T17:55:32Z",
   "audit": [
     {
       "actor": null,
@@ -17458,6 +17458,38 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M2K3B1MTTVRK7AYWG6VC9VSC",
+      "shortname": "understanding-views-n10-design-acceptance",
+      "datetime": "2026-09-15T17:55:20Z",
+      "session": "understanding-views-n10",
+      "prompt": "N10 design adversarial review for D-0 Solution tree on branch understanding-views. Persona: Test Architect (hard veto) with Simplifier. Adversary Mode. Write docs/notes/understanding-views-n10-design-acceptance.md. Verdict: PASS / PASS-WITH-CONDITIONS / BLOCK. Do not implement src/. Do not admit D-1. Do not join main.",
+      "summary": "PASS-WITH-CONDITIONS. Six N9 closes Verified in tests. Design stays draft. T5a/b visual, FieldsSurvive pair, US-T8 error+Retry, US-T13, physical Ctrl+Enter Flagged, Zone-prose contradiction. Panel incomplete (Patterns, SRE). No D-1. No main.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n10-design-acceptance.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "N10 adversarial review of D-0 Solution tree design (Test Architect hard veto + Simplifier)",
+      "done_when": "decision note committed with PASS / PASS-WITH-CONDITIONS / BLOCK; design stays draft unless evidenced to accept; no src/; no D-1; no main",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "44ed80607724f8a60665e0b1f5a1acbf5d36e33a",
+        "short": "44ed80607",
+        "branch": "understanding-views",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -21380,6 +21412,29 @@ window.AUDIT_DATA = {
       "summary": "Six Test Architect closes in docs/design/solution-tree.md. Status remains draft.",
       "tags": [],
       "title": "N10 Test Architect BLOCK closed in D-0 solution-tree design (draft)"
+    },
+    {
+      "id": "cl-01M2K3B8ZED661R3EGA749E4TA",
+      "datetime": "2026-09-15T17:55:28Z",
+      "session": "understanding-views-n10",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "N10 D-0 Solution tree PASS-WITH-CONDITIONS; design stays draft",
+      "prompt": "N10 design adversarial review for D-0 Solution tree. Test Architect + Simplifier. Adversary Mode.",
+      "summary": "PASS-WITH-CONDITIONS. Six N9 closes held. Design docs/design/solution-tree.md stays draft. Conditions: T5a/b visual-tree, FieldsSurvive pair, US-T8 error+Retry, US-T13, Ctrl+Enter Flagged, Zone-prose reconcile. Patterns/SRE unsat.",
+      "rationale": "N10 DoD ticked against opened tests and proofs. Previous BLOCK's six closes have tests. Remaining gaps have named paths so this is not a design-contract Blocker; accepting would mint a second definition of UV-1 done. Owner N14 keeps spec draft and forbids D-1/main.",
+      "artifacts": [
+        "docs/notes/understanding-views-n10-design-acceptance.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "44ed80607724f8a60665e0b1f5a1acbf5d36e33a",
+        "after": "44ed80607724f8a60665e0b1f5a1acbf5d36e33a",
+        "branch": "understanding-views",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M2K3B1MTTVRK7AYWG6VC9VSC"
     }
   ]
 };

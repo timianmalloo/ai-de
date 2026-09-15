@@ -6377,6 +6377,64 @@ window.DOCS_INDEX = {
       "sourceSha256": "8f89ef429007a2435a892df2eed14e4435c4261af02c79e9f77f29da3f3ec97c"
     },
     {
+      "id": "note-understanding-views-n10-design-acceptance",
+      "path": "docs/notes/understanding-views-n10-design-acceptance.md",
+      "title": "N10 D-0 Solution tree: PASS-WITH-CONDITIONS; design stays draft",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [
+        {
+          "by": "design-solution-tree",
+          "on": "2026-09-15",
+          "reason": "N10 PASS-WITH-CONDITIONS; design stays draft; Zone-not-frozen prose vs View-menu-only freeze; N12 still owes T5a/b visual-tree"
+        }
+      ],
+      "summary": "N10 Test Architect (hard) + Simplifier (soft) on D-0 Solution tree: PASS-WITH-CONDITIONS. The six N9 test-plan closes hold. Design docs/design/solution-tree.md stays draft. Blast radius: no design Accepted, no D-1, no main; N12 cannot PASS on the named residuals.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "N10",
+        "D-0",
+        "solution-tree"
+      ],
+      "links": [
+        {
+          "to": "design-solution-tree",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-owner-n14",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-uv-0-solution-tree-core-query",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-uv-1-solution-tree-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-native-ui-solution-tree",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3766b1af9dd680b874988ee28f0a57eaf9b3d0e179279e0df8e2b2a4205bdb90"
+    },
+    {
       "id": "note-understanding-views-n2-comparables",
       "path": "docs/notes/understanding-views-n2-comparables.md",
       "title": "D-0 Solution/tree view comparables (Architecture-pane indexed artifacts)",
@@ -7298,7 +7356,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a0560d7b2a40cfc72465f191fc897e05adea651c0f3eaeb2e3cee60101b6568e"
+      "sourceSha256": "acfa019b2ed52197d8d1dc1f35cd130dcd6d7eb60f11d79a5380f9768578340d"
     },
     {
       "id": "design-watcher-advisory-evaluator",
@@ -8662,7 +8720,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d537e451c6a899896b541f10c4ec5922d6169c7450cc9e93380a8ac15445780f"
+      "sourceSha256": "ef822ec21b0a944866c17082db34725bda2889a2bf4293032e3cc06ba31ddb54"
     },
     {
       "id": "coordination-understanding-views-kickoff",
@@ -16913,7 +16971,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "27088a05396f124219a6959d435eb0717e5aed7eb4214059df3186b868862bb6"
+      "sourceSha256": "9690ba12e072db598628c886056bc9cf8683831f034c910be8481f46a03b3d4f"
     },
     {
       "id": "proof-perspective-content",
@@ -17576,7 +17634,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "145a4c754e71ccf9e1f1d87ea1fcb821243bee3bdba03a6d535e9c61e147af92"
+      "sourceSha256": "e753650a170cbe32a3d47db9091961cf625d554a87b91563d08f7b176284fa81"
     },
     {
       "id": "proof-watcher-advisory-evaluator",
@@ -19611,5 +19669,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "28e71ee845dfe7450cb4ca74a32c21cf436271bc7a64d852a2548f86eddf4169"
+  "graphSha256": "cb7dac5910c0d3d67c1262c8b513c5f97b98b162490074dacb396bd1c962accc"
 };
