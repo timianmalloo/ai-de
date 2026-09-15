@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T01:50:38Z",
+  "generated": "2026-09-15T02:05:23Z",
   "audit": [
     {
       "actor": null,
@@ -16364,6 +16364,35 @@ window.AUDIT_DATA = {
         "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
         "short": "bab5035e7",
         "branch": "understanding-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HCZKQTNDKK80C1XB71Y9AP",
+      "shortname": "understanding-views-owner-ruling",
+      "datetime": "2026-09-15T02:05:23Z",
+      "session": "understanding-views-owner",
+      "prompt": "N0 Owner ruling for Addendum C deferred views",
+      "summary": "Admit D-0 Solution/tree this horizon; not Atlas; D-1..D-6 deferred; join understanding-views; Owner 25/20 calls (overrun recorded)",
+      "kind": "skill",
+      "skill": "owner",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-owner-ruling.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Rule the first admitted understanding view",
+      "done_when": "Ruling note names one view, Atlas seam, D-5/D-6, join target",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-15T02:05:23Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "2b5bc50964e1ad5bc4cc52295c9190cb41522b9a",
+        "short": "2b5bc5096",
+        "branch": "understanding-views-owner",
         "pushed": null
       }
     }

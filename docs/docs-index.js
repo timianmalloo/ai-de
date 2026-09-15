@@ -6221,6 +6221,52 @@ window.DOCS_INDEX = {
       "sourceSha256": "1019c9d98b854b04b2fc784cada4bdea68e34249dba7f30ffe4979e750f397b4"
     },
     {
+      "id": "note-understanding-views-owner-ruling",
+      "path": "docs/notes/understanding-views-owner-ruling.md",
+      "title": "Admit D-0 Solution/tree view this horizon; D-0 is not Atlas; D-1…D-6 stay deferred; join onto understanding-views",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "Admit only D-0 (Solution/tree) this cycle as an Architecture pane over indexed artifacts. Blast radius: one kind, one allow-list column, one derived-menu pickup, join onto understanding-views — not Atlas, not main, not D-1…D-6.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "owner"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "plan-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0036-compile-mode-ladder-deployment-gates",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e36d5ce6b0e6af2c3899ee3f7a5454f295992c7aba0636717c4dbcbe36bb5956"
+    },
+    {
       "id": "note-watcher-substrate-framing",
       "path": "docs/notes/watcher-substrate-framing.md",
       "title": "Loomkeeper framing, score authority, and Observatory archetype",
@@ -18782,5 +18828,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "84ca5f12f2ad5c038f125cfda5cf68f1d4b28376270e538bb4daffaf8b899f9f"
+  "graphSha256": "cc9a112f459bc23ccec470afdf8e74c73e251c0fd99c95a8ab1b6656ddb3d589"
 };
