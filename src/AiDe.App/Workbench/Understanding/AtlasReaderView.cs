@@ -18,6 +18,8 @@ namespace AiDe.App.Workbench.Understanding;
 public sealed class AtlasReaderView : UserControl
 {
     public const int PageSize = 64;
+    public const int OutlinePageSize = 128;
+    private const int SourceWindowLength = 32768;
     private readonly IAtlasQueries? _queries;
     private readonly IAtlasReaderLease? _lease;
     private readonly AtlasWorkspaceOwner? _owner;
@@ -34,6 +36,16 @@ public sealed class AtlasReaderView : UserControl
     private readonly TextBlock _status = new() { TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _bounds = new() { TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _sourceStatus = new() { TextWrapping = TextWrapping.Wrap };
+    private readonly AtlasStaticView _staticView = new();
+    private readonly Button _sourceMode = new() { Content = "Source" };
+    private readonly Button _classMode = new() { Content = "Class view" };
+    private readonly Button _nextOutline = new() { Content = "Next declarations", IsEnabled = false };
+    private readonly Button _nextSource = new() { Content = "Next source page", IsEnabled = false };
+    private AtlasSelectionDto? _readerSelection;
+    private int _outlinePageOffset;
+    private int _sourcePageOffset;
+    private int _sourcePageLength = SourceWindowLength;
+    private string? _selectedDeclarationToken;
     private CancellationTokenSource? _requestBudget;
     private string? _receiptToken;
     private string? _currentFile;
@@ -78,8 +90,82 @@ public sealed class AtlasReaderView : UserControl
     public ListBox OutlineControl => _outline;
     public TextEditor SourceControl => _source;
     public TextBlock StatusControl => _status;
+    public AtlasPresentationMode Presentation { get; private set; }
+    public AtlasStaticView StaticView => _staticView;
+    public Button ClassViewButton => _classMode;
+    public Button SourceViewButton => _sourceMode;
+    public Button NextDeclarationsButton => _nextOutline;
+    public Button NextSourceButton => _nextSource;
+    public AtlasSelectionDto? CurrentSelection => _readerSelection;
+    public string? CurrentBindingToken { get; private set; }
+    public int OutlinePageOffset => _outlinePageOffset;
+    public Task CurrentOperation { get; private set; } = Task.CompletedTask;
 
-    public async Task LoadAsync(CancellationToken cancellationToken = default)
+    public async Task SetPresentationAsync(AtlasPresentationMode presentation, CancellationToken cancellationToken = default)
+    {
+        if (Presentation == presentation) return;
+        var previous = CaptureFrame();
+        SetPresentation(presentation);
+        if (presentation == AtlasPresentationMode.Source) return;
+        if (_lease is null)
+        {
+            _staticView.ShowState("Structure unavailable. This reader returned no admitted structural metadata.");
+            return;
+        }
+        if (_currentFile is not { } file)
+        {
+            _staticView.ShowState("Select a file to inspect its Class view.");
+            return;
+        }
+        var request = ReaderRequest(file, _selectedDeclarationToken, _sourcePageOffset, _sourcePageLength, _outlinePageOffset);
+        var (sequence, token) = BeginRequest(cancellationToken);
+        ClearPresentation();
+        await ApplyReaderSelectionAsync(sequence, () => _lease.Queries.SelectAsync(request, token),
+            token, previous, request.DeclarationToken, request).ConfigureAwait(true);
+    }
+
+    public Task LoadNextOutlinePageAsync(CancellationToken cancellationToken = default) =>
+        LoadReaderContinuationAsync(source: false, cancellationToken);
+
+    public Task LoadNextSourcePageAsync(CancellationToken cancellationToken = default) =>
+        LoadReaderContinuationAsync(source: true, cancellationToken);
+
+    private async Task LoadReaderContinuationAsync(bool source, CancellationToken cancellationToken)
+    {
+        var offset = source ? _readerSelection?.Source.NextOffset : _readerSelection?.OutlineNextOffset;
+        if (_lease is null || _currentFile is not { } file || offset is null)
+        {
+            _status.Text = source ? "No further retained source page." : "No further retained declaration page.";
+            return;
+        }
+        var previous = CaptureFrame();
+        var request = ReaderRequest(file, null, source ? offset.Value : _sourcePageOffset,
+            source ? SourceWindowLength : _sourcePageLength, source ? _outlinePageOffset : offset.Value);
+        var (sequence, token) = BeginRequest(cancellationToken);
+        ClearPresentation();
+        await ApplyReaderSelectionAsync(sequence, () => _lease.Queries.SelectAsync(request, token),
+            token, previous, request: request).ConfigureAwait(true);
+    }
+
+    private void SetPresentation(AtlasPresentationMode presentation)
+    {
+        Presentation = presentation;
+        _source.Visibility = _outline.Visibility =
+            presentation == AtlasPresentationMode.Source ? Visibility.Visible : Visibility.Collapsed;
+        _staticView.Visibility = presentation == AtlasPresentationMode.Class ? Visibility.Visible : Visibility.Collapsed;
+        _sourceMode.IsEnabled = presentation != AtlasPresentationMode.Source;
+        _classMode.IsEnabled = presentation != AtlasPresentationMode.Class;
+        AutomationProperties.SetItemStatus(_sourceMode, presentation == AtlasPresentationMode.Source ? "Selected" : "Not selected");
+        AutomationProperties.SetItemStatus(_classMode, presentation == AtlasPresentationMode.Class ? "Selected" : "Not selected");
+    }
+
+    public Task LoadAsync(CancellationToken cancellationToken = default)
+    {
+        CurrentOperation = LoadCoreAsync(cancellationToken);
+        return CurrentOperation;
+    }
+
+    private async Task LoadCoreAsync(CancellationToken cancellationToken)
     {
         var (sequence, token) = BeginRequest(cancellationToken);
         _status.Text = "Loading repository files…";
@@ -126,9 +212,10 @@ public sealed class AtlasReaderView : UserControl
         _status.Text = "Loading selection…";
         if (_lease is not null)
         {
+            var request = ReaderRequest(file.FileValue!, null);
             await ApplyReaderSelectionAsync(sequence,
-                () => _lease.Queries.SelectAsync(ReaderRequest(file.FileValue!, null), token),
-                token, previous).ConfigureAwait(true);
+                () => _lease.Queries.SelectAsync(request, token),
+                token, previous, request: request).ConfigureAwait(true);
             return;
         }
         await ApplySelectionAsync(
@@ -141,14 +228,17 @@ public sealed class AtlasReaderView : UserControl
     {
         ArgumentNullException.ThrowIfNull(declaration);
         var previous = CaptureFrame();
+        var outlineOffset = _outlinePageOffset;
         var (sequence, token) = BeginRequest(cancellationToken);
         ClearPresentation();
         _status.Text = "Loading declaration…";
         if (_lease is not null)
         {
+            var request = ReaderRequest(declaration.FileValue, declaration.ObservationKey,
+                declaration.Span.Start, Math.Min(SourceWindowLength, declaration.Span.Length), outlineOffset);
             await ApplyReaderSelectionAsync(sequence,
-                () => _lease.Queries.SelectAsync(ReaderRequest(declaration.FileValue, declaration.ObservationKey), token),
-                token, previous, declaration.ObservationKey).ConfigureAwait(true);
+                () => _lease.Queries.SelectAsync(request, token),
+                token, previous, declaration.ObservationKey, request).ConfigureAwait(true);
             return;
         }
         await ApplySelectionAsync(
@@ -183,6 +273,12 @@ public sealed class AtlasReaderView : UserControl
         {
             _back.RemoveAt(_back.Count - 1);
             _backButton.IsEnabled = _back.Count > 0;
+            _outlinePageOffset = frame.OutlinePageOffset;
+            _sourcePageOffset = frame.SourceOffset;
+            _sourcePageLength = frame.SourceLength;
+            SetPresentation(frame.Presentation);
+            if (_readerSelection is { } selection)
+                _staticView.Render(AtlasStaticViewProjection.Create(selection, frame.ClassifierToken));
             RestoreViewState(frame);
         }
     }
@@ -204,6 +300,37 @@ public sealed class AtlasReaderView : UserControl
         AutomationProperties.SetName(_status, "Atlas reader status");
         AutomationProperties.SetName(_bounds, "Atlas pagination and bounds");
         AutomationProperties.SetName(_sourceStatus, "Atlas source state");
+        AutomationProperties.SetName(_classMode, "Class view, file-local classifier occurrences");
+        AutomationProperties.SetName(_sourceMode, "Source view");
+        AutomationProperties.SetName(_nextOutline, "Next declarations page");
+        AutomationProperties.SetName(_nextSource, "Next verified source page");
+        foreach (var button in new[] { _sourceMode, _classMode, _nextOutline, _nextSource })
+        {
+            button.SetResourceReference(ForegroundProperty, "TextBrush");
+            button.SetResourceReference(BackgroundProperty, "SurfaceBrush");
+        }
+        _sourceMode.Click += async (_, _) => await RunEventAsync(() => SetPresentationAsync(AtlasPresentationMode.Source));
+        _classMode.Click += async (_, _) => await RunEventAsync(() => SetPresentationAsync(AtlasPresentationMode.Class));
+        _nextOutline.Click += async (_, _) => await RunEventAsync(() => LoadNextOutlinePageAsync());
+        _nextSource.Click += async (_, _) => await RunEventAsync(() => LoadNextSourcePageAsync());
+        _staticView.ClassifierChanged += token =>
+        {
+            if (_readerSelection is { } selection)
+                _staticView.Render(AtlasStaticViewProjection.Create(selection, token));
+        };
+        _staticView.DeclarationActivated += async (occurrence, _) => await RunEventAsync(async () =>
+        {
+            if (_readerSelection is not { } selection
+                || !selection.Outline.Any(row => row.DeclarationToken == occurrence.Token)) return;
+            var before = _requestSequence;
+            await SelectDeclarationAsync(new OutlineRow(selection.FileToken, occurrence.Declaration)).ConfigureAwait(true);
+            if (_requestSequence == before + 1 && _readerSelection?.DeclarationToken == occurrence.Token
+                && CurrentBindingToken is not null)
+            {
+                SetPresentation(AtlasPresentationMode.Source);
+                _source.TextArea.Focus();
+            }
+        });
 
         _files.ItemsSource = _roots;
         var label = new FrameworkElementFactory(typeof(TextBlock));
@@ -304,12 +431,21 @@ public sealed class AtlasReaderView : UserControl
         grid.Children.Add(_files);
         grid.Children.Add(_outline);
         grid.Children.Add(_source);
+        Grid.SetColumn(_staticView, 1);
+        Grid.SetColumnSpan(_staticView, 2);
+        grid.Children.Add(_staticView);
+        SetPresentation(AtlasPresentationMode.Source);
 
         var footer = new StackPanel { Margin = new Thickness(8, 4, 8, 8) };
         footer.Children.Add(_bounds);
         footer.Children.Add(_sourceStatus);
 
         var root = new DockPanel { LastChildFill = true };
+        var presentationBar = new WrapPanel { Margin = new Thickness(8, 4, 8, 4) };
+        foreach (var button in new[] { _sourceMode, _classMode, _nextOutline, _nextSource })
+            presentationBar.Children.Add(button);
+        DockPanel.SetDock(presentationBar, Dock.Top);
+        root.Children.Add(presentationBar);
         DockPanel.SetDock(toolbar, Dock.Top);
         DockPanel.SetDock(footer, Dock.Bottom);
         root.Children.Add(toolbar);
@@ -491,6 +627,14 @@ public sealed class AtlasReaderView : UserControl
 
     private void ClearSource(SourceProjectionState state, string text)
     {
+        CurrentBindingToken = null;
+        _readerSelection = null;
+        _staticView.ShowState(state switch
+        {
+            SourceProjectionState.Changed => "Source changed — refresh required",
+            SourceProjectionState.Refused => "Source access refused",
+            _ => text,
+        });
         _source.Text = "";
         _source.Select(0, 0);
         CurrentHighlights = [];
@@ -554,7 +698,8 @@ public sealed class AtlasReaderView : UserControl
         try
         {
             var task = operation();
-            await (_owner?.Track(task) ?? task).ConfigureAwait(true);
+            CurrentOperation = _owner?.Track(task) ?? task;
+            await CurrentOperation.ConfigureAwait(true);
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
@@ -563,8 +708,11 @@ public sealed class AtlasReaderView : UserControl
         }
     }
 
-    private AtlasSelectRequestDto ReaderRequest(string file, string? declaration) =>
-        new(1, _lease!.ScopeToken, _lease.CoreEpoch, _manifestToken, file, declaration, 0, 32768, 0, PageSize);
+    private AtlasSelectRequestDto ReaderRequest(string file, string? declaration, int sourceOffset = 0,
+        int sourceLength = SourceWindowLength, int outlineOffset = 0) =>
+        new(1, _lease!.ScopeToken, _lease.CoreEpoch, _manifestToken, file, declaration,
+            sourceOffset, sourceLength, outlineOffset, OutlinePageSize,
+            Presentation == AtlasPresentationMode.Class ? true : null);
 
     private async Task LoadReaderPageAsync(long sequence, int offset, CancellationToken token)
     {
@@ -608,7 +756,7 @@ public sealed class AtlasReaderView : UserControl
     }
 
     private async Task<bool> ApplyReaderSelectionAsync(long sequence, Func<ValueTask<AtlasSelectionDto>> query,
-        CancellationToken token, BackFrame? previous, string? selectedDeclaration = null)
+        CancellationToken token, BackFrame? previous, string? selectedDeclaration = null, AtlasSelectRequestDto? request = null)
     {
         var started = Stopwatch.GetTimestamp();
         try
@@ -617,6 +765,8 @@ public sealed class AtlasReaderView : UserControl
             if (!IsCurrent(sequence) || token.IsCancellationRequested) return false;
             _outlineRows.Clear();
             foreach (var row in selection.Outline) _outlineRows.Add(new OutlineRow(selection.FileToken, row));
+            _readerSelection = selection;
+            _staticView.Render(AtlasStaticViewProjection.Create(selection));
             _bounds.Text = $"Source: {ReaderBounds(selection.SourceBounds)} Outline: {ReaderBounds(selection.OutlineBounds)} "
                 + $"Outline {selection.OutlineState}: {selection.OutlineReason}; next {selection.OutlineNextOffset}; "
                 + $"coverage {selection.Coverage.State}: {selection.Coverage.Value}; {selection.Coverage.Reason}.";
@@ -641,6 +791,13 @@ public sealed class AtlasReaderView : UserControl
             _manifestToken = selection.ManifestToken;
             _receiptToken = selection.ReceiptToken;
             _currentFile = selection.FileToken;
+            _selectedDeclarationToken = selection.DeclarationToken;
+            CurrentBindingToken = source.BindingToken;
+            _outlinePageOffset = request?.OutlineOffset ?? _outlinePageOffset;
+            _sourcePageOffset = source.PageSpan.Start;
+            _sourcePageLength = request?.SourceLength ?? source.PageSpan.Length;
+            _nextOutline.IsEnabled = selection.OutlineNextOffset.HasValue;
+            _nextSource.IsEnabled = source.NextOffset.HasValue;
             _pendingPrevious = null;
             if (previous is not null)
             {
@@ -671,28 +828,33 @@ public sealed class AtlasReaderView : UserControl
         return false;
     }
 
-    private static string ReaderBounds(AtlasBoundsDto bounds) =>
-        $"{bounds.Dimension}; request {bounds.RequestedLimit}; effective {bounds.EffectiveLimit}; rows {bounds.ReturnedRows}; "
-        + $"content bytes {bounds.ReturnedContentBytes}; total {bounds.DenominatorState} {bounds.DenominatorValue} "
-        + $"({bounds.DenominatorReason}); omission {bounds.OmissionDimension} {bounds.OmissionReason}.";
+    private static string ReaderBounds(AtlasBoundsDto bounds) => AtlasStaticViewProjection.DescribeBounds(bounds);
 
     private void ClearPresentation()
     {
         _pendingPrevious = CaptureFrame();
         _receiptToken = null;
         _currentFile = null;
+        _readerSelection = null;
+        _selectedDeclarationToken = null;
+        CurrentBindingToken = null;
+        _nextOutline.IsEnabled = _nextSource.IsEnabled = false;
         _outlineRows.Clear();
         ClearSource(SourceProjectionState.Unavailable, "Source cleared while the requested selection loads.");
+        _staticView.ShowState(_unloaded ? "Source changed — refresh required" : "Loading Class view…");
         _bounds.Text = "Selection bounds not recorded yet.";
     }
 
     private BackFrame? CaptureFrame() => _receiptToken is null ? _pendingPrevious : new(
         _receiptToken, _currentFile!,
         (_outline.SelectedItem as OutlineRow)?.ObservationKey,
-        _outline.IsKeyboardFocusWithin ? "outline" : _source.IsKeyboardFocusWithin ? "source" : "files",
+        Presentation == AtlasPresentationMode.Class ? _staticView.FocusOrigin
+            : _outline.IsKeyboardFocusWithin ? "outline" : _source.IsKeyboardFocusWithin ? "source" : "files",
         _source.SelectionStart, _source.SelectionLength, _source.VerticalOffset, _source.HorizontalOffset,
         FindVisual<ScrollViewer>(_outline)?.VerticalOffset ?? 0,
-        FindVisual<ScrollViewer>(_files)?.VerticalOffset ?? 0);
+        FindVisual<ScrollViewer>(_files)?.VerticalOffset ?? 0,
+        Presentation, _outlinePageOffset, _sourcePageOffset, _sourcePageLength,
+        _staticView.Projection?.Classifier?.Token, _staticView.SelectedToken);
 
     private void RestoreViewState(BackFrame frame)
     {
@@ -701,6 +863,12 @@ public sealed class AtlasReaderView : UserControl
         {
             SelectFileContainer(_files, frame.FileValue);
             UpdateLayout();
+            if (frame.Presentation == AtlasPresentationMode.Class)
+            {
+                if (!_staticView.RestoreFocus(frame.StaticToken, frame.FocusName))
+                    _status.Text += " Focus target unavailable on this restored page.";
+                return;
+            }
             FindVisual<ScrollViewer>(_outline)?.ScrollToVerticalOffset(frame.OutlineOffset);
             FindVisual<ScrollViewer>(_files)?.ScrollToVerticalOffset(frame.FilesOffset);
             _source.Select(Math.Min(frame.SelectionStart, _source.Text.Length),
@@ -853,7 +1021,9 @@ public sealed class AtlasReaderView : UserControl
 
     private sealed record BackFrame(string ReceiptToken, string FileValue, string? ObservationKey, string FocusName,
         int SelectionStart, int SelectionLength, double VerticalOffset, double HorizontalOffset,
-        double OutlineOffset, double FilesOffset);
+        double OutlineOffset, double FilesOffset, AtlasPresentationMode Presentation = AtlasPresentationMode.Source,
+        int OutlinePageOffset = 0, int SourceOffset = 0, int SourceLength = SourceWindowLength,
+        string? ClassifierToken = null, string? StaticToken = null);
 }
 
 public sealed class AtlasFileNode

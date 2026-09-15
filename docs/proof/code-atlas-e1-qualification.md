@@ -13,7 +13,9 @@ review-by: 2026-09-21
 summary: >
   Owner 78 accepts the bounded current-test qualification after independent
   gates and a joined 37-case replay. Preserves rejected intermediate candidates,
-  actual lifetime counterexamples and missing E1 product contracts.
+  actual lifetime counterexamples and missing E1 product contracts. The
+  2026-09-15 native recovery remains unqualified after restored-source UIA and
+  legacy geometry failures; this does not revoke the earlier Core qualification.
 ---
 
 # Current-test qualification accepted; E1 product behavior remains unproved
@@ -287,3 +289,374 @@ Any repaired candidate still needs independent review and a parent replay.
 - Preserve SP3 long-file/page navigation and incremental new-field SP4 as open.
 - Keep E1 sequence/activity, E2 domain/layer/Azure, E3 comparison and E4 AI separate.
 - No E1 product acceptance, normative Addendum E, main push or programme closure.
+
+## Native recovery qualification — 2026-09-15: blocked, not frozen
+
+Session `atlas-e1-native-class-view`, agent
+`copilot-astra-native-e1-recovery`, retained worktree
+`C:\Projects\ai-de-atlas-e1-native-class-view`, branch
+`atlas/e1-native-class-view`, base HEAD
+`4a5812044a38a6fe365fb7929104f51dbc973fc5`.
+No replacement implementation, merge, rebase, push, destructive Git restoration,
+dependency change or inspected-user-repository mutation was performed.
+The original five product/test files survive byte-for-byte. No qualified
+candidate commit was made: the required restored scoped green was not obtained.
+Independent parent gates remain required; this record is not acceptance.
+
+### Evidence, including failed controls
+
+All native TRX files below are in `.artifacts/atlas-e1/`. Names containing
+`green` were chosen before execution and **do not describe their outcome**.
+
+| Receipt | Executed / passed / failed / skipped | What it establishes |
+|---|---|---|
+| `e1-native-proof.trx` | 26 / 26 / 0 / 0 | Original retained checkpoint, untouched |
+| `e1-recovery-baseline.trx` | 71 / 71 / 0 / 0 | Initial ordinary reader/native replay |
+| `e1-mutation-parent-red.trx` | 1 / 0 / 1 / 0 | Direct-parent comparison mutation is detected |
+| `e1-mutation-window-red.trx` | 1 / 0 / 1 / 0 | Global source-window mutation is detected |
+| `e1-recovery-final-green.trx` | 111 / 106 / 5 / 0 | Failed restoration attempt: stale compiled mutant plus missing legacy receipt environment |
+| `e1-recovery-restored-green.trx` | 111 / 108 / 3 / 0 | Non-incremental restored build: native UIA/Back and legacy geometry failures |
+| `e1-restored-scoped-control.trx` | 71 / 70 / 1 / 0 | Original focused scope still fails native 1180-DIP UIA lookup; expanded-suite concurrency is not a sufficient explanation |
+
+The 71-case filter is
+`FullyQualifiedName~AtlasReader|FullyQualifiedName~AtlasStatic`.
+The 111-case filter additionally includes
+`FullyQualifiedName~AtlasSharedHostAdmission|FullyQualifiedName~AtlasDaemonMainWindowProof`.
+Project: `tests/AiDe.App.Tests/AiDe.App.Tests.csproj`, Debug,
+SDK pin `10.0.303`, `net10.0-windows`.
+The restored rebuild used `dotnet build --no-restore --no-incremental
+-p:BuildInParallel=false`: zero warnings and zero errors.
+Subsequent restored runs used `dotnet test --no-build --no-restore`.
+The legacy proof received `ATLAS_PROOF_RUN=e1-recovery-20260915-qualification`;
+its raw evidence is under
+`artifacts/atlas-real-daemon-window-proof/e1-recovery-20260915-qualification/`.
+
+### Discriminating mutations and exact restoration
+
+The existing `tools/mutation-replay.py` was inspected but not used for mutation:
+its restore path calls `git checkout --`, which cannot preserve this dirty,
+partly untracked candidate. Before mutation, all five complete files were copied
+to `.artifacts/atlas-e1/recovery-source-backup/`. Each injected file was restored
+in `finally` from its exact backup, and all five SHA-256 values were compared.
+
+| Fault | Oracle and observed semantic red | Restored control |
+|---|---|---|
+| `AtlasStaticViewProjection.cs:65`: direct-parent `==` changed to `!=` | `Projection_DuplicateNamesRemainOccurrencesWithDirectParentOnly`, test line 19: expected `m2`, actual `m1` | Original bytes restored; this test passes in subsequent restored runs |
+| `AtlasReaderView.cs:238`: declaration window start changed to `0` | `FarMember_UsesIssuedGlobalUtf16Window`, test line 192: expected `40000`, actual `0` | Original bytes restored; this test and source-content checks pass after forced rebuild |
+
+No mutation score or exhaustive fault coverage is claimed. The two faults ran
+separately, with a parseable one-test/one-failure TRX required for each.
+An important qualification-harness defect was observed: `Copy-Item` preserved the
+backup's old modification time, so the immediate incremental build retained the
+mutant assembly although the source checksum was correct. Source time was
+`2026-09-15T05:15:01.3003403Z`, whereas the mutant App DLL time was
+`2026-09-15T14:11:16.4408389Z`. A non-incremental rebuild removed the mutation
+failures. Byte restoration alone is not a rebuilt-binary proof.
+The first repair pass removed stale-binary and missing-environment failures;
+the subsequent focused control did not clear the newly exposed native failure.
+No production repair was attempted on an inferred root cause.
+
+### Unresolved findings and exact seam
+
+- **[Blocker] (Verified) Test/qualification gate:** restored focused execution is
+  70/71. `AtlasStaticCompositionTests.cs:250` fails to find the named UIA button
+  in the 1180-DIP journey, called from line 125. The expanded restored run also
+  observed `Class` expected / `Source` actual at line 160 after Back. The fixture
+  awaits `InvokePattern.Invoke()` and then reads `CurrentOperation`; asynchronous
+  click-dispatch completion is a plausible missing synchronization boundary,
+  **not a verified root cause**. Establish the actual event/publication boundary
+  and a deterministic failing control before changing the scoped test/product.
+  Escalation: parent Test Architect / distributed-systems reviewer.
+- **[Major] (Verified) Legacy geometry seam:** the restored legacy
+  `AtlasDaemonMainWindowProofTests.cs:431,442,445` feeds global source offsets
+  into the member-local AvalonEdit document. Execution throws for offset 48 in
+  a document of length 26. Its source/highlight measurement must agree with the
+  returned page and rebase global highlights, as the new native helper does.
+  This file is outside the five-file grant and was not edited.
+- **[Major] (Flagged) Native UX handoff:** actual 1440-DIP and local-15-DIP
+  screenshots show the selected `Compartments` tab as pale text on white.
+  Numeric contrast was not measured; full-label geometry does not establish
+  selected-tab readability. The relevant native construction is
+  `AtlasStaticView.cs:31-35,62-68`. UX must determine and qualify the smallest
+  local correction, without changing shell/chrome.
+- **[Minor] (Flagged) Observability handoff:** `AtlasStaticView.cs:161-162`
+  emits formatted `Trace.TraceInformation`, not a demonstrated trace-correlated
+  structured event. SRE must determine the local-convention disposition and
+  missing runtime evidence; no new logger/dependency was introduced here.
+
+Shared coordinator request:
+`req-01M2JPT423KF50YT0DYJ6WE6NH`, addressed to
+`copilot-atlas-recovery-b0d0`, path
+`tests/AiDe.App.Tests/Workbench/Understanding/AtlasDaemonMainWindowProofTests.cs`.
+It reports the ungranted geometry seam and native failures before any such edit.
+Shared liveness and requests were re-read at the qualification boundary.
+The recovery is stopped rather than widening scope or retrying to manufacture
+a green receipt.
+
+### Actual environment and visual coverage
+
+The successful baseline's three real-daemon native receipts observed
+1180/1280/1440 by 900 DIP, **native DPI 144 and WPF DPI 144**,
+`HighContrast=false`, `ClientAreaAnimation=true`. The 1180-DIP case used the
+repository light-token override; the other two used dark resources.
+OS text scale was not changed or measured as a numeric setting.
+The separate larger-label fixture used a local `FontSize=15`, **not OS scaling**.
+No other hardware DPI, monitor transition, high-contrast-on, animation-off,
+screen-reader or physical keyboard-input coverage is claimed.
+UIA invocation plus routed Enter is not a hardware Enter test.
+
+The baseline receipts assert current-page 128+23 paging, honest `OutsidePage`
+parents, source/member token parity, retained request preference, Back state and
+focus, stale restore refusal, CRLF/non-BMP input and a far source span starting
+at UTF-16 36590. They record glyph and source/highlight rectangles within the
+measured viewport. These are successful observed journeys, not a blanket claim
+that the later nondeterministic failures are harmless.
+
+Actually displayed and inspected during this recovery:
+
+- `native-1440-20260915140910057-9ddb2864ec164439939ce546875bde7e/class.png`,
+  SHA-256 `633586C6182C5058016435B504320D859A894D08680F7079EBA223BD0DF701EE`.
+- `states-0f11107e1a1546e6ac48b2c2fcb811a1/long-labels-15dip.png`,
+  SHA-256 `6B26DC48CF4DEF5CD6EDBB15669F48DE83DBCD8D4E0C6E770291D6A8F094AA20`.
+
+Both are relative to `.artifacts/atlas-e1/`. Requested 1180-DIP class and
+1280-DIP far-source image views were not supplied by the tool because of its
+one-image limit; their JSON geometry/capture receipts were read, but those
+image pixels are **not** claimed inspected. The original capture folders and
+raw passing receipt remain intact.
+
+### Checksums for retained source and raw evidence
+
+| File under its granted product/test directory | SHA-256 |
+|---|---|
+| `AtlasReaderView.cs` | `48408746563FAB04AFB62D0C86E9EEFAAF2AE4AF337A8C75DE5A4654824BD187` |
+| `AtlasStaticView.cs` | `48BA20BC178356CBE6C590A6E36D02AC148FAB0E3BDDEADA228D36FEBA54D6F1` |
+| `AtlasStaticViewProjection.cs` | `3746CC81D13048AE8292CB1E2A025B9F197EB2A59D58C69BDC450FEF2D995B62` |
+| `AtlasStaticViewTests.cs` | `7A4D5FBD71D5FFFEC760793A6CB56111E56A61965D9D53E13A8BB44C6BCD786C` |
+| `AtlasStaticCompositionTests.cs` | `742AEF4A9E73188D3AD140420FADED6A5D6DBAA308F9FA2F2660D290565E5FA5` |
+
+| Receipt | SHA-256 |
+|---|---|
+| `e1-native-proof.trx` | `3AB8DC6F7FFF65F039283167D0C47F5FA1651AA60913D8E9FAAC20227E2EA439` |
+| `e1-recovery-baseline.trx` | `497F1923A14699AB1AE6AD261F6897D290AED838B8B5E760AD1806404A188CE3` |
+| `e1-mutation-parent-red.trx` | `1DA3F71713660C70430DAB1DC14EBFB2EBA4FD0F45A63FE15032C0D1765449B2` |
+| `e1-mutation-window-red.trx` | `D2ED7B5BC6C28992B37FDC284B7DA206DD959AF717BED39ACA835B871DFB0CCB` |
+| `e1-recovery-final-green.trx` | `C9955B76BB8CA4849BA93DA1115FBDE6656420ABB970679D3FD377478D0296FF` |
+| `e1-recovery-restored-green.trx` | `1A00665BB4D384008E7C9E77D6038FFC5D9DEC526C4DF4F83D8F835864CE734F` |
+| `e1-restored-scoped-control.trx` | `049609BFB6CF3F1BA1EB05B5D9CEF3A7F8A1E7689A6629EABE0D5307E422658B` |
+
+Post-rebuild assembly hashes: App
+`149D9BAA1066CC0D2E5B076471EDB090526A84634639909572B1A6996794FBAC`;
+Core `3CD54A20EDB4AA70094CF934491E990DAE95FDE55FA455F50413370F44268767`;
+Daemon `A1829F5087F0530F96E9F3B25D5EF40792E86AEEFDF3FE9D7978361D6C6BFEAB`.
+
+Definition-of-done is not met: restored native determinism, complete visual
+inspection, native readability, independent Test/UX/UML/C#/SRE clearances,
+instrumentation qualification and a passing frozen candidate remain open.
+The inherited 497/497 bounded Core/fixture acceptance is input, not UI acceptance.
+
+## ND narrow repair phase — prospective 24 calls, still not frozen
+
+The closer authorized a separate prospective 24-call phase, same writer, tree,
+five-file grant and T2/fanout 0. It started at `2026-09-15T14:30:57Z`.
+This is not a reset of the preceding exhausted 40-call qualification.
+The checkpoint was sent directly to closer
+`ed7d1cd1-d8e4-437a-83bc-f39eb926c352` at call 6, with substantive causal findings
+at call 13. No legacy geometry-test permission was received or exercised.
+
+### Distinct hypotheses and executed causal controls
+
+The historical 1180-DIP null lookup happened before selection and therefore
+cannot be explained solely by Back/restore completion. The historical 1440-DIP
+Back failure had a provider-return record but no completed restore before its
+assertion. Diagnostic instrumentation separately records WPF loaded/visible/
+enabled state and dimensions, actual versus requested HWND, UIA process/handle,
+button names and bounds, first lookup, provider return and routed Click.
+
+All nine invocations in the three diagnostic real-pipe journeys recorded
+`ClicksObserved=0` at provider return; the actual routed Click followed.
+**Provider return is demonstrably not a routed-click completion barrier.**
+`Invocation_ProviderReturnedBeforeClick_RemainsPending` controls that boundary
+without timing guesses: the injected provider returns immediately, the routed
+Click is withheld, and the invocation must remain pending. It failed at
+`AtlasStaticViewTests.cs:210` against provider-return-only semantics.
+
+The repair is confined to the test harness:
+`AtlasStaticCompositionTests.cs:247`, `InvokeAndObserveClickAsync`, registers a
+`TaskCompletionSource` before invocation, awaits the Click with a five-second
+failure timeout, and detaches in `finally`. Callers then await the reader's
+actual `CurrentOperation`. No sleep, retry-until-green or idle-as-operation
+completion was introduced. The existing list's routed Enter remains synchronous
+event dispatch and uses the actual reader operation afterward.
+
+For the 1180 predicate, first `FindFirst` now precedes diagnostic enumeration;
+that original result remains the assertion target. The post-census lookup is
+diagnostic only, **never a fallback**. Both were found in the observed ND runs.
+This does not establish the cause of the historical missing element, and no
+selector/concurrency repair or root-cause clearance is claimed.
+
+### Rendered contrast: separate measured defect and local repair
+
+The runtime observation records effective foreground, opacity, value source,
+template source and serialized actual template, named painted parts, and exact
+rendered glyph-interior/background pixel coordinates.
+The observed native `DefaultStyle` template contains `innerBorder` with literal
+`#FFFFFFFF`; its selected trigger raises opacity to 1. The outer `mainBorder`
+uses a background template binding. Both actual border backgrounds reported
+`ParentTemplate` value source. Thus resetting the parent background cannot
+correct this painted white layer.
+
+- Dark 1280/1440: actual glyph `#FFE4E9EF`, background `#FFFFFFFF`, opacity 1,
+  contrast **1.2208762543898204:1**.
+- Light 1180 control: actual glyph `#FF1A1F26` on white,
+  **16.562753363157324:1**; the dark-token hypothesis is not applied to light.
+- A rendered contrast assertion failed for both dark journeys in
+  `nd-predicate-red.trx`, then passed after the repair.
+
+`AtlasStaticView.cs:92-105` now creates its two presentation tabs through
+`CreatePresentationTab`. On load it overrides only the observed template part's
+Background with the existing `SurfaceSunkenBrush` dynamic resource. The native
+template, selection, keyboard, focus and disabled triggers are not replaced.
+The bounded template-part assumption is explicit at line 98; the rendered
+pixel gate is the control for drift, not a promise about other Windows themes.
+
+Measured after repair: dark background `#FF0D1014`, **15.61815863664934:1**;
+light background `#FFE7EBEF`, **13.82399654695408:1**. The selected Compartments
+header is measured; both tabs receive the local override, but this is not a
+complete selected/unselected/hover/disabled/high-contrast state-matrix proof.
+Hardware DPI and OS text-scale limits from the earlier section remain.
+
+Pre-repair template/paint receipts:
+`native-1280-20260915143837953-71413dcfa78e4ae4a8311b034e564381/receipt.json` and
+`native-1440-20260915143842397-a9d18bb4c4564bc7bdf4a325aef6d692/receipt.json`,
+relative to `.artifacts/atlas-e1/`.
+The repaired 1440-DIP capture was actually displayed and inspected:
+`native-1440-20260915144146715-0731cd722c26457289213232bf7c885e/class.png`,
+SHA-256 `A968DA13D45C9F4354E041185FFFD02F878684F3FBB51861622FEC179A038F0B`.
+The selected header is now visibly legible on the dark fill.
+
+### Retained stale actions, with a single-fault discriminator
+
+`RetainedActions_AfterInvalidation_DoNotRequestOrResurrectSource`
+(`AtlasStaticViewTests.cs:216-264`) retains the old compartment button and list,
+with a real source/binding/highlight and selected occurrence. It cancels the
+synthetic lease and unloads the reader through the real Window content lifecycle.
+It then raises old routed Click and Enter actions, deliberately bypassing normal
+disabled-control input filtering. It asserts unchanged SELECT count, empty
+source/highlights, null binding and null current selection.
+This proves the tested **cancellation plus unload/deactivation** path; it is not
+misrepresented as a still-mounted real remote-revocation or hardware-input proof.
+
+Single fault: remove only `ClearPresentation()` from `AtlasReaderView.Deactivate`.
+The retained action caused SELECT count **3 instead of 2**, failing the assertion
+at `AtlasStaticViewTests.cs:257`. Thus the test executes an old callback capable
+of producing the prohibited request when the control is absent.
+The mutation was restored from the exact new-candidate backup in `finally`,
+then a non-incremental build and the focused suite were run. This is a new
+post-hoc mutation control, not a relabelling of the historical three TDD reds.
+
+Both original `.artifacts/atlas-e1/recovery-source-backup/` and original 26/26
+proof remain intact. New candidate backups are separately retained in
+`.artifacts/atlas-e1/nd-pre-mutation-source/`. All five post-restoration file
+hashes matched those backups; no mutant is left in source or the rebuilt DLL.
+
+### Runs, current blocker and stopping decision
+
+All TRX files below are under `.artifacts/atlas-e1/`.
+
+| Receipt | Executed / passed / failed | Meaning |
+|---|---|---|
+| `nd-diagnostic.trx` | 3 / 3 / 0 | Real native event-order and paint observations; not root-cause clearance for historical lookup failure |
+| `nd-predicate-red.trx` | 5 / 2 / 3 | Causal click-barrier assertion and two actual dark-contrast assertions fail |
+| `nd-targeted-green.trx` | 5 / 5 / 0 | Demonstrated barrier/fill repair plus retained-action control pass |
+| `nd-stale-action-mutation-red.trx` | 1 / 0 / 1 | Missing deactivation clearing permits an extra SELECT |
+| `nd-restored-scoped.trx` | 73 / 72 / 1 | Restored non-incremental build, focused reader/native regression; not green |
+
+The remaining observed failure is **list focus after Back** in the 1440-DIP
+journey, `AtlasStaticCompositionTests.cs:191`:
+`DeclarationList.IsKeyboardFocusWithin` was false. The immediately preceding
+mode, page 128 and occurrence-token assertions passed. This is not the old
+provider-return barrier assertion and is not silently classified as concurrency.
+Its cause requires a distinct focus-owner/activation/publication discriminator.
+Raw failing native evidence:
+`native-1440-20260915144258492-c5f754e5afc64f5ebd706b0da1ec9fbd/receipt.json`.
+No rerun was performed to manufacture a green receipt.
+
+Named repair pass 1 reduced the three targeted failing assertions to zero.
+The subsequent restored regression exposed the separate focus predicate.
+The phase stops for closer disposition rather than make a second speculative
+repair within the closing budget. No full 111-case cohort, legacy-test edit,
+freeze, commit, merge, rebase or push occurred.
+The sixth-file permission request remains
+`req-01M2JQMKGC16MV3TH3XK04JYPD`. Final independent gates and any later combined
+native/main-tree qualification remain open.
+
+Recurrence/control recorded here under the narrow grant: a provider-return
+checkpoint substituted for event completion; parent tokens did not control a
+native selected-template paint layer; byte restoration needed an explicit
+rebuild; disabled-state checks needed retained-action fault injection.
+No broader notes or defect-register edits were made.
+
+### Exact ND hashes
+
+| Candidate file | SHA-256 |
+|---|---|
+| `AtlasReaderView.cs` | `48408746563FAB04AFB62D0C86E9EEFAAF2AE4AF337A8C75DE5A4654824BD187` |
+| `AtlasStaticViewProjection.cs` | `3746CC81D13048AE8292CB1E2A025B9F197EB2A59D58C69BDC450FEF2D995B62` |
+| `AtlasStaticView.cs` | `066C6895E4D13AFFFDE152E00F2E65D5A8DF9DDCEF833F5320B046E7C477B297` |
+| `AtlasStaticViewTests.cs` | `68DF175AE7D947D3C3CCE9787E2DC9E258AF2DF7473C05D8E6A4C59BAB7E3092` |
+| `AtlasStaticCompositionTests.cs` | `6EB9E1BFFFB1992483A9D423D67F0AE6D2F86A50257FED6282376DBBAB7C80B4` |
+
+Rebuilt App DLL:
+`56987BEC5CB5C60E16EC99CD2E30D7D65F91E512EF37BFD55FECE66E3D25537E`.
+Rebuilt App.Tests DLL:
+`B4C6C0245E20C2A5B05C5D077429F6B6FCFF9DC29E654E38058BF9C477721F79`.
+Mutated Reader hash (not the restored source):
+`A31F738AE0D32DA5D49B601639F34C8E1ECDAA040EF95B71DB63E7EA4364454C`.
+
+| Receipt | SHA-256 |
+|---|---|
+| `nd-diagnostic.trx` | `BF2007951C7C34DEAB0C9A9E0C93DBCFEFDD61305DD61EBDBD6A252CBAC41E1D` |
+| `nd-predicate-red.trx` | `D4A6E17EC2A33E132B86201F036420DF0E6C73078AADA12715BF664118BCA240` |
+| `nd-targeted-green.trx` | `07BD365C0C0099407433CB1BD1360FADADED5C762F3A176B7C2902D6391C0EB2` |
+| `nd-stale-action-mutation-red.trx` | `0DCE36074E8F7093CE1E8C986A09E94B56A783EB5D17E926BA765A94A882EFF7` |
+| `nd-restored-scoped.trx` | `E49729B4F9BA7C5C2631CCE968A81C1A37CBDE8CC937D83BCC5A0FA8BDE72AE4` |
+
+## NP6 paint-policy correction and focus evidence
+
+Owner prospectively authorized six calls, separate from ND and the original
+qualification. Start: `2026-09-15T14:55:34Z`. Scope remains the five native files
+and existing proof/audit. The legacy geometry carve-out is not executable until
+the responsible owner acknowledges it; no legacy edit is made.
+
+**Correction to ND's paint implementation:** the measured contrast defect and
+pixel improvement remain evidence, but ND's `TabItem.Loaded` workaround was
+rejected by the lifecycle guard. NP6 removes that new hook. A private native
+`TabItem` specialization applies the same bounded paint override from
+`OnApplyTemplate`, after `base.OnApplyTemplate`, and explicitly retains the
+existing implicit `TabItem` style through a resource reference. The default
+native template, keyboard, selection, focus and disabled triggers are retained.
+The numeric rendered gate remains; admitting a native `TabItem` subtype is not
+permission to weaken the contrast assertion.
+
+No focus repair is presumed. Source readback establishes that `GoBackAsync`
+awaits Restore before calling synchronous `RestoreViewState`; the latter calls
+the static view's focus restoration directly. NP6 adds observations immediately
+before both Back focus assertions: actual keyboard element/type/name and owning
+HWND, logical focus type, owned-window activation, list/reader/window focus,
+current-operation state and restored presentation/page/occurrence/status.
+These are current observations, not reconstructed evidence about historical
+failures. The 1180 lookup cause remains unestablished.
+
+This section is registered before execution. NP6's targeted receipt is
+`.artifacts/atlas-e1/np6-targeted.trx`; actual focus/paint records stay in each
+new native `receipt.json`. The closing `implement-atlas-np6-paint-focus` audit
+records the observed outcome and hashes, not an assumed green here. Existing
+numeric contrast and retained stale-action assertions, original raw 26-case
+proof, separate mutation reds and backup hashes remain preserved.
+
+**Process correction:** a decision request is a gate. End the turn after sending
+it; do not act on older queued continuation while the requested decision is
+unanswered. NP6 consumes the queued rejection before editing. Exact 300-second
+leases and explicit checks precede this edit, and leases are released before
+long tests. No continuity is inferred from merely retaining the same identity.

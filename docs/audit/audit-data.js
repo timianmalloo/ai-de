@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T04:21:51Z",
+  "generated": "2026-09-15T15:27:31Z",
   "audit": [
     {
       "actor": null,
@@ -17186,6 +17186,116 @@ window.AUDIT_DATA = {
         "branch": "conductor/code-atlas",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2JPY7S7HZG86ND83GZH4YJ5",
+      "shortname": "implement-atlas-e1-native-recovery-blocked",
+      "datetime": "2026-09-15T14:18:38Z",
+      "session": "atlas-e1-native-class-view",
+      "prompt": "First command: set AGENT_SESSION=atlas-e1-native-class-view, AGENT_NAME=copilot-astra-native-e1-recovery, PYTHONIOENCODING=utf-8; cd C:\\Projects\\ai-de-atlas-e1-native-class-view; python docs\\ai-forward-pack\\scripts\\audit-log.py start --session atlas-e1-native-class-view --skill implement.\nExecute qualification of the interrupted existing candidate, do NOT redesign/rebuild it. User explicitly requests resume from passing26-test checkpoint and finish qualification, concurrently with separate accepted-Atlas main integration. Your retained worktree C:\\Projects\\ai-de-atlas-e1-native-class-view, branch atlas/e1-native-class-view HEAD4a5812044a38a6fe365fb7929104f51dbc973fc5. Parent re-registered identity and coord check succeeded, no active predecessor lease. Five dirty files survive: src\\AiDe.App\\Workbench\\Understanding\\AtlasStaticViewProjection.cs, AtlasStaticView.cs, AtlasReaderView.cs; tests\\AiDe.App.Tests\\Workbench\\Understanding\\AtlasStaticViewTests.cs and AtlasStaticCompositionTests.cs. ONLY these product/test files are your implementation grant; old Owner88 same grant in docs\\collaboration\\session-contracts.md lines1330ff. You may append own measured audit via standard script and update an EXISTING directly relevant Proof Pack for qualification; do not add broader product/doc surface or rebase/merge while other lane works. Tests and captures .artifacts\\atlas-e1 preserved; parent read e1-native-proof.trx actual26executed26passed0fail finish2026-09-14T22:27:04-07:00. Last actions inspected native-1280-20260915052544135-35df5326c85e426ea3cc11f18de12990\\class.png and states-2544a0455f1944848a95b0a2968b3a70\\long-labels-15dip.png. Final text: three real daemon viewport journeys1180/1280/1440DIP,128+23 paging, far UTF16 beyond32768 with CRLF/non-BMP, same class/list token, original request preference, Back page/focus, stale restore refused, UIA/routed Enter, hardstate disabling, local15DIP text labels passed. Remaining visual inspection, regression/mutation checks, scoped freeze. Those are recorded claims to inspect, not need to repeat entire historic research.\nGoal: verify retained exact candidate, inspect actual images/geometry, run smallest regression covering changed reader+native paths, show meaningful mutation reds without discarding any existing work, repair only real scoped defects, restore intended source and re-run relevant green, freeze COMMITTED five-file candidate with evidence and explicit environment coverage gaps. Capture actual native DPI/motion/highcontrast observed; do not claim untested hardware DPI/OStextscale. Source/Class optional modes/file explorer, parent evidence and OutsidePage honesty, token/source/Back invariants required. No core/daemon/factory/MainWindow/chrome/projects/dependencies/inspected-user-repo changes; sequence/activity/E2E3E4 out. Existing Bounded Core/fixture acceptance497/497 is input, not UI acceptance.\nRead scoped C#,observability,testing instructions and existing design as needed; invoke applicable implementation skill (not UI redesign). Parent holds coordinator role and will allocate independent UX/UML/C#/Test/SRE reviewers against frozen pin after replay, you do not self-approve. Parent plan C:\\Users\\malla\\.copilot\\session-state\\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\\files\\atlas-recovery-plan.json. Shared .agents liveness primary recovery notice copilot-atlas-recovery.md and shared requests; re-read at qualification/freeze boundary. Current repo registry/merge-driver doctor clean after parent regenerated8owed outputs; don't erase a newly owed marker or bypass precommit. Explicit env+absolute cwd every shell, short exact-file leases (300s) during edit; release at freeze. Never blanket dirs/ttl3600, no primary mutation, no EnterWorktree, no push, no global process kill, no stash/reset/checkout to discard. Mutable fault injection must preserve complete retained dirty source, restore through exact backups/checks; use existing mutation facility if any. No multi-line heredocs. Use apply_patch for manual files. Audit writes through script, regenerate afterward, stage exact paths not .artifacts. All commits Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>, never amend.\nT2 fanout0, max40toolcalls/context400k. Converge when scoped proof passes with mutations discriminated and actual screenshots inspected, freeze hash+paths+checksums and stop. Two strictly-decreasing named finding repair passes; if limit fires report progress and exact blocker without widening. Return committed candidate SHA, exact tests/source changes, receipts/captures, mutation oracle/red/restoration evidence, remaining limitations, git status, claimed/released leases, calls/budget. Existing raw passing evidence must survive. Report a seam request before any unlisted edit.",
+      "summary": "Qualification blocked, not frozen. Original26/26 preserved; baseline71/71; two separate semantic mutation reds; all five retained source files restored by backup SHA256. Copy restoration preserved old timestamps and incremental mutant binary, resolved with nonincremental build (0 warnings/errors). Restored expanded111:108pass3fail; restored focused71:70pass1fail native UIA. Legacy ungranted geometry offset48/document26 and UIA/Back failures sent to coordinator req-01M2JPT423KF50YT0DYJ6WE6NH. Actual144DPI, highcontrastfalse, animationtrue observed;1440DIP and15DIP screenshots inspected, pale selected-tab issue flagged. Existing Proof Pack updated; no source repair/commit/push. Initial audit start rejected --skill; supported start used. Parent independent gates remain open.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Qualify retained native E1 candidate without redesign or discarding work",
+      "done_when": "Scoped restored proof green, mutations discriminated, required images inspected, qualified candidate committed",
+      "tier": "T2",
+      "main_calls": 35,
+      "main_budget": 40,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-15T14:07:16Z",
+      "duration_seconds": 682.0
+    },
+    {
+      "id": "al-01M2JRKDC78A0C3ZYV1C81TYSY",
+      "shortname": "implement-atlas-nd-causal-repair",
+      "datetime": "2026-09-15T14:47:40Z",
+      "session": "atlas-e1-native-class-view",
+      "prompt": "FIRST COMMAND resumed NEW narrow repair phase: $env:AGENT_SESSION='atlas-e1-native-class-view'; $env:AGENT_NAME='copilot-astra-native-e1-recovery'; $env:PYTHONIOENCODING='utf-8'; Set-Location C:\\Projects\\ai-de-atlas-e1-native-class-view; python docs\\ai-forward-pack\\scripts\\audit-log.py start --session atlas-e1-native-class-view. (Omit unsupported --skill on this retained revision.) USER explicitly authorizes prospective24calls, separate from exhausted40-call qualification. Same writer/tree, T2, fanout0, context400k, no restart/new track; reply directly ed7d1cd1-d8e4-437a-83bc-f39eb926c352. ND: diagnose/repair observed UIA1180 null and Back1440 Class->Source, ADD retained stale-action request/source/binding/highlight invariant, restore/rebuild mutation controls. Scope ONLY original five files and existing Proof Pack/audit. Legacy AtlasDaemonMainWindowProofTests geometry48/26 permission being requested; DO NOT edit it until exact grant. Stage1 frame then competing hypotheses (actual UI state/selector correctness versus event-completion/order); instrumentation must distinguish, never assume race/concurrency. Use targeted failing cases and state/event timeline, no full111cohort until targeted predicates repaired; no sleeps or retry-untilgreen. Establish causal failing control and smallest demonstrated product defect OR test synchronization fix, semantic red→green plus restored nonincremental DLL/hash. Inspect same-class siblings only inside five-file scope and existing assume/simplify markers; record recurrence/control in existing Proof Pack, no new notes. Prospective user approval covers demonstrated five-file repairs, NOT speculative rewrite. UX/WPF reviewer concurrently inspecting frozen AtlasStaticView and two actual captures: DO NOT change tab colors/tokens until numeric/rendered finding returned. At <=6calls send concise diagnosis checkpoint with observations, alternatives ruled out, minimal proposed change; continue only demonstrated fix, ask if ambiguous. Termination: named failing predicates decrease; two nondecreasing targeted repair passes stop/send evidence, no broaden. Exit within24: exact red/green/mutation receipts and source/binary hashes, candidate frozen only if justified, remaining gaps, calls/duration. Preserve original26 proof/backups. No Core/MainWindow/factory/chrome/deps/rebase/push. Independent final gates still open.",
+      "summary": "ND separate budget: provider return before routed Click observed9/9; deterministic causal barrier red and2 pixel-contrast reds -> targeted5/5 after test event bridge and local native innerBorder fill override. Actual dark contrast1.220876->15.618159; light13.823997. Retained stale button/list cancellation+unload invariant added; single missing-Deactivate-clear fault causes SELECT3 instead of2 at test:257. Exact restoration plus nonincremental build0warnings/errors, restored scoped72/73:1440 list focus after Back fails at CompositionTests:191 despite mode/page/token checks passing. Historical1180lookup cause unresolved; no retry-to-green/full111/legacy edit/commit/push. Original26proof and backups intact. Existing Proof Pack has exact receipts/source/DLL/image hashes; repaired1440 screenshot inspected. Initial300s test leases were not explicitly renewed before later test edits: continuous lease coverage is NOT claimed; no conflicting writer was observed. Closing releases all five claimed paths. Independent gates still open.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-qualification.md",
+        "src/AiDe.App/Workbench/Understanding/AtlasStaticView.cs",
+        "tests/AiDe.App.Tests/Workbench/Understanding/AtlasStaticViewTests.cs",
+        "tests/AiDe.App.Tests/Workbench/Understanding/AtlasStaticCompositionTests.cs"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "tier": "T2",
+      "main_calls": 21,
+      "main_budget": 24,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-15T14:30:57Z",
+      "duration_seconds": 1003.0
+    },
+    {
+      "id": "al-01M2JSB5X27784X03YHKFF7GGN",
+      "shortname": "implement-atlas-np6-paint-focus",
+      "datetime": "2026-09-15T15:00:39Z",
+      "session": "atlas-e1-native-class-view",
+      "prompt": "FIRST new NP6 command: $env:AGENT_SESSION='atlas-e1-native-class-view'; $env:AGENT_NAME='copilot-astra-native-e1-recovery'; $env:PYTHONIOENCODING='utf-8'; Set-Location C:\\Projects\\ai-de-atlas-e1-native-class-view; python docs\\ai-forward-pack\\scripts\\audit-log.py start --session atlas-e1-native-class-view. NEW decision-only Owner ruling prospectively grants SIX calls, separatefromND23/24 andold40: firsttwo diagnosepaint/focus, remainingfour boundedrepair,targetedproof,handoff. ExistingfivefilesONLY. Remove TabItem.Loaded workaround; propertemplate-applicationlifecycle, no freshLoadedhook. Focusrepaironlyifcauseproveninsidefivefiles; otherwise reportactualfocusowner/activation/publicationevidence, preserveunknown1180. Numericcontrast/retainedstale-actiontests mustremain; originalrawproofandmutationhashpreserved. A sixthlegacytestfile technicalscopeapproved BUT NONEXECUTABLE until responsible§2owneracknowledges exactcarveout; noeditthere. AllremainingND queuedcorrections NOWapply. Processfinding: prior13callcheckpoint askeddisposition butcontinued Loadedpaintbefore rejection consumed; whenaskingadecision youMUSTENDTURN immediately, nevereditpastgatewaitingonqueuedreply. Leases default300 renew/checkBEFOREeachlateredit and releasebeforelongtests; no continuouscoverageclaimwithoutproof. At6STOPdirectreceipttoed7d1cd1-d8e4-437a-83bc-f39eb926c352; no fullcohort/commitfalsequalification or newrequestforbroaderfix. Ownerfinalgatesremainopen. This is smallest paint-policy correction+focus evidence node, NOT qualification restart.",
+      "summary": "NP6 lifecycle correction: removed added TabItem.Loaded; private native TabItem specialization OnApplyTemplate after base, explicit existing TabItem style resource, measured innerBorder paint override only. StaticView has no .Loaded+= match. Nonincremental build0warnings/errors; targeted5/5zero skipped including numeric contrast, click bridge, retained staleactions. Current3native runs: owned HWND matches focus owner, active=true, logical/keyboard Button after compartmentBack and ListBoxItem after page128 listBack, CurrentOperation RanToCompletion; historicalfocus failure and1180null cause NOT established/no speculativefocusfix. Darkactualcontrast15.6181586 andlight13.8239965 retained. TRXnp6-targeted SHA3C2B894AAB0E40C0BAF3804E4928B3A9862D4F7938484C234562E8D02496EF0F; AppDLL257AEC6EB918059EFB5893022D1DA178AF70CBC8495189A1FD2691A2C4FC2467; TestDLL1B44EA8728E1B773BBA7BC419E67F01E6820E3F57AA358926CBEE3A19B7B6306. StaticViewSHA A6BC21418FA00B6BDE95C531DD7F16B38A8168B44522638E678DFC5C7BC31DCA; CompositionTestsSHA7C9FC49F1AC2B7A4B1322FE43AED8FF95937E27D153CE186084A876B94C23377. Otherthreefiles stable. Original26proof and stalemutationhash unchanged. Allthree exact300sleasessucceeded/checkallowed immediatelybefore soleedit and released BEFORE tests. ExistingProof preregistersNP6 and points here for measuredoutcome. No legacyedit/fullcohort/freeze/commit/rebase/push. Finalindependent gates remainopen.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-qualification.md",
+        "src/AiDe.App/Workbench/Understanding/AtlasStaticView.cs",
+        "tests/AiDe.App.Tests/Workbench/Understanding/AtlasStaticCompositionTests.cs"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Remove rejected Loaded workaround and capture actual focus and paint state inside NP6",
+      "done_when": "Targeted proof and exact hashes recorded, unknown historical causes preserved, receipt delivered within six calls",
+      "tier": "T2",
+      "main_calls": 5,
+      "main_budget": 6,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-15T14:55:34Z",
+      "duration_seconds": 305.0
+    },
+    {
+      "id": "al-01M2JTWBZBJKXYJMXY9H87KFJT",
+      "shortname": "atlas-nf4-unqualified-preservation",
+      "datetime": "2026-09-15T15:27:31Z",
+      "session": "atlas-e1-native-class-view",
+      "prompt": "NP6 rawTRX5/5 andall5sourcehashes VERIFIED bycloser; run14:59:07.443-14:59:29.466 precedes Irelease15:00:15.939, so NOT claimedserialized-slotproof. Currentnativestillunqualified. NEW NF4 deterministicPRESERVATION allocation FOURcalls only, sameauthor/tree/session, no functionalrepair/test/GUI/reviewrestart. Ruling109 asksWIPcommit; preservelatestfivefiles+existingProof/audit/derived as EXPLICITLYUNQUALIFIEDcheckpoint, notfreezeacceptance. Firstcommand supportedauditstart --session atlas-e1-native-class-view; verifyexactcurrent5hashes matchNP6 andcurrentstatus, noactiveownGUIthen recordrelease/unusedslot (nohistoricalPIDs invented). No sourcebyteschanged exceptexistingProofstatus ifneeded. StageEXPLICITfivefiles andownexistingProof/audit/derived ONLY; NEVER gitadd-A here because.artifactsuntracked; leaveoriginal26/mutants/rawartifacts/backupsUNSTAGEDintact. Commitmessage wip(atlas): native qualification checkpoint; gates remain open, include EXACTCopilottrailer fromprovided atlas-recovery-commit-trailer.txt, noClaude default. Auditoutcome=partial/blocked, acceptancefalse; officialregen afteraudit, preserveallcurrentgaps1180/focus/legacy/remainingmutations/visual/combinedR. Readcommitparents/trailer/status/hash. No main/rebase/push/legacyfile/force/stash/cleanup. At4directreceipttoed7d1cd1-d8e4-437a-83bc-f39eb926c352 withSHAorprecisecommitfloorblock, calls/sourcehashes/evidencepaths. This ispermittedownfivefilepreservation, notextraNP6shownrun ornewqualification.",
+      "summary": "EXPLICITLY UNQUALIFIED WIP preservation under Ruling109, not freeze/acceptance. Allfive source hashes match verified NP6; no source bytes edited. Recorded NP6 runtime PIDs10796/30896/33004/34016 all absent at2026-09-15T08:25:47.0178344-07:00; no current owned run, unused desktop slot released, no global exclusivity or historical contention claim. Own existing three audit entries identified; raw26/NDmutation/NP6 receipts remain untracked/unstaged unchanged. Exact supplied Copilot trailer read from atlas-recovery-commit-trailer.txt. Official regeneration precedes explicit eight-path staging; commit result/parent/trailer/status are read back in NF4 tool receipt. All1180/focus/legacy/remainingmutation/visual/independentcombined gates remainopen. No tests/GUI/functionalrepair/main/rebase/push/cleanup. Earlier no-commit statements describe their historical phase; this node requests WIP preservation only.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs\\proof\\code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Preserve exact NP6 five-file work and own evidence as explicitly unqualified WIP",
+      "done_when": "Exact-path WIP commit read back with parent/trailer/status or precise commit-floor refusal reported within four calls",
+      "tier": "T2",
+      "main_calls": 3,
+      "main_budget": 4,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T15:23:56Z",
+      "duration_seconds": 215.0
     }
   ],
   "changes": [
