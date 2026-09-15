@@ -136,6 +136,6 @@ ADR-0030 trigger, quoted not paraphrased: *"Add an explicit `Perspectives` colum
 
 | | |
 |---|---|
-| **Completed** | Execution graph; this plan; HTML twin; pasteable kickoff prompt; worktree `understanding-views`; layer state measured. |
-| **Remaining** | Owner ruling; then the serial spine for the admitted view; joins; N14. |
-| **Best next action** | Run the kickoff prompt: spawn Owner. Do not open specify or code tracks first. |
+| **Completed** | Execution graph; this plan; HTML twin; kickoff; N0 Owner (D-0 only); N1 inventory; N2 comparables; N1 census disposition; N3 spec; N4 PASS (`note-understanding-views-n4-pass`; spec still draft). |
+| **Remaining** | N5 architecture + ADR; N6 council; N7 spike; N8 ui-design; N9–N10 design; N11 core-query then shell-surface; N12 Proof Pack; N13 join onto `understanding-views`; N14. |
+| **Best next action** | N5 `/define-architecture` in `understanding-views-architecture`. Do not open core or shell. Do not `coord regen` from a worktree. |

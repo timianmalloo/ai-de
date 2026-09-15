@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T02:52:33Z",
+  "generated": "2026-09-15T14:02:36Z",
   "audit": [
     {
       "actor": null,
@@ -16571,6 +16571,36 @@ window.AUDIT_DATA = {
         "sha": "a1fe989f9aaf744857222751b22a0082463dacef",
         "short": "a1fe989f9",
         "branch": "understanding-views-specify",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JP0W9B791HV36560236TN8",
+      "shortname": "understanding-views-n4-pass",
+      "datetime": "2026-09-15T14:02:36Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "yes do your sequence... start in the ai-de-understanding-views worktree as you suggested above",
+      "summary": "N4 PASS recorded: Data/UX-IA/Test (after T5c) PASS; UX&A PASS-WITH-CONDITIONS. Spec remains draft. N5 may start.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n4-pass.md",
+        "docs/specs/understanding-views.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Record N4 PASS from non-author receipts and unblock N5",
+      "done_when": "Gate record and decision note on understanding-views; spec stays draft",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-15T13:59:24Z",
+      "duration_seconds": 192.0,
+      "git": {
+        "sha": "962ad56e78ccae76ffc1cb9d8937f75d69796f8f",
+        "short": "962ad56e7",
+        "branch": "understanding-views",
         "pushed": null
       }
     }

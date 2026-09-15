@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generator": "docs-graph.py derive",
+  "generator": "docs-graph.py flag",
   "rootId": "architecture",
   "artifactTypes": [
     "knowledge",
@@ -6286,6 +6286,51 @@ window.DOCS_INDEX = {
       "sourceSha256": "5fa1011362f424dbe1caf1d90556e592360a2ee8443fbf8d39c55b3604e85060"
     },
     {
+      "id": "note-understanding-views-n4-pass",
+      "path": "docs/notes/understanding-views-n4-pass.md",
+      "title": "N4 hard vetoes cleared for D-0 spec; architecture (N5) may start; spec stays draft",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [
+        {
+          "by": "spec-understanding-views",
+          "on": "2026-09-15",
+          "reason": "N4 PASS recorded; N5 architecture unblocked"
+        }
+      ],
+      "summary": "Conductor records N4 PASS from non-author receipts on docs/specs/understanding-views.md at 962ad56e. Authors did not self-clear. Spec status stays draft. Blast radius: N5 architecture may open; no src/, no allow-list row, no main.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "N4",
+        "D-0"
+      ],
+      "links": [
+        {
+          "to": "spec-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-owner-ruling",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-n1-disposition",
+          "rel": "depends-on"
+        },
+        {
+          "to": "plan-understanding-views",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "77e2be52378643c1105ad047ebb4e0dd4c28278415cb3601f7f8880e16292c56"
+    },
+    {
       "id": "note-understanding-views-owner-n1-disposition",
       "path": "docs/notes/understanding-views-owner-n1-disposition.md",
       "title": "Admit a query-time Core census as D-0 unindexed substrate; skip-list omitted; Python/TS file grain disclosed not rewritten; specify may proceed",
@@ -8310,7 +8355,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0e3f7eb4b16c5ef5796f73b1cd0fbf64da837592a011f6150a7761d869b86445"
+      "sourceSha256": "09d2a81783ac8c59843d05176863ae7e1a4624151acc123abae080a7542bfca0"
     },
     {
       "id": "coordination-understanding-views-kickoff",
@@ -18681,8 +18726,14 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "understanding-views",
       "reviewBy": "2027-03-14",
-      "reviewSuggested": [],
-      "summary": "Admits D-0 Solution tree this horizon: Architecture-pane navigator of (path, kind) nodes, kind ∈ {file-artifact, census-folder}. Coverage is indexed-parent | unindexed only; not-recorded is Disclosure. D-1…D-6 stay named-and-deferred with §A5 quoted. N4 repair: grain closed, US-T5 split, fixture F*. Status remains draft.",
+      "reviewSuggested": [
+        {
+          "by": "note-understanding-views-n4-pass",
+          "on": "2026-09-15",
+          "reason": "N4 gate record for D-0 spec"
+        }
+      ],
+      "summary": "Admits D-0 Solution tree this horizon: Architecture-pane navigator of (path, kind) nodes, kind ∈ {file-artifact, census-folder}. Coverage is indexed-parent | unindexed only; not-recorded is Disclosure. D-1…D-6 stay named-and-deferred with §A5 quoted. N4 repair: grain closed, US-T5 split, fixture F*. N4 PASS recorded by conductor from non-author receipts (note-understanding-views-n4-pass). Status remains draft.",
       "tags": [
         "understanding-views",
         "D-0",
@@ -18711,6 +18762,10 @@ window.DOCS_INDEX = {
         },
         {
           "to": "note-understanding-views-n2-comparables",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-n4-pass",
           "rel": "relates-to"
         },
         {
@@ -18746,7 +18801,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  start([Operator in Architecture]) --> ws{Workspace open?}\n  ws -->|no| nows[No-workspace: Open a workspace to see its solution tree.]\n  nows --> openWs[Operator opens a workspace]\n  openWs --> ws\n  ws -->|yes| prior{Prior payload?}\n  prior -->|no| load[Loading: Reading the workspace tree…]\n  prior -->|yes| stale[Rows stay, marked Stale]\n  load --> q{Census plus join}\n  stale --> q\n  q -->|IPC or daemon error| err[Error: Could not read the workspace tree.]\n  err --> retry[Retry]\n  retry --> load\n  q -->|zero nodes and no Disclosure| empty[Empty copy]\n  empty --> showG[Show Graph]\n  q -->|payload| tree[Tree of path-kind nodes plus chrome Disclosures]\n  tree --> skipDisc[N skip-listed directories omitted if N greater than 0]\n  tree --> py{Python/TS scopes present?}\n  py -->|yes| disc[Exact US-T6 copy]\n  py -->|no| nodes\n  disc --> nodes[For each node]\n  nodes --> kind{kind}\n  kind -->|census-folder unindexed| unidx[Unindexed leaf — no children]\n  kind -->|census-folder indexed-parent| parent[Expand or collapse]\n  kind -->|file-artifact| art[Kind glyph plus name]\n  art --> act{Activate}\n  act -->|Enter View source| src[NodeContentAsync then codeviewer]\n  act -->|Ctrl+Enter Reveal in graph| graph[GraphAsync / DescribeAsync]\n  src -->|error| srcErr[Could not open source]\n  srcErr --> srcRetry[Retry] --> src\n  graph -->|error| graphErr[Could not reveal in graph]\n  graphErr --> graphRetry[Retry] --> graph\n  src -->|ok| done([Goal: understand this artifact])\n  graph -->|ok| done\n  unidx --> done2([Goal: coverage is honest])\n  skipDisc --> done2"
         }
       ],
-      "sourceSha256": "69c0f8135c1d1a931572517cb6e71b54452e7dc344633fa30dd67c5b8e60c08b"
+      "sourceSha256": "b7c3cef292938edaac48bed3d58b43df104e51361b642e04133997ead2e9ca45"
     },
     {
       "id": "threat-model-ai-native-ide",
@@ -19008,5 +19063,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ce94a04f4098981025cb1f348b6c8caa01989b50ff5b4dbd91e47bac0b044278"
+  "graphSha256": "6ed1a7b9524d2e04b03c0580a8fe4e506062dfd341550979aa88ce57261512dd"
 };

@@ -12,24 +12,28 @@ links:
   - { to: note-understanding-views-owner-n1-disposition, rel: depends-on }
   - { to: note-understanding-views-n1-inventory, rel: relates-to }
   - { to: note-understanding-views-n2-comparables, rel: relates-to }
+  - { to: note-understanding-views-n4-pass, rel: relates-to }
   - { to: adr-0030-perspective-registry-and-allow-lists, rel: depends-on }
   - { to: adr-0017-primary-view-mode, rel: depends-on }
   - { to: conceptual-model-ai-native-ide, rel: relates-to }
   - { to: spec-knowledge-explorer-mode, rel: relates-to }
   - { to: spec-uml-erm-surfaces, rel: relates-to }
 review-by: 2027-03-14
-review-suggested: []
+review-suggested:
+  - { by: note-understanding-views-n4-pass, on: 2026-09-15, reason: "N4 gate record for D-0 spec" }
 summary: >-
   Admits D-0 Solution tree this horizon: Architecture-pane navigator of (path, kind)
   nodes, kind ∈ {file-artifact, census-folder}. Coverage is indexed-parent | unindexed
   only; not-recorded is Disclosure. D-1…D-6 stay named-and-deferred with §A5 quoted.
-  N4 repair: grain closed, US-T5 split, fixture F*. Status remains draft.
+  N4 repair: grain closed, US-T5 split, fixture F*. N4 PASS recorded
+  by conductor from non-author receipts (note-understanding-views-n4-pass).
+  Status remains draft.
 ---
 
 # Spec: Understanding views — D-0 Solution tree
 
-- **Status:** Draft (N4 BLOCKED then repaired this turn; authors do **not** self-clear;
-  status is not accepted).
+- **Status:** Draft (N4 BLOCKED, repaired, then **PASS** on non-author re-review —
+  `note-understanding-views-n4-pass`. Authors did **not** self-clear; status is not accepted).
 - **Tier (cost-of-error):** T2 — it admits the first understanding view onto the Architecture
   allow-list later; a wrong grain makes every later view navigate a lie.
 - **Author / date:** N3 `/specify`, session `understanding-views-specify`, 2026-09-14.
@@ -757,7 +761,7 @@ N/A — D-0 is not an AI-facing surface. No HAX / Shape-of-AI obligations here.
 
 ## Gate record
 
-`GATE specify · 2026-09-14 · authoring repair after N4 BLOCK · Product Strategist (fan-out 0) · repair: grain closed to (path, kind); Coverage minus not-recorded; US-T5a/b/c; fixture F*; View source vs Reveal in graph; skip-count disclosure; unindexed leaves; empty Show Graph; Part C UX&A conditions · verdict: **pending N4 re-review** · authors did **not** mark status accepted (BoK §II.3 D3).`
+`GATE specify · 2026-09-15 · conductor records N4 re-review · session grok-understanding-views-conductor · spec HEAD 962ad56e · verdict: **PASS** · authors did **not** mark status accepted (BoK §II.3 D3). Evidence: `note-understanding-views-n4-pass`.`
 
 **N4 first-pass (recorded, not self-cleared):**
 
@@ -770,7 +774,16 @@ N/A — D-0 is not an AI-facing surface. No HAX / Shape-of-AI obligations here.
 | **The Simplifier** | (advisory) | Toolkit, default layout, cap value still out |
 | **Security & Identity Architect** | DC-022 | PROBE-APP-ENUM / PROBE-FILE-READ / PROBE-ATLAS |
 
-N5 `/define-architecture` does not start until N4 records a pass or an Owner-overridden soft veto. This repair does not clear that gate.
+**N4 re-review (non-authors; Conductor recorded, did not judge):**
+
+| Lens | Re-review | Clears veto? |
+|---|---|---|
+| **Data & Persistence Architect** | PASS | yes |
+| **UX Researcher / IA** | PASS (minor: pointer path for Reveal) | yes |
+| **Test Architect** | BLOCK on F*∩T5c, then PASS after `962ad56e` omit_probe pin | yes |
+| **UX & Accessibility** | first-pass PASS-WITH-CONDITIONS; not re-run | yes (conditions in Part C) |
+
+N5 `/define-architecture` may start. Residuals (cap drop-set, skip-set unify, toolkit, pointer menu) are N5/N7/N8, not reopened N4 blockers.
 
 ---
 
