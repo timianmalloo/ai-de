@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T15:43:57Z",
+  "generated": "2026-09-15T15:51:12Z",
   "audit": [
     {
       "actor": null,
@@ -17121,6 +17121,71 @@ window.AUDIT_DATA = {
         "acceptance_met": true
       },
       "started_at": "2026-09-15T15:30:12Z",
+      "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2JW6NBF4GZEAHAAS90EW62N",
+      "shortname": "conductor-watch-0915-join4",
+      "datetime": "2026-09-15T15:50:37Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "(continuation of al-01M2JP7RMQ: the watch's fourth landing)",
+      "summary": "Ruling 116 filed (D's coupled listener selector follows the aide. rename; AtlasReaderView.cs gets a Design-table row now - the landed recursive gate was run on a tree carrying the row without the file: OK 17/17, so the row lands before the Atlas candidate per 116 (ii)); the two stale Claude liveness files retired after the Atlas fleet read them as the current acknowledgers; README says how stale liveness is retired from now on.",
+      "kind": "skill",
+      "skill": "conductor-watch",
+      "tool": null,
+      "actor": "claude-conductor",
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "tags": [
+        "coordination",
+        "stress-test"
+      ],
+      "outcome": "success",
+      "goal": "Land Ruling 116's section-2 row for AtlasReaderView.cs before the Atlas candidate, and retire the two stale Claude liveness files",
+      "done_when": "main carries the row and Ruling 116; verify-surface-ownership.py green on main; claude-core.md and claude-ui-experience.md gone; gates green; pushed",
+      "tier": "T1",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "33e9ae7e00e3edb2d44ecec006e5a3c354e69efd",
+        "short": "33e9ae7e0",
+        "branch": "conductor/watch-0915",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JW7Q0K9YPNRGRR25CTTE3A",
+      "shortname": "join-conductor-watch-0915-4",
+      "datetime": "2026-09-15T15:51:11Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "the join of conductor/watch-0915 into main",
+      "summary": "Fourth coordination join of the 2026-09-15 stress test: Ruling 116 filed and the section-2 Design row for AtlasReaderView.cs landed BEFORE the Atlas candidate (the landed recursive gate tolerates a row for a file not yet on the tree - run, OK 17/17); D's coupled listener selector admitted; claude-core.md and claude-ui-experience.md (ended 2026-09-01) retired after another harness read them as the current acknowledgers; README says how stale liveness is retired. Docs only. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land Ruling 116 and the AtlasReaderView.cs section-2 row before the Atlas candidate; retire stale Claude liveness",
+      "done_when": "main carries 500cfac9; verify-surface-ownership.py green on main; gates 38 green in the primary; pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T15:51:10Z",
       "duration_seconds": 1.0
     }
   ],
