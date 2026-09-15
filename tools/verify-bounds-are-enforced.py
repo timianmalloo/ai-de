@@ -65,8 +65,8 @@ APPLIED_ELSEWHERE = {
 }
 
 # One checked indirect seam, not a reason-only exemption or a general C# call-graph analyzer.
-# Exact file and adjacent statements connect the pinned index to its bound, and the digest length
-# guard to hashing. The real CaptureAsync boundary test is the behavioral oracle for this syntax.
+# Exact class/member scopes and adjacent statements connect the pinned index to its bound and the
+# NativePin digest guard to hashing. CaptureAsync boundary tests remain the behavioral oracle.
 INDEX_SOURCE = "src/AiDe.Core/Understanding/AtlasGitMembership.cs"
 INDEX_CALL = '''var index = pins.Add(association.Index, trackChanges: true, role: "worktree-index");
 var indexDigest = index.Digest(MaxIndexBytes, deadline.Token);'''
@@ -77,23 +77,74 @@ Require(length <= maximumBytes, AtlasMembershipCaptureState.BudgetExceeded, "ind
 using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);'''
 
 
+CS_NONCODE = re.compile(
+    r'//[^\n]*|/\*[\s\S]*?\*/|(?P<raw>"{3,})[\s\S]*?(?P=raw)'
+    r'|@"(?:""|[^"])*"|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'')
+
+
+def mask_noncode(body: str) -> str:
+    """Keep offsets but hide comments/literals from declaration and brace recognition."""
+    return CS_NONCODE.sub(lambda match: " " * len(match.group()), body)
+
+
+def member_body(body: str, declaration: str) -> str:
+    """Extract one direct member, rejecting missing/ambiguous/unbalanced declarations."""
+    masked = mask_noncode(body)
+    matches = [match for match in re.finditer(declaration + r"\s*\{", masked)
+               if masked[:match.start()].count("{") == masked[:match.start()].count("}")]
+    if len(matches) != 1:
+        return ""
+    start = matches[0].end()
+    depth = 1
+    for offset in range(start, len(masked)):
+        depth += (masked[offset] == "{") - (masked[offset] == "}")
+        if depth == 0:
+            return body[start:offset]
+    return ""
+
+
 def index_bound_enforced(body: str) -> bool:
-    """Fail closed when either side of this specific indirect contract changes."""
-    code = re.sub(r"\s+", "", strip_comments(body))
-    return all(re.sub(r"\s+", "", required) in code for required in (INDEX_CALL, INDEX_GUARD))
+    """Recognize only the real Atlas capture and its nested NativePin digest, not decoys."""
+    owner = member_body(body, r"\bclass\s+AtlasGitMembership\b[^;{}]*")
+    caller = member_body(owner, r"\binternal\s+async\s+ValueTask<AtlasMembershipSnapshot>\s+"
+                        r"CaptureForQualificationAsync\s*\([^)]*\)")
+    native_pin = member_body(owner, r"\bclass\s+NativePin\s*:\s*IDisposable")
+    digest = member_body(native_pin, r"\binternal\s+string\s+Digest\s*\(\s*long\s+maximumBytes\s*,"
+                         r"\s*CancellationToken\s+cancellationToken\s*\)")
+    # Exactly one real index.Digest call prevents a live unlimited call being paired with a decoy.
+    caller_code = mask_noncode(caller)
+    call = re.sub(r"\s+", "", mask_noncode(INDEX_CALL))
+    guard = INDEX_GUARD.split("{", 1)[1]
+    return (len(re.findall(r"\bindex\s*\.\s*Digest\s*\(", caller_code)) == 1
+            and call in re.sub(r"\s+", "", caller_code)
+            and re.sub(r"\s+", "", strip_comments(digest)).startswith(re.sub(r"\s+", "", guard)))
 
 
 def self_test() -> int:
-    body = INDEX_CALL + "\n" + INDEX_GUARD
+    def fixture(call: str = INDEX_CALL, guard: str = INDEX_GUARD) -> str:
+        return ('internal sealed class AtlasGitMembership { '
+                'internal async ValueTask<AtlasMembershipSnapshot> CaptureForQualificationAsync('
+                'string sourceRoot, AtlasObjectIdentity expectedRootIdentity, CancellationToken cancellationToken) {'
+                + call + '} internal sealed class NativePin : IDisposable {' + guard + ' } } }')
+
+    body = fixture()
     cases = {
+        "wrong class": (body.replace("class AtlasGitMembership", "class DecoyMembership"), False),
+        "live unbounded plus decoy": (body.replace("Digest(MaxIndexBytes,", "Digest(long.MaxValue,")
+                                      + body.replace("class AtlasGitMembership", "class DecoyMembership"), False),
+        "wrong caller method": (body.replace("CaptureForQualificationAsync", "DecoyCapture"), False),
+        "wrong nested class": (body.replace("class NativePin", "class DecoyPin"), False),
+        "wrong digest method": (body.replace("string Digest(", "string DecoyDigest("), False),
+        "live unbounded plus literal decoy": (fixture(INDEX_CALL.replace("Digest(MaxIndexBytes,", "Digest(long.MaxValue,")
+                                                     + '\nvar decoy = """' + INDEX_CALL + '""";'), False),
         "checked caller and guard": (body, True),
         "forwarded unlimited": (body.replace("Digest(MaxIndexBytes,", "Digest(long.MaxValue,"), False),
         "deleted clamp": (body.replace('Require(length <= maximumBytes, AtlasMembershipCaptureState.BudgetExceeded, "index-byte-budget");', ""), False),
         "strict boundary": (body.replace("length <= maximumBytes", "length < maximumBytes"), False),
         "unrelated pin": (body.replace("pins.Add(association.Index,", "pins.Add(executable,"), False),
-        "guard after hashing": (INDEX_CALL + INDEX_GUARD.replace(
+        "guard after hashing": (fixture(guard=INDEX_GUARD.replace(
             'Require(length <= maximumBytes, AtlasMembershipCaptureState.BudgetExceeded, "index-byte-budget");', "")
-            + 'Require(length <= maximumBytes, AtlasMembershipCaptureState.BudgetExceeded, "index-byte-budget");', False),
+            + 'Require(length <= maximumBytes, AtlasMembershipCaptureState.BudgetExceeded, "index-byte-budget");'), False),
         "comment only": ("/*" + body + "*/", False),
         "caller only": (INDEX_CALL, False),
         "helper only": (INDEX_GUARD, False),

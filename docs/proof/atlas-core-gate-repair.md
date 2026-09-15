@@ -25,7 +25,7 @@ Surface list: pinned Git index → capture budget/refusal → snapshot entries/a
 
 - `AtlasGitMembership.CaptureAsync` calls `CaptureForQualificationAsync`. The latter refuses non-Windows execution with `windows-native-evidence-required` before ordinary-path checks or pin acquisition. This repair does **not** claim a production POSIX membership exploit.
 - The original production caller already passed `MaxIndexBytes` (8,388,608) to `NativePin.Digest`. Its `RandomAccess.GetLength` comparison refused oversize input before creating the hash. Baseline boundary tests passed **before** the detector repair. G2 was a scanner false positive, not a missing production clamp.
-- The detector retains its original scan root (`src/` tracked C# files), recursion/census, bound-name expressions, direct-enforcement expressions, and existing `OverviewNodeCap` exception. `MaxIndexBytes` receives no reason-only exception. A checked indirect seam requires its exact declaring file, adjacent index pin/call statements, and the digest length guard immediately before hash creation. If either side changes, that indirect recognition fails closed. This is a narrow lexical contract, not general C# control-flow analysis; behavioral tests remain necessary.
+- The detector retains its original scan root (`src/` tracked C# files), recursion/census, bound-name expressions, direct-enforcement expressions, and existing `OverviewNodeCap` exception. `MaxIndexBytes` receives no reason-only exception. The initial checked seam used global substring matching within that file; independent review blocked it because unrelated classes could supply its evidence. The corrected seam extracts the direct `AtlasGitMembership.CaptureForQualificationAsync` method and the direct `Digest` method of its nested `NativePin` class. It requires adjacent index pin/call statements, exactly one real `index.Digest` invocation, and the digest length guard at the start of the helper, before hashing. Class/member recognition masks comments and literals and rejects missing, ambiguous, or unbalanced scopes. This remains a narrow lexical contract, not general C# control-flow analysis; behavioral tests remain necessary.
 - G3 replaces the root equality and separator prefix in `UnderOrSame`, plus the prefix in `AllowsAtlasContent`, with existing `PathComparison.ForThisFileSystem`. It preserves rooted, colon, and traversal refusal. Windows behavior is preserved. Admission cannot reach a case-distinct sibling using rooted or traversal input because those forms are rejected first.
 - New admission cases use a real `WorkspaceCore` and store. The nested decoder cases exercise its callable boundary with ordinary relative records: `src`, `src-other`, and `SRC`. The POSIX expected result is encoded in the portable test but was not run on POSIX in this episode.
 
@@ -103,6 +103,33 @@ Proposed existing-class recurrences for the Conductor's serialized lesson writer
 3. **Coordination correction, DC-118 mechanism:** repeated `--path` flags on one claim invocation selected only the last path. Readback exposed the narrowed claim before source edits. Each remaining path was then claimed in its own invocation and every grant observed. The Conductor receives this recurrence proposal; no new preventive coordination-tool control is claimed or authorized here.
 
 No shared audit, lesson register, or derived files were written. `AIDE_SESSION` and `AIDE_CONTRACT_LOG` were absent, so no contract event was fabricated. Conductor owns serialized audit/evidence capture. Own liveness was written and exact leases are released after the commits.
+
+## Independent-review correction: scoped evidence
+
+The reviewer hard-blocked the initial source commit `74f2ec0e`: `wrong_class` and `live_unbounded_plus_decoy` both passed `index_bound_enforced`. This disproved the original claim that the lexical evidence was connected to the actual call chain. It did not disprove the separate native production boundary tests. The Conductor authorized an eight-call correction limited to the detector and this receipt; production and test source were unchanged.
+
+Red-first evidence: `scoped-review-red.log` contains `FAIL: wrong class`, `FAIL: live unbounded plus decoy`, and `9/11 passed`, exit 1. The old predicate therefore failed both independent reviewer cases before its replacement.
+
+The correction uses a bounded brace-aware direct-member extractor in the same detector file. A search of existing `tools/` Python helpers found no suitable reusable C# class/member extractor. No new path, dependency, or scanning framework was added. It binds the pinned-index call to the actual capture method and the pre-hash guard to the actual nested `NativePin.Digest`; unrelated classes/methods and quoted decoys no longer count. Missing, ambiguous, and unbalanced declarations fail recognition. Unsupported future syntax must be inspected and the narrow recognizer updated; this is not a complete C# parser or control-flow proof.
+
+Observed correction results, all raw logs retained beside the earlier evidence:
+
+| Evidence | Result | Exit |
+|---|---|---:|
+| `scoped-review-red.log` | Old predicate fails the two new decoy expectations; 9/11 | 1 |
+| `scoped-review-green.log` | 15/15 self-tests, including both reviewer decoys, wrong caller/helper class/helper method, raw-string decoy, prior forwarding/clamp/boundary negatives | 0 |
+| `scoped-gate-green.log` | Actual repository scan accepts all 30 constants | 0 |
+| `scoped-actual-source-mutants.log` | Real source accepted; five in-memory source mutations rejected | 0 |
+
+The last row runs the predicate on the actual production file and mutated copies in memory, without editing production. Raw output:
+
+```text
+{'actual': True, 'wrong_class': False, 'live_unbounded_plus_decoy': False, 'deleted_clamp': False, 'wrong_caller_method': False, 'wrong_native_pin_class': False}
+```
+
+Class → sweep → derive → prevent: **DC-102/DC-118 recurrence proposal** — lexical evidence from an unrelated scope satisfied a claim about the real producer. Sweep the caller, owning class, nested helper class, helper method, and literal-decoy paths. Derive class/member-scoped evidence with a unique real digest invocation. Prevent with the reviewer decoys and additional scope/literal negatives in the executable self-test, plus actual-source mutant readback. This is an author-created detector defect, corrected after independent review; no author clearance is claimed.
+
+The earlier 9/9 self-test row is historical and was insufficient. The corrected self-test is 15/15. Production/test-source `git diff HEAD` was empty during correction, so the Conductor explicitly retained the earlier 55-test result without rerunning unchanged product tests. The same independent reviewer must still clear the correction.
 
 ## Handoff and remaining gates
 
