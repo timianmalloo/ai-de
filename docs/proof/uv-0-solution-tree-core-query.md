@@ -14,7 +14,8 @@ review-by: 2027-03-15
 summary: >-
   UV-0 walking skeleton: Core SolutionTreeAsync / IPC solution-tree, production
   UnanalysedLanguages.Skip, ResolveWithinWorkspace join, T5c omit off the wire.
-  F* DTO tests seen red (19 failed on empty stub) then green (28 passed).
+  F* DTO tests: captured red 14 failed / 11 passed on empty public stub
+  (docs/proof/uv-0-red-run.txt); green 26 Core + 15 App SolutionTree filters.
 ---
 
 # Proof Pack: UV-0 SolutionTreeAsync
@@ -90,17 +91,15 @@ summary: >-
 
 ## Red-before-green (the run)
 
-N12 (Test Architect, independent): the 6/19 red block below is **reconstructed, not a captured trx**. Five `[Fact]`s do not call `ProjectionService.SolutionTree`; empty `Nodes` therefore fails more than 19. There is no red-only commit. Treat the quoted 6/19 as **Flagged**.
-
-Conductor re-ran on the joined tree (filter `FullyQualifiedName~SolutionTree` in Core.Tests): **Passed 26, Failed 0** (Verified, this session). App.Tests same filter: **Passed 15, Failed 0**.
-
-Author-quoted first fail (empty stub — not independently captured):
+**Captured red (Verified, 2026-09-15, conductor):** public `ProjectionService.SolutionTree(SolutionTreeQuery)` stubs returning empty `Nodes`; filter `FullyQualifiedName~SolutionTreeProjectionTests`. Raw log: `docs/proof/uv-0-red-run.txt`. Stub **reverted**; not committed.
 
 ```
-dotnet test tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj --filter FullyQualifiedName~SolutionTreeProjectionTests
-StarDto_IndexedParentFileArtifact_UnindexedProbe_BinAbsentWithSkipCount
-  Assert.Single() Failure: Collection: []
+Failed!  - Failed:    14, Passed:    11, Skipped:     0, Total:    25, Duration: 1 s - AiDe.Core.Tests.dll (net10.0)
 ```
+
+First named fail in that log: `TwoAssertionsForOnePath_CollapseToOneFileArtifact` (`Assert.Single` on empty). `StarDto_IndexedParentFileArtifact_UnindexedProbe_BinAbsentWithSkipCount` also failed on empty `Nodes`. Author's 6/19 figure was reconstructed and is **superseded** by this 14/11/25 capture.
+
+**Captured green (Verified, prior conductor session):** filter `FullyQualifiedName~SolutionTree` — Core.Tests **26 pass**, App.Tests **15 pass**. The 26 includes daemon round-trip + frame tests beyond the 25-class filter.
 
 ## E7 surface list (this slice)
 

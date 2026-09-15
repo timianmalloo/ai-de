@@ -1901,12 +1901,12 @@ window.DOCS_INDEX = {
       "path": "docs/adr/0038-d0-solution-tree-census-and-kind.md",
       "title": "ADR-0038 — D-0 Solution tree: one Architecture kind, one query-time census, no second store",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "understanding-views",
       "reviewBy": "2027-03-15",
       "reviewSuggested": [],
-      "summary": "Admit D-0 as one Architecture-only SurfaceKind (solution-tree) whose payload is one new Core query-time census join (SolutionTreeAsync / IPC solution-tree / one SolutionTreeQuery). File-artifacts resolve through ResolveWithinWorkspace; census does not follow reparse points; UV-0 consumes UnanalysedLanguages.Skip. Named drop-set is projection/test-host only, not IPC. Status proposed — N6 Security BLOCK repaired; authors do not self-clear.",
+      "summary": "Admit D-0 as one Architecture-only SurfaceKind (solution-tree) whose payload is one new Core query-time census join (SolutionTreeAsync / IPC solution-tree / one SolutionTreeQuery). File-artifacts resolve through ResolveWithinWorkspace; census does not follow reparse points; UV-0 consumes UnanalysedLanguages.Skip. Named drop-set is projection/test-host only, not IPC. Status accepted after N6 Security and Tech Lead re-review (conductor recorded).",
       "tags": [
         "architecture",
         "D-0",
@@ -1956,7 +1956,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "416921348ff408cc5fd946c55b3b1db12c26c93f0e8f29cc3cb919a440e56474"
+      "sourceSha256": "b5a123e86a10cc8f903d389150dc2deb41c42d3a5948574250313e7277af2265"
     },
     {
       "id": "api-aide-app",
@@ -2845,7 +2845,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  disk[Workspace disk now] --> census[Core census walk]\n  skip[UnanalysedLanguages.Skip] --> census\n  facts[node_dim + evidence_assertion_fact + scope snapshots] --> join[Latest-generation join]\n  census --> join\n  join --> dto[SolutionTreeResult]\n  dto --> ipc[\"IPC solution-tree\"]\n  ipc --> tree[Architecture Solution tree]\n  tree -->|Enter| src[NodeContentAsync / codeviewer]\n  tree -->|Ctrl+Enter| graph[GraphAsync / DescribeAsync]"
         }
       ],
-      "sourceSha256": "55c50b9e2d16a00f5f75ea37223e587e3f4d239dcb44f1ee901ac8cb39d87613"
+      "sourceSha256": "62e13cac0ca2cfe5eb93879e785c48a690d0458e0fa4bdf698e68bda5b888875"
     },
     {
       "id": "architecture-agent-plane",
@@ -17433,7 +17433,7 @@ window.DOCS_INDEX = {
       "phase": "understanding-views",
       "reviewBy": "2027-03-15",
       "reviewSuggested": [],
-      "summary": "UV-0 walking skeleton: Core SolutionTreeAsync / IPC solution-tree, production UnanalysedLanguages.Skip, ResolveWithinWorkspace join, T5c omit off the wire. F* DTO tests seen red (19 failed on empty stub) then green (28 passed).",
+      "summary": "UV-0 walking skeleton: Core SolutionTreeAsync / IPC solution-tree, production UnanalysedLanguages.Skip, ResolveWithinWorkspace join, T5c omit off the wire. F* DTO tests: captured red 14 failed / 11 passed on empty public stub (docs/proof/uv-0-red-run.txt); green 26 Core + 15 App SolutionTree filters.",
       "tags": [
         "proof-pack",
         "D-0",
@@ -17457,7 +17457,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "70cd148d2f18b0c7a41bcbc83097d5c817b4815c2fae920b705c1c53de016531"
+      "sourceSha256": "d1927ec388342b12364e9b39e2da9cdbfa06579d66b5b857b0353d95d1b9e60d"
     },
     {
       "id": "proof-uv-1-solution-tree-shell",
@@ -19541,5 +19541,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "60fa3d9710ec7a051be7b09f148fe174ea08e73a4e7290841c4ee96194a75b44"
+  "graphSha256": "19bbaeff420cdd1f3dedcd04113948681f6e702b60d3d8dd98169317f92e949d"
 };

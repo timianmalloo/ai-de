@@ -2,7 +2,7 @@
 id: adr-0038-d0-solution-tree-census-and-kind
 title: "ADR-0038 — D-0 Solution tree: one Architecture kind, one query-time census, no second store"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "understanding-views"
 tags: [architecture, D-0, solution-tree, census, allow-list, ipc, adr-0030, understanding-views]
@@ -22,12 +22,12 @@ summary: >-
   Core query-time census join (SolutionTreeAsync / IPC solution-tree / one SolutionTreeQuery).
   File-artifacts resolve through ResolveWithinWorkspace; census does not follow reparse points;
   UV-0 consumes UnanalysedLanguages.Skip. Named drop-set is projection/test-host only, not IPC.
-  Status proposed — N6 Security BLOCK repaired; authors do not self-clear.
+  Status accepted after N6 Security and Tech Lead re-review (conductor recorded).
 ---
 
 # ADR-0038: D-0 Solution tree — one Architecture kind, one query-time census, no second store
 
-- **Status:** Proposed (2026-09-15; N6 Security BLOCK repaired same day). Authors do **not** self-clear. N6 re-review is a later Conductor panel. Spec `spec-understanding-views` stays draft.
+- **Status:** Accepted (2026-09-15). N6 Security re-review PASS (`01a0a588-9dbb-7df3-b50a-2bb41f13564d`); Tech Lead re-review PASS (`01a0a588-9dbb-7df3-b50a-2bc466fff218`). Conductor recorded; authors did not self-clear. Spec `spec-understanding-views` stays draft.
 - **Date:** 2026-09-15
 - **Deciders (Peer Mode, this turn):** Enterprise Architect (fit/longevity), Data & Persistence Architect (durable representation), Tech Lead (smallest correct). Session `understanding-views-architecture`. N6 Security BLOCK closed in text here; authors do not mark Accepted.
 - **Context spec/architecture:** `docs/specs/understanding-views.md`; `docs/architecture.md` §Understanding views / D-0; ADR-0030; Addendum C §A5 AR3.

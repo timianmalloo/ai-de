@@ -1,0 +1,151 @@
+
+  AiDe.Core -> C:\Projects\ai-de-understanding-views-core-query\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Daemon -> C:\Projects\ai-de-understanding-views-core-query\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-understanding-views-core-query\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.39]     AiDe.Core.Tests.SolutionTreeProjectionTests.TwoAssertionsForOnePath_CollapseToOneFileArtifact [FAIL]
+[xUnit.net 00:00:00.40]     AiDe.Core.Tests.SolutionTreeProjectionTests.DirectoryValuedAssertion_IsCensusFolderNotFileArtifact [FAIL]
+[xUnit.net 00:00:00.45]     AiDe.Core.Tests.SolutionTreeProjectionTests.SolutionTreeSpan_EmitsCountsNotPaths [FAIL]
+[xUnit.net 00:00:00.51]     AiDe.Core.Tests.SolutionTreeProjectionTests.Census_DoesNotDescendAJunction_DisclosesReparsePoint [FAIL]
+[xUnit.net 00:00:01.25]     AiDe.Core.Tests.SolutionTreeProjectionTests.HostileCensus_ShrinksUnderTheFrame [FAIL]
+  Failed AiDe.Core.Tests.SolutionTreeProjectionTests.TwoAssertionsForOnePath_CollapseToOneFileArtifact [14 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 1
+Actual:   0
+  Stack Trace:
+     at AiDe.Core.Tests.SolutionTreeProjectionTests.TwoAssertionsForOnePath_CollapseToOneFileArtifact() in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 116
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SolutionTreeProjectionTests.DirectoryValuedAssertion_IsCensusFolderNotFileArtifact [11 ms]
+  Error Message:
+   Assert.Single() Failure: The collection did not contain any matching items
+Expected:   (predicate expression)
+Collection: []
+  Stack Trace:
+     at AiDe.Core.Tests.SolutionTreeProjectionTests.Folder(SolutionTreeResult result, String path) in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 474
+   at AiDe.Core.Tests.SolutionTreeProjectionTests.DirectoryValuedAssertion_IsCensusFolderNotFileArtifact() in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 131
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SolutionTreeProjectionTests.SolutionTreeSpan_EmitsCountsNotPaths [10 ms]
+  Error Message:
+   Assert.Single() Failure: The collection did not contain any matching items
+Expected:   (predicate expression)
+Collection: []
+  Stack Trace:
+     at AiDe.Core.Tests.SolutionTreeProjectionTests.SolutionTreeSpan_EmitsCountsNotPaths() in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 418
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SolutionTreeProjectionTests.Census_DoesNotDescendAJunction_DisclosesReparsePoint [65 ms]
+  Error Message:
+   Assert.Contains() Failure: Filter not matched in collection
+Collection: []
+  Stack Trace:
+     at AiDe.Core.Tests.SolutionTreeProjectionTests.Census_DoesNotDescendAJunction_DisclosesReparsePoint() in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 364
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SolutionTreeProjectionTests.HostileCensus_ShrinksUnderTheFrame [732 ms]
+  Error Message:
+   hostile census must shrink or cap-omit
+  Stack Trace:
+     at AiDe.Core.Tests.SolutionTreeProjectionTests.HostileCensus_ShrinksUnderTheFrame() in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 464
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.26]     AiDe.Core.Tests.SolutionTreeProjectionTests.TwoFilesInDifferentCensusFolders_SitUnderTheEmittedParents [FAIL]
+[xUnit.net 00:00:01.27]     AiDe.Core.Tests.SolutionTreeProjectionTests.HostileDotDot_DisclosesAndDoesNotInventAFolder [FAIL]
+[xUnit.net 00:00:01.28]     AiDe.Core.Tests.SolutionTreeProjectionTests.AncestorCoverage_PythonTsOnlyParentOfIndexedDescendant_IsIndexedParent [FAIL]
+[xUnit.net 00:00:01.30]     AiDe.Core.Tests.SolutionTreeProjectionTests.EnumsTravelAsDeclaredNames_NotKebabOrNumbers [FAIL]
+[xUnit.net 00:00:01.35]     AiDe.Core.Tests.SolutionTreeProjectionTests.BicepFilenameOnlyUnresolvable_DisclosesAndDoesNotMintAFolder [FAIL]
+  Failed AiDe.Core.Tests.SolutionTreeProjectionTests.TwoFilesInDifferentCensusFolders_SitUnderTheEmittedParents [12 ms]
+  Error Message:
+   Assert.Single() Failure: The collection did not contain any matching items
+Expected:   (predicate expression)
+Collection: []
+  Stack Trace:
+     at AiDe.Core.Tests.SolutionTreeProjectionTests.FileNode(SolutionTreeResult result, String path) in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 478
+   at AiDe.Core.Tests.SolutionTreeProjectionTests.TwoFilesInDifferentCensusFolders_SitUnderTheEmittedParents() in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 145
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SolutionTreeProjectionTests.HostileDotDot_DisclosesAndDoesNotInventAFolder [10 ms]
+  Error Message:
+   Assert.Contains() Failure: Filter not matched in collection
+Collection: []
+  Stack Trace:
+     at AiDe.Core.Tests.SolutionTreeProjectionTests.HostileDotDot_DisclosesAndDoesNotInventAFolder() in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 327
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SolutionTreeProjectionTests.AncestorCoverage_PythonTsOnlyParentOfIndexedDescendant_IsIndexedParent [12 ms]
+  Error Message:
+   Assert.Single() Failure: The collection did not contain any matching items
+Expected:   (predicate expression)
+Collection: []
+  Stack Trace:
+     at AiDe.Core.Tests.SolutionTreeProjectionTests.Folder(SolutionTreeResult result, String path) in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 474
+   at AiDe.Core.Tests.SolutionTreeProjectionTests.AncestorCoverage_PythonTsOnlyParentOfIndexedDescendant_IsIndexedParent() in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 280
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SolutionTreeProjectionTests.EnumsTravelAsDeclaredNames_NotKebabOrNumbers [19 ms]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "{"nodes":[],"skipListedDirectoriesOmitted"┬╖┬╖┬╖
+Not found: ""FileArtifact""
+  Stack Trace:
+     at AiDe.Core.Tests.SolutionTreeProjectionTests.EnumsTravelAsDeclaredNames_NotKebabOrNumbers() in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 377
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SolutionTreeProjectionTests.BicepFilenameOnlyUnresolvable_DisclosesAndDoesNotMintAFolder [12 ms]
+  Error Message:
+   Assert.Contains() Failure: Filter not matched in collection
+Collection: []
+  Stack Trace:
+     at AiDe.Core.Tests.SolutionTreeProjectionTests.BicepFilenameOnlyUnresolvable_DisclosesAndDoesNotMintAFolder() in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 311
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.41]     AiDe.Core.Tests.SolutionTreeProjectionTests.PythonTsScope_IndexesFolderWithoutPerFileRows_ExactCopy [FAIL]
+[xUnit.net 00:00:01.42]     AiDe.Core.Tests.SolutionTreeProjectionTests.StarDto_IndexedParentFileArtifact_UnindexedProbe_BinAbsentWithSkipCount [FAIL]
+[xUnit.net 00:00:01.44]     AiDe.Core.Tests.SolutionTreeProjectionTests.ExtraJsonDropRelativePaths_DoesNotOmitFolders [FAIL]
+[xUnit.net 00:00:01.45]     AiDe.Core.Tests.SolutionTreeProjectionTests.BicepFilenameOnly_ResolvesUnderExistingCensusFolder [FAIL]
+  Failed AiDe.Core.Tests.SolutionTreeProjectionTests.PythonTsScope_IndexesFolderWithoutPerFileRows_ExactCopy [10 ms]
+  Error Message:
+   Assert.Single() Failure: The collection did not contain any matching items
+Expected:   (predicate expression)
+Collection: []
+  Stack Trace:
+     at AiDe.Core.Tests.SolutionTreeProjectionTests.Folder(SolutionTreeResult result, String path) in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 474
+   at AiDe.Core.Tests.SolutionTreeProjectionTests.PythonTsScope_IndexesFolderWithoutPerFileRows_ExactCopy() in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 255
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SolutionTreeProjectionTests.StarDto_IndexedParentFileArtifact_UnindexedProbe_BinAbsentWithSkipCount [9 ms]
+  Error Message:
+   Assert.Single() Failure: The collection did not contain any matching items
+Expected:   (predicate expression)
+Collection: []
+  Stack Trace:
+     at AiDe.Core.Tests.SolutionTreeProjectionTests.Folder(SolutionTreeResult result, String path) in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 474
+   at AiDe.Core.Tests.SolutionTreeProjectionTests.StarDto_IndexedParentFileArtifact_UnindexedProbe_BinAbsentWithSkipCount() in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 89
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SolutionTreeProjectionTests.ExtraJsonDropRelativePaths_DoesNotOmitFolders [12 ms]
+  Error Message:
+   Assert.Contains() Failure: Filter not matched in collection
+Collection: []
+  Stack Trace:
+     at AiDe.Core.Tests.SolutionTreeProjectionTests.ExtraJsonDropRelativePaths_DoesNotOmitFolders() in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 58
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.SolutionTreeProjectionTests.BicepFilenameOnly_ResolvesUnderExistingCensusFolder [11 ms]
+  Error Message:
+   Assert.Single() Failure: The collection did not contain any matching items
+Expected:   (predicate expression)
+Collection: []
+  Stack Trace:
+     at AiDe.Core.Tests.SolutionTreeProjectionTests.FileNode(SolutionTreeResult result, String path) in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 478
+   at AiDe.Core.Tests.SolutionTreeProjectionTests.BicepFilenameOnly_ResolvesUnderExistingCensusFolder() in C:\Projects\ai-de-understanding-views-core-query\tests\AiDe.Core.Tests\SolutionTreeProjectionTests.cs:line 296
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:    14, Passed:    11, Skipped:     0, Total:    25, Duration: 1 s - AiDe.Core.Tests.dll (net10.0)

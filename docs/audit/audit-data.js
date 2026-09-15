@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T16:45:45Z",
+  "generated": "2026-09-15T17:10:03Z",
   "audit": [
     {
       "actor": null,
@@ -17276,6 +17276,38 @@ window.AUDIT_DATA = {
         "sha": "23b182509db5da73578f6cc9d9d5f4db2b05bff2",
         "short": "23b182509",
         "branch": "understanding-views-shell",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K0R3WZXH8B35SBNX36QES1",
+      "shortname": "understanding-views-n12-red-capture",
+      "datetime": "2026-09-15T17:10:03Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "yes keep going finish remaining nodes",
+      "summary": "Captured SolutionTreeProjectionTests red 14/11/25; stub reverted. ADR-0038 Accepted after N6 Security/Tech Lead PASS.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/uv-0-red-run.txt",
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Capture a real UV-0 red run and record ADR-0038 Accepted after N6",
+      "done_when": "uv-0-red-run.txt exists; ADR-0038 status accepted",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      },
+      "git": {
+        "sha": "d6574c93b528e282be8ceb2522e07394b4384826",
+        "short": "d6574c93b",
+        "branch": "understanding-views",
         "pushed": null
       }
     }

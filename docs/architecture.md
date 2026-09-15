@@ -1183,9 +1183,9 @@ No unfamiliar SDK. Do not freeze a control in ADR-0038.
 
 ### UV.11 Gate
 
-`GATE define-architecture (Understanding views D-0) · 2026-09-15 · session understanding-views-architecture
-· N6 Security BLOCK repaired in ADR-0038 text · ADR-0038 remains proposed (authors do not self-clear).`
-Residual: other walkers still disagree until N7; production folder-cap unmeasured; toolkit unfrozen.
+`GATE define-architecture (Understanding views D-0) · 2026-09-15 · session grok-understanding-views-conductor
+· N6 Security PASS and Tech Lead PASS on repair a03fb622 · ADR-0038 **Accepted** (conductor recorded; authors did not self-clear).`
+Residual: other walkers may still disagree (N7 widen optional); production folder-cap unmeasured; UV-1 native Ctrl+Enter Flagged.
 
 ## LOA conformance check
 
