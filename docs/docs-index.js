@@ -6417,38 +6417,6 @@ window.DOCS_INDEX = {
       "sourceSha256": "97d517658252e65e6cf51a7392d73986c9eb96aa4d78d91569aaeeead093e21e"
     },
     {
-      "id": "design-atlas-behavior-views",
-      "path": "docs/design/atlas-behavior-views.md",
-      "title": "Atlas E1 static behavior views — proposed design contract",
-      "type": "design",
-      "status": "proposed",
-      "owner": "@timianmalloo",
-      "phase": "",
-      "reviewBy": "2026-12-15",
-      "reviewSuggested": [],
-      "summary": "Proposed method-level static behavior contract for one source-backed occurrence model with governing G6, shared logical envelope, bounded structural graph and page recomposition, hard states and numeric acceptance proposals.",
-      "tags": [
-        "atlas",
-        "e1",
-        "sequence",
-        "activity",
-        "static-analysis",
-        "native-ui"
-      ],
-      "links": [
-        {
-          "to": "mockup-uml-erm-surfaces",
-          "rel": "relates-to"
-        },
-        {
-          "to": "proof-atlas-behavior-contract",
-          "rel": "relates-to"
-        }
-      ],
-      "diagrams": [],
-      "sourceSha256": "fcced5a57d0f6d905a05e1409e4b36583d3347b9ba563aa63e9fb6d1a9fda119"
-    },
-    {
       "id": "design-knowledge-explorer-mode",
       "path": "docs/design/knowledge-explorer-mode.md",
       "title": "Knowledge Explorer mode — component design (Phase 1 walking skeleton)",
@@ -15432,7 +15400,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2026-12-15",
       "reviewSuggested": [],
-      "summary": "Author evidence for the retained six source groups and four Owner-frozen structural/page fixtures with independent expected tables, subject faults and limits.",
+      "summary": "Author evidence for the source and structural/page experiments, plus the granted synthetic behavior UI harness, red controls, headless state checks and limits.",
       "tags": [
         "atlas",
         "e1",
@@ -15446,7 +15414,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "533b091c85605eb1e6a603e7df1acce146e12a336bbde00b6a8f2a3a9f180a60"
+      "sourceSha256": "b493eee69ebc0d52989d0f730ae0ecce2557ff98a5e8e11d75517e605dbea0dc"
     },
     {
       "id": "proof-audit-gate-plan-review",
@@ -19264,6 +19232,13 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     },
     {
+      "id": "surface-mockups-atlas-behavior-views",
+      "path": "docs/mockups/atlas-behavior-views.html",
+      "title": "Atlas · static behavior · synthetic review",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
       "id": "surface-coordination-audit-gate-self-test",
       "path": "docs/coordination/audit-gate-self-test.html",
       "title": "Audit verifier self-test coordination",
@@ -19360,5 +19335,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "e29cab87a9eda9d66e71ee1c3af18c961efa6b91eec060bffe45ea2389be9f34"
+  "graphSha256": "0150303a9e6eb16823872513100d62f1e417128f633ba116955238834a2f45ab"
 };

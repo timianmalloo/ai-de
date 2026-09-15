@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:28:27Z",
+  "generated": "2026-09-15T22:07:19Z",
   "audit": [
     {
       "actor": null,
@@ -18498,6 +18498,37 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "1ab5d9e985fd86ef75adb8d2a11c72fe05b530cc",
         "short": "1ab5d9e98",
+        "branch": "atlas/behavior-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KHRDDCXQC50TTAYNYZ4W14",
+      "shortname": "ui-design-atlas-behavior-review-harness",
+      "datetime": "2026-09-15T22:07:18Z",
+      "session": "codex-atlas-e1-behavior",
+      "prompt": "START FIRST: audit-log.py start --session codex-atlas-e1-behavior --skill ui-design. Human exact grant now recorded req-01M2KCTTG4ZWAC2K01PB1HYWGK RESOLVED. Goal E1-M: implement self-contained synthetic Sequence/Activity review harness docs/mockups/atlas-behavior-views.html in your EXISTING C:/Projects/ai-de-atlas-behavior-views, identity codex-atlas-e1-behavior / codex-sol-e1. Read new Human-granted mock harness stage in Conductor plan C:/Projects/ai-de-conductor-atlas-views/docs/plans/atlas-views.md. Follow actual ui-design workflow/AGENTS/nested instructions. Reuse approved docs/design/atlas-behavior-views.md83e1139b, OwnerG6a766/18cc, original updatedspec addenda and mocks, DESIGN.md tokens, mockup-harness.template.html. Existing designMD serves hub perOwnerruling. Allowed authored paths: exact newHTML + existing docs/design/atlas-behavior-views.md + docs/proof/atlas-behavior-contract.md for direction/review/proof supplements; official audit/derived only; no spike source changes, src/tests/product/DESIGN.md/newMDhub/newdependencies. No sharedlesson edits (Conductor owns serialrecurrence). Headless tests only; no visible desktop. Use exact leases for minutes, no lease on audit/derived; site wrappers need exactclaims if generatorchanges. T2/cap0,24toolcalls/30min checkpoint18/contextceiling400k. Exit: bothviews realistic graph/list/inspector and working selection/filter/Source/Backsimulation with honest synthetic disclosure; full hardstates/persona/viewport/theme/density/capability/reducedmotion harness; loading/empty/error/partial/overflow/unsupported/cancel; nonzero pagebox + contrast/target selfaudit; keyboardfocus meaningful. Reuse direction/G6 logicalenvelope no inventedproduction authority. Full design edgeordering remains native acceptance requirement. Measure ui-craft nonempty corpus and existing mock audits; check help beforeuse. Meaningful red-first controls for hardstate/consistency oracle, not dummy assertion. Record measured output/limitations; independent UX/IA/a11y/Test review follows. Return frozen commit, exact commands/results, residuals/calls. No EnterWorktree; no mainjoin. Genuine scope decisions -> Conductor.",
+      "summary": "Authored the granted self-contained synthetic G6 Sequence/Activity HTML and supplements in existing design/proof. Final Edge headless run: 63 normal cases pass, five actual DOM fault controls reject, 22 contrast pairs and 32 default targets with zero failures, nonzero page 1280x1281. Actual toolbar focus/click checks graph/list Source/Back origin; filtered relation has explicit endpoint stub and erased-stub red control. Initial test selector defect repaired; clipped graph label repaired and real 1024-wide screenshot inspected with stacked inspector. Normal-path browser mock samples: render 1.7ms (#148/seven facts), audit 0.4ms (#246), not product p95. Existing mock sweep one file/zero findings; nonempty craft detector one retained Minor flat-type-hierarchy finding; strict DESIGN lint clean. Three headless screenshots and raw JSON/DOM/logs at C:/Users/malla/AppData/Local/Temp/atlas-e1-mock. Orthogonal matrix only; synthetic keyboard handlers, browser system colors and fixtures do not prove native/UIA/OS/product/runtime/CFG/ordering/performance. No author veto cleared. Conductor owns shared lessons and independent review. Execution graph remained serial within allowed paths; temporary Edge CLI fallback used after existing Node import contract failed.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": "codex-sol-e1",
+      "artifacts": [
+        "docs/mockups/atlas-behavior-views.html",
+        "docs/design/atlas-behavior-views.md",
+        "docs/proof/atlas-behavior-contract.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Implement the Human-granted E1-M synthetic behavior review harness within the three authorized authored paths.",
+      "done_when": "Both views and hard states are reviewable with measured headless consistency, source/back, contrast, targets, negative controls and screenshots; design/proof/audit are frozen for independent review. No product gate is self-cleared.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-15T21:46:16Z",
+      "duration_seconds": 1262.0,
+      "git": {
+        "sha": "96c115e09641520f47678b8c0408ffede452a9d9",
+        "short": "96c115e09",
         "branch": "atlas/behavior-views",
         "pushed": null
       }

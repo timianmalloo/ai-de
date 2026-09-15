@@ -12,6 +12,7 @@ review-by: 2026-12-15
 summary: >-
   Proposed method-level static behavior contract for one source-backed occurrence model with governing G6, shared logical envelope,
   bounded structural graph and page recomposition, hard states and numeric acceptance proposals.
+  Includes the Human-granted synthetic Sequence/Activity review harness and measured author evidence.
 ---
 
 # Atlas E1 static behavior views — proposed design contract
@@ -752,3 +753,61 @@ bounded to exact pinned files. This process correction is not claimed as a new g
 | Completed | Remaining | Best next action |
 |---|---|---|
 | Proposed G6/envelope/structural graph/page identity/caps/state contracts revised against Owner and reviewer | All independent clearance, accepted foundation and exact source grants, mock implementation, graph/parser oracles and product/native evidence | Freeze this revision for independent review; Conductor resolves mock grant and foundation separately |
+
+## 12. E1-M synthetic review harness — 2026-09-15
+
+The Human grant `req-01M2KCTTG4ZWAC2K01PB1HYWGK` permits the
+[self-contained HTML](../mockups/atlas-behavior-views.html). This existing design
+is its graph hub under the Owner ruling; no second Markdown hub or token-system
+change is introduced. Earlier absent-mock statements describe the earlier revision.
+
+**Direction (Inferred design):** preserve the governing G6 linked reading
+workstation. Source selection, a scrollable diagram, an accessible fact list and
+the evidence inspector share one synthetic selection. Sequence emphasizes call
+sites; Activity emphasizes declared source structure. Source preview and Back
+retain the selected fact, its originating surface, filter and scroll positions.
+The narrow 1024 layout stacks the inspector below the list, reachable by normal
+page scrolling and keyboard traversal. No motion is needed for this reading task.
+
+**Domain and surface boundary:** one fixture fact is one labeled occurrence with
+a literal UTF-16 span and demo binding. Five structural relations connect the
+14 primary facts; Sequence presents seven calls. This is HTML-local state, not a
+Core observation or durable representation. The surface list is fixture → local
+model → graph/list/inspector → embedded source → restored focus. Store, service,
+wire, product client and compute readers are absent. The approved logical envelope
+and source-authority obligations remain the future implementation contract.
+
+**Verified author observations:** 63 headless normal checks passed; five planted
+DOM defects were rejected before normal checks. The harness renders 16 named states
+in each view, three personas, three layout widths, three themes, two densities,
+capability refusal and both motion settings. Coverage is orthogonal, not a full
+Cartesian product. Live measurements cover the nonzero page box, 22 token contrast
+pairs, visible enabled 44 × 44 targets, primary identities, binding consistency and
+explicit filtered-boundary endpoints. Full commands, first failure and measured
+results are in the [proof supplement](../proof/atlas-behavior-contract.md#e1-m-synthetic-review-harness).
+
+### Structure-first author rubric and ranked follow-up
+
+| Location / dimension | Severity | Evidence and disposition | Confidence |
+|---|---|---|---|
+| Linked workstation / IA | Independent gate open | Shared selection, exact demo source span and graph/list Back origin passed actual toolbar focus-and-click controls. Independent UX/IA review remains required. | Verified author observation |
+| State recovery / completeness | Independent gate open | 32 state/view checks passed; canceled recovery removal was rejected. Synthetic actions do not prove parser cancellation, complete syntax or production paging. | Verified / Flagged limit |
+| Diagram text / overflow | Major, repaired | Initial narrow screenshot clipped the throw label. Final text uses an ellipsis, full accessible name, full list and inspector. Final actual 1024-wide screenshot shows the ellipsis and stacked inspector. | Verified pixels |
+| Graph boundaries / consistency | Major prevention | Erasing the outside-filter stub marker failed the endpoint oracle. Filtered f6 retains explicit f5→f6 relation evidence. | Verified red-first control |
+| Tokens and targets / accessibility | Independent gate open | Final live audit: zero failures over 22 pairs and 32 default enabled targets. Browser contrast mode is not Windows HighContrast or UIA evidence. | Verified / Flagged limit |
+| Whole HTML / craft hierarchy | Minor (1), retained for reviewer | Nonempty craft scan flags 12/13/15/22 px hierarchy, ratio 1.8:1. Sizes reuse DESIGN.md's dense workstation scale; no token exceptions or rule suppression added. Review before changing the shared scale. | Verified detector finding |
+
+Must-fix before native acceptance: independent UX/IA/a11y/Test review and all
+native/product gates. Should-fix-next: reviewer assessment of hierarchy is the
+highest improvement-to-effort candidate. Worth doing only with a later grant:
+broader synthetic syntax and measured native workloads. No generated imagery,
+gradients, equal stat tiles, placeholder copy or animated decoration is used.
+The existing 2 s open / 150 ms filter-switch / proposed 16 ms UI-work targets remain
+unmeasured for the product. Normal-path browser-mock render/audit timings and
+operation/fact counts are emitted separately as single samples, not product p95.
+Full relation display ordering remains native acceptance
+work under Owner `18cc`; the mock does not qualify it or executable control flow.
+
+| Completed | Remaining | Best next action |
+|---|---|---|
+| Granted E1-M HTML, author matrix, red controls, token/craft checks and headless visual inspection | Independent UX/IA/a11y/Test review; native focus/UIA, OS themes/DPI, production receipt and performance evidence | Freeze this mock and proof for the independent reviewer |

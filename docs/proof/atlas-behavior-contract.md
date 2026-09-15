@@ -8,7 +8,7 @@ tags: [atlas, e1, proof, roslyn]
 links:
   - { to: design-atlas-behavior-views, rel: relates-to }
 review-by: 2026-12-15
-summary: "Author evidence for the retained six source groups and four Owner-frozen structural/page fixtures with independent expected tables, subject faults and limits."
+summary: "Author evidence for the source and structural/page experiments, plus the granted synthetic behavior UI harness, red controls, headless state checks and limits."
 ---
 
 # Evidence — 2026-09-15
@@ -232,3 +232,129 @@ global truncation/cap-gap states, parser stress/cancellation, unknown-target pag
 native and performance evidence. Four-literal feasibility never closes those gates.
 AIDE session/contract environment remains absent; Conductor must name this existing
 proof path in its valid episode capture. No forged episode receipt is written.
+
+## E1-M synthetic review harness
+
+### Scope, reproduction and measured results
+
+**Verified author observation, 2026-09-15:** the Human-granted
+`docs/mockups/atlas-behavior-views.html` is self-contained and uses literal synthetic
+facts. No parser, repository file, service or analyzed code is executed by it. It
+reuses DESIGN.md and the harness template. Its design hub and rubric are
+`docs/design/atlas-behavior-views.md` §12. No spike/source/package/product edit is
+part of E1-M. Author evidence never clears an independent veto.
+
+Open the HTML over `file://` and choose **Run review checks**. For headless
+reproduction, add `?checks=1` to that file URI, launch the installed Edge executable
+with `--headless=new --disable-gpu --no-sandbox --hide-scrollbars`, a fresh
+`--user-data-dir=<temporary directory>`, `--virtual-time-budget=4000`,
+`--window-size=1600,1100` and `--dump-dom`. Read the resulting `#check-results`
+JSON and `#verdict`; the exit code alone is insufficient.
+
+Executed commands from the behavior worktree:
+
+```powershell
+python C:/Users/malla/AppData/Local/Temp/atlas-e1-check.py
+python C:/Users/malla/AppData/Local/Temp/atlas-e1-check.py --shots
+python tools/verify-mockup-audits.py docs/mockups/atlas-behavior-views.html
+python docs/ai-forward-pack/scripts/ui-craft-gate.py docs/mockups/atlas-behavior-views.html --json
+python docs/ai-forward-pack/scripts/design-lint.py DESIGN.md --strict
+```
+
+The temporary stdlib Python driver invokes
+`C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe`, captures DOM/logs,
+parses the real `#check-results` with `HTMLParser`, and fails when that JSON records
+failed cases. No Playwright installation was added. The attempted existing Node
+tool import failed with `The requested module './index.js' does not provide an
+export named 'default'`; the repository's established Edge CLI contract supplied
+the bounded dependency-free fallback.
+
+First observed run: four negative controls rejected, 59 checks passed and one
+failed. `selection-filter-source-back` reported a null `textContent`: the test
+passed a CSS selector to an ID-only lookup. The selector was corrected, then actual
+toolbar focus/click, graph-origin restore and filtered-endpoint cases were added.
+Visual inspection found a separately clipped graph label; explicit ellipsis was
+added without discarding its full accessible name or inspector/list text.
+
+Final observed run:
+
+```json
+{"passed":63,"failed":0,"negativeControls":[
+ {"name":"drop-graph-fact","reason":"graph/list mismatch"},
+ {"name":"corrupt-inspector-binding","reason":"inspector receipt mismatch"},
+ {"name":"remove-canceled-recovery","reason":"state recovery canceled"},
+ {"name":"hide-page","reason":"zero page box"},
+ {"name":"erase-filter-boundary","reason":"filtered relation endpoint absent"}],
+ "audit":{"rendered":true,"box":[1280,1281],"pairCount":22,
+ "contrastFailures":0,"targetCount":32,"targetFailures":0,
+ "smallTargets":[],"consistencyFailures":0,"consistencyErrors":[]}}
+```
+
+The 63 normal cases comprise 32 state/view combinations, 18 theme/density/layout
+width combinations, three personas, older-peer refusal, filtered list Source/Back,
+graph-origin toolbar Source/Back, explicit filtered relation stub, expired-restore
+setup and refusal, Arrow/Enter handling, cancel/retry and two motion settings.
+Every state/view case reads the live audit. Source preview separately reads its
+page/contrast/target audit. The graph-origin case focuses and clicks the toolbar
+button before checking Back focus; direct helper invocation is not its substitute.
+The fixed filtered fixture expects only f6 for `scheduling`, plus r3 with f5→f6
+and an `outside-filter` stub. Removing that boundary marker is rejected.
+
+The 16 states are ready, unselected, loading, empty supported, no matches, partial,
+page boundary, unknown target, async/cancel/throw, malformed, unsupported, source
+changed, canceled, error, overflow and restore expired. Primary identities and
+demo receipts are checked across graph/list/inspector; source highlights the exact
+embedded UTF-16 span. Stale Source is disabled and expired Back refuses a latest
+equivalent. The 512-character overflow state retains the list and inspector while
+showing an explicit diagram limit. State loops are finite fixed lists.
+
+The existing mock sweep reported **1 mockup swept, 0 findings**. This verifies its
+console/placeholder/nonzero-page controls, not the full matrix. The nonempty craft
+scan reported one **Minor flat-type-hierarchy** finding: sizes 12/13/15/22 px,
+ratio 1.8:1. This is retained in the design rubric for independent assessment; no
+suppression or token change was used. The unchanged DESIGN.md strict lint reported
+`clean - all token references resolve (0 warning(s)).`
+
+Normal-path instrumentation now emits browser-mock render and audit elapsed times,
+operation counts and primary volume without a flag. Final observed samples:
+render **1.7 ms**, count **148**, seven Sequence facts; audit **0.4 ms**, count
+**246**, 22 contrast pairs and 32 targets. These are single in-process samples,
+including synchronous rendering/audit work, not browser paint latency or product
+p95. The page labels that limit. `window.mockRender`, `window.lastAudit` and
+`reviewResults.renderMeasurement` expose the actual values; missing timing is
+displayed as `not recorded`.
+
+### Headless visual evidence and limits
+
+Final screenshots were opened and inspected by the author:
+
+- `C:/Users/malla/AppData/Local/Temp/atlas-e1-mock/sequence-ready.png`
+- `C:/Users/malla/AppData/Local/Temp/atlas-e1-mock/activity-ready.png`
+- `C:/Users/malla/AppData/Local/Temp/atlas-e1-mock/activity-narrow-highcontrast.png`
+
+The first two use an actual 1600 × 1100 browser surface; the final narrow/high-
+contrast/partial image uses **1024 × 1600**, shows the ellipsis and the inspector
+stacked below the list. Graph/list areas deliberately scroll; a viewport screenshot
+does not claim every offscreen row is visible at once. Full JSON and DOM/log output
+are alongside these screenshots as `review-checks.json`, `.html` and `.log`.
+These are temporary handoff evidence, not committed portable screenshot assets.
+
+Coverage is orthogonal, not the full Cartesian matrix. Keyboard assertions exercise
+DOM event handlers; native keyboard delivery, focus adorners, UIA, Windows contrast,
+DPI and WPF remain unproved. The browser system-color theme is labeled as such.
+Synthetic cancellation and paging do not demonstrate parser cancellation or the
+production caps. General loops/syntax, relation display order, accepted foundation,
+Core receipts, DTO/wire compatibility, latency percentiles and 16 ms UI work remain
+outside this evidence. No runtime ordering or executable CFG is claimed.
+
+Class → sweep → derive → prevent: ID-only lookup misuse can make a journey oracle
+fail before checking behavior; all Source selector uses were swept and corrected.
+Graph-only checks can omit source focus and missing boundary evidence; both linked
+origins and an erased-stub fault are now executed. Long node labels can clip while
+the DOM remains consistent; the final narrow screenshot plus explicit ellipsis and
+full accessible label cover that shape. Conductor owns shared lesson registration.
+
+Execution graph: existing direction/grant → self-contained fixture/model/surfaces →
+red DOM faults → fixed normal matrix → craft/token checks and actual screenshots →
+proof/audit/derive → frozen review handoff. No fan-out, visible desktop or new scope.
+The independent UX/IA/a11y/Test review and all product gates remain open.
