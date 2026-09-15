@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:22:44Z",
+  "generated": "2026-09-15T20:36:03Z",
   "audit": [
     {
       "actor": null,
@@ -18428,6 +18428,36 @@ window.AUDIT_DATA = {
       "fan_out": 3,
       "started_at": "2026-09-15T20:16:45Z",
       "duration_seconds": 358.0
+    },
+    {
+      "id": "al-01M2KCH9DHPFTQV493JTJGP8JD",
+      "shortname": "atlas-contract-checkpoint",
+      "datetime": "2026-09-15T20:36:02Z",
+      "session": "codex-atlas-views-conductor",
+      "prompt": "Continue remaining E1 Sequence/Activity and E2 domain/layer/Azure with separate worktrees, Owner/Conductor/subagents, coordination and rigor.",
+      "summary": "Observed E2 frozen55df5b6e Linux Release build 0 warnings/errors1.84s and23 checks; independent reviewer8eb44853 blocked oracle gaps, targeted repair active. E1 repeated reflection preflight failures resolved by Astra; six groups reported, independent inspection pending. Owner retains full deployment identity unresolved; request req-01M2KC9CR6YCH2NRZRYW28JFT3 now with Core Owner. Shared-register exact recurrence request req-01M2KCDFNJWXTPRB3G55PJ7Z2E pending. Recorded repeated failed patch-context attempts, no partial writes; release call without identity refused then repeated with exact identity and succeeded. No product/main acceptance.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-views-grounding.md",
+        "docs/plans/atlas-views.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Qualify E1/E2 source contracts and expose precise design blockers without entering peer-owned product paths",
+      "done_when": "Frozen spike outputs independently inspected and reviewed; remaining semantics and foundation barriers recorded",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-15T20:29:32Z",
+      "duration_seconds": 390.0,
+      "git": {
+        "sha": "d3901dc1bdbc42d6f0913dfeb59db78cb6d8722a",
+        "short": "d3901dc1b",
+        "branch": "conductor/atlas-views",
+        "pushed": null
+      }
     }
   ],
   "changes": [

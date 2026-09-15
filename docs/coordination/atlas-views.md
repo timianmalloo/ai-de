@@ -98,3 +98,17 @@ coordination, and a warning at10calls. No repeated broad research or production 
 Conductor measures the common project-coverage baseline once, inspects Linux compatibility,
 and joins only independently reviewed evidence. Initial design overruns24/16 and19/16 are
 reported in the graph; new nodes have smaller explicit exits, not silent budget extensions.
+
+
+## Contract and design checkpoint
+
+| Task | Observed state | Next barrier |
+|---|---|---|
+| E1 contract | Astra reports six groups after exact reflection repair; packaging active | Conductor inspection, Linux and independent review |
+| E2 contract | Frozen55df5b6e builds/runs on Windows and Linux; independent8eb44853 blocks four oracle gaps | Targeted repair and re-review |
+| Design gates | Independent review of frozen E1/E2 designs active | Exact native/mock, receipt, performance and acceptance punchlist |
+| Deployment identity | Full equality unresolved; Owner refuses invented context | Producer seam req-01M2KC9CR6YCH2NRZRYW28JFT3 |
+| Lessons | Existing PACK-Q/DC-127 identified; four-file grant excludes shared register | Exact request req-01M2KCDFNJWXTPRB3G55PJ7Z2E |
+| Product | No implementation admitted | Atlas foundation, exact grants and design gates |
+
+All work remains in named lane trees. No desktop, product-source edit, main integration or cleanup occurred in this checkpoint.

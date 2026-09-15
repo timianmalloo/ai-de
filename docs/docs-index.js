@@ -8249,7 +8249,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0de05687a20936264b574e1e704035f682b1608c32d923432e1ac2ee08a7689a"
+      "sourceSha256": "d8c059ac57833a2057f7786cbe6b1ae451cdd0f7c7862440b904fd8469eb21fd"
     },
     {
       "id": "defect-classes",
@@ -9914,7 +9914,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n G --> O\n O --> D1[E1-D]\n O --> D2[E2-D]\n D1 --> S1[E1-S]\n D2 --> S2[E2-S]\n S1 --> C\n S2 --> C\n C --> RD[R-D]\n RD --> I1[E1-I]\n RD --> I2[E2-I]\n I1 --> P1[E1-P]\n I2 --> P2[E2-P]\n P1 --> R1[R-I E1]\n P2 --> R2[R-I E2]\n R1 --> J\n R2 --> J\n J --> H"
         }
       ],
-      "sourceSha256": "d1631a09a2a5601849eb304cbd6f9cb8efae9d84d06efb88faf0e89cb547433e"
+      "sourceSha256": "7d2341043aa884dc56834a22e2c9cbf127d00e90e8555ca646ee81babe6845ba"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -15480,7 +15480,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d860d92c939b7dfa07e83b5b5cbfaf0c3f3cbe99ce8735288574e605b010f073"
+      "sourceSha256": "e3a8924751317fc7752f03a4009812a7ea87877ca0679f77cbd7f1016c246cf7"
     },
     {
       "id": "proof-audit-gate-plan-review",
@@ -19402,5 +19402,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "4610c204a5abb0a5ecb882f7aa176029240879f4555d734545c182dad23984bf"
+  "graphSha256": "44a77acc3bc5ce541388c5455b0f4f799fc3450783d353932c939bac423c57ea"
 };

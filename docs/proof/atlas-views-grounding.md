@@ -91,7 +91,39 @@ task-specific user cache and verified the executable. Installation is not spike 
 Opened `.github/workflows/build.yml` shows project-coverage only in windows-latest, not the
 Ubuntu job. Core independently acknowledged this in req-01M2KBN3P0A1V2MV3ADXQBZ5J2: manual
 Linux build/run satisfies Ruling121's evidence requirement, but is not proof CI exercises the
-spikes on Linux. Workflow changes are out of scope. Actual spike builds/runs remain pending here.
+spikes on Linux. Workflow changes are out of scope. E1 Linux verification remains pending.
+
+### E2 Linux compatibility observed
+
+Frozen source commit `55df5b6e75e2a7b52f2f5aeb5433e19383196570` was exported with
+`git archive` (global.json, Directory.Build.props/rsp, Directory.Packages.props and the exact
+spike directory) into a task-specific Linux user cache. Windows bin/obj were not copied.
+The SDK executable was `/home/timmall/.cache/codex-atlas-dotnet-10.0.303/sdk/dotnet`.
+From the exported root, the observed command was:
+
+```text
+dotnet build spikes/atlas-architecture-contract/AtlasArchitectureContractSpike.csproj -c Release --artifacts-path /home/timmall/.cache/codex-atlas-verification/e2-55df5b6e-output --nologo
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+Time Elapsed 00:00:01.84
+```
+
+Running the output DLL with that same SDK returned exit 0. The Conductor read all 23 emitted
+checks, including specific negative diagnostics before the positive cases. The final output was:
+
+```text
+UNRESOLVED fully-known-deployment-positive: admitted Bicep subset supplies no actual subscription/resource-group identity; no invented tuple injected.
+PASS 23 contract checks; six fixture groups observed; full deployment equality remains UNRESOLVED (not US-E8 acceptance).
+```
+
+This is one observed Linux compatibility run, not CI coverage or native acceptance. Full
+output is the same 23-case sequence recorded in the E2 RESULT.md at the frozen commit.
+Independent review and after-change project-coverage timing remain pending.
+
+Owner read-only disposition: preserve missing deployment context as an explicit unresolved
+result; request an admitted source-bound producer, not parameter defaults or invented scope.
+Source literal scope-kind cannot establish actual subscription/resource-group identity.
 
 Installer contract reference: <https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-install-script>.
 

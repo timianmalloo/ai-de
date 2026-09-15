@@ -189,3 +189,12 @@ req-01M2KBCP9A8893CWVDDGKKTBYS (E2). No src/tests/package-version/solution edits
 no desktop; synthetic input never executed. Windows and Linux build evidence and observed
 project-coverage walltime comparison precede landing. Production signatures/surfaces require
 their own grants after the Atlas foundation lands.
+
+
+## Spike checkpoint and revised work units
+
+E1-S stopped at 13/12 calls before fixtures, a plan defect. E1-S2 identified the installed BaseMethodDeclarationSyntax overload at 6/8 calls but could not locate coordination tooling. The next 8-call author node corrected only one of two namespace mismatches and again stopped before fixtures. Reassigned the bounded repair plus evidence to Astra (18 calls, checkpoint14), keeping the same lane and exact grants. Independent output inspection and review remain mandatory.
+
+E2-S completed at 10/12 calls, commit55df5b6e. Conductor observed Linux Release build0warnings/errors,1.84s and23 checks. Reviewer8eb44853 BLOCKED alias input-only assertions, confounded scope fixture, constant authority assertion and missing carrier-limit negative tests. Targeted repair precedes re-review and one new Linux run on the corrected commit. Full deployment identity remains unresolved; Owner requested a separately admitted source-bound producer, shared request req-01M2KC9CR6YCH2NRZRYW28JFT3. No product gate waived.
+
+Conductor editing also hit repeated patch-context failures. No partial edit occurred. The control for this checkpoint is to inspect the actual diff and use an append-only checkpoint instead of retrying unchanged patch context; no such retry constitutes progress.
