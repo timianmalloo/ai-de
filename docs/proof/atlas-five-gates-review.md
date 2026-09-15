@@ -9,7 +9,7 @@ links:
   - { to: proof-atlas-five-gates, rel: depends-on }
   - { to: plan-atlas-five-gates, rel: depends-on }
 review-by: 2026-12-15
-summary: "Independent G1/G2/G3/G5 implementation verdicts; G2 scanner is blocked by a demonstrated decoy-placement bypass."
+summary: "Independent G1/G2/G3/G5 implementation clearance, including the reviewed-source pin that supersedes two rejected G2 flow approximations."
 ---
 
 # Scope and frozen inputs
@@ -29,7 +29,7 @@ trees were read only and were not merged.
 | Gate | Verdict | Clearance predicate |
 |---|---|---|
 | G1 audit capture | **CLEAR** | Eighteen truthful later superseders preserve originals and do not promote unrecorded historical verification or acceptance. |
-| G2 bound enforcement | **BLOCK** | Product boundary behavior is supported, but the scanner accepts required text in unrelated/decoy classes while the live call is unbounded. |
+| G2 bound enforcement | **CLEAR at 47f5f54c** | The gate pins the exact behaviorally reviewed product source and fails every change without generic fallback; earlier flow approximations remain rejected history. |
 | G3 containment comparisons | **CLEAR for frozen source** | Both identified sites use the existing platform comparer; reachable input and refusal behavior are covered. |
 | G5 ownership parser | **CLEAR for frozen source** | Historical non-Path tables are non-owning, while malformed owner tables and the prior ownership grammar still fail closed. |
 
@@ -101,6 +101,30 @@ The clearance predicate is behavioral: evidence must bind to the live associatio
 not merely any nested text inside the containing method. No product/test rerun is required for
 this scanner-only correction.
 
+### Owner B replacement and final G2 disposition
+
+Reviewed correction 47f5f54c removes the rejected C# flow approximation. It instead requires
+the exact complete AtlasGitMembership.cs bytes that the at/over-limit production tests and
+forwarding/deleted-clamp mutants qualified. Normalization replaces CRLF with LF only. An
+independent Git-object read produced 60,819 normalized bytes and SHA-256
+5993639d5838ccc9a4319f428dbb8dbcc8c7eab71788ae7bfff435f481627dd1, exactly the committed pin.
+Diffing 74f2ec0e to 47f5f54c found no product or test change.
+
+The MaxIndexBytes path cannot fall through to the generic enforcement regex. The normal gate
+checks the pin before scanning. Independent execution observed 17/17 self-tests and 30/30
+normal bounds. Direct probes observed: actual true; unrelated changed bytes false; the same
+changed bytes plus a generic MaxIndexBytes comparison still false; missing false; unreadable
+directory-at-file-path false. The self-test also rejects both prior reviewer decoys, live
+unbounded, cap/helper/dispatch/comment/lone-CR changes, and generic fallback. LF and CRLF are
+the only accepted byte variants. There is no automatic pin update.
+
+**G2 CLEAR.** The control now makes the bounded claim “reviewed indirect implementation
+unchanged” rather than claiming lexical flow analysis. Any source edit, including an unrelated
+comment, invalidates the gate and requires behavioral requalification plus independent review
+before a manual pin change. This broad invalidation is the explicit Owner-accepted cost of the
+smaller deterministic control. The earlier 55/55 product run and two killed product mutants
+remain applicable because product/test bytes did not change; current-main qualification does not.
+
 ## G3 — containment comparisons
 
 The only product edits replace the two dispatched OrdinalIgnoreCase comparisons with
@@ -145,12 +169,12 @@ fail-closed owner grammar.
 
 | Lens | Verdict |
 |---|---|
-| Test Architect | **BLOCK overall on G2 only.** G1, G3 and G5 have adequate positive, negative and mutation coverage for their frozen scope. |
-| Security / Data integrity | **CLEAR G1/G3/G5; conditional G2.** Product refusal is supported, but the gate cannot attest the live seam until the decoy bypass is closed. |
+| Test Architect | **CLEAR G1/G2/G3/G5.** G2 now checks exact reviewed source identity and rejects both prior decoys; the rejected implementations remain in this receipt as history. |
+| Security / Data integrity | **CLEAR G1/G2/G3/G5.** Product bound refusal and immutable reviewed-source identity are supported; any source change fails closed pending requalification. |
 | SRE | **CLEAR evidence shape.** Raw Core artifacts expose counts, failures and timings; ownership emits population counts; audit capture distinguishes current coverage from frozen debt. |
-| Language Developer / Tech Lead | **CLEAR G3/G5; BLOCK G2 scanner structure.** Reuse and source changes are small; G2 needs method/class correlation. |
+| Language Developer / Tech Lead | **CLEAR.** G2 removes the incomplete parser and states the narrower invariant honestly; G3/G5 retain shared policy and bounded parsing. |
 | Simplifier | **CLEAR.** No new dependency or broad parser was added. The G2 repair should extend the bounded scanner, not add a general C# parser. |
 
-The next review input is one frozen G2 scanner/proof correction with the two named mutants.
-This receipt does not clear G4, final all-gate/current-main integration, Release, publication,
+G1/G2/G3/G5 are clear for their frozen inputs. This receipt does not clear G4, final
+all-gate/current-main integration, Release, publication,
 native behavior, full Core, or E1/E2.
