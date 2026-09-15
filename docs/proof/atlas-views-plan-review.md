@@ -283,3 +283,47 @@ P0s above, foundation/grants, native integration, or product acceptance.
   unresolved. E1 still needs an admitted CFG decision. Production bounds, resolver
   authority, cancellation, Bicep producer qualification, native composition and the
   eight design P0s require later independent evidence.
+
+## Independent design-revision disposition
+
+Reviewed E1 `83e1139b580ef977bebcf68b38e84dd1a871da82`, E2
+`ea21b6b6985dc12bfbabb966060cdc76b0701f13`, its focused correction
+`15b53fe9c5c364321e5d1326dd9aca38f64ecd09`, and Owner ruling
+`a766afa88cb4cbbd20c84dc383b213a4ab4e5e94`. This is a design-contract review.
+No unchanged spike was rerun and no proposed threshold is a measured capability.
+
+**DISPOSITION: the requested design text for P0.1, P0.2, P0.3, P0.6, P0.7 and
+P0.8 is now sufficient for its next bounded evidence nodes. Product dispatch remains
+BLOCKED by the evidence and authorization gates below.**
+
+| Finding | Independent disposition | Evidence and remaining gate |
+|---|---|---|
+| P0.1 — governing archetype | **Design correction CLEAR.** | Both designs serialize the same Owner-normalized G6 signature, resolve every facet into the linked native reading workstation, record the local-evidence/session deviations, and reject the former G1 authoring model. Executable mock and native round-trip evidence remain P0.5/P0.8. |
+| P0.2 — E2 typed semantics | **Design correction CLEAR at E2 `15b53fe9`.** | The correction adds the missing seventh `relations` collection, typed endpoints, kind/state/basis, anchors and assertion references. It distinguishes sourced current dependencies from declared current/target relationships, validates endpoint/kind/assertion compatibility, and keeps unsupported kinds visible without promotion. The 224-row total now covers seven 32-row collections. The old spike `90189411` explicitly does not qualify this new relation contract; its positive and negative relation oracles still require an admitted bounded spike. |
+| P0.3 — shared envelope and temporal receipts | **Logical design correction CLEAR; production gate OPEN.** | Both lanes carry scope, epoch, manifest, request sequence, selected subject, projection observation, row source binding, completion/coverage/continuation and typed refusal. Late N cannot replace N+1. E1 restores a coherent capped page only by its exact receipt; E2 issues a partial receipt only when the selected observation is fully published and bound. Expired/revoked receipts return unavailable and never reconstruct latest state. Accepted-foundation mapping, one shared writer, exact signatures/codecs and golden bytes remain mandatory. |
+| P0.6 — caps and performance | **Design tables CLEAR; measured admission OPEN.** | E1 separately caps primary, auxiliary, stubs, edges, traversal, payload and layout; its 128-fact fixture arithmetic sums correctly. E2 correction accounts for 160 carrier rows under the 224-row total, 32 edges including generated membership, 32 structural plus 32 primary graph nodes, alias details and unknowns. Both label latency/frame/byte limits and fixtures as proposed. Fixture authorization/freeze, E1 parser stress/cancellation, relation-carrier validation, independent SRE/Test threshold acceptance, hardware records, raw samples and measured results remain required. |
+| P0.7 — E1 structural/page policy | **Design correction CLEAR; semantic acceptance OPEN.** | E1 defines a structural source graph and explicitly refuses executable-CFG/runtime meaning. Primary occurrences include controls and gaps; auxiliary closure is charged separately. `outside-window`, `not-observed-after-cap` and `unresolved-target` are distinct. Boundary stubs preserve canonical endpoint/direction/kind, an indivisible closure yields `window-unrepresentable`, and recomposition compares pages 1/2/7/128 against one-window identity and relations. Executed graph/page/parser oracles plus independent UML/Test acceptance remain required; CFG support is not claimed. |
+| P0.8 — E2 native controls | **Design correction CLEAR; native evidence OPEN.** | E2 names per-view graph/list/inspector equality, keyboard Source/Back focus, UIA identity/uncertainty, race/restore, theme, HighContrast, DPI, viewport, overflow and state-reachability falsifiers. The HTML harness grant and real registered WPF composition remain absent, so no native acceptance is implied. |
+
+### E1 bounded experiment suitability
+
+The revised E1 contract is **suitable for one structural/page feasibility experiment**
+under the Owner's reported Ruling-121 disposition. The experiment must stay source-only:
+four synthetic groups covering branch/repeats, loop, try/finally/await, and
+unsupported/nested-body gaps; page sizes 1, 2, 7 and 128; explicit closure, stubs and
+`window-unrepresentable`; and independently specified expected nodes and relations.
+Mutations that drop a branch, a cross-window relation or stable identity must fail.
+It must use only the four exactly granted existing files, add no package, and make no
+production-token, wire, UI, CFG or runtime claim. Before author execution, Conductor/Test
+must freeze the exact four paths and the independent expected-oracle ledger. This experiment
+can qualify the proposed structural/page contract; it cannot itself clear P0.7 product
+semantics or native acceptance.
+
+### Barriers retained
+
+P0.3/P0.4 remain blocked on an accepted foundation, exact grants, one shared writer and
+golden payloads. P0.5 remains blocked on the exact mock grant, executable state harnesses
+and rubric evidence. P0.6 remains blocked on authorized fixtures and measurements. P0.7
+and P0.8 remain blocked on their executed independent evidence. Full Azure deployment
+identity/US-E8.b remains open. Coordination authority is the named `copilot-main-watch`;
+this review does not infer blanket Core authority or grant any source path.

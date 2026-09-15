@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:44:11Z",
+  "generated": "2026-09-15T20:56:02Z",
   "audit": [
     {
       "actor": null,
@@ -18672,6 +18672,53 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "593c7650ceaa0c92431ae5518caadbdeb6454a6e",
         "short": "593c7650c",
+        "branch": "review/atlas-views-design",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KDNWDAE62V8M6Z89MA9S94",
+      "shortname": "atlas-design-revision-review",
+      "datetime": "2026-09-15T20:56:01Z",
+      "session": "codex-atlas-views-review",
+      "prompt": "Independently re-review E1 design 83e1139b and E2 designs ea21b6b6/15b53fe9 against Owner a766afa8 for P0.1, P0.2, P0.3, P0.6, P0.7 and P0.8; preserve foundation, golden, mock, native and measured-evidence barriers and assess one bounded E1 structural/page experiment.",
+      "summary": "Cleared the revised G6, typed E2 relation, logical envelope, cap-table, E1 structural/page and E2 native-oracle design text for bounded evidence work. Product dispatch remains blocked on foundation/grants/golden bytes, mock/native execution, authorized fixtures/measurement, the new E2 relation spike and E1 graph/page semantic evidence. The E1 contract is suitable for the Owner-bounded source-only feasibility experiment after exact paths and independent expected oracles are frozen.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-sol-plan-review",
+      "artifacts": [
+        "docs/proof/atlas-views-plan-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "design-revision"
+      ],
+      "outcome": "blocked",
+      "goal": "Determine which targeted E1/E2 design P0 requirements are corrected and which evidence or authorization gates remain.",
+      "done_when": "Each targeted P0 has a precise corrected/outstanding disposition, cross-lane G6/envelope compatibility is checked, and E1 experiment suitability is bounded without product admission.",
+      "tier": "T2",
+      "main_calls": 16,
+      "main_budget": 12,
+      "main_over_budget": true,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T20:49:42Z",
+      "duration_seconds": 379.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 1,
+          "accepted": 1
+        }
+      ],
+      "git": {
+        "sha": "acdf4894c9a957600bfd6e63b6ab59319dad92ff",
+        "short": "acdf4894c",
         "branch": "review/atlas-views-design",
         "pushed": null
       }
