@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T22:38:29Z",
+  "generated": "2026-09-15T22:38:35Z",
   "audit": [
     {
       "actor": null,
@@ -21766,6 +21766,34 @@ window.AUDIT_DATA = {
       "summary": "Verified code/proof publication; identified twelve original Owner/reviewer audit rows still local and requested an audit-only serialized Core handoff.",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M2KKHMZ4QQR23YW7S7M17CCX",
+      "shortname": "atlas-five-gates-main-base",
+      "datetime": "2026-09-15T22:38:34Z",
+      "session": "codex-atlas-five-gates",
+      "prompt": "the join of the resolved merge into conductor/atlas-five-gates",
+      "summary": "Preparatory main reconciliation; known five gate repairs remain pending; no qualification or publication acceptance. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Incorporate current main before repair freeze",
+      "done_when": "Main ancestry incorporated; repair qualification remains pending",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T22:38:33Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
