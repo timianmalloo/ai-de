@@ -1,0 +1,2 @@
+{"agent": "codex-astra-conductor", "at": 1789501483.0475736, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-review-receipt-handoff", "wi": ""}
+{"agent": "codex-astra-conductor", "at": 1789501483.0590975, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-review-receipt-handoff", "wi": ""}
