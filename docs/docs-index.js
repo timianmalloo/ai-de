@@ -6426,7 +6426,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2026-12-15",
       "reviewSuggested": [],
-      "summary": "Proposed method-level static behavior contract for one source-backed occurrence model rendered as native Sequence and Activity views, with honest bounds, unknowns, source navigation and Back.",
+      "summary": "Proposed method-level static behavior contract for one source-backed occurrence model with governing G6, shared logical envelope, bounded structural graph and page recomposition, hard states and numeric acceptance proposals.",
       "tags": [
         "atlas",
         "e1",
@@ -6439,10 +6439,14 @@ window.DOCS_INDEX = {
         {
           "to": "mockup-uml-erm-surfaces",
           "rel": "relates-to"
+        },
+        {
+          "to": "proof-atlas-behavior-contract",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ef28227f65d1801971b3c99ad6ae558f7f31316fd47e2cd927754d19fe026583"
+      "sourceSha256": "fcced5a57d0f6d905a05e1409e4b36583d3347b9ba563aa63e9fb6d1a9fda119"
     },
     {
       "id": "design-knowledge-explorer-mode",
@@ -19356,5 +19360,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "47557d859cd928a68b0fe399f18b86347b4241eede3dffac4b19ba3a2db84528"
+  "graphSha256": "2e6b6c3e43535e45a23d9543d9f375f32d8d291a4270ba19f8a99b712aafd64a"
 };

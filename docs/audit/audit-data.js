@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:37:41Z",
+  "generated": "2026-09-15T20:52:16Z",
   "audit": [
     {
       "actor": null,
@@ -18412,6 +18412,35 @@ window.AUDIT_DATA = {
         "branch": "atlas/behavior-views",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2KDEZXJ5H9FJYY0VP10AXD2",
+      "shortname": "design-slice-atlas-behavior-revision",
+      "datetime": "2026-09-15T20:52:15Z",
+      "session": "codex-atlas-e1-behavior",
+      "prompt": "Next E1 DESIGN REVISION node, same behavior tree/session, existing docs/design/atlas-behavior-views.md + audit/derived ONLY. Spike5d361f2a now frozen under independent review; no source edits. Read Owner supplement a766afa88cb4cbbd20c84dc383b213a4ab4e5e94 at C:/Projects/ai-de-owner-atlas-views/docs/notes/atlas-views-owner.md and independent8P0 design review593c7650 at review tree proof. GoverningG6 normalize per Owner, no G1 substitution. Shared logical envelope per Owner, no production DTO freeze before foundation. Resolve E1 bounded control-flow algorithm, occurrence/page-window identity, boundary edges/gaps, truncation/recomposition, branch/loop/async/unsupported states without invented runtime order. Define numeric targets/caps and sampling protocol (specopen<=2s/filter-switch<=150ms; Owner proposed16ms UI work target, unmeasured), complete hard-state mock/native oracles including graph/list/inspector source receipts + Source/Back focus. Actual Roslyn spike demonstrates syntax/symbol, NOT CFG; further uncertainty stays explicit. Read existing updated addendum/mock references as needed, no broad reground. No HTML yet: pending exact Core req-01M2KCTTG4ZWAC2K01PB1HYWGK for docs/mockups/atlas-behavior-views.html. Budget14calls/20min checkpoint11; finish existing design artifact+audit/commit; no product/ER/shared wiring. Use exact authored leases, NEVER globally lease derived/audit files; prior mistaken audit-data lease blocked3trees. Return resolved/remaining P0s for independent review.",
+      "summary": "Revised G6/facet mappings, shared logical envelope and partial Restore; removed premature DTO sketches. Proposed structural source graph, stable observation/page identities, bounded closure/stubs, truncation and recomposition oracles. Added complete hard-state/focus/source receipt matrix plus inclusive numeric limits, workload, p95 and dispatcher sampling. No product or HTML changes. P0.1 requires independent review; P0.3/4 foundation and bytes, P0.5 executable mock, P0.6 parser/measurement admission, P0.7 graph/page semantic evidence remain open. Initial overly broad inventory output was truncated; exact bounded reads replaced it. Marker began after two grounding calls and measures remaining work only.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/atlas-behavior-views.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Revise bounded E1 design against Owner and independent P0 findings.",
+      "done_when": "Concrete G6, envelope, algorithm, paging, caps and hard-state contracts recorded with evidence gaps, audited and committed for review.",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-09-15T20:44:16Z",
+      "duration_seconds": 479.0,
+      "git": {
+        "sha": "5d361f2a9de2ebdcc7a255d33ad31d96a3a2e0f1",
+        "short": "5d361f2a9",
+        "branch": "atlas/behavior-views",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -22182,6 +22211,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "c46e112a924a8a0a4c86e4552af1f0e30bfa851c",
         "after": "c46e112a924a8a0a4c86e4552af1f0e30bfa851c",
+        "branch": "atlas/behavior-views",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2KDF043NGSDKJBRBGBREQ43",
+      "datetime": "2026-09-15T20:52:16Z",
+      "session": "codex-atlas-e1-behavior",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Propose G6 and bounded E1 structural behavior contract",
+      "prompt": "Revise existing E1 design under Owner a766afa8 and independent P0 findings593c7650; no product or mock authoring.",
+      "summary": "G6 replaces unsupported G1; logical envelope replaces premature DTO freeze; structural source algorithm and stable paging, cap and native-state oracles are explicit.",
+      "rationale": "Owner normalization and reviewer P0.1/3/5/6/7 require concrete end-to-end contracts while syntax/symbol evidence must not become CFG or runtime proof.",
+      "artifacts": [
+        "docs/design/atlas-behavior-views.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "5d361f2a9de2ebdcc7a255d33ad31d96a3a2e0f1",
+        "after": "5d361f2a9de2ebdcc7a255d33ad31d96a3a2e0f1",
         "branch": "atlas/behavior-views",
         "pushed": null,
         "commits": []

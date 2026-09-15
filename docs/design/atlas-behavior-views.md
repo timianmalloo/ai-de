@@ -7,10 +7,11 @@ owner: "@timianmalloo"
 tags: [atlas, e1, sequence, activity, static-analysis, native-ui]
 links:
   - { to: mockup-uml-erm-surfaces, rel: relates-to }
+  - { to: proof-atlas-behavior-contract, rel: relates-to }
 review-by: 2026-12-15
 summary: >-
-  Proposed method-level static behavior contract for one source-backed occurrence model rendered as
-  native Sequence and Activity views, with honest bounds, unknowns, source navigation and Back.
+  Proposed method-level static behavior contract for one source-backed occurrence model with governing G6, shared logical envelope,
+  bounded structural graph and page recomposition, hard states and numeric acceptance proposals.
 ---
 
 # Atlas E1 static behavior views — proposed design contract
@@ -68,24 +69,42 @@ method and need to answer two different questions from the same evidence:
 The view is read-only. It does not execute source, simulate a trace, infer timing/frequency, or
 expand into callee bodies.
 
-**Archetype Signature — catalog selection:** G1, Parametric Modeling Workbench, is the nearest
-Section-G row because its focal viewport, source/history tree and per-selection detail dock match
-the spatial reading shape of a behavior diagram. Its canonical catalog signature is:
+**Archetype Signature — governing G6 Multi-Panel Data Terminal.** Owner supplement
+`a766afa88cb4cbbd20c84dc383b213a4ab4e5e94` normalizes the Addendum E C1 signature:
 
-`ParametricWorkbench { Type:Configurator; Arch:SpatialBounded; Layout:ViewportWorkbench;
-Density:Compact; Nav:Ribbon+CommandPalette; Viewport:DesktopBound;
-Input:PrecisionPointer+SpatialGestures; Color:DarkAdaptive; Type:Utilitarian; Depth:Diegetic3D;
-Sync:LocalFirst; Persistence:Cloud; Feedback:Optimistic+Confirmed; Motion:Micro;
-Pacing:Freeform; Transition:HardCut; A11y:WCAG_2.2_AA; }`
+```text
+DataTerminal {
+  Type:DSS; Arch:SPA; Layout:MultiPanelWorkstation; Density:UltraDense;
+  Nav:CommandPalette+Sidebar; Viewport:DesktopBound;
+  Input:KeyboardFirst+PrecisionPointer; Color:DarkAdaptive;
+  x-typography:MonospaceTechnical; x-highContrast:System; Depth:Flat;
+  Sync:LocalFirst; Persistence:Session; Feedback:Instant+Confirmed;
+  Motion:None; Pacing:Freeform; Transition:HardCut;
+  A11y:WCAG_2.2_AA+HighLegibility+ReducedMotion;
+  x-platform:windows; x-framework:wpf;
+}
+```
 
-Explicit deviations: the Atlas viewport is a read-only 2D static diagram rather than a 3D
-constructor; the tree is source/member structure rather than editable feature history; the detail
-dock is evidence/provenance rather than parameters; input is keyboard-first plus precision pointer,
-not spatial gestures; persistence is the existing session/receipt model, not cloud; feedback is
-confirmed; depth is flat; motion is none. The selected method and projection are the master;
-Sequence/Activity, accessible list and inspector are synchronized details. Selection and source
-entry are serial; reading either presentation is parallel. These deviations preserve G1's
-viewport-workbench structure without importing its editing, geometry or regeneration semantics.
+This replaces this document's former G1 selection. The Owner's extension fields
+avoid duplicate Type facets and a multi-choice Color; no upstream grammar repair
+is claimed. Reading linked evidence is the job, not authoring a spatial model.
+
+| Facets | Concrete realization |
+|---|---|
+| DSS / SPA / MultiPanelWorkstation | Existing Architecture host; selected method is master; diagram, list, inspector and source are linked details |
+| UltraDense / typography / Flat | Dense aligned occurrence rows; code/identity uses existing technical type tokens; readable prose status; flat panels, no decorative cards |
+| CommandPalette+Sidebar / DesktopBound | Existing file/member and palette entry; one Center reader inside the desktop shell, no new perspective |
+| KeyboardFirst+PrecisionPointer | Same occurrence selection by keyboard or pointer; deterministic focus chain and Source/Back described in §7 |
+| DarkAdaptive / System HighContrast | Existing Light/Dark theme choice plus Windows HighContrast; meaning has text/shape and never depends on color |
+| LocalFirst / Session | Pinned local evidence; refresh is explicit; view history stores receipt plus mode/row/scroll/focus, never source bodies or independent graph truth |
+| Instant+Confirmed | Immediate pending status; only a validated correlated response replaces current content |
+| None / Freeform / HardCut | No animation; unrestricted reading; pivot cuts to the retained projection without changing focus or observation |
+| WCAG / reduced motion / WPF | Native controls and UIA, full-label access, 100/150/200% DPI, linked list alternative; reduced-motion toggle changes no meaning |
+
+Accepted G6 deviations: local evidence replaces streaming market data; sidebar/file
+navigation accompanies commands; confirmed immutable results replace live quotes.
+Selection is serial; reading synchronized details is parallel. Independent UX must
+still validate round-trip fidelity to this family.
 
 Direction: **grounded, ordered, inspectable**. Opposites: speculative, animated, decorative.
 Reuse Visual Studio/VS Code member-to-source navigation, UML sequence notation and familiar
@@ -123,7 +142,7 @@ The bounded context is **Atlas Static Behavior**. Its ubiquitous language is:
 
 `BehaviorProjection` is the aggregate root. Its invariant is: every participant, occurrence,
 control node, edge, bound and limitation belongs to the same selected method, manifest, source
-observation and request sequence. A response that mixes observations is invalid.
+observation and delivery context. A response that mixes observations is invalid; request sequence correlates delivery and is not content identity.
 
 `BehaviorOccurrence` and `ActivityNode` are entities because their identity must survive selection,
 Source and Back. `SourceAnchor`, `Evidence`, `Confidence`, `Bounds` and `Limitation` are value
@@ -140,7 +159,8 @@ do not become durable domain entities.
 | Activity edge | One typed static relation between two activity-node occurrences | Count adds only within one projection; it is not observed traversal frequency. |
 | Limitation | One distinct bounded reason code for this projection | Non-additive; an unknown total stays unknown. |
 
-The projection is derived from verified source and compiler evidence. It is not persisted as graph
+Window recomposition counts canonical identities once: auxiliary markers/edges repeated across
+pages are not additive until deduplicated (§5.3). The projection is derived from verified source and compiler evidence. It is not persisted as graph
 truth. If a view cache is later needed, it is a disposable cache keyed by the complete aggregate
 identity and must have a rebuild-equality oracle against the same source observation. A later live
 read is a different observation, not a rebuild of old history.
@@ -148,7 +168,7 @@ read is a different observation, not a rebuild of old history.
 ### 3.3 Identity and evidence rules
 
 An occurrence key is derived by Core from the selected method observation, source observation,
-syntax kind and exact UTF-16 span. It is not derived from display text, target name, line number
+syntax kind, exact UTF-16 span and syntax-child index path (§5.3). It is not derived from display text, target name, line number
 alone or list position. This preserves repeated calls and overloads.
 
 For a resolved overload, `TargetDeclarationToken` identifies the bound member and the display
@@ -169,227 +189,181 @@ Syntax evidence and semantic evidence remain separate:
 Every visible row carries a call-site/control-site source anchor. A declaration anchor for a
 resolved participant is additional evidence and never replaces the occurrence anchor.
 
-## 4. Proposed contracts — names and signatures are not admitted APIs
+## 4. Shared logical envelope — production bytes and DTOs are not frozen
 
-The smallest correct shape is one behavior producer and one public projection. Sequence and
-Activity are presentation modes over that projection. The following signatures are exact design
-proposals for coordinated review.
+One behavior producer returns one immutable projection. The former C# DTO sketches
+are replaced by this logical contract under Owner shared ruling B. Names below are
+design vocabulary, not accepted signatures, codec fields or a granted API.
 
-```csharp
-namespace AiDe.Core.Understanding;
+| Boundary | Required fields and invariant |
+|---|---|
+| Request | Version and negotiated `static-behavior-v1` capability; authorized scope token; expected Core epoch; exact manifest; monotonically increasing request sequence within owner session; opaque selected method/observation context; bounded occurrence window `(offset, limit)` |
+| Response | Correlated scope, epoch, manifest, sequence and selected subject; Core-issued projection observation token bound to the entire evidence set; version/capability; typed outcome; page bounds, observation coverage, continuation and disclosures |
+| Row | Core-issued occurrence/node/relation identity; origin (`extracted-syntax`, `resolved-symbol`, `ambiguous-symbol`, `unavailable`), confidence (`extracted`, `ambiguous`, `unknown`), predicate and reason; exact observation-bound source-selection token or typed unavailable reason |
+| Navigation | Core-issued receipt for the accepted restorable selection, or explicit unavailable reason; projection token never substitutes for a row source token |
+| Page | Primary offset, returned count, known retained total; structural/edge counts and closure limit; page completion separately from observation coverage and continuation |
+| Compatibility | No capability means no request and visible unavailable state. Unknown version/capability/enum, missing required field, invalid bounds/token or malformed shape yields typed refusal; v1 proposes rejecting unknown fields. The admitted foundation may choose another explicit policy only after golden-case review |
+| Publication | Validate the whole envelope and every row before one atomic publish; no mixed manifest, epoch or observation. A refusal/error publishes no usable new selection or receipt |
 
-public enum AtlasBehaviorEvidenceKind
-{
-    ExtractedSyntax,
-    ResolvedSymbol,
-    AmbiguousSymbol,
-    Unavailable
-}
+Core owns authority, observation identity, continuation and Restore receipts. App
+owns only transient presentation state and request sequencing. Epoch, manifest,
+selection or session replacement cancels pending work. Publication compares the
+current owner generation and request sequence even after successful cancellation;
+late N cannot replace N+1. Cancellation before commit publishes no new snapshot.
 
-public enum AtlasBehaviorConfidence
-{
-    Extracted,
-    Ambiguous,
-    Unknown
-}
+An intentionally capped but internally coherent **published** observation is
+restorable only if Core issued a receipt bound to that exact observation and page.
+Back restores its partial coverage and omissions, not a newly computed complete
+equivalent. In-flight canceled fragments have no receipt and are never restorable.
+Expired/retired Restore preserves the refusal and offers explicit reselection;
+the client never selects a guessed latest equivalent. Presentation mode, row token,
+scroll anchor and focus target are re-applied only after successful Core Restore.
 
-public enum AtlasBehaviorOccurrenceKind
-{
-    Call,
-    RecursiveCall,
-    Await,
-    Throw,
-    Return,
-    Gap
-}
-
-public enum AtlasActivityNodeKind
-{
-    Entry,
-    Action,
-    Decision,
-    Merge,
-    Loop,
-    Await,
-    Throw,
-    Catch,
-    Finally,
-    Return,
-    Exit,
-    Gap
-}
-
-public enum AtlasActivityEdgeKind
-{
-    NextInSource,
-    WhenTrue,
-    WhenFalse,
-    Case,
-    LoopBody,
-    LoopExit,
-    Exception,
-    Cancellation,
-    Continuation,
-    Unknown
-}
-
-public sealed record AtlasBehaviorSourceAnchorDto(
-    string FileToken,
-    string ObservationToken,
-    AtlasSpanDto Span);
-
-public sealed record AtlasBehaviorEvidenceDto(
-    AtlasBehaviorEvidenceKind Kind,
-    AtlasBehaviorConfidence Confidence,
-    string Predicate,
-    string? Reason);
-
-public sealed record AtlasBehaviorParticipantDto(
-    string ParticipantToken,
-    string DisplayName,
-    string? DeclarationToken,
-    AtlasBehaviorEvidenceDto Evidence,
-    AtlasBehaviorSourceAnchorDto? DeclarationAnchor);
-
-public sealed record AtlasBehaviorOccurrenceDto(
-    string OccurrenceToken,
-    int SourceOrdinal,
-    AtlasBehaviorOccurrenceKind Kind,
-    string FromParticipantToken,
-    string? TargetParticipantToken,
-    string[] TargetAlternativeTokens,
-    string DisplayLabel,
-    AtlasBehaviorSourceAnchorDto SourceAnchor,
-    AtlasBehaviorEvidenceDto Evidence);
-
-public sealed record AtlasActivityNodeDto(
-    string NodeToken,
-    int SourceOrdinal,
-    AtlasActivityNodeKind Kind,
-    string DisplayLabel,
-    string? StaticCondition,
-    AtlasBehaviorSourceAnchorDto SourceAnchor,
-    AtlasBehaviorEvidenceDto Evidence);
-
-public sealed record AtlasActivityEdgeDto(
-    string EdgeToken,
-    string FromNodeToken,
-    string ToNodeToken,
-    AtlasActivityEdgeKind Kind,
-    string? StaticCondition,
-    AtlasBehaviorEvidenceDto Evidence);
-
-public sealed record AtlasBehaviorRequestDto(
-    int Version,
-    string ScopeToken,
-    long ExpectedCoreEpoch,
-    string ManifestToken,
-    string FileToken,
-    string EntryDeclarationToken,
-    int OccurrenceOffset,
-    int OccurrenceLimit,
-    long RequestSequence);
-
-public sealed record AtlasBehaviorProjectionDto(
-    int Version,
-    string ScopeToken,
-    long CoreEpoch,
-    string ManifestToken,
-    string FileToken,
-    string EntryDeclarationToken,
-    string SourceObservationToken,
-    long RequestSequence,
-    string ReconstructionDisclosure,
-    AtlasBehaviorParticipantDto[] Participants,
-    AtlasBehaviorOccurrenceDto[] SequenceMessages,
-    AtlasActivityNodeDto[] ActivityNodes,
-    AtlasActivityEdgeDto[] ActivityEdges,
-    AtlasBoundsDto OccurrenceBounds,
-    int? NextOccurrenceOffset,
-    AtlasCompletionState Completion,
-    string[] Limitations);
-
-public interface IAtlasReaderQueries
-{
-    ValueTask<AtlasBehaviorProjectionDto> SelectBehaviorAsync(
-        AtlasBehaviorRequestDto request,
-        CancellationToken cancellationToken);
-}
-```
-
-`ReconstructionDisclosure` must equal
-`static reconstruction — not observed runtime order`; the producer/codec rejects any other value.
-The request has one occurrence window shared by both presentations. A later need for independent
-Activity paging requires a new versioned contract; it must not silently make the two presentations
-describe different subsets.
-
-The proposed capability is `static-behavior-v1`. A peer that does not advertise it receives no
-behavior request. The operation extends the existing framed Atlas reader only after compatibility,
-byte-limit, charge/publication and legacy-peer oracles pass. It does not create a second pipe,
-reader authority or source loader.
-
-The proposed internal producer entry is:
-
-```csharp
-internal static CSharpBehaviorObservationResult Observe(
-    CSharpCompilation compilation,
-    AtlasCompilationScope context,
-    CSharpDeclarationSourceInput source,
-    string entryDeclarationObservationKey,
-    CSharpBehaviorObservationLimits? limits = null,
-    CancellationToken cancellationToken = default);
-```
-
-This signature deliberately consumes the Core-issued verified source association already used by
-the reference E0 producer. It does not accept an App path, raw source text or display name. Use of
-Roslyn control-flow APIs remains a spike-gated implementation choice; this design only depends on
-the syntax and semantic evidence listed in section 5.
+Golden cases: same-payload round trip; older/non-capable peer; missing/unknown field
+and enum; hostile inert disclosure text; wrong scope/epoch/manifest; reordered N/N+1;
+cancellation before publication; coherent partial/capped receipt; changed source;
+expired Restore. Each must assert both returned state and absence of an unauthorized
+new selection. Exact operation name, byte encoding, numeric field widths, source
+selection method and Restore signatures remain P0.3/P0.4 at accepted-foundation C.
+No second reader, pipe, source loader or client-minted navigation authority is added.
 
 ## 5. Supported subset and refusal grammar
 
-### 5.1 First admitted subset proposed
+### 5.1 Proposed algorithm: bounded structural source graph, not executable CFG
 
-- Entry points: source-backed ordinary methods, constructors and property accessors that have a
-  Core-issued method declaration observation and body span.
-- Sequence: invocation and object-creation occurrences directly inside the selected method body;
-  exact overload when supported semantic binding resolves it; recursion; repeated occurrences;
-  source ordinal; call-site anchor; optional resolved declaration anchor.
-- Activity: method entry/exit; blocks; `if`/`else`; `switch` arms with source condition text;
-  `for`/`foreach`/`while`/`do`; `return`; `throw`; `try`/`catch`/`finally`; `await`; and calls shown
-  as action nodes.
-- Cancellation: only an explicitly bound cancellation operation or explicit cancellation exception
-  construct may create a cancellation edge. A parameter named `cancellationToken`, a cancellable
-  callee signature or an `await` does not prove a cancellation path.
-- Errors: explicit `throw`, `catch` and `finally` syntax is represented. Exceptions a callee may
-  throw are unresolved unless supported evidence is later admitted.
-- Async: `await` is an explicit suspension/continuation marker. The continuation is static source
-  structure; scheduler, thread and runtime ordering remain unknown.
+**Design decision, unimplemented:** build a deterministic structural source graph
+from the selected method's Roslyn syntax and separately attach semantic target
+evidence. Do not call this a control-flow graph or draw an edge as observed execution.
+The spike `5d361f2a` observed syntax and symbols for six groups; it did not construct
+this graph or prove all clauses below. P0.7 semantic acceptance remains open until
+the bounded graph oracles run and UML/Test accept this representation for US-E6.
 
-Unsupported or deferred constructs include local functions/lambdas as independently selectable
-entry methods, dynamic dispatch without a bounded alternative set, iterator/yield behavior,
-`goto`, compiler-generated lowering, implicit disposal/monitor behavior, exception propagation
-through callees and interprocedural expansion. Encountering one creates a typed gap or limitation;
-it never causes the producer to skip the fact and report complete.
+1. Validate Core-selected method and verified body/source observation. Proposed entry
+   support is ordinary source methods, constructors and accessors with bodies; only
+   ordinary methods were exercised in the current spike. Reject non-method selection.
+2. Walk the selected body with an explicit bounded stack. Do not enter nested lambda
+   or local-function bodies: emit a sourced `nested-body-not-expanded` gap for each
+   declaration. Never expand a callee or execute/emit analyzed source.
+3. Emit one **primary occurrence** for each invocation, object creation, if, switch,
+   loop, return, throw, try, catch, finally, await and unsupported construct. Each
+   construct has one role; recursion is a call attribute, not a second occurrence.
+   Await and its nested call are distinct constructs with distinct keys and containment.
+4. Sort primary occurrences by integer UTF-16 start ascending, end descending, then
+   fixed role rank (control, await, invocation, creation, return, throw, gap). Any
+   remaining tie uses syntax-child index path within the pinned body. Assign zero-based
+   ordinal once over the observation, before paging or choosing a presentation.
+5. Add method entry/exit and bounded structural region markers (block/branch/case/loop
+   body/try/catch/finally). Attach every marker to its owning primary occurrence or
+   method root. Markers reference the owner's source token and identify themselves as
+   synthetic structure; they are not independently sourced statements.
+6. Emit relations from the following closed table. A relation key is its observation,
+   endpoint keys, kind and syntactic arm index. Edges carry their own predicate,
+   confidence and evidence/source token; they cannot borrow a target declaration's
+   authority. Order edges by endpoint ordinal, kind rank, arm index.
 
-### 5.2 Projection state grammar
-
-| State | Required content | Forbidden claim / recovery |
+| Source case | Nodes and permitted structural relations | Prohibited inference / gap |
 |---|---|---|
-| `Unselected` | Prompt to select a supported method | No extractor diagnosis |
-| `Loading` | Selected identity and request sequence; prior valid view may remain marked refreshing | No empty-success substitution |
-| `ReadyComplete` | Shared projection, exact disclosure, bounds and no unreported omissions | No runtime wording |
-| `ReadyPartial` | Rendered retained rows plus exact known omitted counts or unknown denominator reason; visible limitations | No “complete” label |
-| `EmptySupported` | Selected supported method and observed zero supported behavior occurrences | No claim that the method does nothing at runtime |
-| `Unsupported` | Identity, source anchor and reason; Source remains available when policy permits | No synthetic diagram |
-| `Stale` | Last valid projection remains readable and pinned to its old observation; refresh action | No old anchor against new bytes |
-| `Canceled` | Retained partial rows, if any, marked canceled; omission reason/denominator state | No promotion to partial success |
-| `Error` | Stable code, affected scope, retained identity and recovery action | No swallowed exception or blank canvas |
+| Ordinary block and calls | `Contains` from region to directly contained facts; `NextInSource` between lexical siblings | A NextInSource edge is not an execution successor, including after return/throw |
+| If/else | Decision plus explicit arm regions; `WhenTrueRegion`/`WhenFalseRegion` carry source condition; absent else has an empty false region | No claim either branch executes; short-circuit expression evaluation remains unresolved |
+| Switch | Switch plus one region per source section/arm; `CaseRegion` carries literal pattern/guard text | No exhaustiveness, matching order or implicit fallthrough claim; unsupported pattern semantics yield gap |
+| For/foreach/while/do | Loop plus body region and explicit condition/header facts; `LoopBodyRegion`, `LoopConditionSource` | No synthetic execution back-edge, loop count or implicit enumerator/disposal; unknown runtime behavior remains disclosed |
+| Return/throw | Explicit sourced node; `EnclosedBy` identifies region; lexical next may still exist labelled source order | No return-to-caller or catch-target edge; propagation is unknown |
+| Try/catch/finally | One region each; `HandlerDeclaration` and `FinallyDeclaration` connect the syntactically associated regions | Do not connect an arbitrary call/throw to a handler; filters and propagation are unresolved |
+| Await | Await node contains operand facts; `AwaitOperand`; `ContinuationSource` points to next lexical sibling if present | ContinuationSource means subsequent source, not guaranteed resumption, scheduler or thread |
+| Explicit cancellation | Exact bound CancellationToken.ThrowIfCancellationRequested call gains `cancellation-check` predicate and gap for runtime outcome; explicit bound OperationCanceledException creation/throw gains `cancellation-exception` evidence | Names, parameters, signatures or await alone cannot create cancellation evidence; no delivered-cancellation edge |
+| Dynamic/ambiguous/external target | Preserve invocation; attach resolved external symbol as external evidence without fabricated local declaration token; candidate alternatives are bounded and labelled candidates, not exhaustive dispatch | No invented implementation. Unknown target is a target gap, not an omitted call |
+| Goto/yield/using/lock/unsupported syntax | One sourced gap with kind/reason, retain enclosing supported structure | Never silently lower, flatten or omit implicit behavior |
+| Malformed syntax | Sourced diagnostic gap and affected recovered constructs tagged uncertain | No complete semantic coverage; invalid nodes never establish a certain target |
 
-Only `ReadyComplete`, `ReadyPartial` and `EmptySupported` may render behavior content. A source
-state of Changed, Unavailable, Unverifiable, UnsupportedEncoding, TooLargeToVerify, ReadUnstable,
-Refused or Canceled cannot be upgraded by the App. Exact known counts use the existing Atlas bounds
-semantics. Unknown and withheld denominators remain nonnumeric. `NextOccurrenceOffset` is present
-only when another retained page is known to exist.
+Empty source regions are explicit structural markers. There is no synthetic merge
+or executable exit edge: a method Exit marker is a source boundary, not proof that
+all paths terminate there. If UML/Test require executable successor semantics, that
+is an Owner decision requiring a separate Roslyn CFG contract spike; syntax facts
+must not be relabelled to pass it. This is not an automatic scope downgrade.
+
+Traversal classification is closed for control statements: block and empty statement
+are structural only; the supported control cases above emit their primary facts;
+any remaining statement/control form emits an unsupported gap. Ordinary expression
+subnodes (identifiers, literals, member access and arithmetic) are traversed for
+invocations/creations but do not independently imply control edges. Conditional and
+short-circuit expressions emit a `expression-control-not-expanded` gap while keeping
+their nested call occurrences. No gap can be removed merely because calls inside it
+bound successfully. An expression statement without a supported fact is an anchored
+`unmodelled-action` gap; the proposed fixture must avoid accidental extra facts and
+assert its population before it is accepted for timing.
+
+### 5.2 Projection state and coverage grammar
+
+State is a product of **request outcome**, **published observation coverage** and
+**page completion**. Keep these axes separate in the envelope, footer and UIA:
+
+- Outcome: pending / published / refused / canceled / error.
+- Coverage: fully enumerated / semantic gaps / capped-prefix / malformed / unknown.
+- Page: complete window / shortened by page cap; continuation is independently present
+  only when more retained primary rows are known in this same observation.
+
+`ReadyComplete` means fully enumerated supported source structure, not complete
+runtime knowledge. `ReadyPartial` carries semantic gaps, malformed source or a capped
+prefix. One complete page may contain unknown dispatch and have a next page.
+`EmptySupported` means zero primary facts after successful enumeration, not runtime
+inactivity. Pending/canceled/error states may show an **old published observation**
+under an explicit retained/previous label; they never render unfinished new fragments.
+Changed, Unavailable, Unverifiable, UnsupportedEncoding, TooLargeToVerify,
+ReadUnstable, Refused and Canceled source states cannot be upgraded by the client.
+
+### 5.3 Stable identity, window closure and recomposition
+
+**Observation identity:** Core binds scope, epoch, manifest, selected declaration,
+source hash/observation, producer algorithm version and semantic-reference context.
+Request sequence correlates delivery; it is not part of stable content identity.
+An occurrence key is observation identity + syntax kind/role + exact span + syntax
+child index path. It does not include page offset, mode, display text or target name.
+Structural marker keys add owner occurrence + region role/arm index. Entry/exit key
+from selected method plus boundary role. IDs survive page/pivot changes within the
+same observation; no cross-revision stability is promised.
+
+**Primary window:** offset/limit count all primary occurrences, including controls
+and gaps, not just calls. Sequence displays the call/creation subset with sparse
+source ordinals; Activity displays the selected primary facts. Their visible row
+counts need not match; their occurrence identities and shared window must. A page
+with controls but no calls says `No call sites in this window`, not empty method.
+
+For half-open window [a,b), include primary rows in that range, method boundaries,
+and the transitive owning-region chain needed to interpret those rows. Do not include
+unselected sibling contents. Auxiliary markers consume the structural cap, not the
+primary limit. Relations with both endpoints included render normally. A relation
+incident to an included node whose other endpoint is outside closure renders once
+with a **boundary stub** containing the canonical missing endpoint ID, direction,
+relation kind and reason `outside-window`; if the primary ordinal is known, include
+it and enable Go to window. Never make the stub look like an unknown semantic target.
+Do not emit stubs for relations with neither endpoint included.
+
+A missing endpoint due to observation truncation is `not-observed-after-cap`, with
+unknown ordinal/total; it has no Go to window. Missing semantic target is
+`unresolved-target`, even on the final complete page. Deduplicate structural markers,
+stubs and relations by canonical identity, not label. Report primary, auxiliary,
+boundary-stub and edge counts separately in bytes and UI.
+
+**Page publication:** evaluate primary, closure, edge and encoded-byte limits together.
+If a requested window exceeds a cap, shrink its end before publication and report
+requested/returned counts and the first firing reason. Never drop a relation silently.
+If one primary plus mandatory closure cannot fit, return typed `window-unrepresentable`
+with no new selection. The continuation is Core-issued and binds observation, query policy,
+next ordinal and algorithm version; client offset arithmetic is not authority.
+
+**Observation truncation:** retain a coherent enumerated prefix only at a completed
+primary boundary, with reason and known retained count. Unknown total stays unknown.
+Continuation pages exhaust that retained prefix only; they do not resume an abandoned
+parser or pretend omitted source was observed. Refresh with a changed policy requires
+a new observation. User cancellation before atomic publication returns no new prefix.
+
+**Recomposition oracle:** on an uncapped fixture, union every page from the same
+observation, replace matching stubs with their canonical endpoints, deduplicate only
+canonical auxiliary/edge IDs, and compare all primary IDs, predicates, anchors,
+confidence, relations and order to the one-window projection. Test page sizes 1, 2,
+7 and 128; cut before/inside/after if arms, loop body, try/catch/finally and await.
+Changing only page size must not change any identity. A capped prefix recomposes to
+that prefix plus its explicit observation gap, never to the uncapped result.
 
 ## 6. End-to-end change surfaces and grant requests
 
@@ -464,6 +438,80 @@ small supported window, long qualified names, 128 participants/occurrences, redu
 screen-reader reading order require proof. Motion is unnecessary; reduced motion therefore
 changes no meaning.
 
+### 7.1 Hard-state, linked-reader and navigation oracles
+
+All below are **proposed mock and native tests**, not observations. UI design mode
+is review/elevate of the existing Atlas reading pattern; no new HTML or native
+surface is authored here. The existing WPF keys opened at the baseline include
+`SurfaceBrush`, `SurfaceRaisedBrush`, `SurfaceSunkenBrush`, `TextBrush`,
+`TextMutedBrush`, `DisabledTextBrush`, `BorderBrush`, `BorderStrongBrush`,
+`AccentBrush`, `AccentContrastBrush`, `FocusBrush`, `VerifiedBrush`, `InferredBrush`,
+`UnverifiedBrush` and `DangerBrush`. Consume dynamic resources; selected text over
+AccentBrush uses AccentContrastBrush. HighContrast uses the accepted shell mapping;
+no new palette. Typography/spacing keys must be mapped from the admitted host rather
+than invented. Each interactive control has visible default/hover/focus/pressed,
+disabled and overflow treatment; keyboard focus never relies on hover or color.
+
+The permanent disclosure remains visible and in the accessibility tree in every
+content-bearing state. `Previous observation` denotes retained old content. Source
+and Back are enabled only for independently valid row tokens and Core receipts.
+Focus rules below name real semantic targets, not unstable visual indices.
+
+| State / trigger | Visible content and enabled actions | Forbidden / selection / recovery / focus |
+|---|---|---|
+| Unselected: no supported method | `Select a method to inspect its source structure.`; existing file/member selection | No generated diagram or error diagnosis; clear behavior row; focus method selector |
+| Loading: accepted local selection starts N | `Reading selected method…`; identity; Cancel; prior view labelled `Previous observation` if present | No empty-success or new usable receipt; preserve old selection separately; cancel/retry; focus stays invoking control, status uses polite UIA announcement |
+| ReadyComplete: validated fully enumerated result | Shared window counts, exact disclosure; pivot/filter/rows/Source/Back as authorized | No runtime completeness; selected row persists by token; initial focus first primary row or title if none |
+| EmptySupported: successful zero facts | `No supported source constructs were found in this method.`; method Source and Back | No claim method does nothing; clear row/inspector; focus empty-state heading; choose another method |
+| No matches: local filter hides all current rows | `No matches in this window.` plus retained window count; Clear filter, Next if available | No empty-method/global-search claim; keep hidden selected token as hidden, no stale visible inspector; focus filter; clearing restores token if present |
+| Partial: semantic gaps or capped prefix | `Partial source structure` plus exact known counts or `Total not recorded: <reason>`; rows, valid Source, next retained page, explicit refresh | No complete badge or fabricated denominator; retain selected row; cap reason shown in diagram/list/inspector; focus stays selection |
+| Boundary page: selected relation endpoint outside window | Label `Outside this window`, direction/kind, known target ordinal; Go to window when continuation authority supports it | No unknown-target glyph substitution; preserve relation selection; focus loaded target row after correlated response, else boundary row on refusal |
+| Ambiguous/unknown dispatch | `Target unresolved` or `Candidate targets — not exhaustive dispatch`; call anchor and evidence list | No certain implementation participant; Source points to call site; select same call in both modes and focus its list row |
+| Async/cancel/exception facts | `Await — continuation in source only`, `Cancellation check — outcome unknown`, `Throw — propagation unknown`; source actions | No scheduler, delivered cancel or handler-flow inference; inspector carries same predicates/anchors; focus selected fact |
+| Malformed recovery | `Source has parse errors; structure is partial.`; diagnostic gap rows with stable codes; Source/refresh where allowed | No certain semantic coverage or silently skipped invalid node; selected valid/gap row retained; focus first diagnostic when user invokes Show issues |
+| Unsupported entry or capability | `This method form is not supported.` or `This reader does not support behavior views.`; existing source selection/Back | No fallback Interaction masquerading as method view; no behavior rows; focus reason then supported Source/Back action |
+| Stale/source-changed | `Source changed. This view uses the previous observation.`; old pinned rows, Refresh/reselect | No old highlight on new bytes; keep old row identity; Source refused when binding invalid; focus refresh result title, restore row only if identity still valid |
+| Canceled before publication | `Reading canceled.`; previous published view labelled old if any; Retry/Back | Never publish new fragments or new receipt; prior selection only; focus Retry when cancel finishes; explicit retry creates new N |
+| Error/refused | `Could not read source structure. <stable code>`; identity, previous labelled content if available; Retry/reselect/Back by reason | No swallowed error, fabricated selection or executable diagnostic text; preserve prior receipt only if valid; focus error heading then recovery action |
+| Overflow/layout cap/long label | `Diagram limit reached. Use the accessible list.` or trimmed label with full text in inspector/UIA; list and valid Source/Back | No hidden fact loss or unreadable fixed-size viewport; preserve canonical selected row; focus equivalent list row; window/page reduction is explicit |
+| Restore expired/retired | `This saved selection is no longer available.`; explicit reselection, current valid content remains labelled | Never choose latest equivalent automatically; no false focus restore; focus refusal heading, then reselection |
+
+Local filter applies only to the already accepted window, does not mutate observation
+or canonical order, and states its scope. Clearing/switching the pivot never queries
+Core. Going to another window is a new sequenced request bound to the same observation;
+selection is preserved only when its token is present, otherwise the status names
+the prior row as outside this window and the inspector clears. Enter/Space activates
+the focused Source action; Alt+Left uses the host's Back command if available after
+foundation mapping. Escape closes inspector detail and returns to its owning row.
+
+**Graph/list/inspector equality:** for each view and window compare canonical primary
+IDs, sparse source order, predicates, evidence origin/confidence and row source tokens.
+Activity relation list additionally equals the diagram's relation IDs, endpoints,
+kinds and boundary reasons; selecting an edge shows its own receipt, not its target's.
+Sequence's subset must equal precisely the invocation/creation facts in Activity's
+shared primary window, not every Activity row. Structural markers and stubs have
+explicit separate counts and synthetic-owner source attribution. Any export later
+admitted consumes these same collections and limits.
+
+**Source/Back receipt oracle:** select a repeated or overloaded call at a non-first
+page and nonzero scroll position; save mode, occurrence ID, row/list focus, source
+token, observation and Core receipt. Open Source through the real authority; inspect
+the exact hash-bound UTF-16 span. Back must restore all saved values after validating
+the receipt. Mutate only source bytes, then only epoch, then retire the receipt:
+each run must refuse old highlighting/Restore and never restore a guessed row.
+Run for Sequence call, Activity condition, gap and boundary relation; Source may be
+disabled for an unavailable synthetic relation and its reason must be announced.
+
+**Native falsifiers:** keyboard-only reach every state/action; inspect UIA names,
+roles, selected state, full labels and source/gap reason; perturb one inspector
+receipt or hide one relation from the list and equality must fail. Test Light/Dark,
+Windows HighContrast, 100/150/200% DPI, supported small window and maximum labels.
+Check no clipping hides disclosure, omissions or recovery actions; every pointer
+action has a keyboard alternative. Owner-generation N/N+1 and cancellation races
+must leave focus on N+1. Screen-reader order follows logical source/region order.
+Real WPF composition under a serialized desktop slot is required; fixture HTML,
+UIA metadata alone and headless view-model tests cannot clear native behavior.
+
 ## 8. Mockup disposition
 
 `docs/mockups/uml-erm-surfaces.md/.html` is reusable for the permanent derived/read-only rule,
@@ -482,9 +530,15 @@ pagination, exact omission semantics, overload identity, unknown dispatch, async
 coverage, native accessibility or runtime performance. No private source body, captured fixture or
 screenshot from the proposal may enter product code or tests.
 
-No new mockup is proposed before the one-projection contract and native registration seam are
-accepted. If the UX reviewer finds the existing proposal cannot exercise the full state grammar,
-the follow-up is an updated synthetic self-contained mockup, never a private-corpus capture.
+The exact requested path is `docs/mockups/atlas-behavior-views.html`, under Core
+request `req-01M2KCTTG4ZWAC2K01PB1HYWGK`. This design is its graph hub. No HTML is
+authored in this revision. After grant, the dependency-free synthetic harness must
+exercise §7.1; selectors are persona (developer/architect/keyboard reader), viewport
+(1024×768, 1280×800, 1920×1080), Sequence/Activity, state, Light/Dark/HighContrast,
+capability (supported/older peer), and reduced motion. Use inert synthetic labels,
+including 512-unit labels, nested branches and overflow. Record structure-first
+rubric location/dimension/severity/evidence/fix/confidence; run the nonempty craft
+detector and token/contrast checks. No HTML result clears native acceptance.
 
 ## 9. Failure, security and privacy analysis
 
@@ -566,28 +620,73 @@ an authorized real workspace through actual Core, framed wire, owner and native 
 
 The author cannot clear these gates.
 
-## 11. Instrumentation and performance admission
+## 11. Numeric caps and performance admission
 
-Operator questions and proposed emitting sources:
+All numbers below are **proposed limits**, not measured capacity or admitted wire
+limits. Retain the smaller applicable foundation limit after mapping; incompatibility
+returns to Owner rather than silently changing this contract. Caps bind before row,
+edge, layout or payload publication; input byte checks precede parsing.
 
-| Question | Normal-path source |
-|---|---|
-| How long did observation, projection, wire and native render take? | `aide.atlas.behavior.observe`, `.query`, `.render` spans |
-| How much was requested, returned and omitted, and which bound fired? | count/byte/depth tags from Core bounds plus native rendered counts |
-| Which path ran: complete, partial, canceled, unsupported, stale-discarded or failed? | stable result/state code and completion tag |
-| Did Sequence, Activity and accessible list consume the same projection? | projection observation token/request sequence and per-consumer row counts |
-| Did a failure occur and where? | stable error code, phase and exception type; missing data emits `not recorded` |
+| Quantity | Proposed maximum (inclusive) | Rationale and boundary oracle |
+|---|---|---|
+| Encoded request | 16 KiB UTF-8, opaque token 2,048 bytes each | Finite authority/window payload; max+1 refuses before decode allocation |
+| One encoded response | 512 KiB UTF-8 including envelope/text/stubs | Bounds transport and publication; max+1 shortens window or refuses indivisible closure |
+| Verified source supplied to parser | 1 MiB UTF-8; 524,288 UTF-16 code units | Bound Roslyn input, both measures checked; either max+1 refuses |
+| Requested primary rows/page | 1..128; offset 0..1,023 | Same window across modes; zero/negative/129 refuse; offset beyond retained total gives typed exhausted page |
+| Retained primary rows/observation | 1,024 | Bound total derived work; next row creates capped-prefix gap, total unknown unless independently counted |
+| Auxiliary nodes incl. boundaries/stubs | 512/page; 2,048/observation | Primary count cannot hide graph growth; excess shortens page or caps observation |
+| Relations | 2,048/page; 8,192/observation | Bound fan-out separately; never silently drop edges |
+| Participants / target candidates | 128/page; 256/observation; 8 candidates/call | Excess becomes explicit candidate truncation/unknown completeness; participant closure can shorten page |
+| Labels / conditions / reasons | 512 / 1,024 / 256 UTF-16 units each | Inert displayed summaries; truncation marker and original source receipt retained; test surrogate-pair-safe trimming |
+| Diagnostic records | 64/observation; one aggregate overflow reason | Prevent diagnostic flooding; known count if available else unknown |
+| Syntax traversal depth / nodes visited | 64 levels / 16,384 nodes | Explicit stack and visit charge; depth/node excess yields capped gap before child expansion |
+| Layout input and work | 640 nodes (128+512), 2,048 edges; one linear placement and one linear routing pass, no force-directed iterations | Maximum 640 placements + 2,048 routes; exceeding charge publishes list fallback with layout-limit copy |
+| Per-route points / retained geometry | 6 points/edge, 12,288 points/page | Bound auxiliary allocation; excessive route becomes straight labelled relation in accessible list, never vanished evidence |
+| Analysis deadline / cancellation polling | 1,000 ms per query; observe cancellation at least every 64 visited nodes and before publication | Deadline produces typed incomplete/error, not successful work; cancellation mutation must prevent publication |
 
-Telemetry excludes source text, static condition text, participant/member display labels, absolute
-paths and raw identity tokens. A keyed/correlated opaque operation identifier is sufficient.
+Parser cancellation, Roslyn allocation and deadline behavior were not measured by the
+existing spike. Source input bytes are bounded before Roslyn; syntax depth is checked
+after parsing and does **not** claim a hard bound on Roslyn's own allocation. A parser
+stress/cancellation probe is a required P0.6 admission input; if the underlying API
+cannot honor the proposed budget, return to Owner for a bounded alternative.
 
-The retained Sequence/Activity pivot must meet the upstream retained-view switch threshold of
-150 ms p95 because it reuses one in-memory projection. Initial behavior query/render and UI-thread
-frame thresholds remain **Flagged**: the pinned documents require measured performance but do not
-state a behavior-specific initial-open or frame number. Owner/design review must set those values
-before implementation acceptance. Native measurement uses the admitted E1 fixture and reports
-query, codec, render, participant/occurrence counts, viewport/DPI and cap state. A source comment,
-headless model test or HTML mockup cannot clear that gate.
+**Latency thresholds:** initial open ≤2,000 ms p95; filter and retained pivot each
+≤150 ms p95 (Addendum E A10). Owner candidate: no continuous Atlas-owned UI-thread
+work segment >16 ms. The latter is a review target, not an OS-frame guarantee.
+Perform extraction/layout off the dispatcher; UI work is bounded publication and
+virtualized visible-row updates. UI failure of this target returns to design.
+
+**Fixture proposal E1-perf-v1:** one synthetic authorized workspace containing a
+method with exactly 128 primary facts (96 calls, 8 ifs, 4 loops, 4 awaits, 4 returns,
+4 throws, 2 try regions, 2 catches, 2 finally regions, 2 explicit gaps), 32 participant
+identities, maximum nesting 8 and 20 labels at 512 UTF-16 units. Repeated, recursive,
+overload, dynamic and cancellation cases are assigned within the 96 calls. Fixture
+builder must assert these counts before timing; raw source/hash is frozen by Test
+and Owner before execution. This is proposed fixture content, not a file or an
+authorization to execute analyzed source. Companion cases hit every cap and cap+1.
+
+Protocol: 20 cold-view samples with fresh view and projection cache, application
+startup excluded; separately 100 retained samples for filter and 100 for pivot.
+Nearest-rank p95 is sorted sample 19 of 20, or 95 of 100. Keep every raw sample,
+failures and canceled runs; report failure/cancellation separately and do not replace
+them with faster retries. Record hardware/CPU/RAM, OS/runtime/build, fixture hash and
+population, viewport/DPI, cache policy and instrumentation version before running.
+Those machine values are **not recorded yet**, not guessed from this session.
+Use 1280×800 at 100% DPI for the primary timing cohort; report separate diagnostic
+cohorts at 150/200% and HighContrast without pooling percentiles.
+
+Open measures user action → correct content rendered, UIA populated and keyboard
+interaction available. Filter/pivot measure action → all linked details coherent
+and interactive. Proposed normal-path trace-correlated spans:
+`aide.atlas.behavior.observe`, `.query`, `.layout`, `.publish`, `.render`,
+`.interaction`; source/hash-safe counters record bytes, primary/aux/edge/stub counts,
+cap/deadline reason, completion/coverage, cache path and cancellation/error outcome.
+Dispatcher instrumentation records every Atlas-owned callback start/end, elapsed
+monotonic duration and yield boundaries. A synthetic injected 17 ms callback must
+fail the 16 ms oracle; missing samples report `not recorded`, never zero.
+Count equality uses an operation correlation identifier, not logged source or tokens.
+Telemetry excludes source/condition text, member labels, absolute paths and raw tokens.
+No model, spend or external network path exists; their cost axes are N/A.
 
 ## 12. Confidence ledger, disconfirmation and status
 
@@ -598,7 +697,7 @@ headless model test or HTML mockup cannot clear that gate.
 | Pinned E1 intent requires method-level static honesty and gap handling | US-E6 plus architecture §§8/13 at `92e025ae…` | Compared against current type-level contract | **Verified document** |
 | E0 checkpoint can supply the proposed foundation if admitted | Opened identity/query/reader/observation signatures at `2b818f1…` | No runtime or integration execution allowed in this lane | **Verified source, admission Flagged** |
 | One projection can keep Sequence/Activity/list/inspector consistent | Contract construction and shared-window invariant | Implementation equality oracle not run | **Inferred design** |
-| The syntactic subset can meet all US-E6 clauses without Roslyn CFG APIs | Explicit syntax/semantic grammar and gaps | No producer spike or implementation | **Flagged**; spike/reviewer may narrow or require a supported CFG contract |
+| The structural subset can meet all US-E6 clauses without Roslyn CFG APIs | Six-group syntax/symbol spike at `5d361f2a`; §5 proposed rules | Spike does not build a graph or exercise paging/CFG | **Flagged**; independent semantic acceptance and graph/page oracles remain required |
 | Native layout and performance meet budgets | No native artifact exists | No shown-window run authorized | **Unverified** |
 
 Rejected alternatives:
@@ -613,13 +712,43 @@ Rejected alternatives:
 4. Require interprocedural/runtime simulation in the first tranche. Rejected because no observed
    trace exists and expansion would invent dispatch/order while violating the bounded slice.
 
-Residual risks: foundation admission and final operation/registration paths are pending; supported
-control-flow semantics need an implementation spike or bounded source proof; behavior-specific
-initial-open/frame budgets are unset; and every independent veto remains open. The conclusion
-changes if the accepted E0 reader cannot carry a versioned behavior operation within its strict
-compatibility/byte/charge rules, or if independent UML/Test review shows the syntax subset cannot
-represent the required exception/cancellation/async cases honestly.
+Residual risks: no accepted foundation or production shared envelope exists; exact
+operation/registration grants remain pending. The syntax/symbol spike does not prove
+the proposed structural graph, all supported syntax, paging or parser budgets.
+Numeric limits and the fixture are specified but unmeasured and require SRE/Test
+admission. Mock and native evidence are absent. Independent author vetoes stay open.
+
+### Revision record and P0 disposition
+
+This revision follows Owner `a766afa8` and independent review `593c7650`; neither
+is self-cleared by this author. Peer design lenses: **UML** requires structural
+edge names without executable successors; **Data** separates observation identity
+from request sequence; **Distributed Systems** requires atomic receipt publication;
+**UX** requires one linked G6 workspace; **SRE/Test** require explicit cap units and
+missing-measurement refusal; **Simplifier** removes premature DTO/code duplication.
+The graph/model proposals are **Inferred design**. The six-group spike remains
+**Verified syntax/symbol observation** only. Normalizing G6 resolves this author's
+earlier unsupported archetype choice; the control is the independent P0.1 round-trip
+gate, which had blocked the old design. Shared defect-register reconciliation is
+Conductor-owned because this revision grants only this design plus audit/derived.
+
+| Finding | Revised design response | Remaining independent evidence |
+|---|---|---|
+| P0.1 | G6 normalized and every facet mapped in §2 | UX round-trip review |
+| P0.2 / P0.8 | E2-only; no E1 scope expansion | E2 lane/reviewer |
+| P0.3 | Shared logical envelope, row source tokens, partial Restore and publication in §4 | Foundation mapping, exact shared writer/signatures and golden bytes |
+| P0.4 | Existing seam table retained; implementation guard is accepted foundation AND exact grants AND shared compatibility AND independent clearance | Conductor/Core/GHCP/Grok join guard |
+| P0.5 | Complete mock/native state and receipt oracles in §7.1; exact mock request in §8 | Granted executable HTML harness + rubric, then native proof |
+| P0.6 | Inclusive numeric caps, workload, samples, percentile and UI segment targets in §11 | Fixture authorization/freeze, parser probe, SRE/Test acceptance and measurements |
+| P0.7 | Structural algorithm, paging grain/closure/boundaries/recomposition in §5 | Executed graph/page oracles and UML/Test acceptance; CFG remains unproven |
+
+Execution graph reused from the admitted programme: bounded inputs → revise this
+single design → consistency read → audit/change → derive/check → commit → independent
+review. No parallel author or new plan artifact. Finite section checklist is the
+termination variant; the 14-call cap is a defect signal, not completion. The first
+inventory search was too broad and produced truncated output; subsequent reads were
+bounded to exact pinned files. This process correction is not claimed as a new gate.
 
 | Completed | Remaining | Best next action |
 |---|---|---|
-| US-E6 mapped to inspected code or a precise gap; one occurrence model, proposed signatures, state/refusal grammar, manifest, mock disposition, red-first controls and reviewer matrix recorded | Owner foundation decision; exact reader server/remote and host registration paths; independent design gates; source grants; all implementation/native evidence | Conductor settles the shared seams and pins the admitted foundation, then dispatches independent Test/UML/UX/Core review of this proposal |
+| Proposed G6/envelope/structural graph/page identity/caps/state contracts revised against Owner and reviewer | All independent clearance, accepted foundation and exact source grants, mock implementation, graph/parser oracles and product/native evidence | Freeze this revision for independent review; Conductor resolves mock grant and foundation separately |
