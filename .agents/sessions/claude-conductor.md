@@ -10,7 +10,7 @@
 | **Branch** | `conductor/watch-0915` |
 | **Based on** | `main` `bab5035e` |
 | **Status** | **WATCH + COORDINATE** — no product authoring; coordination artifacts only (Ruling 107) |
-| **Last updated** | 2026-09-15 (14:50Z) |
+| **Last updated** | 2026-09-15 (15:25Z) |
 
 ## Doing right now
 
@@ -22,10 +22,11 @@ reaches the conductor within one poll; answers come back as `request-resolve` li
 answer is a contract, as sections in `docs/collaboration/session-contracts.md` (§10 today) and
 rulings in `docs/notes/addendum-c-council-rulings.md` (**106–114 filed**).
 
-**Landing now (announced, Ruling 107):** §10 + the §2:165 path cell (`ProseView.cs`, Ruling 114),
-Rulings 106–114, the `tools/merge-append-only-log.py` repair (+ `--self-test`), this file, one audit
-entry. Joined in the primary with `conductor-join.py --docs-only`; the primary's dirty ledgers are
-committed first as their own change, never discarded.
+**Landed on `main` at `663c3a80` (15:03Z):** §10, the §2:165 path cell (`ProseView.cs`, Ruling 114),
+Rulings 106–114, the `tools/merge-append-only-log.py` repair (+ `--self-test`). **Next join
+(announced):** `tools/verify-stranded-audit.py` fix (it read its own tree's `.agents/log`, so from a
+linked worktree every registered session was "nobody live" — `553bb9bc` on `conductor/watch-0915`)
+and Ruling 115 (the Atlas A–E carve-outs), when the Owner returns it.
 
 **`main` is RED** since 2026-09-12 (issue #13; 13 tests at `bab5035e`, named in Ruling 112). Every
 candidate today lands under Ruling 112 (1): no failure outside that set, none of the set lost.

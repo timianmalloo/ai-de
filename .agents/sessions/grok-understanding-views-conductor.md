@@ -8,19 +8,19 @@
 | **Session id** | `grok-understanding-views-conductor` |
 | **Worktree** | `C:/Projects/ai-de-understanding-views` |
 | **Branch** | `understanding-views` |
-| **Based on** | `962ad56e` (N4 T5c pin); N4 pass note this turn |
-| **Status** | N5 proposed (ADR-0038 @ 46160f21) — N6 council in flight |
+| **Based on** | `b3b3aef4` (join of ADR-0038; gates not green) |
+| **Status** | Join recount in flight; N7 spike dispatched |
 | **Last updated** | 2026-09-15 |
 
 ## Doing right now
 
-N4 PASS committed (`cb868bce`). N5 dispatched in `C:/Projects/ai-de-understanding-views-architecture`.
+Stopped after N6 PASS + merge of `understanding-views-architecture`. `conductor-join.py --docs-only` committed then failed step 8: `verify-test-run` / terminal-host gates need .trx that `--docs-only` skipped generating.
 
 ## Waiting on
 
 | From | What |
 |---|---|
-| **architecture** | N5 ADR + architecture amendment for D-0 kind + census query |
+| **Next conductor pass** | Recount or `--continue` after tests; then N7 toolkit spike |
 
 ## To peers
 
