@@ -13,6 +13,88 @@ summary: "Executed author red/green and five real-helper mutation controls for a
 
 # G4 harness diagnostic repair
 
+## Superseding scanner correction after independent BLOCK
+
+Independent Astra review **BLOCKED** scanner `f43ff83c`: file-wide EDI recognition
+allowed a healthy method to exempt a separate unguarded wrapper. The earlier
+passing self-test did not cover that correlation boundary. The production helper
+and its four passing tests/five rejected source mutations below are unchanged.
+
+The reviewer supplied this exact lexical probe:
+
+```csharp
+private static void Healthy(Exception failure) {
+    if (failure is Xunit.Sdk.XunitException)
+        System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(failure).Throw();
+    throw new InvalidOperationException("retained", failure);
+}
+private static void Broken(Exception unrelated) {
+    throw new InvalidOperationException("broken wrapper", unrelated);
+}
+```
+
+Executed replay of that probe against frozen and corrected scanners:
+
+```text
+f43ff83: problems=[], wrapped_files=1
+corrected: one diagnostic for tests/MixedEdiTests.cs, wrapped_files=1
+```
+
+The corrected diagnostic is the existing unguarded-wrapper refusal. Exact JSON
+is `C:/Users/malla/AppData/Local/Temp/atlas-edi-correction.json`; the reproducible
+temporary script is `atlas-edi-correction.py` in the same directory. It loads the
+frozen scanner with `git show f43ff83:tools/verify-harness-diagnostics.py`, invokes
+both real `check` functions against the same temporary file, and asserts the
+old acceptance and new single refusal.
+
+Before changing the rule, three new fixtures were observed red:
+
+```text
+verify-harness-diagnostics: SELF-TEST FAILED — scoped EDI verdicts: ['MixedEdiTests.cs', 'UnrelatedCollectionEdiTests.cs', 'UnrelatedOriginalEdiTests.cs']
+```
+
+**Repair:** every wrapper match must independently qualify for the new EDI path.
+The guard must precede that wrapper in the same innermost callable, with no
+intervening reassignment or unrelated statement. The guarded original must be
+the wrapped identifier, or the foreach item from the exact wrapped collection.
+The actual retained-array foreach plus nonempty-array check remains admitted.
+The file-wide EDI presence check no longer exempts a wrapper. Legacy direct
+throw-guard behavior and the existing STA denominator are retained.
+
+Seven additional scoped fixtures cover the exact reviewer probe, separate methods
+using the same parameter spelling, separate healthy-array and broken methods,
+same-method unrelated original/collection, and the two correctly correlated
+original/collection positives. Final self-test therefore has **11 TCS fixtures
+and nine EDI fixtures**. The earlier two-EDI count below describes the blocked
+revision, not this correction.
+
+Final executed commands:
+
+```powershell
+python C:/Users/malla/AppData/Local/Temp/atlas-edi-correction.py
+python tools/verify-harness-diagnostics.py --self-test
+python tools/verify-harness-diagnostics.py
+git diff --check
+```
+
+All exited 0. Self-test reported the exact mixed, same-name mixed, unrelated
+collection and unrelated-original files as planted failures; correlated positive
+fixtures were not reported. Normal output remained:
+
+```text
+verify-harness-diagnostics: 4 file(s) declare an STA thread = 2 wrapping + 0 plain rethrow(s) + 1 original TCS handoff(s) + 1 whose subject is an exception.
+verify-harness-diagnostics: OK — 2 wrapping harness(es), every one rethrows an assertion failure as itself.
+```
+
+Class → sweep → derive → prevent: **DC-104/DC-118** recurrence; a file-wide guard
+presence check widened a callable-local exception contract. Sweep guard location,
+same-spelling parameters and exact wrapped source/collection. Derive an independent
+verdict per wrapper for the new EDI path. Prevent with the observed red fixtures
+and exact frozen-versus-corrected replay, then retained independent re-review.
+This remains a bounded lexical checker, not arbitrary C# control-flow analysis.
+No App rerun was performed or needed for this scanner/proof-only correction.
+Independent re-review remains required; this author does not clear the BLOCK.
+
 ## Goal, authority and boundary
 
 Goal: recognize a valid original-exception TCS handoff and preserve original
