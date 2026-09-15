@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:54:17Z",
+  "generated": "2026-09-15T15:22:35Z",
   "audit": [
     {
       "actor": null,
@@ -16765,6 +16765,66 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T14:54:16Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2JTK3CZCP84DYMZMEDV0HYS",
+      "shortname": "n7-d0-tree-toolkit",
+      "datetime": "2026-09-15T15:22:27Z",
+      "session": "understanding-views-spike",
+      "prompt": "N7 spike for AI-DE D-0 Solution tree. Spike Protocol (read AND run). T1. Establish the tree toolkit contract for D-0 so UV-1 can bind to it. ADR-0038 forbade freezing WPF TreeView in architecture; freeze it only if read+run evidence says so. Done when docs/spikes/d0-tree-toolkit/RESULT.md exists and is committed.",
+      "summary": "N7 D-0 tree toolkit spike request",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [
+        "D-0",
+        "spike",
+        "N7"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2JTK3G3M92P2TQ23H5P7249",
+      "shortname": "n7-d0-tree-toolkit",
+      "datetime": "2026-09-15T15:22:27Z",
+      "session": "understanding-views-spike",
+      "prompt": "N7 spike for AI-DE D-0 Solution tree. Spike Protocol (read AND run). T1. Establish the tree toolkit contract for D-0 so UV-1 can bind to it. ADR-0038 forbade freezing WPF TreeView in architecture; freeze it only if read+run evidence says so. Done when docs/spikes/d0-tree-toolkit/RESULT.md exists and is committed.",
+      "summary": "N7 Spike Protocol froze WPF TreeView as the D-0 toolkit. Read+run on installed PresentationFramework 10.0.0.0 / .NET 10.0.11: opt-in recycling virtualization (18/400 realized), UIA Tree/TreeItem with AutomationProperties.Name kind+coverage, 28px header content (Height=28 clips children), unindexed leaf Hidden expander + LeafNode (double-click still sets IsExpanded), PreviewKeyDown for Enter/Ctrl+Enter. VM nests the flat DTO under census-folders present in the DTO; no path-split. ListView/ItemsControl and WebView2 HTML trees rejected. PoC throwaway at spikes/d0-tree-toolkit/. No src/ product.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/spikes/d0-tree-toolkit/RESULT.md",
+        "spikes/d0-tree-toolkit/RESULT-raw.txt",
+        "spikes/d0-tree-toolkit/Program.cs"
+      ],
+      "tags": [
+        "D-0",
+        "spike",
+        "N7",
+        "TreeView"
+      ],
+      "outcome": "success",
+      "goal": "Establish the D-0 tree toolkit contract so UV-1 can bind to it.",
+      "done_when": "docs/spikes/d0-tree-toolkit/RESULT.md exists (findings, Verified/Inferred/Flagged, chosen option + rejected, PoC disposal) and is committed on this branch.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T15:10:04Z",
+      "duration_seconds": 743.0,
+      "git": {
+        "sha": "b3b3aef4ac3528a1586e3308fdd43d1a9136c4ee",
+        "short": "b3b3aef4a",
+        "branch": "understanding-views-spike",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -20588,6 +20648,34 @@ window.AUDIT_DATA = {
         "pushed": null,
         "commits": []
       }
+    },
+    {
+      "id": "cl-01M2JTKBA9ZV89MT62C05N2VMG",
+      "datetime": "2026-09-15T15:22:35Z",
+      "session": "understanding-views-spike",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "N7 freeze WPF TreeView as D-0 toolkit",
+      "prompt": "N7 spike for AI-DE D-0 Solution tree. Spike Protocol (read AND run). T1. Establish the tree toolkit contract for D-0 so UV-1 can bind to it. ADR-0038 forbade freezing WPF TreeView in architecture; freeze it only if read+run evidence says so. Done when docs/spikes/d0-tree-toolkit/RESULT.md exists and is committed.",
+      "summary": "N7 Spike Protocol froze WPF TreeView as the D-0 toolkit. Read+run on installed PresentationFramework 10.0.0.0 / .NET 10.0.11: opt-in recycling virtualization (18/400 realized), UIA Tree/TreeItem with AutomationProperties.Name kind+coverage, 28px header content (Height=28 clips children), unindexed leaf Hidden expander + LeafNode (double-click still sets IsExpanded), PreviewKeyDown for Enter/Ctrl+Enter. VM nests the flat DTO under census-folders present in the DTO; no path-split. ListView/ItemsControl and WebView2 HTML trees rejected. PoC throwaway at spikes/d0-tree-toolkit/. No src/ product.",
+      "rationale": "ADR-0038 left the control unfrozen. Installed WPF TreeView met UIA Tree/TreeItem, 28px header hit, arrows, Enter bubbling, opt-in virtualization, and unindexed LeafNode. ListView/ItemsControl fail TreeItem role. WebView2 is the wrong host.",
+      "artifacts": [
+        "docs/spikes/d0-tree-toolkit/RESULT.md",
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md"
+      ],
+      "tags": [
+        "D-0",
+        "N7",
+        "TreeView"
+      ],
+      "git": {
+        "before": "b3b3aef4",
+        "after": "b3b3aef4ac3528a1586e3308fdd43d1a9136c4ee",
+        "branch": "understanding-views-spike",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M2JTK3G3M92P2TQ23H5P7249"
     }
   ]
 };
