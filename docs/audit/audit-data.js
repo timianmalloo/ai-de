@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:11:47Z",
+  "generated": "2026-09-15T20:37:41Z",
   "audit": [
     {
       "actor": null,
@@ -18382,6 +18382,36 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "started_at": "2026-09-15T20:01:50Z",
       "duration_seconds": 596.0
+    },
+    {
+      "id": "al-01M2KCGZ7GBZ3CJKXX3V59JYA8",
+      "shortname": "investigate-atlas-behavior-contract",
+      "datetime": "2026-09-15T20:35:52Z",
+      "session": "codex-atlas-e1-behavior",
+      "prompt": "Bounded E1 spike repair/evidence task, replacing stalled Sol author. User explicitly asks right-sized subagents; stronger model for Roslyn contract diagnosis. Worktree C:/Projects/ai-de-atlas-behavior-views, branch atlas/behavior-views. Session codex-atlas-e1-behavior, agent codex-sol-e1 (existing lane identity; do not create another tree/EnterWorktree). Root Conductor owns programme, separate Astra Owner decisions. Read AGENTS applicable and exact spike files; do not re-ground whole programme. Core Ruling121 grants only spikes/atlas-behavior-contract/{AtlasBehaviorContractSpike.csproj,Program.cs,RESULT.md}, docs/proof/atlas-behavior-contract.md plus mandated audit/derived. No src/tests/solution/dependency changes. Existing untracked Program and csproj built net10 with centrally pinned Roslyn4.14. Prior runs failed reflection BEFORE fixtures. Known exact fix: PrintSignatures GetSymbolInfo currently uses typeof(Microsoft.CodeAnalysis.CSharpExtensions), installed XML shows Microsoft.CodeAnalysis.CSharp.CSharpExtensions, ExpressionSyntax second parameter. GetDeclaredSymbol now corrected to latter namespace BaseMethodDeclarationSyntax. Verify installed XML, repair all actual preflight mismatches, run six synthetic fixture groups. Never emit/execute analyzed code. Do not remove preflight to hide failure. coord script exactly docs/ai-forward-pack/scripts/coord-core.py (NOT tools/...), use exact leases with existing env. All previous leases released. Last workers consumed excessive calls correcting one matcher at a time and stopped. Objective now complete bounded spike including honest RESULTS/proof/audit/commit if feasible. Budget 18 tools/15min, checkpoint at14, not multiple 8-call retries. Six groups repeat/recursive, overload, unknown/dynamic, branch+loop, await/cancel/throw, malformed/unsupported. Actual negative-first oracles required, no invented pass. Installed loop may expose real fixture defects; diagnose observed failures via repo investigate. Read workflow definitions as needed, do not redo all broad grounding. Root handles Linux, project coverage, independent review. Report actual outputs, exact commit, limitations; author never clears own gates. Audit design-slice marker may be open, inspect; capture earlier reflection and tool-path failures as contract-discovery/plan defects, do not fabricate duration. Conductor can supply any exact evidence rather than research more.",
+      "summary": "Observed old GetSymbolInfo preflight fail before fixtures; verified installed XML; repaired owner and actual SourceText parser preflight. Six synthetic groups complete and three negative-first controls observed. Full stdout and limitations recorded; author acceptance and Linux/project coverage remain separate. Marker20:32:12Z began after diagnosis; measured duration covers only remainder. Prior author failures attributed, not independently reproduced. Shared register class reconciliation deferred to Conductor due exact grant.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "spikes/atlas-behavior-contract/RESULT.md",
+        "docs/proof/atlas-behavior-contract.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Complete bounded Roslyn contract spike and evidence without production edits.",
+      "done_when": "Six fixture groups observed, honest result and proof recorded, allowed files committed for independent review.",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-09-15T20:32:12Z",
+      "duration_seconds": 220.0,
+      "git": {
+        "sha": "755d03474a2bd9c16083d0bb5dee076548114c93",
+        "short": "755d03474",
+        "branch": "atlas/behavior-views",
+        "pushed": null
+      }
     }
   ],
   "changes": [

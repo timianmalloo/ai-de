@@ -15419,6 +15419,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "56dcbfeec074ea753ff0b3a0cc893aa0d3623122c7ac156afdce54071768f6fa"
     },
     {
+      "id": "proof-atlas-behavior-contract",
+      "path": "docs/proof/atlas-behavior-contract.md",
+      "title": "Atlas behavior contract spike evidence",
+      "type": "proof-pack",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Author evidence for six synthetic Roslyn contract fixtures, retained negative controls, and explicit limits; independent acceptance pending.",
+      "tags": [
+        "atlas",
+        "e1",
+        "proof",
+        "roslyn"
+      ],
+      "links": [
+        {
+          "to": "design-atlas-behavior-views",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "087d2bf3596e94537a0b40919542102cc4e345955398c3c810c6177932949a1d"
+    },
+    {
       "id": "proof-audit-gate-plan-review",
       "path": "docs/proof/audit-gate-plan-review.md",
       "title": "Independent plan review: audit gate self-test",
@@ -19330,5 +19356,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "4ba76f78b70fe18a17dc827593e9a47850b70f7dd3d914665f35201526e3ffb7"
+  "graphSha256": "47557d859cd928a68b0fe399f18b86347b4241eede3dffac4b19ba3a2db84528"
 };
