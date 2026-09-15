@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T23:42:50Z",
+  "generated": "2026-09-15T16:26:45Z",
   "audit": [
     {
       "actor": null,
@@ -16310,6 +16310,169 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T23:34:34Z",
       "duration_seconds": 495.0
+    },
+    {
+      "id": "al-01M2JP02E3EZSKXFNRAK2QBSYA",
+      "shortname": "two things",
+      "datetime": "2026-09-15T14:02:09Z",
+      "session": "prompt-log",
+      "prompt": "two things\n1: Lets merge and get main up to date with this work\n2: Resume the existing native E1 worktree from its passing 26-test checkpoint and finish candidate qualification\nmake sure we are actively coordinating across sessions I am going to stress test our coordination by running sessions across GHCP, Grok, Claude Code and Codex",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2JRAZDV9YJ5JAENDB935FYQ",
+      "shortname": "atlas-recovery-closing-checkpoint",
+      "datetime": "2026-09-15T14:43:04Z",
+      "session": "copilot-atlas-recovery-b0d0",
+      "prompt": "two things\n1: Lets merge and get main up to date with this work\n2: Resume the existing native E1 worktree from its passing 26-test checkpoint and finish candidate qualification\nmake sure we are actively coordinating across sessions I am going to stress test our coordination by running sessions across GHCP, Grok, Claude Code and Codex",
+      "summary": "Measured closing checkpoint, not completion: direct receipts verified. Original I50/50 blocked, Zone correction unapplied and six unique TRX failures; IRP24 targeted repair active against main663c3a. Original N40/40 blocked, retained26/26 intact; new user-approved ND24 latest report13/24 demonstrates provider-return barrier and darkcontrast reds,1180 unresolved. WPF review6/6. Final Test/Security and native gates remain open. Accepted-I publication separated from later combined-nativeA/R by user clarification. No recovery commit/push/primary product mutation; histories/worktrees preserved. Requests recorded for exact legacygeometry grant and cross-harness seams. Current harness enforcement observed-only. This is not a budget-only task close.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "C:/Users/malla/.copilot/session-state/b0d0c445-0dbc-47cb-8e51-19bfe9427c29/files/atlas-recovery-plan.json",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Merge accepted Atlas into current main and qualify retained native E1 with active coordination",
+      "done_when": "Accepted integration independently reviewed and published with unchanged gates/build and preserved histories; native qualified and separately combined-reviewed before any native publication; exact commits and receipts reported",
+      "tier": "T2",
+      "main_calls": 49,
+      "main_budget": 50,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T14:23:07Z",
+      "duration_seconds": 1197.0,
+      "git": {
+        "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
+        "short": "bab5035e7",
+        "branch": "conductor/atlas-recovery",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JT52GF9MNCMD0AFQ0Y27M9",
+      "shortname": "atlas-recovery-c2-checkpoint",
+      "datetime": "2026-09-15T15:14:47Z",
+      "session": "copilot-atlas-recovery-b0d0",
+      "prompt": "Continue the same user goal: merge accepted Atlas into current main and finish native E1 candidate qualification, using retained writers/reviewers and explicit cross-session coordination.",
+      "summary": "C2 bounded24/24 checkpoint, NOT completion: originalclosing50/50 alreadyreported. CorrectedIcode1252c7e commit/parents/Copilottrailer andsame-mainhelperblob verified; authorizedhost/MainWindow40/40verified. Laterdocs-onlyheade2724fc6 reported, IRPnow23/24 afterresourcehandoff; originalI50/50plusroutingseparate. Main/originlastverified663c3a; currentmainjoin andfiveguardfailuresawait exactB-E counterpartack, no fullrunner/Releaseacceptance. NativeNDfinal24/24 afterold40: targeted5/5, staleactionsemanticmutant1/1red, restored72/73focusfail verified. NewLoadedpaint rejected; arrivalordering corrected honestly, no claimwriterreadandignoredqueuedreview. SameNP6prospectiveallocation, no duplicate6; nextsingleGUI slotgranted afterIexplicitreleaseobserved15:00:15.938Z PID[]. Timestampcomparisons do not support knownIcohort as causeofrecordednativefailures; otherwindowactivityunmeasured. OwnertechnicalA/B-E scopes NONEXECUTABLE without responsiblecurrentsection2ack; requestsremainopen. WPF6/6review, decision-onlyOwnermax6actualnotreturned; finalTest/Security/nativegatesopen. Fourregenobligations earlier weregone byofficialregen/doctorreadback, notmanuallycleared. One later sessionplanpatch failedclosed onwrongcopiedidentifier, madeNOchange; stableidentifier/contextchecks preventedmutation. No recoverypublication/primaryproductmutation/worktreedeletion. Currentgoal remains active behind explicitauthority/proof gates.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "C:/Users/malla/.copilot/session-state/b0d0c445-0dbc-47cb-8e51-19bfe9427c29/files/atlas-recovery-plan.json",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Publish independently accepted Atlas integration and finish retained native E1 qualification without weakening gates",
+      "done_when": "Accepted main and origin pins read back after official join/reviews/build/history preservation; native candidate qualification and any later combined publication meet their independent evidence predicates",
+      "tier": "T2",
+      "main_calls": 24,
+      "main_budget": 24,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T14:46:25Z",
+      "duration_seconds": 1702.0,
+      "git": {
+        "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
+        "short": "bab5035e7",
+        "branch": "conductor/atlas-recovery",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JX1YXF71QQ492097N9JX33",
+      "shortname": "atlas-recovery-c4-checkpoint",
+      "datetime": "2026-09-15T16:05:31Z",
+      "session": "copilot-atlas-recovery-b0d0",
+      "prompt": "Continue the same approved A-E repairs using retained writers, preserve all gates, serialize shown-window verification, merge accepted Atlas and finish native candidate qualification.",
+      "summary": "C4 20/20 partialcheckpoint, notcompletion. R115 A-E/currentCoreDesignACKs read; R116 listenerselector-only amendment andAtlasReaderViewDesignrow confirmed, mainlastread650f7e9e. ICD10source4files14+/14-: unchangedComposer1/1 andPrivacyguardPASS; coupled182/179/3red dueoldlistenerprefix, ICL6authorizedexactfix. BcanonicalArchitecture-onlyrowapplied/buildgreen, IBE9/12reported beforetargetedruntime. ETestdesign6callsBLOCK solelymissingregistrypermission; explicitE-onlyfailclosedhook/site-to-executed-production-probe obligationregistry allowed, notexemption. ERE2 scopedverdictpending; EIM16afterPASS includesrealLoaded/Unloadedstimulus, actualquerytoken/cancellation/drain/disposalobservations andsameoraclefaultcontrols. NA10geometrydefectverifiedred1/1failcommit481676ab beforefixdf4ad289 andgreen1/1PASS CompletedtrueFailureCount0; originalassertionspreserved, noCore/MainWindowproductedit. Nreleaseddesktop, IgrantedtargetedB/Eoneannouncedrunatatime. NP6earlierrunnotserialized-slotproof; old1180/focusuncertaintiesremain. Regenerationtargetsourceestablished: coordrepo_rootreturnsprimary andcmd_regenusesprimarycwd; ownI --checkPASS746audit/165change, so noIderivedblock. Correctedearlierwhole-site-derivedstatement: actualregistrykeepssiteHTMLauthored, onlyfiguresderived. No coordtool/manifestrepairallocated. Integrationnewmainjoin/fullgates/Release/finalreviews/publishandnativefinalqualificationremainOPEN. No recoverymainpush; worktrees/rawreceiptsretained.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "C:/Users/malla/.copilot/session-state/b0d0c445-0dbc-47cb-8e51-19bfe9427c29/files/atlas-recovery-plan.json",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Converge acknowledged repairs into accepted Atlas integration and qualified native candidate",
+      "done_when": "Required repaired commits, unchanged integrated gates, independent reviews, Release build, preserved histories and exact main/origin publication receipt; native remaining predicates and combined review satisfied before any publication",
+      "tier": "T2",
+      "main_calls": 20,
+      "main_budget": 20,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T15:43:05Z",
+      "duration_seconds": 1346.0,
+      "git": {
+        "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
+        "short": "bab5035e7",
+        "branch": "conductor/atlas-recovery",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JY8SS1JBJKXB6VCWE3055T",
+      "shortname": "atlas-recovery-c5-checkpoint",
+      "datetime": "2026-09-15T16:26:44Z",
+      "session": "copilot-atlas-recovery-b0d0",
+      "prompt": "Continue final delivery with existing workers; independently review E, finish native scoped faults and captures without useless image retries, then qualify and publish under unchanged gates.",
+      "summary": "C5 20/20 partialcheckpoint. VerifiedC/Dlistenerf4b2668d unchangedComposer/Privacyguard sources with1/1+182/182, Baf9a0eea exact2/2. EIM16 actualuncommittedEfileSHAE0DFBFBFA6C51C1ABC74B96D6D9E38BE642A86A3242EAE951105A338FA3D19FF frozenforretainedTest8callcodeacceptance; rawsemanticcoverage16/17,setuperror16/17 andgreen17/17read. Authorprovidedprecisequerycount/eventorder/finallycleanup/paint/oraclegaps; no selfclearance. NativeNQ18at12/18waitingmessagewasstalehold; sameNdesktopgrantreconfirmedafterIrelease16:17:22.931, sixremainingcalls directfault/restoration/finalcohort notimageviewretries. Backmodenonshownsemanticredrestoredreceipt reported, otheroraclesremain. UserrequestsseparateindependentUX/WPFcapturecontext; exactsixcapture/immutablecommit/hash/viewportpacket saved sessionfiles/atlas-native-render-review.json, pendingfreeglobalagentcapacity (closer+Test+Security+N=4). RetainedSecurity6callR112baseline-refusaladjudicationactive, finalintegrationvetoopen. No newimplementationtrack/fullcohort/mainjoin/recoverypush; receiptsandworktreesretained. AwaitsubstantiveE/N/securityresults, noacknowledgment-onlyworkerreplays requested.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "C:/Users/malla/.copilot/session-state/b0d0c445-0dbc-47cb-8e51-19bfe9427c29/files/atlas-native-render-review.json",
+        "C:/Users/malla/.copilot/session-state/b0d0c445-0dbc-47cb-8e51-19bfe9427c29/files/atlas-recovery-plan.json"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Finish E and native qualification, then independently qualify current-main integration for guarded publication",
+      "done_when": "All required repaired-source, rendered, mutation, integrated-runner, independent-review and pre-push Release predicates proven; preserved histories and actual local/remote main receipt returned",
+      "tier": "T2",
+      "main_calls": 20,
+      "main_budget": 20,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T16:07:14Z",
+      "duration_seconds": 1170.0,
+      "git": {
+        "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
+        "short": "bab5035e7",
+        "branch": "conductor/atlas-recovery",
+        "pushed": null
+      }
     }
   ],
   "changes": [
