@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T16:26:45Z",
+  "generated": "2026-09-15T17:14:50Z",
   "audit": [
     {
       "actor": null,
@@ -16470,6 +16470,43 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
         "short": "bab5035e7",
+        "branch": "conductor/atlas-recovery",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K10VCR46MWZB1VSVR41KHC",
+      "shortname": "atlas-recovery-c7-checkpoint",
+      "datetime": "2026-09-15T17:14:49Z",
+      "session": "copilot-atlas-recovery-b0d0",
+      "prompt": "Continue the existing closing coordination through precise E/native controls and baseline scope adjudication; preserve history and do not self-clear final gates.",
+      "summary": "C7 16/16 partialcheckpoint. SecuritySC4 scopedPASS R112i forrecordedWindows-onlyv1: ADR0008 andApp/Daemontargets checked, portable-hostresidual retained, noLinuxsafeclaim/finalIclearance. E ER18preparation15semanticreds/22 then22green verified; production30/31overbroadinventorycachepredicate resolvedBC2TestPASS toinactiveactionablepresentation+exactfresh/latepathmarkers, no productcachewipe. RepairedEcommit92d7b316/source799C4508094576088C9EBD3FB40168052F1D74C40F48ED6318D878DA8F17CD7C andfresh31/31verified; retainedTestER6reviewactive. Unexpectedparent74d81a inspected:auditline+derivedviewONLY, no product/test; neithercloser norI issuedit, actorunverified, attributioncorrectionshared. NativeNM12 finite3caseharness/offpage1red1green/exactrestorationverified, twoGUIcasespending; existing6remaining receivesdesktop afterI31runPID30732 end17:04:50.621990Z/release, no new12. Freshfinal1131180classcaptureACTUALLYviewedandcorroboratesrequiredlimitationclipping, MajorboundedrenderBLOCK; no rootcauseinvented. No newmainjoin/fullrunner/Release/finalI/nativequalification/push. Currentrawreceipts/worktreesretained; actualgatesremainopen.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "C:/Users/malla/.copilot/session-state/b0d0c445-0dbc-47cb-8e51-19bfe9427c29/files/atlas-recovery-plan.json",
+        "C:/Users/malla/.copilot/session-state/b0d0c445-0dbc-47cb-8e51-19bfe9427c29/files/atlas-native-render-review.json"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Finish acknowledged repairs and independent qualification, then safely publish accepted Atlas",
+      "done_when": "Exact current-main integrated source passes unchanged gates/reviews/Release with primaryhistorypreserved and remote/localrefreadback; native required controls/rendered/combinedacceptance complete",
+      "tier": "T2",
+      "main_calls": 16,
+      "main_budget": 16,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T16:51:15Z",
+      "duration_seconds": 1414.0,
+      "git": {
+        "sha": "01ce71dcee31dbc8eedab18dd4691909b46b8f36",
+        "short": "01ce71dce",
         "branch": "conductor/atlas-recovery",
         "pushed": null
       }
