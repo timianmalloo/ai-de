@@ -1252,6 +1252,25 @@ path budget, process/diagnostic cleanup, ordinary invocation and actual role
 coverage. Additional tracked build/project/content-copy seams return before edits.
 Conductor remains capped at 740; no Core join or native/UI/main/push acceptance.
 
+Owner turn 84 raises Conductor prospectively to 780 cumulative leaves for
+fixture-gate closure, conditional integration and the next native-slice decision.
+No canonical-pair, commit or source-join approval follows from that allowance.
+
+Owner turn 85 grants four new fixture-author leaves for reciprocal-overlap
+preflight and its negative control, then two new Security readback leaves.
+The prior two unused leaves are not transferred. Claim the existing materializer
+path; add separator-aware output-inside-execution rejection alongside equality,
+execution-inside-output and reparse checks. A fresh reciprocal case must refuse
+before either root or build/preparation output exists. Preserve the earlier
+late-refusal run.
+
+Recheck hostile cases against the revised script hash, with valid preceding
+authorization/input-hash prerequisites and actual structural guard errors.
+Freeze the updated five-file hashes, preserve Core/peer/source provenance and
+the QualificationOnly status, and obtain actual Security disposition. Normal
+expected-pair approval, fixture commit and Core/accessor/fixture joins remain
+separate decisions. Parent ordinary replay remains required; no native/main grant.
+
 ### Core owns
 
 | Path | Why |

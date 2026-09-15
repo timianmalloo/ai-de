@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T02:42:51Z",
+  "generated": "2026-09-15T03:20:43Z",
   "audit": [
     {
       "actor": null,
@@ -17051,6 +17051,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "1ea80c0d06311cb8cb69743b611f5179c62169c8",
         "short": "1ea80c0d0",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HH9H6ZXW0049C8DCRCNSRR",
+      "shortname": "atlas-owner85-reciprocal-preflight-close",
+      "datetime": "2026-09-15T03:20:42Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner84main780; Owner85new4authorleavessame5files+2Securityreads, oldunused2nottransferred. Actualparentunfixedreciprocalcaseexit1afterbothroots/buildcreated; noescapeclaim. Parentoldhostilearchives/manifest/patchhashesmatch,current253Fscriptmatches, actualstderrstructuralguards—notprereqhashfailures. RawZIPnamespreservedseparatelyfromPythonnormalizedview. Revisedscriptmustrejectreciprocalpreflight andfreshneither-root-created; recheckhostilecasesnewscriptwithoutoverwritingoldlogs. PairED7F/8E95QualificationOnly andCore/testsunchanged; no approval/commit/sourcejoin/nativeUI. Test/SREcandidate-treeclearance retainsuncommitted-input/no-cleancloneboundary; Securitycurrentvetoexplicit.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-e1-core-metadata.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close the precise reciprocal preflight and guard-evidence delivery predicates",
+      "done_when": "Revised script refuses before creating either root and Security reads guard-specific current-hash evidence",
+      "tier": "T2",
+      "main_calls": 750,
+      "main_budget": 780,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T03:20:42Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "5c9565038caf266966dd32a23071ab4581852266",
+        "short": "5c9565038",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
