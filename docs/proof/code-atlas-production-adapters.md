@@ -751,3 +751,61 @@ unchanged mint/privacy guards, not just the earlier narrower 182-case selection.
 native retains the desktop. Fresh counts, semantic outcomes, protected-source hashes and any
 commit are recorded in the closing audit/raw IAL receipt. No whole cohort, GUI, newer-main join,
 gate change, dependency change, final review clearance or publication is part of this repair.
+
+## IQV16 - repaired Core is green; real-window UIA proof blocks qualification
+
+Fresh main `e8611df54d583fb2c965cd30c5a82c3ed9c03b37` was actually merged, not assumed to be
+the previous main. Merge `c4d7b2f466790cc0525dba596e951f327df16674` has parents that main and
+the completed listener repair `c2603ecc78e8ca2e25f8b8994cb54f6bf29d07bc`. Only three authored
+site figure blocks conflicted; prose was preserved and figures regenerated. Source/test files
+are unchanged by this main merge. Official content union retained 826 audit entries and 165
+change entries, with full-content multiplicity/upstream-identity checks; raw reissue mappings
+are in `IJ/union-1789499391489249300/`.
+
+The unchanged official no-push join continuation ran all configured whole/split recounts and
+the closing outcome check once:
+
+| receipt | total | executed | passed | failed | not executed |
+|---|---:|---:|---:|---:|---:|
+| App | 1133 | 1133 | 1132 | 1 | 0 |
+| Core, whole | 3162 | 3161 | 3161 | 0 | 1 |
+| Core, portable | 2818 | 2817 | 2817 | 0 | 1 |
+| Core, nonportable | 344 | 344 | 344 | 0 | 0 |
+
+The Core skip is the already recorded file-symlink privilege case. No filter, test, assertion
+or floor was weakened. The three prior admission-observer failures are absent from this fresh
+whole-Core and portable run. Split rows remain subsets, not additional tests.
+
+**Exact remaining failure:** App
+`AtlasDaemonMainWindowProofTests.MainWindow_RealDaemonReplacement_AcknowledgesHealthyReleaseAndPreservesBorrowedClient`
+fails `Assert.NotNull(element)` in `ObserveAutomationAsync`, line413, called at line200.
+The MTA lookup searches descendants of the proof-owned HWND for each of five names:
+`Atlas files`, `Atlas member outline`, `Atlas source page read-only`,
+`Atlas pagination and bounds`, and `Back to restored Atlas receipt`.
+The assertion does not record which requested name was missing, and `uia.own-hwnd` is written
+only after all five succeed. The missing name and the cause therefore remain **unverified**;
+no focus/contention/timing/geometry cause is asserted.
+
+The owned real-window receipt is
+`artifacts/atlas-real-daemon-window-proof/atlas-iqv16-1789499494939232200/receipt.json`.
+It records `Completed: false`, `FailureCount: 4`, plus a retained
+`mainwindow-member-normal-default.png`. This is not a successful replacement/Back/cleanup
+journey. The raw record preserves primary/cleanup distinctions; inspected cleanup events include
+`first.daemon-forced-cleanup` and `replacement.daemon-forced-cleanup`, both recording
+InvalidOperationException and message hash
+`945D6D82FFB73B1DF1636251CB6BE9384FB9E76622353D329B7B35375995106A`.
+Those cleanup records are not silently dropped behind the single xUnit failure.
+
+`verify-test-run.py --no-run` returned **1**; official join returned **4 at recount**. The full
+gate runner and configured prepublication Release build were **not reached**. No Release hash,
+final acceptance or publication permission can be inferred from the green Core receipts.
+No cohort retry, additional test/product edit, new GUI run or native-delta application followed
+this failure. A bounded next diagnosis must first identify the missing named UIA element from
+this exact proof HWND, preserving the assertions and the primary/cleanup evidence.
+
+Raw join-level command JSON, `join-result.json`, and all four copied TRX files are in
+`.artifacts/atlas-main-integration/IQV/atlas-iqv16-1789499494939232200/`.
+Actual official-join host PID34192 ran `2026-09-15T19:11:34.997049Z` to
+`2026-09-15T19:23:02.549597Z`, exit4; shared start/end-release requests are
+`req-01M2K7PMM1RSQVR4Q1F060NAFT` and `req-01M2K8BM23CJ5FM0BY4RR8ENRF`.
+No main/ref movement was observed during qualification; desktop released.

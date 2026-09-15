@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T19:09:53Z",
+  "generated": "2026-09-15T19:33:26Z",
   "audit": [
     {
       "actor": null,
@@ -21441,6 +21441,37 @@ window.AUDIT_DATA = {
       "supersedes": "al-01M2K151CMPGVH9GDD51JHVA7Y",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M2K8YM9DZBYK78ZT02JT6PRZ",
+      "shortname": "atlas-iqv-uia-proof-blocked",
+      "datetime": "2026-09-15T19:33:25Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "IQV16 actualfreshmainjoin, unchangedwhole/splitrecounts/outcome/allgates/Release with no push; stoponce onnewfailure andpreserverawreceipts.",
+      "summary": "Mergedmaine8611df5 with repairedIc2603ecc atc4d7b2f4;3figure-onlyconflicts,prosepreserved,source/testsunchanged. Officialledgerunion826audit/165change retainedcontentmultiplicity/upstreamidentity. WholeCore3161/3161PASS with1filesymlinkskip; portable2817/2817PASS withsame1skip; nonportable344/344PASS. App1132/1133,oneAtlasDaemonMainWindowProofTests realwindowfailure: UIAroot.FindFirst returnednull atObserveAutomationAsync413/caller200. Whichof5namedcontrolsmissingnotrecorded; no causeasserted. OwnedwindowreceiptCompletedfalse/FailureCount4 includescleanupfailures. Closing--no-runexit1;officialjoinexit4atrecoun t;allgatesandReleaseNOTreached. No retry,test/productedit,nativeapply,mainmutation,push. HostPID34192 start19:11:34.997049Z end19:23:02.549597Z,desktopreleased. RawIQV/atlas-iqv16-1789499494939232200 holdsall4TRXs/fullcommandJSON; actualwindowreceipt inartifacts/atlas-real-daemon-window-proof/samelabel. Finalreview/publicationblocked.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Qualify repaired accepted Atlas with current main before publication",
+      "done_when": "Unchanged full outcomes/gates/Release pass or exact measured blocker is returned",
+      "tier": "T2",
+      "main_calls": 14,
+      "main_budget": 16,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T19:03:46Z",
+      "duration_seconds": 1779.0
     }
   ],
   "changes": [

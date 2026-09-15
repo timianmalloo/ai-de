@@ -11870,7 +11870,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "efb5491d79bfa569e4ce27f9ef56d2cfb34cb88a3e00fffe73ecd3b95bf3d345"
+      "sourceSha256": "d336b93309ba4debceeb42d7d247a301c00ebd611cdba47a26ffc3441f119702"
     },
     {
       "id": "proof-code-atlas-real-daemon-mainwindow",
@@ -21346,5 +21346,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a71d5c28c6a1086b91d2bbf4eb23892e4e615eb6cb8b379fe7eecc36d39c6d62"
+  "graphSha256": "3a15f7f256ebafca6f0984de1ca77fe509347a44c4ff4c95374ba0a59c8aad2c"
 };
