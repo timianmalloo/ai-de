@@ -711,3 +711,140 @@ change, smaller viewport or weaker readability threshold is permitted.
 This evidence section is committed **before** that coordinate-only repair.
 The raw receipts remain unstaged, and the original 26-case/NP6/mutation evidence
 and backups remain untouched. This red checkpoint is not qualification.
+
+## NQ18 bounded qualification checkpoint — 113/113, residual gates open
+
+NQ18 started at `2026-09-15T16:19:34Z` with 18 prospective calls, separate
+from earlier allocations. It did not restart NA or rerun its accepted
+coordinate-frame repair. The starting pin was
+`df4ad2892fd6b6b98642373a8b9d04e1bd34a994`.
+
+### Single-fault proof, with source and binary restoration
+
+The only permanent code change is one additional token equality assertion in
+`FarMember_UsesIssuedGlobalUtf16Window`, checking the actual issued declaration
+token passed to the request. No expected value was relaxed and no product
+repair was made.
+
+| Control | Single fault and failing assertion | Evidence |
+|---|---|---|
+| Back mode | Force `GoBackAsync` to set Class instead of the saved mode; expected Source, actual Class at `AtlasStaticViewTests.cs:153` | `nq18-back-mode-red.trx`: 1/1 failed; restored `nq18-back-mode-restored.trx`: 1/1 passed |
+| Token routing | Replace only `ReaderRequest`'s declaration token argument with null; expected `"far"`, actual null at `AtlasStaticViewTests.cs:193` | `nq18-token-route-red.trx`: 1/1 failed; same assertion passes in final 113-case run |
+
+The exact selected tests and `AtlasStaticTestHost.RunAsync` were opened before
+running them while integration held the desktop: they construct an STA
+dispatcher and reader, **not a Window, shown surface, daemon or UIA client**.
+Both mutations were restored in `finally` from separate complete backups.
+Reader SHA-256 after each restore:
+`48408746563FAB04AFB62D0C86E9EEFAAF2AE4AF337A8C75DE5A4654824BD187`.
+Each trusted subsequent green followed a non-incremental test-project rebuild.
+No mutant was retained across the desktop wait.
+
+The earlier meaningful offset, duplicate-name/direct-parent and stale-action
+mutation receipts remain reusable evidence. They are not relabelled historical
+TDD or counted as new NQ18 executions.
+**Back-page, Back-focus and off-page-parent single-fault discrimination remain
+unexecuted.** Passing real journeys cover their assertions, but do not fill
+those requested mutation gaps. No mutation score or complete fault coverage is
+claimed.
+
+### One predeclared final scoped run
+
+After the integrator's explicit release and closer's grant, NQ18 ran exactly one
+restored native/reader/shared-host/legacy cohort:
+
+```text
+FullyQualifiedName~AtlasReader|FullyQualifiedName~AtlasStatic|
+FullyQualifiedName~AtlasSharedHostAdmission|FullyQualifiedName~AtlasDaemonMainWindowProof
+```
+
+The prior 111-case selection plus two added tests produced **113 executed,
+113 passed, zero failed/errors/skipped/timeouts/aborts**. This is a native scoped
+cohort, not the whole application suite or a new-main combined-tree gate.
+The actual legacy receipt also reports `Completed=true`, `FailureCount=0`.
+Explicit daemon and test-project non-incremental builds passed with zero
+warnings/errors. No retry-to-green occurred.
+
+- Raw TRX: `.artifacts/atlas-e1/nq18-final-scoped.trx`.
+- All 113 full test names, outcomes, start/end/duration and error fields:
+  `.artifacts/atlas-e1/nq18-final-named-results.json`.
+- Full stdout/stderr: `nq18-final.stdout.txt`, `nq18-final.stderr.txt`.
+- Run, source/binary hashes and exact process observations:
+  `nq18-final-run.json`; native state/focus/paint/capture observations:
+  `nq18-final-observations.json`, under the same artifact directory.
+- Legacy raw receipt:
+  `artifacts/atlas-real-daemon-window-proof/nq18-final-aec9f149bd894c818472dd56b81ef513/receipt.json`.
+
+Actual dotnet runner PID **31464**, start
+`2026-09-15T16:24:42.4671421Z`, end `2026-09-15T16:25:32.3295201Z`, exit 0.
+Shared start/end request `req-01M2JY52RW7C6XPZA2528RK0XR` was resolved with
+desktop release. Actual runtime PIDs decoded from receipts were
+`3796,16396,26376,27876,28192,34660`; all were absent at run completion.
+The closer's observed integration runner ended at `16:17:22.931Z`, before this
+run. This proves the announced I/N sequencing, not an OS desktop lock or
+exclusion of human/other-harness activity.
+Historical 1180 lookup and 1440 focus causes remain unknown: a controlled
+green is not retroactive causality.
+
+### Actual versus unavailable image inspection
+
+Six NP6 class/far-source captures were requested one at a time. Five tool
+responses did not supply pixels because of their image limit. **Only this NP6
+1440-DIP far-source image was actually supplied and inspected in NQ18:**
+
+`native-1440-20260915145916531-3e90b547901d4ea29196bfcc0351f0b9/far-source.png`,
+relative to `.artifacts/atlas-e1/`, SHA-256
+`773A93D571F103C84A7F8C6148C8CCB344FC155A8396141BE8456DD5BF89B963`.
+The M140 source line, selected identifier highlight, selected outline occurrence
+and page/bounds disclosure are visible. This image predates the NQ18 final run.
+
+The other five requested NP6 images are **not** claimed visually inspected.
+Their capture hashes were read from receipts, not substituted for pixels.
+The final run generated fresh native class/far-source images and local 15-DIP
+hard-state images in:
+
+- `native-1180-20260915162520364-4e67909d32994c24bc7cfbbb810470de`
+- `native-1280-20260915162507020-b1625a7d5248415ab9b3adf8e7502456`
+- `native-1440-20260915162514096-bcc5007bebaf40289d3f9eea3c8945ed`
+- `states-5b657f98ae7f4ffe9a503ba70200be66`
+
+These directories are under `.artifacts/atlas-e1/`; their image paths/hashes and
+geometry measurements are retained in the raw receipts. **The fresh pixels were
+not independently inspected in NQ18.** The admitted environment remains bounded:
+144 native/WPF DPI, high contrast off, animation on; local 15-DIP font sizing is
+not current OS text-scale evidence. No full E1/hardware/OS-scale acceptance.
+
+### NQ18 hashes and closure limits
+
+| Evidence | SHA-256 |
+|---|---|
+| Back-mode red TRX | `40240528C3A2C8EECEB801CC02A3D40104230B2AEC4CB2E75123BE9E18DB2323` |
+| Back-mode restored TRX | `615DF1D73DAC3CE506DAEECFB8B44C0B8093475F0FA32B56DB543AEA762D7985` |
+| Token-route red TRX | `D589D03E4E82301AF7310254BF6BF21C0E76A7CB674F1B438093BBE04078AAD1` |
+| Final 113-case TRX | `7410171DED6B568C9C7C91557C9F25CD87AA9A92442230885067463C4B92DC20` |
+| Full named results JSON | `3C87445157D30DE7AF19DE33DBD7457A44859E6E9B3CCAF48FC38158680A67F8` |
+| Rebuilt App DLL | `D288AE9DCDA7B73BE6AD4FFB0C4EC90AA8D783FC6B677F9F9EB9518196D14DDC` |
+| Rebuilt App.Tests DLL | `EF7D98F07DE8A897B46F4E5B70437F056E7F58E06ABCA4856F27F771D118F840` |
+
+Back-mode mutant Reader hash:
+`3AB61050F1CE7A2F5BEA722E2AE3DF2118220446C4F0599A535C7B45DD904B05`;
+token-route mutant Reader hash:
+`BFD3B664765293DAB9FED5958386F1B7AE284C9255E920D8C406905B5DAC8C2E`.
+Neither remains in the restored source/binary.
+
+Final working-source hashes (stable across the final run):
+
+| File | SHA-256 |
+|---|---|
+| `AtlasReaderView.cs` | `48408746563FAB04AFB62D0C86E9EEFAAF2AE4AF337A8C75DE5A4654824BD187` |
+| `AtlasStaticView.cs` | `A6BC21418FA00B6BDE95C531DD7F16B38A8168B44522638E678DFC5C7BC31DCA` |
+| `AtlasStaticViewProjection.cs` | `3746CC81D13048AE8292CB1E2A025B9F197EB2A59D58C69BDC450FEF2D995B62` |
+| `AtlasStaticViewTests.cs` | `768B0FC09C54FDE9D81C9095806A7B5115FAB3DA41D74EF52B031555DD8B51CE` |
+| `AtlasStaticCompositionTests.cs` | `7C9FC49F1AC2B7A4B1322FE43AED8FF95937E27D153CE186084A876B94C23377` |
+
+NQ18 preserves this evidence as a bounded qualification checkpoint, **not a
+qualified freeze**. The remaining three single-fault controls, unavailable/
+uninspected pixels, historical causes and independent combined A/R plus
+UX/UML/C#/SRE/DS/Security/Owner gates remain explicit. No unproven product repair,
+Core/factory/chrome/dependency change, rebase, main mutation or push occurred.
+Original raw 26-case proof, older reds, mutations and backups remain unstaged.

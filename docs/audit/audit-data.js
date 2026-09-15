@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T15:51:03Z",
+  "generated": "2026-09-15T16:26:56Z",
   "audit": [
     {
       "actor": null,
@@ -17355,6 +17355,36 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T15:46:12Z",
       "duration_seconds": 291.0
+    },
+    {
+      "id": "al-01M2JY953N0SKN2PVSEACFEG9J",
+      "shortname": "atlas-nq18-scoped-proof-incomplete-controls",
+      "datetime": "2026-09-15T16:26:55Z",
+      "session": "atlas-e1-native-class-view",
+      "prompt": "NEW NQ18 PRECISE QUALIFICATION allocation EIGHTEENcalls, samewriter/tree (notrestartNA/NP ornewimplementation), T2 fanout0 context400k. USERrequestsfinishremainingtoken/Backmutants+capturereview+finalnativescopedcohort. Firstcommand supported auditstart --session atlas-e1-native-class-view withidentityinownretainedtree. Currentpin df4ad289; Ared481676ab->df4green VERIFIED bycloser, no redo. DESKTOP I currentlyholdsEIM16; NO Nshownwindow/UIA/realcohort untilexplicitIrelease+closergrant. NonGUIstaticmutations ONLY ifopenedtest/helper provesNOshownwindow, otherwiseDEFER; imageinspectionofexistingcaptures/staticcoverageworkindependent. Boundedworklist: maprequiredoraclestoexacttests/sourcehashes; REUSEunchangedvalidoriginalTDD andposthocoffset/parent/stale-mutantreceipts withoutrelabelling. Fillremaining SINGLE-FAULT tokenroute, Backmode, Backpage, Backfocus andduplicate/offpage gaps. Eachfault mustfailNAMEDsemanticassertion, notsetup/cleanup/compile; sourcebackup/finallyrestore, exacthashmatchANDnonincrementalrestoredbinarybeforetrustingnextgreen. Neverleaveamutantwhilewaitingfordesktop. Tests maystrengthenobservablepreconditions/oracles insideexistingfivefiles; NOunprovenproductfocus/lookuprepair, sleeps,retryuntilgreen,expectedvalueweakening or newfilescope. Ifa mutant survives reportgapandboundedteststrengthening, notsuccess. Inspectactual1180/1280/1440class/farsource captures thatwereNOTvisuallyinspected, oneimagecallatime (no parallelimagebatch); labelold/currenthashes, do notclaimlocal15DIP=currentOSscale. Missingcurrent15DIP/requiredstatecapturecanbecreatedONLYafterdesktopgrant withrestoredcandidate. Keepactual144DPI/HCoff/animationon/currentruntimebounds; nofullE1/hardware/OS-scaleacceptance. Afterallcontrols/restorationanddesktopgrant: ONEpredeclaredfinal scoped native+reader+legacyMainWindow selection matchingpriorexpandedcohort (accountforaddedtests); freshownedATLAS_PROOF_RUN, explicitDaemon/testnonincrementalbuild, exactFULLnamedresults/errors/skips/bytes/binaryhash. No re-run-untilgreen; anyfailure -> exactblocker/source/event/focusstate, no speculativecause. Historical1180/focusuncertainties remainunlessactualdiscriminatorprovescause; controlledgreenisnotretroactivecausality. IforacleworkneedsGUIwhileIholds: END TURNwithboundedreadyworklist/remainingcalls+source-restoredproof, no status-onlyack and no extraallocationrequestbydefault. RootwillhandoffdesktopafterIrelease. At18sendONEsubstantiveresult exactcoverage,red/green/capturepaths,commit/pinifjustified,remaininggaps andcalls. ExistingProof/auditupdated, exact300leasescheck/renewbeforeedits/releasebeforelongtests; artifact/backupsunstaged. NoCore/factory/chrome/deps/rebase/main/push orfinalOwner/Test selfclear. Sourcecorrectnessandboundedqualificationonly; finalcombinedA/R+UX/UML/C#/SRE/DS/Security stillseparate.",
+      "summary": "INCOMPLETE requested fault/visual qualification, not qualified freeze. NQ18 Backmode singlefault Source->Class semanticred atStaticViewTests153, exactrestore/nonincremental1/1green; tokenroute null singlefault expectedfar actualnull at193, one added token equality assertion, exactReaderrestore/nonincremental final113/113zeroerrors/skips. RemainingBackpage/Backfocus/offpage-parentfaults NOTexecuted; reusedolderoffset/directparentduplicate/stalefaultreceipts notrelabeledTDD. Siximagecalls: onlyNP6 1440farsourcepixelsprovided/inspected, fiveimage-limit responses notinspection; freshfinalcaptures/local15DIPgenerated butuninspected. Finalsinglecohort ranAFTERexplicitIrelease/closergrant; PID31464 16:24:42.4671421Z->16:25:32.3295201Z exit0; sixreceiptPIDsallabsent desktopreleased req-01M2JY52RW7C6XPZA2528RK0XR. LegacyCompletedtrue FailureCount0, actualcurrent144DPI/HCoff/animationon. Fullnamed113results/observations/sourcebinaryhashes in.artifacts/atlas-e1/nq18-final-*.json/TRX; TRXSHA7410171DED6B568C9C7C91557C9F25CD87AA9A92442230885067463C4B92DC20. Historical1180/focuscausesunknown; currentgreenNOTretroactivecausality. Finalcohort ran despite remainingunexecutedfaultworklist, so prerequisite completeness NOTclaimed. No productrepair/main/push; boundedtest+existingProof/audit checkpoint only; allfinalindependentgatesopen.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests\\AiDe.App.Tests\\Workbench\\Understanding\\AtlasStaticViewTests.cs",
+        "docs\\proof\\code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Complete remaining native single-fault controls, actual capture review and one final scoped run",
+      "done_when": "Required mutants discriminated and restored, required pixels inspected, one scoped result pinned with all remaining gates explicit",
+      "tier": "T2",
+      "main_calls": 17,
+      "main_budget": 18,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T16:19:34Z",
+      "duration_seconds": 441.0
     }
   ],
   "changes": [

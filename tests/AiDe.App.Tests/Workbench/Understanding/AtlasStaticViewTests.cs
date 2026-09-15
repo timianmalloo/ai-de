@@ -190,6 +190,7 @@ public sealed class AtlasStaticViewTests
         await reader.SelectDeclarationAsync(new OutlineRow("file", AtlasStaticPort.FarRow));
 
         Assert.NotNull(port.LastRequest);
+        Assert.Equal(AtlasStaticPort.FarRow.DeclarationToken, port.LastRequest.DeclarationToken);
         Assert.Equal(40000, port.LastRequest.SourceOffset);
         Assert.Equal(3, port.LastRequest.SourceLength);
         Assert.Null(port.LastRequest.StaticStructure);
