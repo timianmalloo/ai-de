@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T16:08:05Z",
+  "generated": "2026-09-15T16:54:01Z",
   "audit": [
     {
       "actor": null,
@@ -17209,6 +17209,41 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "500cfac9639b5e78ea5aab1322b39ff44c187e78",
         "short": "500cfac96",
+        "branch": "conductor/watch-0915",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JZTQBFSDD9FYGZZB835G3G",
+      "shortname": "conductor-watch-0915-join6",
+      "datetime": "2026-09-15T16:54:00Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "(continuation of al-01M2JP7RMQ: the watch's sixth landing)",
+      "summary": "Ruling 118 filed: v1's supported platform is Windows by recorded authority (ADR-0008:67; App and Daemon net10.0-windows; a census shows no portable process calls the purge or the launcher); the Linux no-throws are residuals with no live instance and a reference-census gate as the tripwire; 112 (i) closed for the Atlas landing with no waiver. Atlas's two Security requests resolved with the citations verbatim.",
+      "kind": "skill",
+      "skill": "conductor-watch",
+      "tool": null,
+      "actor": "claude-conductor",
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "tags": [
+        "coordination",
+        "main-red"
+      ],
+      "outcome": "success",
+      "goal": "Land Ruling 118 (the supported-platform authority that closes 112 (i) for the Atlas landing)",
+      "done_when": "main carries Ruling 118; gates green; pushed; the Atlas requests resolved with the verbatim citations",
+      "tier": "T1",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "9125000d6ad2948f5f63de691f6241d39a174032",
+        "short": "9125000d6",
         "branch": "conductor/watch-0915",
         "pushed": null
       }
