@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:53:53Z",
+  "generated": "2026-09-15T14:54:17Z",
   "audit": [
     {
       "actor": null,
@@ -16465,198 +16465,306 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2HDP2CS1SFN6P9Y6R5WX7FS",
-      "shortname": "understanding-views-owner-n1-disposition",
-      "datetime": "2026-09-15T02:17:38Z",
-      "session": "understanding-views-owner",
-      "prompt": "Owner N1 STOP-BEFORE-N5 disposition",
-      "summary": "Admit query-time Core census; specify may proceed; Python/TS extractor rewrite cut; N5 after N4",
-      "kind": "skill",
-      "skill": "owner",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/notes/understanding-views-owner-n1-disposition.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Dispose N1 STOP-BEFORE-N5",
+      "datetime": "2026-09-15T02:17:38Z",
       "done_when": "Census admitted or refused; specify yes/no",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-09-15T02:17:38Z",
       "duration_seconds": 0.0,
+      "fan_out": 0,
       "git": {
-        "sha": "6ad70a82bc41540c7c0b404ef44ab92c5449692e",
-        "short": "6ad70a82b",
         "branch": "understanding-views-owner",
-        "pushed": null
-      }
+        "pushed": null,
+        "sha": "6ad70a82bc41540c7c0b404ef44ab92c5449692e",
+        "short": "6ad70a82b"
+      },
+      "goal": "Dispose N1 STOP-BEFORE-N5",
+      "id": "al-01M2HDP2CS1SFN6P9Y6R5WX7FS",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Owner N1 STOP-BEFORE-N5 disposition",
+      "session": "understanding-views-owner",
+      "shortname": "understanding-views-owner-n1-disposition",
+      "skill": "owner",
+      "started_at": "2026-09-15T02:17:38Z",
+      "summary": "Admit query-time Core census; specify may proceed; Python/TS extractor rewrite cut; N5 after N4",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2HEBKBNYNV1YKN3CY24N4J7",
-      "shortname": "specify-understanding-views",
+      "actor": null,
+      "artifacts": [
+        "docs/specs/understanding-views.md"
+      ],
       "datetime": "2026-09-15T02:29:24Z",
-      "session": "understanding-views-specify",
-      "prompt": "N3 specify D-0 only",
-      "summary": "D-0 spec Parts A/B/C; US-T3/T4/T5 distinct; D-1-D-6 quoted; ~66/50 overrun",
-      "kind": "skill",
-      "skill": "specify",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/specs/understanding-views.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Specify D-0 only",
       "done_when": "Three layers; grain from Owner N1 disposition; falsifiable Gherkin",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-09-15T02:29:23Z",
       "duration_seconds": 1.0,
+      "fan_out": 0,
       "git": {
+        "branch": "understanding-views-specify",
+        "pushed": null,
         "sha": "d22f056ca3702f3752ec3525ca34d75fa4b00bae",
-        "short": "d22f056ca",
-        "branch": "understanding-views-specify",
-        "pushed": null
-      }
+        "short": "d22f056ca"
+      },
+      "goal": "Specify D-0 only",
+      "id": "al-01M2HEBKBNYNV1YKN3CY24N4J7",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "N3 specify D-0 only",
+      "session": "understanding-views-specify",
+      "shortname": "specify-understanding-views",
+      "skill": "specify",
+      "started_at": "2026-09-15T02:29:23Z",
+      "summary": "D-0 spec Parts A/B/C; US-T3/T4/T5 distinct; D-1-D-6 quoted; ~66/50 overrun",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2HFBT5K8MF3267Y3GR3GSW7",
-      "shortname": "specify-understanding-views-n4-repair",
+      "actor": null,
+      "artifacts": [
+        "docs/specs/understanding-views.md"
+      ],
       "datetime": "2026-09-15T02:47:00Z",
-      "session": "understanding-views-specify",
-      "prompt": "N4 spec repair after BLOCK",
-      "summary": "N4 repair: grain (path,kind); US-T5a/b/c; F*; View source vs Reveal in graph; ~42/40 overrun",
-      "kind": "skill",
-      "skill": "specify",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/specs/understanding-views.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Repair D-0 spec to clear N4 hard vetoes",
       "done_when": "Data/Test/UX blockers have failing inputs",
-      "tier": "T2",
       "fan_out": 0,
       "git": {
-        "sha": "8657ff5fdb277632151f780206f3614aaa279f0c",
-        "short": "8657ff5fd",
         "branch": "understanding-views-specify",
-        "pushed": null
-      }
+        "pushed": null,
+        "sha": "8657ff5fdb277632151f780206f3614aaa279f0c",
+        "short": "8657ff5fd"
+      },
+      "goal": "Repair D-0 spec to clear N4 hard vetoes",
+      "id": "al-01M2HFBT5K8MF3267Y3GR3GSW7",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "N4 spec repair after BLOCK",
+      "session": "understanding-views-specify",
+      "shortname": "specify-understanding-views-n4-repair",
+      "skill": "specify",
+      "summary": "N4 repair: grain (path,kind); US-T5a/b/c; F*; View source vs Reveal in graph; ~42/40 overrun",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2HFP02HVP3QY1ADWVV1T1H6",
-      "shortname": "specify-understanding-views-t5c",
-      "datetime": "2026-09-15T02:52:33Z",
-      "session": "understanding-views-specify",
-      "prompt": "T5c omit_probe fixture pin",
-      "summary": "F* omit_probe dirs; US-T5c pins unindexed_probe survivor",
-      "kind": "skill",
-      "skill": "specify",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/specs/understanding-views.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "tier": "T2",
+      "datetime": "2026-09-15T02:52:33Z",
       "fan_out": 0,
       "git": {
-        "sha": "a1fe989f9aaf744857222751b22a0082463dacef",
-        "short": "a1fe989f9",
         "branch": "understanding-views-specify",
-        "pushed": null
-      }
+        "pushed": null,
+        "sha": "a1fe989f9aaf744857222751b22a0082463dacef",
+        "short": "a1fe989f9"
+      },
+      "id": "al-01M2HFP02HVP3QY1ADWVV1T1H6",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "T5c omit_probe fixture pin",
+      "session": "understanding-views-specify",
+      "shortname": "specify-understanding-views-t5c",
+      "skill": "specify",
+      "summary": "F* omit_probe dirs; US-T5c pins unindexed_probe survivor",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2JP0W9B791HV36560236TN8",
-      "shortname": "understanding-views-n4-pass",
-      "datetime": "2026-09-15T14:02:36Z",
-      "session": "grok-understanding-views-conductor",
-      "prompt": "yes do your sequence... start in the ai-de-understanding-views worktree as you suggested above",
-      "summary": "N4 PASS recorded: Data/UX-IA/Test (after T5c) PASS; UX&A PASS-WITH-CONDITIONS. Spec remains draft. N5 may start.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/notes/understanding-views-n4-pass.md",
         "docs/specs/understanding-views.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Record N4 PASS from non-author receipts and unblock N5",
+      "datetime": "2026-09-15T14:02:36Z",
       "done_when": "Gate record and decision note on understanding-views; spec stays draft",
-      "tier": "T2",
-      "fan_out": 0,
-      "started_at": "2026-09-15T13:59:24Z",
       "duration_seconds": 192.0,
+      "fan_out": 0,
       "git": {
+        "branch": "understanding-views",
+        "pushed": null,
         "sha": "962ad56e78ccae76ffc1cb9d8937f75d69796f8f",
-        "short": "962ad56e7",
-        "branch": "understanding-views",
-        "pushed": null
-      }
+        "short": "962ad56e7"
+      },
+      "goal": "Record N4 PASS from non-author receipts and unblock N5",
+      "id": "al-01M2JP0W9B791HV36560236TN8",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "yes do your sequence... start in the ai-de-understanding-views worktree as you suggested above",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "understanding-views-n4-pass",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T13:59:24Z",
+      "summary": "N4 PASS recorded: Data/UX-IA/Test (after T5c) PASS; UX&A PASS-WITH-CONDITIONS. Spec remains draft. N5 may start.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2JR42W1K48C5KJDFC28P74Q",
-      "shortname": "understanding-views-n6-council",
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n6-council.md"
+      ],
       "datetime": "2026-09-15T14:39:18Z",
-      "session": "grok-understanding-views-conductor",
-      "prompt": "yes do your sequence... start in the ai-de-understanding-views worktree as you suggested above",
-      "summary": "N6: Data PASS; Security BLOCK (confinement, junctions, skip, DropRelativePaths on wire); Simplifier PWC; Tech Lead conditions. N5 budget 119/40.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/notes/understanding-views-n6-council.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "N6 council on ADR-0038",
       "done_when": "Four receipts recorded; Security BLOCK stops N7",
-      "tier": "T2",
       "fan_out": 4,
       "git": {
-        "sha": "cb868bce441246f0aa921aec649901dc755b56ce",
-        "short": "cb868bce4",
         "branch": "understanding-views",
-        "pushed": null
-      }
+        "pushed": null,
+        "sha": "cb868bce441246f0aa921aec649901dc755b56ce",
+        "short": "cb868bce4"
+      },
+      "goal": "N6 council on ADR-0038",
+      "id": "al-01M2JR42W1K48C5KJDFC28P74Q",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "yes do your sequence... start in the ai-de-understanding-views worktree as you suggested above",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "understanding-views-n6-council",
+      "skill": "execute-with-coordination",
+      "summary": "N6: Data PASS; Security BLOCK (confinement, junctions, skip, DropRelativePaths on wire); Simplifier PWC; Tech Lead conditions. N5 budget 119/40.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2JRYS6MGB7PJ887T3G8BBHF",
-      "shortname": "understanding-views-n6-pass",
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n6-council.md"
+      ],
       "datetime": "2026-09-15T14:53:53Z",
-      "session": "grok-understanding-views-conductor",
+      "done_when": "Security and Tech Lead clear; N7 unblocked",
+      "fan_out": 4,
+      "git": {
+        "branch": "understanding-views",
+        "pushed": null,
+        "sha": "08a77aee068aa735dfe45d81f1c556b90355267a",
+        "short": "08a77aee0"
+      },
+      "goal": "Record N6 re-review PASS on ADR-0038",
+      "id": "al-01M2JRYS6MGB7PJ887T3G8BBHF",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "yes do your sequence... start in the ai-de-understanding-views worktree as you suggested above",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "understanding-views-n6-pass",
+      "skill": "execute-with-coordination",
       "summary": "N6 re-review PASS at a03fb622. Security six blockers closed. Tech Lead skip/drop-set closed. ADR stays proposed.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md"
+      ],
+      "change": "cl-01M2JQ7S3EDVEHP93AHEFXZMXW",
+      "datetime": "2026-09-15T14:24:14Z",
+      "done_when": "Architecture section + proposed ADR for D-0 admission; allow-list described not implemented; committed on understanding-views-architecture.",
+      "duration_seconds": 1027.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-architecture",
+        "pushed": null,
+        "sha": "cb868bce441246f0aa921aec649901dc755b56ce",
+        "short": "cb868bce4"
+      },
+      "goal": "N5 /define-architecture amendment: one new kind, derived menu, no second store.",
+      "id": "al-01M2JQ8GAT99FQJJY3WMZEZ24V",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "N5: /define-architecture amendment: one new kind, derived menu, no second store.\n\nDone when: Architecture section + ADR for D-0 admission. Allow-list change described, not implemented. Status of ADR is proposed (you do not self-clear; N6 council is a later Conductor panel).\n\nTier: T2. Fan-out cap: 0. Skip Stage 4 council.",
+      "session": "understanding-views-architecture",
+      "shortname": "define-architecture-understanding-views-d0",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": false
+      },
+      "skill": "define-architecture",
+      "started_at": "2026-09-15T14:07:07Z",
+      "summary": "ADR-0038 proposed + architecture.md §Understanding views / D-0. Kind solution-tree described not implemented. Query SolutionTreeAsync / IPC solution-tree. Stage 4 skipped (N6). Spec stays draft.",
+      "tags": [
+        "understanding-views",
+        "D-0"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md"
+      ],
+      "change": "cl-01M2JRF7PFTH07QDQPXB6VSF52",
+      "datetime": "2026-09-15T14:45:36Z",
+      "done_when": "Majors 1-11 closed in ADR + architecture section; ADR still proposed; committed on understanding-views-architecture.",
+      "duration_seconds": 320.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-architecture",
+        "pushed": null,
+        "sha": "46160f215e96d5a8e4f05076b029ebdd546aa381",
+        "short": "46160f215"
+      },
+      "goal": "Repair ADR-0038 after N6 Security BLOCK so re-review can pass.",
+      "id": "al-01M2JRFM31VF877D2MAHMH08TF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Resume N5 architecture author. Repair ADR-0038 after N6 Security BLOCK. Do not mark the ADR accepted. Close majors 1-11 (ResolveWithinWorkspace, no-follow reparse/EnvelopePurge, consume UnanalysedLanguages.Skip, DropRelativePaths off IPC, PROBE-APP-ENUM not PID, byte/frame bound, PathComparison identity, ancestor indexed-parent, drop orphan files, one OmittedByCap, collapse Query/Request).",
+      "session": "understanding-views-architecture",
+      "shortname": "define-architecture-d0-n6-repair",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": false
+      },
+      "skill": "define-architecture",
+      "started_at": "2026-09-15T14:40:16Z",
+      "summary": "N6 Security BLOCK repaired in ADR-0038 + architecture UV section. Majors 1-11 closed in text. ADR remains proposed. No src/.",
+      "tags": [
+        "understanding-views",
+        "D-0",
+        "N6"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M2JRZGGNJ62DJVAX9D55WZAV",
+      "shortname": "join-understanding-views-architecture",
+      "datetime": "2026-09-15T14:54:17Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "the join of understanding-views-architecture into understanding-views",
+      "summary": "ADR-0038 + D-0 architecture section; N6 Security PASS after repair a03fb622 recount_seconds=0 (docs_only=True).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/notes/understanding-views-n6-council.md"
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md",
+        "docs/architecture.md"
       ],
       "tags": [],
       "outcome": "success",
-      "goal": "Record N6 re-review PASS on ADR-0038",
-      "done_when": "Security and Tech Lead clear; N7 unblocked",
-      "tier": "T2",
-      "fan_out": 4,
-      "git": {
-        "sha": "08a77aee068aa735dfe45d81f1c556b90355267a",
-        "short": "08a77aee0",
-        "branch": "understanding-views",
-        "pushed": null
-      }
+      "goal": "Join N5/N6 architecture onto understanding-views",
+      "done_when": "ADR-0038 and UV.1-11 on understanding-views; not main",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T14:54:16Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
@@ -20431,6 +20539,52 @@ window.AUDIT_DATA = {
         "before": "475d46e6a7e19b746ea9f9cf8449fd84119bae9e",
         "after": "475d46e6a7e19b746ea9f9cf8449fd84119bae9e",
         "branch": "understanding-views-comparables",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2JQ7S3EDVEHP93AHEFXZMXW",
+      "datetime": "2026-09-15T14:23:50Z",
+      "session": "understanding-views-architecture",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "ADR-0038 proposed: D-0 Solution tree is one Architecture kind over one query-time Core census",
+      "prompt": "N5: /define-architecture amendment: one new kind, derived menu, no second store.\n\nDone when: Architecture section + ADR for D-0 admission. Allow-list change described, not implemented. Status of ADR is proposed (you do not self-clear; N6 council is a later Conductor panel).\n\nTier: T2. Fan-out cap: 0. Skip Stage 4 council.",
+      "summary": "Admitted D-0 as SurfaceKind solution-tree (described, not added) whose payload is IWorkspaceQueries.SolutionTreeAsync / IPC solution-tree. Coverage two-valued; Disclosure for shortfalls; test-overridable DropRelativePaths for US-T5c; skip policy consumed not copied (survivor N7). Addenda C/D slices still exclude D-0. ADR status proposed; Stage 4 skipped (N6).",
+      "rationale": "Owner N1 census admission + N4 PASS grain close + AR3/ADR-0030 derived menu + DC-022 + Ruling 53. Rejected OverviewAsync, App disk walk, folder_dim, path-split, Atlas, D-1..D-6 scaffolding.",
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "cb868bce441246f0aa921aec649901dc755b56ce",
+        "after": "cb868bce441246f0aa921aec649901dc755b56ce",
+        "branch": "understanding-views-architecture",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2JRF7PFTH07QDQPXB6VSF52",
+      "datetime": "2026-09-15T14:45:23Z",
+      "session": "understanding-views-architecture",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "ADR-0038 N6 Security BLOCK repair: containment, skip bind, drop-set off wire",
+      "prompt": "Resume N5 architecture author. Repair ADR-0038 after N6 Security BLOCK. Do not mark the ADR accepted. Close majors 1-11 (ResolveWithinWorkspace, no-follow reparse/EnvelopePurge, consume UnanalysedLanguages.Skip, DropRelativePaths off IPC, PROBE-APP-ENUM not PID, byte/frame bound, PathComparison identity, ancestor indexed-parent, drop orphan files, one OmittedByCap, collapse Query/Request).",
+      "summary": "Repaired proposed ADR-0038 and architecture §Understanding views / D-0. File-artifacts via ResolveWithinWorkspace; census does not follow reparse points (EnvelopePurge class); UV-0 consumes UnanalysedLanguages.Skip; DropRelativePaths off IPC; count+frame bounds; PathComparison identity; ancestor indexed-parent; one OmittedByCap. Status remains proposed.",
+      "rationale": "N6 Security BLOCK. Conductor does not override. Close majors 1-11 in text so re-review can pass. Authors do not self-clear.",
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "46160f215e96d5a8e4f05076b029ebdd546aa381",
+        "after": "46160f215e96d5a8e4f05076b029ebdd546aa381",
+        "branch": "understanding-views-architecture",
         "pushed": null,
         "commits": []
       }
