@@ -46,3 +46,16 @@
 {"agent": "grok-understanding-views-conductor", "at": 1789492799.9576643, "code": null, "kind": "allowed", "path": "docs/proof/uv-0-red-run.txt", "session": "grok-understanding-views-conductor", "wi": ""}
 {"agent": "grok-understanding-views-conductor", "at": 1789492799.9678204, "code": null, "kind": "allowed", "path": "docs/proof/uv-0-solution-tree-core-query.md", "session": "grok-understanding-views-conductor", "wi": ""}
 {"agent": "grok-understanding-views-conductor", "at": 1789492799.9784212, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/BoundsReachTheSurfaceTests.cs", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789493396.303974, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789493396.3146327, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789493396.3288, "code": null, "kind": "allowed", "path": "docs/api/AiDe.App.Workbench.md", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789493396.3413887, "code": null, "kind": "allowed", "path": "docs/api/AiDe.Core.Extraction.md", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789493396.35349, "code": null, "kind": "allowed", "path": "docs/api/AiDe.Core.Ipc.md", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789493396.3645463, "code": null, "kind": "allowed", "path": "docs/api/AiDe.Core.Projections.md", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789493396.375819, "code": null, "kind": "allowed", "path": "docs/api/AiDe.Core.Store.md", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789493396.3868554, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789493396.3990715, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789493396.4102662, "code": null, "kind": "allowed", "path": "docs/collaboration/session-contracts.md", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789493396.4209075, "code": null, "kind": "allowed", "path": "docs/coordination/understanding-views.md", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789493396.4319582, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789493396.4416957, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Extraction/ScopeFingerprints.cs", "session": "grok-understanding-views-conductor", "wi": ""}

@@ -1,0 +1,9 @@
+{"agent": "codex-sol-author", "at": 1789496598.1769557, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-audit-verifier-author", "wi": ""}
+{"agent": "codex-sol-author", "at": 1789496598.1871161, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-audit-verifier-author", "wi": ""}
+{"agent": "codex-sol-author", "at": 1789496598.1966565, "code": null, "kind": "allowed", "path": "docs/proof/audit-gate-self-test-author.md", "session": "codex-audit-verifier-author", "wi": ""}
+{"agent": "codex-sol-author", "at": 1789496598.2083154, "code": null, "kind": "allowed", "path": "tools/verify-audit-log.py", "session": "codex-audit-verifier-author", "wi": ""}
+{"agent": "codex-sol-author", "at": 1789496598.2205875, "code": null, "kind": "allowed", "path": "tools/verify-gate-self-tests.py", "session": "codex-audit-verifier-author", "wi": ""}
+{"agent": "codex-sol-author", "at": 1789497280.346069, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-audit-verifier-author", "wi": ""}
+{"agent": "codex-sol-author", "at": 1789497280.3560922, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-audit-verifier-author", "wi": ""}
+{"agent": "codex-sol-author", "at": 1789497280.3666215, "code": null, "kind": "allowed", "path": "docs/proof/audit-gate-self-test-author.md", "session": "codex-audit-verifier-author", "wi": ""}
+{"agent": "codex-sol-author", "at": 1789497280.3767219, "code": null, "kind": "allowed", "path": "tools/verify-audit-log.py", "session": "codex-audit-verifier-author", "wi": ""}
