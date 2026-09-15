@@ -6417,6 +6417,34 @@ window.DOCS_INDEX = {
       "sourceSha256": "97d517658252e65e6cf51a7392d73986c9eb96aa4d78d91569aaeeead093e21e"
     },
     {
+      "id": "design-atlas-behavior-views",
+      "path": "docs/design/atlas-behavior-views.md",
+      "title": "Atlas E1 static behavior views — proposed design contract",
+      "type": "design",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Proposed method-level static behavior contract for one source-backed occurrence model rendered as native Sequence and Activity views, with honest bounds, unknowns, source navigation and Back.",
+      "tags": [
+        "atlas",
+        "e1",
+        "sequence",
+        "activity",
+        "static-analysis",
+        "native-ui"
+      ],
+      "links": [
+        {
+          "to": "mockup-uml-erm-surfaces",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ef28227f65d1801971b3c99ad6ae558f7f31316fd47e2cd927754d19fe026583"
+    },
+    {
       "id": "design-knowledge-explorer-mode",
       "path": "docs/design/knowledge-explorer-mode.md",
       "title": "Knowledge Explorer mode — component design (Phase 1 walking skeleton)",
@@ -19302,5 +19330,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "cdd88612eb547c1c59d7cd30ad6c280de4af5e4a93295e495173f86740d6f50d"
+  "graphSha256": "4ba76f78b70fe18a17dc827593e9a47850b70f7dd3d914665f35201526e3ffb7"
 };

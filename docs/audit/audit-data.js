@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T19:45:31Z",
+  "generated": "2026-09-15T20:11:47Z",
   "audit": [
     {
       "actor": null,
@@ -18363,6 +18363,25 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T19:45:30Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2KB4VX97CE73HRE70ARRZYW",
+      "shortname": "design-slice-atlas-behavior",
+      "datetime": "2026-09-15T20:11:46Z",
+      "session": "codex-atlas-e1-behavior",
+      "prompt": "Design the bounded E1 Sequence/Activity source-to-identity-to-producer-to-query/wire-to-native-to-source/back contract from pinned US-E6, architecture, design, current code and mockups; map every requirement, propose exact paths and signatures, define supported subset and refusals, seams, red-first native accessibility performance and reviewer gates; author only docs/design/atlas-behavior-views.md and do not implement.",
+      "summary": "Proposed one source-backed occurrence projection for method Sequence and Activity, with exact signatures, bounds, unknowns, Source and Back, red-first oracles, and open independent gates.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/atlas-behavior-views.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-09-15T20:01:50Z",
+      "duration_seconds": 596.0
     }
   ],
   "changes": [
@@ -22115,6 +22134,28 @@ window.AUDIT_DATA = {
         ]
       },
       "audit_ref": "al-01M2DZ3GA6T04XHQ6EAD7HRY8R"
+    },
+    {
+      "id": "cl-01M2KB4WA3RC47966DH2B5DN1V",
+      "datetime": "2026-09-15T20:11:47Z",
+      "session": null,
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Propose one static behavior projection for Atlas Sequence and Activity",
+      "prompt": "Design the bounded E1 Sequence/Activity source-to-identity-to-producer-to-query/wire-to-native-to-source/back contract from pinned US-E6, architecture, design, current code and mockups; map every requirement, propose exact paths and signatures, define supported subset and refusals, seams, red-first native accessibility performance and reviewer gates; author only docs/design/atlas-behavior-views.md and do not implement.",
+      "summary": "Preserve legacy type-level Interaction; propose a new method occurrence aggregate that feeds synchronized Sequence, Activity, accessible list, inspector and export.",
+      "rationale": "One bounded projection preserves occurrence identity, source receipt, paging and omission semantics across both presentations without claiming runtime behavior.",
+      "artifacts": [
+        "docs/design/atlas-behavior-views.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "c46e112a924a8a0a4c86e4552af1f0e30bfa851c",
+        "after": "c46e112a924a8a0a4c86e4552af1f0e30bfa851c",
+        "branch": "atlas/behavior-views",
+        "pushed": null,
+        "commits": []
+      }
     }
   ]
 };
