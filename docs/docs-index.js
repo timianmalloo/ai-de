@@ -6531,6 +6531,76 @@ window.DOCS_INDEX = {
       "sourceSha256": "ca364ca44c5b351012336203307d689afd891098997ef12ab38d6bfc63853deb"
     },
     {
+      "id": "note-understanding-views-owner-n14",
+      "path": "docs/notes/understanding-views-owner-n14.md",
+      "title": "Stop this horizon: D-1…D-4 keep-deferred; no further admission; join stays understanding-views",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [
+        {
+          "by": "spec-understanding-views",
+          "on": "2026-09-15",
+          "reason": "N14 stop; D-1…D-4 remain quoted §A5 deferred; spec stays draft"
+        },
+        {
+          "by": "plan-understanding-views",
+          "on": "2026-09-15",
+          "reason": "N14 loop exit; variant 4→0"
+        }
+      ],
+      "summary": "N14 stops this horizon. D-1…D-4 are keep-deferred with §A5 admitted-when intact. Blast radius: no next view, no D-1 kind, no main; D-0 chrome may finish on understanding-views without reopening the N14 loop.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "owner",
+        "N14"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-ruling",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-n1-disposition",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-uv-0-solution-tree-core-query",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-uv-1-solution-tree-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-native-ui-solution-tree",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-understanding-views",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ef1d9bd958372f12eccdac3df9ce7c87c64acfc1499717760e4c9d9bff5a9297"
+    },
+    {
       "id": "note-understanding-views-owner-ruling",
       "path": "docs/notes/understanding-views-owner-ruling.md",
       "title": "Admit D-0 Solution/tree view this horizon; D-0 is not Atlas; D-1…D-6 stay deferred; join onto understanding-views",
@@ -17433,7 +17503,7 @@ window.DOCS_INDEX = {
       "phase": "understanding-views",
       "reviewBy": "2027-03-15",
       "reviewSuggested": [],
-      "summary": "UV-0 walking skeleton: Core SolutionTreeAsync / IPC solution-tree, production UnanalysedLanguages.Skip, ResolveWithinWorkspace join, T5c omit off the wire. F* DTO tests: captured red 14 failed / 11 passed on empty public stub (docs/proof/uv-0-red-run.txt); green 26 Core + 15 App SolutionTree filters.",
+      "summary": "UV-0 walking skeleton: Core SolutionTreeAsync / IPC solution-tree, production UnanalysedLanguages.Skip, ResolveWithinWorkspace join, T5c omit off the wire. F* DTO tests: captured red on empty INTERNAL SolutionTree overload — Failed 19 / Passed 6 / Total 25 (docs/proof/uv-0-red-run.txt). T5a/T5b/T5c/Cancel are in that fail list. Green: Core+App SolutionTree filters (see body).",
       "tags": [
         "proof-pack",
         "D-0",
@@ -17457,7 +17527,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d1927ec388342b12364e9b39e2da9cdbfa06579d66b5b857b0353d95d1b9e60d"
+      "sourceSha256": "3b7fff24d8514aa1702a5d75e51cad95524fd0e32909ef9b28bf4cd15051c983"
     },
     {
       "id": "proof-uv-1-solution-tree-shell",
@@ -19541,5 +19611,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "19bbaeff420cdd1f3dedcd04113948681f6e702b60d3d8dd98169317f92e949d"
+  "graphSha256": "6ea85dafafd381ce5fb9de671db37a2a160b40c30cc0da4b44d861eab75c3322"
 };
