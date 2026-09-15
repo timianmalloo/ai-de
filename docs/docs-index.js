@@ -8876,6 +8876,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "9639568f02c25923e0a708cf46869fa2d1a2a68b844949f035afa761f5f79498"
     },
     {
+      "id": "investigation-code-atlas-legacy-peer-startup",
+      "path": "docs/investigations/code-atlas-legacy-peer-startup.md",
+      "title": "Legacy peer startup: runtime path depth exceeds the Git fixture boundary",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-09-22",
+      "reviewSuggested": [],
+      "summary": "The prepared legacy server fails Git initialization under a deep execution path. Identical canonical binaries pass from a shorter owned path. The investigation proposes bounded execution staging without changing the legacy implementation or approving the fixture hash pair.",
+      "tags": [
+        "code-atlas",
+        "investigation",
+        "fixture",
+        "paths",
+        "compatibility"
+      ],
+      "links": [
+        {
+          "to": "proof-code-atlas-e1-core-metadata",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-code-atlas-e1-static-views",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ae8e2e084faaaab0b5f2cbb1eb1337c7ba798037ba9833ffbdf07eb27093b7d4"
+    },
+    {
       "id": "investigation-code-atlas-outline-selection",
       "path": "docs/investigations/code-atlas-outline-selection.md",
       "title": "Atlas outline selection - composed journey exposes state lost before Back",
@@ -19196,5 +19227,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "50219bb6bc7376073127ccd4d460c4a325c3ef4326df5efdb6d0ee87035263fa"
+  "graphSha256": "05ab18676736e526a62fd270d05eb7e8dc4828539b30003dfac664c6fe315231"
 };

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T02:06:59Z",
+  "generated": "2026-09-15T02:33:39Z",
   "audit": [
     {
       "actor": null,
@@ -16986,6 +16986,38 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "dec1ec131e250b7337225816e309ddd9abb1d69a",
         "short": "dec1ec131",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HEKBTRTYSGV5MPTG40X4TG",
+      "shortname": "atlas-legacy-startup-path-investigation",
+      "datetime": "2026-09-15T02:33:38Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner82canonicalbuildsreproducibleperretainedreceipt, qualification33/34failslegacyServerEOF. Parentreadchildlogs(noTRX)andactualharness; standalonecanonical-e1PASS, exactfailedpreparedpeer1FAILretainedGitFilenameTooLongbeforeworkspacepublish, samepreparedruntimeclosurecopiedownedshortpath1PASSCore/Peerhashesequal. Peerpath181vs85; no product/config edit. Archivedfixture425–478 derivesrepo beneathAppContext.BaseDirectory; deliverylaunchesdeepbuildoutput. Classunboundedbuildtoruntimepathcomposition; clientrolepasseswithoutsamelegacyserverrepo. Parentkill-beforeloggerflush diagnosticloss isInferred, not timedproof. Markersswepttwo deliveryfilesnone. Proposedshortownedexecutionstaging/hashchecks/pathbudget+boundeddiagnosticflush andrealroles/hostilecontrols; stoppedforOwnergrant. Originalhashes/canonicalqualificationpair/failurespreserved; no hashapproval/cleancloneclaim.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/code-atlas-legacy-peer-startup.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Diagnose the canonical legacy-server startup EOF without guessing or changing source",
+      "done_when": "A retained discriminator identifies the startup failure class and a bounded repair is returned to Owner",
+      "tier": "T2",
+      "main_calls": 714,
+      "main_budget": 740,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T02:31:58Z",
+      "duration_seconds": 100.0,
+      "git": {
+        "sha": "e1e3a59f55dae34e44d591b58af2b3035b09915e",
+        "short": "e1e3a59f5",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
