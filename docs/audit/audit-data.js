@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T17:29:21Z",
+  "generated": "2026-09-15T18:23:17Z",
   "audit": [
     {
       "actor": null,
@@ -17540,6 +17540,50 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T17:29:19Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2K4Y784N9DA0KSRMHXZB3Z9",
+      "shortname": "audit-gate-self-test-author",
+      "datetime": "2026-09-15T18:23:17Z",
+      "session": "codex-audit-verifier-author",
+      "prompt": "Implement Ruling 119: prove existing verify-audit-log policy with a disposable-copy red-first harness, nine real Git and CLI cases, five disabled guards plus forced-green and forced-failure normal CLI mutants, canonical audit-log.py next_id ULID allocation, unchanged normal policy, and remove only verify-audit-log.py from the frozen self-test ratchet in the same commit.",
+      "summary": "Added a hermetic self-test using a byte-identical verifier copy and real temporary Git HEAD. Nine fixed cases pass; seven exactly-once semantic mutants fail through named oracles without tracebacks. Normal verification remains green at 839 entries; the frozen ratchet shrank from 10 to 9. Recorded and corrected an author error that guessed a full SHA.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "codex-sol-author",
+      "artifacts": [
+        "docs/proof/audit-gate-self-test-author.md",
+        "tools/verify-audit-log.py",
+        "tools/verify-gate-self-tests.py"
+      ],
+      "tags": [
+        "audit",
+        "mutation-testing",
+        "dc-104"
+      ],
+      "outcome": "success",
+      "goal": "Add deterministic semantic self-proof to verify-audit-log.py while preserving normal policy and shrinking its frozen ratchet entry.",
+      "done_when": "The disposable unchanged-gate harness rejects seven named mutants, the production self-test passes nine real Git and CLI cases, normal CLI remains green, and both tool edits are committed together with proof.",
+      "tier": "T1",
+      "main_calls": 19,
+      "main_budget": 20,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T18:12:36Z",
+      "duration_seconds": 641.0,
+      "git": {
+        "sha": "8b164757e1db9da44bfe0ec5907cd8d6a6765fa6",
+        "short": "8b164757e",
+        "branch": "fix/audit-verifier-proof",
+        "pushed": null
+      }
     }
   ],
   "changes": [
