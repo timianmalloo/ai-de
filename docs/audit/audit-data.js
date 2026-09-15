@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:28:22Z",
+  "generated": "2026-09-15T21:47:26Z",
   "audit": [
     {
       "actor": null,
@@ -18540,6 +18540,42 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "4a81eb11ba3d190d59a2680be98be9ee0ca9238a",
         "short": "4a81eb11b",
+        "branch": "owner/atlas-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KGKZPMQV66DWMPYSHEC957",
+      "shortname": "atlas-owner-human-granted-mock-stage",
+      "datetime": "2026-09-15T21:47:25Z",
+      "session": "codex-atlas-views-owner",
+      "prompt": "Start audit-log.py start --session codex-atlas-views-owner --skill ui-design before grounding. Human now explicitly grants branch-local docs/mockups/atlas-behavior-views.html, docs/mockups/atlas-architecture-views.html and recurrence-only docs/lessons/defect-classes.md; request req-01M2KCTTG4ZWAC2K01PB1HYWGK resolved with actual grant. Separate Astra Owner: bounded read-only validation of new plan section Human-granted mock harness stage C:/Projects/ai-de-conductor-atlas-views/docs/plans/atlas-views.md; existing Owner decisions/G6/designs govern. Author two independent HTMLs in existing E1/E2trees; Conductor serializes lessons; existing proof/design hub supplements only, no new DESIGN.md/hub needed per priorruling. No product/main/native admission. Confirm scope/plan and hard gates or send genuine decision. Budget6calls/8min, no authoringimplementer. Record grant supplement in existing Owner note with exact lease/audit/derived if needed, no other paths. Author dispatch follows plan; independent reviewer clears veto, not Owner.",
+      "summary": "Read the new Conductor mock stage, lane state/navigation contracts, existing DESIGN tokens and UI workflow. Confirmed exact branch-local HTML grants, existing hub reuse, isolated author lanes and retained synthetic honesty, rendered/craft/a11y/measurement gates. Explicitly retained independent vetoes and all production/native barriers. No HTML authored or executed.",
+      "kind": "manual",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": "codex-astra-owner",
+      "artifacts": [
+        "docs/notes/atlas-views-owner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Validate bounded mock-harness dispatch against existing Owner decisions and explicit human grants.",
+      "done_when": "Owner note records exact scope, required gates and independent review boundaries for Conductor dispatch.",
+      "tier": "T2",
+      "main_calls": 4,
+      "main_budget": 6,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T21:45:45Z",
+      "duration_seconds": 100.0,
+      "git": {
+        "sha": "18cc6cb6f9933bf1772e5c622956df30bb842052",
+        "short": "18cc6cb6f",
         "branch": "owner/atlas-views",
         "pushed": null
       }

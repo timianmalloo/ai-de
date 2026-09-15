@@ -685,3 +685,77 @@ Planned and actual shape: evidence → decision → recorded handoff, no fan-out
 implementation. The existing Owner tree is retained for programme continuity.
 No AIDE session/contract environment was present; no registered episode-close event
 can be emitted by this worker. Evidence is named in this note and the official audit.
+
+## Human-granted mock harness stage — Owner confirmation, 2026-09-15
+
+**Goal:** validate bounded mock-harness dispatch against the existing Owner decisions.
+**Done when:** the admitted scope and required gates are recorded for Conductor.
+**Tier T2; fan-out 0; six-call/eight-minute circuit breaker.** Mode: review of the
+stage contract. Owner authors no HTML and clears no author or reviewer veto.
+
+**Grant source:** Conductor relays the human's explicit grant of
+`docs/mockups/atlas-behavior-views.html`,
+`docs/mockups/atlas-architecture-views.html` and recurrence-only additions to
+`docs/lessons/defect-classes.md`, resolving request
+`req-01M2KCTTG4ZWAC2K01PB1HYWGK`. This is the permission basis; no grant is inferred
+from a plan, silence or a previous request. Conductor alone serializes the shared
+lesson register. Existing exact note/proof/design authority is retained.
+
+**Verified by opened documents:** the Conductor plan's “Human-granted mock harness
+stage” defines two isolated author lanes, independent UX/IA/accessibility/Test review,
+bounded repairs, inspected evidence and branch handoff. E1 design §7.1 supplies
+behavior hard states, linked readers, source-bound navigation and refusal rules.
+E2 design §§7.1–7.2 supplies per-view transitions and graph/list/inspector, source,
+identity and focus predicates. Existing `DESIGN.md` supplies semantic tokens and
+light/dark/high-contrast treatment. These are design/source observations only; no
+HTML, browser behavior or native implementation was observed in this Owner run.
+
+**Decision:** admit E1-M and E2-M as branch-local, self-contained synthetic HTML
+harness authoring in their existing lane trees. Existing G6 and shared envelope
+decisions govern. Existing design/proof documents are the graph hubs and places for
+direction, matrix, rubric and evidence supplements. No new `DESIGN.md`, hub,
+dependency, asset package or product path is granted. Historical waiting-for-grant
+statements are superseded for these exact HTML paths only. The existing plan is
+continued; this scope confirmation does not restart graph optimization.
+
+Required gates remain explicit:
+
+1. Each lane declares the applicable UI-standard trigger union and uses the existing
+   direction, G6 facets and tokens. Technical evidence/uncertainty and target-native
+   obligations remain visible; an HTML mock cannot discharge a native obligation.
+   No generated imagery or model-fronting behavior is introduced by this grant.
+2. Each view has a reachable, finite hard-state matrix, including empty/loading/error,
+   partial/unsupported/stale/canceled/overflow and receipt refusal where specified.
+   Harness selectors cover persona, viewport, view, state, theme/density, capability
+   and reduced motion. Controls must change rendered behavior, not just report the
+   requested state. Selection, local filter, simulated Source and Back preserve the
+   specified identity, evidence, selection and focus across graph/list/inspector.
+3. Synthetic source/envelope/navigation receipts are labelled simulation. E1 never
+   implies runtime execution or qualified relation display order. E2 never promotes
+   declared semantics to verified implementation, symbolic roots to deployed identity,
+   or configuration/dependency to grants/runtime use. Retain all unsupported reasons.
+4. Before critique, record measurements on a nonempty rendered surface: positive
+   page dimensions, strict inward design lint, nonempty outward craft scan, actual
+   contrast/target checks and keyboard/focus/state observations. Read the results,
+   not just exit codes. Normal-path harness audits and the SRE performance-measurement
+   lens remain required within the existing review; browser timing is not product
+   timing. Existing DC-196 copy and DC-200 hidden-page controls remain applicable.
+5. Freeze HTML plus the existing proof/design supplements before independent review.
+   UX/IA, accessibility, Test and triggered domain/platform/SRE lenses review the
+   observed state matrix, linked-reader honesty and structure-before-surface rubric.
+   The Simplifier reviews unnecessary UI. Authors cannot clear their own hard vetoes;
+   missing evidence or an uncleared veto blocks harness qualification. Repairs remain
+   within the granted paths; Conductor handles any recurrence lesson and control.
+
+Surface list: existing design/state/copy contract → each synthetic state model →
+graph/list/inspector and simulation controls → browser checks → existing proof hub →
+independent review. No production store/model/service/wire/native reader changes.
+The two author lanes share no authored path. Headless verification uses separate
+outputs; native desktop activity remains excluded and scheduler-owned.
+
+**Completed:** Owner scope confirmation; no new semantic decision blocks dispatch.
+**Remaining:** both harnesses, observed browser/craft/accessibility evidence and
+independent disposition. Foundation, exact product grants, golden wire/receipt
+contracts, native proof and serialized product join remain open. Planned and actual
+Owner graph: bounded reads → confirmation → receipt. The existing Owner tree is
+retained for programme continuity; no AIDE contract environment was supplied.
