@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T16:54:17Z",
+  "generated": "2026-09-15T17:11:51Z",
   "audit": [
     {
       "actor": null,
@@ -17333,6 +17333,65 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T16:54:15Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2K0HMS28QHK6YS111NHS324",
+      "shortname": "yes keep going finish remaining nodes",
+      "datetime": "2026-09-15T17:06:31Z",
+      "session": "prompt-log",
+      "prompt": "yes keep going finish remaining nodes",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2K0R0V50JN4ZHTXQ1Z901ZV",
+      "shortname": "three things:",
+      "datetime": "2026-09-15T17:10:00Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "three things:\n- resolve the blocker\n- provide a periodic tabular update of tasks with what they do and what their status is so i can track the table instead of snarfing through the reasoning\n- keep going with the next best action after resolving the blocker",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2K0VCANA626N5V72W3X88P2",
+      "shortname": "ownership-qualification-plan",
+      "datetime": "2026-09-15T17:11:50Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "Resolve the blocker, provide periodic task status tables, and continue with the next best action.",
+      "summary": "OwnerO8 T1: publishedfix verified; main alreadycontainsf7fd470. G->V/Q->C, separate readonlyreview andqualification, no duplicateimplementation. Full inputtree/buildpath/TRXhash match allows explicitreceipt reuse. NewCore obsoleteparagraph requestreq-01M2K0QEPYF0CEWHPBKYQ72GY6. 35Conductor/12review calls planned, no speedup claim.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/ownership-qualification.md",
+        "docs/proof/ownership-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve stale ownership qualification blocker and continue bounded next action",
+      "done_when": "Current qualification verified and status/correction handoff committed",
+      "tier": "T1",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T17:09:41Z",
+      "duration_seconds": 129.0
     }
   ],
   "changes": [

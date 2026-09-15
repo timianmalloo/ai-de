@@ -9990,6 +9990,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "62577cd18a0caecf5aa001fb22370aa7cca8608829123d3a4f3742a4537037ef"
     },
     {
+      "id": "plan-ownership-qualification",
+      "path": "docs/plans/ownership-qualification.md",
+      "title": "Qualify the landed ownership gate and close stale status",
+      "type": "doc",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Verify the already-published fix, qualify unchanged inputs, and coordinate the obsolete ownership-gap paragraph without duplicating implementation.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "qualification"
+      ],
+      "links": [
+        {
+          "to": "plan-recursive-surface-ownership",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Goal state and bounded graph",
+          "mermaid": "flowchart LR\n G --> V --> C\n G --> Q --> C"
+        }
+      ],
+      "sourceSha256": "15e47e81f83af6fbce1d91f28c1c0b71d18317516cda4c1a7f99dc922ab26dd1"
+    },
+    {
       "id": "plan-recursive-surface-ownership",
       "path": "docs/plans/recursive-surface-ownership.md",
       "title": "Execution graph: recursive ownership gate",
@@ -16310,6 +16345,39 @@ window.DOCS_INDEX = {
       "sourceSha256": "0ce1c999eb408c194202fc11bc9cf17ed3b17d62b6ed956d5df84281d38085b0"
     },
     {
+      "id": "proof-ownership-qualification",
+      "path": "docs/proof/ownership-qualification.md",
+      "title": "Published ownership gate qualification",
+      "type": "proof-pack",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Current qualification and status reconciliation after the Core coordinator published the recursive gate and repaired shared liveness lookup.",
+      "tags": [
+        "proof",
+        "ownership",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "plan-ownership-qualification",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-recursive-surface-ownership",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5ea2e14338b78a310d7ad2535512e9c06290badc1da510944d345935642a12d9"
+    },
+    {
       "id": "proof-perspective-content",
       "path": "docs/proof/perspective-content.md",
       "title": "Proof Pack: SH-3 — perspective content",
@@ -18989,5 +19057,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "8f2faf3565aa5aea3d93391e8c56ab50ebf5bc18ff5a9ff856e57482cbc3b020"
+  "graphSha256": "77280863b321fe8f35f5ef280831994dc55644dfb4f87b68e1e16726bf8022ea"
 };
