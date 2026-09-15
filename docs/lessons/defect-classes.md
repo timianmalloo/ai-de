@@ -3401,6 +3401,10 @@ for both or split.*
 
 ### DC-088 — A launcher omits an identity, and a downstream guard degrades to advisory rather than refusing
 
+- **Same-programme recurrence:** the author reported commit `18a4a19f` also printed that
+  `AGENT_SESSION` was unset. Separate lease receipts are not commit-time enforcement. The repair
+  assignment requires identity as the first executable shell lines and inspection of the actual
+  commit hook output; the original limitation remains recorded in the programme proof.
 - **Instance (Codex ownership programme, 2026-09-15):** a shell set `AGENT_SESSION` after its merge
   commit instead of before it; the hook printed NOT CHECKED and accepted commit `978b4eb5`.
   Sweep: all remaining mutating shell calls, not only calls to `coord`; derive: identity belongs
@@ -4864,6 +4868,16 @@ for both or split.*
 
 ### DC-118 — Transcription is a width-changing step, and nothing checks the width: a ruling becomes a clause, a clause becomes a guard, and the scope silently moves
 
+- **Recurrence (ownership parser review, 2026-09-15):** the first recursive repair passed its own
+  self-test while a reviewer found five width changes: owner context leaked across a deeper
+  heading; two malformed declaration shapes disappeared; unrelated non-surface paths entered
+  jurisdiction; and an indented next-section heading failed to end ownership parsing. Conductor
+  reproduced the reviewer harness at 4/9 passing, exit 1, against `18a4a19f`. Sweep: section
+  boundaries, every heading transition, Path-header presence, malformed-row admission, token
+  relevance and existing header reuse after prose. Derive: parser recognition and discovery must
+  share the same surface boundary while preserving the register's actual table syntax. Prevent:
+  five red-first regression fixtures and independent re-review before joining; the author's
+  passing self-test alone was insufficient. Evidence: `docs/proof/recursive-surface-ownership.md`.
 - **Instance (recursive ownership programme, 2026-09-15):** the gate promised every Workbench
   `*Surface.cs`/`*View.cs` but scanned only the directory top level and used basenames as identity.
   At `bab5035e` it passed 13 files while a recursive inventory found 17. Sweep: discovery,

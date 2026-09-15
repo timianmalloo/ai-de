@@ -105,10 +105,12 @@ Frozen author handoff must cite Owner amendment `171791f` and Core Rulings 113/1
 
 | Completed | Remaining | Best next action |
 |---|---|---|
-| isolated identities, baseline observation, Owner O1/O2 | handoff, independent plan gate, author/review/join | finish measured preflight |
+| isolated identities; Core Rulings 113/114; Owner O1–O7; independent plan gate; first author; runtime receipts | repair five independently reproduced parser counterexamples, independent re-review, script join, final evidence | same-author bounded repair; no main integration |
 
 ## Planned versus actual
 
-At creation: one Owner delegated; no implementer dispatched; gate baseline observed 13 and recursive census 17. Duration and token costs remain not recorded until closing audit; no modeled number is reported as measured. Rework and final receipts append at close.
+Baseline observed 13 gate files versus 17 recursively discovered. Author `18a4a19f` recorded 22 baseline failures and six killed mutants; independent reviewer then exposed five parser counterexamples, also reproduced by Conductor. Owner O7 confirmed same-scope repair after diagnosis. The re-plan in `plan-recursive-surface-ownership` retains independent veto clearance and the full join runner. One author, no additional implementation lane.
+
+Actual receipts: first author audit 981 seconds, final report 58 calls against 35 planned; plan reviewer 443 seconds and 25/25 calls. Tokens are not recorded. Overruns are estimate defects, not increased budgets. A single Owner-approved non-updating .NET run supplied the mandatory fresh-worktree receipts: 3,743 tests executed and passed, one existing nonexecuted test, five terminal-host paths passed. Baselines and product sources are unchanged. Shared stranded-audit subsequently passed across 72 worktrees. Final acceptance remains pending repair/re-review/join; see the programme proof for hashes and limitations.
 
 
