@@ -136,6 +136,6 @@ ADR-0030 trigger, quoted not paraphrased: *"Add an explicit `Perspectives` colum
 
 | | |
 |---|---|
-| **Completed** | N0–N11 walking skeleton on `understanding-views` (UV-0 query + UV-1 kind/TreeView). ADR-0038 Accepted. N14 stop: D-1…D-4 keep-deferred. Spec stays draft. Not `main`. |
-| **Remaining** | N12 Proof Pack (red 19/6 recaptured; re-review in flight). N13 full `conductor-join.py` gates if stranded-audit and App.Tests recount are green. D-0 chrome (glyph, physical Ctrl+Enter, zone) may follow; it does not reopen N14. |
-| **Best next action** | Confirm N12 PASS on 19/6 capture. Finish App.Tests recount. Do not admit D-1. |
+| **Completed** | N0–N12 walking skeleton; N14 stop (D-1…D-4 keep-deferred). N8 chrome: glyphs, node menu, double-click View source; zone frozen View-menu-only. Spec stays draft. Not `main`. |
+| **Remaining** | N13 recount + `tools/run-verify-gates.py`. N10 design acceptance (non-author). Physical Ctrl+Enter attended/SendInput. |
+| **Best next action** | Recount then the join gates. Do not admit D-1. |

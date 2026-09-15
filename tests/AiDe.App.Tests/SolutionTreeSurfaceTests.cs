@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using ShapePath = System.Windows.Shapes.Path;
 using AiDe.App.Workbench;
 using AiDe.Core.Projections;
 using AiDe.Testing;
@@ -142,6 +143,24 @@ public sealed class SolutionTreeSurfaceTests
                 Assert.NotNull(file);
                 var filePeer = System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement(file!);
                 Assert.Contains("file-artifact", filePeer.GetName(), StringComparison.Ordinal);
+
+                var srcFolder = FindItem(surface.Tree, n => n.Node.Path == "src");
+                Assert.NotNull(srcFolder);
+                var folderGlyph = FindKindGlyph(srcFolder!);
+                var fileGlyph = FindKindGlyph(file!);
+                var unindexedGlyph = FindKindGlyph(unindexed);
+                Assert.NotNull(folderGlyph);
+                Assert.NotNull(fileGlyph);
+                Assert.NotNull(unindexedGlyph);
+                Assert.Same(SolutionTreeGlyphs.Folder, folderGlyph!.Data);
+                Assert.Same(SolutionTreeGlyphs.File, fileGlyph!.Data);
+                Assert.Same(SolutionTreeGlyphs.Folder, unindexedGlyph!.Data);
+                Assert.True(
+                    unindexedGlyph.StrokeDashArray is { Count: > 0 },
+                    "unindexed kind glyph must be dashed");
+                Assert.True(
+                    folderGlyph.StrokeDashArray is null or { Count: 0 },
+                    "indexed-parent folder glyph must be solid");
             }
             finally
             {
@@ -307,6 +326,70 @@ public sealed class SolutionTreeSurfaceTests
                 unindexed.RaiseEvent(dbl);
                 Assert.False(unindexed.IsExpanded);
                 Assert.False(unindexed.HasItems);
+
+                seen = null;
+                var fileDbl = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left)
+                {
+                    RoutedEvent = UIElement.PreviewMouseLeftButtonDownEvent,
+                };
+                typeof(MouseButtonEventArgs).GetProperty("ClickCount")!.SetValue(fileDbl, 2);
+                file.RaiseEvent(fileDbl);
+                Assert.NotNull(seen);
+                Assert.Equal(NodeViewKind.Source, seen!.Kind);
+                Assert.Equal("Program", seen.NodeId);
+            }
+            finally
+            {
+                window.Close();
+            }
+        });
+    }
+
+    [Fact]
+    public void FileArtifact_NodeMenu_IsViewSourceAndReveal_UnindexedHasNone()
+    {
+        OnSta(() =>
+        {
+            var (surface, window) = Mount(StarDto());
+            try
+            {
+                var fileVm = Flatten(_rootsOf(surface)).Single(n => n.Node.Path == "src/Program.cs");
+                var menu = surface.BuildFileMenu(fileVm);
+                Assert.NotNull(menu);
+                var headers = menu!.Items.OfType<MenuItem>().Select(i => (string)i.Header).ToList();
+                Assert.Equal(["View source", "Reveal in graph"], headers);
+
+                SolutionTreeActivate? seen = null;
+                surface.ActivateRequested += (_, a) => seen = a;
+                ((MenuItem)menu.Items[1]).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                Assert.Equal(NodeViewKind.GraphNeighbourhood, seen!.Kind);
+
+                var unindexedVm = Flatten(_rootsOf(surface)).Single(n => n.Node.Path == "unindexed_probe");
+                Assert.Null(surface.BuildFileMenu(unindexedVm));
+            }
+            finally
+            {
+                window.Close();
+            }
+        });
+
+        static IReadOnlyList<SolutionTreeNodeItem> _rootsOf(SolutionTreeSurface surface) =>
+            ((IEnumerable<SolutionTreeNodeItem>?)surface.Tree.ItemsSource)?.ToList()
+            ?? [];
+    }
+
+    [Fact]
+    public void MarkStale_ChromeCarriesStaleWordAndGlyph()
+    {
+        OnSta(() =>
+        {
+            var (surface, window) = Mount(StarDto());
+            try
+            {
+                surface.MarkStale();
+                Assert.Contains("Stale", VisibleText(surface), StringComparison.Ordinal);
+                var staleGlyph = FindNamedPath(surface, "staleGlyph");
+                Assert.NotNull(staleGlyph?.Data);
             }
             finally
             {
@@ -495,6 +578,58 @@ public sealed class SolutionTreeSurfaceTests
 
             return null;
         }
+    }
+
+    private static ShapePath? FindKindGlyph(TreeViewItem item)
+    {
+        item.ApplyTemplate();
+        item.UpdateLayout();
+        return FindNamedPath(item, "kindGlyph") ?? FirstPath(item, skipExpander: true);
+    }
+
+    private static ShapePath? FindNamedPath(DependencyObject root, string name)
+    {
+        if (root is FrameworkElement fe && fe.Name == name && root is ShapePath named)
+        {
+            return named;
+        }
+
+        var n = VisualTreeHelper.GetChildrenCount(root);
+        for (var i = 0; i < n; i++)
+        {
+            var found = FindNamedPath(VisualTreeHelper.GetChild(root, i), name);
+            if (found is not null)
+            {
+                return found;
+            }
+        }
+
+        return null;
+    }
+
+    private static ShapePath? FirstPath(DependencyObject root, bool skipExpander = false)
+    {
+        if (skipExpander && root is ToggleButton)
+        {
+            return null;
+        }
+
+        if (root is ShapePath path && path.Width >= 15)
+        {
+            return path;
+        }
+
+        var n = VisualTreeHelper.GetChildrenCount(root);
+        for (var i = 0; i < n; i++)
+        {
+            var found = FirstPath(VisualTreeHelper.GetChild(root, i), skipExpander);
+            if (found is not null)
+            {
+                return found;
+            }
+        }
+
+        return null;
     }
 
     private static void ExpandIndexed(TreeView tree)

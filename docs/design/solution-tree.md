@@ -632,10 +632,10 @@ Unit of work: one `SolutionTreeAsync` invocation. Span: existing `ActivitySource
 |---|---|---|
 | Production caps 2000/5000 | **Inferred** | Retune when UV-0 emits counts. Honest `Omitted (N)` meanwhile. |
 | Empty UI vs root-in | **closed (N10 Test Architect)** | Arrange B6 as root-only DTO + no non-root nodes + no shortfall. Failing input: empty copy replaced by an Unindexed root row. |
-| Physical Ctrl+Enter | **Flagged** (spike) | PreviewKeyDown is the control; RaiseEvent is not proof. |
+| Physical Ctrl+Enter | **Flagged** (spike) | PreviewKeyDown is the control; RaiseEvent is not proof. HandleKey(Control) and the node menu are the tested pointer/keyboard Reveal paths. |
 | Other walkers vs Skip | **Flagged** | N7 optional widen; UV-0 binds Skip. |
-| Glyph-to-kind map | **Flagged** (N8) | UV-1 UIA Name still includes `NodeKind` word. |
-| Default Left vs View-menu-only | **not frozen** | UX-1 still ≤ 2 steps via Show. |
+| Glyph-to-kind map | **closed (N8)** | Three stroke glyphs (folder / file / dashed-folder). UIA Name still includes the kind word. Not a per-`NodeKind` icon set. |
+| Default Left vs View-menu-only | **frozen View-menu-only** | Ruling 94 Left stays Graph. `solution-tree` is admitted; not in `ArchitectureDefault`. UX-1 still ≤ 2 steps via Show. |
 | T5a deterministic real-FS IOException | **Inferred** | Internal enumerator hook is the named Core seam. |
 | Stage 4 / N10 | **open** | This design stays **draft**. Authors do not self-clear. |
 
@@ -664,9 +664,9 @@ Unit of work: one `SolutionTreeAsync` invocation. Span: existing `ActivitySource
 
 | | |
 |---|---|
-| **Completed** | N9 repair of N10 Test Architect BLOCK in this draft: UV-1 T5c Fake/golden arrange (no App omit ctor, no `DropRelativePaths`, no `InternalsVisibleTo` App.Tests); US-T6/UI-8 visual-tree exact copy; B6 root-only empty; F\* `io_probe/`; PROBE-APP-ENUM + `DirectoryInfo` APIs; UV-0 T5c falsifying inputs. Status remains **draft**. |
-| **Remaining** | N10 re-review of this repair (authors do **not** self-clear). Other N10 lenses. N8 `/ui-design` chrome. `/implement` UV-0 then UV-1. Join target `understanding-views`, not `main`. |
-| **Best next action** | N10 Test Architect re-reads this file against the six closes, then remaining N10 lenses. |
+| **Completed** | N9 repair of N10 Test Architect BLOCK. UV-0 + UV-1 walking skeleton. N8 chrome: kind glyphs, stale glyph, file double-click View source, dual-activate node menu. Zone frozen View-menu-only (Ruling 94). Status remains **draft**. |
+| **Remaining** | N10 re-review (authors do **not** self-clear). Physical Ctrl+Enter attended/SendInput. Join recount + `tools/run-verify-gates.py` on `understanding-views`. Not `main`. |
+| **Best next action** | N10 Test Architect + remaining lenses re-read this file and the chrome tests. Do not admit D-1. |
 
 ## Gate record
 

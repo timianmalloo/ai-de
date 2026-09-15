@@ -41,7 +41,7 @@ summary: >-
 - **Oracle:** Unindexed missing, expander present, skip silent, `bin` as a row.
 - **Red observed before green:** compile-fail then assertion-fail before `SolutionTreeSurface.Show` existed; US-C4 reds landed first.
 - **Confidence:** Verified
-- **Residual risk:** N8 glyph chrome still deferred.
+- **Residual risk:** per-`NodeKind` icons not drawn; three census glyphs only.
 
 ### Claim 3: T5c visual-tree via Fake omit-set DTO
 - **Evidence:** `Show_OmitSetDto_ChromeSaysOmittedN_NoOmitProbeRow_UnindexedProbeRemainsLeaf`. DTO already has `omit_probe` absent, `OmittedByCap = 2`, Cap disclosure `Omitted (2)`, `unindexed_probe` Unindexed. `Binder_CallsSolutionTreeAsync_NotGraphAsync_AndShowsOmitSetDto` calls `SolutionTreeAsync` once; `SolutionTreeQuery` has no `DropRelativePaths` property. No `InternalsVisibleTo` App.Tests on Core.
@@ -88,5 +88,5 @@ summary: >-
 | | |
 |---|---|
 | **Completed** | Kind row, TreeView + N7, US-C4, T3/T5c Fake DTO, probes. Red: 19 vs 18 kinds. Green: 15 SolutionTree tests + 89 menu/factory-related. |
-| **Remaining** | N8 glyph chrome. Physical Ctrl+Enter attended/SendInput. Zone/default layout. N10 design acceptance. Join onto `understanding-views`. |
-| **Best next action** | N8 `/ui-design` chrome, or join UV-0+UV-1 onto `understanding-views`. |
+| **Remaining** | Physical Ctrl+Enter attended/SendInput (RaiseEvent is not the chord). N10 design acceptance (authors do not self-clear). Join recount + gates. |
+| **Best next action** | N10 non-author review. Recount App/Core baselines. Do not admit D-1. |

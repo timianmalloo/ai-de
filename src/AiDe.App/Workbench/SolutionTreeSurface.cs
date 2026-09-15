@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using AiDe.Core.Projections;
 
 namespace AiDe.App.Workbench;
@@ -50,6 +51,16 @@ internal sealed class SolutionTreeNodeItem
         : "census-folder";
 
     public string CoverageLabel => Node.Coverage == CensusFolderCoverage.Unindexed ? "Unindexed" : "";
+
+    public Geometry KindGlyph => Node.Kind == SolutionTreeNodeKind.FileArtifact
+        ? SolutionTreeGlyphs.File
+        : SolutionTreeGlyphs.Folder;
+
+    public DoubleCollection KindGlyphDash =>
+        Node.Kind == SolutionTreeNodeKind.CensusFolder
+        && Node.Coverage == CensusFolderCoverage.Unindexed
+            ? SolutionTreeGlyphs.Dash
+            : SolutionTreeGlyphs.Solid;
 
     public string AccessibleName
     {
@@ -138,6 +149,32 @@ internal sealed class SolutionTreeNodeItem
     }
 }
 
+/// <summary>N8 kind glyphs: mockup 16px stroke paths. Decorative; UIA Name stays on the row.</summary>
+internal static class SolutionTreeGlyphs
+{
+    public static Geometry Folder { get; } = Frozen(Geometry.Parse("M2.5 5h3.2l1.2 1.4H13.5V12.5H2.5z"));
+
+    public static Geometry File { get; } = Frozen(Geometry.Parse("M4.5 2.5h5l2.5 2.5V13.5h-7.5z M9.5 2.5V5h2.5"));
+
+    public static Geometry Stale { get; } = Frozen(Geometry.Parse("M8 2.5a5.5 5.5 0 1 0 0.01 0z M8 5v3.2l2 1.3"));
+
+    public static DoubleCollection Dash { get; } = Frozen(new DoubleCollection { 2, 2 });
+
+    public static DoubleCollection Solid { get; } = Frozen(new DoubleCollection());
+
+    private static Geometry Frozen(Geometry geometry)
+    {
+        geometry.Freeze();
+        return geometry;
+    }
+
+    private static DoubleCollection Frozen(DoubleCollection dashes)
+    {
+        dashes.Freeze();
+        return dashes;
+    }
+}
+
 /// <summary>
 /// Architecture Solution tree: WPF TreeView over <see cref="IWorkspaceQueries.SolutionTreeAsync"/>.
 /// </summary>
@@ -198,6 +235,36 @@ public sealed class SolutionTreeSurface : ContentControl
     public event EventHandler? ShowGraphRequested;
 
     public event EventHandler? RetryRequested;
+
+    /// <summary>Last file-artifact node menu built for a pointer Reveal / View source.</summary>
+    internal ContextMenu? LastNodeMenu { get; private set; }
+
+    /// <summary>
+    /// Dual-activate menu only (DESIGN.md: View source · Reveal in graph). Not the full Open-as list.
+    /// </summary>
+    internal ContextMenu? BuildFileMenu(SolutionTreeNodeItem item)
+    {
+        if (item.Node.Kind != SolutionTreeNodeKind.FileArtifact
+            || string.IsNullOrEmpty(item.Node.NodeId))
+        {
+            return null;
+        }
+
+        var nodeId = item.Node.NodeId;
+        var menu = new ContextMenu();
+        menu.Items.Add(ActivateItem("View source", NodeViewKind.Source, nodeId));
+        menu.Items.Add(ActivateItem("Reveal in graph", NodeViewKind.GraphNeighbourhood, nodeId));
+        LastNodeMenu = menu;
+        return menu;
+    }
+
+    private MenuItem ActivateItem(string label, NodeViewKind kind, string nodeId)
+    {
+        var item = new MenuItem { Header = label };
+        item.Click += (_, _) =>
+            ActivateRequested?.Invoke(this, new SolutionTreeActivate(nodeId, kind));
+        return item;
+    }
 
     public void ShowLoading()
     {
@@ -334,6 +401,20 @@ public sealed class SolutionTreeSurface : ContentControl
         coverage.SetValue(DockPanel.DockProperty, Dock.Right);
         coverage.SetResourceReference(TextBlock.ForegroundProperty, "UnverifiedBrush");
 
+        var glyph = new FrameworkElementFactory(typeof(Path), "kindGlyph");
+        glyph.SetBinding(Path.DataProperty, new Binding(nameof(SolutionTreeNodeItem.KindGlyph)));
+        glyph.SetBinding(Path.StrokeDashArrayProperty, new Binding(nameof(SolutionTreeNodeItem.KindGlyphDash)));
+        glyph.SetValue(FrameworkElement.NameProperty, "kindGlyph");
+        glyph.SetValue(FrameworkElement.WidthProperty, 16.0);
+        glyph.SetValue(FrameworkElement.HeightProperty, 16.0);
+        glyph.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 8, 0));
+        glyph.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+        glyph.SetValue(DockPanel.DockProperty, Dock.Left);
+        glyph.SetValue(Path.StretchProperty, Stretch.Uniform);
+        glyph.SetValue(Path.StrokeThicknessProperty, 1.5);
+        glyph.SetValue(Path.FillProperty, Brushes.Transparent);
+        glyph.SetResourceReference(Path.StrokeProperty, "TextBrush");
+
         var name = new FrameworkElementFactory(typeof(TextBlock));
         name.SetBinding(TextBlock.TextProperty, new Binding(nameof(SolutionTreeNodeItem.DisplayName)));
         name.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
@@ -341,6 +422,7 @@ public sealed class SolutionTreeSurface : ContentControl
         name.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
 
         dock.AppendChild(coverage);
+        dock.AppendChild(glyph);
         dock.AppendChild(name);
         header.AppendChild(dock);
 
@@ -364,10 +446,10 @@ public sealed class SolutionTreeSurface : ContentControl
             new Binding(nameof(SolutionTreeNodeItem.AccessibleName))));
         itemStyle.Setters.Add(new EventSetter(
             UIElement.PreviewMouseLeftButtonDownEvent,
-            new MouseButtonEventHandler(OnUnindexedPreviewMouseDown)));
+            new MouseButtonEventHandler(OnItemMouseDown)));
         itemStyle.Setters.Add(new EventSetter(
             UIElement.MouseLeftButtonDownEvent,
-            new MouseButtonEventHandler(OnUnindexedPreviewMouseDown)));
+            new MouseButtonEventHandler(OnItemMouseDown)));
         tree.ItemContainerStyle = itemStyle;
 
         tree.PreviewKeyDown += (_, e) =>
@@ -383,33 +465,76 @@ public sealed class SolutionTreeSurface : ContentControl
             }
         };
 
-        tree.PreviewMouseLeftButtonDown += OnUnindexedPreviewMouseDown;
+        tree.PreviewMouseLeftButtonDown += OnItemMouseDown;
+        tree.ContextMenuOpening += OnContextMenuOpening;
 
         return tree;
     }
 
-    private static void OnUnindexedPreviewMouseDown(object sender, MouseButtonEventArgs e)
+    private void OnContextMenuOpening(object sender, ContextMenuEventArgs e)
+    {
+        if (Tree.SelectedItem is SolutionTreeNodeItem item
+            && BuildFileMenu(item) is { } menu)
+        {
+            Tree.ContextMenu = menu;
+            return;
+        }
+
+        e.Handled = true;
+    }
+
+    private void OnItemMouseDown(object sender, MouseButtonEventArgs e)
     {
         if (e.ClickCount != 2)
         {
             return;
         }
 
-        SolutionTreeNodeItem? vm = sender switch
+        var container = Ancestor<TreeViewItem>(e.OriginalSource as DependencyObject)
+            ?? (sender as TreeViewItem);
+        if (container?.DataContext is not SolutionTreeNodeItem vm)
         {
-            TreeViewItem { DataContext: SolutionTreeNodeItem item } => item,
-            TreeView { SelectedItem: SolutionTreeNodeItem selected } => selected,
-            _ => null,
-        };
-
-        if (vm is { Children.Count: 0 })
-        {
-            e.Handled = true;
-            if (sender is TreeViewItem leaf)
+            if (Tree.SelectedItem is SolutionTreeNodeItem selected)
             {
-                leaf.IsExpanded = false;
+                vm = selected;
+                container = null;
+            }
+            else
+            {
+                return;
             }
         }
+
+        if (vm.Node.Kind == SolutionTreeNodeKind.FileArtifact
+            && !string.IsNullOrEmpty(vm.Node.NodeId))
+        {
+            ActivateRequested?.Invoke(this, new SolutionTreeActivate(vm.Node.NodeId, NodeViewKind.Source));
+            e.Handled = true;
+            return;
+        }
+
+        if (vm.Node.Kind == SolutionTreeNodeKind.CensusFolder
+            && vm.Node.Coverage == CensusFolderCoverage.Unindexed)
+        {
+            e.Handled = true;
+            if (container is not null)
+            {
+                container.IsExpanded = false;
+            }
+        }
+    }
+
+    private static T? Ancestor<T>(DependencyObject? start) where T : DependencyObject
+    {
+        for (var d = start; d is not null; d = VisualTreeHelper.GetParent(d))
+        {
+            if (d is T match)
+            {
+                return match;
+            }
+        }
+
+        return null;
     }
 
     private void RenderChrome(SolutionTreeResult? result)
@@ -417,9 +542,30 @@ public sealed class SolutionTreeSurface : ContentControl
         _chrome.Children.Clear();
         if (_stale)
         {
+            var row = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(12, 4, 12, 4),
+            };
+            var glyph = new Path
+            {
+                Name = "staleGlyph",
+                Data = SolutionTreeGlyphs.Stale,
+                Width = 16,
+                Height = 16,
+                Stretch = Stretch.Uniform,
+                StrokeThickness = 1.5,
+                Fill = Brushes.Transparent,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 0, 8, 0),
+            };
+            glyph.SetResourceReference(Shape.StrokeProperty, "InferredBrush");
             var stale = Muted("Stale");
+            stale.Margin = new Thickness(0);
             stale.SetResourceReference(TextBlock.ForegroundProperty, "InferredBrush");
-            _chrome.Children.Add(stale);
+            row.Children.Add(glyph);
+            row.Children.Add(stale);
+            _chrome.Children.Add(row);
         }
 
         if (result is not null)
