@@ -9911,10 +9911,10 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "Nodes, dependencies, exits and oracles",
-          "mermaid": "flowchart LR\n G --> O\n O --> D1[E1-D]\n O --> D2[E2-D]\n D1 --> C\n D2 --> C\n C --> RD[R-D]\n RD --> I1[E1-I]\n RD --> I2[E2-I]\n I1 --> R1[R-I E1]\n I2 --> R2[R-I E2]\n R1 --> J\n R2 --> J\n J --> H"
+          "mermaid": "flowchart LR\n G --> O\n O --> D1[E1-D]\n O --> D2[E2-D]\n D1 --> C\n D2 --> C\n C --> RD[R-D]\n RD --> I1[E1-I]\n RD --> I2[E2-I]\n I1 --> P1[E1-P]\n I2 --> P2[E2-P]\n P1 --> R1[R-I E1]\n P2 --> R2[R-I E2]\n R1 --> J\n R2 --> J\n J --> H"
         }
       ],
-      "sourceSha256": "46a84fc3ffdb7ca56093f16fd2e01027ef4798322d8bdf310a84d72e19857705"
+      "sourceSha256": "689f088e8f3150f505d243f17b61532e98f292d08a6c7f6590915fa6d448561e"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -19373,5 +19373,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "76ca3946e287c1956ddf18a6394de8c64be77c58f1a5d4e7cdfb8ef0cb019852"
+  "graphSha256": "41ab2ce3dfe423a80dc7f2a58d125dab967055a39b2f65b2654091ff1e31edad"
 };

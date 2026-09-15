@@ -61,7 +61,9 @@ ER remains a separate outstanding item; five-view delivery is not completion of 
 | R-D | Independent design/graph/UX/architecture review | C | Trigger union reviewed, falsifiable veto exits satisfied | T2 |
 | E1-I | Red-first, minimal Sequence/Activity vertical slices | R-D | Production source→model→wire→native→Source/Back proven; mutants/negative states exercised | T2 |
 | E2-I | Red-first domain, layer, Azure vertical slices | R-D | Source-backed meaning, no inferred domain truth or deployed-state claims; actual native path proven | T2 |
-| R-I | Independent implementation/native review per frozen slice | respective I | Actual results inspected, all triggered vetoes cleared; partial remains unaccepted | T2 |
+| E1-P | Freeze E1 proof and evidence inputs | E1-I | docs/proof/atlas-behavior-views.md names real receipts and exact revision; missing/unexecuted/contradictory observations fail | T2 |
+| E2-P | Freeze E2 proof and evidence inputs | E2-I | docs/proof/atlas-architecture-views.md names real receipts and exact revision; missing/unexecuted/contradictory observations fail | T2 |
+| R-I | Independent implementation/native review per frozen slice | respective P | Reviewer opens frozen proof and raw results; all triggered vetoes cleared; partial remains unaccepted | T2 |
 | J | Integrate dependency order, regenerate after audit, official join checks | R-I, GHCP landing | Integrated proof and actual test results; no failures beyond agreed baseline; Owner close | T2 |
 | H | Agreed serialized publication handoff | J | Candidate/base/evidence request acknowledged; no direct main push without grant | T1 |
 
@@ -75,8 +77,10 @@ flowchart LR
  C --> RD[R-D]
  RD --> I1[E1-I]
  RD --> I2[E2-I]
- I1 --> R1[R-I E1]
- I2 --> R2[R-I E2]
+ I1 --> P1[E1-P]
+ I2 --> P2[E2-P]
+ P1 --> R1[R-I E1]
+ P2 --> R2[R-I E2]
  R1 --> J
  R2 --> J
  J --> H
@@ -119,8 +123,10 @@ one shared authority/foundation pass; independent lane grounding and later imple
 after fixed shared contracts; independent review as soon as each frozen slice is ready.
 
 Cost model is **Inferred**, in normalized node units, not minutes or tokens: G=1, O=1,
-each D=2, C=1, R-D=1, each I=4, each R-I=2, J=2, H=1. T1=23; T∞=15;
-two execution lanes yield Brent bound (23−15)/2+15=19 and lower bound 15. The ceiling is eight
+each D=2, C=1, R-D=1, each I=3, each P=1, each R-I=2, J=2, H=1. T1=23; T∞=15;
+The independent review required explicit proof nodes; the previous four implementation units
+are now split into three implementation plus one evidence unit, not an invented cost reduction.
+Two execution lanes yield Brent bound (23−15)/2+15=19 and lower bound 15. The ceiling is eight
 units before overhead; no measured speedup is claimed. Shared contracts and desktop slots can
 erase that ceiling. Four total agents provide only two author slots. Pause completed workers
 to admit independent reviewers; Owner does not become an implementer.
@@ -144,9 +150,14 @@ appended at each phase close: calls, exposed tokens, elapsed time, rework, bound
 
 ## Plan review
 
-Owner grounding completed at `8c9fa47c`: five-view scope and two design lanes confirmed. Independent plan review pending. This graph authorizes bounded grounding
+Owner grounding completed at `8c9fa47c`: five-view scope and two design lanes confirmed. Independent review `e07c9e59` cleared design grounding only. This graph authorizes bounded grounding
 only. Product implementation is held at C/R-D until accepted foundation, exact grants and
 independent design gates exist.
+
+The independent review required explicit proof nodes before implementation. E1-P/E2-P now
+name committed Proof Packs, exact revision and raw evidence inputs; missing, unexecuted or
+contradictory results prevent review admission. Other implementation barriers remain unresolved,
+not waived by this graph amendment. Focused review of this amendment remains required.
 
 ## Grounding checkpoint actuals
 
