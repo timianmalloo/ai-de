@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:33:20Z",
+  "generated": "2026-09-15T14:56:02Z",
   "audit": [
     {
       "actor": null,
@@ -16372,6 +16372,71 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
         "short": "bab5035e7",
+        "branch": "review/surface-ownership",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JS1PYHM37VK5BK5DNQAZ7C",
+      "shortname": "recursive-surface-ownership-implementation-review",
+      "datetime": "2026-09-15T14:55:29Z",
+      "session": "codex-surface-ownership-review",
+      "prompt": "Independently review frozen author commit 18a4a19f with a byte-pinned snapshot, adversarial parser and ownership oracles, real 17-file register state, author proof and exact scope; do not edit author code or rerun .NET.",
+      "summary": "Blocked 18a4a19f after a 4/9 independent adversarial run. Five fixtures expose missing heading resets, missing Path-header and delimiter diagnostics, overbroad non-surface relevance, and indented section-end parsing. Built-in self-test and 17/17 live register still pass but do not cover these failures.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership-review.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Independently review frozen commit 18a4a19f for recursive surface ownership correctness, Python quality, simplicity, and bounded evidence.",
+      "done_when": "Byte-pinned tests, real-register outcomes, scope inspection, shaped persona verdicts, executable counterexamples, and veto-clear predicates are recorded and committed.",
+      "tier": "T1",
+      "main_calls": 14,
+      "main_budget": 25,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false,
+        "regression": false
+      },
+      "started_at": "2026-09-15T14:47:28Z",
+      "duration_seconds": 481.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 2,
+          "accepted": 2
+        },
+        {
+          "persona": "python-developer",
+          "raised": 3,
+          "accepted": 3
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 1,
+          "accepted": 1
+        },
+        {
+          "persona": "sre-diagnostician",
+          "raised": 1,
+          "accepted": 1
+        },
+        {
+          "persona": "data-persistence-architect",
+          "raised": 1,
+          "accepted": 1
+        }
+      ],
+      "git": {
+        "sha": "8690c5fa83562d1204554be178c8a52b016e3293",
+        "short": "8690c5fa8",
         "branch": "review/surface-ownership",
         "pushed": null
       }

@@ -16371,6 +16371,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "7f5d0fd0ec8cd33617414f7ed9112a21c331a035ae4859e272aa94234c2e6b57"
     },
     {
+      "id": "proof-recursive-surface-ownership-review",
+      "path": "docs/proof/recursive-surface-ownership-review.md",
+      "title": "Recursive surface ownership: independent implementation review",
+      "type": "proof-pack",
+      "status": "blocked",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Frozen commit 18a4a19f is blocked by five executable parser-boundary counterexamples.",
+      "tags": [
+        "proof",
+        "review",
+        "ownership",
+        "python",
+        "testing"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-recursive-surface-ownership-plan-review",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5071512a8472495eccbd8f067ec3138277ddccddb0287722ca9e3771de37d146"
+    },
+    {
       "id": "proof-s2-settings-and-sentinels",
       "path": "docs/proof/s2-settings-and-sentinels.md",
       "title": "Proof Pack — S2: the settings and sentinels commit",
@@ -18665,5 +18700,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c36840be64e18ecf33826bf5676687f0465f6225b47157c10658bab89fd4ad78"
+  "graphSha256": "22a99f43a0e88e32d6d25f37ae7ce22a5a714c6255b2c7885e274c396f6b9d30"
 };
