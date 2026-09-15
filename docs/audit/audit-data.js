@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:56:02Z",
+  "generated": "2026-09-15T20:59:56Z",
   "audit": [
     {
       "actor": null,
@@ -18719,6 +18719,53 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "acdf4894c9a957600bfd6e63b6ab59319dad92ff",
         "short": "acdf4894c",
+        "branch": "review/atlas-views-design",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KDX1VQ27A4TXNGF7P647KT",
+      "shortname": "atlas-e1-structural-oracle-spec",
+      "datetime": "2026-09-15T20:59:56Z",
+      "session": "codex-atlas-views-review",
+      "prompt": "Author an independent expected-result oracle ledger for the bounded E1 structural/page experiment: four literal groups, exact typed primary identities/counts, structural relations, pages 1/2/7/128, closure/stubs/recomposition/refusal invariants and three required negative mutations; mark undefined algorithm choices for Owner rather than invent them.",
+      "summary": "Froze four literal source fixtures, 13 expected primary identities, required structural relation subsets, exact per-page primary counts, closure/stub/recomposition rules and five mutation/refusal oracles. Blocked author start on five unresolved contract choices: marker attachment, loop-header representation, try/finally region endpoints, unsupported-lock block marker and a non-tautological injectable unrepresentable-window cap.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-sol-plan-review",
+      "artifacts": [
+        "docs/proof/atlas-views-plan-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "e1-oracle-spec"
+      ],
+      "outcome": "blocked",
+      "goal": "Freeze an independent, implementation-neutral oracle ledger for the E1 structural/page feasibility experiment.",
+      "done_when": "Four literal fixtures, fixed primary identities/counts, required relations, page/recomposition/refusal rules and mutation failures are recorded, with every undefined algorithm choice marked for Owner decision.",
+      "tier": "T2",
+      "main_calls": 6,
+      "main_budget": 6,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T20:57:31Z",
+      "duration_seconds": 145.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 5,
+          "accepted": 5
+        }
+      ],
+      "git": {
+        "sha": "d062650d41b68f6c14d1fffd9c07228a2846d7ef",
+        "short": "d062650d4",
         "branch": "review/atlas-views-design",
         "pushed": null
       }

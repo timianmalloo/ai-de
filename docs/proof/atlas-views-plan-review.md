@@ -327,3 +327,135 @@ and rubric evidence. P0.6 remains blocked on authorized fixtures and measurement
 and P0.8 remain blocked on their executed independent evidence. Full Azure deployment
 identity/US-E8.b remains open. Coordination authority is the named `copilot-main-watch`;
 this review does not infer blanket Core authority or grant any source path.
+
+## Independent E1 structural/page oracle specification
+
+This reviewer authored this expected-result specification against E1 design `83e1139b`
+and review `d062650d`. A later implementation review must disclose that role and must not
+accept subject-derived changes to these expectations. Relations here are structural source
+evidence, never executable CFG edges or runtime observations.
+
+### Literal fixture groups
+
+Each block is a separate UTF-8/LF file and observation; analyze only the named method.
+
+**B — `Branch`**
+```csharp
+class B {
+  void Ping() { }
+  void Branch(bool flag) {
+    Ping();
+    if (flag) { Ping(); } else { Ping(); }
+  }
+}
+```
+
+**L — `Loop`**
+```csharp
+class L {
+  void Tick() { }
+  void Loop(bool more) {
+    while (more) { Tick(); }
+  }
+}
+```
+
+**T — `WorkAsync`**
+```csharp
+using System.Threading.Tasks;
+class T {
+  Task SendAsync() => Task.CompletedTask;
+  void Cleanup() { }
+  async Task WorkAsync() {
+    try { await SendAsync(); }
+    finally { Cleanup(); }
+  }
+}
+```
+
+**G — `Gaps`**
+```csharp
+class G {
+  void Ping() { }
+  void Gaps(object gate) {
+    void Local() { Ping(); }
+    lock (gate) { }
+  }
+}
+```
+
+### Fixed primary identities
+
+Oracle labels are test vocabulary. Each production identity must be the §5.3 tuple:
+fixture observation + listed Roslyn syntax kind/role + full exact UTF-16 syntax-node span
+in the literal + syntax-child index path. Expected spans/paths come from the fixed fixture,
+never from subject output. Ordinals use span start, end descending and the frozen role rank.
+
+| Group | Primary identities in source order | Count and exclusions |
+|---|---|---|
+| B | `B1 InvocationExpression Ping()` before branch; `B2 IfStatement`; `B3 InvocationExpression Ping()` true arm; `B4 InvocationExpression Ping()` false arm | **4**; three distinct call sites bind the same declaration. |
+| L | `L1 WhileStatement`; `L2 InvocationExpression Tick()` | **2**; no back-edge or iteration claim. |
+| T | `T1 TryStatement`; `T2 AwaitExpression`; `T3 InvocationExpression SendAsync()`; `T4 FinallyClause`; `T5 InvocationExpression Cleanup()` | **5**; await and call have distinct keys; no scheduler/resumption/propagation claim. |
+| G | `G1 Gap(nested-body-not-expanded)` anchored to `Local`; `G2 Gap(unsupported-lock)` anchored to `lock` | **2**; the nested `Ping()` is absent and cannot contribute an edge. |
+
+Every group also has exactly one method Entry and one method Exit identity bound to its
+selected observation. Their attachment relation is reserved by D1 below.
+
+### Required structural relations
+
+This is the fixed minimum set. D1–D4 must freeze the complete auxiliary inventory and total.
+
+| Group | Required typed relations |
+|---|---|
+| B | Method-body `Contains` B1/B2; `NextInSource(B1,B2)`; `WhenTrueRegion(B2,B.true)` and `WhenFalseRegion(B2,B.false)` carrying exact `flag` source; `Contains(B.true,B3)`; `Contains(B.false,B4)`. |
+| L | Method-body `Contains` L1; `LoopBodyRegion(L1,L.body)`; `Contains(L.body,L2)`. `LoopConditionSource` carries exact `more` source; D2 freezes its endpoint shape. |
+| T | Method-body `Contains` T1; try-region contains T2; `AwaitOperand(T2,T3)`; finally-region contains T5. `FinallyDeclaration` is required; D3 freezes endpoints. |
+| G | Method-body `Contains` G1/G2; `NextInSource(G1,G2)`. Nothing relates the skipped `Ping()` to the selected graph. D4 settles the empty lock block marker. |
+
+Relation identity is observation + canonical endpoints + kind + syntactic arm index. Its
+predicate/anchor cannot borrow target authority. Any executable-successor, loop-back,
+catch-target, scheduler or runtime edge fails the experiment.
+
+### Paging, refusals and mutations
+
+Run every observation with primary page sizes **1, 2, 7, 128**. Expected primary page
+counts are B `4/2/1/1`, L `2/1/1/1`, T `5/3/1/1`, G `2/1/1/1`. A page contains its
+primary window, Entry/Exit and transitive owning-region chain only. A relation with one
+excluded endpoint becomes one `outside-window` stub with canonical missing endpoint ID,
+direction, kind and known ordinal; a relation with neither endpoint is absent.
+
+Union pages from one observation, replace matching stubs, and deduplicate only canonical
+auxiliary/relation IDs. The union must equal size-128 for every primary ID, ordinal,
+predicate, anchor, confidence, relation and order. Offset/page size never enter identity.
+`not-observed-after-cap` has unknown ordinal/total and no Go-to-window;
+`unresolved-target` is semantic; neither may masquerade as `outside-window`.
+
+| Negative mutation | Required failing oracle |
+|---|---|
+| Drop B2 or either branch-region relation | Fixed B primary/relation set and recomposition mismatch. |
+| Drop a size-1/2 cross-window relation or stub | Per-page stub and recomposed relation mismatch. |
+| Add page offset/size to an identity | Cross-size stable-identity mismatch. |
+| Traverse `Local` and emit `Ping()` | G count/exclusion mismatch. |
+| Relabel a relation executable/runtime | Closed structural vocabulary/meaning mismatch. |
+
+Invalid limit, offset or observation yields typed refusal and no new selection/receipt.
+One valid primary whose mandatory closure cannot fit yields `window-unrepresentable` and
+no new selection; D5 must supply a non-tautological trigger.
+
+### Needs Owner decision before author execution
+
+1. **D1 marker attachment:** freeze the kind/endpoints attaching Entry, Exit and method-body
+   block, and whether ordinary nested blocks add markers. This fixes exact total counts.
+2. **D2 loop header:** decide whether the condition/header is a node, L1 value or relation
+   evidence, and freeze `LoopConditionSource` endpoints.
+3. **D3 try/finally duality:** decide whether T1/T4 and try/finally region markers coexist
+   as separate nodes, and freeze `FinallyDeclaration` endpoints.
+4. **D4 unsupported lock:** decide whether G2's empty lock body gets a block marker.
+5. **D5 unrepresentable trigger:** authorize a test-only limit policy that makes one primary
+   plus mandatory closure exceed its cap. Defaults (512 auxiliary/page; depth 64) cannot
+   produce this state from the minimal fixture, so a claimed refusal otherwise is tautological.
+
+**BLOCK author start until D1–D5 are frozen by Owner/Conductor.** Then the Astra author may
+use only the four exactly granted existing spike paths and no new package. The experiment can
+qualify structural/page feasibility only; it grants no production token, wire, UI, CFG,
+runtime, product or native acceptance.
