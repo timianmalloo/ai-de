@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:03:49Z",
+  "generated": "2026-09-15T20:12:27Z",
   "audit": [
     {
       "actor": null,
@@ -17740,6 +17740,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "1bfb250aeee2fe11b06fb7de0b3fafaef1ceaea4",
         "short": "1bfb250ae",
+        "branch": "understanding-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KB634HSDGYXAS49W4XWGKJ",
+      "shortname": "coord-r115-desktop-hold",
+      "datetime": "2026-09-15T20:12:27Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "just a reminder to coordinate with the other sessions — Astra observed unannounced SendInput",
+      "summary": "Ruling 115 miss acknowledged. Late desktop START/END on the shared ledger (req-01M2KB1GN5, req-01M2KB1GPT). Atlas/Claude notified. Chord test now refuses if Occupant() is set and announces ActualPID start/end. Resolved seven open requests to this session (no main intent; no D-1; no Atlas overlap). Desktop RELEASED. Did not re-run SendInput.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/DesktopHold.cs",
+        "tests/AiDe.App.Tests/SolutionTreeChordTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Honor Ruling 115 desktop hold and answer other sessions on the ledger",
+      "done_when": "Hold announced; probe gated; seam requests resolved; no unannounced desktop run this turn",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "fc97072f1385cf66f04e21667681d811ea81dadf",
+        "short": "fc97072f1",
         "branch": "understanding-views",
         "pushed": null
       }
