@@ -845,3 +845,58 @@ to recover it. Only the diagnostic-removal mutant counts as the valid semantic m
 This is a diagnostic/control checkpoint only. Fresh-main integration and the unchanged full
 recount/outcome/gates/Release sequence still decide qualification; no product cause or fix is
 inferred from the previous all-found run or this intentionally missing-control fixture.
+
+## UWQ20 full qualification - all suites pass, five static gates block Release
+
+Fresh main `c46e112a924a8a0a4c86e4552af1f0e30bfa851c` was actually merged at
+`71de3ddbc2d5be935b4d6ccbe842321d45cf3442`, with diagnostic/control checkpoint
+`5f651aaa557ca0cf4e627f7e6def432cc69df32a` as its other parent. Two figure conflicts were
+resolved without replacing authored prose; append-only content/multiplicity and upstream identity
+were verified. Raw union mappings are in `IJ/union-1789505921052027100/`.
+
+The one unchanged full qualification completed every recount and the outcome check:
+
+| receipt | total | executed/passed | failed | not executed |
+|---|---:|---:|---:|---:|
+| App | 1134 | 1134 | 0 | 0 |
+| Core, whole | 3162 | 3161 | 0 | 1 |
+| Core, portable | 2818 | 2817 | 0 | 1 |
+| Core, nonportable | 344 | 344 | 0 | 0 |
+
+The named Core skip remains the file-symlink privilege case. Split rows are subsets. No
+selector/filter/test/floor was weakened; the extra App test is the controlled diagnostic oracle.
+Closing `--no-run` returned 0 and reported 4295 executed across the two whole projects.
+The original intermittent UIA cause remains unknown: this green is a qualification observation,
+not evidence that diagnostic logging repaired the product.
+
+The official join committed its recount/audit/derived checkpoint
+`231f41a7e383975513ee9eafd89ea8449ffb5e6d`, then the unchanged gate runner executed **38**
+checks: **33 passed, five failed**. The complete per-check report is retained in
+`command-015.json` under the run directory below. Failed checks:
+
+- `verify-audit-capture.py` - goal capture/AL5b control.
+- `verify-bounds-are-enforced.py` - a declared limit is not being enforced.
+- `verify-containment-comparisons.py` - the report names `WorkspaceCore.cs:593` and an
+  ordinal separator-terminated containment comparison.
+- `verify-harness-diagnostics.py` - the report names the proof test's declared STA thread.
+- `verify-surface-ownership.py` - the report names session-contracts line412, an existing
+  historical `Existing`/path row before a recognized Path header.
+
+These are observed gate failures, not diagnosed root causes or waived baseline debt. The existing
+aggregate runner prints shortened individual summaries; no individual check was rerun or changed
+merely to obtain a different result. The complete aggregate status report and source pins are
+retained for a bounded next gate-disposition pass.
+
+Official join stopped with **exit8 at the gate runner**, whose exit was 1. The configured
+prepublication Release build was **not reached**; no stale binary hash is offered as proof.
+The join script's earlier acceptance signal was emitted before these gates; the closing blocked
+audit entry supersedes that premature signal. No publication or final Security/Test acceptance
+is implied by the green suites.
+
+Raw full run: `.artifacts/atlas-main-integration/IJ/atlas-uwq20-1789505979044456000/`,
+including all four copied TRXs, full join-level command JSON and `join-result.json`.
+Actual official-join host PID10372 ran from `2026-09-15T20:59:39.102929Z` to
+`2026-09-15T21:13:37.795236Z`, exit8. Shared start/end-release:
+`req-01M2KDWGRCHMC31SBV2VNTDXBB` / `req-01M2KEP3SH3EZGQ0SBJK7GE1EX`.
+Desktop released. No ref movement, native application, new product/gate/dependency edit,
+full-cohort retry, main mutation or push occurred.

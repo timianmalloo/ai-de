@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:11:26Z",
+  "generated": "2026-09-15T22:12:52Z",
   "audit": [
     {
       "actor": null,
@@ -22533,6 +22533,69 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T20:59:39Z",
       "duration_seconds": 706.0
+    },
+    {
+      "id": "al-01M2KFHN7Q0WNJNJP3MS7SGCWJ",
+      "shortname": "atlas-uwq-acceptance-correction",
+      "datetime": "2026-09-15T21:28:40Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "TR4 preservation-only: append truthful UWQ correction before any site claim, regeneration or commit; preserve original entry and all in-flight work.",
+      "summary": "CORRECTION: the superseded official join entry emitted acceptance before its gate runner. UWQ whole/split test outcomes passed, but the unchanged runner executed38gates:33PASS/5FAIL. Failed:verify-audit-capture.py;verify-bounds-are-enforced.py;verify-containment-comparisons.py;verify-harness-diagnostics.py;verify-surface-ownership.py. Gate runner exit1, officialjoin exit8. Configured prepublicationRelease build NOTREACHED. Candidate231f41a7e383975513ee9eafd89ea8449ffb5e6d isBLOCKED/notaccepted; no publication clearance. Originalentry retainedappend-only. Rawcommand-015.json/allTRXs/join-result in.artifacts/atlas-main-integration/IJ/atlas-uwq20-1789505979044456000. This preservation-only correction doesnotrepairgates ordeclarefinalSecurity/Test acceptance.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Correct the premature acceptance signal without altering existing evidence or source",
+      "done_when": "Append-only corrective entry is read back as blocked/acceptancefalse and names the superseded entry",
+      "tier": "T2",
+      "main_calls": 1,
+      "main_budget": 4,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T21:28:40Z",
+      "duration_seconds": 0.0,
+      "supersedes": "al-01M2KEJ2V2PREZ2P1H4JYT3Q83"
+    },
+    {
+      "id": "al-01M2KHZ55HW8V4FX65TFB9FY8R",
+      "shortname": "atlas-hp6-codex-handoff-preservation",
+      "datetime": "2026-09-15T22:10:59Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "HP6 user-approved mechanical preservation only: retain original false acceptance and blocked superseder, own proof/audit/derived, and commit truthful Codex P1 handoff base; no source/test/tool/gate repair or rerun.",
+      "summary": "Actual user approval yes have Codex take it transferred only five-static-gate P1 implementation to Codex. SourceI231f41a7 preserved; original al-01M2KEJ2V2PREZ2P1H4JYT3Q83 remains append-only and blocked superseder al-01M2KFHN7Q0WNJNJP3MS7SGCWJ verified outcome blocked/acceptancefalse. UWQ tests passed App1134/Core3161/portable2817/nonportable344 withreportedCorefilesymlinkskip, but33/38gatesPASS5FAIL and ReleaseNOTREACHED. RawIJ/atlas-uwq20-1789505979044456000/command-015.json plusallTRXs andrunidentity are unchanged. This node onlymakes truthful correction/proof durable fornewCodexworktree; no source/tests/tools/gatepolicy edits, no GUI/build/test/mainjoin/push. Main901320c4 notjoined. Finalrepair/gates/Release/reviews/publicationremainblocked.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Preserve a truthful immutable P1 handoff base without altering qualification policy or code",
+      "done_when": "Original and blocked superseder, proof and own derived views are committed with source/tests/tools unchanged and leases released",
+      "tier": "T2",
+      "main_calls": 2,
+      "main_budget": 6,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T22:08:55Z",
+      "duration_seconds": 124.0
     }
   ],
   "changes": [
