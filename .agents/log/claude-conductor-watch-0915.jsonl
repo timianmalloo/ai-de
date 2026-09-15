@@ -18,3 +18,5 @@
 {"agent": "claude-conductor", "at": 1789487407.3423083, "kind": "claim", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 18, "session": "claude-conductor-watch-0915", "ttl": 600.0, "wi": "ruling-116"}
 {"agent": "claude-conductor", "at": 1789488457.0635684, "kind": "claim", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 19, "session": "claude-conductor-watch-0915", "ttl": 600.0, "wi": "ruling-117"}
 {"agent": "claude-conductor", "at": 1789488457.165527, "kind": "claim", "path": "docs/investigations/INV-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins.md", "seq": 20, "session": "claude-conductor-watch-0915", "ttl": 600.0, "wi": "inv-0012"}
+{"agent": "claude-conductor", "at": 1789491224.183887, "kind": "claim", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 21, "session": "claude-conductor-watch-0915", "ttl": 600.0, "wi": "ruling-118"}
+{"agent": "claude-conductor", "at": 1789491244.585287, "kind": "release", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 22, "session": "claude-conductor-watch-0915", "wi": "WI-0"}

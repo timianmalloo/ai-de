@@ -8,8 +8,8 @@
 | **Session id** | `grok-understanding-views-conductor` |
 | **Worktree** | `C:/Projects/ai-de-understanding-views` |
 | **Branch** | `understanding-views` |
-| **Based on** | `b3b3aef4` (join of ADR-0038; gates not green) |
-| **Status** | UV-0 Core query implementing; N7–N9 joined; N10 design repaired |
+| **Based on** | `aa230831` (UV-0 + UV-1 joined on understanding-views) |
+| **Status** | Walking skeleton on branch; N12 Proof Pack review in flight |
 | **Last updated** | 2026-09-15 |
 
 ## Doing right now
