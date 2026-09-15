@@ -42,8 +42,10 @@ namespace AiDe.App.Workbench;
 /// adapter must share the same <see cref="ILayoutService"/> instance, or the keyboard would mutate
 /// one layout while the view rendered another.</para>
 /// </remarks>
-public sealed class WorkbenchShell : IDisposable
+public sealed class WorkbenchShell : IDisposable, IAsyncDisposable
 {
+    private readonly Understanding.AtlasWorkspaceOwner _atlasOwner = new();
+    private bool _atlasShellResourcesDisposed;
     /// <summary>The UI thread, captured where the shell is wired — indexing completes on a worker.</summary>
     private System.Windows.Threading.Dispatcher _dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
 
@@ -119,7 +121,7 @@ public sealed class WorkbenchShell : IDisposable
     /// content is a pure function of the queries belong here.</para>
     /// </remarks>
     private static readonly HashSet<string> WorkspaceDependentPaneKinds =
-        new(StringComparer.Ordinal) { "sessions", "board", "leaderboard", "ledger", "view" };
+        new(StringComparer.Ordinal) { "sessions", "board", "leaderboard", "ledger", "view", "code-atlas" };
 
     /// <summary>The last observed watcher-store fingerprint; the loop only re-renders the panes when it changes (conn-9).</summary>
     private string? _watcherFingerprint;
@@ -159,7 +161,7 @@ public sealed class WorkbenchShell : IDisposable
             watcher.Daydreams,
             TerminalNameFor,
             SessionDocumentFor,
-            consoleFor: ConsoleFor);
+            consoleFor: ConsoleFor) { AtlasOwner = _atlasOwner };
 
         // The environment contract does not depend on a workspace, so it must not be gated behind
         // one. It was assigned ONLY in AttachWorkspace, which both call sites skip when the daemon
@@ -708,7 +710,7 @@ public sealed class WorkbenchShell : IDisposable
             watcher.Daydreams,
             TerminalNameFor,
             SessionDocumentFor,
-            consoleFor: ConsoleFor);
+            consoleFor: ConsoleFor) { AtlasOwner = _atlasOwner };
 
         // Panes realized at construction were built against a factory with no queries and render
         // "not available". Mark every workspace-dependent kind to rebuild on the next Render so they
@@ -1784,12 +1786,8 @@ public sealed class WorkbenchShell : IDisposable
             }
         }
 
-        // simplify: one kind places itself — a prompt draft opens beside a terminal (its transfer
-        // target) when there is one, else in any stack, where every other kind follows the document
-        // placement policy. A kind-keyed branch beside a row set is the shape Ruling 22 removes;
-        // ceiling: this one kind. Trigger: a second kind needing bespoke placement — then placement
-        // becomes a column on the row read by DocumentPlacementPolicy, and that policy's own
-        // DocumentKinds hand list retires with it.
+        // A prompt retains its terminal-relative rule. Other rows use their zone rule or
+        // the existing document-placement policy in OpenReferenceDocument.
         var besideTerminal = string.Equals(kind, "prompt", StringComparison.Ordinal)
             ? (target.Service.Current.AllStacks().FirstOrDefault(st => st.Surfaces.Any(su => su.Kind == "terminal"))
                ?? target.Service.Current.AllStacks().FirstOrDefault())?.Id
@@ -1810,7 +1808,8 @@ public sealed class WorkbenchShell : IDisposable
     /// <param name="host">The host the document opens in — resolved by the caller (<see cref="ResolveHost"/>).</param>
     /// <param name="intoStackId">
     /// When given, the surface is tabbed into this stack and the placement policy is not consulted
-    /// — the prompt kind's own rule (see <see cref="OpenKind"/>). Null for every other kind.
+    /// — the prompt's terminal-relative rule. Null delegates to the kind's zone rule or
+    /// the existing document-placement policy.
     /// </param>
     private string OpenReferenceDocument(DockHost host, Surface surface, string okMessage, string noPaneMessage, string? intoStackId = null)
     {
@@ -3113,8 +3112,26 @@ public sealed class WorkbenchShell : IDisposable
         return $"Dispute recorded against {disputable.EpisodeId} (append-only; the score is unchanged).";
     }
 
+    internal async Task AttachAtlasWorkspaceAsync(Func<AiDe.Core.Understanding.IAtlasWorkspaceReader>? factory)
+    {
+        await _atlasOwner.AttachAsync(factory).ConfigureAwait(true);
+        foreach (var host in Hosts)
+            host.Adapter.Invalidate(host.Service.Current.AllStacks().SelectMany(stack => stack.Surfaces)
+                .Where(surface => surface.Kind == "code-atlas").Select(surface => surface.SurfaceId));
+    }
+
+    internal void CancelAtlasOperations() => _atlasOwner.Dispose();
+
+    public async ValueTask DisposeAsync()
+    {
+        await _atlasOwner.DisposeAsync().ConfigureAwait(true);
+        Dispose();
+    }
+
     public void Dispose()
     {
+        _atlasOwner.Dispose();
+        if (_atlasShellResourcesDisposed) return;
         // The owner is closing. Each live pane writes its `terminal.stop` first — the reason is
         // `owner-closing`, recorded once, so the log pairs every start with an end and a census can
         // read "still hosted" as a subtraction instead of a process list — and is then DISPOSED, which
@@ -3160,6 +3177,7 @@ public sealed class WorkbenchShell : IDisposable
         _watcherPump?.Cancel();
         _watcherPump?.Dispose();
         _watcherHost?.Dispose();
+        _atlasShellResourcesDisposed = true;
     }
 
     /// <summary>The live session document for a <c>session-document</c> surface, or null.</summary>
@@ -3542,4 +3560,3 @@ public sealed class WorkbenchShell : IDisposable
         _sessionDocuments
             .GetValueOrDefault(Sessions.SessionDocumentSurface.SurfaceIdFor(sessionId))?.Composer;
 }
-

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using AiDe.Core.Understanding;
 
 namespace AiDe.Core.Ipc;
 
@@ -24,6 +25,11 @@ public sealed class DaemonEndpoint
     private readonly CapabilityRegistry _capabilities;
     private readonly Func<string, long> _epochOf;
     private readonly Dictionary<string, Func<IpcRequest, IpcPeer, IpcResponse>> _operations;
+    private readonly Dictionary<string, Func<IpcRequest, IpcPeer, CancellationToken, ValueTask<IpcResponse>>> _asyncOperations = new(StringComparer.Ordinal);
+    private readonly List<Func<IpcPeer, AtlasConnectionEndReason, CancellationToken, ValueTask>> _ended = [];
+    private readonly List<Func<IpcRequest, IpcPeer, IpcResponse?>> _opening = [];
+    private readonly object _publicationGate = new();
+    private readonly Dictionary<IpcResponse, Publication> _publications = new(ReferenceEqualityComparer.Instance);
 
     public DaemonEndpoint(
         string workspaceId,
@@ -39,8 +45,13 @@ public sealed class DaemonEndpoint
     public string WorkspaceId { get; }
 
     /// <summary>Registers an operation. Unregistered operations are rejected, never guessed at.</summary>
-    public void Register(string operation, Func<IpcRequest, IpcPeer, IpcResponse> handler) =>
-        _operations[operation] = handler;
+    public void Register(string operation, Func<IpcRequest, IpcPeer, IpcResponse> handler)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(operation);
+        ArgumentNullException.ThrowIfNull(handler);
+        if (_asyncOperations.ContainsKey(operation) || !_operations.TryAdd(operation, handler))
+            throw new InvalidOperationException("An operation is already registered.");
+    }
 
     /// <summary>
     /// The opening exchange: agree a version and issue a capability, in that order.
@@ -73,6 +84,11 @@ public sealed class DaemonEndpoint
                 "this daemon serves a different workspace");
         }
 
+        foreach (var opening in _opening)
+        {
+            var refused = opening(request, peer);
+            if (refused is not null) return refused;
+        }
         var epoch = _epochOf(WorkspaceId);
         var capability = _capabilities.Issue(peer, WorkspaceId, epoch);
         span?.SetTag("ipc.capability_issued", true);
@@ -86,6 +102,16 @@ public sealed class DaemonEndpoint
 
     /// <summary>Handles a command: every gate, in order, before any operation runs.</summary>
     public IpcResponse Invoke(IpcRequest request, IpcPeer peer)
+    {
+        var rejected = Validate(request, peer);
+        if (rejected is not null) return rejected;
+        if (_operations.TryGetValue(request.Operation, out var handler)) return handler(request, peer);
+        return _asyncOperations.ContainsKey(request.Operation)
+            ? IpcResponse.Error("Atlas.UnsupportedDispatch", "This operation requires awaited dispatch.")
+            : IpcResponse.Error(IpcErrorCodes.MalformedEnvelope, $"unknown operation '{request.Operation}'");
+    }
+
+    private IpcResponse? Validate(IpcRequest request, IpcPeer peer)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(peer);
@@ -130,14 +156,138 @@ public sealed class DaemonEndpoint
                 $"command was authored against epoch {request.WorkspaceEpoch}, current is {currentEpoch}"));
         }
 
-        if (!_operations.TryGetValue(request.Operation, out var handler))
-        {
-            return Reject(span, IpcResponse.Error(
-                IpcErrorCodes.MalformedEnvelope, $"unknown operation '{request.Operation}'"));
-        }
-
-        return handler(request, peer);
+        return null;
     }
+
+    public void RegisterAsync(string operation, Func<IpcRequest, IpcPeer, CancellationToken, ValueTask<IpcResponse>> handler)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(operation);
+        ArgumentNullException.ThrowIfNull(handler);
+        if (_operations.ContainsKey(operation) || !_asyncOperations.TryAdd(operation, handler))
+            throw new InvalidOperationException("An operation is already registered.");
+    }
+
+    public async ValueTask<IpcResponse> InvokeAsync(IpcRequest request, IpcPeer peer, CancellationToken cancellationToken)
+    {
+        var rejected = Validate(request, peer);
+        if (rejected is not null) return rejected;
+        cancellationToken.ThrowIfCancellationRequested();
+        if (_asyncOperations.TryGetValue(request.Operation, out var handler))
+            return await handler(request, peer, cancellationToken).ConfigureAwait(false);
+        return Invoke(request, peer);
+    }
+
+    public void RegisterConnectionEnded(Func<IpcPeer, AtlasConnectionEndReason, CancellationToken, ValueTask> handler) =>
+        _ended.Add(handler ?? throw new ArgumentNullException(nameof(handler)));
+
+    internal void RegisterOpening(Func<IpcRequest, IpcPeer, IpcResponse?> handler) => _opening.Add(handler);
+    internal bool IsAwaited(string operation) => _asyncOperations.ContainsKey(operation);
+    internal void RequireUnregistered(IEnumerable<string> operations)
+    {
+        if (operations.Any(operation => _operations.ContainsKey(operation) || _asyncOperations.ContainsKey(operation)))
+            throw new InvalidOperationException("An operation is already registered.");
+    }
+
+    internal void HoldPublication(IpcResponse response, IpcPeer peer, AtlasReadScopeIssuer.Operation operation)
+    {
+        lock (_publicationGate)
+        {
+            if (_publications.Count >= AtlasReadBudget.MaxActive)
+                throw new AtlasReadException("Atlas.Busy", "Publication capacity is occupied.");
+            operation.RegisterPublication();
+            _publications.Add(response, new Publication(peer, operation));
+        }
+    }
+
+    internal async ValueTask<IpcResponse> CommitResponseAsync(
+        IpcRequest request, IpcPeer peer, IpcResponse response, CancellationToken cancellationToken)
+    {
+        Publication? publication;
+        lock (_publicationGate) _publications.TryGetValue(response, out publication);
+        var rejected = Validate(request, peer);
+        if (rejected is null && response.Ok && publication is null
+            && request.Operation is AtlasWorkspaceOperations.Admit or AtlasWorkspaceOperations.Inventory
+                or AtlasWorkspaceOperations.Select or AtlasWorkspaceOperations.Restore)
+            return IpcResponse.Error("Atlas.PublicationMissing", "A successful Atlas source operation requires held publication ownership.");
+        if (publication is not null)
+        {
+            if (publication.Peer != peer) throw new InvalidOperationException("Publication belongs to another connection.");
+            if (rejected is null)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                publication.Operation.Commit();
+            }
+            if (rejected is not null)
+            {
+                publication.Operation.CancelPublication();
+                await publication.Operation.DisposeAsync().ConfigureAwait(false);
+                lock (_publicationGate) _publications.Remove(response);
+            }
+        }
+        return rejected ?? response;
+    }
+
+    internal async ValueTask DiscardResponseAsync(IpcResponse response)
+    {
+        Publication? publication;
+        lock (_publicationGate) _publications.TryGetValue(response, out publication);
+        if (publication is null) return;
+        publication.Operation.CancelPublication();
+        using var cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+        await publication.Operation.WriterFinished.WaitAsync(cleanup.Token).ConfigureAwait(false);
+        await publication.Operation.DisposeAsync().ConfigureAwait(false);
+        lock (_publicationGate) _publications.Remove(response);
+    }
+
+    internal CancellationToken PublicationCancellation(IpcResponse response)
+    {
+        lock (_publicationGate)
+            return _publications.TryGetValue(response, out var publication) ? publication.Operation.Token : default;
+    }
+
+    internal async ValueTask FinishResponseWriteAsync(IpcResponse response)
+    {
+        Publication? publication;
+        lock (_publicationGate) _publications.TryGetValue(response, out publication);
+        if (publication is null) return;
+        publication.Operation.FinishWriter();
+        await publication.Operation.DisposeAsync().ConfigureAwait(false);
+        lock (_publicationGate) _publications.Remove(response);
+    }
+
+    public async ValueTask ConnectionEndedAsync(IpcPeer peer, AtlasConnectionEndReason reason, CancellationToken cleanupToken)
+    {
+        List<Exception>? failures = null;
+        var cleanupTasks = new List<Task>();
+        try
+        {
+            _capabilities.RevokeConnection(peer.ConnectionId);
+            // Start every invalidation before awaiting cleanup: a writer must see revocation
+            // while Stop awaits the writer's own completion signal.
+            foreach (var handler in _ended)
+            {
+                try { cleanupTasks.Add(handler(peer, reason, cleanupToken).AsTask()); }
+                catch (Exception exception) { (failures ??= []).Add(exception); }
+            }
+            IpcResponse[] pending;
+            lock (_publicationGate)
+                pending = _publications.Where(pair => pair.Value.Peer.ConnectionId == peer.ConnectionId).Select(pair => pair.Key).ToArray();
+            foreach (var response in pending)
+            {
+                try { cleanupTasks.Add(DiscardResponseAsync(response).AsTask()); }
+                catch (Exception exception) { (failures ??= []).Add(exception); }
+            }
+            foreach (var task in cleanupTasks)
+            {
+                try { await task.ConfigureAwait(false); }
+                catch (Exception exception) { (failures ??= []).Add(exception); }
+            }
+        }
+        finally { _capabilities.RevokeConnection(peer.ConnectionId); }
+        if (failures is not null) throw new AggregateException(failures);
+    }
+
+    private sealed record Publication(IpcPeer Peer, AtlasReadScopeIssuer.Operation Operation);
 
     private static IpcResponse Reject(Activity? span, IpcResponse response)
     {

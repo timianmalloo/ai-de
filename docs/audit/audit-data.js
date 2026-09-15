@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T23:42:50Z",
+  "generated": "2026-09-15T14:49:29Z",
   "audit": [
     {
       "actor": null,
@@ -9871,6 +9871,67 @@ window.AUDIT_DATA = {
     {
       "actor": "claude-opus-5",
       "artifacts": [
+        "docs/plans/conductor-programme.md",
+        "docs/notes/conductor-phase1-plan-approval.md"
+      ],
+      "datetime": "2026-09-09T18:59:36Z",
+      "done_when": "Phase-1 worktree exists on its own branch with coord installed inside it; the division of work is recorded and approved; no parallel track is claimed that GO5 does not support",
+      "fan_out": 0,
+      "goal": "Turn coordination on for Phase 1 and settle the division of work, or record that it is already settled",
+      "id": "al-01M23RMCR3AR8A72P9MH8Z2168",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "/prepare-for-coordination scoped to Phase 1 (R1, R2, R4-core): classify artifacts first, apply GO5 independence from the workspace graph's real edges, name the serial spine, state the multiplier honestly - if the honest answer is fewer tracks, or one, say so.",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "shortname": "prepare-for-coordination-phase1",
+      "signals": {
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "The skill's core output - the division of work - was already derived, adversarially reviewed by both vetoes, and RULED at width 1 by the Owner. Re-running the skill to re-derive a decided answer would have spent tokens to reach the same place, so only its actionable remainder was executed and that is recorded here rather than implied. THE HONEST MULTIPLIER IS 1: GO5 independence was claimed in the first draft and is disproved by the plan's own exit conditions (the ACP client's oracle requires the auth-status refusal and an absolute cwd, both owned by the other track), and the ceiling was ~1.24x against GO6's ~15x token multiplier while speed ranks last. Artifact classification was done first, in SETUP 4: the registry went 6 -> 10 patterns with every regenerate command run before its rule was written, and every pattern verified by calling the classifier directly (site/*.html deliberately left authored, because regeneration rewrites only its data figures and would discard authored prose). DONE: worktree C:/Projects/ai-de-feature-conductor-agent-plane on branch feature/conductor-agent-plane, branched from main at 711c559, with coord install run INSIDE it (.git/config is per-clone) - doctor reports 10 patterns and both merge drivers registered. Execution is four SEQUENTIAL SESSIONS in that one tree rather than parallel worktrees, which satisfies WT1 with no primary-checkout exception to record. Node N0 (frame corpus) is complete; N1+N2 dispatched.",
+      "tags": [
+        "conductor",
+        "phase-1",
+        "coordination",
+        "worktree"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "human-operator",
+      "artifacts": [
+        "docs/notes/conductor-subscription-use-authorised.md"
+      ],
+      "datetime": "2026-09-09T19:13:51Z",
+      "done_when": "The authorisation is recorded as a human ruling, re-plan checkpoint 3 is closed, and the Phase-1 exit run plus the E18 close are unblocked",
+      "fan_out": 0,
+      "goal": "Close the one question the Owner escalated to the human rather than ruling on: may this programme drive the operator's Max subscription",
+      "id": "al-01M23SEGAS071BX81W0MA9RF92",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "yes i have already said i am ok with using my Max account",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "shortname": "licensing-ruling-human",
+      "signals": {
+        "acceptance_met": true
+      },
+      "skill": null,
+      "summary": "The human operator authorised use of their own Max subscription. This is the ONE decision in the programme that was not delegated - the Owner agent explicitly declined to rule, on the grounds that a commercial question about the operator's own account sits outside spec-reading and outside its delegated authority, and the ACP spike had flagged it with 'do not treat it worked as permission'. EFFECT: re-plan checkpoint 3 CLOSED; N7's exit run on the Max account unblocked; the E18 close unblocked for Owner counter-signature. SCOPE OF THE RULING, recorded so it is not over-cited later: it covers the operator using their own subscription on their own machine for their own project. It does NOT cover distributing AI-DE such that OTHER users drive THEIR subscriptions - the scenario --hide-claude-auth exists for - which is a distribution decision no Phase-1 work requires. UNCHANGED BY IT: the observed-auth spawn gate still fails closed, because an API-key environment source outranks the stored subscription and would bill the API silently while the UI reads max-personal. That control protects the operator's money, which is a different concern from their permission.",
+      "tags": [
+        "conductor",
+        "phase-1",
+        "licensing",
+        "human-ruling",
+        "escalation"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "claude-opus-5",
+      "artifacts": [
         "src/AiDe.Core/AgentPlane/RunEvent.cs",
         "src/AiDe.Core/AgentPlane/AcpRunEventMapper.cs",
         "src/AiDe.Core/AgentPlane/EngineCatalog.cs",
@@ -9909,6 +9970,40 @@ window.AUDIT_DATA = {
       ],
       "tier": "T1",
       "tool": "claude-code"
+    },
+    {
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/plans/conductor-programme.md"
+      ],
+      "datetime": "2026-09-09T19:20:23Z",
+      "done_when": "Build, test counts and the fast gates verified by the conductor independently of the track's claims; N3 dispatched with its routing rationale and alternatives recorded",
+      "fan_out": 1,
+      "goal": "Confirm N1/N2 by running the gates myself, and dispatch N3 with a recorded routing rationale",
+      "id": "al-01M23STE7W6R4EEN3GRV4B76T8",
+      "kind": "manual",
+      "outcome": "success",
+      "parallelism": {
+        "unparseable_runs": 1
+      },
+      "prompt": "Verify N1/N2 independently rather than accepting the track's report, then route and dispatch N3 (plane services).",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "shortname": "verify-n1-n2-and-route-n3",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "VERIFIED INDEPENDENTLY, not accepted: build clean with 0 warnings; 399 App + 1746 Core = 2145 passing, 0 failed (baseline 2118, +27), both projects clearing their minimums; marker-lint 8/8; verify-fixture-derivation OK; verify-no-conflict-markers OK across 1299 files. The track's counts matched mine exactly. I did NOT re-run verify-test-run.py over the same tree a third time - I hold its evidence directly, and running it again would be ceremony without new information. THE TRACK DISPROVED A CLAIM IN MY OWN APPROVED PLAN: the plan said N2's non-adapter mode refusal keeps 'the codex/copilot deferral' enforced; it only enforces copilot, because spec 14.2 declares openai as engine codex with acp: adapter - I verified the spec text myself. The track added a third refusal (AP-0003, an adapter row whose entry module has never been observed on a real install) rather than papering over it, which strengthened the deferral. Plan corrected in place. The track also proved its oracle CAN fail rather than merely asserting it: it mutated the mapper to drop a field, observed red on all four corpus files, and reverted. All 88 frames round-trip with no field lost, checked per-leaf with count equality so omission and duplication both fail. Two findings carried forward to later nodes: id:0 is a valid inbound request id (write.jsonl:12) that a truthiness-keyed correlation table would never answer, now a required N4 case; and cost arrives twice at different fidelities, with the richer per-model block preserved in ext for Phase 3. ROUTING N3 - ESCALATION RECORDED (spec 9.3): plan allocated sonnet as well-scoped implementation; escalated to OPUS because the node carries a store schema migration under the Data & Persistence HARD VETO and R2's byte-for-byte episode-attribute requirement, both semantic rather than mechanical, which is what the routing rule means by architecture-sensitive. Alternatives rejected: sonnet-as-planned (risks a restart on the two semantic clauses); splitting the node (the Owner ruled its five pieces are one node).",
+      "tags": [
+        "conductor",
+        "phase-1",
+        "verification",
+        "routing"
+      ],
+      "tier": "T2",
+      "tool": null
     },
     {
       "actor": "claude-opus-5",
@@ -9954,6 +10049,33 @@ window.AUDIT_DATA = {
       ],
       "tier": "T2",
       "tool": "claude-code"
+    },
+    {
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-09T20:18:39Z",
+      "done_when": "Each finding triaged upstream-vs-local with a reason; genuinely upstream defects fixed in C:/Projects/ai-forward following that repo's own revision protocol and gates; changes committed and pushed; repo-local findings left alone and named",
+      "fan_out": 1,
+      "goal": "Fix upstream, in the AI-Forward Pack source, the defect classes this repo discovered that originate in the pack rather than locally",
+      "id": "al-01M23X54E4KN2NMXSY14540ZNF",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "for these classes of defects which should be fixed upstream in the ai-forward repo as well, lets have a sub-agent fixing in ai-forward and committing and pushing, as there are no contending work sessions in ai-forward",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "shortname": "dispatch-upstream-pack-fixes",
+      "skill": null,
+      "summary": "TRIAGE - which of today's findings are the PACK's and which are this repo's. UPSTREAM, dispatched to ai-forward with authority to commit and push (operator confirmed no contending sessions there): (1) DC-112, the strongest - the pack instructs 'run coord install inside each new worktree (per-clone .git/config)'. Per-clone is true; per-worktree does not follow, because a worktree SHARES .git/config with its parent unless extensions.worktreeConfig is set. Following the instruction exactly overwrote the parent clone's merge-driver paths with a path inside a temporary tree, and coord doctor reports 'declared and registered' either way because it never checks that the path outlives the tree that wrote it. Fix: correct the instruction everywhere it appears, and give doctor the missing assertion (the driver path must resolve AND lie inside the clone being checked). (2) DC-111's MECHANISM - pack-apply re-appends a blanket gitignore pattern that git's last-match rule lets silently invert an earlier, explicitly recorded repo override; the pack's default may be right, the silent inversion is not. (3) The rev-63 .agents/* instruction can defeat the pack's OWN capture mandate for repos that commit contract logs under .agents/log/; the invariant the pack wants is 'the registry travels with the repo', which several ignore-shapes satisfy, so it should state the invariant and its verification rather than one literal pattern. (4) Lower confidence, left to the agent to judge: audit-log.py's start stamp is CONSUMED by the next append, while AGENTS.md presents duration as measured with no flag to remember - possibly a documentation gap rather than a defect, and explicitly told not to change consuming behaviour unless confident, because silently reusing a stale start stamp would be worse than an honest 'not recorded'. LEFT LOCAL, deliberately: ai-de's own tools/verify-test-run.py --update hazard (its tool, not the pack's) and the site-figures staleness. The agent was told evidence is not authority and to verify every claim before changing a source that every consuming repo inherits - pushing a wrong default reaches all of them.",
+      "tags": [
+        "conductor",
+        "ai-forward",
+        "upstream",
+        "defect-class",
+        "continuous-improvement"
+      ],
+      "tier": "T2",
+      "tool": null
     },
     {
       "actor": "Claude Opus 5 (1M context)",
@@ -10047,128 +10169,6 @@ window.AUDIT_DATA = {
     {
       "actor": "claude-opus-5",
       "artifacts": [
-        "docs/plans/conductor-programme.md",
-        "docs/notes/conductor-phase1-plan-approval.md"
-      ],
-      "datetime": "2026-09-09T18:59:36Z",
-      "done_when": "Phase-1 worktree exists on its own branch with coord installed inside it; the division of work is recorded and approved; no parallel track is claimed that GO5 does not support",
-      "fan_out": 0,
-      "goal": "Turn coordination on for Phase 1 and settle the division of work, or record that it is already settled",
-      "id": "al-01M23RMCR3AR8A72P9MH8Z2168",
-      "kind": "manual",
-      "outcome": "success",
-      "prompt": "/prepare-for-coordination scoped to Phase 1 (R1, R2, R4-core): classify artifacts first, apply GO5 independence from the workspace graph's real edges, name the serial spine, state the multiplier honestly - if the honest answer is fewer tracks, or one, say so.",
-      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
-      "shortname": "prepare-for-coordination-phase1",
-      "signals": {
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": null,
-      "summary": "The skill's core output - the division of work - was already derived, adversarially reviewed by both vetoes, and RULED at width 1 by the Owner. Re-running the skill to re-derive a decided answer would have spent tokens to reach the same place, so only its actionable remainder was executed and that is recorded here rather than implied. THE HONEST MULTIPLIER IS 1: GO5 independence was claimed in the first draft and is disproved by the plan's own exit conditions (the ACP client's oracle requires the auth-status refusal and an absolute cwd, both owned by the other track), and the ceiling was ~1.24x against GO6's ~15x token multiplier while speed ranks last. Artifact classification was done first, in SETUP 4: the registry went 6 -> 10 patterns with every regenerate command run before its rule was written, and every pattern verified by calling the classifier directly (site/*.html deliberately left authored, because regeneration rewrites only its data figures and would discard authored prose). DONE: worktree C:/Projects/ai-de-feature-conductor-agent-plane on branch feature/conductor-agent-plane, branched from main at 711c559, with coord install run INSIDE it (.git/config is per-clone) - doctor reports 10 patterns and both merge drivers registered. Execution is four SEQUENTIAL SESSIONS in that one tree rather than parallel worktrees, which satisfies WT1 with no primary-checkout exception to record. Node N0 (frame corpus) is complete; N1+N2 dispatched.",
-      "tags": [
-        "conductor",
-        "phase-1",
-        "coordination",
-        "worktree"
-      ],
-      "tier": "T2",
-      "tool": null
-    },
-    {
-      "actor": "human-operator",
-      "artifacts": [
-        "docs/notes/conductor-subscription-use-authorised.md"
-      ],
-      "datetime": "2026-09-09T19:13:51Z",
-      "done_when": "The authorisation is recorded as a human ruling, re-plan checkpoint 3 is closed, and the Phase-1 exit run plus the E18 close are unblocked",
-      "fan_out": 0,
-      "goal": "Close the one question the Owner escalated to the human rather than ruling on: may this programme drive the operator's Max subscription",
-      "id": "al-01M23SEGAS071BX81W0MA9RF92",
-      "kind": "manual",
-      "outcome": "success",
-      "prompt": "yes i have already said i am ok with using my Max account",
-      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
-      "shortname": "licensing-ruling-human",
-      "signals": {
-        "acceptance_met": true
-      },
-      "skill": null,
-      "summary": "The human operator authorised use of their own Max subscription. This is the ONE decision in the programme that was not delegated - the Owner agent explicitly declined to rule, on the grounds that a commercial question about the operator's own account sits outside spec-reading and outside its delegated authority, and the ACP spike had flagged it with 'do not treat it worked as permission'. EFFECT: re-plan checkpoint 3 CLOSED; N7's exit run on the Max account unblocked; the E18 close unblocked for Owner counter-signature. SCOPE OF THE RULING, recorded so it is not over-cited later: it covers the operator using their own subscription on their own machine for their own project. It does NOT cover distributing AI-DE such that OTHER users drive THEIR subscriptions - the scenario --hide-claude-auth exists for - which is a distribution decision no Phase-1 work requires. UNCHANGED BY IT: the observed-auth spawn gate still fails closed, because an API-key environment source outranks the stored subscription and would bill the API silently while the UI reads max-personal. That control protects the operator's money, which is a different concern from their permission.",
-      "tags": [
-        "conductor",
-        "phase-1",
-        "licensing",
-        "human-ruling",
-        "escalation"
-      ],
-      "tier": "T2",
-      "tool": null
-    },
-    {
-      "actor": "claude-opus-5",
-      "artifacts": [
-        "docs/plans/conductor-programme.md"
-      ],
-      "datetime": "2026-09-09T19:20:23Z",
-      "done_when": "Build, test counts and the fast gates verified by the conductor independently of the track's claims; N3 dispatched with its routing rationale and alternatives recorded",
-      "fan_out": 1,
-      "goal": "Confirm N1/N2 by running the gates myself, and dispatch N3 with a recorded routing rationale",
-      "id": "al-01M23STE7W6R4EEN3GRV4B76T8",
-      "kind": "manual",
-      "outcome": "success",
-      "parallelism": {
-        "unparseable_runs": 1
-      },
-      "prompt": "Verify N1/N2 independently rather than accepting the track's report, then route and dispatch N3 (plane services).",
-      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
-      "shortname": "verify-n1-n2-and-route-n3",
-      "signals": {
-        "acceptance_met": true,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": null,
-      "summary": "VERIFIED INDEPENDENTLY, not accepted: build clean with 0 warnings; 399 App + 1746 Core = 2145 passing, 0 failed (baseline 2118, +27), both projects clearing their minimums; marker-lint 8/8; verify-fixture-derivation OK; verify-no-conflict-markers OK across 1299 files. The track's counts matched mine exactly. I did NOT re-run verify-test-run.py over the same tree a third time - I hold its evidence directly, and running it again would be ceremony without new information. THE TRACK DISPROVED A CLAIM IN MY OWN APPROVED PLAN: the plan said N2's non-adapter mode refusal keeps 'the codex/copilot deferral' enforced; it only enforces copilot, because spec 14.2 declares openai as engine codex with acp: adapter - I verified the spec text myself. The track added a third refusal (AP-0003, an adapter row whose entry module has never been observed on a real install) rather than papering over it, which strengthened the deferral. Plan corrected in place. The track also proved its oracle CAN fail rather than merely asserting it: it mutated the mapper to drop a field, observed red on all four corpus files, and reverted. All 88 frames round-trip with no field lost, checked per-leaf with count equality so omission and duplication both fail. Two findings carried forward to later nodes: id:0 is a valid inbound request id (write.jsonl:12) that a truthiness-keyed correlation table would never answer, now a required N4 case; and cost arrives twice at different fidelities, with the richer per-model block preserved in ext for Phase 3. ROUTING N3 - ESCALATION RECORDED (spec 9.3): plan allocated sonnet as well-scoped implementation; escalated to OPUS because the node carries a store schema migration under the Data & Persistence HARD VETO and R2's byte-for-byte episode-attribute requirement, both semantic rather than mechanical, which is what the routing rule means by architecture-sensitive. Alternatives rejected: sonnet-as-planned (risks a restart on the two semantic clauses); splitting the node (the Owner ruled its five pieces are one node).",
-      "tags": [
-        "conductor",
-        "phase-1",
-        "verification",
-        "routing"
-      ],
-      "tier": "T2",
-      "tool": null
-    },
-    {
-      "actor": "claude-opus-5",
-      "artifacts": [
-        "docs/lessons/defect-classes.md"
-      ],
-      "datetime": "2026-09-09T20:18:39Z",
-      "done_when": "Each finding triaged upstream-vs-local with a reason; genuinely upstream defects fixed in C:/Projects/ai-forward following that repo's own revision protocol and gates; changes committed and pushed; repo-local findings left alone and named",
-      "fan_out": 1,
-      "goal": "Fix upstream, in the AI-Forward Pack source, the defect classes this repo discovered that originate in the pack rather than locally",
-      "id": "al-01M23X54E4KN2NMXSY14540ZNF",
-      "kind": "manual",
-      "outcome": "success",
-      "prompt": "for these classes of defects which should be fixed upstream in the ai-forward repo as well, lets have a sub-agent fixing in ai-forward and committing and pushing, as there are no contending work sessions in ai-forward",
-      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
-      "shortname": "dispatch-upstream-pack-fixes",
-      "skill": null,
-      "summary": "TRIAGE - which of today's findings are the PACK's and which are this repo's. UPSTREAM, dispatched to ai-forward with authority to commit and push (operator confirmed no contending sessions there): (1) DC-112, the strongest - the pack instructs 'run coord install inside each new worktree (per-clone .git/config)'. Per-clone is true; per-worktree does not follow, because a worktree SHARES .git/config with its parent unless extensions.worktreeConfig is set. Following the instruction exactly overwrote the parent clone's merge-driver paths with a path inside a temporary tree, and coord doctor reports 'declared and registered' either way because it never checks that the path outlives the tree that wrote it. Fix: correct the instruction everywhere it appears, and give doctor the missing assertion (the driver path must resolve AND lie inside the clone being checked). (2) DC-111's MECHANISM - pack-apply re-appends a blanket gitignore pattern that git's last-match rule lets silently invert an earlier, explicitly recorded repo override; the pack's default may be right, the silent inversion is not. (3) The rev-63 .agents/* instruction can defeat the pack's OWN capture mandate for repos that commit contract logs under .agents/log/; the invariant the pack wants is 'the registry travels with the repo', which several ignore-shapes satisfy, so it should state the invariant and its verification rather than one literal pattern. (4) Lower confidence, left to the agent to judge: audit-log.py's start stamp is CONSUMED by the next append, while AGENTS.md presents duration as measured with no flag to remember - possibly a documentation gap rather than a defect, and explicitly told not to change consuming behaviour unless confident, because silently reusing a stale start stamp would be worse than an honest 'not recorded'. LEFT LOCAL, deliberately: ai-de's own tools/verify-test-run.py --update hazard (its tool, not the pack's) and the site-figures staleness. The agent was told evidence is not authority and to verify every claim before changing a source that every consuming repo inherits - pushing a wrong default reaches all of them.",
-      "tags": [
-        "conductor",
-        "ai-forward",
-        "upstream",
-        "defect-class",
-        "continuous-improvement"
-      ],
-      "tier": "T2",
-      "tool": null
-    },
-    {
-      "actor": "claude-opus-5",
-      "artifacts": [
         "docs/proof/conductor-agent-plane.md",
         "docs/notes/conductor-n7-refactor-oracle.md",
         "spikes/conductor-exit-run/PROVENANCE.md",
@@ -10238,39 +10238,6 @@ window.AUDIT_DATA = {
         "phase-1",
         "e18",
         "close"
-      ],
-      "tier": "T2",
-      "tool": null
-    },
-    {
-      "actor": "claude-opus-5",
-      "artifacts": [
-        "docs/specs/conductor/ai-de-spec-addendum-a-session-experience.html",
-        "docs/notes/addendum-a-reconciliation.md",
-        "docs/notes/addendum-a-ratification.md"
-      ],
-      "datetime": "2026-09-10T00:20:45Z",
-      "done_when": "Addendum committed with checksum and supersession recorded; evidence-cited reconciliation produced; amended CT19 block ratified or cut by the Owner; ruling recorded as a decision note plus audit entry",
-      "fan_out": 1,
-      "goal": "Admit Addendum A as a scope change through the authority chain: ingested with provenance, reconciled against what was actually built, and ratified by the Owner before anything re-plans",
-      "id": "al-01M24B0ERPJYMCAR1BS49N7J4P",
-      "kind": "manual",
-      "outcome": "success",
-      "prompt": "CHANGE ORDER - Addendum A: The Session Experience. Amend the goal of the run in flight. Process it through the same authority chain as everything else: Owner > approved plan > you > agents. Ingest, reconcile against reality, amend the goal block, convene the Owner; the Owner's ratification is the admission of this scope change.",
-      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
-      "shortname": "addendum-a-ratified",
-      "signals": {
-        "acceptance_met": true,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": null,
-      "summary": "RATIFIED WITH THREE CUTS. The reconciliation changed the answer the change order expected: it anticipated A3's storage/naming repair as a SERIAL SPINE and asked me to verify rather than assume; verifying showed no .aide/sessions path exists anywhere in src/, AiDe.Core/Sessions/ does not exist, and no run-log store or projection was ever built - so the path rename costs ZERO and the spine is two renames plus a naming rule, hours not a phase. OWNER CUTS: (i) the Phase-1 canvas ships Console and Terminal ONLY, because a tab with nothing behind it is dead UI; (ii) the mention picker sources files and graph nodes only; (iii) R14 is a PATH CONTRACT, not a store - RunLogStore stays Phase 3 and Console renders the in-process stream. CONDITIONS: modes and picker sources must be data-driven registrations not a hard-coded strip; CodeMirror 6 needs the Spike Protocol; REACT IS REFUSED (one composer is one implementer, and A5's premise that the surface 'is already WebView2 + React' is FALSE on main - no package.json names React or CodeMirror, so R15 carries a new dependency rather than a reuse); Terminal MODE existing is not a terminal-hosting violation, a terminal CONSTRUCTED during the exit run is. RULING 15: rename GovernedSessionSource/GovernedSession to GovernedLaneSource/GovernedLane now including the consumer, Watcher callee migrates opportunistically, and GovernedLane must NOT grow an interface (Ruling 7 untouched). RULING 16: the Agent Plane E18 close STANDS - rewriting it to Superseded would make the audit trail say Phase 1 was never Completed when its four clauses were - so it gains ONE HEADER LINE; Phase 1 re-opens under amended exit evidence with the front door as a second delivery under Phase 1, NOT an invented container (Ruling 14 undisturbed, its trigger now fired). RULING 17: Phase 2 N0 continues unchanged, Phase 2 code nodes wait behind the front-door close because ConductorHost and the session document rewire the same composition root and the coupling test fails. RULING 18: the session document kind is 'session-document'; the Watcher's 'sessions' kind stays because it is a persisted restorableKinds string and renaming it is a saved-layout migration. THE OWNER CORRECTED MY RECONCILIATION: I wrote 'no public consumers outside the namespace' and GovernedRunHost.cs:114 constructs it. One consumer, still cheap, but the claim was false and is corrected in place rather than quietly edited.",
-      "tags": [
-        "conductor",
-        "addendum-a",
-        "scope-change",
-        "ratification"
       ],
       "tier": "T2",
       "tool": null
@@ -10373,6 +10340,39 @@ window.AUDIT_DATA = {
     {
       "actor": "claude-opus-5",
       "artifacts": [
+        "docs/specs/conductor/ai-de-spec-addendum-a-session-experience.html",
+        "docs/notes/addendum-a-reconciliation.md",
+        "docs/notes/addendum-a-ratification.md"
+      ],
+      "datetime": "2026-09-10T00:20:45Z",
+      "done_when": "Addendum committed with checksum and supersession recorded; evidence-cited reconciliation produced; amended CT19 block ratified or cut by the Owner; ruling recorded as a decision note plus audit entry",
+      "fan_out": 1,
+      "goal": "Admit Addendum A as a scope change through the authority chain: ingested with provenance, reconciled against what was actually built, and ratified by the Owner before anything re-plans",
+      "id": "al-01M24B0ERPJYMCAR1BS49N7J4P",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "CHANGE ORDER - Addendum A: The Session Experience. Amend the goal of the run in flight. Process it through the same authority chain as everything else: Owner > approved plan > you > agents. Ingest, reconcile against reality, amend the goal block, convene the Owner; the Owner's ratification is the admission of this scope change.",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "shortname": "addendum-a-ratified",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "RATIFIED WITH THREE CUTS. The reconciliation changed the answer the change order expected: it anticipated A3's storage/naming repair as a SERIAL SPINE and asked me to verify rather than assume; verifying showed no .aide/sessions path exists anywhere in src/, AiDe.Core/Sessions/ does not exist, and no run-log store or projection was ever built - so the path rename costs ZERO and the spine is two renames plus a naming rule, hours not a phase. OWNER CUTS: (i) the Phase-1 canvas ships Console and Terminal ONLY, because a tab with nothing behind it is dead UI; (ii) the mention picker sources files and graph nodes only; (iii) R14 is a PATH CONTRACT, not a store - RunLogStore stays Phase 3 and Console renders the in-process stream. CONDITIONS: modes and picker sources must be data-driven registrations not a hard-coded strip; CodeMirror 6 needs the Spike Protocol; REACT IS REFUSED (one composer is one implementer, and A5's premise that the surface 'is already WebView2 + React' is FALSE on main - no package.json names React or CodeMirror, so R15 carries a new dependency rather than a reuse); Terminal MODE existing is not a terminal-hosting violation, a terminal CONSTRUCTED during the exit run is. RULING 15: rename GovernedSessionSource/GovernedSession to GovernedLaneSource/GovernedLane now including the consumer, Watcher callee migrates opportunistically, and GovernedLane must NOT grow an interface (Ruling 7 untouched). RULING 16: the Agent Plane E18 close STANDS - rewriting it to Superseded would make the audit trail say Phase 1 was never Completed when its four clauses were - so it gains ONE HEADER LINE; Phase 1 re-opens under amended exit evidence with the front door as a second delivery under Phase 1, NOT an invented container (Ruling 14 undisturbed, its trigger now fired). RULING 17: Phase 2 N0 continues unchanged, Phase 2 code nodes wait behind the front-door close because ConductorHost and the session document rewire the same composition root and the coupling test fails. RULING 18: the session document kind is 'session-document'; the Watcher's 'sessions' kind stays because it is a persisted restorableKinds string and renaming it is a saved-layout migration. THE OWNER CORRECTED MY RECONCILIATION: I wrote 'no public consumers outside the namespace' and GovernedRunHost.cs:114 constructs it. One consumer, still cheap, but the claim was false and is corrected in place rather than quietly edited.",
+      "tags": [
+        "conductor",
+        "addendum-a",
+        "scope-change",
+        "ratification"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "claude-opus-5",
+      "artifacts": [
         "docs/architecture/agent-plane.md",
         "docs/adr/0027-acp-lane-separate-shape.md",
         "docs/adr/0028-mode-cohort-not-partition.md",
@@ -10411,38 +10411,6 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "actor": "claude-opus-5",
-      "artifacts": [
-        "spikes/codemirror-composer/README.md"
-      ],
-      "datetime": "2026-09-10T00:47:11Z",
-      "done_when": "A committed re-runnable spike answers yes/no/unclear with executed evidence, names the build cost honestly, and states residual risks",
-      "fan_out": 1,
-      "goal": "Settle by execution whether CodeMirror 6 can serve Addendum A's composer and Source viewer without React and without forcing a bundler this repo does not have",
-      "id": "al-01M24CGVK52HV960BGK27ZH407",
-      "kind": "script",
-      "outcome": "success",
-      "prompt": "Run the Spike Protocol on CodeMirror 6: can it serve both the composer and the Source viewer, inside WebView2, without React, at a build cost this repo should accept? The Owner made this a precondition before R15 may depend on it.",
-      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
-      "shortname": "spike-codemirror-composer",
-      "signals": {
-        "acceptance_met": true,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": null,
-      "summary": "YES WITH A NAMED COST, not an unqualified yes. Verified by execution in a real Chromium engine (Edge 152 headless, DOM captured to browser-dump.html): CodeMirror 6 mounts with plain new EditorView into a div with zero React imports; markdown live-edits; a fenced JS block gets full highlighting; and the @mention chip is a GENUINE Decoration.replace + WidgetType rendering a contenteditable=false span that REPLACES the source text - a real widget, not styled text, which was the load-bearing question. Read-only is first-class via EditorState.readOnly + EditorView.editable. MIT across all 52 installed packages, 11 MB, actively maintained. THE COST IS HOSTING, NOT THE EDITOR: the current WebView2 host uses NavigateToString, which cannot serve import-map modules at all, so R15 must either adopt SetVirtualHostNameToFolderMapping and maintain a generated import map, or take a minimal bundler. The import-map path also proved fragile in exactly the way a second hand-maintained manifest does - one missing transitive package produced a hard runtime failure with NO build-time warning. Flipping to NO requires SetVirtualHostNameToFolderMapping being unavailable in this repo's hosting model, unchecked here. THE SPIKE ALSO DISPROVED A PREMISE I GAVE IT: I said this repo has a root package-lock.json 'for other tooling'; git log --all shows no commit has EVER added one - the file exists in the adjacent ai-forward repo and I conflated the two. That is the third false premise I handed a delegate today, all three caught by the delegate; registered as DC-116.",
-      "tags": [
-        "conductor",
-        "addendum-a",
-        "spike",
-        "codemirror",
-        "r15"
-      ],
-      "tier": "T2",
-      "tool": "domain-researcher"
-    },
-    {
       "actor": null,
       "artifacts": [
         "docs/proof/pp-lane-rename-ruling-15.md",
@@ -10478,6 +10446,38 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "spikes/codemirror-composer/README.md"
+      ],
+      "datetime": "2026-09-10T00:47:11Z",
+      "done_when": "A committed re-runnable spike answers yes/no/unclear with executed evidence, names the build cost honestly, and states residual risks",
+      "fan_out": 1,
+      "goal": "Settle by execution whether CodeMirror 6 can serve Addendum A's composer and Source viewer without React and without forcing a bundler this repo does not have",
+      "id": "al-01M24CGVK52HV960BGK27ZH407",
+      "kind": "script",
+      "outcome": "success",
+      "prompt": "Run the Spike Protocol on CodeMirror 6: can it serve both the composer and the Source viewer, inside WebView2, without React, at a build cost this repo should accept? The Owner made this a precondition before R15 may depend on it.",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "shortname": "spike-codemirror-composer",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "YES WITH A NAMED COST, not an unqualified yes. Verified by execution in a real Chromium engine (Edge 152 headless, DOM captured to browser-dump.html): CodeMirror 6 mounts with plain new EditorView into a div with zero React imports; markdown live-edits; a fenced JS block gets full highlighting; and the @mention chip is a GENUINE Decoration.replace + WidgetType rendering a contenteditable=false span that REPLACES the source text - a real widget, not styled text, which was the load-bearing question. Read-only is first-class via EditorState.readOnly + EditorView.editable. MIT across all 52 installed packages, 11 MB, actively maintained. THE COST IS HOSTING, NOT THE EDITOR: the current WebView2 host uses NavigateToString, which cannot serve import-map modules at all, so R15 must either adopt SetVirtualHostNameToFolderMapping and maintain a generated import map, or take a minimal bundler. The import-map path also proved fragile in exactly the way a second hand-maintained manifest does - one missing transitive package produced a hard runtime failure with NO build-time warning. Flipping to NO requires SetVirtualHostNameToFolderMapping being unavailable in this repo's hosting model, unchecked here. THE SPIKE ALSO DISPROVED A PREMISE I GAVE IT: I said this repo has a root package-lock.json 'for other tooling'; git log --all shows no commit has EVER added one - the file exists in the adjacent ai-forward repo and I conflated the two. That is the third false premise I handed a delegate today, all three caught by the delegate; registered as DC-116.",
+      "tags": [
+        "conductor",
+        "addendum-a",
+        "spike",
+        "codemirror",
+        "r15"
+      ],
+      "tier": "T2",
+      "tool": "domain-researcher"
     },
     {
       "actor": "claude-opus-5",
@@ -10649,6 +10649,47 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "src/AiDe.Core/Sessions/TemplateSchema.cs",
+        "src/AiDe.Core/Sessions/TemplateFrontmatterReader.cs",
+        "src/AiDe.Core/Sessions/TemplateLoader.cs",
+        "src/AiDe.Core/Sessions/TemplateCompiler.cs",
+        "src/AiDe.Core/Sessions/TemplateSources.cs",
+        "src/AiDe.Core/Sessions/TemplateCatalog.cs",
+        "docs/architecture/pinned-contracts.md"
+      ],
+      "datetime": "2026-09-10T19:07:02Z",
+      "done_when": "Every FT clause passes as a test; dotnet build -c Release clean with zero warnings; the full gate set green, run bare.",
+      "duration_seconds": 1453.0,
+      "fan_out": 0,
+      "goal": "Land template-schema/1 as a pinned contract, its validator, a deterministic compiler, the catalog with source precedence, and the twelve built-in templates transcribed from Addendum B (front-door node FT, R18).",
+      "id": "al-01M26BEQABQV7Y1J5BCCTMZV31",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Execute node FT, the template spine, of the approved front-door plan (docs/plans/conductor-front-door.md, FT section; docs/notes/addendum-b-ratification.md Rulings 26-31; Addendum B B3, B4, B7, R18).\n\nGoal: Land template-schema/1 as a pinned contract, its validator, a deterministic compiler, the catalog with source precedence, and the twelve built-in templates transcribed from Addendum B.\nDone when: every FT clause passes as a test; dotnet build -c Release clean, zero warnings; full gate set green bare.\nNot in scope: the composer or form rendering (F4) - the picker UI - the catalog canvas view (R22, Phase 3) - assist of any kind (R20/R21, Phase 3) - the session object (F0) - web hosting (F1) - anything under Watcher/, Dispatch/ or Terminal/.\nTier: T2. Fan-out cap: 0. Budget: 95 tool calls.\n\nClauses: (1) template-schema/1 pinned from birth, documented in a new pinned-contracts registry (Ruling 29) that links weave/1 and loomkeeper/1 without moving them, and states whether min and tier_default are schema-1 constraints or preserved-unknown fields. (2) when_to_use and why load-blocking; a failed template surfaces as a disabled entry carrying its error. (3) Deterministic compile, byte-identical. (4) Built-in + workspace only, precedence personal > workspace > pack > built-in fixed now, overrides badged, sources an ordered descriptor list. (5) Take an installed YAML dependency scoped to the template loader (Ruling 35); a third hand-rolled reader and JSON frontmatter are both refused; no tag-driven type resolution. (6) The twelve built-ins are transcribed, not authored (Ruling 30), with a fixture test citing B4 and launch/change-order checked against the real audit-log prompts. (7) goal-block's fields ARE GoalBlockFields' six constants; SpawnContractTests.cs stays byte-unchanged; template hints must not read as enforced.\n\nHard constraints: TDD red-first with mutation-bought assertion-level red; TreatWarningsAsErrors, zero warnings; new code in src/AiDe.Core/Sessions/; full gate set at close, bare; never git stash; never verify-test-run.py --update.",
+      "session": "ft-template-spine",
+      "shortname": "ft-template-spine",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "started_at": "2026-09-10T18:42:49Z",
+      "summary": "FT, the template spine. template-schema/1 pinned from birth and declared in a new pinned-contracts registry (Ruling 29) that links weave/1 and loomkeeper/1 where they live: min and tier_default are declared SCHEMA-1 CONSTRAINTS, not preserved unknowns; unknown frontmatter is preserved, never rejected. when_to_use and why are load-blocking and a failed template becomes a disabled catalog entry carrying its error. Compile is byte-deterministic - the renderer walks the template, never the caller's dictionary. Sources are an ordered descriptor list with personal > workspace > pack > built-in fixed now and built-in + workspace registered; overrides are badged. Frontmatter takes YamlDotNet 18.1.0 scoped to one file (Ruling 35), with explicit YAML tags refused before any node is built. The twelve built-ins are transcribed from B4 and re-derived from the spec HTML by the fixture test on every run; launch and change-order are additionally checked field-by-field against audit prompts al-01M23NQ3H2X748YSBMDKDVV9EJ, al-01M24B0ERPJYMCAR1BS49N7J4P and al-01M2687RD6P8RK5KZJXQ0ZBEJS. goal-block's fields are GoalBlockFields' six constants, in spec order; its fan_out_cap and budget hints say validated, not enforced. 124 new tests; compile-red observed, then assertion-level red bought by three mutations.",
+      "tags": [
+        "conductor",
+        "templates",
+        "template-schema",
+        "pinned-contract",
+        "front-door"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
       "actor": "Claude Opus 5 (1M context)",
       "artifacts": [
         "src/AiDe.App/Workbench/WebAssetHost.cs",
@@ -10692,47 +10733,6 @@ window.AUDIT_DATA = {
         "webview2",
         "supply-chain",
         "vendoring"
-      ],
-      "tier": "T2",
-      "tool": null
-    },
-    {
-      "actor": "claude-opus-5",
-      "artifacts": [
-        "src/AiDe.Core/Sessions/TemplateSchema.cs",
-        "src/AiDe.Core/Sessions/TemplateFrontmatterReader.cs",
-        "src/AiDe.Core/Sessions/TemplateLoader.cs",
-        "src/AiDe.Core/Sessions/TemplateCompiler.cs",
-        "src/AiDe.Core/Sessions/TemplateSources.cs",
-        "src/AiDe.Core/Sessions/TemplateCatalog.cs",
-        "docs/architecture/pinned-contracts.md"
-      ],
-      "datetime": "2026-09-10T19:07:02Z",
-      "done_when": "Every FT clause passes as a test; dotnet build -c Release clean with zero warnings; the full gate set green, run bare.",
-      "duration_seconds": 1453.0,
-      "fan_out": 0,
-      "goal": "Land template-schema/1 as a pinned contract, its validator, a deterministic compiler, the catalog with source precedence, and the twelve built-in templates transcribed from Addendum B (front-door node FT, R18).",
-      "id": "al-01M26BEQABQV7Y1J5BCCTMZV31",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "Execute node FT, the template spine, of the approved front-door plan (docs/plans/conductor-front-door.md, FT section; docs/notes/addendum-b-ratification.md Rulings 26-31; Addendum B B3, B4, B7, R18).\n\nGoal: Land template-schema/1 as a pinned contract, its validator, a deterministic compiler, the catalog with source precedence, and the twelve built-in templates transcribed from Addendum B.\nDone when: every FT clause passes as a test; dotnet build -c Release clean, zero warnings; full gate set green bare.\nNot in scope: the composer or form rendering (F4) - the picker UI - the catalog canvas view (R22, Phase 3) - assist of any kind (R20/R21, Phase 3) - the session object (F0) - web hosting (F1) - anything under Watcher/, Dispatch/ or Terminal/.\nTier: T2. Fan-out cap: 0. Budget: 95 tool calls.\n\nClauses: (1) template-schema/1 pinned from birth, documented in a new pinned-contracts registry (Ruling 29) that links weave/1 and loomkeeper/1 without moving them, and states whether min and tier_default are schema-1 constraints or preserved-unknown fields. (2) when_to_use and why load-blocking; a failed template surfaces as a disabled entry carrying its error. (3) Deterministic compile, byte-identical. (4) Built-in + workspace only, precedence personal > workspace > pack > built-in fixed now, overrides badged, sources an ordered descriptor list. (5) Take an installed YAML dependency scoped to the template loader (Ruling 35); a third hand-rolled reader and JSON frontmatter are both refused; no tag-driven type resolution. (6) The twelve built-ins are transcribed, not authored (Ruling 30), with a fixture test citing B4 and launch/change-order checked against the real audit-log prompts. (7) goal-block's fields ARE GoalBlockFields' six constants; SpawnContractTests.cs stays byte-unchanged; template hints must not read as enforced.\n\nHard constraints: TDD red-first with mutation-bought assertion-level red; TreatWarningsAsErrors, zero warnings; new code in src/AiDe.Core/Sessions/; full gate set at close, bare; never git stash; never verify-test-run.py --update.",
-      "session": "ft-template-spine",
-      "shortname": "ft-template-spine",
-      "signals": {
-        "acceptance_met": true,
-        "regression": false,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": null,
-      "started_at": "2026-09-10T18:42:49Z",
-      "summary": "FT, the template spine. template-schema/1 pinned from birth and declared in a new pinned-contracts registry (Ruling 29) that links weave/1 and loomkeeper/1 where they live: min and tier_default are declared SCHEMA-1 CONSTRAINTS, not preserved unknowns; unknown frontmatter is preserved, never rejected. when_to_use and why are load-blocking and a failed template becomes a disabled catalog entry carrying its error. Compile is byte-deterministic - the renderer walks the template, never the caller's dictionary. Sources are an ordered descriptor list with personal > workspace > pack > built-in fixed now and built-in + workspace registered; overrides are badged. Frontmatter takes YamlDotNet 18.1.0 scoped to one file (Ruling 35), with explicit YAML tags refused before any node is built. The twelve built-ins are transcribed from B4 and re-derived from the spec HTML by the fixture test on every run; launch and change-order are additionally checked field-by-field against audit prompts al-01M23NQ3H2X748YSBMDKDVV9EJ, al-01M24B0ERPJYMCAR1BS49N7J4P and al-01M2687RD6P8RK5KZJXQ0ZBEJS. goal-block's fields are GoalBlockFields' six constants, in spec order; its fan_out_cap and budget hints say validated, not enforced. 124 new tests; compile-red observed, then assertion-level red bought by three mutations.",
-      "tags": [
-        "conductor",
-        "templates",
-        "template-schema",
-        "pinned-contract",
-        "front-door"
       ],
       "tier": "T2",
       "tool": null
@@ -10969,32 +10969,6 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "actor": "timianmalloo (human)",
-      "artifacts": [
-        "docs/plans/conductor-front-door.md"
-      ],
-      "datetime": "2026-09-10T23:15:27Z",
-      "done_when": "Provider record and conductor supersession written into docs/security/ with every field either cited or explicitly not-published",
-      "goal": "Obtain the human's ruling on the Privacy hard-floor trip so F4's send seam can unblock",
-      "id": "al-01M26SNK3SZVE0CB48VDQNVQA4",
-      "kind": "manual",
-      "outcome": "partial",
-      "prompt": "1: For me personally all that is fine, we may want to have an \"opt-in\" choice in the tool (in a settings) so that a case where that may not be ok we can restrict\n2: FOr me residency is US ... but again it should probably be just the locale of the machine indicating residency\nand yes its a single-operator desktop",
-      "session": "conductor-front-door-join",
-      "shortname": "Human ruling on Privacy Blocker 1 — authorization, residency, single-operator",
-      "skill": null,
-      "summary": "HUMAN RULING ON PRIVACY BLOCKER 1 -- captured verbatim, because this is the authoritative input to a compliance record and a paraphrase would not be defensible.\n\nThe conductor asked three questions after Privacy tripped its hard veto (CLEARS-THE-VETO: no; basis absent). The human answered:\n\n  Q1 -- Anthropic's retention and training posture for the Max subscription tier.\n  A1 -- \"For me personally all that is fine, we may want to have an 'opt-in' choice in the tool (in a settings) so that a case where that may not be ok we can restrict\"\n\n  Q2 -- Residency.\n  A2 -- \"FOr me residency is US ... but again it should probably be just the locale of the machine indicating residency\"\n\n  Q3 -- Is this a single-operator desktop app whose only user is the person doing the reading?\n  A3 -- \"and yes its a single-operator desktop\"\n\nWHAT EACH ANSWER DOES:\n\nA1 gives AUTHORIZATION, which is a real field in the provider record. It does NOT give the retention or training FACTS -- accepting terms is not the same as stating them, and the record's own rule is that unknown fields fail closed. A domain-researcher is establishing those from primary sources with URLs and stated effective dates, instructed that \"not published\" is a usable answer and an inference is not.\n\nA1 also adds a NEW REQUIREMENT: a settings opt-in so deployments where this is not acceptable can restrict it. Treated as a scope addition, not a clarification, and put to Privacy for shape, default state and phase -- because the human's own phrasing (\"a case where that may NOT be ok\") describes a context that is NOT this one, so the toggle's default has to be right for a situation nobody in this session can see.\n\nA2 -- the conductor PUSHED BACK before writing it into a record, because the suggestion conflates two different fields. PROCESSING RESIDENCY is where Anthropic processes and stores; it is a property of the provider's infrastructure and the machine's locale says nothing about it. USER JURISDICTION is where the user is, which decides which law applies, and locale is a weak proxy even there -- an en-US machine operated from Berlin is a GDPR subject and still reports en-US. Deriving residency from locale would put a confident wrong value in the one field whose governing rule is that unknowns fail closed. Proposed instead: processing residency from the provider's published terms; jurisdiction recorded as DECLARED, defaulting to machine locale as a HINT and never as the recorded value, changeable in the same settings surface. Put to Privacy to confirm or overrule.\n\nA3 CONFIRMS AN ASSUMPTION THAT WAS ALREADY LOAD-BEARING ON A DIFFERENT RULING. Ruling 44 accepted F4's Phase-1 security posture -- non-edit calls auto-allowed, permission banner Dismiss-only -- as an Owner residual rather than a floor trip, and named its own assumption: \"Inferred that this is a single-operator desktop app whose only user is the one doing the reading -- if that assumption is wrong, this is a Security floor question and goes to the human.\" It is now Verified rather than Inferred, so Ruling 44 stands, and the containment argument has an actual human who is simultaneously operator, data subject, reader and authorizer.\n\nSTILL OPEN: Blocker 1's provider record itself. Five of its seven fields are writable from the repo plus A1 and A3; two are external facts pending the researcher. Privacy has been asked whether an operator's informed acceptance satisfies the basis for a single-operator local tool, or whether something more is owed.",
-      "tags": [
-        "conductor",
-        "privacy",
-        "human-floor",
-        "basis",
-        "f4"
-      ],
-      "tier": "T2",
-      "tool": null
-    },
-    {
       "actor": "Claude Opus 5 (1M context)",
       "artifacts": [
         "tools/verify-containment-comparisons.py",
@@ -11026,6 +11000,32 @@ window.AUDIT_DATA = {
       "skill": null,
       "summary": "THREE CONTAINMENT SITES FIXED AND ONE GATE BUILT, on fix/containment-boundaries.\n\nALL THREE SITES MATCHED THE BRIEF'S DESCRIPTION and were verified by reading before editing. Fixed by LIFTING the rule, not copying it: ProofPackVerifier had consolidated it behind a PRIVATE member and RepositoryCorrection spelled the same ternary out one file away, under a comment already reading \"one rule, not a second idiom\". Copying a private member into three more files is the defect, not the fix. The rule is now the public AiDe.Core.PathComparison.ForThisFileSystem and both prior spellings are deleted; exactly one platform-conditional path comparison remains in src/.\n\nTHE GATE WAS OBSERVED FAILING IN CI ON LINUX BEFORE IT PASSED. Run 34538367468 (deliberately pushed un-fixed): the `Containment-comparison gate` step exit 1, naming exactly FixtureExtractor.cs:98, KnowledgeExtractor.cs:484 and ProjectionService.cs:1216 -- 3 findings against the 66 StartsWith calls carrying a StringComparison literal in src/, zero false positives; the paired `Containment-comparison gate -- self-test` step passed in the same run. Its --self-test plants FIVE failure modes (inline shape, one-hop indirect shape, an approval resolving to nothing, an approval that is not platform-conditional, an empty corpus) and asserts a clean tree passes, run as a SUBPROCESS from a NON-ROOT directory so that git rev-parse --show-toplevel is itself exercised.\n\nTHE INDIRECTION HALF WAS LOAD-BEARING AND THE BRIEF UNDERSTATED IT. The brief described the shape as x.StartsWith(<root-ish> + separator, <comparison>), which is syntactically true of only ONE of the three sites: KnowledgeExtractor and ProjectionService both build the separator-terminated root into a LOCAL one statement above the comparison. An inline-only matcher would have found one site and reported the other two clean -- DC-006 in the shape that matters here.\n\nSECURITY EXPOSURE ON FixtureExtractor, STATED HONESTLY: NO PRODUCTION CALLER REACHES IT. The only production WorkspaceCore.Open caller (AiDe.Daemon/Program.cs:177) passes WorkspaceExtractors.Default(), where FixtureExtractor sits in the composite's FALLBACK slot -- reached only by a scope id carrying none of the seven routed prefixes, and discovery (CSharpScopeDiscovery) emits only those seven. The `extractor ?? new FixtureExtractor()` default in WorkspaceCore.Open is never taken in production either. Beyond reachability, the case fold at that site is not OBSERVABLE at all: root is Path.GetFullPath(RootPath) and every path EnumerateFiles yields is that same string with segments appended, so the prefix test is true by construction whatever comparison it is given. There is also no archive extraction anywhere in this class -- it reads *.facts and *.md off disk -- so the brief's \"attacker-controlled archive\" framing does not apply to it.\n\nTWO FURTHER DEFECTS MEASURED AT THAT SITE, both reported, neither fixed (each a separate change): (1) its comment claimed \"a junction or symlink that escapes the fixture root must not be extracted (P1-FS)\". MEASURED on .NET 10.0.11: Directory.EnumerateFiles TRAVERSES a junction and Path.GetFullPath does NOT resolve one, so the containment test returns true and the escaped file IS read. The comment now states what the line does rather than what it was hoped to do. (2) a RootPath ending in a separator makes `root + separator` a DOUBLE separator, and then EVERY file reports as escaping the scope root.\n\nLOCAL VERIFICATION on Windows before this commit: solution builds clean under TreatWarningsAsErrors; AiDe.Core.Tests 2045/2045 passed (floor 2041), AiDe.App.Tests 456/456 passed (floor 456, run via the PowerShell console host per DC-117). Four new portable tests. verify-test-run.py --update was NEVER run. The confirming both-platform CI run is the push that carries this commit.",
       "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "timianmalloo (human)",
+      "artifacts": [
+        "docs/plans/conductor-front-door.md"
+      ],
+      "datetime": "2026-09-10T23:15:27Z",
+      "done_when": "Provider record and conductor supersession written into docs/security/ with every field either cited or explicitly not-published",
+      "goal": "Obtain the human's ruling on the Privacy hard-floor trip so F4's send seam can unblock",
+      "id": "al-01M26SNK3SZVE0CB48VDQNVQA4",
+      "kind": "manual",
+      "outcome": "partial",
+      "prompt": "1: For me personally all that is fine, we may want to have an \"opt-in\" choice in the tool (in a settings) so that a case where that may not be ok we can restrict\n2: FOr me residency is US ... but again it should probably be just the locale of the machine indicating residency\nand yes its a single-operator desktop",
+      "session": "conductor-front-door-join",
+      "shortname": "Human ruling on Privacy Blocker 1 — authorization, residency, single-operator",
+      "skill": null,
+      "summary": "HUMAN RULING ON PRIVACY BLOCKER 1 -- captured verbatim, because this is the authoritative input to a compliance record and a paraphrase would not be defensible.\n\nThe conductor asked three questions after Privacy tripped its hard veto (CLEARS-THE-VETO: no; basis absent). The human answered:\n\n  Q1 -- Anthropic's retention and training posture for the Max subscription tier.\n  A1 -- \"For me personally all that is fine, we may want to have an 'opt-in' choice in the tool (in a settings) so that a case where that may not be ok we can restrict\"\n\n  Q2 -- Residency.\n  A2 -- \"FOr me residency is US ... but again it should probably be just the locale of the machine indicating residency\"\n\n  Q3 -- Is this a single-operator desktop app whose only user is the person doing the reading?\n  A3 -- \"and yes its a single-operator desktop\"\n\nWHAT EACH ANSWER DOES:\n\nA1 gives AUTHORIZATION, which is a real field in the provider record. It does NOT give the retention or training FACTS -- accepting terms is not the same as stating them, and the record's own rule is that unknown fields fail closed. A domain-researcher is establishing those from primary sources with URLs and stated effective dates, instructed that \"not published\" is a usable answer and an inference is not.\n\nA1 also adds a NEW REQUIREMENT: a settings opt-in so deployments where this is not acceptable can restrict it. Treated as a scope addition, not a clarification, and put to Privacy for shape, default state and phase -- because the human's own phrasing (\"a case where that may NOT be ok\") describes a context that is NOT this one, so the toggle's default has to be right for a situation nobody in this session can see.\n\nA2 -- the conductor PUSHED BACK before writing it into a record, because the suggestion conflates two different fields. PROCESSING RESIDENCY is where Anthropic processes and stores; it is a property of the provider's infrastructure and the machine's locale says nothing about it. USER JURISDICTION is where the user is, which decides which law applies, and locale is a weak proxy even there -- an en-US machine operated from Berlin is a GDPR subject and still reports en-US. Deriving residency from locale would put a confident wrong value in the one field whose governing rule is that unknowns fail closed. Proposed instead: processing residency from the provider's published terms; jurisdiction recorded as DECLARED, defaulting to machine locale as a HINT and never as the recorded value, changeable in the same settings surface. Put to Privacy to confirm or overrule.\n\nA3 CONFIRMS AN ASSUMPTION THAT WAS ALREADY LOAD-BEARING ON A DIFFERENT RULING. Ruling 44 accepted F4's Phase-1 security posture -- non-edit calls auto-allowed, permission banner Dismiss-only -- as an Owner residual rather than a floor trip, and named its own assumption: \"Inferred that this is a single-operator desktop app whose only user is the one doing the reading -- if that assumption is wrong, this is a Security floor question and goes to the human.\" It is now Verified rather than Inferred, so Ruling 44 stands, and the containment argument has an actual human who is simultaneously operator, data subject, reader and authorizer.\n\nSTILL OPEN: Blocker 1's provider record itself. Five of its seven fields are writable from the repo plus A1 and A3; two are external facts pending the researcher. Privacy has been asked whether an operator's informed acceptance satisfies the basis for a single-operator local tool, or whether something more is owed.",
+      "tags": [
+        "conductor",
+        "privacy",
+        "human-floor",
+        "basis",
+        "f4"
+      ],
       "tier": "T2",
       "tool": null
     },
@@ -11327,6 +11327,70 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/session-front-door.html",
+        "docs/reviews/ui-operator-feedback.md",
+        "DESIGN.md"
+      ],
+      "datetime": "2026-09-11T13:37:53Z",
+      "duration_seconds": 1341.0,
+      "id": "al-01M28B0R807NPKC605J54T6S09",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Node U1 - /ui-design stages 1-3 on real operator feedback (7 items in C:\\Users\\malla\\Downloads\\UI housekeeping). DESIGN ONLY: write DESIGN.md and docs/mockups/, do NOT write src/. T2. Bounded loop: variant = rubric findings at severity >= major, strictly decreasing; floor = zero majors; cap = 3 passes. Deliverable is the ranked plan. Mid-task correction: Ruling 45 makes the canvas Console-only; design a one-mode-now-N-later strip.",
+      "session": "ui-elevation-node-u1",
+      "shortname": "ui-design-session-front-door",
+      "skill": "ui-design",
+      "started_at": "2026-09-11T13:15:32Z",
+      "summary": "Elevate review of the session front door. Six of seven feedback items are unimplemented spec or measured defect, not taste. Item 4's systemic cause named at the token level: only 6 implicit WPF styles exist, none for a text or input control, so 18 base types fall back to platform light defaults - 11 measured failing pairs, worst 1.15:1, plus the inverse at 1.22:1 caused by a previous partial fix. Composer: CodeMirror is vendored and navigated to but Configure has zero callers and host.init/editor.ready deadlock, so it never initializes. Task class is a free-text box for a cohort key where a typo costs more than a default. Explore/Provenance/Domain are one class instantiated three times, and the operator's proposed fix keeps the wrong one. Rail: 3 of 4 icons inert, the 4th is the only door to Explorer mode. Console-only mode strip designed per Ruling 45. Rubric variant 5 majors -> 0 in 2 passes; cap did not fire. Nine false claims in the brief reported.",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": "node-f5",
+      "artifacts": [
+        "docs/proof/conductor-front-door.md",
+        "tools/verify-front-door-exit-evidence.py"
+      ],
+      "datetime": "2026-09-11T13:48:59Z",
+      "done_when": "A governed run rooted in the linked worktree has closed, its scored_episode_cell row read, and either IsComparable == true is recorded or the Not Scored verdict has been escalated as Ruling 17's EvaluatorIntegrity trip.",
+      "duration_seconds": 1812.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "feature/exit-evidence",
+        "pushed": true,
+        "sha": "1374401d171b1ec6be5d56c25b1d1e00608abc18",
+        "short": "1374401d1"
+      },
+      "goal": "Measure, before the exit run, every live dependency the exit run has: the pinned adapter starting, observed auth arriving, worktree provisioning from inside a linked worktree, coord genuinely absent, and whether the linked-worktree shape scores comparable.",
+      "id": "al-01M28BN2WPZKCAE3VT8228QY5H",
+      "kind": "script",
+      "outcome": "success",
+      "prompt": "Node F5 — exit evidence and the Proof Pack. Pre-flight only: buy Ruling 17's answer (does the linked-worktree shape score?) through the existing --conduct entry before spending the front-door exit run, which cannot be re-taken.",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "shortname": "f5-preflight-live-run",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "started_at": "2026-09-11T13:18:47Z",
+      "summary": "A LIVE GOVERNED RUN THAT IS NOT THE EXIT EVIDENCE, recorded because a live run that appears in no record is worse than one that appears with its purpose stated.\n\nWHAT IT WAS FOR. F5's exit run launches through the front door and cannot be re-taken; Ruling 17 makes \"does the linked-worktree shape score?\" a question that must reach the conductor rather than a qualification to carry. This bought that answer through the existing `--conduct` headless entry, for one trivial turn, before spending the run whose evidence is the deliverable.\n\nBOUNDS. Task class `front-door-preflight` in its own scratch data directory, so nothing shares the exit run's cohort — ScoreSegment partitions on (Workspace, TaskClass, SchemaVersion) and a throwaway episode in the measured cohort would be DC-110's shape. Lease exactly `spikes/conductor-front-door-exit-run/**`; 6-minute prompt timeout; the lane wrote one file containing one word.\n\nWHAT IT MEASURED, and it is the reason to keep the record. repositoryRoot was the LINKED WORKTREE `C:/projects/ai-de-feature-exit-evidence`. The episode scored `Partial: 15 / 15 observed`, `mode=governed`, `IsComparable == true`, `IncomparableReason == null` — and its `workspace` column reads `c:\\projects\\ai-de`, the PARENT repository, which does not contain `docs/proof/conductor-front-door.md` in its working tree or in HEAD (`9f01fdc`), verified both ways. The declared artifact was therefore credited from the LANE'S OWN CHECKOUT: DC-115's Phase-2 control (`ProofPackVerifier.VerifyInCheckouts` + `ClosedEpisodeScoring.CheckoutsOf`) observed doing its job on the shape Phase 1 could not use. Phase 1 avoided the defect by rooting in a clone; this did not have to.\n\nOTHER MEASUREMENTS. terminalHostConstructions 0. eventsObserved 43, latencyMeasured 43, p50 0.0204 ms, p95 0.2858 ms on TIMMALLSTRIX — recorded, never asserted (ADR-0029). observedAuth kind=account label=\"Claude Max\" plan=max. seamsRaised 0, seamResolutionRatio 1. Exit code 0, so ConductorEntry's four-point floor held. Wall clock 14 s for the run that was waited on.\n\ncoordInstalled: FALSE, DELIBERATELY. `coord` is not on this machine's PATH and no shim was supplied, because supplying one would have run `coord install` inside a linked worktree that SHARES `.git/config` with its parent — measured: `extensions.worktreeConfig` is unset on C:/projects/ai-de and both merge drivers live in `file:.git/config`. That is DC-112, and it would have repointed the main clone's merge drivers at a lane tree that is then released, breaking merges across twenty-one live worktrees, in the one run nobody would think to suspect. `ProcessRunner.Run` catches Win32Exception and returns -1, so the provisioner records false and the run proceeds. The main clone's merge drivers were re-read after the runs and after cleanup: unchanged.\n\nA MISTAKE, RECORDED RATHER THAN TIDIED. TWO runs happened, not one. `& $exe --conduct ...` on a WinExe returns immediately — the GUI subsystem detaches — so the first invocation reported no exit code and 0 seconds while a real governed run continued in the background. The second, launched with Start-Process -Wait, is the one measured above. Both provisioned a lane worktree and both scored `Partial: 15 / 15 observed`; the store holds two episodes in the preflight cohort. The subscription cost was doubled by a harness error, not by design. Anything launching this shell must wait on the process object, never on the call.\n\nCLEANUP. Both lane worktrees removed (`git worktree remove --force`, opt-in after reading what each held: one untracked `preflight.txt` containing `ready`, HEAD at 1374401 which exists on feature/exit-evidence, so no commit existed nowhere else), both agent branches deleted, `git worktree prune` run, count back to 21 with zero lane trees remaining.\n\nWHAT THIS DOES NOT COVER, stated so a green is not over-quoted later. It launched through `--conduct`, NOT the front door. It is no evidence for clause 2 (composed in the composer, streamed in Console mode) or clause 5 (launched through the same composition root, ledger counting roots) — those are precisely the path it does not touch. Clause 9's qualification is discharged by the exit run, not by this one. This is evidence about the plumbing, not a verdict.",
+      "tags": [
+        "conductor",
+        "front-door",
+        "f5",
+        "pre-flight",
+        "dc-115",
+        "dc-112",
+        "not-exit-evidence"
+      ],
+      "tier": "T2",
+      "tool": "AiDe.App.exe --conduct"
+    },
+    {
       "actor": "Claude Opus 5 (1M context)",
       "artifacts": [
         "src/AiDe.App/Conductor/RunEventRelay.cs",
@@ -11364,27 +11428,6 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T2",
       "tool": "claude-code"
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/mockups/session-front-door.html",
-        "docs/reviews/ui-operator-feedback.md",
-        "DESIGN.md"
-      ],
-      "datetime": "2026-09-11T13:37:53Z",
-      "duration_seconds": 1341.0,
-      "id": "al-01M28B0R807NPKC605J54T6S09",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "Node U1 - /ui-design stages 1-3 on real operator feedback (7 items in C:\\Users\\malla\\Downloads\\UI housekeeping). DESIGN ONLY: write DESIGN.md and docs/mockups/, do NOT write src/. T2. Bounded loop: variant = rubric findings at severity >= major, strictly decreasing; floor = zero majors; cap = 3 passes. Deliverable is the ranked plan. Mid-task correction: Ruling 45 makes the canvas Console-only; design a one-mode-now-N-later strip.",
-      "session": "ui-elevation-node-u1",
-      "shortname": "ui-design-session-front-door",
-      "skill": "ui-design",
-      "started_at": "2026-09-11T13:15:32Z",
-      "summary": "Elevate review of the session front door. Six of seven feedback items are unimplemented spec or measured defect, not taste. Item 4's systemic cause named at the token level: only 6 implicit WPF styles exist, none for a text or input control, so 18 base types fall back to platform light defaults - 11 measured failing pairs, worst 1.15:1, plus the inverse at 1.22:1 caused by a previous partial fix. Composer: CodeMirror is vendored and navigated to but Configure has zero callers and host.init/editor.ready deadlock, so it never initializes. Task class is a free-text box for a cohort key where a typo costs more than a default. Explore/Provenance/Domain are one class instantiated three times, and the operator's proposed fix keeps the wrong one. Rail: 3 of 4 icons inert, the 4th is the only door to Explorer mode. Console-only mode strip designed per Ruling 45. Rubric variant 5 majors -> 0 in 2 passes; cap did not fire. Nine false claims in the brief reported.",
-      "tags": [],
-      "tool": null
     },
     {
       "actor": "Claude Opus 5 (1M context)",
@@ -11449,6 +11492,48 @@ window.AUDIT_DATA = {
         "ui-design",
         "correction",
         "operator-feedback"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "src/AiDe.App/App.xaml",
+        "tests/AiDe.App.Tests/ContrastFloorTests.cs",
+        "tests/AiDe.App.Tests/ThemeProbe.cs",
+        "tests/AiDe.App.Tests/Sessions/TheTaskClassIsChosenNotTypedTests.cs",
+        "tests/AiDe.Core.Tests/TheEvidencePaneDoesNotInventConfidenceTests.cs",
+        "src/AiDe.Core/Presentation/Sessions/TaskClassVocabulary.cs",
+        "src/AiDe.App/Workbench/DarkCaption.cs"
+      ],
+      "datetime": "2026-09-11T14:26:35Z",
+      "done_when": "Each ranked item is built, deferred or refused with a reason; the eleven measured pairings are re-measured after item 1 rather than asserted; the maximized proposal is built and marked awaiting ratification; the IA finding is produced with nothing deleted; test floors met; gates run with --gate on the craft gate; branch pushed.",
+      "git": {
+        "branch": "feature/ui-implementation",
+        "pushed": null,
+        "sha": "0a63a731d863d0636bbcf215c4540311b988eae7",
+        "short": "0a63a731d"
+      },
+      "goal": "Implement U1's ranked plan for the theme, contrast, icon, surface-content and sheet concern, on feature/ui-implementation, without altering tab placement or move behaviour.",
+      "id": "al-01M28DSXJFATYK40B3T5ZBAWAF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "feat(theme): implicit defaults for the base control set, measured\n\nItem 1 of the ranked plan in docs/reviews/ui-operator-feedback.md, plus\nitems 4 and 5.\n\nThe shell themed its CONTAINERS and left its LEAVES to WPF, whose default\nis a light theme. Six implicit styles existed, none for a text or input\ncontrol; eighteen base types fell back to the platform and twenty-eight\ninstantiations did. App.xaml now carries an implicit default for every\ntype TC1 names, each setting INK AND GROUND TOGETHER - the partial\npairing is what turned dark-on-dark into light-on-white at 1.22:1.\n\n- The palette tokens move above the templates, because a StaticResource\n  cannot reference a brush declared below it.\n- DisabledTextBrush (#7C8896) is now a token, not a literal repeated three\n  times, and disabled is that pairing rather than Opacity 0.5 - which\n  measured 2.73:1 against a 3:1 floor (A4).\n- The focus ring is its own 2px outline. The old trigger recoloured a\n  border whose thickness every rail button sets to zero, so it rendered\n  nothing while a comment claimed otherwise (A1/AR4).\n- CheckBox and RadioButton are retemplated: the platform bullet paints its\n  glyph in a fixed near-black, so on a dark ground the two states\n  composite to nearly the same image.\n- SunkenBrush/RaisedBrush were referenced from six sites and declared\n  nowhere. A missing key is a silent no-op (TC3); the six now name the\n  keys that exist.\n- AvalonDock's chrome keeps a transparent button pairing in its own\n  resource scope, which is nearer in the tree than Application.Resources.\n\nControls, not prose (CI6):\n- ContrastFloorTests re-measures all eleven pairings from real controls in\n  a real shown window under the real App.xaml, and writes the table.\n- A theory over the eighteen TC1 types fails when one has no implicit\n  default, or sets only one of ink and ground.\n- A rendered-pixel test fails when a checked box is not visibly different\n  from an unchecked one.\n- TokenDisciplineTests fails when any named resource key is undeclared.\n\nMeasured after the change: pairs 1-10 clear their floors (13.57-15.62:1\nfor text, 5.28:1 for the disabled glyph). Pair 11 is DESIGN.md's declared\nborder deviation and is reported, not asserted.\n\nNo layout, geometry, template binding or command is changed by any of\nthis, so tab placement and drag behaviour are untouched.\n\nCo-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01PXGs6quw67gGZao37P7xSC",
+      "session": "session_01PXGs6quw67gGZao37P7xSC",
+      "shortname": "node-u2-ui-implementation",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "Node U2 — built U1's ranked plan for the theme, contrast, icon, surface-content and sheet concern.\n\nBUILT. Item 1: implicit TargetType defaults in App.xaml for the eighteen base control types TC1\nnames, each setting ink and ground together. Item 4: the rail focus ring is its own 2px outline\n(the old trigger recoloured a border every rail button sets to zero width). Item 5: the six\nreferences to the undeclared SunkenBrush/RaisedBrush keys now name the keys that exist, and a\ncheck fails when any named key is undeclared. Item 3: the task class is a bounded picker with\nRQ2-RQ5 copy and nothing preselected. Item 6: the pane no longer hard-codes Verified. Item 8: three\ndisabled rail placeholders deleted, New Session added as the accent primary, Explorer given a\ncatalog command. Item 10: MaxSearchResultsCeiling, and a capped read renders as a lower bound.\nItem 11: both dialogs opt their caption into DWM dark mode through one factory. A4: disabled is a\ntoken pairing, not Opacity 0.5 at 2.73:1.\n\nMEASURED, NOT ASSERTED. ContrastFloorTests instantiates real controls in a real shown window under\nthe real App.xaml and computes every pairing. Pairs 1-10 clear (13.57-15.62:1 text, 5.28:1 the\ndisabled glyph); pair 11 is DESIGN.md's declared border deviation at 1.39:1, reported and not\nasserted. A rendered-pixel test proves a checked box differs visibly from an unchecked one.\n\nPROPOSED, AWAITING RATIFICATION. Creating a session maximizes its document's stack — the maximized\ndock state DESIGN.md already defines — because the requested full-window view conflicts with A4.4\nand ADR-0017.\n\nDEFERRED WITH REASONS. Item 2 and the composer half of 5/6 belong to node F4b. Item 7 renders in\nSessionDocumentSurface.cs, which F4b holds. Items 12 and 16 depend on item 2. Item 9 is a finding\nleft where the deletion would be made: the operator's own fix is backwards, and nothing was\ndeleted. Items 13 and 15 are product decisions or cross reserved files. RQ6 is not built because\nthe operator's last answer is persisted nowhere.\n\nFALSE IN MY BRIEF. Item 1 clears 8 of 11 measured pairs, not 7 — pair 8 is a ListBox ground and the\nimplicit ListBox style clears it. The palette needed one addition (a disabled ink token) for A4,\nwhich the brief's \"no behaviour change, one file\" framing did not anticipate. The craft gate with\n--gate exits 0 over docs/mockups with 66 Majors and 38 Minors present, so --gate is no more\ndiscriminating than a bare run unless a Blocker is mapped.",
+      "tags": [
+        "ui",
+        "contrast",
+        "theme"
       ],
       "tier": "T2",
       "tool": null
@@ -11571,6 +11656,84 @@ window.AUDIT_DATA = {
       "tool": "Claude Code"
     },
     {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/conductor-front-door.md",
+        "tools/verify-front-door-exit-evidence.py",
+        "tools/expected-test-counts.json"
+      ],
+      "datetime": "2026-09-11T15:24:10Z",
+      "done_when": "Clauses 0-9 reported with evidence; terminalHostConstructions == 0 with its falsifier; no Residual cell reading 'none'; counts reported; gates green; pushed; CI read back with gh run view --json conclusion.",
+      "fan_out": 3,
+      "git": {
+        "branch": "feature/exit-evidence",
+        "pushed": false,
+        "sha": "b7f41d1c4ac9f2f8f61a88ff55e63d7cb9593aa0",
+        "short": "b7f41d1c4"
+      },
+      "goal": "Run the frozen oracle against a real governed run through the App shell and close F5's Proof Pack.",
+      "id": "al-01M28H3BREVHK9EA4YVVJ6JDMD",
+      "kind": "manual",
+      "outcome": "blocked",
+      "prompt": "You are node F5 of the AI-DE Conductor front-door slice, resuming. Merge main (never rebase), run the\nfrozen oracle at 1374401d against a real governed run through the App shell - composed in the\ncomposer, streamed in Console mode, scored episode - report all nine clauses plus clause 0 with their\nevidence, terminalHostConstructions == 0 with its falsifier, write the Proof Pack with no Residual\ncell reading \"none\", report the counts, gates green, push and read CI back with\n`gh run view --json conclusion`. Treat every claim in this brief as Inferred unless labelled\nVerified, and report back which of them were false.",
+      "session": "conductor-front-door-f5-exit-evidence",
+      "shortname": "F5 exit evidence: blocked by DC-130's second instance, with the counts and gates measured",
+      "signals": {
+        "acceptance_met": false,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "THE EXIT RUN DID NOT HAPPEN, AND THE REASON IS STRUCTURAL. The shipped product cannot send from the\nfront door at this commit, so clauses 2, 3, 5, 6 and 9 are unsatisfiable - five of nine, the same\narithmetic DC-130's first instance produced.\n\nMEASURED, not inferred. `grep -rn \"ComposerSendContext\" src` returns five hits and ZERO\nconstructions: a declaration, a doc-comment cref, two parameters, a field. The only\n`new ComposerSendContext` in the repository is in a test (ASendLaunchesAGovernedRunTests.cs:79).\nComposerSurface.Send() opens with `if (_context is null) { ... return null; }` at :224, and `_context`\nis assigned only in Configure at :166, which nothing under src/ calls. A type whose only construction\nin the repository is inside a test cannot be supplied at runtime.\n\nDC-130's SECOND INSTANCE IN THIS SLICE, with its signature verbatim: a constructed value returned to\na discarding caller. MainWindow.xaml.cs:160 passes only `created.Config` from a\nNewSessionResult(Config, TaskClass, RoutableBackends) - dropping TaskClass, the one field the sheet\nrefuses to default because a defaulted class ranks in the wrong cohort (DC-110). F4b closed the seam\nbelow (request -> run); the seam above (session config + task class -> composer send context) is\nstill unowned. Both nodes green against every clause they were given. OpenSessionDocument's own\ndoc-comment records the conflict without resolving it - DC-130's other tell.\n\nWHY THIS NODE DID NOT WIRE IT. A driver CAN call Composer.Configure() itself and press Send(); the\nrun would be real, the episode would score, and the oracle would read composerSendCount == 1 and\nlaunchedBy under src/ - both true, both green, product still broken. That is DC-127 manufactured\ndeliberately inside the pack whose job is to refuse it. And the edge is a decomposition ruling\n(where a reopened session's task class comes from), not an evidence node's call.\n\nTHE ORACLE'S OWN BLIND SPOT, recorded rather than patched. Clauses 2 and 5 never ask WHO wired the\ncomposer, so they cannot separate a product-wired send from a harness-wired one. The closure is a\nsource scan of the form TheProductItselfConstructsASessionLane already uses. NOT ADDED: clause 0\ncompares the oracle's bytes against 1374401d, so widening it after the fact reddens clause 0. The\ncontrol refused its own author, which is the behaviour it was committed early to have.\n\nWHAT IS DISCHARGED. Clause 0 holds: 1374401d is an ancestor of this branch, is NOT reachable from\nmain, and the oracle's bytes are byte-identical to that commit after the merge. Clauses 1, 4, 7, 8\nare discharged. The oracle's --self-test exits 0: \"the oracle reddens on every clause it claims to\ncheck\". Bare, it exits 1 because its subject does not exist - a gate refusing an absent subject is\nnot a broken gate, which is why only the self-test is wired in CI.\n\nCOUNTS, measured on the merged tree, --update NEVER run. App 512 (floor 512, +0). Core 2214 (floor\n2210, +4). Core portable 2060 (floor 2056, +4). Core non-portable 154 (floor 154, +0).\n2060 + 154 = 2214 by three separate observations that agree. The +4 is this node's own four origin\ntests from bc6d6a4b. Build 0 warnings 0 errors. 29 of 30 gates green.\n\nDURATION IS NOT RECORDED rather than estimated: no `audit-log.py start` marker was set at grounding\nfor this run, and a modeled duration would be a plausible wrong number (IO12).\n\nFOUR CONDUCTOR CLAIMS REFUTED, listed in the node's report; the load-bearing one is \"There is now an\nexit run for your oracle to observe\" - F4b made the seam real, not the path.",
+      "tags": [
+        "f5",
+        "dc-130",
+        "blocked"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/conductor-front-door.md",
+        "tools/verify-front-door-exit-evidence.py"
+      ],
+      "datetime": "2026-09-11T16:18:22Z",
+      "done_when": "F6's edge verified by opening the file; oracle bytes still match 1374401d; counts and gates reported; the run taken or its remaining preconditions named as findings.",
+      "fan_out": 3,
+      "git": {
+        "branch": "feature/exit-evidence",
+        "pushed": false,
+        "sha": "c5ca7b1ff3d5105da27d6b81a2a95e063680630e",
+        "short": "c5ca7b1ff"
+      },
+      "goal": "Verify the cleared blocker against the tree, then take the front-door exit run without touching clause 0.",
+      "id": "al-01M28M6KP2YYN6M6F4NZ8HDNSD",
+      "kind": "manual",
+      "outcome": "blocked",
+      "prompt": "Your blocker is cleared on main - F6 built the edge, and your report is what proved it was missing.\nMerge main (never rebase), then take the run: task class no earlier run has used checked against the\nstore, harness waits on the process object (DC-129), terminalHostConstructions == 0 with N7's\nfalsifier verbatim, every Residual cell naming a measurement or an explicit uncovered input. Do not\ntouch clause 0 - satisfy the blind spot by a companion demonstration in the Proof Pack instead, and\nsay so if that is the wrong shape.",
+      "session": "conductor-front-door-f5-exit-evidence",
+      "shortname": "F5: F6's edge verified, oracle blind spot closed from outside, run blocked on two operator inputs",
+      "signals": {
+        "acceptance_met": false,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "THE BLOCKER IS CLEARED AND VERIFIED, AND THE RUN IS STILL NOT TAKEN. F6's edge is real on the merged\ntree: MainWindow.xaml.cs:263 calls composer.Configure(...) and :265 constructs\nnew Workbench.Composer.ComposerSendContext(...) with TaskClass: created.TaskClass -- the field that\nwas being dropped. All of the coordinator's claims were checked against the tree this time and ALL\nWERE TRUE: floors App 517 / Core 2234 / portable 2080 / non-portable 154; register 134 classes\n(66/53/15); Ruling 46 filed as the edge-ownership ruling; verify-ruling-citations.py present and\ngreen (43 cited, 34 defined, 9 frozen); ComposerProbe is a ProjectReference at line 81.\n\nTHE ORACLE'S BLIND SPOT IS CLOSED FROM OUTSIDE, NOT BY WIDENING IT. Clause 0 was not touched and the\noracle's bytes still match 1374401d across a second merge.\nTheRunBindingComesFromTheProviderFileTests.TheShellConstructsOneRegistryOneSendContextAndOneAttachmentGate\nasserts EXACTLY ONE composer.Configure( and EXACTLY ONE new Workbench.Composer.ComposerSendContext(\nin the shell, then sweeps every other file under src/AiDe.App/. Because there is one Configure call\nsite and it is product code, a run reaching Send() with a populated context reached it through\nBindComposer. That is the companion the conductor asked for, and it already existed.\n\nWHY THE RUN STILL DID NOT HAPPEN -- two preconditions, neither of them code, neither this node's.\n(1) ~/.aide/providers.json is ABSENT on this machine (ProviderConfiguration.DefaultPath, checked).\nBindComposer refuses by name without it, and the file names THE ACCOUNT THE RUN BILLS. Inventing that\nlabel is DC-110's defect exactly, and LaneBinding refuses to pick between two accounts for the same\nreason. The schema is settled; the value is the operator's.\n(2) THERE IS NO HEADLESS FRONT DOOR. ConductorEntry.IsRequested is the only argument the shell reads.\nFile -> New Session opens a modal Window via NewSessionSheetDialog.Show, and showSheet is hard-wired\ninside MainWindow.NewSession(), so nothing substitutes it without editing product code. \"The harness\nwaits on the process object\" does not apply -- there is no process to launch for this path. The\ngesture is the operator's hands or UI automation of a live modal on a billing path.\n(3) Cohort: no AI-DE episode store exists at any default location, so the \"class no earlier run has\nused\" check must be made against the store the workspace's DataDirectory creates at run time.\n\nREADY: the ACP adapter is installed at C:/Projects/ai-de/spikes/acp-subscription-lane; subscription\nuse is authorised by the operator in their own words (al-01M23SEGAS071BX81W0MA9RF92), scoped to the\noperator's own subscription on their own machine for their own project.\n\nA NEAR-MISS CORRECTED BEFORE IT WAS REPORTED. I first swept for coverage by grepping the private\nmethod name BindComposer, found nothing, and was about to report the path untested. It is thoroughly\ntested: F6's E7-chain test covers file -> reader -> registry -> sheet -> EnabledBackends ->\nComposerSendContext -> Send -> GovernedRunRequest with a named refusal at each link. THE METHOD NAME\nIS NOT THE PATH'S NAME. Third grep-shaped false negative in this node -- the first was\nnamespace-qualified `new Sessions.SessionDocumentSurface`, which the conductor then walked into too.\n\nPROOF PACK CORRECTED RATHER THAN APPENDED TO. The pack asserted \"the shipped product cannot send\nfrom the front door\", which is now FALSE of the tree. That section is now Part 1 (what was measured,\nmarked no longer true) and Part 2 (what F6 closed, what remains). Counts corrected twice by\nre-measuring: this table has now named three different floor sets, and each was stale when carried\nrather than measured. Gate count measured by `ls`, not recalled -- my first draft said 32.\n\nCOUNTS on the merged tree, --update NEVER run: App 517 (floor 517, +0), Core 2238 (floor 2234, +4),\nportable 2084 (floor 2080, +4), non-portable 154 (floor 154, +0). 2084 + 154 = 2238 by three\nobservations that agree. The +4 is this node's own four origin tests. Build 0/0. 30 of 31 gates\ngreen; the thirty-first is this slice's oracle refusing an absent subject, whose --self-test is green.",
+      "tags": [
+        "f5",
+        "dc-130",
+        "blocked",
+        "providers"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
       "actor": "sre-diagnostician",
       "artifacts": [
         "tools/reap-stragglers.py",
@@ -11610,48 +11773,6 @@ window.AUDIT_DATA = {
       ],
       "tier": "T1",
       "tool": "claude-code"
-    },
-    {
-      "actor": "Claude Opus 5 (1M context)",
-      "artifacts": [
-        "src/AiDe.App/App.xaml",
-        "tests/AiDe.App.Tests/ContrastFloorTests.cs",
-        "tests/AiDe.App.Tests/ThemeProbe.cs",
-        "tests/AiDe.App.Tests/Sessions/TheTaskClassIsChosenNotTypedTests.cs",
-        "tests/AiDe.Core.Tests/TheEvidencePaneDoesNotInventConfidenceTests.cs",
-        "src/AiDe.Core/Presentation/Sessions/TaskClassVocabulary.cs",
-        "src/AiDe.App/Workbench/DarkCaption.cs"
-      ],
-      "datetime": "2026-09-11T14:26:35Z",
-      "done_when": "Each ranked item is built, deferred or refused with a reason; the eleven measured pairings are re-measured after item 1 rather than asserted; the maximized proposal is built and marked awaiting ratification; the IA finding is produced with nothing deleted; test floors met; gates run with --gate on the craft gate; branch pushed.",
-      "git": {
-        "branch": "feature/ui-implementation",
-        "pushed": null,
-        "sha": "0a63a731d863d0636bbcf215c4540311b988eae7",
-        "short": "0a63a731d"
-      },
-      "goal": "Implement U1's ranked plan for the theme, contrast, icon, surface-content and sheet concern, on feature/ui-implementation, without altering tab placement or move behaviour.",
-      "id": "al-01M28DSXJFATYK40B3T5ZBAWAF",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "feat(theme): implicit defaults for the base control set, measured\n\nItem 1 of the ranked plan in docs/reviews/ui-operator-feedback.md, plus\nitems 4 and 5.\n\nThe shell themed its CONTAINERS and left its LEAVES to WPF, whose default\nis a light theme. Six implicit styles existed, none for a text or input\ncontrol; eighteen base types fell back to the platform and twenty-eight\ninstantiations did. App.xaml now carries an implicit default for every\ntype TC1 names, each setting INK AND GROUND TOGETHER - the partial\npairing is what turned dark-on-dark into light-on-white at 1.22:1.\n\n- The palette tokens move above the templates, because a StaticResource\n  cannot reference a brush declared below it.\n- DisabledTextBrush (#7C8896) is now a token, not a literal repeated three\n  times, and disabled is that pairing rather than Opacity 0.5 - which\n  measured 2.73:1 against a 3:1 floor (A4).\n- The focus ring is its own 2px outline. The old trigger recoloured a\n  border whose thickness every rail button sets to zero, so it rendered\n  nothing while a comment claimed otherwise (A1/AR4).\n- CheckBox and RadioButton are retemplated: the platform bullet paints its\n  glyph in a fixed near-black, so on a dark ground the two states\n  composite to nearly the same image.\n- SunkenBrush/RaisedBrush were referenced from six sites and declared\n  nowhere. A missing key is a silent no-op (TC3); the six now name the\n  keys that exist.\n- AvalonDock's chrome keeps a transparent button pairing in its own\n  resource scope, which is nearer in the tree than Application.Resources.\n\nControls, not prose (CI6):\n- ContrastFloorTests re-measures all eleven pairings from real controls in\n  a real shown window under the real App.xaml, and writes the table.\n- A theory over the eighteen TC1 types fails when one has no implicit\n  default, or sets only one of ink and ground.\n- A rendered-pixel test fails when a checked box is not visibly different\n  from an unchecked one.\n- TokenDisciplineTests fails when any named resource key is undeclared.\n\nMeasured after the change: pairs 1-10 clear their floors (13.57-15.62:1\nfor text, 5.28:1 for the disabled glyph). Pair 11 is DESIGN.md's declared\nborder deviation and is reported, not asserted.\n\nNo layout, geometry, template binding or command is changed by any of\nthis, so tab placement and drag behaviour are untouched.\n\nCo-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01PXGs6quw67gGZao37P7xSC",
-      "session": "session_01PXGs6quw67gGZao37P7xSC",
-      "shortname": "node-u2-ui-implementation",
-      "signals": {
-        "acceptance_met": true,
-        "regression": false,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "implement",
-      "summary": "Node U2 — built U1's ranked plan for the theme, contrast, icon, surface-content and sheet concern.\n\nBUILT. Item 1: implicit TargetType defaults in App.xaml for the eighteen base control types TC1\nnames, each setting ink and ground together. Item 4: the rail focus ring is its own 2px outline\n(the old trigger recoloured a border every rail button sets to zero width). Item 5: the six\nreferences to the undeclared SunkenBrush/RaisedBrush keys now name the keys that exist, and a\ncheck fails when any named key is undeclared. Item 3: the task class is a bounded picker with\nRQ2-RQ5 copy and nothing preselected. Item 6: the pane no longer hard-codes Verified. Item 8: three\ndisabled rail placeholders deleted, New Session added as the accent primary, Explorer given a\ncatalog command. Item 10: MaxSearchResultsCeiling, and a capped read renders as a lower bound.\nItem 11: both dialogs opt their caption into DWM dark mode through one factory. A4: disabled is a\ntoken pairing, not Opacity 0.5 at 2.73:1.\n\nMEASURED, NOT ASSERTED. ContrastFloorTests instantiates real controls in a real shown window under\nthe real App.xaml and computes every pairing. Pairs 1-10 clear (13.57-15.62:1 text, 5.28:1 the\ndisabled glyph); pair 11 is DESIGN.md's declared border deviation at 1.39:1, reported and not\nasserted. A rendered-pixel test proves a checked box differs visibly from an unchecked one.\n\nPROPOSED, AWAITING RATIFICATION. Creating a session maximizes its document's stack — the maximized\ndock state DESIGN.md already defines — because the requested full-window view conflicts with A4.4\nand ADR-0017.\n\nDEFERRED WITH REASONS. Item 2 and the composer half of 5/6 belong to node F4b. Item 7 renders in\nSessionDocumentSurface.cs, which F4b holds. Items 12 and 16 depend on item 2. Item 9 is a finding\nleft where the deletion would be made: the operator's own fix is backwards, and nothing was\ndeleted. Items 13 and 15 are product decisions or cross reserved files. RQ6 is not built because\nthe operator's last answer is persisted nowhere.\n\nFALSE IN MY BRIEF. Item 1 clears 8 of 11 measured pairs, not 7 — pair 8 is a ListBox ground and the\nimplicit ListBox style clears it. The palette needed one addition (a disabled ink token) for A4,\nwhich the brief's \"no behaviour change, one file\" framing did not anticipate. The craft gate with\n--gate exits 0 over docs/mockups with 66 Majors and 38 Minors present, so --gate is no more\ndiscriminating than a bare run unless a Blocker is mapped.",
-      "tags": [
-        "ui",
-        "contrast",
-        "theme"
-      ],
-      "tier": "T2",
-      "tool": null
     },
     {
       "actor": null,
@@ -11736,29 +11857,90 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
-        "docs/investigations/INV-0007-contrast-floor-passes-while-the-shell-fails.md",
-        "docs/notes/contrast-census-runs-out-of-process.md",
-        "tests/AiDe.App.ContrastProbe/Program.cs",
-        "tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs",
-        "tests/AiDe.App.Tests/ShellContrastCensusTests.cs"
+        "docs/notes/front-door-ruling-49.md"
       ],
-      "datetime": "2026-09-11T18:53:01Z",
-      "done_when": "INV-0007 exists with the census table verbatim; the census (AiDe.App.ContrastProbe + ShellContrastCensusTests) is committed red on main; audit logged; pushed to investigate/contrast-census",
-      "duration_seconds": 2655.0,
-      "fan_out": 1,
+      "datetime": "2026-09-11T17:34:51Z",
+      "done_when": "The three prior-session files and the new Ruling 49 note are committed; every tools/verify-*.py gate plus the Core build, tests build, and filtered test run have recorded exit codes; the audit entry and derived views are regenerated and committed; the branch is pushed to origin/feature/exit-evidence.",
+      "duration_seconds": 407.0,
       "git": {
-        "branch": "investigate/contrast-census",
+        "branch": "feature/exit-evidence",
+        "pushed": false,
+        "sha": "2a363f4fedcdbf634ddce40e97a0cc32f54faadf",
+        "short": "2a363f4fe"
+      },
+      "goal": "Bring feature/exit-evidence to the operator-gesture boundary: commit the prior session's uncommitted files, file Ruling 49 as a note, run every gate, and push, so the only missing input for F5 is the operator's own File -> New Session gesture.",
+      "id": "al-01M28RJNCKQZPTG05SMVRWR16V",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "Bring feature/exit-evidence to the operator-gesture boundary: everything committed, gates green, pushed, so the only missing input for F5 is the operator's own File -> New Session gesture (Ruling 49). Do not perform that gesture, launch the app, or run any session.",
+      "session": "f5a-exit-evidence",
+      "shortname": "f5a-ruling-49-committed",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "started_at": "2026-09-11T17:28:04Z",
+      "summary": "Read and confirmed coherent the three prior-session diffs (residuals-carried table, Proof Pack Part 3 / clause table / oracle-integrity rows, and a test <remarks> comment); nothing was half-written. Filed docs/notes/front-door-ruling-49.md (verified absent by grep and by verify-ruling-citations.py before filing; passes after). Checked docs/notes/front-door-council-rulings.md and confirmed it is a specific decision note (Rulings 19-25), not an index -- no row added there. Committed the three prior-session files (bc3ba59c) and the ruling note (2a363f4f) as two separate commits. Ran all 32 tools/verify-*.py gates bare, one exit code each: 30 passed (0); verify-front-door-exit-evidence.py failed (1) as expected -- spikes/conductor-front-door-exit-run/exit-evidence.json does not exist because the operator's gesture has not happened, which is the exact state Ruling 49 describes; verify-derived-views.py and verify-site-figures.py both failed (1) as expected because the new note is not yet reflected in the derived views -- both are resolved by this same commit's regenerate-derived.py run, checked again after. dotnet build src/AiDe.Core/AiDe.Core.csproj -c Release -p:TreatWarningsAsErrors=true: 0 Warnings, 0 Errors. dotnet build tests/AiDe.Core.Tests -c Release: 0 Warnings, 0 Errors. Filtered test TheSessionOriginIsSetOnlyOnTheCommandPathTests: 4 passed, 0 failed. Full verify-test-run.py (bare, check mode, background due to length): exit 0, 2755 tests across AiDe.App.Tests (517) and AiDe.Core.Tests (2238), both met baseline. verify-test-run.py --update was never run.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-11T18:04:11Z",
+      "id": "al-01M28T8C2WEVN4J0D10XQJMJAZ",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Operator feedback on the session composer (with screenshot 'session gesture.png'): (1) 'I could not see the entry areas' — the composer's fields were squeezed into a ~200px scroll region above a large Compiled view; (2) there are mandatory fields that should not be mandatory and should be options in settings, not explicitly the template: budget, cap etc. are not intrinsic to the prompt, they are intrinsic to the session settings; (3) the UX is super chunky — it does not feel like a chat conversation, and the whole enter-in-text-boxes-and-see-the-render-below is awful from a UI/UX perspective. Also observed: Send refused with 'no write scope could be derived from this draft'.",
+      "session": "prompt-log",
+      "shortname": "Operator feedback on the session composer (with screenshot 'session gest…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-11T18:07:12Z",
+      "id": "al-01M28TDX0G5RGHXKY5QTTFQMPH",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Operator: we still have lots of cases of dark/hard-to-read font colors against the tool background. We need a consistent color palette that works consistently, and to stop putting dark fonts on dark backgrounds and light fonts on light backgrounds. (Screenshot 'session gesture.png': Compiled view label, Lease/status lines, 'Attaching files is off' line, Graph/Terminal tab captions dim on dark; the compiled TextBox is a white box in a dark UI.)",
+      "session": "prompt-log",
+      "shortname": "Operator: we still have lots of cases of dark/hard-to-read font colors a…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0007-composer-entry-areas-starved-by-the-compiled-view.md",
+        "tests/AiDe.App.Tests/Composer/ComposerHostIntegrationTests.cs",
+        "tests/AiDe.App.ComposerProbe/Program.cs"
+      ],
+      "datetime": "2026-09-11T18:25:12Z",
+      "done_when": "Two red tests committed on investigate/composer-input, INV-0007 written with typed links and derived, audit entry, derived views regenerated, branch pushed",
+      "duration_seconds": 2399.0,
+      "git": {
+        "branch": "investigate/composer-input",
         "pushed": null,
         "sha": "f5c0f740fd0488baa00dd2de4320c187f585058e",
         "short": "f5c0f740f"
       },
-      "goal": "Prove, by a census of the shell the product composes, why unreadable text ships past U2's contrast floor; name the mechanism per site; propose the class and a phased plan; stop before fixing",
-      "id": "al-01M28X1SAPJE12TF0FKMEQXHZT",
+      "goal": "Verified root cause of 'the composer accepts no typing / entry areas not visible' after File → New Session, with a red reproduction in the product's composition, a class, a sibling sweep and a phased plan; stop before the fix",
+      "id": "al-01M28VEVQW46H5GKG4JW7ZD8X4",
       "kind": "skill",
       "outcome": "success",
-      "prompt": "We still have lots of cases of dark/hard-to-read font colors with regards to the tool background. We need to ensure we have a consistent color palette that works consistently, and stop putting dark fonts on dark backgrounds and light fonts on light backgrounds.",
-      "session": "contrast-census",
-      "shortname": "investigate-contrast-census",
+      "prompt": "The composer accepts no typing: the operator opened File → New Session and could not type in the composer. The operator, on the F5 tree (feature/exit-evidence @ 729fdb5e — same composer code as main), ran dotnet run --project src/AiDe.App -c Release, opened a workspace, did File → New Session, and reports: \"I cannot type in the composer.\" Words only; no screenshot yet. %LOCALAPPDATA%\\AiDe\\logs\\workbench-20260911.log — last line 2026-09-11T17:41:12Z evt: layout.mutation, operation: open-session-document, surface: session-document:20260911T174112Z-28f7fe97, placement: split-beside-graph — that is the operator's gesture. Nothing is logged after it. The composer emits no diagnostics at all. Later, verbatim: \"I could not see the entry areas.\" — and the operator's screenshot: a ~200px WebView2 scroll region with only FAN_OUT_CAP and BUDGET visible, a ~500px read-only Compiled view under it.",
+      "session": "composer-input",
+      "shortname": "investigate-composer-input",
       "signals": {
         "acceptance_met": true,
         "regression": false,
@@ -11766,12 +11948,11 @@ window.AUDIT_DATA = {
         "verification_path": true
       },
       "skill": "investigate",
-      "started_at": "2026-09-11T18:08:46Z",
-      "summary": "Two verified findings. (1) The photographed sites are the ORIGINAL instance on a Release binary built before 5213d7bb merged: both matching Release builds carry be68ca1c / 2a363f4f in their informational version and neither contains the fix; the white TextBox is impossible on HEAD (measured sunken). (2) On main a census of the real App booted out of process (180 pairings) finds 14 below floor the floor cannot see: 12 at 2.37:1 where the fix's implicit TextBlock style overrides every container's accent-ground state ink by inheritance, 2 disabled controls whose DisabledTextBrush never reaches the glyphs, 1 page-CSS hint at 4.47:1. Necessary+sufficient: setter removed -> 12->0 (and 3 masked selected-inactive tab sites at 1.45 appear); setter present -> 12. Class: the leaf overrides the container's pairing (proposed DC-136), DC-135 recurrence 2, DC-131 instance, an unattributed-binary report (proposed DC-137). Phased plan: A remove the leaf ink setter + B selected-ACTIVE tab trigger + DESIGN.md on-accent row; TokenDisciplineTests source rule; page CSS tokens on host.init; app.start with the sha; register; census reach; muted-token decision. Stopped for review.",
+      "started_at": "2026-09-11T17:45:13Z",
+      "summary": "INV-0007. Verified root cause (necessary and sufficient, measured in the real WorkbenchShell + AvalonDock host under the operator's recorded arrangement): ComposerSurface docks a StackPanel footer Bottom whose read-only compiled-view TextBox has no MaxHeight; it is measured unconstrained (401px for an empty goal block, 465px with three answers) before the WebView2 editor host gets the remainder, so editor = composer − compiled − 114px: 0px at 485px (F5's choreography), 105–110px at 684–689px (main, Ruling 47 maximize). Capping the compiled view from outside the product gave the editor 202px in the same 485px and the run went green. Second defect reproduced: any later Adapter.Render() re-parents the WebView2, WPF raises Loaded again, InitialiseAsync navigates again, the router drops the new page's editor.ready as a duplicate → host.init=0, fields=0, the operator's on-screen text gone; the graph canvas has the same Loaded→navigate shape (one render, one reload, measured). Ruled out by measurement: focus/global key handlers (decompiled WebView2 WPF wrapper forwards only accelerators), host.init never arriving on open, page/bundle failing to load, a non-editable editor, contrast as the primary cause (text 10.33:1, labels 6.31:1; boundaries 1.51:1 recorded as F4). Two red tests committed (ComposerHostIntegrationTests: entry areas keep their room — exit 24; page survives a later render — exit 25). Phased plan: 1 writer-first Grid layout with a 35% compiled ceiling; 2 initialise-once + readiness per navigation (composer + canvas); 3 bounds/handshake/input telemetry on the normal path; 4 class controls (writer≥reader helper, one WebSurfaceHost, Loaded-init analyzer, DC classes A/B registered with the fix); 5 keyboard entry focuses a field; 6 page-side non-text contrast floor. Stopped before the fix.",
       "tags": [
-        "ui",
-        "contrast",
-        "census"
+        "composer",
+        "investigation"
       ],
       "tier": "T1",
       "tool": null
@@ -11849,6 +12030,49 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
+        "docs/investigations/INV-0007-contrast-floor-passes-while-the-shell-fails.md",
+        "docs/notes/contrast-census-runs-out-of-process.md",
+        "tests/AiDe.App.ContrastProbe/Program.cs",
+        "tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs",
+        "tests/AiDe.App.Tests/ShellContrastCensusTests.cs"
+      ],
+      "datetime": "2026-09-11T18:53:01Z",
+      "done_when": "INV-0007 exists with the census table verbatim; the census (AiDe.App.ContrastProbe + ShellContrastCensusTests) is committed red on main; audit logged; pushed to investigate/contrast-census",
+      "duration_seconds": 2655.0,
+      "fan_out": 1,
+      "git": {
+        "branch": "investigate/contrast-census",
+        "pushed": null,
+        "sha": "f5c0f740fd0488baa00dd2de4320c187f585058e",
+        "short": "f5c0f740f"
+      },
+      "goal": "Prove, by a census of the shell the product composes, why unreadable text ships past U2's contrast floor; name the mechanism per site; propose the class and a phased plan; stop before fixing",
+      "id": "al-01M28X1SAPJE12TF0FKMEQXHZT",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "We still have lots of cases of dark/hard-to-read font colors with regards to the tool background. We need to ensure we have a consistent color palette that works consistently, and stop putting dark fonts on dark backgrounds and light fonts on light backgrounds.",
+      "session": "contrast-census",
+      "shortname": "investigate-contrast-census",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "started_at": "2026-09-11T18:08:46Z",
+      "summary": "Two verified findings. (1) The photographed sites are the ORIGINAL instance on a Release binary built before 5213d7bb merged: both matching Release builds carry be68ca1c / 2a363f4f in their informational version and neither contains the fix; the white TextBox is impossible on HEAD (measured sunken). (2) On main a census of the real App booted out of process (180 pairings) finds 14 below floor the floor cannot see: 12 at 2.37:1 where the fix's implicit TextBlock style overrides every container's accent-ground state ink by inheritance, 2 disabled controls whose DisabledTextBrush never reaches the glyphs, 1 page-CSS hint at 4.47:1. Necessary+sufficient: setter removed -> 12->0 (and 3 masked selected-inactive tab sites at 1.45 appear); setter present -> 12. Class: the leaf overrides the container's pairing (proposed DC-136), DC-135 recurrence 2, DC-131 instance, an unattributed-binary report (proposed DC-137). Phased plan: A remove the leaf ink setter + B selected-ACTIVE tab trigger + DESIGN.md on-accent row; TokenDisciplineTests source rule; page CSS tokens on host.init; app.start with the sha; register; census reach; muted-token decision. Stopped for review.",
+      "tags": [
+        "ui",
+        "contrast",
+        "census"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
         "docs/specs/addendum-c-perspectives.md"
       ],
       "datetime": "2026-09-11T18:55:23Z",
@@ -11913,41 +12137,17 @@ window.AUDIT_DATA = {
     },
     {
       "actor": null,
-      "artifacts": [
-        "docs/investigations/INV-0007-composer-entry-areas-starved-by-the-compiled-view.md",
-        "tests/AiDe.App.Tests/Composer/ComposerHostIntegrationTests.cs",
-        "tests/AiDe.App.ComposerProbe/Program.cs"
-      ],
-      "datetime": "2026-09-11T18:25:12Z",
-      "done_when": "Two red tests committed on investigate/composer-input, INV-0007 written with typed links and derived, audit entry, derived views regenerated, branch pushed",
-      "duration_seconds": 2399.0,
-      "git": {
-        "branch": "investigate/composer-input",
-        "pushed": null,
-        "sha": "f5c0f740fd0488baa00dd2de4320c187f585058e",
-        "short": "f5c0f740f"
-      },
-      "goal": "Verified root cause of 'the composer accepts no typing / entry areas not visible' after File → New Session, with a red reproduction in the product's composition, a class, a sibling sweep and a phased plan; stop before the fix",
-      "id": "al-01M28VEVQW46H5GKG4JW7ZD8X4",
-      "kind": "skill",
+      "artifacts": [],
+      "datetime": "2026-09-11T19:23:32Z",
+      "id": "al-01M28YSMW5C0C6VZJVSMD93HBG",
+      "kind": "prompt",
       "outcome": "success",
-      "prompt": "The composer accepts no typing: the operator opened File → New Session and could not type in the composer. The operator, on the F5 tree (feature/exit-evidence @ 729fdb5e — same composer code as main), ran dotnet run --project src/AiDe.App -c Release, opened a workspace, did File → New Session, and reports: \"I cannot type in the composer.\" Words only; no screenshot yet. %LOCALAPPDATA%\\AiDe\\logs\\workbench-20260911.log — last line 2026-09-11T17:41:12Z evt: layout.mutation, operation: open-session-document, surface: session-document:20260911T174112Z-28f7fe97, placement: split-beside-graph — that is the operator's gesture. Nothing is logged after it. The composer emits no diagnostics at all. Later, verbatim: \"I could not see the entry areas.\" — and the operator's screenshot: a ~200px WebView2 scroll region with only FAN_OUT_CAP and BUDGET visible, a ~500px read-only Compiled view under it.",
-      "session": "composer-input",
-      "shortname": "investigate-composer-input",
-      "signals": {
-        "acceptance_met": true,
-        "regression": false,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "investigate",
-      "started_at": "2026-09-11T17:45:13Z",
-      "summary": "INV-0007. Verified root cause (necessary and sufficient, measured in the real WorkbenchShell + AvalonDock host under the operator's recorded arrangement): ComposerSurface docks a StackPanel footer Bottom whose read-only compiled-view TextBox has no MaxHeight; it is measured unconstrained (401px for an empty goal block, 465px with three answers) before the WebView2 editor host gets the remainder, so editor = composer − compiled − 114px: 0px at 485px (F5's choreography), 105–110px at 684–689px (main, Ruling 47 maximize). Capping the compiled view from outside the product gave the editor 202px in the same 485px and the run went green. Second defect reproduced: any later Adapter.Render() re-parents the WebView2, WPF raises Loaded again, InitialiseAsync navigates again, the router drops the new page's editor.ready as a duplicate → host.init=0, fields=0, the operator's on-screen text gone; the graph canvas has the same Loaded→navigate shape (one render, one reload, measured). Ruled out by measurement: focus/global key handlers (decompiled WebView2 WPF wrapper forwards only accelerators), host.init never arriving on open, page/bundle failing to load, a non-editable editor, contrast as the primary cause (text 10.33:1, labels 6.31:1; boundaries 1.51:1 recorded as F4). Two red tests committed (ComposerHostIntegrationTests: entry areas keep their room — exit 24; page survives a later render — exit 25). Phased plan: 1 writer-first Grid layout with a 35% compiled ceiling; 2 initialise-once + readiness per navigation (composer + canvas); 3 bounds/handshake/input telemetry on the normal path; 4 class controls (writer≥reader helper, one WebSurfaceHost, Loaded-init analyzer, DC classes A/B registered with the fix); 5 keyboard entry focuses a field; 6 page-side non-text contrast floor. Stopped before the fix.",
-      "tags": [
-        "composer",
-        "investigation"
-      ],
-      "tier": "T1",
+      "prompt": "Operator on tier: shouldn't tier be decided by the compilation of the prompt? A key aspect and benefit of being able to type a prompt and then post-process it would be to decorate it with things like tier.",
+      "session": "prompt-log",
+      "shortname": "Operator on tier: shouldn't tier be decided by the compilation of the pr…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
       "tool": null
     },
     {
@@ -11998,6 +12198,36 @@ window.AUDIT_DATA = {
         "dc-137"
       ],
       "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-11T19:35:30Z",
+      "id": "al-01M28ZFJW6MCAMFS8KHYNQ77G1",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Operator, thinking through compile: three (four) contexts are needed — (1) the model family (Anthropic, OAI, Grok…) the prompt is crafted for (perception: OAI models add more ceremony and drift per turn); (2) the conversation and session history; (3) the repo and its standards/constitution and its particular skills (e.g. my work loop in the ai-forward repo); (4) compile is first mechanical then agentic — a mechanical pre-compile (decoration etc.), then hand-off to a model to compile the final prompt, the same model the session is bound to (as Claude Code binds a conversation model while execution may use other agents/models). Answers: Q1 inputs = text, session context, repo constitution, target model family. Q2 a separation of concerns between what an operator tunes in settings vs. what is uniquely contextual at compile — conductor to propose the differentiation. Q3 with that enumeration, recommend the mechanical/agentic split. Q4 post-compile is a 'prepare' stage where the operator may override before submitting to the console. Q5 a rich envelope; fields not a rigid structure; the template is a guide not a constraint, because compile can create the appropriate structure through further decoration.",
+      "session": "prompt-log",
+      "shortname": "Operator, thinking through compile: three (four) contexts are needed — (…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-11T20:06:16Z",
+      "id": "al-01M2917WRTT5JP9EEV2C9FTW9E",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Operator: yes, I am aligned with Addendum D (the compile step as its own bounded context, per the conductor's proposal: pre-compile mechanical, then compile agentic on the session-bound model, then prepare with operator override, then submit; settings vs compile-context vs decorations; lease always mechanical; tier mechanical-first; a rich append-only compiled envelope; template as guide).",
+      "session": "prompt-log",
+      "shortname": "Operator: yes, I am aligned with Addendum D (the compile step as its own…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
       "tool": null
     },
     {
@@ -12059,81 +12289,6 @@ window.AUDIT_DATA = {
         "telemetry"
       ],
       "tier": "T1",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [],
-      "datetime": "2026-09-11T18:04:11Z",
-      "id": "al-01M28T8C2WEVN4J0D10XQJMJAZ",
-      "kind": "prompt",
-      "outcome": "success",
-      "prompt": "Operator feedback on the session composer (with screenshot 'session gesture.png'): (1) 'I could not see the entry areas' — the composer's fields were squeezed into a ~200px scroll region above a large Compiled view; (2) there are mandatory fields that should not be mandatory and should be options in settings, not explicitly the template: budget, cap etc. are not intrinsic to the prompt, they are intrinsic to the session settings; (3) the UX is super chunky — it does not feel like a chat conversation, and the whole enter-in-text-boxes-and-see-the-render-below is awful from a UI/UX perspective. Also observed: Send refused with 'no write scope could be derived from this draft'.",
-      "session": "prompt-log",
-      "shortname": "Operator feedback on the session composer (with screenshot 'session gest…",
-      "skill": null,
-      "summary": "prompt logged for reuse",
-      "tags": [],
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [],
-      "datetime": "2026-09-11T18:07:12Z",
-      "id": "al-01M28TDX0G5RGHXKY5QTTFQMPH",
-      "kind": "prompt",
-      "outcome": "success",
-      "prompt": "Operator: we still have lots of cases of dark/hard-to-read font colors against the tool background. We need a consistent color palette that works consistently, and to stop putting dark fonts on dark backgrounds and light fonts on light backgrounds. (Screenshot 'session gesture.png': Compiled view label, Lease/status lines, 'Attaching files is off' line, Graph/Terminal tab captions dim on dark; the compiled TextBox is a white box in a dark UI.)",
-      "session": "prompt-log",
-      "shortname": "Operator: we still have lots of cases of dark/hard-to-read font colors a…",
-      "skill": null,
-      "summary": "prompt logged for reuse",
-      "tags": [],
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [],
-      "datetime": "2026-09-11T19:23:32Z",
-      "id": "al-01M28YSMW5C0C6VZJVSMD93HBG",
-      "kind": "prompt",
-      "outcome": "success",
-      "prompt": "Operator on tier: shouldn't tier be decided by the compilation of the prompt? A key aspect and benefit of being able to type a prompt and then post-process it would be to decorate it with things like tier.",
-      "session": "prompt-log",
-      "shortname": "Operator on tier: shouldn't tier be decided by the compilation of the pr…",
-      "skill": null,
-      "summary": "prompt logged for reuse",
-      "tags": [],
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [],
-      "datetime": "2026-09-11T19:35:30Z",
-      "id": "al-01M28ZFJW6MCAMFS8KHYNQ77G1",
-      "kind": "prompt",
-      "outcome": "success",
-      "prompt": "Operator, thinking through compile: three (four) contexts are needed — (1) the model family (Anthropic, OAI, Grok…) the prompt is crafted for (perception: OAI models add more ceremony and drift per turn); (2) the conversation and session history; (3) the repo and its standards/constitution and its particular skills (e.g. my work loop in the ai-forward repo); (4) compile is first mechanical then agentic — a mechanical pre-compile (decoration etc.), then hand-off to a model to compile the final prompt, the same model the session is bound to (as Claude Code binds a conversation model while execution may use other agents/models). Answers: Q1 inputs = text, session context, repo constitution, target model family. Q2 a separation of concerns between what an operator tunes in settings vs. what is uniquely contextual at compile — conductor to propose the differentiation. Q3 with that enumeration, recommend the mechanical/agentic split. Q4 post-compile is a 'prepare' stage where the operator may override before submitting to the console. Q5 a rich envelope; fields not a rigid structure; the template is a guide not a constraint, because compile can create the appropriate structure through further decoration.",
-      "session": "prompt-log",
-      "shortname": "Operator, thinking through compile: three (four) contexts are needed — (…",
-      "skill": null,
-      "summary": "prompt logged for reuse",
-      "tags": [],
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [],
-      "datetime": "2026-09-11T20:06:16Z",
-      "id": "al-01M2917WRTT5JP9EEV2C9FTW9E",
-      "kind": "prompt",
-      "outcome": "success",
-      "prompt": "Operator: yes, I am aligned with Addendum D (the compile step as its own bounded context, per the conductor's proposal: pre-compile mechanical, then compile agentic on the session-bound model, then prepare with operator override, then submit; settings vs compile-context vs decorations; lease always mechanical; tier mechanical-first; a rich append-only compiled envelope; template as guide).",
-      "session": "prompt-log",
-      "shortname": "Operator: yes, I am aligned with Addendum D (the compile step as its own…",
-      "skill": null,
-      "summary": "prompt logged for reuse",
-      "tags": [],
       "tool": null
     },
     {
@@ -12387,6 +12542,95 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
+        "src/AiDe.Core/AgentPlane/AcpLaneClient.cs",
+        "src/AiDe.App/Conductor/GovernedRunHost.cs",
+        "tests/AiDe.Core.Tests/AgentPlane/AcpLaneClientTests.cs",
+        "tests/AiDe.App.Tests/Conductor/TheGovernedLaneHasNoShellTests.cs",
+        "tests/AiDe.Core.AcpProbe/Program.cs",
+        "docs/notes/lane-pin-spike.md",
+        "docs/proof/lane-pin-ruling-71.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-11T22:16:41Z",
+      "done_when": "Spike note records the adapter path from source (0.75.1 :5859-5860, :6007); wire test red then green; null-path byte-equality test green; GovernedRunHost passes the pin at its one site; Security lens clears; builds 0 warnings; Core+App full suites green and verify-test-run --no-run OK; every tools/verify-*.py green after regeneration; oracle byte-identical to 1374401d; committed, Release rebuilt, pushed",
+      "duration_seconds": 1565.0,
+      "fan_out": 1,
+      "git": {
+        "branch": "feature/exit-evidence",
+        "pushed": false,
+        "sha": "b6652f64979ffcd9c59aa38b190d860528daf2ac",
+        "short": "b6652f649"
+      },
+      "goal": "Ruling 71 lane pin: a typed LaneSessionOptions {Tools?, DisallowedTools?} on both AcpLaneClient.NewSessionAsync overloads; the governed lane sends _meta.claudeCode.options.disallowedTools [Bash]; null path byte-identical; red-first on the outgoing frame",
+      "id": "al-01M298PPTEJDBYAQQ3DCJW9MTE",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "/implement Ruling 71: the governed lane's session/new carries _meta.claudeCode.options.disallowedTools [\"Bash\"], typed on AcpLaneClient.NewSessionAsync, asserted red-first on the outgoing frame\n\nDispatched by the conductor (session conductor-addendum-c) onto the F5 tree C:\\Projects\\ai-de-feature-exit-evidence (feature/exit-evidence @ 757af057); merge main (a3f760a3) first, never rebase; the frozen oracle tools/verify-front-door-exit-evidence.py stays byte-identical to tag f5-oracle-frozen (1374401d).\n\nRuling 71 (verbatim, docs/notes/addendum-c-council-rulings.md): (a) The F5 exit run may proceed only after AcpLaneClient.NewSessionAsync sends _meta.claudeCode.options.disallowedTools: [\"Bash\"] for the governed lane, a unit test asserts that member on the outgoing session/new JSON, the run is attended, and the run's Proof Pack records the outgoing frame, every observed tool-call name, and origin/main's sha before and after; (b) the standing control is a typed session/new tools argument on the one NewSessionAsync site (the agent-plane's; reused later by Addendum D's C1 with tools: []) — a record {tools?, disallowedTools?}, two callers, not a launch-profile abstraction; (c) .claude/settings.json:4 (Bash(git push:*)) is a finding for the operator, not yours to change.\n\nDone when: 1. Spike (bounded, source-only): confirm from the adapter source the _meta path, the type of disallowedTools, and that \"Bash\" is the SDK's shell tool name; record in docs/notes/lane-pin-spike.md. 2. Red first: a Core AgentPlane test asserting the outgoing session/new params contain _meta.claudeCode.options.disallowedTools == [\"Bash\"] when the governed options are passed — observed red on the current client. 3. The change: a small record accepted by NewSessionAsync (both overloads; a null/absent record sends exactly today's frame — a second test proves byte-equality); GovernedRunHost passes DisallowedTools: [\"Bash\"]; ConductorEntry.cs byte-unchanged; no other behaviour change. 4. Green, then the Security lens (read-only sub-agent) confirms: the pin is on the single site, the null path is byte-identical, nothing widens, the settings.json:4 finding is recorded not edited. 5. Gates, bare, stop on the first red: dotnet build Core, App, both test projects with -p:TreatWarningsAsErrors=true; dotnet test Core (full) and App (full); verify-test-run.py CHECK only; every tools/verify-*.py; regenerate-derived.py after the audit entry; the oracle diff empty. 6. Register the class if new (check DC-019 first), audit entry, regenerate, commit, rebuild Release, push origin feature/exit-evidence.\n\nFails if: any change to the frozen oracle, ConductorEntry.cs, .claude/settings.json, the vendored bundle; a launch-profile abstraction; a merge to main; git stash; a rebase; verify-test-run.py --update; a repo-wide destructive command. No governed run, no model call — the operator performs the gesture.",
+      "session": "f5-lane-pin",
+      "shortname": "f5-lane-pin-ruling-71",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-11T21:50:36Z",
+      "summary": "Shipped Ruling 71's lane pin on feature/exit-evidence. Spike (source-only, docs/notes/lane-pin-spike.md): adapter 0.75.1 reads _meta.claudeCode.options at acp-agent.js:5859-5860, spreads disallowedTools at :6007 (string[]), Bash is the SDK shell tool (sdk-tools.d.ts:750) — the ruling's spelling holds verbatim. LaneSessionOptions(Tools?, DisallowedTools?) record on both NewSessionAsync overloads; ToMeta null iff both null so the absent/empty record sends the prior frame byte for byte (characterization theory, exact string). Red observed: the pin and tools-[] tests NullReference'd on the plumbing-only client; blank-name test sent a frame and timed out before the guard; App tests turned red by mutating the host (no pin; bare call). GovernedRunHost.GovernedLaneSession = DisallowedTools [Bash] at the one site; a sweep test requires every NewSessionAsync in src/ to name its tools (DC-019: the boundary, not the site). Security lens (read-only): CLEARED WITH FINDINGS — no blocker; nothing widens (:5964 spread collides with nothing security-relevant); next-ruling findings: Monitor/REPL/Agent/hooks remain reachable; settings.json:4 recorded as an operator finding, not edited. Instrumentation gap recorded: the host reports the session id, not the outgoing frame. DC-019 recurrence registered with the sweep as control. Core 2250/2250, App 603/603, verify-test-run --no-run OK; every verify-*.py green except the frozen F5 oracle (red by design until the operator's run). Proof Pack docs/proof/lane-pin-ruling-71.md.",
+      "tags": [
+        "ruling-71",
+        "f5",
+        "agent-plane",
+        "security"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/AgentPlane/AcpLaneClient.cs",
+        "src/AiDe.App/Conductor/GovernedRunHost.cs",
+        "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs",
+        "tests/AiDe.App.Tests/Conductor/TheGovernedLaneHasNoShellTests.cs",
+        "tests/AiDe.Core.Tests/AgentPlane/AcpLaneClientTests.cs",
+        "docs/proof/lane-pin-ruling-71.md"
+      ],
+      "datetime": "2026-09-11T22:26:21Z",
+      "done_when": "Red: the Core assert on SessionNewParameters and the App test on the report/log lines fail on the step-A host; green after; Core AgentPlane 182/182 and App Conductor 12/12; builds 0 warnings; oracle diff empty; committed, Release rebuilt, pushed",
+      "duration_seconds": 313.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "feature/exit-evidence",
+        "pushed": true,
+        "sha": "246b38a3e871dc85db983abb077f04673db95ab0",
+        "short": "246b38a3e"
+      },
+      "goal": "The frame a governed lane is opened with is recorded on the normal path: report line + lane.session-new log line carrying the params the client sent",
+      "id": "al-01M2998D6N54QJ5J6VC9PK805W",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "Coordinator: close finding 1 in the same tree/session — at the one governed site emit the outgoing session/new params on the normal path (the exact JSON the client sent: cwd, mcpServers, _meta) through the host's existing Report channel AND WorkbenchDiagnostics (evt lane.session-new, run/lane/session id, the params object), so the attended F5 run leaves the frame in %LOCALAPPDATA%\\AiDe\\logs and in the run's report. Red first with the existing fake peer, green, no other change; oracle byte-identical; ConductorEntry.cs untouched. Build with TreatWarningsAsErrors, run the Core AgentPlane suite and the App Conductor tests, audit entry (manual, T0), regenerate-derived, commit, rebuild Release, push, report ProductVersion.",
+      "session": "f5-lane-pin",
+      "shortname": "f5-lane-pin-frame-recorded",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "started_at": "2026-09-11T22:21:08Z",
+      "summary": "AcpLaneClient.SessionNewParameters records the params object handed to the peer (outbound mirror of AcpPeer.ObservedAuth). GovernedRunHost.OpenSessionAsync (the one site, extracted so a fake peer can drive it) reports 'acp session <id> opened with session/new params <json>' and emits WorkbenchDiagnostics.LaneSessionNew (evt lane.session-new; run, lane, session, params); a client that recorded nothing reads as not recorded. Red observed: Core Expected {cwd…} Actual null; App Sub-string not found on the id-only report. Test compares the recorded params to the frame the peer actually wrote to the engine's stdin. Core AgentPlane 182/182, App Conductor 12/12, 0 warnings. Proof Pack claims 10-11 added.",
+      "tags": [
+        "ruling-71",
+        "f5",
+        "instrumentation"
+      ],
+      "tier": "T0",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
         "src/AiDe.Core/Presentation/Composer/ComposerDraft.cs",
         "src/AiDe.App/Workbench/Composer/ComposerSendGate.cs",
         "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
@@ -12419,6 +12663,50 @@ window.AUDIT_DATA = {
       "started_at": "2026-09-11T22:28:32Z",
       "summary": "F-2 fixed: added ComposerDraft.SourceText (operator-typed content only, shape-scoped); ComposerSendGate.cs:169 and ComposerSurface.cs:452 both derive the lease from it instead of the compiled prompt. Red observed on main (attachment/template-body cases), green after; goal-block heading and goal-field controls unaffected; display/send equality test added; source-scan guard added; DC-146 registered; Security & Identity read-only review PASS. Core 2240/0, App 605/0 (611 incl. new tests), build clean under -p:TreatWarningsAsErrors=true. Proof Pack: docs/proof/lease-source-text.md.",
       "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0009-a-session-document-opened-into-a-body-that-is-not-on-screen.md",
+        "tests/AiDe.App.ComposerProbe/Program.SessionRender.cs",
+        "tests/AiDe.App.Tests/Sessions/ASessionDocumentIsShownWhereTheOperatorIsTests.cs",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-11T23:17:55Z",
+      "done_when": "Red oracles observed in the operator's arrangement (exit 30 Explorer body; exit 32 reopen), green controls, INV-0009 with typed links, register updated, gates green, branch pushed",
+      "duration_seconds": 2354.0,
+      "fan_out": 2,
+      "git": {
+        "branch": "investigate/session-document-render",
+        "pushed": null,
+        "sha": "1aadde843a950c9d56a7dc5f034bca0254d52f4b",
+        "short": "1aadde843"
+      },
+      "goal": "Prove by red reproduction in the product's restored-layout state why File → New Session shows nothing and why a reopened session's composer is never configured; generalise; plan; stop before the fix",
+      "id": "al-01M29C6TT50SFYN2J9Z8JFVAEY",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "You are the investigation node for the defect that blocks the operator's F5 exit run, dispatched by the conductor (Claude Opus, session conductor-addendum-c). Run the /investigate skill (Skill tool: investigate, args: A new session document created by File → New Session is never rendered when the app starts from a restored layout that already holds a session document; and a restored/reopened session document's composer is never configured). Read CLAUDE.md and AGENTS.md first; the pack's rules apply in full — a root cause is proven by a reproduction that fails first, in the state the product was actually in (DC-135, three times today: the harness constructed a state the product was not in). Use python, not python3; $env:PYTHONIOENCODING='utf-8'.\n\n## Your worktree — the only tree you write to\nC:\\Projects\\ai-de-investigate-session-document-render, branch investigate/session-document-render, HEAD = main 1aadde84. From inside it: $env:AGENT_SESSION='session-render'; $env:AGENT_NAME='claude-investigate-render'; $env:PYTHONIOENCODING='utf-8'; python docs/ai-forward-pack/scripts/audit-log.py start --session session-render\nNote: main does not yet carry the F5 tree's lane pin (feature/exit-evidence @ 135e05e1); it does carry the composer fix (WebSurfaceHost, the handshake/layout telemetry — DC-137/138) and the contrast fix. The telemetry below was recorded by the F5 tree's Release build 1.0.0+135e05e1…, whose composer/session code equals main's.\n\n## The evidence — the operator's launch, verbatim, in your tree\ndocs/investigations/operator-launch-22-33Z.log.jsonl — 26 lines from %LOCALAPPDATA%\\AiDe\\logs\\workbench-20260911.log, 22:33:20Z–22:34:30Z, terminal noise removed. Read every line. The story it tells:\n1. app.start 22:33:21Z, Release 135e05e1, DPI 1.5, dark theme.\n2. 22:33:28 layout.mutation open-session-document placement=split-beside-graph surface=session-document:…ba326cf3 active=graph — this document was restored from the persisted layout at startup (the operator did nothing yet); its composer: initialising → navigation-started (1) → page-ready; composer.layout editor 617 px, visible:true, loaded:true — but never configured, never init-pushed → the page mounted with no fields. This is what the operator saw: a blank editor area with the compiled box under it.\n3. 22:34:09 open-session-document placement=split-beside-graph surface=…c5547968 active=graph — the operator's File → New Session; its composer logs configured (fields 6) and nothing else: no initialising, navigations: 0, no composer.layout → the surface was never Loaded, never measured — never in a rendered visual tree.\n4. 22:34:20 open-session-document placement=tab surface=…b62cbcd3 active=…c5547968 (zone-center, active index 9) — a second File → New Session; same: configured, never initialised, never laid out.\n5. 22:34:26 all three composers disposed (the app closed). The graph surface re-attached repeatedly; explorer-graph initialised at 22:34:00.\n\n## The code paths (checked this turn)\n- src/AiDe.App/MainWindow.xaml.cs:172-206 NewSession(): Shell.OpenSessionDocument(created.Config) → GiveTheNewSessionTheWholeTree(sessionId, opened + \" \" + BindComposer(created)) — BindComposer (:235-281, the only Configure call, :281) runs only here; the reopen path :387 (OpenSessionDocument(config) after reading session.json) and the startup restore never bind → defect A: a restored/reopened document's composer has no send context and never pushes host.init.\n- src/AiDe.App/Workbench/Sessions/NewSessionPlacement.cs:31-58 GiveItTheWholeTree: service.Current.FindStackOf(surfaceId) → SetStackState(stack.Id, StackState.Maximized) (Ruling 47; its oracle tests/AiDe.App.Tests/Sessions/ANewSessionTakesTheWholeTreeTests.cs passes on a clean layout). src/AiDe.App/Workbench/WorkbenchShell.cs:1590 (mode = \"split-beside-graph\"), :2909 OpenSessionDocument, ZoneBackedLayoutService / ZonesToTree (src/AiDe.Core/Workbench/; DC-135: StackState.Maximized does not round-trip — the projection omits collapsed zones), LayoutPersistence.cs (the restored layout), SurfaceContentFactory.cs:158-175 (the factory hands back the shell's live document for a session-document surface; sessionDocumentFor).\n- src/AiDe.App/Workbench/Composer/ComposerSurface.cs + WebSurfaceHost.cs (owner.Loaded += OnAttachedAsync; initialising logged there — so no initialising ⇒ Loaded never fired on the new document's composer), WorkbenchDiagnostics.cs (composer.layout from MeasureOverride).\n- The harness that passed: tests/AiDe.App.ComposerProbe/Program.cs --shell mode and tests/AiDe.App.Tests/Composer/ComposerHostIntegrationTests.cs (TheComposersEntryAreasKeepTheirRoomAfterTheNewSessionChoreography: opens a session document on a fresh shell, applies Ruling 47's maximize, fields=6, editor 334 px). The product's state differed: a restored layout already containing a session document (zone-left held explore:view, provenance:inspector, contexts, joins; the restored document sat beside the graph) — reproduce THAT.\n\n## Hypotheses to disconfirm by observation (none is a conclusion)\nH1 With a restored layout, OpenSessionDocument's split-beside-graph places the new document into a stack/zone that the subsequent Maximize of FindStackOf(surfaceId) collapses or that the projection omits (active: graph in the mutation says the new surface was not activated) — so the new document exists in the zone model but not in the rendered tree.\nH2 The restored session document's surface id or the persisted StackState leaves the zone service in a state where a second session-document cannot be projected (e.g. one visible document per zone; the restored one wins).\nH3 The new document was rendered but hidden behind another tab (then Loaded would still fire for AvalonDock content? — verify; a hidden tab's content is usually not loaded) — distinguish \"in the tree, collapsed\" from \"not in the tree\".\nH4 Something in the restore path (A) also prevents (B): e.g. the restored document holds the sessionDocumentFor slot so the factory hands back the OLD document for the NEW surface.\n\n## What you must produce\n1. Reproductions that fail first, in the product's state: extend the --shell probe / the integration test with a restored-layout precondition (persist a layout containing a session document beside the graph as the operator's did — the mutation line carries the zone/stack payload; use it), then File → New Session through MainWindow.NewSession()'s real choreography (OpenSessionDocument → GiveItTheWholeTree → BindComposer), and assert the new document's composer is Loaded, measured (composer.layout present), and reaches init-pushed with fields 6. Observe it red. A second red test for (A): reopening a session (:387 path) yields a composer that reaches configured and init-pushed.\n2. The verified root cause for (B) with the observation that proves it and the alternative ruled out; the cause for (A) is already visible in the code — confirm it by the red test.\n3. The class, generalised (sweep: every other place a document is opened without BindComposer; every placement/maximize path evaluated against a non-empty persisted layout), and a repair plan — code + tests + the missing instrumentation (a layout.mutation line for the maximize itself with the resulting projected tree; a session-document.bound / unbound event so an unconfigured document is visible in the log). Stop before the fix; the operator reviews — but write the plan so the fix is a one-node T1.\n4. docs/investigations/INV-<next>.md (allocator: INV-0008 is the highest on main; python tools/verify-id-allocators.py immediately before commit), frontmatter, typed links, the log excerpt cited by line; docs-graph.py derive; audit entry (--shortname investigate-session-document-render --session session-render --skill investigate --kind skill --tier T1 --git … + signals); regenerate-derived.py; gates bare stop-on-first-red; commit with the attribution lines, then git push -u origin investigate/session-document-render.\n\n## Fails if (stop and report instead)\n- A root cause asserted without the restored-layout reproduction observed red; the harness \"fixed\" to pass rather than the product; any write outside your worktree; git stash; a rebase; a push to main; verify-test-run.py --update; DC-120. No governed run, no model call, no billing.\n\n## Report back (compact)\nThe red observations (test names, failure text); the root cause of (B) and its proof; (A) confirmed; siblings; the plan; INV path and shas; the operator question if any.",
+      "session": "session-render",
+      "shortname": "investigate-session-document-render",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "started_at": "2026-09-11T22:38:41Z",
+      "summary": "INV-0009. (B) VERIFIED: the New Session at 22:34:09Z was opened while Explorer was the window's body (explorer-graph initialising at 22:34:00Z is built only inside ShellModeController.Set(Explorer)); the docking host was unparented, so the document's composer was configured and never Loaded, and the shell announced 'opened … bound … maximized' about the model. Replayed from the log's own restore payload through the product's LayoutPersistence and ShellModeController (ComposerProbe --session-render): workbench body GREEN (rules out H1-H4: restored layout, second restored document, maximize, factory slot), Explorer body RED exit 30, return-to-workbench GREEN (necessary+sufficient); sibling code viewer red in the same state. (A) VERIFIED red exit 32: the reopen path never binds the composer (DC-084 rec. 2) AND, for a surface the restore already placed, the pane keeps its 'No session is open' island because Render reuses content nothing invalidated (DC-040 rec. 2). (C) the brief's premise corrected: session …ba326cf3 at 22:33:28Z was CREATED (id minted that second), via the chooser with no workspace open; BindComposer refused 'repositoryRoot' — the blank editor the operator saw (DC-148). DC-147 registered. Four oracles in ASessionDocumentIsShownWhereTheOperatorIsTests: 2 red, 2 green. Plan: Phase 1 one seam DocumentOpening → mode.Set(Workbench) + shell.mode line; Phase 2 Invalidate on reopen + SessionComposerBinder(SessionConfig) shared by both paths; 2b bind restored documents at workspace-open; Phase 3 Owner's choice for the chooser path; Phase 4 emitters (maximize-stack, session-document.bound/refused); Phase 5 ADR-0017 amendment (flagged review-suggested). No fix made. Operator question: did you enter Explorer at 22:34:00Z before New Session?",
+      "tags": [
+        "investigation",
+        "session-document",
+        "explorer-mode",
+        "dc-147",
+        "dc-148"
+      ],
       "tier": "T1",
       "tool": null
     },
@@ -12483,6 +12771,61 @@ window.AUDIT_DATA = {
         "session"
       ],
       "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0009-a-session-document-opened-into-a-body-that-is-not-on-screen.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-11T23:21:04Z",
+      "done_when": "verify-id-allocators and verify-defect-register green on the branch",
+      "fan_out": 2,
+      "git": {
+        "branch": "investigate/session-document-render",
+        "pushed": null,
+        "sha": "efc65a8996b0b50872ea422ed3c17973926938e3",
+        "short": "efc65a899"
+      },
+      "goal": "Keep INV-0009's ids unique across every branch before push",
+      "id": "al-01M29CCKH3RASB2HZZTYPYXX13",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Re-issue the defect-class ids INV-0009 allocated (DC-013): verify-id-allocators reported DC-147 allocated independently on origin/feature/session-elevation after this branch's first commit.",
+      "session": "session-render",
+      "shortname": "investigate-session-document-render-reissue",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "summary": "Ids re-issued, nothing else changed: the class 'a command mutates the model of a view that is not on screen, and reports the model's success as the screen's' is DC-148 (was DC-147); 'a flow acquires a resource by asking the operator, uses it for one half of the work, and refuses the other half for lack of that resource' is DC-149 (was DC-148). main's DC-146 and feature/session-elevation's DC-147 are carried verbatim so the register's sequence is unbroken on this branch. INV-0009, the register and ADR-0017's review-suggested flag renumbered; the superseded entry's summary should be read with this substitution.",
+      "supersedes": "al-01M29C6TT50SFYN2J9Z8JFVAEY",
+      "tags": [
+        "investigation",
+        "dc-013",
+        "dc-148",
+        "dc-149"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-11T23:23:53Z",
+      "id": "al-01M29CHR7C9WAPMA7YZPRMKXB6",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Operator approves INV-0009 phases 1, 2, 2b, 4 now, and rules the workspace chooser OPENS the chosen workspace and then creates the session (R13 b1 completed), rather than refusing.",
+      "session": "prompt-log",
+      "shortname": "Operator approves INV-0009 phases 1, 2, 2b, 4 now, and rules the workspa…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
       "tool": null
     },
     {
@@ -12586,21 +12929,6 @@ window.AUDIT_DATA = {
         "architecture"
       ],
       "tier": "T2",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [],
-      "datetime": "2026-09-11T23:23:53Z",
-      "id": "al-01M29CHR7C9WAPMA7YZPRMKXB6",
-      "kind": "prompt",
-      "outcome": "success",
-      "prompt": "Operator approves INV-0009 phases 1, 2, 2b, 4 now, and rules the workspace chooser OPENS the chosen workspace and then creates the session (R13 b1 completed), rather than refusing.",
-      "session": "prompt-log",
-      "shortname": "Operator approves INV-0009 phases 1, 2, 2b, 4 now, and rules the workspa…",
-      "skill": null,
-      "summary": "prompt logged for reuse",
-      "tags": [],
       "tool": null
     },
     {
@@ -12815,250 +13143,6 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "actor": "node-f5",
-      "artifacts": [
-        "docs/proof/conductor-front-door.md",
-        "tools/verify-front-door-exit-evidence.py"
-      ],
-      "datetime": "2026-09-11T13:48:59Z",
-      "done_when": "A governed run rooted in the linked worktree has closed, its scored_episode_cell row read, and either IsComparable == true is recorded or the Not Scored verdict has been escalated as Ruling 17's EvaluatorIntegrity trip.",
-      "duration_seconds": 1812.0,
-      "fan_out": 0,
-      "git": {
-        "branch": "feature/exit-evidence",
-        "pushed": true,
-        "sha": "1374401d171b1ec6be5d56c25b1d1e00608abc18",
-        "short": "1374401d1"
-      },
-      "goal": "Measure, before the exit run, every live dependency the exit run has: the pinned adapter starting, observed auth arriving, worktree provisioning from inside a linked worktree, coord genuinely absent, and whether the linked-worktree shape scores comparable.",
-      "id": "al-01M28BN2WPZKCAE3VT8228QY5H",
-      "kind": "script",
-      "outcome": "success",
-      "prompt": "Node F5 — exit evidence and the Proof Pack. Pre-flight only: buy Ruling 17's answer (does the linked-worktree shape score?) through the existing --conduct entry before spending the front-door exit run, which cannot be re-taken.",
-      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
-      "shortname": "f5-preflight-live-run",
-      "signals": {
-        "acceptance_met": true,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": null,
-      "started_at": "2026-09-11T13:18:47Z",
-      "summary": "A LIVE GOVERNED RUN THAT IS NOT THE EXIT EVIDENCE, recorded because a live run that appears in no record is worse than one that appears with its purpose stated.\n\nWHAT IT WAS FOR. F5's exit run launches through the front door and cannot be re-taken; Ruling 17 makes \"does the linked-worktree shape score?\" a question that must reach the conductor rather than a qualification to carry. This bought that answer through the existing `--conduct` headless entry, for one trivial turn, before spending the run whose evidence is the deliverable.\n\nBOUNDS. Task class `front-door-preflight` in its own scratch data directory, so nothing shares the exit run's cohort — ScoreSegment partitions on (Workspace, TaskClass, SchemaVersion) and a throwaway episode in the measured cohort would be DC-110's shape. Lease exactly `spikes/conductor-front-door-exit-run/**`; 6-minute prompt timeout; the lane wrote one file containing one word.\n\nWHAT IT MEASURED, and it is the reason to keep the record. repositoryRoot was the LINKED WORKTREE `C:/projects/ai-de-feature-exit-evidence`. The episode scored `Partial: 15 / 15 observed`, `mode=governed`, `IsComparable == true`, `IncomparableReason == null` — and its `workspace` column reads `c:\\projects\\ai-de`, the PARENT repository, which does not contain `docs/proof/conductor-front-door.md` in its working tree or in HEAD (`9f01fdc`), verified both ways. The declared artifact was therefore credited from the LANE'S OWN CHECKOUT: DC-115's Phase-2 control (`ProofPackVerifier.VerifyInCheckouts` + `ClosedEpisodeScoring.CheckoutsOf`) observed doing its job on the shape Phase 1 could not use. Phase 1 avoided the defect by rooting in a clone; this did not have to.\n\nOTHER MEASUREMENTS. terminalHostConstructions 0. eventsObserved 43, latencyMeasured 43, p50 0.0204 ms, p95 0.2858 ms on TIMMALLSTRIX — recorded, never asserted (ADR-0029). observedAuth kind=account label=\"Claude Max\" plan=max. seamsRaised 0, seamResolutionRatio 1. Exit code 0, so ConductorEntry's four-point floor held. Wall clock 14 s for the run that was waited on.\n\ncoordInstalled: FALSE, DELIBERATELY. `coord` is not on this machine's PATH and no shim was supplied, because supplying one would have run `coord install` inside a linked worktree that SHARES `.git/config` with its parent — measured: `extensions.worktreeConfig` is unset on C:/projects/ai-de and both merge drivers live in `file:.git/config`. That is DC-112, and it would have repointed the main clone's merge drivers at a lane tree that is then released, breaking merges across twenty-one live worktrees, in the one run nobody would think to suspect. `ProcessRunner.Run` catches Win32Exception and returns -1, so the provisioner records false and the run proceeds. The main clone's merge drivers were re-read after the runs and after cleanup: unchanged.\n\nA MISTAKE, RECORDED RATHER THAN TIDIED. TWO runs happened, not one. `& $exe --conduct ...` on a WinExe returns immediately — the GUI subsystem detaches — so the first invocation reported no exit code and 0 seconds while a real governed run continued in the background. The second, launched with Start-Process -Wait, is the one measured above. Both provisioned a lane worktree and both scored `Partial: 15 / 15 observed`; the store holds two episodes in the preflight cohort. The subscription cost was doubled by a harness error, not by design. Anything launching this shell must wait on the process object, never on the call.\n\nCLEANUP. Both lane worktrees removed (`git worktree remove --force`, opt-in after reading what each held: one untracked `preflight.txt` containing `ready`, HEAD at 1374401 which exists on feature/exit-evidence, so no commit existed nowhere else), both agent branches deleted, `git worktree prune` run, count back to 21 with zero lane trees remaining.\n\nWHAT THIS DOES NOT COVER, stated so a green is not over-quoted later. It launched through `--conduct`, NOT the front door. It is no evidence for clause 2 (composed in the composer, streamed in Console mode) or clause 5 (launched through the same composition root, ledger counting roots) — those are precisely the path it does not touch. Clause 9's qualification is discharged by the exit run, not by this one. This is evidence about the plumbing, not a verdict.",
-      "tags": [
-        "conductor",
-        "front-door",
-        "f5",
-        "pre-flight",
-        "dc-115",
-        "dc-112",
-        "not-exit-evidence"
-      ],
-      "tier": "T2",
-      "tool": "AiDe.App.exe --conduct"
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/proof/conductor-front-door.md",
-        "tools/verify-front-door-exit-evidence.py",
-        "tools/expected-test-counts.json"
-      ],
-      "datetime": "2026-09-11T15:24:10Z",
-      "done_when": "Clauses 0-9 reported with evidence; terminalHostConstructions == 0 with its falsifier; no Residual cell reading 'none'; counts reported; gates green; pushed; CI read back with gh run view --json conclusion.",
-      "fan_out": 3,
-      "git": {
-        "branch": "feature/exit-evidence",
-        "pushed": false,
-        "sha": "b7f41d1c4ac9f2f8f61a88ff55e63d7cb9593aa0",
-        "short": "b7f41d1c4"
-      },
-      "goal": "Run the frozen oracle against a real governed run through the App shell and close F5's Proof Pack.",
-      "id": "al-01M28H3BREVHK9EA4YVVJ6JDMD",
-      "kind": "manual",
-      "outcome": "blocked",
-      "prompt": "You are node F5 of the AI-DE Conductor front-door slice, resuming. Merge main (never rebase), run the\nfrozen oracle at 1374401d against a real governed run through the App shell - composed in the\ncomposer, streamed in Console mode, scored episode - report all nine clauses plus clause 0 with their\nevidence, terminalHostConstructions == 0 with its falsifier, write the Proof Pack with no Residual\ncell reading \"none\", report the counts, gates green, push and read CI back with\n`gh run view --json conclusion`. Treat every claim in this brief as Inferred unless labelled\nVerified, and report back which of them were false.",
-      "session": "conductor-front-door-f5-exit-evidence",
-      "shortname": "F5 exit evidence: blocked by DC-130's second instance, with the counts and gates measured",
-      "signals": {
-        "acceptance_met": false,
-        "regression": false,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": null,
-      "summary": "THE EXIT RUN DID NOT HAPPEN, AND THE REASON IS STRUCTURAL. The shipped product cannot send from the\nfront door at this commit, so clauses 2, 3, 5, 6 and 9 are unsatisfiable - five of nine, the same\narithmetic DC-130's first instance produced.\n\nMEASURED, not inferred. `grep -rn \"ComposerSendContext\" src` returns five hits and ZERO\nconstructions: a declaration, a doc-comment cref, two parameters, a field. The only\n`new ComposerSendContext` in the repository is in a test (ASendLaunchesAGovernedRunTests.cs:79).\nComposerSurface.Send() opens with `if (_context is null) { ... return null; }` at :224, and `_context`\nis assigned only in Configure at :166, which nothing under src/ calls. A type whose only construction\nin the repository is inside a test cannot be supplied at runtime.\n\nDC-130's SECOND INSTANCE IN THIS SLICE, with its signature verbatim: a constructed value returned to\na discarding caller. MainWindow.xaml.cs:160 passes only `created.Config` from a\nNewSessionResult(Config, TaskClass, RoutableBackends) - dropping TaskClass, the one field the sheet\nrefuses to default because a defaulted class ranks in the wrong cohort (DC-110). F4b closed the seam\nbelow (request -> run); the seam above (session config + task class -> composer send context) is\nstill unowned. Both nodes green against every clause they were given. OpenSessionDocument's own\ndoc-comment records the conflict without resolving it - DC-130's other tell.\n\nWHY THIS NODE DID NOT WIRE IT. A driver CAN call Composer.Configure() itself and press Send(); the\nrun would be real, the episode would score, and the oracle would read composerSendCount == 1 and\nlaunchedBy under src/ - both true, both green, product still broken. That is DC-127 manufactured\ndeliberately inside the pack whose job is to refuse it. And the edge is a decomposition ruling\n(where a reopened session's task class comes from), not an evidence node's call.\n\nTHE ORACLE'S OWN BLIND SPOT, recorded rather than patched. Clauses 2 and 5 never ask WHO wired the\ncomposer, so they cannot separate a product-wired send from a harness-wired one. The closure is a\nsource scan of the form TheProductItselfConstructsASessionLane already uses. NOT ADDED: clause 0\ncompares the oracle's bytes against 1374401d, so widening it after the fact reddens clause 0. The\ncontrol refused its own author, which is the behaviour it was committed early to have.\n\nWHAT IS DISCHARGED. Clause 0 holds: 1374401d is an ancestor of this branch, is NOT reachable from\nmain, and the oracle's bytes are byte-identical to that commit after the merge. Clauses 1, 4, 7, 8\nare discharged. The oracle's --self-test exits 0: \"the oracle reddens on every clause it claims to\ncheck\". Bare, it exits 1 because its subject does not exist - a gate refusing an absent subject is\nnot a broken gate, which is why only the self-test is wired in CI.\n\nCOUNTS, measured on the merged tree, --update NEVER run. App 512 (floor 512, +0). Core 2214 (floor\n2210, +4). Core portable 2060 (floor 2056, +4). Core non-portable 154 (floor 154, +0).\n2060 + 154 = 2214 by three separate observations that agree. The +4 is this node's own four origin\ntests from bc6d6a4b. Build 0 warnings 0 errors. 29 of 30 gates green.\n\nDURATION IS NOT RECORDED rather than estimated: no `audit-log.py start` marker was set at grounding\nfor this run, and a modeled duration would be a plausible wrong number (IO12).\n\nFOUR CONDUCTOR CLAIMS REFUTED, listed in the node's report; the load-bearing one is \"There is now an\nexit run for your oracle to observe\" - F4b made the seam real, not the path.",
-      "tags": [
-        "f5",
-        "dc-130",
-        "blocked"
-      ],
-      "tier": "T2",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/proof/conductor-front-door.md",
-        "tools/verify-front-door-exit-evidence.py"
-      ],
-      "datetime": "2026-09-11T16:18:22Z",
-      "done_when": "F6's edge verified by opening the file; oracle bytes still match 1374401d; counts and gates reported; the run taken or its remaining preconditions named as findings.",
-      "fan_out": 3,
-      "git": {
-        "branch": "feature/exit-evidence",
-        "pushed": false,
-        "sha": "c5ca7b1ff3d5105da27d6b81a2a95e063680630e",
-        "short": "c5ca7b1ff"
-      },
-      "goal": "Verify the cleared blocker against the tree, then take the front-door exit run without touching clause 0.",
-      "id": "al-01M28M6KP2YYN6M6F4NZ8HDNSD",
-      "kind": "manual",
-      "outcome": "blocked",
-      "prompt": "Your blocker is cleared on main - F6 built the edge, and your report is what proved it was missing.\nMerge main (never rebase), then take the run: task class no earlier run has used checked against the\nstore, harness waits on the process object (DC-129), terminalHostConstructions == 0 with N7's\nfalsifier verbatim, every Residual cell naming a measurement or an explicit uncovered input. Do not\ntouch clause 0 - satisfy the blind spot by a companion demonstration in the Proof Pack instead, and\nsay so if that is the wrong shape.",
-      "session": "conductor-front-door-f5-exit-evidence",
-      "shortname": "F5: F6's edge verified, oracle blind spot closed from outside, run blocked on two operator inputs",
-      "signals": {
-        "acceptance_met": false,
-        "regression": false,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": null,
-      "summary": "THE BLOCKER IS CLEARED AND VERIFIED, AND THE RUN IS STILL NOT TAKEN. F6's edge is real on the merged\ntree: MainWindow.xaml.cs:263 calls composer.Configure(...) and :265 constructs\nnew Workbench.Composer.ComposerSendContext(...) with TaskClass: created.TaskClass -- the field that\nwas being dropped. All of the coordinator's claims were checked against the tree this time and ALL\nWERE TRUE: floors App 517 / Core 2234 / portable 2080 / non-portable 154; register 134 classes\n(66/53/15); Ruling 46 filed as the edge-ownership ruling; verify-ruling-citations.py present and\ngreen (43 cited, 34 defined, 9 frozen); ComposerProbe is a ProjectReference at line 81.\n\nTHE ORACLE'S BLIND SPOT IS CLOSED FROM OUTSIDE, NOT BY WIDENING IT. Clause 0 was not touched and the\noracle's bytes still match 1374401d across a second merge.\nTheRunBindingComesFromTheProviderFileTests.TheShellConstructsOneRegistryOneSendContextAndOneAttachmentGate\nasserts EXACTLY ONE composer.Configure( and EXACTLY ONE new Workbench.Composer.ComposerSendContext(\nin the shell, then sweeps every other file under src/AiDe.App/. Because there is one Configure call\nsite and it is product code, a run reaching Send() with a populated context reached it through\nBindComposer. That is the companion the conductor asked for, and it already existed.\n\nWHY THE RUN STILL DID NOT HAPPEN -- two preconditions, neither of them code, neither this node's.\n(1) ~/.aide/providers.json is ABSENT on this machine (ProviderConfiguration.DefaultPath, checked).\nBindComposer refuses by name without it, and the file names THE ACCOUNT THE RUN BILLS. Inventing that\nlabel is DC-110's defect exactly, and LaneBinding refuses to pick between two accounts for the same\nreason. The schema is settled; the value is the operator's.\n(2) THERE IS NO HEADLESS FRONT DOOR. ConductorEntry.IsRequested is the only argument the shell reads.\nFile -> New Session opens a modal Window via NewSessionSheetDialog.Show, and showSheet is hard-wired\ninside MainWindow.NewSession(), so nothing substitutes it without editing product code. \"The harness\nwaits on the process object\" does not apply -- there is no process to launch for this path. The\ngesture is the operator's hands or UI automation of a live modal on a billing path.\n(3) Cohort: no AI-DE episode store exists at any default location, so the \"class no earlier run has\nused\" check must be made against the store the workspace's DataDirectory creates at run time.\n\nREADY: the ACP adapter is installed at C:/Projects/ai-de/spikes/acp-subscription-lane; subscription\nuse is authorised by the operator in their own words (al-01M23SEGAS071BX81W0MA9RF92), scoped to the\noperator's own subscription on their own machine for their own project.\n\nA NEAR-MISS CORRECTED BEFORE IT WAS REPORTED. I first swept for coverage by grepping the private\nmethod name BindComposer, found nothing, and was about to report the path untested. It is thoroughly\ntested: F6's E7-chain test covers file -> reader -> registry -> sheet -> EnabledBackends ->\nComposerSendContext -> Send -> GovernedRunRequest with a named refusal at each link. THE METHOD NAME\nIS NOT THE PATH'S NAME. Third grep-shaped false negative in this node -- the first was\nnamespace-qualified `new Sessions.SessionDocumentSurface`, which the conductor then walked into too.\n\nPROOF PACK CORRECTED RATHER THAN APPENDED TO. The pack asserted \"the shipped product cannot send\nfrom the front door\", which is now FALSE of the tree. That section is now Part 1 (what was measured,\nmarked no longer true) and Part 2 (what F6 closed, what remains). Counts corrected twice by\nre-measuring: this table has now named three different floor sets, and each was stale when carried\nrather than measured. Gate count measured by `ls`, not recalled -- my first draft said 32.\n\nCOUNTS on the merged tree, --update NEVER run: App 517 (floor 517, +0), Core 2238 (floor 2234, +4),\nportable 2084 (floor 2080, +4), non-portable 154 (floor 154, +0). 2084 + 154 = 2238 by three\nobservations that agree. The +4 is this node's own four origin tests. Build 0/0. 30 of 31 gates\ngreen; the thirty-first is this slice's oracle refusing an absent subject, whose --self-test is green.",
-      "tags": [
-        "f5",
-        "dc-130",
-        "blocked",
-        "providers"
-      ],
-      "tier": "T2",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/notes/front-door-ruling-49.md"
-      ],
-      "datetime": "2026-09-11T17:34:51Z",
-      "done_when": "The three prior-session files and the new Ruling 49 note are committed; every tools/verify-*.py gate plus the Core build, tests build, and filtered test run have recorded exit codes; the audit entry and derived views are regenerated and committed; the branch is pushed to origin/feature/exit-evidence.",
-      "duration_seconds": 407.0,
-      "git": {
-        "branch": "feature/exit-evidence",
-        "pushed": false,
-        "sha": "2a363f4fedcdbf634ddce40e97a0cc32f54faadf",
-        "short": "2a363f4fe"
-      },
-      "goal": "Bring feature/exit-evidence to the operator-gesture boundary: commit the prior session's uncommitted files, file Ruling 49 as a note, run every gate, and push, so the only missing input for F5 is the operator's own File -> New Session gesture.",
-      "id": "al-01M28RJNCKQZPTG05SMVRWR16V",
-      "kind": "manual",
-      "outcome": "success",
-      "prompt": "Bring feature/exit-evidence to the operator-gesture boundary: everything committed, gates green, pushed, so the only missing input for F5 is the operator's own File -> New Session gesture (Ruling 49). Do not perform that gesture, launch the app, or run any session.",
-      "session": "f5a-exit-evidence",
-      "shortname": "f5a-ruling-49-committed",
-      "signals": {
-        "acceptance_met": true,
-        "regression": false,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": null,
-      "started_at": "2026-09-11T17:28:04Z",
-      "summary": "Read and confirmed coherent the three prior-session diffs (residuals-carried table, Proof Pack Part 3 / clause table / oracle-integrity rows, and a test <remarks> comment); nothing was half-written. Filed docs/notes/front-door-ruling-49.md (verified absent by grep and by verify-ruling-citations.py before filing; passes after). Checked docs/notes/front-door-council-rulings.md and confirmed it is a specific decision note (Rulings 19-25), not an index -- no row added there. Committed the three prior-session files (bc3ba59c) and the ruling note (2a363f4f) as two separate commits. Ran all 32 tools/verify-*.py gates bare, one exit code each: 30 passed (0); verify-front-door-exit-evidence.py failed (1) as expected -- spikes/conductor-front-door-exit-run/exit-evidence.json does not exist because the operator's gesture has not happened, which is the exact state Ruling 49 describes; verify-derived-views.py and verify-site-figures.py both failed (1) as expected because the new note is not yet reflected in the derived views -- both are resolved by this same commit's regenerate-derived.py run, checked again after. dotnet build src/AiDe.Core/AiDe.Core.csproj -c Release -p:TreatWarningsAsErrors=true: 0 Warnings, 0 Errors. dotnet build tests/AiDe.Core.Tests -c Release: 0 Warnings, 0 Errors. Filtered test TheSessionOriginIsSetOnlyOnTheCommandPathTests: 4 passed, 0 failed. Full verify-test-run.py (bare, check mode, background due to length): exit 0, 2755 tests across AiDe.App.Tests (517) and AiDe.Core.Tests (2238), both met baseline. verify-test-run.py --update was never run.",
-      "tags": [],
-      "tier": "T1",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/AgentPlane/AcpLaneClient.cs",
-        "src/AiDe.App/Conductor/GovernedRunHost.cs",
-        "tests/AiDe.Core.Tests/AgentPlane/AcpLaneClientTests.cs",
-        "tests/AiDe.App.Tests/Conductor/TheGovernedLaneHasNoShellTests.cs",
-        "tests/AiDe.Core.AcpProbe/Program.cs",
-        "docs/notes/lane-pin-spike.md",
-        "docs/proof/lane-pin-ruling-71.md",
-        "docs/lessons/defect-classes.md"
-      ],
-      "datetime": "2026-09-11T22:16:41Z",
-      "done_when": "Spike note records the adapter path from source (0.75.1 :5859-5860, :6007); wire test red then green; null-path byte-equality test green; GovernedRunHost passes the pin at its one site; Security lens clears; builds 0 warnings; Core+App full suites green and verify-test-run --no-run OK; every tools/verify-*.py green after regeneration; oracle byte-identical to 1374401d; committed, Release rebuilt, pushed",
-      "duration_seconds": 1565.0,
-      "fan_out": 1,
-      "git": {
-        "branch": "feature/exit-evidence",
-        "pushed": false,
-        "sha": "b6652f64979ffcd9c59aa38b190d860528daf2ac",
-        "short": "b6652f649"
-      },
-      "goal": "Ruling 71 lane pin: a typed LaneSessionOptions {Tools?, DisallowedTools?} on both AcpLaneClient.NewSessionAsync overloads; the governed lane sends _meta.claudeCode.options.disallowedTools [Bash]; null path byte-identical; red-first on the outgoing frame",
-      "id": "al-01M298PPTEJDBYAQQ3DCJW9MTE",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "/implement Ruling 71: the governed lane's session/new carries _meta.claudeCode.options.disallowedTools [\"Bash\"], typed on AcpLaneClient.NewSessionAsync, asserted red-first on the outgoing frame\n\nDispatched by the conductor (session conductor-addendum-c) onto the F5 tree C:\\Projects\\ai-de-feature-exit-evidence (feature/exit-evidence @ 757af057); merge main (a3f760a3) first, never rebase; the frozen oracle tools/verify-front-door-exit-evidence.py stays byte-identical to tag f5-oracle-frozen (1374401d).\n\nRuling 71 (verbatim, docs/notes/addendum-c-council-rulings.md): (a) The F5 exit run may proceed only after AcpLaneClient.NewSessionAsync sends _meta.claudeCode.options.disallowedTools: [\"Bash\"] for the governed lane, a unit test asserts that member on the outgoing session/new JSON, the run is attended, and the run's Proof Pack records the outgoing frame, every observed tool-call name, and origin/main's sha before and after; (b) the standing control is a typed session/new tools argument on the one NewSessionAsync site (the agent-plane's; reused later by Addendum D's C1 with tools: []) — a record {tools?, disallowedTools?}, two callers, not a launch-profile abstraction; (c) .claude/settings.json:4 (Bash(git push:*)) is a finding for the operator, not yours to change.\n\nDone when: 1. Spike (bounded, source-only): confirm from the adapter source the _meta path, the type of disallowedTools, and that \"Bash\" is the SDK's shell tool name; record in docs/notes/lane-pin-spike.md. 2. Red first: a Core AgentPlane test asserting the outgoing session/new params contain _meta.claudeCode.options.disallowedTools == [\"Bash\"] when the governed options are passed — observed red on the current client. 3. The change: a small record accepted by NewSessionAsync (both overloads; a null/absent record sends exactly today's frame — a second test proves byte-equality); GovernedRunHost passes DisallowedTools: [\"Bash\"]; ConductorEntry.cs byte-unchanged; no other behaviour change. 4. Green, then the Security lens (read-only sub-agent) confirms: the pin is on the single site, the null path is byte-identical, nothing widens, the settings.json:4 finding is recorded not edited. 5. Gates, bare, stop on the first red: dotnet build Core, App, both test projects with -p:TreatWarningsAsErrors=true; dotnet test Core (full) and App (full); verify-test-run.py CHECK only; every tools/verify-*.py; regenerate-derived.py after the audit entry; the oracle diff empty. 6. Register the class if new (check DC-019 first), audit entry, regenerate, commit, rebuild Release, push origin feature/exit-evidence.\n\nFails if: any change to the frozen oracle, ConductorEntry.cs, .claude/settings.json, the vendored bundle; a launch-profile abstraction; a merge to main; git stash; a rebase; verify-test-run.py --update; a repo-wide destructive command. No governed run, no model call — the operator performs the gesture.",
-      "session": "f5-lane-pin",
-      "shortname": "f5-lane-pin-ruling-71",
-      "signals": {
-        "acceptance_met": true,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "implement",
-      "started_at": "2026-09-11T21:50:36Z",
-      "summary": "Shipped Ruling 71's lane pin on feature/exit-evidence. Spike (source-only, docs/notes/lane-pin-spike.md): adapter 0.75.1 reads _meta.claudeCode.options at acp-agent.js:5859-5860, spreads disallowedTools at :6007 (string[]), Bash is the SDK shell tool (sdk-tools.d.ts:750) — the ruling's spelling holds verbatim. LaneSessionOptions(Tools?, DisallowedTools?) record on both NewSessionAsync overloads; ToMeta null iff both null so the absent/empty record sends the prior frame byte for byte (characterization theory, exact string). Red observed: the pin and tools-[] tests NullReference'd on the plumbing-only client; blank-name test sent a frame and timed out before the guard; App tests turned red by mutating the host (no pin; bare call). GovernedRunHost.GovernedLaneSession = DisallowedTools [Bash] at the one site; a sweep test requires every NewSessionAsync in src/ to name its tools (DC-019: the boundary, not the site). Security lens (read-only): CLEARED WITH FINDINGS — no blocker; nothing widens (:5964 spread collides with nothing security-relevant); next-ruling findings: Monitor/REPL/Agent/hooks remain reachable; settings.json:4 recorded as an operator finding, not edited. Instrumentation gap recorded: the host reports the session id, not the outgoing frame. DC-019 recurrence registered with the sweep as control. Core 2250/2250, App 603/603, verify-test-run --no-run OK; every verify-*.py green except the frozen F5 oracle (red by design until the operator's run). Proof Pack docs/proof/lane-pin-ruling-71.md.",
-      "tags": [
-        "ruling-71",
-        "f5",
-        "agent-plane",
-        "security"
-      ],
-      "tier": "T1",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/AgentPlane/AcpLaneClient.cs",
-        "src/AiDe.App/Conductor/GovernedRunHost.cs",
-        "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs",
-        "tests/AiDe.App.Tests/Conductor/TheGovernedLaneHasNoShellTests.cs",
-        "tests/AiDe.Core.Tests/AgentPlane/AcpLaneClientTests.cs",
-        "docs/proof/lane-pin-ruling-71.md"
-      ],
-      "datetime": "2026-09-11T22:26:21Z",
-      "done_when": "Red: the Core assert on SessionNewParameters and the App test on the report/log lines fail on the step-A host; green after; Core AgentPlane 182/182 and App Conductor 12/12; builds 0 warnings; oracle diff empty; committed, Release rebuilt, pushed",
-      "duration_seconds": 313.0,
-      "fan_out": 0,
-      "git": {
-        "branch": "feature/exit-evidence",
-        "pushed": true,
-        "sha": "246b38a3e871dc85db983abb077f04673db95ab0",
-        "short": "246b38a3e"
-      },
-      "goal": "The frame a governed lane is opened with is recorded on the normal path: report line + lane.session-new log line carrying the params the client sent",
-      "id": "al-01M2998D6N54QJ5J6VC9PK805W",
-      "kind": "manual",
-      "outcome": "success",
-      "prompt": "Coordinator: close finding 1 in the same tree/session — at the one governed site emit the outgoing session/new params on the normal path (the exact JSON the client sent: cwd, mcpServers, _meta) through the host's existing Report channel AND WorkbenchDiagnostics (evt lane.session-new, run/lane/session id, the params object), so the attended F5 run leaves the frame in %LOCALAPPDATA%\\AiDe\\logs and in the run's report. Red first with the existing fake peer, green, no other change; oracle byte-identical; ConductorEntry.cs untouched. Build with TreatWarningsAsErrors, run the Core AgentPlane suite and the App Conductor tests, audit entry (manual, T0), regenerate-derived, commit, rebuild Release, push, report ProductVersion.",
-      "session": "f5-lane-pin",
-      "shortname": "f5-lane-pin-frame-recorded",
-      "signals": {
-        "acceptance_met": true,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": null,
-      "started_at": "2026-09-11T22:21:08Z",
-      "summary": "AcpLaneClient.SessionNewParameters records the params object handed to the peer (outbound mirror of AcpPeer.ObservedAuth). GovernedRunHost.OpenSessionAsync (the one site, extracted so a fake peer can drive it) reports 'acp session <id> opened with session/new params <json>' and emits WorkbenchDiagnostics.LaneSessionNew (evt lane.session-new; run, lane, session, params); a client that recorded nothing reads as not recorded. Red observed: Core Expected {cwd…} Actual null; App Sub-string not found on the id-only report. Test compares the recorded params to the frame the peer actually wrote to the engine's stdin. Core AgentPlane 182/182, App Conductor 12/12, 0 warnings. Proof Pack claims 10-11 added.",
-      "tags": [
-        "ruling-71",
-        "f5",
-        "instrumentation"
-      ],
-      "tier": "T0",
-      "tool": null
-    },
-    {
       "actor": null,
       "artifacts": [],
       "datetime": "2026-09-12T00:21:30Z",
@@ -13103,90 +13187,6 @@ window.AUDIT_DATA = {
       "skill": null,
       "summary": "Ruling 79: Addendum C/D code from main now; F5's tree frozen at 135e05e1 for its run; the lane-pin commits cherry-picked onto main as S0 (3ab712c6, 57da088d), tests green on main. §2: nine surfaces moved from Core/Design to the Shell and Conversation lanes for the horizon; one prose mention neutralised so the gate reads one owner.",
       "tags": [],
-      "tier": "T1",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/investigations/INV-0009-a-session-document-opened-into-a-body-that-is-not-on-screen.md",
-        "tests/AiDe.App.ComposerProbe/Program.SessionRender.cs",
-        "tests/AiDe.App.Tests/Sessions/ASessionDocumentIsShownWhereTheOperatorIsTests.cs",
-        "docs/lessons/defect-classes.md"
-      ],
-      "datetime": "2026-09-11T23:17:55Z",
-      "done_when": "Red oracles observed in the operator's arrangement (exit 30 Explorer body; exit 32 reopen), green controls, INV-0009 with typed links, register updated, gates green, branch pushed",
-      "duration_seconds": 2354.0,
-      "fan_out": 2,
-      "git": {
-        "branch": "investigate/session-document-render",
-        "pushed": null,
-        "sha": "1aadde843a950c9d56a7dc5f034bca0254d52f4b",
-        "short": "1aadde843"
-      },
-      "goal": "Prove by red reproduction in the product's restored-layout state why File → New Session shows nothing and why a reopened session's composer is never configured; generalise; plan; stop before the fix",
-      "id": "al-01M29C6TT50SFYN2J9Z8JFVAEY",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "You are the investigation node for the defect that blocks the operator's F5 exit run, dispatched by the conductor (Claude Opus, session conductor-addendum-c). Run the /investigate skill (Skill tool: investigate, args: A new session document created by File → New Session is never rendered when the app starts from a restored layout that already holds a session document; and a restored/reopened session document's composer is never configured). Read CLAUDE.md and AGENTS.md first; the pack's rules apply in full — a root cause is proven by a reproduction that fails first, in the state the product was actually in (DC-135, three times today: the harness constructed a state the product was not in). Use python, not python3; $env:PYTHONIOENCODING='utf-8'.\n\n## Your worktree — the only tree you write to\nC:\\Projects\\ai-de-investigate-session-document-render, branch investigate/session-document-render, HEAD = main 1aadde84. From inside it: $env:AGENT_SESSION='session-render'; $env:AGENT_NAME='claude-investigate-render'; $env:PYTHONIOENCODING='utf-8'; python docs/ai-forward-pack/scripts/audit-log.py start --session session-render\nNote: main does not yet carry the F5 tree's lane pin (feature/exit-evidence @ 135e05e1); it does carry the composer fix (WebSurfaceHost, the handshake/layout telemetry — DC-137/138) and the contrast fix. The telemetry below was recorded by the F5 tree's Release build 1.0.0+135e05e1…, whose composer/session code equals main's.\n\n## The evidence — the operator's launch, verbatim, in your tree\ndocs/investigations/operator-launch-22-33Z.log.jsonl — 26 lines from %LOCALAPPDATA%\\AiDe\\logs\\workbench-20260911.log, 22:33:20Z–22:34:30Z, terminal noise removed. Read every line. The story it tells:\n1. app.start 22:33:21Z, Release 135e05e1, DPI 1.5, dark theme.\n2. 22:33:28 layout.mutation open-session-document placement=split-beside-graph surface=session-document:…ba326cf3 active=graph — this document was restored from the persisted layout at startup (the operator did nothing yet); its composer: initialising → navigation-started (1) → page-ready; composer.layout editor 617 px, visible:true, loaded:true — but never configured, never init-pushed → the page mounted with no fields. This is what the operator saw: a blank editor area with the compiled box under it.\n3. 22:34:09 open-session-document placement=split-beside-graph surface=…c5547968 active=graph — the operator's File → New Session; its composer logs configured (fields 6) and nothing else: no initialising, navigations: 0, no composer.layout → the surface was never Loaded, never measured — never in a rendered visual tree.\n4. 22:34:20 open-session-document placement=tab surface=…b62cbcd3 active=…c5547968 (zone-center, active index 9) — a second File → New Session; same: configured, never initialised, never laid out.\n5. 22:34:26 all three composers disposed (the app closed). The graph surface re-attached repeatedly; explorer-graph initialised at 22:34:00.\n\n## The code paths (checked this turn)\n- src/AiDe.App/MainWindow.xaml.cs:172-206 NewSession(): Shell.OpenSessionDocument(created.Config) → GiveTheNewSessionTheWholeTree(sessionId, opened + \" \" + BindComposer(created)) — BindComposer (:235-281, the only Configure call, :281) runs only here; the reopen path :387 (OpenSessionDocument(config) after reading session.json) and the startup restore never bind → defect A: a restored/reopened document's composer has no send context and never pushes host.init.\n- src/AiDe.App/Workbench/Sessions/NewSessionPlacement.cs:31-58 GiveItTheWholeTree: service.Current.FindStackOf(surfaceId) → SetStackState(stack.Id, StackState.Maximized) (Ruling 47; its oracle tests/AiDe.App.Tests/Sessions/ANewSessionTakesTheWholeTreeTests.cs passes on a clean layout). src/AiDe.App/Workbench/WorkbenchShell.cs:1590 (mode = \"split-beside-graph\"), :2909 OpenSessionDocument, ZoneBackedLayoutService / ZonesToTree (src/AiDe.Core/Workbench/; DC-135: StackState.Maximized does not round-trip — the projection omits collapsed zones), LayoutPersistence.cs (the restored layout), SurfaceContentFactory.cs:158-175 (the factory hands back the shell's live document for a session-document surface; sessionDocumentFor).\n- src/AiDe.App/Workbench/Composer/ComposerSurface.cs + WebSurfaceHost.cs (owner.Loaded += OnAttachedAsync; initialising logged there — so no initialising ⇒ Loaded never fired on the new document's composer), WorkbenchDiagnostics.cs (composer.layout from MeasureOverride).\n- The harness that passed: tests/AiDe.App.ComposerProbe/Program.cs --shell mode and tests/AiDe.App.Tests/Composer/ComposerHostIntegrationTests.cs (TheComposersEntryAreasKeepTheirRoomAfterTheNewSessionChoreography: opens a session document on a fresh shell, applies Ruling 47's maximize, fields=6, editor 334 px). The product's state differed: a restored layout already containing a session document (zone-left held explore:view, provenance:inspector, contexts, joins; the restored document sat beside the graph) — reproduce THAT.\n\n## Hypotheses to disconfirm by observation (none is a conclusion)\nH1 With a restored layout, OpenSessionDocument's split-beside-graph places the new document into a stack/zone that the subsequent Maximize of FindStackOf(surfaceId) collapses or that the projection omits (active: graph in the mutation says the new surface was not activated) — so the new document exists in the zone model but not in the rendered tree.\nH2 The restored session document's surface id or the persisted StackState leaves the zone service in a state where a second session-document cannot be projected (e.g. one visible document per zone; the restored one wins).\nH3 The new document was rendered but hidden behind another tab (then Loaded would still fire for AvalonDock content? — verify; a hidden tab's content is usually not loaded) — distinguish \"in the tree, collapsed\" from \"not in the tree\".\nH4 Something in the restore path (A) also prevents (B): e.g. the restored document holds the sessionDocumentFor slot so the factory hands back the OLD document for the NEW surface.\n\n## What you must produce\n1. Reproductions that fail first, in the product's state: extend the --shell probe / the integration test with a restored-layout precondition (persist a layout containing a session document beside the graph as the operator's did — the mutation line carries the zone/stack payload; use it), then File → New Session through MainWindow.NewSession()'s real choreography (OpenSessionDocument → GiveItTheWholeTree → BindComposer), and assert the new document's composer is Loaded, measured (composer.layout present), and reaches init-pushed with fields 6. Observe it red. A second red test for (A): reopening a session (:387 path) yields a composer that reaches configured and init-pushed.\n2. The verified root cause for (B) with the observation that proves it and the alternative ruled out; the cause for (A) is already visible in the code — confirm it by the red test.\n3. The class, generalised (sweep: every other place a document is opened without BindComposer; every placement/maximize path evaluated against a non-empty persisted layout), and a repair plan — code + tests + the missing instrumentation (a layout.mutation line for the maximize itself with the resulting projected tree; a session-document.bound / unbound event so an unconfigured document is visible in the log). Stop before the fix; the operator reviews — but write the plan so the fix is a one-node T1.\n4. docs/investigations/INV-<next>.md (allocator: INV-0008 is the highest on main; python tools/verify-id-allocators.py immediately before commit), frontmatter, typed links, the log excerpt cited by line; docs-graph.py derive; audit entry (--shortname investigate-session-document-render --session session-render --skill investigate --kind skill --tier T1 --git … + signals); regenerate-derived.py; gates bare stop-on-first-red; commit with the attribution lines, then git push -u origin investigate/session-document-render.\n\n## Fails if (stop and report instead)\n- A root cause asserted without the restored-layout reproduction observed red; the harness \"fixed\" to pass rather than the product; any write outside your worktree; git stash; a rebase; a push to main; verify-test-run.py --update; DC-120. No governed run, no model call, no billing.\n\n## Report back (compact)\nThe red observations (test names, failure text); the root cause of (B) and its proof; (A) confirmed; siblings; the plan; INV path and shas; the operator question if any.",
-      "session": "session-render",
-      "shortname": "investigate-session-document-render",
-      "signals": {
-        "acceptance_met": true,
-        "regression": false,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "investigate",
-      "started_at": "2026-09-11T22:38:41Z",
-      "summary": "INV-0009. (B) VERIFIED: the New Session at 22:34:09Z was opened while Explorer was the window's body (explorer-graph initialising at 22:34:00Z is built only inside ShellModeController.Set(Explorer)); the docking host was unparented, so the document's composer was configured and never Loaded, and the shell announced 'opened … bound … maximized' about the model. Replayed from the log's own restore payload through the product's LayoutPersistence and ShellModeController (ComposerProbe --session-render): workbench body GREEN (rules out H1-H4: restored layout, second restored document, maximize, factory slot), Explorer body RED exit 30, return-to-workbench GREEN (necessary+sufficient); sibling code viewer red in the same state. (A) VERIFIED red exit 32: the reopen path never binds the composer (DC-084 rec. 2) AND, for a surface the restore already placed, the pane keeps its 'No session is open' island because Render reuses content nothing invalidated (DC-040 rec. 2). (C) the brief's premise corrected: session …ba326cf3 at 22:33:28Z was CREATED (id minted that second), via the chooser with no workspace open; BindComposer refused 'repositoryRoot' — the blank editor the operator saw (DC-148). DC-147 registered. Four oracles in ASessionDocumentIsShownWhereTheOperatorIsTests: 2 red, 2 green. Plan: Phase 1 one seam DocumentOpening → mode.Set(Workbench) + shell.mode line; Phase 2 Invalidate on reopen + SessionComposerBinder(SessionConfig) shared by both paths; 2b bind restored documents at workspace-open; Phase 3 Owner's choice for the chooser path; Phase 4 emitters (maximize-stack, session-document.bound/refused); Phase 5 ADR-0017 amendment (flagged review-suggested). No fix made. Operator question: did you enter Explorer at 22:34:00Z before New Session?",
-      "tags": [
-        "investigation",
-        "session-document",
-        "explorer-mode",
-        "dc-147",
-        "dc-148"
-      ],
-      "tier": "T1",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/investigations/INV-0009-a-session-document-opened-into-a-body-that-is-not-on-screen.md",
-        "docs/lessons/defect-classes.md"
-      ],
-      "datetime": "2026-09-11T23:21:04Z",
-      "done_when": "verify-id-allocators and verify-defect-register green on the branch",
-      "fan_out": 2,
-      "git": {
-        "branch": "investigate/session-document-render",
-        "pushed": null,
-        "sha": "efc65a8996b0b50872ea422ed3c17973926938e3",
-        "short": "efc65a899"
-      },
-      "goal": "Keep INV-0009's ids unique across every branch before push",
-      "id": "al-01M29CCKH3RASB2HZZTYPYXX13",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "Re-issue the defect-class ids INV-0009 allocated (DC-013): verify-id-allocators reported DC-147 allocated independently on origin/feature/session-elevation after this branch's first commit.",
-      "session": "session-render",
-      "shortname": "investigate-session-document-render-reissue",
-      "signals": {
-        "acceptance_met": true,
-        "regression": false,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "investigate",
-      "summary": "Ids re-issued, nothing else changed: the class 'a command mutates the model of a view that is not on screen, and reports the model's success as the screen's' is DC-148 (was DC-147); 'a flow acquires a resource by asking the operator, uses it for one half of the work, and refuses the other half for lack of that resource' is DC-149 (was DC-148). main's DC-146 and feature/session-elevation's DC-147 are carried verbatim so the register's sequence is unbroken on this branch. INV-0009, the register and ADR-0017's review-suggested flag renumbered; the superseded entry's summary should be read with this substitution.",
-      "supersedes": "al-01M29C6TT50SFYN2J9Z8JFVAEY",
-      "tags": [
-        "investigation",
-        "dc-013",
-        "dc-148",
-        "dc-149"
-      ],
       "tier": "T1",
       "tool": null
     },
@@ -13528,6 +13528,21 @@ window.AUDIT_DATA = {
         "dc-155"
       ],
       "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-12T14:21:05Z",
+      "id": "al-01M2AZWJ3NBA6Y0N21JE9MK0P8",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Operator: 'sigh... not sure about progress from my user perspective' - the lease issue persists, the UX is still the individual text blocks, the task class is still required with no default; keep going; also 'I am still seeing terminal hosts that are not being cleaned up - /investigate AGAIN'. Later: approves INV-0010 slices 1-4 now; slice 5 (the global Copilot MCP config) is the operator's.",
+      "session": "prompt-log",
+      "shortname": "Operator: 'sigh... not sure about progress from my user perspective' - t…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
       "tool": null
     },
     {
@@ -13902,6 +13917,163 @@ window.AUDIT_DATA = {
     },
     {
       "actor": null,
+      "artifacts": [
+        "docs/plans/code-atlas-fleet.md",
+        "docs/notes/code-atlas-proposal-provenance.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "datetime": "2026-09-12T16:53:58Z",
+      "done_when": "Independent trees/identities, native seam request, proposal boundary and initial Owner/spec/contract work are recorded; implementation awaits gates and ownership admission.",
+      "duration_seconds": 694.0,
+      "fan_out": 4,
+      "git": {
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "sha": "b0e092b5f4176766f2e1870124665d9f74748d00",
+        "short": "b0e092b5f"
+      },
+      "goal": "Establish a clean Owner-led GPT fleet for the next Code Atlas addendum and delivery without racing Claude main.",
+      "id": "al-01M2B8MH16F7BPWE2NNS3EB1JC",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-fleet-bootstrap",
+      "skill": null,
+      "started_at": "2026-09-12T16:42:24Z",
+      "summary": "Main b0e092b5 observed with SH1 merged; Claude SH2/CV1/X1 continue in separate trees. Created conductor/code-atlas, owner/code-atlas, atlas/specification and atlas/contracts-spike from currentmain. Current Astra main thread is Conductor; separate owner agent explicitly gpt-6-astra; GPT5.5 spec and contracts workers. Native req-01M2B86TXF7SHG61B31P4H4173 addresses Claude conductor; section9 records request without changing section2 ownership. No primary index/product writes or merges. Proposal1065 remains private reference history, not imported. Merge drivers observed effective; shared regen-owed marker reported, not cleared via coord regen.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "owner-gpt-6-astra",
+      "artifacts": [
+        "docs/notes/atlas-owner/next-addendum.md"
+      ],
+      "datetime": "2026-09-12T17:01:47Z",
+      "done_when": "The named ruling, evidence, scope effects and conditions are durable and linked; unobserved acknowledgments remain open.",
+      "fan_out": 4,
+      "goal": "Record the separate Astra Owner ruling governing Code Atlas scope and fleet safety.",
+      "id": "al-01M2B92TASXV9CDJGFBYFJ9Z8B",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-owner-next-addendum",
+      "skill": null,
+      "summary": "Recorded Owner ruling next-addendum from agent61e506c4-2d12-42e9-85cb-153f2f916811. See the note for the exact scope/conditions. Spec whole vision; first code horizon deterministic native file/type/member/source only, with acknowledgment-gated source paths and no private proposal merge. No implementation admission or main integration inferred from silence.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "owner-gpt-6-astra",
+      "artifacts": [
+        "docs/notes/atlas-owner/development-models.md"
+      ],
+      "datetime": "2026-09-12T17:01:47Z",
+      "done_when": "The named ruling, evidence, scope effects and conditions are durable and linked; unobserved acknowledgments remain open.",
+      "fan_out": 4,
+      "goal": "Record the separate Astra Owner ruling governing Code Atlas scope and fleet safety.",
+      "id": "al-01M2B92TDN19Y2JPJ2J325K482",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-owner-development-models",
+      "skill": null,
+      "summary": "Recorded Owner ruling development-models from agent61e506c4-2d12-42e9-85cb-153f2f916811. See the note for the exact scope/conditions. Spec whole vision; first code horizon deterministic native file/type/member/source only, with acknowledgment-gated source paths and no private proposal merge. No implementation admission or main integration inferred from silence.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "owner-gpt-6-astra",
+      "artifacts": [
+        "docs/notes/atlas-owner/delivery-horizon.md"
+      ],
+      "datetime": "2026-09-12T17:01:47Z",
+      "done_when": "The named ruling, evidence, scope effects and conditions are durable and linked; unobserved acknowledgments remain open.",
+      "fan_out": 4,
+      "goal": "Record the separate Astra Owner ruling governing Code Atlas scope and fleet safety.",
+      "id": "al-01M2B92TGHF8AW04BVEX7DW39J",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-owner-delivery-horizon",
+      "skill": null,
+      "summary": "Recorded Owner ruling delivery-horizon from agent61e506c4-2d12-42e9-85cb-153f2f916811. See the note for the exact scope/conditions. Spec whole vision; first code horizon deterministic native file/type/member/source only, with acknowledgment-gated source paths and no private proposal merge. No implementation admission or main integration inferred from silence.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "owner-gpt-6-astra",
+      "artifacts": [
+        "docs/notes/atlas-owner/lane-admission.md"
+      ],
+      "datetime": "2026-09-12T17:01:47Z",
+      "done_when": "The named ruling, evidence, scope effects and conditions are durable and linked; unobserved acknowledgments remain open.",
+      "fan_out": 4,
+      "goal": "Record the separate Astra Owner ruling governing Code Atlas scope and fleet safety.",
+      "id": "al-01M2B92TKAQ1RM1G18A4S993TE",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-owner-lane-admission",
+      "skill": null,
+      "summary": "Recorded Owner ruling lane-admission from agent61e506c4-2d12-42e9-85cb-153f2f916811. See the note for the exact scope/conditions. Spec whole vision; first code horizon deterministic native file/type/member/source only, with acknowledgment-gated source paths and no private proposal merge. No implementation admission or main integration inferred from silence.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "owner-gpt-6-astra",
+      "artifacts": [
+        "docs/notes/atlas-owner/reference-custody.md"
+      ],
+      "datetime": "2026-09-12T17:01:47Z",
+      "done_when": "The named ruling, evidence, scope effects and conditions are durable and linked; unobserved acknowledgments remain open.",
+      "fan_out": 4,
+      "goal": "Record the separate Astra Owner ruling governing Code Atlas scope and fleet safety.",
+      "id": "al-01M2B92TPCCEJN1V1KKDCFYS23",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-owner-reference-custody",
+      "skill": null,
+      "summary": "Recorded Owner ruling reference-custody from agent61e506c4-2d12-42e9-85cb-153f2f916811. See the note for the exact scope/conditions. Spec whole vision; first code horizon deterministic native file/type/member/source only, with acknowledgment-gated source paths and no private proposal merge. No implementation admission or main integration inferred from silence.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "owner-gpt-6-astra",
+      "artifacts": [
+        "docs/notes/atlas-owner/identifier-discipline.md"
+      ],
+      "datetime": "2026-09-12T17:01:47Z",
+      "done_when": "The named ruling, evidence, scope effects and conditions are durable and linked; unobserved acknowledgments remain open.",
+      "fan_out": 4,
+      "goal": "Record the separate Astra Owner ruling governing Code Atlas scope and fleet safety.",
+      "id": "al-01M2B92TS81YZMH0RPF0T72PQ5",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-owner-identifier-discipline",
+      "skill": null,
+      "summary": "Recorded Owner ruling identifier-discipline from agent61e506c4-2d12-42e9-85cb-153f2f916811. See the note for the exact scope/conditions. Spec whole vision; first code horizon deterministic native file/type/member/source only, with acknowledgment-gated source paths and no private proposal merge. No implementation admission or main integration inferred from silence.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
       "agent_runs": [
         {
           "agent": "data-persistence-architect",
@@ -14071,35 +14243,170 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "actor": null,
-      "artifacts": [],
-      "datetime": "2026-09-12T14:21:05Z",
-      "id": "al-01M2AZWJ3NBA6Y0N21JE9MK0P8",
-      "kind": "prompt",
+      "actor": "owner-gpt-6-astra",
+      "artifacts": [
+        "docs/notes/atlas-owner/e1-identity.md"
+      ],
+      "datetime": "2026-09-12T17:52:08Z",
+      "done_when": "Named ruling and conditions are durable, with source implementation and integration still explicitly blocked.",
+      "fan_out": 4,
+      "goal": "Record the delegated Owner boundary for Atlas evidence and safe document progress.",
+      "id": "al-01M2BBZ0ANZPB83TSVCAF46RTY",
+      "kind": "manual",
       "outcome": "success",
-      "prompt": "Operator: 'sigh... not sure about progress from my user perspective' - the lease issue persists, the UX is still the individual text blocks, the task class is still required with no default; keep going; also 'I am still seeing terminal hosts that are not being cleaned up - /investigate AGAIN'. Later: approves INV-0010 slices 1-4 now; slice 5 (the global Copilot MCP config) is the operator's.",
-      "session": "prompt-log",
-      "shortname": "Operator: 'sigh... not sure about progress from my user perspective' - t…",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-owner-e1-identity",
       "skill": null,
-      "summary": "prompt logged for reuse",
+      "summary": "Recorded Owner ruling e1-identity. E0 cannot downgrade physical inventory/member identity; bounded synthetic research permitted; evidence overclaims corrected; isolated candidate/proposed document content may complete while Core/Claude acknowledgment and registration remain blocked. No product or main permission.",
       "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "owner-gpt-6-astra",
+      "artifacts": [
+        "docs/notes/atlas-owner/contract-probes.md"
+      ],
+      "datetime": "2026-09-12T17:52:08Z",
+      "done_when": "Named ruling and conditions are durable, with source implementation and integration still explicitly blocked.",
+      "fan_out": 4,
+      "goal": "Record the delegated Owner boundary for Atlas evidence and safe document progress.",
+      "id": "al-01M2BBZ0DQRSBPSWDNF723CA9A",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-owner-contract-probes",
+      "skill": null,
+      "summary": "Recorded Owner ruling contract-probes. E0 cannot downgrade physical inventory/member identity; bounded synthetic research permitted; evidence overclaims corrected; isolated candidate/proposed document content may complete while Core/Claude acknowledgment and registration remain blocked. No product or main permission.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "owner-gpt-6-astra",
+      "artifacts": [
+        "docs/notes/atlas-owner/evidence-corrections.md"
+      ],
+      "datetime": "2026-09-12T17:52:08Z",
+      "done_when": "Named ruling and conditions are durable, with source implementation and integration still explicitly blocked.",
+      "fan_out": 4,
+      "goal": "Record the delegated Owner boundary for Atlas evidence and safe document progress.",
+      "id": "al-01M2BBZ0GP8YK0RD8S2Z2QKKAS",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-owner-evidence-corrections",
+      "skill": null,
+      "summary": "Recorded Owner ruling evidence-corrections. E0 cannot downgrade physical inventory/member identity; bounded synthetic research permitted; evidence overclaims corrected; isolated candidate/proposed document content may complete while Core/Claude acknowledgment and registration remain blocked. No product or main permission.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "owner-gpt-6-astra",
+      "artifacts": [
+        "docs/notes/atlas-owner/draft-content-while-blocked.md"
+      ],
+      "datetime": "2026-09-12T17:52:08Z",
+      "done_when": "Named ruling and conditions are durable, with source implementation and integration still explicitly blocked.",
+      "fan_out": 4,
+      "goal": "Record the delegated Owner boundary for Atlas evidence and safe document progress.",
+      "id": "al-01M2BBZ0KRRT0JM50QTY220AKP",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-owner-draft-content-while-blocked",
+      "skill": null,
+      "summary": "Recorded Owner ruling draft-content-while-blocked. E0 cannot downgrade physical inventory/member identity; bounded synthetic research permitted; evidence overclaims corrected; isolated candidate/proposed document content may complete while Core/Claude acknowledgment and registration remain blocked. No product or main permission.",
+      "tags": [],
+      "tier": "T2",
       "tool": null
     },
     {
       "actor": null,
-      "artifacts": [],
-      "datetime": "2026-09-12T19:16:25Z",
-      "done_when": "population counted and attributed; the hang class and the stdout-leak class each red->green with an E2E proof; App and Core Windows suites green; INV-0011 + proof pack + register entries committed",
-      "goal": "Diagnose the sixth terminal-host report to a measured cause in our own infra, fix with red-first controls, and say from the operator's chair what remains",
-      "id": "al-01M2BGSB09J4SXDSR80PNJB8PX",
-      "kind": "skill",
+      "artifacts": [
+        "docs/specs/addendum-e-code-atlas.md",
+        "docs/reviews/code-atlas-spec-content-gates.md",
+        "docs/reviews/code-atlas-data-constraints.md",
+        "docs/coordination/code-atlas-resume.md"
+      ],
+      "datetime": "2026-09-12T17:52:08Z",
+      "done_when": "Full corrected candidate, explicit oracles/native phase criteria and evidence-class boundaries are joined for review.",
+      "fan_out": 4,
+      "git": {
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "sha": "da7e44d5509ad6f1627a827693bb8375e7dbb9b9",
+        "short": "da7e44d55"
+      },
+      "goal": "Prepare candidate Addendum E for final content review without claiming registration or implementation.",
+      "id": "al-01M2BBZ0Q0WPDDX70JD3ERVQQT",
+      "kind": "manual",
       "outcome": "success",
-      "prompt": "ok - this is ridiculous... go look at the number of zombie terminal hosts being created AGAIN ... and dont say it is the copilot session because that is working on this repo as well so it should have any fixes you already claimed to have done",
-      "session": "claude-conductor-addendum-c",
-      "shortname": "investigate-terminal-hosts-sixth-x2",
-      "skill": "investigate",
-      "summary": "INV-0011 (X-2). Counted first: 32 powershell + 36 conhost born in the hour, all children of CV-1's App test host, alive 25 min - ours. The host was hung 30 min in WorkbenchShell.Git -> ReadToEnd after git exited (DC-165: the read was bounded by the child's exit, not the call; fixed in ProcessRunner, Git() reuses it; red 7.1 s -> green 2 s). On the way in: a ConPTY child of a redirected parent inherited its std handles and wrote into its stdout (DC-164: STARTF_USESTDHANDLES with null handles as Windows Terminal does; red token-on-pipe -> green; DC-014's 2026-08-26 instance re-attributed). WorkbenchShell.Dispose now disposes its terminal panes and every App test disposes its shell: ledger 64/14 -> 64/62. The census then saw the Target session face at 1.03:1 (readiness never reached the test host before) -> ChromeComboBoxTemplate, 120/120. App 783/783, Core Windows half 155/155. The 513 node/conhost under wta.exe -> copilot.exe are INV-0010's pre-fix pool, unchanged; operator's call to end it.",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-spec-content-repair",
+      "skill": null,
+      "summary": "Joined specification through4b78b241; preserved security repairs, phase-scoped UX/native futureproof and populated oracle/NFR matrices. Conductor split source-only,79Core,40StoreIPC andsyntheticRoslyn observations and added explicit no-native/fullsuite/registration/admission sentence. Securitycontent blockers cleared atba969; Testcontent cleared conditionally; final UX/Data and narrowTestledger checks follow. Native request remainsopen; humanrelay unavailable. Proposedarchitecture author active; no source dispatch.",
       "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "owner-gpt-6-astra",
+      "artifacts": [
+        "docs/specs/addendum-e-code-atlas.md",
+        "docs/notes/atlas-owner/candidate-content-ready.md",
+        "docs/reviews/code-atlas-spec-content-gates.md"
+      ],
+      "datetime": "2026-09-12T18:15:44Z",
+      "done_when": "Owner conditional countersign and final content gates are recorded with report-derived verification labels corrected.",
+      "fan_out": 4,
+      "git": {
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "sha": "fce928a7c4a0c24db76499196e56e5962fb63bc1",
+        "short": "fce928a7c"
+      },
+      "goal": "Record candidate specification content readiness while preserving blocked delivery.",
+      "id": "al-01M2BDA78NYYFWNBQBNPHH6T6F",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-candidate-content-ready",
+      "skill": null,
+      "summary": "Owner countersigns DOCUMENT-CONTENT-READY CandidateE for PROPOSEDarchitecture only. Applied condition: reported K0 execution attributed to producer/commands/TRX; removed redundant Verified-by-parent row. Security/Test/UX/Data spec-content gates clear with downstream conditions. Joined proposedarchitecture6documents for independentgates; no normativeE registration,source dispatch,main integration,privatepublication orprogrammeclosure.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/code-atlas.md",
+        "docs/coordination/code-atlas-resume.md"
+      ],
+      "datetime": "2026-09-12T18:38:58Z",
+      "done_when": "Preflight proves admitted paths, registration and acknowledgment before any product track is opened.",
+      "duration_seconds": 38.0,
+      "fan_out": 4,
+      "goal": "Execute the accepted Code Atlas coordination plan only after required ownership and admission gates.",
+      "id": "al-01M2BEMRY2982SWFP0WEWD6FRC",
+      "kind": "skill",
+      "outcome": "blocked",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "execute-code-atlas-preflight-blocked",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-12T18:38:20Z",
+      "summary": "Preflight did not admit source execution. Plan headings/schema are present, but plan is proposed/not-dispatched and req-01M2B86TXF7SHG61B31P4H4173 remainsopen. Inheriteddrivers effective; sharedprimaryregen-owed marker remains reported, not cleared byworker. No productsource workers opened. Documentation/research fleet work and Owner rulings remain valid, separate from delivery admission; resume contract names exactrequiredacknowledgers/seams.",
+      "tags": [],
+      "tier": "T2",
       "tool": null
     },
     {
@@ -14181,6 +14488,383 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
+        "docs/notes/atlas-owner/live-source.md"
+      ],
+      "change": "cl-01M2BG4Y37Y1AHGTEMJ5QPWNR2",
+      "datetime": "2026-09-12T19:05:16Z",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "fan_out": 0,
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "id": "al-01M2BG4Y666QVVX65C872VV3MN",
+      "kind": "manual",
+      "outcome": "partial",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-owner-live-source",
+      "skill": null,
+      "summary": "E0 uses hash-validated live source. Back may report old matching content unavailable; it never applies old anchors to changed bytes. Ruling preserved; no product/main permission. Original decision duration and historical main-line cost were not recorded.",
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/inventory-default.md"
+      ],
+      "change": "cl-01M2BG4YAZ4MAQBZZ3ZH6PZQ3D",
+      "datetime": "2026-09-12T19:05:16Z",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "fan_out": 0,
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "id": "al-01M2BG4YDTHQ2KA6ZRGZ9CS40N",
+      "kind": "manual",
+      "outcome": "partial",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-owner-inventory-default",
+      "skill": null,
+      "summary": "E0 inventories tracked plus authorized nonignored untracked files under a versioned policy, with explicit non-Git enumeration and visibility/read separation. Ruling preserved; no product/main permission. Original decision duration and historical main-line cost were not recorded.",
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/generic-facts.md"
+      ],
+      "change": "cl-01M2BG4YJKYVJY0RCSERZQYPKV",
+      "datetime": "2026-09-12T19:05:17Z",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "fan_out": 0,
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "id": "al-01M2BG4YN8N4E03TN4GJNPZXX4",
+      "kind": "manual",
+      "outcome": "partial",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-owner-generic-facts",
+      "skill": null,
+      "summary": "E0 first reuses generic versioned facts, completion seals and replay in the existing substrate. A typed-store addition requires separate evidence. Ruling preserved; no product/main permission. Original decision duration and historical main-line cost were not recorded.",
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/symbol-floor.md"
+      ],
+      "change": "cl-01M2BG4YSWFVYAQX257V8Q9MTB",
+      "datetime": "2026-09-12T19:05:17Z",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "fan_out": 0,
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "id": "al-01M2BG4YWGJCSKGCFAPDK918R1",
+      "kind": "manual",
+      "outcome": "partial",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-owner-symbol-floor",
+      "skill": null,
+      "summary": "E0 advertises the probed source-type/method/overload/constructor/property/accessor/partial-declaration subset. Unsupported kinds remain explicit, not blanket C# support. Ruling preserved; no product/main permission. Original decision duration and historical main-line cost were not recorded.",
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/interpretation-deferred.md"
+      ],
+      "change": "cl-01M2BG4Z18JPT8G5E862Q8RGA3",
+      "datetime": "2026-09-12T19:05:17Z",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "fan_out": 0,
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "id": "al-01M2BG4Z3Y1YH23HX7RJ79BG6K",
+      "kind": "manual",
+      "outcome": "partial",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-owner-interpretation-deferred",
+      "skill": null,
+      "summary": "E4 interpretation awaits its separate adapter, processing, provider and eval admission. The development GPT fleet does not replace the product Claude runtime. Ruling preserved; no product/main permission. Original decision duration and historical main-line cost were not recorded.",
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/whole-versus-e0.md"
+      ],
+      "change": "cl-01M2BG4Z8EAYAFPD4FSMT9752K",
+      "datetime": "2026-09-12T19:05:17Z",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "fan_out": 0,
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "id": "al-01M2BG4ZB3T0STAA4MWPEFGXST",
+      "kind": "manual",
+      "outcome": "partial",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-owner-whole-versus-e0",
+      "skill": null,
+      "summary": "Whole future architecture obligations remain proposed; E0 composition excludes later Diagram/ModelPort. Navigation is view-local Memento with Core validation, not a durable aggregate. Ruling preserved; no product/main permission. Original decision duration and historical main-line cost were not recorded.",
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/addendum-e-code-atlas.md",
+        "docs/reviews/code-atlas-spec-content-gates.md",
+        "docs/proof/code-atlas-contract-grounding.md"
+      ],
+      "datetime": "2026-09-12T19:05:18Z",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "fan_out": 0,
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "id": "al-01M2BG4ZDTJYCCNRPSJ5KR333J",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "specify-code-atlas-candidate-content",
+      "skill": "specify",
+      "summary": "Candidate Addendum E content is complete with Functional/UX/UI layers, per-clause oracles and phase-native criteria. Security/Test/UX/Data content gates and Owner countersign retained. Not normative E registration, source admission or implemented acceptance. Bounded worker evidence is attributed; no native/full-suite claim. Duration was not recorded for the complete skill run.",
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/architecture/code-atlas-proposed.md",
+        "docs/reviews/code-atlas-architecture-content-gates.md",
+        "docs/proof/code-atlas-documentation-checkpoint.md"
+      ],
+      "change": "cl-01M2BG4ZJE0PHS0BHZMRSP47BR",
+      "datetime": "2026-09-12T19:05:18Z",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "fan_out": 0,
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "id": "al-01M2BG4ZNXPC93WKJ2KG5Z6W5S",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "define-architecture-code-atlas-content",
+      "skill": "define-architecture",
+      "summary": "Whole proposed architecture and five proposed ADRs content-ready after independent gates, Owner content choices and final E0-versus-whole scoping. Source/handle/race, exact budget, wire/store/native and provider proofs remain admission obligations. req-01M2B86TXF7SHG61B31P4H4173 remains open. No product implementation, main integration or publication. Complete phase duration not recorded.",
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/code-atlas.md",
+        "docs/coordination/code-atlas.html",
+        "docs/coordination/code-atlas-resume.md"
+      ],
+      "datetime": "2026-09-12T19:05:18Z",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "fan_out": 0,
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "id": "al-01M2BG4ZRJ8Q8Y39W6ECMADHQ3",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "prepare-code-atlas-proposed-plan",
+      "skill": "prepare-for-coordination",
+      "summary": "Proposed machine-readable plan and synchronized HTML preserved. Exact future Core/Shell seams, E0 safety/build/integration/proof responsibilities, budgets and resume predicates are stated but not dispatched. Inherited coordination configuration reused; no worker reinstall or primary regeneration-marker clearing. External acknowledgment prevents source admission.",
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/plans/code-atlas-fleet.md",
+        "docs/coordination/code-atlas.md",
+        "docs/proof/code-atlas-documentation-checkpoint.md"
+      ],
+      "datetime": "2026-09-12T19:05:18Z",
+      "done_when": "Candidate E, proposed architecture, reviews and resume instructions are preserved on the isolated branch; product delivery remains explicitly blocked.",
+      "fan_out": 0,
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "id": "al-01M2BG4ZV5QJC9EHXAW7HJ813Y",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "optimize-graph-code-atlas-checkpoint",
+      "skill": "optimize-graph",
+      "summary": "Ten logical checkpoints retained. Independent spec/contract branches joined before content gates; whole proposed architecture and bounded documentation closure completed while external C0 acknowledgment blocks Dn/In/Jn. No added source fan-out. Actual total work/span/peak concurrency/tokens and aggregate rework count are not recorded; no speedup claimed. Audit selfcheck: fourteen prior Conductor entries have goal/tier, but all lack main-line actual/budget fields. Historical measurements not fabricated. Current closure uses deterministic generation/check/commit with no further agents.",
+      "tags": [
+        "code-atlas",
+        "documentation-checkpoint",
+        "delivery-blocked"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-documentation-checkpoint.md",
+        "docs/coordination/code-atlas-resume.md"
+      ],
+      "datetime": "2026-09-12T19:06:33Z",
+      "done_when": "Candidate E, proposed architecture, review records and resume instructions are committed in the isolated worktree; delivery blockers remain explicit.",
+      "fan_out": 0,
+      "goal": "Preserve the reviewed Code Atlas documentation checkpoint without crossing Claude ownership boundaries.",
+      "id": "al-01M2BG79H3TZW3A5JEWA778EPJ",
+      "kind": "manual",
+      "main_budget": 20,
+      "main_calls": 18,
+      "main_over_budget": false,
+      "outcome": "partial",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-documentation-checkpoint",
+      "skill": null,
+      "summary": "Preserving documentation-content-ready checkpoint; delivery externally blocked. Observed: coordination HTML canonical text/hash/local links match after stale-text detection; source/tests/package/canonical-architecture diff from common main base empty; private proposal1065a851 is not an ancestor; derived/conflict/figure/defect/audit/id checks passed. Full docs graph is NOT green: sole defect is pre-existing frozen-F5 proof-conductor-front-door link;53 existing review suggestions. Core/Claude request remains open, no product dispatch or main integration. Cleanup report deleted nothing; Atlas trees retained. Main-budget value covers this bounded post-summary closure through this write, not historical fleet calls. AIDE contract environment is absent, so no episode event was fabricated.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-12T19:10:19Z",
+      "id": "al-01M2BGE5VCTVK3AYH6GJRCWZW1",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "session": "prompt-log",
+      "shortname": "keep going why are you stopping here the owner and conductor need to res…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-12T19:16:25Z",
+      "done_when": "population counted and attributed; the hang class and the stdout-leak class each red->green with an E2E proof; App and Core Windows suites green; INV-0011 + proof pack + register entries committed",
+      "goal": "Diagnose the sixth terminal-host report to a measured cause in our own infra, fix with red-first controls, and say from the operator's chair what remains",
+      "id": "al-01M2BGSB09J4SXDSR80PNJB8PX",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "ok - this is ridiculous... go look at the number of zombie terminal hosts being created AGAIN ... and dont say it is the copilot session because that is working on this repo as well so it should have any fixes you already claimed to have done",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "investigate-terminal-hosts-sixth-x2",
+      "skill": "investigate",
+      "summary": "INV-0011 (X-2). Counted first: 32 powershell + 36 conhost born in the hour, all children of CV-1's App test host, alive 25 min - ours. The host was hung 30 min in WorkbenchShell.Git -> ReadToEnd after git exited (DC-165: the read was bounded by the child's exit, not the call; fixed in ProcessRunner, Git() reuses it; red 7.1 s -> green 2 s). On the way in: a ConPTY child of a redirected parent inherited its std handles and wrote into its stdout (DC-164: STARTF_USESTDHANDLES with null handles as Windows Terminal does; red token-on-pipe -> green; DC-014's 2026-08-26 instance re-attributed). WorkbenchShell.Dispose now disposes its terminal panes and every App test disposes its shell: ledger 64/14 -> 64/62. The census then saw the Target session face at 1.03:1 (readiness never reached the test host before) -> ChromeComboBoxTemplate, 120/120. App 783/783, Core Windows half 155/155. The 513 node/conhost under wta.exe -> copilot.exe are INV-0010's pre-fix pool, unchanged; operator's call to end it.",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/isolated-authoring.md",
+        "docs/collaboration/session-contracts.md",
+        "docs/plans/code-atlas-fleet.md"
+      ],
+      "datetime": "2026-09-12T19:21:19Z",
+      "done_when": "The agreed implementation is integrated and its native journey demonstrated; this partial checkpoint records authoring admission, not full delivery.",
+      "duration_seconds": 660.0,
+      "fan_out": 4,
+      "goal": "Resolve the delivery boundary through the Owner and Conductor, then execute the admitted Code Atlas work.",
+      "id": "al-01M2BH2ATFDE1VY6RJ7FHPCE39",
+      "kind": "manual",
+      "main_budget": 40,
+      "main_calls": 39,
+      "main_over_budget": false,
+      "outcome": "partial",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-resolve-authoring-boundary",
+      "skill": null,
+      "started_at": "2026-09-12T19:10:19Z",
+      "summary": "Owner turns7/8 supersede blanket source freeze: explicit new-file branch-local authoring and detached inert presentation allowed, existing Core/Shell ownership and integration gate retained. Exact safety files/writer recorded in sole section2 before dispatch; native safety probe now executing in dedicated tree from observed main4d396411. E0 detailed design and narrow independent security scope review are active. Narrowed request req-01M2BGHNCM6WRD4ZZMBBFEEB4K is attempted delivery, not agreement. This reaches the authoring-admission checkpoint; main 40-call estimate covers resumption through this record, not later implementation/proof joins. No source safety/product/native acceptance asserted.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/code-atlas.md",
+        "docs/notes/atlas-owner/isolated-authoring.md"
+      ],
+      "datetime": "2026-09-12T19:23:27Z",
+      "done_when": "The safety and candidate checkpoints return observed evidence, exact-file deltas are admitted, and the next shared-integration decision is presented to the Owner.",
+      "duration_seconds": 127.0,
+      "fan_out": 4,
+      "goal": "Execute and independently verify the Owner-admitted isolated E0 foundation without touching Claude shared files.",
+      "id": "al-01M2BH67QY4NYSHYT5JVGFRC5N",
+      "kind": "skill",
+      "main_budget": 20,
+      "main_calls": 8,
+      "main_over_budget": false,
+      "outcome": "partial",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-isolated-authoring-dispatch",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-12T19:21:20Z",
+      "summary": "Implementation-admission checkpoint recorded and active plan corrected. Both new source/candidate trees observed at main4d396411. Source-safety GPT writer assigned exact four probe files plus proof, with30call total checkpoint including prior preflight. Candidate exact file manifest awaits E0 design receipt; safety code not yet accepted. Existing SH3 integration retained. Initial register eligibility command correctly refused because identity was missing; rerun with explicit identity actually checked and granted the lease. No false pass. This20call join-phase budget is separate from the completed authoring-admission checkpoint; programme remains active.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
         "docs/proof/terminal-hosts-sixth.md",
         "docs/proof/composer-as-conversation.md"
       ],
@@ -14201,51 +14885,6 @@ window.AUDIT_DATA = {
       "skill": "execute-with-coordination",
       "summary": "Join: X-2 (8f73b74e) and CV-1 (7b800e8c) merged to main; CV-1's three register placeholders allocated DC-166/167/168; whole-suite recount App 793 / Core 2351 = 2185 + 166; every verify gate green. Supersedes the X-2 entry, which named no proof artifact: the evidence is docs/proof/terminal-hosts-sixth.md (rows 1-7, red->green) and docs/proof/composer-as-conversation.md (CV-1, 43 rows). Census at the operator's 'multiplying right now' (19:28Z-19:31Z): births in the last 12 min = this census; alive from the last hour = 3 bash, 1 powershell, 1 conhost (ours, this census), sleeps; conhost 269 / node 257 = the WT agent pool, unchanged; no testhost or dotnet test alive; the Copilot proposal tree has no test binaries. The births the operator saw were the recount's three suite runs (19:00Z-19:27Z).",
       "supersedes": "al-01M2BGSB09J4SXDSR80PNJB8PX",
-      "tags": [],
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [],
-      "datetime": "2026-09-12T20:01:21Z",
-      "id": "al-01M2BKBKVZV0JE3G00Y6TRV3BX",
-      "kind": "prompt",
-      "outcome": "success",
-      "prompt": "ok - this is ridiculous... go look at the number of zombie terminal hosts being created AGAIN ... and dont say it is the copilot session because that is working on this repo as well so it should have any fixes you already claimed to have done",
-      "session": "prompt-log",
-      "shortname": "ok - this is ridiculous... go look at the number of zombie terminal host…",
-      "skill": null,
-      "summary": "prompt logged for reuse",
-      "tags": [],
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [],
-      "datetime": "2026-09-12T20:01:21Z",
-      "id": "al-01M2BKBM0SH1GNVN04DRTSW6XH",
-      "kind": "prompt",
-      "outcome": "success",
-      "prompt": "the term hosts are multiplying right now... great opportunity for you to debug",
-      "session": "prompt-log",
-      "shortname": "the term hosts are multiplying right now... great opportunity for you to…",
-      "skill": null,
-      "summary": "prompt logged for reuse",
-      "tags": [],
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [],
-      "datetime": "2026-09-12T20:01:21Z",
-      "id": "al-01M2BKBM5VDEM1ZYNRV4DBT25N",
-      "kind": "prompt",
-      "outcome": "success",
-      "prompt": "keep going / you end the WT pool / i will probably wait for CV-2 to finish before doing a manual test",
-      "session": "prompt-log",
-      "shortname": "keep going / you end the WT pool / i will probably wait for CV-2 to fini…",
-      "skill": null,
-      "summary": "prompt logged for reuse",
       "tags": [],
       "tool": null
     },
@@ -14295,6 +14934,76 @@ window.AUDIT_DATA = {
       "summary": "WorkbenchLayout.Default(Perspective) for Coding (Left=Terminal sessions, Bottom=one terminal, Center=empty) and Architecture (Center=Graph/Domain/Contexts, Left=Evidence, Right=Provenance); the Evidence/Provenance EvidenceSelectionSource seam (US-C6 positive oracle); Architecture's canvas kind-filtered via GraphQuery.ExcludeKnowledge end-to-end incl. the wire (Ruling 53); the class-diagram scaling fix via GraphQuery.KindFilter=ClassHierarchyModel.TypeKinds (Ruling 54, measured 0->500 types on a 1500-node fixture); DC-164 registered for two drag-reconcile fixes the new one-surface-zone/empty-Center defaults exposed. Test Architect hard-veto PASS-WITH-CONDITIONS and opus patterns-expert PASS-WITH-CONDITIONS, both rounds of findings fixed. Full build+test green (2318 Core, 788 App), verify-test-run.py/verify-surface-ownership.py/verify-defect-register.py and the rest of tools/verify-*.py green. Proof Pack docs/proof/perspective-content.md.",
       "tags": [],
       "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-source-safety-join.md",
+        "docs/proof/code-atlas-source-safety.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-12T19:47:51Z",
+      "done_when": "Admitted safety and candidate checkpoints return observed evidence and the next shared integration decision is resolved; this is the bounded safety join, not programme completion.",
+      "duration_seconds": 1458.0,
+      "fan_out": 4,
+      "goal": "Execute and independently verify the Owner-admitted isolated E0 foundation without touching Claude shared files.",
+      "id": "al-01M2BJJWYHMDJVYZMGX70AWKER",
+      "kind": "manual",
+      "outcome": "partial",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-native-safety-reviewed-join",
+      "skill": null,
+      "started_at": "2026-09-12T19:23:33Z",
+      "summary": "Joined reviewed standalone probe source only: worker8db3335c mapped to conductor0c1b3cf1 through d8bc7fad/c4511956. Independent pinned replay19PASS0FAIL2NOT_PROVEN51ms; joined replay samecounts55ms, runtime10.0.11. Parsed counts, not exit0, define incomplete symlink disposition0x80070522. Security/Test conditional bounded-evidence clearance and CSharp targetedPASS recorded. Fixed historical raw-green pointer via final join proof. DC015/019/156 recurrences recorded for coarse oracles, adjacent hash/identity authority, and failed-acquisition handle lifetime. Original worker reports30/30 safetycalls exhausted. E0 candidate design/filemanifest still awaited; reader direction needs Owner restricted-input choice. No product/native/main acceptance.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-12T20:01:21Z",
+      "id": "al-01M2BKBKVZV0JE3G00Y6TRV3BX",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "ok - this is ridiculous... go look at the number of zombie terminal hosts being created AGAIN ... and dont say it is the copilot session because that is working on this repo as well so it should have any fixes you already claimed to have done",
+      "session": "prompt-log",
+      "shortname": "ok - this is ridiculous... go look at the number of zombie terminal host…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-12T20:01:21Z",
+      "id": "al-01M2BKBM0SH1GNVN04DRTSW6XH",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "the term hosts are multiplying right now... great opportunity for you to debug",
+      "session": "prompt-log",
+      "shortname": "the term hosts are multiplying right now... great opportunity for you to…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-12T20:01:21Z",
+      "id": "al-01M2BKBM5VDEM1ZYNRV4DBT25N",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "keep going / you end the WT pool / i will probably wait for CV-2 to finish before doing a manual test",
+      "session": "prompt-log",
+      "shortname": "keep going / you end the WT pool / i will probably wait for CV-2 to fini…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
       "tool": null
     },
     {
@@ -14372,6 +15081,99 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
+        "docs/proof/code-atlas-identity-unit.md",
+        "docs/notes/atlas-owner/candidate-first-unit.md"
+      ],
+      "datetime": "2026-09-12T20:55:34Z",
+      "done_when": "The admitted first pure identity/binding unit is integrated into the conductor branch with observed evidence; full native Code Atlas remains subsequent work.",
+      "duration_seconds": 4058.0,
+      "fan_out": 4,
+      "goal": "Implement the user-requested Code Atlas through isolated worker trees under Conductor-controlled scopes, gates and joins.",
+      "id": "al-01M2BPEX3VKJSPDKX3564J5J6K",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "Fleet mode is permitted, each sub-agent must have its own worktree, and the conductor still pulls the strings.",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-identity-unit-reviewed-join",
+      "skill": "implement",
+      "started_at": "2026-09-12T19:47:56Z",
+      "summary": "Conductor joined only the four granted Core/test files through a5257f0c and independentlyobserved38executed38passed in candidate and joined trees. First joined no-restore returned0withoutTRX; missingassets observed, local-source restore followed, thenactualTRXread. DataBLOCK clearedafteractualLFcounterexample correction, staticconstructor andpartialcases. Addedpartialimplementation-presence stability probe. Semantic/mutation history split reportedfromobserved; retainedpartialredTRX read. Currentmainca7443e8; SH3head9b16a394 actuallyancestorofmain andtreeclean; primarydirtyonlycoordlogs. Requestsremainopen,noackfabricated. NextOwnerhorizonrequested with IDcodec reconciliation and freshsharedboundary, notprogrammeclosure.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/code-atlas.md"
+      ],
+      "datetime": "2026-09-12T21:03:13Z",
+      "done_when": "Conductor merge is clean and evidenced, then separate registered workers receive exact scoped contracts.",
+      "duration_seconds": 453.0,
+      "fan_out": 4,
+      "goal": "Create a current-main plus reviewed-Atlas baseline for isolated live-reader workers.",
+      "id": "al-01M2BPWWYGDR05Y9BX62ZZXB6D",
+      "kind": "manual",
+      "outcome": "partial",
+      "prompt": "Fleet mode is permitted with a separate worktree per sub-agent and Conductor control.",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-live-reader-baseline",
+      "skill": null,
+      "started_at": "2026-09-12T20:55:40Z",
+      "summary": "Owner admits coherent detached live inventory/declaration/source/Back horizon, onecanonicalexistingtuplecodec,10callcontracts25enumeration60aggregateimplementation15proof. Reconciled isolatedconductor with mainca7443, preservingallacceptedClaudechanges andAtlascommits. Onlythreeconflicts were sitefigurevalues; hunkstructurescomparedidentical afterremovingderivednumbers, thenexistinggeneratorsregeneratedcounts. Primarycheckoutanditsdirtycoordlogsuntouched; no sharedadapterauthoringoractualmainintegrationpermission.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/coordination/code-atlas.md"
+      ],
+      "datetime": "2026-09-12T21:31:37Z",
+      "done_when": "Actual inventory/member/source/Back journey is implemented and independently proven under the admitted limits; this entry records active prerequisite dispatch only.",
+      "fan_out": 4,
+      "goal": "Build the real detached live-reader horizon through isolated agents and Conductor-controlled gates.",
+      "id": "al-01M2BRGXMDZ5XB713SRTYVVBDE",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "Each sub-agent must have its own worktree and the Conductor still pulls the strings.",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-live-foundation-dispatch",
+      "skill": "execute-with-coordination",
+      "summary": "Createdthree distinctregisteredtreesfrom054b8b56; readonlyAstra commoncontract returned7/10. FrozenData-amendedcontract recordedbeforeFwriterdispatch; GPTfoundationowns8exactfiles18of60, noIO/UI/issueroperation. Enumerationwriterowns4probefiles+proof25calls; parentobserved25PASS0FAIL2NOT_PROVENat57b, finalboundedrepairchecks inprogress. Source/project/private/sharedadaptersnotauthorized; Conductorjoinsonly. No CodeAtlasnativecompletionclaimed.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-enumeration-safety.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "datetime": "2026-09-12T21:48:30Z",
+      "done_when": "Bounded enumeration result is joined and evidenced; foundation correction continues toward real detached-reader implementation.",
+      "duration_seconds": 1006.0,
+      "fan_out": 4,
+      "goal": "Produce reviewed enumeration evidence and preserve the corrected foundation/producer execution plan.",
+      "id": "al-01M2BSFTJCYHGBE05B0QRS55RY",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "Continue the real Code Atlas reader through isolated fleet worktrees.",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-enumeration-reviewed-join",
+      "skill": "implement",
+      "started_at": "2026-09-12T21:31:44Z",
+      "summary": "Joinedcleanedenumerationprobe through8450ce06. Parentobserved29PASS0FAIL2NOT_PROVEN atworkerf1e(58ms) andjoinedbranch(55ms),parsedresultsnotexit0. Removedmutationbypass; exactnativecode2/no-pathdiagnostic,recursivepeak3andpost-returnmutationsobserved. Security/Testlimitedordinary-local evidencecleared; requirespriorrootbinding/detectedreparseexclusion; symlinksNOTPROVEN, notrace-freeobjectopenorliveproductclaim. Prooftranscriptionandsemantic-vs-compile-redcorrectionscommitted. Fcommonproposalheldonactualmodelgaps; meaningfulTRXsconfirmeddespiteglobmiss.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
         "docs/proof/mechanical-compile.md",
         "src/AiDe.Core/Compilation/EnvelopeStore.cs",
         "src/AiDe.Core/Compilation/Projection.cs",
@@ -14414,6 +15216,31 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
+        "docs/proof/code-atlas-live-reader-candidate.md",
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "datetime": "2026-09-12T22:04:58Z",
+      "done_when": "E/D return executable scoped producers on the cleared common contract, then source/query/native assembly and independent real-workspace proof complete the admitted horizon.",
+      "duration_seconds": 982.0,
+      "fan_out": 4,
+      "goal": "Deliver the real Code Atlas reading journey through isolated producer tracks and explicit joins.",
+      "id": "al-01M2BTDYW54WX8FA02BXR8T5C9",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "Continue Code Atlas with isolated sub-agent worktrees and Conductor-controlled assignments, gates and merges.",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-foundation-cleared-producers-dispatched",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-12T21:48:36Z",
+      "summary": "Fclearedandjoined02695471 afteractualwriterleaserelease,notTTLwait. Parentcandidateandjoinedruns63executed63passed; namedsemanticredandfinalconstructorguardread. ExactF8filesretained; noIO/nativeclaim. CreatedEandDseparatetreesatsamepin; E4files24callsactualinventory, D2files24callsactualcompilerdeclarations/rangesfromfullboundinputs; neithereditscommoncontracts. Explicit96F/E/Dreplanandearlieroverrunskept; source/query/nativeassemblyfuturecheckpoint.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
         "docs/proof/mechanical-compile.md"
       ],
       "datetime": "2026-09-12T22:13:30Z",
@@ -14437,6 +15264,131 @@ window.AUDIT_DATA = {
     },
     {
       "actor": null,
+      "artifacts": [
+        "docs/investigations/code-atlas-native-repair-controls.md",
+        "docs/proof/code-atlas-live-reader-candidate.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-12T23:09:51Z",
+      "done_when": "Controlledcauseevidence,reviewedplan,Ownerapprovalandexactrepairedregressionsarepreserved; unrelatednative/source/UIworkisnotclaimed.",
+      "duration_seconds": 3888.0,
+      "fan_out": 4,
+      "goal": "Verify the causes of the three E failures and execute only the Owner-approved bounded repair.",
+      "id": "al-01M2BY4RP46PGETQHEYGAB9Q0J",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Diagnose the three remaining E native repair failures, preserve evidence, and obtain delegated Owner approval before repairs.",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "investigate-atlas-native-controls",
+      "skill": "investigate",
+      "started_at": "2026-09-12T22:05:03Z",
+      "summary": "Conductorisolatedtwoverifiedmechanisms:metadata-only0x80doesnotenforceheldwrite/renameexclusion;GenericRead0x80000000doeswith0x80070020andafterreleaseworks. Junctionrecursivefixturedeletionfailedwithoutenumerator;directunlink-firstpreservedtargetandcompletedcleanup. SREdisconfirmed,Ownerturn16approvedexact6callrepair; candidateandparent95/95thenjoinedF/E/D110/110. No universalrace/symlinkclaim. Diagnosticfixtureexplicitlyremoved. Anyauto-durationbelongsbroadercoordinatorphase; isolatedRCAelapsedwasnotseparatelyrecorded.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-reader-native-direction.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "datetime": "2026-09-12T23:09:51Z",
+      "done_when": "Directionandcontractgatesareexplicit,twowritersexecutetheirgrants,andlaternativeproofisnotconfusedwithinjectedfixtures.",
+      "fan_out": 4,
+      "goal": "Apply settled native UI direction and close the precise decoder bootstrap seam without duplicating source logic.",
+      "id": "al-01M2BY4RS1FJX31GH4PBBRKBWG",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "Implement the approved Code Atlas native reading journey with separate worker worktrees and Conductor-controlled gates.",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-native-direction-and-source-seam",
+      "skill": "ui-design",
+      "summary": "Reusedapprovedfile-first/altitudeproposal andexistingDESIGN; recordednativedirection/statecontract, UI-T1/T4apply,T2/T3notthisslice. UXbriefPASS/platformconditionalPASS beforetwo-fileNativePhaseB. No newmockup/palette/privatefixtureimport; nativecode/liverunnerproofpending. Dbootstrap300c8c5d exposedoneinternal8MiB-cappeddecodedlengthhelperthroughsameDecoder; joinedbf57b0ee112testsandSbe99fcf0beforeSPhaseB. Ownerturn17Q36/native20/runner12/proof15fundsrecorded; S/nativeparallel, actualquery/runnerstillpendingSreceipt.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-live-reader-candidate.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/coordination/code-atlas.md"
+      ],
+      "datetime": "2026-09-13T00:45:35Z",
+      "done_when": "Actual Q/native journey observed against an authorized clean AI-DE scope, evidence persisted and Owner reviews the detached horizon.",
+      "duration_seconds": 91.0,
+      "fan_out": 4,
+      "goal": "Continue Owner-governed detached file/member/source/Back delivery without crossing Claude shared-file authority.",
+      "id": "al-01M2C3M1XJGS4E7PRGW36GH335",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-query-native-seam-join",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-13T00:44:04Z",
+      "summary": "Joined F/Q/N continuation and manifest seams at bcbe8a47. Parent independently observed 272 Core and 38 shown native fixture cases, zero skips, and inspected full Q seam test delta after reviewer truncation. Security/Test/UX conditional component gates clear; actual native composition remains pending. Q10/12 new leaves, N10/10; F accounting ambiguity/overrun and extra parent validation overhead retained. Owner21 permits bounded runner --prove; runner12 and independent15 remain allocated. Timing marker covers this documentation continuation from 00:44Z, not preceding seam work.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/code-atlas-outline-selection.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/proof/code-atlas-live-reader-candidate.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-13T01:17:26Z",
+      "done_when": "Runtime failure, competing causes, source path, narrow repair and delegated Owner approval recorded; native acceptance remains blocked until controlled proof.",
+      "duration_seconds": 288.0,
+      "fan_out": 4,
+      "goal": "Diagnose composed accepted-member selection loss and secure a bounded, failing-first native repair without weakening the journey.",
+      "id": "al-01M2C5ECFQ6CF1ENBP2PDXE5B2",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "investigate-atlas-outline-selection",
+      "skill": "investigate",
+      "started_at": "2026-09-13T01:12:38Z",
+      "summary": "Actual synthetic Q/native composition:37PASS1FAIL7NOTPROVEN; selected outline row already null after accepted member, so Back captures null while original receipt/source/focus/cursor restore. Parent read runtime events and native clear/rebuild/CaptureFrame path. Causal mechanism remains provisional pending controlled red/green. Test blocks lowered oracle; Owner24 explicitly authorizes same-owner8leaf N repair then6new runner leaves, preserving19spent/26ceiling and independent15. No realroot read. Earlier runner constructor errors and generated-untracked API omission captured as class recurrences.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-live-reader-candidate.md",
+        "docs/investigations/code-atlas-outline-selection.md",
+        "docs/coordination/code-atlas.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "datetime": "2026-09-13T02:43:34Z",
+      "done_when": "Owner inspects scoped evidence and accepts the detached horizon; persistent proof/capture and explicit next checkpoint retain unfinished programme obligations.",
+      "duration_seconds": 542.0,
+      "fan_out": 4,
+      "goal": "Deliver and independently prove the admitted detached reading horizon while keeping the full Code Atlas programme and shared-host authority honest.",
+      "id": "al-01M2CAC34VFP027485YZSGZ4QP",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-detached-reader-horizon-accepted",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-13T02:34:32Z",
+      "summary": "Owner32 accepts ONLY detached readera0ff/cc67 against authorizedbcbe AiDe.Core scope. Parentjoinedbuild0/Core272/Native45; independentreal23PASS sixNA, synthetic45PASS, isolatedsourcefaultASSERT-rendered-source; externalbytes/UTF16/differentfile/PNG/clean-after completed. OwnedPNGhashretainedinrepo. RootAcpEngineProcess.Start5534..8874 highlight5565:5 andBack originalbindingproved. N27additionalrepairleaves,runner26/26; independentreports3evidence+1bookkeepingafter15,counted19/21. OriginalrecipeparentcollisionandUIAoracleerrorsretained. Main6d3e281a+counterpartrequestsOPEN; programmeNOTcomplete. Owneradmits12leaf Astra currentmain/sharedhostpacket next. Durationcoversproof-documentationclose marker,notwholeprogramme.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
       "artifacts": [],
       "datetime": "2026-09-13T16:38:09Z",
       "id": "al-01M2DT497G6755SMJYE5QJBC00",
@@ -14449,6 +15401,97 @@ window.AUDIT_DATA = {
       "summary": "prompt logged for reuse",
       "tags": [],
       "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/code-atlas.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "datetime": "2026-09-13T16:43:56Z",
+      "done_when": "Compatibility commit and sourced admission packet are preserved for Owner and hard-gate decisions without existing-adapter authoring or inferred counterpart agreement.",
+      "fan_out": 4,
+      "goal": "Reconcile accepted Atlas with observed current main and identify exact legitimate shared-host production seams.",
+      "id": "al-01M2DTEVGX06VN19RH27ZJJBY6",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "shortname": "atlas-shared-host-compatibility-sealed",
+      "skill": "design-slice",
+      "summary": "Compatibility sealed locally be3ace85 exacttreeecdedfcc parents6d3e281a+1e688ace. Worker24/24; Conductorreviewed93paths/no-U/parents and272Core45Native receipts tiedto899unchangedpostruninputs. InheritedEOFblankbyteidenticalaccepted; notrewritten. Packetmethod/owner/testmanifest+onehandoffOPEN, noexistingadapterauthored. Wrong --baseHEAD toolcontext capturedDC150; futureimmutableSHA+readback. Productionauthority/membership/asyncIPC gates remain; directexistingNodeContentreadertrace prevents conflating Atlasreferenceabsence withnoexistingworkspace-readbasis or mandatoryConversationSession. Partialdesign/contract-grounding only, notimplementationclearance; durationnotrecordedforthiswholecheckpoint.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M2DTKC9EEE5AXEHCW4MRTZBZ",
+      "shortname": "atlas-current-main-compatibility-join",
+      "datetime": "2026-09-13T16:46:24Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Joining reviewedbe3ace85(main6d3+Atlas1e688) into isolatedConductor. Onlytwo site-page conflicts, allcomparedhunks solelyderivedfigures; markersresolvedthenregenerated. Source/tests/spikes/buildinputs equaltestedcompatibilitytree, noadapterauthored. Preservedappendonlylogs andMainCV2changes; noprimary/mainmerge. Productionpacket remainsproposed andactualsource-readbasis/policyowner/asyncIPC decisions undergates.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/code-atlas-shared-host-admission.md",
+        "docs/coordination/code-atlas.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Converge the reviewed compatibility snapshot into the isolated Atlas delivery branch without changing adapter authority.",
+      "done_when": "Reviewed compatibility history and conductor decisions coexist, derived views are regenerated, code matches tested inputs and production admission stays explicit.",
+      "tier": "T2",
+      "fan_out": 4
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-13T16:52:02Z",
+      "done_when": "the round-trip test red then green; the sweep applied; DC-177 registered; committed on the conductor branch",
+      "goal": "Land Ruling 87 before Rulings 81/82 so the conversation slice starts from readable text",
+      "id": "al-01M2DTXP2QFXJMH7M6WBAG56BC",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going on all other next steps (Ruling 87 first: the engine's streams are UTF-8)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "x-4-ruling-87-utf8-streams",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "Ruling 87 landed as side track X-4: AcpEngineProcess sets UTF-8 (no BOM) on all three redirected streams; ProcessRunner (git) on both - the sweep. Red-first: the ACP probe's --echo-utf8 writes the bytes of '- SS compile' past the console layer; the reader produced 'GCo ..o compile' (CP437) before the change, the string after. 50 ACP tests + 23 runner tests green. DC-177 registered (a redirected child's stream read with the platform default encoding).",
+      "tags": [],
+      "tier": "T0",
+      "tool": null
+    },
+    {
+      "id": "al-01M2DVY854QS9HRRWMFGB2VC8N",
+      "shortname": "atlas-workspace-authority-and-ipc-spike",
+      "datetime": "2026-09-13T17:09:49Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner workspace-readinheritance decisionrecorded afterexistingNodeContentwhole-pathtrace andupdatedSecurity/Datajudgments. DSsource-supportedcancellationhazard remainsunexecuted, no productionrepairclaimed. Exact5files/16leafAstraIPCspike+4reviewregistered, immutable16eabaseverified, noexistingadapter/liveRootedits. Designqualificationstillpartial; correlation/abortlifetimechoiceawaitsexperiment.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/code-atlas-shared-host-admission.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Qualify legitimate production Atlas authority and transport without coupling the independent Code use case to Conversation or guessing cancellation semantics.",
+      "done_when": "Owner authority decision and bounded experiment are explicit; production lease and adapters remain gated on executed transport evidence.",
+      "tier": "T2",
+      "fan_out": 4
     },
     {
       "actor": null,
@@ -14523,31 +15566,6 @@ window.AUDIT_DATA = {
       "supersedes": "al-01M2DX26KXEVF8SJFWJHKSF5WC",
       "tags": [],
       "tier": "T1",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/lessons/defect-classes.md"
-      ],
-      "datetime": "2026-09-13T16:52:02Z",
-      "done_when": "the round-trip test red then green; the sweep applied; DC-177 registered; committed on the conductor branch",
-      "goal": "Land Ruling 87 before Rulings 81/82 so the conversation slice starts from readable text",
-      "id": "al-01M2DTXP2QFXJMH7M6WBAG56BC",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "keep going on all other next steps (Ruling 87 first: the engine's streams are UTF-8)",
-      "session": "claude-conductor-addendum-c",
-      "shortname": "x-4-ruling-87-utf8-streams",
-      "signals": {
-        "acceptance_met": true,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "implement",
-      "summary": "Ruling 87 landed as side track X-4: AcpEngineProcess sets UTF-8 (no BOM) on all three redirected streams; ProcessRunner (git) on both - the sweep. Red-first: the ACP probe's --echo-utf8 writes the bytes of '- SS compile' past the console layer; the reader produced 'GCo ..o compile' (CP437) before the change, the string after. 50 ACP tests + 23 runner tests green. DC-177 registered (a redirected child's stream read with the platform default encoding).",
-      "tags": [],
-      "tier": "T0",
       "tool": null
     },
     {
@@ -14649,43 +15667,6 @@ window.AUDIT_DATA = {
       "tool": "Claude Code"
     },
     {
-      "actor": "claude-x-3",
-      "artifacts": [
-        "src/AiDe.App/Workbench/WorkbenchShell.cs",
-        "src/AiDe.App/Workbench/WebSurfaceHost.cs",
-        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
-        "tests/AiDe.App.Tests/Sessions/TheRegionCycleCommandsReachTheFocusedDocumentTests.cs",
-        "tests/AiDe.App.Tests/SessionIdentityReportsTheRealWorktreeTests.cs",
-        "tests/AiDe.App.Tests/Composer/ComposerPageThemeTests.cs"
-      ],
-      "datetime": "2026-09-13T18:24:24Z",
-      "done_when": "The blocker (silent refusal) is fixed and proven red-first; the accepted minor/major hardening findings are applied; both full suites and run-verify-gates are green.",
-      "fan_out": 0,
-      "git": {
-        "branch": "side/x3-shell-seams",
-        "pushed": true,
-        "sha": "b53197aff2cf8fa06f0f379c6ef57e5077d1ce12",
-        "short": "b53197aff"
-      },
-      "goal": "Fold the Test Architect and WPF-lens read-only review findings into the X-3 branch before close.",
-      "id": "al-01M2E06TVSPAR2WZ09ZV5PQ14W",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "Fold in the Test Architect and WPF-lens review findings from the X-3 read-only reviews: silent refusal on the no-session-focused cycle-region path, a concurrent-retry window in WebSurfaceHost.Retry(), a Head/Branch swap the tests would not catch, a mockup-fidelity comment, and a pinned-role test gap (--inferred/--verified/--border-strong).",
-      "session": "x-3",
-      "shortname": "x-3-shell-seams-review-fixes",
-      "signals": {
-        "acceptance_met": true,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "implement",
-      "summary": "Blocker fixed: WireSessionRegionCycle's synthetic refusal now announces itself (was silent, DC-011); red observed then green (ExecutingSessionCycleRegion_WithNoSessionFocused_AnnouncesWhy). Hardening: WebSurfaceHost.Retry() clears _lastAttemptFailed before awaiting (closes a concurrent-retry window); SessionIdentityReportsTheRealWorktreeTests's Head test now checks hex shape, differs from Branch, and cross-checks an independent git invocation; ComposerPageThemeTests's pinned-value theory extended with the three additive roles; ComposerSurface's mockup-fidelity comment corrected (airspace, not literal fidelity). Full suites green (844 App, 2496 Core).",
-      "tags": [],
-      "tier": "T1",
-      "tool": null
-    },
-    {
       "actor": null,
       "artifacts": [
         "docs/reviews/ui-operator-findings-2026-09-13.md",
@@ -14743,6 +15724,43 @@ window.AUDIT_DATA = {
         "operator-findings"
       ],
       "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "claude-x-3",
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/WebSurfaceHost.cs",
+        "src/AiDe.App/Workbench/Composer/ComposerSurface.cs",
+        "tests/AiDe.App.Tests/Sessions/TheRegionCycleCommandsReachTheFocusedDocumentTests.cs",
+        "tests/AiDe.App.Tests/SessionIdentityReportsTheRealWorktreeTests.cs",
+        "tests/AiDe.App.Tests/Composer/ComposerPageThemeTests.cs"
+      ],
+      "datetime": "2026-09-13T18:24:24Z",
+      "done_when": "The blocker (silent refusal) is fixed and proven red-first; the accepted minor/major hardening findings are applied; both full suites and run-verify-gates are green.",
+      "fan_out": 0,
+      "git": {
+        "branch": "side/x3-shell-seams",
+        "pushed": true,
+        "sha": "b53197aff2cf8fa06f0f379c6ef57e5077d1ce12",
+        "short": "b53197aff"
+      },
+      "goal": "Fold the Test Architect and WPF-lens read-only review findings into the X-3 branch before close.",
+      "id": "al-01M2E06TVSPAR2WZ09ZV5PQ14W",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Fold in the Test Architect and WPF-lens review findings from the X-3 read-only reviews: silent refusal on the no-session-focused cycle-region path, a concurrent-retry window in WebSurfaceHost.Retry(), a Head/Branch swap the tests would not catch, a mockup-fidelity comment, and a pinned-role test gap (--inferred/--verified/--border-strong).",
+      "session": "x-3",
+      "shortname": "x-3-shell-seams-review-fixes",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "Blocker fixed: WireSessionRegionCycle's synthetic refusal now announces itself (was silent, DC-011); red observed then green (ExecutingSessionCycleRegion_WithNoSessionFocused_AnnouncesWhy). Hardening: WebSurfaceHost.Retry() clears _lastAttemptFailed before awaiting (closes a concurrent-retry window); SessionIdentityReportsTheRealWorktreeTests's Head test now checks hex shape, differs from Branch, and cross-checks an independent git invocation; ComposerPageThemeTests's pinned-value theory extended with the three additive roles; ComposerSurface's mockup-fidelity comment corrected (airspace, not literal fidelity). Full suites green (844 App, 2496 Core).",
+      "tags": [],
+      "tier": "T1",
       "tool": null
     },
     {
@@ -15043,55 +16061,26 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
-        "docs/proof/coordination-perspective.md",
-        "docs/notes/sh4-coordination-landing-and-drop-sentence.md",
-        "src/AiDe.Core/Workbench/Perspectives.cs",
-        "src/AiDe.Core/Workbench/ZoneLayout.cs",
-        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
-        "src/AiDe.App/Workbench/WorkbenchShell.cs",
-        "src/AiDe.App/Workbench/WorkbenchAdapter.cs",
-        "src/AiDe.App/Workbench/PerspectiveShell.cs",
-        "src/AiDe.App/Workbench/LayoutPersistence.cs",
-        "src/AiDe.App/MainWindow.xaml",
-        "src/AiDe.App/MainWindow.xaml.cs",
-        "src/AiDe.App/Workbench/PerspectiveRail.cs",
-        "tests/AiDe.App.Tests/Workbench/KindAllowListsTests.cs",
-        "tests/AiDe.App.Tests/Workbench/ZoneLayoutSlotsTests.cs",
-        "tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs"
+        "docs/proof/the-conversation.md"
       ],
-      "datetime": "2026-09-13T22:14:29Z",
-      "done_when": "P1-P7 red then green; the existing suites green with the census walking host C; the gates green; the Proof Pack docs/proof/coordination-perspective.md, the audit entry and the push landed; Release rebuilt",
-      "duration_seconds": 5843.0,
-      "fan_out": 3,
-      "git": {
-        "branch": "lane/shell-sh4",
-        "pushed": null,
-        "sha": "2ec0e4707b2021f3d286554e1cc3c549c9284cdb",
-        "short": "2ec0e4707"
-      },
-      "goal": "Land Ruling 84: Coordination as the fourth Perspective (host C, Ctrl+4, its own slot file and default, the rail entry IconCoordination, the five Loomkeeper kinds admitted by Coordination only, the derived View menu, the pre-C restore's drop-with-report naming Coordination) on lane/shell-sh4",
-      "id": "al-01M2EDC3SXV2T2XFW9RKFDQV0V",
+      "datetime": "2026-09-13T21:09:08Z",
+      "done_when": "the option on the record and on both product lanes, the wire controls green with the member admitted by name",
+      "goal": "Make the thread's Thinking line reachable from a lane",
+      "id": "al-01M2E9MEP7HE0597E5C0XD581J",
       "kind": "skill",
       "outcome": "success",
-      "prompt": "You are track SH-4.1 of the Shell lane — Ruling 84: Coordination is a fourth Perspective (host C, Ctrl+4, its own layout slot, the rail entry, the allow-list column) and the five Loomkeeper kinds (sessions · board · leaderboard · ledger · daydreams) move to it as a set; Coding admits none of them. Run the /implement skill (args: SH-4.1: the Coordination perspective — host C, Ctrl+4, the rail entry IconCoordination, the third layout slot file and its default, the allow-list column, the derived View menu, the pre-C restore's drop-with-report naming Coordination (Ruling 84; ADR-0030/31/32 as amended by docs/notes/adr-0030-0032-amendment-coordination.md)). Tier T2, fan-out cap 3 (reviews read-only). The conductor is Claude Opus (session conductor-addendum-c). The pack applies in full (red first; smallest correct; DC-135 — construct what the product constructs; the Test Architect's veto; UX & Accessibility on the rail and announcements; the WPF lens on the icon and host C).\n\nThe operator's words (the decision): \"the ledger-leaderboard-sessions-board views should be tied to a different left bar icon - coordination.\" The ruling: docs/notes/addendum-c-council-rulings.md Ruling 84 (and 83 for what Coding's Left becomes — SH-4.2's slice). The design: DESIGN.md §\"Errata after Rulings 83–84\"; the mockup docs/mockups/perspective-shell.html; the review docs/reviews/ui-operator-findings-2026-09-13.md §7 SH-4.1 row (the oracles P1–P7 and the attended rows P-1, P-4, the announcement \"Coordination perspective — 4 panes\" and the landing on the Left zone's active tab); Addendum C's appended errata block; docs/notes/adr-0030-0032-amendment-coordination.md.\n\nWorktree C:\\Projects\\ai-de-lane-shell-sh4, branch lane/shell-sh4, HEAD = main 560ea825. Leases (DC-163) for shared files; never claim the defect register — placeholders DC-nnn (SH-4 a); the conductor allocates (next free DC-182). Never taskkill, never reap-stragglers --reap, never verify-test-run.py --update. X-3 live on WorkbenchShell.cs/WorkbenchAnnouncer.cs/App.xaml/WebSurfaceHost.cs/WorkbenchDiagnostics.cs/WorkbenchCommands.cs/MainMenuBuilder.cs/CommandPalette.cs; CV-5 live on the session document, composer, thread, ConsoleSurface.\n\nFloors: E7 before coding in the Proof Pack; reviews read-only ≤ 3 (Test Architect hard on P2/P3/P6 mutation-shape; UX & Accessibility hard on the rail item and host C's empty states; the WPF lens on the glyph and host C); gates at close (dotnet build Core + App + both test projects -p:TreatWarningsAsErrors=true; both full test projects --logger trx; python tools/run-verify-gates.py; regenerate-derived.py after the audit entry); audit entry; Proof Pack docs/proof/coordination-perspective.md; commits with the attribution trailer; git push -u origin lane/shell-sh4; never merge to main; merge origin/main before close if it moved — never rebase; release claims; rebuild Release and report the ProductVersion.\n\nFails if: a schema field instead of a third slot file; a fifth kind left admitted by Coding; a full-window composite for Coordination; a write to CV-5's or X-3's files beyond the derived-menu contribution, or to DESIGN.md/docs/mockups; the Coding re-cut (SH-4.2); a red made green by weakening; verify-test-run.py --update; git stash; a rebase; a push to main.",
-      "session": "sh-4",
-      "shortname": "sh-4-1-coordination-perspective",
+      "prompt": "keep going (CV-5.3's routed finding: the lane must ask for summarized thinking)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "x-5-thinking-display",
       "signals": {
         "acceptance_met": true,
         "verification_executed": true,
         "verification_path": true
       },
       "skill": "implement",
-      "started_at": "2026-09-13T20:37:06Z",
-      "summary": "SH-4.1 landed Ruling 84 on lane/shell-sh4: Coordination is the fourth Perspective — the registry row (\"coordination\", \"Coordination\", 4, DockHost, \"perspective.coordination\"), Ctrl+4 from Order, host C by DockHost.Create in WorkbenchShell (Hosts = A · B · C), the third slot file <layout>.coordination.zones.json by SlotPathFor, CoordinationDefault (Left = Terminal sessions · Center = Ledger · Leaderboard · Message board · Right empty · Bottom collapsed; Daydreams via the View menu), the five Loomkeeper kinds admitted by Coordination only (Coding admits none; CodingDefault's Left is empty as Ruling 84 forces — the Bottom and Center stay SH-4.2's), the derived View menu by construction, IconCoordination (a ring with three beads) beside IconCoding in MainWindow.xaml, the pre-C restore's drop-with-report naming Coordination and its gesture (\"They live in Coordination (Ctrl+4); open them from its View menu.\"; a mixed restore lists each pane once under its perspective). P1–P7 red → green with the red runs recorded; the census walks host B's and host C's bodies (138 → 170 sites, 0 below floor) and asserts the landing per host. Two defects found and fixed on the way, one class (placeholder SH-4 a): a docking view's active content after a body is (re)parented is the last-realized pane's — the adapter now asserts the model's active surface now and again at Loaded priority (both RestoreActive branches and ActivateInView; measured in the census window and the session-render replay, mutant-red headless), and the switch's landing is stated on the row (Perspective.Landing: Coordination → Left, Architecture → Center) and applied one dispatcher turn after the body's Loaded. Reviews: Test Architect veto cleared (findings 1–4, 7 applied); UX & Accessibility hard veto cleared, soft held then applied (the Sessions pane's copy and focus target, the once-listed mixed sentence, the beads, AcceleratorKey); WPF lens no escalation (its Major measured, confirmed and fixed). Proof Pack docs/proof/coordination-perspective.md; decision note docs/notes/sh4-coordination-landing-and-drop-sentence.md. Attended rows for the conductor: P-1 (UIA walk), P-4 (private_bytes_delta for host C), the announcement and landing under NVDA, the pre-C report on the operator's file, host C's empty states. Findings for D3/the conductor: two definitions of the drop sentence (DESIGN.md vs the P6 oracle); Daydreams' zone unspecified (lands beside Terminal sessions); the live region's channel truncates long reports (X-3's seam); SH-4.2 inherits the Coding landing rule and a Coding drag row.",
-      "tags": [
-        "addendum-c",
-        "shell-lane",
-        "sh-4",
-        "ruling-84",
-        "coordination"
-      ],
-      "tier": "T2",
+      "summary": "X-5: LaneSessionOptions.ThinkingDisplay (the SDK's ThinkingAdaptive display, sdk.d.ts:8448-8451; the adapter drops empty-text thoughts, acp-agent.js:7742) - the governed and read-only lanes ask for 'summarized' so Ruling 82's Thinking line can appear; the compile session does not ask (CE-0023 unchanged). Red-first: four new tests (the shape, the absence, the compile's silence, the two values) plus the three wire-shape controls that went red on the fifth member and were re-pointed with the finding named.",
+      "tags": [],
+      "tier": "T0",
       "tool": null
     },
     {
@@ -15124,55 +16113,6 @@ window.AUDIT_DATA = {
       "summary": "CV-4: admission's code. CompileAdmissionGate (new, Core/Sessions) reads compile-eval-admission.json from the machine-level ~/.aide/proof/ directory and recomputes five ADR-0036 Gate 2 floors from the report's own numerator/denominator pairs (split witness: holdout>=50, disjoint, ordered; schema_fail<=2%; applied_denied=0; tool_calls=0; degraded<=5%, Ruling 76) - a verdict-shaped key (verdict/met/passed/admitted/selectable) is never read, at any nesting, proven by planted-verdict tests in both directions. Wired into CompileModeGate's Gate 2 branch, replacing CV-3's always-refuse placeholder; the no-report case still refuses CE-0020 unchanged (US-D11 b2 stays green). Six new CE- codes (CE-0024..CE-0029), contiguous. tools/compile-eval/ring.py (new, stdlib, imports score.py rather than reimplementing) re-scores on a change of the (adapter sha, CLI sha, craft-profile sha) triple or on a model_observed != model_configured mismatch (CV-3's residual, independent of the triple), demotes agentic to agentic-advisory on a regression with compile.mode.changed{trigger: ring|drift}, never re-demotes on unchanged evidence (no flapping), and sets the drift watermark readmitted_at on a later passing re-score. compile.mode.changed joins the compile.* vocabulary (CompileEventKinds.ModeChanged, CompileModeChangeTriggers, CompileSignal.ModeChanged); SessionConfigStore.SetCompileMode gains a trigger parameter (default operator) and emits the event only on a real transition. A canonicalisation fixture (one fixed byte string, one SHA-256 hex constant) is asserted identical by CompilePin.Sha256 (C#) and ring.py's self-test (Python). Gates: dotnet build Core+App 0/0 warnings/errors; AiDe.Core.Tests 2615 passed (+1 pre-existing skip); AiDe.App.Tests 895 passed (matches the recorded floor, no App-layer test added); ring.py --self-test 8/8; score.py --self-test unchanged 3/3; verify-id-allocators CE family at 29 contiguous; run-verify-gates green after regenerate-derived. Two AI Systems Engineer / Test Architect reviews (read-only, fan-out 2) both PASS. Findings recorded as placeholders (conductor allocates): the ring's triple (adapter/CLI/profile sha) differs from ADR-0036 Gate 3's literal triple (contract_version/prompt_sha/profile.sha) - built to the plan row's explicit triple, discrepancy recorded, full prompt-version A6 ring left as a future track; the audit start marker was not set at grounding this run, so duration_seconds understates true elapsed time. Not touched (named, out of file-ownership): the settings-row UI control (SessionDocumentSurface.cs, a future slice), writing outcome:\"suspect\" into the called row on a model mismatch (ComposerSendGate.cs, outside CV-4's lifetime hand-off), the build.yml CI step for ring.py --self-test (a seam request). The gate itself is not this track: 50 scored + 50 holdout real envelopes accrue through operator use over weeks; a calendar event, not a session.",
       "tags": [],
       "tier": "T1",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/proof/the-conversation.md"
-      ],
-      "datetime": "2026-09-13T21:09:08Z",
-      "done_when": "the option on the record and on both product lanes, the wire controls green with the member admitted by name",
-      "goal": "Make the thread's Thinking line reachable from a lane",
-      "id": "al-01M2E9MEP7HE0597E5C0XD581J",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "keep going (CV-5.3's routed finding: the lane must ask for summarized thinking)",
-      "session": "claude-conductor-addendum-c",
-      "shortname": "x-5-thinking-display",
-      "signals": {
-        "acceptance_met": true,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "implement",
-      "summary": "X-5: LaneSessionOptions.ThinkingDisplay (the SDK's ThinkingAdaptive display, sdk.d.ts:8448-8451; the adapter drops empty-text thoughts, acp-agent.js:7742) - the governed and read-only lanes ask for 'summarized' so Ruling 82's Thinking line can appear; the compile session does not ask (CE-0023 unchanged). Red-first: four new tests (the shape, the absence, the compile's silence, the two values) plus the three wire-shape controls that went red on the fifth member and were re-pointed with the finding named.",
-      "tags": [],
-      "tier": "T0",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/proof/compile-admission-code.md"
-      ],
-      "datetime": "2026-09-13T22:12:36Z",
-      "done_when": "main pushed green through run-verify-gates; Release built",
-      "goal": "Land CV-4 and X-5 on main with the floors recounted and a Release build",
-      "id": "al-01M2ED8N1F9R1BQA883YPD7M2M",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "keep going (the join of CV-4 and X-5)",
-      "session": "claude-conductor-addendum-c",
-      "shortname": "join-cv4-x5",
-      "signals": {
-        "acceptance_met": true,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "execute-with-coordination",
-      "summary": "Join: CV-4 (4241bfb2: CompileAdmissionGate recomputing every A14.4 floor from num/den, CE-0024..0029, ring.py with drift demotion and readmitted_at, compile.mode.changed) and X-5 (da2badf4: the lanes ask for summarized thinking) merged to main; one derived-figure conflict taken ours and regenerated; DC-189/190 written into the register from CV-4's proof (the node left them as prose). Recount App 895 / Core 2620 = 2450 + 170. The compile-mode ladder's code is complete: mechanical-only default, advisory admissible (gate 1 open), agentic behind gate 2's recomputed floors over 50+50 real envelopes.",
-      "tags": [],
       "tool": null
     },
     {
@@ -15245,6 +16185,84 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
+        "docs/proof/compile-admission-code.md"
+      ],
+      "datetime": "2026-09-13T22:12:36Z",
+      "done_when": "main pushed green through run-verify-gates; Release built",
+      "goal": "Land CV-4 and X-5 on main with the floors recounted and a Release build",
+      "id": "al-01M2ED8N1F9R1BQA883YPD7M2M",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of CV-4 and X-5)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-cv4-x5",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Join: CV-4 (4241bfb2: CompileAdmissionGate recomputing every A14.4 floor from num/den, CE-0024..0029, ring.py with drift demotion and readmitted_at, compile.mode.changed) and X-5 (da2badf4: the lanes ask for summarized thinking) merged to main; one derived-figure conflict taken ours and regenerated; DC-189/190 written into the register from CV-4's proof (the node left them as prose). Recount App 895 / Core 2620 = 2450 + 170. The compile-mode ladder's code is complete: mechanical-only default, advisory admissible (gate 1 open), agentic behind gate 2's recomputed floors over 50+50 real envelopes.",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/coordination-perspective.md",
+        "docs/notes/sh4-coordination-landing-and-drop-sentence.md",
+        "src/AiDe.Core/Workbench/Perspectives.cs",
+        "src/AiDe.Core/Workbench/ZoneLayout.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs",
+        "src/AiDe.App/Workbench/PerspectiveShell.cs",
+        "src/AiDe.App/Workbench/LayoutPersistence.cs",
+        "src/AiDe.App/MainWindow.xaml",
+        "src/AiDe.App/MainWindow.xaml.cs",
+        "src/AiDe.App/Workbench/PerspectiveRail.cs",
+        "tests/AiDe.App.Tests/Workbench/KindAllowListsTests.cs",
+        "tests/AiDe.App.Tests/Workbench/ZoneLayoutSlotsTests.cs",
+        "tests/AiDe.App.ContrastProbe/ShellContrastCensus.cs"
+      ],
+      "datetime": "2026-09-13T22:14:29Z",
+      "done_when": "P1-P7 red then green; the existing suites green with the census walking host C; the gates green; the Proof Pack docs/proof/coordination-perspective.md, the audit entry and the push landed; Release rebuilt",
+      "duration_seconds": 5843.0,
+      "fan_out": 3,
+      "git": {
+        "branch": "lane/shell-sh4",
+        "pushed": null,
+        "sha": "2ec0e4707b2021f3d286554e1cc3c549c9284cdb",
+        "short": "2ec0e4707"
+      },
+      "goal": "Land Ruling 84: Coordination as the fourth Perspective (host C, Ctrl+4, its own slot file and default, the rail entry IconCoordination, the five Loomkeeper kinds admitted by Coordination only, the derived View menu, the pre-C restore's drop-with-report naming Coordination) on lane/shell-sh4",
+      "id": "al-01M2EDC3SXV2T2XFW9RKFDQV0V",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "You are track SH-4.1 of the Shell lane — Ruling 84: Coordination is a fourth Perspective (host C, Ctrl+4, its own layout slot, the rail entry, the allow-list column) and the five Loomkeeper kinds (sessions · board · leaderboard · ledger · daydreams) move to it as a set; Coding admits none of them. Run the /implement skill (args: SH-4.1: the Coordination perspective — host C, Ctrl+4, the rail entry IconCoordination, the third layout slot file and its default, the allow-list column, the derived View menu, the pre-C restore's drop-with-report naming Coordination (Ruling 84; ADR-0030/31/32 as amended by docs/notes/adr-0030-0032-amendment-coordination.md)). Tier T2, fan-out cap 3 (reviews read-only). The conductor is Claude Opus (session conductor-addendum-c). The pack applies in full (red first; smallest correct; DC-135 — construct what the product constructs; the Test Architect's veto; UX & Accessibility on the rail and announcements; the WPF lens on the icon and host C).\n\nThe operator's words (the decision): \"the ledger-leaderboard-sessions-board views should be tied to a different left bar icon - coordination.\" The ruling: docs/notes/addendum-c-council-rulings.md Ruling 84 (and 83 for what Coding's Left becomes — SH-4.2's slice). The design: DESIGN.md §\"Errata after Rulings 83–84\"; the mockup docs/mockups/perspective-shell.html; the review docs/reviews/ui-operator-findings-2026-09-13.md §7 SH-4.1 row (the oracles P1–P7 and the attended rows P-1, P-4, the announcement \"Coordination perspective — 4 panes\" and the landing on the Left zone's active tab); Addendum C's appended errata block; docs/notes/adr-0030-0032-amendment-coordination.md.\n\nWorktree C:\\Projects\\ai-de-lane-shell-sh4, branch lane/shell-sh4, HEAD = main 560ea825. Leases (DC-163) for shared files; never claim the defect register — placeholders DC-nnn (SH-4 a); the conductor allocates (next free DC-182). Never taskkill, never reap-stragglers --reap, never verify-test-run.py --update. X-3 live on WorkbenchShell.cs/WorkbenchAnnouncer.cs/App.xaml/WebSurfaceHost.cs/WorkbenchDiagnostics.cs/WorkbenchCommands.cs/MainMenuBuilder.cs/CommandPalette.cs; CV-5 live on the session document, composer, thread, ConsoleSurface.\n\nFloors: E7 before coding in the Proof Pack; reviews read-only ≤ 3 (Test Architect hard on P2/P3/P6 mutation-shape; UX & Accessibility hard on the rail item and host C's empty states; the WPF lens on the glyph and host C); gates at close (dotnet build Core + App + both test projects -p:TreatWarningsAsErrors=true; both full test projects --logger trx; python tools/run-verify-gates.py; regenerate-derived.py after the audit entry); audit entry; Proof Pack docs/proof/coordination-perspective.md; commits with the attribution trailer; git push -u origin lane/shell-sh4; never merge to main; merge origin/main before close if it moved — never rebase; release claims; rebuild Release and report the ProductVersion.\n\nFails if: a schema field instead of a third slot file; a fifth kind left admitted by Coding; a full-window composite for Coordination; a write to CV-5's or X-3's files beyond the derived-menu contribution, or to DESIGN.md/docs/mockups; the Coding re-cut (SH-4.2); a red made green by weakening; verify-test-run.py --update; git stash; a rebase; a push to main.",
+      "session": "sh-4",
+      "shortname": "sh-4-1-coordination-perspective",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-13T20:37:06Z",
+      "summary": "SH-4.1 landed Ruling 84 on lane/shell-sh4: Coordination is the fourth Perspective — the registry row (\"coordination\", \"Coordination\", 4, DockHost, \"perspective.coordination\"), Ctrl+4 from Order, host C by DockHost.Create in WorkbenchShell (Hosts = A · B · C), the third slot file <layout>.coordination.zones.json by SlotPathFor, CoordinationDefault (Left = Terminal sessions · Center = Ledger · Leaderboard · Message board · Right empty · Bottom collapsed; Daydreams via the View menu), the five Loomkeeper kinds admitted by Coordination only (Coding admits none; CodingDefault's Left is empty as Ruling 84 forces — the Bottom and Center stay SH-4.2's), the derived View menu by construction, IconCoordination (a ring with three beads) beside IconCoding in MainWindow.xaml, the pre-C restore's drop-with-report naming Coordination and its gesture (\"They live in Coordination (Ctrl+4); open them from its View menu.\"; a mixed restore lists each pane once under its perspective). P1–P7 red → green with the red runs recorded; the census walks host B's and host C's bodies (138 → 170 sites, 0 below floor) and asserts the landing per host. Two defects found and fixed on the way, one class (placeholder SH-4 a): a docking view's active content after a body is (re)parented is the last-realized pane's — the adapter now asserts the model's active surface now and again at Loaded priority (both RestoreActive branches and ActivateInView; measured in the census window and the session-render replay, mutant-red headless), and the switch's landing is stated on the row (Perspective.Landing: Coordination → Left, Architecture → Center) and applied one dispatcher turn after the body's Loaded. Reviews: Test Architect veto cleared (findings 1–4, 7 applied); UX & Accessibility hard veto cleared, soft held then applied (the Sessions pane's copy and focus target, the once-listed mixed sentence, the beads, AcceleratorKey); WPF lens no escalation (its Major measured, confirmed and fixed). Proof Pack docs/proof/coordination-perspective.md; decision note docs/notes/sh4-coordination-landing-and-drop-sentence.md. Attended rows for the conductor: P-1 (UIA walk), P-4 (private_bytes_delta for host C), the announcement and landing under NVDA, the pre-C report on the operator's file, host C's empty states. Findings for D3/the conductor: two definitions of the drop sentence (DESIGN.md vs the P6 oracle); Daydreams' zone unspecified (lands beside Terminal sessions); the live region's channel truncates long reports (X-3's seam); SH-4.2 inherits the Coding landing rule and a Coding drag row.",
+      "tags": [
+        "addendum-c",
+        "shell-lane",
+        "sh-4",
+        "ruling-84",
+        "coordination"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
         "docs/proof/editor-rest.md"
       ],
       "datetime": "2026-09-13T22:22:56Z",
@@ -15265,6 +16283,70 @@ window.AUDIT_DATA = {
       "summary": "Join: CV-5.4 (cb78dbb5) merged to main; the register's tail conflict was first committed WITH markers because the marker gate's red was hidden by a tail -1 (DC-113 recurrence 4, DC-136's shape) - caught by re-running the gate bare before the push, resolved, the merge amended (never pushed red). DC-191..193 allocated. Recount App 913 / Core 2620 = 2450 + 170. The editor fills the body at 0 turns (476.5 px measured at 673x748), rests at 280 with turns; L6 measured: 1 turn at both 1440x900 and 2560x1600 (Ruling 88's >= 2 was the mockup's number - a finding for the Owner).",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M2EF5VTB8E50FMJG6A3TCQKH",
+      "shortname": "atlas-production-repair-dispatch",
+      "datetime": "2026-09-13T22:46:01Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Resumed production convergence. Independently reproduced membership14/17 with the same three native-namespace-notification failures. Consumed SRE four source-level Shell lifetime findings. Owner43 authorized same-tree three-leaf diagnostics before nine NQ repair leaves, twelve Shell repair leaves, eight separate reviews; dispatched both retained writers. Core actual runtime factory and MainWindow remain absent. Recorded partial proof and refreshed stale coordination/liveness. No candidate join, primary change or push.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/coordination/code-atlas.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Continue Code Atlas production integration with Owner-resolved blockers.",
+      "done_when": "Membership and Shell lifetime blockers resolved, actual Core-to-Shell handoff committed, next integration gate supported by concrete evidence.",
+      "tier": "T2",
+      "main_calls": 38,
+      "main_budget": 60,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-13T22:33:08Z",
+      "duration_seconds": 773.0,
+      "git": {
+        "sha": "366167052537c35171f40c6da66c982f8f5d93e5",
+        "short": "366167052",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2EF83JETJA83CHYM1A9RQV1",
+      "shortname": "atlas-production-record-metadata",
+      "datetime": "2026-09-13T22:47:15Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Recorded Core adapter failure-class controls and corrected the touched IPC proof typed-link mapping after observing the graph parser warning. Swept Atlas proof mappings; one affected file. Preserve unrelated ruling-49 dangling link. Repair workers continue; no product candidate joined.",
+      "kind": "command",
+      "skill": null,
+      "tool": "docs-graph",
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md",
+        "docs/proof/code-atlas-ipc-contract.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Persist accurate production convergence evidence and supported graph metadata.",
+      "done_when": "Records preserve partial state and the corrected IPC link appears in derived graph without its prior parser warning.",
+      "tier": "T0",
+      "fan_out": 0,
+      "started_at": "2026-09-13T22:47:15Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "366167052537c35171f40c6da66c982f8f5d93e5",
+        "short": "366167052",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     },
     {
       "actor": null,
@@ -15289,6 +16371,138 @@ window.AUDIT_DATA = {
       "summary": "Join: SH-4.1 (0a7c9795) merged to main clean - Coordination is the fourth Perspective (host C, Ctrl+4, its own slot file, IconCoordination, the five Loomkeeper kinds re-homed, the pre-C restore's drop-with-report naming Coordination), plus two defects the slice found and fixed (the view's active content after a body is reparented, DC-194; the census walking before realization, DC-195). DC-194..196 (SH-4.1) and DC-197..201 (D3) allocated into the register from their proof and review. The first join through conductor-join.py.",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M2EG9C2RD14VH1RAV4MDEPPA",
+      "shortname": "atlas-shell-join-native-abort-receipt",
+      "datetime": "2026-09-13T23:05:25Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Joined cleared Shell component and lifetime repair as639be9d3 after source/oracle checks, independent90/90 before/after join, eleven semantic reds. Registered DC-177 cleanup ownership and DC-178 malformed structural edits. Corrected NQ diagnostics compile but still14/17: source-root watch completes false/error995/zero bytes firstaftergitversion, unlike real ABA event. Cause unverified; seven NQ leaves held for Owner. No Core runtime factory or MainWindow handoff. Manual mainline leaf recount77 exceeds extended72; record overrun, not budget success. No primary changes/push.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Continue Code Atlas production integration with Owner-resolved blockers.",
+      "done_when": "Membership and Shell lifetime blockers resolved, actual Core-to-Shell handoff committed, next integration gate supported by concrete evidence.",
+      "tier": "T2",
+      "main_calls": 77,
+      "main_budget": 72,
+      "main_over_budget": true,
+      "fan_out": 4,
+      "started_at": "2026-09-13T22:56:43Z",
+      "duration_seconds": 522.0,
+      "git": {
+        "sha": "639be9d389747904b61d6298cc65f96ba6075ade",
+        "short": "639be9d38",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2EGC5251PV6B5DQS6DBXPKC",
+      "shortname": "atlas-register-heading-correction",
+      "datetime": "2026-09-13T23:06:56Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Corrected two Conductor-authored class headings to existing parser grammar. Tool originallycounted176; nowbothDC177/DC178discovered and178classes/countsverified. Initial readback command misused array-notmatch as scalar; corrected by explicitly materializing one string before predicates. Malformed-uncited-heading detector limitation recorded. Recording repair adds to checkpointoverrun, manualleaf82/72. No product/admission change.",
+      "kind": "command",
+      "skill": null,
+      "tool": "verify-defect-register",
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Correct the two malformed evidence-register headings created in this checkpoint.",
+      "done_when": "The existing register tool discovers both new IDs and reports178classes with matching counts.",
+      "tier": "T0",
+      "main_calls": 82,
+      "main_budget": 72,
+      "main_over_budget": true,
+      "fan_out": 0,
+      "started_at": "2026-09-13T23:06:12Z",
+      "duration_seconds": 44.0,
+      "git": {
+        "sha": "5cfc28b48cec62e354de9c9eb963f767e486896f",
+        "short": "5cfc28b48",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2EKV3EQB4WGKFX8FSRS3JTA",
+      "shortname": "atlas-qualification-disposition-cleanup-grant",
+      "datetime": "2026-09-14T00:07:32Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Preserve pending Owner46-48/proof/register updates before qualification-only join. Candidatec7c94153 cause/fixedrawreceiptsread; parentbuild350/350; TestPASS andSecurityconditionalqualification. Production cleanup-timeout accounting blocked. Owner48allocates10existingregularCleaves(cleanup) andreserves4runtimeestimate; sixnewreviewleaves;NQ29/30unchanged. Conductor cumulativeceiling126 prospectively, prior102and15wrappers/overrunsretained. Actualfactory/MainWindowunfunded.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve native cleanup qualification and obtain an actionable real-runtime funding request.",
+      "done_when": "Cleanup has an evidence-backed disposition and the remaining real Core-to-Shell implementation has an explicit executable funding request.",
+      "tier": "T2",
+      "main_calls": 106,
+      "main_budget": 126,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-13T23:10:55Z",
+      "duration_seconds": 3397.0,
+      "git": {
+        "sha": "6c119a3b91b00c7485de8fb3f40d9e4163431cc9",
+        "short": "6c119a3b9",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2EM17YVXNVB2C58PQZMJ1ZC",
+      "shortname": "atlas-qualification-joined-cleanup-running",
+      "datetime": "2026-09-14T00:10:53Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Joined qualificationonlyd8d83de+c7c94153 asdf17c69a+acaf4dca afterpendingrecords39b9b43d. Explicitraw paired-stage assertions confirm retainedunchangedhandles/OVERLAPPED andzeroexplicitcancel/dispose onthreadexit; fixedissuerstayspending. Exacttwofilediffmatchesreviewedcandidate; joinedCore350/350. Productioncleanupconditionretained. Owner48 C10cleanup+4runtimeestimate dispatched; no fullfactory/MainWindowadmission. Refreshedplan/proof/liveness; derived regeneration follows.",
+      "kind": "command",
+      "skill": null,
+      "tool": "git",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/coordination/code-atlas.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Preserve the qualified native mechanism while resolving production cleanup and runtime funding.",
+      "done_when": "Qualification-only join is recorded accurately and retained-cleanup implementation plus runtime estimate have bounded owners.",
+      "tier": "T2",
+      "main_calls": 110,
+      "main_budget": 126,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T00:10:53Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "acaf4dca9e96328711a1517a06964e76eafdd1c5",
+        "short": "acaf4dca9",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     },
     {
       "actor": null,
@@ -15346,6 +16560,39 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
+      "id": "al-01M2EPB4QF2TRQZA7FTH52A4JA",
+      "shortname": "atlas-retained-cleanup-joined",
+      "datetime": "2026-09-14T00:51:14Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Joined reviewed retained-cleanup7d78e773 asc90a9cceb9ced91405f194b9c1848309b20b9a54. Exacttwofiles match; parent355/355before/afterjoin; threeactualsemanticreds andTestoraclesread. Securitynative-sourcegapcompleted byparent; injectedtimeoutsnotstalledkernelclaims. Owner49reallocated2savedregularCleaves tofinishfailedruntimebody/20manifestgrounding, nowdispatched; fullruntimeunfunded. Partialdocpatchapplied3records; planhunkdidnotapply and wasnotmisreported. Main126/126,18parallelwrappersseparate. No mainpush/factory/MainWindowclaim.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close retained-cleanup qualification and obtain grounded runtime funding.",
+      "done_when": "Cleanup disposition is evidenced and the missing runtime contracts and executable funding request are explicit.",
+      "tier": "T2",
+      "main_calls": 126,
+      "main_budget": 126,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T00:51:14Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "c90a9cceb9ced91405f194b9c1848309b20b9a54",
+        "short": "c90a9cceb",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
       "actor": null,
       "artifacts": [
         "docs/proof/coding-recut-left-dock.md"
@@ -15372,6 +16619,30 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
+        "docs/coordination/addendum-cd.md"
+      ],
+      "datetime": "2026-09-14T01:04:51Z",
+      "done_when": "main pushed green with the lane rows retired and the plan closed",
+      "goal": "Close the programme's coordination horizon on main",
+      "id": "al-01M2EQ42P0HDDJ3YE8C647YQCW",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of conductor/addendum-c)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-converge-docs",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Converge (docs): Ruling 90 filed (the Console toggle closes on its second press; Ruling 88's premise corrected); the Addenda C/D lane rows retired from session-contracts.md with the horizon's new files assigned to Core/Design (verify-surface-ownership 13/13); the plan's execution ledger and Stage 10 close; DC-142 recurrence 2; docs/notes/pack-findings-addendum-cd.md (17 rows for /updatepack); 12 merged worktrees removed one by one; the stale coord sessions ended.",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
         "docs/profiles/sp-0002/profile.md"
       ],
       "datetime": "2026-09-14T01:07:40Z",
@@ -15387,6 +16658,73 @@ window.AUDIT_DATA = {
       "summary": "Profile sp-0002: 4 session(s), 27 finding(s)",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M2ER1FVFZ2PVK8NR8ZDJG1MY",
+      "shortname": "atlas-actual-runtime-funded-tree-ready",
+      "datetime": "2026-09-14T01:20:55Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner50 fundsactualC60(regular48to108), independentreviews18, conditionalShell16, independentdaemon/MainWindowproof15, cumulativeConductor184. PreparedfreshverifiedC runtime tree at1e96dd8e; oldCregistrationendedandevidencekept. Realreaderownershipandnonblockingidlemembershippinrulesrecorded. Inheriteddoctorreportsold6sharedOWED/nonzero; localderivedchecksallpass; narrowOwnerdispositionpending, nofalsecleandoctororprimarymarkerdeletion. Previouscontrolplane2-calloverrunretained. Cnotyetdispatched.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/code-atlas.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Deliver the actual Core runtime and committed Shell handoff.",
+      "done_when": "The daemon-backed reader works through real admission, transport and factory APIs with independent review.",
+      "tier": "T2",
+      "main_calls": 136,
+      "main_budget": 184,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T01:20:55Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "1e96dd8e8ae06a42759ff14779eb95296edf0248",
+        "short": "1e96dd8e8",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2ERK8XBXE07CGEYZSSKEDDA",
+      "shortname": "atlas-runtime-setup-exception",
+      "datetime": "2026-09-14T01:30:38Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner51permitsdispatchonlywithunchangedsharedOWEDdebt. Recordedexact6pathsandSHA238DA28A...F076E; lastwrite01:02:21Zpredatesruntimegitfilecreation01:13:27Z, repeatedhashstable. CurrentruntimeSID exactsourceclaim/check/releaseallowed; actualcommon-dirprecommithookread; retainedGPwriterrecent7d78sourcecapabilityobserved. HistoricalS5qualificationnotpromoted,currentdoctorstillnonzero. No marker/hook/install/primarymutation. Thisdurationmeasuresclosingrecordmechanicsonly,notearliersetupelapsed.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Release the verified runtime writer under the exact shared-debt setup exception.",
+      "done_when": "Exact marker baseline, current writer and commit-floor evidence are recorded without claiming a clean doctor.",
+      "tier": "T2",
+      "main_calls": 143,
+      "main_budget": 184,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T01:30:38Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "6792ea1c673fbb81ec5540f529fd2fc2556c6018",
+        "short": "6792ea1c6",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     },
     {
       "actor": null,
@@ -15421,30 +16759,6 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
-        "docs/coordination/addendum-cd.md"
-      ],
-      "datetime": "2026-09-14T01:04:51Z",
-      "done_when": "main pushed green with the lane rows retired and the plan closed",
-      "goal": "Close the programme's coordination horizon on main",
-      "id": "al-01M2EQ42P0HDDJ3YE8C647YQCW",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "keep going (the join of conductor/addendum-c)",
-      "session": "claude-conductor-addendum-c",
-      "shortname": "join-converge-docs",
-      "signals": {
-        "acceptance_met": true,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "execute-with-coordination",
-      "summary": "Converge (docs): Ruling 90 filed (the Console toggle closes on its second press; Ruling 88's premise corrected); the Addenda C/D lane rows retired from session-contracts.md with the horizon's new files assigned to Core/Design (verify-surface-ownership 13/13); the plan's execution ledger and Stage 10 close; DC-142 recurrence 2; docs/notes/pack-findings-addendum-cd.md (17 rows for /updatepack); 12 merged worktrees removed one by one; the stale coord sessions ended.",
-      "tags": [],
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
         "docs/profiles/addendum-cd.md",
         "docs/notes/attended-rows-for-the-operator.md"
       ],
@@ -15472,60 +16786,200 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
+      "id": "al-01M2F2Z414GJXB8WH004Z9H2YT",
+      "shortname": "atlas-runtime-independent-review-disposition",
+      "datetime": "2026-09-14T04:31:52Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Actualruntimeb1c6f74a iscommittedbutUNJOINED. Parentdaemonbuild437Core/96Appzero skipped, actualfactorydeltaread andfrozengenericIPCunchanged. Test/DSconditionalgates; parentreadIPC/budgettests. DS79assertionsarehistoricalspikeonly. RuntimeSecurity6waswastedonoldscope+failedreads; wrongPASSrejected. Owner52fundsfreshnarrowSecurity6 inverifiedread-onlyb1treecf522afd using6literalviews. No vulnerabilityassertedfrommissingcoverage; noShellreleasebeforeauthorityclearance.",
+      "kind": "command",
+      "skill": null,
+      "tool": "review",
       "actor": null,
       "artifacts": [
-        "docs/proof/conductor-front-door.md"
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
       ],
-      "datetime": "2026-09-14T13:31:12Z",
-      "done_when": "main pushed green through the runner (F5's oracle self-test only); Release built; the recount green",
-      "duration_seconds": 453.0,
-      "fan_out": 0,
-      "goal": "Land F5 on main so the front-door gesture is performed on the current build",
-      "id": "al-01M2G1TNB2JTEZ262Q6TX6NEF2",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "keep going (the join of the resolved merge)",
-      "session": "claude-conductor-addendum-c",
-      "shortname": "join-f5-exit-evidence",
-      "signals": {
-        "acceptance_met": true,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "execute-with-coordination",
-      "started_at": "2026-09-14T13:23:39Z",
-      "summary": "Join: feature/exit-evidence (135e05e1, 21 commits) merged to main under Ruling 91 (the operator: merge F5 and proceed) - ten conflicts: derived figures taken ours; the four lane-pin files taken from main (the cherry-picks had evolved through CV-3/X-5; the lane.session-new frame record is on main); SessionConfigStore.Create and the sheet's Create merged by hand to carry the sheet's three decisions AND F5's origin (SessionOrigins.MainMenuNewSession); the register's header from main. F5's nine-clause oracle runs in self-test form in the runner until the gesture's record exists (clauses 2/3/5/6/9 RUN-PENDING). X-6 rides on this join: the composer's caret on the theme's ink (DC-209) and the Compiled prompt disclosure measured on screen. recount_seconds=452 (docs_only=False).",
       "tags": [],
-      "tier": "T1",
-      "tool": null
+      "outcome": "partial",
+      "goal": "Resolve the actual runtime authority gate before joining Core or releasing Shell.",
+      "done_when": "An independent current-pin authority review supports the policy/issuer/facade/bootstrap path, or names an exact blocker.",
+      "tier": "T2",
+      "main_calls": 168,
+      "main_budget": 184,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T04:31:52Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "e9b8dbd94aeb421ed88bb942351b40dbafc6c5dd",
+        "short": "e9b8dbd94",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     },
     {
+      "id": "al-01M2F3GKPTMQ6D7E284Z2PREZZ",
+      "shortname": "atlas-publication-lifetime-investigation",
+      "datetime": "2026-09-14T04:41:25Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "FreshauthorityreviewBLOCKSpublication/expiryboundary. ParentreadactualIssuer/Endpoint/Server: operationnative/workownershipdisposedbeforewirewrite; scopeStopwaitspreparationonly. Sourceorderingverified, externallyvisibleinterleaving/disclosureNOTexecuted. Controlledpublicationbarrier, competinglinearization/transporthypothesesandphasedplanrecorded; Ownerdispositionpending; NOFIX/noCorejoin/Shellrelease. Boundedmarkersearchnone. Prior437Core96Appdoesnotcovermissinginterleaving.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/conductor-front-door.md"
+        "docs/investigations/code-atlas-publication-lifetime.md",
+        "docs/proof/code-atlas-production-adapters.md"
       ],
-      "datetime": "2026-09-14T13:41:36Z",
-      "done_when": "main pushed green through the runner; Release built",
-      "duration_seconds": 430.0,
-      "fan_out": 0,
-      "goal": "Land F5 and X-6 on main green",
-      "id": "al-01M2G2DPY7XVRT1NQCGBJGVXRT",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "keep going (the join of the resolved merge)",
-      "session": "claude-conductor-addendum-c",
-      "shortname": "join-f5-exit-evidence-2",
-      "signals": {
-        "acceptance_met": true,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "execute-with-coordination",
-      "started_at": "2026-09-14T13:34:26Z",
-      "summary": "The F5 join, second pass: the first pass stopped at the runner (one order-dependent red - ConsoleSplitPlacementTests read Keyboard.FocusedElement, null when another class's window held the keyboard; now the document's focus scope) and the join script now reads the recount's outcome at step 4 before any commit. F5 (135e05e1) is on main under Ruling 91 with its oracle in self-test form until the gesture's record exists; X-6 (the caret, the disclosure rows) rides along. recount_seconds=429 (docs_only=False).",
       "tags": [],
-      "tier": "T1",
-      "tool": null
+      "outcome": "partial",
+      "goal": "Establish the publication/expiry authority lifetime before admitting the runtime.",
+      "done_when": "A controlled publisher interleaving distinguishes safe ownership/cancellation from premature release, and Owner approves the evidence-backed repair disposition.",
+      "tier": "T2",
+      "main_calls": 178,
+      "main_budget": 184,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T04:39:55Z",
+      "duration_seconds": 90.0,
+      "git": {
+        "sha": "14844e24e8be83abf3af4a0dfcd5954af41cc783",
+        "short": "14844e24e",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2F43JNVEVD7FG7DG77N2BS6",
+      "shortname": "atlas-publication-red-first-release",
+      "datetime": "2026-09-14T04:51:47Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner53 grantsC20available regular106to126; first8releaseddeterministicnative-Qpublicationred/plan, remaining12helduntilparentread. Exactissuer/endpoint/serverand2testfiles. Scopeexpiry/deadline/connectionmustcancelanddrainwriterbeforepins/reservationsrelease; partialframeterminal,nobyterecallclaim. Twelveindependentreviewleaves4each andConductor208prospective. No fix/runtimejoin/Shellreleaseyet. No externallyvisiblefailureclaimedbeforeexecution.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/code-atlas-publication-lifetime.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Establish and repair the actual writer lifetime before runtime admission.",
+      "done_when": "The native-Q paused-publication oracle is observed red, a supported ownership repair is reviewed, and Core is conditionally joinable.",
+      "tier": "T2",
+      "main_calls": 184,
+      "main_budget": 208,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T04:49:39Z",
+      "duration_seconds": 128.0,
+      "git": {
+        "sha": "af4c7248b4229c10f52eda2d2f89c10680b41f3b",
+        "short": "af4c7248b",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2F5WA6YVR9BGARXAQV30F0C",
+      "shortname": "atlas-publication-red-observed-repair-released",
+      "datetime": "2026-09-14T05:22:46Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Parentreadnative-Qredreceipt/sourcehook/rawrevoke-partial-deadlineJSONandindependentlyreproduced6FAIL/2PASS. Active/nativeownershipalready0beforewrite; revocation/explicitexpiryreturns0chargeswhilewriteruncanceledand1693byteIndexedMatchbodycompletes; partial4byteprefixalsofinishes; operationdeadlinecancelnotlinkedwriter. No unauthorizeddisclosure/stalledclockclaim. Owner53conditionalplanmatched; releasedCremaining12regular114/126forwriter-ownedrepairandregressions. Core/Shellstillheldbeforeindependentreview.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/code-atlas-publication-lifetime.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Repair the observed native-Q publication lifetime defect without weakening its oracle.",
+      "done_when": "The original six red cases become green under retained writer ownership and independent current-pin review.",
+      "tier": "T2",
+      "main_calls": 191,
+      "main_budget": 208,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T05:22:46Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "bb28dc0f5ce1764728291531b0f09045843252e7",
+        "short": "bb28dc0f5",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2G07QADEM33GF0DSPZWA6GP",
+      "shortname": "atlas-publication-review-remaining-gates",
+      "datetime": "2026-09-14T13:03:22Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Candidatefa89fixedoriginal6reds,parent447Core96Appand10orderingcases. Securityclearsoriginalpublicationveto; DSblocksnewpost-full-writecancellationpoll, Testblocksreceiptcountersnotfullyasserted. Parentopenedexactwriter/helper; newlatecancelinterleavingnotyetexecuted. Runtimeunjoined/Shellproofheld. SeparateidallocatorFAILED: publishedmain76c6d430max208collideswithlocalDC177/178; preservebothandseekOwnerreconciliation, no newidguess/productmainmerge/auditrewrite. Normalderivedgatesdonotclearallocatorfailure.",
+      "kind": "command",
+      "skill": null,
+      "tool": "review",
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/code-atlas-publication-lifetime.md",
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve the remaining publication review gates without erasing evidence or published IDs.",
+      "done_when": "Late-completion behavior and complete resource oracles are proven, and local class identities are reconciled for integration.",
+      "tier": "T2",
+      "main_calls": 206,
+      "main_budget": 208,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T13:03:22Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "3e54960114c7a63105155cd5a85b33c770f4aa06",
+        "short": "3e5496011",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2G09JNQ804F81AET12YK5AS",
+      "shortname": "atlas-published-id-count-wording",
+      "datetime": "2026-09-14T13:04:23Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Corrected publishedmaximum wording to a numericcount ratherthan an unresolvedlocalclasscitation. InitialderivedgatecaughtliteralDC208notpresentlocally; no commitwascreatedbyfailedcommand. ActualDC177/178cross-branchcollisionremainsrecordedandunresolved; no evidence/IDsdiscarded. PublicationDS/TestgatesremainblockedandOwnerrulingpending.",
+      "kind": "command",
+      "skill": null,
+      "tool": "docs",
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Keep the pending blocker record accurate without creating a false local class citation.",
+      "done_when": "The record distinguishes the published numeric maximum from locally resolvable class entries.",
+      "tier": "T0",
+      "main_calls": 208,
+      "main_budget": 208,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "git": {
+        "sha": "3e54960114c7a63105155cd5a85b33c770f4aa06",
+        "short": "3e5496011",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     },
     {
       "actor": null,
@@ -15571,6 +17025,95 @@ window.AUDIT_DATA = {
     {
       "actor": null,
       "artifacts": [
+        "docs/proof/conductor-front-door.md"
+      ],
+      "datetime": "2026-09-14T13:31:12Z",
+      "done_when": "main pushed green through the runner (F5's oracle self-test only); Release built; the recount green",
+      "duration_seconds": 453.0,
+      "fan_out": 0,
+      "goal": "Land F5 on main so the front-door gesture is performed on the current build",
+      "id": "al-01M2G1TNB2JTEZ262Q6TX6NEF2",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of the resolved merge)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-f5-exit-evidence",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T13:23:39Z",
+      "summary": "Join: feature/exit-evidence (135e05e1, 21 commits) merged to main under Ruling 91 (the operator: merge F5 and proceed) - ten conflicts: derived figures taken ours; the four lane-pin files taken from main (the cherry-picks had evolved through CV-3/X-5; the lane.session-new frame record is on main); SessionConfigStore.Create and the sheet's Create merged by hand to carry the sheet's three decisions AND F5's origin (SessionOrigins.MainMenuNewSession); the register's header from main. F5's nine-clause oracle runs in self-test form in the runner until the gesture's record exists (clauses 2/3/5/6/9 RUN-PENDING). X-6 rides on this join: the composer's caret on the theme's ink (DC-209) and the Compiled prompt disclosure measured on screen. recount_seconds=452 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "id": "al-01M2G1TWD323M9YJR42V88A62K",
+      "shortname": "atlas-register-only-identity-reconciliation",
+      "datetime": "2026-09-14T13:31:19Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner54register-onlypass: importedpublished177-208verbatimfrom76c6d430; preservedbothAtlasdefinitionsinrevision+oldnumericID+titlemappingnote, historicalJSONLunchanged. Checked85refs/47worktrees; nextnumeric209alreadyallocatedconductor/addendum-c, soNOreplacementnumbersguessed. Atlascanonicalnumbers/semanticdeduppendingnameddecisions; sourcecorrection8leavesrunningindependently. Currentregister208collisioncheckagainstpinnedtrunkPASS; oldworkerbranchcopiesremainhistoricalnotes. No productmainmerge/push.",
+      "kind": "command",
+      "skill": null,
+      "tool": "reconciliation",
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/defect-id-reconciliation.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Preserve published and Atlas defect meanings without ambiguous ID reuse.",
+      "done_when": "Published entries are retained verbatim, Atlas meanings/history survive, and replacement numbers are either safely reserved or explicitly pending.",
+      "tier": "T2",
+      "main_calls": 216,
+      "main_budget": 256,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T13:31:19Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "7be3be92b8c6785d88895927f7dbe0647bb75a49",
+        "short": "7be3be92b",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/conductor-front-door.md"
+      ],
+      "datetime": "2026-09-14T13:41:36Z",
+      "done_when": "main pushed green through the runner; Release built",
+      "duration_seconds": 430.0,
+      "fan_out": 0,
+      "goal": "Land F5 and X-6 on main green",
+      "id": "al-01M2G2DPY7XVRT1NQCGBJGVXRT",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going (the join of the resolved merge)",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-f5-exit-evidence-2",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T13:34:26Z",
+      "summary": "The F5 join, second pass: the first pass stopped at the runner (one order-dependent red - ConsoleSplitPlacementTests read Keyboard.FocusedElement, null when another class's window held the keyboard; now the document's focus scope) and the join script now reads the recount's outcome at step 4 before any commit. F5 (135e05e1) is on main under Ruling 91 with its oracle in self-test form until the gesture's record exists; X-6 (the caret, the disclosure rows) rides along. recount_seconds=429 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
         "docs/lessons/defect-classes.md"
       ],
       "datetime": "2026-09-14T13:53:09Z",
@@ -15595,6 +17138,72 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M2G53E2E1ZZKN63N9S7MV850",
+      "shortname": "atlas-conditional-join-idle-oracle",
+      "datetime": "2026-09-14T14:28:25Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Coregatescleared4d03; fourcodecommitsjoined4855151fand19sourcecomparisonempty. JoinedCore458/459: idleGitassertzeroowner immediatelyafterclientRestore observed1. Parentreadactualtest/server, no rerun-to-green. Owner55C6regular132to138releasedspecificmatchedRestore/client-complete/server-drain proof; onlydemonstratedoraclecorrection, productionlockcontractunchanged. Test2DS2freshreviews, joinedCoreANDApprequiredbeforeShell16. Partialallocationpatchupdatedsole§2; failedno-opnotehunkwasnotrepeated; actualnote/proofnowupdated.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Establish actual server-idle completion before accepting the joined runtime.",
+      "done_when": "The request-correlated drain oracle is proven and corrected joined Core and App gates support the real handoff.",
+      "tier": "T2",
+      "main_calls": 234,
+      "main_budget": 256,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T14:28:25Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "4855151f0328bd3c0623e3a5e23f58e2cb9c9248",
+        "short": "4855151f0",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2G6VX7AYVPGGS1QYR7GRSXN",
+      "shortname": "atlas-joined-core-cleared-shell-released",
+      "datetime": "2026-09-14T14:59:15Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Reviewedtest-only3c097fa joined4cfb8450; independentlyjoinedCore459/459andApp96/96zero skipped. Prior458/459failurepreserved; specificRestorefull-receive vs matchingserverdrainproven. Owner55conditionalShellreleaseMET; S16newcalls44to60dispatchedretainedagentinNEWcleanverifiedatlas-mainwindow-handofftree4cfb8450,oldregistrationended/evidencekept. ActualCreateAtlasReader/VMfactoryhandoffpassed; borrowedinterfacesremainborrowed. Independentwindowproof15helduntilrealMainWindowcommit. Initialrecordpatchfailedbeforeanyedit; correctedsole§2/Ownernotesnowpersisted. No mainpush/programmeclaim.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Complete actual MainWindow attachment, replacement and awaited close over the reviewed Core reader.",
+      "done_when": "The real Architecture Code Atlas surface consumes the committed factory and passes independent daemon/window proof.",
+      "tier": "T2",
+      "main_calls": 248,
+      "main_budget": 256,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T14:59:15Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "4cfb8450a7cda5448d3aa32923d95998fc22d36c",
+        "short": "4cfb8450a",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     },
     {
       "actor": null,
@@ -15628,6 +17237,39 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
+      "id": "al-01M2G81BWGR343H5C3DQT660BY",
+      "shortname": "atlas-shown-window-pending-lifecycle",
+      "datetime": "2026-09-14T15:19:43Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "S16handoffcallsreturnedNOcommit,3filesdirty,113/115. Parentsource/TRXreadshowsbothshown-windowtheories~30.1sfailatouterwatcher.dbdelete; CoreusingisinsideasyncPumpbody. Earlierpendingawait/failureunrecorded; cleanupmaskinghypothesisNOTrootcause. Owneraskedboundedstage/awaiterlifetimediagnosiswithoutskippingcleanup/extendingtimeout. Corejoined459/96accepted; S60/60andindependentwindow15stillgated.",
+      "kind": "command",
+      "skill": null,
+      "tool": "investigation",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Expose the actual shown-window lifecycle failure before repairing the MainWindow handoff.",
+      "done_when": "The primary pending stage and cleanup ownership are observed and an evidence-backed repair is reviewed.",
+      "tier": "T2",
+      "main_calls": 255,
+      "main_budget": 256,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T15:19:04Z",
+      "duration_seconds": 39.0,
+      "git": {
+        "sha": "8004b49f9ba81af91d610cc83e45607a32bf010e",
+        "short": "8004b49f9",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
       "actor": null,
       "artifacts": [
         "docs/ai-forward-pack/INSTALL.md",
@@ -15657,6 +17299,72 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
+      "id": "al-01M2G8MBPT1RBPWWT5C85X3G87",
+      "shortname": "atlas-mainwindow-primary-failure-diagnostic-release",
+      "datetime": "2026-09-14T15:30:05Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner56S12newleaves60to72same3dirtyfiles; first4diagnostic/controlleavesreleased,remaining8helduntilparentdiscriminatorread. Preserveprimarypendingawait/timeoutandcleanupfailureseparately; ownedpumpbody/CoreSQLitecleanup,noSleep/longertimeout/poolclearing/borroweddisposal/sharedStaedits. NativeSRE2Test2freshreviews. Mainceiling300prospective; actualdaemonwindowproof15stillseparate. Noverifiedcause/productfix/commitfromS yet.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Identify the exact shown-window lifecycle failure before a cause-specific correction.",
+      "done_when": "Named stages and owned task/resource state distinguish primary failure from cleanup masking and support a reviewed remedy.",
+      "tier": "T2",
+      "main_calls": 260,
+      "main_budget": 300,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T15:28:22Z",
+      "duration_seconds": 103.0,
+      "git": {
+        "sha": "74eb1c4b1faea6b3395e131e0bd8e7d9db345d40",
+        "short": "74eb1c4b1",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2G98P2BZ3BX8E1A7AHDCAVW",
+      "shortname": "atlas-dispatcher-discriminator-read",
+      "datetime": "2026-09-14T15:41:11Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Parentreadbothshownfailurediscriminatorlogs/controlandsharedStapumploopreadonly. WorkspaceReadycomplete/gen1, firstApplicationIdlewaitinguntil30spumptimeout; noSelect/Apply/Closestagereached. OwnedDispatcher.Runcontrol153msexecutesidle/borrowedFind/CoreDispose/fixturedelete. Pumpstarvationhypothesissupported, sameMainWindow/full-local-pumpcomparisonstillrequired. ReleasedremainingS8leaves64/72underOwner56; no sharedSta/timeout/ownershipwaiver; independentrealdaemonproofstillseparate.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Complete the same shown-window lifecycle under an owned dispatcher that services its required priorities.",
+      "done_when": "The controlled MainWindow cases execute selection, replacement, close/retry and owned cleanup, with primary failures preserved and independent review.",
+      "tier": "T2",
+      "main_calls": 267,
+      "main_budget": 300,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T15:41:11Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "752295a9ca52a27a3f791a3854a27960db654001",
+        "short": "752295a9c",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
       "actor": null,
       "artifacts": [],
       "datetime": "2026-09-14T16:15:09Z",
@@ -15670,6 +17378,71 @@ window.AUDIT_DATA = {
       "summary": "prompt logged for reuse",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M2GBX93KDFQ6NFSMX0VTTKZV",
+      "shortname": "atlas-mainwindow-joined-real-proof-grant",
+      "datetime": "2026-09-14T16:27:23Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner57exactbuiltinSourceSRE3/Test2readsclearedfixture-backedMainWindowlifecycle. Joined2b3as28c5c5ea, exact3sourcefilecompare, combinedApp/native/factory/sessionroutes124/124zero skipped. SharedSta/Core/VMunchanged. Reserved15-callindependentproofassignedONEnewApp.TestsAtlasDaemonMainWindowProofTests.cs inpost-joinownworktree, realdaemon/client/reader/Architecturewindow, ownedconfig, ownHWNDUIA/nofakeports; noduplicateproject/IVT/reflection/profilewrites. Parentownsproofdoc/capture. Prior4failedreviewleavesretained.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Prove the joined reader through an actual daemon and MainWindow, not fixture Atlas ports.",
+      "done_when": "The real Architecture file/member/source/Back and replacement/revocation/shutdown journey has independent owned-window evidence.",
+      "tier": "T2",
+      "main_calls": 288,
+      "main_budget": 300,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T16:27:23Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "28c5c5ea5e5530b98408c66773377c7e1bf0509d",
+        "short": "28c5c5ea5",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GC7XG0F6XTC8K9VJA15HX8",
+      "shortname": "atlas-independent-real-window-proof-started",
+      "datetime": "2026-09-14T16:33:12Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Independentreal-daemon/MainWindowproofagent413486b5dispatchedinowncleanverified5e624810tree,15totalleaves,soleNEWAtlasDaemonMainWindowProofTests.cs. Realdaemon/client/reader/Architecturewindow,ownedsource/config,own-HWNDUIA/capture,replace/currentness/awaitedshutdown; nofixtureAtlasports/product/project/IVT/sharedStaedits/profilewrites. Exactassignmentrecorded; parentownsproofdoc/capturecopy. Priorfixture124greenisnotthisproof. Programme/main/normativeEunaccepted.",
+      "kind": "command",
+      "skill": null,
+      "tool": "task",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Observe the actual daemon-backed MainWindow reading and lifetime journey independently.",
+      "done_when": "Owned-window source/binding/navigation/currentness/replacement/shutdown evidence exists with actual daemon and no fake Atlas data.",
+      "tier": "T2",
+      "main_calls": 293,
+      "main_budget": 300,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T16:33:12Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "5e624810a52444e106e45bfc2815c0fe417ada40",
+        "short": "5e624810a",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     },
     {
       "actor": null,
@@ -15743,18 +17516,66 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "actor": null,
-      "artifacts": [],
-      "datetime": "2026-09-14T17:16:15Z",
-      "id": "al-01M2GEPRFPC617YYTMWDGVDW0E",
-      "kind": "prompt",
-      "outcome": "success",
-      "prompt": "acp=mcp: For the tool backend i need to be able to use: my claude subscription (my max account in my case); my Microsoft work account with GCHP (so i can let some of my colleagues try it who may not have a claude account); My OpenAI, Grok and Gemini subscriptions. For any given session in the tool... I should be able to switch between any of the accounts i listed above as well as Higgsfield",
-      "session": "claude-conductor-addendum-c",
-      "shortname": "acp=mcp: For the tool backend i need to be able to use: my claude subscr…",
+      "id": "al-01M2GE5XSKWEBKAAVPDQ88TH02",
+      "shortname": "atlas-real-window-acknowledged-release-proof",
+      "datetime": "2026-09-14T17:07:04Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep working on your tasks; give periodic refreshes of the todo table showing what is in flight and still to do",
+      "summary": "Owner58proof12newcalls,total27/12spent/15available,redispatchedsameindependentwriteronefile. Usesactualhealthyacknowledgedatlas.release throughworkspace replacement; Scope.Stopawaitswork/writer/disposal. No inventedpublicsame-live-scopeidlebarrier, no clientreply=drainassertion; in-processidleGitevidenceseparate. Actualdaemon/window/file/member/source/Back/replacement/oldscoperejection/shutdown/UIA/capturerequired. Previousgroundingfailuresnoexecutionpreserved. Ledger35done/4inprogress;Core/Shellimplementationsdonebutintegratedproofnotyetexecuted.",
+      "kind": "command",
       "skill": null,
-      "summary": "prompt logged for reuse",
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
       "tags": [],
+      "outcome": "partial",
+      "goal": "Execute the independent real-daemon/MainWindow proof through acknowledged healthy release.",
+      "done_when": "Actual source/navigation and replacement/release/shutdown evidence exists without fake ports or invented idle synchronization.",
+      "tier": "T2",
+      "main_calls": 306,
+      "main_budget": 330,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T17:07:04Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "294d22aaec27830ab5b7149859efac4c728e67dc",
+        "short": "294d22aae",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/composer-compiled-prompt-and-console-rows.md"
+      ],
+      "datetime": "2026-09-14T17:12:17Z",
+      "done_when": "Each ruling's CONDITIONS met by tests observed red then green; dotnet test for AiDe.App.Tests and AiDe.Core.Tests pass with counts recorded before and after; run-verify-gates.py green on the committed tree; docs/proof/composer-compiled-prompt-and-console-rows.md exists with the Ruling 96 condition-1 measurement, red-first evidence per ruling, attended rows and residual risk; the branch pushed; an audit entry appended; coord session ended; the report given.",
+      "duration_seconds": 2473.0,
+      "fan_out": 0,
+      "goal": "Land the Owner's Rulings 96, 101 and 100 as three commits (96 · 101 · 100) on lane/composer-r96-r100-r101, each ruling's CONDITIONS met by red-first tests.",
+      "id": "al-01M2GEFG1Q6TE5ACWCVKXGJMZD",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "You are a lane node of the AI-DE Conductor programme (repo root C:\\projects\\ai-de; the pack's rules in C:\\projects\\ai-de\\AGENTS.md apply). Work ONLY in your worktree C:\\Projects\\ai-de-lane-composer-r96-r100-r101 on branch lane/composer-r96-r100-r101 (based on main dda140ba).",
+      "session": "composer-r96-r100-r101",
+      "shortname": "lane-composer-r96-r100-r101",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-14T16:31:04Z",
+      "summary": "Three commits on lane/composer-r96-r100-r101 (base dda140ba): 170d0366 Ruling 96, b77a39f5 Ruling 101, d8c48356 Ruling 100; the proof doc docs/proof/composer-compiled-prompt-and-console-rows.md. F-E's measured cause (Ruling 96 condition 1, at the operator's belt 489.5 x 517.13, 1 turn, the one-line message, through the header's own click): toggle checked True, CompiledPromptOpen False, _compiled.IsArrangeValid False, ActualHeight 0.00, Text.Length 69, the lines panel 181.92 unchanged - the height was zero, the text present. Both disclosure templates (ThreadFeed.DisclosureStyle, ToolDisclosureStyle) bound the HeaderSite toggle's IsChecked to Expander.IsExpanded with a one-way TemplateBinding, so a click rotated the chevron and never set IsExpanded; the ExpandSite trigger never fired; EmitLayout (SizeChanged-only) wrote nothing - the ledger's compiled null. Fixed with the stock two-way binding; subordinate: the box had no MinHeight of its own (29.89 px under its 48 floor when opened by the property) - the floor is on the box now; the open state persists per session document (model + envelope, same schema version, saved on toggle, restored on reopen). Ruling 101: TextOf reads content[] (first text line · total bytes; the no-text form over the item types), rawOutput in the same form, the zero-item form for a result with nothing - the kind is never a tool result's body; DC-187 kept; ToolFacts.ContentTexts the one reader. Ruling 100: ConversationItems.BookkeepingKinds = acp.session.update.usage_update, acp.session.update.available_commands_update (observed through the mapper over read.jsonl); never items, never in the fold; Rows unchanged (M1 green). Red-first on every control (messages in the proof doc). Tests executed before -> after: App 955 -> 957, Core 2636 -> 2640; verify-test-run --update not run (the conductor's). Findings, not changed: two new classes (composer a: a template toggle bound one-way to the state it drives; composer b: a floor kept as an addend in the parent's arithmetic, never on the element); the fenced first line of write.jsonl:13; the pre-existing s-terminal start-without-stop in SurfaceContentTests (10/9 in every full App run, other agents' too); coord doctor's 8 owed regenerations at base; the outcome line's event count vs the fold's; the census probe never opens the disclosure.",
+      "tags": [],
+      "tier": "T1",
       "tool": null
     },
     {
@@ -15795,6 +17616,21 @@ window.AUDIT_DATA = {
     },
     {
       "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-14T17:16:15Z",
+      "id": "al-01M2GEPRFPC617YYTMWDGVDW0E",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "acp=mcp: For the tool backend i need to be able to use: my claude subscription (my max account in my case); my Microsoft work account with GCHP (so i can let some of my colleagues try it who may not have a claude account); My OpenAI, Grok and Gemini subscriptions. For any given session in the tool... I should be able to switch between any of the accounts i listed above as well as Higgsfield",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "acp=mcp: For the tool backend i need to be able to use: my claude subscr…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
       "artifacts": [
         "docs/proof/explore-view-source.md"
       ],
@@ -15826,35 +17662,6 @@ window.AUDIT_DATA = {
       "artifacts": [
         "docs/proof/composer-compiled-prompt-and-console-rows.md"
       ],
-      "datetime": "2026-09-14T17:12:17Z",
-      "done_when": "Each ruling's CONDITIONS met by tests observed red then green; dotnet test for AiDe.App.Tests and AiDe.Core.Tests pass with counts recorded before and after; run-verify-gates.py green on the committed tree; docs/proof/composer-compiled-prompt-and-console-rows.md exists with the Ruling 96 condition-1 measurement, red-first evidence per ruling, attended rows and residual risk; the branch pushed; an audit entry appended; coord session ended; the report given.",
-      "duration_seconds": 2473.0,
-      "fan_out": 0,
-      "goal": "Land the Owner's Rulings 96, 101 and 100 as three commits (96 · 101 · 100) on lane/composer-r96-r100-r101, each ruling's CONDITIONS met by red-first tests.",
-      "id": "al-01M2GEFG1Q6TE5ACWCVKXGJMZD",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "You are a lane node of the AI-DE Conductor programme (repo root C:\\projects\\ai-de; the pack's rules in C:\\projects\\ai-de\\AGENTS.md apply). Work ONLY in your worktree C:\\Projects\\ai-de-lane-composer-r96-r100-r101 on branch lane/composer-r96-r100-r101 (based on main dda140ba).",
-      "session": "composer-r96-r100-r101",
-      "shortname": "lane-composer-r96-r100-r101",
-      "signals": {
-        "acceptance_met": true,
-        "regression": false,
-        "verification_executed": true,
-        "verification_path": true
-      },
-      "skill": "implement",
-      "started_at": "2026-09-14T16:31:04Z",
-      "summary": "Three commits on lane/composer-r96-r100-r101 (base dda140ba): 170d0366 Ruling 96, b77a39f5 Ruling 101, d8c48356 Ruling 100; the proof doc docs/proof/composer-compiled-prompt-and-console-rows.md. F-E's measured cause (Ruling 96 condition 1, at the operator's belt 489.5 x 517.13, 1 turn, the one-line message, through the header's own click): toggle checked True, CompiledPromptOpen False, _compiled.IsArrangeValid False, ActualHeight 0.00, Text.Length 69, the lines panel 181.92 unchanged - the height was zero, the text present. Both disclosure templates (ThreadFeed.DisclosureStyle, ToolDisclosureStyle) bound the HeaderSite toggle's IsChecked to Expander.IsExpanded with a one-way TemplateBinding, so a click rotated the chevron and never set IsExpanded; the ExpandSite trigger never fired; EmitLayout (SizeChanged-only) wrote nothing - the ledger's compiled null. Fixed with the stock two-way binding; subordinate: the box had no MinHeight of its own (29.89 px under its 48 floor when opened by the property) - the floor is on the box now; the open state persists per session document (model + envelope, same schema version, saved on toggle, restored on reopen). Ruling 101: TextOf reads content[] (first text line · total bytes; the no-text form over the item types), rawOutput in the same form, the zero-item form for a result with nothing - the kind is never a tool result's body; DC-187 kept; ToolFacts.ContentTexts the one reader. Ruling 100: ConversationItems.BookkeepingKinds = acp.session.update.usage_update, acp.session.update.available_commands_update (observed through the mapper over read.jsonl); never items, never in the fold; Rows unchanged (M1 green). Red-first on every control (messages in the proof doc). Tests executed before -> after: App 955 -> 957, Core 2636 -> 2640; verify-test-run --update not run (the conductor's). Findings, not changed: two new classes (composer a: a template toggle bound one-way to the state it drives; composer b: a floor kept as an addend in the parent's arithmetic, never on the element); the fenced first line of write.jsonl:13; the pre-existing s-terminal start-without-stop in SurfaceContentTests (10/9 in every full App run, other agents' too); coord doctor's 8 owed regenerations at base; the outcome line's event count vs the fold's; the census probe never opens the disclosure.",
-      "tags": [],
-      "tier": "T1",
-      "tool": null
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/proof/composer-compiled-prompt-and-console-rows.md"
-      ],
       "datetime": "2026-09-14T17:38:27Z",
       "done_when": "recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
       "duration_seconds": 480.0,
@@ -15877,6 +17684,39 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M2GG3H2632NKX5DDZSN7E1PT",
+      "shortname": "atlas-readable-maximized-source-proof",
+      "datetime": "2026-09-14T17:40:42Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep working and provide periodic todo refreshes showing in-flight and remaining work",
+      "summary": "Owner59withholdsvisible-sourceacceptanceafterparentactual1280x900PNGsourceclipping. Independentrealdata/binding/healthyrelease/lifecyclegreenretained. Sixnewproofleaves27to33samefile: renderedfocus+realWindowMaximizepane, actualtextviewport/outlineclipgeometryandreadablemethod/highlight,preservebeforecaptureandalljourneychecks. No productionresize/fakecontrols/publicidlebarrierclaim. Defaultplacementremainsusabilityfindingevenifmaximizedpathpasses. Proofwriterdispatched; notcompleted.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Demonstrate an existing supported pane state where actual Code Atlas source and member content are readable.",
+      "done_when": "The maximized user path, clipped viewport geometry and owned-window pixels support the real source/binding journey without hiding default-placement limits.",
+      "tier": "T2",
+      "main_calls": 321,
+      "main_budget": 330,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T17:40:42Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "7601509826238df218f0feac4ec5466ca5d8d9a8",
+        "short": "760150982",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     },
     {
       "actor": null,
@@ -15960,6 +17800,39 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M2GHAZBE6D3TZZ3ST1NPTRWS",
+      "shortname": "atlas-real-command-focus-layout-investigation",
+      "datetime": "2026-09-14T18:02:15Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep working and provide periodic todo refreshes showing in-flight and remaining work",
+      "summary": "Owner60funds8proofleaves33to41,main360prospective. Failedmaximizewidth247.41unchanged; sourceviewport0 andclippedlabelmeasured; aftergeometrymissing, failedrunforcedownedPIDexitspreserved. OwneropenedClick→execute→Shellrouter; missingICommanddispatchnotestablished, keyboardfocusnotlogicalfocusedstack. SamefilemustobservefocusedIDs/target/command/layout+AFTERgeometry/pixels, no privateSet/windowresize/productfix. Visibleacceptancewithheld; priorrealdata/lifecyclegreenretained. Proofinvestigationdispatched;todo35done4inprogress.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Identify the actual supported focus, command and layout path that can expose readable Code Atlas source.",
+      "done_when": "Logical target and command effects are measured, with complete post-action geometry and pixels or an exact product seam failure.",
+      "tier": "T2",
+      "main_calls": 333,
+      "main_budget": 360,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T18:02:15Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "6818642e34f3cedf515087650ef23f3098523d09",
+        "short": "6818642e3",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     },
     {
       "actor": null,
@@ -16067,6 +17940,72 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M2GJP6T3EWFGSYEH3VRJNFEJ",
+      "shortname": "atlas-center-primary-reading-placement",
+      "datetime": "2026-09-14T18:25:51Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep working and provide periodic todo refreshes showing in-flight and remaining work",
+      "summary": "Owner61productCenter-defaultsliceS12new72to84dispatchedfreshverified10c7729tree,exactWorkbenchShell/SurfaceContentFactory/SharedHostTests. PreferredCenteronexistingkindrow/existingoverride,newopensonly; preservedexplicitrestoredplacement/Show-existing/otherdocpromptflows. NoCoremaximize/window/font/ReaderViewhack. Redclippedsourceand1280/declaredviewportreadabilityneeded; UX/SRE/Test2eachbeforejoin. Independentproof8new41to49heldforreviewedUIcommit,normaldefaultrealdaemonjourneynotmaximizeworkaround. Addedexplicitreadable-placementtodo; originaldata/lifecyclegreenpreserved.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Make newly opened Code Atlas readable as primary Center content without overriding user layouts.",
+      "done_when": "The existing placement mechanism yields readable source/member/highlight pixels in the normal default path and preserves other placement/lifecycle contracts.",
+      "tier": "T2",
+      "main_calls": 346,
+      "main_budget": 360,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T18:25:51Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "10c772964fd75405981833d0a05eb9f57293ce89",
+        "short": "10c772964",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GM59F2KQVY3HZ4QN3KGP4A",
+      "shortname": "atlas-finite-outline-wrap-release",
+      "datetime": "2026-09-14T18:51:34Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep working and provide periodic todo refreshes showing in-flight and remaining work",
+      "summary": "Owner62S8new84to92addsONLYReaderViewtothreeplacementfiles. ParentreadCenterSource/highlightfitboth1280/1440,fonts13; fullunwrappedlabel218.453vs171visiblefails2oracles. Finitewidthstretch/wrap/no-trimming/fulltext+accessibleName, actualwrappedglyphgeometryrequired; no sourcegrid/window/font/Corechange. ExistingUX/SRE/Test2eachunspent, proof8conditionalunchanged41to49. Parent400prospectiveceiling, pastcostsretained. Sourcewriterdispatched, combinedcandidateuncommitted/unaccepted.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Complete readable Center placement with full width-constrained member labels.",
+      "done_when": "Actual wrapped labels, source lines and highlights fit both declared viewports while selection/focus/Back/ownership and user placement remain intact.",
+      "tier": "T2",
+      "main_calls": 356,
+      "main_budget": 400,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T18:51:34Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "654a2a3be1a3bd070754f2238a0dc35c10307de4",
+        "short": "654a2a3be",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     },
     {
       "actor": null,
@@ -16200,6 +18139,39 @@ window.AUDIT_DATA = {
       "duration_seconds": 533.0
     },
     {
+      "id": "al-01M2GP0QVYFD5Z2V497ABSME4Z",
+      "shortname": "atlas-center-joined-default-proof-released",
+      "datetime": "2026-09-14T19:24:02Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep working and provide periodic todo refreshes showing in-flight and remaining work",
+      "summary": "UX/SRE/Testallcleared6591Center+wrapping; parent232/232independentandjoineddd84702b232/232,4filesidentical. ProofadoptedONLYreviewedUIasf89822cb; dirtysoleproofdeltaSHAunchanged. Releasedconditional8proofleaves41to49 fornormalCenterdefault+actualwrappedglyphs/realdaemon/lifecycle/UIA/memberPNG; removeslegacymaxoracle/workaround,nohiddenresize. Defaultreadabilityacceptanceawaitsnewpixels. Oldcombinedfailure/captures/forcedexitsretained; nohistoricalscopefigurespromoted.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Prove the reviewed normal Center default through the actual daemon and window.",
+      "done_when": "Normal-default source, member glyphs and highlight are visibly readable with real binding/lifecycle evidence and owned capture.",
+      "tier": "T2",
+      "main_calls": 373,
+      "main_budget": 400,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T19:24:02Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "dd84702b71d0a32ebe860f211b0a05b946726ccf",
+        "short": "dd84702b7",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
       "id": "al-01M2GPXF95DJBM8HW4KVPMF43F",
       "shortname": "join-conductor-seam-engine-row",
       "datetime": "2026-09-14T19:39:44Z",
@@ -16226,6 +18198,39 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T19:30:43Z",
       "duration_seconds": 541.0
+    },
+    {
+      "id": "al-01M2GRPF6QKQY0RPXATEPRCRHC",
+      "shortname": "atlas-e0-bounded-acceptance-e1-design",
+      "datetime": "2026-09-14T20:10:51Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "keep working and provide periodic todo refreshes showing in-flight and remaining work",
+      "summary": "Owner63acceptedboundedrealdaemonE0normalCenterreading forobservedfixture/viewport afteractualPNG/geometry/lifecyclereadback. Approvedcapturecopiedwithverified0A55507A...hash anddurableproofdoccreated. Parentseparatereplay1PASS; current-Conductorproofjoin/replaypendinghardcoded-root/startup-parityfollowup. Fourproofleaves47to51dispatched; footernotaccepted. E1staticclass/memberDESIGNONLY12leavesdispatchedseparatetree8b9232d5,oneMD,4reviewsreserved. E1sequence/activityexplicit;E2domain/ER/layer/Azure,E3correspondence,E4AIunfinished. No mainpush/normativeE/programmeclaim.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-real-daemon-mainwindow.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Preserve bounded E0 evidence and begin the next explicitly admitted static-view design.",
+      "done_when": "Accepted E0 scope/limits and capture are durable; footer/current-root follow-up and E1 design have exact bounded owners.",
+      "tier": "T2",
+      "main_calls": 395,
+      "main_budget": 400,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T20:10:51Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "8b9232d5c0f7bebcaada0cdc01e7eff193e98bb3",
+        "short": "8b9232d5c",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     },
     {
       "id": "al-01M2GS9KKEXPF2018MXVSYP8XM",
@@ -16284,6 +18289,425 @@ window.AUDIT_DATA = {
       "duration_seconds": 504.0
     },
     {
+      "id": "al-01M2GT041TZKXP9Z6QSREZG9KB",
+      "shortname": "atlas-owner64-proof-e1-checkpoint",
+      "datetime": "2026-09-14T20:33:36Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner64 authorizes four proof-only leaves 51 to55 and prospective cumulative Conductor430. Actual footer binding/VM owner, legitimate refresh and current-checkout replay required. E1 design76d30b42 fully paged/read; codec/capability, charge and native source-contract gaps remain explicit, no code grant. Four review-node budget interpretation referred to Owner. Ledger refreshed36done6inprogress. Current Claude liveness read: wave1main75a2adfb, composer and engine spikes live; no canonical ownership transfer/main consent inferred. Corrected stale own liveness. Shell probe mistakenly parsed Markdown as JSON; restricted parser by extension, no repository defect or product change.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-real-daemon-mainwindow.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close remaining E0 proof and obtain E1 design decision",
+      "done_when": "Proof integrated and replayed; E1 has reviewed implementation boundary",
+      "tier": "T2",
+      "main_calls": 418,
+      "main_budget": 430,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T20:32:29Z",
+      "duration_seconds": 67.0,
+      "git": {
+        "sha": "f8b0f3c7453b87221b1d656ffcd5c2700efb079f",
+        "short": "f8b0f3c74",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GTC866ZCBGC6M9F1AFBQ1H",
+      "shortname": "atlas-owner65-contract-grant",
+      "datetime": "2026-09-14T20:40:14Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner65 expands four TOTAL review leaves to16, four each, not retrospective reinterpretation. New16-leaf Astra source-contract checkpoint updates only E1 design in separate explicitly pinned tree before reviewers. Parent§2 records exact assignment and sequence. Old/new codec, lifetime/charging, native events and decoded-memory claims remain source review blockers. Proof continues independently. No E1 product/main/push grant.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Complete E0 closure and source-grounded E1 admission",
+      "done_when": "Integrated E0 replay and explicit E1 gate decision are recorded",
+      "tier": "T2",
+      "main_calls": 425,
+      "main_budget": 430,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T20:40:14Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "b6e053c29629f53c5c670d6586213cdf09c3af08",
+        "short": "b6e053c29",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GVKA9838A47TMFQTG7VBN3",
+      "shortname": "atlas-e0-footer-current-tree-closed",
+      "datetime": "2026-09-14T21:01:34Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner66 raised455; Owner67 proof55to63. Authorac683dce1pass; parent reviewed whole changed source/receipt/twoPNGs before authorized proof-only joins d4d84674/9b9f83d4/a8e09f35. CurrentConductor rebuilt and fullproof1executed1passed0failed; repo/Git/assembly/daemon roots exact. Named StatusMessage footer owner/refreshed text; characterized U+0020 no-ink only; missing-character/nonwhiteemptyink/clipping controls rejected on both VMs. Normal exits38152/59056zero, fixturesdeleted, two releaseACKs and borrowedquery reuse. Fresh initialized member and replacement-footer PNGs retained separately; replacement loading pixels not settled-source proof. Historical failed runs and publicidle/heldrace/distinctcommand/broadcoverage exclusions preserved. E0two closing tasksdone; programme38done4progress, not productpercentage. E1contract16leafreview running, no source/main/push grant. Budget countsmanualleaves, wrapper total not newly inferred.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-real-daemon-mainwindow.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close bounded E0 named footer and current-checkout proof",
+      "done_when": "Three proof commits joined and full Conductor-root replay plus pixels, controls and normal cleanup recorded",
+      "tier": "T2",
+      "main_calls": 451,
+      "main_budget": 455,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T21:00:03Z",
+      "duration_seconds": 91.0,
+      "git": {
+        "sha": "a8e09f355e6785e7b0f24b009cc64e7f9785fc54",
+        "short": "a8e09f355",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GWRJFPHQ8Q46QS4VQJXGZ9",
+      "shortname": "atlas-e1-contract-review-join",
+      "datetime": "2026-09-14T21:21:55Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc) - execute in fleet mode",
+      "summary": "Owner68 raised475. Source-contract worker ed8511c2 used16/16, corrected strictcodec/capability/SELECTRESTORE/nativepaging/charge ledger and16path manifest; parent verified product/tests unchanged fromb6e053c2 and read ledger0.2to0.8. Four reviewers at samepin: Test andUX design-onlyconditional; Core4/4BLOCK product on unexecutedSP1/SP4, suitabletestonly; UML4/4didnotclearfullnotation due3metadatareads+truncatedsearch159/183omitted. Parent supplied exact464to567+333to360 ranges and requested2newleaves, not presumedclear. Test/UXactualcounts not reported, metadata clarificationpending. No E1 source grant. Proposed test-only actual SP1/SP2 andcurrentSP4baseline; no fakecodec/no compileerrorasbehaviorred, SP3/fullnewmetadataSP4remain. E0 committedaf6506b4 and38done4progress remains bounded, no programme/main/push/privatehistory acceptance.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Converge the corrected E1 source contract and four independent reviews",
+      "done_when": "All four review predicates are classified and Owner receives the exact next admissible tranche",
+      "tier": "T2",
+      "main_calls": 472,
+      "main_budget": 475,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T21:13:10Z",
+      "duration_seconds": 525.0,
+      "git": {
+        "sha": "af6506b4fe77cd688d7efc2abaa3cb268c4c2b21",
+        "short": "af6506b4f",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GXR0CABF4GGPPS30MSKKR4",
+      "shortname": "atlas-e1-test-qualification-start",
+      "datetime": "2026-09-14T21:39:05Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner69 UML2newreads finalT2designPASS, total6; Test3/4 UX4/4 Core4/4,17/18totalreviewleaves. Designjoins502e1495/c9617fb7 plus parent postreview disposition; current productveto SP1/SP4notcleared. Newregisteredverifiedtesttreec9617fb7; GPT5.5worker4c71df17 executing24leafTESTONLYtwofiles, no source/fakecodec/compileerrorred. Parentimplementskill+flow loaded; allpriorfailurespreserved. Ledger43tasks39done4progress (qualificationnowseparatetask), E0boundedcomplete. Existing canonical security/privacy documents have repository-specific names and remain unchanged; new design contains proposal-onlySTRIDE/LINDDUN, no implemented new processing/egress. No main/push/normativeE/privatehistory. AIDEcontractenvabsent, no invented episode event.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/code-atlas-e1-static-views.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Qualify current E1 codec and lexical contracts without product changes",
+      "done_when": "Two test files and actual receipts identify current behavior and missing seams, with independent gate disposition",
+      "tier": "T2",
+      "main_calls": 491,
+      "main_budget": 500,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T21:36:02Z",
+      "duration_seconds": 183.0,
+      "git": {
+        "sha": "c9617fb7d6911731def65a0fadbeaaa405f53eae",
+        "short": "c9617fb7d",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GYSBXR9ARHK2T5XZX10D1V",
+      "shortname": "atlas-e1-candidate-review-held",
+      "datetime": "2026-09-14T21:57:18Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner70 grants12reviewleaves4eachTest/CSharp/CoreSecuritySRE andmain530. Candidate020f9622 onlytwoauthorizedtestfiles331lines, productunchanged; parentreadallsource and independentlyreplayed16executed16pass0fail, actualTRXread. No candidatejoin. Clearly unexercisedactualregistration/remoteRESTORE/Qissuerwriter paths notpromoted fromcodecfixture/queueledger tests. Vacuity, siblingversusintervening, frameboundary andfailurecleanup questions inindependentreview. Authoradmittedapprox35/24leaves+wrappers, furtherauthorcallsstopped; approxnotreconciledmeasurement. Three earlieroraclecorrection failuresclaimed, onlyfinalTRXfound; metadata-onlyno-toolrequestsent. Sourceprofile/newmetadata/nativeUI/SP3/incrementalSP4unqualified. Threefundedreviewerssamepinrunning; no newsource/main/pushpermission.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Evaluate the frozen test-only qualification without overstating its reach",
+      "done_when": "Actual tests, claim limits and independent review predicates are recorded before admission",
+      "tier": "T2",
+      "main_calls": 509,
+      "main_budget": 530,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T21:54:20Z",
+      "duration_seconds": 178.0,
+      "git": {
+        "sha": "7cc20382120aa87c757e750d3d55502c53c3a054",
+        "short": "7cc203821",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2GZE6WKBAGZX14YXWA34RWZ",
+      "shortname": "atlas-e1-qualification-blocked-evidence",
+      "datetime": "2026-09-14T22:08:41Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner71holds020f/noauthorwork. All3reviews4leaveseachBLOCKqualification: mutationhitsrootandrow, vacuous/nullsemanticoracles, missingfixturedisposal andassertion-abortedqueuecleanup, wrongbody/prefixunit andzero-acceptingchargeupperbound, overstatedpathnames. Thesearetestdefects/evidencelimits, notnewproductionvulnerabilities. AuthorconfirmsoldTRXoverwritten;3reportedredsfixture/oraclecorrections, exactcountunknown~35/24+wrappers. Newproofrecordsactual16greenandnonclaims; nojoin. Parentopenedexistingrealreader/restorer andblockedwriterbaselinetestexcerpts, reusepotentialnotnewexecution. Owneraskedforboundedtwofilerepair+baseline-reuse andresolutionofnewmetadatarequirementsoutsideOwner69grant; noimplicitexpansion. CoreproductSP1/SP4/SP3andwiderE1E2E3E4remainopen.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Preserve actual E1 qualification evidence and its gate failures",
+      "done_when": "Candidate scope, execution, missing reds and independent blocking predicates are durably recorded",
+      "tier": "T2",
+      "main_calls": 525,
+      "main_budget": 530,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T22:05:53Z",
+      "duration_seconds": 168.0,
+      "git": {
+        "sha": "64a597a55054376cbceafcd50e7b9693db987c0a",
+        "short": "64a597a55",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2H06NA86ZF83STV9K939SF5",
+      "shortname": "atlas-owner72-scoped-test-repair",
+      "datetime": "2026-09-14T22:22:02Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner72openedcandidateandadmits16NEWrepairleavessamewriter/tree/twofiles; old~35/24notretrofunded. Fixpath-specificrowmutation, meaningfuloccurrence/logicalidentitychecks, disposableinputs/partialconstruction, cleanupbeforeasserts/exactcharges, body-prefixunits, truthfulnames; newuniquecontroloutputs. ReuseexistingrealNativeScopeSELECTmemberRESTOREandNativePublicationLifetimeOrdering CURRENT E0 tests, no duplicateimplementation. Ownerexplicitlyexcludes parent/flavor/newmetadataimplementationfromTESTONLYexit; productgatesremain. TwelveNEWpostrepairreviewleaves4each andmain560. Actualcapcaptureonlyviaestablishedseamotherwisegap. Dispatched4c71df17; prior020fheldproofae91998cpreserved. Ledger39done4progress, no product/main/normativeEclosure.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Repair the qualification tests without expanding into missing E1 product behavior",
+      "done_when": "Nonvacuous cleanup-safe tests and existing real-baseline receipts are frozen for independent review",
+      "tier": "T2",
+      "main_calls": 532,
+      "main_budget": 560,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T22:22:02Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "ae91998c0f553a420960d392a0145480c0b7ed44",
+        "short": "ae91998c0",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2H1QX9HZ18HJZQ78B8RYDSA",
+      "shortname": "atlas-e1-repair-review-disposition",
+      "datetime": "2026-09-14T22:48:56Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "aa4926e9author14/16; parent27/27=16focused+10NativePublication(includingownership)+1realNativeScopeRestore, rawmatched-drain/publicationread. CURRENT E0baseline notnewmetadata. FreshTest3/4conditional,CSharp4/4twoWrappersconditional,CoreSRE4/4BLOCKwhole-rootinvariance missing; scopeTokenonlycannotexcluderoot+rowcorruption. ClassFlavordeclaredclassactuallynull, secondaryexceptionsreduced,cleanupfailurecontrols unobserved. Red16/4fail scope limited toactualmutants, notautomaticregressionproof. Parentclasssweepobservedexactoldbadqueuecleanup/upperbound inexistingAtlasReadBudgetTests; Owner73requiresrecord,no3rdfilegrantyet. AskedOwnercompare2homesvsdelete duplicateandexplicitlyrepaironecanonicalbudgettesthome. Nojoin/furtherauthoringcurrently, no E1product/main/normativeacceptance.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Disposition the repaired qualification against its actual boundaries",
+      "done_when": "All fresh reviews and exact remaining predicates are recorded for Owner decision",
+      "tier": "T2",
+      "main_calls": 556,
+      "main_budget": 560,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "git": {
+        "sha": "0966e6ff3cfde39c5742832faf690f611c5988ae",
+        "short": "0966e6ff3",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2H24BQRANRVZ2MP7RJK5WWW",
+      "shortname": "atlas-owner74-budget-test-consolidation",
+      "datetime": "2026-09-14T22:55:44Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner74choosesB:16NEWleaves samewriter/tree now3EXACTtestfiles includingAtlasReadBudgetTests; unusedprior2nottransferred andold~35/24preserved. Deleteduplicatequeuefixture, repaircoupledclassacrossthreeexistingbudgettests withprimary-secondaryexceptionobjects andactualfailurecontrols. Rootpropertysets/valuesminusoutline, exactclassvalue, root+rowcorruptionmustfailbeforecodec. Same16leafwriterdispatched; nohelperfile/prod changes. Fresh12reviewleaves4each andmain590. Currentaa27/27rawbaselineunchanged, nojoin. Ledger39done4progress; E1productseamsstillopen, no main/push/normativeE.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Consolidate and qualify cleanup-safe nonvacuous test controls",
+      "done_when": "One budget-test home and exact JSON isolation survive retained fault controls and independent review",
+      "tier": "T2",
+      "main_calls": 563,
+      "main_budget": 590,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T22:55:44Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "24e8d1b7a43489c9462fb61862f3b21b82c8c9e6",
+        "short": "24e8d1b7a",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2H3HYX1KTK6Y5VH4FTBB56G",
+      "shortname": "atlas-owner75-lifetime-transfer",
+      "datetime": "2026-09-14T23:20:38Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "All44c7reviews:Test3/4conditional,CSharp4/4twoWrappersBLOCKadvisory,CoreSRE3/4rootvetoCLEAREDresourceBLOCK. Owner75transferssoleAtlasReadBudgetTests.cs toretainedCoreAstra innewregisteredverified44c7tree; coordcheckedpredecessorleaseALLOWbeforeauthorclaim.16newleaves, old5unusednottransferred; originalwriter/other2filesfrozen. Musttrackallacquisitionsinclrefusalunexpectedresults,releasebeforedependentawait,ownFIFOeverypath,realbounded5admissionred/control,partialandprimary-secondaryfaultobjects.12freshreviews/Main620. Owner76recordsfailedreflectionprobeAccessDeniedOS5/nooutput/notsemanticred; no retry/bypass, ordinaryauthorizedtestrepair supplieswitness. No newmetadata/product/main/normativeacceptance. OriginalE0and31greenbaselinepreserved; currentqualunjoined.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close the one-file test-helper lifetime defects without reopening accepted qualification surfaces",
+      "done_when": "Five-admission and failure-ownership controls produce retained evidence and fresh independent clearance",
+      "tier": "T2",
+      "main_calls": 585,
+      "main_budget": 620,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T23:20:38Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "aa6303ec3d2daaf4de4d717f4715beef44875790",
+        "short": "aa6303ec3",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2H4D6XBXQQ37FC1GAY6TB6X",
+      "shortname": "atlas-lifetime-counterexample-and-replay",
+      "datetime": "2026-09-14T23:35:31Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "7262566bCoreAstra14/16nowrap, solebudgettestdelta, otherqualification/produnchangedverified. Parentreadfullsource andRAWoldhelperfive-admissionredTimeout4active1pending:cancel+awaitcleanup4success1cancelzero. New37/37parentreplay with5success0faultnocancel, exactFIFO/capacity/partial0-1-3 andsameexceptionobjects. Same-typeexceptionreplacementmutant2Assert.Samefailures3pass preserveszero. NewE0baseline11separate. Thisordinarytestevidence—notdeniedreflection—establishesboundedtesthelpercounterexample. Source/rawsnapshotsallretained, no-receiptno-restoreexitnotproof. Threefresh4leafreviewsgatesrunning, nojoin. FutureE1parent/flavor/optin/longfile/newmetadatachargesunimplemented. Earlierlosses/overrunsnotrewritten.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Establish the lifetime repair with actual counterexamples and independent replay",
+      "done_when": "Pinned one-file red/green, exception identity and acquisition/drain accounting are recorded for independent gates",
+      "tier": "T2",
+      "main_calls": 599,
+      "main_budget": 620,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T23:32:39Z",
+      "duration_seconds": 172.0,
+      "git": {
+        "sha": "9ec414d32859aeee0ccd83e8ff94327695b232f6",
+        "short": "9ec414d32",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2H4STF70VKBCWNNSBW00DRB",
+      "shortname": "atlas-final-qualification-gates-clear",
+      "datetime": "2026-09-14T23:42:24Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Final7262566b: Test3/4onewrapperconditionalPASScurrenttestscope;CoreSRE4/4PASSresourcelifetimevetoCLEARED;CSharp4/4twowrappersPASSadvisory. Completeonefilesource+retainedparent37/37/oldhelperred/identitymutantinspected. No remainingCURRENTqualificationpredicate reported. Futuremetadata/negotiation/SP3/incrementalSP4remainoutside. Owner77requestedconsolidatedreceipt; suppliedexactfourtestcommitjoinchain020f,aa,44c7,726 andproposed11fileCoretranchefromexisting16pathdesign, dependencyoncompiledportbeforenativeUI, explicitsemanticoracles/budget. AwaitOwnerruling; nojoin/sourcegrantinferred. Allfailedintermediateevidencepreserved.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Converge independent current-qualification gates and request the bounded next implementation",
+      "done_when": "All three final receipts and exact test-chain/next-core requests are recorded without widening acceptance",
+      "tier": "T2",
+      "main_calls": 607,
+      "main_budget": 620,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T23:41:52Z",
+      "duration_seconds": 32.0,
+      "git": {
+        "sha": "b4d3136794f9daf18927fca206e8e902276a900d",
+        "short": "b4d313679",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
       "id": "al-01M2H4TJZCNBFCMPEFFHY7195C",
       "shortname": "join-conductor-catalog-seams",
       "datetime": "2026-09-14T23:42:49Z",
@@ -16310,6 +18734,429 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T23:34:34Z",
       "duration_seconds": 495.0
+    },
+    {
+      "id": "al-01M2H5HYV9AX5V7BTBN305C6A9",
+      "shortname": "atlas-qualification-joined-core-admitted",
+      "datetime": "2026-09-14T23:55:35Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner78testonlyjoins2a05bbaf/3ca57f89/b79e662c/b91d4bb5; aggregate3testsno productdelta. ActualConductor37/37 withrawpercaseoutput, ProofPackcurrentacceptedboundedqualonly. SeparateCoreAstra48leaves11exactpaths, newtreeatlas/e1-core-metadata verifiedb91d4bb5; all11identitycheckedcoordresultsALLOWbeforeauthoring. No App/genericprotocol/dependency/storeexpansion. Genuinelegacy6cellcompatibility, verifiedsyntaxparent/flavor, Corelargepaging/UTF16/nonBMP, incrementalcharges/escapedwriterdrain mandatory; preserveoldcontrols.20freshindependentreviewleaves4eachSecurity/Data/DS/Test/CSharp,main660. Nodequalificationdone; newCoretask44total40done4progress, notproductpercentage. No main/push/normative/privatecontentpermission.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-qualification.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close current qualification and start the separately admitted E1 Core behavior",
+      "done_when": "Authorizedtestchainjoined/replayed/recorded and exact Corewriter/tree/manifest admitted",
+      "tier": "T2",
+      "main_calls": 615,
+      "main_budget": 660,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-14T23:53:19Z",
+      "duration_seconds": 136.0,
+      "git": {
+        "sha": "b91d4bb5b0f59352b7f90b94e0b2733a647452dc",
+        "short": "b91d4bb5b",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HAJDPTGX5XAS8RZ9BSH8FZ",
+      "shortname": "atlas-core-candidate-fixture-and-review-closure",
+      "datetime": "2026-09-15T01:23:13Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "ceaCoreparent494/494fixturepresent andAppbuild0; source/binaryhashesverified. SourceCoreProofcapturessemanticred/SP1-4/limitations. Testblocksfixture+unreadSP2;DSWITHDREWwrongphysicaltreereview;CSharpunreadrangesaftertoolerrors;Data4reportedpinnedphysicalsource/metadatawrapperdescriptionnotimmutable;Securityconditionalsourceclear. Owner80funds8completionreadsDS4CSharp3Test1; parentdirectgitblobpackets withcommit/blob/path/lineheaders+actualTRXexcerpts generated in sessionfiles, built-inviewsdispatched. Separate16leafCoreAstrafixturewriternewcea tree exact5paths, allleasechecksALLOW, preservegenuinehashes/safeownsourcearchive/twofreshrootordinarytestproof; hashdriftreturnednotguessed. Main700. Fouractiveworknodescap; futureOwnerprogressrequests wait forcapacity. Clarified user Waiting on Core means thisCopilotfleet, notClaude. No sourcejoin/nativeUI/main/normativeE. Ledger45tasks40done5progress, notproductpercentage.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-core-metadata.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close Core review coverage and genuine legacy fixture delivery without widening product scope",
+      "done_when": "Correct-pin completion verdicts and reproducible fixture inputs/results resolve the held Core gate",
+      "tier": "T2",
+      "main_calls": 666,
+      "main_budget": 700,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T01:20:37Z",
+      "duration_seconds": 156.0,
+      "git": {
+        "sha": "8178eaf48163bcd1009be9423646ffa683ab2605",
+        "short": "8178eaf48",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HCE0JKYWZEN5DVQC3XFJEW",
+      "shortname": "atlas-fixture-provenance-gate-and-accessor-control",
+      "datetime": "2026-09-15T01:55:46Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner80fixture16/16stoppedcorrectly: genuinepatchedsourceequalacrosstwofreshroots, bothbuildsreportgreenbutbinaryhashesdifferacrossroots/referencepair. Parentindependentlyhashedoutputs/readactualSourceLink mappingambientcea despiteInformationalVersionb91; root-specificPDBpathsrecorded. No hashrelaxation/no fixturecommit/wiring, no cleancloneclaim. Requestedexplicitdeterministicpath/PDB/baselineSourceRoot/SourceLinkcontract, notarbitrarynewhashapproval. SeparateOwner81test-only1791f95d3/3 commits exactget-set/add-removemultisets+empty/duplicatecontrols; parent9/9actual andrawassertfailuresread, Test1leafreadbackactive. DScompletionpinconfirmedwithissuerprovenancecorrected, C#completionPASS; productCorecea unchanged andunjoined. Alloldfixturepresent494greenspreserved. No metadata/UI/main/normativeacceptance.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-core-metadata.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Establish reproducible legacy fixture provenance and close the separate accessor oracle",
+      "done_when": "Two-root hashes/provenance and actual accessor fault controls are recorded for Owner/Test disposition",
+      "tier": "T2",
+      "main_calls": 690,
+      "main_budget": 700,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T01:54:35Z",
+      "duration_seconds": 71.0,
+      "git": {
+        "sha": "d2cd73ce5cae987414f6c2b4342109ee43abcc2c",
+        "short": "d2cd73ce5",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HD2H96W7N0434V241A8W7Y",
+      "shortname": "atlas-owner82-deterministic-fixture-contract",
+      "datetime": "2026-09-15T02:06:58Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner82new16leafsamefixturewriter/tree5paths, old16/16andseparate3/3accessorcostsretained. Canonicalpaths/PDBbaselineSourceLinkandpatched-sourceidentityrequired; output/stagingoverridesdeclaredhashedonly. Historicalhashesstayreferences. Onlyafterequality/provenancechecksmayfixedqualificationpairbepinnedBEFOREruns; Ownerseparatelyapprovesnormalpair. No arbitraryenvhashacceptance, SourceLinkfalsebaselineclaim, disablingprovenance, private/thirdparty/caches/fetch/mutedtests. Remainingordinaryautoprep/extractionhostiletests/contextseamgatesexplicit. Test1/1clearedaccessororacle afterparent9/9. Coreceastaysunjoined/nativeUIungranted, main740.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Make genuine legacy fixture builds reproducible without weakening identity or provenance",
+      "done_when": "Twofreshrootcanonicalbyteequality/provenance andrealcompatibilitysupportanexplicitnormalhashdecision",
+      "tier": "T2",
+      "main_calls": 697,
+      "main_budget": 740,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T02:06:58Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "dec1ec131e250b7337225816e309ddd9abb1d69a",
+        "short": "dec1ec131",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HEKBTRTYSGV5MPTG40X4TG",
+      "shortname": "atlas-legacy-startup-path-investigation",
+      "datetime": "2026-09-15T02:33:38Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner82canonicalbuildsreproducibleperretainedreceipt, qualification33/34failslegacyServerEOF. Parentreadchildlogs(noTRX)andactualharness; standalonecanonical-e1PASS, exactfailedpreparedpeer1FAILretainedGitFilenameTooLongbeforeworkspacepublish, samepreparedruntimeclosurecopiedownedshortpath1PASSCore/Peerhashesequal. Peerpath181vs85; no product/config edit. Archivedfixture425–478 derivesrepo beneathAppContext.BaseDirectory; deliverylaunchesdeepbuildoutput. Classunboundedbuildtoruntimepathcomposition; clientrolepasseswithoutsamelegacyserverrepo. Parentkill-beforeloggerflush diagnosticloss isInferred, not timedproof. Markersswepttwo deliveryfilesnone. Proposedshortownedexecutionstaging/hashchecks/pathbudget+boundeddiagnosticflush andrealroles/hostilecontrols; stoppedforOwnergrant. Originalhashes/canonicalqualificationpair/failurespreserved; no hashapproval/cleancloneclaim.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/code-atlas-legacy-peer-startup.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Diagnose the canonical legacy-server startup EOF without guessing or changing source",
+      "done_when": "A retained discriminator identifies the startup failure class and a bounded repair is returned to Owner",
+      "tier": "T2",
+      "main_calls": 714,
+      "main_budget": 740,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T02:31:58Z",
+      "duration_seconds": 100.0,
+      "git": {
+        "sha": "e1e3a59f55dae34e44d591b58af2b3035b09915e",
+        "short": "e1e3a59f5",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HF46R88ZBE70M8XSRMQQ9F",
+      "shortname": "atlas-owner83-bounded-runtime-staging",
+      "datetime": "2026-09-15T02:42:50Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner83acceptspairedpathRCAandgrants12newleavessame5files, fixturetotal44. Executionbudgetderivedfromlegacyruntime suffix/toolcontract, not85asgeneralbound; declaredruntimeclosurecopiedshortownedpathandhashchecked, oldCore/globalsettingsunchanged. Boundedchildexit/TRXgrace+concurrentlogs retainsprimaryerror, forcedkillreported. SameED7F/8E95QualificationOnlypairnotnormalapproved. Bothroles/fullCore/hostilearchive-outputcontrolsmustexecute;12freshreviewleavesSecurity/SRE/Test4eachafterparentreadback. Writerdispatched, sourceCore/UI/mainjoinungranted. Priorfailedpreps/EOF/standalonelongfail-identicalshortpassandallcanonicalprovenancepreserved.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/investigations/code-atlas-legacy-peer-startup.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Deliver the reproducible peer through bounded owned execution staging",
+      "done_when": "Both genuine roles/fullCore/hostile-output controls and cleanup support a separate canonical-pair approval",
+      "tier": "T2",
+      "main_calls": 720,
+      "main_budget": 740,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T02:42:50Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "1ea80c0d06311cb8cb69743b611f5179c62169c8",
+        "short": "1ea80c0d0",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HH9H6ZXW0049C8DCRCNSRR",
+      "shortname": "atlas-owner85-reciprocal-preflight-close",
+      "datetime": "2026-09-15T03:20:42Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner84main780; Owner85new4authorleavessame5files+2Securityreads, oldunused2nottransferred. Actualparentunfixedreciprocalcaseexit1afterbothroots/buildcreated; noescapeclaim. Parentoldhostilearchives/manifest/patchhashesmatch,current253Fscriptmatches, actualstderrstructuralguards—notprereqhashfailures. RawZIPnamespreservedseparatelyfromPythonnormalizedview. Revisedscriptmustrejectreciprocalpreflight andfreshneither-root-created; recheckhostilecasesnewscriptwithoutoverwritingoldlogs. PairED7F/8E95QualificationOnly andCore/testsunchanged; no approval/commit/sourcejoin/nativeUI. Test/SREcandidate-treeclearance retainsuncommitted-input/no-cleancloneboundary; Securitycurrentvetoexplicit.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-e1-core-metadata.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close the precise reciprocal preflight and guard-evidence delivery predicates",
+      "done_when": "Revised script refuses before creating either root and Security reads guard-specific current-hash evidence",
+      "tier": "T2",
+      "main_calls": 750,
+      "main_budget": 780,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T03:20:42Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "5c9565038caf266966dd32a23071ab4581852266",
+        "short": "5c9565038",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HJHKCSHF42RXEAA27BRY7N",
+      "shortname": "atlas-owner86-canonical-pair-adoption",
+      "datetime": "2026-09-15T03:42:35Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner86normalpairED7F/8E95approved; historical6353/641B/sourceprovenance unchanged. Fournewadoptionleavesdispatchedsamewriter5files,status/referenceonly,no novelcode. Security6cumulativefixtureleavesfinalPASS; Test/SREboundedcandidateclear, forcedkill/race/broadrootlimits explicit. ConditionalexactCorecea/accessor1791/approvedfixturecommitjoins+8verificationleaves; no literalcloneclaimorUI/main/normativeacceptance. Parentfailedonepatchcontextwithoutchanges thenappliedexactregistersection; correctedno sourceimpact. Main780 unchanged.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Commit the approved genuine fixture and prove joined delivery before native authoring",
+      "done_when": "Approved-modefive-filecommit/hashreadback andjoined/freshworktreeordinaryreceipts supportCore/fixtureclosure",
+      "tier": "T2",
+      "main_calls": 765,
+      "main_budget": 780,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T03:42:35Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "dd682d27a5baf8f10e1880a0a7e90a2f40f770cf",
+        "short": "dd682d27a",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HKG7AX4Z935ZCR0A8GJXPY",
+      "shortname": "atlas-owner87-git-canonical-fixture-input",
+      "datetime": "2026-09-15T03:59:18Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "4e34fixturecommit5files/authorApproved497green, butparentrawGitblobcheckandactualfreshregisteredworktreefoundpatchLFDA1!=manifestCRLF9639. Attrstextauto/eolLF; FreshApprovedpreparationFAILline72beforebuild. Parentbyteproofonly130CRLFnormalization7590→7460, archiveunchanged. Owner87grants4leavesONLYcanonicalLFpeerpatch+manifestinputhash/provenance, preserveold9639reference/ED7F8E95pair/archive/source/settings,.gitattributesunchanged. Newcorrectioncommit/readblobs required; sourceCorejoinsheld. ScriptcanonicalblobBF7F...recordedno logicchange. Main820, no newUI/main/normativeauthority.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-e1-core-metadata.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Align approved fixture provenance with canonical committed input bytes",
+      "done_when": "Committed/freshLFpatchhashmatchesmanifestandpreservesqualifiedsource/approvedbinaries beforeintegration",
+      "tier": "T2",
+      "main_calls": 777,
+      "main_budget": 820,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T03:59:18Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "6e8be3345cd07b053afe6237ec8d7089d208504b",
+        "short": "6e8be3345",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HMSF9C3MDV16W6M42871EH",
+      "shortname": "atlas-e1-core-and-fixture-delivered",
+      "datetime": "2026-09-15T04:21:50Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner86/87conditionaljoinscompleted9716efba/7829377d/85594e77/2b818f14,exact15paths. Rawcommit+freshLFDA1manifestmatchbeforejoins; noApp/daemon/framing/deps/projectchanges. Joined497/497 andNEWpostjoinworktreeemptyartifacts/bin/obj497/497 afterlegitrestore; no-restoreexit0withoutTRXretainedNOTproof. Nooldfixtureenv. Parentread6Approved/ApprovedReproductionreceipts exactpatch/binaryhashes,158runtimefiles/root85or90<=135, childTRX/PIDabsent/noforcedkill/cleanupnull. FreshworktreeNOTliteralclone. Canonicalinputrepresentationfailure preserved; historicalsource/PDB/blocked/mutantcontrols notrewritten. Core/fixturetasksdonewithinboundedScope42done3progress; next5pathnativeauthorrequestOwnerpending. No nativeUI/main/push/normativeE/programmeacceptance. Existing API/docs bundle regenerated against new public ports.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-core-metadata.md",
+        "docs/design/code-atlas-e1-static-views.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close joined Core/fixture delivery and carry its verified ports into the next native decision",
+      "done_when": "Committed/fresh input hashes, joined/fresh ordinary execution and actual preparation/lifetime outputs are recorded",
+      "tier": "T2",
+      "main_calls": 791,
+      "main_budget": 820,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T04:19:21Z",
+      "duration_seconds": 149.0,
+      "git": {
+        "sha": "2b818f144980a0e2acecbaddc0795864a00673a3",
+        "short": "2b818f144",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HNK97556778ZDN9X71G9FN",
+      "shortname": "atlas-owner88-native-class-view-start",
+      "datetime": "2026-09-15T04:35:56Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner88acceptsCore/fixtureboundedclosure4a581204 andadmits48nativeauthorleaves5paths toretainedShellAstra0425. Newtree/baseverified4a581204, all5predecessorchecksALLOW; §2exactownership/directionrecorded. UI-designcreateextension: grounded/readable/ordered, VSfilemetaphor+scopedUMLcompartments, inheritE0Centerandtokens. TriggersUI-T1expertprecision/UI-T4WindowsWPF; no generatedassets/modelUI. Existingapprovedproposal/UXreusedwithoutprivateimport; noextraHTML/DESIGN/chromeauthoring. Fullrealdaemon/pipe/nativejourneys, >128/farUTF16/CRLFnonBMP, exacttoken/source/Back, hardstates/nativeUIA/geometry/scale/DPI conditionssent.20newreviewleaves4eachUX/UML/CSharp/Test/SRE;main870. Parentdesign direction edit preceded its renewed lease but no overlap observed; currentcommitclaimed. Ledger46tasks42done4progress, no native/main/normativeEacceptance.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/design/code-atlas-e1-static-views.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Build native file-first and visual-first class/member/source journeys on the delivered Core ports",
+      "done_when": "Five-file native candidate carries real composition, source consistency, geometry and accessibility evidence for independent gates",
+      "tier": "T2",
+      "main_calls": 802,
+      "main_budget": 870,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T04:35:56Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "4a5812044a38a6fe365fb7929104f51dbc973fc5",
+        "short": "4a5812044",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JQHMZJQ2YB7Y4ZQP9VESPN",
+      "shortname": "atlas-main-integration-blocked",
+      "datetime": "2026-09-15T14:29:14Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "Integrate frozen accepted Atlas with current main in the isolated integration track; no push or native candidate changes.",
+      "summary": "All six conflicts resolved; official full-content register union verified after red-first allocator compatibility repair. Full recount: App 1109 executed/5 failed; Core 3161 executed/1 failed/1 skipped; portable 2817/0 failed/1 skipped; nonportable 344/1 failed. Closing --no-run returned 1, join stopped at step 4; all gates/build not reached. No publication or acceptance. See existing recovery plan and ignored local receipts.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/code-atlas.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Preserve both histories and qualify the integrated result without publishing",
+      "done_when": "All integrated gates and Release build pass with independent acceptance",
+      "tier": "T2",
+      "main_calls": 48,
+      "main_budget": 50,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T14:06:48Z",
+      "duration_seconds": 1346.0
+    },
+    {
+      "id": "al-01M2JRPPHPV0WBD24VVVZQAMZ7",
+      "shortname": "atlas-irp-authorized-boundary",
+      "datetime": "2026-09-15T14:49:28Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "Apply only authorized Zone-only integration correction, exact current-main helper, fresh proof environment and existing recovery plan; no native or ungranted guard repairs.",
+      "summary": "Zone-only/no-inspector correction applied; both consoleFor+AtlasOwner factories retained. Main helper exact blob and both allocator self-tests passed. Nonincremental Debug daemon build green; unchanged host/real-daemon proof 40/40 green with fresh owned run label. Five historical guard failures, latest-main merge and final whole/gate/Release qualification remain blocked on scope. No publication or self-approval.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/code-atlas.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Correct accepted-Atlas integration within the new 24-call repair allocation",
+      "done_when": "Corrected candidate pin and complete unchanged qualification or exact remaining seams",
+      "tier": "T2",
+      "main_calls": 12,
+      "main_budget": 24,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T14:37:18Z",
+      "duration_seconds": 730.0
     }
   ],
   "changes": [
@@ -19389,28 +22236,6 @@ window.AUDIT_DATA = {
     },
     {
       "artifacts": [
-        "docs/design/watcher-signals-telemetry.md"
-      ],
-      "datetime": "2026-09-01T02:41:16Z",
-      "git": {
-        "after": "c1241a814329f1409a1c6daa1e9d0d9e05ecd8a4",
-        "before": "c1241a814329f1409a1c6daa1e9d0d9e05ecd8a4",
-        "branch": "feature/watcher-richer-signals",
-        "commits": [],
-        "pushed": null
-      },
-      "id": "cl-0128",
-      "kind": "design",
-      "prompt": "do tasks 2-4",
-      "rationale": "Richer scores without fabrication require the turn to record its own signals (spec L127); the advisory fold must stay gated on calibration (ADR-0019) and egress opt-in, so the seam is operator-configurable and off by default.",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "skill": "implement",
-      "summary": "An optional audit signals object lets an instrumented turn record what it observed; the deriver uses explicit-or-conservative-default (no fabrication). The auto-score path accepts an optional advisory evaluator + calibration registry; the on-device local heuristic folds the advisory dimensions when qualified, the cloud judge is the same seam behind an egress opt-in + creds.",
-      "tags": [],
-      "title": "t3/t4: signals telemetry convention + advisory-evaluator seam"
-    },
-    {
-      "artifacts": [
         "src/AiDe.Core/Extraction/BicepConstantFolder.cs"
       ],
       "datetime": "2026-09-01T02:08:52Z",
@@ -19452,6 +22277,28 @@ window.AUDIT_DATA = {
       "summary": "ADR-0021: fixed Left/Right/Bottom/Center zones as stable containers; within-zone splits only; zone-scoped ops; expand-migrate-contract migration. Fixes DC-063 structurally.",
       "tags": [],
       "title": "Adopt named absolute dock zones (replace the proportional split tree)"
+    },
+    {
+      "artifacts": [
+        "docs/design/watcher-signals-telemetry.md"
+      ],
+      "datetime": "2026-09-01T02:41:16Z",
+      "git": {
+        "after": "c1241a814329f1409a1c6daa1e9d0d9e05ecd8a4",
+        "before": "c1241a814329f1409a1c6daa1e9d0d9e05ecd8a4",
+        "branch": "feature/watcher-richer-signals",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-0128",
+      "kind": "design",
+      "prompt": "do tasks 2-4",
+      "rationale": "Richer scores without fabrication require the turn to record its own signals (spec L127); the advisory fold must stay gated on calibration (ADR-0019) and egress opt-in, so the seam is operator-configurable and off by default.",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "skill": "implement",
+      "summary": "An optional audit signals object lets an instrumented turn record what it observed; the deriver uses explicit-or-conservative-default (no fabrication). The auto-score path accepts an optional advisory evaluator + calibration registry; the on-device local heuristic folds the advisory dimensions when qualified, the cloud judge is the same seam behind an egress opt-in + creds.",
+      "tags": [],
+      "title": "t3/t4: signals telemetry convention + advisory-evaluator seam"
     },
     {
       "artifacts": [
@@ -20032,6 +22879,293 @@ window.AUDIT_DATA = {
       "audit_ref": "al-01M2BBK33XE20A69BHZ9F3XJ55"
     },
     {
+      "artifacts": [
+        "docs/notes/atlas-owner/live-source.md"
+      ],
+      "datetime": "2026-09-12T19:05:16Z",
+      "git": {
+        "after": "aac360e7ab87e6ce991f4343440438dab88b08ba",
+        "before": null,
+        "branch": "conductor/code-atlas",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2BG4Y37Y1AHGTEMJ5QPWNR2",
+      "kind": "decision",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "rationale": "Scoped Astra Owner ruling under the explicit documentation-only exception; not a waiver of external ownership or hard floors.",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "skill": "define-architecture",
+      "summary": "E0 uses hash-validated live source. Back may report old matching content unavailable; it never applies old anchors to changed bytes. This is content direction only; source ownership and implementation admission remain blocked.",
+      "tags": [],
+      "title": "PROPOSED Code Atlas Owner choice: live-source"
+    },
+    {
+      "artifacts": [
+        "docs/notes/atlas-owner/inventory-default.md"
+      ],
+      "datetime": "2026-09-12T19:05:16Z",
+      "git": {
+        "after": "aac360e7ab87e6ce991f4343440438dab88b08ba",
+        "before": null,
+        "branch": "conductor/code-atlas",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2BG4YAZ4MAQBZZ3ZH6PZQ3D",
+      "kind": "decision",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "rationale": "Scoped Astra Owner ruling under the explicit documentation-only exception; not a waiver of external ownership or hard floors.",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "skill": "define-architecture",
+      "summary": "E0 inventories tracked plus authorized nonignored untracked files under a versioned policy, with explicit non-Git enumeration and visibility/read separation. This is content direction only; source ownership and implementation admission remain blocked.",
+      "tags": [],
+      "title": "PROPOSED Code Atlas Owner choice: inventory-default"
+    },
+    {
+      "artifacts": [
+        "docs/notes/atlas-owner/generic-facts.md"
+      ],
+      "datetime": "2026-09-12T19:05:17Z",
+      "git": {
+        "after": "aac360e7ab87e6ce991f4343440438dab88b08ba",
+        "before": null,
+        "branch": "conductor/code-atlas",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2BG4YJKYVJY0RCSERZQYPKV",
+      "kind": "decision",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "rationale": "Scoped Astra Owner ruling under the explicit documentation-only exception; not a waiver of external ownership or hard floors.",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "skill": "define-architecture",
+      "summary": "E0 first reuses generic versioned facts, completion seals and replay in the existing substrate. A typed-store addition requires separate evidence. This is content direction only; source ownership and implementation admission remain blocked.",
+      "tags": [],
+      "title": "PROPOSED Code Atlas Owner choice: generic-facts"
+    },
+    {
+      "artifacts": [
+        "docs/notes/atlas-owner/symbol-floor.md"
+      ],
+      "datetime": "2026-09-12T19:05:17Z",
+      "git": {
+        "after": "aac360e7ab87e6ce991f4343440438dab88b08ba",
+        "before": null,
+        "branch": "conductor/code-atlas",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2BG4YSWFVYAQX257V8Q9MTB",
+      "kind": "decision",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "rationale": "Scoped Astra Owner ruling under the explicit documentation-only exception; not a waiver of external ownership or hard floors.",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "skill": "define-architecture",
+      "summary": "E0 advertises the probed source-type/method/overload/constructor/property/accessor/partial-declaration subset. Unsupported kinds remain explicit, not blanket C# support. This is content direction only; source ownership and implementation admission remain blocked.",
+      "tags": [],
+      "title": "PROPOSED Code Atlas Owner choice: symbol-floor"
+    },
+    {
+      "artifacts": [
+        "docs/notes/atlas-owner/interpretation-deferred.md"
+      ],
+      "datetime": "2026-09-12T19:05:17Z",
+      "git": {
+        "after": "aac360e7ab87e6ce991f4343440438dab88b08ba",
+        "before": null,
+        "branch": "conductor/code-atlas",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2BG4Z18JPT8G5E862Q8RGA3",
+      "kind": "decision",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "rationale": "Scoped Astra Owner ruling under the explicit documentation-only exception; not a waiver of external ownership or hard floors.",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "skill": "define-architecture",
+      "summary": "E4 interpretation awaits its separate adapter, processing, provider and eval admission. The development GPT fleet does not replace the product Claude runtime. This is content direction only; source ownership and implementation admission remain blocked.",
+      "tags": [],
+      "title": "PROPOSED Code Atlas Owner choice: interpretation-deferred"
+    },
+    {
+      "artifacts": [
+        "docs/notes/atlas-owner/whole-versus-e0.md"
+      ],
+      "datetime": "2026-09-12T19:05:17Z",
+      "git": {
+        "after": "aac360e7ab87e6ce991f4343440438dab88b08ba",
+        "before": null,
+        "branch": "conductor/code-atlas",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2BG4Z8EAYAFPD4FSMT9752K",
+      "kind": "decision",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "rationale": "Scoped Astra Owner ruling under the explicit documentation-only exception; not a waiver of external ownership or hard floors.",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "skill": "define-architecture",
+      "summary": "Whole future architecture obligations remain proposed; E0 composition excludes later Diagram/ModelPort. Navigation is view-local Memento with Core validation, not a durable aggregate. This is content direction only; source ownership and implementation admission remain blocked.",
+      "tags": [],
+      "title": "PROPOSED Code Atlas Owner choice: whole-versus-e0"
+    },
+    {
+      "artifacts": [
+        "docs/architecture/code-atlas-proposed.md",
+        "docs/adr/proposed/code-atlas/identity.proposed.md",
+        "docs/adr/proposed/code-atlas/inventory-source-manifest.proposed.md",
+        "docs/adr/proposed/code-atlas/fact-substrate.proposed.md",
+        "docs/adr/proposed/code-atlas/bounded-native-queries.proposed.md",
+        "docs/adr/proposed/code-atlas/comparison-authority-ai.proposed.md",
+        "docs/reviews/code-atlas-architecture-content-gates.md"
+      ],
+      "datetime": "2026-09-12T19:05:18Z",
+      "git": {
+        "after": "aac360e7ab87e6ce991f4343440438dab88b08ba",
+        "before": "a50329b2",
+        "branch": "conductor/code-atlas",
+        "commits": [
+          "aac360e7 docs(atlas): separate E0 composition from future architecture obligations",
+          "86cce603 docs(atlas): clarify source availability and capability privacy admission",
+          "664f7a64 docs(atlas): resolve Owner content choices and bound operational admission",
+          "1ae62024 docs: record candidate Atlas content readiness without delivery admission",
+          "fce928a7 Integrate proposed Code Atlas architecture and ADRs for content gates",
+          "12e6bf0e docs(atlas): record cleared spec-content gates without architecture acceptance",
+          "b8bc351e docs(atlas): align proposal with integrated candidate a50329b2",
+          "f34b617e docs(atlas): propose whole-system architecture and isolated decisions"
+        ],
+        "pushed": null
+      },
+      "id": "cl-01M2BG4ZJE0PHS0BHZMRSP47BR",
+      "kind": "architecture",
+      "prompt": "this looks great\ni dont remember what addendum we are up to\n/specify use the proposal and mockup to create the next addendum\n/define-architecture for the overall architecure\nthen use our: owner (Astra), conductor (Astra), work-appropriate-model (GPT models, so likely GPT5.5) to implement this work using my ai-forward approach (design-slice, implement etc)\n- execute in fleet mode, the owner agent makes the decisions, the conductor coordinates the work the delegates to sub agents that work in their own work trees\n- make sure you are using the repo specific ways to coordinate and distribute accountabilities/responsibilities with the claude session and its sub-agents\n\nClarification:\nisnt claude's conductore in main as well? just want to make sure we are keeping things clean\n",
+      "rationale": "One fact substrate, scoped logical identities and revision-bound observations, policy-relative physical inventory, hash-validated source, bounded native queries and separately admitted comparison/AI preserve the requested whole vision without premature E0 runtime layers.",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "skill": "define-architecture",
+      "summary": "Defined the whole proposed architecture and five proposed ADRs; final author 51961b6c joined through aac360e7. Content reviews and scoped Owner decisions complete; no normative acceptance or implementation admission.",
+      "tags": [],
+      "title": "PROPOSED Code Atlas whole architecture and isolated first delivery horizon"
+    },
+    {
+      "artifacts": [
+        "docs/notes/atlas-owner/isolated-authoring.md",
+        "docs/collaboration/session-contracts.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-12T19:23:27Z",
+      "git": {
+        "after": "cd2e6e9e7defc8415159f6e861a5aa39843c13be",
+        "before": null,
+        "branch": "conductor/code-atlas",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2BH67MVAWGQBFGS76CE6ETD",
+      "kind": "decision",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "rationale": "A gate protects only the operations that carry its risk. Explicit Owner authority admits reversible isolated work without pretending an unanswered pull log is acknowledgment.",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "skill": "execute-with-coordination",
+      "summary": "Owner turns7/8 supersede the all-source freeze. Exact branch-local new-file grants are recorded in sole section2; source safety is dispatched, candidate design active, existing SH3/Core/Shell files and main integration unchanged. DC-154 operational recurrence captured with honest partially-controlled scope.",
+      "tags": [],
+      "title": "Atlas: isolate additive authoring from shared integration acknowledgment"
+    },
+    {
+      "artifacts": [
+        "docs/notes/atlas-owner/candidate-first-unit.md",
+        "docs/proof/code-atlas-identity-unit.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "datetime": "2026-09-12T20:55:34Z",
+      "git": {
+        "after": "a5257f0cc4b352f4ea0ad9784b81a120201a66a3",
+        "before": null,
+        "branch": "conductor/code-atlas",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2BPEX0YHSGSCEN593JWP68Q",
+      "kind": "decision",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "rationale": "Separate logical identity from source observations, preserve opaque tokens, validate exact hashes and supported compiler symbols; execute semantic counterexamples rather than treating passing tests or source review as proof of untested boundaries.",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "skill": "implement",
+      "summary": "Owner selected conservative manifest-bound source input and admitted four-file pure identity unit; later twelve-call correction and Conductor boundary-close kept the same files/overall60call candidate ceiling. Actual code is joined at a5257f0c with independent38-test evidence, Data clearance and explicit reported46/60 budget overrun. Whole native E0 remains unbuilt.",
+      "tags": [],
+      "title": "Atlas first Core unit and bounded correctness decisions"
+    },
+    {
+      "id": "cl-01M2BRGXHFRYM98A4HCHSJYDPJ",
+      "datetime": "2026-09-12T21:31:37Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Atlas live-reader horizon and one canonical codec",
+      "prompt": "Use fleet sub-agents in separate worktrees, with the Conductor retaining control, and continue Code Atlas implementation.",
+      "summary": "Ownerturn12 admits realdetachedinventory/declaration/source/Back horizon andselects implementedtuplecodeconly. Response-onlycontract7/10 frozen; Dataamendments requireexpectedrootidentity, fullverifiedcompilerbuffer distinctfromUIpage, honestFileLimitedprofile. Eight-filecommonfoundationdispatched18of60aggregate; enum25callinvestigationseparate; actualsharedadapterintegrationremainsunassigned.",
+      "rationale": "Oneidentityauthority, explicitinformationboundaries andrealgeneratedfile/nativeevidence avoidcompetingcodecs, fakeprojectsemantics andwhole-programcoordinationstalls.",
+      "artifacts": [
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/coordination/code-atlas.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "054b8b56381e4cf42717c2a8012f2e64a116e10d",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2BSFTFF71SDKNYCENMJDK2P",
+      "datetime": "2026-09-12T21:48:30Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "decision",
+      "skill": "execute-with-coordination",
+      "title": "Atlas foundation correction and explicit producer rebudget",
+      "prompt": "Keep executing with separate sub-agent worktrees and Conductor-controlled gates.",
+      "summary": "Ownerturn13 retainsFwriter forone16callsame-eight-filecorrection afterminicontractread. Replaceinadequate60estimate with96cumulativeF/E/D:32spent+16repair+24E+24D. Source/query/nativeassemblyseparatenextcheckpoint. Fproposal53greenbutData/Testblockersremain; no producerdispatchfromincompletecontracts.",
+      "rationale": "Recordactualoverrun andrepairtypedcontracts beforeparallelproducers; do not silentlytradeprooforfundremainingreaderworkwithaninadequateremainder.",
+      "artifacts": [
+        "docs/notes/atlas-owner/live-reader-horizon.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "8450ce062397e0cee09380b374783be4f86464d5",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2DVY81G8YAPRM80NYMR6JNR",
+      "datetime": "2026-09-13T17:09:49Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Atlas source admission inherits workspace authority, not Conversation lifetime",
+      "prompt": "keep going why are you stopping here the owner and conductor need to resolve things not stop here",
+      "summary": "Owner34-35 chooses workspace/peer-scoped Atlas source admission over existing workspace-read basis; no mandatoryConversationSession/newapprovalforalreadypermittedcontent/proofJSON/policyDB. Strongernative-root/policy-generation/expiry/revoke restrictions remain. Productioncancellationlifetime withheldpending16leafsyntheticIPCcomparison+4review.",
+      "rationale": "ExistingproductionNodeContentroute providesworkspace-confinedsourceaccess independentofConversation; Atlasnamespaceabsenceprovesunwiredportnotabsenceofreadbasis. ActualIPCcancel/reusehazard mustbeexecutedbeforechoosingadapterpolicy.",
+      "artifacts": [
+        "docs/design/code-atlas-shared-host-admission.md",
+        "docs/notes/atlas-owner/live-reader-horizon.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "16ea6f734206126bf9d73646ccb8f9d7d20ced94",
+        "after": "16ea6f734206126bf9d73646ccb8f9d7d20ced94",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
       "id": "cl-01M2DZ46Z1X43CV79JQN2C9JG8",
       "datetime": "2026-09-13T18:05:30Z",
       "session": "d3-findings",
@@ -20062,6 +23196,156 @@ window.AUDIT_DATA = {
         ]
       },
       "audit_ref": "al-01M2DZ3GA6T04XHQ6EAD7HRY8R"
+    },
+    {
+      "id": "cl-01M2GXR0873YPWCS0FSJ4Y5JRM",
+      "datetime": "2026-09-14T21:39:05Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "E1 source contracts admit test-only qualification",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Reviewed occurrence design and corrected strict codec, capability, publication, paging and charge ledger joined. Owner69 admits exactly two test files for SP1/SP2/currentSP4; no production metadata or E1 acceptance. UML gap repaired by actual exact-content reads.",
+      "rationale": "Actual strict old decoder and missing opt-in/lexical seams require current-contract execution before any new behavior. Preserve SP3 and incremental-newfield-SP4 gates and entire user journey.",
+      "artifacts": [
+        "docs/design/code-atlas-e1-static-views.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "e381cfd5a1a0218ead15d8769ac4a35799f0c4be",
+        "after": "c9617fb7d6911731def65a0fadbeaaa405f53eae",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": [
+          "c9617fb7 docs(atlas): reconcile E1 source and compatibility contracts",
+          "502e1495 docs: design bounded E1 concrete class and member views"
+        ]
+      }
+    },
+    {
+      "id": "cl-01M2H24BKTPXHX7HV17M0KR2WN",
+      "datetime": "2026-09-14T22:55:44Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "decision",
+      "skill": "implement",
+      "title": "Consolidate qualification resource controls into one budget-test home",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner74 explicitly grants existing AtlasReadBudgetTests as third test file, deletes duplicate new queue test, and scopes one 16-leaf consolidation. Fix inherited class once; whole-root JSON isolation and exact supplied values remain mandatory. No product changes.",
+      "rationale": "Parent and Owner observed the same assertion-before-release/permissive-charge shape in the copied prior-art test. Maintaining two helpers repeats the defect surface; one authoritative test home preserves scope and controls.",
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "24e8d1b7",
+        "after": "24e8d1b7a43489c9462fb61862f3b21b82c8c9e6",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2H5HYQQYS1VXEMJ18TN08HA",
+      "datetime": "2026-09-14T23:55:35Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Admit qualification join and bounded E1 Core implementation",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner78acceptedtestchainonly afterindependentgates; joined37/37actual. Separate48leaf11pathCoretranche fornegotiation/lexicalmetadata/Corepaging/charges, nativeUIlater, genuineoldartifactsandactualSP1-4proofrequired.",
+      "rationale": "Current-test qualification no longer hides oracle/lifetime gaps; missing product behavior now receives its own exact source grant and fresh independent gates rather than being inferred from old E0 green.",
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "564e8aa791e0b66d31b0a4d8f92f393d88872d6c",
+        "after": "b91d4bb5b0f59352b7f90b94e0b2733a647452dc",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": [
+          "b91d4bb5 test(atlas): drain owned budget admissions before waiting for capacity",
+          "b79e662c Consolidate Atlas E1 qualification tests",
+          "3ca57f89 Repair Atlas E1 qualification tests",
+          "2a05bbaf Add Atlas E1 static qualification tests"
+        ]
+      }
+    },
+    {
+      "id": "cl-01M2HD2H5MS1K6SFEH1H3MNJZS",
+      "datetime": "2026-09-15T02:06:58Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "decision",
+      "skill": "implement",
+      "title": "Legacy fixture uses deterministic source-and-build provenance",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner82permitscanonicalcompiler/PDBpathsandaccuratebaselineSourceRoot/SourceLink, preservingpatchedpeerprovenance/embeddedownsource. Same5file16leafqualification; twofreshrootequality+realcompatibilitybeforeseparateOwnercanonicalhashapproval. Oldpath-dependentreferencepairkept.",
+      "rationale": "Samegenuinesourcesbuiltin2rootshavedifferentPE/PDBpathsandambientSourceLinkidentity. Controlledprovenancecanonicalizationisnotarbitraryhashreplacementorclaimoforiginalbyteidentity.",
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-e1-core-metadata.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "dec1ec13",
+        "after": "dec1ec131e250b7337225816e309ddd9abb1d69a",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2HJHK98VAXC25KKN4966W4F",
+      "datetime": "2026-09-15T03:42:35Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "decision",
+      "skill": "implement",
+      "title": "Approve canonical legacy fixture pair for normal preparation",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner86approvesED7FCore/8E95peerunderbaseline-source/patch/canonicalbuildprovenance, nothistoricalbyteidentity.4leavesadoptmanifeststatus/referenceonly, normalApprovedverification/commit. ConditionalCore/accessor/fixturejointhenjoined+freshownedworktreeproof8leaves;nativegrantseparate.",
+      "rationale": "AllcurrentdeliverySecuritypredicatesclearwithguard-specificevidence; Test/SREcandidate-treeclearances+parentordinary497/497supportnormalpairapprovalwhilecommittedfreshdeliveryremainsrequired.",
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "dd682d27",
+        "after": "dd682d27a5baf8f10e1880a0a7e90a2f40f770cf",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "artifacts": [
+        "docs/notes/sh2-presenter-router-and-slots.md",
+        "docs/proof/perspective-shell.md"
+      ],
+      "audit_ref": "al-01M2BBK33XE20A69BHZ9F3XJ55",
+      "datetime": "2026-09-12T17:45:57Z",
+      "git": {
+        "after": "b0e092b5f4176766f2e1870124665d9f74748d00",
+        "before": "b0e092b5",
+        "branch": "lane/shell-sh2",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2JPR4KVXNBQHVKZGPZMMBBG",
+      "kind": "decision",
+      "prompt": "SH-2 (/implement): the second docking host, PerspectiveShell, one layout slot per host, the rail",
+      "rationale": "Each is defended in docs/notes/sh2-presenter-router-and-slots.md with the reviewer finding that shaped it; the ADR-0032 text items (the .bak once-rule's scope, the rollback-re-upgrade loss, ReplaceFile partial failures, the zone-walk order) are relayed to the ADR's owner rather than edited here.",
+      "session": "sh-2",
+      "skill": "implement",
+      "summary": "The router reads the catalog's CommandScope (no switch on an id); DocumentOpening names its host and follows the APPLIED add (document first, then the switch); a kind-open asks from the host that raised it; host B's interim default is today's default filtered to its kinds until SH-3's Default(perspective); the switch is two log lines (shell.mode, shell.mode.shown); the rail is a ListBox with one writer of its selection and a tab index that puts the selected destination first; a refused file is preserved every time and the pre-perspective bytes once; a reconcile keeps the view's active tab; focus after a switch is the window's EntryFocus hook; the admission's refusal codes live beside the rule.",
+      "tags": [
+        "addendum-c",
+        "shell-lane",
+        "adr-0031",
+        "adr-0032"
+      ],
+      "title": "SH-2: ten decisions below ADR weight for the second host, the presenter/router, the slots and the rail"
     }
   ]
 };

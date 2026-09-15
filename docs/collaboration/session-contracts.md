@@ -55,6 +55,36 @@ which is the defect signature the data-modelling standard names.
 
 ## 2. File ownership
 
+### Current-main Atlas recovery authority, 2026-09-15
+
+The user's current merge-and-resume instruction admits isolated integration of accepted
+`conductor/code-atlas` at `92e025ae8cacd0a2fc8580f865a2172c4a9bdeb4` with main at
+`bab5035e75a10e97e57934891650cd4ddefecd76`. Current-main Core/Design/Shared ownership
+rows govern; historic retired lane allocations and earlier no-main clauses below are historical,
+not renewed grants. This is the sole §2 ownership register, not a parallel authority.
+
+`copilot-atlas-main-integrator` / `atlas-main-integration-b0d0` owns the isolated merge,
+its exact conflict resolutions, register content union, derived regeneration and integrated
+qualification in `C:\Projects\ai-de-atlas-main-integration`, branch `atlas/main-integration`.
+It does not own primary/main mutation or publication. Parent `copilot-atlas-recovery-b0d0`
+alone admits the reviewed candidate and publishes after the gates. Existing session, engine,
+account and Composer behavior, IPC/source-grant boundaries and reader lifetime contracts remain.
+
+The native author alone retains these exact five files in the separate
+`C:\Projects\ai-de-atlas-e1-native-class-view`, branch `atlas/e1-native-class-view`:
+
+- `src/AiDe.App/Workbench/Understanding/AtlasStaticViewProjection.cs`
+- `src/AiDe.App/Workbench/Understanding/AtlasStaticView.cs`
+- `src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs`
+- `tests/AiDe.App.Tests/Workbench/Understanding/AtlasStaticViewTests.cs`
+- `tests/AiDe.App.Tests/Workbench/Understanding/AtlasStaticCompositionTests.cs`
+
+That track resumes its existing native E1 26-test checkpoint; the integration author neither
+inspects nor imports its dirty candidate, edits its files, nor rebases that branch. Native
+acceptance is a separate gate. Exact short leases and live checks apply; no blanket directory
+ownership is inferred. Recovery sequence and evidence live in the existing
+`docs/coordination/code-atlas.md`, not a new plan.
+
 **Last reconciled against the tree: 2026-09-13 (converge)**, by the conductor retiring the Addenda C/D lane rows (plan `addendum-cd` step 11: the horizon's moves returned to Core/Design with the horizon's new files assigned); before that on 2026-09-11 by the conductor applying those rows as moves, and the same day by node F4 of the front-door slice, adding the
 composer surface it built under `src/AiDe.App/Workbench/Composer/`. Previously reconciled 2026-09-10
 by node F2 (the three surfaces under `src/AiDe.App/Workbench/Sessions/`), and 2026-09-01 by the core
@@ -78,6 +108,1291 @@ with no owner; nothing can fail a section that has quietly stopped covering its 
 
 Ownership means: **you edit it, the other session proposes changes to it.** It does not mean the
 other session may not read it — reading is how contracts stay honest.
+
+### Atlas branch-local authoring exception, 2026-09-12
+
+**Authority:** the user's explicit continuation instruction and the separate Astra Owner's
+turn-7/turn-8 rulings, recorded in `note-atlas-isolated-authoring`. This is a grant to author
+specified new files on Atlas branches, **not Claude's acknowledgment**, a transfer of the existing
+ownership rows, normative Addendum E acceptance, or permission to integrate into main.
+
+| Writer / branch | Exact new authored files | Limit |
+|---|---|---|
+| `atlas-e0-source-safety-gpt55` / `atlas/e0-source-safety` | `spikes/code-atlas-source-reader/CodeAtlas.SourceReaderProbe.csproj`; `spikes/code-atlas-source-reader/Program.cs`; `spikes/code-atlas-source-reader/OpenedSourceReader.cs`; `spikes/code-atlas-source-reader/SourceReaderProbeCases.cs`; `docs/proof/code-atlas-source-safety.md` | One bounded synthetic Windows safety batch, 30 calls; no user data or existing product/project edits. |
+| `atlas-e0-candidate-gpt55` / `atlas/e0-candidate` | `src/AiDe.Core/Understanding/AtlasIdentity.cs`; `src/AiDe.Core/Understanding/AtlasSourceBinding.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasIdentityTests.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasSourceBindingTests.cs` | Within the unchanged 60-call candidate ceiling: 25 initial, 12 Owner-admitted correction, then 6 Conductor-allocated boundary-close calls for the executed trailing-LF defect and constructor/partial oracles. Conservative allocated ceiling 43; 17 reserved. Same four files, no reader, persistence, IPC or UI. |
+| `atlas-live-enumeration-gpt55` / `atlas/live-reader-enumeration` | `spikes/code-atlas-directory-enumeration/CodeAtlas.DirectoryEnumerationProbe.csproj`; `spikes/code-atlas-directory-enumeration/Program.cs`; `spikes/code-atlas-directory-enumeration/OpenedDirectoryEnumerator.cs`; `spikes/code-atlas-directory-enumeration/DirectoryEnumerationProbeCases.cs`; `docs/proof/code-atlas-enumeration-safety.md` | Owner turn-12 new horizon: 25 calls for one synthetic safe-enumeration investigation. No private corpus, privilege/configuration changes, shared files or product admission. |
+| `atlas-live-core-gpt55` / `atlas/live-reader-core` | Existing `src/AiDe.Core/Understanding/AtlasIdentity.cs`, `tests/AiDe.Core.Tests/Understanding/AtlasIdentityTests.cs`; new `src/AiDe.Core/Understanding/AtlasIdentityCodec.cs`, `AtlasManifest.cs`, `AtlasQueryContracts.cs`; new `tests/AiDe.Core.Tests/Understanding/AtlasIdentityCodecTests.cs`, `AtlasManifestTests.cs`, `AtlasQueryContractsTests.cs` | F proposal used 32 against 18 planned calls. Owner turn 13 admits one 16-call same-eight-file correction after Conductor contract readback. New cumulative F/E/D ceiling 96; no filesystem, issuer operation, producer/query implementation, native UI or shared-file edit in F. |
+| `atlas-live-inventory-repair-astra` / `atlas/live-reader-inventory-repair` | `src/AiDe.Core/Understanding/AtlasInventory.cs`; `src/AiDe.Core/Understanding/AtlasDirectoryEnumerator.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasInventoryTests.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasDirectoryEnumeratorTests.cs` | Owner turn-14 repair used 30 leaf calls and retained 92/95 passing proposal. After bounded diagnosis, Owner turn 16 admits six more leaf calls for held GenericRead and test-owned junction cleanup only. Frozen F read-only; no source-content reader, query/native assembly or shared adapters. |
+| `atlas-live-declarations-gpt55` / `atlas/live-reader-declarations` | `src/AiDe.Core/Understanding/CSharpDeclarationObservation.cs`; `tests/AiDe.Core.Tests/Understanding/CSharpDeclarationObservationTests.cs` | Owner turn-14 D repair: 20 additional leaf calls after Conductor mini-contract readback. Prior 37/24 leaf overrun retained. No filesystem, project evaluation, source reader, query/native assembly or frozen-F edits. |
+| `atlas-live-source-astra` / `atlas/live-reader-source` | `src/AiDe.Core/Understanding/AtlasSource.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasSourceTests.cs` | Owner turn-15 S allowance: 30 new writer leaf calls, eight targeted validation leaf calls separately. First three writer calls establish and return the minimum contract before implementation. No grant issuer, query/native UI, store, IPC, real-user workspace or frozen F/D edits. |
+| `atlas-live-native-repair-astra` / `atlas/live-reader-native-repair` | `src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs`; `tests/AiDe.App.Tests/Workbench/Understanding/AtlasReaderViewTests.cs` | After the turn-18 repair and turn-20 seam, Owner turn 24 grants eight new leaves for accepted-member selection loss exposed by actual composition. Same owner/tree/two files; shown UIA regression red before current-only stable-key rebind, no first-row fallback. No filesystem/provider/issuer, host/theme/layout/project/F-contract changes. Prior allocations and overruns remain recorded. |
+| `atlas-live-query-astra` / `atlas/live-reader-query` | `src/AiDe.Core/Understanding/AtlasQueryService.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasQueryServiceTests.cs` | Owner turn-17 Q allowance: 36 leaf calls. First four are read-only contract readback against actual cleared S API. In-memory query/receipt and narrow trusted composition only; no store, IPC, host, UI, project or frozen producer edits. |
+| `atlas-live-continuation-gpt55` / `atlas/live-reader-continuation` | `src/AiDe.Core/Understanding/AtlasQueryContracts.cs`; `tests/AiDe.Core.Tests/Understanding/AtlasQueryContractsTests.cs` | Owner turn-20 exact F continuation seam: eight new leaf calls for optional validated InventoryPage.NextOffset only. Pin/verify this contract before Q/N edits; no other F shape or producer/UI implementation. |
+| `atlas-shared-host-astra` / `atlas/shared-host-compatibility` | New `docs/design/code-atlas-shared-host-admission.md` and `.html`; merge/regeneration results only for reconciliation with an executor-observed main pin | Owner turn 32: 12 leaves for compatibility build, exact adapter/owner/test manifest, production authority/membership proposal and one supported counterpart handoff. No authored existing Core/Shell/Conversation adapter edits, primary changes, main merge or push. Packet is not production-design acceptance. |
+| `atlas-ipc-contract-astra` / `atlas/ipc-contract` | `spikes/code-atlas-ipc-contract/CodeAtlas.IpcContractProbe.csproj`; `Program.cs`; `IpcCancellationCases.cs`; `AtlasTransportCandidate.cs`; `docs/proof/code-atlas-ipc-contract.md` | Owner turn 35: 16 leaves for a synthetic IPC cancellation/async-contract comparison, plus four independent DS/Test review calls. Baseline `16ea6f734206126bf9d73646ccb8f9d7d20ced94`, explicit SHA/readback. No existing Core/Shell edits, live daemon, user data or shared adapters. |
+| `atlas-final-adapter-contract-astra` / `atlas/final-adapter-contract` | Existing `docs/design/code-atlas-shared-host-admission.md` and `.html` only | Owner turn 37: eight leaves for the final dispatch-ready authority/membership/wire/async/host contract and exact implementation assignments. Separate verified worktree; no product source authoring. |
+| `atlas-live-runner-astra` / `atlas/live-reader-runner` | `spikes/code-atlas-reader-candidate/CodeAtlas.ReaderCandidate.csproj`; `spikes/code-atlas-reader-candidate/Program.cs` | Original 12 leaves ended with two CS7036 peer-constructor errors and no synthetic execution. Owner turn 23 prospectively adds eight leaves, same writer/files, ending at actual shown synthetic journey/capture/negative proof, not build alone. No existing App startup/host/IPC/project edits, private corpus, inspected-project execution or main integration. Independent live-root proof retains its separate 15-call allowance. |
+
+The first source writer's worktree is `C:\Projects\ai-de-atlas-e0-source-safety`, created from
+executor-observed main `4d396411`. A separate candidate tree
+`C:\Projects\ai-de-atlas-e0-candidate`, branch `atlas/e0-candidate`, has the exact first-unit file
+grant above under the Owner's turn-9 ruling (`note-atlas-candidate-first-unit`). All four files
+were observed absent in both that tree and current main before dispatch. Additional Core/App/test
+files still require their own exact record here; this first-unit grant does not implicitly admit them.
+
+The Owner permits that candidate's new files only under `Core/Understanding`, its dedicated
+Core tests, `App/Workbench/Understanding`, and its dedicated App tests. Detached presentation
+must consume supplied projections; it cannot read repositories/stores/providers. If existing
+project constraints require a shared-file change, the approved fallback is new standalone
+`spikes/code-atlas-e0-candidate` files, named here first. Neither an empty path nor an expired
+lease grants a wider exception.
+
+All existing SH3 IPC/factory/shell/adapter/graph/evidence/layout files and tests stay with their
+current writers. No existing extractor, query, wire, store, package, solution, menu or host edit
+is admitted here. Integration remains serialized through the existing Claude/Core/Shell
+authority. The native requests remain open; only their actual recipients can supply agreement.
+
+**Live-reader horizon, Owner turn 12:** the contract author in
+`C:\Projects\ai-de-atlas-live-reader-contracts` has a ten-call, response-only contract-freeze
+assignment; it authors no repository file. The enumeration writer above uses
+`C:\Projects\ai-de-atlas-live-reader-enumeration`. The Core integration tree
+`C:\Projects\ai-de-atlas-live-reader-core` is reserved, not dispatched. All three start at
+`054b8b56`, current main `ca7443e8` reconciled with reviewed Atlas commits in the Conductor
+tree. Exact implementation subsets must be added here after contract freeze; the Owner's
+ceiling manifest in `note-atlas-live-reader-horizon` is not permission to create unused files.
+
+**Producer pin:** F is cleared and joined at `02695471264cfe0ae29f9a5a2784070cdc0f11b4`;
+candidate and Conductor runs each executed 63 passing tests. F's writer explicitly released its
+leases before the Conductor join; no TTL wait or self-integration was used. E's tree is
+`C:\Projects\ai-de-atlas-live-reader-inventory`; D's is
+`C:\Projects\ai-de-atlas-live-reader-declarations`. Both resolve to that same pin, and their
+six new files were observed absent before dispatch. E and D cannot alter common contracts;
+required amendments return to the Conductor as seam requests.
+
+E's replacement tree is `C:\Projects\ai-de-atlas-live-reader-inventory-repair`, based on
+the preserved E proposal `e54f21e1`. The old E tree remains intact and is no longer a writer.
+An old-session registration cleanup discrepancy was detected by state readback and returned
+to that writer; released edit leases, not a claimed command invocation, were checked before
+replacement assignment.
+
+S's independent tree is `C:\Projects\ai-de-atlas-live-reader-source`, pinned to
+`7584c0ae` (cleared F and D plus source-probe evidence). E completion is not its prerequisite.
+E and S are the only implementation writers; D is frozen and joined. The Conductor reads S's
+input/result/lifetime/falsifier contract before releasing source implementation.
+
+Native view tree: `C:\Projects\ai-de-atlas-live-reader-native`, pin `bf57b0ee`, with a
+separate read-only native-review tree at the same pin. The direction is
+`note-atlas-reader-native-direction`. Q/runner work remains undispatched until S's actual
+receipt; exact files and integrator will be recorded here before that release.
+
+N's replacement tree is `C:\Projects\ai-de-atlas-live-reader-native-repair`, based on preserved
+proposal `e0fdb531`; previous-writer handoff was received, leases checked free and no active old
+native registration remained. Q's tree is `C:\Projects\ai-de-atlas-live-reader-query`, pin
+`b381eeae`, containing the independently cleared S code. Q and N are the only writers.
+The Conductor retains both gates and all joins.
+
+The S owner has one exact metadata-only `ObserveApprovedRootIdentity` bootstrap amendment in its
+existing two files. Owner turn 19 corrects its allowance to **five leaf calls charged to Q**:
+Q's eight contract reads plus five bootstrap calls leave 23 of its unchanged 36 for implementation.
+Complete alone may return native identity; Partial/Refused/Canceled never supplies usable identity.
+No source content, grant issuance or frozen F/D edit is added.
+
+The cross-owner continuation seam has a dedicated F writer in
+`C:\Projects\ai-de-atlas-live-reader-continuation`, base `41dc0501`. After its pin, the existing
+Q owner receives 12 new leaf calls on its two files and the existing N Astra owner receives ten
+on its two files. They may then work concurrently, never on the same authored file. Six targeted
+independent validation calls are separately allocated; existing budgets/overruns remain recorded.
+
+Owner turn 24 adds eight leaves to the existing N owner for the exact accepted-member selection
+regression, then six runner leaves after reviewed N incorporation. The runner ceiling is 26
+(19 reported spent, seven remaining), not a reset; its independent fifteen-call real-root proof
+allowance is unchanged. The investigation is `investigation-code-atlas-outline-selection`.
+The runner never patches product code or weakens the selected-row expectation.
+
+Owner turn 25 adds **six prospective N leaves**, same owner and two files, after the preceding
+eight ended at 44/45 passing. Two diagnostic leaves must distinguish realized-container
+selection from framework UIA peer state before repair is released. Claim setup, if a separate
+leaf is needed, is charged within the same six and reduces the repair/close remainder; it is
+not hidden or added to the total. Both selection assertions stay. No private-cache
+manipulation, forced refresh, manual reselection or arbitrary sleep to obtain green is admitted.
+The Conductor reads the diagnostic receipt before releasing any repair.
+
+Owner turn 28 permits **four new N leaves** for a test-only close, after Test's explicit
+current-selection-oracle approval. Freeze the product-file hash. Query the control's public
+selection provider for the current selected item instead of treating cached child-peer
+identity as current selection. Keep observation-key, realized-container and SelectionItem
+assertions; remove only unnecessary provisional dispatcher diagnostics. No cache invalidation,
+forced refresh or reselection. Read back the unchanged product file, run all 45 cases, and
+commit/release only on the stated conditions. Original red02 covers the product defect, not
+the newly changed provider acquisition; external-client UIA proof is not claimed.
+
+Owner turn 29 grants **four further N test-only leaves** for the established empty-selection
+boundary: WPF v10.0.11 returns null before any selection. Accept null-or-empty only there;
+post-acceptance non-null/single/matching/selected provider and realized key/container checks
+remain strict. Product SHA-256 stays
+`8B76E2BD85BF44651D5CC6D4F4F528A29585034C675EB12554735F7FDE243980`.
+Claim first, run all 45, retain failed-precondition evidence, then commit/release on success.
+
+Owner turn 30 permits **six N test-only leaves** to replace the unconnected manual-provider
+oracle with a public UI Automation client query on a non-UI MTA thread. Capture only the owned
+window HWND, verify its process/window identity, search only beneath it, and require current
+selection/name/container runtime identity plus SelectionItem state. Keep UI-thread key and
+realized-container assertions, finite deadlines, cleanup and the frozen product hash. No
+DesktopRoot/global search, listeners, project/dependency/shared-harness edits or cache forcing.
+API absence is NOT_PROVEN, never a successful fallback. Original manual null-operand evidence
+must be named; this grant is not real-repository or full-assistive-technology acceptance.
+
+Owner turn 31 extends independent proof from 15 to **21 leaves**, solely for an isolated-parent
+semantic-red run, independent byte/decoder/UTF-16 and different-file checks, owned PNG inspection,
+post-run cleanliness/fixture disposition and a persistent receipt. No source edits or unnecessary
+real-root rerun. The first independent real-root run passed its runner checks, but the red recipe
+shared a synthetic parent and hit the refusal guard; that is not semantic-red proof. Retain it.
+
+Owner turn 32 accepts only the proved detached reader against its pinned scope and keeps the
+programme open. The next worker gets its own compatibility tree and the exact two packet files
+above. It must separate transport delivery, recipient acknowledgment and actual agreement.
+If acknowledgment is absent after one supported attempt, return the packet to Owner for a
+bounded branch-local adapter decision; do not require human relay or repeatedly poll the log.
+
+Owner turn 33 adds **12 prospective leaves** to the same shared-host worker, 24 total, for
+contract completion and the local compatibility merge. First four: exact production authority/
+currentness, trusted membership and factory-to-host/query/IPC/disposal grounding. A demonstrated
+missing contract is a gap plus proposed seam, not a guessed signature. Conductor reviews final
+staged paths, conflicts and merge parents before commit. No second handoff or polling; preserve
+request `req-01M2CAXKH01J8SMQV1HBCCAN08` as OPEN. Existing adapter and primary/main authority
+remain ungranted. New worktree bases must be immutable SHAs with immediate HEAD readback.
+
+Owner turns 34-35 remove the proposed Conversation/DocumentSession dependency. Atlas inherits
+existing workspace-read authority with a separately enforced workspace/connection-scoped lease;
+it does not gain broader roots/content, another policy database or proof-JSON authorization.
+Server-derived peer/workspace/epoch, native-root/policy currentness, expiry and revocation remain
+required. The next bounded IPC spike tests abort/reconnect first without selecting it for
+production. A demonstrated hard-floor violation in the existing production path must be
+preserved and escalated to the human, not traded away by the spike grant.
+
+Owner turn 36 grants **12 additional IPC-spike leaves**, 28 writer leaves total, plus four
+new targeted DS/Test review calls. Same five files/owner/tree, no production edits. First
+three calls: claim, discriminating baseline instrumentation and execution; Conductor reads
+the receipt before releasing the remaining nine. Preserve the parent-appended proof evidence,
+correct owned proof metadata, and do not require corruption as the only successful diagnosis.
+The candidate must preserve clean connection/scope/manifest/receipt continuity and abandon only
+possibly incomplete exchanges; fresh scope explicitly rejects old receipts. Actual existing-path
+wrong-response delivery stops dependent work for human escalation.
+
+Owner turn 37 freezes only the transport direction: healthy connection/scope reuse, terminal
+dirty/unknown exchanges, explicit fresh admission/inventory, existing Q receipt semantics.
+The final eight-call packet checkpoint must end in exact implementation files/owners/budgets/
+falsifiers, followed immediately by Owner's branch-local authoring decision. It may not become
+another broad survey. No adapter or main-integration permission follows until that decision.
+
+Owner turn 38 grants four additional leaves to the same final-packet writer for the exact
+projection/accessibility/repository-form/limit erratum. It conditionally extends branch-local
+authoring to corrected §8's Track C 20-file ceiling (48 leaves) and Track S eight-file ceiling
+(32), preserving canonical Core/Shell ownership and excluding main integration. Actual writers,
+immutable bases and exact files must be recorded here before source edits. C's first eight
+calls compile the corrected DTO/public-façade seam and prove golden/semantic-red parity; Shell
+waits for that committed contract. Membership remains under narrow Security qualification,
+with at most ten additional C membership-source/test leaves if the required mechanism needs
+proof. No hidden worktree/nested-root exclusion, semantic-index visibility filter, new 512 KiB
+outline ceiling, proof authority or public/internal signature contradiction is admitted.
+
+### Atlas production Track C assignment, Owner turn 38
+
+Writer `atlas-production-core-exec-astra`, branch `atlas/production-core-execution`, receives the following
+exact branch-local ceiling under Owner turn 38 and corrected packet `8c320ff4`.
+The prior `atlas-production-core-astra` review-role dispatch used eight leaves and authored
+nothing at `921adf40b8e610339888fe62e79cd3f63c0117be`; that clean tree/report are retained.
+Owner turn 40 reassigns the same ceiling to a general-purpose execution agent in a new tree,
+releasing the next eight of the unchanged 48, with 32 later calls still unreleased.
+Execution tree `C:\Projects\ai-de-atlas-production-core-execution` is clean and its HEAD was
+verified at `921adf40b8e610339888fe62e79cd3f63c0117be`. The former registration was ended.
+Harness qualification is the general-purpose execution role with writable patch/shell tools,
+previously observed producing the native reader, runner and IPC spike in this same fleet;
+the C# review persona remains an advisory lens, not this writer.
+Canonical Core ownership is unchanged. The newly released eight leaves are restricted to the
+DTO/projection/public-composition contract checkpoint; no Git implementation is cleared until
+NQ1/NQ2. Shell has no writer release until the compiled/golden seam is committed and reviewed.
+Existing counterpart requests remain non-consent; this is the explicit Owner exception.
+
+| Existing/new | Exact authored path |
+|---|---|
+| Existing | `src/AiDe.Core/WorkspaceCore.cs` |
+| Existing | `src/AiDe.Core/Understanding/AtlasQueryService.cs` |
+| New | `src/AiDe.Core/Understanding/AtlasWorkspaceReadPolicy.cs` |
+| New | `src/AiDe.Core/Understanding/AtlasReadScopeIssuer.cs` |
+| New | `src/AiDe.Core/Understanding/AtlasGitMembership.cs` |
+| New | `src/AiDe.Core/Understanding/AtlasReadBudget.cs` |
+| New | `src/AiDe.Core/Understanding/AtlasReaderContracts.cs` |
+| New | `src/AiDe.Core/Understanding/AtlasReaderProjection.cs` |
+| Existing | `src/AiDe.Core/Ipc/DaemonEndpoint.cs` |
+| Existing | `src/AiDe.Core/Ipc/IpcServer.cs` |
+| Existing | `src/AiDe.Core/Ipc/WorkspaceClient.cs` |
+| New | `src/AiDe.Core/Ipc/AtlasWorkspaceOperations.cs` |
+| New | `src/AiDe.Core/Ipc/AtlasRemoteReader.cs` |
+| Existing | `src/AiDe.Daemon/Program.cs` |
+| Existing | `src/AiDe.App/ViewModels/MainWindowViewModel.cs` |
+| New | `tests/AiDe.Core.Tests/Understanding/AtlasProductionAdmissionTests.cs` |
+| New | `tests/AiDe.Core.Tests/Understanding/AtlasGitMembershipTests.cs` |
+| New | `tests/AiDe.Core.Tests/Understanding/AtlasReaderWireTests.cs` |
+| New | `tests/AiDe.Core.Tests/Understanding/AtlasIpcAdmissionTests.cs` |
+| New | `tests/AiDe.Core.Tests/Understanding/AtlasReadBudgetTests.cs` |
+
+This is a ceiling, not a command to create unused files. Preserve all unlisted existing
+identity/F/E/D/S, generic IPC client/contract/framing, capability registry, database, perspective,
+menu, docking, generic adapter and style files. Each actual edit requires its short lease.
+The Conductor records and verifies the immutable starting SHA before dispatch.
+
+Actual next-eight subset: `AtlasReaderContracts.cs`, `AtlasReaderProjection.cs`,
+`AtlasWorkspaceOperations.cs` only for an honest public façade boundary, and
+`AtlasReaderWireTests.cs`. No existing production source or membership/authority implementation
+is released in this checkpoint. A compile-only accessibility fixture is explicitly not runtime
+composition. The recorded Q and N predecessor handoffs remain with the Track C/S successors,
+conditional on their source checkpoints and preservation of the accepted behavior.
+
+Owner turn 40 mapping constraint: operation/phase and request supply primary dimension and
+requested limits. Preserve actual native counts/state; derive output facts only from observed
+projection inputs. Unknown/Withheld retain null values and safe state-based explanations;
+unrecorded producer detail is “not recorded,” not an invented cause. Map known omission
+dimensions explicitly; when unestablished, null is permitted with a safe omission reason,
+superseding mandatory reason/dimension pairing. Inventory content bytes are zero; source
+content bytes derive from returned UTF-8 text with producer consistency asserted. No runtime
+no-op/success façade is admitted; an accessibility compile fixture proves only that boundary.
+
+Owner turn 41 releases the next 12 C leaves, same four-file seam, within the unchanged 48.
+Sixteen are charged; this tranche may reach 28, with 20 still unreleased. Preserve partial
+`280d9f94`. Required semantic reds include zero source length, split-surrogate highlights,
+empty/nonprogressing continuation against request context and inconsistent native content
+bytes. Inventory requires native and rendered bytes both zero; selection reconciles actual
+UTF-8 source bytes before splitting source/outline. Handles preserve valid Unicode/ordinal
+values up to 256 UTF-8 bytes. Reasons have separate safe-message handling, not token syntax.
+Complete public ports, Selection/source-bound/native goldens and the non-friend consumer
+accessibility compile boundary before Shell; no filesystem/Git/issuer/transport wiring.
+
+Owner turn 42 releases C's remaining 20 leaves within 48, reserving the first five for the
+standalone empty-source continuation inconsistency. Observe red for empty IndexedMatch with
+NextOffset zero, reject it in serialization/deserialization, preserve empty source with null
+continuation, rerun and commit without changing ports. Conductor reviews/joins before releasing
+Shell's existing 32-call tranche. NQ1/NQ2 still gate membership; the separately allowed at-most-ten
+qualification calls may address only those predicates. Other granted Core/Shell seams need not
+wait, but no unqualified Git-dependent admission or production success stub is allowed.
+
+After independently executing 326/326 and inspecting the final empty-page red/green,
+Conductor joined the seam as `366167052537c35171f40c6da66c982f8f5d93e5`.
+C's remaining 15 regular calls are released; 33/48 are charged. The same C writer also receives
+the already authorized **at-most-ten separately counted NQ1/NQ2 qualification calls**, only in
+`AtlasGitMembership.cs` and `AtlasGitMembershipTests.cs`, on owned synthetic required repository
+forms. Candidate helper/tests may be authored for qualification, but Git-dependent production
+admission waits for narrow Security readback. This is not an increase to general C work.
+S proceeds concurrently on the compiled ports; its real-window handoff waits for C's actual
+committed factory/view-model surface.
+
+### Atlas production Track S assignment, Owner turns 38/42
+
+Writer `atlas-production-shell-astra`, branch `atlas/production-shell`, receives only the
+following eight-file branch-local ceiling, 32 leaves, after Conductor's corrected Core seam join
+`366167052537c35171f40c6da66c982f8f5d93e5`. Canonical Shell/Core/native ownership remains;
+the explicit Owner exception and predecessor N handoff at `a8897914` authorize this branch work,
+not the open counterpart requests. Main integration is still ungranted.
+
+| Existing/new | Exact authored path |
+|---|---|
+| Existing | `src/AiDe.App/Workbench/SurfaceContentFactory.cs` |
+| Existing | `src/AiDe.App/Workbench/WorkbenchShell.cs` |
+| Existing | `src/AiDe.App/MainWindow.xaml.cs` |
+| New | `src/AiDe.App/Workbench/Understanding/AtlasLoadingHost.cs` |
+| New | `src/AiDe.App/Workbench/Understanding/AtlasWorkspaceOwner.cs` |
+| Existing | `src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs` |
+| Existing | `tests/AiDe.App.Tests/Workbench/Understanding/AtlasReaderViewTests.cs` |
+| New | `tests/AiDe.App.Tests/Workbench/Understanding/AtlasSharedHostAdmissionTests.cs` |
+
+Track S tree `C:\Projects\ai-de-atlas-production-shell` was created clean and HEAD verified at
+`366167052537c35171f40c6da66c982f8f5d93e5` before dispatch.
+MainWindow integration consumes only C's
+actual committed factory/view-model handoff, not guessed signatures; owner/loading/view work
+may proceed against the compiled public ports. Preserve the old proof constructor, selection/
+Back/currentness semantics, independent source/outline states and awaited lifetime ownership.
+Do not change unchanged perspective, menu consumers, generic docking/adapter, style, projects,
+Core contracts or any unlisted file. A needed seam returns to Conductor.
+
+### Atlas production repair continuation, Owner turn 43
+
+The same C and S writers retain their exact twenty/eight-file ceilings and existing trees.
+This is a prospective branch-local repair grant, not canonical ownership transfer or
+permission to integrate into primary/main. Conductor independently repeated the final
+membership candidate's three failures; no membership consumer is admitted.
+
+- C regular accounting is **34/48**, fourteen remaining. NQ special accounting is **10/22**:
+  twelve new leaves, with only the first three released initially. In
+  `AtlasGitMembership.cs` and `AtlasGitMembershipTests.cs`, those three add qualification-only
+  changed-pin/role, capture-stage, completion/error/byte-result and bounded action/name
+  diagnostics, then reproduce without changing invalidation semantics. Conductor must read
+  the diagnostic receipt before releasing the remaining nine. Repair only the demonstrated
+  cause; preserve hostile-fsmonitor, packed-ref ABA, relevant namespaces and fail-closed
+  overflow/error behavior. Regular non-Git work remains allowed, without fake admission.
+- S accounting is **32/44**, twelve new leaves for the four SRE lifetime findings in the
+  existing owner/loading-host/test scope. Observe semantic reds for transition recovery,
+  throwing clear callbacks, drained/idempotent final primitive disposal, and cleanup after
+  post-assignment load failure. Catching an exception does not release resource ownership.
+  MainWindow wiring still requires the actual committed/reviewed C handoff.
+- Eight separate targeted review leaves cover NQ Security/Test and Shell SRE/Test. Parent
+  readbacks and replays are separate costs, not hidden inside the worker budgets.
+- Maximum two writers, total width four. The order remains qualified membership, real
+  Core facade/issuer/client/ViewModel handoff, exact Shell consumption and real-window
+  lifecycle, then actual daemon-backed journey proof. Exhaustion returns remaining work
+  and its estimate to Owner; it does not reset a budget or manufacture completion.
+
+Owner turn 44 reallocates two of the nine held NQ leaves to correcting the diagnostic
+patch's two misplaced methods, compiling, and rerunning the unchanged diagnostic cases.
+The first three diagnostic leaves produced compiler errors, not native event evidence.
+NQ may reach **15/22**; seven remain held until Conductor reads the actual receipt.
+No invalidation-semantic change, regular-C borrowing or new source permission is granted.
+The broken-build transcript remains evidence of the structural patch-placement failure.
+
+Owner turn 45 prospectively extends the resumed Conductor checkpoint from sixty to
+seventy-two leaves: six Shell evidence/join, three NQ disposition, three record/regeneration.
+Author budgets do not change. Shell used 12/12 repair leaves, cumulative **44/44**, and
+returned `8e691c6a`. Targeted SRE/Test gates cleared the component repair; Conductor read
+the previously truncated test-source portion, read eleven semantic-red messages, and
+independently observed 90/90 both before and after joining as `639be9d3`. S's remaining
+MainWindow work stays unreleased until the committed C factory exists. Four NQ review
+leaves remain; neither failed membership source nor diagnostic-only source was joined.
+
+Owner turn 46 releases the seven remaining NQ leaves in two stages, still within **22**
+total. The first four, released now to the same C writer and two qualification files,
+compare native-operation lifetime across the await/process boundary. Record issuing-thread
+identity/liveness, handle/OVERLAPPED ownership, explicit cancellation/disposal and native
+completion results, with a genuine namespace-change control. Conductor reads the observations
+before releasing up to three cause-specific repair/replay leaves. No abort/overflow may be
+ignored, no silent rearm or fixture-only success is admitted, and any lifetime mechanism
+must be bounded and drained. Regular C remains 34/48; production admission remains closed.
+
+Owner turn 47 replaces those micro-releases with one coherent qualification pass in the
+same two files/tree: **19/30 NQ leaves charged, eleven available**, including eight newly
+authorized leaves. Capture immutable thread metadata while valid; diagnostic failure must
+not obstruct cleanup or become success. Execute exited/live/cancel/mutation controls and
+relate them to the original failures. Only if that evidence establishes the cause may the
+same pass implement and replay the minimal bounded/drained lifetime correction. The
+independent production-admission gate remains after the pass; four NQ review leaves are
+reserved. Regular C remains 34/48. Preserve every failed diagnostic and qualification run.
+
+Owner also fixes the next cumulative Conductor ceiling at **102 leaves**, not a fresh
+allowance. The immediate manual recount through the turn-47 ruling is **90 leaf calls**
+and **fourteen parallel-wrapper calls separately**. Native commands inside a PowerShell
+leaf are not counted as extra tool leaves. This is a manual transcript count, not
+harness-measured model requests. Remaining capacity at that point is twelve; the earlier
+72-to-82 overrun remains recorded. Only qualification verification/review, a conditional
+join and records are funded here, not the missing production factory/MainWindow scope.
+
+Owner turn 48 authorizes joining `d8d83de` plus its corrected `c7c94153` as qualification-only
+code after the pending records are committed. Production cleanup remains explicitly blocked.
+C receives **ten of its fourteen remaining regular calls** for retained-failure cleanup and
+fault oracles in the same membership source/test files, so regular use may reach **44/48**.
+Four regular calls are reserved for a code-grounded runtime estimate and executable commit
+sequence across the existing twenty-file ceiling. NQ remains 29/30; its unused call is not
+borrowed. Six new targeted Security/Test review leaves are separate.
+
+Invalidate first; attempt every independently safe cleanup; strongly retain pending native
+operations, buffers, handles, issuer lifetime and reservations in a bounded failure state.
+Fault oracles cover pin cleanup, canceled creation and final issuer drain. Label injected
+timeouts honestly; prove safe others release, pending debt remains charged, new admission
+cannot bypass it and later completion allows idempotent cleanup. No production consumer is
+admitted before raw evidence and targeted clearance. MainWindow still waits for real C code.
+Conductor's prospective cumulative ceiling is **126**, including six reserved record/join
+mechanics calls and eighteen cleanup/review/runtime-estimate-disposition calls; prior
+wrappers and overruns are retained, never reset.
+
+Owner turn 49 reallocates C's two unused cleanup leaves to the specific failed runtime
+grounding, without increasing 48: regular use is **46/48**, with two read-only leaves now
+released. No source authoring is allowed in that completion. Reconcile the twenty exact
+paths, read the missing dispatch/client/ViewModel disposal bodies, and return an inspected
+pin, executable commit sequence, tests, risks and bounded estimate with exclusions.
+The provisional 35-60-leaf estimate is not yet funding-ready.
+
+Cleanup candidate `7d78e773` used eight cleanup leaves and passes the targeted Test gate.
+Security conditionally clears the retained-owner paths. Conductor filled the review's
+missing native constructor/disposal ranges and independently replayed 355/355. Timeout
+throws before live buffer freeing; unpublished constructor cleanup retains its owner.
+The candidate may join under Owner 48's conditional gate, without admitting the unbuilt
+runtime factory or real-window integration.
+
+### Atlas actual runtime tranche, Owner turn 50
+
+C receives sixty new execution/verification leaves, regular **48/108**, across the same
+twenty-file ceiling above. NQ remains 29/30. The runtime successor session is
+`atlas-production-core-runtime-astra`, branch `atlas/production-core-runtime`, worktree
+`C:\Projects\ai-de-atlas-production-core-runtime`, using the retained C execution agent.
+Its exact starting HEAD was read back as `1e96dd8e8ae06a42759ff14779eb95296edf0248`, clean.
+The previous `atlas-production-core-exec-astra` registration ended; its tree and all raw
+proofs are retained. The new tree includes the accepted Shell and cleanup seams, rather
+than building runtime against the predecessor tree's older Shell.
+
+First writer leaf verifies the literal assigned paths and reads the daemon composition/
+shutdown body at that pin. At most the first eight leaves resolve necessary composition/
+lifetime decisions and executable controls. Continue through admission composition,
+awaited server/facade, isolated persistent reader, actual factory/ViewModel handoff and
+daemon proof, without artificial two-call releases. Stop only for a real unknown contract,
+scope conflict or veto. Generic `IpcClient` stays unchanged.
+
+Connection/workspace identity comes from `WorkspaceClient`'s actual connection state,
+not the ViewModel display name. Newly created Atlas readers transfer to the Shell workspace
+owner; borrowed queries/commands remain borrowed. Write/delete-excluding Git/admin/index/
+ref pins are held only in bounded capture/read/publication critical sections, never while
+the UI waits or throughout the logical lease. Later operations revalidate rather than
+consulting disposed-pin currentness. Git change/contention yields truthful retryable
+unavailability or invalidation; old receipts do not acquire new authority.
+
+Owner separately grants eighteen review leaves (Security six, DS six, Test six), sixteen
+new S handoff leaves only after an actual reviewed C commit, and fifteen independent real
+daemon/MainWindow proof leaves. The Shell eight-file ceiling remains. Conductor's
+prospective cumulative ceiling is 184, preserving the 128 count, control-plane overrun,
+and eighteen reported wrappers; first eight are reserved for records. Maximum two writers/
+width four; no primary/main integration, push or normative Addendum E acceptance.
+
+Setup readback: inherited merge drivers and registry are effective. `coord doctor` reports
+the same six pre-existing shared OWED markers and exits nonzero; it is not called clean.
+The fresh runtime tree's `regenerate-derived.py --check` passed all local checks. No global
+marker was cleared or installation overwritten. Owner's narrow setup disposition is pending;
+this is not a waiver of a source, authority or runtime verification gate.
+
+Owner turn 51 permits dispatch with an exception only for that shared regeneration debt.
+The exact identities in `C:\Projects\ai-de\.agents\regen-owed.txt` are:
+`docs/_meta.json`, `docs/_site/index.html`, `docs/api/AiDe.App.Workbench.md`,
+`docs/api/AiDe.Core.AgentPlane.md`, `docs/audit/audit-data.js`, `docs/docs-index.js`.
+The first exact identity/hash baseline recorded here is SHA-256
+`238DA28A2DC48D4E477B388AA7AC8AA77DDEEE166A8DCB8878966211B87F076E`.
+Its last-write time `2026-09-14T01:02:21.9741078Z` precedes the new runtime gitfile creation
+`2026-09-14T01:13:27.9988158Z`; repeated hash reads through the current checks agree.
+Earlier checkpoints recorded the count, not this hash; no earlier measurement is invented.
+
+The current retained general-purpose C agent authored/committed the inspected `7d78e773`
+in this CLI session. In the new registered tree, an actual exact-path claim, identity-bound
+`coord check --json` allowance and release were exercised for `AtlasWorkspaceReadPolicy.cs`.
+The effective common-dir `pre-commit` hook was opened: it invokes the primary
+`coord-core.py precommit` floor through the installed Python. No hook installation,
+override, marker deletion or source edit was performed in this check. Historical hook
+enforcement qualification is still historical, not a fresh blanket enforcement claim.
+Any different marker set or additional doctor failure falls outside this exception.
+
+Owner turn 52 authorizes six additional independent Security review leaves after the
+original six were spent without reviewing runtime authority. The wrong-scope cleanup
+PASS was rejected; two corrective source reads also failed. That cost remains spent.
+The new scope is narrower: workspace read policy, all issuer authority branches,
+operations facade, daemon bootstrap/registration and the relevant Core eligibility method.
+
+Fresh reviewer `atlas-runtime-authority-fresh` uses registered read-only review session
+`atlas-runtime-authority-review`, branch `atlas/runtime-authority-review`, worktree
+`C:\Projects\ai-de-atlas-runtime-authority-review`. Parent verified exact
+`b1c6f74a0c5b0c7775420ac63ad814aa05c9bc0c` and a clean tree. Six literal built-in-view ranges
+are supplied; no ad-hoc range helper, source authoring or repeated native-cleanup review.
+No runtime join or Shell handoff occurs until this authority gate is resolved.
+
+C's committed runtime is `b1c6f74a`, nineteen authorized files, 58/60 new leaves used:
+regular 106/108, NQ 29/30. Parent independently built the daemon and observed 437/437
+Core/IPC and 96/96 App/factory cases with zero skipped. Test and DS reviews are conditional;
+the old 79-assertion IPC spike is not runtime evidence. Shell's sixteen leaves and the
+fifteen independent real-window proof leaves remain held. Mainline ceiling remains 184.
+
+Owner turn 53 authorizes twenty C publication-lifetime diagnosis/repair leaves, comprising
+the two unused regular leaves plus eighteen new ones: regular **106/126**. Exact scope is
+`src/AiDe.Core/Understanding/AtlasReadScopeIssuer.cs`,
+`src/AiDe.Core/Ipc/DaemonEndpoint.cs`, `src/AiDe.Core/Ipc/IpcServer.cs`,
+`tests/AiDe.Core.Tests/Understanding/AtlasIpcAdmissionTests.cs`, and
+`tests/AiDe.Core.Tests/Understanding/AtlasProductionAdmissionTests.cs`.
+The same runtime writer/tree remains; no other source or generic IPC change is granted.
+
+Conductor releases the first eight for deterministic actual-native-Q paused-publication
+evidence and the repair plan. Parent must read the semantic red before the remaining
+twelve implementation/replay leaves are released. The described repair is conditionally
+approved: preparation completion, writer completion and resource release are distinct;
+scope expiry/revocation, operation deadline and connection cancellation remain linked
+through bounded writing; pins/reservations release only after completion or canceled-and-
+awaited writing. No self-awaiting stop path, appended refusal after a possible partial frame,
+recalled-byte claim or weakened oracle is permitted. Failed cleanup remains charged.
+
+Twelve new independent review leaves are separate (Security/DS/Test four each). NQ is
+unchanged; Shell sixteen and independent real-window proof fifteen remain held.
+Conductor's prospective cumulative ceiling is 208, with six calls reserved for records.
+The prior 22 reported wrappers and all spent/failed work remain recorded. The checkpoint
+ends at a reviewed repair disposition and conditional Core join, not programme completion.
+
+The first eight publication leaves returned deterministic native-Q evidence: six semantic
+reds and two passing controls. Conductor read the receipt, source seam, raw revoke/partial/
+deadline traces and independently repeated the same 6/8 failures. C is **114/126**.
+The twelve reserved repair/replay leaves are now released under Owner 53's conditional
+approval, within the same five-file scope. Preparation/writer/release separation and the
+cancel-and-actual-drain plan match that approval; the oracle is not weakened. Runtime join
+and Shell handoff still await repaired evidence and the three independent reviews.
+
+Owner turn 54 authorizes eight C leaves, two unused plus six new, regular **124/132**,
+within the same five repair files. Observe semantic red in the successful-full-write /
+pre-poll window before removing the retroactive cancellation decision. Preserve legitimate
+connection/scope revocation and all pre/during-write/partial-frame/drain behavior.
+Assert complete blocked/drained fixture tuples and reject safely perturbed observations.
+Endpoint commit must require held publication for successful admit/inventory/select/restore,
+while capabilities/release and errors remain exempt. This guard is contract hardening,
+not an observed missing-hold disclosure. DS and Test each receive four new review leaves;
+Security's ownership clearance stands only if that contract remains unchanged.
+
+Conductor may reconcile the defect register only: import published entries 177-208
+verbatim from `76c6d430a19492ffcd9b126e641ee70cda57ec69`, preserve both Atlas definitions,
+check branches/reservations and semantic duplicates before reissuing, and record
+revision/old-id/title-to-canonical-id mappings. Historical JSONL is not rewritten and
+ambiguous references are not globally replaced. No replacement number is pre-authorized.
+If numbering cannot be serialized safely, retain named pending decisions; source repair
+does not wait for guessed IDs. Mainline ceiling is prospectively 256, retaining all
+previous calls/overruns/wrappers. Shell sixteen and independent-window fifteen stay held
+until the actual repaired Core handoff is cleared and joined.
+
+Owner turn 55 grants six new C leaves, regular **132/138**, to establish the specific
+final-Restore receive-versus-drain ordering in the existing server qualification seams
+and `AtlasProductionAdmissionTests.cs`. Pause after its full writer return but before
+cleanup; correlate that request's ownership and matching drain signal, accounting for
+other global owners. Correct the idle assertion only if the controlled observation
+supports it, with a finite signal deadline and no sleeps/polling/early pin release.
+Real Git writes, stale-scope refusal and reusable receipts remain mandatory.
+
+Four new review leaves are separate (Test two, DS two). The conditionally joined
+`4855151f` code is identical to reviewed `4d03bd19`, but its Core run is 458/459 because
+the old test asserts zero native owners immediately after the client reply. That gate
+remains failed until corrected current-pin Core **and App** runs are observed.
+If ownership persists after the matching drain, the runtime finding stays open and its
+repair scope needs explicit approval. After joined green, fresh Test/DS clearance and
+parent handoff confirmation, the already funded Shell sixteen may be released.
+
+Owner-55 exit conditions are met: the request-correlated test-only correction `3c097fa9`
+passed fresh Test/DS review and joined as `4cfb8450`. Conductor independently rebuilt and
+ran joined Core 459/459 and App/factory 96/96, zero skipped. Production source remains
+the reviewed `4d03bd19` implementation; its actual factory/ViewModel handoff was read.
+
+The held sixteen S leaves are now released, cumulative S **44/60**, to the retained Shell
+agent in fresh session `atlas-mainwindow-handoff-astra`, branch `atlas/mainwindow-handoff`,
+worktree `C:\Projects\ai-de-atlas-mainwindow-handoff`. Parent verified clean exact base
+`4cfb8450a7cda5448d3aa32923d95998fc22d36c`, local derived checks and an identity-bound
+MainWindow path allowance. The prior Shell registration ended; its proof tree remains.
+The same eight-file S ceiling applies. MainWindow consumes
+`MainWindowViewModel.AtlasReaderFactory` and transfers each created reader to
+`AtlasWorkspaceOwner`; existing borrowed query/command interfaces remain borrowed.
+The independent real daemon/MainWindow proof's fifteen leaves remain separate and held
+until the real handoff lands. No source grant, main/push or programme acceptance is implied.
+
+Owner turn 56 grants twelve S diagnostic/repair leaves, cumulative **60/72**, only in
+the three dirty MainWindow, WorkbenchShell and AtlasSharedHostAdmissionTests files.
+Conductor releases the first four for named stage/task/generation/disposal-gate evidence
+and an owned WPF/Core/SQLite control; the remaining eight wait for parent readback of
+the discriminator. Preserve the primary failure and report cleanup errors separately.
+No longer timeout, sleeps, sync-over-async, pool clearing, borrowed-query disposal or
+shared-`Sta` edit is granted. Successful cases must finish their owned body/cleanup and
+delete fixtures; failed drain is explicit retained debt, not skipped cleanup success.
+Native SRE and Test each receive two review leaves. Conductor's cumulative ceiling
+becomes 300, first eight reserved for records. The S proposal remains unjoined; the
+independent real-daemon/MainWindow proof is still separate.
+
+The four Owner-56 diagnostic leaves returned a discriminator, now read by Conductor:
+both modes reach completed `WorkspaceReady`, generation one, then wait at the first
+ApplicationIdle operation until the shared pump times out. Primary timeout and later
+locked-database cleanup are separate. The owned `Dispatcher.Run` control executes idle
+work before/after close, uses borrowed queries, disposes Core and deletes its fixture.
+Conductor read shared `Sta.Pump` as read-only: its loop invokes Background priority.
+
+The remaining eight S leaves are released, cumulative **64/72**, to test the same unchanged
+MainWindow composition under a local full-dispatcher pump and correct only what that
+counterexample establishes. Shared `Sta` stays unchanged; no timeout extension or skipped
+cleanup. If a later product stage fails, expose it rather than attributing every failure
+to the pump. Full affected replay and fresh SRE/Test review remain required before join.
+
+Owner turn 57 funded five replacement source-coverage leaves (SRE three, Test two);
+the original four oversized-output reads remain spent. Both exact-source reviews now
+clear the fixture-backed MainWindow lifecycle. Parent independently executed 115
+shown/native/factory cases plus nine existing session-opening controls, then joined
+`2b3a4e72` as `28c5c5ea` and ran the combined 124/124 set with zero skipped.
+Production Core/ViewModel/shared `Sta` remained unchanged by the Shell delta.
+
+The reserved fifteen-call independent proof is released only to a separate verified
+post-join worktree. Its sole authored file is
+`tests/AiDe.App.Tests/Workbench/Understanding/AtlasDaemonMainWindowProofTests.cs`.
+It uses the legitimate existing test assembly and internal MainWindow constructor,
+not a spoofed friend assembly, new project, reflection bypass or normal profile-writing
+startup. No existing test, product, project or IVT file may be changed.
+
+The proof must launch the actual pinned daemon on owned source/config/data directories,
+connect actual `WorkspaceClient`/`CreateAtlasReader`, use real repository files and the
+existing Architecture opener, exercise file/member/source/Back, replacement, an explicitly
+identified revocation/currentness path and awaited shutdown, and observe own-HWND UIA and
+capture. A local bounded full dispatcher must outlive owned body and cleanup. No fake
+Atlas ports, DesktopRoot search, private UIA cache manipulation, source bodies/secrets in
+logs or user-profile writes are permitted. Parent owns the durable proof document and
+approved capture copy. The fifteen calls include authoring, execution and receipt.
+
+Independent proof assignment: session `atlas-real-daemon-window-proof`, branch
+`atlas/real-daemon-window-proof`, worktree
+`C:\Projects\ai-de-atlas-real-daemon-window-proof`, exact clean base
+`5e624810a52444e106e45bfc2815c0fe417ada40`. Parent verified the base, local derived gates
+and the identity-bound allowance for the sole new proof test file. Fifteen leaf calls
+cover authoring, actual daemon/window execution and receipt. No existing source/test/
+project/IVT file is assigned. Generated raw receipts and owned-window captures remain
+proof evidence; the Conductor owns their approved durable documentation/copy.
+
+Owner turn 58 extends the independent real-window proof allowance from fifteen to
+twenty-seven leaves: twelve charged, fifteen available. The same writer/tree and sole
+new proof test file remain. No product/shared-test/project/IVT change is granted.
+Established factory/VM contracts are supplied; remaining reads use literal ranges only,
+not shell-search/helper experiments.
+
+The minimal external lifecycle path is **healthy acknowledged lease release through
+workspace replacement**. Healthy lease disposal awaits `atlas.release`; its server handler
+awaits scope work, writer completion and resource disposal before success. Terminal
+disposal, generic reader disposal or window disappearance are not substitutes. Observational
+wrappers may record and forward real calls/results unchanged; no fake lease, private pipe
+or reflection-generated authority is permitted.
+
+The actual window proof covers opener/file/member/source/Back, replacement, released
+old-scope rejection and awaited shutdown. A public same-live-scope server-idle barrier
+remains unestablished; in-process idle-Git proof remains separate. No zero-pin or immediate
+Git-write assertion is inferred from a source reply. Mainline ceiling becomes a prospective
+330 cumulative leaves, preserving prior calls/wrappers/overruns and all programme restrictions.
+
+Owner turn 59 extends the independent proof from twenty-seven to thirty-three leaves,
+six newly available in the same sole proof test file. The actual run's data/binding/
+healthy-release evidence is retained, but visible-source acceptance is withheld: the
+default capture clips source/outline despite bound text and `IsOffscreen=false`.
+
+Focus Code Atlas through its rendered tab/control and use the supported
+`Window -> Maximize pane` route (`workbench.maximizePane`), not private layout/focus state
+or an assumed keyboard binding. Observe the intended pane maximizing; measure source text
+viewport and selected-outline content against the window client area and clipping
+ancestors. The method/source text, selected label and highlighted identifier must be
+readable, not merely positive-area controls. Preserve before/after geometry and owned
+captures plus all lifecycle assertions. No production resizing/layout edit is granted.
+A successful maximized path does not close the default-placement usability finding.
+Mainline ceiling remains 330; other proof limits and programme restrictions remain.
+
+Owner turn 60 grants eight further proof leaves, total **33/41**, in the same sole test
+file. It is a command/focus/layout investigation, not a production placement grant.
+Owner opened the actual route: menu Click forwards the command ID to `Shell.Execute`
+and `PerspectiveShell`; logical focus is separately derived from ancestor layout content.
+Missing ICommand dispatch is therefore not established from the failed width result.
+
+Use legitimate rendered tab/header/control focus and the actual menu action, preferably
+own-window UIA Invoke. Read before/after `FocusedSurfaceId`/`FocusedStackId`, intended
+target stack, dispatch/result and resulting layout; a handled result can still mean
+"No pane is focused." Any temporary public-router observer forwards unchanged behavior
+and is restored. Never set controller focus/layout state or window size.
+Always record post-action geometry/pixels, including failed-width cases. Preserve failed
+captures and forced exits as failures. If the normal route cannot expose readable source,
+return the exact failing seam and minimal Shell-file proposal for separate approval.
+Mainline ceiling becomes a prospective 360; visible-source acceptance remains withheld.
+
+Owner turn 61 authorizes a twelve-leaf Shell Center-placement slice, cumulative S
+**72/84**, in fresh session `atlas-center-reading-placement-astra`, branch
+`atlas/center-reading-placement`, worktree
+`C:\Projects\ai-de-atlas-center-reading-placement`. Parent verified clean exact base
+`10c772964fd75405981833d0a05eb9f57293ce89`, local derived gates and an identity-bound
+WorkbenchShell path allowance. Prior handoff registration ended; its proof tree remains.
+
+Only `src/AiDe.App/Workbench/WorkbenchShell.cs`,
+`src/AiDe.App/Workbench/SurfaceContentFactory.cs`, and
+`tests/AiDe.App.Tests/Workbench/Understanding/AtlasSharedHostAdmissionTests.cs` may change.
+Put preferred Center placement on the existing kind row and consume the existing placement
+override. Do not add a hidden kind-keyed branch or another placement framework. New opens
+use the default; restored/explicit user placement, existing tabs, Show-existing and other
+document/prompt rules remain. No maximize rewrite, window/font hack or reader-layout edit.
+Observe clipped-default red, then Center/readable text-label-highlight geometry at 1280
+and the declared target viewport. If Center is insufficient, return measured bounds and
+the minimal additional reader-layout proposal before editing it.
+
+UX/SRE/Test receive two review leaves each. After a reviewed UI commit, independent proof
+receives eight new leaves, **41/49**, in its existing sole file, to adopt that UI commit,
+remove the invalid legacy maximization assertion and prove the normal default journey.
+Canonical zone state replaces legacy stack flags when observed. Old captures/errors/forced
+exits remain; default-placement acceptance requires actual new readable default pixels.
+Mainline stays 360 and no main/push/normative/programme acceptance is granted.
+
+Owner turn 62 adds only
+`src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs` to the three placement files,
+and grants eight S leaves, cumulative **84/92**. The source/highlight now fit Center at
+1280/1440, but the complete 218.453-DIP member label has only 171 DIP visible. Preserve
+that red evidence. Stretch outline items within the actual finite viewport and wrap the
+full label without trimming, replacement text or font changes; accessible names remain.
+Measure actual rendered wrapped lines rather than an unconstrained single-line rectangle.
+Selection, focus, virtualization, source geometry, bounds and receipt/Back behavior remain.
+
+The existing unspent UX/SRE/Test two-leaf reviews cover the combined four-file candidate.
+The independent proof's eight conditional calls remain 41/49 after reviewed UI join:
+normal Center default, actual wrapped geometry, no legacy stack-max assertion, and real
+daemon/lifecycle/UIA/capture replay. Mainline ceiling is prospectively 400, without resetting
+prior costs. No extra product, proof, primary/main or programme authority is implied.
+
+The combined Center/wrapping candidate `6591b5e9` cleared exact-source UX/SRE/Test gates.
+Parent ran the final combined UI/Sessions set 232/232, joined it as `dd84702b`, compared
+the four files with the reviewed candidate and repeated joined 232/232, zero skipped.
+The earlier pre-corrected geometry/session-focus failure remains separate historical
+evidence; no root cause for that historical session-focus failure is invented.
+
+The independent proof tree adopted only that reviewed UI commit as `f89822cb`; its
+uncommitted sole-file proof delta was hashed before/after and remained byte-identical.
+The eight conditional proof leaves are now released, **41/49**, to remove the legacy
+maximization oracle/workaround, use normal new Center placement and actual wrapped-glyph
+geometry, and rerun the real daemon/window/source/member/Back/replacement/release/shutdown
+and own-HWND capture path. No source, layout state, font/window-size or query-result
+substitution is permitted. Default readable-source acceptance still requires the new pixels.
+
+Owner turn 63 accepts the bounded E0 native reading/default-readability horizon for the
+observed fixture and viewport. Parent may join only proof commits `2ab95e2b` and `6bb7646d`,
+replay current code, write `docs/proof/code-atlas-real-daemon-mainwindow.md`, and copy the
+approved owned capture to
+`docs/proof/assets/code-atlas-mainwindow/normal-default-member.png`, verifying hashes.
+Public same-live-scope idle, held late-publication race in this window run, distinct command
+method, broader accessibility/viewport coverage and the footer remain outside acceptance.
+
+The same proof writer receives four startup/footer follow-up leaves, **47/51**, in its
+sole test file. Exercise legitimate VM initialization/refresh, never assign a convenient
+status string. Current-tree replay must not silently launch binaries from an old hard-coded
+proof tree. Any product-status discrepancy after normal initialization is a new finding;
+no product-status edit is authorized.
+
+E-1 Concrete static code views is the next admitted functional phase. A separate design
+writer receives twelve leaves only for `docs/design/code-atlas-e1-static-views.md`, with
+four targeted independent review leaves. Return the precise producer/query/wire/class/
+member/source path, supported relations/profile limits, negative oracles, exact manifest
+and bounded first implementation tranche. Reuse E0 identities, evidence and Architecture
+host. Method sequence/activity stays explicit in E1; domain/ER/layer/Azure is E2,
+correspondence E3 and AI E4. No E1 source implementation, normative E/main/push or programme
+completion grant follows. Mainline ceiling remains 400.
+
+E1 design assignment: session `atlas-e1-static-design`, branch `atlas/e1-static-design`,
+worktree `C:\Projects\ai-de-atlas-e1-static-design`, exact clean base
+`8b9232d5c0f7bebcaada0cdc01e7eff193e98bb3`, verified by Conductor. Sole authored path:
+`docs/design/code-atlas-e1-static-views.md`. Twelve author leaves include grounding,
+design and receipt; no product code or shared artifact editing is granted. Parent owns
+audit/change/index integration. Four targeted review leaves remain separate.
+
+Owner turn 64 extends the existing proof writer from 51 to 55 cumulative leaves,
+solely for the named, bound footer assertion and current-checkout proof closure.
+Within the owned MainWindow, identify `Workspace health`, verify its `StatusMessage`
+binding belongs to the active VM, and compare displayed status after legitimate
+refresh. Two equal text values elsewhere are not a footer oracle. No status
+assignment or product edit is granted. Preserve the failed duplicate-match run.
+Build and replay the whole real-daemon journey, inspect fresh pixels and normal
+lifecycle receipts, and verify repository, test assembly and daemon binary roots.
+Only the reviewed proof-file correction may join the two previously admitted
+proof commits; alternate-checkout correctness requires a real Conductor replay.
+Footer coherence is not accepted before that named-target evidence passes.
+The Conductor cumulative ceiling rises prospectively from 400 to 430 leaves;
+prior expenditure remains recorded. E1 still has no implementation grant, and
+main integration, push, normative Addendum E and programme closure remain separate.
+
+Owner turn 65 expands the original four total review leaves to sixteen total
+leaves, four each for Core security/concurrency/codec, native UX, UML/graph, and
+Test/composition/simplification. This is twelve new leaves, not a reinterpretation
+of the old allowance. All applicable gates must clear against the same corrected
+source-contract pin; an unresolved contract is a blocker. Overall active width
+stays four, including the independent footer proof.
+
+Before those final reviews, the retained Core Astra worker receives a separate
+sixteen-leaf documentation-only contract checkpoint. Assignment:
+session `atlas-e1-source-contracts`, branch `atlas/e1-source-contracts`, new tree
+`C:\Projects\ai-de-atlas-e1-source-contracts`, explicit base
+`b6e053c2` (resolve and verify its full object id before creation), plus only the
+design-file commit `76d30b4252f9c66e735c5d009e4c9b4287df0d54`.
+Sole authored path: `docs/design/code-atlas-e1-static-views.md`.
+Establish actual signatures/callers, old/new compatibility, selection and
+publication ownership, charging, native token/events, and decoded memory.
+Separate source-observed, executed and unresolved contracts; name a minimum
+executable spike where reading cannot establish behavior. Reconcile the proposed
+fourteen paths and first tranche, preserving lexical occurrences versus semantic
+identity and retaining sequence/activity in E1. No product, UI, shared record,
+private corpus, main or push authoring is granted. Parent owns record integration.
+The Conductor ceiling remains 430; implementation admission follows the completed
+contract and independent gate receipt.
+
+Owner turn 66 extends Conductor prospectively from 430 to 455 cumulative leaves
+for the already admitted proof, contract and review nodes, not product authoring.
+Owner turn 67 extends the same sole proof writer from 55 to 63 cumulative leaves.
+The duplicate-text selector was repaired, but the full run then rejected an empty
+glyph-ink rectangle; neither missing text nor harmless whitespace follows from
+that rectangle alone. Record relevant run characters/clusters, advances and ink
+bounds before changing the oracle. Exempt only demonstrated whitespace or
+characterized no-ink runs from area containment. Preserve rendered/accessibility
+text equality and every required nonwhitespace character. Negative controls must
+remove required characters and clip real ink, failing even when remaining
+rectangles fit. Retain named footer/binding/active-VM assertions, the current-root
+locator and all failed runs. A full replay must show normal daemon exits and owned
+cleanup. Parent inspects the changed source, raw receipt and PNG before the
+proof-only join, then replays in Conductor and checks binary roots. Unresolved
+classification returns literal evidence; no blanket empty-rectangle skip,
+product edit, automatic extension or main/push grant.
+
+Owner 67 proof conditions were observed met on the bounded fixture. The proof
+writer used 63/63 and committed only `ac683dce`; parent read its changed source,
+raw receipt and both captures, then joined the three authorized proof commits as
+`d4d84674`, `9b9f83d4`, `a8e09f35`. The actual Conductor-checkout replay executed
+one test and passed: roots/assembly/daemon all resolve to Conductor, both named
+footers bind to the active refreshed VM, all three ink/character mutations fail,
+both healthy releases return, and daemons 38152/59056 exit normally with fixtures
+deleted. The initialized member and replacement-footer captures are preserved
+under `docs/proof/assets/code-atlas-mainwindow/`; the replacement image is a
+loading state, not settled-source pixel evidence. Full receipt/hashes and
+unchanged exclusions are in `docs/proof/code-atlas-real-daemon-mainwindow.md`.
+This closes the remaining bounded E0 proof-only integration, not the programme.
+
+Owner turn 68 raises Conductor prospectively to 475 cumulative leaves for E0
+record closure and the existing E1 contract/review convergence. E0 closure is
+committed at `af6506b4`; no E1 source authority follows.
+
+The sixteen-leaf source-contract worker returned
+`ed8511c2292f477d720cb8bbc21bd57404330094`, used 16/16, and released its design
+lease. Parent verified that only the design changed after its import and that
+product/test source equals the declared `b6e053c2` baseline. The current ledger
+identifies strict unknown-property rejection, separate SELECT/RESTORE writers,
+discarded remote capabilities, first-128 outline behavior and fixed initial source
+window. Its proposal is now sixteen paths; `AtlasWorkspaceOperations.cs` and
+`AtlasRemoteReader.cs` are necessary additional transport seams. No new code ran.
+SP1 compatibility, SP2 lexical association, SP3 long-file/page navigation and
+SP4 incremental accounting/publication remain explicitly executable blockers.
+
+The four independent read-only reviews now target that same immutable corrected
+pin, at four leaves each: retained fresh Security reviewer
+`cf522afd-1af4-42ef-a392-5af8ccb41074` (Core/security/concurrency/codec),
+retained UX reviewer `c4994e72-ff75-4e75-8a5c-2a31100dca18`,
+retained Test reviewer `e8c73a03-3fa2-4a77-8d17-68cdf80188b1`, and UML/graph reviewer
+`cb31686a-6ad1-4538-9040-5933d09146ed`. The first three use their existing separate
+review worktrees and immutable pinned content. The fourth owns registered session
+and branch `atlas-e1-uml-review` / `atlas/e1-uml-review` at
+`C:\Projects\ai-de-atlas-e1-uml-review`, whose exact HEAD parent verified above.
+No reviewer may edit product/design/shared records or treat a missing executable
+contract as PASS. All four results precede the next Owner implementation decision.
+
+E1 review join at that pin: Test and UX returned conditional design-only acceptance;
+neither clears executable E1 acceptance. Core Security used 4/4 and blocks product
+admission on SP1 compatibility and SP4 incremental accounting/publication, while
+explicitly permitting a proposed narrow test-only checkpoint for consideration.
+No additional source-contradicting design defect was established by that sample.
+UML used 4/4 but spent three reads on worktree/ref metadata and its final search
+omitted 159 of 183 matches; it did not read the full occurrence/notation contract
+and does not clear that gate. Parent supplied exact completion ranges:
+design lines 464-567 (sections 3-4) and 333-360 (SP1-SP4). Two additional targeted
+read leaves were requested from Owner, not assumed. Test/UX tool-leaf counts
+were not supplied with their verdicts; metadata-only clarification is pending.
+This is a review-coverage finding, not proof that the design contradicts UML.
+The next proposed work is test-only SP1/SP2 characterization plus existing SP4
+baseline controls, with actual codec/producer/ownership paths and no test-only
+replacement implementation; Owner admission remains pending.
+
+Owner turn 69 authorizes two new UML read leaves for exactly lines 464-567 and
+333-360 at the corrected design pin, no more metadata checks/searches, and a
+corrected T2 design-only verdict. The prior four spent remain recorded. Subsequent
+metadata-only replies establish Test 3/4 leaves (no wrappers) and UX 4/4 leaves
+(one wrapper separate); their technical verdicts did not change.
+
+After that UML disposition, Owner admits one 24-leaf general-purpose GPT-5.5
+TEST-ONLY qualification worker. Assigned session/branch:
+`atlas-e1-test-qualification` / `atlas/e1-test-qualification`; own new worktree
+`C:\Projects\ai-de-atlas-e1-test-qualification`, based on current Conductor
+`e381cfd5a1a0218ead15d8769ac4a35799f0c4be` plus only original design `76d30b42`
+and correction `ed8511c2`, with all pins checked before authoring.
+Only these authored paths are admitted:
+`tests/AiDe.Core.Tests/Understanding/AtlasStaticReaderContractTests.cs` and
+`tests/AiDe.Core.Tests/Understanding/AtlasStaticObservationTests.cs`.
+Scope is SP1, SP2 and existing SP4 baseline controls through actual frozen codecs,
+registrations, reader and verified-buffer producer/helpers. Expected-value oracles
+are permitted; a test-only implementation of missing production behavior is not.
+Compilation failure is not semantic red. Missing classifier/parent/opt-in seams
+must be reported exactly, not implemented. Current-contract tests may pass while
+proposed-behavior qualification remains blocked. SP3 and incremental new-field
+SP4 remain open; no first-128 waiver, production metadata, partial-name merge,
+invented project context or blanket sixteen-path authoring is granted.
+Freeze the test/evidence receipt for parent readback. Conductor receives a
+prospective 500 cumulative leaves for these existing nodes only.
+
+The targeted UML disposition is complete: T2 PASS for design only, after two exact
+reads (6 cumulative). Sections 3-4 explicitly prohibit composition/lifetime
+inference and editable derived views; SP2/SP3 remain execution gates. This closes
+the review-coverage defect without converting future metadata into current facts.
+The two design commits are joined as `502e1495` and `c9617fb7`.
+The test-only worker's realized base is
+`c9617fb7d6911731def65a0fadbeaaa405f53eae`, exactly the above Conductor baseline plus
+those two design changes; parent created, registered and verified the clean
+`atlas/e1-test-qualification` tree at that pin. Owner 69's conditional test-only
+grant is therefore active. No E1 product-implementation veto is cleared.
+
+The admitted test-only worker is
+`4c71df17-edde-4831-909d-b781d12a5d98` (`atlas-e1-test-qualification-gpt55`,
+general-purpose GPT-5.5), with 24 total leaves and the two exact test paths above.
+Parent owns documentation/Proof Pack/audit/graph updates; generated test receipts
+and owned fixtures are permitted in the worker's artifacts area. No nested agents,
+primary/source writes, new dependencies or self-admitted product work are allowed.
+
+Owner turn 70 grants twelve new qualification review leaves: four Test, four C#,
+four combined Core Security/SRE, on one frozen candidate after parent execution
+readback. Their scope is the tests and the actual claims exercised, not unimplemented
+E1 behavior. The Conductor cumulative ceiling rises prospectively to 530.
+
+The test author returned `020f9622457865d358780820a753a1bec0092958`. Parent verified
+only the two authorized files changed (331 lines), product source unchanged, and
+replayed 16 executed / 16 passed / zero failed. Parent TRX is
+`atlas-e1-independent/parent-e1-qualification.trx` in the session evidence root.
+No candidate join or qualification acceptance has occurred.
+
+The author's budget report is approximately 35 leaves against 24, plus wrappers;
+this is an admitted overrun, not retrospectively funded work or an independently
+reconciled exact count. Further author tool use is stopped. Only the final TRX was
+found; the claimed three earlier failures were described as oracle corrections,
+not product fixes, and their red attribution/raw receipts remain unverified.
+
+The three funded reviews now inspect that exact pin: Test
+`e8c73a03-3fa2-4a77-8d17-68cdf80188b1`, C#
+`679f5667-7121-462f-90d7-8987a0ffe858`, Core Security/SRE
+`cf522afd-1af4-42ef-a392-5af8ccb41074`, in their retained separate review trees.
+Parent supplied literal complete ranges, not broad searches:
+`AtlasStaticReaderContractTests.cs:1-153`, `AtlasStaticObservationTests.cs:1-178`.
+The green tests currently use codec fixtures, Roslyn producer inputs and a local
+reservation ledger. They do not execute actual capability registration, remote
+RESTORE retention, or the native Q/issuer/blocked writer. Boundary, empty-output,
+unsupported-parent and cleanup-oracle questions remain with the independent gates.
+No runtime vulnerability or full SP1/SP4 qualification follows from these greens.
+
+Owner turn 72 reassigns the same test worker/tree and two files for sixteen new
+repair leaves. Prior approximately 35/24 expenditure is not retroactively funded.
+Required repairs: isolate JSON mutations to the intended row while preserving a
+valid root; expected nonempty occurrences, nonnull supplied-profile logical values
+and exact role/file/identity assertions; deterministic input disposal including
+partial construction; drain/capture outcomes and release every reservation before
+assertions; preserve primary failures; exact real ledger charges; separate body
+and prefix units; truthful sibling/literal-codec/reflection names.
+New red/control outputs must have distinct retained names. Historical overwritten
+TRXs cannot be recreated or called product red.
+
+Run the existing real SELECT/member/RESTORE and publication-lifetime tests at the
+repaired candidate rather than duplicate their implementation. Credit them only
+as current E0 baseline. Actual capability capture through an established public/
+test seam is permitted inside the same two files; otherwise report the gap.
+No new parent/flavor/opt-in fields, test-only substitute producer/codec or
+first-128 waiver is admitted. Owner explicitly separates those missing E1 product
+seams from this repair's exit criteria: qualification may establish current
+behavior and report missing behavior without implementing it.
+
+Twelve new post-repair review leaves are granted, four each Test/C#/Core
+Security-SRE, after parent replay of one repaired pin. Earlier review budgets
+remain spent. Conductor's cumulative ceiling rises prospectively to 560.
+No main/push, normative Addendum E or programme closure follows.
+
+Owner turn 74 selects one authoritative budget-test home and grants sixteen new
+consolidation leaves to the same qualification writer/tree. Exactly one existing
+third file is newly admitted:
+`tests/AiDe.Core.Tests/Understanding/AtlasReadBudgetTests.cs`, alongside the two
+qualification files already assigned. No helper file or production edit is
+granted, and the two unused leaves from the preceding pass are not transferred.
+
+Claim all three paths. Delete the duplicate queue test from the new reader
+contract tests; repair the existing budget tests with exact charges, one cleanup
+path, every returned reservation/outcome captured, release/drain before assertions
+and original primary/secondary exception objects retained. Exercise unexpected
+success, fault, simultaneous failures and partial construction; sweep the newly
+admitted file's other tests for that same coupled acquisition/cleanup class.
+The row tests must compare the complete root after excluding only `outline`,
+preserve/assert exact supplied values, and reject old root-plus-row corruption
+independently of decoder rejection. Keep occurrence nonvacuity and context checks.
+Retain unique control/red receipts, freeze a single candidate and report actual
+counts. Existing E0 baseline evidence remains separate from missing E1 features.
+
+Twelve new reviews are funded, four each Test/Core Security-SRE/C#, against that
+same candidate after parent replay. Conductor's cumulative ceiling rises
+prospectively to 590. No E1 product, main/push, normative E or programme grant.
+
+Owner turn 75 transfers only the remaining lifetime bug to retained Core Astra
+`cfac7750-d1df-47ae-a107-205951487fd7`, sixteen new leaves, and freezes the original
+qualification writer and the other two test files. Assigned session/branch:
+`atlas-e1-budget-lifetime-repair` / `atlas/e1-budget-lifetime-repair`; new worktree
+`C:\Projects\ai-de-atlas-e1-budget-lifetime-repair`. Parent created, registered
+and verified HEAD `44c7db6d0730a22651bc05ad7c1872c13d2418f0`.
+Parent's identity-checked coordination query allowed the exact file before the
+new author claim, confirming no predecessor lease blocks the transfer.
+Sole authored path: `tests/AiDe.Core.Tests/Understanding/AtlasReadBudgetTests.cs`.
+The prior writer's five unused leaves are not transferred.
+
+Register every returned task/reservation immediately, including unexpected
+success from expected-refusal calls. Release successful drained acquisitions
+before dependent awaits; own/drain both FIFO tasks on every path. Observe a
+bounded five-real-admission counterexample against the preserved helper with
+failure cancellation and awaited cleanup. Exercise partial acquisition followed
+by failure, unexpected success/fault and simultaneous primary/secondary failures,
+preserving original exception objects. Retain exact charges/final zero and actual
+red/green receipts; no wrong expected number counts as a production fault.
+No helper file, production edit or renewed SP1/SP2/root-isolation work is granted.
+
+Owner grants twelve new independent review leaves, four each Test/Core
+Security-SRE/C#, and raises Conductor prospectively to 620 cumulative leaves.
+Owner turn 76 records the failed parent reflection probe accurately: AccessDenied
+(OS error 5), no diagnostic output, no runtime discriminator. Do not retry or
+bypass that denied route. The authorized ordinary test repair must supply the
+runtime evidence. No qualification/product/main/normative-E acceptance is implied.
+
+Owner turn 78 admits the exact test-only chain `020f9622`, `aa4926e9`, `44c7db6d`,
+`7262566b`. Conductor joined those as `2a05bbaf`, `3ca57f89`, `b79e662c`, `b91d4bb5`;
+the aggregate diff contains only the three authorized test files. Joined replay
+executed 37 and passed all 37, with real per-case outputs and fresh diagnostics.
+This closes the bounded qualification node only; the Proof Pack preserves every
+earlier hold, failure, source snapshot and cost record.
+
+Owner separately admits 48 author leaves for E1 Core implementation, assigned to
+retained execution-capable general-purpose Core Astra
+`cfac7750-d1df-47ae-a107-205951487fd7`. New session/branch:
+`atlas-e1-core-metadata` / `atlas/e1-core-metadata`; new tree
+`C:\Projects\ai-de-atlas-e1-core-metadata`. Immutable post-join source baseline:
+`b91d4bb5b0f59352b7f90b94e0b2733a647452dc`, verified by joined replay; parent must
+create/register/read back the new tree and verify predecessor releases before
+authoring. Exact writable manifest, no other source paths:
+
+- `src/AiDe.Core/Understanding/CSharpDeclarationObservation.cs`
+- `src/AiDe.Core/Understanding/AtlasManifest.cs`
+- `src/AiDe.Core/Understanding/AtlasQueryContracts.cs`
+- `src/AiDe.Core/Understanding/AtlasQueryService.cs`
+- `src/AiDe.Core/Understanding/AtlasReaderContracts.cs`
+- `src/AiDe.Core/Understanding/AtlasReaderProjection.cs`
+- `src/AiDe.Core/Understanding/AtlasReadScopeIssuer.cs`
+- `src/AiDe.Core/Ipc/AtlasWorkspaceOperations.cs`
+- `src/AiDe.Core/Ipc/AtlasRemoteReader.cs`
+- `tests/AiDe.Core.Tests/Understanding/AtlasStaticObservationTests.cs`
+- `tests/AiDe.Core.Tests/Understanding/AtlasStaticReaderContractTests.cs`
+
+Derive classifier flavor and immediate lexical parent from verified syntax within
+one file/context/observation; preserve overload/partial occurrences and explicit
+unsupported/ambiguous omissions. Prove all six old/new compatibility cells using
+actual codecs/registration/remote SELECT/RESTORE and genuine frozen legacy
+artifacts. Legacy/non-opted fields are absent, not null; Restore retains the
+original preference; malformed opted-in metadata refuses without fallback.
+Use v1 plus the negotiated feature only if those results establish compatibility.
+An unlisted/version seam is returned to Owner, not silently edited.
+
+Implement Core paging beyond 128 declarations and source windows beyond UTF-16
+offset 32768 with CRLF/non-BMP and off-page-parent cases; no first-page waiver.
+Charge new retained/projected fields before retention/publication and prove
+escaped-frame and matching blocked-writer/drain accounting. Metadata content
+bytes stay zero; storage charges are not heap claims. Replace obsolete
+field-absence checks with genuine legacy protections, never delete protection
+merely to obtain green. Compiled ports and retained SP1/SP2/Core-SP3/SP4 red/green
+receipts precede independent review. App/native views remain a later dependent
+grant. No new dependency/store/factory/daemon/framing/generic-client change.
+
+Twenty new review leaves are funded: Security, Data, DS, Test and C# four each,
+on one candidate after parent replay, scheduled at total width four. Conductor
+receives a prospective 660 cumulative leaves. No UI release, E1 product acceptance,
+main/push, normative E, private import or programme closure follows from authoring.
+
+Owner turn 80 keeps Core candidate `cea76307fe75b943a945cf837139e6a80ea2595d`
+unjoined. The parent reproduced 494/494 with genuine legacy binaries, built the
+unchanged App, and verified all eleven source hashes. Missing-fixture invocation
+failed both peer cases; that is not a literal clean-clone run.
+Security and Data give bounded source/model clearance. Test blocks fixture
+delivery and has an unread SP2 section. C# has unread ranges after failed/truncated
+retrievals. DS withdrew its earlier clearance after confirming it read an older
+physical tree without establishing the requested pin. Those verdicts are not
+silently promoted into current-candidate evidence.
+
+Eight new completion-review leaves are granted: DS four, C# three, Test one.
+Parent may generate session-local excerpts directly from `cea76307` Git blobs,
+carrying commit/blob identity, path and original line ranges. Reviewers must use
+built-in views of those exact excerpts, not another bespoke range reader. Prior
+failed reads and costs remain spent. Total active width remains four, including
+the fixture author; no overlapping control-plane fan-out is added while full.
+
+Sixteen new fixture-delivery qualification leaves are assigned to retained
+Core Astra in session/branch `atlas-e1-legacy-fixture` /
+`atlas/e1-legacy-fixture`, tree `C:\Projects\ai-de-atlas-e1-legacy-fixture`.
+Parent created, registered and verified its exact `cea76307` HEAD; all five
+identity-checked predecessor queries returned allow. Exact authored paths:
+
+- `tools/materialize-atlas-legacy-peer.ps1`
+- `tests/AiDe.Core.Tests/Fixtures/AtlasLegacyV1/baseline-source.zip`
+- `tests/AiDe.Core.Tests/Fixtures/AtlasLegacyV1/peer.patch`
+- `tests/AiDe.Core.Tests/Fixtures/AtlasLegacyV1/manifest.json`
+- Fixture-preparation wiring only in
+  `tests/AiDe.Core.Tests/Understanding/AtlasStaticReaderContractTests.cs`
+
+First execute preparation from genuine retained source/patch/build inputs.
+Record every input, tool version, build setting, patch outcome and output hash.
+Archive only necessary own-repository source/build inputs, retaining provenance
+and licensing; exclude private corpus, credentials, caches and third-party binary
+bundles. Validate extraction paths and owned output boundaries. Prove two fresh
+owned output roots and ordinary test invocation without author `.artifacts` or
+environment-override prerequisites; no skip, muted gate or external-fetch fallback.
+If path/SDK/SourceLink differences change hashes, preserve the evidence and return
+the exact decision needed. Existing expected hashes cannot simply be replaced
+with whatever was produced. Missing declared tools fail explicitly. Additional
+project/content-copy files require a new exact seam grant. No Core behavior edit.
+Conductor's cumulative ceiling rises prospectively to 700; no source/native-UI/
+main/push/normative-E/programme acceptance is granted.
+
+Owner turn 81 separately grants three author leaves after the fixture-preparation
+checkpoint for `tests/AiDe.Core.Tests/Understanding/AtlasStaticObservationTests.cs`
+in the same `atlas/e1-legacy-fixture` branch, plus one targeted Test readback leaf.
+The sixteen fixture leaves are unchanged and cannot be borrowed. Claim the added
+path before editing. Assert exact identifier multisets `["add","remove"]` and
+`["get","set"]` before their respective loops, without deduplication that hides
+extra occurrences. Retain an empty-subset control exercising those same assertions
+and replay the actual producer test. Source/fixture checkpoint receipts and call
+counts remain separate; product pin `cea76307` is frozen. This closes a test
+vacuity, not a producer defect or a new production-field grant.
+
+Owner turn 82 adopts deterministic source-and-build provenance for the legacy
+fixture. The original path-dependent binary hashes remain historical references;
+they are not falsely described as reproducible. Fixed canonical compiler/PDB
+path mapping and explicit baseline source/SourceLink identity are permitted.
+Patched peer bytes must not be attributed to an unchanged baseline file: retain
+accurate patch provenance and embedded own-source evidence where needed.
+Generated build overrides are allowed only inside declared, hashed owned staging/
+output directories, never as an unlisted product/project edit.
+
+Sixteen new fixture qualification leaves are granted in the same five-file scope
+and existing `atlas/e1-legacy-fixture` tree. Require equal canonical Core and peer
+bytes from two fresh roots, inspect PE/PDB/SourceLink and effective build settings,
+and record unexplained differences. Only after that evidence may the author pin
+an explicitly qualification-only candidate pair before actual mixed-version
+SELECT/RESTORE runs. Owner must approve that pair before it becomes the normal
+expected fixture pair; never accept whichever bytes a build happens to produce.
+Ordinary autopreparation, hostile-archive/output-boundary checks and removal of
+author-artifact/environment prerequisites remain mandatory. No skip/mute, Core
+behavior change, third-party binary bundle or network-source fallback is granted.
+Preserve blocked two-root outputs and prior fixture-present greens.
+
+Conductor's cumulative ceiling rises prospectively to 740. Owner 81's separate
+accessor correction used 3/3 and its targeted Test readback used 1/1, clearing
+the accessor-vacuity predicate; those counts do not fund fixture work. No source
+join, native-phase/main/push/normative-E/programme acceptance is implied.
+
+Owner turn 83 accepts the bounded path-sensitive startup diagnosis and grants
+twelve new fixture-delivery leaves in the same five-file scope. The fixture
+author allowance is now 44 (16 + 16 + 12), with Owner 81's three accessor leaves
+separate. Derive the execution-path budget from the actual frozen fixture suffix
+and tool contract; "85 worked" is not a universal limit. Copy the declared runtime
+closure to a newly owned short execution directory, excluding generated test
+artifacts, and verify its manifest and pinned binaries after copying.
+
+On EOF, retain the primary failure and drain stdout/stderr concurrently. Allow
+a bounded exit/TRX-flush grace, then terminate only the owned child tree if
+necessary; forced termination/missing artifacts stay explicit. No old-Core edit
+or global Git/Windows setting is granted. Rerun both genuine mixed roles, full
+relevant Core cases and hostile archive/output controls under the preregistered
+QualificationOnly pair. Owner must still approve the normal expected pair.
+Preserve deep-path outputs and historical hashes.
+
+Twelve new independent delivery-review leaves follow parent execution/readback:
+Security, SRE and Test four each. Inspect archive/output safety, provenance/pins,
+path budget, process/diagnostic cleanup, ordinary invocation and actual role
+coverage. Additional tracked build/project/content-copy seams return before edits.
+Conductor remains capped at 740; no Core join or native/UI/main/push acceptance.
+
+Owner turn 84 raises Conductor prospectively to 780 cumulative leaves for
+fixture-gate closure, conditional integration and the next native-slice decision.
+No canonical-pair, commit or source-join approval follows from that allowance.
+
+Owner turn 85 grants four new fixture-author leaves for reciprocal-overlap
+preflight and its negative control, then two new Security readback leaves.
+The prior two unused leaves are not transferred. Claim the existing materializer
+path; add separator-aware output-inside-execution rejection alongside equality,
+execution-inside-output and reparse checks. A fresh reciprocal case must refuse
+before either root or build/preparation output exists. Preserve the earlier
+late-refusal run.
+
+Recheck hostile cases against the revised script hash, with valid preceding
+authorization/input-hash prerequisites and actual structural guard errors.
+Freeze the updated five-file hashes, preserve Core/peer/source provenance and
+the QualificationOnly status, and obtain actual Security disposition. Normal
+expected-pair approval, fixture commit and Core/accessor/fixture joins remain
+separate decisions. Parent ordinary replay remains required; no native/main grant.
+
+Owner turn 86 approves NORMAL use of the canonical legacy fixture pair:
+Core `ED7F23CDA7DBB749511D1D879CF0886543E4E76680009749398D19CA9E445EC5`;
+peer `8E95C84ED6887572B62F35664222A771E0EF283980E430B69F64AFEA5BC583BA`.
+This approval preserves archived-source, patch, baseline and deterministic build
+provenance; it is not byte-identical historical reproduction or E1 acceptance.
+Historical 6353/641B references and all failed preparations remain evidence.
+
+Four new adoption/commit leaves are granted in the same five-file scope. Change
+only `canonicalCandidate.status=Approved` and its approval reference before
+ordinary Approved-mode verification, hash readback, commit and release. The
+previous two unused leaves do not transfer. Any other needed code change returns
+as an exact finding; no new preparation/compiler/hash-policy logic is authorized.
+
+After parent commit/path/hash readback, only Core `cea76307`, accessor `1791f95d`
+and the approved five-file fixture commit may join. Eight verification leaves
+cover joined and fresh-owned-worktree ordinary invocation with empty owned
+artifact/output locations and no `ATLAS_FROZEN_LEGACY_DIRECTORY` override.
+Read actual provenance, hashes, both mixed-role results and cleanup; distinguish
+a fresh worktree from a literal clone. Fixture/Core closure follows that proof,
+then a separately budgeted native request. Mainline remains 780; no native
+authoring, main/push, normative E or programme closure is implied.
+
+Owner turn 87 grants four new correction leaves for `peer.patch` EOL
+canonicalization and its manifest hash/provenance only. The committed LF patch
+hash is `DA1AFEE0B66F027C35E4B9D50966C47A1BF30EB491122080B58D61F315B90A39`.
+Preserve historical CRLF hash 963915... as a reference; do not change
+`.gitattributes`, archive, qualified peer source, build settings or approved
+ED7F/8E95 binaries. Prove exact qualified-source/pair reproduction and ordinary
+Approved-mode results, then make a new correction commit, never amend.
+
+The parent observed the failed fresh-worktree case at fixture commit `4e34b7ac`:
+Git attributes require `text=auto eol=lf`, but manifest pins still described
+working-tree CRLF bytes. No Core/accessor join was released. Parent must verify
+new commit-blob and fresh-checkout input hashes before joining the fixture
+commit plus correction. Script canonical blob SHA is recorded without behavior
+change. Retain the old working-tree greens and fresh failure.
+Conductor's cumulative ceiling rises prospectively to 820; no native/UI/main/
+push/normative-E/programme authority is added.
+
+Owner 86/87's bounded integration proof is complete: correction `2440b571`
+pins Git-canonical LF bytes while preserving the archive, qualified source,
+build settings and approved binary pair. Parent raw-blob and fresh-checkout
+checks passed before the four conditional joins: `9716efba`, `7829377d`,
+`85594e77`, `2b818f14`. The aggregate is exactly fifteen authorized paths.
+
+Conductor ordinary execution passed 497/497; new registered
+`atlas/e1-core-fresh-proof` at exact `2b818f144980a0e2acecbaddc0795864a00673a3`
+started without artifacts/bin/obj and ordinary restored execution also passed
+497/497. A receipt-less no-restore exit was not counted. This is a fresh worktree,
+not a clone. Parent read all six Approved/ApprovedReproduction preparation
+receipts, canonical LF patch and ED7F/8E95 hashes, closure/path bounds, child TRXs,
+absent child PIDs, null cleanup errors and no forced termination. The joined
+Core/fixture Proof Pack preserves the failed 4e34 checkout and all earlier runs.
+The Core/fixture nodes may close within scope. Native source authoring still
+requires its own Owner grant; no main/push or normative E acceptance follows.
+
+Owner turn 88 accepts the persisted bounded Core/fixture checkpoint and grants
+48 native E1 author leaves to retained Shell/native Astra
+`0425e614-83e6-4140-bfa1-9b7789042a28`. New session/branch:
+`atlas-e1-native-class-view` / `atlas/e1-native-class-view`; new worktree
+`C:\Projects\ai-de-atlas-e1-native-class-view`, exact post-closure base
+`4a5812044a38a6fe365fb7929104f51dbc973fc5`. Parent created, registered and verified
+the tree; all five identity-checked predecessor queries returned allow.
+Exact authored paths:
+
+- `src/AiDe.App/Workbench/Understanding/AtlasStaticViewProjection.cs`
+- `src/AiDe.App/Workbench/Understanding/AtlasStaticView.cs`
+- `src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs`
+- `tests/AiDe.App.Tests/Workbench/Understanding/AtlasStaticViewTests.cs`
+- `tests/AiDe.App.Tests/Workbench/Understanding/AtlasStaticCompositionTests.cs`
+
+Reuse Architecture/CodeAtlas/Center, tokens/resources, owner and lease. No factory,
+MainWindow, chrome, project or dependency changes. Preserve file-explorer
+navigation and explicit Source/Class opt-in semantics. Cards/compartments come
+only from admitted occurrence/flavor/parent evidence; OutsidePage is not authority.
+The equivalent accessible list and visual members activate the same issued token
+and verified UTF-16 source window. Back preserves page, mode, selection, focus
+and original request preference. No guessed parent, name-merged partial,
+project semantics, inheritance or call graph.
+
+Require semantic red and real daemon/pipe/native composition for both entrances,
+over 128 declarations, a member beyond offset 32768, CRLF/non-BMP and off-page
+parents. Prove source/list/class consistency, actual readable geometry/complete
+labels at 1280 and smaller/larger supported viewports, keyboard/UIA, themes,
+reduced motion, text scale and DPI with gaps explicit. An IsOffscreen/bounds-string
+proxy cannot clear native proof. Unlisted seams return before edits.
+Sequence/activity and later E2/E3/E4 remain outside this tranche.
+
+Twenty review leaves are funded, four each UX, UML/graph, C#, Test and SRE,
+against one candidate after parent replay. Maintain width four and separate
+author/reviewer counts. Conductor's cumulative ceiling rises prospectively to
+870. No native acceptance, main/push, normative E or programme closure follows.
 
 ### Core owns
 
@@ -2684,3 +3999,41 @@ for that merge; git then compares the normalised forms instead of the raw bytes.
 Verified before landing: solution builds with 0 errors, every gate green, and all three test halves
 at baseline (1,569 + 150 + 399) with the tree still clean afterwards — so nothing in the suite
 depended on CRLF.
+
+## 9. Code Atlas fleet request - Astra Owner/Conductor, GPT execution workers (2026-09-12)
+
+The user requested specification of the next addendum from Code Atlas, overall architecture,
+then Owner-led fleet implementation, coordinated with the existing Claude conductor and lanes.
+The observed next addendum is **E**, after the registered A-D inputs. This section requests its
+reservation; it does not silently assign a letter another session is using.
+
+The Atlas Conductor is a distinct GPT-6 Astra CLI session in
+`C:\Projects\ai-de-conductor-code-atlas`, branch `conductor/code-atlas`, based on `main`
+`b0e092b5`. A separate read-only Astra Owner rules on its scope; GPT-5.5 workers have individual
+worktrees. The proposal at `1065a851` remains a local reference branch: its private TheTerrace
+source/session fixture is not merged into delivery history or authorized for publication.
+
+**Section 2 remains the only ownership map. No ownership row is changed by this request.**
+Current workers draft a new specification and establish contracts/baseline evidence without
+editing product source. Shell SH-2/SH-3, Conversation CV-* and X-1 retain their authored paths.
+The product runtime conductor/provider contract is not changed merely by this development-fleet
+model selection.
+
+Native request: **`req-01M2B86TXF7SHG61B31P4H4173`**, addressed to `conductor-addendum-c`.
+
+Requested response from the Claude conductor:
+
+1. Confirm/reserve Addendum E for Code & Architecture Understanding, or name a conflicting
+   reservation before the spec is accepted.
+2. Agree narrow Atlas authored paths after the model/architecture settles. A new namespace is
+   not permission to ignore section 2's existing Core responsibilities.
+3. Keep Shell-owned registry, host, layout, menu, `MainWindow` and current diagram-surface edits
+   with Shell; agree a versioned integration seam rather than concurrent edits to those files.
+4. Name the owner and timing for Core query/IPC changes and any later read-only model-analysis
+   seam that touches Conversation-owned agent-plane paths.
+5. Keep primary `main` convergence with Claude until a different serialized handoff is explicit.
+   Atlas never stashes/resets/stages the primary checkout to clear someone else's work.
+
+Reply through `coord request resolve` and an appended response here. An unexpired lease is
+respected; a refusal triggers replanning rather than waiting it out. Silence and stale liveness
+are not consent. The eventual accepted responsibility moves belong in section 2, not a parallel map.

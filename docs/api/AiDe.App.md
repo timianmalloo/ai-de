@@ -70,5 +70,5 @@ what is KNOWN about a crash, not whether it happens.
 
 | Member | Summary |
 |---|---|
-| `MainWindow()` | **(gap)** |
+| `MainWindow() : this(` | **(gap)** |
 | `void OnSourceInitialized(EventArgs e)` | **(gap)** |

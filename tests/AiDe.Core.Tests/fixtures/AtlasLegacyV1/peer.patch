@@ -1,0 +1,130 @@
+diff --git a/tests/AiDe.Core.Tests/Understanding/AtlasStaticReaderContractTests.cs b/tests/AiDe.Core.Tests/Understanding/AtlasStaticReaderContractTests.cs
+index f531eef2..fee7f761 100644
+--- a/tests/AiDe.Core.Tests/Understanding/AtlasStaticReaderContractTests.cs
++++ b/tests/AiDe.Core.Tests/Understanding/AtlasStaticReaderContractTests.cs
+@@ -1,12 +1,125 @@
+ using System.Text;
+ using System.Text.Json;
+ using System.Text.Json.Nodes;
++using System.IO.Pipes;
++using System.Runtime.Versioning;
++using AiDe.Core.Ipc;
+ using AiDe.Core.Understanding;
+ 
+ namespace AiDe.Core.Tests.Understanding;
+ 
+ public sealed class AtlasStaticReaderContractTests
+ {
++    [Fact]
++    public void SelectRequest_StructuralOptInHasAnActualCodecPath()
++    {
++        var json = ValidSelectRequest().Replace("\"fileToken\"", "\"staticStructure\":true,\"fileToken\"", StringComparison.Ordinal);
++        var parsed = AtlasReaderProjection.DeserializeSelect(Encoding.UTF8.GetBytes(json));
++        using var document = JsonDocument.Parse(JsonSerializer.Serialize(parsed));
++        Assert.True(document.RootElement.GetProperty("StaticStructure").GetBoolean());
++    }
++
++    [Fact]
++    [SupportedOSPlatform("windows")]
++    [Trait("Platform", "Windows")]
++    public async Task NativeReaderPagesBeyond128AndRestoresFarUtf16Member()
++    {
++        await using var fixture = await AtlasRuntimeFixture.StartAsync();
++        var text = "public class Widget {\r\n" + new string(' ', 33000) + "// 😀\r\n"
++            + string.Join("\r\n", Enumerable.Range(0, 150).Select(i => $"public int M{i}() => {i};")) + "\r\n}";
++        await File.WriteAllTextAsync(Path.Combine(fixture.Repository, "src", "Widget.cs"), text, Encoding.UTF8);
++        await fixture.GitAsync("add", "--", "src/Widget.cs");
++        await fixture.GitAsync("commit", "--quiet", "-m", "bounded structural fixture");
++        await using var reader = new AtlasRemoteReader(fixture.WorkspaceId);
++        await using var lease = await reader.AdmitAsync(CancellationToken.None);
++        var inventory = await lease.Queries.InventoryAsync(
++            new(1, lease.ScopeToken, lease.CoreEpoch, lease.InitialManifestToken, 0, 128), CancellationToken.None);
++        var file = inventory.Files.Single(item => item.RelativePath.EndsWith("Widget.cs", StringComparison.Ordinal));
++        var request = new AtlasSelectRequestDto(1, lease.ScopeToken, lease.CoreEpoch,
++            inventory.ManifestToken, file.FileToken, null, 0, 64, 0, 128);
++        var first = await lease.Queries.SelectAsync(request, CancellationToken.None);
++        Assert.Equal(SourceProjectionState.IndexedMatch, first.Source.State);
++        Assert.Equal(128, first.Outline.Length);
++        Assert.Equal(128, first.OutlineNextOffset);
++        var second = await lease.Queries.SelectAsync(request with
++        {
++            ManifestToken = first.ManifestToken, OutlineOffset = 128
++        }, CancellationToken.None);
++        Assert.Equal(23, second.Outline.Length);
++        Assert.Null(second.OutlineNextOffset);
++        Assert.Empty(first.Outline.Select(item => item.DeclarationToken)
++            .Intersect(second.Outline.Select(item => item.DeclarationToken), StringComparer.Ordinal));
++        var member = second.Outline.Single(item => item.DisplayName.Contains("M140(", StringComparison.Ordinal));
++        Assert.True(member.Span.Start > 32768);
++        var selected = await lease.Queries.SelectAsync(request with
++        {
++            ManifestToken = second.ManifestToken, DeclarationToken = member.DeclarationToken,
++            SourceOffset = member.Span.Start, SourceLength = member.Span.Length, OutlineOffset = 128
++        }, CancellationToken.None);
++        var restored = await lease.Queries.RestoreAsync(
++            new(1, lease.ScopeToken, lease.CoreEpoch, selected.ReceiptToken!), CancellationToken.None);
++        Assert.Equal(text.Substring(member.Span.Start, member.Span.Length), selected.Source.Text);
++        Assert.Equal(selected.Source.Text, restored.Source.Text);
++        Assert.Equal(selected.Source.Highlights, restored.Source.Highlights);
++        Assert.Single(selected.Source.Highlights);
++        Assert.Equal(0, selected.OutlineBounds.ReturnedContentBytes);
++    }
++
++    // Compiled against the frozen genuine E0 Core before product edits. The control pipe is test-only.
++    [Fact]
++    [SupportedOSPlatform("windows")]
++    [Trait("Platform", "Windows")]
++    public async Task FrozenContractPeer()
++    {
++        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(90));
++        var controlName = Environment.GetEnvironmentVariable("ATLAS_LEGACY_CONTROL");
++        if (controlName is null)
++        {
++            await using var fixture = await AtlasRuntimeFixture.StartAsync();
++            _ = await PeerJourneyAsync(fixture.WorkspaceId, deadline.Token);
++            return;
++        }
++
++        await using var control = new NamedPipeClientStream(".", controlName, PipeDirection.InOut, PipeOptions.Asynchronous);
++        await control.ConnectAsync(deadline.Token);
++        using var input = new StreamReader(control, Encoding.UTF8, false, 4096, leaveOpen: true);
++        using var output = new StreamWriter(control, new UTF8Encoding(false), 4096, leaveOpen: true) { AutoFlush = true };
++        var role = await input.ReadLineAsync(deadline.Token);
++        if (role == "server")
++        {
++            await using var fixture = await AtlasRuntimeFixture.StartAsync();
++            await output.WriteLineAsync(fixture.WorkspaceId.AsMemory(), deadline.Token);
++            Assert.Equal("stop", await input.ReadLineAsync(deadline.Token));
++        }
++        else if (role == "client")
++        {
++            var workspace = await input.ReadLineAsync(deadline.Token) ?? throw new EndOfStreamException();
++            var result = await PeerJourneyAsync(workspace, deadline.Token);
++            await output.WriteLineAsync(JsonSerializer.Serialize(result, WorkspaceOperations.Wire).AsMemory(), deadline.Token);
++        }
++        else
++        {
++            throw new InvalidOperationException("Unknown frozen-peer role.");
++        }
++    }
++
++    private static async Task<AtlasSelectionDto[]> PeerJourneyAsync(string workspace, CancellationToken cancellationToken)
++    {
++        await using var reader = new AtlasRemoteReader(workspace);
++        await using var lease = await reader.AdmitAsync(cancellationToken);
++        var inventory = await lease.Queries.InventoryAsync(
++            new(1, lease.ScopeToken, lease.CoreEpoch, lease.InitialManifestToken, 0, 128), cancellationToken);
++        var file = inventory.Files.Single(item => item.RelativePath.EndsWith("Widget.cs", StringComparison.Ordinal));
++        var selected = await lease.Queries.SelectAsync(new(1, lease.ScopeToken, lease.CoreEpoch,
++            inventory.ManifestToken, file.FileToken, null, 0, 32768, 0, 128), cancellationToken);
++        var restored = await lease.Queries.RestoreAsync(
++            new(1, lease.ScopeToken, lease.CoreEpoch, selected.ReceiptToken!), cancellationToken);
++        Assert.Equal(SourceProjectionState.IndexedMatch, selected.Source.State);
++        Assert.Equal(SourceProjectionState.IndexedMatch, restored.Source.State);
++        Assert.Equal(selected.Source.Text, restored.Source.Text);
++        return [selected, restored];
++    }
++
+     [Fact]
+     public void Capabilities_CurrentLiteralCodecAcceptsLegacyE0PayloadWithoutProvingRegistration()
+     {

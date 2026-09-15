@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using AiDe.Core.Understanding;
 using System.IO.Pipes;
 using System.Runtime.Versioning;
 using System.Text.Json;
@@ -80,6 +81,13 @@ public sealed class IpcServer
     private readonly DaemonEndpoint _endpoint;
     private readonly IpcServerOptions _options;
     private readonly string _ownerSid;
+
+    internal sealed record PublicationProbe(
+        IpcRequest Request, IpcPeer Peer, IpcResponse Response,
+        CancellationToken OperationCancellation, Action CancelOperationForQualification);
+    internal Func<Stream, PublicationProbe, Stream>? PublicationWriterForQualification { get; set; }
+    internal Action<IpcResponse>? PublicationDrainedForQualification { get; set; }
+    internal Func<PublicationProbe, ValueTask>? AfterWriterReturnedForQualification { get; set; }
 
     private int _active;
     private int _served;
@@ -222,7 +230,9 @@ public sealed class IpcServer
         // before it exists — the first message is read, then identity is settled, then it is served
         // or the connection ends.
         IpcPeer? peer = null;
-
+        var endReason = AtlasConnectionEndReason.Disconnected;
+        try
+        {
         while (!cancellationToken.IsCancellationRequested && pipe.IsConnected)
         {
             string? raw;
@@ -284,8 +294,22 @@ public sealed class IpcServer
             // kernel rather than memory spent by us.
             try
             {
-                await RespondWithinTimeout(pipe, Handle(raw, peer), cancellationToken)
-                    .ConfigureAwait(false);
+                IpcMessage? message = null;
+                try { message = JsonSerializer.Deserialize<IpcMessage>(raw, Wire); }
+                catch (JsonException) { }
+                if (message is { Kind: IpcMessage.Invoke, Request: not null } && _endpoint.IsAwaited(message.Request.Operation))
+                {
+                    var ended = await HandleAwaitedAsync(pipe, message.Request, peer, cancellationToken).ConfigureAwait(false);
+                    if (ended is { } reason)
+                    {
+                        endReason = reason;
+                        return;
+                    }
+                }
+                else
+                {
+                    await RespondWithinTimeout(pipe, Handle(raw, peer), cancellationToken).ConfigureAwait(false);
+                }
             }
             catch (IOException)
             {
@@ -300,6 +324,132 @@ public sealed class IpcServer
                 return;
             }
         }
+        }
+        finally
+        {
+            if (peer is not null)
+            {
+                using var cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+                try
+                {
+                    await _endpoint.ConnectionEndedAsync(peer,
+                        cancellationToken.IsCancellationRequested ? AtlasConnectionEndReason.Shutdown : endReason,
+                        cleanup.Token).ConfigureAwait(false);
+                }
+                catch (AggregateException)
+                {
+                    // The issuer retains failed drains and their reservations; a listener must not
+                    // turn a retained cleanup condition into loss of the other connections.
+                    span?.SetTag("atlas.cleanup.retained", true);
+                }
+            }
+        }
+    }
+
+    private async Task<AtlasConnectionEndReason?> HandleAwaitedAsync(
+        Stream pipe, IpcRequest request, IpcPeer peer, CancellationToken connectionCancellation)
+    {
+        using var operation = CancellationTokenSource.CreateLinkedTokenSource(connectionCancellation);
+        operation.CancelAfter(request.Operation == AtlasWorkspaceOperations.Admit ? TimeSpan.FromSeconds(30)
+            : request.Operation == AtlasWorkspaceOperations.Release ? TimeSpan.FromSeconds(2) : TimeSpan.FromSeconds(10));
+        using var monitorCancellation = CancellationTokenSource.CreateLinkedTokenSource(connectionCancellation);
+        var monitor = MonitorPeerAsync(pipe, monitorCancellation.Token);
+        var work = _endpoint.InvokeAsync(request, peer, operation.Token).AsTask();
+        IpcResponse? response = null;
+        IpcResponse? publicationResponse = null;
+        try
+        {
+            if (await Task.WhenAny(work, monitor).ConfigureAwait(false) == monitor)
+            {
+                var abandoned = await monitor.ConfigureAwait(false);
+                if (abandoned is not null)
+                    await operation.CancelAsync().ConfigureAwait(false);
+            }
+            try
+            {
+                response = await work.ConfigureAwait(false);
+                publicationResponse = response;
+            }
+            catch (OperationCanceledException) when (operation.IsCancellationRequested)
+            {
+                response = IpcResponse.Error("Atlas.DeadlineExceeded", "The Atlas operation was canceled or exceeded its deadline.");
+            }
+            await monitorCancellation.CancelAsync().ConfigureAwait(false);
+            var ending = await monitor.ConfigureAwait(false);
+            if (ending is not null || connectionCancellation.IsCancellationRequested)
+            {
+                await _endpoint.DiscardResponseAsync(response).ConfigureAwait(false);
+                return ending ?? AtlasConnectionEndReason.Shutdown;
+            }
+            if (operation.IsCancellationRequested)
+            {
+                await _endpoint.DiscardResponseAsync(response).ConfigureAwait(false);
+                response = IpcResponse.Error("Atlas.DeadlineExceeded", "The Atlas deadline elapsed after work drained.");
+            }
+            else
+            {
+                var body = JsonSerializer.SerializeToUtf8Bytes(response, Wire);
+                if (body.Length > AtlasReaderProjection.MaxFrameBodyBytes)
+                {
+                    await _endpoint.DiscardResponseAsync(response).ConfigureAwait(false);
+                    response = IpcResponse.Error("Atlas.PayloadTooLarge", "The escaped Atlas response exceeds its frame budget.");
+                }
+                else
+                {
+                    try
+                    {
+                        response = await _endpoint.CommitResponseAsync(request, peer, response, operation.Token).ConfigureAwait(false);
+                    }
+                    catch (AtlasReadException exception)
+                    {
+                        await _endpoint.DiscardResponseAsync(response).ConfigureAwait(false);
+                        response = IpcResponse.Error(exception.Code, exception.Message);
+                    }
+                    catch (OperationCanceledException) when (operation.IsCancellationRequested)
+                    {
+                        await _endpoint.DiscardResponseAsync(response).ConfigureAwait(false);
+                        response = IpcResponse.Error("Atlas.DeadlineExceeded", "The Atlas deadline won publication.");
+                    }
+                }
+            }
+            var writer = PublicationWriterForQualification?.Invoke(pipe,
+                new PublicationProbe(request, peer, response, operation.Token, operation.Cancel)) ?? pipe;
+            using var writerCancellation = response.Ok
+                ? CancellationTokenSource.CreateLinkedTokenSource(
+                    connectionCancellation, operation.Token, _endpoint.PublicationCancellation(response))
+                : CancellationTokenSource.CreateLinkedTokenSource(connectionCancellation);
+            await RespondWithinTimeout(writer, response, writerCancellation.Token).ConfigureAwait(false);
+            if (AfterWriterReturnedForQualification is { } afterWriter)
+                await afterWriter(new PublicationProbe(request, peer, response, operation.Token, operation.Cancel)).ConfigureAwait(false);
+            return null;
+        }
+        finally
+        {
+            try
+            {
+                await monitorCancellation.CancelAsync().ConfigureAwait(false);
+                await monitor.ConfigureAwait(false);
+            }
+            finally
+            {
+                if (publicationResponse is not null)
+                {
+                    await _endpoint.FinishResponseWriteAsync(publicationResponse).ConfigureAwait(false);
+                    PublicationDrainedForQualification?.Invoke(publicationResponse);
+                }
+            }
+        }
+    }
+
+    private static async Task<AtlasConnectionEndReason?> MonitorPeerAsync(Stream pipe, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var count = await pipe.ReadAsync(new byte[1], cancellationToken).ConfigureAwait(false);
+            return count == 0 ? AtlasConnectionEndReason.Disconnected : AtlasConnectionEndReason.ProtocolViolation;
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { return null; }
+        catch (IOException) { return AtlasConnectionEndReason.Disconnected; }
     }
 
     private IpcResponse Handle(string raw, IpcPeer peer)

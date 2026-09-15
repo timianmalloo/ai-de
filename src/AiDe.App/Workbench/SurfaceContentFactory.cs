@@ -45,6 +45,7 @@ public sealed class SurfaceContentFactory(
     // test) with no session behind the surface, which the pane says plainly.
     Func<Surface, FrameworkElement?>? consoleFor = null)
 {
+    internal Understanding.AtlasWorkspaceOwner? AtlasOwner { get; init; }
 
     /// <summary>How many surfaces of a kind a host holds at once — what §A7's "Instances" column says.</summary>
     public enum Instances
@@ -134,6 +135,12 @@ public sealed class SurfaceContentFactory(
     /// </remarks>
     public static IReadOnlyList<SurfaceKind> Kinds { get; } =
     [
+        new("code-atlas", "Code Atlas",
+            "Read the admitted workspace's file inventory, member outline and verified source.",
+            static (factory, _) => new Understanding.AtlasLoadingHost(factory.AtlasOwner),
+            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View"),
+            Zone: ZoneId.Center),
+
         // ── Architecture: the reading host (UC3) ──────────────────────────────────────────────
 
         new("canvas", "Graph",
