@@ -8249,7 +8249,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9364ffbde6d5c304193dd39f09da258a435c16d29e9e1f9e75b3e662dfd15e02"
+      "sourceSha256": "0474b68ef774fad794fafd923ca7bff07d5118a022edcd456f8fac7ad2a644b4"
     },
     {
       "id": "defect-classes",
@@ -8278,7 +8278,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "21f03353b78655ad4c8aa8a656858156c9e1c2acfbb401c3ff7c17aaccc7e1aa"
+      "sourceSha256": "d6eadcd0600f04d76bec83ed07c60fd10613668136e77a16619c5554cefc7d2f"
     },
     {
       "id": "design-session-profiler",
@@ -9914,7 +9914,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n G --> O\n O --> D1[E1-D]\n O --> D2[E2-D]\n D1 --> S1[E1-S]\n D2 --> S2[E2-S]\n S1 --> C\n S2 --> C\n C --> RD[R-D]\n RD --> I1[E1-I]\n RD --> I2[E2-I]\n I1 --> P1[E1-P]\n I2 --> P2[E2-P]\n P1 --> R1[R-I E1]\n P2 --> R2[R-I E2]\n R1 --> J\n R2 --> J\n J --> H"
         }
       ],
-      "sourceSha256": "3e1804600ec5442076e0ed307b4fc1c78752b79f727e766d711019d1efc67df7"
+      "sourceSha256": "fb05eeefb47268e2ceb84afc9c701e97961c51f7f2f4bd4eac02e6ec18ab1263"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -15480,7 +15480,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3003674840e64874ce639e295397b4c41d6458e80022e4266ef2a601b53eb613"
+      "sourceSha256": "5e3ac49d6fc8d2e16b68699fbe8f65f5691839db8ac9094046fa4e20d8241212"
     },
     {
       "id": "proof-audit-gate-plan-review",
@@ -19402,5 +19402,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "da3ae9637dc17e961dd2a42dc224d400e75edeb8defd3cbbf071a67a96cf0fb0"
+  "graphSha256": "4357a6926c4dd6f1c38e40fb77feeacae792f072316912e32cf0831f8e77c30f"
 };

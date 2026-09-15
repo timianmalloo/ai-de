@@ -124,3 +124,14 @@ Owner a766afa8 admits E1-D2 and E2-D2 in existing Markdown paths after shared G6
 ## Design-text clearance and continuing proof
 
 Revised E1 83e1139b and E2 15b53fe9 cleared at design-text level by d062650d. Owner admits finite structural/page and typed-relation experiments within Ruling121. E1 independent oracle ledger precedes authoring; E2 source experiment runs independently. No mock file, shared register or product authoring has begun beyond its grant. Human exact3doc-path question remains pending. Main-watch route is copilot-main-watch; accepted-Atlas publisher remains recovery closer. Main integration authority does not transfer by Claude usage cap.
+
+## Current handoff: bounded experiments, no product publication
+
+| Lane | Frozen work | Observed state | Remaining |
+|---|---|---|---|
+| E1 | Source1ab5d9e9; scoped receipts96c115e0; Owner18cc6cb6 | Four structural fixtures,30nodes/30relations,28pages/16recompositions;10 rejections/8faults; Windows/Linux passed | Relation display order and full native/P0.7 acceptance |
+| E2 | a9d86fc1; review53ed3844 | Complete fixed semantic rows;57 normal checks/eight subject faults; Windows/Linux passed | Real authority/producer, full deployment equality and native acceptance |
+| Mockups | Exact request req-01M2KCTTG4ZWAC2K01PB1HYWGK | Design text and hard-state oracles ready | Two Design-owned HTML grants; no grant inferred |
+| Product/join | Existing programme branches retained | No src/tests/product edits; no main join | Accepted Atlas foundation, exact grants/wire goldens and serialized integration handoff |
+
+Correction: docs/lessons/defect-classes.md is shared append-only under section2; its extra grant request was resolved as unnecessary. Only the two mock HTML paths remain in the pending human question. Watcher has watch/triage authority only; GHCP recovery closer keeps accepted-Atlas publication and desktop scheduling. Final combined-candidate coverage is a landing obligation. Exact source/platform evidence and review limitations are in docs/proof/atlas-views-grounding.md.

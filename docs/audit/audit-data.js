@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:15:55Z",
+  "generated": "2026-09-15T21:32:27Z",
   "audit": [
     {
       "actor": null,
@@ -18578,6 +18578,69 @@ window.AUDIT_DATA = {
         "branch": "conductor/atlas-views",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2KFQ1PXAFFT0D8W4V7Z0N02",
+      "shortname": "atlas-final-experiments",
+      "datetime": "2026-09-15T21:31:37Z",
+      "session": "codex-atlas-views-conductor",
+      "prompt": "Continue the authorized five-view programme through independent experiment review, repair actual findings, verify final platforms and preserve integration boundaries.",
+      "summary": "E1 source1ab5d9e9 with docs96c115e0 cleared by ce4f913a under Owner18cc relation-set scope; display ordering remains unqualified. Linux30nodes30relations28pages16recompositions10rejections8faults; Windows coverage40/18/22/0 in21s. E2 a9d86fc1 fixes omitted dependency Basis with complete expected rows; review53ed3844; Linux57normal and new fault exit1; Windows coverage40/18/22/0 in25s. Two local invocation mistakes (check --path and nonexistent verifier name) were observed, help/file discovery corrected them; actual positional check and verify-defect-register passed225classes. No product/mock/main grant inferred. Existing full user prompt remains al-01M2KAA7JEJXYDVBWF7QSMRGG2.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": "codex-astra-conductor",
+      "artifacts": [
+        "docs/proof/atlas-views-grounding.md",
+        "docs/plans/atlas-views.md",
+        "docs/coordination/atlas-views.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Qualify bounded E1 and E2 experiments for the next authorized implementation stage.",
+      "done_when": "Frozen independent receipts, inspected platform results, corrected scope and coordination handoff are recorded; product gates remain explicit.",
+      "tier": "T2",
+      "fan_out": 4,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T21:25:16Z",
+      "duration_seconds": 381.0,
+      "git": {
+        "sha": "800ee62e0a21e1509fb0097872a2accb513cd134",
+        "short": "800ee62e0",
+        "branch": "conductor/atlas-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KFRJFFGXWEY0ZK0S2Q59M9",
+      "shortname": "atlas-grounding-capture-correction",
+      "datetime": "2026-09-15T21:32:26Z",
+      "session": "codex-atlas-views-conductor",
+      "prompt": "Correct the missing evidence signal in the existing Atlas grounding audit row without rewriting history or promoting later proof to earlier verification.",
+      "summary": "Original20:05 grounding checkpoint recorded scope/graph/coordination artifacts but no Proof Pack verification signal. At that checkpoint independent review and a missing graph evidence node were pending. This correction explicitly records verification_path=false and verification_executed=false for that historical checkpoint. Later programme proof remains separate. Existing verify-audit-capture.py refused the omitted signal; its compliant append-only supersession control is used without changing the verifier.",
+      "kind": "manual",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": "codex-astra-conductor",
+      "artifacts": [
+        "docs/plans/atlas-views.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Capture the original grounding checkpoint honestly.",
+      "done_when": "A compliant append-only superseder explicitly records the original absence of verification.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false,
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "supersedes": "al-01M2KASA7G27MYVBT6KT9P0Y3J"
     }
   ],
   "changes": [

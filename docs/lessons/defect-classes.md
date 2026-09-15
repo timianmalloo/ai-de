@@ -5476,6 +5476,15 @@ for both or split.*
   control without claiming class-wide prevention; independent receipt `dcc0e358` clears only the
   bounded synthetic carrier.
 
+- **Same-class semantic-row correction, 2026-09-15 (`a9d86fc1`, review `53ed3844`).**
+  **Class:** partial positive patterns omitted the second row's evidence Basis; checking a
+  different row did not cover it. **Sweep:** both emitted relation rows and every semantic
+  field were enumerated, including exact anchor/reference populations. **Derive:** independent
+  complete expected rows replace selected-field patterns. **Prevent:** the basis-only subject
+  fault passed the old oracle, then failed full-row equality; normal57checks pass. Independent
+  review and Linux execution observed final fault sensitivity. The earlier clearance is
+  explicitly superseded for this omission; class-wide status remains partially-controlled.
+
 ### DC-128 — Citing a commit proves a file existed, not that it was unchanged, so "committed before" is attested rather than mechanical
 
 - **Shape:** a process requires that an artifact — an oracle, a spec, a baseline — be **fixed before
