@@ -9,9 +9,11 @@ tags: [privacy, linddun, work-data, prompts, audit]
 links:
   - { to: spec-ai-native-ide, rel: documents }
   - { to: knowledge-hub, rel: relates-to }
+  - { to: design-solution-tree, rel: documents }
 review-by: 2027-02-20
 review-suggested:
   - { by: spec-ai-native-ide, on: 2026-08-26, reason: "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice" }
+  - { by: design-solution-tree, on: 2026-09-15, reason: "N9 draft design for D-0 UV-0 then UV-1 (SolutionTreeAsync + Architecture kind)" }
 summary: >-
   Defines the privacy posture for local AI-IDE workspace data: data inventory, purpose,
   retention, deletion, indirect model egress, and LINDDUN-lite dispositions. It is a
@@ -136,6 +138,12 @@ Before implementation approval:
 4. Before enabling the future `ExternalProcessing` capability, verify the
    provider/model/residency/training-retention record and repository-policy approval; unknown
    fields fail closed.
+
+## Pending design: D-0 Solution tree
+
+`design-solution-tree` (draft, 2026-09-15) walks workspace-relative paths already in Core; no new
+PII category; span tags must not carry paths. LINDDUN-lite lives on that design. Refresh with
+`python docs/ai-forward-pack/scripts/docs-graph.py rollup --heading "Privacy analysis (LINDDUN-lite)" --type design`. N10 reviews before this review absorbs the rows.
 
 ## Residual risks
 

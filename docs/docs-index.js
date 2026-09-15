@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generator": "docs-graph.py derive",
+  "generator": "docs-graph.py flag",
   "rootId": "architecture",
   "artifactTypes": [
     "knowledge",
@@ -7112,6 +7112,82 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "910ca00625a52fa49f3333a77f8303b0672468c81c8f7402da71727e20d8aded"
+    },
+    {
+      "id": "design-solution-tree",
+      "path": "docs/design/solution-tree.md",
+      "title": "D-0 Solution tree — UV-0 Core query then UV-1 Architecture kind",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "Walking-skeleton design for D-0: UV-0 adds one Core query-time census join (SolutionTreeAsync / IPC solution-tree / one SolutionTreeQuery of two ints) with grain (path, kind), no folder_dim, T5c omit off the wire; UV-1 then admits one Architecture SurfaceKind and a WPF TreeView. Status draft — N10 review is later.",
+      "tags": [
+        "design",
+        "D-0",
+        "solution-tree",
+        "census",
+        "ipc",
+        "wpf",
+        "treeview",
+        "UV-0",
+        "UV-1",
+        "understanding-views"
+      ],
+      "links": [
+        {
+          "to": "spec-understanding-views",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spike-d0-tree-toolkit",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0009-in-process-first-daemon",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-n1-inventory",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "depends-on"
+        },
+        {
+          "to": "threat-model-ai-native-ide",
+          "rel": "relates-to"
+        },
+        {
+          "to": "privacy-review-ai-native-ide",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2cf7bfda872c3becaf8c2cd7f36100f6f2fa9aee9ccd96e61ba4f9cddaffd6c2"
     },
     {
       "id": "design-watcher-advisory-evaluator",
@@ -15429,6 +15505,11 @@ window.DOCS_INDEX = {
           "by": "spec-ai-native-ide",
           "on": "2026-08-26",
           "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        },
+        {
+          "by": "design-solution-tree",
+          "on": "2026-09-15",
+          "reason": "N9 draft design for D-0 UV-0 then UV-1 (SolutionTreeAsync + Architecture kind)"
         }
       ],
       "summary": "Defines the privacy posture for local AI-IDE workspace data: data inventory, purpose, retention, deletion, indirect model egress, and LINDDUN-lite dispositions. It is a pre-implementation gate for the AI-native IDE specification.",
@@ -15447,10 +15528,14 @@ window.DOCS_INDEX = {
         {
           "to": "knowledge-hub",
           "rel": "relates-to"
+        },
+        {
+          "to": "design-solution-tree",
+          "rel": "documents"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "32b4814e4d2bd7463961ca3f0822adde409eddbe18b8fa45b47ff68df81968ba"
+      "sourceSha256": "da722127689f4e45f43bf843f5d6e5afe8abd515b2ff3f84d6ab9303db3d6983"
     },
     {
       "id": "privacy-review-conductor",
@@ -18975,6 +19060,11 @@ window.DOCS_INDEX = {
           "by": "spec-ai-native-ide",
           "on": "2026-08-26",
           "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        },
+        {
+          "by": "design-solution-tree",
+          "on": "2026-09-15",
+          "reason": "N9 draft design for D-0 UV-0 then UV-1 (SolutionTreeAsync + Architecture kind)"
         }
       ],
       "summary": "Disposes STRIDE threats across workspace IPC, filesystem identity, terminal and rendering content, prompt delivery, MCP, audit evidence, and dependency acquisition with required negative controls.",
@@ -18997,10 +19087,14 @@ window.DOCS_INDEX = {
         {
           "to": "privacy-review-ai-native-ide",
           "rel": "relates-to"
+        },
+        {
+          "to": "design-solution-tree",
+          "rel": "documents"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b8bd5ee4e4b5516c7b3bf7bb0994e6016d7bea411c248a0302d8f077639b5cb0"
+      "sourceSha256": "83f09a2548f91e9a7e4d1a1cf2c8b6eba773b05d46857ada515cbfa585ce5338"
     }
   ],
   "surfaces": [
@@ -19216,5 +19310,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "40a5f03fa8eff012572fd3674a5922031f6766eb778c5ca81c74c7f16817d2a5"
+  "graphSha256": "4554ea38fef0f59c463974c53cd47d6b59f737896dc47e55cb7a14626e7a6585"
 };

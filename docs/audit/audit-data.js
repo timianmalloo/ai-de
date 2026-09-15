@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T15:22:35Z",
+  "generated": "2026-09-15T15:40:01Z",
   "audit": [
     {
       "actor": null,
@@ -16825,6 +16825,45 @@ window.AUDIT_DATA = {
         "branch": "understanding-views-spike",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2JVK2GYYJ6RVGWZ99CY8PG1",
+      "shortname": "design-slice-solution-tree",
+      "datetime": "2026-09-15T15:39:55Z",
+      "session": "understanding-views-design",
+      "prompt": "You are N9 /design-slice for D-0 Solution tree (UV-0 Core query + UV-1 Shell). Persona: patterns-expert with csharp-developer. Reason at high. T2. Fan-out 0. Budget 40 tool calls.\n\nGoal: docs/design/solution-tree.md: contracts, grain, failure modes, telemetry, test plan, E7 list, file lists for UV-0 then UV-1.\n\nDone when: that file exists, quotes ADR-0038 and the spec, names patterns, has a red-first test plan mapped to US-T1–T7/T5a–c/T11, committed on this branch. Status draft (N10 review is later).\n\nMust include: data model first (no folder_dim; census query-time; grain (path,kind)); UV-0 walking skeleton SolutionTreeAsync / IPC solution-tree / SolutionTreeQuery two ints only; consume UnanalysedLanguages.Skip; ResolveWithinWorkspace; no-follow reparse; frame shrink; T5c omit set constructor/internal not IPC; FakeWorkspaceQueries virtual refuse; CanvasGraphViewModelTests.StubQueries compile tax; UV-1 one SurfaceKind solution-tree, Perspectives {Architecture}, Instances One; WPF TreeView attachments from N7; not MainMenuBuilder lists; PROBE-APP-ENUM = App assembly; serial UV-0 reds before UV-1 kind row (AR3); failure modes + STRIDE-lite (DC-022, path confinement, skip re-entry); telemetry per ADR IO1; Testing Strategy union.\n\nNot in scope: Implementing. Atlas. D-1…D-6. main. Public IWorkspaceDirectoryCensus. DropRelativePaths on the wire. Marking design accepted.\n\nFollow design-slice Stages 0–3 and 5. Skip Stage 4 council (N10). Leave status draft.",
+      "summary": "Draft design for D-0 Solution tree: UV-0 Core query-time census join (SolutionTreeAsync / IPC solution-tree / one SolutionTreeQuery of two ints; Skip consumed; ResolveWithinWorkspace; no-follow reparse; T5c omit off-wire) then UV-1 one Architecture kind + WPF TreeView. Status draft; N10 later.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/solution-tree.md",
+        "docs/security/ai-native-ide-threat-model.md",
+        "docs/security/ai-native-ide-privacy-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "docs/design/solution-tree.md contracts, grain, failure modes, telemetry, test plan, E7, UV-0 then UV-1 file lists",
+      "done_when": "file exists, quotes ADR-0038 and spec, names patterns, red-first test plan mapped to US-T1-T7/T5a-c/T11, committed, status draft",
+      "tier": "T2",
+      "main_calls": 40,
+      "main_budget": 40,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T15:25:23Z",
+      "duration_seconds": 872.0,
+      "git": {
+        "sha": "2089e02522bceb0e118beee1583b853d2381e011",
+        "short": "2089e0252",
+        "branch": "understanding-views-design",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -20676,6 +20715,29 @@ window.AUDIT_DATA = {
         "commits": []
       },
       "audit_ref": "al-01M2JTK3G3M92P2TQ23H5P7249"
+    },
+    {
+      "id": "cl-01M2JVK83ZH5SQHW1NMV4RAG02",
+      "datetime": "2026-09-15T15:40:01Z",
+      "session": "understanding-views-design",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "D-0 Solution tree designed (UV-0 query then UV-1 kind, draft)",
+      "prompt": "You are N9 /design-slice for D-0 Solution tree (UV-0 Core query + UV-1 Shell). Persona: patterns-expert with csharp-developer. Reason at high. T2. Fan-out 0. Budget 40 tool calls.\n\nGoal: docs/design/solution-tree.md: contracts, grain, failure modes, telemetry, test plan, E7 list, file lists for UV-0 then UV-1.\n\nDone when: that file exists, quotes ADR-0038 and the spec, names patterns, has a red-first test plan mapped to US-T1–T7/T5a–c/T11, committed on this branch. Status draft (N10 review is later).\n\nMust include: data model first (no folder_dim; census query-time; grain (path,kind)); UV-0 walking skeleton SolutionTreeAsync / IPC solution-tree / SolutionTreeQuery two ints only; consume UnanalysedLanguages.Skip; ResolveWithinWorkspace; no-follow reparse; frame shrink; T5c omit set constructor/internal not IPC; FakeWorkspaceQueries virtual refuse; CanvasGraphViewModelTests.StubQueries compile tax; UV-1 one SurfaceKind solution-tree, Perspectives {Architecture}, Instances One; WPF TreeView attachments from N7; not MainMenuBuilder lists; PROBE-APP-ENUM = App assembly; serial UV-0 reds before UV-1 kind row (AR3); failure modes + STRIDE-lite (DC-022, path confinement, skip re-entry); telemetry per ADR IO1; Testing Strategy union.\n\nNot in scope: Implementing. Atlas. D-1…D-6. main. Public IWorkspaceDirectoryCensus. DropRelativePaths on the wire. Marking design accepted.\n\nFollow design-slice Stages 0–3 and 5. Skip Stage 4 council (N10). Leave status draft.",
+      "summary": "Draft design for D-0 Solution tree: UV-0 Core query-time census join (SolutionTreeAsync / IPC solution-tree / one SolutionTreeQuery of two ints; Skip consumed; ResolveWithinWorkspace; no-follow reparse; T5c omit off-wire) then UV-1 one Architecture kind + WPF TreeView. Status draft; N10 later.",
+      "rationale": "ADR-0038 and spec-understanding-views already closed the grain (path, kind), no folder_dim, query-time census, and AR3 serial phasing. This design names the C# seams, N7 TreeView attachments, failure/STRIDE/telemetry, and the red-first test plan so UV-0 implementers can write reds without inventing a public census interface or a wire DropRelativePaths field.",
+      "artifacts": [
+        "docs/design/solution-tree.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "2089e02522bceb0e118beee1583b853d2381e011",
+        "after": "2089e02522bceb0e118beee1583b853d2381e011",
+        "branch": "understanding-views-design",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M2JVK2GYYJ6RVGWZ99CY8PG1"
     }
   ]
 };
