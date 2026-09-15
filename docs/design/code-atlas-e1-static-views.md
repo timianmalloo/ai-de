@@ -22,6 +22,23 @@ summary: >
 
 # E1 concrete static views — detailed design, not implementation authority
 
+## Current delivery checkpoint
+
+The bounded E1 Core implementation and genuine legacy-fixture delivery are joined
+at `2b818f144980a0e2acecbaddc0795864a00673a3`. Independent source/model/transport/
+test/security dispositions and joined plus fresh-owned-worktree ordinary runs
+(497 passed each) are recorded in `proof-code-atlas-e1-core-metadata`.
+Owner 86/87's integration conditions are met; this does not accept the native
+class view or all E1 behavior.
+
+The current ports provide explicit `StaticStructure=true` opt-in, omitted
+legacy/non-opted metadata, `AtlasOutlineRowDto.Structure`, page-scoped parent
+tokens/omissions, retained original-request Restore preference and bounded Core
+source/outline paging. Native rendering, UI navigation/focus and cross-surface
+proof remain the next separately budgeted slice. Historical design/review
+statements below retain their original stage; do not treat an earlier "not yet
+implemented" statement as the current Core delivery status.
+
 ## Conductor disposition after the source-contract and design reviews
 
 Owner turn 69 admits **test-only qualification**, not E1 product implementation.

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T03:59:19Z",
+  "generated": "2026-09-15T04:21:51Z",
   "audit": [
     {
       "actor": null,
@@ -17149,6 +17149,40 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "6e8be3345cd07b053afe6237ec8d7089d208504b",
         "short": "6e8be3345",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HMSF9C3MDV16W6M42871EH",
+      "shortname": "atlas-e1-core-and-fixture-delivered",
+      "datetime": "2026-09-15T04:21:50Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner86/87conditionaljoinscompleted9716efba/7829377d/85594e77/2b818f14,exact15paths. Rawcommit+freshLFDA1manifestmatchbeforejoins; noApp/daemon/framing/deps/projectchanges. Joined497/497 andNEWpostjoinworktreeemptyartifacts/bin/obj497/497 afterlegitrestore; no-restoreexit0withoutTRXretainedNOTproof. Nooldfixtureenv. Parentread6Approved/ApprovedReproductionreceipts exactpatch/binaryhashes,158runtimefiles/root85or90<=135, childTRX/PIDabsent/noforcedkill/cleanupnull. FreshworktreeNOTliteralclone. Canonicalinputrepresentationfailure preserved; historicalsource/PDB/blocked/mutantcontrols notrewritten. Core/fixturetasksdonewithinboundedScope42done3progress; next5pathnativeauthorrequestOwnerpending. No nativeUI/main/push/normativeE/programmeacceptance. Existing API/docs bundle regenerated against new public ports.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-e1-core-metadata.md",
+        "docs/design/code-atlas-e1-static-views.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close joined Core/fixture delivery and carry its verified ports into the next native decision",
+      "done_when": "Committed/fresh input hashes, joined/fresh ordinary execution and actual preparation/lifetime outputs are recorded",
+      "tier": "T2",
+      "main_calls": 791,
+      "main_budget": 820,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T04:19:21Z",
+      "duration_seconds": 149.0,
+      "git": {
+        "sha": "2b818f144980a0e2acecbaddc0795864a00673a3",
+        "short": "2b818f144",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

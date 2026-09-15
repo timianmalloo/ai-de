@@ -1310,6 +1310,23 @@ change. Retain the old working-tree greens and fresh failure.
 Conductor's cumulative ceiling rises prospectively to 820; no native/UI/main/
 push/normative-E/programme authority is added.
 
+Owner 86/87's bounded integration proof is complete: correction `2440b571`
+pins Git-canonical LF bytes while preserving the archive, qualified source,
+build settings and approved binary pair. Parent raw-blob and fresh-checkout
+checks passed before the four conditional joins: `9716efba`, `7829377d`,
+`85594e77`, `2b818f14`. The aggregate is exactly fifteen authorized paths.
+
+Conductor ordinary execution passed 497/497; new registered
+`atlas/e1-core-fresh-proof` at exact `2b818f144980a0e2acecbaddc0795864a00673a3`
+started without artifacts/bin/obj and ordinary restored execution also passed
+497/497. A receipt-less no-restore exit was not counted. This is a fresh worktree,
+not a clone. Parent read all six Approved/ApprovedReproduction preparation
+receipts, canonical LF patch and ED7F/8E95 hashes, closure/path bounds, child TRXs,
+absent child PIDs, null cleanup errors and no forced termination. The joined
+Core/fixture Proof Pack preserves the failed 4e34 checkout and all earlier runs.
+The Core/fixture nodes may close within scope. Native source authoring still
+requires its own Owner grant; no main/push or normative E acceptance follows.
+
 ### Core owns
 
 | Path | Why |

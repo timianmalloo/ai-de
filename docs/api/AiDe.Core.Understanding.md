@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Understanding: 73 types, 230 members, 16% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Understanding: 78 types, 233 members, 16% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Understanding`
 
-**73 public types · 230 public members · 16% documented.**
+**78 public types · 233 public members · 16% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -309,6 +309,30 @@ Verified source metadata. The body is request-local only and is not retained her
 | `AtlasSourceObservation Verified(string observationKey, string manifestToken, string fileValue, string policyToken, AtlasObjectIdentity rootIdentity, AtlasObjectIdentity fileIdentity, string canonicalSha256, long byteLength, string decoderId, int decodedUtf16Length, AtlasBounds bounds)` | **(gap)** |
 | `AtlasSourceObservation Unavailable(string observationKey, string manifestToken, string fileValue, string policyToken, AtlasBounds bounds, string reason)` | **(gap)** |
 
+## `AtlasClassifierFlavor`
+
+*enum* — `AtlasManifest.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasLexicalParentState`
+
+*enum* — `AtlasManifest.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasStructureProvenance`
+
+*enum* — `AtlasManifest.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `AtlasDeclarationStructure`
+
+*record* — `AtlasManifest.cs`
+
+Descriptive syntax evidence; occurrence and source-binding identities remain unchanged.
+
 ## `AtlasDeclaration`
 
 *class* — `AtlasManifest.cs`
@@ -317,7 +341,7 @@ Declaration metadata. Logical symbol value can be absent when the compiler ident
 
 | Member | Summary |
 |---|---|
-| `AtlasDeclaration(string observationKey, string? logicalSymbolValue, string sourceObservationKey, string contextKey, AtlasSourceBinding sourceBinding, AtlasDeclarationKind kind, AtlasDeclarationRole role, string displaySignature, string identifier, AtlasTextSpan identifierSpan, AtlasTextSpan declarationSpan, AtlasTextSpan? bodySpan, string? unresolvedReason)` | **(gap)** |
+| `AtlasDeclaration(string observationKey, string? logicalSymbolValue, string sourceObservationKey, string contextKey, AtlasSourceBinding sourceBinding, AtlasDeclarationKind kind, AtlasDeclarationRole role, string displaySignature, string identifier, AtlasTextSpan identifierSpan, AtlasTextSpan declarationSpan, AtlasTextSpan? bodySpan, string? unresolvedReason, AtlasDeclarationStructure? structure = null)` | **(gap)** |
 | `string ObservationKey { get; }` | **(gap)** |
 | `string? LogicalSymbolValue { get; }` | **(gap)** |
 | `string SourceObservationKey { get; }` | **(gap)** |
@@ -331,6 +355,7 @@ Declaration metadata. Logical symbol value can be absent when the compiler ident
 | `AtlasTextSpan DeclarationSpan { get; }` | **(gap)** |
 | `AtlasTextSpan? BodySpan { get; }` | **(gap)** |
 | `string? UnresolvedReason { get; }` | **(gap)** |
+| `AtlasDeclarationStructure? Structure { get; }` | **(gap)** |
 
 ## `AtlasManifest`
 
@@ -407,11 +432,12 @@ One addressable declaration in a selection outline.
 
 | Member | Summary |
 |---|---|
-| `OutlineDeclaration(string observationKey, string displayName, AtlasDeclarationKind kind, AtlasTextSpan span)` | **(gap)** |
+| `OutlineDeclaration(string observationKey, string displayName, AtlasDeclarationKind kind, AtlasTextSpan span, AtlasDeclarationStructure? structure = null)` | **(gap)** |
 | `string ObservationKey { get; }` | **(gap)** |
 | `string DisplayName { get; }` | **(gap)** |
 | `AtlasDeclarationKind Kind { get; }` | **(gap)** |
 | `AtlasTextSpan Span { get; }` | **(gap)** |
+| `AtlasDeclarationStructure? Structure { get; }` | **(gap)** |
 
 ## `SelectionOutline`
 
@@ -603,7 +629,7 @@ selection; consumers must subsequently adopt the manifest token of an accepted s
 
 *record* — `AtlasReaderContracts.cs`
 
-*No doc comment on this type.* **(gap)**
+Structural metadata is explicit opt-in; the remote reader omits it when the peer lacks the feature.
 
 ## `AtlasRestoreRequestDto`
 
@@ -652,6 +678,12 @@ selection; consumers must subsequently adopt the manifest token of an accepted s
 *record* — `AtlasReaderContracts.cs`
 
 *No doc comment on this type.* **(gap)**
+
+## `AtlasStructureDto`
+
+*record* — `AtlasReaderContracts.cs`
+
+Descriptive, page-scoped syntax evidence. An omitted parent never carries an authority token.
 
 ## `AtlasSpanDto`
 
@@ -720,6 +752,7 @@ This is not an admission, token-store, transport-registration or root-I/O implem
 | `int FramePrefixBytes = sizeof(int)` | **(gap)** |
 | `int MaxPageTextUtf8Bytes = 128 * 1024` | **(gap)** |
 | `int MaxSourceInputBytes = 8 * 1024 * 1024` | **(gap)** |
+| `string StaticStructureFeature = "static-structure-v1"` | **(gap)** |
 | `AtlasFileDto File(` | **(gap)** |
 | `AtlasBoundsDto Bounds(` | Projects native row bounds only; source-range bounds require their own measured inputs. Unknown native omission dimensions remain absent rather than guessing a category. Standalone metadata producers must report zero … |
 | `AtlasInventoryPageDto Inventory(` | **(gap)** |

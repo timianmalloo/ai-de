@@ -2695,7 +2695,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Understanding: 73 types, 230 members, 16% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Understanding: 78 types, 233 members, 16% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2708,7 +2708,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "43ffda3f361fa259b517aca5d3757c2208081c7f8a1e46c68d0b4bee5ccf6989"
+      "sourceSha256": "583275a09973825d55aa371a342921f1053225b525cd1fc3dcff45b6a6612d31"
     },
     {
       "id": "api-aide-core-upgrade",
@@ -6609,7 +6609,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fa01b25b720b6b3a1f9b59e551c3cc02e5145d0e152c3b419722d05055d4e2e3"
+      "sourceSha256": "cace8e4d7de84b210c63f2659a4bd0604cd446034ed5591422782cb7540dcb4f"
     },
     {
       "id": "design-code-atlas-shared-host-admission",
@@ -11138,12 +11138,12 @@ window.DOCS_INDEX = {
       "path": "docs/proof/code-atlas-e1-core-metadata.md",
       "title": "Code Atlas E1 Core metadata: candidate evidence and delivery gates",
       "type": "doc",
-      "status": "draft",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-09-22",
       "reviewSuggested": [],
-      "summary": "Frozen E1 Core candidate with executed metadata, compatibility, paging and publication evidence. The supplied-fixture 494-case replay is valid, but reproducible legacy-fixture delivery and incomplete reviews still block joining.",
+      "summary": "Bounded E1 Core ports and reproducible legacy-fixture delivery are integrated after independent gates. Joined and fresh-owned-worktree ordinary runs each passed 497 cases from committed inputs; native E1 views remain a later grant.",
       "tags": [
         "code-atlas",
         "e1",
@@ -11167,7 +11167,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "12782dc2e2378d426ea8a73ea2b169630f41b89adbf400a4fb5fd35d8030e3cd"
+      "sourceSha256": "f8b683172368668e807f54f348cdcb670abcfe64d2d9fa160d5270676d30cd2b"
     },
     {
       "id": "proof-code-atlas-e1-qualification",
@@ -11906,7 +11906,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "45f2801a6e76979490b3b9f9bb2bdac710c2689022b4f6cc511fc57cc265971e"
+      "sourceSha256": "4cbf600763f6f2758e269c89012d09faf395f5c088d760199a1ebdba9027db1d"
     },
     {
       "id": "session-profiles",
@@ -19227,5 +19227,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a838496d7a880a0f8e11792fe067e26f2a548f341eea971a943226c071c49c1e"
+  "graphSha256": "3954c1d657939cb3cd8f24052c997c8fdf6215267363cfed6ce1c0c7e53965c9"
 };

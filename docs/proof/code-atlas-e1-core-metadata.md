@@ -2,7 +2,7 @@
 id: proof-code-atlas-e1-core-metadata
 title: "Code Atlas E1 Core metadata: candidate evidence and delivery gates"
 type: doc
-status: draft
+status: accepted
 owner: "@timianmalloo"
 tags: [code-atlas, e1, core, compatibility, paging, proof]
 links:
@@ -11,12 +11,65 @@ links:
   - { to: architecture-code-atlas-proposed, rel: depends-on }
 review-by: 2026-09-22
 summary: >
-  Frozen E1 Core candidate with executed metadata, compatibility, paging and
-  publication evidence. The supplied-fixture 494-case replay is valid, but
-  reproducible legacy-fixture delivery and incomplete reviews still block joining.
+  Bounded E1 Core ports and reproducible legacy-fixture delivery are integrated
+  after independent gates. Joined and fresh-owned-worktree ordinary runs each
+  passed 497 cases from committed inputs; native E1 views remain a later grant.
 ---
 
 # Core capability evidence, not native-view or programme acceptance
+
+## Current disposition: Core and fixture delivery complete within scope
+
+Owner 86 approved the normal canonical fixture pair and conditional integration;
+Owner 87 approved the Git-canonical LF input correction. Parent verified raw
+commit blobs and fresh-checkout pins before joining the exact authorized changes:
+
+| Change | Source commit | Conductor join |
+|---|---|---|
+| E1 Core metadata/negotiation/paging | `cea76307fe75b943a945cf837139e6a80ea2595d` | `9716efba` |
+| Accessor multiset/control correction | `1791f95dde2116efc5e5f5ace1760f3cd10f6474` | `7829377d` |
+| Approved reproducible fixture | `4e34b7acb52319f3459c79a4a283196553e90a19` | `85594e77` |
+| Canonical committed patch input | `2440b571ff9e91065a29a33cce9e11ba767655aa` | `2b818f144980a0e2acecbaddc0795864a00673a3` |
+
+The aggregate changed exactly the authorized fifteen paths, including nine Core
+production files, the two Core tests and four fixture/tool inputs. No App,
+daemon, generic-client, framing, dependency or project file changed.
+
+**Joined run:** 497 executed, 497 passed, zero failed/skipped, ordinary invocation
+in `C:\Projects\ai-de-conductor-code-atlas` with the designated preparation
+location initially empty and no `ATLAS_FROZEN_LEGACY_DIRECTORY` override.
+
+**Fresh-owned-worktree run:** 497 executed, 497 passed, zero failed/skipped in
+`C:\Projects\ai-de-atlas-e1-core-fresh-proof` at the same joined commit. Before
+the run, that tree had no `.artifacts`, Core.Tests `bin` or `obj`. The first
+`--no-restore` command returned zero with no TRX and is explicitly **not proof**;
+ordinary restore/test produced the actual retained result. This was a fresh
+worktree, **not a literal fresh clone**.
+
+Parent read all six mixed-role/negative-role preparation receipts across the two
+runs. Each reports `Approved` / `ApprovedReproduction`, canonical patch input
+`DA1AFEE0B66F027C35E4B9D50966C47A1BF30EB491122080B58D61F315B90A39`,
+approved Core `ED7F23CD...445EC5` and peer `8E95C84E...583BA`, and 158 verified
+runtime files. Execution-root lengths were 85 and 90 against the fixture's
+derived maximum 135. All child PIDs were absent after completion, child TRXs
+existed, cleanup errors were null and forced termination was false. The negative
+role retained its intended original EOF rather than masquerading as success.
+
+Current receipts are session files:
+`atlas-e1-joined-approved/joined-approved-core.trx`,
+`atlas-e1-fresh-approved/fresh-approved-core.trx` and
+`atlas-e1-fresh-approved/joined-and-fresh-preparation-readback.json`, with fresh
+native diagnostics. Both verification trees and their evidence remain retained.
+
+GATE bounded E1 Core/fixture delivery - independent source, model, transport,
+test and delivery predicates dispositioned; Owner 86/87 integration conditions
+observed met by parent joined and fresh-worktree execution. Core ports may now
+serve the separately granted native slice. No native UI, full E1, main/push,
+normative Addendum E or programme acceptance is asserted.
+
+All earlier holds below are historical checkpoints. Forced-timeout behavior
+remains source-reviewed but unexecuted; preparation namespace race immunity and
+arbitrary checkout/Git configurations are not claimed.
 
 Owner 78 admitted eleven exact Core/test paths. Candidate
 `cea76307fe75b943a945cf837139e6a80ea2595d` is based on the joined qualification
@@ -29,7 +82,8 @@ change occurred.
 Parent replayed Core Understanding/IPC with the supplied genuine legacy fixture:
 **494 executed, 494 passed, zero failed/skipped**. The unchanged App also built
 with zero warnings/errors. These observations do not prove native E1 rendering.
-The candidate remains unjoined under Owner 79/80.
+At this initial checkpoint the candidate remained unjoined under Owner 79/80;
+the later bounded integration is recorded above.
 
 ## Candidate contract
 
@@ -150,6 +204,9 @@ require a new exact grant.
 
 The source candidate, native view and programme remain unaccepted pending the
 completed source gates and fixture-delivery disposition.
+
+The above statement records the initial Owner 80 checkpoint, not the current
+Core/fixture disposition at the top of this record.
 
 ## Owner 80 fixture checkpoint: source reproduced, binary gate blocked
 
