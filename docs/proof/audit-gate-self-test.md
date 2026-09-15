@@ -10,11 +10,20 @@ links:
   - { to: coord-audit-gate-self-test, rel: relates-to }
   - { to: note-audit-gate-self-test-owner, rel: relates-to }
   - { to: proof-audit-gate-plan-review, rel: relates-to }
+  - { to: proof-audit-gate-self-test-review, rel: relates-to }
 review-by: 2026-12-15
 summary: "Observed fixtures, independent review and integrated qualification for one frozen self-test debt item."
 ---
 
 # Evidence
+
+## Reviewed candidate — integration pending
+
+Independent re-review PASS at7094c1473774d933ac58c1b48ee448016f226ba3 clears Test Architect, Python, Security, SRE and Simplifier on repaired candidate1581441da13e9b46a75242276b23c465f91264b5. Gate blobbcd042aec3de20c71096d148fca1385a0c708191, SHA2568964a27a3de0fd26ed4535c5c6217815a9a0ed3342526c2ef6f3cdbe12f721b3. Conductor inspected the repair diff and independently reran --self-test with inherited AUDIT_GATE_MUTANT=1:11 completed cases and all7 named mutation receipts, exit0. Source/tests/build-input diff frombbd1bece remains empty.
+
+Owner A3/A4 admitted only corrections to the new self-test and dispatch. Review had observed an ambient-variable bypass falsely claiming seven mutations, abbreviated flag handling changing normal positional behavior, and inherited Git-local variables redirecting fixture commands. Repairs use exact-vector dispatch, private in-process mutation control, measured case/mutant counters, and the installed Git's local-environment variable contract. Independent spectator tests observe unchanged HEAD, index, configuration and status; isolated temporary parent is empty after exit. The review's initial cleanup claim was withdrawn after proving it had counted a concurrent run's folders; its wrong-cwd ratchet result is also recorded as review-harness error. No normal-policy repair was smuggled into this work.
+
+Review receipt imported verbatim; source/destination SHA256f20487d86d5117836d7dc039997998806c32182031ee8c4c5b7d48d0e22193c6 matched. Original audit al-01M2K5REEWBT50CJCYH0JJR8HP remains on reviewer branch. Focused re-review6/6 calls. Author repair11/8 calls,424 measured seconds; its audit al-01M2K5K1DBSNYX96MMC41ETH43 and full historical proof travel in the candidate. Required integrated gate runner has not run at this checkpoint.
 
 Baseline bbd1bece. Normal policy and module contract opened. Frozen list contains ten names including verify-audit-log.py. No new self-test has run yet. Core grant and independent design review pending. The programme changes no product, allocator, merge framework or ownership policy. Actual red/green and final checks will be recorded here after observation. AIDE_CONTRACT_LOG is absent; this proof is captured in committed audit artifacts.
 
