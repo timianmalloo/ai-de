@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:45:55Z",
+  "generated": "2026-09-15T15:00:26Z",
   "audit": [
     {
       "actor": null,
@@ -16347,6 +16347,47 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
         "short": "bab5035e7",
+        "branch": "fix/recursive-surface-ownership",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JSARRWHRW2Z6Q0WKWPMYZ3",
+      "shortname": "investigate-recursive-surface-ownership-review-block",
+      "datetime": "2026-09-15T15:00:26Z",
+      "session": "codex-surface-ownership-author",
+      "prompt": "Investigate the independent five-case parser block on pinned 18a4a19f, then apply Owner O7 same-scope repair after root acknowledgement; preserve §2 authority and independent veto.",
+      "summary": "Reproduced five parser-state/token-jurisdiction failures on pinned 18a4a19f, traced necessary and sufficient causes, added failing-first fixtures, repaired only those predicates, and observed the full self-test plus external reviewer 9/9 green. Proof: docs/proof/recursive-surface-ownership-repair.md.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": "codex-sol-author",
+      "artifacts": [
+        "tools/verify-surface-ownership.py",
+        "docs/investigations/recursive-surface-ownership.md",
+        "docs/proof/recursive-surface-ownership-repair.md",
+        "docs/docs-index.js"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Diagnose and repair the five independent recursive surface-ownership parser blocks without widening policy or authority.",
+      "done_when": "All five cases are red before repair, the full self-test and independent reproducer pass after the bounded repair, real register outcomes remain correct, and investigation/proof/audit are committed for independent re-review.",
+      "tier": "T1",
+      "main_calls": 12,
+      "main_budget": 18,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T14:52:51Z",
+      "duration_seconds": 455.0,
+      "git": {
+        "sha": "18a4a19f82eff6130c9938bdf401539cd2a8944f",
+        "short": "18a4a19f8",
         "branch": "fix/recursive-surface-ownership",
         "pushed": null
       }

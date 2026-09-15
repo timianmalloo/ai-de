@@ -11675,6 +11675,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "ff71dbe76956b39245cdb544b102aa05b5dda15741ff768a2fe8e9065fedfebd"
     },
     {
+      "id": "investigation-recursive-surface-ownership",
+      "path": "docs/investigations/recursive-surface-ownership.md",
+      "title": "Recursive surface ownership parser review block",
+      "type": "investigation",
+      "status": "complete",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Reproduces and traces five independent parser failures on author commit 18a4a19f, records the necessary and sufficient causes, and defines the same-scope repair that preserves live section 2 header reuse and exact surface-token jurisdiction.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "parser",
+        "verification"
+      ],
+      "links": [
+        {
+          "to": "proof-recursive-surface-ownership-author",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "007bcb571e4d97d5c364f9ee5640964d7d6dd7c968941f6e43884d222ff1ab12"
+    },
+    {
       "id": "investigation-redraw-isolation",
       "path": "docs/investigations/redraw-isolation.md",
       "title": "Investigation — redraw isolation and UI jitter",
@@ -16370,6 +16404,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "6e7bfcc4ebaa673a7ff2456ae0ef8e53427b383c788196ab0afecdf0eba6db7d"
     },
     {
+      "id": "proof-recursive-surface-ownership-repair",
+      "path": "docs/proof/recursive-surface-ownership-repair.md",
+      "title": "Recursive surface ownership parser repair proof",
+      "type": "proof-pack",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Records failing-first and green evidence for the five independent parser findings, the expanded relevance boundary, and the unchanged real-register outcomes. Independent acceptance remains open.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "python",
+        "verification"
+      ],
+      "links": [
+        {
+          "to": "investigation-recursive-surface-ownership",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-recursive-surface-ownership-author",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b885fce34e1b24de3a3873d1e05bfa7da30ba4fc1f137d68c7ed0e580e2c64df"
+    },
+    {
       "id": "proof-s2-settings-and-sentinels",
       "path": "docs/proof/s2-settings-and-sentinels.md",
       "title": "Proof Pack — S2: the settings and sentinels commit",
@@ -18664,5 +18732,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a570dd8ea29eaec9a94189dd2e567c0d6d0dd20256abf6ed3c112bdd003b8667"
+  "graphSha256": "579b387170928c18a23ab9e1606b758ba7df5b8136523d49595cfc244a51ea67"
 };

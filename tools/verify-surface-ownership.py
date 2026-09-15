@@ -59,9 +59,11 @@ UNASSIGNED: dict[str, str] = {
 }
 
 OWNER_TABLE = re.compile(r"^### (.+?) owns\s*$")
-LEVEL_THREE_HEADING = re.compile(r"^###\s+")
+MARKDOWN_HEADING = re.compile(r"^#{1,6}\s+")
 CODE_TOKEN = re.compile(r"`([^`]+)`")
-SURFACE_NAME = re.compile(r"[A-Za-z][A-Za-z0-9_]*(?:Surface|View)\.cs")
+SURFACE_NAME = re.compile(r"[^/\s`|]*(?:Surface|View)\.cs")
+RECURSIVE_SURFACE_PATTERN = re.compile(
+    re.escape(SURFACES) + r"(?:/[^/\s`|]+)*/\*\*")
 TABLE_SEPARATOR = re.compile(r"^:?-{3,}:?$")
 PROVENANCE = re.compile(r"(?:\breq-[A-Za-z0-9]+\b|\bRuling\s+\d+\b)", re.IGNORECASE)
 RETIREMENT = re.compile(r"\b(?:remove|retire)\s+when\b|\buntil\b", re.IGNORECASE)
@@ -90,7 +92,8 @@ def surfaces(root: Path) -> list[str]:
 
 
 def _surface_relevant(value: str) -> bool:
-    return SURFACES in value or SURFACE_NAME.search(value) is not None
+    return (SURFACE_NAME.search(value) is not None or
+            RECURSIVE_SURFACE_PATTERN.search(value) is not None)
 
 
 def _table_cells(line: str) -> list[str] | None:
@@ -176,7 +179,7 @@ def _parse_owners(root: Path, present: list[str]) -> tuple[dict[str, list[str]],
     if start is None:
         return {}, [f"ownership contract {CONTRACT} has no '## 2. File ownership' section"]
     end = next((index for index in range(start + 1, len(lines))
-                if lines[index].startswith("## ")), len(lines))
+                if lines[index].lstrip().startswith("## ")), len(lines))
     found: dict[str, list[str]] = {}
     problems: list[str] = []
     owner: str | None = None
@@ -190,7 +193,7 @@ def _parse_owners(root: Path, present: list[str]) -> tuple[dict[str, list[str]],
             path_column = None
             table_started = False
             continue
-        if LEVEL_THREE_HEADING.match(line.strip()):
+        if MARKDOWN_HEADING.match(line.strip()):
             owner = None
             path_column = None
             table_started = False
@@ -202,14 +205,21 @@ def _parse_owners(root: Path, present: list[str]) -> tuple[dict[str, list[str]],
             table_started = True
             continue
         if cells is None:
-            if table_started and line.strip() and "|" in line and _surface_relevant(line):
+            stripped = line.strip()
+            row_without_pipes = stripped.startswith("`") and _surface_relevant(stripped)
+            if table_started and stripped and _surface_relevant(line) and (
+                    "|" in line or row_without_pipes):
                 problems.append(
                     f"line {offset} has a malformed Path-table row containing a surface path: "
-                    f"{line.strip()}")
-            if line.strip():
+                    f"{stripped}")
+            if stripped:
                 table_started = False
             continue
         if path_column is None:
+            if _surface_relevant(line):
+                problems.append(
+                    f"line {offset} has a malformed surface Path-table row before a Path header: "
+                    f"{line.strip()}")
             continue
         table_started = True
         if all(TABLE_SEPARATOR.fullmatch(cell) for cell in cells):
@@ -469,7 +479,7 @@ def self_test() -> int:
             "### Core owns\n\n| Path | Why |\n|---|---|\n"
             f"| `{SURFACES}/*Surface.cs` | pattern |\n"
             f"| `{SURFACES}/OneSurface.cs` | same-owner duplicate |\n"
-            f"| `{SURFACES}/**` | recursive pattern |\n")
+            f"| `{SURFACES}/Nested/**` | recursive pattern |\n")
         require("same-owner overlap deduplicates", check(overlap, unassigned={}) == [],
                 f"got {check(overlap, unassigned={})!r}")
 
@@ -482,6 +492,22 @@ def self_test() -> int:
         require("ordinary star never crosses a slash", has(
             check(segment_star, unassigned={}), f"{SURFACES}/Nested/DeepView.cs", "has no owner"),
             f"got {check(segment_star, unassigned={})!r}")
+
+        suffix_population = base / "suffix-population"
+        suffix_paths = [
+            f"{SURFACES}/Surface.cs",
+            f"{SURFACES}/View.cs",
+            f"{SURFACES}/_OddView.cs",
+            f"{SURFACES}/ÉcranView.cs",
+        ]
+        fixture(
+            suffix_population,
+            suffix_paths,
+            "### Core owns\n\n| Path | Why |\n|---|---|\n" +
+            "".join(f"| `{path}` | exact suffix population |\n" for path in suffix_paths))
+        require("every suffix-admitted filename remains declaration-relevant",
+                check(suffix_population, unassigned={}) == [],
+                f"got {check(suffix_population, unassigned={})!r}")
 
         overlap_contract = overlap / CONTRACT
         overlap_contract.write_text(
@@ -518,6 +544,71 @@ def self_test() -> int:
         require("ownerless Path table is diagnosed", has(
             contamination_problems, "SharedView.cs", "malformed", "outside"),
             f"got {contamination_problems!r}")
+
+        nested_heading = base / "nested-heading"
+        fixture(
+            nested_heading,
+            [f"{SURFACES}/HiddenView.cs"],
+            "### Core owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/**` | broad |\n\n"
+            "#### Notes, not an owner\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/HiddenView.cs` | outside owner context |\n")
+        require("any non-owner heading resets owner context", has(
+            check(nested_heading, unassigned={}), f"{SURFACES}/HiddenView.cs", "outside", "owner"),
+            f"got {check(nested_heading, unassigned={})!r}")
+
+        missing_path_header = base / "missing-path-header"
+        fixture(
+            missing_path_header,
+            [f"{SURFACES}/HiddenView.cs"],
+            "### Core owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/**` | broad |\n\n"
+            "### Design owns\n\n"
+            f"| `{SURFACES}/HiddenView.cs` | missing Path header |\n")
+        require("surface row without Path header is visible", has(
+            check(missing_path_header, unassigned={}), f"{SURFACES}/HiddenView.cs", "malformed"),
+            f"got {check(missing_path_header, unassigned={})!r}")
+
+        no_delimiters = base / "no-delimiters"
+        fixture(
+            no_delimiters,
+            [f"{SURFACES}/HiddenView.cs"],
+            "### Core owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/**` | broad |\n\n"
+            "### Design owns\n\n| Path | Why |\n|---|---|\n"
+            f"`{SURFACES}/HiddenView.cs` missing every table delimiter\n")
+        require("surface row without table delimiters is visible", has(
+            check(no_delimiters, unassigned={}), f"{SURFACES}/HiddenView.cs", "malformed"),
+            f"got {check(no_delimiters, unassigned={})!r}")
+
+        unrelated_workbench = base / "unrelated-workbench"
+        fixture(
+            unrelated_workbench,
+            [f"{SURFACES}/AnchorSurface.cs"],
+            "### Core owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/AnchorSurface.cs` | surface |\n"
+            f"| {SURFACES}/WorkbenchShell.cs | unrelated non-surface row |\n")
+        require("unrelated Workbench filename stays outside jurisdiction",
+                check(unrelated_workbench, unassigned={}) == [],
+                f"got {check(unrelated_workbench, unassigned={})!r}")
+
+        indented_end = base / "indented-section-end"
+        target = indented_end / SURFACES / "HiddenView.cs"
+        target.parent.mkdir(parents=True)
+        target.write_text("// probe\n", encoding="utf-8")
+        contract = indented_end / CONTRACT
+        contract.parent.mkdir(parents=True)
+        contract.write_text(
+            "## 2. File ownership\n\n"
+            "### Core owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/HiddenView.cs` | owner |\n\n"
+            "  ## 3. Later\n\n"
+            "### Design owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/HiddenView.cs` | outside section 2 |\n",
+            encoding="utf-8")
+        require("indented level-two heading ends section 2",
+                check(indented_end, unassigned={}) == [],
+                f"got {check(indented_end, unassigned={})!r}")
 
         malformed_cases = {
             "unquoted path": f"| {SURFACES}/BrokenView.cs | no code token |",
