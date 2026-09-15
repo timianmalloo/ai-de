@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:48:35Z",
+  "generated": "2026-09-15T20:54:18Z",
   "audit": [
     {
       "actor": null,
@@ -18477,6 +18477,34 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T20:41:39Z",
       "duration_seconds": 416.0
+    },
+    {
+      "id": "al-01M2KDJQV40XTNP71N82XVPNJK",
+      "shortname": "atlas-e2-relation-design-correction",
+      "datetime": "2026-09-15T20:54:18Z",
+      "session": "codex-atlas-e2-architecture",
+      "prompt": "Finite E2 design correction same existing Markdown only. Owner requires typed endpoint IDs and evidence; ArchitectureDocumentV1 lacks relations while output promises edges. Add typed Relation input and current-source supported assertion versus declared/target semantics with validation/unresolved rules. Reconcile sixcollection192row cap, total/page/display limits and PERF populations. No runtime producer or spike/HTML change. Budget8calls10min checkpoint6; audit/derive/commit exact lease; independent reviewer clears finding.",
+      "summary": "Read Owner relation clause. Added typed seventh relation collection, endpoint/source/kind/state/basis rules, source assertion matching, declared-current versus extracted distinction and exact negative oracles. Cap224total7collections; revised160rowfixture with24relations,32edges/page inclusive generatedmembership,64primary+structuralnodes,32aliasdetails and unknowns; byte/depth fixture assertions owed. Old spike has no relation support and is explicitly not qualification. Independent design review and foundation remain open.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "GPT-6 Astra E2 author",
+      "artifacts": [
+        "docs/design/atlas-architecture-views.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close omitted E2 relation design contract and inconsistent population/cap definitions",
+      "done_when": "Typed relation input and jointly satisfiable carrier/page/fixture limits are committed for independent review",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false,
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T20:52:08Z",
+      "duration_seconds": 130.0
     }
   ],
   "changes": [
@@ -22269,6 +22297,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "90189411",
         "after": "901894112b50d5cdd8cd272f1cb4cb3e886366a7",
+        "branch": "atlas/architecture-views",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2KDJQQPH11HDY7N8BZ9Z0E6",
+      "datetime": "2026-09-15T20:54:18Z",
+      "session": "codex-atlas-e2-architecture",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Make E2 relation intake explicit and reconcile bounds",
+      "prompt": "Correct confirmed E2 P0.2: add typed relation input with endpoint IDs/evidence, source-current versus declared-target distinction, validation/unresolved rules; reconcile collections/rows/page/display caps and PERF fixture. Existing design only, no spike/producer/HTML changes.",
+      "summary": "Added Relation/EndpointRef carrier types and edge basis/provenance/state; current implementation edges require existing matching supported assertions, declared/target relations stay distinct. Seven32rowcollections cap224; PERF160rows with24relations and per-page32edge/64totalgraphnode limits. Existing spike explicitly does not qualify new relation contract.",
+      "rationale": "An output edge cannot imply an omitted input contract, and fixture/count limits must be jointly satisfiable.",
+      "artifacts": [
+        "docs/design/atlas-architecture-views.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "ea21b6b6",
+        "after": "ea21b6b6985dc12bfbabb966060cdc76b0701f13",
         "branch": "atlas/architecture-views",
         "pushed": null,
         "commits": []

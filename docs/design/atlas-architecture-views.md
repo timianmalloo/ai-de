@@ -191,7 +191,8 @@ Typed schema notation below defines required logical fields, not production DTO/
 
 ```text
 ArchitectureDocumentV1 = { version:1, concepts:Concept[], invariants:Invariant[],
-  layers:Structure[], anchors:Anchor[], resources:DeclarationRef[], aliases:Alias[] }
+  layers:Structure[], anchors:Anchor[], resources:DeclarationRef[], aliases:Alias[],
+  relations:Relation[] }
 Concept = { id:LocalId, label:Text, role:Entity|ValueObject|Aggregate,
   anchor:AnchorId, root?:ConceptId, members?:ConceptId[], invariants?:InvariantId[] }
 Invariant = { id:LocalId, statement:Text, anchor:AnchorId }
@@ -203,6 +204,11 @@ Anchor = { id:AnchorId, target:SourceTargetId, scope:ScopeId, hash:ContentHash,
 DeclarationRef = { id:ResourceId, workspace:WorkspaceId, scope:ScopeId,
   file:FileId, symbol:ResourceSymbol, anchor:AnchorId }
 Alias = { id:AliasId, label:Text, rootRef:ResourceId, anchor:AnchorId }
+EndpointRef = { type:Concept|Structure|Resource, id:LocalId }
+Relation = { id:RelationId, from:EndpointRef, to:EndpointRef,
+  kind:AtlasArchitectureRelationKind, state:Current|Target|Unspecified,
+  basis:SupportedSourceAssertion|ExplicitDeclaration,
+  anchors:AnchorId[], assertionRefs:AssertionId[] }
 EvidenceBinding = { target:SourceTargetId, observationToken:OpaqueToken?,
   sourceBindingToken:OpaqueToken?, state:Bound|Missing|Stale|Denied|Unsupported,
   reason:Text?, sourceRevision:RevisionId, producer:ProducerId, producerVersion:Version }
@@ -219,6 +225,8 @@ ArchitectureNode = { id:OpaqueRowId, label:Text, semanticKind:ClosedNodeKind,
   sourceSelectionToken:OpaqueToken?, unavailableReason:Text? }
 ArchitectureEdge = { id:OpaqueRowId, from:OpaqueRowId, to:OpaqueRowId,
   kind:AtlasArchitectureRelationKind, evidence:EvidenceBinding[],
+  provenance:ClaimProvenance, basis:SupportedSourceAssertion|ExplicitDeclaration,
+  declaredState:Current|Target|Unspecified,
   disposition:Supported|Unresolved|Unsupported, reason:Text? }
 ArchitecturePage = { version:Int, capability:CapabilityId, scopeToken:OpaqueToken,
   coreEpoch:Long, manifestToken:OpaqueToken, requestSequence:PositiveLong,
@@ -238,6 +246,46 @@ is required. The label is **Declared invariant**, never Proven invariant. Enforc
 requires separate supported enforcement evidence, absent from the initial carrier. Structure
 membership is explicit and does not derive from namespace, folder or existing context tables.
 
+**Relation intake and validation:** `relations` is the seventh collection, required even when
+empty. Its IDs share the document-wide uniqueness check. Endpoint type determines the collection
+in which its ID must resolve; a label, namespace expression or alias ID is not a typed endpoint.
+Invalid shape/enum, duplicate ID, incompatible endpoint type/kind, or contradictory identity
+rejects the affected intake with a stable diagnostic and no partial valid model. Dangling endpoint
+IDs and missing/stale/denied/out-of-scope evidence produce a reasoned unresolved relation; they
+do not create a placeholder implementation edge. A relation has at least one anchor reference.
+
+An input claiming `SupportedSourceAssertion` must resolve at least one existing admitted assertion
+in the same pinned observation, whose subject/object/predicate match the typed endpoints/kind.
+A current **implementation dependency** requires that source assertion. An assertion ID is only
+a reference: the carrier cannot supply its own origin, confidence or authority. A missing or
+mismatched assertion is unresolved/invalid respectively, never silently downgraded into a verified
+edge. Core's admitted evidence binding determines the final source provenance.
+
+`ExplicitDeclaration` relationships may be Current, Target or Unspecified as declared intent,
+but display the permanent label **Declared relationship** and retain ExplicitDeclaration origin.
+Current in this row is a declared state, not proof of current implementation. Target relations
+remain visibly target-state; neither fills a missing extracted edge or upgrades authority.
+AssertionRefs must be empty for this basis so the two meanings cannot mix. All anchor, endpoint,
+state, basis and source-assertion checks happen before producing ArchitectureEdge.
+
+Initial relation-kind compatibility: DomainAssociation connects Concepts; AggregateMembership
+connects an aggregate Concept to a member Concept; LayerDependency/ComponentDependency connects
+matching Structure kinds; DeploymentDependency connects Resource declarations and requires the
+existing supported source predicate to be called an implementation/deployment dependency.
+Other kinds remain typed but capability-unsupported in this horizon. In particular EnforcesInvariant,
+ParentChild, ConfigurationReference, NetworkRule, ExplicitGrant and RuntimeUse cannot become
+supported merely because the carrier names them. Declared unsupported candidates may appear in
+the unsupported list with their anchors, never as proof of enforcement/grant/runtime use.
+Self-relations retain their exact meaning; no implicit transitive or reverse relation is generated.
+
+New negative oracles owed: missing relation collection, duplicate relation ID, endpoint kind/ID
+mismatch, dangling endpoint, no anchor, stale anchor, forged/current assertion reference,
+predicate/endpoints mismatched to the referenced assertion, Current declared relation shown as
+extracted, Target shown as current implementation, mixed basis/assertionRefs, and unsupported
+kind promoted to supported. Positive oracles require one admitted source-backed typed relation
+and one distinctly displayed declared/target relation. The frozen spike `90189411` has no relation
+collection or relation validation; its results **do not qualify this new design contract**.
+
 Carrier fields do not include `accepted`, `authority`, token-minting instructions, or runtime
 observations. Such injected fields reject the input. Authority evidence comes from a separate
 trusted resolver, not the same JSON or its status text. Until that resolver is admitted,
@@ -255,7 +303,7 @@ because a human accepts a claim; acceptance is a separate attributable reference
 | Parent/config/network/grant | Separate typed producer and evidence contract | Initial capability unavailable; no lookup/comment-derived counts or grants |
 
 Proposed strict carrier limits: UTF-8 document at most 64 KiB before parse; JSON depth 8;
-32 rows per collection, 192 total rows across the six collections; 32 references per list;
+32 rows per collection, 224 total rows across the seven collections; 32 references per list;
 256 UTF-16 units per ordinary text/ID field; no whitespace-only required string. Reject bounds
 before unbounded allocation. Spike checks row/text/role/reference cases; byte/depth and real
 binding/authorization remain production negative-test obligations, not already proven controls.
@@ -464,11 +512,27 @@ does not skip automated state reachability. No native run is claimed by this des
 
 ### 7.3 Performance fixture and numeric admission targets
 
-Proposed authorized synthetic fixture `E2-PERF-v1`: 32 concepts including four aggregates,
-16 invariants, eight logical/deployment structures, 32 declaration roots, 32 aliases,
-96 source-backed typed edges, 16 unsupported edge records, and 256-unit worst-case labels.
-Use deterministic seed 1 and synthetic bound source buffers; a second envelope test requests
-one item/byte beyond each cap. This fixture is not a private repository or deployed inventory.
+Proposed synthetic fixture `E2-PERF-v1` is revised to match the seven-collection contract:
+32 concepts (including four aggregates), 16 invariants, eight structures, 16 anchors,
+32 declaration roots, 32 aliases, and 24 relations = **160 carrier rows**, with every
+collection <=32 and total <=224. Of the 24 relations, 16 reference synthetic supported source
+assertions and eight deliberately unsupported capability cases feed the unknown list. Three
+labels (one per view) are exactly 256 UTF-16 units; remaining labels <=24 ASCII units. Use seed 1
+and synthetic bound source buffers. The constructed carrier must serialize to <=48 KiB UTF-8
+(below the64KiB parser cap), depth<=8, and references<=32/list; fixture construction must assert
+these facts, not assume that row counts imply a byte bound. No fixture or measured byte size
+is claimed to exist yet.
+
+Pages hold at most32 primary rows: Domain's32concepts+16invariants require at least two pages;
+Layer's eight structures fit one; Azure's32roots fit one with up to32alias detail rows. Up to
+24explicit relation records fit the32edge-page ceiling; generated aggregate-membership relations
+share that same32edge budget and overflow into continuation, never a hidden auxiliary graph.
+At most32group/gap display nodes may supplement primary nodes, total<=64graph nodes. Alias detail
+rows are separately capped at32 and are not duplicated as graph nodes; if a future design draws
+them as nodes, they must consume the same64-node budget. Eight unsupported relation records fit
+the32unknown-row ceiling. The list/inspector can page but never materialize the whole carrier
+outside these per-publication caps. A companion boundary fixture deliberately requests one
+item/byte beyond each cap. This is not a private repository or deployed inventory.
 
 | Axis | Target / hard cap | Negative control and source |
 |---|---|---|
@@ -476,13 +540,13 @@ one item/byte beyond each cap. This fixture is not a private repository or deplo
 | Filter/retained view switch | <=150 ms p95 | A10; injected delayed publication exceeding target fails measured acceptance |
 | UI-thread work | No continuous Atlas UI-thread segment >16 ms | Owner's proposed threshold, not measured capacity; instrument start/end of every Atlas dispatcher segment; an injected >16 ms segment fails |
 | Request | <=8 KiB total UTF-8 request; positive sequence and bounded token/text fields | Proposed limit, enough for opaque envelope/windows without source bodies; exact-cap/one-over refusal |
-| Request page | 1..32 nodes/root rows, <=96 edges, <=32 alias records, <=32 unknown records | Validate before work; exceeding hard cap rejects/truncates with explicit dimension |
+| Request page | 1..32 primary nodes/root rows, <=32 edges including generated membership, <=32 alias detail rows, <=32 unknown rows | Validate before work; exceeding hard cap rejects/truncates with explicit dimension |
 | Structural display nodes | <=32 extra group/gap nodes, <=64 total primary+structural nodes | Proposed auxiliary-graph cap; structural node32/33 and total64/65 controls prevent hidden unbounded graph |
 | Payload | <=256 KiB UTF-8 metadata per page, ordinary field <=256 UTF-16 units | Measure serialized bytes before publication; exact-cap/one-over cases |
 | Total response | <=384 KiB serialized UTF-8 including envelope, metadata and source | Proposed ceiling allows256KiB metadata+64KiB source+bounded framing; measure actual total, refuse/truncate before publication |
 | Source | Requested source window <=16 Ki UTF-16 units and <=64 KiB UTF-8 text, further bounded by accepted foundation | Never conflate source/metadata units; byte and UTF-16 boundaries each tested |
-| Layout | At most 32 visible node/root rows and 96 visible edges per publication; at most 10,000 layout operations | Operation counter/cancellation; one-over returns bounded omission, not unbounded retry |
-| Carrier | 64 KiB UTF-8, depth 8, 32 rows/collection, 32 refs/list, 256-unit required text | Byte/depth/row/list/text boundary negatives before allocation/publication |
+| Layout | <=32primary+32structural graph nodes (64total), <=32edges, <=10,000 layout operations per publication | All group/gap/membership work charged; one-over returns explicit omission or continuation, not an unbounded retry |
+| Carrier | 64 KiB UTF-8, depth 8, 32 rows/collection, 224rows/sevencollections, 32 refs/list, 256-unit required text | Byte/depth/row/total/list/text boundary negatives before allocation/publication |
 
 Measurement protocol target: record CPU/model, physical/logical cores, RAM, Windows build,
 .NET build, display refresh/DPI, power mode and actual fixture hash. Hardware is **not recorded
