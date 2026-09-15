@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T02:05:23Z",
+  "generated": "2026-09-15T02:12:37Z",
   "audit": [
     {
       "actor": null,
@@ -16393,6 +16393,35 @@ window.AUDIT_DATA = {
         "sha": "2b5bc50964e1ad5bc4cc52295c9190cb41522b9a",
         "short": "2b5bc5096",
         "branch": "understanding-views-owner",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HDCVGG79M0A6ZRHQVHAZ1C",
+      "shortname": "understanding-views-n1-inventory",
+      "datetime": "2026-09-15T02:12:37Z",
+      "session": "understanding-views-inventory",
+      "prompt": "N1 D-0 current-state inventory",
+      "summary": "STOP-BEFORE-N5: artifact_path_id cannot list folders or unindexed dirs without Core census; 52/25 overrun",
+      "kind": "skill",
+      "skill": "explore",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n1-inventory.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "File:line inventory of D-0 substrate",
+      "done_when": "STOP-BEFORE-N5 answered with citations",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-09-15T02:12:36Z",
+      "duration_seconds": 1.0,
+      "git": {
+        "sha": "475d46e6a7e19b746ea9f9cf8449fd84119bae9e",
+        "short": "475d46e6a",
+        "branch": "understanding-views-inventory",
         "pushed": null
       }
     }

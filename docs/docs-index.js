@@ -6221,6 +6221,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "1019c9d98b854b04b2fc784cada4bdea68e34249dba7f30ffe4979e750f397b4"
     },
     {
+      "id": "note-understanding-views-n1-inventory",
+      "path": "docs/notes/understanding-views-n1-inventory.md",
+      "title": "N1 inventory — D-0 Solution/tree substrate (Architecture kinds, artifact_path_id, unindexed folders)",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "Current-state inventory for D-0. No SolutionTree/WorkspaceTree. OverviewAsync/GraphAsync are the wrong grain. artifact_path_id is assertion provenance, not an artifact dimension; several extractors do not store file paths. Existing facts cannot emit §A5 unindexed folders without a Core-side disk census. STOP-BEFORE-N5.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "inventory",
+        "D-0"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-ruling",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8f89ef429007a2435a892df2eed14e4435c4261af02c79e9f77f29da3f3ec97c"
+    },
+    {
       "id": "note-understanding-views-owner-ruling",
       "path": "docs/notes/understanding-views-owner-ruling.md",
       "title": "Admit D-0 Solution/tree view this horizon; D-0 is not Atlas; D-1…D-6 stay deferred; join onto understanding-views",
@@ -18828,5 +18859,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "cc9a112f459bc23ccec470afdf8e74c73e251c0fd99c95a8ab1b6656ddb3d589"
+  "graphSha256": "b56f8fc7e77d33bb89a6a2f049087a7b89baa322b11585b1e073d340def4c2cc"
 };
