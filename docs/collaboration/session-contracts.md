@@ -156,6 +156,7 @@ contract that is silently crossed is worse than one that is amended. Ownership o
 unchanged and returns to Design.
 | `src/AiDe.App/Workbench/SequenceDiagramSurface.cs` | A design surface; Core owns its `InteractionAsync` feed |
 | `src/AiDe.App/Workbench/SearchSurface.cs` | Design authored it; Core owns its provider — how it was actually built |
+| `src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs` | The Atlas reader view (Rulings 106, 113, 116): Design's surface, Core's reader lease and queries behind it — the `SearchSurface.cs` shape; authored by the Atlas fleet under a branch-local grant, never a fleet ownership. `AtlasStaticView.cs` joins this cell in the ruling that accepts the native E1 slice |
 | `src/AiDe.App/Workbench/PromptDraftSurface.cs` | Interactive chrome |
 | `src/AiDe.App/Workbench/TerminalSurface.cs` | Terminal rendering, with `TerminalView` |
 | `src/AiDe.App/Workbench/Sessions/NewSessionSheetDialog.cs` | The New Session sheet's window; every rule it renders belongs to `NewSessionSheetModel` (R13) |

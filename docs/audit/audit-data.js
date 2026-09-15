@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T15:30:14Z",
+  "generated": "2026-09-15T15:50:49Z",
   "audit": [
     {
       "actor": null,
@@ -17122,6 +17122,42 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T15:30:12Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2JW6NBF4GZEAHAAS90EW62N",
+      "shortname": "conductor-watch-0915-join4",
+      "datetime": "2026-09-15T15:50:37Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "(continuation of al-01M2JP7RMQ: the watch's fourth landing)",
+      "summary": "Ruling 116 filed (D's coupled listener selector follows the aide. rename; AtlasReaderView.cs gets a Design-table row now - the landed recursive gate was run on a tree carrying the row without the file: OK 17/17, so the row lands before the Atlas candidate per 116 (ii)); the two stale Claude liveness files retired after the Atlas fleet read them as the current acknowledgers; README says how stale liveness is retired from now on.",
+      "kind": "skill",
+      "skill": "conductor-watch",
+      "tool": null,
+      "actor": "claude-conductor",
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "tags": [
+        "coordination",
+        "stress-test"
+      ],
+      "outcome": "success",
+      "goal": "Land Ruling 116's section-2 row for AtlasReaderView.cs before the Atlas candidate, and retire the two stale Claude liveness files",
+      "done_when": "main carries the row and Ruling 116; verify-surface-ownership.py green on main; claude-core.md and claude-ui-experience.md gone; gates green; pushed",
+      "tier": "T1",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "33e9ae7e00e3edb2d44ecec006e5a3c354e69efd",
+        "short": "33e9ae7e0",
+        "branch": "conductor/watch-0915",
+        "pushed": null
+      }
     }
   ],
   "changes": [
