@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:58:42Z",
+  "generated": "2026-09-15T21:11:26Z",
   "audit": [
     {
       "actor": null,
@@ -22505,6 +22505,34 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M2KEJ2V2PREZ2P1H4JYT3Q83",
+      "shortname": "join-atlas-current-main-uwq20",
+      "datetime": "2026-09-15T21:11:25Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "the join of c46e112a924a8a0a4c86e4552af1f0e30bfa851c into atlas/main-integration",
+      "summary": "Accepted Atlas/E candidate reconciled with frozen main c46e112a924a8a0a4c86e4552af1f0e30bfa851c; native excluded recount_seconds=705 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Qualify accepted Atlas with current main without publishing",
+      "done_when": "Unchanged full recount outcomes, every gate and prepublication Release build pass",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T20:59:39Z",
+      "duration_seconds": 706.0
     }
   ],
   "changes": [
