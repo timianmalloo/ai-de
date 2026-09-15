@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T16:06:20Z",
+  "generated": "2026-09-15T16:17:23Z",
   "audit": [
     {
       "actor": null,
@@ -19314,6 +19314,37 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T16:06:13Z",
       "duration_seconds": 5.7
+    },
+    {
+      "id": "al-01M2JXQNMA4WA2TGK6AG2QD957",
+      "shortname": "atlas-eim-obligation-attempt",
+      "datetime": "2026-09-15T16:17:23Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "EIM16 implement site-level fail-closed production observation obligations and oracle negatives in the sole named E test file; retained semantic red then production attempt; no product/native/gate/dependency edits.",
+      "summary": "Seven site obligations implemented. Retained semantic membership-only red16/17. Production first attempt16/17 failed missingSurfaceBrush fixture; repaired using existing resource-loading recipe, not a semantic TDD red. Final resources-run exit=0 receipt=C:\\Projects\\ai-de-atlas-main-integration\\.artifacts\\atlas-main-integration\\EIM\\production-resources-1789489036075541600. Existing once/start/failure/retry tests retained; oracle negatives labelled test-only, not production mutants. No final Test acceptance or commit, paint observation adequacy remains explicit review gap. All targeted runs announced actual PID start/end, desktop released. EIM16 cap reached at directed closing receipt; further qualification not claimed.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Implement and prove exact E site obligations without exemptions or synthetic positive evidence",
+      "done_when": "All discovered sites have executed passing production observations and named oracle negatives; otherwise return exact gap",
+      "tier": "T2",
+      "main_calls": 15,
+      "main_budget": 16,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T16:10:47Z",
+      "duration_seconds": 396.0
     }
   ],
   "changes": [
