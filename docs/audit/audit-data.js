@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:54:18Z",
+  "generated": "2026-09-15T21:06:25Z",
   "audit": [
     {
       "actor": null,
@@ -18505,6 +18505,50 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T20:52:08Z",
       "duration_seconds": 130.0
+    },
+    {
+      "id": "al-01M2KE8XX6WJS9Z8V22WAFRNWV",
+      "shortname": "E2 bounded relation contract spike under Ruling121: preserve28 controls …",
+      "datetime": "2026-09-15T21:06:25Z",
+      "session": "prompt-log",
+      "prompt": "E2 bounded relation contract spike under Ruling121: preserve28 controls and3faults; prove declared-target and synthetic source dependency bindings; reject missing wrong endpoints unsupported kinds missing stale evidence mismatched assertions; test seven collection caps; emit projection and commit evidence; no production producer authorization UI cloud or design edits.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2KE8Y0HC2MDQ5ZGQC4FWSQR",
+      "shortname": "atlas-e2-relation-contract",
+      "datetime": "2026-09-15T21:06:25Z",
+      "session": "codex-atlas-e2-architecture",
+      "prompt": "Qualify bounded synthetic relation carrier under existing Ruling121, preserving prior controls and evidence. No production or design edits.",
+      "summary": "Red first missing seventh collection exit1; Windows rebuilt57 checks exit0; six subject faults exit1. Output records retain typed endpoints basis state evidence and assertion bindings. Independent review Linux coverage and production scope remain open.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "GPT-6 Astra E2 author",
+      "artifacts": [
+        "spikes/atlas-architecture-contract/RESULT.md",
+        "docs/proof/atlas-architecture-contract.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Qualify synthetic relation admission and projection without inventing authority.",
+      "done_when": "Bounded negative and positive relation observations, prior controls retained, fault rejections and evidence committed for independent review.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T20:57:10Z",
+      "duration_seconds": 555.0
     }
   ],
   "changes": [

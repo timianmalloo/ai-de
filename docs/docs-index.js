@@ -10369,7 +10369,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2026-12-15",
       "reviewSuggested": [],
-      "summary": "28 repaired Windows contract checks plus three rejected subject faults; deployment equality unresolved.",
+      "summary": "57 Windows synthetic checks and six rejected subject faults; relation evidence remains synthetic.",
       "tags": [
         "atlas",
         "proof",
@@ -10384,7 +10384,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d065cf4f5fa7462f2fa481fb13a78ed3f36aa86bd88767d4147dcd61bd807b0a"
+      "sourceSha256": "5f11190cd5a3800988030f4d8d4e96de3ff86f302dbb4c54716c7722364a6d79"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -19360,5 +19360,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "e203bfccfc792d956284b1d92614344dd195298be58e90648e8b39e3548cbfc2"
+  "graphSha256": "bf2b85df63ca533a7ea0c6277de336ac0c4d7560780610aedae67f796a4640e3"
 };

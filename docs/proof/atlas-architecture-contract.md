@@ -8,10 +8,25 @@ tags: [atlas, proof, spike, domain, azure]
 links:
   - { to: design-atlas-architecture-views, rel: relates-to }
 review-by: 2026-12-15
-summary: "28 repaired Windows contract checks plus three rejected subject faults; deployment equality unresolved."
+summary: "57 Windows synthetic checks and six rejected subject faults; relation evidence remains synthetic."
 ---
 
 # Bounded E2 contract evidence
+
+## Latest relation experiment (2026-09-15)
+
+Windows rebuild/run observed exit 0 and 57 checks. Original 28 controls remain;
+new relation tests exercise typed endpoints, kind/evidence/assertion rejection,
+declaration provenance, emitted relation records and seven-collection bounds.
+The missing seventh collection oracle failed before the validator fix (exit 1).
+All six explicit subject faults exited 1 after rebuild, including bad admission,
+dropped relations and wrong projected endpoint. Named commands, outputs and
+limitations are in [RESULT.md](../../spikes/atlas-architecture-contract/RESULT.md#relation-experiment--2026-09-15).
+
+Verified: synthetic output/refusal behavior only. Flagged: independent review and
+Conductor Linux/coverage pending; production producer, authorization and full
+deployment identity remain unresolved. Design `15b53fe9` is unchanged.
+The original repair evidence below is preserved as history.
 
 Repair following independent BLOCK `8eb44853eefd935fb680c3824595b93b07e5b803`:
 `dotnet run --project spikes/atlas-architecture-contract/AtlasArchitectureContractSpike.csproj`

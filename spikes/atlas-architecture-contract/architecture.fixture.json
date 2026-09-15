@@ -20,6 +20,10 @@
     { "id": "resource-a", "workspace": "fixture", "scope": "file:a", "file": "a.bicep", "symbol": "store", "anchor": "a" },
     { "id": "resource-b", "workspace": "fixture", "scope": "file:b", "file": "a.bicep", "symbol": "store", "anchor": "a" }
   ],
+  "relations": [
+    { "id": "declared", "from": { "type": "concept", "id": "order" }, "to": { "type": "concept", "id": "money" }, "kind": "domain-association", "state": "target", "basis": "explicit-declaration", "anchors": ["a"], "assertionRefs": [] },
+    { "id": "dependency", "from": { "type": "resource", "id": "resource-a" }, "to": { "type": "resource", "id": "resource-b" }, "kind": "deployment-dependency", "state": "current", "basis": "supported-source-assertion", "anchors": ["a"], "assertionRefs": ["synthetic-dependency"] }
+  ],
   "aliases": [
     { "id": "alias-a", "label": "Primary", "rootRef": "resource-a", "anchor": "a" },
     { "id": "alias-b", "label": "Archive", "rootRef": "resource-a", "anchor": "b" }

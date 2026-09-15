@@ -16,7 +16,7 @@ internal static class Program
         {
             if (args.Length != 0)
             {
-                if (args.Length != 2 || args[0] != "--fault" || args[1] is not ("alias-drop" or "alias-wrong-root" or "scope-drop"))
+                if (args.Length != 2 || args[0] != "--fault" || args[1] is not ("alias-drop" or "alias-wrong-root" or "scope-drop" or "relation-drop" or "relation-wrong-endpoint" or "relation-admit-mismatch"))
                     throw new ArgumentException("Only named experimental fault injections are accepted.");
                 _fault = args[1];
             }
@@ -30,6 +30,7 @@ internal static class Program
                 Assert(name, result.Errors.Contains(expected), string.Join(",", result.Errors));
             }
             // Negatives first: assert specific failures, never merely a thrown exception.
+            Negative("missing-seventh-collection", d => d.Remove("relations"), "shape:relations");
             Negative("duplicate-id", d => d["concepts"]![1]!["id"] = "order", "duplicate-id");
             Negative("unknown-role", d => d["concepts"]![0]!["role"] = "namespace", "unknown-role");
             Negative("invalid-shape", d => d["concepts"] = "wrong", "shape:concepts");
@@ -96,6 +97,7 @@ internal static class Program
                 "literal type/name read as data; targetScope supplies scope KIND only");
             Assert("partial-identity-refused", !SameDeployment(a, b), "identical literal type/name cannot merge without deployment scope");
             Assert("expression-name-unresolved", unknown.Name is null && !SameDeployment(a, unknown), "expression not evaluated");
+            RelationChecks(valid);
             Console.WriteLine("UNRESOLVED fully-known-deployment-positive: admitted Bicep subset supplies no actual subscription/resource-group identity; no invented tuple injected.");
             Console.WriteLine($"PASS {_checks} contract checks; six fixture groups observed; full deployment equality remains UNRESOLVED (not US-E8 acceptance).");
             return 0;
@@ -120,7 +122,7 @@ internal static class Program
     private static Result Validate(JsonObject document)
     {
         var result = new Result();
-        var allowed = new HashSet<string> { "version", "concepts", "invariants", "layers", "anchors", "resources", "aliases" };
+        var allowed = new HashSet<string> { "version", "concepts", "invariants", "layers", "anchors", "resources", "aliases", "relations" };
         foreach (var key in document.Select(p => p.Key).Where(k => !allowed.Contains(k))) result.Errors.Add($"unknown-field:{key}");
         if (document["version"] is not JsonValue version || !version.TryGetValue<int>(out var v) || v != 1) result.Errors.Add("version");
         var arrays = new Dictionary<string, JsonArray>();
@@ -133,7 +135,8 @@ internal static class Program
                 if (array.Count > 32) result.Errors.Add($"bound:{key}");
             }
         }
-        if (arrays.Count != 6) return result;
+        if (arrays.Count != 7) return result;
+        if (arrays.Values.Sum(a => a.Count) > 224) result.Errors.Add("bound:total");
         var ids = new HashSet<string>();
         foreach (var row in arrays.Values.SelectMany(a => a))
         {
@@ -151,7 +154,7 @@ internal static class Program
                 || anchor["length"]?.ToJsonString() != "3") result.Unresolved.Add(Text(anchor!, "id") ?? "<missing>");
         }
         var anchorIds = arrays["anchors"].Select(a => Text(a!, "id")).ToHashSet();
-        foreach (var (kind, rows) in arrays.Where(p => p.Key != "anchors"))
+        foreach (var (kind, rows) in arrays.Where(p => p.Key is not ("anchors" or "relations")))
         {
             foreach (var row in rows)
             {
@@ -246,6 +249,107 @@ internal static class Program
         return new ResourceProjection([], roots);
     }
 
+    // Deliberately closed synthetic assertion registry. It is not an Atlas producer or authorization oracle.
+    private static RelationProjection ProjectRelations(JsonObject document)
+    {
+        var validation = Validate(document);
+        var errors = new List<string>(validation.Errors);
+        var unresolved = new HashSet<string>(validation.Unresolved);
+        var edges = new List<RelationEdge>();
+        if (errors.Count != 0) return new(errors.ToArray(), unresolved.ToArray(), []);
+        foreach (var row in document["relations"]!.AsArray())
+        {
+            var r = row!;
+            if (r.AsObject().Any(p => !new[] { "id", "from", "to", "kind", "state", "basis", "anchors", "assertionRefs" }.Contains(p.Key))) errors.Add("relation-field");
+            foreach (var field in new[] { "id", "kind", "state", "basis" })
+                if (Text(r, field) is not { Length: > 0 and <= 256 } s || string.IsNullOrWhiteSpace(s)) errors.Add("relation-text");
+            string Endpoint(string field)
+            {
+                if (r[field] is not JsonObject endpoint || endpoint.Count != 2 || Text(endpoint, "id") is not { Length: > 0 and <= 256 } id || string.IsNullOrWhiteSpace(id)) { errors.Add("endpoint-shape"); return ""; }
+                var collection = Text(endpoint, "type") switch { "concept" => "concepts", "structure" => "layers", "resource" => "resources", _ => "" };
+                if (collection == "") errors.Add("endpoint-type");
+                else if (!document[collection]!.AsArray().Any(n => Text(n!, "id") == id)) unresolved.Add("endpoint:" + id);
+                return Text(endpoint, "type") + ":" + id;
+            }
+            var from = Endpoint("from"); var to = Endpoint("to");
+            var kind = Text(r, "kind"); var state = Text(r, "state"); var basis = Text(r, "basis");
+            if (kind is not ("domain-association" or "deployment-dependency")) errors.Add("unsupported-kind");
+            else if (!(from.StartsWith(kind == "domain-association" ? "concept:" : "resource:", StringComparison.Ordinal) && to.StartsWith(kind == "domain-association" ? "concept:" : "resource:", StringComparison.Ordinal))) errors.Add("endpoint-kind");
+            if (state is not ("current" or "target" or "unspecified")) errors.Add("relation-state");
+            if (basis is not ("explicit-declaration" or "supported-source-assertion")) errors.Add("relation-basis");
+            string[] Refs(string field, bool required)
+            {
+                if (r[field] is not JsonArray list || list.Count > 32 || (required && list.Count == 0) || list.Any(n => n is not JsonValue v || !v.TryGetValue<string>(out var s) || string.IsNullOrWhiteSpace(s) || s.Length > 256)) { errors.Add("relation-refs:" + field); return []; }
+                return list.Select(n => n!.GetValue<string>()).ToArray();
+            }
+            var anchors = Refs("anchors", true); var assertions = Refs("assertionRefs", basis == "supported-source-assertion");
+            var evidence = new List<AnchorEvidence>();
+            foreach (var id in anchors)
+            {
+                var a = document["anchors"]!.AsArray().FirstOrDefault(n => Text(n!, "id") == id);
+                if (a is null) unresolved.Add("anchor:" + id);
+                else if (!validation.Unresolved.Contains(id)) evidence.Add(new(id, Text(a, "target")!, Text(a, "scope")!, Text(a, "hash")!, a["start"]!.GetValue<int>(), a["length"]!.GetValue<int>()));
+            }
+            if (basis == "explicit-declaration" && assertions.Length != 0) errors.Add("declaration-assertions");
+            if (basis == "supported-source-assertion")
+            {
+                if (assertions.Any(a => a != "synthetic-dependency")) unresolved.Add("assertion:missing");
+                // Registry predicate depends_on binds this exact typed pair, kind and anchor in one synthetic observation.
+                if (_fault != "relation-admit-mismatch" && (kind != "deployment-dependency" || from != "resource:resource-a" || to != "resource:resource-b" || state != "current" || !anchors.SequenceEqual(["a"]))) errors.Add("assertion-mismatch");
+            }
+            edges.Add(new(Text(r, "id")!, from, _fault == "relation-wrong-endpoint" ? from : to, kind!, state!, basis!, basis == "explicit-declaration" ? "Declared relationship" : "Synthetic supported depends_on", evidence.ToArray(), assertions));
+        }
+        return new(errors.ToArray(), unresolved.ToArray(), errors.Count != 0 || unresolved.Count != 0 || _fault == "relation-drop" ? [] : edges.ToArray());
+    }
+
+    private static void RelationChecks(JsonObject valid)
+    {
+        void Reject(string name, Action<JsonObject> mutate, string diagnostic, bool unresolved = false)
+        {
+            var copy = (JsonObject)valid.DeepClone(); mutate(copy); var p = ProjectRelations(copy);
+            Assert(name, p.Edges.Length == 0 && (unresolved ? p.Unresolved : p.Errors).Contains(diagnostic), $"errors={string.Join(',', p.Errors)} unresolved={string.Join(',', p.Unresolved)} edges={p.Edges.Length}");
+        }
+        Reject("relation-missing-endpoint", d => d["relations"]![0]!["from"] = null, "endpoint-shape");
+        Reject("relation-dangling-endpoint", d => d["relations"]![0]!["to"]!["id"] = "missing", "endpoint:missing", true);
+        Reject("relation-wrong-endpoint-type", d => d["relations"]![0]!["to"] = new JsonObject { ["type"] = "resource", ["id"] = "resource-b" }, "endpoint-kind");
+        Reject("relation-unsupported-kind", d => d["relations"]![0]!["kind"] = "explicit-grant", "unsupported-kind");
+        Reject("relation-missing-evidence", d => d["relations"]![0]!["anchors"] = new JsonArray("missing"), "anchor:missing", true);
+        Reject("relation-stale-evidence", d => d["anchors"]![0]!["hash"] = "stale", "a", true);
+        Reject("relation-missing-assertion", d => d["relations"]![1]!["assertionRefs"] = new JsonArray("absent"), "assertion:missing", true);
+        Reject("relation-mismatched-assertion", d => d["relations"]![1]!["to"]!["id"] = "resource-a", "assertion-mismatch");
+        Reject("relation-mismatched-evidence-binding", d => d["relations"]![1]!["anchors"] = new JsonArray("b"), "assertion-mismatch");
+        Reject("relation-empty-evidence", d => d["relations"]![0]!["anchors"] = new JsonArray(), "relation-refs:anchors");
+        Reject("relation-ref-overflow", d => d["relations"]![0]!["anchors"] = new JsonArray(Enumerable.Repeat("a", 33).Select(s => (JsonNode?)JsonValue.Create(s)).ToArray()), "relation-refs:anchors");
+        foreach (var collection in new[] { "concepts", "invariants", "layers", "anchors", "resources", "aliases", "relations" })
+            Reject("shape-" + collection, d => d[collection] = "bad", "shape:" + collection);
+        var boundary = (JsonObject)valid.DeepClone();
+        foreach (var field in boundary.Where(p => p.Value is JsonArray).Select(p => p.Key).ToArray())
+        {
+            var list = boundary[field]!.AsArray();
+            while (list.Count < 32) { var extra = list[0]!.DeepClone(); extra["id"] = $"{field}-{list.Count}"; list.Add(extra); }
+        }
+        var full = ProjectRelations(boundary);
+        Assert("seven-collection-224-boundary", full.Errors.Length == 0 && full.Unresolved.Length == 0 && full.Edges.Length == 32, "7 x 32 rows; 32 produced relations");
+        foreach (var collection in new[] { "concepts", "invariants", "layers", "anchors", "resources", "aliases", "relations" })
+        {
+            var copy = (JsonObject)boundary.DeepClone(); var extra = copy[collection]![0]!.DeepClone(); extra["id"] = "overflow"; copy[collection]!.AsArray().Add(extra);
+            var p = ProjectRelations(copy);
+            Assert("cap-" + collection, p.Errors.Contains("bound:" + collection) && p.Errors.Contains("bound:total") && p.Edges.Length == 0, "225 total; 33 in named collection; no output");
+        }
+        var positive = ProjectRelations(valid);
+        Assert("relation-produced-target-and-current", positive.Errors.Length == 0 && positive.Unresolved.Length == 0 && positive.Edges.Length == 2
+            && positive.Edges[0] is { From: "concept:order", To: "concept:money", Kind: "domain-association", State: "target", Basis: "explicit-declaration", Label: "Declared relationship" }
+            && positive.Edges[1] is { From: "resource:resource-a", To: "resource:resource-b", Kind: "deployment-dependency", State: "current", Label: "Synthetic supported depends_on" }
+            && positive.Edges.All(e => e.Anchors.Length == 1 && e.Anchors[0].Id == "a" && e.Anchors[0].Target == "synthetic:abc")
+            && positive.Edges[1].Assertions.SequenceEqual(["synthetic-dependency"]), JsonSerializerOutput(positive));
+        var current = (JsonObject)valid.DeepClone(); current["relations"]![0]!["state"] = "current";
+        var declaration = ProjectRelations(current);
+        Assert("current-declaration-stays-declared", declaration.Edges.Length == 2 && declaration.Edges[0].Label == "Declared relationship" && declaration.Edges[0].Basis == "explicit-declaration", JsonSerializerOutput(declaration));
+    }
+
+    private static string JsonSerializerOutput(RelationProjection p) => System.Text.Json.JsonSerializer.Serialize(p.Edges);
+    private sealed record RelationEdge(string Id, string From, string To, string Kind, string State, string Basis, string Label, AnchorEvidence[] Anchors, string[] Assertions);
+    private sealed record RelationProjection(string[] Errors, string[] Unresolved, RelationEdge[] Edges);
     private sealed record ResourceIdentity(string? Scope, string? Type, string? Name);
     private sealed record AnchorEvidence(string Id, string Target, string Scope, string Hash, int Start, int Length);
     private sealed record AliasEvidence(string Id, AnchorEvidence Anchor);
