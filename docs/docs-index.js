@@ -6221,6 +6221,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "1019c9d98b854b04b2fc784cada4bdea68e34249dba7f30ffe4979e750f397b4"
     },
     {
+      "id": "note-understanding-views-n2-comparables",
+      "path": "docs/notes/understanding-views-n2-comparables.md",
+      "title": "D-0 Solution/tree view comparables (Architecture-pane indexed artifacts)",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-14",
+      "reviewSuggested": [],
+      "summary": "Named, sourced comparables for D-0 Solution/tree: VS Solution Explorer, Rider/IntelliJ Project views, VS Code Explorer vs C# Dev Kit Solution Explorer, Eclipse Package/Project Explorer, Structurizr model/tree. Distinguishes Architecture-pane indexed tree from ADR-0017 Explorer. Key lesson: show unindexed folders as an explicit state (Rider no-index).",
+      "tags": [
+        "decision-note",
+        "understanding-views",
+        "comparables",
+        "d-0"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-ruling",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5fa1011362f424dbe1caf1d90556e592360a2ee8443fbf8d39c55b3604e85060"
+    },
+    {
       "id": "note-understanding-views-owner-ruling",
       "path": "docs/notes/understanding-views-owner-ruling.md",
       "title": "Admit D-0 Solution/tree view this horizon; D-0 is not Atlas; D-1…D-6 stay deferred; join onto understanding-views",
@@ -18828,5 +18862,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "cc9a112f459bc23ccec470afdf8e74c73e251c0fd99c95a8ab1b6656ddb3d589"
+  "graphSha256": "1249715c9850d09e8a0d996ff98be94ff054d3c5ff65272209eb6c541ee83525"
 };
