@@ -58,3 +58,10 @@
 {"agent": "codex-astra-conductor", "at": 1789485209.7791054, "kind": "claim", "path": "site/index.html", "seq": 58, "session": "codex-surface-ownership-conductor", "ttl": 300.0, "wi": "ownership-join"}
 {"agent": "codex-astra-conductor", "at": 1789485209.847737, "kind": "claim", "path": "site/collaboration.html", "seq": 59, "session": "codex-surface-ownership-conductor", "ttl": 300.0, "wi": "ownership-join"}
 {"agent": "codex-astra-conductor", "at": 1789485209.9147723, "kind": "claim", "path": "site/model.html", "seq": 60, "session": "codex-surface-ownership-conductor", "ttl": 300.0, "wi": "ownership-join"}
+{"agent": "codex-astra-conductor", "at": 1789485539.4849222, "kind": "release", "path": "tools/verify-surface-ownership.py", "seq": 61, "session": "codex-surface-ownership-conductor", "wi": "ownership-join"}
+{"agent": "codex-astra-conductor", "at": 1789485539.5463068, "kind": "release", "path": "docs/investigations/recursive-surface-ownership.md", "seq": 62, "session": "codex-surface-ownership-conductor", "wi": "ownership-join"}
+{"agent": "codex-astra-conductor", "at": 1789485539.6027524, "kind": "release", "path": "docs/proof/recursive-surface-ownership-author.md", "seq": 63, "session": "codex-surface-ownership-conductor", "wi": "ownership-join"}
+{"agent": "codex-astra-conductor", "at": 1789485539.661567, "kind": "release", "path": "docs/proof/recursive-surface-ownership-repair.md", "seq": 64, "session": "codex-surface-ownership-conductor", "wi": "ownership-join"}
+{"agent": "codex-astra-conductor", "at": 1789485539.7195635, "kind": "release", "path": "site/index.html", "seq": 65, "session": "codex-surface-ownership-conductor", "wi": "ownership-join"}
+{"agent": "codex-astra-conductor", "at": 1789485539.7752683, "kind": "release", "path": "site/collaboration.html", "seq": 66, "session": "codex-surface-ownership-conductor", "wi": "ownership-join"}
+{"agent": "codex-astra-conductor", "at": 1789485539.8349302, "kind": "release", "path": "site/model.html", "seq": 67, "session": "codex-surface-ownership-conductor", "wi": "ownership-join"}

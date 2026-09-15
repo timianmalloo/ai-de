@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T15:09:16Z",
+  "generated": "2026-09-15T15:14:14Z",
   "audit": [
     {
       "actor": null,
@@ -16443,25 +16443,108 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2JQNQYPGBM4FD84EJRC1P11",
-      "shortname": "join-conductor-watch-0915",
-      "datetime": "2026-09-15T14:31:28Z",
-      "session": "claude-conductor-watch-0915",
-      "prompt": "the join of conductor/watch-0915 into main",
-      "summary": "The Claude conductor's coordination landing for the 2026-09-15 stress test: section 10 of session-contracts.md, Rulings 106-114 in the council register, ProseView.cs into the section-2 Design row (Ruling 114), tools/merge-append-only-log.py repaired (removed auditlog._reserve; --self-test on a real conflict under both allocators), the conductor's liveness. main is red (Ruling 112) - this join is docs + one Python tool, no product code, no test change. recount_seconds=0 (docs_only=True).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/collaboration/session-contracts.md",
         "docs/notes/addendum-c-council-rulings.md",
         "tools/merge-append-only-log.py"
       ],
+      "datetime": "2026-09-15T14:31:28Z",
+      "done_when": "main carries ba67d180's content; gates green in the primary; pushed; the watcher reports MAIN moved",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Land the coordination artifacts the live GHCP/Grok/Codex sessions are waiting on (Ruling 106 contract, the merge tool, section 10) on main under Ruling 107",
+      "id": "al-01M2JQNQYPGBM4FD84EJRC1P11",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of conductor/watch-0915 into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-conductor-watch-0915",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T14:31:27Z",
+      "summary": "The Claude conductor's coordination landing for the 2026-09-15 stress test: section 10 of session-contracts.md, Rulings 106-114 in the council register, ProseView.cs into the section-2 Design row (Ruling 114), tools/merge-append-only-log.py repaired (removed auditlog._reserve; --self-test on a real conflict under both allocators), the conductor's liveness. main is red (Ruling 112) - this join is docs + one Python tool, no product code, no test change. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T15:09:16Z",
+      "id": "al-01M2JSTZ5ME1BWG2WP76BY25T0",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "yes finish the join then keep going unless absolutely needed to check in with a human defer to the owner to tell you to keep going lets get this work implemented with minimal human blocking",
+      "session": "prompt-log",
+      "shortname": "yes finish the join then keep going unless absolutely needed to check in…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": "claude-conductor",
+      "artifacts": [
+        "tools/verify-stranded-audit.py",
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "datetime": "2026-09-15T15:13:25Z",
+      "done_when": "main carries 553bb9bc and Ruling 115; the three Atlas carve-out requests resolved; gates green in the primary; pushed",
+      "duration_seconds": 153.0,
+      "duration_source": "session-start-hook",
+      "fan_out": 1,
+      "git": {
+        "branch": "conductor/watch-0915",
+        "pushed": null,
+        "sha": "553bb9bcee1301994bcb3db1c3eda352d2033a7f",
+        "short": "553bb9bce"
+      },
+      "goal": "Land the second coordination batch the live sessions are waiting on: the verify-stranded-audit.py repair and Ruling 115",
+      "id": "al-01M2JT2HVQQXAN0QCFRT002XY7",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "(continuation of al-01M2JP7RMQ: the watch's second landing)",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "conductor-watch-0915-join2",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "conductor-watch",
+      "started_at": "2026-09-15T15:10:52Z",
+      "summary": "verify-stranded-audit.py read its own tree's .agents/log (the committed snapshot) while coord-core writes the session log under the primary, so from any linked worktree every registered session read as stranded (Codex req-01M2JQY0G3 and the conductor's own run) - live_trees() now resolves against the primary; --self-test extended with the linked-worktree case, red on the old check(), green on the new. Ruling 115 filed: the Atlas A-E carve-outs acknowledged by the section-2 owner with no Claude control changed; desktop-serialization hold accepted; the three requests resolved.",
+      "tags": [
+        "coordination",
+        "stress-test"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "id": "al-01M2JT40P2NYHZ0RKC30ST2WQY",
+      "shortname": "join-conductor-watch-0915-2",
+      "datetime": "2026-09-15T15:14:13Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "the join of conductor/watch-0915 into main",
+      "summary": "Second coordination join of the 2026-09-15 stress test: tools/verify-stranded-audit.py read its own tree's .agents/log and reported every registered session stranded from any linked worktree (Codex req-01M2JQY0G3; the conductor's own run) - now resolves against the primary, self-test extended; Ruling 115 filed (Atlas carve-outs A-E acknowledged by the section-2 owner, no Claude control changed; desktop-serialization hold); section 10.2 row. Docs + one gate, no product code. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-stranded-audit.py",
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
       "tags": [],
       "outcome": "success",
-      "goal": "Land the coordination artifacts the live GHCP/Grok/Codex sessions are waiting on (Ruling 106 contract, the merge tool, section 10) on main under Ruling 107",
-      "done_when": "main carries ba67d180's content; gates green in the primary; pushed; the watcher reports MAIN moved",
+      "goal": "Land the verify-stranded-audit.py repair and Ruling 115 on main under Ruling 107 so the live GHCP/Grok/Codex lanes can gate in their own worktrees and the Atlas writers can edit under the carve-outs",
+      "done_when": "main carries 553bb9bc and d98b91d1; gates green in the primary; pushed; the watcher reports MAIN moved",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -16469,23 +16552,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-09-15T14:31:27Z",
+      "started_at": "2026-09-15T15:14:12Z",
       "duration_seconds": 1.0
-    },
-    {
-      "id": "al-01M2JSTZ5ME1BWG2WP76BY25T0",
-      "shortname": "yes finish the join then keep going unless absolutely needed to check in…",
-      "datetime": "2026-09-15T15:09:16Z",
-      "session": "prompt-log",
-      "prompt": "yes finish the join then keep going unless absolutely needed to check in with a human defer to the owner to tell you to keep going lets get this work implemented with minimal human blocking",
-      "summary": "prompt logged for reuse",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
-      "tags": [],
-      "outcome": "success"
     }
   ],
   "changes": [
