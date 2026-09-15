@@ -2,7 +2,7 @@
 id: proof-recursive-surface-ownership
 title: "Recursive surface ownership: programme evidence"
 type: proof-pack
-status: blocked
+status: complete
 owner: "@timianmalloo"
 tags: [proof, ownership, coordination, tooling]
 links:
@@ -16,6 +16,10 @@ summary: "Observed scope, red-first evidence, independent receipts, and integrat
 ---
 
 # Programme evidence
+
+## Superseding status — 2026-09-15
+
+The original candidate landed through Core at `33e9ae7e`. Core fixed the shared-liveness blocker in `553bb9bc`; current qualification passed all 38 required gates at `3284acc55d906cdd5beb7e80527200b8bdf3f491`. Independent Test Architect and Simplifier cleared the continuation. See [current qualification proof](ownership-qualification.md) for receipt hashes, remaining publication boundary and exact observations. The blocked reports below describe historical checkpoints, not current programme status. Codex did not push main.
 
 ## Contract and scope
 

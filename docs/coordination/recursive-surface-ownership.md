@@ -2,7 +2,7 @@
 id: coord-recursive-surface-ownership
 title: "Recursive surface ownership: bounded Codex programme"
 type: doc
-status: blocked
+status: complete
 owner: "@timianmalloo"
 tags: [coordination, ownership, tooling]
 links:
@@ -13,6 +13,10 @@ summary: "One tooling author, an Astra Owner and Conductor, and independent revi
 ---
 
 # Recursive surface ownership
+
+## Superseding status — 2026-09-15
+
+The original reviewed candidate landed through Core at `33e9ae7e`. Core repaired the shared-liveness lookup; the holder explicitly released the conflicting audit leases. Current qualification passed 38/38 required gates at `3284acc55d906cdd5beb7e80527200b8bdf3f491`, with independent Test Architect/Simplifier PASS. See [qualification proof](../proof/ownership-qualification.md). Historical blocked checkpoints below are superseded. The isolated `conductor/ownership-qualification` branch is for Core's serialized documentation handoff; Codex has not pushed main. Retain worktrees for provenance.
 
 ## Goal contract
 
@@ -116,5 +120,4 @@ Actual receipts: first author audit 981 seconds, final report 58 calls against 3
 Final implementation `676f63ed` independently passed all triggered vetoes; the two missing mutation controls were added before acceptance. Conductor script merge `7fdf6ab0` and checkpoint `df050caf` preserve the reviewed code. The mandatory runner passed 37/38 twice; the sole failure is primary `docs/audit/audit-log.jsonl` becoming uncommitted after an earlier stranded-audit PASS. The coordinator received the exact seam request. The script's premature acceptance audit was officially superseded as blocked. See the programme proof for receipt hashes, provenance and retained worktree reasons. No primary source mutation, peer-log repair or main publication was performed.
 
 Latest observation after `327528e2`: primary logs no longer fail the standalone stranded-audit gate; the gate now names Understanding Views spike audit/change logs. Coord simultaneously lists the spike active, so its "nobody live" diagnostic is a finding to reconcile, not evidence of abandonment. Grok received request `req-01M2JTQ5G3YVP0D81XBH2ZQK6E`. Qualification remains blocked on that shared state; no review or implementation acceptance was revoked.
-
 

@@ -8049,7 +8049,7 @@ window.DOCS_INDEX = {
       "path": "docs/coordination/recursive-surface-ownership.md",
       "title": "Recursive surface ownership: bounded Codex programme",
       "type": "doc",
-      "status": "blocked",
+      "status": "complete",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-15",
@@ -8071,7 +8071,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7cff295ce9d8e703491162cd64707cc27b168309ea9031ab8587e3676800844b"
+      "sourceSha256": "e0e693a79024db3d297413cc6db40e629b7002ad5f020f19974a34f361a25a60"
     },
     {
       "id": "coordination-addendum-cd",
@@ -9990,11 +9990,46 @@ window.DOCS_INDEX = {
       "sourceSha256": "62577cd18a0caecf5aa001fb22370aa7cca8608829123d3a4f3742a4537037ef"
     },
     {
+      "id": "plan-ownership-qualification",
+      "path": "docs/plans/ownership-qualification.md",
+      "title": "Qualify the landed ownership gate and close stale status",
+      "type": "doc",
+      "status": "complete",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Verify the already-published fix, qualify unchanged inputs, and coordinate the obsolete ownership-gap paragraph without duplicating implementation.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "qualification"
+      ],
+      "links": [
+        {
+          "to": "plan-recursive-surface-ownership",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Superseding completion — 2026-09-15",
+          "mermaid": "flowchart LR\n G --> V --> C\n G --> Q --> C"
+        }
+      ],
+      "sourceSha256": "94046bbf448dc698a1c3aa5b789f9c6b5ca9d0fca67eef2de320d15712840a54"
+    },
+    {
       "id": "plan-recursive-surface-ownership",
       "path": "docs/plans/recursive-surface-ownership.md",
       "title": "Execution graph: recursive ownership gate",
       "type": "doc",
-      "status": "blocked",
+      "status": "complete",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-15",
@@ -10018,7 +10053,7 @@ window.DOCS_INDEX = {
       "diagrams": [
         {
           "kind": "flowchart",
-          "title": "Execution graph",
+          "title": "Superseding status — 2026-09-15",
           "mermaid": "flowchart LR\n G --> O --> P --> A --> R --> J\n G --> P"
         },
         {
@@ -10027,7 +10062,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n R[Review BLOCK] --> I[Investigate: reproduce five cases] --> A2[Bounded same-author repair] --> R2[Independent review] --> J[Join]"
         }
       ],
-      "sourceSha256": "d278435deef29d864fd192b30ee47eb4b9652d67661a184f2808c90647338585"
+      "sourceSha256": "40712ff0a73a3edf22ae67d2999b87ad8e0beff54317a842d48477f81013d932"
     },
     {
       "id": "plan-ui-and-windowing",
@@ -10728,7 +10763,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ed117b69ab96f88534316d8a6ff15bc209f3fb59d7b9f2f0c6bdb6bb3e2b622e"
+      "sourceSha256": "8db1b8c2d263d7d044518d5aeb535b813a1f1856c838c9d72be80a885c9a615d"
     },
     {
       "id": "session-profiles",
@@ -11721,7 +11756,7 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
-          "to": "inv-0005-a-red-main-nobody-consumed",
+          "to": "INV-0005-the-gate-runs-everything-and-has-been-red-for-two-days",
           "rel": "relates-to"
         },
         {
@@ -11733,12 +11768,12 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         },
         {
-          "to": "addendum-c-council-rulings",
+          "to": "note-addendum-c-council-rulings",
           "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "40afa38a1853c0784d87a0a88a7bb4bd00cadec178d8e40c05497ec758d4c710"
+      "sourceSha256": "f7f512919b02fcbbc3adca4c48c208d1351022658d11bd9adfa68975b79d3fae"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -16310,6 +16345,68 @@ window.DOCS_INDEX = {
       "sourceSha256": "0ce1c999eb408c194202fc11bc9cf17ed3b17d62b6ed956d5df84281d38085b0"
     },
     {
+      "id": "proof-ownership-qualification",
+      "path": "docs/proof/ownership-qualification.md",
+      "title": "Published ownership gate qualification",
+      "type": "proof-pack",
+      "status": "complete",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Current qualification and status reconciliation after the Core coordinator published the recursive gate and repaired shared liveness lookup.",
+      "tags": [
+        "proof",
+        "ownership",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "plan-ownership-qualification",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-recursive-surface-ownership",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-ownership-qualification-review",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2faa2a4f8b7bce7150625737108efa48d23b08f4768059cfae7897769ca9b7a3"
+    },
+    {
+      "id": "proof-ownership-qualification-review",
+      "path": "docs/proof/ownership-qualification-review.md",
+      "title": "Independent review of ownership qualification",
+      "type": "proof-pack",
+      "status": "current",
+      "owner": "@codex-sol-review",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Independent Test Architect and Simplifier qualification of the published stranded-audit fix and receipt-reuse boundary.",
+      "tags": [
+        "proof",
+        "ownership",
+        "review"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "66e8b16314eeda217934db71c767c5ac0f1c54fe1c1fba2ed3519b3e5aa5c38c"
+    },
+    {
       "id": "proof-perspective-content",
       "path": "docs/proof/perspective-content.md",
       "title": "Proof Pack: SH-3 — perspective content",
@@ -16519,7 +16616,7 @@ window.DOCS_INDEX = {
       "path": "docs/proof/recursive-surface-ownership.md",
       "title": "Recursive surface ownership: programme evidence",
       "type": "proof-pack",
-      "status": "blocked",
+      "status": "complete",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-15",
@@ -16554,7 +16651,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0322de91737132a52ea693ef0ef5bb48fff2446d2de88063990f2848227545f4"
+      "sourceSha256": "a5005d42c8bb8b1cf747ab9925891ba2e5ebf8fc29f394faf2d702e8129b3dc6"
     },
     {
       "id": "proof-recursive-surface-ownership-author",
@@ -18989,5 +19086,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "8f2faf3565aa5aea3d93391e8c56ab50ebf5bc18ff5a9ff856e57482cbc3b020"
+  "graphSha256": "f9e137477ec8d7508a0a2560f1abaf3e80274198e0ebdc81d70ee8357a65a3f6"
 };
