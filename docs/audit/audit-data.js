@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:30:00Z",
+  "generated": "2026-09-15T22:14:07Z",
   "audit": [
     {
       "actor": null,
@@ -18954,6 +18954,79 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "53ed3844e7c523f083a700b22fbb3a63094fb64b",
         "short": "53ed3844e",
+        "branch": "review/atlas-views-design",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KJ4W0NF5BXN8PNHHD8B7T1",
+      "shortname": "atlas-mock-independent-review",
+      "datetime": "2026-09-15T22:14:07Z",
+      "session": "codex-atlas-views-review",
+      "prompt": "Independently review the two frozen Atlas HTML mock harnesses against the human-granted R-M graph floor, including rendered state, actual audit values, keyboard selection/filter/Source/Back, consistency, UX/IA, accessibility, Test Architect, SRE, Simplifier and Orchestrator lenses; retain native and product barriers.",
+      "summary": "Cleared frozen E1 and E2 self-contained HTML harnesses for bounded mock qualification. Independently observed nonempty rendered audits, E1 63/0 plus five negative controls, E2 229/0, and real Edge key paths for selection, Source and exact Back focus. Recorded four advisory craft Minor findings and retained all native, product, provenance, display-order and deployment-identity exclusions.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": "codex-sol-plan-review",
+      "artifacts": [
+        "docs/proof/atlas-views-plan-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "mock-review"
+      ],
+      "outcome": "success",
+      "goal": "Independently qualify both frozen Atlas HTML mock harnesses at R-M without promoting browser evidence to native or product acceptance.",
+      "done_when": "Each named lens has a falsifiable verdict grounded in rendered values and real-key interaction, with unresolved native and product gates explicit.",
+      "tier": "T2",
+      "main_calls": 22,
+      "main_budget": 16,
+      "main_over_budget": true,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T21:48:06Z",
+      "duration_seconds": 1561.0,
+      "persona_yield": [
+        {
+          "persona": "UX Researcher / IA",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "UX & Accessibility",
+          "raised": 1,
+          "accepted": 1
+        },
+        {
+          "persona": "Test Architect",
+          "raised": 1,
+          "accepted": 1
+        },
+        {
+          "persona": "SRE",
+          "raised": 1,
+          "accepted": 1
+        },
+        {
+          "persona": "Simplifier",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "Orchestrator",
+          "raised": 1,
+          "accepted": 1
+        }
+      ],
+      "git": {
+        "sha": "ce4f913ac5179459ba5805263ad443bad5e911d8",
+        "short": "ce4f913ac",
         "branch": "review/atlas-views-design",
         "pushed": null
       }

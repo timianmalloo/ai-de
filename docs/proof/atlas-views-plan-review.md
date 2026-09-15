@@ -618,3 +618,74 @@ parser stress/cancellation, global truncation semantics, production observation/
 receipt authority, wire/native behavior, performance or full P0.7/product acceptance. The
 Conductor separately reported Linux reproduction of 30 nodes, 30 relations, 28 pages,
 16 recompositions, ten rejection receipts and eight fault classes; it was not rerun here.
+
+## Independent mock-harness review (R-M)
+
+Reviewed Owner grant `212d3bca`, frozen E1 behavior harness
+`0bdd16d7e429f8ed00a73e7c664eb3ced520fae8`, and frozen E2 architecture harness
+`27642bf89b687f1e78bc33f11f977cd753baf7cf`. The canonical plan's R-M row now
+explicitly retains UX/IA, accessibility, Test Architect, SRE and Simplifier review,
+requires actual audit/count/timing values, rejects console-only, placeholder-only and
+zero-page evidence, and keeps browser measurement mock-only. Its author/freeze/review/
+bounded-repair/Conductor join is dependency-correct; native and foundation gates remain.
+
+**CLEAR — bounded self-contained HTML mock qualification only.**
+
+### E1 behavior harness
+
+- The independent headless sweep reported one nonempty rendered mock and zero findings.
+  The required strict lint target is repository `DESIGN.md`, which was clean with zero
+  warnings. Running that design-language lint against the HTML is not the declared gate.
+  The craft detector reported one Minor `flat-type-hierarchy` finding.
+- An independent Edge CDP run read the normal-path state rather than relying on process
+  exit: 63 passed, zero failed, five negative controls; zero contrast, target and
+  consistency failures; 735 px by 8196 px document extent. Its emitted single samples
+  were 1.7 ms render and 1.5 ms audit and remain browser-mock measurements.
+- Real browser input reached list fact `f1`; ArrowDown selected `f3`; Enter opened
+  the exact embedded `stock.Reserve(order)` span and focused the source heading. One
+  Tab reached Back, and Enter restored focus and selection to `f3`. Real Tab plus text
+  input entered `scheduling` and produced the single `f6` Sequence result. The normal
+  control suite separately checks the Activity filtered-boundary stub and refuses its
+  removal; no relation stub is expected for that Sequence filtering observation.
+- The 16 hard states, Sequence/Activity switch, source-bound inspector, refusal copy,
+  selection invalidation and source receipt/Back behavior are present in rendered
+  controls. The five negative controls cover hidden page, corrupt binding, missing
+  recovery, removed filtered-boundary evidence and expired restore.
+
+### E2 architecture harness
+
+- The independent headless sweep reported one nonempty rendered mock and zero findings;
+  strict design lint was clean. The craft detector reported three Minor findings:
+  two `cramped-padding` and one `flat-type-hierarchy`.
+- The independent Edge CDP normal path read PASS 229/0, page audit 735 by 1591 px
+  (735 by 1872 px full document), minimum text contrast 6.48:1, 25 visible controls and
+  zero targets below 24 by 24 px. Emitted samples were 1.40 ms render and 145.70 ms
+  synthetic sweep and remain browser-mock measurements.
+- Real Tab reached the `order` list row; Enter selected it, set
+  `aria-pressed=true` and enabled Source. Nineteen further Tabs plus Enter opened
+  Source; Back became keyboard-reachable, and Enter restored focus to the exact selected
+  `order` list row. Real Tab and text input updated the filter. The combined literal
+  `Order → Money` matched no individual row, so that observation proves the empty
+  filter path rather than positive endpoint closure. The normal controls separately
+  assert actual SVG endpoints for every rendered filtered relation.
+- Frozen proof records the deliberate `state-leak`, `evidence-drift` and
+  `back-focus` modes as 27, 15 and 15 failures. Source inspection confirms each changes
+  the subject path and that the normal checks cover all three views, all 16 states,
+  selection/filter/source restoration and filtered-edge endpoint presence.
+
+### Persona convergence and limits
+
+| Lens | Verdict | Evidence / disposition |
+|---|---|---|
+| UX Researcher / IA | CLEAR | G6 linked-reading workstations keep view choice, status, graph/list and evidence/source structure coherent; hard states preserve actionable recovery or honest refusal. |
+| UX & Accessibility | CLEAR for HTML | Semantic controls, visible focus, live status, contrast/target audits, real-key selection and exact Back restoration were observed. This is not Windows HighContrast, UIA or native keyboard proof. |
+| Test Architect | CLEAR for mock | Normal matrices were read, E1 negative controls were observed, E2 fault mechanisms and recorded outputs were inspected, and real input exercised the user path. Green wrapper exits alone were not used as acceptance. |
+| SRE | CLEAR for mock | Both surfaces emit normal-path counts, failures, dimensions, contrast/target data and browser timings; labels explicitly refuse product-latency interpretation. |
+| Simplifier | CLEAR | Each lane uses one dependency-free HTML harness and a small shared state/render/check core. The four craft Minor findings remain advisory polish work. |
+| Orchestrator | CLEAR | Two frozen lane artifacts join at one independent R-M node; bounded repairs precede the serialized Conductor close. No native or foundation node was removed. |
+
+This review does not qualify HTML/native equivalence, WPF composition, UIA, Windows
+HighContrast, product latency or reliability, production source/provenance/authority,
+wire contracts, E1 relation display ordering, full E1 P0.7, E2 deployment identity, or
+product acceptance. The independently exercised browser keys also do not promote the
+authors' synthetic `KeyboardEvent` controls into native evidence.
