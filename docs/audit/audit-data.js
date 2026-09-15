@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T15:51:12Z",
+  "generated": "2026-09-15T16:08:38Z",
   "audit": [
     {
       "actor": null,
@@ -17095,89 +17095,172 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2JV1A9HEXJ7HJH28GA5G5FV",
-      "shortname": "join-codex-surface-ownership",
-      "datetime": "2026-09-15T15:30:13Z",
-      "session": "claude-conductor-watch-0915",
-      "prompt": "the join of the resolved merge into main",
-      "summary": "Join #3 of the 2026-09-15 stress test: Codex's candidate conductor/surface-ownership f7fd4707 (sessions ended, handed off) reviewed by the Claude conductor - outside docs/ and ledgers the diff is exactly tools/verify-surface-ownership.py (Ruling 113 scope); --self-test green (eight injected mutants, recursive identities, section-2 Path cells, patterns, exceptions); the gate reads 17/17 surfaces assigned on the real tree; defect-classes.md gains recurrence instances only. Two figure-only conflicts in site/*.html resolved toward HEAD and rewritten by the site-figures step. recount_seconds=0 (docs_only=True).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "tools/verify-surface-ownership.py",
         "docs/proof/recursive-surface-ownership.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land Codex's reviewed recursive surface-ownership gate on main under Rulings 108/113 so every *Surface.cs / *View.cs under Workbench, at any depth, has a section-2 owner or a dated UNASSIGNED entry",
+      "datetime": "2026-09-15T15:30:13Z",
       "done_when": "main carries f7fd4707's content; verify-surface-ownership.py reports 17/17 on main; gates 38 green in the primary; pushed",
-      "tier": "T1",
+      "duration_seconds": 1.0,
       "fan_out": 0,
+      "goal": "Land Codex's reviewed recursive surface-ownership gate on main under Rulings 108/113 so every *Surface.cs / *View.cs under Workbench, at any depth, has a section-2 owner or a dated UNASSIGNED entry",
+      "id": "al-01M2JV1A9HEXJ7HJH28GA5G5FV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-codex-surface-ownership",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-09-15T15:30:12Z",
-      "duration_seconds": 1.0
+      "summary": "Join #3 of the 2026-09-15 stress test: Codex's candidate conductor/surface-ownership f7fd4707 (sessions ended, handed off) reviewed by the Claude conductor - outside docs/ and ledgers the diff is exactly tools/verify-surface-ownership.py (Ruling 113 scope); --self-test green (eight injected mutants, recursive identities, section-2 Path cells, patterns, exceptions); the gate reads 17/17 surfaces assigned on the real tree; defect-classes.md gains recurrence instances only. Two figure-only conflicts in site/*.html resolved toward HEAD and rewritten by the site-figures step. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2JW6NBF4GZEAHAAS90EW62N",
-      "shortname": "conductor-watch-0915-join4",
-      "datetime": "2026-09-15T15:50:37Z",
-      "session": "claude-conductor-watch-0915",
-      "prompt": "(continuation of al-01M2JP7RMQ: the watch's fourth landing)",
-      "summary": "Ruling 116 filed (D's coupled listener selector follows the aide. rename; AtlasReaderView.cs gets a Design-table row now - the landed recursive gate was run on a tree carrying the row without the file: OK 17/17, so the row lands before the Atlas candidate per 116 (ii)); the two stale Claude liveness files retired after the Atlas fleet read them as the current acknowledgers; README says how stale liveness is retired from now on.",
-      "kind": "skill",
-      "skill": "conductor-watch",
-      "tool": null,
       "actor": "claude-conductor",
       "artifacts": [
         "docs/collaboration/session-contracts.md",
         "docs/notes/addendum-c-council-rulings.md"
       ],
+      "datetime": "2026-09-15T15:50:37Z",
+      "done_when": "main carries the row and Ruling 116; verify-surface-ownership.py green on main; claude-core.md and claude-ui-experience.md gone; gates green; pushed",
+      "fan_out": 1,
+      "git": {
+        "branch": "conductor/watch-0915",
+        "pushed": null,
+        "sha": "33e9ae7e00e3edb2d44ecec006e5a3c354e69efd",
+        "short": "33e9ae7e0"
+      },
+      "goal": "Land Ruling 116's section-2 row for AtlasReaderView.cs before the Atlas candidate, and retire the two stale Claude liveness files",
+      "id": "al-01M2JW6NBF4GZEAHAAS90EW62N",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "(continuation of al-01M2JP7RMQ: the watch's fourth landing)",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "conductor-watch-0915-join4",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "conductor-watch",
+      "summary": "Ruling 116 filed (D's coupled listener selector follows the aide. rename; AtlasReaderView.cs gets a Design-table row now - the landed recursive gate was run on a tree carrying the row without the file: OK 17/17, so the row lands before the Atlas candidate per 116 (ii)); the two stale Claude liveness files retired after the Atlas fleet read them as the current acknowledgers; README says how stale liveness is retired from now on.",
       "tags": [
         "coordination",
         "stress-test"
       ],
-      "outcome": "success",
-      "goal": "Land Ruling 116's section-2 row for AtlasReaderView.cs before the Atlas candidate, and retire the two stale Claude liveness files",
-      "done_when": "main carries the row and Ruling 116; verify-surface-ownership.py green on main; claude-core.md and claude-ui-experience.md gone; gates green; pushed",
       "tier": "T1",
-      "fan_out": 1,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "git": {
-        "sha": "33e9ae7e00e3edb2d44ecec006e5a3c354e69efd",
-        "short": "33e9ae7e0",
-        "branch": "conductor/watch-0915",
-        "pushed": null
-      }
+      "tool": null
     },
     {
-      "id": "al-01M2JW7Q0K9YPNRGRR25CTTE3A",
-      "shortname": "join-conductor-watch-0915-4",
-      "datetime": "2026-09-15T15:51:11Z",
-      "session": "claude-conductor-watch-0915",
-      "prompt": "the join of conductor/watch-0915 into main",
-      "summary": "Fourth coordination join of the 2026-09-15 stress test: Ruling 116 filed and the section-2 Design row for AtlasReaderView.cs landed BEFORE the Atlas candidate (the landed recursive gate tolerates a row for a file not yet on the tree - run, OK 17/17); D's coupled listener selector admitted; claude-core.md and claude-ui-experience.md (ended 2026-09-01) retired after another harness read them as the current acknowledgers; README says how stale liveness is retired. Docs only. recount_seconds=0 (docs_only=True).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/collaboration/session-contracts.md",
         "docs/notes/addendum-c-council-rulings.md"
       ],
+      "datetime": "2026-09-15T15:51:11Z",
+      "done_when": "main carries 500cfac9; verify-surface-ownership.py green on main; gates 38 green in the primary; pushed",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Land Ruling 116 and the AtlasReaderView.cs section-2 row before the Atlas candidate; retire stale Claude liveness",
+      "id": "al-01M2JW7Q0K9YPNRGRR25CTTE3A",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of conductor/watch-0915 into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-conductor-watch-0915-4",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T15:51:10Z",
+      "summary": "Fourth coordination join of the 2026-09-15 stress test: Ruling 116 filed and the section-2 Design row for AtlasReaderView.cs landed BEFORE the Atlas candidate (the landed recursive gate tolerates a row for a file not yet on the tree - run, OK 17/17); D's coupled listener selector admitted; claude-core.md and claude-ui-experience.md (ended 2026-09-01) retired after another harness read them as the current acknowledgers; README says how stale liveness is retired. Docs only. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T15:57:00Z",
+      "id": "al-01M2JWJBW25M89NXRMSDET5EZH",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "B — diagnose the 13 red tests now (read-only, no lane), fix after the Atlas landing",
+      "session": "prompt-log",
+      "shortname": "B — diagnose the 13 red tests now (read-only, no lane), fix after the At…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": "claude-conductor",
+      "artifacts": [
+        "docs/investigations/INV-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins.md",
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "datetime": "2026-09-15T16:08:04Z",
+      "done_when": "INV-0012 on main with per-test first-red run/commit, local-run results and mechanism; the Owner has ruled on the fix order (Ruling 117)",
+      "duration_seconds": 664.0,
+      "fan_out": 2,
+      "git": {
+        "branch": "conductor/watch-0915",
+        "pushed": null,
+        "sha": "500cfac9639b5e78ea5aab1322b39ff44c187e78",
+        "short": "500cfac96"
+      },
+      "goal": "Classify each of the 13 red tests as regression vs runner/platform-environment with measured evidence; refusal tests first; escalate if any is a real regression",
+      "id": "al-01M2JX6MC750ZFEF0Z65V58M4M",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "B — diagnose the 13 red tests now (read-only, no lane), fix after the Atlas landing",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "main-red-diagnosis",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "main-red-diagnosis",
+      "started_at": "2026-09-15T15:57:00Z",
+      "summary": "Swept all 50 Build runs on main since the last green (ebe18260) from their .trx artifacts: 9 deterministic reds, each born red at a join (CV-2 c59eac66: purge sibling-held-open, Linux; sh4-2 3e5b04f6: CodingsLeftExtentTests x4, Windows runner; engines 9f2044bc: EngineCatalogTests x4, Linux) and 4 intermittent STA timeouts. Local Windows runs: 38/38 Core, 32/32 App (under the desktop hold, announced). Mechanisms opened: the locator tells shim from executable only by Windows suffix; the delete cascade's refusal is a Windows directory-move semantics; the runner's 96ch measure is 673 px vs a 451 px column. Ruling 117: no floor trip on the shipped platform; Platform=Windows scoping with residuals as tests; extent tests measured then pinned or quarantined; STA quarantined executing; the join closes only on the landed SHA's recorded CI result. The Owner caught one false fixture claim in the conductor's proposal (recorded, 117 (ii)).",
+      "tags": [
+        "main-red",
+        "diagnosis",
+        "inv-0005"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "id": "al-01M2JX7MSGS8F66ST1WBXH0GGB",
+      "shortname": "join-conductor-watch-0915-5",
+      "datetime": "2026-09-15T16:08:37Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "the join of conductor/watch-0915 into main",
+      "summary": "Fifth coordination join of the 2026-09-15 stress test: the main-red diagnosis (INV-0012) and Ruling 117 land. Measured from all 50 Build runs since the last green and two local Windows runs: no regression on the shipped platform, no floor trip; Platform=Windows scoping with residuals as tests, extent tests measured then pinned or quarantined, STA quarantined executing, the join closes only on the landed SHA's recorded CI result. Docs only; the repair lane opens after the Atlas landing. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins.md",
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
       "tags": [],
       "outcome": "success",
-      "goal": "Land Ruling 116 and the AtlasReaderView.cs section-2 row before the Atlas candidate; retire stale Claude liveness",
-      "done_when": "main carries 500cfac9; verify-surface-ownership.py green on main; gates 38 green in the primary; pushed",
+      "goal": "Land the main-red diagnosis and Ruling 117 so the Atlas and Grok candidates land under a known red set and the repair lane has its order",
+      "done_when": "main carries 9125000d; gates 38 green in the primary; pushed",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -17185,8 +17268,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-09-15T15:51:10Z",
-      "duration_seconds": 1.0
+      "started_at": "2026-09-15T16:08:37Z",
+      "duration_seconds": 0.0
     }
   ],
   "changes": [
