@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:33:28Z",
+  "generated": "2026-09-15T14:36:27Z",
   "audit": [
     {
       "actor": null,
@@ -16606,6 +16606,59 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T14:33:26Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2JQY0HQY67NXDEJX0GKM2W1",
+      "shortname": "ownership-independent-receipts",
+      "datetime": "2026-09-15T14:35:59Z",
+      "session": "codex-surface-ownership-conductor",
+      "prompt": "Import the independent Owner and plan-review receipts as attributed evidence, with source commits and byte hashes.",
+      "summary": "Verbatim Owner171791f and reviewer8690c5fa receipts copied; source/copy SHA256 pairs equal. Original audit ids preserved as provenance in proof, not replayed. Source branches retained. Implementation review remains pending.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Preserve independent decision and plan-review evidence.",
+      "done_when": "Receipt bytes match original source commits and provenance is recorded.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M2JQYTTWAHZ6GS7DREHYN1TB",
+      "shortname": "ownership-main-join-blocked",
+      "datetime": "2026-09-15T14:36:26Z",
+      "session": "codex-surface-ownership-conductor",
+      "prompt": "Correct the prerequisite main-rule join outcome after step8 mandatory runner failed.",
+      "summary": "Script merged publishedmain authority and committed checks but final full runner failed3/38. Missing terminal/Core.NET TRX receipts explicitly reported; global stranded-audit also remains independently observed. No waiver, no push. Earlier script acceptance=true emitted before final gates is superseded; branch retained for bounded implementation work.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Use published ownership authority for recursive gate qualification.",
+      "done_when": "Published section2 incorporated and required integrated gates pass.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "supersedes": "al-01M2JQSC0YN0RA479KTSXKV797"
     }
   ],
   "changes": [

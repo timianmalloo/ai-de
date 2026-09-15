@@ -5911,6 +5911,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "547599b3a81162c48e18f139d1969e09a99e9810e61d30b9f0b14dd1e0c10957"
     },
     {
+      "id": "note-recursive-surface-ownership-owner",
+      "path": "docs/notes/recursive-surface-ownership-owner.md",
+      "title": "Recursive surface ownership: bounded Owner decisions",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Defines the bounded interpretation of existing ownership declarations for the recursive Workbench surface gate. Assignments remain exclusively in session-contracts section 2.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "verification",
+        "decision"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5c1ffe250e7fd5c71aab5c29fbd2354d161ace7fb6fa674b13d4f725f6c07f14"
+    },
+    {
       "id": "note-session-design-decoration-line",
       "path": "docs/notes/session-design-decoration-line.md",
       "title": "The decoration line — one grammar for every turn (class · tier · lease · shape · template, provenance on demand), the task class per prompt with free-form as the explicit default, and where the tier control sits",
@@ -16404,6 +16430,67 @@ window.DOCS_INDEX = {
       "sourceSha256": "6d8859bbc9cc1635e9b7aa19807ae8cb3c0ff07354368f08de9465546d2a1845"
     },
     {
+      "id": "proof-recursive-surface-ownership",
+      "path": "docs/proof/recursive-surface-ownership.md",
+      "title": "Recursive surface ownership: programme evidence",
+      "type": "proof-pack",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Observed scope, red-first evidence, independent receipts, and integration limitations for the recursive Python ownership gate.",
+      "tags": [
+        "proof",
+        "ownership",
+        "coordination",
+        "tooling"
+      ],
+      "links": [
+        {
+          "to": "coord-recursive-surface-ownership",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c3c48429dae124049699aa5f93adecf13f29a9ca6d79434cd289518ffe2540f0"
+    },
+    {
+      "id": "proof-recursive-surface-ownership-plan-review",
+      "path": "docs/proof/recursive-surface-ownership-plan-review.md",
+      "title": "Recursive surface ownership: independent plan review",
+      "type": "proof-pack",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Independent pre-author review clears the bounded plan and fixes the task join gate floor.",
+      "tags": [
+        "proof",
+        "review",
+        "ownership",
+        "testing",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7f5d0fd0ec8cd33617414f7ed9112a21c331a035ae4859e272aa94234c2e6b57"
+    },
+    {
       "id": "proof-s2-settings-and-sentinels",
       "path": "docs/proof/s2-settings-and-sentinels.md",
       "title": "Proof Pack — S2: the settings and sentinels commit",
@@ -18706,5 +18793,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "db3b97e12cd8a1788e797f6ff0042984b8bc809b7acf9cddcac461c9a857ff07"
+  "graphSha256": "e0d2ab5cfc672d288f86b073f7830b43769d9dd3adb4cfdecd8ce5710bb12b4e"
 };
