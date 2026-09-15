@@ -746,6 +746,12 @@ def self_test() -> int:
                 "stale assigned exception retention": (
                     "elif assigned.get(declared_path):",
                     "elif False and assigned.get(declared_path):"),
+                "heading-context reset suppression": (
+                    "if MARKDOWN_HEADING.match(line.strip()):",
+                    "if False and MARKDOWN_HEADING.match(line.strip()):"),
+                "delimiter-free row suppression": (
+                    'row_without_pipes = stripped.startswith("`") and _surface_relevant(stripped)',
+                    "row_without_pipes = False"),
             }
             mutant_environment = os.environ.copy()
             mutant_environment["SURFACE_GATE_MUTANT"] = "1"
@@ -773,8 +779,9 @@ def self_test() -> int:
             print(f"  - {failure}")
         return 1
 
-    print("verify-surface-ownership: self-test OK — recursive identities, §2 Path cells, "
-          "patterns, exceptions, deterministic diagnostics, and CLI exits are proven.")
+    print("verify-surface-ownership: self-test OK — eight injected mutants plus recursive "
+          "identities, §2 Path cells, patterns, exceptions, deterministic diagnostics, and "
+          "CLI exits are proven.")
     return 0
 
 

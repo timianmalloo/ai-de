@@ -21,6 +21,7 @@ summary: >-
 - **Blocked source blob:** `0f53658b30857222d8207b9b6fdfe706039b6e8b`
 - **Intermediate five-case repair blob:** `112d2200e7f746087e0c39ab2f8c1fc68f9c6e1b`
 - **Final broad-pattern repair blob before commit:** `3b66c0778c131b06bf7fd1adad01c888bf5b6b00`
+- **Final mutation-closure source blob:** `ce11ae27eb79b97f54a1cf0fec4e5036f7ad90c4`
 - **Investigation:** `investigation-recursive-surface-ownership`
 - **Tier:** T1
 - **Author/date:** `codex-sol-author`, 2026-09-15
@@ -34,7 +35,7 @@ summary: >-
 | a row without pipes cannot disappear | code-token row while Path table active | no problem returned | missing-delimiter malformed diagnostic | Verified |
 | jurisdiction equals the surface token population | unquoted exact `WorkbenchShell.cs` | false malformed diagnostic | zero problems | Verified |
 | indentation cannot extend §2 | two-space `## 3` followed by Design row | false Core/Design conflict | zero problems | Verified |
-| original behavior remains protected | complete self-test plus six source mutants | five new tests red before repair | exit 0 in 1.0399975 s | Verified |
+| original behavior remains protected | complete self-test plus eight source mutants | five new tests red before repair | exit 0 in 1.958 s | Verified |
 | independent fixture accepts repaired behavior | reviewer-owned nine-case script | 4/9, exit 1 | 9/9, exit 0 in 0.1275984 s | Verified |
 | live header reuse survives | real §2 rows after prose plus real register checks | N/A | base only ProseView red; Conductor 17/17 green | Verified |
 | every supported pattern enters jurisdiction before matching | Core `/**` plus Design `/*.cs` | conflict silently absent; exit 1 in 0.9924614 s | cross-owner conflict reported | Verified |
@@ -48,11 +49,19 @@ names:
 4. `unrelated Workbench filename stays outside jurisdiction`
 5. `indented level-two heading ends section 2`
 
+The final mutation run also observed both reviewer-required one-change mutants exit nonzero inside
+the complete self-test:
+
+| Injected mutant | Killing fixture | Observed result |
+|---|---|---|
+| disable `MARKDOWN_HEADING` reset | `any non-owner heading resets owner context` (`#### Notes`) | mutant subprocess exited nonzero |
+| disable the `row_without_pipes` branch | `surface row without table delimiters is visible` | mutant subprocess exited nonzero |
+
 ## Final commands
 
 | Command | Exit | Duration | Observed result |
 |---|---:|---:|---|
-| `python tools/verify-surface-ownership.py --self-test` | 0 | 1.0399975 s | complete suite and six source mutants pass |
+| `python tools/verify-surface-ownership.py --self-test` | 0 | 1.958 s | complete suite and eight source mutants pass |
 | reviewer `adversarial_review.py` beside repaired source copy | 0 | 0.1275984 s | 9/9 passed |
 | `python -m py_compile tools/verify-surface-ownership.py` | 0 | 0.0837541 s | no output |
 | normal CLI on author base | 1 | 0.1132545 s | only `Sessions/ProseView.cs` unowned |
@@ -68,6 +77,9 @@ repair scope. No product source, §2 authority, other tool, or lesson register c
 - **Flagged:** independent review of the frozen repair commit remains mandatory; the author does not
   clear its own veto.
 - **Flagged:** the Conductor owns the integrated full runner and final Ruling 114 join.
+- **Flagged:** the declared six-call estimate fired after a stale coordination CLI signature and a
+  stale mutation-map patch context each required correction. Both failed before repository edits;
+  root owns the shared DC118 lesson update.
 
 | | |
 |---|---|

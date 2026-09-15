@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T15:03:03Z",
+  "generated": "2026-09-15T15:10:57Z",
   "audit": [
     {
       "actor": null,
@@ -16429,6 +16429,48 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "a3e9bcdcbcf8536ef401c46a8858871c128483ee",
         "short": "a3e9bcdcb",
+        "branch": "fix/recursive-surface-ownership",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JSY16S6B1SBGXZ4D5BVJAT",
+      "shortname": "recursive-surface-ownership-mutation-closure",
+      "datetime": "2026-09-15T15:10:57Z",
+      "session": "codex-surface-ownership-author",
+      "prompt": "Close independent review predicate 3 by adding exactly two mutation oracles for heading context reset and delimiter-free row disappearance.",
+      "summary": "Added two one-change source mutants to the existing surface ownership self-test. The full suite observed all eight mutants rejected and exited 0 in 1.958 seconds. Parser semantics are unchanged.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "codex-sol-author",
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership-repair.md",
+        "tools/verify-surface-ownership.py"
+      ],
+      "tags": [
+        "recursive-surface-ownership",
+        "mutation-testing"
+      ],
+      "outcome": "success",
+      "goal": "Close reviewer hard predicate 3 with explicit heading-reset and delimiter-free-row mutation oracles.",
+      "done_when": "The complete self-test rejects all eight source mutants, the proof records the final blob and measured result, and the bounded commit is frozen.",
+      "tier": "T1",
+      "main_calls": 11,
+      "main_budget": 6,
+      "main_over_budget": true,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T15:07:15Z",
+      "duration_seconds": 222.0,
+      "git": {
+        "sha": "1105bb833f0e4bc777ee9d151ff368581a89023f",
+        "short": "1105bb833",
         "branch": "fix/recursive-surface-ownership",
         "pushed": null
       }
