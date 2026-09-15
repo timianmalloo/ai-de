@@ -8061,6 +8061,14 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   readback proved exactly 11 executed/passed cases. Reuse CT27's file-before-run control; do not
   repair quoting by repeatedly transmitting inline programs. Evidence: `docs/proof/atlas-five-gates.md`.
 
+- **Process-boundary recurrence (Atlas record commit, 2026-09-15):** AGENT_SESSION/AGENT_NAME
+  were set in earlier PowerShell processes but omitted from the commit process. The existing
+  precommit control correctly reported identity unset and ran advisory-only. Earlier environment
+  assignments do not survive a new shell. Sweep: identity-bearing coordination and commit calls.
+  Prevent: initialize both values in the same process as the staged-path precommit check and
+  commit; fail on the check's nonzero result. Do not call later checking retrospective proof of
+  the earlier commit boundary. This uses the existing executable precommit control, not a new hook.
+
 - **Shape:** an agent writes a Python (or shell) program inline as `python - <<'EOF' …` in Git Bash
   on Windows; a quote, a backslash or a `$` inside the program is mangled by the shell before the
   interpreter sees it; the tool result is `unexpected EOF` / `SyntaxError` / `IndentationError`, and

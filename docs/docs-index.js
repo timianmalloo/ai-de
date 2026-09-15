@@ -8938,7 +8938,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "084d9ad041dc8bf443f3a572cb7189392179123a26e8c688d277d1001819e442"
+      "sourceSha256": "7bfd5291b07ea9eb3a2056ef059b2e22b5154eb4a8d0371dc92433f83c1e4596"
     },
     {
       "id": "design-session-profiler",
@@ -11774,7 +11774,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6fd5f1514e8feba7b54460882d42f107d109cb9df148dad22397e376c25d9600"
+      "sourceSha256": "0ea7d7e1e7c67109d5e54399d75230d2fba6c0addda326546244fda0c9806f8a"
     },
     {
       "id": "proof-code-atlas-contract-grounding",
@@ -21441,5 +21441,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "79d180a06def99bad7532d5b64a54c7e636ee9f47fe5aa8820c97c2cbd2f80ad"
+  "graphSha256": "596e81ea09aad92aef01a97cac173d0008d5b70b2a70470d4e33371bdbb156c1"
 };

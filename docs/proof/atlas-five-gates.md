@@ -27,6 +27,16 @@ Historical raw integrated results remain read-only under C:/Projects/ai-de-atlas
 
 ## Current verdict
 
+Records milestone78d61c04 and shared manifest req-01M2KPD0GV75KDESDM00F6RHGK name all reviewed
+components. Official regeneration observed833 audit+165 change entries,555 indexed artifacts,
+14 correct site figures,225 valid defect classes,4 matching derived views and no conflict markers.
+Its commit hook reported AGENT_SESSION unset: the shell-local identity did not carry from earlier
+processes. Therefore no identity-enforced precommit is claimed for78d61c04. Subsequent correction
+explicitly sets both identity variables in the same process as the existing staged-path check and
+commit. It cannot retroactively establish the original boundary. Current-main qualification is
+still pending. The direct producer proposal f073e2a0/blob661c92a3 was received and opened;
+its consumer acceptance review is separate from the component repairs and remains pending.
+
 ### Linux containment supplement observed by Conductor
 
 Frozen source a4d25b9e was exported with `git archive` (src,tests, Directory.Build.props/rsp,

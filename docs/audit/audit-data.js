@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T23:28:05Z",
+  "generated": "2026-09-15T23:29:42Z",
   "audit": [
     {
       "actor": null,
@@ -21871,6 +21871,28 @@ window.AUDIT_DATA = {
         "short": "9301207ee",
         "branch": "conductor/atlas-five-gates",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KPF8D98XHKKC3PM6N6W8TD",
+      "shortname": "atlas-record-identity-correction",
+      "datetime": "2026-09-15T23:29:41Z",
+      "session": "codex-atlas-five-gates",
+      "prompt": "Honor the repo-specific identity and coordination protocols while finishing the reviewed five-gate records and direct peer handshake.",
+      "summary": "Records commit78d61c04 hook reported AGENT_SESSION unset because environment values from earlier shell processes did not persist. Do not claim identity-enforced checking for that commit. Correction records DC207 process-boundary recurrence and sets AGENT_SESSION/AGENT_NAME in the same process as existing staged-path precommit and commit. Producer proposalf073e2a0/blob661c92a3 received; Owner admits bounded read-only comparison, no contract acceptance/freeze. Combined current-main regression, Release and publication remain pending.",
+      "kind": "command",
+      "skill": null,
+      "tool": "coord-precommit",
+      "actor": "Codex",
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md",
+        "docs/coordination/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "signals": {
+        "verification_path": true,
+        "acceptance_met": false
       }
     }
   ],
