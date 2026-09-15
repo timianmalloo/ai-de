@@ -11116,6 +11116,39 @@ window.DOCS_INDEX = {
       "sourceSha256": "fbf372e37e6df30d58ad671051def9d2f9fd7848f0c02db8b3af8ba41cc69df7"
     },
     {
+      "id": "spike-d0-tree-toolkit",
+      "path": "docs/spikes/d0-tree-toolkit/RESULT.md",
+      "title": "Spike — D-0 Solution tree toolkit (WPF TreeView)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "N7 Spike Protocol (read + run on installed WPF net10.0-windows / PresentationFramework 10.0.0.0 / .NET 10.0.11): freeze WPF TreeView as the D-0 toolkit. HierarchicalDataTemplate over a VM-nested forest of the flat SolutionTreeResult.Nodes list. Opt-in recycling virtualization, 28px header content (never Height on TreeViewItem), AutomationProperties.Name bound to kind+coverage, PreviewKeyDown for Enter / Ctrl+Enter. Custom ListView/ItemsControl and WebView2 HTML trees are rejected.",
+      "tags": [
+        "spike",
+        "D-0",
+        "solution-tree",
+        "treeview",
+        "wpf",
+        "N7",
+        "understanding-views"
+      ],
+      "links": [
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "696b7d3e687865530477a591904360764c266fcb46c7979aeae8abc61f36bc4b"
+    },
+    {
       "id": "spike-dpi-and-ganged-resize",
       "path": "docs/reviews/spike-dpi-and-ganged-resize.md",
       "title": "Spike — per-monitor DPI and ganged resize",
@@ -19183,5 +19216,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "cc8fe7553f7bcb9fcf45a4dabb961ac52578cefe7a0376220d4716066bddb82f"
+  "graphSha256": "40a5f03fa8eff012572fd3674a5922031f6766eb778c5ca81c74c7f16817d2a5"
 };
