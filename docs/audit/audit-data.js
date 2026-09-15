@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T02:05:23Z",
+  "generated": "2026-09-15T02:09:32Z",
   "audit": [
     {
       "actor": null,
@@ -16395,6 +16395,45 @@ window.AUDIT_DATA = {
         "branch": "understanding-views-owner",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2HD76Y4QAD3N7H8ZQ2Q1ETG",
+      "shortname": "collectknowledge-d0-tree-comparables",
+      "datetime": "2026-09-15T02:09:32Z",
+      "session": "understanding-views-comparables",
+      "prompt": "N2 of plan-understanding-views: domain research for D-0 Solution/tree view comparables. Read-only. Named, sourced comparables for a solution/tree view of code, data, and architecture artifacts in an Architecture host. Done when docs/notes/understanding-views-n2-comparables.md exists.",
+      "summary": "Six named comparables for D-0: VS Solution Explorer, Rider Explorer (no-index label), IntelliJ Project view (Excluded), VS Code Explorer vs C# Dev Kit Solution Explorer, Eclipse Package/Project Explorer, Structurizr model/tree. Key lesson: unindexed must be a visible state (Rider), never silent omission. Architecture-pane tree is not ADR-0017 Explorer.",
+      "kind": "skill",
+      "skill": "collectknowledge",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n2-comparables.md"
+      ],
+      "tags": [
+        "understanding-views",
+        "d-0",
+        "comparables"
+      ],
+      "outcome": "success",
+      "goal": "Named, sourced comparables for D-0 Solution/tree view of indexed code/data/architecture artifacts",
+      "done_when": "docs/notes/understanding-views-n2-comparables.md exists with sourced table and unindexed lesson",
+      "tier": "T1",
+      "main_calls": 24,
+      "main_budget": 25,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T02:06:40Z",
+      "duration_seconds": 172.0,
+      "git": {
+        "sha": "475d46e6a7e19b746ea9f9cf8449fd84119bae9e",
+        "short": "475d46e6a",
+        "branch": "understanding-views-comparables",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -20147,6 +20186,31 @@ window.AUDIT_DATA = {
         ]
       },
       "audit_ref": "al-01M2DZ3GA6T04XHQ6EAD7HRY8R"
+    },
+    {
+      "id": "cl-01M2HD77670WF79KAKXZVQ90HT",
+      "datetime": "2026-09-15T02:09:32Z",
+      "session": "understanding-views-comparables",
+      "kind": "knowledge",
+      "skill": "collectknowledge",
+      "title": "D-0 Solution/tree view comparables established",
+      "prompt": "N2 of plan-understanding-views: domain research for D-0 Solution/tree view comparables. Read-only. Named, sourced comparables for a solution/tree view of code, data, and architecture artifacts in an Architecture host. Done when docs/notes/understanding-views-n2-comparables.md exists.",
+      "summary": "Six named comparables for D-0: VS Solution Explorer, Rider Explorer (no-index label), IntelliJ Project view (Excluded), VS Code Explorer vs C# Dev Kit Solution Explorer, Eclipse Package/Project Explorer, Structurizr model/tree. Key lesson: unindexed must be a visible state (Rider), never silent omission. Architecture-pane tree is not ADR-0017 Explorer.",
+      "rationale": "N3 /specify for D-0 needs sourced navigator lessons (grain, unindexed state, activate) before design; distinguishes Architecture-pane tree from ADR-0017 Explorer.",
+      "artifacts": [
+        "docs/notes/understanding-views-n2-comparables.md"
+      ],
+      "tags": [
+        "understanding-views",
+        "d-0"
+      ],
+      "git": {
+        "before": "475d46e6a7e19b746ea9f9cf8449fd84119bae9e",
+        "after": "475d46e6a7e19b746ea9f9cf8449fd84119bae9e",
+        "branch": "understanding-views-comparables",
+        "pushed": null,
+        "commits": []
+      }
     }
   ]
 };
