@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T17:19:54Z",
+  "generated": "2026-09-15T17:29:21Z",
   "audit": [
     {
       "actor": null,
@@ -17348,6 +17348,198 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M2K0R0V50JN4ZHTXQ1Z901ZV",
+      "shortname": "three things:",
+      "datetime": "2026-09-15T17:10:00Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "three things:\n- resolve the blocker\n- provide a periodic tabular update of tasks with what they do and what their status is so i can track the table instead of snarfing through the reasoning\n- keep going with the next best action after resolving the blocker",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2K0VCANA626N5V72W3X88P2",
+      "shortname": "ownership-qualification-plan",
+      "datetime": "2026-09-15T17:11:50Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "Resolve the blocker, provide periodic task status tables, and continue with the next best action.",
+      "summary": "OwnerO8 T1: publishedfix verified; main alreadycontainsf7fd470. G->V/Q->C, separate readonlyreview andqualification, no duplicateimplementation. Full inputtree/buildpath/TRXhash match allows explicitreceipt reuse. NewCore obsoleteparagraph requestreq-01M2K0QEPYF0CEWHPBKYQ72GY6. 35Conductor/12review calls planned, no speedup claim.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/ownership-qualification.md",
+        "docs/proof/ownership-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve stale ownership qualification blocker and continue bounded next action",
+      "done_when": "Current qualification verified and status/correction handoff committed",
+      "tier": "T1",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T17:09:41Z",
+      "duration_seconds": 129.0
+    },
+    {
+      "id": "al-01M2K151CMPGVH9GDD51JHVA7Y",
+      "shortname": "ownership-current-qualification",
+      "datetime": "2026-09-15T17:17:06Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "the join of 516f7d5ad39ba2f9f7dec4a563c7cfb2836023f7 into conductor/ownership-qualification",
+      "summary": "OwnerO8/O9 and Core request resolutions authorize exact docs-only corrections; source/tests/buildinputs unchanged, originalTRXhashes matched. Independent Test/SimplifierPASS3665e51f. Qualify isolated branch; no mainpush. recount_seconds=0 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Resolve former ownership qualification blocker and close obsolete documentation",
+      "done_when": "Integrated Core corrections and existing ownership gate pass mandatory qualification",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T17:17:04Z",
+      "duration_seconds": 2.0
+    },
+    {
+      "id": "al-01M2K1GCQT3GRHWYW1RWC3B49Y",
+      "shortname": "ownership-checkpoint-correction",
+      "datetime": "2026-09-15T17:23:18Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "Resolve the blocker and keep going with the next best action.",
+      "summary": "The join appended acceptance before its checkpoint. Step 7 was refused by peer register/derived leases, so full qualification had not run. Holder subsequently explicitly released both leases in atlas-e1-native-class-view log sequences 99 and 100. Continue through the prescribed join; no bypass or expiry-based consent.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "signals": {
+        "acceptance_met": false
+      },
+      "supersedes": "al-01M2K151CMPGVH9GDD51JHVA7Y",
+      "git": {
+        "sha": "51c5c9e18db750bb00cab0176a27c7b3654afcb6",
+        "short": "51c5c9e18",
+        "branch": "conductor/ownership-qualification",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K1GV0102SQXRWRP2TW82QH",
+      "shortname": "ownership-current-qualification",
+      "datetime": "2026-09-15T17:23:33Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "the join of the resolved merge into conductor/ownership-qualification",
+      "summary": "Owner O8/O9 authorize exact Core documentation corrections. Source, tests and build inputs unchanged; original TRX hashes matched. Independent Test Architect and Simplifier PASS at 3665e51f. Holder explicitly released blocking leases. Qualify isolated branch; no main push. recount_seconds=0 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md",
+        "docs/proof/ownership-qualification-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Resolve former ownership qualification blocker and close obsolete documentation",
+      "done_when": "Integrated Core corrections and existing ownership gate pass mandatory qualification",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T17:23:31Z",
+      "duration_seconds": 2.0
+    },
+    {
+      "id": "al-01M2K1R3MANATTDTCV8NM55GTE",
+      "shortname": "ownership-qualified-close",
+      "datetime": "2026-09-15T17:27:31Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "Resolve the blocker, provide periodic task tables, and continue with the next best action.",
+      "summary": "Owner O10 authorized historical status reconciliation after full38 PASS at3284acc5. Published implementation remains unchanged. Core documentation corrections consumed under O9. Native holder explicitly released blocking leases. Independent Test Architect/Simplifier PASS3665e51f. Reused3743 executed test and5 exit-path receipts only after matching source/tests/build inputs and hashes. Final status metadata creates expected index drift before mandated regeneration. Main publication remains Core; retain evidence worktrees.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md",
+        "docs/proof/ownership-qualification-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Resolve ownership qualification blockers and close the bounded programme",
+      "done_when": "Required checks and independent review pass, status records are corrected, and committed evidence is handed to Core",
+      "tier": "T1",
+      "fan_out": 4,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T17:27:07Z",
+      "duration_seconds": 24.0,
+      "git": {
+        "sha": "3284acc55d906cdd5beb7e80527200b8bdf3f491",
+        "short": "3284acc55",
+        "branch": "conductor/ownership-qualification",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K1VDRTC41MCETH988RDHZV",
+      "shortname": "join-codex-ownership-qualification",
+      "datetime": "2026-09-15T17:29:20Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "the join of conductor/ownership-qualification into main",
+      "summary": "Join #7 of the 2026-09-15 stress test: Codex's docs-only candidate e112bee7 (base 0b3644f2) reviewed by the Claude conductor - 18 files, all docs/ledgers/derived/site figures, no source or test change, 38/38 at 3284acc5, failing set empty - joined; it carries the Claude lane's 516f7d5a (section-2 closure paragraph, INV-0012's two link ids). The primary's local-only 0b3644f2 rides to origin with it. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land Codex's closing proof docs and the Claude lane's section-2/INV-0012 corrections on main under Ruling 108",
+      "done_when": "main carries e112bee7 and 516f7d5a; gates 38 green in the primary; pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T17:29:19Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
