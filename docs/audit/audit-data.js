@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T17:14:50Z",
+  "generated": "2026-09-15T22:22:41Z",
   "audit": [
     {
       "actor": null,
@@ -16510,6 +16510,232 @@ window.AUDIT_DATA = {
         "branch": "conductor/atlas-recovery",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2K4Z0Q8THV2T96G3XFEK50Y",
+      "shortname": "atlas-recovery-c8-checkpoint",
+      "datetime": "2026-09-15T18:23:43Z",
+      "session": "copilot-atlas-recovery-b0d0",
+      "prompt": "Converge accepted E into fresh main using unchanged full qualification; finish native remaining controls/rendered proof with serialized desktop and retained workers.",
+      "summary": "C8 20/20 partialcheckpoint, no recoverypublication. RetainedER6 independentlyPASS E92d7/799C4508 allB1-B5; NM12threefaults verifiedcomplete/restored atbea3798c. Codexsiteboundary checkedallow andcurrentCoreconfirmedendedsessions; refreshedmainbbd1bece local/origin/advertised equal. IJ20 mergedfreshbbd with92d at70b9ef30; srctestsdiffempty; blockedcheckpoint e31906df clean. FullApp1133/1133PASS, Corewhole3162total3161executed3158pass3fail, portable2818/2817/2814/3, nonportable344/344PASS; rawTRXnotExecutedcounter0 despiteoneexecutiondelta, namedconditionalfilesymlinkskipreported. EXACT3newAtlasProductionAdmissionTests failures tracedbywriterto3oldRemoteReaderActivitySource selectors; NOToldbaseline13. Unchangedclosing--no-runEXIT1/conductorjoinEXIT4 correctlyheld every-gate/Release; no Releasebinaryclaim. Exactprefix-onlynewfilepermissionrequestedreq-01M2K4R9EWESN0WY1EXZCN6TB6; IAL8samewriterall3oldemitter-consumersweep/targetedrepairafterACK, no blindrecount. NL12nativebounded1180cliporacleprep has6callsremaining, desktopgrantedafterIJhost32564 ended18:03:30.817Z; no IGUIwhileNLholds. Sourcecaptionnotshortened/fullglyphactualcliporacle required beforelayoutfix. Primarydirtyhistorypreservation/publication remainsrootjobafterfinalgates; allrawlogs/worktreesretained.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "C:/Users/malla/.copilot/session-state/b0d0c445-0dbc-47cb-8e51-19bfe9427c29/files/atlas-recovery-plan.json",
+        "C:/Users/malla/.copilot/session-state/b0d0c445-0dbc-47cb-8e51-19bfe9427c29/files/atlas-native-render-review.json"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Qualify and publish accepted Atlas integration; complete bounded native candidate qualification",
+      "done_when": "No new unexplained required-test failures; unchanged fullgates and Release plus independent finalreviews; preservedprimaryhistory and actual local/remote mainreceipt; native requiredmutation/rendered/combinedpredicates complete",
+      "tier": "T2",
+      "main_calls": 20,
+      "main_budget": 20,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T17:17:28Z",
+      "duration_seconds": 3975.0,
+      "git": {
+        "sha": "6ac1e43419ff30e80bc87696ed2c61a73be6910e",
+        "short": "6ac1e4341",
+        "branch": "conductor/atlas-recovery",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K7FJ3JK6EESBNP8PJ8Z40X",
+      "shortname": "atlas-recovery-c9-checkpoint",
+      "datetime": "2026-09-15T19:07:43Z",
+      "session": "copilot-atlas-recovery-b0d0",
+      "prompt": "Complete exact admission-selector repair and final native scoped evidence, then independent native component review before combined acceptance.",
+      "summary": "C9 16/16 partialcheckpoint. ExactR116 three-admission-selectorACK read; IAL8 actualdiff3prefixliterals verified, unchangedmint1/1+full210/210PASS. Codexaudit-gate currentlivenessexplicitreleased/siteallowverified; nativeNFPclosingauditleaseslaterexplicitreleased. ICQ6ownregen/check/commit andIQV16unchangedfullqualificationcontinuation allocatedsameI, no publication. NL12sourcee028 minimalhidden180/260columnminima Source-only diffverified;4casered3pass1fail->4/4green; ACTUALfresh1180imageD9B81showsfullare-not-established, boundedclipfindingcleared. NFP6 reviewpin4db/e028 product/testidentities with113/113 andmanifestDDA322... verified; no finalselfacceptance. IndependentUML8callPASS lexicaloccurrence scope; C#initial8incomplete(wrongauditshorthand/oversizedreads), boundedremainder8advisoryPASSnoidentifiedC#bugwithlimits. IndependentDS/SRE8BLOCK retainedbuttonnotorig-renderbound: oldcallbackcouldreactivateafternewREADYsameissuedtoken; source-inferrednotexecuted. RG10sameNwriter red-firstheadlesscheck/minimalguard allocated; noCore/authority/scopegrowth. Finalcombined/nativeandmainjoinedSecurity/Test/Release/fullgatesremainOPEN; no recoverypush.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "C:/Users/malla/.copilot/session-state/b0d0c445-0dbc-47cb-8e51-19bfe9427c29/files/atlas-native-render-review.json"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Finish precise repairs and independent qualification without changing approved contracts or hiding failures",
+      "done_when": "Fresh current-source wholegates/Release andindependentreviews passed, primaryhistorypreserved and actualmain/originpublicationreadback; native boundedqualification/combinedreview completed",
+      "tier": "T2",
+      "main_calls": 16,
+      "main_budget": 16,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T18:26:10Z",
+      "duration_seconds": 2493.0,
+      "git": {
+        "sha": "6ac1e43419ff30e80bc87696ed2c61a73be6910e",
+        "short": "6ac1e4341",
+        "branch": "conductor/atlas-recovery",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KA4PP0Q21XCPGTMCVFY2QD",
+      "shortname": "atlas-recovery-c10-checkpoint",
+      "datetime": "2026-09-15T19:54:13Z",
+      "session": "copilot-atlas-recovery-b0d0",
+      "prompt": "Continue existing-worker delivery: classify the remaining owned-HWND UIA proof failure, preserve current native guard evidence, and report task-tree status without treating commits as publication.",
+      "summary": "C10 16/16 partialcheckpoint. c2603ecc3listenerliteralrepair/cleanprotectedguards verified; IQV16 actualfreshmaine861 mergec4d7b2f/blockedcheckpoint2c605bf verified. Corewhole3161pass/portable2817pass/nonportable344pass, App1132/1133 oneunidentifiedowned-HWND UIAName lookupnull; originalassertdoesnotnamewhich5, no raceinferred. Officialoutcome--no-runheldgates/Release; diagnostic-onlyreq-01M2K9HBD...ACKread(no selector/timeouts/retry/fallback/productchanges), UDG10sameIwriteroneinstrumentedtargetrunafterNrelease. NativeRG10 actual2oldreadycallbackreds, generationguard2green, guardinversion2red/restored2green at4d506 verified; DSindependentPASSclearsoldcallbackblocker, boundedremainingSRElimitsnamed. UXboundedcomponentPASS current1180/farsource/canceled, no fullWCAG/hardwareclaim. FinalcurrentguardFQ6 115/115verified at46e2f266(parent4d506,evidenceonlysrc/testdiffempty), TRXEE781... and764filemanifestreportedstable; retainedTestNFT8finalnativecandidatequalificationreviewactive, combinedA/R stillseparate. NativeFQreleasedrunner23748 end19:47:58.329Z; IgetsUDGdiagnosticdesktop. Mainlastreadc46e112a local/origin, refreshatjoin. No recoverymainpublication, no finalOwner/nativecombinedclosure. Mandatorytask-tree reportingadded; no extra doc-onlycommits/pollingforstatus.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "C:/Users/malla/.copilot/session-state/b0d0c445-0dbc-47cb-8e51-19bfe9427c29/files/atlas-recovery-plan.json",
+        "C:/Users/malla/.copilot/session-state/b0d0c445-0dbc-47cb-8e51-19bfe9427c29/files/atlas-native-render-review.json"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Publish independently accepted Atlas integration and finish bounded native qualification with preserved evidence",
+      "done_when": "Actualcurrentmainjoinedcandidate passesunchangedgates/Release/independentreviews andpublisheswithhistory/refproof; native115current-sourcecandidate andrequiredcombined/Owner gates qualified within recordedbounds",
+      "tier": "T2",
+      "main_calls": 16,
+      "main_budget": 16,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T19:07:46Z",
+      "duration_seconds": 2787.0,
+      "git": {
+        "sha": "6ac1e43419ff30e80bc87696ed2c61a73be6910e",
+        "short": "6ac1e4341",
+        "branch": "conductor/atlas-recovery",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KAFGHR7S7CFXG138BMMEBH",
+      "shortname": "atlas-codex-views-user-assignment",
+      "datetime": "2026-09-15T20:00:07Z",
+      "session": "copilot-atlas-recovery-b0d0",
+      "prompt": "Lets have the codex session take on the Remaining E1 Sequence/Activity views and the E2 domain/layer/Azure views",
+      "summary": "Captured user-authored Codex parallelprogramme assignment, no I/Npivot. Foreground durablebriefreq-01M2KA6YK6SJBRF4MF27H0J8XE open/ACKpending; initial20callT2fanout2 contract/design/newtree/exactmanifest, no sixnativefiles/sharedCoreShellwithoutseam, reuseGrok/Substrate, noE3/E4/liveAzure/sourceexecution. Claude/Groknoticesretained. Nextmeaningfulcheckpoint checksACK andupdatesexistingplan/soleownershipviaresponsibleowner, noextraGHCPagent orpolling. GHCPstillclosesI/NandsoleAtlaspublication/desktopschedule.",
+      "kind": "prompt",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Capture Codex assignment while continuing unchanged Atlas I/N closure",
+      "done_when": "Verbatimassignmentrecorded andpendingACK tracked; existingI/Nexecutionnotderailed",
+      "tier": "T2",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M2KBV0S2HR7AFXB8KW8ZCX0T",
+      "shortname": "atlas-recovery-c11-checkpoint",
+      "datetime": "2026-09-15T20:23:52Z",
+      "session": "copilot-atlas-recovery-b0d0",
+      "prompt": "Continue I/N closure unchanged; user also assigns Codex Remaining E1 Sequence/Activity and E2 domain/layer/Azure, with periodic milestone task-tree reporting.",
+      "summary": "C11 12/12 partialcheckpoint. UDG10oneapprovedowned-HWNDdiagnostic VERIFIED1/1PASS/UNREPRODUCED,source20D6589E119additions0deletions/protectedadmissionunchanged; original10lookupsfoundandrootidentityconsistentonthisrun, nullcensusunexecuted, no historicalcause/fixclaimed. Ownerexactfinite-dispositionrequestreq-01M2KBN3QVFDRTE72N7TRHHQJE askscontrolledblank-ownedWindow negative measurementoracle thenONEfreshunchangedfullqualification ifadmitted; no fallback/timeouts/selector/productchange. GOAL2 boundednativecandidateQUALIFICATION COMPLETEat46e2f266/product4d506: retainedNFT8independentlyPASSall764input/binaryhashes,115/115andmutation/glyphcriteria. Ruling120OwnerrecordsqualifiedATCHECKPOINTnotacceptedformain; futureseparatesecondnativecandidate/currentbase/combinedA-R/publicationbyClaude afterI, notinventedcurrentcompatibility. GOAL1stillINCOMPLETE:AppUIAoutcomegate/fullrunner/Release/finalIreviews/publishpending. Codexuserassignmentcapturedverbatim al-01M2KAFG... andACKcheckedreq-01M2KA6YK...: codex-atlas-views-conductor/conductor-atlas-views,c46base,fiveviewcontract-design only; no product/desktop; ClaudeACKprocess,Groknoticepending; no GHCPprogrammeagent. Periodicmeaningfultasktreetabled,committed!=published,E3/E4unstarted. No recoverypush orscopepivot; worktrees/rawhistorypreserved.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "C:/Users/malla/.copilot/session-state/b0d0c445-0dbc-47cb-8e51-19bfe9427c29/files/atlas-recovery-plan.json"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Finish accepted Atlas main publication while retaining completed bounded native qualification and separate Codex assignment",
+      "done_when": "I actualfreshjoinedsource passesunchangedgates/Release/finalreviews andpublisheswithhistory/refproof; nativeboundedqualificationrecordedwithoutshipping/combinedinflation; CodexACKtrackedseparately",
+      "tier": "T2",
+      "main_calls": 12,
+      "main_budget": 12,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T19:57:53Z",
+      "duration_seconds": 1559.0,
+      "git": {
+        "sha": "6ac1e43419ff30e80bc87696ed2c61a73be6910e",
+        "short": "6ac1e4341",
+        "branch": "conductor/atlas-recovery",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KG64G2JS1C2ZCM7J6T1KYD",
+      "shortname": "atlas-recovery-c12-static-gate-hold",
+      "datetime": "2026-09-15T21:39:51Z",
+      "session": "copilot-atlas-recovery-b0d0",
+      "prompt": "Finish the existing bounded accepted-Atlas qualification while the watcher owns holistic reporting; only the actual user may approve new work-area transfers.",
+      "summary": "C12 18/18 checkpoint, originalgoal1NOTCOMPLETE. UWQ20controlledownedblankWindowmeasurementcontrol+validdiagnostic-removalmutant/restore executed; noncompilingmoved-after-assertattemptnotcounted. ONEfreshmainjoinedcandidate231f41a7/71de3ddb(5f651aaa+c46) hasallwhole/splittestsPASS:App1134,Core3161,portable2817,NP344; existingfilesymlinkprivilegeskipretained. Full38gates33PASS5FAIL,ReleaseNOTREACHED/no publication. RootindependentlyranONLY5readonlystaticgatesforfullmessages:18historicalauditentriesmissingcapture;MaxIndexBytesenforcementnotrecognized;2OrdinalIgnoreCasecontainments;2STAdiagnosticshapes;2historicalPath-tableparserrows. No repairs/allowlist/gatechangesorcausesassumed. FALSEpre-gateacceptanceal-01M2KEJ2... nowVERIFIEDsupersededbyal-01M2KFHN7Q0WNJNJP3MS7SGCWJoutcomeBLOCKED/acceptancefalse, originalpreserved. TR4preservationonlynotnewimplementation. Watchertookholistic27rows/transferrecommendations; actualUSERONLYnewmovespolicyrecordedplan/liveness, noneapprovedbyroot. Mainwatchsynchronouseventsverified/asyncwakeunproven; userexplicit6callLOCALcallbackcontractspike+retainedSecurity4reviewforwarded,nomainauthoritytransfer. New5-gateclosureareaRECOMMENDED toCodex(optionGrokCoreportion)AWAITINGHUMANREVIEW, no newGHCPimplementationagent/tree/code. Nativegoal2DONEboundedcheckpoint46e2f266/R120, no native-mainclaim; CodexE1/E2ACKapprovedparallelprogrammeunchanged. Mainlastverifiedc46e112a; primarysharedhistoryandallworktrees/receiptskept. FinaljoinedSecurity/Test/Release/publicationremainblocked.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "C:/Users/malla/.copilot/session-state/b0d0c445-0dbc-47cb-8e51-19bfe9427c29/files/atlas-recovery-plan.json"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Preserve truthful accepted-Atlas qualification state and finish publication only after required gates",
+      "done_when": "Fivegatefindingsresolvedunderapprovedscope,fullrunner/Release/finalreviewsPASS,primaryhistorypreserved,nonforcedmainpublicationandactualrefreadback; boundednativeoutcomealreadycomplete",
+      "tier": "T2",
+      "main_calls": 18,
+      "main_budget": 18,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T20:29:54Z",
+      "duration_seconds": 4197.0,
+      "git": {
+        "sha": "6ac1e43419ff30e80bc87696ed2c61a73be6910e",
+        "short": "6ac1e4341",
+        "branch": "conductor/atlas-recovery",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KJMH2A999CP24JX5H8GPTB",
+      "shortname": "preserve-owned-closer-audit",
+      "datetime": "2026-09-15T22:22:40Z",
+      "session": "copilot-atlas-recovery-b0d0",
+      "prompt": "Prioritize non-destructive audit/proof preservation and commit in your own GHCP trees so Grok can qualify; no new product work or role transfer.",
+      "summary": "Own-checkout history preservation only. All prior working audit lines backed up and retained; Codex is user-approved for exactfive-static-gateclosure, ACK/newtruthfulbase pending; IHP6 handled onlybyexistingIwriter. No othertree/main/product/test/tool changes, gateweakening, cleanup or publication. Goal1remainsblocked5gates/Release/finalreviews; nativegoal2boundedqualificationdone. LatestmainGrokstranded gate identifiesonlytwoGHCPtrees, nottheoldCodexfinding. This commit preservesownprompt/correction/history and derived output, notqualification.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Preserve and commit own accumulated audit history without dropping any working line",
+      "done_when": "Every pre-existing audit line remains, own derived outputs verified and exact own commit read back; no product/main mutation",
+      "tier": "T0",
+      "fan_out": 0,
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T22:05:54Z",
+      "duration_seconds": 1006.0
     }
   ],
   "changes": [
