@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:03:21Z",
+  "generated": "2026-09-15T20:14:11Z",
   "audit": [
     {
       "actor": null,
@@ -18399,6 +18399,42 @@ window.AUDIT_DATA = {
         "branch": "owner/atlas-views",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2KB97R5CR0QD061B471TYDG",
+      "shortname": "atlas-owner-semantic-resource-forks",
+      "datetime": "2026-09-15T20:14:10Z",
+      "session": "codex-atlas-views-owner",
+      "prompt": "Resume Owner decision task FIRST re-mark design-slice audit in your C:/Projects/ai-de-owner-atlas-views, same identity. Two lane designs scoped, E2 frozen e2c17251ad0480ac66e3442d5b31483e02e1ecee at C:/Projects/ai-de-atlas-architecture-views/docs/design/atlas-architecture-views.md. Read sections3–6 only for forks. E1 proposes preserving existing Interaction, new source-bound behavior occurrence model and Sequence/Activity views over same projection; not yet committed. Decisions needed: F1 supported explicit domain/layer intake; F2 Azure root/alias/predicate evidence subset; F3 accepted foundation remains peer authority, do not invent it. Evidence: actual BoundedContextReader in Core/Extraction/BoundedContextMap.cs supports Name/Description/Includes/Tables, not DDD roles/invariants. EF/SQL tables are not DDD. Bicep has scope/symbol/resource type/API/name/existing/loop/conditional/depends_on, no canonical Azure root or richer predicates. Options A extend explicit validated source/spec declaration intake, B heuristic DDD inference, C unavailable-only page. Recommend A with unsupported/unclassified fallback, no heuristic promotion; decide smallest documented contract that can provide positive supported US-E7a/c without E3 authority engine. Azure recommend exact source-evidenced resource root equality, not same-name dedup; specify safe initial supported producer subset without pretending unsupported-only closes entire story. No implementation before grants/design review/foundation. Independent graph review e07c9e59 clears grounding only; asks explicit proof nodes (Conductor repairing). Budget8calls/12min/10k tokens, converge to precise design decisions/required spikes, not broad research. Allowed existing Owner note + audit/derived only, short lease; return committed decision. You remain Owner, distinct E2 author was /root/owner legacy harness name.",
+      "summary": "Read frozen E2 sections 3-6 and actual context/Bicep producer excerpts. Recorded F1 explicit validated source-declared roles/invariants and layers with optional externally admitted specification references, no heuristic semantics or E3 resolver. Recorded F2 declaration versus deployment identity, explicit same-declaration aliases, full-evidence cross-declaration qualification, initial Bicep subset, positive fixtures and focused spikes. F3 remains pending peer authority; no product acceptance.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "codex-astra-owner",
+      "artifacts": [
+        "docs/notes/atlas-views-owner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Settle precise domain/layer intake and Azure identity/predicate design forks while preserving external foundation authority.",
+      "done_when": "Owner note records positive supported F1/F2 contracts and bounded falsifying spikes, retains F3 and full-story gates, and is committed with official audit.",
+      "tier": "T2",
+      "main_calls": 5,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T20:11:27Z",
+      "duration_seconds": 163.0,
+      "git": {
+        "sha": "8c9fa47cc19574f43f7c206251e19af67553b8be",
+        "short": "8c9fa47cc",
+        "branch": "owner/atlas-views",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -22169,6 +22205,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "c46e112a924a8a0a4c86e4552af1f0e30bfa851c",
         "after": "c46e112a924a8a0a4c86e4552af1f0e30bfa851c",
+        "branch": "owner/atlas-views",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2KB97MNFWW1CJ40RF807YGE",
+      "datetime": "2026-09-15T20:14:10Z",
+      "session": "codex-atlas-views-owner",
+      "kind": "decision",
+      "skill": "design-slice",
+      "title": "Atlas explicit semantic intake and evidence-bound resource identity",
+      "prompt": "Decide F1 supported explicit domain/layer intake and F2 Azure root/alias/predicate evidence subset; preserve F3 foundation as peer authority. Converge to precise design decisions and required spikes, not implementation.",
+      "summary": "Chose versioned validated explicit declarations for roles/invariants/layers, separate declared semantics from accepted-spec and implementation truth, preserve Context semantics. Distinguished declaration aliases from fully evidenced deployment-identity equivalence; bounded Bicep support and positive cross-declaration spike remain explicit.",
+      "rationale": "Opened producers lack DDD roles/invariants and canonical Azure identity. Positive supported source-declared paths meet the design need without heuristic promotion or an E3 authority engine.",
+      "artifacts": [
+        "docs/notes/atlas-views-owner.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "8c9fa47cc19574f43f7c206251e19af67553b8be",
+        "after": "8c9fa47cc19574f43f7c206251e19af67553b8be",
         "branch": "owner/atlas-views",
         "pushed": null,
         "commits": []
