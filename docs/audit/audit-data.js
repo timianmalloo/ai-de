@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:36:03Z",
+  "generated": "2026-09-15T20:45:33Z",
   "audit": [
     {
       "actor": null,
@@ -18455,6 +18455,36 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "d3901dc1bdbc42d6f0913dfeb59db78cb6d8722a",
         "short": "d3901dc1b",
+        "branch": "conductor/atlas-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KD2P2Z9HA6H2CBEDZ45TNA",
+      "shortname": "atlas-spikes-qualified",
+      "datetime": "2026-09-15T20:45:32Z",
+      "session": "codex-atlas-views-conductor",
+      "prompt": "Continue E1/E2 with independent lane worktrees and repository coordination, specification/design/implementation loop and rigor.",
+      "summary": "Both bounded spikes cleared by independent acdf4894: E1 5d361f2a source/syntax/symbol only; E2 90189411 repaired projection28checks and3subject faults. Conductor observed exact frozen Linux builds/runs and per-lane project coverage40/18/22/0 in26s, baseline39/18/21 in26s. Combined candidate not measured. Owner a766afa8 admits two design revisions under governingG6 and logical envelope;8P0s remain. Exact mock and shared register requests pending. No foundation, CFG, full Azure identity, native or product acceptance.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-views-grounding.md",
+        "docs/plans/atlas-views.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Qualify frozen E1/E2 spikes and continue admitted design work without peer-owned product edits",
+      "done_when": "Both spike revisions have observed cross-platform evidence and independent bounded clearance, with remaining design barriers explicit",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-15T20:40:47Z",
+      "duration_seconds": 285.0,
+      "git": {
+        "sha": "edb9aa3f089ede041b7c88a4edf2ec514f636f08",
+        "short": "edb9aa3f0",
         "branch": "conductor/atlas-views",
         "pushed": null
       }

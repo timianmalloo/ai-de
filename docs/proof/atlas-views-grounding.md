@@ -149,3 +149,24 @@ remote main. The finite13-row publication handoff remains separate from this new
 Programme and worker trees are retained for active design, original audit provenance and later
 dependency-ordered joins. No peer worktree or dirty primary file was cleaned up. No AIDE_*
 environment was present, so registered episode emission is unavailable in this harness session.
+
+
+## Corrected spike compatibility checkpoint
+
+| Frozen lane | Linux Release build | Observed run | Windows project coverage |
+|---|---|---|---|
+| E1 5d361f2a9de2ebdcc7a255d33ad31d96a3a2e0f1 | 0 warnings, 0 errors; 3.49s | Six fixture groups; three negative-first controls; exact Roslyn4.14/runtime10.0.11 signatures printed | 40 tracked /18 solution /22 outside /0 exempt;22 outside built in26s |
+| E2 901894112b50d5cdd8cd272f1cb4cb3e886366a7 | 0 warnings, 0 errors; 1.91s | 28 checks, named negative cases first; full deployment equality explicitly unresolved | 40 tracked /18 solution /22 outside /0 exempt;22 outside built in26s |
+
+Both Linux sources were exported at the exact commits with git archive, including repository SDK/compiler/package props and only the relevant spike directory. Separate Linux output directories avoid Windows build artifacts. Commands used the same exact SDK executable and build/run shape as the earlier E2 receipt. E1 output ends SUMMARY fixture_groups=6 failures=0 with the static-reconstruction disclosure. E2 output ends PASS28 contract checks, six fixture groups, full deployment equality remains UNRESOLVED. The Conductor read complete output, not only exit codes. Independent spike review remains pending. These results do not prove CFG, native view behavior, authorization or full US-E8.
+
+The before/after gate comparison is per lane against baseline39/18/21 in26s. A combined two-spike candidate has not been joined or measured; its landing gate remains required. No measured speedup or CI Linux coverage is claimed.
+
+
+## Independent spike clearance and design continuation
+
+Reviewer acdf4894c9a957600bfd6e63b6ab59319dad92ff clears E1 5d361f2a only as source/syntax/symbol feasibility, and E2 90189411 only as the repaired experimental projection. The Conductor opened the committed receipt. It records the normal outputs and three E2 subject faults failing the exact dependent assertions. The reviewer excluded an initial parallel-build file-lock failure and credited the subsequent already-built run. No CFG, deployment equality, native or product acceptance was granted.
+
+Owner a766afa88cb4cbbd20c84dc383b213a4ab4e5e94 preserves governing G6 and admits two design-document revisions under one logical envelope. Eight design P0s remain: archetype mapping; E2 typed schema; shared request/observation/completion/Restore contract; foundation/grants/joint guards; executable hard-state mock harnesses; numeric targets/caps/protocol; E1 control-flow paging; per-view E2 native accessibility and consistency oracles. Proposed16ms UI-work target is normative and unmeasured. Both revisions use independent existing worktrees; exact new mock paths await req-01M2KCTTG4ZWAC2K01PB1HYWGK. Upstream grammar discrepancy is reported by req-01M2KD0HNAYKZPBRW2SM9PR63N.
+
+The generated audit-data lease mistakenly held by E1 blocked Conductor and E2 commits across worktrees. The holder explicitly released it; commits then passed identity-bound hooks. No TTL expiry was treated as permission. Shared-register recurrence request req-01M2KCDFNJWXTPRB3G55PJ7Z2E remains pending; no completion claim is made for that obligation.

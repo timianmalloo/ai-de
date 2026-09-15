@@ -198,3 +198,10 @@ E1-S stopped at 13/12 calls before fixtures, a plan defect. E1-S2 identified the
 E2-S completed at 10/12 calls, commit55df5b6e. Conductor observed Linux Release build0warnings/errors,1.84s and23 checks. Reviewer8eb44853 BLOCKED alias input-only assertions, confounded scope fixture, constant authority assertion and missing carrier-limit negative tests. Targeted repair precedes re-review and one new Linux run on the corrected commit. Full deployment identity remains unresolved; Owner requested a separately admitted source-bound producer, shared request req-01M2KC9CR6YCH2NRZRYW28JFT3. No product gate waived.
 
 Conductor editing also hit repeated patch-context failures. No partial edit occurred. The control for this checkpoint is to inspect the actual diff and use an append-only checkpoint instead of retrying unchanged patch context; no such retry constitutes progress.
+
+
+## Qualified spikes, remaining design gates
+
+E1 5d361f2a and E2 90189411 independently cleared by acdf4894 within their bounded feasibility scopes. Both Windows coverage runs40/18/22/0 built22outside in26s; Linux E1 3.49s/sixgroups and E2 1.91s/28checks observed. No combined candidate gate yet.
+
+Owner a766afa8 admits E1-D2 and E2-D2 in existing Markdown paths after shared G6/envelope decision. Each has14-call/20min budget, checkpoint11; exact new mock grants are a separate dependency. Remaining variant: eight independently identified design obligations mapped to frozen evidence; foundation/production DTO/native gates remain unmet. Earlier source spikes do not prove CFG or complete Azure identity. Next join is only reviewed design/spike evidence under the agreed serialized protocol.

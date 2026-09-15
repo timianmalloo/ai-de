@@ -112,3 +112,10 @@ reported in the graph; new nodes have smaller explicit exits, not silent budget 
 | Product | No implementation admitted | Atlas foundation, exact grants and design gates |
 
 All work remains in named lane trees. No desktop, product-source edit, main integration or cleanup occurred in this checkpoint.
+
+
+## Qualified spikes, remaining design gates
+
+E1 5d361f2a and E2 90189411 independently cleared by acdf4894 within their bounded feasibility scopes. Both Windows coverage runs40/18/22/0 built22outside in26s; Linux E1 3.49s/sixgroups and E2 1.91s/28checks observed. No combined candidate gate yet.
+
+Owner a766afa8 admits E1-D2 and E2-D2 in existing Markdown paths after shared G6/envelope decision. Each has14-call/20min budget, checkpoint11; exact new mock grants are a separate dependency. Remaining variant: eight independently identified design obligations mapped to frozen evidence; foundation/production DTO/native gates remain unmet. Earlier source spikes do not prove CFG or complete Azure identity. Next join is only reviewed design/spike evidence under the agreed serialized protocol.
