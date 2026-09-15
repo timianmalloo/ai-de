@@ -6,11 +6,29 @@ using System.Text.Json.Serialization;
 using AiDe.Core.Understanding;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Xunit.Abstractions;
 
 namespace AiDe.Core.Tests.Understanding;
 
-public sealed class AtlasStaticObservationTests
+public sealed class AtlasStaticObservationTests(ITestOutputHelper output)
 {
+    [Theory]
+    [InlineData("add", "remove")]
+    [InlineData("get", "set")]
+    public void AccessorMultisetAssertionsRejectEmptyAndDuplicatedSubsets(string first, string second)
+    {
+        foreach (var actual in new[] { Array.Empty<string>(), new[] { first, first, second } })
+        {
+            var failure = Assert.ThrowsAny<Xunit.Sdk.XunitException>(() =>
+                AssertAccessorMultiset(actual, [first, second]));
+            Assert.Contains("Assert.Equal()", failure.Message, StringComparison.Ordinal);
+            output.WriteLine($"expected=[{first},{second}]; actual=[{string.Join(',', actual)}]; {failure.Message}");
+        }
+    }
+
+    private static void AssertAccessorMultiset(IEnumerable<string> actual, string[] expected) =>
+        Assert.Equal(expected, actual.Order(StringComparer.Ordinal).ToArray());
+
     [Fact]
     public void ActualRetainedManifestPricingIncludesEveryStructuralValue()
     {
@@ -69,12 +87,18 @@ public sealed class AtlasStaticObservationTests
         var property = result.Declarations.Single(item => item.Identifier == "Count");
         var inner = result.Declarations.Single(item => item.Identifier == "Inner");
         Assert.Equal("NotApplicable", Structure(box).GetProperty("ParentState").GetString());
-        foreach (var child in result.Declarations.Where(item => item.Identifier is "get" or "set"))
+        var propertyAccessors = result.Declarations
+            .Where(item => item.Kind is AtlasDeclarationKind.Accessor && item.Identifier is "get" or "set").ToArray();
+        AssertAccessorMultiset(propertyAccessors.Select(item => item.Identifier), ["get", "set"]);
+        foreach (var child in propertyAccessors)
             Assert.Equal(property.ObservationKey, Structure(child).GetProperty("ParentObservationKey").GetString());
         Assert.Equal(box.ObservationKey, Structure(inner).GetProperty("ParentObservationKey").GetString());
         Assert.Equal(inner.ObservationKey, Structure(result.Declarations.Single(item => item.Identifier == "M"))
             .GetProperty("ParentObservationKey").GetString());
-        foreach (var accessor in result.Declarations.Where(item => item.Identifier is "add" or "remove"))
+        var eventAccessors = result.Declarations
+            .Where(item => item.Kind is AtlasDeclarationKind.Accessor && item.Identifier is "add" or "remove").ToArray();
+        AssertAccessorMultiset(eventAccessors.Select(item => item.Identifier), ["add", "remove"]);
+        foreach (var accessor in eventAccessors)
         {
             Assert.Equal("Unavailable", Structure(accessor).GetProperty("ParentState").GetString());
             Assert.Equal(JsonValueKind.Null, Structure(accessor).GetProperty("ParentObservationKey").ValueKind);
