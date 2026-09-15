@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T18:02:58Z",
+  "generated": "2026-09-15T18:05:35Z",
   "audit": [
     {
       "actor": null,
@@ -17555,6 +17555,36 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M2K3XSEHVQ8E5SM9VYDDSZQE",
+      "shortname": "plan-audit-gate-self-test",
+      "datetime": "2026-09-15T18:05:35Z",
+      "session": "codex-audit-gate-conductor",
+      "prompt": "yes do this next",
+      "summary": "One serial tooling author after explicit Core grant and independent plan review. Existing verifier policy retained. T1 plan and coordination pair record actual dependencies, failure oracles, termination variant, exact paths, model rationale and estimated budgets. Doctor observes effective drivers with four shared regeneration markers; use own-tree orchestrator, do not mutate primary.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/audit-gate-self-test.md",
+        "docs/coordination/audit-gate-self-test.md",
+        "docs/proof/audit-gate-self-test.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Add meaningful self-tests to the audit-log verifier without changing policy",
+      "done_when": "Red-first proof, independent review, applicable checks and committed evidence support a Core handoff",
+      "tier": "T1",
+      "fan_out": 4,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T18:01:52Z",
+      "duration_seconds": 223.0
     }
   ],
   "changes": [
