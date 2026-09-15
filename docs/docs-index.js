@@ -5911,6 +5911,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "547599b3a81162c48e18f139d1969e09a99e9810e61d30b9f0b14dd1e0c10957"
     },
     {
+      "id": "note-recursive-surface-ownership-owner",
+      "path": "docs/notes/recursive-surface-ownership-owner.md",
+      "title": "Recursive surface ownership: bounded Owner decisions",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Defines the bounded interpretation of existing ownership declarations for the recursive Workbench surface gate. Assignments remain exclusively in session-contracts section 2.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "verification",
+        "decision"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9ac32814d507b12595ec948bbf2afde35276c5378249abcf6ea14ddb4d595a1b"
+    },
+    {
       "id": "note-session-design-decoration-line",
       "path": "docs/notes/session-design-decoration-line.md",
       "title": "The decoration line — one grammar for every turn (class · tier · lease · shape · template, provenance on demand), the task class per prompt with free-form as the explicit default, and where the tier control sits",
@@ -18634,5 +18660,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c098a7937db9de42729b1f524d005a86ab7ce5e85832d27fdc17ed24d0550635"
+  "graphSha256": "28715afce0c772af7b58c317b483f68925a7ca2943d8e50bfcef7f2948481f34"
 };

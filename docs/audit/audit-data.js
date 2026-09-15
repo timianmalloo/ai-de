@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T23:42:50Z",
+  "generated": "2026-09-15T14:23:48Z",
   "audit": [
     {
       "actor": null,
@@ -16310,6 +16310,29 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T23:34:34Z",
       "duration_seconds": 495.0
+    },
+    {
+      "id": "al-01M2JQ7PYW3WYGXM3N3R05K0M5",
+      "shortname": "recursive-surface-owner-decisions",
+      "datetime": "2026-09-15T14:23:48Z",
+      "session": "codex-surface-ownership-owner",
+      "prompt": "Act as separate Owner for the bounded recursive surface-ownership programme. Confirm T1, inspect current code and section 2, decide recursive discovery, relative identity, grouped declarations, ambiguity and malformed rows. Review grounding/handoff to design review to single author red/green to independent review to join/proof/commit graph. Write only the bounded Owner decision note; no implementation or main integration. Evaluate Python-only programme-local join contract without .NET recount/build or push.",
+      "summary": "Confirmed T1 and bounded interpretation. Observed existing gate passing 13 while independent recursive inventory has 17, including unassigned Sessions/ProseView.cs. Required path-cell-only parsing, exact relative identities, grouped same-cell directory inheritance, cross-owner ambiguity failure, stale exceptions, and independent plan review. Approved programme-local join scope conditional on Test Architect gate selection. No implementation acceptance.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": "GPT-6 Astra Owner",
+      "artifacts": [
+        "docs/notes/recursive-surface-ownership-owner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Give the Conductor a bounded evidence-grounded decision contract",
+      "done_when": "Owner semantics, scope, graph conditions, and join scope are recorded for independent review",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-09-15T14:20:29Z",
+      "duration_seconds": 199.0
     }
   ],
   "changes": [
