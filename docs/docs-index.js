@@ -18682,7 +18682,7 @@ window.DOCS_INDEX = {
       "phase": "understanding-views",
       "reviewBy": "2027-03-14",
       "reviewSuggested": [],
-      "summary": "Admits D-0 Solution tree this horizon: an Architecture-pane navigator over Core-named paths (indexed artifacts joined to a query-time census). Grain, skip-omission, unindexed and not-recorded are distinct. D-1…D-6 stay named-and-deferred with §A5 admitted-when quoted. No Atlas, no second graph store, no Tests perspective, no allow-list row here.",
+      "summary": "Admits D-0 Solution tree this horizon: Architecture-pane navigator of (path, kind) nodes, kind ∈ {file-artifact, census-folder}. Coverage is indexed-parent | unindexed only; not-recorded is Disclosure. D-1…D-6 stay named-and-deferred with §A5 quoted. N4 repair: grain closed, US-T5 split, fixture F*. Status remains draft.",
       "tags": [
         "understanding-views",
         "D-0",
@@ -18738,15 +18738,15 @@ window.DOCS_INDEX = {
         {
           "kind": "class",
           "title": "Conceptual domain model (DM1 / DM4 — before UX/UI)",
-          "mermaid": "classDiagram\n  class SolutionTreeProjection {\n    queryTime\n    invariant every visible node is a Core-named path\n    invariant skip-listed directories are not nodes\n    invariant no folder is minted by splitting artifact_path_id\n    invariant census is not stored\n  }\n  class TreeNode {\n    workspaceRelativePath\n  }\n  class IndexedArtifact {\n    path\n    kind\n  }\n  class CensusFolder {\n    path\n    coverage\n  }\n  class Coverage {\n    indexedParent\n    unindexed\n    notRecorded\n  }\n  SolutionTreeProjection --> TreeNode : projects many\n  TreeNode --> IndexedArtifact : is exactly one of\n  TreeNode --> CensusFolder : is exactly one of\n  CensusFolder --> Coverage : has exactly one"
+          "mermaid": "classDiagram\n  class SolutionTreeProjection {\n    queryTime\n    invariant one path at most one node\n    invariant skip-listed directories are not nodes\n    invariant folder exists iff census emitted it minus skip\n    invariant declared_at never creates a folder\n    invariant census is not stored\n  }\n  class TreeNode {\n    path\n    kind\n  }\n  class FileArtifact {\n    path\n  }\n  class CensusFolder {\n    path\n    coverage\n  }\n  class Coverage {\n    indexedParent\n    unindexed\n  }\n  class Disclosure {\n    pythonTsPerFile\n    skipOmittedCount\n    shortfallIo\n    shortfallPermission\n    shortfallCap\n    unresolvablePath\n  }\n  SolutionTreeProjection --> TreeNode : projects many\n  SolutionTreeProjection --> Disclosure : carries\n  TreeNode --> FileArtifact : kind file-artifact\n  TreeNode --> CensusFolder : kind census-folder\n  CensusFolder --> Coverage : has exactly one"
         },
         {
           "kind": "flowchart",
           "title": "User flows (happy + alternate + error + recovery)",
-          "mermaid": "flowchart TD\n  start([Operator in Architecture]) --> ws{Workspace open?}\n  ws -->|no| nows[No-workspace: Open a workspace to see its solution tree.]\n  nows --> openWs[Operator opens a workspace]\n  openWs --> ws\n  ws -->|yes| load[Loading: Reading the workspace tree…]\n  load --> q{Census plus join}\n  q -->|IPC or daemon error| err[Error: Could not read the workspace tree.]\n  err --> retry[Retry]\n  retry --> load\n  q -->|zero nodes and no shortfall| empty[Empty: No indexed artifacts or folders to show.]\n  q -->|payload| tree[Tree of Core-named paths]\n  tree --> py{Python/TS scopes present?}\n  py -->|yes| disc[Disclosure: files not listed individually]\n  py -->|no| nodes\n  disc --> nodes[For each Core-named path]\n  nodes --> kind{What is it?}\n  kind -->|skip-listed directory| skipX[Not a node — omit]\n  kind -->|census folder, zero joinable artifacts, not skipped| unidx[Unindexed word plus glyph]\n  kind -->|census folder, joinable artifacts| parent[Indexed-parent folder]\n  kind -->|census shortfall| nr[Not recorded plus omitted count if cap]\n  kind -->|indexed artifact| art[Kind glyph plus name]\n  parent --> expand[Expand or collapse]\n  art --> act{Activate}\n  act -->|reveal structure| graph[Existing GraphAsync / DescribeAsync neighbourhood]\n  act -->|open source| src[NodeContentAsync then codeviewer]\n  graph --> done([Goal: understand this artifact])\n  src --> done\n  unidx --> done2([Goal: coverage is honest])\n  nr --> done2"
+          "mermaid": "flowchart TD\n  start([Operator in Architecture]) --> ws{Workspace open?}\n  ws -->|no| nows[No-workspace: Open a workspace to see its solution tree.]\n  nows --> openWs[Operator opens a workspace]\n  openWs --> ws\n  ws -->|yes| prior{Prior payload?}\n  prior -->|no| load[Loading: Reading the workspace tree…]\n  prior -->|yes| stale[Rows stay, marked Stale]\n  load --> q{Census plus join}\n  stale --> q\n  q -->|IPC or daemon error| err[Error: Could not read the workspace tree.]\n  err --> retry[Retry]\n  retry --> load\n  q -->|zero nodes and no Disclosure| empty[Empty copy]\n  empty --> showG[Show Graph]\n  q -->|payload| tree[Tree of path-kind nodes plus chrome Disclosures]\n  tree --> skipDisc[N skip-listed directories omitted if N greater than 0]\n  tree --> py{Python/TS scopes present?}\n  py -->|yes| disc[Exact US-T6 copy]\n  py -->|no| nodes\n  disc --> nodes[For each node]\n  nodes --> kind{kind}\n  kind -->|census-folder unindexed| unidx[Unindexed leaf — no children]\n  kind -->|census-folder indexed-parent| parent[Expand or collapse]\n  kind -->|file-artifact| art[Kind glyph plus name]\n  art --> act{Activate}\n  act -->|Enter View source| src[NodeContentAsync then codeviewer]\n  act -->|Ctrl+Enter Reveal in graph| graph[GraphAsync / DescribeAsync]\n  src -->|error| srcErr[Could not open source]\n  srcErr --> srcRetry[Retry] --> src\n  graph -->|error| graphErr[Could not reveal in graph]\n  graphErr --> graphRetry[Retry] --> graph\n  src -->|ok| done([Goal: understand this artifact])\n  graph -->|ok| done\n  unidx --> done2([Goal: coverage is honest])\n  skipDisc --> done2"
         }
       ],
-      "sourceSha256": "b3660461cbdf6f824a8d30d0596d7153bec88e1254da9f920a919e0b24b0b9e1"
+      "sourceSha256": "69c0f8135c1d1a931572517cb6e71b54452e7dc344633fa30dd67c5b8e60c08b"
     },
     {
       "id": "threat-model-ai-native-ide",
@@ -19008,5 +19008,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "9ba4d0c99452d9bf2ec103ab7308254d57e8af9a3e01d9397f2e720446c06106"
+  "graphSha256": "ce94a04f4098981025cb1f348b6c8caa01989b50ff5b4dbd91e47bac0b044278"
 };

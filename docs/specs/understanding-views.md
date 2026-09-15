@@ -20,15 +20,16 @@ links:
 review-by: 2027-03-14
 review-suggested: []
 summary: >-
-  Admits D-0 Solution tree this horizon: an Architecture-pane navigator over Core-named
-  paths (indexed artifacts joined to a query-time census). Grain, skip-omission, unindexed
-  and not-recorded are distinct. D-1…D-6 stay named-and-deferred with §A5 admitted-when
-  quoted. No Atlas, no second graph store, no Tests perspective, no allow-list row here.
+  Admits D-0 Solution tree this horizon: Architecture-pane navigator of (path, kind)
+  nodes, kind ∈ {file-artifact, census-folder}. Coverage is indexed-parent | unindexed
+  only; not-recorded is Disclosure. D-1…D-6 stay named-and-deferred with §A5 quoted.
+  N4 repair: grain closed, US-T5 split, fixture F*. Status remains draft.
 ---
 
 # Spec: Understanding views — D-0 Solution tree
 
-- **Status:** Draft (adversarial gate is N4; authors do not self-clear).
+- **Status:** Draft (N4 BLOCKED then repaired this turn; authors do **not** self-clear;
+  status is not accepted).
 - **Tier (cost-of-error):** T2 — it admits the first understanding view onto the Architecture
   allow-list later; a wrong grain makes every later view navigate a lie.
 - **Author / date:** N3 `/specify`, session `understanding-views-specify`, 2026-09-14.
@@ -58,6 +59,8 @@ These sentences govern this spec. Later slices quote them; they do not thin them
 **Grain** (`note-understanding-views-owner-n1-disposition`):
 
 > One tree node is exactly one Core-named workspace-relative path: **either** one indexed artifact (a file/document resolved from latest assertions) **or** one census folder (a directory Core observed). Skip-listed directories are not nodes. A census folder’s coverage is `indexed-parent` | `unindexed` | `not-recorded`.
+
+**N4 grain close (this spec — does not thin the quote):** Owner “indexed artifact” is this spec’s **file-artifact**. Owner “census folder” is **census-folder**. Node identity is the pair `(path, kind)` with `kind ∈ {file-artifact, census-folder}`. Folder **Coverage** is only `indexed-parent` | `unindexed`. Owner’s `not-recorded` is **Disclosure** (projection shortfall), never a census-folder coverage value and never a reason to mint a folder.
 
 **AR3** (`spec-addendum-c-perspectives` §A5):
 
@@ -118,14 +121,14 @@ item — without hiding gaps or inventing folders.*
 ### Core scenario
 
 The operator is in **Architecture** with a workspace open. They open the **Solution tree**. Core
-returns a query-time census of directories joined to latest-generation indexed artifacts. The tree
-lists those Core-named paths by project and folder, each indexed artifact with a kind glyph. A
-census folder that has joinable indexed artifacts is an **indexed-parent**. A census folder that is
-not skip-listed and has zero joinable indexed artifacts shows **Unindexed** (word + glyph). A
-skip-listed directory (example: `bin`) is **not a node**. A census shortfall shows **Not recorded**,
-never a complete-looking empty tree. The operator activates an indexed artifact: the Architecture
-graph shows its neighbourhood (`GraphAsync` / `DescribeAsync`) **or** source opens
-(`NodeContentAsync` / admitted `codeviewer`). No third reveal path. No Atlas type.
+returns a query-time census of directories joined to latest-generation file-artifacts. The tree
+lists `(path, kind)` nodes. A census-folder with joinable file-artifacts under it, or whose path
+is a scope `declared_at`, is **indexed-parent**. A census-folder that is not skip-listed, has no
+joinable file-artifacts, and is not a `declared_at` path shows **Unindexed** as a non-expanding
+leaf. A skip-listed directory (example: `bin`) is **not a node**; the tree shows a skip-omission
+count. A projection shortfall is **Disclosure** (`Not recorded` / `Omitted (N)`), never a folder
+state. Primary activate on a file-artifact is **View source**; secondary is **Reveal in graph**.
+No third reveal path. No Atlas type.
 
 If this path works end to end, D-0 is worth building. Everything else in this spec protects that
 path from looking complete when it is not.
@@ -143,42 +146,63 @@ disk-now, derived (DM7). The conceptual model’s `artifact_dim` is **not** real
 | Term | Definition | Kind |
 |---|---|---|
 | **Solution tree** | The Architecture-pane navigator this spec admits (D-0). Not Explorer. Not Atlas. | Presentation entity (identity: the one instance in Architecture) |
-| **Tree node** | Exactly one Core-named workspace-relative path. | Entity (identity: that path) |
-| **Indexed artifact** | A file or document resolved from latest-generation assertions (joined via `declared_at` / scope location). | Entity |
-| **Census folder** | A directory Core observed at query time. Folder identity comes from the census, never from splitting `artifact_path_id`. | Entity |
-| **Coverage** | On a census folder only: `indexed-parent` \| `unindexed` \| `not-recorded`. Exactly one. | Value object |
-| **Indexed-parent** | A census folder with one or more joinable indexed artifacts under it. | Coverage value |
-| **Unindexed** | A census folder **not** on the skip list, with **zero** joinable indexed artifacts. Rider “no index”, not VS Code hide. | Coverage value |
-| **Not-recorded** | Census shortfall: IO, permission, or cap. Never a fake folder. Never a complete-looking empty tree. | Coverage value |
-| **Skip-listed directory** | A directory the **one** surviving Core skip set names. **Not a node.** Not unindexed (the index is not supposed to cover it). Not not-recorded (the skip is known). | Not in the tree |
+| **Tree node** | Exactly one pair `(path, kind)` with `kind ∈ {file-artifact, census-folder}`. Path is Core-named, workspace-relative. One path yields at most one node. | Entity (identity: that pair) |
+| **File-artifact** | A file or document resolved from latest-generation assertions (joined via scope location). **Directory-valued assertions are not file-artifact nodes** (Python/TS `ScopeId`, a `declared_at` directory, any assertion whose resolved path is a directory Core observed). | Entity |
+| **Census-folder** | A directory Core’s query-time census **emitted**, minus the skip set. Folder identity comes only from that emission. Splitting `artifact_path_id` does not mint one. `declared_at` does not mint one. | Entity |
+| **Coverage** | On a census-folder only, exactly one of `indexed-parent` \| `unindexed`. Not-recorded is not Coverage. | Value object |
+| **Indexed-parent** | Coverage of a census-folder that has one or more joinable **file-artifact** descendants **or** whose path equals a scope `declared_at`. Widened so a Python/TS scope directory is not unindexed. | Coverage value |
+| **Unindexed** | Coverage of a census-folder that is not skip-listed, has **zero** joinable file-artifact descendants, and is **not** a `declared_at` path. Rider “no index”, not VS Code hide. The node is a **non-expanding leaf** (no child rows). | Coverage value |
+| **Disclosure** | Projection shortfall or honesty line on the **tree**, not a node kind. Includes: Python/TS per-file not recorded; skip-omission count; census IO; permission; cap omit; unresolvable assertion path. User-facing shortfall word: `Not recorded`. | Value object |
+| **Skip-listed directory** | A directory the **one** surviving Core skip set names. **Not a node.** Not unindexed. Not a Disclosure kind of its own — counted in the skip-omission disclosure. | Not in the tree |
 | **Skip set** | One existing Core skip policy the census consumes. Not a fourth `HashSet`. Not VS Code `files.exclude`. Architecture unifies today’s disagreeing lists. | Value object (existing policy) |
-| **Kind glyph** | The visible kind of an indexed artifact (code / data / architecture, plus file kind). Colour is never the only signal (`DESIGN.md`). | Value object |
-| **Disclosure** | An honest shortfall the tree must show (Python/TS per-file not recorded; omitted-by-cap count). | Value object |
+| **Kind glyph** | Visible kind of a file-artifact (code / data / architecture, plus file kind). Colour is never the only signal (`DESIGN.md`). | Value object |
+| **View source** | Primary activate on a file-artifact. Existing Architecture action (`NodeViewKind.Source`). | Interaction |
+| **Reveal in graph** | Secondary activate on a file-artifact. Existing Architecture action (`NodeViewKind.GraphNeighbourhood`). | Interaction |
 
-**Grain (declared before any column):** one tree node is exactly one Core-named workspace-relative
-path — **either** one indexed artifact **or** one census folder. Skip-listed directories are not
-nodes. Two people given this grain and a real workspace produce the same node set.
+Do not use the unglossed phrase **“indexed folder”**. Say census-folder with coverage indexed-parent.
 
-**Not the grain:** one node = indexed artifact OR unindexed folder only — that erases indexed-parent
-folders and forces illegal path-splits to nest files. **Not the grain:** `OverviewAsync` clusters
-(identifier-prefix groups, `MaxClusters` omission, no unindexed). **Not the grain:** `GraphAsync`
-nodes (no path, caps omit nodes, no folders).
+**Grain (declared before any column):** one tree node is exactly one `(path, kind)` with
+`kind ∈ {file-artifact, census-folder}`. Two people given this grain and a real workspace produce
+the same node set.
+
+**Root: in.** The workspace root is a census-folder node whenever a workspace is open. Its path is
+the empty workspace-relative path `""`. The skip set does not omit the root. Coverage uses the same
+function. Tree-level Disclosures attach to tree chrome, not as extra nodes.
+
+**Folder existence.** A census-folder node exists **iff** the census emitted that directory and the
+skip set does not name it. `declared_at` never creates a folder. Unresolvable assertion paths never
+create a folder.
+
+**One path → at most one node.** If the census emitted `P` as a directory, `P` is a census-folder
+and is not a file-artifact. Directory-valued assertions are not file-artifact nodes. Many assertions
+that resolve to the same file path collapse to one file-artifact node.
+
+**Coverage function** (census-folder `P` only):
+
+- `indexed-parent` iff at least one file-artifact joins under `P` (child or descendant) **or** some
+  scope’s `declared_at` equals `P`.
+- `unindexed` otherwise.
+
+**Not the grain:** one node = file-artifact OR unindexed folder only — that erases indexed-parent
+folders and forces illegal path-splits. **Not the grain:** Coverage includes not-recorded.
+**Not the grain:** `OverviewAsync` clusters. **Not the grain:** `GraphAsync` nodes.
 
 ```mermaid
 classDiagram
   class SolutionTreeProjection {
     queryTime
-    invariant every visible node is a Core-named path
+    invariant one path at most one node
     invariant skip-listed directories are not nodes
-    invariant no folder is minted by splitting artifact_path_id
+    invariant folder exists iff census emitted it minus skip
+    invariant declared_at never creates a folder
     invariant census is not stored
   }
   class TreeNode {
-    workspaceRelativePath
-  }
-  class IndexedArtifact {
     path
     kind
+  }
+  class FileArtifact {
+    path
   }
   class CensusFolder {
     path
@@ -187,35 +211,46 @@ classDiagram
   class Coverage {
     indexedParent
     unindexed
-    notRecorded
+  }
+  class Disclosure {
+    pythonTsPerFile
+    skipOmittedCount
+    shortfallIo
+    shortfallPermission
+    shortfallCap
+    unresolvablePath
   }
   SolutionTreeProjection --> TreeNode : projects many
-  TreeNode --> IndexedArtifact : is exactly one of
-  TreeNode --> CensusFolder : is exactly one of
+  SolutionTreeProjection --> Disclosure : carries
+  TreeNode --> FileArtifact : kind file-artifact
+  TreeNode --> CensusFolder : kind census-folder
   CensusFolder --> Coverage : has exactly one
 ```
 
 **Aggregates and the one invariant each protects**
 
 - **Solution tree projection** (root: the query-time projection for the open workspace).
-  **Invariant:** every visible node is a Core-named workspace-relative path; skip-listed
-  directories are not nodes; a census folder carries exactly one coverage value; folders are
-  never invented by splitting `artifact_path_id`; unresolvable assertion paths are
-  **not-recorded**, not guessed folders; the App does not walk disk.
+  **Invariant:** every visible node is a `(path, kind)` pair as grained above; skip-listed
+  directories are not nodes; a census-folder carries exactly one Coverage value from the function
+  above; folders are never invented by splitting `artifact_path_id` or from `declared_at`;
+  projection shortfalls are Disclosure, not Coverage; the App does not walk disk.
 - **Perspective Layout** (existing, Addendum C §A6). **Invariant:** every surface in
   Architecture’s host is of a kind Architecture admits. D-0’s kind enters that set **only** in
   the slice that builds it (AR3).
-- **Scope Snapshot** (existing evidence aggregate). Untouched. Indexed artifacts are latest
+- **Scope Snapshot** (existing evidence aggregate). Untouched. File-artifacts are latest
   assertions under the committed generation; this spec does not rewrite extractors.
 
 **Python / TypeScript / Bicep honesty (this horizon)**
 
 - Python and TypeScript extractors store `request.ScopeId` as `Provenance.ArtifactPathId` with
   null source location — **not a file path**. This spec does **not** rewrite extractors.
-- Those **scopes** appear as indexed **folders** (the scope directory).
-- Per-file `.py` / `.ts` artifacts are **not recorded**. No fake file rows from a second walk.
-- Bicep filename-only paths resolve via scope location; never treat the filename as a folder;
-  else **not-recorded**.
+- Iff the census emitted the scope’s `declared_at` directory, that census-folder has coverage
+  **indexed-parent** (the `declared_at` widening). It is not unindexed and not a Disclosure
+  shortfall.
+- Zero file-artifact nodes with extensions `.py` / `.ts` are minted from a second walk.
+- Disclosure copy (exact): `Python and TypeScript files are not listed individually. The scope folder is indexed.`
+- Bicep filename-only paths resolve via scope location onto an existing census-folder; never treat
+  the filename as a folder; else Disclosure `Not recorded`, no node.
 
 **Durable representation.** Out of this spec (architecture). Binding constraint: **no stored
 census / `folder_dim` this horizon**; **no second graph store**.
@@ -225,11 +260,11 @@ census / `folder_dim` this horizon**; **no second graph store**.
 **In (this horizon, D-0 only)**
 
 - The Solution tree as an Architecture-pane navigator over the declared grain.
-- Query-time Core census + latest indexed artifacts, App-must-not-read (DC-022).
-- Hard states: empty, loading, unindexed, not-recorded, error, no-workspace — plus Python/TS
-  disclosure and skip-omission as a named rule.
-- Activate → existing `GraphAsync` / `DescribeAsync` **or** `NodeContentAsync` / admitted
-  `codeviewer`.
+- Query-time Core census + latest file-artifacts, App-must-not-read (DC-022).
+- Hard states: empty, loading, unindexed (leaf), error, no-workspace, stale-while-refresh — plus
+  Python/TS disclosure, skip-omission **count**, and named Disclosure shortfalls (IO / permission / cap).
+- Activate on a file-artifact: primary **View source**, secondary **Reveal in graph** (existing
+  Architecture actions). No third reveal path.
 - The **requirement** that the later building slice add **one** `SurfaceKind` row with
   Architecture in its `Perspectives` column, and that the menu pick it up by derivation
   (ADR-0030). This specify turn does **not** add that row.
@@ -302,83 +337,107 @@ census / `folder_dim` this horizon**; **no second graph store**.
 
 ### User stories & acceptance criteria (testable)
 
-Each criterion is falsifiable. Oracle: headless Core/App test against a fixture workspace, plus a
-rendered-surface / query test where the story says so. Duration SLOs are **recorded, not asserted
-in CI** (ADR-0029; DC-107). Caps are architecture’s; this spec requires **disclosure**, not a
-number.
+Each criterion is falsifiable. Duration SLOs are **recorded, not asserted in CI** (ADR-0029; DC-107).
+The production cap value is architecture’s; tests inject a **test-overridable cap**.
 
-**US-T1 — As an architect, I want artifacts listed by project and folder with a kind glyph, so that I can find what the index covers.**
-- **Given** a workspace with at least one joinable indexed artifact under a census folder **When** the Solution tree opens **Then** that artifact is a tree node under that folder **And** the node shows a kind glyph **And** the glyph is not the only signal of kind (word or accessible name accompanies it).
-- **Given** two indexed artifacts whose resolved paths sit in different census folders **When** the tree opens **Then** they are not siblings under a path-split invented folder; each sits under the census folder Core observed for that path.
-- **Falsifier:** `OverviewAsync` clusters as rows; files nested by splitting `artifact_path_id`; a node without a kind glyph; kind by colour alone.
+**Composed fixture F\*** — one real-disk workspace used by US-T2, US-T3, US-T4, and one US-T5 shortfall:
 
-**US-T2 — As an architect, I want indexed-parent folders to exist as nodes, so that files have a real parent without illegal path-splits.**
-- **Given** a census folder with one or more joinable indexed artifacts under it **When** the tree opens **Then** that folder is a node with coverage `indexed-parent` **And** it is not labelled Unindexed **And** the indexed artifacts appear under it.
-- **Falsifier:** only files appear (parents erased); parent labelled Unindexed; parent invented by splitting a path that Core did not observe as a directory.
+| On disk | Role |
+|---|---|
+| A census directory containing at least one joinable file-artifact (e.g. `src/` + a file the fixture extractor indexes) | indexed-parent |
+| `unindexed_probe/` — not skip-listed, zero joinable file-artifacts, not a `declared_at` path. **Not `docs/`.** | unindexed leaf |
+| `bin/` with files on disk, name on the surviving skip set | omitted node + skip-count |
+| One shortfall arranged at query time via a Core seam (US-T5a IO, US-T5b permission, or US-T5c cap) | Disclosure |
+
+Three observable outcomes on F\* (plus the indexed-parent context): `unindexed_probe` is Unindexed; `bin` is absent and skip-count ≥ 1; the arranged shortfall’s Disclosure is present.
+
+**Oracle for US-T3 and US-T5a–c:** (1) the tree-query DTO **and** (2) a **headless visual-tree walk** of the Solution tree surface. A query-only green is not a pass.
+
+**US-T1 — As an architect, I want file-artifacts listed by project and folder with a kind glyph, so that I can find what the index covers.**
+- **Given** F\* **When** the Solution tree opens **Then** the joinable file-artifact is a `kind=file-artifact` node under the census-folder the census emitted for its resolved path **And** UIA Name contains that file’s kind word.
+- **Given** two file-artifacts whose resolved paths sit in different census-folders **When** the tree opens **Then** each sits under the census-folder Core emitted for that path (no path-split parent).
+- **Given** two latest-generation assertions that resolve to the same file path **When** the tree opens **Then** exactly one `kind=file-artifact` node exists for that path.
+- **Given** a directory-valued assertion whose resolved path equals a census-emitted directory **When** the tree opens **Then** that path is a census-folder node **And** it is not also a file-artifact node.
+- **Failing input:** `OverviewAsync` clusters as rows; parents minted by splitting `artifact_path_id`; two nodes for one path; a directory-valued assertion rendered as a file-artifact; UIA Name without kind.
+
+**US-T2 — As an architect, I want indexed-parent census-folders as nodes, so that files have a real parent without illegal path-splits.**
+- **Given** F\*’s indexed-parent directory **When** the tree opens **Then** that census-folder node has coverage `indexed-parent` **And** the file-artifact nodes appear under it.
+- **Failing input:** only file-artifacts appear; parent coverage `unindexed`; parent invented from a path the census did not emit.
 
 **US-T3 — As an architect, I want a folder the index has not covered shown as Unindexed, so that I do not take silence for coverage.** *(§A5 unindexed; Rider “no index”)*
-- **Given** a workspace whose Core census includes directory `docs/` **And** `docs/` is not on the surviving skip set **And** zero latest-generation indexed artifacts join under `docs/` **When** the Solution tree opens **Then** `docs/` is a tree node **And** its coverage is `unindexed` **And** the node shows the word “Unindexed” and a glyph **And** the node is not omitted.
-- **Falsifier:** `docs/` missing; `docs/` labelled only not-recorded; `docs/` looking like an empty success; a skip-listed directory shown as Unindexed (that is US-T4’s row, and it must not pass here).
+- **Given** F\* **When** the Solution tree opens **Then** the query DTO contains `unindexed_probe` as `kind=census-folder` coverage `unindexed` **And** a headless visual-tree walk finds a row whose visible text includes `unindexed_probe` and `Unindexed` **And** that row has **zero child rows** (non-expanding leaf).
+- **Failing input:** `unindexed_probe` missing; coverage `indexed-parent`; row labelled `Not recorded`; expandable empty children; skip-listed `bin` shown as Unindexed (that fails US-T4, not this row).
 
-**US-T4 — As an architect, I want skip-listed directories omitted, so that build output is not flooded in as “unindexed”.** *(distinct from US-T3)*
-- **Given** a workspace containing directory `bin/` whose name is on the surviving Core skip set **And** `bin/` has files on disk **When** the Solution tree opens **Then** `bin/` is not a tree node **And** no node for `bin/` carries coverage `unindexed` or `not-recorded`.
-- **Given** the same workspace as US-T3 **When** a test asserts skip-omission and unindexed together **Then** `bin/` is absent **And** `docs/` is present as Unindexed — two different outcomes, one fixture.
-- **Falsifier:** `bin/` appears as Unindexed; `bin/` appears as Not recorded; `bin/` appears as indexed-parent; skip implemented as VS Code-style hide with no named rule.
+**US-T4 — As an architect, I want skip-listed directories omitted and counted, so that build output is neither flooded nor silently hidden.** *(distinct from US-T3)*
+- **Given** F\* **When** the Solution tree opens **Then** no node has path `bin` **And** tree chrome shows the exact copy `N skip-listed directories omitted` with N ≥ 1.
+- **Failing input:** `bin` row present (including greyed); skip-count absent (silence); skip-count copy on a `bin` row; `unindexed_probe` used as the skip example.
 
-**US-T5 — As an architect, I want census shortfall shown as Not recorded, so that a failed walk never looks like an empty workspace.**
-- **Given** the census cannot observe a directory because of IO, permission, or payload cap **When** the Solution tree opens **Then** the shortfall is disclosed as coverage `not-recorded` **And** a cap cause includes an omitted count **And** the tree does not render a complete-looking empty success **And** no fake folder is invented for the unobserved path.
-- **Falsifier:** silent omission; empty tree that looks complete; a guessed folder from a path split; the shortfall labelled only Unindexed (US-T3 must fail that input; US-T5 must pass it).
+**US-T5a — As an architect, I want a census IO shortfall disclosed, so that a failed walk never looks like an empty workspace.**
+- **Given** F\* **And** the Core census IO seam is arranged to fail for a named relative path that is not `unindexed_probe` or `bin` **When** the Solution tree opens **Then** Disclosure includes `Not recorded` with cause IO **And** no census-folder node exists for the unobserved path **And** a headless visual-tree walk shows that Disclosure **And** `unindexed_probe` remains Unindexed (US-T3 still holds).
+- **Failing input:** silent drop; a minted folder for the unobserved path; the IO shortfall labelled `Unindexed`; query-only pass without visual-tree walk.
 
-**US-T6 — As an architect, I want Python/TypeScript scopes disclosed as indexed folders without fake per-file rows, so that the tree does not look complete for those languages.**
-- **Given** a Python or TypeScript scope whose assertions store `ScopeId` as `ArtifactPathId` **When** the tree opens **Then** the scope directory appears as an indexed folder **And** no per-file `.py` / `.ts` artifact nodes are minted from a second walk **And** a disclosure that per-file artifacts are not recorded is present on the rendered surface (query test + rendered-surface test).
-- **Falsifier:** fake `.py`/`.ts` rows; scope folder missing; disclosure absent while such scopes exist; the tree looking complete for those languages.
+**US-T5b — As an architect, I want a permission shortfall disclosed.**
+- **Given** F\* **And** the Core census permission seam denies a named directory **When** the Solution tree opens **Then** Disclosure includes `Not recorded` with cause permission **And** that directory is not a node **And** a headless visual-tree walk shows that Disclosure.
+- **Failing input:** denied directory appears as Unindexed; no Disclosure; fake folder.
+
+**US-T5c — As an architect, I want a cap shortfall disclosed.**
+- **Given** F\* **And** the **test-overridable cap** is set below F\*’s uncapped node count **When** the Solution tree opens **Then** Disclosure includes exact copy `Omitted (N)` with integer N > 0 **And** a headless visual-tree walk shows that copy **And** the tree is not presented as complete.
+- **Failing input:** truncation with no `Omitted (N)`; cap treated as Coverage `unindexed`; production cap hard-coded so the test cannot arrange the shortfall.
+
+**US-T6 — As an architect, I want Python/TypeScript scopes as indexed-parent census-folders without fake per-file rows, so that the tree does not look complete for those languages.**
+- **Given** a workspace whose census emitted a directory `P` **And** a Python or TypeScript scope has `declared_at` equal to `P` **And** assertions store `ScopeId` as `ArtifactPathId` **When** the tree opens **Then** `P` is a census-folder with coverage `indexed-parent` **And** zero `kind=file-artifact` nodes have extensions `.py` or `.ts` **And** the rendered surface contains the exact copy `Python and TypeScript files are not listed individually. The scope folder is indexed.`
+- **Failing input:** `P` coverage `unindexed`; `P` treated as Disclosure `Not recorded`; fake `.py`/`.ts` file-artifact rows; disclosure copy absent or paraphrased; `declared_at` minting `P` when the census did not emit it.
 
 **US-T7 — As an architect, I want Bicep filename-only provenance resolved via scope location, so that a filename is never treated as a folder.**
-- **Given** a Bicep assertion whose `artifact_path_id` is a filename only **And** the scope location resolves it to a census folder **When** the tree opens **Then** the artifact is a file node under that folder **And** the filename is not a census folder.
-- **Given** the same filename-only provenance **And** the scope location cannot resolve it **When** the tree opens **Then** the path is **not-recorded** **And** no folder is invented from the filename.
-- **Falsifier:** a folder named for the `.bicep` file; a guessed parent from string split; silent drop without not-recorded.
+- **Given** a Bicep assertion whose `artifact_path_id` is a filename only **And** the scope location resolves it onto an existing census-folder **When** the tree opens **Then** the artifact is a file-artifact node under that census-folder **And** no census-folder path equals that filename.
+- **Given** the same filename-only provenance **And** the scope location cannot resolve it **When** the tree opens **Then** Disclosure includes `Not recorded` **And** no node is minted from the filename.
+- **Failing input:** a census-folder named for the `.bicep` file; a guessed parent from string split; silent drop with no Disclosure.
 
-**US-T8 — As an architect, I want activating an indexed artifact to reveal it in the Architecture graph or open its source, so that the tree is a navigator not a third store.**
-- **Given** an indexed artifact node in the Solution tree **When** I activate it to reveal structure **Then** the Architecture graph shows that artifact’s neighbourhood via existing `GraphAsync` / `DescribeAsync` **And** no Atlas type is loaded **And** no second graph store is written.
-- **Given** an indexed artifact node **When** I activate it to open source **Then** content is fetched via `NodeContentAsync` and shown in admitted `codeviewer` **And** the App does not read the file (DC-022).
-- **Given** a census folder node **When** I activate it **Then** the folder expands or collapses **And** no graph node is invented for that folder **And** no third reveal path runs.
-- **Falsifier:** a new IPC “treeReveal”; Atlas `Understanding/**`; App `File.Read*`; folder activation fabricating a graph entity.
+**US-T8 — As an architect, I want primary View source and secondary Reveal in graph on a file-artifact, so that the tree is a navigator not a third store.**
+- **Given** a file-artifact node **When** I invoke **View source** (primary: Enter) **Then** content is fetched via `NodeContentAsync` and shown in admitted `codeviewer`.
+- **Given** a file-artifact node **When** I invoke **Reveal in graph** (secondary: Ctrl+Enter) **Then** the Architecture graph shows that artifact’s neighbourhood via existing `GraphAsync` / `DescribeAsync`.
+- **Given** View source fails (NodeContent shortfall or IPC error) **When** the reveal surface would show content **Then** that surface shows error copy with **Retry** **And** Retry re-invokes `NodeContentAsync` **And** the tree selection is unchanged.
+- **Given** Reveal in graph fails **When** the graph would show the neighbourhood **Then** the graph shows error with **Retry** **And** Retry re-invokes `GraphAsync` / `DescribeAsync` **And** the tree selection is unchanged.
+- **Given** an indexed-parent census-folder **When** I press Right or Enter **Then** it expands or collapses **And** View source and Reveal in graph do not run.
+- **Given** an unindexed census-folder **When** I press Enter, Right, or Left **Then** it stays a leaf **And** no child rows appear **And** View source and Reveal in graph do not run.
+- **Failing input:** a third reveal IPC; folder activation opening source or fabricating a graph entity; unindexed folder expanding empty children; activate error with no Retry.
 
-**US-T9 — As an operator, I want empty, loading, error and no-workspace to be distinct, so that I know what to do next.**
-- **Given** no workspace is open **When** Architecture shows the Solution tree **Then** the no-workspace state is shown with the copy in Part C **And** the tree is not an empty success.
-- **Given** a workspace is open **And** the tree query is in flight **Then** the loading state is shown.
-- **Given** a workspace is open **And** the census-plus-join returns zero nodes and no not-recorded shortfall **Then** the empty state is shown **And** it is not labelled Unindexed (Unindexed is a folder coverage, not the whole tree).
-- **Given** the tree query fails (daemon/IPC error) **When** the surface would render **Then** the error state is shown with a Retry path **And** Retry re-enters loading.
-- **Falsifier:** no-workspace looking like empty; empty looking like unindexed; error looking like empty; loading with stale nodes presented as current without a stale mark.
+**US-T9 — As an operator, I want empty, loading, error, no-workspace, and stale-while-refresh to be distinct, so that I know what to do next.**
+- **Given** no workspace is open **When** Architecture shows the Solution tree **Then** the no-workspace copy in Part C is shown.
+- **Given** first open of the tree (no prior payload) **And** the query is in flight **Then** the loading copy is shown.
+- **Given** a populated tree **When** a refresh starts **Then** the previous rows remain visible marked `Stale` until the new payload arrives (stale-while-refresh).
+- **Given** a workspace is open **And** the census-plus-join returns zero nodes and no Disclosure shortfall **Then** the empty copy is shown **And** the one next action is **Show Graph** (existing Architecture `canvas` Show).
+- **Given** the tree query fails (daemon/IPC error) **When** the surface would render **Then** the error copy is shown with **Retry** **And** Retry re-enters loading.
+- **Failing input:** no-workspace using empty copy; empty labelled Unindexed; empty with no Show Graph action; refresh blanking to loading; error without Retry.
 
 **US-T10 — As an operator, I want the Solution tree reachable only as an Architecture kind whose menu entry is derived, so that AR3 and ADR-0030 hold.**
 - **Given** the slice that builds D-0 has not landed **When** a headless test reads `SurfaceContentFactory.Kinds` **Then** there is no Solution-tree kind row (this specify turn adds none).
 - **Given** the slice that builds D-0 **When** it admits the kind **Then** Architecture is in that row’s `Perspectives` column **And** the View menu/palette gain “Show `<Title>`” by `PerspectiveMenu.For` with **no** edit to a hand-written list **And** Coding and Explore do not admit the kind.
 - **Given** a test-time kind row admitted only by Architecture (existing US-C4 mutation) **Then** that contract still holds after D-0’s row exists.
-- **Falsifier:** a menu string for an unbuilt kind; a second list; Explore or Coding admitting the tree; scaffolding D-1…D-6 rows “for later”.
+- **Failing input:** a menu string for an unbuilt kind; a second list; Explore or Coding admitting the tree; scaffolding D-1…D-6 rows.
 
-**US-T11 — As a reviewer, I want the tree query to be a new Core projection, so that Overview/Graph are not abused and the App does not walk disk.**
-- **Given** the D-0 query **When** it runs **Then** it is one new `IWorkspaceQueries` method with a new IPC operation **And** it is not `overview` or `graph`.
-- **Given** that query **When** it needs directories **Then** Core performs the census **And** the App process does not enumerate workspace directories to build nodes.
-- **Falsifier:** App `Directory.Enumerate*`; handler mapped to `overview`/`graph`; a second SQLite graph.
+**US-T11 — As a reviewer, I want the tree query to be a new Core projection, so that Overview/Graph are not abused and forbidden APIs are not used.**
+- **Given** the D-0 query **When** it runs **Then** it is one new `IWorkspaceQueries` method with a new IPC operation that is not `overview` or `graph`.
+- **PROBE-APP-ENUM.** **Given** the App process handles a Solution tree open on F\* **When** the query and first render complete **Then** the App process has not invoked `Directory.EnumerateFileSystemEntries`, `EnumerateDirectories`, `EnumerateFiles`, `GetDirectories`, `GetFiles`, or `GetFileSystemEntries` on the workspace root or any descendant. (Core census inside the Core process is allowed.)
+- **PROBE-ATLAS.** **Given** the Solution tree open **Then** no loaded type has namespace prefix `AiDe.Core.Understanding` **And** no loaded type is sourced from `src/AiDe.Core/Understanding/`.
+- **PROBE-FILE-READ.** **Given** View source on a file-artifact **Then** the App process has not invoked `File.ReadAllText`, `File.ReadAllBytes`, `File.Open`, or `File.OpenRead` on that workspace path (content comes from `NodeContentAsync`).
+- **Failing input:** App directory walk; handler mapped to `overview`/`graph`; Atlas `Understanding` type loaded; App file read to fill a node.
 
-**US-T12 — As an operator, I want a bounded payload that degrades honestly, so that a large workspace does not silently drop folders.**
-- **Given** the projection hits its cap **When** the tree renders **Then** omitted-by-cap is disclosed as not-recorded / omitted count **And** never silent.
-- **Falsifier:** truncated tree with no omitted count; cap as a plausible complete tree.
+**US-T12 — Cap disclosure is US-T5c.** (No separate criterion; US-T5c is the cap oracle.)
 
 **US-T13 — As an operator, I want the Solution tree not to be Explorer, so that I still have a file-agnostic reading mode.**
-- **Given** Architecture is active with the Solution tree open **When** I switch to Explore **Then** the Explore body is still the ADR-0017 graph+reader **And** the Solution tree is not that body.
-- **Falsifier:** D-0 replacing Explorer; D-0 hosted as Explore’s full-window surface.
+- **Given** Architecture is active with the Solution tree open **When** I switch to Explore **Then** the Explore body is still the ADR-0017 graph+reader.
+- **Failing input:** D-0 replacing Explorer; D-0 hosted as Explore’s full-window surface.
 
 ### Non-functional requirements (ISO/IEC 25010 checklist)
 
 | Attribute | Requirement (measurable) |
 |---|---|
-| Functional suitability | US-T1…T13 hold against the fixture matrix in Boundary set. A green that cannot distinguish US-T3/T4/T5 is a failed suite, not a pass. |
-| Performance efficiency | Payload is capped; omitted-by-cap is disclosed (US-T12). Latency is **emitted and recorded** on the normal path (IO1); **no CI test asserts a duration under a constant** (ADR-0029 / DC-107). Cap values are architecture’s. |
-| Reliability | Query failure → error + Retry (US-T9). Census IO/permission → not-recorded, not a crash-shaped empty tree (US-T5). |
-| Security | App must not read workspace files to build the tree (DC-022). No new identity, PII collection, or irreversible action. Tree shows workspace-relative paths already in Core’s authority. STRIDE: information disclosure of skip-listed dirs is prevented by US-T4; spoofing a folder via path-split is prevented by the grain. |
-| Usability | Unindexed / not-recorded / skip-omission are distinct in the UI (word + glyph). Empty, loading, error, no-workspace each have specified copy and a next action. Deepened in Part B. |
+| Functional suitability | US-T1…T13 hold against F\* and the Boundary set. A green that cannot distinguish US-T3 / US-T4 / US-T5a–c is a failed suite. |
+| Performance efficiency | Payload is capped; omitted-by-cap is US-T5c. Latency is **emitted and recorded** on the normal path (IO1); **no CI test asserts a duration under a constant** (ADR-0029 / DC-107). Production cap is architecture’s; tests inject a test-overridable cap. |
+| Reliability | Query failure → error + Retry (US-T9). Census IO/permission → Disclosure, not a crash-shaped empty tree (US-T5a/b). Activate failure → Retry on the reveal surface (US-T8). |
+| Security | App must not read workspace files to build the tree (DC-022). PROBE-APP-ENUM, PROBE-ATLAS, PROBE-FILE-READ. No new identity, PII collection, or irreversible action. STRIDE: skip-listed dirs must not re-enter as Unindexed (US-T4); path-split folders forbidden by the grain. |
+| Usability | Unindexed / skip-count / Not-recorded Disclosure are distinct (word + glyph). Empty’s one next action is Show Graph. Deepened in Part B. |
 | Compatibility | Native Windows WPF shell (`DESIGN.md` `x-platform:windows; x-framework:wpf`). No web-only tree. High-contrast theme uses the same semantic roles. |
 | Maintainability | One skip set consumed, not copied. One new query, not a fork of Overview. Menu derived (ADR-0030 mutation test remains the oracle). |
 | Portability | N/A — desktop Windows workstation product. |
@@ -390,19 +449,25 @@ The test matrix. Each row is a distinct oracle.
 
 | # | Input | Required outcome | Distinct from |
 |---|---|---|---|
-| B1 | Workspace with indexed files under observed folders | Indexed artifacts + indexed-parent folders | B3, B6 |
-| B2 | Census dir, not skipped, zero joinable artifacts (`docs/`) | Node + `unindexed` | B3, B4 |
-| B3 | Skip-listed dir with files on disk (`bin/`) | **No node** | B2, B4 |
-| B4 | IO/permission/cap shortfall | `not-recorded` + omitted count if cap | B2, B5, B6 |
+| B1 | F\* indexed-parent directory | census-folder coverage `indexed-parent` + file-artifact children | B3, B6 |
+| B2 | F\* `unindexed_probe/` | census-folder coverage `unindexed`, non-expanding leaf | B3, B4 |
+| B3 | F\* `bin/` | **No node**; skip-count ≥ 1 | B2, B4 |
+| B4a | Core census IO seam fail | Disclosure `Not recorded` cause IO; no minted folder | B2, B5, B6 |
+| B4b | Core census permission seam deny | Disclosure `Not recorded` cause permission; no node | B2 |
+| B4c | Test-overridable cap below node count | Disclosure `Omitted (N)` N>0 | B2, B6 |
 | B5 | No workspace | No-workspace copy | B6 |
-| B6 | Workspace, zero nodes, no shortfall | Empty copy | B2, B4, B5 |
-| B7 | Query in flight | Loading | B6 |
+| B6 | Workspace, zero nodes, no Disclosure shortfall | Empty copy + Show Graph | B2, B4 |
+| B7 | First open, query in flight | Loading | B6, B7s |
+| B7s | Refresh of populated tree | Stale-while-refresh | B7 |
 | B8 | IPC/daemon failure | Error + Retry | B4, B6 |
-| B9 | Python/TS ScopeId provenance | Indexed folder + disclosure; no `.py`/`.ts` file nodes | B1 looking complete |
-| B10 | Bicep filename-only, resolvable | File under scope folder | B11 |
-| B11 | Bicep filename-only, unresolvable | not-recorded; filename ≠ folder | B2 |
-| B12 | Activate indexed artifact | Graph neighbourhood **or** codeviewer | Folder expand |
-| B13 | Hostile/malformed path in an assertion | not-recorded; no invented folder | B1 |
+| B9 | Python/TS `declared_at` = census-emitted `P` | `P` coverage `indexed-parent`; zero `.py`/`.ts` file-artifacts; exact US-T6 copy | B2, B4 |
+| B10 | Bicep filename-only, resolvable | file-artifact under existing census-folder | B11 |
+| B11 | Bicep filename-only, unresolvable | Disclosure `Not recorded`; filename ≠ folder | B2 |
+| B12 | File-artifact Enter | View source (`NodeContentAsync` / `codeviewer`) | Folder expand |
+| B12b | File-artifact Ctrl+Enter | Reveal in graph | B12 |
+| B12c | View source / Reveal failure | Error + Retry on that surface | B8 |
+| B13 | Hostile/malformed assertion path | Disclosure; no invented folder | B1 |
+| B14 | PROBE-APP-ENUM / PROBE-ATLAS / PROBE-FILE-READ | Fail if forbidden API or Atlas type used | — |
 
 ### Comparables & user evidence (sourced)
 
@@ -444,7 +509,7 @@ From `note-understanding-views-n2-comparables` (official docs opened this progra
 
 ### Personas & jobs-to-be-done (deepened)
 
-**Architect / reviewer.** Expert, dense, keyboard-first, already in Architecture. They know VS/Rider trees. They distrust a clean empty pane. Success from their side: “I can see what is indexed, what is not, and I can jump to the graph or the file. I can tell `bin` was skipped on purpose, `docs` is unindexed, and a permission failure is not an empty repo.”
+**Architect / reviewer.** Expert, dense, keyboard-first, already in Architecture. They know VS/Rider trees. They distrust a clean empty pane. Success from their side: “I can see what is indexed, what is not, and I can jump to the graph or the file. I can tell `bin` was skipped on purpose (count, no row), `unindexed_probe` is Unindexed, and a permission failure is Not recorded.”
 
 **Operator from Coding.** Same person, different moment. They switched perspective to understand an artifact. They will look for a navigator beside the graph. They must reach the tree without guessing (findability ≤ 2 steps from Architecture: default pane or View → Show Solution tree).
 
@@ -454,7 +519,7 @@ Evidence: N2 comparables (Verified) + §A5 admitted-when (Verified requirement).
 
 **Categorization.** One surface: Solution tree. Nodes are paths, not graph clusters, not Explorer resources, not Structurizr model elements.
 
-**Hierarchy.** Workspace root (implied) → census folders nested by the paths Core observed → indexed artifacts under the folder they join to. Coverage is an attribute of a folder node, not a parallel tree.
+**Hierarchy.** Workspace root **in** (census-folder path `""`) → census-folders nested by paths Core emitted → file-artifacts under the folder they join to. Coverage is an attribute of a census-folder. Unindexed census-folders are leaves. Tree-level Disclosures sit in chrome, not as nodes.
 
 **Navigation.** Host: Architecture docking host (Addendum C body = DockHost). Entry: derived “Show Solution tree” (and default-layout inclusion if design-slice so decides). Sibling surfaces: Graph (`canvas`), Evidence (`view`), diagrams. Explore remains a different perspective. Coding does not host this tree.
 
@@ -464,15 +529,23 @@ Evidence: N2 comparables (Verified) + §A5 admitted-when (Verified requirement).
 |---|---|
 | Solution tree | This surface |
 | Unindexed | Coverage `unindexed` |
-| Not recorded | Coverage `not-recorded` |
-| (no node) | Skip-listed — there is no label because there is no node |
+| Not recorded | Disclosure shortfall (IO / permission / unresolvable path) |
+| `Omitted (N)` | Disclosure cap shortfall |
+| `N skip-listed directories omitted` | Skip-omission count; N ≥ 1 when F\* `bin/` exists. Not a `bin` row. |
+| View source | Primary activate (file-artifact) |
+| Reveal in graph | Secondary activate (file-artifact) |
+| Show Graph | Empty state’s one Architecture-reachable next action |
 | Open a workspace to see its solution tree. | No-workspace |
-| Reading the workspace tree… | Loading |
+| Reading the workspace tree… | Loading (first open) |
+| Stale | Refresh in flight on a populated tree |
 | No indexed artifacts or folders to show. | Empty |
-| Could not read the workspace tree. | Error |
-| Python and TypeScript files are not listed individually. The scope folder is indexed. | US-T6 disclosure |
+| Could not read the workspace tree. | Tree query error |
+| Could not open source. | View source error |
+| Could not reveal in graph. | Reveal in graph error |
+| Retry | Recovery for tree query, View source, and Reveal in graph errors |
+| Python and TypeScript files are not listed individually. The scope folder is indexed. | US-T6 disclosure (exact) |
 
-Do not label skip-listed directories “hidden” or “excluded” — those words are IntelliJ/VS Code’s and they mean something else (N2 lesson 5).
+Do not label skip-listed directories “hidden” or “excluded” — those words are IntelliJ/VS Code’s and they mean something else (N2 lesson 5). Do not say “indexed folder”.
 
 ### User flows (happy + alternate + error + recovery)
 
@@ -482,34 +555,40 @@ flowchart TD
   ws -->|no| nows[No-workspace: Open a workspace to see its solution tree.]
   nows --> openWs[Operator opens a workspace]
   openWs --> ws
-  ws -->|yes| load[Loading: Reading the workspace tree…]
+  ws -->|yes| prior{Prior payload?}
+  prior -->|no| load[Loading: Reading the workspace tree…]
+  prior -->|yes| stale[Rows stay, marked Stale]
   load --> q{Census plus join}
+  stale --> q
   q -->|IPC or daemon error| err[Error: Could not read the workspace tree.]
   err --> retry[Retry]
   retry --> load
-  q -->|zero nodes and no shortfall| empty[Empty: No indexed artifacts or folders to show.]
-  q -->|payload| tree[Tree of Core-named paths]
+  q -->|zero nodes and no Disclosure| empty[Empty copy]
+  empty --> showG[Show Graph]
+  q -->|payload| tree[Tree of path-kind nodes plus chrome Disclosures]
+  tree --> skipDisc[N skip-listed directories omitted if N greater than 0]
   tree --> py{Python/TS scopes present?}
-  py -->|yes| disc[Disclosure: files not listed individually]
+  py -->|yes| disc[Exact US-T6 copy]
   py -->|no| nodes
-  disc --> nodes[For each Core-named path]
-  nodes --> kind{What is it?}
-  kind -->|skip-listed directory| skipX[Not a node — omit]
-  kind -->|census folder, zero joinable artifacts, not skipped| unidx[Unindexed word plus glyph]
-  kind -->|census folder, joinable artifacts| parent[Indexed-parent folder]
-  kind -->|census shortfall| nr[Not recorded plus omitted count if cap]
-  kind -->|indexed artifact| art[Kind glyph plus name]
-  parent --> expand[Expand or collapse]
+  disc --> nodes[For each node]
+  nodes --> kind{kind}
+  kind -->|census-folder unindexed| unidx[Unindexed leaf — no children]
+  kind -->|census-folder indexed-parent| parent[Expand or collapse]
+  kind -->|file-artifact| art[Kind glyph plus name]
   art --> act{Activate}
-  act -->|reveal structure| graph[Existing GraphAsync / DescribeAsync neighbourhood]
-  act -->|open source| src[NodeContentAsync then codeviewer]
-  graph --> done([Goal: understand this artifact])
-  src --> done
+  act -->|Enter View source| src[NodeContentAsync then codeviewer]
+  act -->|Ctrl+Enter Reveal in graph| graph[GraphAsync / DescribeAsync]
+  src -->|error| srcErr[Could not open source]
+  srcErr --> srcRetry[Retry] --> src
+  graph -->|error| graphErr[Could not reveal in graph]
+  graphErr --> graphRetry[Retry] --> graph
+  src -->|ok| done([Goal: understand this artifact])
+  graph -->|ok| done
   unidx --> done2([Goal: coverage is honest])
-  nr --> done2
+  skipDisc --> done2
 ```
 
-Findability: from Architecture, the tree is one Show command or an already-open pane — not buried in settings. Dead ends forbidden: error without Retry; not-recorded without words; skip-listed dirs reappearing as Unindexed.
+Findability: from Architecture, the tree is one Show command or an already-open pane. Dead ends forbidden: error without Retry; skip-omission without a count; unindexed folder that expands; empty without Show Graph.
 
 ### Wireframe-level structure (Skeleton)
 
@@ -519,35 +598,36 @@ Low fidelity on purpose. Toolkit unfrozen (N7). Arrangement, not chrome.
 Architecture host
 +------------------+---------------------------+
 | Solution tree    | Graph / diagrams          |
-| [filter later]   | (existing canvas)         |
+| chrome:          | (existing canvas)         |
+|  N skip-listed…  |                           |
+|  Omitted (N)     |                           |
+|  US-T6 copy      |                           |
 |                  |                           |
-| v src            |                           |
-|   v App          |                           |
-|     Program.cs   |  neighbourhood or         |
-|   v docs         |  codeviewer on activate   |
+| v src            | Enter: View source        |
+|     Program.cs   | Ctrl+Enter: Reveal in graph|
+|   unindexed_probe|                           |
 |     Unindexed    |                           |
-|   (bin omitted)  |                           |
-| Not recorded (N) |                           |
-|                  |                           |
-| disclosure line  |                           |
+|   (no bin row)   |                           |
 +------------------+---------------------------+
 ```
 
 - Tree is a **navigator column** beside the existing graph, not a replacement of `canvas`.
-- Coverage marks sit on the folder row (word + glyph), not in a status bar only.
-- Disclosure line is visible when Python/TS scopes exist; absent when they do not (test can fail).
-- Hard states replace the tree body (empty / loading / error / no-workspace), they do not draw a fake root.
+- Coverage marks sit on the census-folder row (word + glyph). Unindexed rows have no expander children.
+- Skip-omission is chrome count, not a `bin` row and not silence.
+- Python/TS copy is chrome; absent when no such scopes (test can fail).
+- Hard states replace the tree body (empty / loading / error / no-workspace). Empty offers **Show Graph** only.
 
 Default zone (Left vs Right vs extra pane) is **design-slice**. This skeleton records the job: navigator beside reveal, not a second Explorer window.
 
 ### UX acceptance criteria (falsifiable)
 
-- **UX-1.** From Architecture, the operator reaches the Solution tree in ≤ 2 steps (Show command, or it is already in the layout). *Falsifier:* only reachable from Coding or a settings page.
-- **UX-2.** Every flow in the diagram has a specified recovery: no-workspace → open workspace; error → Retry; not-recorded → still a tree plus disclosure; loading → result or error.
-- **UX-3.** US-T3, US-T4 and US-T5 are visually distinguishable: Unindexed is a labelled node; skip-omission is absence of that node; Not recorded is a labelled shortfall. A colour-only distinction fails.
-- **UX-4.** Activating an indexed artifact does not navigate to Explore and does not open Atlas. Reveal stays in Architecture (graph or `codeviewer`).
-- **UX-5.** Folder activate never feels like a failed file open: it expands/collapses; it does not show Error.
-- **UX-6.** Python/TS disclosure is next to the tree, not only in Diagnostics (Diagnostics is Coding-only today — N1). *Falsifier:* disclosure only on a surface the Architecture operator cannot see.
+- **UX-1.** From Architecture, the operator reaches the Solution tree in ≤ 2 steps (Show command, or it is already in the layout). *Failing input:* only reachable from Coding or a settings page.
+- **UX-2.** Every flow in the diagram has a specified recovery: no-workspace → open workspace; tree error → Retry; View source error → Retry; Reveal in graph error → Retry; empty → Show Graph; loading/stale → result or error.
+- **UX-3.** US-T3, US-T4 and US-T5a–c are visually distinguishable: Unindexed is a labelled **leaf** node; skip-omission is **no row plus** `N skip-listed directories omitted`; Not recorded / `Omitted (N)` is chrome Disclosure. Colour-only fails.
+- **UX-4.** View source and Reveal in graph stay in Architecture. They do not navigate to Explore and do not open Atlas.
+- **UX-5.** Indexed-parent Enter/Right expands or collapses. Unindexed Enter/Right does not expand and does not show Error.
+- **UX-6.** Python/TS disclosure is tree chrome, not only Diagnostics (Coding-only today — N1). *Failing input:* disclosure only on a surface the Architecture operator cannot see.
+- **UX-7.** Empty state’s only next action is **Show Graph**. *Failing input:* empty with no action, or with Retry as the only action (that is the error state).
 
 ---
 
@@ -579,16 +659,18 @@ Reference `DESIGN.md` (U3a). No arbitrary values.
 |---|---|
 | Tree ground | `{colors.surface}` / `{colors.surface-raised}` |
 | Primary node name | `{colors.text}` |
-| Coverage / disclosure / not recorded | `{colors.text-muted}` |
-| Unindexed mark (word + glyph; colour third) | `{colors.inferred}` / `{colors.stale}` — never colour alone |
-| Not-recorded / omitted | `{colors.text-muted}` or `{colors.stale}` per DESIGN.md “Absence is a state” |
+| Coverage / disclosure | `{colors.text-muted}` |
+| Unindexed mark (word + glyph; colour third) | `{colors.unverified}` — **not** `{colors.inferred}` or `{colors.stale}` |
+| Not-recorded Disclosure | `{colors.unverified}` (DESIGN.md “Not Recorded”) + word `Not recorded` |
+| Cap / skip-count Disclosure | `{colors.text-muted}` |
+| Stale-while-refresh | `{colors.stale}` + word `Stale` |
 | Error | `{colors.danger}` |
 | Selection / accent ground | `{colors.accent}` with **only** `{colors.accent-contrast}` as ink |
 | Focus ring | 2px `{colors.focus}` |
 | Separators | `{colors.border}` (decorative); control bounds `{colors.border-strong}` |
 | Type | `{typography.ui}` for chrome; `{typography.mono}` only for paths if shown as paths |
-| Density | Compact (`{spacing.scale}`) |
-| Icon size | `{icon.sm}` / `{icon.md}` |
+| Density | Compact (`DESIGN.md`: 28px list rows, 24×24 target — **not** 44px rail rows) |
+| Icon size | `{icon.sm}` (16px) inside the 28px row; the **hit rect is the full row** |
 
 Experience qualities: **dense, not cramped; honest, not optimistic; calm, not ornamental.** Opposite of: empty-success chrome, colour-only badges, file-manager toolbars.
 
@@ -598,31 +680,40 @@ Experience qualities: **dense, not cramped; honest, not optimistic; calm, not or
 
 | Component | States required (U9) |
 |---|---|
-| Tree | default, loading, empty, error, no-workspace, populated, not-recorded shortfall, Python/TS disclosure present/absent |
-| Folder node | default, hover, focus, selected, expanded, collapsed, `indexed-parent`, `unindexed`, disabled N/A |
-| Artifact node | default, hover, focus, selected, activating, disabled N/A |
-| Skip-listed dir | **no component** — absence is the state |
-| Disclosure line | present (when US-T6 applies), absent (when it does not) |
+| Tree | default, loading, empty, error, no-workspace, populated, stale-while-refresh, skip-count present/absent, cap omit present/absent, Python/TS disclosure present/absent, IO/permission Disclosure present/absent |
+| Census-folder indexed-parent | default, hover, focus, selected, expanded, collapsed |
+| Census-folder unindexed | default, hover, focus, selected; **not** expanded/collapsed (leaf) |
+| File-artifact | default, hover, focus, selected, activating |
+| Skip-listed dir | **no component** — counted in chrome only |
 | Retry | default, focus, pressed, disabled while in-flight |
+| Show Graph (empty only) | default, focus, pressed |
 
-**Screen 2 — Reveal (existing).** Graph neighbourhood or `codeviewer`. This spec does not restyle them. It requires they are the only activate targets.
+**Screen 2 — Reveal (existing).** `codeviewer` (View source) or graph neighbourhood (Reveal in graph). Error+Retry states on those surfaces are required (US-T8).
 
-First-run: same as empty/no-workspace, not a coach-mark tour (YAGNI). Overflow: virtualize; cap + omitted count (US-T12).
+First-run: same as empty/no-workspace, not a coach-mark tour (YAGNI). Overflow: virtualize; cap + `Omitted (N)` (US-T5c).
 
 ### Motion, copy, accessibility & performance
 
-- **Motion:** Hard-cut between loading and result (`Transition:HardCut`). Expand/collapse may use `{motion.fast}` / `{motion.base}` **gated on `prefers-reduced-motion` / Windows animation setting**. No skeleton that looks like a complete tree.
+- **Motion:** Hard-cut between loading and result (`Transition:HardCut`). Expand/collapse of **indexed-parent** rows may use `{motion.fast}` / `{motion.base}` **gated on `prefers-reduced-motion` / Windows animation setting**. Unindexed rows do not animate expand. No skeleton that looks like a complete tree.
 - **Copy (in-voice, load-bearing):**
   - Unindexed: `Unindexed`
   - Not recorded: `Not recorded`
   - Cap: `Omitted (N)` with N the omitted count
+  - Skip-omission: `N skip-listed directories omitted` (absent when N = 0)
   - No-workspace: `Open a workspace to see its solution tree.`
   - Loading: `Reading the workspace tree…`
-  - Empty: `No indexed artifacts or folders to show.`
-  - Error: `Could not read the workspace tree.` Action: `Retry`
-  - Python/TS: `Python and TypeScript files are not listed individually. The scope folder is indexed.`
-- **WCAG 2.2 AA:** node name + coverage in the accessible name; role tree/treeitem; keyboard Up/Down/Left/Right/Enter; contrast per DESIGN.md ink×ground matrix (runtime census remains the oracle); coverage not colour-only; hit target for expanders not below the compact density floor already used in the shell.
+  - Stale: `Stale`
+  - Empty: `No indexed artifacts or folders to show.` Action: `Show Graph`
+  - Tree error: `Could not read the workspace tree.` Action: `Retry`
+  - View source error: `Could not open source.` Action: `Retry`
+  - Reveal in graph error: `Could not reveal in graph.` Action: `Retry`
+  - Python/TS (exact): `Python and TypeScript files are not listed individually. The scope folder is indexed.`
+- **Dual-activate chords** (tree focused; do not steal Coding’s composer Ctrl+Enter): **Enter** = View source; **Ctrl+Enter** = Reveal in graph. Right/Left expand or collapse **indexed-parent** only.
+- **Hit rect:** the full **28px** row is the target (≥24×24). Do **not** inflate rows to 44px (rail size). Do not leave a 16px chevron as the only hit target (`DESIGN.md` compact list rows).
+- **WCAG 2.2 AA / UIA:** role tree/treeitem; Name **includes kind and coverage** (file-artifact: kind word; census-folder: `indexed-parent` or `Unindexed`); keyboard Up/Down/Left/Right/Enter/Ctrl+Enter; contrast per DESIGN.md ink×ground matrix; coverage not colour-only.
 - **Performance:** bounded payload; virtualize large trees (architecture/spike). No CI duration assertion.
+
+**N4 UX & Accessibility conditions (recorded here; not extra 44px rows):** stale-while-refresh; dual-activate chords Enter / Ctrl+Enter; UIA Name includes kind + coverage; hit rect = full 28px row (≥24×24), not 16px chevron; unindexed token `{colors.unverified}` not inferred/stale.
 
 ### AI-UX
 
@@ -630,15 +721,17 @@ N/A — D-0 is not an AI-facing surface. No HAX / Shape-of-AI obligations here.
 
 ### UI acceptance criteria (falsifiable)
 
-- **UI-1.** Empty, loading, error, no-workspace, unindexed, and not-recorded are each a specified visual state with the copy above. *Falsifier:* one generic blank pane for all six.
-- **UI-2.** Unindexed and not-recorded each combine a word and a glyph; colour is never the only signal (`DESIGN.md` principle 2).
-- **UI-3.** Skip-listed directories have no row to style (US-T4). A greyed `bin` row fails.
+- **UI-1.** Empty, loading, error, no-workspace, unindexed, Not-recorded Disclosure, and stale-while-refresh are each a specified visual state with the copy above. *Failing input:* one generic blank pane for all of them.
+- **UI-2.** Unindexed uses `{colors.unverified}` plus the word `Unindexed` plus a glyph. Using `{colors.inferred}` or `{colors.stale}` for Unindexed fails.
+- **UI-3.** Skip-listed directories have no row. Silence (no skip-count when N ≥ 1) fails. A greyed `bin` row fails.
 - **UI-4.** All interactive targets use token colours from `DESIGN.md`; no off-token hex in the tree chrome (craft detector floor at ui-design).
 - **UI-5.** Focus is a 2px `{colors.focus}` ring, visible in light, dark, and High Contrast.
 - **UI-6.** Selected row on `{colors.accent}` uses only `{colors.accent-contrast}` ink.
 - **UI-7.** Reduced motion: no expand animation; state still changes.
-- **UI-8.** Python/TS disclosure copy is present in the tree surface when such scopes exist (rendered-surface test).
-- **UI-9.** Native UIA tree pattern exposes coverage in Name or HelpText so a screen reader can distinguish US-T3 from US-T5 without colour.
+- **UI-8.** Python/TS disclosure copy is present in the tree surface when such scopes exist, exact string (US-T6).
+- **UI-9.** UIA Name of a census-folder includes coverage (`Unindexed` or `indexed-parent`). UIA Name of a file-artifact includes its kind word. A Name that is only the path fails.
+- **UI-10.** Hit rect of each row is the full 28px height and at least 24×24. A 16px chevron-only target fails. A 44px row fails.
+- **UI-11.** Enter on a focused file-artifact invokes View source. Ctrl+Enter invokes Reveal in graph. Either chord doing the other action fails.
 
 ---
 
@@ -649,12 +742,13 @@ N/A — D-0 is not an AI-facing surface. No HAX / Shape-of-AI obligations here.
 | Which single skip set survives (`CSharpScopeDiscovery` vs `UnanalysedLanguages` vs TS extractor) | Major for US-T4 fixtures | **Flagged** | Architecture unifies; spec tests bind to the survivor, not a fourth list |
 | Query name, DTO, cap values | Major for implementers, not for this grain | **Flagged** | N5 architecture + spike; must still disclose omit |
 | Tree toolkit (WPF TreeView vs alternative) | Major for N7, not for acceptance | **Flagged** | Spike Protocol; do not freeze here |
-| Glyph-to-kind map | Minor | **Flagged** | Design-slice; UI-2 still requires word+glyph |
+| Glyph-to-kind map | Minor | **Flagged** | Design-slice; UI-9 still requires kind in UIA Name |
 | Default layout inclusion vs View-menu-only | Minor | **Inferred** (comparables put the tree left) | Design-slice; UX-1 still requires ≤ 2 steps |
 | Whether a later horizon stores a census after measured bounds fail | Out of horizon | **Flagged** | Owner validation on N1 disposition: numbers, not a stored-census fait accompli |
 | VS “on disk but not in project” chrome | Nit | **Flagged** (N2) | Not required if Rider lesson holds |
 | Atlas `session-contracts` §2 text not in this worktree | Seam | **Flagged** (Owner) | Path ban still holds |
-| V16 inbound of this new spec is empty; Addendum C’s D-0 paragraph is now implemented-by this spec | Minor (graph hygiene) | **Inferred** | Conductor/N4: `docs-graph.py flag --changed spec-addendum-c-perspectives` or a review-suggested on that node — this turn does not edit Addendum C’s body (quote, don’t amend) |
+| Census IO / permission seam shape | Major for US-T5a/b implementers | **Flagged** | Architecture names the test double; this spec requires it is Core-arranged |
+| V16 inbound of this spec | Minor (graph hygiene) | **Inferred** | Conductor: flag Addendum C; do not amend its body |
 
 **Residual risk:** a later slice “completes” Python/TS by walking files in the App or minting fake rows. That re-opens extractor grain and is **out** unless Owner admits a separate slice. **Residual risk:** skip-omission implemented as hide-without-a-rule (VS Code). US-T4 exists to fail that.
 
@@ -662,20 +756,20 @@ N/A — D-0 is not an AI-facing surface. No HAX / Shape-of-AI obligations here.
 
 ## Gate record
 
-`GATE specify · 2026-09-14 · authoring: Product Strategist (this node, fan-out 0) · criteria met: three layers present; conceptual model before UX/UI; core scenario; explicit non-goals including D-1…D-6 quoted from §A5; Gherkin US-T3/T4/T5 distinct; comparables sourced; ISO 25010 walked; archetype auto-selected from JTBD · verdict: **pending N4** · vetoes→resolution: authors did **not** self-clear (BoK §II.3 D3).`
+`GATE specify · 2026-09-14 · authoring repair after N4 BLOCK · Product Strategist (fan-out 0) · repair: grain closed to (path, kind); Coverage minus not-recorded; US-T5a/b/c; fixture F*; View source vs Reveal in graph; skip-count disclosure; unindexed leaves; empty Show Graph; Part C UX&A conditions · verdict: **pending N4 re-review** · authors did **not** mark status accepted (BoK §II.3 D3).`
 
-**Who must attack at N4 (do not skip):**
+**N4 first-pass (recorded, not self-cleared):**
 
-| Lens | Why | Veto |
+| Lens | First-pass | Repair in this file |
 |---|---|---|
-| **The Simplifier** | Scope/gold-plating: default-layout, toolkit, glyph map, stored census, extractor rewrite | Soft |
-| **The Test Architect** | Every Gherkin must have an input that fails it; US-T3/T4/T5 must be three oracles | Hard on unverifiable claims |
-| **Data & Persistence Architect** | Grain, no stored census, no `artifact_path_id` split, one skip set, DM7 | Hard on unmodelled concept |
-| **UX Researcher / IA** | Flow integrity, findability, unhappy paths, IA labels | UX-specification veto |
-| **UX & Accessibility** | State completeness, tokens, WCAG 2.2 AA, colour-not-only | UI veto |
-| **Security & Identity Architect** | DC-022 App-must-not-read; no second authority on disk | Hard if identity/PII — here integrity of file access |
+| **Data & Persistence Architect** | BLOCK | `(path, kind)`; Coverage = indexed-parent \| unindexed; not-recorded → Disclosure; folder iff census minus skip; `declared_at` does not mint; directory-valued assertions ≠ file-artifact; root in; “indexed folder” deleted |
+| **Test Architect** | BLOCK | US-T5a/b/c with Core arrange; F\*; visual-tree walk on T3/T5; US-T6 indexed-parent + exact copy; PROBE-*; vacuous Ands removed |
+| **UX Researcher / IA** | BLOCK | Primary View source / secondary Reveal in graph; activate error arrows; skip-count; unindexed leaves; empty Show Graph |
+| **UX & Accessibility** | PASS-WITH-CONDITIONS | Stale-while-refresh; Enter/Ctrl+Enter; UIA Name kind+coverage; 28px full-row hit rect; `{colors.unverified}` for Unindexed |
+| **The Simplifier** | (advisory) | Toolkit, default layout, cap value still out |
+| **Security & Identity Architect** | DC-022 | PROBE-APP-ENUM / PROBE-FILE-READ / PROBE-ATLAS |
 
-N5 `/define-architecture` does not start until N4 records a pass or an Owner-overridden soft veto. A spec with collapsed unindexed/skip/not-recorded is, in practice, a **blocking** finding for the Test Architect and the Data Architect.
+N5 `/define-architecture` does not start until N4 records a pass or an Owner-overridden soft veto. This repair does not clear that gate.
 
 ---
 

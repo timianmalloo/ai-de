@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T02:29:24Z",
+  "generated": "2026-09-15T02:47:00Z",
   "audit": [
     {
       "actor": null,
@@ -16518,6 +16518,33 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "d22f056ca3702f3752ec3525ca34d75fa4b00bae",
         "short": "d22f056ca",
+        "branch": "understanding-views-specify",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HFBT5K8MF3267Y3GR3GSW7",
+      "shortname": "specify-understanding-views-n4-repair",
+      "datetime": "2026-09-15T02:47:00Z",
+      "session": "understanding-views-specify",
+      "prompt": "N4 spec repair after BLOCK",
+      "summary": "N4 repair: grain (path,kind); US-T5a/b/c; F*; View source vs Reveal in graph; ~42/40 overrun",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/understanding-views.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Repair D-0 spec to clear N4 hard vetoes",
+      "done_when": "Data/Test/UX blockers have failing inputs",
+      "tier": "T2",
+      "fan_out": 0,
+      "git": {
+        "sha": "8657ff5fdb277632151f780206f3614aaa279f0c",
+        "short": "8657ff5fd",
         "branch": "understanding-views-specify",
         "pushed": null
       }
