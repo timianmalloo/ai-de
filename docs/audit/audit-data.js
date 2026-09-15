@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:27:48Z",
+  "generated": "2026-09-15T21:30:00Z",
   "audit": [
     {
       "actor": null,
@@ -18907,6 +18907,53 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "dcc0e35893cc717996ade44d673bd03457fbea10",
         "short": "dcc0e3589",
+        "branch": "review/atlas-views-design",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KFM2YH26H2XAXQ8CP41HMD",
+      "shortname": "atlas-e1-structural-experiment-review",
+      "datetime": "2026-09-15T21:30:00Z",
+      "session": "codex-atlas-views-review",
+      "prompt": "Independently review frozen E1 structural/page experiment 1ab5d9e9 against Owner 4a81eb11, independent oracle ledger 205d5da4 and narrowed relation-order decision 18cc6cb6; execute the subject, inspect output, and preserve CFG/runtime/product exclusions.",
+      "summary": "Cleared the bounded E1 structural relation-set and page-feasibility experiment: fixed 13 primary/17 auxiliary/30-node/30-relation inventories, 28 pages, 16 recompositions, D5/refusal controls, legacy evidence and ten rejection receipts across eight subject faults passed independent execution. Lexicographic relation sorting qualifies set comparison only; design display ordering and full P0.7 remain open.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-sol-plan-review",
+      "artifacts": [
+        "docs/proof/atlas-views-plan-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "e1-structural-review"
+      ],
+      "outcome": "success",
+      "goal": "Determine whether E1 1ab5d9e9 satisfies the Owner-frozen independent structural/page oracle ledger within its experimental scope.",
+      "done_when": "Syntax-derived output, fixed inventories, paging/closure/recomposition, D5/refusals, subject faults and legacy preservation have a committed scoped verdict, with relation display ordering explicitly qualified.",
+      "tier": "T2",
+      "main_calls": 14,
+      "main_budget": 14,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T21:29:59Z",
+      "duration_seconds": 1.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 1,
+          "accepted": 1
+        }
+      ],
+      "git": {
+        "sha": "53ed3844e7c523f083a700b22fbb3a63094fb64b",
+        "short": "53ed3844e",
         "branch": "review/atlas-views-design",
         "pushed": null
       }

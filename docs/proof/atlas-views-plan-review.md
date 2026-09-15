@@ -426,7 +426,10 @@ direction, kind and known ordinal; a relation with neither endpoint is absent.
 
 Union pages from one observation, replace matching stubs, and deduplicate only canonical
 auxiliary/relation IDs. The union must equal size-128 for every primary ID, ordinal,
-predicate, anchor, confidence, relation and order. Offset/page size never enter identity.
+predicate, anchor and confidence and for the complete relation set. Primary order and the
+Owner-frozen auxiliary order must match. Lexicographic relation-ID sorting is comparison
+canonicalization only; relation display order is outside this experiment's qualification.
+Offset/page size never enter identity.
 `not-observed-after-cap` has unknown ordinal/total and no Go-to-window;
 `unresolved-target` is semantic; neither may masquerade as `outside-window`.
 
@@ -561,3 +564,57 @@ independently. This supersedes only the incomplete semantic-row portion of `dcc0
 
 The bounded synthetic clearance is restored. No real producer/authority, deployment equality,
 production binding, wire/native behavior, performance, US-E8 or product acceptance follows.
+
+## Independent E1 structural/page experiment review
+
+Reviewed subject/source commit `1ab5d9e985fd86ef75adb8d2a11c72fe05b530cc`,
+Owner D1–D5 `4a81eb11ba3d190d59a2680be98be9ee0ca9238a`, Owner scope
+decision `18cc6cb6f9933bf1772e5c622956df30bb842052`, documentation freeze
+`96c115e09641520f47678b8c0408ffede452a9d9`, and the independent oracle ledger
+at review commit `205d5da4`. This reviewer authored the expected-result ledger, not the
+experiment subject; the expected tables predate the subject implementation.
+
+**CLEAR — bounded structural relation-set and page-feasibility experiment only.** The
+independent Windows run exited 0. It preserved the legacy six groups and three negative
+demonstrations, then produced the four literal graphs with the fixed inventories:
+B `4/5/9/9`, L `2/4/6/6`, T `5/5/10/10`, G `2/3/5/5`; totals 13 primary,
+17 auxiliary, 30 nodes and 30 relations. Source hashes, syntax spans, child paths,
+conditions, bound targets, gaps, anchors and confidence matched the fixed tables.
+
+The run produced 28 pages and 16 exact recompositions at page sizes 1, 2, 7 and 128.
+Each page matched the independent closure table, inside-relation set and directional
+`outside-window` stubs including missing primary/owner ordinals. Recomposition restored the
+complete canonical relation set without conflicting duplicate node/relation evidence.
+
+D5 behaved as frozen: B3 `[2,3)` with auxiliary cap 3 returned
+`window-unrepresentable`, first limit `auxiliary-closure`, and no publication; cap 4
+published all four auxiliaries; B1 `[0,1)` at cap 3 published the three common auxiliaries.
+Invalid limits 0/129, offsets -1/4 and foreign observation returned typed refusal with no
+publication. Ten dependent rejection receipts across eight subject-fault classes were
+observed: dropped branch, dropped cross-window relation, page-dependent identity,
+always-refuse, omitted owning region, ignored cap, traversed opaque local body and invented
+runtime edge. Each failed its named fixed-table, page, recomposition or cap oracle.
+
+### Narrowed relation-order disposition
+
+The subject and expected adapter sort relations lexicographically by identity before set
+comparison. E1 design `83e1139b` separately requires endpoint-ordinal/kind-rank/arm-index
+display order; the experiment did not implement or falsify that rule. Owner `18cc6cb6`
+therefore narrows this evidence to exact relation-set preservation: identity, endpoints,
+kind, arm, predicate, anchor and confidence, plus closure, stubs and recomposition.
+The docs-only freeze `96c115e` states that limit without changing source or output. Primary
+source-ordinal order and the D1–D5 auxiliary inventory/order remain qualified. Relation
+display ordering, its auxiliary-endpoint ordering key and its rendered-surface oracle remain
+unqualified and required before product admission.
+
+The subject derives syntax nodes, spans, paths, symbols and structural relations from the
+literal sources. `IndependentExpected` hard-codes those facts, ownership, relations and
+closure rather than reading `StructuralBuilder`/`ProjectPage`; shared record types and simple
+set inclusion do not supply subject results. The subject faults demonstrate sensitivity to
+the requested error classes.
+
+This clearance does not establish executable CFG or runtime order, generic syntax coverage,
+parser stress/cancellation, global truncation semantics, production observation/continuation/
+receipt authority, wire/native behavior, performance or full P0.7/product acceptance. The
+Conductor separately reported Linux reproduction of 30 nodes, 30 relations, 28 pages,
+16 recompositions, ten rejection receipts and eight fault classes; it was not rerun here.
