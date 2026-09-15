@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:52:16Z",
+  "generated": "2026-09-15T21:21:06Z",
   "audit": [
     {
       "actor": null,
@@ -18438,6 +18438,36 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "5d361f2a9de2ebdcc7a255d33ad31d96a3a2e0f1",
         "short": "5d361f2a9",
+        "branch": "atlas/behavior-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KF3RQ805NE2HW0N2DAWR4H",
+      "shortname": "implement-atlas-structural-page-experiment",
+      "datetime": "2026-09-15T21:21:05Z",
+      "session": "codex-atlas-e1-behavior",
+      "prompt": "E1 bounded STRUCTURAL/PAGE EXPERIMENT author start now. Owner4a81eb11ba3d190d59a2680be98be9ee0ca9238a D1-D5 and independent oracle ledger205d5da4 CLEAR. Read exact ledger at C:/Projects/ai-de-review-atlas-views-design/docs/proof/atlas-views-plan-review.md; original design83e1139b, Owner refinements override experiment ambiguities. Existing behavior tree/session. ONLY fourRuling121files spikes/atlas-behavior-contract/{csproj,Program.cs,RESULT.md}, docs/proof/atlas-behavior-contract.md + requiredaudit/derived; no design/source/tests/wire/UI/newpaths/packages. Fourliteralfixtures in ledger,13primary+17aux=30nodes/30edges; perfixture B4/5/9edges,L2/4/6,T5/5/10,G2/3/5. Pages1/2/7/128 with expectedclosure/stubs/recomposition, B3cap3refuses/cap4succeeds,B1cap3succeeds. Independentlyfixed literalexpectednodes/relations; do not derive expected from subject. Retain previous6sourcegroups/3negativecontrols. Red-first subject faults droppingbranch/cross-windowrelation/stableidentity must fail dependentoracles. Parse/analyze synthetic source only; noemit/executeanalyzedcode. Experimental structural source graph, NOT executableCFG/runtime. Do not broaden syntax beyond4fixtures; explicitunsupportedgap. Budget18calls/25min checkpoint14; source+RESULT/proof+audit+commit then exit, inspect toolhelp once and use exactauthoredleases. No globalderivedleases; site wrappers have generatedfigures but are authored, claim exactonlyifregenerationtouches. Root handles Linux/coverage and independentreview. If ledger/design ambiguity remains stopthatbranch and escalate evidence/options; do not guess. Return frozenSHA, completeobservednormal/faultoutputs andlimits.",
+      "summary": "Implemented source-only four-literal structural/page experiment from independent ledger and Owner D1-D5. Observed13primary17aux30nodes30edges,28pages16recompositions,10dependent OracleFailure rejections across8subject fault classes, D5non-tautological closure caps and5invalid-request refusals. Prior6sourcegroups/3negativecontrols retained. Literal spans/paths discovered before subject and fixed in separate expected tables; no expectation changed to fit output. Full final stdout in RESULT including graph/closure/stubs/bytes; final structural elapsed59.441ms includes fault/normal/console work, not production latency. No source execution, Core authority, CFG, native, global truncation or parser/performance acceptance. Root owns Linux/coverage/independent review and cross-artifact graph/register reconciliation.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "spikes/atlas-behavior-contract/RESULT.md",
+        "docs/proof/atlas-behavior-contract.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Observe the four Owner-frozen structural/page fixtures against independent exact oracles and required subject faults.",
+      "done_when": "Prior fixtures retained, required structural/page/fault outputs observed and recorded, scoped candidate audited and committed for independent review.",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-09-15T21:07:50Z",
+      "duration_seconds": 795.0,
+      "git": {
+        "sha": "83e1139b580ef977bebcf68b38e84dd1a871da82",
+        "short": "83e1139b5",
         "branch": "atlas/behavior-views",
         "pushed": null
       }

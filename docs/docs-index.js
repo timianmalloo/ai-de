@@ -15432,7 +15432,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2026-12-15",
       "reviewSuggested": [],
-      "summary": "Author evidence for six synthetic Roslyn contract fixtures, retained negative controls, and explicit limits; independent acceptance pending.",
+      "summary": "Author evidence for the retained six source groups and four Owner-frozen structural/page fixtures with independent expected tables, subject faults and limits.",
       "tags": [
         "atlas",
         "e1",
@@ -15446,7 +15446,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "087d2bf3596e94537a0b40919542102cc4e345955398c3c810c6177932949a1d"
+      "sourceSha256": "d24990e7eb649a6533d5c0d3d01d03059fdb896676acb7903cee847ffe79ed09"
     },
     {
       "id": "proof-audit-gate-plan-review",
@@ -19360,5 +19360,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "2e6b6c3e43535e45a23d9543d9f375f32d8d291a4270ba19f8a99b712aafd64a"
+  "graphSha256": "dde9f9722116ac35c8578648e10fc2309f057009df19a1c6e3c43acd159653bb"
 };
