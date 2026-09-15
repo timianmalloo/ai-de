@@ -1,0 +1,9 @@
+{
+  "checks": [["python", "tools/verify-audit-log.py", "--self-test"], ["python", "tools/verify-audit-log.py"], ["python", "tools/verify-gate-self-tests.py"], ["python", "tools/verify-gate-self-tests.py", "--self-test"]],
+  "recount": [],
+  "regenerate": [["python", "tools/regenerate-derived.py"]],
+  "gates": [["python", "docs/ai-forward-pack/scripts/docs-graph.py", "validate"], ["python", "tools/run-verify-gates.py"]],
+  "build": [],
+  "trailer_file": "docs/coordination/audit-gate-self-test-trailer.txt",
+  "push_remote": "origin"
+}

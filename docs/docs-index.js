@@ -4499,6 +4499,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "8401c1a896861a28910865d9c257bdf1baffbb46afefb989418de30bf457de3c"
     },
     {
+      "id": "note-audit-gate-self-test-owner",
+      "path": "docs/notes/audit-gate-self-test-owner.md",
+      "title": "Audit verifier self-test: bounded Owner decisions",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Adds observable proof of existing audit-verifier behavior through an isolated self-test. Preserves policy, allocator behavior, live logs, and every other frozen gate entry.",
+      "tags": [
+        "audit",
+        "verification",
+        "decision",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "137913943e90a10acc7bd4bcef45c68e6e98bd5a894e6e936871837dc0103f26"
+    },
+    {
       "id": "note-avalondock-tab-styling",
       "path": "docs/notes/avalondock-tab-styling-decision.md",
       "title": "Decision — AvalonDock document-tab accent & corner styling",
@@ -8045,6 +8071,34 @@ window.DOCS_INDEX = {
       "sourceSha256": "6549168b93046ac99c21691b61f11f8ca8e7baa58b4cf8ee2e82340e61b34615"
     },
     {
+      "id": "coord-audit-gate-self-test",
+      "path": "docs/coordination/audit-gate-self-test.md",
+      "title": "Audit verifier self-test coordination",
+      "type": "doc",
+      "status": "complete",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Exact tooling handoff, one author and independent review for existing audit verifier semantics.",
+      "tags": [
+        "coordination",
+        "testing"
+      ],
+      "links": [
+        {
+          "to": "plan-audit-gate-self-test",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e6e341de4a960d913b08cccc62c14406fe2a24b4d9f4d5a06005a6968976dd35"
+    },
+    {
       "id": "coord-recursive-surface-ownership",
       "path": "docs/coordination/recursive-surface-ownership.md",
       "title": "Recursive surface ownership: bounded Codex programme",
@@ -8196,7 +8250,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c7c2fbb7bc13fce45d3280747a82bd1a5d2547def1574388dabfe555b5a939c1"
+      "sourceSha256": "ca1c9fa5828cf6d1c8c551fb565e4d4de9685e4619e1aea53967269a1bfb53c0"
     },
     {
       "id": "design-session-profiler",
@@ -9409,7 +9463,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8485cbab26859a82f099a05a28d7f409ea70045ff1220ccde3a413e0f81b6800"
+      "sourceSha256": "923e5351a3218ef3c59015a241acbdf7ff277e6fe4f4e13d1658fc37891453e6"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -9798,6 +9852,41 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "1e69075fe508c573e0487e1a1ae1973dbedc4331d09eecd65d4981e8cac3a590"
+    },
+    {
+      "id": "plan-audit-gate-self-test",
+      "path": "docs/plans/audit-gate-self-test.md",
+      "title": "Audit verifier self-test: bounded execution graph",
+      "type": "doc",
+      "status": "complete",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "One tooling author followed by independent adversarial verification, with no audit policy expansion.",
+      "tags": [
+        "plan",
+        "testing",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "coord-audit-gate-self-test",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Goal and graph",
+          "mermaid": "flowchart LR\n G --> D --> A --> R --> J --> C"
+        }
+      ],
+      "sourceSha256": "ec050aa737c4017647646d7d56e9158d94d25b31bc6d52f709f6b06d0bb2cf69"
     },
     {
       "id": "plan-conductor-front-door",
@@ -15302,6 +15391,125 @@ window.DOCS_INDEX = {
       "sourceSha256": "56dcbfeec074ea753ff0b3a0cc893aa0d3623122c7ac156afdce54071768f6fa"
     },
     {
+      "id": "proof-audit-gate-plan-review",
+      "path": "docs/proof/audit-gate-plan-review.md",
+      "title": "Independent plan review: audit gate self-test",
+      "type": "proof-pack",
+      "status": "current",
+      "owner": "@codex-sol-review",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Initial plan block and superseding PASS after the executable red-first and Ruling 119 constraints were added.",
+      "tags": [
+        "proof",
+        "audit",
+        "testing",
+        "review"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "940fa9cef7a88623184e7196ffa83facbc1d8ab3b231666b722051427148e177"
+    },
+    {
+      "id": "proof-audit-gate-self-test",
+      "path": "docs/proof/audit-gate-self-test.md",
+      "title": "Audit verifier self-test programme evidence",
+      "type": "proof-pack",
+      "status": "complete",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Observed fixtures, independent review and integrated qualification for one frozen self-test debt item.",
+      "tags": [
+        "proof",
+        "testing",
+        "audit"
+      ],
+      "links": [
+        {
+          "to": "plan-audit-gate-self-test",
+          "rel": "implements"
+        },
+        {
+          "to": "coord-audit-gate-self-test",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-audit-gate-self-test-owner",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-audit-gate-plan-review",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-audit-gate-self-test-review",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3dd8b11baf255bf08da0dc6c865a686ea071c4e304955d7a540771a24c5bbe7f"
+    },
+    {
+      "id": "proof-audit-gate-self-test-author",
+      "path": "docs/proof/audit-gate-self-test-author.md",
+      "title": "Audit verifier self-test author proof",
+      "type": "proof-pack",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Records disposable-copy red-first evidence, real Git and CLI fixtures, seven semantic mutants, unchanged normal behavior, and the audit self-test ratchet reduction.",
+      "tags": [
+        "audit",
+        "verification",
+        "python",
+        "mutation-testing"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0f09b000d4475de7300a9109df0d6daef311dbba943b2eaed71bee26c89925dd"
+    },
+    {
+      "id": "proof-audit-gate-self-test-review",
+      "path": "docs/proof/audit-gate-self-test-review.md",
+      "title": "Independent implementation review: audit gate self-test",
+      "type": "proof-pack",
+      "status": "current",
+      "owner": "@codex-sol-review",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Initial frozen-candidate BLOCK and superseding PASS after exact CLI, mutation-control, and Git-environment repairs.",
+      "tags": [
+        "proof",
+        "audit",
+        "testing",
+        "review"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f20487d86d5117836d7dc039997998806c32182031ee8c4c5b7d48d0e22193c6"
+    },
+    {
       "id": "proof-census-controls",
       "path": "docs/proof/census-controls.md",
       "title": "Proof Pack - The census controls (INV-0008 phase 6, DC-147's control, the four legacy mockups)",
@@ -18998,6 +19206,14 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     },
     {
+      "id": "surface-coordination-audit-gate-self-test",
+      "path": "docs/coordination/audit-gate-self-test.html",
+      "title": "Audit verifier self-test coordination",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coord-audit-gate-self-test"
+    },
+    {
       "id": "surface-mockups-context-map-join",
       "path": "docs/mockups/context-map-join.html",
       "title": "Context Map & Join surfaces — Core→Design §4a (mockup)",
@@ -19086,5 +19302,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f9e137477ec8d7508a0a2560f1abaf3e80274198e0ebdc81d70ee8357a65a3f6"
+  "graphSha256": "cdd88612eb547c1c59d7cd30ad6c280de4af5e4a93295e495173f86740d6f50d"
 };
