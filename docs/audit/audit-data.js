@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T17:19:59Z",
+  "generated": "2026-09-15T17:20:12Z",
   "audit": [
     {
       "actor": null,
@@ -17341,6 +17341,36 @@ window.AUDIT_DATA = {
         "sha": "05ed4a865ed5bc65693ecc02481bb702c67e1229",
         "short": "05ed4a865",
         "branch": "understanding-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K1AP5QJ4Y2J76G84ZVZ05P",
+      "shortname": "understanding-views-owner-n14",
+      "datetime": "2026-09-15T17:20:11Z",
+      "session": "understanding-views-owner-n14",
+      "prompt": "N14 Owner next-view or stop",
+      "summary": "Stop this horizon. D-1..D-4 keep-deferred. No main. D-0 remains the admitted view.",
+      "kind": "skill",
+      "skill": "owner",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-owner-n14.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "N14 dispose remaining views or stop",
+      "done_when": "Written ruling: stop horizon; D-1..D-4 keep-deferred; variant 4 to 0",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true
+      },
+      "git": {
+        "sha": "9e4945906a7fbdf9d3dd37972c5f865ea9f34daf",
+        "short": "9e4945906",
+        "branch": "understanding-views-owner-n14",
         "pushed": null
       }
     }
