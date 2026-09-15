@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T19:45:31Z",
+  "generated": "2026-09-15T20:09:57Z",
   "audit": [
     {
       "actor": null,
@@ -18363,6 +18363,68 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T19:45:30Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2KB1GXXPWYGPCR95WZD5XVQ",
+      "shortname": "atlas-views-plan-review",
+      "datetime": "2026-09-15T20:09:57Z",
+      "session": "codex-atlas-views-review",
+      "prompt": "Independently review the frozen bounded Atlas E1/E2 programme graph for design-lane admission only across Test Architect, Simplifier, SRE and Orchestrator lenses; preserve implementation barriers and commit only the review receipt plus official audit and derived artifacts.",
+      "summary": "Cleared two bounded design-grounding lanes; retained implementation block and identified missing explicit per-lane evidence nodes with falsifiable clearance.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": "codex-sol-plan-review",
+      "artifacts": [
+        "docs/proof/atlas-views-plan-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "plan-review"
+      ],
+      "outcome": "success",
+      "goal": "Decide whether the bounded Atlas E1/E2 programme graph is safe to admit into design work.",
+      "done_when": "Each named lens has a PASS/BLOCK verdict with falsifiable clearance, and the review receipt plus required audit artifacts are committed on the review branch.",
+      "tier": "T2",
+      "main_calls": 8,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T20:06:18Z",
+      "duration_seconds": 219.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 1,
+          "accepted": 0
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "sre",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "orchestrator",
+          "raised": 1,
+          "accepted": 0
+        }
+      ],
+      "git": {
+        "sha": "c46e112a924a8a0a4c86e4552af1f0e30bfa851c",
+        "short": "c46e112a9",
+        "branch": "review/atlas-views-design",
+        "pushed": null
+      }
     }
   ],
   "changes": [

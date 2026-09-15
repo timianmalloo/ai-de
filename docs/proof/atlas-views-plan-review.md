@@ -1,0 +1,88 @@
+---
+id: proof-atlas-views-plan-review
+title: "Independent Atlas E1/E2 programme graph review"
+type: proof
+status: accepted
+owner: "codex-sol-plan-review"
+tags: [atlas, plan-review, execution-graph, coordination]
+links:
+  - { to: session-contracts, rel: depends-on }
+review-by: 2026-12-15
+summary: >-
+  Clears the two bounded Atlas design-grounding lanes while retaining the
+  implementation barrier and requiring explicit evidence nodes before product work.
+---
+
+# Independent Atlas E1/E2 programme graph review
+
+## Review boundary and evidence
+
+This review covers only the frozen programme graph and design-lane admission. It does
+not review either unfinished lane design and does not grant implementation, native runs,
+integration or publication.
+
+Reviewed inputs:
+
+- Conductor plan and coordination record at
+  `45aac3e3e6ae57dbb46299f8da015a96ce3744d1`.
+- Owner decision at `8c9fa47cc19574f43f7c206251e19af67553b8be`.
+- Shared transfer request `req-01M2KA6YK6SJBRF4MF27H0J8XE`, resolved as accepted
+  for bounded design grounding.
+- Core/Design request `req-01M2KA74EQYXWCZB5GMRNXNWN1`, resolved with the exact
+  per-lane grant process and shared-file restrictions.
+- GHCP foundation request `req-01M2KA74D0TGMKV5G0XW1VBHDY`, still open at review.
+
+All claims below are **Verified** against those records unless marked **Inferred**.
+The referenced `kb-graph-and-loop-engineering` node and evidence directory are absent;
+the plan records that gap and does not promote it to evidence.
+
+## Admission verdict
+
+**PASS: bounded E1 and E2 design/contract grounding may continue in the two existing,
+separate worktrees. BLOCK: no product implementation is admitted.** The graph already
+holds implementation behind accepted-foundation, exact-grant and independent-design
+barriers. Those barriers remain load-bearing.
+
+| Lens | Verdict | Evidence and falsifiable clearance |
+|---|---|---|
+| Test Architect (hard veto) | **PASS design grounding; BLOCK implementation** | The graph maps required test families and independent reviews, but Proof Pack/evidence production is folded into implementation exits and the join. Before implementation, add one explicit evidence node per lane between `E*-I` and `R-I`, naming the committed proof artifact, evidence inputs and an oracle that fails on missing, unexecuted or contradictory results. Review consumes those frozen artifacts; an author's summary cannot satisfy the node. |
+| Simplifier | **PASS** | Two lanes match distinct behavior and architecture grains and own separate design artifacts. Premature horizontal model/store/wire/UI tracks are struck, and native/integration resources remain serialized. The explicit evidence nodes requested above carry an independent gate and therefore earn their boundary. `Lean already. Ship the design grounding.` |
+| SRE | **PASS design grounding** | The cost model is labeled **Inferred** and its arithmetic is consistent: `T1=23`, `T∞=15`, two-lane Brent bound `19`, ceiling `8` normalized units. No speedup is claimed. Retry, containment, circuit-breaker semantics, context ceiling and exclusive desktop serialization are stated. Implementation remains held until each lane names a fixture and observable duration/count/omission/cancellation/error oracle. |
+| Orchestrator | **PASS design grounding; BLOCK implementation** | The cap of four includes Owner and Conductor and leaves two author slots. The lanes have distinct trees, artifacts, exits and budgets. Core's exact-grant protocol is resolved, while the accepted foundation and exact code allowlists remain deliberately unresolved at `C`. Clear by recording an accepted foundation SHA, a jointly satisfiable per-lane path/signature guard table, section-2 grants for each new Surface/View, and independent design verdicts on frozen revisions. |
+
+## Graph checks
+
+- **Nodes and floors:** Grounding, Owner decision, distinct lane designs, shared-contract
+  convergence, independent design review, implementation, independent implementation
+  review, serialized join and publication handoff are present. The missing explicit
+  evidence nodes are the only graph-structure blocker found.
+- **Authorization barrier:** `C` and `R-D` prevent product authoring from consuming a
+  moving candidate or implied ownership. Silence and a candidate pin do not grant a path.
+- **Shared seam width:** The current design-only paths are disjoint. Product-path guards
+  are intentionally pending. At `C`, the guard must name each path and public signature;
+  any recursive scan must state root, recursion, token set and allowlist. The E1, E2,
+  GHCP/Core and Grok clauses must be jointly satisfiable before either implementation lane
+  opens.
+- **Artifact contracts and independent review:** The design outputs are named as
+  `docs/design/atlas-behavior-views.md` and
+  `docs/design/atlas-architecture-views.md`. A separate reviewer owns dedicated review
+  proof; neither lane clears its own veto.
+- **Scope truth:** Sequence, Activity, domain, layer/component and Azure are the five
+  admitted views. ER stays explicit remainder. Five-view completion cannot be reported as
+  completion of all Addendum E E2.
+- **Serialization:** Native shown-window evidence, integrated composition and joins remain
+  serialized shared resources. No design-lane result grants desktop or main access.
+
+## Clearance checklist before implementation
+
+1. Resolve the GHCP foundation request to an exact accepted SHA or observe its landing.
+2. Freeze both lane designs and record independent design PASS/BLOCK verdicts.
+3. Record exact file/signature allowlists, section-2 Surface/View grants and mutually
+   satisfiable guards for all shared seams.
+4. Amend the graph with explicit per-lane evidence nodes and their failure oracles.
+5. Keep ER excluded from the five-view completion claim and keep native/integration work
+   serialized.
+
+**Residual risk:** the design lanes may discover a real cross-lane decision edge. The plan's
+re-plan trigger covers that case; it must return to the Conductor rather than widening either
+worker's scope.
