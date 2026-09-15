@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T18:09:55Z",
+  "generated": "2026-09-15T18:33:22Z",
   "audit": [
     {
       "actor": null,
@@ -17520,6 +17520,43 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "c421fc682bb1a140601fd60fd94afd195cf1d7ba",
         "short": "c421fc682",
+        "branch": "understanding-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K5GMP623YDNG9DT8PERZXS",
+      "shortname": "implement-n10-c1-c3",
+      "datetime": "2026-09-15T18:33:21Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "keep going — close remaining D-0 N10 conditions on understanding-views without admitting D-1",
+      "summary": "Closed N10 C1 T5a/b visual Fake DTOs (Not recorded chrome, unindexed leaf); C2 App wrap pair (no Presentation twin); C3 activate-error overlay + Retry, Show Graph opens canvas, US-T13 Explore pin; C5 freeze prose. C4 physical Ctrl+Enter stays Flagged. App.Tests 1048. HEAD 40c431bd. Not main. Not D-1.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs",
+        "src/AiDe.App/Workbench/SolutionTreeSurface.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "docs/design/solution-tree.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close remaining D-0 N10 conditions on understanding-views without admitting D-1",
+      "done_when": "C1-C3 and C5 evidenced in tests or design; C4 still Flagged; recount updated; not main",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T18:24:21Z",
+      "duration_seconds": 540.0,
+      "git": {
+        "sha": "40c431bd38f324832dff7d60c8e3ee2de2c41ad4",
+        "short": "40c431bd3",
         "branch": "understanding-views",
         "pushed": null
       }

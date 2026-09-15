@@ -2068,7 +2068,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 103 types, 462 members, 71% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 103 types, 463 members, 71% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2081,7 +2081,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2bddf0a25b4d8e1d5e3fb17f482ef3fd13f9511773aa4d62886f09d5a1c1bdd4"
+      "sourceSha256": "f41d04141e472c3d5b270717fa41e4b074d1f8e99f9ca35a4e3042cee200f21e"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -7356,7 +7356,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d09f30308379ce4f9434aaa7a73e54bac2bee64d178ead0776c2e1b997fd4c48"
+      "sourceSha256": "aa41a40a7d70bfb9cdd4d3a54be2e8aa0bf6617d51fb811732f61a3e7cfe9409"
     },
     {
       "id": "design-watcher-advisory-evaluator",
@@ -17634,7 +17634,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e753650a170cbe32a3d47db9091961cf625d554a87b91563d08f7b176284fa81"
+      "sourceSha256": "78002b1b687b1af5f5e5170209430dd93fd9457a7b85a62b1008ff61f4da4503"
     },
     {
       "id": "proof-watcher-advisory-evaluator",
@@ -19669,5 +19669,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "388012924cb7bbd9a4e4d68794ea067ef8b444ed1ef1a137ae915d365d79ad4c"
+  "graphSha256": "a28c66d7cfca000009c87221bb6d6fe9545117dbac2ff11cf17b1a38c6b38b8f"
 };
