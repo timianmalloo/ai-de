@@ -1230,6 +1230,28 @@ accessor correction used 3/3 and its targeted Test readback used 1/1, clearing
 the accessor-vacuity predicate; those counts do not fund fixture work. No source
 join, native-phase/main/push/normative-E/programme acceptance is implied.
 
+Owner turn 83 accepts the bounded path-sensitive startup diagnosis and grants
+twelve new fixture-delivery leaves in the same five-file scope. The fixture
+author allowance is now 44 (16 + 16 + 12), with Owner 81's three accessor leaves
+separate. Derive the execution-path budget from the actual frozen fixture suffix
+and tool contract; "85 worked" is not a universal limit. Copy the declared runtime
+closure to a newly owned short execution directory, excluding generated test
+artifacts, and verify its manifest and pinned binaries after copying.
+
+On EOF, retain the primary failure and drain stdout/stderr concurrently. Allow
+a bounded exit/TRX-flush grace, then terminate only the owned child tree if
+necessary; forced termination/missing artifacts stay explicit. No old-Core edit
+or global Git/Windows setting is granted. Rerun both genuine mixed roles, full
+relevant Core cases and hostile archive/output controls under the preregistered
+QualificationOnly pair. Owner must still approve the normal expected pair.
+Preserve deep-path outputs and historical hashes.
+
+Twelve new independent delivery-review leaves follow parent execution/readback:
+Security, SRE and Test four each. Inspect archive/output safety, provenance/pins,
+path budget, process/diagnostic cleanup, ordinary invocation and actual role
+coverage. Additional tracked build/project/content-copy seams return before edits.
+Conductor remains capped at 740; no Core join or native/UI/main/push acceptance.
+
 ### Core owns
 
 | Path | Why |

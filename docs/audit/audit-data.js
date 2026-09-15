@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T02:33:39Z",
+  "generated": "2026-09-15T02:42:51Z",
   "audit": [
     {
       "actor": null,
@@ -17018,6 +17018,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "e1e3a59f55dae34e44d591b58af2b3035b09915e",
         "short": "e1e3a59f5",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HF46R88ZBE70M8XSRMQQ9F",
+      "shortname": "atlas-owner83-bounded-runtime-staging",
+      "datetime": "2026-09-15T02:42:50Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner83acceptspairedpathRCAandgrants12newleavessame5files, fixturetotal44. Executionbudgetderivedfromlegacyruntime suffix/toolcontract, not85asgeneralbound; declaredruntimeclosurecopiedshortownedpathandhashchecked, oldCore/globalsettingsunchanged. Boundedchildexit/TRXgrace+concurrentlogs retainsprimaryerror, forcedkillreported. SameED7F/8E95QualificationOnlypairnotnormalapproved. Bothroles/fullCore/hostilearchive-outputcontrolsmustexecute;12freshreviewleavesSecurity/SRE/Test4eachafterparentreadback. Writerdispatched, sourceCore/UI/mainjoinungranted. Priorfailedpreps/EOF/standalonelongfail-identicalshortpassandallcanonicalprovenancepreserved.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/investigations/code-atlas-legacy-peer-startup.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Deliver the reproducible peer through bounded owned execution staging",
+      "done_when": "Both genuine roles/fullCore/hostile-output controls and cleanup support a separate canonical-pair approval",
+      "tier": "T2",
+      "main_calls": 720,
+      "main_budget": 740,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T02:42:50Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "1ea80c0d06311cb8cb69743b611f5179c62169c8",
+        "short": "1ea80c0d0",
         "branch": "conductor/code-atlas",
         "pushed": null
       }
