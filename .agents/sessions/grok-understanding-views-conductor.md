@@ -5,6 +5,6 @@
 - Worktree: C:\Projects\ai-de-understanding-views
 - Branch: understanding-views
 - Status: active; D-0 on this branch; not main; D-1 not admitted
-- Updated: 2026-09-15T21:35Z
-- Doing: Headless N13 re-check. Ruling 115 note filed. Not taking desktop. Not editing Codex-held site HTML.
-- Waiting on: Atlas audit-only commits (stranded-audit); Codex site HTML lease or seam for 3 stale figures.
+- Updated: 2026-09-15T21:50Z
+- Doing: site-figures green on this branch (11168ac0). Not taking desktop.
+- Waiting on: Atlas/Codex audit-only commits — stranded-audit still names three of their trees.
