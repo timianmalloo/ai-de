@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generator": "docs-graph.py flag",
+  "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
     "knowledge",
@@ -6329,6 +6329,42 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "77e2be52378643c1105ad047ebb4e0dd4c28278415cb3601f7f8880e16292c56"
+    },
+    {
+      "id": "note-understanding-views-n6-council",
+      "path": "docs/notes/understanding-views-n6-council.md",
+      "title": "N6 council on ADR-0038: Security BLOCK; Data PASS; Simplifier and Tech Lead conditions",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "N6 width-4 on ADR-0038 at 46160f21. Security hard BLOCK (path confinement, junctions, skip fail-closed, DropRelativePaths on the wire). Data PASS with projection-join majors. Simplifier PASS-WITH-CONDITIONS. Tech Lead conditions on skip binding. Authors do not self-clear. N7 not opened.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "N6",
+        "D-0",
+        "adr-0038"
+      ],
+      "links": [
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-n4-pass",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "dd2c0ad0579d25d061505a65ab472e5f356e7f1aae12b18aba8ac04ea2fea1c1"
     },
     {
       "id": "note-understanding-views-owner-n1-disposition",
@@ -19063,5 +19099,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6ed1a7b9524d2e04b03c0580a8fe4e506062dfd341550979aa88ce57261512dd"
+  "graphSha256": "ba9b847327b4f0cea41b7cebd89cdf1fd9b25e1c825f85370213187ed386bec3"
 };

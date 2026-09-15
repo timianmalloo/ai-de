@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:02:36Z",
+  "generated": "2026-09-15T14:39:18Z",
   "audit": [
     {
       "actor": null,
@@ -16600,6 +16600,33 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "962ad56e78ccae76ffc1cb9d8937f75d69796f8f",
         "short": "962ad56e7",
+        "branch": "understanding-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JR42W1K48C5KJDFC28P74Q",
+      "shortname": "understanding-views-n6-council",
+      "datetime": "2026-09-15T14:39:18Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "yes do your sequence... start in the ai-de-understanding-views worktree as you suggested above",
+      "summary": "N6: Data PASS; Security BLOCK (confinement, junctions, skip, DropRelativePaths on wire); Simplifier PWC; Tech Lead conditions. N5 budget 119/40.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n6-council.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "N6 council on ADR-0038",
+      "done_when": "Four receipts recorded; Security BLOCK stops N7",
+      "tier": "T2",
+      "fan_out": 4,
+      "git": {
+        "sha": "cb868bce441246f0aa921aec649901dc755b56ce",
+        "short": "cb868bce4",
         "branch": "understanding-views",
         "pushed": null
       }
