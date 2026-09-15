@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T15:22:59Z",
+  "generated": "2026-09-15T15:25:55Z",
   "audit": [
     {
       "actor": null,
@@ -16984,6 +16984,32 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T15:21:55Z",
       "duration_seconds": 63.0
+    },
+    {
+      "id": "al-01M2JTSDRWJR62JVE59V0FE9NK",
+      "shortname": "ownership-final-shared-state",
+      "datetime": "2026-09-15T15:25:54Z",
+      "session": "codex-surface-ownership-conductor",
+      "prompt": "Record latest observed shared qualification blocker without changing peer work",
+      "summary": "After327528e2 primaryaudit finding cleared. Stranded-audit instead reports Understanding Views spike audit/change logs; coord lists spikeactive and Grok liveness saysN7dispatched, so abandonment is not inferred. Requestreq-01M2JTQ5G3YVP0D81XBH2ZQK6E toGrok. Source acceptance676f63ed unchanged; no peerrecord edits or gatewaiver. HTML twin equality and finalauditcapturePASS.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Preserve accurate blocked handoff for reviewed recursive ownership gate",
+      "done_when": "Latest blocker and responsible peer recorded with evidence; no unauthorized mutation",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      }
     }
   ],
   "changes": [

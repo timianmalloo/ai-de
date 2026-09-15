@@ -105,7 +105,7 @@ Frozen author handoff must cite Owner amendment `171791f` and Core Rulings 113/1
 
 | Completed | Remaining | Best next action |
 |---|---|---|
-| recursive gate and eight-mutant self-test; Core Rulings 113/114; Owner O1–O7; independent final PASS; script merge; runtime receipts | mandatory join qualification blocked only by primary checkout's uncommitted audit log | owner resolves request req-01M2JTCR30AJ256HJFZHZJNRPX, then qualification; no main integration grant |
+| recursive gate and eight-mutant self-test; Core Rulings 113/114; Owner O1–O7; independent final PASS; script merge; runtime receipts | mandatory join qualification blocked by shared audit state; latest finding is active Understanding Views spike logs | peer preserves records and coordinator reconciles liveness under req-01M2JTQ5G3YVP0D81XBH2ZQK6E, then qualification; no main integration grant |
 
 ## Planned versus actual
 
@@ -114,5 +114,7 @@ Baseline observed 13 gate files versus 17 recursively discovered. Author `18a4a1
 Actual receipts: first author audit 981 seconds, final report 58 calls against 35 planned; plan reviewer 443 seconds and 25/25 calls. Repair 18/18 calls; final two-mutant unit 222 seconds and 14/6 calls; final review 16/16 calls. Tokens are not recorded. Overruns are estimate defects, not increased budgets. A single Owner-approved non-updating .NET run supplied the mandatory fresh-worktree receipts: 3,743 tests executed and passed, one existing nonexecuted test, five terminal-host paths passed. Baselines and product sources are unchanged.
 
 Final implementation `676f63ed` independently passed all triggered vetoes; the two missing mutation controls were added before acceptance. Conductor script merge `7fdf6ab0` and checkpoint `df050caf` preserve the reviewed code. The mandatory runner passed 37/38 twice; the sole failure is primary `docs/audit/audit-log.jsonl` becoming uncommitted after an earlier stranded-audit PASS. The coordinator received the exact seam request. The script's premature acceptance audit was officially superseded as blocked. See the programme proof for receipt hashes, provenance and retained worktree reasons. No primary source mutation, peer-log repair or main publication was performed.
+
+Latest observation after `327528e2`: primary logs no longer fail the standalone stranded-audit gate; the gate now names Understanding Views spike audit/change logs. Coord simultaneously lists the spike active, so its "nobody live" diagnostic is a finding to reconcile, not evidence of abandonment. Grok received request `req-01M2JTQ5G3YVP0D81XBH2ZQK6E`. Qualification remains blocked on that shared state; no review or implementation acceptance was revoked.
 
 

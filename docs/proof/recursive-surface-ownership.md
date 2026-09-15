@@ -67,7 +67,7 @@ DC-118 control half (b): the scan's root, recursion, suffix set and exceptions m
 
 ## Completion state
 
-The bounded implementation is reviewed and committed. Integration qualification is BLOCKED by another session's uncommitted primary audit log. No full-green or main-integration claim is made. Final reviewed author `676f63ed3899cd5282f23db51eb582ebad169e17` joined through the prescribed script at `7fdf6ab0`; join checkpoint `df050caf` retains the implementation and its evidence. No push occurred.
+The bounded implementation is reviewed and committed. Integration qualification is BLOCKED by shared audit state outside this lane. No full-green or main-integration claim is made. Final reviewed author `676f63ed3899cd5282f23db51eb582ebad169e17` joined through the prescribed script at `7fdf6ab0`; join checkpoint `df050caf` retains the implementation and its evidence. No push occurred.
 
 ## Mandatory runtime receipts
 
@@ -120,11 +120,15 @@ The stranded-audit gate had passed earlier, then failed as shared state changed.
 
 ## Handoff and residuals
 
+**Latest shared-state observation after commit `327528e2`:** `verify-stranded-audit.py` no longer reports the primary log. It instead reports uncommitted `docs/audit/audit-log.jsonl` and `docs/audit/change-log.jsonl` in `C:/Projects/ai-de-understanding-views-spike`. At the same observation, `coord session list --json` lists `understanding-views-spike` as active and Grok's current liveness says N7 is dispatched. Therefore the gate's wording "nobody is live" is not accepted as proof of abandonment. Request `req-01M2JTQ5G3YVP0D81XBH2ZQK6E` asks Grok to preserve/commit its records at the normal bounded exit, without discarding or forcing a premature commit. This supersedes the primary path as the latest blocker; it does not erase the two earlier full-run results. The source and test baselines remain unchanged. No peer records were touched.
+
 Mitigation `mit-0010` was captured through `dream.py capture-mitigation` for DC-118, naming the actual gate/self-test control and its red-green boundary. Its generated audit `al-01M2JTHBQ9AET7766XWR1VG8BE` omitted explicit proof signals; official supersession `al-01M2JTJ496AAG7HADNE72M9CCV` supplies the goal and proof. That acceptance covers mitigation capture only. Final documentation validation observed 485 artifacts, zero defects, zero orphans and zero index drift, with 66 existing review suggestions. Audit-capture validation passed.
 
+The final allocator check passed across nine declared families, including ten mitigation records and 118 branches. It emitted four non-failing advisories about pre-existing DC-177/DC-178 reuse on two Atlas branches. Those advisories are outside this programme and were reported to the Owner; no Atlas register was changed.
+
 - **Completed / Verified:** recursive canonical identity gate, unchanged ownership decisions, red-first and mutation controls, independent acceptance, script-driven isolated merge, proof and audit capture.
-- **Remaining / Flagged:** primary audit preservation by its owner, then unchanged mandatory join qualification. Main integration additionally requires an explicit recorded grant; none was requested as implied consent or exercised.
-- **Next:** coordinator resolves the precise primary-log seam; integrator rechecks the current recursive population, including any later Atlas/Grok surfaces, against sole §2 authority before publication.
+- **Remaining / Flagged:** peer audit preservation and reconciliation of the shared gate's liveness interpretation, then unchanged mandatory join qualification. Main integration additionally requires an explicit recorded grant; none was requested as implied consent or exercised.
+- **Next:** coordinator resolves the precise shared-audit seam; integrator rechecks the current recursive population, including any later Atlas/Grok surfaces, against sole §2 authority before publication.
 - **Inferred:** no claim that future surfaces or unsupported Markdown syntax are covered. The parser is deliberately bounded to the accepted §2 grammar.
 - **Retained worktrees:** Conductor for the blocked candidate and ignored runtime receipts; author for source/red-first evidence; Owner and reviewer for original decision/audit provenance. None is removed.
 - **Capture limitation:** `AIDE_CONTRACT_LOG` was unset. No invented episode channel/path or event is claimed; the actual committed proof and official audit records are the available capture.

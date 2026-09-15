@@ -8071,7 +8071,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b2d1e064f0dd64c95b4f7d48a5133125d0aec9c8be456f475e807dcf0a8e6a7e"
+      "sourceSha256": "7cff295ce9d8e703491162cd64707cc27b168309ea9031ab8587e3676800844b"
     },
     {
       "id": "coordination-addendum-cd",
@@ -10027,7 +10027,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n R[Review BLOCK] --> I[Investigate: reproduce five cases] --> A2[Bounded same-author repair] --> R2[Independent review] --> J[Join]"
         }
       ],
-      "sourceSha256": "ae64b6bcf93d0a7487fb1825c59e1e9f5d6265c12b5e1223eec0fc54863c26aa"
+      "sourceSha256": "d278435deef29d864fd192b30ee47eb4b9652d67661a184f2808c90647338585"
     },
     {
       "id": "plan-ui-and-windowing",
@@ -16508,7 +16508,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b4788f40c783efa5f20155d1d383da90c532a70ebc129151ea81d1122aa4e734"
+      "sourceSha256": "fe18a5e8f48dcf7974bc1dd4a8c2f6cd3d46582a62b334b0f855223c1e1205b6"
     },
     {
       "id": "proof-recursive-surface-ownership-author",
@@ -18943,5 +18943,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ae039a5982f0d0ee2440c21fc7461d5695cfb3cedbecc0356c7b347a32729bc6"
+  "graphSha256": "5f288aa1cfe92b5ad6d6f18cfe012a609f4407a3d56fc5b9653415f903faca1f"
 };
