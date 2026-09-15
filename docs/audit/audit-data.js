@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:31:00Z",
+  "generated": "2026-09-15T20:38:34Z",
   "audit": [
     {
       "actor": null,
@@ -18553,6 +18553,78 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "59bac4eea5a1a96228c627130c93fd78b2bc86d1",
         "short": "59bac4eea",
+        "branch": "review/atlas-views-design",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KCNX5DNHB06Z6V8B5NBSQT",
+      "shortname": "atlas-five-view-design-review",
+      "datetime": "2026-09-15T20:38:33Z",
+      "session": "codex-atlas-views-review",
+      "prompt": "Independently review frozen E1 design 755d0347 and E2 design e2c17251 against intent 92e025ae, mock direction 1065a851, Owner F1/F2 57a09ed6 and UI/design rules; produce a finite prioritized five-view design-gate punchlist without spike re-review or product admission.",
+      "summary": "Blocked implementation dispatch with eight finite P0 design requirements: governing G6 archetype reconciliation, E2 F1/F2 contract update, shared receipt/wire envelope, exact grants/guards, complete mock/state harness, numeric performance/bounds, E1 control-flow paging semantics, and E2 per-view native oracles. Scope and semantic honesty pass.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "codex-sol-plan-review",
+      "artifacts": [
+        "docs/proof/atlas-views-plan-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "design-review"
+      ],
+      "outcome": "blocked",
+      "goal": "Review the frozen E1/E2 designs for the five admitted views and produce a finite prioritized design-gate punchlist.",
+      "done_when": "Each hard block and advisory item cites frozen design/spec/mock evidence, names its clearing predicate and responsible persona, and preserves the foundation and scope barriers.",
+      "tier": "T2",
+      "main_calls": 9,
+      "main_budget": 12,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T20:34:22Z",
+      "duration_seconds": 251.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 6,
+          "accepted": 0
+        },
+        {
+          "persona": "ux-researcher-ia",
+          "raised": 2,
+          "accepted": 0
+        },
+        {
+          "persona": "ux-accessibility",
+          "raised": 3,
+          "accepted": 0
+        },
+        {
+          "persona": "data-persistence",
+          "raised": 1,
+          "accepted": 0
+        },
+        {
+          "persona": "sre",
+          "raised": 1,
+          "accepted": 0
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 1,
+          "accepted": 0
+        }
+      ],
+      "git": {
+        "sha": "8eb44853eefd935fb680c3824595b93b07e5b803",
+        "short": "8eb44853e",
         "branch": "review/atlas-views-design",
         "pushed": null
       }
