@@ -231,6 +231,7 @@ public sealed class PerspectiveMenuTests
             ("sequence",         ["architecture"], SurfaceContentFactory.Instances.Many),
             ("contexts",         ["architecture"], SurfaceContentFactory.Instances.One),
             ("joins",            ["architecture"], SurfaceContentFactory.Instances.One),
+            ("solution-tree",    ["architecture"], SurfaceContentFactory.Instances.One),
         };
 
         Assert.Equal(expected.Length, SurfaceContentFactory.Kinds.Count);
@@ -332,7 +333,7 @@ public sealed class PerspectiveMenuTests
              "Next tab in pane", "Previous tab in pane", "Move tab left/right",
              "Focus graph canvas", "Clear the status message",
              "Show graph", "Show evidence", "New class diagram", "New sequence diagram",
-             "Show contexts", "Show joins", "New code viewer"],                 // Ruling 94: no "Show provenance" — the kind is retired
+             "Show contexts", "Show joins", "Show solution tree", "New code viewer"],                 // Ruling 94: no "Show provenance" — the kind is retired
             Titles(architecture, "_View"));
         Assert.Equal(Titles(coding, "_Edit"), Titles(architecture, "_Edit"));
         Assert.Equal(Titles(coding, "_Window"), Titles(architecture, "_Window"));
