@@ -235,3 +235,51 @@ useful end-to-end oracles. The following finite design work remains.
 Clearance requires a new frozen revision from each affected author and author-independent
 re-review. It does not require waiting for Linux spike packaging, and it grants no product
 implementation while the foundation barrier remains open.
+
+## Independent E1/E2 spike qualification
+
+Reviewed frozen E1 `5d361f2a9de2ebdcc7a255d33ad31d96a3a2e0f1` and repaired E2
+`901894112b50d5cdd8cd272f1cb4cb3e886366a7`. **CLEAR both bounded spikes.** This
+qualifies E1 only for source/syntax/symbol feasibility and E2 only for the repaired
+experimental projection. It does not clear E1 control-flow semantics, the eight design
+P0s above, foundation/grants, native integration, or product acceptance.
+
+### E1 behavior spike — CLEAR within its declared boundary
+
+- **[Verified]** The Windows run exited 0 with all six groups and all three negative
+  demonstrations observed. Roslyn overloads are checked by reflection before analysis.
+- **[Verified]** The negative demonstrations are sensitive to the intended mistakes:
+  type-level dedup drops one of three call occurrences, lexical ordering reverses `9:1`
+  and `10:1`, and dynamic invocation retains syntax while producing no bound symbol.
+- **[Verified]** The positive groups cover repeated/recursive calls, distinct overloads,
+  unknown/dynamic symbols, `if`/`while`, `await`/cancellation/throw syntax, and malformed
+  parse diagnostics with a retained unsupported `goto` gap.
+- **[Verified limitation]** The program analyzes synthetic source only. It does not prove
+  CFG/path reachability, production occurrence DTOs, virtual dispatch, cross-project
+  identity, paging/revision behavior, runtime order, native behavior, or performance.
+
+### E2 architecture spike repair — prior findings cleared
+
+| Prior finding | Disposition and falsifiable evidence |
+|---|---|
+| Alias collapse/provenance was asserted by inspecting fixtures | **CLEAR.** Assertions now inspect `ProjectResources` output. Two aliases under one produced root retain distinct anchor IDs and complete target/scope/hash/span evidence. `alias-drop` fails `two-aliases-one-produced-root`; `alias-wrong-root` fails `different-root-not-collapsed`. |
+| Scope distinction was confounded by different files | **CLEAR.** The two resources now share workspace, file and symbol and differ only by scope. `scope-drop` fails `equal-symbols-distinct-scopes`. |
+| Authority was a constant/self-authored assertion | **CLEAR.** The constant `Authority`/`EnforcementProven` claim was removed. The spike now limits itself to validation and hostile-field rejection; it does not claim an authority resolver. |
+| Layer/text/row/blank rejection branches lacked negative oracles | **CLEAR.** The 28-check run exercises unknown layer kind, 257-character text, 33 rows and whitespace required text, with stable rejection diagnostics. |
+
+### Execution evidence and limits
+
+- **[Verified here]** E1 Windows `dotnet run --no-restore`: exit 0; six groups and three
+  negative demonstrations. E2 Windows normal run: exit 0; 28 checks. E2 fault runs:
+  `alias-drop`, `alias-wrong-root` and `scope-drop` each exit 1 at the named dependent
+  assertion. An initial parallel `alias-drop` attempt hit a build-file lock and is excluded;
+  its clean `--no-build` rerun is the credited result.
+- **[Reported from Conductor evidence]** With SDK 10.0.303 on Linux, E1 built with zero
+  warnings/errors in 3.49 s and produced six groups/three negatives; E2 built with zero
+  warnings/errors in 1.91 s and produced 28 checks. This is manual Linux compatibility
+  evidence accepted by Core in `req-01M2KBN3P0A1V2MV3ADXQBZ5J2`; current CI project
+  coverage remains Windows-only.
+- **[Open by design]** Fully known deployment identity and US-E8 acceptance remain
+  unresolved. E1 still needs an admitted CFG decision. Production bounds, resolver
+  authority, cancellation, Bicep producer qualification, native composition and the
+  eight design P0s require later independent evidence.

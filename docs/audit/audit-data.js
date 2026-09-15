@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:38:34Z",
+  "generated": "2026-09-15T20:44:11Z",
   "audit": [
     {
       "actor": null,
@@ -18625,6 +18625,53 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "8eb44853eefd935fb680c3824595b93b07e5b803",
         "short": "8eb44853e",
+        "branch": "review/atlas-views-design",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KD06EXT6WB3VYV5JCMNVXG",
+      "shortname": "atlas-e1-e2-spike-qualification",
+      "datetime": "2026-09-15T20:44:11Z",
+      "session": "codex-atlas-views-review",
+      "prompt": "Independently execute and qualify frozen E1 spike 5d361f2a and repaired E2 spike 90189411, reassess all four prior E2 findings, preserve bounded source/syntax/symbol and experimental-projection limits, and distinguish manual Linux evidence from CI coverage.",
+      "summary": "Cleared both bounded spikes: E1 independently produced six positive groups and three meaningful negative demonstrations; E2 produced 28 checks and all three injected subject faults failed their dependent assertions, clearing the four prior findings. Manual Linux compatibility evidence is separate from Windows-only CI. No design, CFG, foundation, native, or product acceptance is granted.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-sol-plan-review",
+      "artifacts": [
+        "docs/proof/atlas-views-plan-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "spike-qualification"
+      ],
+      "outcome": "success",
+      "goal": "Qualify the frozen E1 spike and determine whether the repaired E2 spike clears all four prior independent findings.",
+      "done_when": "Executed checks and source inspection produce a committed CLEAR/BLOCK disposition for each bounded spike and every prior E2 finding without product overclaim.",
+      "tier": "T2",
+      "main_calls": 15,
+      "main_budget": 12,
+      "main_over_budget": true,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T20:39:41Z",
+      "duration_seconds": 270.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 4,
+          "accepted": 4
+        }
+      ],
+      "git": {
+        "sha": "593c7650ceaa0c92431ae5518caadbdeb6454a6e",
+        "short": "593c7650c",
         "branch": "review/atlas-views-design",
         "pushed": null
       }
