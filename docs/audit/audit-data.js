@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T03:42:36Z",
+  "generated": "2026-09-15T03:59:19Z",
   "audit": [
     {
       "actor": null,
@@ -17116,6 +17116,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "dd682d27a5baf8f10e1880a0a7e90a2f40f770cf",
         "short": "dd682d27a",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HKG7AX4Z935ZCR0A8GJXPY",
+      "shortname": "atlas-owner87-git-canonical-fixture-input",
+      "datetime": "2026-09-15T03:59:18Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "4e34fixturecommit5files/authorApproved497green, butparentrawGitblobcheckandactualfreshregisteredworktreefoundpatchLFDA1!=manifestCRLF9639. Attrstextauto/eolLF; FreshApprovedpreparationFAILline72beforebuild. Parentbyteproofonly130CRLFnormalization7590→7460, archiveunchanged. Owner87grants4leavesONLYcanonicalLFpeerpatch+manifestinputhash/provenance, preserveold9639reference/ED7F8E95pair/archive/source/settings,.gitattributesunchanged. Newcorrectioncommit/readblobs required; sourceCorejoinsheld. ScriptcanonicalblobBF7F...recordedno logicchange. Main820, no newUI/main/normativeauthority.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/proof/code-atlas-e1-core-metadata.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Align approved fixture provenance with canonical committed input bytes",
+      "done_when": "Committed/freshLFpatchhashmatchesmanifestandpreservesqualifiedsource/approvedbinaries beforeintegration",
+      "tier": "T2",
+      "main_calls": 777,
+      "main_budget": 820,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T03:59:18Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "6e8be3345cd07b053afe6237ec8d7089d208504b",
+        "short": "6e8be3345",
         "branch": "conductor/code-atlas",
         "pushed": null
       }

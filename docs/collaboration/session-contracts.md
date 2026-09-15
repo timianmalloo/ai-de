@@ -1293,6 +1293,23 @@ a fresh worktree from a literal clone. Fixture/Core closure follows that proof,
 then a separately budgeted native request. Mainline remains 780; no native
 authoring, main/push, normative E or programme closure is implied.
 
+Owner turn 87 grants four new correction leaves for `peer.patch` EOL
+canonicalization and its manifest hash/provenance only. The committed LF patch
+hash is `DA1AFEE0B66F027C35E4B9D50966C47A1BF30EB491122080B58D61F315B90A39`.
+Preserve historical CRLF hash 963915... as a reference; do not change
+`.gitattributes`, archive, qualified peer source, build settings or approved
+ED7F/8E95 binaries. Prove exact qualified-source/pair reproduction and ordinary
+Approved-mode results, then make a new correction commit, never amend.
+
+The parent observed the failed fresh-worktree case at fixture commit `4e34b7ac`:
+Git attributes require `text=auto eol=lf`, but manifest pins still described
+working-tree CRLF bytes. No Core/accessor join was released. Parent must verify
+new commit-blob and fresh-checkout input hashes before joining the fixture
+commit plus correction. Script canonical blob SHA is recorded without behavior
+change. Retain the old working-tree greens and fresh failure.
+Conductor's cumulative ceiling rises prospectively to 820; no native/UI/main/
+push/normative-E/programme authority is added.
+
 ### Core owns
 
 | Path | Why |
