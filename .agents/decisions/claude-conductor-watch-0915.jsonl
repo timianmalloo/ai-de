@@ -264,3 +264,14 @@
 {"agent": "claude-conductor", "at": 1789491254.7903392, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "claude-conductor-watch-0915", "wi": ""}
 {"agent": "claude-conductor", "at": 1789491254.8003724, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "claude-conductor-watch-0915", "wi": ""}
 {"agent": "claude-conductor", "at": 1789491254.8094914, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789491260.2050164, "code": null, "kind": "allowed", "path": ".agents/decisions/claude-conductor-watch-0915.jsonl", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789491260.2135298, "code": null, "kind": "allowed", "path": ".agents/regen-owed.txt", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789491260.2232327, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789491260.2322876, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789491260.241503, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789491260.250695, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789491260.260214, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789491260.270357, "code": null, "kind": "allowed", "path": "site/index.html", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789492240.7096455, "code": null, "kind": "allowed", "path": "docs/collaboration/session-contracts.md", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789492401.9244156, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789492401.9353101, "code": null, "kind": "allowed", "path": "docs/investigations/INV-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins.md", "session": "claude-conductor-watch-0915", "wi": ""}

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T16:54:17Z",
+  "generated": "2026-09-15T17:19:54Z",
   "audit": [
     {
       "actor": null,
@@ -17333,6 +17333,21 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T16:54:15Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2K0HMS28QHK6YS111NHS324",
+      "shortname": "yes keep going finish remaining nodes",
+      "datetime": "2026-09-15T17:06:31Z",
+      "session": "prompt-log",
+      "prompt": "yes keep going finish remaining nodes",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [

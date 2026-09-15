@@ -1,0 +1,3 @@
+{"agent": "codex-astra-conductor", "at": 1789492199.4556382, "kind": "session-start", "path": "-", "seq": 1, "session": "codex-ownership-qualification-review", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-review-ownership-qualification"}
+{"agent": "codex-sol-review", "at": 1789492479.7773225, "kind": "claim", "path": "docs/proof/ownership-qualification-review.md", "seq": 2, "session": "codex-ownership-qualification-review", "ttl": 300.0, "wi": "ownership-qualification-review"}
+{"agent": "codex-sol-review", "at": 1789492588.2210906, "kind": "release", "path": "docs/proof/ownership-qualification-review.md", "seq": 3, "session": "codex-ownership-qualification-review", "wi": "WI-0"}

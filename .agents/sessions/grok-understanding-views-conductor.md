@@ -8,8 +8,8 @@
 | **Session id** | `grok-understanding-views-conductor` |
 | **Worktree** | `C:/Projects/ai-de-understanding-views` |
 | **Branch** | `understanding-views` |
-| **Based on** | `aa230831` (UV-0 + UV-1 joined on understanding-views) |
-| **Status** | Walking skeleton on branch; N12 Proof Pack review in flight |
+| **Based on** | `5802a83c` N14 stop joined |
+| **Status** | Horizon stopped; N12 PASS on 19/6 red; App.Tests recount green |
 | **Last updated** | 2026-09-15 |
 
 ## Doing right now
