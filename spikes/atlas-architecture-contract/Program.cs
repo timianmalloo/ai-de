@@ -8,11 +8,18 @@ internal static class Program
 {
     private static readonly HashSet<string> Roles = ["entity", "value-object", "aggregate"];
     private static int _checks;
+    private static string _fault = "none";
 
-    private static int Main()
+    private static int Main(string[] args)
     {
         try
         {
+            if (args.Length != 0)
+            {
+                if (args.Length != 2 || args[0] != "--fault" || args[1] is not ("alias-drop" or "alias-wrong-root" or "scope-drop"))
+                    throw new ArgumentException("Only named experimental fault injections are accepted.");
+                _fault = args[1];
+            }
             var valid = JsonNode.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory,
                 "architecture.fixture.json")))!.AsObject();
             void Negative(string name, Action<JsonObject> mutate, string expected)
@@ -27,6 +34,10 @@ internal static class Program
             Negative("unknown-role", d => d["concepts"]![0]!["role"] = "namespace", "unknown-role");
             Negative("invalid-shape", d => d["concepts"] = "wrong", "shape:concepts");
             Negative("invalid-label-shape", d => d["concepts"]![0]!["label"] = 42, "field:label");
+            Negative("blank-required-text", d => d["concepts"]![0]!["label"] = "   ", "field:label");
+            Negative("text-overflow", d => d["concepts"]![0]!["label"] = new string('x', 257), "field:label");
+            Negative("row-overflow", d => { var rows = d["concepts"]!.AsArray(); while (rows.Count <= 32) { var extra = rows[0]!.DeepClone(); extra["id"] = $"extra-{rows.Count}"; rows.Add(extra); } }, "bound:concepts");
+            Negative("unknown-layer-kind", d => d["layers"]![0]!["kind"] = "folder", "layer-kind");
             Negative("anchor-authority-injection", d => d["anchors"]![0]!["accepted"] = true, "unknown-field:accepted");
             Negative("missing-aggregate-root", d => d["concepts"]![2]!["root"] = "absent", "aggregate-root");
             Negative("missing-invariant", d => d["concepts"]![2]!["invariants"] = new JsonArray(), "aggregate-invariant");
@@ -52,15 +63,29 @@ internal static class Program
             var positive = Validate(valid);
             Assert("explicit-domain-layer-positive", positive.Errors.Count == 0 && positive.Unresolved.Count == 0,
                 "entity+value-object+aggregate; declared invariant; logical/current and deployment/target");
-            Assert("authority-not-promoted", positive.Authority == "unestablished" && !positive.EnforcementProven,
-                "declared semantics; authority unestablished; enforcement not proven");
-
             var resources = valid["resources"]!.AsArray();
-            var aliases = valid["aliases"]!.AsArray();
-            Assert("two-aliases-one-declaration", aliases.Select(a => Text(a!, "rootRef")).Distinct().Count() == 1
-                && aliases.All(a => Text(a!, "anchor") == "a"), "one referenced root; two retained alias anchors");
-            string Key(JsonNode n) => string.Join('\u001f', new[] { "workspace", "scope", "file", "symbol" }.Select(p => Text(n, p)));
-            Assert("equal-symbols-distinct-scopes", Key(resources[0]!) != Key(resources[1]!), "two declaration roots; same symbol");
+            Assert("equal-symbols-distinct-scopes", DeclarationKey(resources[0]!) != DeclarationKey(resources[1]!)
+                && ProjectResources(valid).Roots.Length == 2, "all identity components equal except scope; two produced roots");
+            var missingRoot = (JsonObject)valid.DeepClone();
+            missingRoot["aliases"]![1]!["rootRef"] = "missing";
+            var missingProjection = ProjectResources(missingRoot);
+            Assert("missing-root-produces-no-groups", missingProjection.Errors.Contains("alias-root") && missingProjection.Roots.Length == 0,
+                "alias-root; no partial output");
+            var differentRoot = (JsonObject)valid.DeepClone();
+            differentRoot["aliases"]![1]!["rootRef"] = "resource-b";
+            var separated = ProjectResources(differentRoot);
+            Assert("different-root-not-collapsed", separated.Errors.Length == 0 && separated.Roots.Length == 2
+                && separated.Roots.Single(r => r.Id == "resource-a").Aliases.Select(a => a.Id).SequenceEqual(["alias-a"])
+                && separated.Roots.Single(r => r.Id == "resource-b").Aliases.Select(a => a.Id).SequenceEqual(["alias-b"]),
+                "two roots each retain their own alias");
+            var grouped = ProjectResources(valid);
+            var group = grouped.Roots.Single(r => r.Id == "resource-a");
+            Assert("two-aliases-one-produced-root", grouped.Errors.Length == 0 && grouped.Roots.Length == 2
+                && group.Aliases.Select(a => a.Id).SequenceEqual(["alias-a", "alias-b"])
+                && group.Aliases.Select(a => a.Anchor.Id).SequenceEqual(["a", "b"])
+                && group.Aliases.All(a => a.Anchor.Target == "synthetic:abc" && a.Anchor.Scope == "fixture"
+                    && a.Anchor.Hash == "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+                    && a.Anchor.Start == 0 && a.Anchor.Length == 3), "produced root retains both complete alias anchor records");
 
             const string literal = "targetScope = 'resourceGroup'\nresource store 'Microsoft.Storage/storageAccounts@2023-01-01' = {\n  name: 'example'\n}";
             const string expression = "targetScope = 'resourceGroup'\nresource store 'Microsoft.Storage/storageAccounts@2023-01-01' = {\n  name: nameParameter\n}";
@@ -149,7 +174,7 @@ internal static class Program
                     _ => new[] { "id", "label", "rootRef" }
                 };
                 foreach (var field in required)
-                    if (Text(row, field) is not { Length: > 0 and <= 256 }) result.Errors.Add($"field:{field}");
+                    if (Text(row, field) is not { Length: > 0 and <= 256 } text || string.IsNullOrWhiteSpace(text)) result.Errors.Add($"field:{field}");
             }
         }
         var concepts = arrays["concepts"].Where(c => Text(c!, "id") is not null)
@@ -195,12 +220,40 @@ internal static class Program
     private static bool SameDeployment(ResourceIdentity a, ResourceIdentity b) =>
         a.Scope is not null && a.Type is not null && a.Name is not null && a == b;
 
+    private static string DeclarationKey(JsonNode resource) => string.Join('\u001f',
+        (_fault == "scope-drop" ? new[] { "workspace", "file", "symbol" } : ["workspace", "scope", "file", "symbol"])
+        .Select(p => Text(resource, p)));
+
+    // Small subject under test: only validated synthetic declaration aliases, not Azure equivalence.
+    private static ResourceProjection ProjectResources(JsonObject document)
+    {
+        var validation = Validate(document);
+        if (validation.Errors.Count != 0 || validation.Unresolved.Count != 0)
+            return new ResourceProjection([.. validation.Errors, .. validation.Unresolved.Select(a => $"unresolved:{a}")], []);
+        var anchors = document["anchors"]!.AsArray().ToDictionary(a => Text(a!, "id")!, a => new AnchorEvidence(
+            Text(a!, "id")!, Text(a!, "target")!, Text(a!, "scope")!, Text(a!, "hash")!,
+            a!["start"]!.GetValue<int>(), a["length"]!.GetValue<int>()));
+        var groups = document["resources"]!.AsArray().GroupBy(r => DeclarationKey(r!)).ToArray();
+        var roots = groups.Select(group =>
+        {
+            var ids = group.Select(r => Text(r!, "id")!).ToHashSet();
+            var aliasRows = document["aliases"]!.AsArray()
+                .Where(a => _fault == "alias-wrong-root" ? group.Key == groups[0].Key : ids.Contains(Text(a!, "rootRef")!));
+            if (_fault == "alias-drop") aliasRows = aliasRows.Take(1);
+            return new ResourceRoot(Text(group.First()!, "id")!, group.Key, aliasRows.Select(a =>
+                new AliasEvidence(Text(a!, "id")!, anchors[Text(a!, "anchor")!])).ToArray());
+        }).ToArray();
+        return new ResourceProjection([], roots);
+    }
+
     private sealed record ResourceIdentity(string? Scope, string? Type, string? Name);
+    private sealed record AnchorEvidence(string Id, string Target, string Scope, string Hash, int Start, int Length);
+    private sealed record AliasEvidence(string Id, AnchorEvidence Anchor);
+    private sealed record ResourceRoot(string Id, string Key, AliasEvidence[] Aliases);
+    private sealed record ResourceProjection(string[] Errors, ResourceRoot[] Roots);
     private sealed class Result
     {
         public List<string> Errors { get; } = [];
         public HashSet<string> Unresolved { get; } = [];
-        public string Authority => "unestablished";
-        public bool EnforcementProven => false;
     }
 }

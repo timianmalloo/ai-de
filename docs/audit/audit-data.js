@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:25:13Z",
+  "generated": "2026-09-15T20:36:45Z",
   "audit": [
     {
       "actor": null,
@@ -18420,6 +18420,35 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T20:19:21Z",
       "duration_seconds": 352.0
+    },
+    {
+      "id": "al-01M2KCJK0K67SB8XY472D8VHTQ",
+      "shortname": "atlas-e2-contract-review-repair",
+      "datetime": "2026-09-15T20:36:45Z",
+      "session": "codex-atlas-e2-architecture",
+      "prompt": "Repair independent E2 spike BLOCK8eb44853: produce grouped root/alias output and retained anchors with negative mutations; isolate scope as only identity difference; remove constant authority check; exercise advertised kind/row/text/whitespace limits. Same exact spike grant; no deployment identity expansion or production parser. Read receipt, observe meaningful red then green, update RESULT/proof and audit, commit for same independent reviewer. Budget16calls15min checkpoint12.",
+      "summary": "Observed blank-required-text fail prior validation. Added minimal pure validated ResourceProjection and output-sensitive alias tests; scope differs alone; constant authority properties/count removed; layerkind33row257charwhitespace negatives. Rebuilt final source:28checks exit0. Three subject fault runs exit1 at exact alias-drop/wrong-root/scope-drop oracles. Earlier stale --no-build receipt discarded, explicit rebuild and all faults repeated. Historical23checks retained as review-blocked. Full deployment identity still unresolved; Linux rerun and independent rereview pending.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": "GPT-6 Astra E2 author",
+      "artifacts": [
+        "spikes/atlas-architecture-contract/RESULT.md",
+        "docs/proof/atlas-architecture-contract.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Correct four independently observed E2 spike evidentiary defects within bounded grant",
+      "done_when": "Named counterexamples and repaired output-sensitive oracles have observed results and committed proof for independent rereview",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T20:31:42Z",
+      "duration_seconds": 303.0
     }
   ],
   "changes": [

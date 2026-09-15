@@ -8,7 +8,7 @@ tags: [atlas, spike, domain, azure]
 links:
   - { to: design-atlas-architecture-views, rel: relates-to }
 review-by: 2026-12-15
-summary: "Synthetic JSON carrier checks pass; fully known deployment identity remains unresolved."
+summary: "28 repaired synthetic checks and three rejected faults; deployment identity remains unresolved."
 ---
 
 # E2 contract spike result
@@ -21,7 +21,83 @@ framework-only net10 console spike and evidence. No solution, package, productio
 analyzed-code execution, desktop, or source-access-policy change. Grant is branch-local and
 does not admit production `ReadAsync` or a native surface.
 
-## Observed Windows command and output
+## Current repair evidence — supersedes the original 23-check claim
+
+Independent review `8eb44853eefd935fb680c3824595b93b07e5b803` BLOCKED the original
+evidence: alias assertions inspected input, the scope case also changed file, the authority
+assertion was constant, and several advertised bounds lacked negative oracles. That history
+remains below; the original 23 rows did not independently establish those four claims.
+
+**Observed red first:** after adding the whitespace case before changing validation,
+`dotnet run --project spikes/atlas-architecture-contract/AtlasArchitectureContractSpike.csproj`
+returned exit 1 with `FAIL InvalidOperationException: blank-required-text:`. Required text now
+rejects whitespace. Unknown layer kind, 33 unique rows and 257-character text have separate
+named negative checks.
+
+Alias evidence now comes from `ProjectResources`: validation must succeed before any root
+group is returned; output contains root groups and complete immutable alias-anchor records.
+The two aliases retain distinct anchor IDs `a`/`b` and their target, scope, content hash and span.
+Missing root emits no partial groups; moving one alias to the other root keeps the groups
+separate. The identity fixture differs **only** in scope, with workspace/file/symbol identical.
+The constant authority properties and their counted assertion were deleted; the two actual
+hostile-field rejection checks remain. No authority resolver is claimed.
+
+After rebuilding the final source, the same command returned exit 0 and:
+
+```text
+PASS duplicate-id: duplicate-id,aggregate-member,layer-member
+PASS unknown-role: unknown-role,aggregate-root
+PASS invalid-shape: shape:concepts
+PASS invalid-label-shape: field:label
+PASS blank-required-text: field:label
+PASS text-overflow: field:label
+PASS row-overflow: bound:concepts
+PASS unknown-layer-kind: layer-kind
+PASS anchor-authority-injection: unknown-field:accepted
+PASS missing-aggregate-root: aggregate-root,aggregate-root-membership
+PASS missing-invariant: aggregate-invariant
+PASS root-outside-members: aggregate-root-membership
+PASS untyped-membership: layer-member
+PASS unknown-dimension: layer-dimension
+PASS unknown-state: layer-state
+PASS hostile-acceptance-marker: unknown-field:accepted
+PASS alias-not-declaration: alias-root
+PASS stale-anchor: unresolved=a
+PASS missing-target: unresolved=a
+PASS out-of-scope: unresolved=a
+PASS explicit-domain-layer-positive: entity+value-object+aggregate; declared invariant; logical/current and deployment/target
+PASS equal-symbols-distinct-scopes: all identity components equal except scope; two produced roots
+PASS missing-root-produces-no-groups: alias-root; no partial output
+PASS different-root-not-collapsed: two roots each retain their own alias
+PASS two-aliases-one-produced-root: produced root retains both complete alias anchor records
+PASS literal-source-subset: literal type/name read as data; targetScope supplies scope KIND only
+PASS partial-identity-refused: identical literal type/name cannot merge without deployment scope
+PASS expression-name-unresolved: expression not evaluated
+UNRESOLVED fully-known-deployment-positive: admitted Bicep subset supplies no actual subscription/resource-group identity; no invented tuple injected.
+PASS 28 contract checks; six fixture groups observed; full deployment equality remains UNRESOLVED (not US-E8 acceptance).
+```
+
+Three explicit fault injections alter the subject, not its assertions. After that rebuild:
+
+| Command suffix after `dotnet run --no-build --project spikes/atlas-architecture-contract/AtlasArchitectureContractSpike.csproj --` | Observed exit | Final diagnostic |
+|---|---|---|
+| `--fault alias-drop` | 1 | `FAIL InvalidOperationException: two-aliases-one-produced-root: produced root retains both complete alias anchor records` |
+| `--fault alias-wrong-root` | 1 | `FAIL InvalidOperationException: different-root-not-collapsed: two roots each retain their own alias` |
+| `--fault scope-drop` | 1 | `FAIL InvalidOperationException: equal-symbols-distinct-scopes: all identity components equal except scope; two produced roots` |
+
+Alias-drop truncates the produced aliases; wrong-root assigns aliases to the first group;
+scope-drop removes scope from the subject's grouping key. These are experiment-only switches,
+not production options. A first fault run accidentally used an earlier binary after test edits;
+it is excluded from final-revision evidence. The explicit rebuild and all three repeated fault
+runs above correct that stale-artifact mistake. No Linux result from the old source is reused.
+
+Class -> sweep -> derive -> prevent: the class is an oracle asserting its inputs/constants
+instead of independently observing the produced result. Swept alias groups, identity dimensions,
+authority and advertised bounds. Derived output-sensitive checks, isolated scope, removed the
+constant, and added boundary negatives. The three subject faults now fail named oracles. Full
+deployment identity remains the same open producer question, not a new scope for this repair.
+
+## Historical initial Windows command and output (review-blocked)
 
 Run from repository root on 2026-09-15:
 
