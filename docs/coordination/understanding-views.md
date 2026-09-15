@@ -136,6 +136,6 @@ ADR-0030 trigger, quoted not paraphrased: *"Add an explicit `Perspectives` colum
 
 | | |
 |---|---|
-| **Completed** | N0–N14. UV-0/UV-1 + chrome on `understanding-views`. N10 panel (TA/Simplifier PWC, Patterns PASS, SRE PWC). C4 physical Ctrl+Enter via GUI probe, now Ruling 115-gated. N13 38/38. Not `main`. |
-| **Remaining** | Caps 2000/5000 Inferred. Daemon CT repo-wide. Design stays draft. Site figures stale while Codex holds `site/*.html`. Atlas trees have uncommitted audit jsonl (we will not `checkout --` or commit their product). |
-| **Best next action** | Stop this horizon unless Owner re-admits one deferred view. Do not admit D-1. Do not take the desktop without START. |
+| **Completed** | D-0 on `main` `bcf4959b` (Ruling 108). N14 horizon closed. **D-1 re-admitted** (`note-understanding-views-owner-d1-admission`). |
+| **Remaining** | D-1 spine: specify → architecture (listing query + API/UX/CLI/unclassified) → spike if needed → design → UV-0 query (red first) → UV-1 kind. D-2…D-4 keep-deferred. |
+| **Best next action** | `/specify` for D-1 on `understanding-views-d1`. Do not add an `entry-points` kind until the query exists (AR3). |

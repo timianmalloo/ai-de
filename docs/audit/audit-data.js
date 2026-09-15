@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T22:30:16Z",
+  "generated": "2026-09-15T22:52:52Z",
   "audit": [
     {
       "actor": null,
@@ -19844,6 +19844,35 @@ window.AUDIT_DATA = {
       "summary": "Verified code/proof publication; identified twelve original Owner/reviewer audit rows still local and requested an audit-only serialized Core handoff.",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M2KMBV5ZEQPEFFD7708W28HA",
+      "shortname": "owner-d1-admission",
+      "datetime": "2026-09-15T22:52:52Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "re-admit D-1 now",
+      "summary": "Owner ruling admits D-1 Entry-points only. Substrate query still absent; UV-0 is that query. D-2..D-4 keep-deferred. Branch understanding-views-d1 from main bcf4959b.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-owner-d1-admission.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "tier": "T2",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc",
+        "branch": "understanding-views-d1",
+        "pushed": null
+      }
     }
   ],
   "changes": [

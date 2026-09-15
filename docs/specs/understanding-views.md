@@ -21,6 +21,7 @@ links:
 review-by: 2027-03-14
 review-suggested:
   - { by: note-understanding-views-n4-pass, on: 2026-09-15, reason: "N4 gate record for D-0 spec" }
+  - { by: note-understanding-views-owner-d1-admission, on: 2026-09-15, reason: "D-1 admitted this cycle; §A5 D-1 is now DoD; do not thin" }
 summary: >-
   Admits D-0 Solution tree this horizon: Architecture-pane navigator of (path, kind)
   nodes, kind ∈ {file-artifact, census-folder}. Coverage is indexed-parent | unindexed

@@ -6713,6 +6713,65 @@ window.DOCS_INDEX = {
       "sourceSha256": "54995978c362c7d4388ece73d264d03af8cec27c29f02b1347cc768c407c6445"
     },
     {
+      "id": "note-understanding-views-owner-d1-admission",
+      "path": "docs/notes/understanding-views-owner-d1-admission.md",
+      "title": "Admit D-1 Entry-points this cycle; D-2…D-4 stay keep-deferred; first slice is the substrate query",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [
+        {
+          "by": "spec-understanding-views",
+          "on": "2026-09-15",
+          "reason": "D-1 admitted; §A5 admitted-when is now this cycle's DoD"
+        },
+        {
+          "by": "plan-understanding-views",
+          "on": "2026-09-15",
+          "reason": "New N14-successor cycle; one view in flight"
+        }
+      ],
+      "summary": "Operator re-admits D-1 Entry-points only. D-2…D-4 remain keep-deferred. The listing query and API/UX/CLI/unclassified classification do not exist yet — UV-0 is that substrate; the Architecture kind is added only in the slice that builds it (AR3).",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "owner",
+        "D-1",
+        "entry-points"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-n14",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-ruling",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "plan-understanding-views",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "69a9635958af3ebb9abff1c875b5b7792850ad017ab70362f8b76badc6dc870d"
+    },
+    {
       "id": "note-understanding-views-owner-n1-disposition",
       "path": "docs/notes/understanding-views-owner-n1-disposition.md",
       "title": "Admit a query-time Core census as D-0 unindexed substrate; skip-list omitted; Python/TS file grain disclosed not rewritten; specify may proceed",
@@ -6770,6 +6829,11 @@ window.DOCS_INDEX = {
           "by": "plan-understanding-views",
           "on": "2026-09-15",
           "reason": "N14 loop exit; variant 4→0"
+        },
+        {
+          "by": "note-understanding-views-owner-d1-admission",
+          "on": "2026-09-15",
+          "reason": "Successor ruling admits D-1; N14 horizon stays closed"
         }
       ],
       "summary": "N14 stops this horizon. D-1…D-4 are keep-deferred with §A5 admitted-when intact. Blast radius: no next view, no D-1 kind, no main; D-0 chrome may finish on understanding-views without reopening the N14 loop.",
@@ -6819,7 +6883,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ef1d9bd958372f12eccdac3df9ce7c87c64acfc1499717760e4c9d9bff5a9297"
+      "sourceSha256": "ebf96534009d857c20ef0dc3d36ef4612d022c45d746ab15640fafa3d16758cc"
     },
     {
       "id": "note-understanding-views-owner-ruling",
@@ -8970,7 +9034,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8e686fb31673a73a95410bc8bc7e9d5ff7fac4c6275bd01521e8a63505cf0f57"
+      "sourceSha256": "3be72866262e3b3e1386d7a83ec8871fd838c5e332a2647aaa345cc70c06664a"
     },
     {
       "id": "coordination-understanding-views-kickoff",
@@ -20113,6 +20177,11 @@ window.DOCS_INDEX = {
           "by": "note-understanding-views-n4-pass",
           "on": "2026-09-15",
           "reason": "N4 gate record for D-0 spec"
+        },
+        {
+          "by": "note-understanding-views-owner-d1-admission",
+          "on": "2026-09-15",
+          "reason": "D-1 admitted this cycle; §A5 D-1 is now DoD; do not thin"
         }
       ],
       "summary": "Admits D-0 Solution tree this horizon: Architecture-pane navigator of (path, kind) nodes, kind ∈ {file-artifact, census-folder}. Coverage is indexed-parent | unindexed only; not-recorded is Disclosure. D-1…D-6 stay named-and-deferred with §A5 quoted. N4 repair: grain closed, US-T5 split, fixture F*. N4 PASS recorded by conductor from non-author receipts (note-understanding-views-n4-pass). Status remains draft.",
@@ -20183,7 +20252,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  start([Operator in Architecture]) --> ws{Workspace open?}\n  ws -->|no| nows[No-workspace: Open a workspace to see its solution tree.]\n  nows --> openWs[Operator opens a workspace]\n  openWs --> ws\n  ws -->|yes| prior{Prior payload?}\n  prior -->|no| load[Loading: Reading the workspace tree…]\n  prior -->|yes| stale[Rows stay, marked Stale]\n  load --> q{Census plus join}\n  stale --> q\n  q -->|IPC or daemon error| err[Error: Could not read the workspace tree.]\n  err --> retry[Retry]\n  retry --> load\n  q -->|zero nodes and no Disclosure| empty[Empty copy]\n  empty --> showG[Show Graph]\n  q -->|payload| tree[Tree of path-kind nodes plus chrome Disclosures]\n  tree --> skipDisc[N skip-listed directories omitted if N greater than 0]\n  tree --> py{Python/TS scopes present?}\n  py -->|yes| disc[Exact US-T6 copy]\n  py -->|no| nodes\n  disc --> nodes[For each node]\n  nodes --> kind{kind}\n  kind -->|census-folder unindexed| unidx[Unindexed leaf — no children]\n  kind -->|census-folder indexed-parent| parent[Expand or collapse]\n  kind -->|file-artifact| art[Kind glyph plus name]\n  art --> act{Activate}\n  act -->|Enter View source| src[NodeContentAsync then codeviewer]\n  act -->|Ctrl+Enter Reveal in graph| graph[GraphAsync / DescribeAsync]\n  src -->|error| srcErr[Could not open source]\n  srcErr --> srcRetry[Retry] --> src\n  graph -->|error| graphErr[Could not reveal in graph]\n  graphErr --> graphRetry[Retry] --> graph\n  src -->|ok| done([Goal: understand this artifact])\n  graph -->|ok| done\n  unidx --> done2([Goal: coverage is honest])\n  skipDisc --> done2"
         }
       ],
-      "sourceSha256": "b7c3cef292938edaac48bed3d58b43df104e51361b642e04133997ead2e9ca45"
+      "sourceSha256": "29d73fe7c19ee59e55722eb9d7d2eef209527a98f1fea809cce4ba7392c52be9"
     },
     {
       "id": "threat-model-ai-native-ide",
@@ -20478,5 +20547,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d835155d07f75e4983887e0f6cd3d7b7716282d981e68c8c5d55b097de52f2cb"
+  "graphSha256": "a550dcdcc2adc595385cbd7cf3cb2c6f32c0a7e7b80de81be2f35d3f510d3cab"
 };
