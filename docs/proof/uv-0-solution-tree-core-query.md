@@ -14,8 +14,9 @@ review-by: 2027-03-15
 summary: >-
   UV-0 walking skeleton: Core SolutionTreeAsync / IPC solution-tree, production
   UnanalysedLanguages.Skip, ResolveWithinWorkspace join, T5c omit off the wire.
-  F* DTO tests: captured red 14 failed / 11 passed on empty public stub
-  (docs/proof/uv-0-red-run.txt); green 26 Core + 15 App SolutionTree filters.
+  F* DTO tests: captured red on empty INTERNAL SolutionTree overload —
+  Failed 19 / Passed 6 / Total 25 (docs/proof/uv-0-red-run.txt). T5a/T5b/T5c/Cancel
+  are in that fail list. Green: Core+App SolutionTree filters (see body).
 ---
 
 # Proof Pack: UV-0 SolutionTreeAsync
@@ -44,14 +45,14 @@ summary: >-
 ### Claim 3: F* DTO US-T1–T4 (grain, indexed-parent, unindexed_probe, production skip bin)
 - **Evidence:** `StarDto_IndexedParentFileArtifact_UnindexedProbe_BinAbsentWithSkipCount`. `src` coverage IndexedParent; `src/Program.cs` file-artifact; `unindexed_probe` Unindexed; no `bin` node; `SkipListedDirectoriesOmitted >= 1`. `ProductionSkip_ContainsBinWithoutATestInjectedSet` reads `UnanalysedLanguages.Skip` (same instance). Collapse, directory-valued, two-folder parent tests passed.
 - **Oracle:** empty stub returned `Nodes = []` so Folder() failed (collection empty).
-- **Red observed before green:** yes. First failing run: `dotnet test … --filter FullyQualifiedName~SolutionTreeProjectionTests` **25 tests, Passed 6, Failed 19**. `StarDto_…` at `SolutionTreeProjectionTests.cs:89` `Assert.Single` on empty Nodes.
+- **Red observed before green:** yes. Captured internal-stub run: **Failed 19, Passed 6, Total 25** (`docs/proof/uv-0-red-run.txt`). `StarDto_…` is in that fail list.
 - **Confidence:** Verified
 - **Residual risk:** skip-count chrome copy is UV-1 UI.
 
 ### Claim 4: T5a/b/c DTO — IO, permission, named omit off the wire
 - **Evidence:** T5a hook throws `IOException` on `io_probe` → Disclosure Not recorded cause Io, no node, unindexed_probe remains. T5b `UnauthorizedAccessException` on `omit_probe` → Permission, skip-count ≥ 1. T5c internal omit `{omit_probe, omit_probe_2}` → those paths absent, `OmittedByCap >= 2`, Disclosure `Omitted (N)` Count equals the field, unindexed_probe Unindexed. `QueryJson_HasNoDropRelativePathsField`. Extra JSON `dropRelativePaths` does not omit. `GenericCapBelowCount_MayDropUnindexedProbe_AndThereforeIsNotT5c` documents the forbidden arrange.
 - **Oracle:** empty stub had no disclosures / no unindexed_probe. T5c fails if omit is on the query or if integer cap is used as the arrange.
-- **Red observed before green:** yes — `NamedOmit_…` and `IoShortfallOnIoProbe_…` in the 19-fail run.
+- **Red observed before green:** yes — `NamedOmit_…`, `IoShortfallOnIoProbe_…`, `PermissionShortfallOnOmitProbe_…`, `CancelMidWalk_…` are in `docs/proof/uv-0-red-run.txt` (internal empty stub).
 - **Confidence:** Verified
 - **Residual risk:** T5b real ACL (D4 preferred) used the enumerator hook; visual-tree is UV-1.
 
@@ -91,15 +92,15 @@ summary: >-
 
 ## Red-before-green (the run)
 
-**Captured red (Verified, 2026-09-15, conductor):** public `ProjectionService.SolutionTree(SolutionTreeQuery)` stubs returning empty `Nodes`; filter `FullyQualifiedName~SolutionTreeProjectionTests`. Raw log: `docs/proof/uv-0-red-run.txt`. Stub **reverted**; not committed.
+**Captured red (Verified, 2026-09-15):** internal `ProjectionService.SolutionTree(query, omit, census, ct)` returns empty `Nodes` and does not run the cancel hook. Filter `FullyQualifiedName~SolutionTreeProjectionTests`. Log: `docs/proof/uv-0-red-run.txt`. Stub **reverted**; not committed.
 
 ```
-Failed!  - Failed:    14, Passed:    11, Skipped:     0, Total:    25, Duration: 1 s - AiDe.Core.Tests.dll (net10.0)
+Failed!  - Failed:    19, Passed:     6, Skipped:     0, Total:    25
 ```
 
-First named fail in that log: `TwoAssertionsForOnePath_CollapseToOneFileArtifact` (`Assert.Single` on empty). `StarDto_IndexedParentFileArtifact_UnindexedProbe_BinAbsentWithSkipCount` also failed on empty `Nodes`. Author's 6/19 figure was reconstructed and is **superseded** by this 14/11/25 capture.
+T5a (`IoShortfallOnIoProbe_…`), T5b (`PermissionShortfallOnOmitProbe_…`), T5c (`NamedOmit_…`), and `CancelMidWalk_…` are in the fail list. A prior public-1-arg stub produced 14/11 and is superseded.
 
-**Captured green (Verified, prior conductor session):** filter `FullyQualifiedName~SolutionTree` — Core.Tests **26 pass**, App.Tests **15 pass**. The 26 includes daemon round-trip + frame tests beyond the 25-class filter.
+**Captured green (Verified, 2026-09-15):** `docs/proof/uv-0-green-run.txt` — Core `~SolutionTree` **26 pass**; App `~SolutionTree` **15 pass**.
 
 ## E7 surface list (this slice)
 
@@ -115,10 +116,11 @@ First named fail in that log: `TwoAssertionsForOnePath_CollapseToOneFileArtifact
 
 ## Residual risk
 
-- UV-1 visual-tree, kind row, activate. Authors do not mark ADR-0038 accepted.
+- UV-1 visual-tree, kind row, activate (landed; native Ctrl+Enter Flagged).
 - T5b hook vs real ACL. Caps 2000/5000 Inferred.
 - Other extractors' skip lists still disagree (N7 optional).
+- ADR-0038 is Accepted (conductor recorded N6 PASS). This pack stays draft.
 
 ## Gate record
 
-`GATE implement · 2026-09-15 · UV-0 Core query · T2 · red 19/25 then green 28 · status draft, not a self-clear of ADR-0038`
+`GATE implement · 2026-09-15 · UV-0 Core query · T2 · red 19/25 (internal stub, captured) then green 26 Core + 15 App · pack draft`

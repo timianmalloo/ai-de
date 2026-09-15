@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T17:10:03Z",
+  "generated": "2026-09-15T17:19:59Z",
   "audit": [
     {
       "actor": null,
@@ -17307,6 +17307,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "d6574c93b528e282be8ceb2522e07394b4384826",
         "short": "d6574c93b",
+        "branch": "understanding-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K1AA3B2KDYQ5T258VS2BDW",
+      "shortname": "understanding-views-n12-n13-hygiene",
+      "datetime": "2026-09-15T17:19:59Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "yes keep going finish remaining nodes",
+      "summary": "Internal empty SolutionTree stub: Failed 19 Passed 6 Total 25. Green logs committed. SolutionTreeResult.Disclosures and Message covered on the surface.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/uv-0-red-run.txt",
+        "docs/proof/uv-0-green-run.txt",
+        "tests/AiDe.App.Tests/BoundsReachTheSurfaceTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "N12 captured internal-stub red 19/6; N13 cover SolutionTree bound fields",
+      "done_when": "uv-0-red-run 19/6; uv-0-green-run 26+15; BoundsReachTheSurfaceTests green",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      },
+      "git": {
+        "sha": "05ed4a865ed5bc65693ecc02481bb702c67e1229",
+        "short": "05ed4a865",
         "branch": "understanding-views",
         "pushed": null
       }
