@@ -170,3 +170,8 @@ Reviewer acdf4894c9a957600bfd6e63b6ab59319dad92ff clears E1 5d361f2a only as sou
 Owner a766afa88cb4cbbd20c84dc383b213a4ab4e5e94 preserves governing G6 and admits two design-document revisions under one logical envelope. Eight design P0s remain: archetype mapping; E2 typed schema; shared request/observation/completion/Restore contract; foundation/grants/joint guards; executable hard-state mock harnesses; numeric targets/caps/protocol; E1 control-flow paging; per-view E2 native accessibility and consistency oracles. Proposed16ms UI-work target is normative and unmeasured. Both revisions use independent existing worktrees; exact new mock paths await req-01M2KCTTG4ZWAC2K01PB1HYWGK. Upstream grammar discrepancy is reported by req-01M2KD0HNAYKZPBRW2SM9PR63N.
 
 The generated audit-data lease mistakenly held by E1 blocked Conductor and E2 commits across worktrees. The holder explicitly released it; commits then passed identity-bound hooks. No TTL expiry was treated as permission. Shared-register recurrence request req-01M2KCDFNJWXTPRB3G55PJ7Z2E remains pending; no completion claim is made for that obligation.
+
+
+## Design-text clearance and continuing proof
+
+Revised E1 83e1139b and E2 15b53fe9 cleared at design-text level by d062650d. Owner admits finite structural/page and typed-relation experiments within Ruling121. E1 independent oracle ledger precedes authoring; E2 source experiment runs independently. No mock file, shared register or product authoring has begun beyond its grant. Human exact3doc-path question remains pending. Main-watch route is copilot-main-watch; accepted-Atlas publisher remains recovery closer. Main integration authority does not transfer by Claude usage cap.

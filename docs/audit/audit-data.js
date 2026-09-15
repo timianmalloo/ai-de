@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:45:33Z",
+  "generated": "2026-09-15T20:58:09Z",
   "audit": [
     {
       "actor": null,
@@ -18485,6 +18485,36 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "edb9aa3f089ede041b7c88a4edf2ec514f636f08",
         "short": "edb9aa3f0",
+        "branch": "conductor/atlas-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KDSR4GBG9CXKXZ1SD5JRG4",
+      "shortname": "atlas-semantic-proof-replan",
+      "datetime": "2026-09-15T20:58:08Z",
+      "session": "codex-atlas-views-conductor",
+      "prompt": "Continue E1/E2 with Owner/Conductor/subagents, separate worktrees, coordination and graph optimization.",
+      "summary": "Material evidence-driven replan after independent design-text clearanced062650d: E1 independent oracle ledger then bounded structural/page experiment, E2 typed relation experiment, parallel exact existingRuling121 paths. Owner interpreted both within original source-contract grants. Distinct source-semantic gaps, no new product/UI scope. Existing foundation/golden/native gates unchanged. Mock/register3path human grant pending; main-watch takeover is coordination-only. Prior normalized graph estimate explicitly historical; no measured speedup claimed.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/atlas-views.md",
+        "docs/proof/atlas-views-grounding.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close finite source-semantic proof gaps within existing grants while external ownership decisions remain pending",
+      "done_when": "Independent expected invariants are fixed, bounded experiments have falsifying controls and observed evidence, and no product acceptance is inferred",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-15T20:57:12Z",
+      "duration_seconds": 56.0,
+      "git": {
+        "sha": "7c96752814096aefc019f5317da480a9d4e5b3ed",
+        "short": "7c9675281",
         "branch": "conductor/atlas-views",
         "pushed": null
       }

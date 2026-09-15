@@ -119,3 +119,8 @@ All work remains in named lane trees. No desktop, product-source edit, main inte
 E1 5d361f2a and E2 90189411 independently cleared by acdf4894 within their bounded feasibility scopes. Both Windows coverage runs40/18/22/0 built22outside in26s; Linux E1 3.49s/sixgroups and E2 1.91s/28checks observed. No combined candidate gate yet.
 
 Owner a766afa8 admits E1-D2 and E2-D2 in existing Markdown paths after shared G6/envelope decision. Each has14-call/20min budget, checkpoint11; exact new mock grants are a separate dependency. Remaining variant: eight independently identified design obligations mapped to frozen evidence; foundation/production DTO/native gates remain unmet. Earlier source spikes do not prove CFG or complete Azure identity. Next join is only reviewed design/spike evidence under the agreed serialized protocol.
+
+
+## Design-text clearance and continuing proof
+
+Revised E1 83e1139b and E2 15b53fe9 cleared at design-text level by d062650d. Owner admits finite structural/page and typed-relation experiments within Ruling121. E1 independent oracle ledger precedes authoring; E2 source experiment runs independently. No mock file, shared register or product authoring has begun beyond its grant. Human exact3doc-path question remains pending. Main-watch route is copilot-main-watch; accepted-Atlas publisher remains recovery closer. Main integration authority does not transfer by Claude usage cap.
