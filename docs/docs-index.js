@@ -15391,6 +15391,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "56dcbfeec074ea753ff0b3a0cc893aa0d3623122c7ac156afdce54071768f6fa"
     },
     {
+      "id": "proof-atlas-views-plan-review",
+      "path": "docs/proof/atlas-views-plan-review.md",
+      "title": "Independent Atlas E1/E2 programme graph review",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "codex-sol-plan-review",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Clears the two bounded Atlas design-grounding lanes while retaining the implementation barrier and requiring explicit evidence nodes before product work.",
+      "tags": [
+        "atlas",
+        "plan-review",
+        "execution-graph",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c02c81235a12ccf6387141ebbf159bad45d9a90545f9844551816c7a2072efa0"
+    },
+    {
       "id": "proof-audit-gate-plan-review",
       "path": "docs/proof/audit-gate-plan-review.md",
       "title": "Independent plan review: audit gate self-test",
@@ -19302,5 +19328,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "cdd88612eb547c1c59d7cd30ad6c280de4af5e4a93295e495173f86740d6f50d"
+  "graphSha256": "ccce08b2f5406a4ebfb452b86cb3fa36c552c40427671693c50da0a57a290a98"
 };

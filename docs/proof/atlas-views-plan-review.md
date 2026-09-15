@@ -1,7 +1,7 @@
 ---
 id: proof-atlas-views-plan-review
 title: "Independent Atlas E1/E2 programme graph review"
-type: proof
+type: proof-pack
 status: accepted
 owner: "codex-sol-plan-review"
 tags: [atlas, plan-review, execution-graph, coordination]

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:09:57Z",
+  "generated": "2026-09-15T20:10:39Z",
   "audit": [
     {
       "actor": null,
@@ -18422,6 +18422,43 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "c46e112a924a8a0a4c86e4552af1f0e30bfa851c",
         "short": "c46e112a9",
+        "branch": "review/atlas-views-design",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KB2SDRCQ7NCCSSD99V9N98",
+      "shortname": "atlas-views-plan-review-correction",
+      "datetime": "2026-09-15T20:10:38Z",
+      "session": "codex-atlas-views-review",
+      "prompt": "Correct the review receipt metadata after docs-graph rejected the unregistered proof type and record that the planned eight-call budget fired.",
+      "summary": "Replaced the unregistered document type with the repository's established Proof Pack type, regenerated the index, and recorded the nine-of-eight call overrun caused by the failed first derive.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "codex-sol-plan-review",
+      "artifacts": [
+        "docs/proof/atlas-views-plan-review.md"
+      ],
+      "tags": [
+        "correction"
+      ],
+      "outcome": "success",
+      "goal": "Make the committed review receipt discoverable and identity-checked.",
+      "done_when": "Docs graph derives without findings, audit verifies, the correction commit passes with coordination identity, and the tree is clean.",
+      "tier": "T2",
+      "main_calls": 9,
+      "main_budget": 8,
+      "main_over_budget": true,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "9816426d56bf088ad6283f58c21f78ed35298c62",
+        "short": "9816426d5",
         "branch": "review/atlas-views-design",
         "pushed": null
       }
