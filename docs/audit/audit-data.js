@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:14:11Z",
+  "generated": "2026-09-15T20:42:59Z",
   "audit": [
     {
       "actor": null,
@@ -18435,6 +18435,42 @@ window.AUDIT_DATA = {
         "branch": "owner/atlas-views",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2KCXZQ3VAS410DM7H312JEC",
+      "shortname": "atlas-owner-design-review-disposition",
+      "datetime": "2026-09-15T20:42:58Z",
+      "session": "codex-atlas-views-owner",
+      "prompt": "Owner bounded disposition on design review593c7650ceaa0c92431ae5518caadbdeb6454a6e, read receipt C:/Projects/ai-de-review-atlas-views-design/docs/proof/atlas-views-plan-review.md. EightP0s: governing specG6 vs E1 G1 deviation/E2 absent signature; E2 fold F1/F2; shared envelope requestSequence/observation/completion/Restore receipt; foundation+exact grants joint guard; full DX8-10 hard-state mock harness; exact p95/frame/caps; E1 CFG+window/recomposition; E2 graph/list/inspector/native focus/UIA oracles. Recommend two bounded design-revision nodes in same lane docs after minimal shared envelope/authoritative G6 decision; mock harness exact new paths need Core grant (not invent), no product. Confirm priorities and shared contract decisions with evidence; record decision in own existing Owner note via normal lease/audit if feasible budget10calls/12min. Do not self-clear review, invent numeric budgets as measured, or remove P0 by decree. Main stillc46e foundation held, Core considering design-only context seam122. Need useful next work independent of foundation. Additional instruction: propose only docs/mockups/atlas-behavior-views.html and docs/mockups/atlas-architecture-views.html, each self-contained dependency-free DX harness using the existing repo design system. Existing design Markdown paths already lane-authorized. Conductor will request grants; no product before foundation.",
+      "summary": "Read independent frozen review, exact E1 DTO proposal and archetype grammar. Recorded governing G6 and valid extension serialization, shared logical envelope/correlation/observation/completion/Restore semantics, two revision nodes, exact pending mock paths, proposed performance protocol and per-P0 evidence predicates. Found source grammar/example duplicate Type and invalid combined Color; normalized explicitly without modifying upstream. No P0 self-cleared; production admission held.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "codex-astra-owner",
+      "artifacts": [
+        "docs/notes/atlas-views-owner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Settle shared design decisions and order two bounded design revisions against eight independent P0 findings.",
+      "done_when": "Owner supplement records G6, shared semantic envelope, exact mock-path request, measurable proposed budgets and revision outputs while preserving independent review and foundation/grant barriers.",
+      "tier": "T2",
+      "main_calls": 7,
+      "main_budget": 10,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T20:39:36Z",
+      "duration_seconds": 202.0,
+      "git": {
+        "sha": "57a09ed6a2d2a3139cd1129b58294db92a74685a",
+        "short": "57a09ed6a",
+        "branch": "owner/atlas-views",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -22227,6 +22263,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "8c9fa47cc19574f43f7c206251e19af67553b8be",
         "after": "8c9fa47cc19574f43f7c206251e19af67553b8be",
+        "branch": "owner/atlas-views",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2KCXZKNVMPFKFAQGPV6FAZM",
+      "datetime": "2026-09-15T20:42:58Z",
+      "session": "codex-atlas-views-owner",
+      "kind": "decision",
+      "skill": "design-slice",
+      "title": "Atlas G6 shared envelope and two bounded design revisions",
+      "prompt": "Confirm priorities and shared contract decisions for independent design review 593c7650, preserving all eight P0s and the foundation barrier. Confirm only docs/mockups/atlas-behavior-views.html and docs/mockups/atlas-architecture-views.html for the pending Core grant.",
+      "summary": "Retained governing G6 using explicit grammar extensions for conflicting example facets; fixed logical shared envelope and Restore semantics without inventing production types. Admitted two existing-Markdown revisions, exact pending mock paths, proposed 16 ms Atlas dispatch-work threshold and sampling protocol; all eight P0s remain for independent clearance.",
+      "rationale": "Design and state/oracle work can progress before foundation, while source binding, shared wire compatibility and ownership remain joint implementation barriers.",
+      "artifacts": [
+        "docs/notes/atlas-views-owner.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "57a09ed6a2d2a3139cd1129b58294db92a74685a",
+        "after": "57a09ed6a2d2a3139cd1129b58294db92a74685a",
         "branch": "owner/atlas-views",
         "pushed": null,
         "commits": []

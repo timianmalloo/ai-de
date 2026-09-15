@@ -307,3 +307,168 @@ its uncommitted design has not been independently read or accepted in this run.
 **Owner disposition:** F1 and F2 design choices settled subject to named qualification;
 no source grant, self-cleared veto or product acceptance. Conductor assigns the exact
 spike/design amendments and carries pending foundation authority and full-story exits.
+
+## Design-review disposition — 2026-09-15
+
+**Goal:** settle shared design choices and order two bounded lane revisions against
+the eight P0 findings. **Done when:** each finding has a named revision output and
+independent clearing predicate. **Tier T2; fan-out 0; ten-call/twelve-minute budget.**
+No product changes, foundation admission or review clearance are part of this run.
+
+**Verified evidence:** independent receipt
+`593c7650ceaa0c92431ae5518caadbdeb6454a6e`,
+`docs/proof/atlas-views-plan-review.md`, reviews E1 `755d0347` and E2 `e2c17251`.
+It blocks implementation on P0.1–P0.8 and separately blocks the E2 spike's claimed
+oracle coverage. Its earlier evidence-node finding was already cleared against
+Conductor `137d4fe5`; do not repeat that repair. Source reads confirm E1 currently
+selects G1 and its proposed response lacks a Restore receipt. No product was run.
+
+### Shared ruling A — governing G6, one linked reading workstation
+
+**Retain Addendum E C1's G6 Multi-Panel Data Terminal for all five views.** There is
+no G1 modelling-authoring amendment. Sequence/Activity are linked read-only details
+of selected code; domain/layer/Azure are linked evidence views. The source/history
+tree and evidence inspector do not turn this job into parametric 3D modelling.
+
+The opened grammar requires each facet once and single-choice Color. Its examples
+reuse `Type` for category and typography; Addendum's combined Color value also
+conflicts with that grammar. Use the documented extension hook to serialize the
+existing design intent without those ambiguities:
+
+```text
+DataTerminal {
+  Type:DSS; Arch:SPA; Layout:MultiPanelWorkstation; Density:UltraDense;
+  Nav:CommandPalette+Sidebar; Viewport:DesktopBound;
+  Input:KeyboardFirst+PrecisionPointer; Color:DarkAdaptive;
+  x-typography:MonospaceTechnical; x-highContrast:System; Depth:Flat;
+  Sync:LocalFirst; Persistence:Session; Feedback:Instant+Confirmed;
+  Motion:None; Pacing:Freeform; Transition:HardCut;
+  A11y:WCAG_2.2_AA+HighLegibility+ReducedMotion;
+  x-platform:windows; x-framework:wpf;
+}
+```
+
+This is an explicit serialization normalization, not a claim that the upstream
+grammar/example defect was repaired. Conductor reports it to the governing-doc owner.
+The concrete facet mappings below preserve the G6 family; independent UX still
+checks round-trip fidelity and all P0.1 conditions on the revised designs.
+
+| Facet group | Required concrete realization in both lane designs |
+|---|---|
+| DSS / SPA / workstation | Existing Architecture host; file or concept master selection; linked diagram, list, evidence and source details. No new perspective or editing model |
+| Navigation/input | Existing palette/sidebar entry; keyboard-first focus chain, precision-pointer equivalent, explicit selection and Back; no new global menu without seam agreement |
+| Density/type/color/depth | Existing WPF tokens, dense rows and hierarchy, technical code/identity typography, readable UI copy, Light/Dark plus Windows HighContrast, flat structure |
+| Local/session | Local pinned evidence, explicit refresh; session selection/scroll/focus with opaque Core receipts. No duplicate source bodies or durable graph truth in view history |
+| Feedback/time | Immediate local selection/loading feedback, data accepted only after validation; free reading, no animation, hard cuts without focus loss or false current data |
+| Native/accessibility | WPF controls/UIA; keyboard source/Back; 100/150/200% DPI; reduced motion and full-label access; linked accessible alternatives |
+
+The accepted deviations from catalog G6 are local evidence rather than market
+streaming, sidebar/file navigation beside existing commands, and confirmed immutable
+query results rather than flashing live quotes. E1 has a selected method and one
+projection across Sequence/Activity; E2 has a selected concept/resource and one
+presentation model across Domain/Layer/Azure. Neither changes the family.
+
+### Shared ruling B — envelope semantics now, production shape after foundation
+
+Both lanes must use this **logical contract** in their revised designs and synthetic
+mock states. It is not a granted API, accepted codec or replacement reader:
+
+| Boundary | Mandatory meaning |
+|---|---|
+| Request | Negotiated version/capability; authorized scope token; expected Core epoch; exact manifest; monotonic request sequence within the owning view/session; opaque selection/observation context; bounded window with declared grain |
+| Response | Echo/correlate scope, epoch, manifest, request sequence and selected subject; opaque projection observation token bound to its evidence set; typed completion/outcome, bounds/omissions, continuation, disclosures and capability/version |
+| Row/evidence | Exact evidence origin/confidence and observation-bound source-selection token or typed unavailable reason; a projection token cannot substitute for a row's source binding |
+| Navigation | Core-issued receipt for an accepted restorable selection, or explicit unavailable reason. Source and Back/Restore consume existing authority and receipts; no client-minted paths, receipts or reconstructed latest selection |
+| Lifetime | Owner invalidation/cancellation on epoch, manifest, selected context or session replacement; late N cannot overwrite N+1 even if N succeeds after cancellation |
+| Refusal | Unknown version/capability/enum, invalid sequence/bounds/token or malformed payload yields typed refusal. Refused/error replies publish no usable new selection/receipt and never make old evidence current |
+
+Page completion, observation coverage and remaining continuation are distinct.
+A complete page may still have an unknown semantic target or more pages; those
+facts stay explicit. Partial/canceled work is never silently called complete.
+The lane design must define exactly when a partial selection is restorable and which
+receipt it receives; otherwise it is non-restorable with reason. A Back refusal
+keeps its own expired/retired result and never selects a guessed latest equivalent.
+
+Shared golden cases must cover round trip, older/non-capable peer, missing/unknown
+field or enum under the chosen compatibility policy, inert disclosure text, stale
+scope/epoch/manifest, reordered N/N+1, cancellation-before-publication, partial
+completion, capped result, source-changed and expired Restore. After foundation
+admission, the integrator maps this contract to actual shared types and freezes the
+bytes/signatures with one writer per path. Until then P0.3/P0.4 remain open.
+
+### Two revision nodes and priority
+
+**Admit bounded design revisions in the existing lane Markdown paths.** They can
+proceed independently of foundation after these shared decisions. They may not
+implement product code, fabricate the missing producer, or add arbitrary files.
+
+1. **E1 revision:** replace G1 with G6 and facet mappings; adopt envelope semantics;
+   freeze supported control-flow rules and their spike oracles; specify occurrence
+   paging versus structural-node accounting, cross-page edges/gaps, stable order and
+   page recomposition. Source syntax order must not become executable control flow.
+   The syntax-versus-CFG choice requires bounded evidence before semantic acceptance.
+2. **E2 revision:** incorporate F1/F2 as typed schema/DTO proposals, including authority,
+   origin/version, source binding, symbolic identity and carrier limits; adopt G6 and
+   envelope semantics; specify per-view focus/UIA/state and graph/list/inspector oracles.
+   Keep full cross-declaration equality/US-E8.b unresolved, and keep the failed spike
+   oracles separate from production evidence. One E2 presentation core prevents drift.
+
+In parallel with these Markdown revisions, Conductor requests exactly two new
+mock paths: `docs/mockups/atlas-behavior-views.html` and
+`docs/mockups/atlas-architecture-views.html`. **This note does not grant those paths.**
+Existing design Markdown supplies each mock's graph-linked hub; no shared new
+DESIGN file, generated private material or dependency is needed. After exact grant,
+each file is a standalone synthetic DX8–DX10 harness using existing design tokens.
+
+Harness selectors: persona, viewport, view, state, theme, capability and reduced
+motion. For every state list trigger → visible content/copy → enabled actions →
+forbidden content → preserved/cleared selection → recovery → focus destination.
+Render all lane states, including ambiguity/async/cancel/error/omission for E1,
+declared/unknown authority for Domain, typed/unsupported edges for Layer, and
+declarations/aliases/unknown identity for Azure. Include long labels and overflow.
+Run structure-first rubric critique; HTML proof cannot replace native proof.
+
+### Performance and caps — normative candidates, not measurements
+
+Retain governing thresholds: open ≤2 seconds p95; filter and retained switch ≤150 ms
+p95. **Owner candidate frame budget: no continuous Atlas UI-thread work segment over
+16 ms.** This is a proposed acceptance threshold, not an observed capability or a
+claim that all OS rendering frames meet it. Independent SRE/Test review must accept
+its exact instrumentation and workload before dispatch; unmet results return to
+design, never silently relax the budget.
+
+Each lane must define exact proposed request bytes, total response bytes, primary
+rows, structural nodes, edges, text lengths, parser depth and layout-work limits in
+its revised schema. Start from inspected foundation ceilings where applicable;
+otherwise label the numeric choice **proposed limit** with a rationale. A cap on
+primary rows alone cannot bound an auxiliary graph. Bound before allocation and
+publication; refused/truncated states and every numeric unit require negative tests.
+No hard cap is treated as measured capacity. Any still-blank cap keeps P0.6 open.
+
+Protocol requirement: one explicitly authorized fixture per lane, 20 cold-view
+samples (fresh view and projection cache, startup excluded) and 100 retained/warm
+samples, reported separately; nearest-rank p95, raw samples retained. Record actual
+hardware/OS/runtime/build, viewport/DPI, fixture hash/population, cache state and
+instrumentation before running. Do not invent hardware values now. Opening measures
+user action to correctly rendered/interactable content; separate query/render timing
+explains the total. Boundary fixtures deliberately exceed each cap. Native dispatcher
+segments and synthetic over-budget controls must test the stated frame criterion.
+
+### P0 disposition and join guard
+
+| Finding | Next evidence; independent clearance still required |
+|---|---|
+| P0.1 | Both frozen designs carry normalized G6, mappings, phase deviations and UX round-trip review |
+| P0.2 | E2 frozen typed carrier/DTO schema folds F1/F2 and all unresolved identity/authority cases |
+| P0.3 | Shared semantic table now; accepted-foundation mapping and actual golden payloads later at C |
+| P0.4 | Exact accepted SHA, grants and jointly satisfiable E1/E2/GHCP/Core/Grok path/signature guards; one shared integrator |
+| P0.5 | Exact mock grants, complete executable synthetic state harnesses and recorded rubric critique |
+| P0.6 | Lane fixtures/protocols, complete numeric cap tables, instrumentation and SRE/Test-reviewed thresholds |
+| P0.7 | E1 bounded syntax/CFG spike plus structural accounting, cross-page/gap and recomposition oracles |
+| P0.8 | Domain/Layer/Azure per-view row/relation equality, keyboard Source/Back/focus, UIA identity/uncertainty, HighContrast/DPI/overflow/state-reachability and real WPF composition controls |
+
+No P0 is removed by this decision. Freeze revised outputs and return them to the
+independent reviewer. The exact foundation/grant guard is conjunctive, not alternative:
+accepted foundation **and** exact grants **and** shared compatibility **and** independent
+design clearance are all required before implementation. Design-only context-seam
+consideration does not discharge that guard or supply the missing Azure context.
