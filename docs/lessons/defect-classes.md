@@ -5468,6 +5468,14 @@ for both or split.*
   class-wide partially-controlled status. Evidence: `docs/proof/atlas-architecture-contract.md`
   in the architecture lane and `docs/proof/atlas-views-plan-review.md` in the review lane.
 
+- **Same-class follow-up, 2026-09-15, relation binding (`ed7efe79`).** The relation oracle
+  compared only anchor ID/target while its evidence claimed full binding. A fault retaining those
+  fields but corrupting scope/hash/span falsely passed. Independent fixed-record equality now
+  covers every anchor field and population; the same fault fails on Windows and Linux. The
+  existing alias comparison already covered the complete record. This extends the local output
+  control without claiming class-wide prevention; independent receipt `dcc0e358` clears only the
+  bounded synthetic carrier.
+
 ### DC-128 — Citing a commit proves a file existed, not that it was unchanged, so "committed before" is attested rather than mechanical
 
 - **Shape:** a process requires that an artifact — an oracle, a spec, a baseline — be **fixed before

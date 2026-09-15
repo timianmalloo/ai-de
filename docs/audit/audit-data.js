@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:07:15Z",
+  "generated": "2026-09-15T21:15:55Z",
   "audit": [
     {
       "actor": null,
@@ -18545,6 +18545,36 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "902ec1c422d8e39a740645f5a7689c5c276520cb",
         "short": "902ec1c42",
+        "branch": "conductor/atlas-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KET97BJ8E2VSD35JKPQYQ7",
+      "shortname": "atlas-e2-relations-qualified",
+      "datetime": "2026-09-15T21:15:54Z",
+      "session": "codex-atlas-views-conductor",
+      "prompt": "Continue bounded E1/E2 work with independent evidence, coordination and isolation.",
+      "summary": "E2 ed7efe79 independently cleared by dcc0e358 for synthetic relation carrier. Conductor inspected source and receipt; exact frozen Linux build 0 warnings/errors1.90s, 57 normal checks, corrupted-binding fault exits1 at named output oracle. Final Windows project coverage40/18/22/0 in21s. Captured same-class partial-binding oracle recurrence with observed faulty pass before repair and failing control after. No real producer authority/deployment identity/native/product acceptance. E1 experiment active; mock2path grant pending.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-views-grounding.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Verify final E2 relation spike across platforms and preserve its limits and recurrence evidence",
+      "done_when": "Final frozen source has inspected cross-platform outputs, independent bounded clearance and committed proof records",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-15T21:15:24Z",
+      "duration_seconds": 30.0,
+      "git": {
+        "sha": "474c0a1bf655d8dc3559ea38ddf612578126f50d",
+        "short": "474c0a1bf",
         "branch": "conductor/atlas-views",
         "pushed": null
       }
