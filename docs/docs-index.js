@@ -5492,6 +5492,54 @@ window.DOCS_INDEX = {
       "sourceSha256": "4cfedc5859c7e42721b0262e7e521f3343c578a617f8ff2864e2afa485cb726f"
     },
     {
+      "id": "note-d1-codex-entry-point-handshake",
+      "path": "docs/notes/d1-codex-entry-point-handshake.md",
+      "title": "D-1 ↔ Codex E1/E2 entry-point handshake (proposed; not frozen)",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Grok's proposed bilateral contract for D-1 Entry-points vs Codex E1 Sequence/Activity and E2. Status is proposed until Codex ACKs this file at a pinned SHA. Notice-sent is not peer-ACK and not frozen.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "entry-points",
+        "atlas-e1",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-d1-admission",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-atlas-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "af85cdadb1ef2c942a16aed8c5cacb2fdb770d63d32d423bbfee35934d662f3e"
+    },
+    {
       "id": "note-dc-115-evidence-in-a-lanes-own-checkout",
       "path": "docs/notes/dc-115-evidence-in-a-lanes-own-checkout.md",
       "title": "DC-115 — verifying a lane's evidence in the checkout it committed it in",
@@ -20547,5 +20595,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a550dcdcc2adc595385cbd7cf3cb2c6f32c0a7e7b80de81be2f35d3f510d3cab"
+  "graphSha256": "323f7db2b3e3e5c22e8b9d3b87b07e79d3e07caedbe1be28c6c32dd9a452d96f"
 };
