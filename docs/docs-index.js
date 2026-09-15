@@ -8249,7 +8249,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "166408cd2c8aa7f61c16599c0976fc1fb31130e33de681387271c7762cbdbdc3"
+      "sourceSha256": "0de05687a20936264b574e1e704035f682b1608c32d923432e1ac2ee08a7689a"
     },
     {
       "id": "defect-classes",
@@ -9911,10 +9911,10 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "Nodes, dependencies, exits and oracles",
-          "mermaid": "flowchart LR\n G --> O\n O --> D1[E1-D]\n O --> D2[E2-D]\n D1 --> C\n D2 --> C\n C --> RD[R-D]\n RD --> I1[E1-I]\n RD --> I2[E2-I]\n I1 --> P1[E1-P]\n I2 --> P2[E2-P]\n P1 --> R1[R-I E1]\n P2 --> R2[R-I E2]\n R1 --> J\n R2 --> J\n J --> H"
+          "mermaid": "flowchart LR\n G --> O\n O --> D1[E1-D]\n O --> D2[E2-D]\n D1 --> S1[E1-S]\n D2 --> S2[E2-S]\n S1 --> C\n S2 --> C\n C --> RD[R-D]\n RD --> I1[E1-I]\n RD --> I2[E2-I]\n I1 --> P1[E1-P]\n I2 --> P2[E2-P]\n P1 --> R1[R-I E1]\n P2 --> R2[R-I E2]\n R1 --> J\n R2 --> J\n J --> H"
         }
       ],
-      "sourceSha256": "689f088e8f3150f505d243f17b61532e98f292d08a6c7f6590915fa6d448561e"
+      "sourceSha256": "d1631a09a2a5601849eb304cbd6f9cb8efae9d84d06efb88faf0e89cb547433e"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -15454,6 +15454,35 @@ window.DOCS_INDEX = {
       "sourceSha256": "56dcbfeec074ea753ff0b3a0cc893aa0d3623122c7ac156afdce54071768f6fa"
     },
     {
+      "id": "proof-atlas-views-grounding",
+      "path": "docs/proof/atlas-views-grounding.md",
+      "title": "Atlas five-view grounding and coordination evidence",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Observed scope, isolation, peer handoff and graph review; no product acceptance.",
+      "tags": [
+        "atlas",
+        "coordination",
+        "proof"
+      ],
+      "links": [
+        {
+          "to": "plan-atlas-views",
+          "rel": "documents"
+        },
+        {
+          "to": "coordination-atlas-views",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d860d92c939b7dfa07e83b5b5cbfaf0c3f3cbe99ce8735288574e605b010f073"
+    },
+    {
       "id": "proof-audit-gate-plan-review",
       "path": "docs/proof/audit-gate-plan-review.md",
       "title": "Independent plan review: audit gate self-test",
@@ -19373,5 +19402,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "41ab2ce3dfe423a80dc7f2a58d125dab967055a39b2f65b2654091ff1e31edad"
+  "graphSha256": "4610c204a5abb0a5ecb882f7aa176029240879f4555d734545c182dad23984bf"
 };

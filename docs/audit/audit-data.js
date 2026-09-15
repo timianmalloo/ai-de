@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:05:29Z",
+  "generated": "2026-09-15T20:22:44Z",
   "audit": [
     {
       "actor": null,
@@ -18403,6 +18403,31 @@ window.AUDIT_DATA = {
       "fan_out": 3,
       "started_at": "2026-09-15T19:55:32Z",
       "duration_seconds": 596.0
+    },
+    {
+      "id": "al-01M2KBRWZF6D0RB8J5FPGQNVG3",
+      "shortname": "atlas-views-contract-replan",
+      "datetime": "2026-09-15T20:22:43Z",
+      "session": "codex-atlas-views-conductor",
+      "prompt": "Continue user-directed five-view programme through independently reviewed contracts and isolated E1/E2 lanes.",
+      "summary": "Independent reviewer59bac4ee cleared explicit evidence-node repair. Owner57a09ed6 and frozen E1/E2 designs exposed unqualified semantic/producer contracts; graph adds two exact synthetic spikes under Ruling121. Existing implementation gates remain. Grok confirmed no overlapping features. Project-coverage baseline39/18/21 passed in26s. Exact SDK10.0.303 installed in isolated Linux user cache and --info inspected; spike Linux compatibility remains pending. Initial design call-budget overruns recorded; next nodes limited to six fixture groups and12calls including coordination.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": "codex-astra-conductor",
+      "artifacts": [
+        "docs/plans/atlas-views.md",
+        "docs/coordination/atlas-views.md",
+        "docs/proof/atlas-views-grounding.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Qualify E1/E2 contracts before product admission",
+      "done_when": "Graph includes bounded contract qualification, named proof/review exits and exact Ruling121 scope without weakening implementation barriers",
+      "tier": "T2",
+      "fan_out": 3,
+      "started_at": "2026-09-15T20:16:45Z",
+      "duration_seconds": 358.0
     }
   ],
   "changes": [

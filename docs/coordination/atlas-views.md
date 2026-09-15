@@ -87,4 +87,14 @@ Separate provisioned tree and stated division: observed for Owner dispatch. Rece
 observed through collaboration messages. Filesystem edit boundaries are **observed-only** in
 this Codex harness, not an OS sandbox. Commit floor and explicit coord checks remain mandatory.
 No unsupported claim that historical Claude/Copilot hook evidence certifies Codex enforcement.
-Detailed actuals and independent plan review pending; product authoring not yet admitted.
+Independent reviewe07c9e59 cleared grounding;59bac4ee cleared the explicit evidence-node repair.
+E1 design755d0347 and E2 designe2c17251 are committed, with producer gaps retained. Owner57a09ed6
+settled explicit semantic declarations and source-evidenced resource identity rules, subject to
+synthetic qualification. Ruling121 grants two bounded contract spikes in existing lane trees;
+exact paths are in the shared requests. No production authoring is admitted.
+
+E1-S and E2-S each have six named fixture groups,12-call/15min/12k-token budgets including
+coordination, and a warning at10calls. No repeated broad research or production parser. The
+Conductor measures the common project-coverage baseline once, inspects Linux compatibility,
+and joins only independently reviewed evidence. Initial design overruns24/16 and19/16 are
+reported in the graph; new nodes have smaller explicit exits, not silent budget extensions.

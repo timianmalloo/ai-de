@@ -57,7 +57,9 @@ ER remains a separate outstanding item; five-view delivery is not completion of 
 | O | Owner decides horizon, tier and contested seams | G | Recorded bounded ruling; no self-cleared reviewer veto | T2 |
 | E1-D | Separate worker reconciles Sequence/Activity spec, mocks, code and source-to-native trace | O | Every US-E6 obligation mapped; exact proposed paths/signatures; no unsupported runtime claims | T2 |
 | E2-D | Separate worker reconciles domain/layer/Azure spec, mocks, code and evidence rules | O | US-E7/8 mapped; grain, identity, provenance, unknowns and declaration semantics explicit | T2 |
-| C | Settle shared contracts and exact section-2 grants; choose accepted foundation | E1-D, E2-D, peers | No path has two writers; every cross-lane guard jointly satisfiable; new surfaces assigned | T2 |
+| E1-S | Qualify installed Roslyn behavior contract using synthetic source | E1-D, exact spike grant | Explicit occurrence/control-flow fixtures distinguish supported syntax from gaps; source never executed | T2 |
+| E2-S | Qualify explicit declaration carrier and resource identity rules | E2-D, Owner57a09ed6, exact spike grant | Positive bound declarations/aliases, duplicate/stale/unknown/partial identity negatives; no real authorization claim | T2 |
+| C | Settle shared contracts and exact section-2 grants; choose accepted foundation | E1-S, E2-S, peers | No path has two writers; every cross-lane guard jointly satisfiable; new surfaces assigned | T2 |
 | R-D | Independent design/graph/UX/architecture review | C | Trigger union reviewed, falsifiable veto exits satisfied | T2 |
 | E1-I | Red-first, minimal Sequence/Activity vertical slices | R-D | Production source→model→wire→native→Source/Back proven; mutants/negative states exercised | T2 |
 | E2-I | Red-first domain, layer, Azure vertical slices | R-D | Source-backed meaning, no inferred domain truth or deployed-state claims; actual native path proven | T2 |
@@ -72,8 +74,10 @@ flowchart LR
  G --> O
  O --> D1[E1-D]
  O --> D2[E2-D]
- D1 --> C
- D2 --> C
+ D1 --> S1[E1-S]
+ D2 --> S2[E2-S]
+ S1 --> C
+ S2 --> C
  C --> RD[R-D]
  RD --> I1[E1-I]
  RD --> I2[E2-I]
@@ -123,10 +127,13 @@ one shared authority/foundation pass; independent lane grounding and later imple
 after fixed shared contracts; independent review as soon as each frozen slice is ready.
 
 Cost model is **Inferred**, in normalized node units, not minutes or tokens: G=1, O=1,
-each D=2, C=1, R-D=1, each I=3, each P=1, each R-I=2, J=2, H=1. T1=23; T∞=15;
+each D=2, each S=2, C=1, R-D=1, each I=3, each P=1, each R-I=2, J=2, H=1.
+At grounding, before contract spikes were known, T1=23 and T∞=15. Owner57a09ed6 and the
+two lane designs exposed unqualified producer contracts; the re-plan adds E1-S/E2-S.
+The revised model has T1=27 and T∞=17.
 The independent review required explicit proof nodes; the previous four implementation units
 are now split into three implementation plus one evidence unit, not an invented cost reduction.
-Two execution lanes yield Brent bound (23−15)/2+15=19 and lower bound 15. The ceiling is eight
+Two execution lanes yield Brent bound (27−17)/2+17=22 and lower bound17. The ceiling is ten
 units before overhead; no measured speedup is claimed. Shared contracts and desktop slots can
 erase that ceiling. Four total agents provide only two author slots. Pause completed workers
 to admit independent reviewers; Owner does not become an implementer.
@@ -157,7 +164,9 @@ independent design gates exist.
 The independent review required explicit proof nodes before implementation. E1-P/E2-P now
 name committed Proof Packs, exact revision and raw evidence inputs; missing, unexecuted or
 contradictory results prevent review admission. Other implementation barriers remain unresolved,
-not waived by this graph amendment. Focused review of this amendment remains required.
+not waived by this graph amendment. Focused reviewer59bac4ee cleared the evidence-node finding.
+The subsequent contract-spike expansion follows Owner57a09ed6 and Ruling121; it does not
+remove any implementation barrier.
 
 ## Grounding checkpoint actuals
 
@@ -167,3 +176,16 @@ sequence/producer mapping. E2 uses Astra high for domain/resource evidence and a
 Both have their own main-based worktrees and16-call design inventories. The harness refused a new
 E2 thread at its thread limit; resumed an available completed agent with a new explicit E2 role and
 task/session/worktree instead. No fourth concurrent worker was added; E2 never reviews its own work.
+
+E1 design755d0347 completed at24/16 calls; E2 designe2c17251 completed at19/16 including
+coordination. Those overruns expose too much artifact/grounding work per initial node. The next
+nodes are limited to six named synthetic fixture groups each,12 total calls each with warning
+at10; neither repeats broad grounding nor builds production code. They have concrete exit
+evidence rather than a larger retry of the old inventory. Separate independent spike review
+must check both positive and refusal oracles before evidence enters C.
+
+Ruling121 exact spike grants: req-01M2KBCP7JY9PJTC63PD04WPT2 (E1) and
+req-01M2KBCP9A8893CWVDDGKKTBYS (E2). No src/tests/package-version/solution edits;
+no desktop; synthetic input never executed. Windows and Linux build evidence and observed
+project-coverage walltime comparison precede landing. Production signatures/surfaces require
+their own grants after the Atlas foundation lands.
