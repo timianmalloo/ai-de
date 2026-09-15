@@ -60,6 +60,7 @@ public sealed class AtlasStaticViewTests
             var label = Assert.IsType<TextBlock>(Assert.Single(view.CompartmentButtons).Content);
             Assert.Equal(15, label.FontSize);
             AtlasStaticCompositionTests.CheckLabel(window, label, evidence, "local-text-size-15-not-OS-scaling");
+            AtlasStaticCompositionTests.CheckRequiredDisclosure(window, view, directory, evidence);
             AtlasStaticCompositionTests.Capture(window, directory, "long-labels-15dip", evidence);
             foreach (var state in new[]
             {

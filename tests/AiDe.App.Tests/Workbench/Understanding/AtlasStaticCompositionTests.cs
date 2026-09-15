@@ -142,6 +142,7 @@ public sealed class AtlasStaticCompositionTests
                     Assert.Equal(AtlasPresentationMode.Class, reader.Presentation);
                     Assert.True(reader.StaticView.Projection!.Classifier!.IsClass);
                     ObserveSelectedTab(window, reader.StaticView.Presentations, log);
+                    CheckRequiredDisclosure(window, reader.StaticView, evidence, log);
                     var firstButton = reader.StaticView.CompartmentButtons.First();
                     var member = Assert.IsType<AtlasStaticOccurrence>(firstButton.Tag);
                     Assert.True(member.Declaration.Span.Start > 32768);
@@ -463,6 +464,97 @@ public sealed class AtlasStaticCompositionTests
         Assert.All(rectangles, rect => Assert.True(viewport.Contains(rect)));
         Assert.Equal(new string(label.Text.Where(character => !char.IsWhiteSpace(character)).ToArray()),
             new string(string.Concat(runs.Select(run => run.Text)).Where(character => !char.IsWhiteSpace(character)).ToArray()));
+    }
+
+    internal static void CheckRequiredDisclosure(Window window, AtlasStaticView view, string directory, Evidence evidence)
+    {
+        var label = Assert.Single(Visuals<TextBlock>(view),
+            block => block.Text == AtlasStaticViewProjection.RelationshipDisclosure);
+        var ancestorViewport = Visible(label, window, layout: false);
+        var allocatedLabel = label.TransformToAncestor(window).TransformBounds(new Rect(label.RenderSize));
+        var surface = view.TransformToAncestor(window).TransformBounds(new Rect(view.RenderSize));
+        var runs = ClippedGlyphs(VisualTreeHelper.GetDrawing(label), Matrix.Identity, null).ToArray();
+        var glyphs = runs.Select(run =>
+        {
+            var bounds = label.TransformToAncestor(window).TransformBounds(run.Bounds);
+            var clippedViewport = ancestorViewport;
+            if (run.Clip is { } clip)
+                clippedViewport.Intersect(label.TransformToAncestor(window).TransformBounds(clip));
+            return new
+            {
+                run.Text, Bounds = bounds.ToString(CultureInfo.InvariantCulture),
+                ClippedViewport = clippedViewport.ToString(CultureInfo.InvariantCulture),
+                FitsActualClip = !clippedViewport.IsEmpty && clippedViewport.Contains(bounds),
+                FitsAllocatedLabel = allocatedLabel.Contains(bounds),
+                FitsSurfaceAllocation = surface.Contains(bounds),
+            };
+        }).ToArray();
+        var ancestors = new List<object>();
+        for (DependencyObject? current = label; current is not null; current = VisualTreeHelper.GetParent(current))
+        {
+            if (current is FrameworkElement element)
+            {
+                var clip = VisualTreeHelper.GetClip(element);
+                ancestors.Add(new
+                {
+                    Type = element.GetType().Name, element.Name, element.ClipToBounds,
+                    element.ActualWidth, element.ActualHeight,
+                    DesiredSize = element.DesiredSize.ToString(CultureInfo.InvariantCulture),
+                    RenderSize = element.RenderSize.ToString(CultureInfo.InvariantCulture),
+                    Bounds = element.TransformToAncestor(window).TransformBounds(new Rect(element.RenderSize))
+                        .ToString(CultureInfo.InvariantCulture),
+                    ClipType = clip?.GetType().Name,
+                    ClipBounds = clip is null ? null : element.TransformToAncestor(window).TransformBounds(clip.Bounds)
+                        .ToString(CultureInfo.InvariantCulture),
+                });
+            }
+            if (ReferenceEquals(current, window)) break;
+        }
+        var expected = new string(label.Text.Where(character => !char.IsWhiteSpace(character)).ToArray());
+        var drawn = new string(string.Concat(runs.Select(run => run.Text))
+            .Where(character => !char.IsWhiteSpace(character)).ToArray());
+        evidence.Mark("required-disclosure", new
+        {
+            label.Text, label.FontSize, label.TextWrapping, label.TextTrimming,
+            label.ActualWidth, label.ActualHeight,
+            WidthSetting = label.Width.ToString("R", CultureInfo.InvariantCulture),
+            MaxWidthSetting = label.MaxWidth.ToString("R", CultureInfo.InvariantCulture),
+            Dpi = VisualTreeHelper.GetDpi(label).PixelsPerInchX,
+            AncestorClippedViewport = ancestorViewport.ToString(CultureInfo.InvariantCulture),
+            AllocatedLabel = allocatedLabel.ToString(CultureInfo.InvariantCulture),
+            SurfaceAllocation = surface.ToString(CultureInfo.InvariantCulture),
+            ExpectedCharacters = expected, DrawnCharacters = drawn,
+            Glyphs = glyphs, Ancestors = ancestors,
+        });
+        Capture(window, directory, "required-disclosure", evidence);
+        Assert.NotEmpty(glyphs);
+        Assert.Equal(expected, drawn);
+        Assert.All(glyphs, glyph => Assert.True(glyph.FitsActualClip,
+            "Every required-disclosure glyph must fit the actual ancestor/drawing-clipped viewport."));
+        Assert.Equal(TextWrapping.Wrap, label.TextWrapping);
+        Assert.Equal(TextTrimming.None, label.TextTrimming);
+    }
+
+    private static IEnumerable<(Rect Bounds, string Text, Rect? Clip)> ClippedGlyphs(
+        Drawing drawing, Matrix parent, Rect? inheritedClip)
+    {
+        if (drawing is DrawingGroup group)
+        {
+            var transform = group.Transform?.Value ?? Matrix.Identity;
+            transform.Append(parent);
+            var clip = inheritedClip;
+            if (group.ClipGeometry is { } geometry)
+            {
+                var bounds = new MatrixTransform(transform).TransformBounds(geometry.Bounds);
+                if (clip is { } existing) bounds.Intersect(existing);
+                clip = bounds;
+            }
+            foreach (var child in group.Children)
+                foreach (var run in ClippedGlyphs(child, transform, clip)) yield return run;
+        }
+        else if (drawing is GlyphRunDrawing run)
+            yield return (new MatrixTransform(parent).TransformBounds(run.Bounds),
+                new string(run.GlyphRun.Characters.ToArray()), inheritedClip);
     }
 
     private static IEnumerable<(Rect Bounds, string Text)> Glyphs(Drawing drawing, Matrix parent)

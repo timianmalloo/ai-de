@@ -962,3 +962,74 @@ A/R plus UX/UML/C#/SRE/DS/Security/Owner gates remain open. Original 26-case,
 NQ18 113-case, historical TDD and earlier mutation receipts remain unchanged and
 unstaged. No Core/factory/chrome/dependency edit, rebase, main update or push
 occurred.
+
+## NL12 required-disclosure clipped-viewport control and bounded repair
+
+NL12 began at `2026-09-15T17:24:16Z`, with 12 prospective calls. Static prep
+changed only the two existing test files and compiled without running any
+Window/Show/UIA/daemon while integration held the desktop. Product
+`AtlasStaticView.cs` remained at
+`A6BC21418FA00B6BDE95C531DD7F16B38A8168B44522638E678DFC5C7BC31DCA`.
+The closer later granted the desktop after integration join-host PID 32564
+ended at `18:03:30.817182Z`.
+
+The new shared `CheckRequiredDisclosure` oracle finds the full, unmodified
+relationship-limitation TextBlock, records its actual/desired/render dimensions,
+walks actual ancestor clipping geometry, and includes DrawingGroup clips in
+the shaped-glyph traversal. It compares every non-whitespace character and every
+glyph rectangle against the actual ancestor/drawing-clipped viewport.
+Own-label and surface-allocation fit are recorded as diagnostics, **not**
+substituted for actual clipping. The required-disclosure PNG is captured
+before assertions. Existing member/source/token/Back/stale/contrast and numeric
+assertions are unchanged.
+
+### Red observed on unchanged product
+
+Exactly four selected cases ran once: 1180/1280/1440 real composition journeys
+and the existing current local-15-DIP hard-state fixture. Result: **one failed,
+three passed, zero skipped**. Only 1180 failed the actual clipped-glyph predicate
+at `AtlasStaticCompositionTests.cs:532`. Full expected and drawn characters
+agreed: this is clipping, not missing text in the backing string.
+
+- Red TRX `.artifacts/atlas-e1/nl12-disclosure-red.trx`, SHA-256
+  `03822EC9A56044A47D1D2648D7580DCF28923A40E9D76EB5D05F98F3B4718264`.
+- Runner PID 23756, actual start `2026-09-15T18:22:05.3324457Z`, end
+  `2026-09-15T18:22:24.8385706Z`, exit 1.
+- Shared start/end request `req-01M2K4W0JD7NKVWRRC4JQW5Z70` resolved with
+  desktop release; recorded runtime PIDs `5696,8784,25696,32388` were absent.
+- Full measurements: `.artifacts/atlas-e1/nl12-red-observations.json`;
+  runner/hash metadata: `nl12-red-run.json`; stdout/stderr retained alongside.
+- Fresh red capture:
+  `native-1180-20260915182221619-8a368638a7e84283b45066a039d605e8/required-disclosure.png`
+  under `.artifacts/atlas-e1/`. No vision inspection of this new PNG is claimed.
+
+### Verified width mechanism, not a guessed margin or DPI adjustment
+
+At 1180, the reader body Grid renders at **620 DIP**, but its actual layout clip
+and parent allow **598.5066666666667 DIP**. The Grid's source-only column minima
+are **180 + 180 + 260 = 620**, still applied while the outline and source
+controls are collapsed and Class view spans their two columns.
+
+The Class view is consequently allocated 440 DIP, its disclosure label 424 DIP.
+The first shaped line's ink runs from X **499.6066927083333** to
+**915.9961653645834**; the actual ancestor clip ends at X **909.92**.
+The ink fits its own allocated label and Class surface, yet exceeds the real
+clip by **6.0761653645834 DIP**. This directly explains why label-local checks
+and the previous 113-case green missed the clipped final letter.
+At 1280/1440 and local 15 DIP, the actual clipped-glyph predicate passed.
+
+The bounded correction is solely in `AtlasReaderView`'s existing body-grid
+layout: retain the original file-column minimum; apply the original outline/
+source minima only in Source presentation, and remove those hidden-column
+minima in Class presentation. Star weights and all Source-mode minima remain
+unchanged. No wording, font, ellipsis, padding/DPI guess, shell/theme/Core or
+dependency change is introduced. A retained Grid reference lets the existing
+presentation switch own those minima in one place.
+
+This section records the red and the demonstrated repair before its green run.
+The same four-case selector, fresh capture/geometry data, exact source/binary
+hashes and measured result are recorded by the closing
+`atlas-nl12-disclosure-layout` audit and `nl12-disclosure-green.trx`.
+No green, pixel review, whole-cohort result or native acceptance is assumed here.
+Original 26/113 receipts, NM12 three-fault controls and original images remain
+preserved; final independent/combined gates remain separate.

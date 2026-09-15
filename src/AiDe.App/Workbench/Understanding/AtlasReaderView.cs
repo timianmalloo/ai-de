@@ -37,6 +37,7 @@ public sealed class AtlasReaderView : UserControl
     private readonly TextBlock _bounds = new() { TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _sourceStatus = new() { TextWrapping = TextWrapping.Wrap };
     private readonly AtlasStaticView _staticView = new();
+    private readonly Grid _readerGrid = new();
     private readonly Button _sourceMode = new() { Content = "Source" };
     private readonly Button _classMode = new() { Content = "Class view" };
     private readonly Button _nextOutline = new() { Content = "Next declarations", IsEnabled = false };
@@ -150,6 +151,8 @@ public sealed class AtlasReaderView : UserControl
     private void SetPresentation(AtlasPresentationMode presentation)
     {
         Presentation = presentation;
+        _readerGrid.ColumnDefinitions[1].MinWidth = presentation == AtlasPresentationMode.Source ? 180 : 0;
+        _readerGrid.ColumnDefinitions[2].MinWidth = presentation == AtlasPresentationMode.Source ? 260 : 0;
         _source.Visibility = _outline.Visibility =
             presentation == AtlasPresentationMode.Source ? Visibility.Visible : Visibility.Collapsed;
         _staticView.Visibility = presentation == AtlasPresentationMode.Class ? Visibility.Visible : Visibility.Collapsed;
@@ -421,10 +424,10 @@ public sealed class AtlasReaderView : UserControl
         toolbar.Children.Add(_loadMore);
         toolbar.Children.Add(_status);
 
-        var grid = new Grid();
+        var grid = _readerGrid;
         grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star), MinWidth = 180 });
-        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star), MinWidth = 180 });
-        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(5, GridUnitType.Star), MinWidth = 260 });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(5, GridUnitType.Star) });
         Grid.SetColumn(_files, 0);
         Grid.SetColumn(_outline, 1);
         Grid.SetColumn(_source, 2);

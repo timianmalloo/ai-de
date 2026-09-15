@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T17:19:53Z",
+  "generated": "2026-09-15T18:28:59Z",
   "audit": [
     {
       "actor": null,
@@ -17414,6 +17414,36 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T16:51:32Z",
       "duration_seconds": 1701.0
+    },
+    {
+      "id": "al-01M2K58MRR6B47HKHC8VC0WHA6",
+      "shortname": "atlas-nl12-disclosure-layout",
+      "datetime": "2026-09-15T18:28:59Z",
+      "session": "atlas-e1-native-class-view",
+      "prompt": "NL12 ONLY verified1180requiredlimitationclip: actualfullTextBlock/TextFormatterglyphbounds versusancestorclippedviewport, redonunchangedStaticViewA6 beforeminimumdemonstratedfivefilelayoutfix; no textshortening/ellipsis/fakehashpixel/shell/theme/Core/dependencies. Preservealloldnumeric/source/token/Back/stalecontrols. Exact1180/1280/1440/currentlocal15DIP targeted proof, freshcaptures, PID/start/end/desktoprelease, no wholecohort; original113/NM3/26/pixels retained. Ihelddesktopuntilcloser explicitgrant; staticprep/compileonlybeforegrant. Twelveprospectivecalls, samewriter/tree; finalindependent/combinedgatesremainopen.",
+      "summary": "RED1failed3passed/4 onunchangedA6: glyphright915.996165vsactualclipright909.92, ownlabel/surfacefitsTRUE; readerGrid620 from180+180+260minimums exceeded598.506667available whileoutline/sourcecollapsed. FULLcharacterspresent; notmissingtext/margin/DPIguess. FixONLYReaderbodyGrid: originaloutline180/source260minima nowSource-modeonly; Class hiddenminima0; fileminimum/starweights/fullwording/fonts/alloldassertionsunchanged. GREEN4/4 and4completefullglyph-fit measurements includinglocal15DIP afternonincrementalbuild0warnings/errors. GreenTRXSHA=A5DC43B4F524022D17EE4D2AB6CE4DC1A46917C849D36A810CBA6308BC9C990D ReaderSHA=64A29BE565263671E0512851F7D7D33CEF7FFDBF278A9E0DEF2968478947741F StaticViewA6unchanged AppDLL=5473DBAC75221F8AAAC3A3E34883BE6062B0939F90E2C8375AF114510810924A TestDLL=A58A46F6FF09AE619FA80D53D362DC3EFBEE245A0B5715AA7FE292D0FFB94F55. FreshPNG/geometry in nl12-green-observations.json; pixelsNOTclaimedvisuallyinspected, Rootreviewpending. RunnerPID=10868 start=2026-09-15T18:28:34.0199958Z end=2026-09-15T18:28:58.0565762Z runtimePIDs=19988,23224,30224,33336 allabsent, desktopreleased. No wholecohort/main/rebase/push; historicalcauses/hardwareOSlimits/finalcombinedindependentgates remainOPEN.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src\\AiDe.App\\Workbench\\Understanding\\AtlasReaderView.cs",
+        "docs\\proof\\code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Correct only measured required-disclosure clipping with full wording preserved",
+      "done_when": "Unchanged-product clipped-glyph red, minimalcause-linkedlayoutfix, exact4casecompleteglyphgreen andfreshcaptures/hashes recorded; pixel/finalgates explicit",
+      "tier": "T2",
+      "main_calls": 11,
+      "main_budget": 12,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T17:24:16Z",
+      "duration_seconds": 3883.0
     }
   ],
   "changes": [
