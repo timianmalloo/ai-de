@@ -1,0 +1,19 @@
+{
+  "agent": "copilot-atlas-main-integrator",
+  "session": "atlas-main-integration-b0d0",
+  "worktree": "C:\\Projects\\ai-de-atlas-main-integration",
+  "branch": "atlas/main-integration",
+  "status": "blocked-on-exact-counterpart-authority",
+  "doing": "Interactive desktop released; no new App, full-recount, real-window or UIA run may start without closer handoff.",
+  "waiting_on": "Exact section-2 writer/path acknowledgements for technically approved IRP repairs; closer authorization before any further GUI run.",
+  "interactive_desktop": {
+    "state": "released",
+    "observed_utc": "2026-09-15T15:00:15.9389417Z",
+    "integration_runtime_process_count": 0,
+    "observed_process_ids": [],
+    "last_shown_receipts": "artifacts\\atlas-real-daemon-window-proof\\atlas-irp-1789483669095237100",
+    "next_run_owner": "atlas-e1-native-class-view",
+    "next_run_limit": "one NP shown run, as directed by the closer",
+    "cause_inference": "No inference about native focus or 1180 failures is made from possible desktop overlap."
+  }
+}

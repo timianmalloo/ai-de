@@ -6414,6 +6414,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "547599b3a81162c48e18f139d1969e09a99e9810e61d30b9f0b14dd1e0c10957"
     },
     {
+      "id": "note-recursive-surface-ownership-owner",
+      "path": "docs/notes/recursive-surface-ownership-owner.md",
+      "title": "Recursive surface ownership: bounded Owner decisions",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Defines the bounded interpretation of existing ownership declarations for the recursive Workbench surface gate. Assignments remain exclusively in session-contracts section 2.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "verification",
+        "decision"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5c1ffe250e7fd5c71aab5c29fbd2354d161ace7fb6fa674b13d4f725f6c07f14"
+    },
+    {
       "id": "note-session-design-decoration-line",
       "path": "docs/notes/session-design-decoration-line.md",
       "title": "The decoration line — one grammar for every turn (class · tier · lease · shape · template, provenance on demand), the task class per prompt with free-form as the explicit default, and where the tier control sits",
@@ -8603,6 +8629,35 @@ window.DOCS_INDEX = {
       "sourceSha256": "6549168b93046ac99c21691b61f11f8ca8e7baa58b4cf8ee2e82340e61b34615"
     },
     {
+      "id": "coord-recursive-surface-ownership",
+      "path": "docs/coordination/recursive-surface-ownership.md",
+      "title": "Recursive surface ownership: bounded Codex programme",
+      "type": "doc",
+      "status": "complete",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "One tooling author, an Astra Owner and Conductor, and independent review close recursive ownership coverage without changing ownership policy.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "tooling"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "plan-recursive-surface-ownership",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e0e693a79024db3d297413cc6db40e629b7002ad5f020f19974a34f361a25a60"
+    },
+    {
       "id": "coordination-addendum-cd",
       "path": "docs/coordination/addendum-cd.md",
       "title": "Coordination plan - Addenda C and D (the perspective shell and the compile step)",
@@ -8801,7 +8856,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "08f1cd23232c08752833892aea873d12f2b8002fa9abc05ba2c496c132d8668f"
+      "sourceSha256": "b392e918c1520f1b2f433c18cbb41345dff031ed3afcbd70a19421b830077e9a"
     },
     {
       "id": "design-session-profiler",
@@ -10114,7 +10169,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3c5ba58222a1b1d54bf011551d242292d506448262ed18d35910a93afb48146d"
+      "sourceSha256": "8485cbab26859a82f099a05a28d7f409ea70045ff1220ccde3a413e0f81b6800"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -11296,6 +11351,81 @@ window.DOCS_INDEX = {
       "sourceSha256": "62577cd18a0caecf5aa001fb22370aa7cca8608829123d3a4f3742a4537037ef"
     },
     {
+      "id": "plan-ownership-qualification",
+      "path": "docs/plans/ownership-qualification.md",
+      "title": "Qualify the landed ownership gate and close stale status",
+      "type": "doc",
+      "status": "complete",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Verify the already-published fix, qualify unchanged inputs, and coordinate the obsolete ownership-gap paragraph without duplicating implementation.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "qualification"
+      ],
+      "links": [
+        {
+          "to": "plan-recursive-surface-ownership",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Superseding completion — 2026-09-15",
+          "mermaid": "flowchart LR\n G --> V --> C\n G --> Q --> C"
+        }
+      ],
+      "sourceSha256": "94046bbf448dc698a1c3aa5b789f9c6b5ca9d0fca67eef2de320d15712840a54"
+    },
+    {
+      "id": "plan-recursive-surface-ownership",
+      "path": "docs/plans/recursive-surface-ownership.md",
+      "title": "Execution graph: recursive ownership gate",
+      "type": "doc",
+      "status": "complete",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "A single author spine with independent pre-author and post-author gates; ownership decisions precede implementation.",
+      "tags": [
+        "plan",
+        "execution-graph",
+        "ownership"
+      ],
+      "links": [
+        {
+          "to": "coord-recursive-surface-ownership",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Superseding status — 2026-09-15",
+          "mermaid": "flowchart LR\n G --> O --> P --> A --> R --> J\n G --> P"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Material-evidence re-plan: independent parser veto",
+          "mermaid": "flowchart LR\n R[Review BLOCK] --> I[Investigate: reproduce five cases] --> A2[Bounded same-author repair] --> R2[Independent review] --> J[Join]"
+        }
+      ],
+      "sourceSha256": "40712ff0a73a3edf22ae67d2999b87ad8e0beff54317a842d48477f81013d932"
+    },
+    {
       "id": "plan-ui-and-windowing",
       "path": "docs/plans/ui-and-windowing.md",
       "title": "Execution graph — UI elevation, windowing behaviour, and F5 in parallel",
@@ -12316,7 +12446,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "36237fdbaaf1d98bc54543e36fd792f200abb491b696358863c654ebc5b4addf"
+      "sourceSha256": "bd7b464253cc829b41fd036b2fd34c32c42a3d2ff684ed3d42b40ecb61092865"
     },
     {
       "id": "session-profiles",
@@ -13283,6 +13413,52 @@ window.DOCS_INDEX = {
       "sourceSha256": "2122bcb7ecb421695f758e544427505235dd28a09b7511b1dca941c4d61d772f"
     },
     {
+      "id": "inv-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins",
+      "path": "docs/investigations/INV-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins.md",
+      "title": "main has been red since 2026-09-12 — 13 tests, 9 of them born red at three joins whose recount ran only on Windows, 4 flaky on the runner; none a regression on the shipped platform",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-watch-0915",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "Option B of the operator's 2026-09-15 main-red decision: diagnose read-only, fix after the Atlas landing. Measured from all 50 Build runs on main since the last green (ebe18260, 09-12T17:55Z), two local runs on a real Windows desktop, and the code. The 13 red tests at bab5035e are 9 deterministic reds — each first red on the CI run that first executed it, at a join — and 4 intermittent STA timeouts. All 13 pass on Windows here (38/38 Core, 32/32 App). The five Linux-only Core reds are Windows semantics encoded in a locator (.exe vs .cmd) and a delete cascade (a directory move refused while a file inside is open); the eight Windows-runner reds are the hosted runner's fonts/DPI and its flaky UI suite. Ruling 117 holds the fix order.",
+      "tags": [
+        "main-red",
+        "ci",
+        "inv-0005",
+        "join",
+        "recount",
+        "linux",
+        "runner",
+        "engine-catalog",
+        "envelope-store",
+        "codings-left-extent",
+        "sta",
+        "dc-104"
+      ],
+      "links": [
+        {
+          "to": "INV-0005-the-gate-runs-everything-and-has-been-red-for-two-days",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f7f512919b02fcbbc3adca4c48c208d1351022658d11bd9adfa68975b79d3fae"
+    },
+    {
       "id": "inv-knowledge-chip-reads-zero-again",
       "path": "docs/investigations/knowledge-chip-reads-zero-again.md",
       "title": "The Knowledge category chip reads 0 again — the App ignores the IsKnowledge flag",
@@ -13391,6 +13567,40 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "7b5ab959b71fba5a9a1515532fb4f6b0f1b3c9f0d78041713eaec85f8299b33d"
+    },
+    {
+      "id": "investigation-recursive-surface-ownership",
+      "path": "docs/investigations/recursive-surface-ownership.md",
+      "title": "Recursive surface ownership parser review block",
+      "type": "investigation",
+      "status": "complete",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Reproduces and traces five independent parser failures on author commit 18a4a19f, records the necessary and sufficient causes, and defines the same-scope repair that preserves live section 2 header reuse and exact surface-token jurisdiction.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "parser",
+        "verification"
+      ],
+      "links": [
+        {
+          "to": "proof-recursive-surface-ownership-author",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "adb50226c350725f59d0554f4a9c86b1beb1167e87619b1533fdce0626cc93a2"
     },
     {
       "id": "investigation-redraw-isolation",
@@ -18055,6 +18265,68 @@ window.DOCS_INDEX = {
       "sourceSha256": "0ce1c999eb408c194202fc11bc9cf17ed3b17d62b6ed956d5df84281d38085b0"
     },
     {
+      "id": "proof-ownership-qualification",
+      "path": "docs/proof/ownership-qualification.md",
+      "title": "Published ownership gate qualification",
+      "type": "proof-pack",
+      "status": "complete",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Current qualification and status reconciliation after the Core coordinator published the recursive gate and repaired shared liveness lookup.",
+      "tags": [
+        "proof",
+        "ownership",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "plan-ownership-qualification",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-recursive-surface-ownership",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-ownership-qualification-review",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2faa2a4f8b7bce7150625737108efa48d23b08f4768059cfae7897769ca9b7a3"
+    },
+    {
+      "id": "proof-ownership-qualification-review",
+      "path": "docs/proof/ownership-qualification-review.md",
+      "title": "Independent review of ownership qualification",
+      "type": "proof-pack",
+      "status": "current",
+      "owner": "@codex-sol-review",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Independent Test Architect and Simplifier qualification of the published stranded-audit fix and receipt-reuse boundary.",
+      "tags": [
+        "proof",
+        "ownership",
+        "review"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "66e8b16314eeda217934db71c767c5ac0f1c54fe1c1fba2ed3519b3e5aa5c38c"
+    },
+    {
       "id": "proof-perspective-content",
       "path": "docs/proof/perspective-content.md",
       "title": "Proof Pack: SH-3 — perspective content",
@@ -18258,6 +18530,178 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "6d8859bbc9cc1635e9b7aa19807ae8cb3c0ff07354368f08de9465546d2a1845"
+    },
+    {
+      "id": "proof-recursive-surface-ownership",
+      "path": "docs/proof/recursive-surface-ownership.md",
+      "title": "Recursive surface ownership: programme evidence",
+      "type": "proof-pack",
+      "status": "complete",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Observed scope, red-first evidence, independent receipts, and integration limitations for the recursive Python ownership gate.",
+      "tags": [
+        "proof",
+        "ownership",
+        "coordination",
+        "tooling"
+      ],
+      "links": [
+        {
+          "to": "coord-recursive-surface-ownership",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-recursive-surface-ownership-review",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-recursive-surface-ownership-repair",
+          "rel": "relates-to"
+        },
+        {
+          "to": "investigation-recursive-surface-ownership",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a5005d42c8bb8b1cf747ab9925891ba2e5ebf8fc29f394faf2d702e8129b3dc6"
+    },
+    {
+      "id": "proof-recursive-surface-ownership-author",
+      "path": "docs/proof/recursive-surface-ownership-author.md",
+      "title": "Recursive surface ownership: author proof",
+      "type": "proof-pack",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "recursive surface-ownership gate authoring",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Records red-first, mutation, temporary-filesystem, CLI, and live-register evidence for the recursive Workbench surface-ownership gate. The author base remains honestly red only for ProseView; the read-only Ruling 114 Conductor register is green at 17 of 17.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "python",
+        "verification"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6e7bfcc4ebaa673a7ff2456ae0ef8e53427b383c788196ab0afecdf0eba6db7d"
+    },
+    {
+      "id": "proof-recursive-surface-ownership-plan-review",
+      "path": "docs/proof/recursive-surface-ownership-plan-review.md",
+      "title": "Recursive surface ownership: independent plan review",
+      "type": "proof-pack",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Independent pre-author review clears the bounded plan and fixes the task join gate floor.",
+      "tags": [
+        "proof",
+        "review",
+        "ownership",
+        "testing",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7f5d0fd0ec8cd33617414f7ed9112a21c331a035ae4859e272aa94234c2e6b57"
+    },
+    {
+      "id": "proof-recursive-surface-ownership-repair",
+      "path": "docs/proof/recursive-surface-ownership-repair.md",
+      "title": "Recursive surface ownership parser repair proof",
+      "type": "proof-pack",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Records failing-first and green evidence for the five independent parser findings, the expanded relevance boundary, and the unchanged real-register outcomes. Independent acceptance remains open.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "python",
+        "verification"
+      ],
+      "links": [
+        {
+          "to": "investigation-recursive-surface-ownership",
+          "rel": "implements"
+        },
+        {
+          "to": "proof-recursive-surface-ownership-author",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d9b5e5d3bdd5ff4a18a765bb84e12fb75bb9be1a046542c2b9a23ca4bb164acc"
+    },
+    {
+      "id": "proof-recursive-surface-ownership-review",
+      "path": "docs/proof/recursive-surface-ownership-review.md",
+      "title": "Recursive surface ownership: independent implementation review",
+      "type": "proof-pack",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "The initial candidate was blocked by five counterexamples; final repair 676f63ed clears every recorded veto.",
+      "tags": [
+        "proof",
+        "review",
+        "ownership",
+        "python",
+        "testing"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-recursive-surface-ownership-plan-review",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3fa78362c62e33417ccb65fd3db64f230fd348dcc1b8ea1ad88b5fe0c264c8e0"
     },
     {
       "id": "proof-s2-settings-and-sentinels",
@@ -20670,6 +21114,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-named-dock-zones"
     },
     {
+      "id": "surface-coordination-recursive-surface-ownership",
+      "path": "docs/coordination/recursive-surface-ownership.html",
+      "title": "Recursive surface ownership programme",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coord-recursive-surface-ownership"
+    },
+    {
       "id": "surface-mockups-uml-erm-surfaces",
       "path": "docs/mockups/uml-erm-surfaces.html",
       "title": "UML & ERM Surfaces — derived views (mockup)",
@@ -20678,5 +21130,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "1d0833ee652072693deaeff0f0a38ec2a0e45793af5d7a1de1131d0c48fdcb43"
+  "graphSha256": "8958ed8bdef02e8ef69909c0873d2589362a244551e91e217ba0ebf7e0d1ca71"
 };

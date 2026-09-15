@@ -1865,3 +1865,4 @@
 {"agent": "claude-conductor", "at": 1789428873.9599636, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789428873.9669635, "code": null, "kind": "allowed", "path": ".agents/sessions/atlas-e1-source-contracts.json", "session": "claude-conductor-addendum-c", "wi": ""}
 {"agent": "claude-conductor", "at": 1789428873.9749959, "code": null, "kind": "allowed", "path": ".agents/sessions/copilot-atlas-conductor.md", "session": "claude-conductor-addendum-c", "wi": ""}
+{"agent": "claude-conductor", "at": 1789429553.698349, "code": null, "kind": "allowed", "path": ".agents/decisions/claude-conductor-addendum-c.jsonl", "session": "claude-conductor-addendum-c", "wi": ""}

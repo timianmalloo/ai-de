@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T17:07:48Z",
+  "generated": "2026-09-15T17:48:51Z",
   "audit": [
     {
       "actor": null,
@@ -18769,6 +18769,21 @@ window.AUDIT_DATA = {
       }
     },
     {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T01:21:55Z",
+      "id": "al-01M2HAG1G4X73F91RF00S2748Z",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "ground yourself in the repo; there is a claude code session and a github copilot session already underway using coordination skills; go through the specs, architecture and outstanding work and give me a table of things still to be done",
+      "session": "prompt-log",
+      "shortname": "ground yourself in the repo; there is a claude code session and a github…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
       "id": "al-01M2HAJDPTGX5XAS8RZ9BSH8FZ",
       "shortname": "atlas-core-candidate-fixture-and-review-closure",
       "datetime": "2026-09-15T01:23:13Z",
@@ -18800,6 +18815,36 @@ window.AUDIT_DATA = {
         "branch": "conductor/code-atlas",
         "pushed": null
       }
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T01:42:40Z",
+      "id": "al-01M2HBP0R4J0VYHPCXNJVTWVKY",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "lets get started with Addendum C deferred understanding views; create a kickoff prompt for a Grok owner-conductor-subagent fleet with own worktrees, owner grok-4.6 xhigh, conductor grok-4.6 high, using optimize-graph, prepare-for-coordination, execute-with-coordination and the pack skills",
+      "session": "prompt-log",
+      "shortname": "lets get started with Addendum C deferred understanding views; create a …",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T01:55:24Z",
+      "id": "al-01M2HCDB62Q4P04A4KTXWFRSJH",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "You are the Conductor for AI-DE's Addendum C deferred understanding views (execute kickoff: N0 Owner first)",
+      "session": "prompt-log",
+      "shortname": "You are the Conductor for AI-DE's Addendum C deferred understanding view…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
     },
     {
       "id": "al-01M2HCE0JKYWZEN5DVQC3XFJEW",
@@ -19097,6 +19142,130 @@ window.AUDIT_DATA = {
       }
     },
     {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T13:55:33Z",
+      "id": "al-01M2JNKZQNJ99QQYD91MKMBDG0",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "looks like my laptop rebooted over night; take stock of where the last Grok session was working in the repo; give me a summary of what was done not done (tabular form); key next steps and recommended sequence of events to continue",
+      "session": "prompt-log",
+      "shortname": "looks like my laptop rebooted over night; take stock of where the last G…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T13:58:48Z",
+      "id": "al-01M2JNSY77A2406WDGSEX7T409",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "yes do your sequence... start in the ai-de-understanding-views worktree as you suggested above",
+      "session": "prompt-log",
+      "shortname": "yes do your sequence... start in the ai-de-understanding-views worktree …",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T14:06:21Z",
+      "id": "al-01M2JP7RMQKNWXGF1R7PSN3HY2",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "it looks like my laptop rebooted while sessions were active. evaluate all sessions to understand what is going on. when we ended yesterday claude code did not have any active workstreams BUT we need your Owner-Conductor-Sub.Agents to be listening for messages as the other sessions continue and I want the Claude Code Owner and Conductor actively monitoring merges to main and understanding/coordinating across sessions. I am going to actively stress test our coordination capability by having sessions run in GHCP, Grok, Codex while you are watching and coordinating",
+      "session": "prompt-log",
+      "shortname": "it looks like my laptop rebooted while sessions were active. evaluate al…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": "claude-conductor",
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/addendum-c-council-rulings.md",
+        "tools/merge-append-only-log.py",
+        ".agents/sessions/claude-conductor.md"
+      ],
+      "datetime": "2026-09-15T14:26:28Z",
+      "done_when": "per-session status table; Owner/Conductor provably receiving messages (request-add to claude-conductor answered within one poll); a merge-to-main watch active and reporting",
+      "duration_seconds": 1212.0,
+      "fan_out": 1,
+      "git": {
+        "branch": "conductor/watch-0915",
+        "pushed": null,
+        "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
+        "short": "bab5035e7"
+      },
+      "goal": "Recover situational awareness after the reboot and stand the Claude Owner + Conductor back up as a live listener/coordinator over main and the cross-session ledgers",
+      "id": "al-01M2JQCJRQCVRABT7AW8ZMMWYT",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "it looks like my laptop rebooted while sessions were active. evaluate all sessions to understand what is going on. Owner-Conductor sub-agents listening for messages; Claude Code Owner and Conductor actively monitoring merges to main and coordinating across sessions during a GHCP/Grok/Codex stress test",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "conductor-watch-0915",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "conductor-watch",
+      "started_at": "2026-09-15T14:06:16Z",
+      "summary": "Grounded 5 (then 8) live non-Claude sessions post-reboot; persistent watcher over main/lane tips, requests.jsonl, liveness, session log and primary git state (15 s poll) - proven two-way with GHCP and Codex within the hour; Owner sub-agent resident, Rulings 106-114 filed (Atlas landing contract; Claude coordination-only; landing-intent sequencing; E1 tree frozen; unregistered-session rule; stale requests; main-is-red rule; Codex tool grant; ProseView section-2 row). FOUND main RED since 2026-09-12 (issue #13; 13 tests at bab5035e, named) - every 09-13/09-14 join landed on red (INV-0005 recurrence). FIXED tools/merge-append-only-log.py (called auditlog._reserve, removed at pack rev 59; blocked the Atlas change-log union) with a --self-test on a real conflict under both allocators - the self-test's first run caught a write to ROOT instead of the conflict's repo (DC-104 shape). Section 10 appended; section 2 line 165 path cell + ProseView.cs; 6 requests resolved, 5 sent.",
+      "tags": [
+        "coordination",
+        "stress-test",
+        "main-red"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T14:26:43Z",
+      "id": "al-01M2JQD1RX6AGTWJ70DNKRY73Q",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "You are the Conductor for a bounded AI-DE programme: close the recursive surface-ownership verification gap.\n\nUse GPT-6 Astra for this main Conductor thread. Establish a separate GPT-6 Astra Owner agent. The Owner oversees scope and decisions; the Conductor delegates execution and escalates decisions to the Owner. Sub-agents perform bounded units assigned by the Conductor, using models the Conductor selects and right-sizes under repository guidance.\n\nRepository: C:\\projects\\ai-de\n\n## 1. Objective and completion contract\n\nGoal:\nMake surface-ownership verification cover nested Workbench surfaces without inventing ownership.\n\nDone when:\n- Surface discovery recursively covers the declared Workbench surface population.\n- Ownership matching uses repository-relative path identity, so identical basenames in different directories cannot silently alias.\n- docs/collaboration/session-contracts.md §2 remains the sole authority on ownership.\n- Meaningful red-first fixtures prove nested omissions, duplicate basenames, ambiguous ownership, and stale exceptions are handled.\n- Existing ownership decisions remain intact. Unresolved assignments are reported to their owner and are never guessed by the implementation.\n- The smallest applicable checks pass, their actual results are inspected, and independent reviewers clear all triggered gates.\n- A Proof Pack and the required audit/coordination records capture the implementation and evidence.\n- The reviewed change is committed in the isolated programme branch and ready for the agreed integration handoff.\n\nNot in scope:\n- Product source, UI behavior, or new ownership policy.\n- Atlas implementation, native E1 qualification, or Atlas recovery/integration.\n- Grok’s Understanding Views programme, census query, or new surfaces.\n- Refactoring the coordination framework.\n- Worktree cleanup belonging to other sessions.\n- Main integration without an explicit, recorded integration grant.\n\nInitial tier: T1, subject to Owner confirmation after grounding.\nInitial maximum concurrent agents: 4, including Owner and Conductor. Reduce width when dependencies or coordination overhead warrant it.\n\nThe prior assessment found that tools/verify-surface-ownership.py uses top-level discovery and basename matching, and that §2 explicitly records the nested coverage gap. Treat this as a lead: verify current code and records before planning or editing.\n\n## 2. Ground in the repository’s constitution and workflows\n\nRead AGENTS.md and applicable nested instructions first. Honor the Agent Knowledge Pack and AI-Forward Pack throughout.\n\nUse the repository’s actual workflows, skills, and scripts for HOW you work:\n- optimize-graph\n- prepare-for-coordination\n- execute-with-coordination\n- specify → define-architecture → design-slice → implement → investigate, as applicable\n- Rigor Protocol, No-Guessing Protocol, end-to-end integrity, testing strategy, continuous improvement, solution-selection ladder, instrumentation, persona review, and audit requirements.\n\nOpen the workflow definitions and inspect script help/contracts before using them. Do not replace these mechanisms with an improvised coordination system or merely claim to have followed them.\n\nScale ceremony to the task, while preserving every applicable floor. Reuse existing specification and architecture where sufficient; explicitly explain which stages need new artifacts and which are satisfied by existing evidence. Invoke investigate when an observed failure requires diagnosis.\n\nBefore substantive execution, publish:\nGoal · Done when · Not in scope · Tier · Fan-out cap.\n\nRun optimize-graph once across the whole programme at grounding. Record real dependencies, required gates, exit conditions, verification oracles, loop termination variants, and planned versus actual work. Re-plan through the workflow when material evidence changes the graph; do not repeatedly invoke it without cause.\n\n## 3. Establish isolation and current coordination state\n\nBefore repository writes:\n- Read .github/instructions/session-collaboration.instructions.md.\n- Read the sole ownership register, docs/collaboration/session-contracts.md §2, including applicable branch-local grants.\n- Read every liveness record in .agents/sessions/.\n- Inspect current worktrees, shared requests, and identity-bound lease state using the repository’s supported coordination scripts.\n- Reconcile conflicting or stale records against newer events and branch evidence. Do not equate “no response” with consent or “old live record” with current activity.\n\nCreate and enter this programme’s own named branch/worktree through coord-core.py’s documented worktree lifecycle. Use the repository’s naming and identity conventions.\n\nSet AGENT_SESSION and AGENT_NAME. Publish your own liveness record with objective, worktree, branch, status, and dependencies. Do not add a second ownership map or edit another session’s liveness file.\n\nRequest the narrow Core-owned tooling handoff through the repository’s prescribed request/contract protocol. Prior user authorization for this task does not silently transfer another session’s owned files.\n\nExpected implementation surface:\n- tools/verify-surface-ownership.py\n- Its existing tests or self-test mechanism, extended using established conventions.\n- A task-specific Proof Pack and required audit/lesson records.\n- An exact, separately coordinated §2 correction only if necessary to express an already-agreed assignment.\n\nFreeze the actual allowlist after opening the code. No broad tools/**, Core/**, or Workbench/** lease.\n\nUse short identity-bound file leases for the minutes of editing, and release them promptly. A refused lease is a plan defect: coordinate or narrow the work; never wait out its TTL.\n\nAvoid Shell/factory/menu wiring, Atlas paths, and Grok’s query/surface paths. If a dependency reaches them, stop that branch of work and raise a precise seam request.\n\nKeep the primary checkout untouched. No stash, reset, force-push, discard, or cleanup of another session’s work. Preserve current dirty files.\n\n## 4. Owner–Conductor–sub-agent responsibilities\n\nOwner — GPT-6 Astra:\n- Confirm the objective, scope, tier, acceptance contract, and bounded plan.\n- Decide escalated ownership ambiguities, policy questions, scope changes, and integration requests.\n- Require evidence for decisions and record them using repository mechanisms.\n- Do not become a second implementer.\n- Do not override or self-clear a reviewer’s hard veto.\n\nConductor — GPT-6 Astra, this main thread:\n- Own the execution graph, assignments, coordination, sequencing, budgets, joins, and status.\n- Delegate bounded authoring and independent review units.\n- Select each sub-agent’s available model based on task complexity, risk, and repository guidance; record the rationale. Use stronger reasoning for ownership/path semantics and adversarial review, and smaller models for deterministic bounded work where adequate.\n- Inspect returned artifacts and results; a sub-agent report alone does not verify its claims.\n- Escalate genuine decisions to the Owner with evidence, options, recommendation, and what each choice constrains.\n- Resolve routine execution details without repeatedly asking the human.\n\nSub-agents:\n- Receive an explicit objective, inputs, allowed paths, forbidden paths, dependencies, budget, exit condition, evidence requirement, and escalation route.\n- Perform only their assigned unit.\n- Use the repository’s prescribed isolated worktree/session arrangements. The Conductor provisions these according to the workflow; sub-agents must not call EnterWorktree.\n- Do not edit shared ledgers or generated artifacts concurrently outside the coordinated protocol.\n- Return commits/artifacts, observed results, residual risks, and required follow-up.\n\nParallelize only independent work. Do not dispatch an implementer before the ownership semantics and design are settled. Reviewers must be independent of the author whose work they review.\n\n## 5. Design and proof requirements\n\nBefore changing the gate, resolve from evidence:\n- Which file suffixes and paths define a “surface” under the existing contract.\n- How §2 represents explicit paths, grouped entries, directory ownership, and exceptions.\n- How recursive discovery maps to those existing declarations.\n- How duplicate basenames, overlapping assignments, stale exceptions, and malformed or ambiguous declarations are handled.\n- Which platform/path rules the repository actually requires.\n\nDo not solve recursive discovery by merely widening a scan while retaining ambiguous basename identity. Do not widen the policy beyond the existing ownership contract.\n\nWrite the affected surface list before implementation:\nfilesystem discovery → path identity → §2 parsing → ownership decision → diagnostics/exit status → test fixtures → existing gate invocation → proof/audit evidence.\n\nUse the smallest correct implementation. Prefer existing code and stdlib. No new dependency without a demonstrated need.\n\nClass → sweep → derive → prevent:\nCapture the defect class using the existing register and allocator protocol, reusing an existing class where appropriate. Convert the lesson into an executable control; prose alone is not completion.\n\nProve meaningful failures before fixes. Include fixtures that distinguish:\n- An unowned nested surface from an owned nested surface.\n- Two different paths sharing a basename.\n- A genuinely ambiguous assignment from a legitimate existing declaration.\n- A stale exception from a live unresolved exception.\n- A valid existing register from a parser that silently ignores its syntax.\n\nRun applicable tests and gates, read their actual results, and verify against the declared file population. A green exit code alone does not establish coverage. Do not run unrelated full suites unless the repository’s trigger rules require them.\n\n## 6. Integration, records, and close\n\nCoordinate the eventual join with the active Atlas recovery integrator and current peers. Parallel authoring does not authorize concurrent main integration.\n\nUse the repository’s existing join tools. Preserve append-only records through the mandated merge mechanism; regenerate derived files rather than merging them by hand, in the required order after audit writes.\n\nUse the documented audit start/close markers, prompt logging, graph metadata/index rules, and Proof Pack capture. If running inside AI-DE with AIDE_CONTRACT_LOG available, emit the required episode events and name actual repository-relative proof artifacts at close. Never invent an artifact path or acceptance result.\n\nAt completion, report:\n- Completed / Remaining / Next.\n- Verified / Inferred / Flagged.\n- Changed files, observed checks, independent gate outcomes, and residual risks.\n- Branch/worktree and integration status.\n- Evidence artifact paths.\n- Whether the worktree is retained and why.\n\nStop when the bounded completion contract is met. New gaps are findings for the Owner, not permission to expand the programme.",
+      "session": "codex-surface-ownership-conductor",
+      "shortname": "recursive-surface-ownership-programme",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/plans/recursive-surface-ownership.md"
+      ],
+      "datetime": "2026-09-15T14:27:08Z",
+      "done_when": "Independent plan review clears before author; bounded programme committed with proof and handoff.",
+      "duration_seconds": 419.0,
+      "fan_out": 3,
+      "goal": "Make surface-ownership verification cover nested Workbench surfaces without inventing ownership.",
+      "id": "al-01M2JQDT4PM8RPV7AHTGH9X8M1",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "You are the Conductor for a bounded AI-DE programme: close the recursive surface-ownership verification gap.\n\nUse GPT-6 Astra for this main Conductor thread. Establish a separate GPT-6 Astra Owner agent. The Owner oversees scope and decisions; the Conductor delegates execution and escalates decisions to the Owner. Sub-agents perform bounded units assigned by the Conductor, using models the Conductor selects and right-sizes under repository guidance.\n\nRepository: C:\\projects\\ai-de\n\n## 1. Objective and completion contract\n\nGoal:\nMake surface-ownership verification cover nested Workbench surfaces without inventing ownership.\n\nDone when:\n- Surface discovery recursively covers the declared Workbench surface population.\n- Ownership matching uses repository-relative path identity, so identical basenames in different directories cannot silently alias.\n- docs/collaboration/session-contracts.md §2 remains the sole authority on ownership.\n- Meaningful red-first fixtures prove nested omissions, duplicate basenames, ambiguous ownership, and stale exceptions are handled.\n- Existing ownership decisions remain intact. Unresolved assignments are reported to their owner and are never guessed by the implementation.\n- The smallest applicable checks pass, their actual results are inspected, and independent reviewers clear all triggered gates.\n- A Proof Pack and the required audit/coordination records capture the implementation and evidence.\n- The reviewed change is committed in the isolated programme branch and ready for the agreed integration handoff.\n\nNot in scope:\n- Product source, UI behavior, or new ownership policy.\n- Atlas implementation, native E1 qualification, or Atlas recovery/integration.\n- Grok’s Understanding Views programme, census query, or new surfaces.\n- Refactoring the coordination framework.\n- Worktree cleanup belonging to other sessions.\n- Main integration without an explicit, recorded integration grant.\n\nInitial tier: T1, subject to Owner confirmation after grounding.\nInitial maximum concurrent agents: 4, including Owner and Conductor. Reduce width when dependencies or coordination overhead warrant it.\n\nThe prior assessment found that tools/verify-surface-ownership.py uses top-level discovery and basename matching, and that §2 explicitly records the nested coverage gap. Treat this as a lead: verify current code and records before planning or editing.\n\n## 2. Ground in the repository’s constitution and workflows\n\nRead AGENTS.md and applicable nested instructions first. Honor the Agent Knowledge Pack and AI-Forward Pack throughout.\n\nUse the repository’s actual workflows, skills, and scripts for HOW you work:\n- optimize-graph\n- prepare-for-coordination\n- execute-with-coordination\n- specify → define-architecture → design-slice → implement → investigate, as applicable\n- Rigor Protocol, No-Guessing Protocol, end-to-end integrity, testing strategy, continuous improvement, solution-selection ladder, instrumentation, persona review, and audit requirements.\n\nOpen the workflow definitions and inspect script help/contracts before using them. Do not replace these mechanisms with an improvised coordination system or merely claim to have followed them.\n\nScale ceremony to the task, while preserving every applicable floor. Reuse existing specification and architecture where sufficient; explicitly explain which stages need new artifacts and which are satisfied by existing evidence. Invoke investigate when an observed failure requires diagnosis.\n\nBefore substantive execution, publish:\nGoal · Done when · Not in scope · Tier · Fan-out cap.\n\nRun optimize-graph once across the whole programme at grounding. Record real dependencies, required gates, exit conditions, verification oracles, loop termination variants, and planned versus actual work. Re-plan through the workflow when material evidence changes the graph; do not repeatedly invoke it without cause.\n\n## 3. Establish isolation and current coordination state\n\nBefore repository writes:\n- Read .github/instructions/session-collaboration.instructions.md.\n- Read the sole ownership register, docs/collaboration/session-contracts.md §2, including applicable branch-local grants.\n- Read every liveness record in .agents/sessions/.\n- Inspect current worktrees, shared requests, and identity-bound lease state using the repository’s supported coordination scripts.\n- Reconcile conflicting or stale records against newer events and branch evidence. Do not equate “no response” with consent or “old live record” with current activity.\n\nCreate and enter this programme’s own named branch/worktree through coord-core.py’s documented worktree lifecycle. Use the repository’s naming and identity conventions.\n\nSet AGENT_SESSION and AGENT_NAME. Publish your own liveness record with objective, worktree, branch, status, and dependencies. Do not add a second ownership map or edit another session’s liveness file.\n\nRequest the narrow Core-owned tooling handoff through the repository’s prescribed request/contract protocol. Prior user authorization for this task does not silently transfer another session’s owned files.\n\nExpected implementation surface:\n- tools/verify-surface-ownership.py\n- Its existing tests or self-test mechanism, extended using established conventions.\n- A task-specific Proof Pack and required audit/lesson records.\n- An exact, separately coordinated §2 correction only if necessary to express an already-agreed assignment.\n\nFreeze the actual allowlist after opening the code. No broad tools/**, Core/**, or Workbench/** lease.\n\nUse short identity-bound file leases for the minutes of editing, and release them promptly. A refused lease is a plan defect: coordinate or narrow the work; never wait out its TTL.\n\nAvoid Shell/factory/menu wiring, Atlas paths, and Grok’s query/surface paths. If a dependency reaches them, stop that branch of work and raise a precise seam request.\n\nKeep the primary checkout untouched. No stash, reset, force-push, discard, or cleanup of another session’s work. Preserve current dirty files.\n\n## 4. Owner–Conductor–sub-agent responsibilities\n\nOwner — GPT-6 Astra:\n- Confirm the objective, scope, tier, acceptance contract, and bounded plan.\n- Decide escalated ownership ambiguities, policy questions, scope changes, and integration requests.\n- Require evidence for decisions and record them using repository mechanisms.\n- Do not become a second implementer.\n- Do not override or self-clear a reviewer’s hard veto.\n\nConductor — GPT-6 Astra, this main thread:\n- Own the execution graph, assignments, coordination, sequencing, budgets, joins, and status.\n- Delegate bounded authoring and independent review units.\n- Select each sub-agent’s available model based on task complexity, risk, and repository guidance; record the rationale. Use stronger reasoning for ownership/path semantics and adversarial review, and smaller models for deterministic bounded work where adequate.\n- Inspect returned artifacts and results; a sub-agent report alone does not verify its claims.\n- Escalate genuine decisions to the Owner with evidence, options, recommendation, and what each choice constrains.\n- Resolve routine execution details without repeatedly asking the human.\n\nSub-agents:\n- Receive an explicit objective, inputs, allowed paths, forbidden paths, dependencies, budget, exit condition, evidence requirement, and escalation route.\n- Perform only their assigned unit.\n- Use the repository’s prescribed isolated worktree/session arrangements. The Conductor provisions these according to the workflow; sub-agents must not call EnterWorktree.\n- Do not edit shared ledgers or generated artifacts concurrently outside the coordinated protocol.\n- Return commits/artifacts, observed results, residual risks, and required follow-up.\n\nParallelize only independent work. Do not dispatch an implementer before the ownership semantics and design are settled. Reviewers must be independent of the author whose work they review.\n\n## 5. Design and proof requirements\n\nBefore changing the gate, resolve from evidence:\n- Which file suffixes and paths define a “surface” under the existing contract.\n- How §2 represents explicit paths, grouped entries, directory ownership, and exceptions.\n- How recursive discovery maps to those existing declarations.\n- How duplicate basenames, overlapping assignments, stale exceptions, and malformed or ambiguous declarations are handled.\n- Which platform/path rules the repository actually requires.\n\nDo not solve recursive discovery by merely widening a scan while retaining ambiguous basename identity. Do not widen the policy beyond the existing ownership contract.\n\nWrite the affected surface list before implementation:\nfilesystem discovery → path identity → §2 parsing → ownership decision → diagnostics/exit status → test fixtures → existing gate invocation → proof/audit evidence.\n\nUse the smallest correct implementation. Prefer existing code and stdlib. No new dependency without a demonstrated need.\n\nClass → sweep → derive → prevent:\nCapture the defect class using the existing register and allocator protocol, reusing an existing class where appropriate. Convert the lesson into an executable control; prose alone is not completion.\n\nProve meaningful failures before fixes. Include fixtures that distinguish:\n- An unowned nested surface from an owned nested surface.\n- Two different paths sharing a basename.\n- A genuinely ambiguous assignment from a legitimate existing declaration.\n- A stale exception from a live unresolved exception.\n- A valid existing register from a parser that silently ignores its syntax.\n\nRun applicable tests and gates, read their actual results, and verify against the declared file population. A green exit code alone does not establish coverage. Do not run unrelated full suites unless the repository’s trigger rules require them.\n\n## 6. Integration, records, and close\n\nCoordinate the eventual join with the active Atlas recovery integrator and current peers. Parallel authoring does not authorize concurrent main integration.\n\nUse the repository’s existing join tools. Preserve append-only records through the mandated merge mechanism; regenerate derived files rather than merging them by hand, in the required order after audit writes.\n\nUse the documented audit start/close markers, prompt logging, graph metadata/index rules, and Proof Pack capture. If running inside AI-DE with AIDE_CONTRACT_LOG available, emit the required episode events and name actual repository-relative proof artifacts at close. Never invent an artifact path or acceptance result.\n\nAt completion, report:\n- Completed / Remaining / Next.\n- Verified / Inferred / Flagged.\n- Changed files, observed checks, independent gate outcomes, and residual risks.\n- Branch/worktree and integration status.\n- Evidence artifact paths.\n- Whether the worktree is retained and why.\n\nStop when the bounded completion contract is met. New gaps are findings for the Owner, not permission to expand the programme.",
+      "session": "codex-surface-ownership-conductor",
+      "shortname": "optimize-recursive-surface-ownership",
+      "skill": "optimize-graph",
+      "started_at": "2026-09-15T14:20:09Z",
+      "summary": "One author spine; Astra Owner and Conductor, independent plan and code review. Doctor effective; Core Ruling113 grant obtained. ProseView assignment pending114. No implementation dispatched.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
       "id": "al-01M2JQHMZJQ2YB7Y4ZQP9VESPN",
       "shortname": "atlas-main-integration-blocked",
       "datetime": "2026-09-15T14:29:14Z",
@@ -19126,6 +19295,226 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T14:06:48Z",
       "duration_seconds": 1346.0
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/recursive-surface-ownership.md"
+      ],
+      "datetime": "2026-09-15T14:30:01Z",
+      "done_when": "Plan and full-content HTML committed; independent plan gate passed; exact author dispatch.",
+      "duration_seconds": 150.0,
+      "fan_out": 3,
+      "goal": "One isolated author lane with independent evidence and existing coordination.",
+      "id": "al-01M2JQK2ZXVQFQ6VQ6XJARS6YR",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "You are the Conductor for a bounded AI-DE programme: close the recursive surface-ownership verification gap.\n\nUse GPT-6 Astra for this main Conductor thread. Establish a separate GPT-6 Astra Owner agent. The Owner oversees scope and decisions; the Conductor delegates execution and escalates decisions to the Owner. Sub-agents perform bounded units assigned by the Conductor, using models the Conductor selects and right-sizes under repository guidance.\n\nRepository: C:\\projects\\ai-de\n\n## 1. Objective and completion contract\n\nGoal:\nMake surface-ownership verification cover nested Workbench surfaces without inventing ownership.\n\nDone when:\n- Surface discovery recursively covers the declared Workbench surface population.\n- Ownership matching uses repository-relative path identity, so identical basenames in different directories cannot silently alias.\n- docs/collaboration/session-contracts.md §2 remains the sole authority on ownership.\n- Meaningful red-first fixtures prove nested omissions, duplicate basenames, ambiguous ownership, and stale exceptions are handled.\n- Existing ownership decisions remain intact. Unresolved assignments are reported to their owner and are never guessed by the implementation.\n- The smallest applicable checks pass, their actual results are inspected, and independent reviewers clear all triggered gates.\n- A Proof Pack and the required audit/coordination records capture the implementation and evidence.\n- The reviewed change is committed in the isolated programme branch and ready for the agreed integration handoff.\n\nNot in scope:\n- Product source, UI behavior, or new ownership policy.\n- Atlas implementation, native E1 qualification, or Atlas recovery/integration.\n- Grok’s Understanding Views programme, census query, or new surfaces.\n- Refactoring the coordination framework.\n- Worktree cleanup belonging to other sessions.\n- Main integration without an explicit, recorded integration grant.\n\nInitial tier: T1, subject to Owner confirmation after grounding.\nInitial maximum concurrent agents: 4, including Owner and Conductor. Reduce width when dependencies or coordination overhead warrant it.\n\nThe prior assessment found that tools/verify-surface-ownership.py uses top-level discovery and basename matching, and that §2 explicitly records the nested coverage gap. Treat this as a lead: verify current code and records before planning or editing.\n\n## 2. Ground in the repository’s constitution and workflows\n\nRead AGENTS.md and applicable nested instructions first. Honor the Agent Knowledge Pack and AI-Forward Pack throughout.\n\nUse the repository’s actual workflows, skills, and scripts for HOW you work:\n- optimize-graph\n- prepare-for-coordination\n- execute-with-coordination\n- specify → define-architecture → design-slice → implement → investigate, as applicable\n- Rigor Protocol, No-Guessing Protocol, end-to-end integrity, testing strategy, continuous improvement, solution-selection ladder, instrumentation, persona review, and audit requirements.\n\nOpen the workflow definitions and inspect script help/contracts before using them. Do not replace these mechanisms with an improvised coordination system or merely claim to have followed them.\n\nScale ceremony to the task, while preserving every applicable floor. Reuse existing specification and architecture where sufficient; explicitly explain which stages need new artifacts and which are satisfied by existing evidence. Invoke investigate when an observed failure requires diagnosis.\n\nBefore substantive execution, publish:\nGoal · Done when · Not in scope · Tier · Fan-out cap.\n\nRun optimize-graph once across the whole programme at grounding. Record real dependencies, required gates, exit conditions, verification oracles, loop termination variants, and planned versus actual work. Re-plan through the workflow when material evidence changes the graph; do not repeatedly invoke it without cause.\n\n## 3. Establish isolation and current coordination state\n\nBefore repository writes:\n- Read .github/instructions/session-collaboration.instructions.md.\n- Read the sole ownership register, docs/collaboration/session-contracts.md §2, including applicable branch-local grants.\n- Read every liveness record in .agents/sessions/.\n- Inspect current worktrees, shared requests, and identity-bound lease state using the repository’s supported coordination scripts.\n- Reconcile conflicting or stale records against newer events and branch evidence. Do not equate “no response” with consent or “old live record” with current activity.\n\nCreate and enter this programme’s own named branch/worktree through coord-core.py’s documented worktree lifecycle. Use the repository’s naming and identity conventions.\n\nSet AGENT_SESSION and AGENT_NAME. Publish your own liveness record with objective, worktree, branch, status, and dependencies. Do not add a second ownership map or edit another session’s liveness file.\n\nRequest the narrow Core-owned tooling handoff through the repository’s prescribed request/contract protocol. Prior user authorization for this task does not silently transfer another session’s owned files.\n\nExpected implementation surface:\n- tools/verify-surface-ownership.py\n- Its existing tests or self-test mechanism, extended using established conventions.\n- A task-specific Proof Pack and required audit/lesson records.\n- An exact, separately coordinated §2 correction only if necessary to express an already-agreed assignment.\n\nFreeze the actual allowlist after opening the code. No broad tools/**, Core/**, or Workbench/** lease.\n\nUse short identity-bound file leases for the minutes of editing, and release them promptly. A refused lease is a plan defect: coordinate or narrow the work; never wait out its TTL.\n\nAvoid Shell/factory/menu wiring, Atlas paths, and Grok’s query/surface paths. If a dependency reaches them, stop that branch of work and raise a precise seam request.\n\nKeep the primary checkout untouched. No stash, reset, force-push, discard, or cleanup of another session’s work. Preserve current dirty files.\n\n## 4. Owner–Conductor–sub-agent responsibilities\n\nOwner — GPT-6 Astra:\n- Confirm the objective, scope, tier, acceptance contract, and bounded plan.\n- Decide escalated ownership ambiguities, policy questions, scope changes, and integration requests.\n- Require evidence for decisions and record them using repository mechanisms.\n- Do not become a second implementer.\n- Do not override or self-clear a reviewer’s hard veto.\n\nConductor — GPT-6 Astra, this main thread:\n- Own the execution graph, assignments, coordination, sequencing, budgets, joins, and status.\n- Delegate bounded authoring and independent review units.\n- Select each sub-agent’s available model based on task complexity, risk, and repository guidance; record the rationale. Use stronger reasoning for ownership/path semantics and adversarial review, and smaller models for deterministic bounded work where adequate.\n- Inspect returned artifacts and results; a sub-agent report alone does not verify its claims.\n- Escalate genuine decisions to the Owner with evidence, options, recommendation, and what each choice constrains.\n- Resolve routine execution details without repeatedly asking the human.\n\nSub-agents:\n- Receive an explicit objective, inputs, allowed paths, forbidden paths, dependencies, budget, exit condition, evidence requirement, and escalation route.\n- Perform only their assigned unit.\n- Use the repository’s prescribed isolated worktree/session arrangements. The Conductor provisions these according to the workflow; sub-agents must not call EnterWorktree.\n- Do not edit shared ledgers or generated artifacts concurrently outside the coordinated protocol.\n- Return commits/artifacts, observed results, residual risks, and required follow-up.\n\nParallelize only independent work. Do not dispatch an implementer before the ownership semantics and design are settled. Reviewers must be independent of the author whose work they review.\n\n## 5. Design and proof requirements\n\nBefore changing the gate, resolve from evidence:\n- Which file suffixes and paths define a “surface” under the existing contract.\n- How §2 represents explicit paths, grouped entries, directory ownership, and exceptions.\n- How recursive discovery maps to those existing declarations.\n- How duplicate basenames, overlapping assignments, stale exceptions, and malformed or ambiguous declarations are handled.\n- Which platform/path rules the repository actually requires.\n\nDo not solve recursive discovery by merely widening a scan while retaining ambiguous basename identity. Do not widen the policy beyond the existing ownership contract.\n\nWrite the affected surface list before implementation:\nfilesystem discovery → path identity → §2 parsing → ownership decision → diagnostics/exit status → test fixtures → existing gate invocation → proof/audit evidence.\n\nUse the smallest correct implementation. Prefer existing code and stdlib. No new dependency without a demonstrated need.\n\nClass → sweep → derive → prevent:\nCapture the defect class using the existing register and allocator protocol, reusing an existing class where appropriate. Convert the lesson into an executable control; prose alone is not completion.\n\nProve meaningful failures before fixes. Include fixtures that distinguish:\n- An unowned nested surface from an owned nested surface.\n- Two different paths sharing a basename.\n- A genuinely ambiguous assignment from a legitimate existing declaration.\n- A stale exception from a live unresolved exception.\n- A valid existing register from a parser that silently ignores its syntax.\n\nRun applicable tests and gates, read their actual results, and verify against the declared file population. A green exit code alone does not establish coverage. Do not run unrelated full suites unless the repository’s trigger rules require them.\n\n## 6. Integration, records, and close\n\nCoordinate the eventual join with the active Atlas recovery integrator and current peers. Parallel authoring does not authorize concurrent main integration.\n\nUse the repository’s existing join tools. Preserve append-only records through the mandated merge mechanism; regenerate derived files rather than merging them by hand, in the required order after audit writes.\n\nUse the documented audit start/close markers, prompt logging, graph metadata/index rules, and Proof Pack capture. If running inside AI-DE with AIDE_CONTRACT_LOG available, emit the required episode events and name actual repository-relative proof artifacts at close. Never invent an artifact path or acceptance result.\n\nAt completion, report:\n- Completed / Remaining / Next.\n- Verified / Inferred / Flagged.\n- Changed files, observed checks, independent gate outcomes, and residual risks.\n- Branch/worktree and integration status.\n- Evidence artifact paths.\n- Whether the worktree is retained and why.\n\nStop when the bounded completion contract is met. New gaps are findings for the Owner, not permission to expand the programme.",
+      "session": "codex-surface-ownership-conductor",
+      "shortname": "prepare-recursive-surface-ownership",
+      "skill": "prepare-for-coordination",
+      "started_at": "2026-09-15T14:27:31Z",
+      "summary": "Independent Test Architect plan PASS; Simplifier PASS; Python and SRE contract accepted. Core Ruling113 grants one Python gate. Owner171791f governs unique bare names. Exact task join retains full gate runner; Python-only recount/build empty. Author dispatched serially after frozen plan.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/addendum-c-council-rulings.md",
+        "tools/merge-append-only-log.py"
+      ],
+      "datetime": "2026-09-15T14:31:28Z",
+      "done_when": "main carries ba67d180's content; gates green in the primary; pushed; the watcher reports MAIN moved",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Land the coordination artifacts the live GHCP/Grok/Codex sessions are waiting on (Ruling 106 contract, the merge tool, section 10) on main under Ruling 107",
+      "id": "al-01M2JQNQYPGBM4FD84EJRC1P11",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of conductor/watch-0915 into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-conductor-watch-0915",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T14:31:27Z",
+      "summary": "The Claude conductor's coordination landing for the 2026-09-15 stress test: section 10 of session-contracts.md, Rulings 106-114 in the council register, ProseView.cs into the section-2 Design row (Ruling 114), tools/merge-append-only-log.py repaired (removed auditlog._reserve; --self-test on a real conflict under both allocators), the conductor's liveness. main is red (Ruling 112) - this join is docs + one Python tool, no product code, no test change. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T14:32:43Z",
+      "done_when": "Bounded graph with independent plan gate.",
+      "fan_out": 3,
+      "goal": "Plan recursive ownership closure.",
+      "id": "al-01M2JQR18QZ4JH7MVER7ECZP6H",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "You are the Conductor for a bounded AI-DE programme: close the recursive surface-ownership verification gap.\n\nUse GPT-6 Astra for this main Conductor thread. Establish a separate GPT-6 Astra Owner agent. The Owner oversees scope and decisions; the Conductor delegates execution and escalates decisions to the Owner. Sub-agents perform bounded units assigned by the Conductor, using models the Conductor selects and right-sizes under repository guidance.\n\nRepository: C:\\projects\\ai-de\n\n## 1. Objective and completion contract\n\nGoal:\nMake surface-ownership verification cover nested Workbench surfaces without inventing ownership.\n\nDone when:\n- Surface discovery recursively covers the declared Workbench surface population.\n- Ownership matching uses repository-relative path identity, so identical basenames in different directories cannot silently alias.\n- docs/collaboration/session-contracts.md §2 remains the sole authority on ownership.\n- Meaningful red-first fixtures prove nested omissions, duplicate basenames, ambiguous ownership, and stale exceptions are handled.\n- Existing ownership decisions remain intact. Unresolved assignments are reported to their owner and are never guessed by the implementation.\n- The smallest applicable checks pass, their actual results are inspected, and independent reviewers clear all triggered gates.\n- A Proof Pack and the required audit/coordination records capture the implementation and evidence.\n- The reviewed change is committed in the isolated programme branch and ready for the agreed integration handoff.\n\nNot in scope:\n- Product source, UI behavior, or new ownership policy.\n- Atlas implementation, native E1 qualification, or Atlas recovery/integration.\n- Grok’s Understanding Views programme, census query, or new surfaces.\n- Refactoring the coordination framework.\n- Worktree cleanup belonging to other sessions.\n- Main integration without an explicit, recorded integration grant.\n\nInitial tier: T1, subject to Owner confirmation after grounding.\nInitial maximum concurrent agents: 4, including Owner and Conductor. Reduce width when dependencies or coordination overhead warrant it.\n\nThe prior assessment found that tools/verify-surface-ownership.py uses top-level discovery and basename matching, and that §2 explicitly records the nested coverage gap. Treat this as a lead: verify current code and records before planning or editing.\n\n## 2. Ground in the repository’s constitution and workflows\n\nRead AGENTS.md and applicable nested instructions first. Honor the Agent Knowledge Pack and AI-Forward Pack throughout.\n\nUse the repository’s actual workflows, skills, and scripts for HOW you work:\n- optimize-graph\n- prepare-for-coordination\n- execute-with-coordination\n- specify → define-architecture → design-slice → implement → investigate, as applicable\n- Rigor Protocol, No-Guessing Protocol, end-to-end integrity, testing strategy, continuous improvement, solution-selection ladder, instrumentation, persona review, and audit requirements.\n\nOpen the workflow definitions and inspect script help/contracts before using them. Do not replace these mechanisms with an improvised coordination system or merely claim to have followed them.\n\nScale ceremony to the task, while preserving every applicable floor. Reuse existing specification and architecture where sufficient; explicitly explain which stages need new artifacts and which are satisfied by existing evidence. Invoke investigate when an observed failure requires diagnosis.\n\nBefore substantive execution, publish:\nGoal · Done when · Not in scope · Tier · Fan-out cap.\n\nRun optimize-graph once across the whole programme at grounding. Record real dependencies, required gates, exit conditions, verification oracles, loop termination variants, and planned versus actual work. Re-plan through the workflow when material evidence changes the graph; do not repeatedly invoke it without cause.\n\n## 3. Establish isolation and current coordination state\n\nBefore repository writes:\n- Read .github/instructions/session-collaboration.instructions.md.\n- Read the sole ownership register, docs/collaboration/session-contracts.md §2, including applicable branch-local grants.\n- Read every liveness record in .agents/sessions/.\n- Inspect current worktrees, shared requests, and identity-bound lease state using the repository’s supported coordination scripts.\n- Reconcile conflicting or stale records against newer events and branch evidence. Do not equate “no response” with consent or “old live record” with current activity.\n\nCreate and enter this programme’s own named branch/worktree through coord-core.py’s documented worktree lifecycle. Use the repository’s naming and identity conventions.\n\nSet AGENT_SESSION and AGENT_NAME. Publish your own liveness record with objective, worktree, branch, status, and dependencies. Do not add a second ownership map or edit another session’s liveness file.\n\nRequest the narrow Core-owned tooling handoff through the repository’s prescribed request/contract protocol. Prior user authorization for this task does not silently transfer another session’s owned files.\n\nExpected implementation surface:\n- tools/verify-surface-ownership.py\n- Its existing tests or self-test mechanism, extended using established conventions.\n- A task-specific Proof Pack and required audit/lesson records.\n- An exact, separately coordinated §2 correction only if necessary to express an already-agreed assignment.\n\nFreeze the actual allowlist after opening the code. No broad tools/**, Core/**, or Workbench/** lease.\n\nUse short identity-bound file leases for the minutes of editing, and release them promptly. A refused lease is a plan defect: coordinate or narrow the work; never wait out its TTL.\n\nAvoid Shell/factory/menu wiring, Atlas paths, and Grok’s query/surface paths. If a dependency reaches them, stop that branch of work and raise a precise seam request.\n\nKeep the primary checkout untouched. No stash, reset, force-push, discard, or cleanup of another session’s work. Preserve current dirty files.\n\n## 4. Owner–Conductor–sub-agent responsibilities\n\nOwner — GPT-6 Astra:\n- Confirm the objective, scope, tier, acceptance contract, and bounded plan.\n- Decide escalated ownership ambiguities, policy questions, scope changes, and integration requests.\n- Require evidence for decisions and record them using repository mechanisms.\n- Do not become a second implementer.\n- Do not override or self-clear a reviewer’s hard veto.\n\nConductor — GPT-6 Astra, this main thread:\n- Own the execution graph, assignments, coordination, sequencing, budgets, joins, and status.\n- Delegate bounded authoring and independent review units.\n- Select each sub-agent’s available model based on task complexity, risk, and repository guidance; record the rationale. Use stronger reasoning for ownership/path semantics and adversarial review, and smaller models for deterministic bounded work where adequate.\n- Inspect returned artifacts and results; a sub-agent report alone does not verify its claims.\n- Escalate genuine decisions to the Owner with evidence, options, recommendation, and what each choice constrains.\n- Resolve routine execution details without repeatedly asking the human.\n\nSub-agents:\n- Receive an explicit objective, inputs, allowed paths, forbidden paths, dependencies, budget, exit condition, evidence requirement, and escalation route.\n- Perform only their assigned unit.\n- Use the repository’s prescribed isolated worktree/session arrangements. The Conductor provisions these according to the workflow; sub-agents must not call EnterWorktree.\n- Do not edit shared ledgers or generated artifacts concurrently outside the coordinated protocol.\n- Return commits/artifacts, observed results, residual risks, and required follow-up.\n\nParallelize only independent work. Do not dispatch an implementer before the ownership semantics and design are settled. Reviewers must be independent of the author whose work they review.\n\n## 5. Design and proof requirements\n\nBefore changing the gate, resolve from evidence:\n- Which file suffixes and paths define a “surface” under the existing contract.\n- How §2 represents explicit paths, grouped entries, directory ownership, and exceptions.\n- How recursive discovery maps to those existing declarations.\n- How duplicate basenames, overlapping assignments, stale exceptions, and malformed or ambiguous declarations are handled.\n- Which platform/path rules the repository actually requires.\n\nDo not solve recursive discovery by merely widening a scan while retaining ambiguous basename identity. Do not widen the policy beyond the existing ownership contract.\n\nWrite the affected surface list before implementation:\nfilesystem discovery → path identity → §2 parsing → ownership decision → diagnostics/exit status → test fixtures → existing gate invocation → proof/audit evidence.\n\nUse the smallest correct implementation. Prefer existing code and stdlib. No new dependency without a demonstrated need.\n\nClass → sweep → derive → prevent:\nCapture the defect class using the existing register and allocator protocol, reusing an existing class where appropriate. Convert the lesson into an executable control; prose alone is not completion.\n\nProve meaningful failures before fixes. Include fixtures that distinguish:\n- An unowned nested surface from an owned nested surface.\n- Two different paths sharing a basename.\n- A genuinely ambiguous assignment from a legitimate existing declaration.\n- A stale exception from a live unresolved exception.\n- A valid existing register from a parser that silently ignores its syntax.\n\nRun applicable tests and gates, read their actual results, and verify against the declared file population. A green exit code alone does not establish coverage. Do not run unrelated full suites unless the repository’s trigger rules require them.\n\n## 6. Integration, records, and close\n\nCoordinate the eventual join with the active Atlas recovery integrator and current peers. Parallel authoring does not authorize concurrent main integration.\n\nUse the repository’s existing join tools. Preserve append-only records through the mandated merge mechanism; regenerate derived files rather than merging them by hand, in the required order after audit writes.\n\nUse the documented audit start/close markers, prompt logging, graph metadata/index rules, and Proof Pack capture. If running inside AI-DE with AIDE_CONTRACT_LOG available, emit the required episode events and name actual repository-relative proof artifacts at close. Never invent an artifact path or acceptance result.\n\nAt completion, report:\n- Completed / Remaining / Next.\n- Verified / Inferred / Flagged.\n- Changed files, observed checks, independent gate outcomes, and residual risks.\n- Branch/worktree and integration status.\n- Evidence artifact paths.\n- Whether the worktree is retained and why.\n\nStop when the bounded completion contract is met. New gaps are findings for the Owner, not permission to expand the programme.",
+      "session": "codex-surface-ownership-conductor",
+      "shortname": "correct-optimize-ownership-capture",
+      "signals": {
+        "acceptance_met": false,
+        "verification_path": false
+      },
+      "skill": "optimize-graph",
+      "summary": "Corrects missing evidence signal in original planning entry; plan recorded, implementation not verified at that point. Existing verify-audit-capture caught omission. No historical row rewritten.",
+      "supersedes": "al-01M2JQDT4PM8RPV7AHTGH9X8M1",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T14:32:43Z",
+      "done_when": "Plan committed and independent plan gate passed before author dispatch.",
+      "fan_out": 3,
+      "goal": "One isolated author lane with independent evidence and existing coordination.",
+      "id": "al-01M2JQR1C19T5NFSEJ5BQD2M1Z",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "You are the Conductor for a bounded AI-DE programme: close the recursive surface-ownership verification gap.\n\nUse GPT-6 Astra for this main Conductor thread. Establish a separate GPT-6 Astra Owner agent. The Owner oversees scope and decisions; the Conductor delegates execution and escalates decisions to the Owner. Sub-agents perform bounded units assigned by the Conductor, using models the Conductor selects and right-sizes under repository guidance.\n\nRepository: C:\\projects\\ai-de\n\n## 1. Objective and completion contract\n\nGoal:\nMake surface-ownership verification cover nested Workbench surfaces without inventing ownership.\n\nDone when:\n- Surface discovery recursively covers the declared Workbench surface population.\n- Ownership matching uses repository-relative path identity, so identical basenames in different directories cannot silently alias.\n- docs/collaboration/session-contracts.md §2 remains the sole authority on ownership.\n- Meaningful red-first fixtures prove nested omissions, duplicate basenames, ambiguous ownership, and stale exceptions are handled.\n- Existing ownership decisions remain intact. Unresolved assignments are reported to their owner and are never guessed by the implementation.\n- The smallest applicable checks pass, their actual results are inspected, and independent reviewers clear all triggered gates.\n- A Proof Pack and the required audit/coordination records capture the implementation and evidence.\n- The reviewed change is committed in the isolated programme branch and ready for the agreed integration handoff.\n\nNot in scope:\n- Product source, UI behavior, or new ownership policy.\n- Atlas implementation, native E1 qualification, or Atlas recovery/integration.\n- Grok’s Understanding Views programme, census query, or new surfaces.\n- Refactoring the coordination framework.\n- Worktree cleanup belonging to other sessions.\n- Main integration without an explicit, recorded integration grant.\n\nInitial tier: T1, subject to Owner confirmation after grounding.\nInitial maximum concurrent agents: 4, including Owner and Conductor. Reduce width when dependencies or coordination overhead warrant it.\n\nThe prior assessment found that tools/verify-surface-ownership.py uses top-level discovery and basename matching, and that §2 explicitly records the nested coverage gap. Treat this as a lead: verify current code and records before planning or editing.\n\n## 2. Ground in the repository’s constitution and workflows\n\nRead AGENTS.md and applicable nested instructions first. Honor the Agent Knowledge Pack and AI-Forward Pack throughout.\n\nUse the repository’s actual workflows, skills, and scripts for HOW you work:\n- optimize-graph\n- prepare-for-coordination\n- execute-with-coordination\n- specify → define-architecture → design-slice → implement → investigate, as applicable\n- Rigor Protocol, No-Guessing Protocol, end-to-end integrity, testing strategy, continuous improvement, solution-selection ladder, instrumentation, persona review, and audit requirements.\n\nOpen the workflow definitions and inspect script help/contracts before using them. Do not replace these mechanisms with an improvised coordination system or merely claim to have followed them.\n\nScale ceremony to the task, while preserving every applicable floor. Reuse existing specification and architecture where sufficient; explicitly explain which stages need new artifacts and which are satisfied by existing evidence. Invoke investigate when an observed failure requires diagnosis.\n\nBefore substantive execution, publish:\nGoal · Done when · Not in scope · Tier · Fan-out cap.\n\nRun optimize-graph once across the whole programme at grounding. Record real dependencies, required gates, exit conditions, verification oracles, loop termination variants, and planned versus actual work. Re-plan through the workflow when material evidence changes the graph; do not repeatedly invoke it without cause.\n\n## 3. Establish isolation and current coordination state\n\nBefore repository writes:\n- Read .github/instructions/session-collaboration.instructions.md.\n- Read the sole ownership register, docs/collaboration/session-contracts.md §2, including applicable branch-local grants.\n- Read every liveness record in .agents/sessions/.\n- Inspect current worktrees, shared requests, and identity-bound lease state using the repository’s supported coordination scripts.\n- Reconcile conflicting or stale records against newer events and branch evidence. Do not equate “no response” with consent or “old live record” with current activity.\n\nCreate and enter this programme’s own named branch/worktree through coord-core.py’s documented worktree lifecycle. Use the repository’s naming and identity conventions.\n\nSet AGENT_SESSION and AGENT_NAME. Publish your own liveness record with objective, worktree, branch, status, and dependencies. Do not add a second ownership map or edit another session’s liveness file.\n\nRequest the narrow Core-owned tooling handoff through the repository’s prescribed request/contract protocol. Prior user authorization for this task does not silently transfer another session’s owned files.\n\nExpected implementation surface:\n- tools/verify-surface-ownership.py\n- Its existing tests or self-test mechanism, extended using established conventions.\n- A task-specific Proof Pack and required audit/lesson records.\n- An exact, separately coordinated §2 correction only if necessary to express an already-agreed assignment.\n\nFreeze the actual allowlist after opening the code. No broad tools/**, Core/**, or Workbench/** lease.\n\nUse short identity-bound file leases for the minutes of editing, and release them promptly. A refused lease is a plan defect: coordinate or narrow the work; never wait out its TTL.\n\nAvoid Shell/factory/menu wiring, Atlas paths, and Grok’s query/surface paths. If a dependency reaches them, stop that branch of work and raise a precise seam request.\n\nKeep the primary checkout untouched. No stash, reset, force-push, discard, or cleanup of another session’s work. Preserve current dirty files.\n\n## 4. Owner–Conductor–sub-agent responsibilities\n\nOwner — GPT-6 Astra:\n- Confirm the objective, scope, tier, acceptance contract, and bounded plan.\n- Decide escalated ownership ambiguities, policy questions, scope changes, and integration requests.\n- Require evidence for decisions and record them using repository mechanisms.\n- Do not become a second implementer.\n- Do not override or self-clear a reviewer’s hard veto.\n\nConductor — GPT-6 Astra, this main thread:\n- Own the execution graph, assignments, coordination, sequencing, budgets, joins, and status.\n- Delegate bounded authoring and independent review units.\n- Select each sub-agent’s available model based on task complexity, risk, and repository guidance; record the rationale. Use stronger reasoning for ownership/path semantics and adversarial review, and smaller models for deterministic bounded work where adequate.\n- Inspect returned artifacts and results; a sub-agent report alone does not verify its claims.\n- Escalate genuine decisions to the Owner with evidence, options, recommendation, and what each choice constrains.\n- Resolve routine execution details without repeatedly asking the human.\n\nSub-agents:\n- Receive an explicit objective, inputs, allowed paths, forbidden paths, dependencies, budget, exit condition, evidence requirement, and escalation route.\n- Perform only their assigned unit.\n- Use the repository’s prescribed isolated worktree/session arrangements. The Conductor provisions these according to the workflow; sub-agents must not call EnterWorktree.\n- Do not edit shared ledgers or generated artifacts concurrently outside the coordinated protocol.\n- Return commits/artifacts, observed results, residual risks, and required follow-up.\n\nParallelize only independent work. Do not dispatch an implementer before the ownership semantics and design are settled. Reviewers must be independent of the author whose work they review.\n\n## 5. Design and proof requirements\n\nBefore changing the gate, resolve from evidence:\n- Which file suffixes and paths define a “surface” under the existing contract.\n- How §2 represents explicit paths, grouped entries, directory ownership, and exceptions.\n- How recursive discovery maps to those existing declarations.\n- How duplicate basenames, overlapping assignments, stale exceptions, and malformed or ambiguous declarations are handled.\n- Which platform/path rules the repository actually requires.\n\nDo not solve recursive discovery by merely widening a scan while retaining ambiguous basename identity. Do not widen the policy beyond the existing ownership contract.\n\nWrite the affected surface list before implementation:\nfilesystem discovery → path identity → §2 parsing → ownership decision → diagnostics/exit status → test fixtures → existing gate invocation → proof/audit evidence.\n\nUse the smallest correct implementation. Prefer existing code and stdlib. No new dependency without a demonstrated need.\n\nClass → sweep → derive → prevent:\nCapture the defect class using the existing register and allocator protocol, reusing an existing class where appropriate. Convert the lesson into an executable control; prose alone is not completion.\n\nProve meaningful failures before fixes. Include fixtures that distinguish:\n- An unowned nested surface from an owned nested surface.\n- Two different paths sharing a basename.\n- A genuinely ambiguous assignment from a legitimate existing declaration.\n- A stale exception from a live unresolved exception.\n- A valid existing register from a parser that silently ignores its syntax.\n\nRun applicable tests and gates, read their actual results, and verify against the declared file population. A green exit code alone does not establish coverage. Do not run unrelated full suites unless the repository’s trigger rules require them.\n\n## 6. Integration, records, and close\n\nCoordinate the eventual join with the active Atlas recovery integrator and current peers. Parallel authoring does not authorize concurrent main integration.\n\nUse the repository’s existing join tools. Preserve append-only records through the mandated merge mechanism; regenerate derived files rather than merging them by hand, in the required order after audit writes.\n\nUse the documented audit start/close markers, prompt logging, graph metadata/index rules, and Proof Pack capture. If running inside AI-DE with AIDE_CONTRACT_LOG available, emit the required episode events and name actual repository-relative proof artifacts at close. Never invent an artifact path or acceptance result.\n\nAt completion, report:\n- Completed / Remaining / Next.\n- Verified / Inferred / Flagged.\n- Changed files, observed checks, independent gate outcomes, and residual risks.\n- Branch/worktree and integration status.\n- Evidence artifact paths.\n- Whether the worktree is retained and why.\n\nStop when the bounded completion contract is met. New gaps are findings for the Owner, not permission to expand the programme.",
+      "session": "codex-surface-ownership-conductor",
+      "shortname": "correct-prepare-ownership-capture",
+      "signals": {
+        "acceptance_met": true,
+        "verification_path": false
+      },
+      "skill": "prepare-for-coordination",
+      "summary": "Corrects missing evidence signal: coordination plan committed and independent plan gate passed; product implementation evidence not yet produced. Existing capture gate is the recurrence control.",
+      "supersedes": "al-01M2JQK2ZXVQFQ6VQ6XJARS6YR",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T14:33:27Z",
+      "done_when": "Published section2 and rulings incorporated with checks and full runner observed.",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Use published ownership authority for recursive gate qualification.",
+      "id": "al-01M2JQSC0YN0RA479KTSXKV797",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into conductor/surface-ownership",
+      "session": "codex-surface-ownership-conductor",
+      "shortname": "ownership-main-rulings",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T14:33:26Z",
+      "summary": "Consume Core113 narrow handoff and114 ProseView section2 assignment; source authority retained. recount_seconds=0 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership.md"
+      ],
+      "datetime": "2026-09-15T14:35:59Z",
+      "done_when": "Receipt bytes match original source commits and provenance is recorded.",
+      "fan_out": 0,
+      "goal": "Preserve independent decision and plan-review evidence.",
+      "id": "al-01M2JQY0HQY67NXDEJX0GKM2W1",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Import the independent Owner and plan-review receipts as attributed evidence, with source commits and byte hashes.",
+      "session": "codex-surface-ownership-conductor",
+      "shortname": "ownership-independent-receipts",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Verbatim Owner171791f and reviewer8690c5fa receipts copied; source/copy SHA256 pairs equal. Original audit ids preserved as provenance in proof, not replayed. Source branches retained. Implementation review remains pending.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership.md"
+      ],
+      "datetime": "2026-09-15T14:36:26Z",
+      "done_when": "Published section2 incorporated and required integrated gates pass.",
+      "fan_out": 0,
+      "goal": "Use published ownership authority for recursive gate qualification.",
+      "id": "al-01M2JQYTTWAHZ6GS7DREHYN1TB",
+      "kind": "skill",
+      "outcome": "blocked",
+      "prompt": "Correct the prerequisite main-rule join outcome after step8 mandatory runner failed.",
+      "session": "codex-surface-ownership-conductor",
+      "shortname": "ownership-main-join-blocked",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Script merged publishedmain authority and committed checks but final full runner failed3/38. Missing terminal/Core.NET TRX receipts explicitly reported; global stranded-audit also remains independently observed. No waiver, no push. Earlier script acceptance=true emitted before final gates is superseded; branch retained for bounded implementation work.",
+      "supersedes": "al-01M2JQSC0YN0RA479KTSXKV797",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": "codex-sol-author",
+      "artifacts": [
+        "tools/verify-surface-ownership.py",
+        "docs/proof/recursive-surface-ownership-author.md",
+        "docs/docs-index.js"
+      ],
+      "datetime": "2026-09-15T14:45:55Z",
+      "done_when": "Expanded red-first self-tests pass; the base gate fails only ProseView; the Ruling 114 register passes 17/17; proof and audit are committed for independent review.",
+      "duration_seconds": 981.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "fix/recursive-surface-ownership",
+        "pushed": null,
+        "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
+        "short": "bab5035e7"
+      },
+      "goal": "Implement the bounded recursive Workbench surface-ownership gate without inferring ownership.",
+      "id": "al-01M2JRG6QSVM39E8B7QC0VC0KQ",
+      "kind": "skill",
+      "main_budget": 35,
+      "main_calls": 47,
+      "main_over_budget": true,
+      "outcome": "success",
+      "prompt": "Verbatim author task brief: docs/proof/recursive-surface-ownership-author.md, Author contract (verbatim handoff).",
+      "session": "codex-surface-ownership-author",
+      "shortname": "implement-recursive-surface-ownership",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-15T14:29:34Z",
+      "summary": "Implemented recursive repository-relative Workbench surface ownership verification; expanded red-first self-test from the baseline to cover parser, path, exception, CLI, deterministic, and six injected mutation oracles; base register fails only ProseView while Ruling 114 Conductor register passes 17/17. Proof: docs/proof/recursive-surface-ownership-author.md.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
       "id": "al-01M2JRPPHPV0WBD24VVVZQAMZ7",
@@ -19159,6 +19548,35 @@ window.AUDIT_DATA = {
       "duration_seconds": 730.0
     },
     {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership.md",
+        "docs/plans/recursive-surface-ownership.md"
+      ],
+      "datetime": "2026-09-15T14:53:38Z",
+      "done_when": "Independent veto cleared and full join gates pass on isolated committed candidate",
+      "duration_seconds": 136.0,
+      "fan_out": 2,
+      "goal": "Close recursive surface ownership without inventing ownership",
+      "id": "al-01M2JRYAXFXHK54P8F96NN50SE",
+      "kind": "skill",
+      "outcome": "blocked",
+      "prompt": "You are the Conductor for a bounded AI-DE programme: close the recursive surface-ownership verification gap.\n\nUse GPT-6 Astra for this main Conductor thread. Establish a separate GPT-6 Astra Owner agent. The Owner oversees scope and decisions; the Conductor delegates execution and escalates decisions to the Owner. Sub-agents perform bounded units assigned by the Conductor, using models the Conductor selects and right-sizes under repository guidance.\n\nRepository: C:\\projects\\ai-de\n\n## 1. Objective and completion contract\n\nGoal:\nMake surface-ownership verification cover nested Workbench surfaces without inventing ownership.\n\nDone when:\n- Surface discovery recursively covers the declared Workbench surface population.\n- Ownership matching uses repository-relative path identity, so identical basenames in different directories cannot silently alias.\n- docs/collaboration/session-contracts.md §2 remains the sole authority on ownership.\n- Meaningful red-first fixtures prove nested omissions, duplicate basenames, ambiguous ownership, and stale exceptions are handled.\n- Existing ownership decisions remain intact. Unresolved assignments are reported to their owner and are never guessed by the implementation.\n- The smallest applicable checks pass, their actual results are inspected, and independent reviewers clear all triggered gates.\n- A Proof Pack and the required audit/coordination records capture the implementation and evidence.\n- The reviewed change is committed in the isolated programme branch and ready for the agreed integration handoff.\n\nNot in scope:\n- Product source, UI behavior, or new ownership policy.\n- Atlas implementation, native E1 qualification, or Atlas recovery/integration.\n- Grok’s Understanding Views programme, census query, or new surfaces.\n- Refactoring the coordination framework.\n- Worktree cleanup belonging to other sessions.\n- Main integration without an explicit, recorded integration grant.\n\nInitial tier: T1, subject to Owner confirmation after grounding.\nInitial maximum concurrent agents: 4, including Owner and Conductor. Reduce width when dependencies or coordination overhead warrant it.\n\nThe prior assessment found that tools/verify-surface-ownership.py uses top-level discovery and basename matching, and that §2 explicitly records the nested coverage gap. Treat this as a lead: verify current code and records before planning or editing.\n\n## 2. Ground in the repository’s constitution and workflows\n\nRead AGENTS.md and applicable nested instructions first. Honor the Agent Knowledge Pack and AI-Forward Pack throughout.\n\nUse the repository’s actual workflows, skills, and scripts for HOW you work:\n- optimize-graph\n- prepare-for-coordination\n- execute-with-coordination\n- specify → define-architecture → design-slice → implement → investigate, as applicable\n- Rigor Protocol, No-Guessing Protocol, end-to-end integrity, testing strategy, continuous improvement, solution-selection ladder, instrumentation, persona review, and audit requirements.\n\nOpen the workflow definitions and inspect script help/contracts before using them. Do not replace these mechanisms with an improvised coordination system or merely claim to have followed them.\n\nScale ceremony to the task, while preserving every applicable floor. Reuse existing specification and architecture where sufficient; explicitly explain which stages need new artifacts and which are satisfied by existing evidence. Invoke investigate when an observed failure requires diagnosis.\n\nBefore substantive execution, publish:\nGoal · Done when · Not in scope · Tier · Fan-out cap.\n\nRun optimize-graph once across the whole programme at grounding. Record real dependencies, required gates, exit conditions, verification oracles, loop termination variants, and planned versus actual work. Re-plan through the workflow when material evidence changes the graph; do not repeatedly invoke it without cause.\n\n## 3. Establish isolation and current coordination state\n\nBefore repository writes:\n- Read .github/instructions/session-collaboration.instructions.md.\n- Read the sole ownership register, docs/collaboration/session-contracts.md §2, including applicable branch-local grants.\n- Read every liveness record in .agents/sessions/.\n- Inspect current worktrees, shared requests, and identity-bound lease state using the repository’s supported coordination scripts.\n- Reconcile conflicting or stale records against newer events and branch evidence. Do not equate “no response” with consent or “old live record” with current activity.\n\nCreate and enter this programme’s own named branch/worktree through coord-core.py’s documented worktree lifecycle. Use the repository’s naming and identity conventions.\n\nSet AGENT_SESSION and AGENT_NAME. Publish your own liveness record with objective, worktree, branch, status, and dependencies. Do not add a second ownership map or edit another session’s liveness file.\n\nRequest the narrow Core-owned tooling handoff through the repository’s prescribed request/contract protocol. Prior user authorization for this task does not silently transfer another session’s owned files.\n\nExpected implementation surface:\n- tools/verify-surface-ownership.py\n- Its existing tests or self-test mechanism, extended using established conventions.\n- A task-specific Proof Pack and required audit/lesson records.\n- An exact, separately coordinated §2 correction only if necessary to express an already-agreed assignment.\n\nFreeze the actual allowlist after opening the code. No broad tools/**, Core/**, or Workbench/** lease.\n\nUse short identity-bound file leases for the minutes of editing, and release them promptly. A refused lease is a plan defect: coordinate or narrow the work; never wait out its TTL.\n\nAvoid Shell/factory/menu wiring, Atlas paths, and Grok’s query/surface paths. If a dependency reaches them, stop that branch of work and raise a precise seam request.\n\nKeep the primary checkout untouched. No stash, reset, force-push, discard, or cleanup of another session’s work. Preserve current dirty files.\n\n## 4. Owner–Conductor–sub-agent responsibilities\n\nOwner — GPT-6 Astra:\n- Confirm the objective, scope, tier, acceptance contract, and bounded plan.\n- Decide escalated ownership ambiguities, policy questions, scope changes, and integration requests.\n- Require evidence for decisions and record them using repository mechanisms.\n- Do not become a second implementer.\n- Do not override or self-clear a reviewer’s hard veto.\n\nConductor — GPT-6 Astra, this main thread:\n- Own the execution graph, assignments, coordination, sequencing, budgets, joins, and status.\n- Delegate bounded authoring and independent review units.\n- Select each sub-agent’s available model based on task complexity, risk, and repository guidance; record the rationale. Use stronger reasoning for ownership/path semantics and adversarial review, and smaller models for deterministic bounded work where adequate.\n- Inspect returned artifacts and results; a sub-agent report alone does not verify its claims.\n- Escalate genuine decisions to the Owner with evidence, options, recommendation, and what each choice constrains.\n- Resolve routine execution details without repeatedly asking the human.\n\nSub-agents:\n- Receive an explicit objective, inputs, allowed paths, forbidden paths, dependencies, budget, exit condition, evidence requirement, and escalation route.\n- Perform only their assigned unit.\n- Use the repository’s prescribed isolated worktree/session arrangements. The Conductor provisions these according to the workflow; sub-agents must not call EnterWorktree.\n- Do not edit shared ledgers or generated artifacts concurrently outside the coordinated protocol.\n- Return commits/artifacts, observed results, residual risks, and required follow-up.\n\nParallelize only independent work. Do not dispatch an implementer before the ownership semantics and design are settled. Reviewers must be independent of the author whose work they review.\n\n## 5. Design and proof requirements\n\nBefore changing the gate, resolve from evidence:\n- Which file suffixes and paths define a “surface” under the existing contract.\n- How §2 represents explicit paths, grouped entries, directory ownership, and exceptions.\n- How recursive discovery maps to those existing declarations.\n- How duplicate basenames, overlapping assignments, stale exceptions, and malformed or ambiguous declarations are handled.\n- Which platform/path rules the repository actually requires.\n\nDo not solve recursive discovery by merely widening a scan while retaining ambiguous basename identity. Do not widen the policy beyond the existing ownership contract.\n\nWrite the affected surface list before implementation:\nfilesystem discovery → path identity → §2 parsing → ownership decision → diagnostics/exit status → test fixtures → existing gate invocation → proof/audit evidence.\n\nUse the smallest correct implementation. Prefer existing code and stdlib. No new dependency without a demonstrated need.\n\nClass → sweep → derive → prevent:\nCapture the defect class using the existing register and allocator protocol, reusing an existing class where appropriate. Convert the lesson into an executable control; prose alone is not completion.\n\nProve meaningful failures before fixes. Include fixtures that distinguish:\n- An unowned nested surface from an owned nested surface.\n- Two different paths sharing a basename.\n- A genuinely ambiguous assignment from a legitimate existing declaration.\n- A stale exception from a live unresolved exception.\n- A valid existing register from a parser that silently ignores its syntax.\n\nRun applicable tests and gates, read their actual results, and verify against the declared file population. A green exit code alone does not establish coverage. Do not run unrelated full suites unless the repository’s trigger rules require them.\n\n## 6. Integration, records, and close\n\nCoordinate the eventual join with the active Atlas recovery integrator and current peers. Parallel authoring does not authorize concurrent main integration.\n\nUse the repository’s existing join tools. Preserve append-only records through the mandated merge mechanism; regenerate derived files rather than merging them by hand, in the required order after audit writes.\n\nUse the documented audit start/close markers, prompt logging, graph metadata/index rules, and Proof Pack capture. If running inside AI-DE with AIDE_CONTRACT_LOG available, emit the required episode events and name actual repository-relative proof artifacts at close. Never invent an artifact path or acceptance result.\n\nAt completion, report:\n- Completed / Remaining / Next.\n- Verified / Inferred / Flagged.\n- Changed files, observed checks, independent gate outcomes, and residual risks.\n- Branch/worktree and integration status.\n- Evidence artifact paths.\n- Whether the worktree is retained and why.\n\nStop when the bounded completion contract is met. New gaps are findings for the Owner, not permission to expand the programme.",
+      "session": "codex-surface-ownership-conductor",
+      "shortname": "ownership-parser-replan",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T14:51:22Z",
+      "summary": "Independent Test/Python veto reproduced by Conductor: five parser failures,4/9 adversarial checks pass,exit1. OwnerO7 admits bounded investigate-repair-review before join. Runtime receipt prerequisite closed:3743 executed pass,1 existing nonexecuted,5 terminal exit paths pass; no baseline changes.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
       "id": "al-01M2JS40SWDP3JE7ER315MF902",
       "shortname": "atlas-irp-owner-scope-pending",
       "datetime": "2026-09-15T14:56:44Z",
@@ -19188,6 +19606,400 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T14:55:47Z",
       "duration_seconds": 57.0
+    },
+    {
+      "actor": "codex-sol-author",
+      "artifacts": [
+        "tools/verify-surface-ownership.py",
+        "docs/investigations/recursive-surface-ownership.md",
+        "docs/proof/recursive-surface-ownership-repair.md",
+        "docs/docs-index.js"
+      ],
+      "datetime": "2026-09-15T15:00:26Z",
+      "done_when": "All five cases are red before repair, the full self-test and independent reproducer pass after the bounded repair, real register outcomes remain correct, and investigation/proof/audit are committed for independent re-review.",
+      "duration_seconds": 455.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "fix/recursive-surface-ownership",
+        "pushed": null,
+        "sha": "18a4a19f82eff6130c9938bdf401539cd2a8944f",
+        "short": "18a4a19f8"
+      },
+      "goal": "Diagnose and repair the five independent recursive surface-ownership parser blocks without widening policy or authority.",
+      "id": "al-01M2JSARRWHRW2Z6Q0WKWPMYZ3",
+      "kind": "skill",
+      "main_budget": 18,
+      "main_calls": 12,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Investigate the independent five-case parser block on pinned 18a4a19f, then apply Owner O7 same-scope repair after root acknowledgement; preserve §2 authority and independent veto.",
+      "session": "codex-surface-ownership-author",
+      "shortname": "investigate-recursive-surface-ownership-review-block",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "started_at": "2026-09-15T14:52:51Z",
+      "summary": "Reproduced five parser-state/token-jurisdiction failures on pinned 18a4a19f, traced necessary and sufficient causes, added failing-first fixtures, repaired only those predicates, and observed the full self-test plus external reviewer 9/9 green. Proof: docs/proof/recursive-surface-ownership-repair.md.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": "codex-sol-author",
+      "artifacts": [
+        "tools/verify-surface-ownership.py",
+        "docs/investigations/recursive-surface-ownership.md",
+        "docs/proof/recursive-surface-ownership-repair.md",
+        "docs/docs-index.js"
+      ],
+      "datetime": "2026-09-15T15:03:03Z",
+      "done_when": "The broad-star conflict is red before repair, green after repair, and prior self-test/reviewer behavior remains green.",
+      "duration_seconds": 0.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "fix/recursive-surface-ownership",
+        "pushed": null,
+        "sha": "a3e9bcdcbcf8536ef401c46a8858871c128483ee",
+        "short": "a3e9bcdcb"
+      },
+      "goal": "Ensure every supported Workbench star pattern enters surface declaration matching without admitting exact non-surface files.",
+      "id": "al-01M2JSFJSWJS95C5F7TEJHVC5K",
+      "kind": "skill",
+      "main_budget": 18,
+      "main_calls": 17,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Check the same-class supported segment-local broad pattern boundary before final freeze.",
+      "session": "codex-surface-ownership-author",
+      "shortname": "investigate-surface-pattern-jurisdiction",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "started_at": "2026-09-15T15:03:03Z",
+      "summary": "Observed Core Workbench/** plus Design Workbench/*.cs silently miss a conflict, added a failing-first fixture, widened only declaration-pattern jurisdiction, and kept exact WorkbenchShell.cs outside scope. Proof updated in docs/proof/recursive-surface-ownership-repair.md.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T15:09:16Z",
+      "id": "al-01M2JSTZ5ME1BWG2WP76BY25T0",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "yes finish the join then keep going unless absolutely needed to check in with a human defer to the owner to tell you to keep going lets get this work implemented with minimal human blocking",
+      "session": "prompt-log",
+      "shortname": "yes finish the join then keep going unless absolutely needed to check in…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": "codex-sol-author",
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership-repair.md",
+        "tools/verify-surface-ownership.py"
+      ],
+      "datetime": "2026-09-15T15:10:57Z",
+      "done_when": "The complete self-test rejects all eight source mutants, the proof records the final blob and measured result, and the bounded commit is frozen.",
+      "duration_seconds": 222.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "fix/recursive-surface-ownership",
+        "pushed": null,
+        "sha": "1105bb833f0e4bc777ee9d151ff368581a89023f",
+        "short": "1105bb833"
+      },
+      "goal": "Close reviewer hard predicate 3 with explicit heading-reset and delimiter-free-row mutation oracles.",
+      "id": "al-01M2JSY16S6B1SBGXZ4D5BVJAT",
+      "kind": "skill",
+      "main_budget": 6,
+      "main_calls": 11,
+      "main_over_budget": true,
+      "outcome": "success",
+      "prompt": "Close independent review predicate 3 by adding exactly two mutation oracles for heading context reset and delimiter-free row disappearance.",
+      "session": "codex-surface-ownership-author",
+      "shortname": "recursive-surface-ownership-mutation-closure",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-15T15:07:15Z",
+      "summary": "Added two one-change source mutants to the existing surface ownership self-test. The full suite observed all eight mutants rejected and exited 0 in 1.958 seconds. Parser semantics are unchanged.",
+      "tags": [
+        "recursive-surface-ownership",
+        "mutation-testing"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": "claude-conductor",
+      "artifacts": [
+        "tools/verify-stranded-audit.py",
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "datetime": "2026-09-15T15:13:25Z",
+      "done_when": "main carries 553bb9bc and Ruling 115; the three Atlas carve-out requests resolved; gates green in the primary; pushed",
+      "duration_seconds": 153.0,
+      "duration_source": "session-start-hook",
+      "fan_out": 1,
+      "git": {
+        "branch": "conductor/watch-0915",
+        "pushed": null,
+        "sha": "553bb9bcee1301994bcb3db1c3eda352d2033a7f",
+        "short": "553bb9bce"
+      },
+      "goal": "Land the second coordination batch the live sessions are waiting on: the verify-stranded-audit.py repair and Ruling 115",
+      "id": "al-01M2JT2HVQQXAN0QCFRT002XY7",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "(continuation of al-01M2JP7RMQ: the watch's second landing)",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "conductor-watch-0915-join2",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "conductor-watch",
+      "started_at": "2026-09-15T15:10:52Z",
+      "summary": "verify-stranded-audit.py read its own tree's .agents/log (the committed snapshot) while coord-core writes the session log under the primary, so from any linked worktree every registered session read as stranded (Codex req-01M2JQY0G3 and the conductor's own run) - live_trees() now resolves against the primary; --self-test extended with the linked-worktree case, red on the old check(), green on the new. Ruling 115 filed: the Atlas A-E carve-outs acknowledged by the section-2 owner with no Claude control changed; desktop-serialization hold accepted; the three requests resolved.",
+      "tags": [
+        "coordination",
+        "stress-test"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership.md"
+      ],
+      "datetime": "2026-09-15T15:13:45Z",
+      "done_when": "Reviewed candidate merged into isolated programme branch with mandatory checks passing and no push",
+      "duration_seconds": 2.0,
+      "fan_out": 0,
+      "goal": "Close recursive surface ownership without inventing ownership",
+      "id": "al-01M2JT354ZQHZGE1E4GF8NE54K",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of fix/recursive-surface-ownership into conductor/surface-ownership",
+      "session": "codex-surface-ownership-conductor",
+      "shortname": "ownership-reviewed-join",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T15:13:43Z",
+      "summary": "Independent Test Python Simplifier SRE Data integrity PASS at676f63ed; recursive ownership17/17; eight mutants rejected. Join isolated programme only; no main publication. recount_seconds=0 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "tools/verify-stranded-audit.py",
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "datetime": "2026-09-15T15:14:13Z",
+      "done_when": "main carries 553bb9bc and d98b91d1; gates green in the primary; pushed; the watcher reports MAIN moved",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Land the verify-stranded-audit.py repair and Ruling 115 on main under Ruling 107 so the live GHCP/Grok/Codex lanes can gate in their own worktrees and the Atlas writers can edit under the carve-outs",
+      "id": "al-01M2JT40P2NYHZ0RKC30ST2WQY",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of conductor/watch-0915 into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-conductor-watch-0915-2",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T15:14:12Z",
+      "summary": "Second coordination join of the 2026-09-15 stress test: tools/verify-stranded-audit.py read its own tree's .agents/log and reported every registered session stranded from any linked worktree (Codex req-01M2JQY0G3; the conductor's own run) - now resolves against the primary, self-test extended; Ruling 115 filed (Atlas carve-outs A-E acknowledged by the section-2 owner, no Claude control changed; desktop-serialization hold); section 10.2 row. Docs + one gate, no product code. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership.md",
+        "docs/proof/recursive-surface-ownership-review.md"
+      ],
+      "datetime": "2026-09-15T15:19:31Z",
+      "done_when": "Independent review and all mandatory join gates pass with committed evidence",
+      "fan_out": 2,
+      "goal": "Close recursive surface ownership without inventing ownership",
+      "id": "al-01M2JTDQ908JTSDTZGNTP7CMTM",
+      "kind": "skill",
+      "outcome": "blocked",
+      "prompt": "You are the Conductor for a bounded AI-DE programme: close the recursive surface-ownership verification gap.\n\nUse GPT-6 Astra for this main Conductor thread. Establish a separate GPT-6 Astra Owner agent. The Owner oversees scope and decisions; the Conductor delegates execution and escalates decisions to the Owner. Sub-agents perform bounded units assigned by the Conductor, using models the Conductor selects and right-sizes under repository guidance.\n\nRepository: C:\\projects\\ai-de\n\n## 1. Objective and completion contract\n\nGoal:\nMake surface-ownership verification cover nested Workbench surfaces without inventing ownership.\n\nDone when:\n- Surface discovery recursively covers the declared Workbench surface population.\n- Ownership matching uses repository-relative path identity, so identical basenames in different directories cannot silently alias.\n- docs/collaboration/session-contracts.md §2 remains the sole authority on ownership.\n- Meaningful red-first fixtures prove nested omissions, duplicate basenames, ambiguous ownership, and stale exceptions are handled.\n- Existing ownership decisions remain intact. Unresolved assignments are reported to their owner and are never guessed by the implementation.\n- The smallest applicable checks pass, their actual results are inspected, and independent reviewers clear all triggered gates.\n- A Proof Pack and the required audit/coordination records capture the implementation and evidence.\n- The reviewed change is committed in the isolated programme branch and ready for the agreed integration handoff.\n\nNot in scope:\n- Product source, UI behavior, or new ownership policy.\n- Atlas implementation, native E1 qualification, or Atlas recovery/integration.\n- Grok’s Understanding Views programme, census query, or new surfaces.\n- Refactoring the coordination framework.\n- Worktree cleanup belonging to other sessions.\n- Main integration without an explicit, recorded integration grant.\n\nInitial tier: T1, subject to Owner confirmation after grounding.\nInitial maximum concurrent agents: 4, including Owner and Conductor. Reduce width when dependencies or coordination overhead warrant it.\n\nThe prior assessment found that tools/verify-surface-ownership.py uses top-level discovery and basename matching, and that §2 explicitly records the nested coverage gap. Treat this as a lead: verify current code and records before planning or editing.\n\n## 2. Ground in the repository’s constitution and workflows\n\nRead AGENTS.md and applicable nested instructions first. Honor the Agent Knowledge Pack and AI-Forward Pack throughout.\n\nUse the repository’s actual workflows, skills, and scripts for HOW you work:\n- optimize-graph\n- prepare-for-coordination\n- execute-with-coordination\n- specify → define-architecture → design-slice → implement → investigate, as applicable\n- Rigor Protocol, No-Guessing Protocol, end-to-end integrity, testing strategy, continuous improvement, solution-selection ladder, instrumentation, persona review, and audit requirements.\n\nOpen the workflow definitions and inspect script help/contracts before using them. Do not replace these mechanisms with an improvised coordination system or merely claim to have followed them.\n\nScale ceremony to the task, while preserving every applicable floor. Reuse existing specification and architecture where sufficient; explicitly explain which stages need new artifacts and which are satisfied by existing evidence. Invoke investigate when an observed failure requires diagnosis.\n\nBefore substantive execution, publish:\nGoal · Done when · Not in scope · Tier · Fan-out cap.\n\nRun optimize-graph once across the whole programme at grounding. Record real dependencies, required gates, exit conditions, verification oracles, loop termination variants, and planned versus actual work. Re-plan through the workflow when material evidence changes the graph; do not repeatedly invoke it without cause.\n\n## 3. Establish isolation and current coordination state\n\nBefore repository writes:\n- Read .github/instructions/session-collaboration.instructions.md.\n- Read the sole ownership register, docs/collaboration/session-contracts.md §2, including applicable branch-local grants.\n- Read every liveness record in .agents/sessions/.\n- Inspect current worktrees, shared requests, and identity-bound lease state using the repository’s supported coordination scripts.\n- Reconcile conflicting or stale records against newer events and branch evidence. Do not equate “no response” with consent or “old live record” with current activity.\n\nCreate and enter this programme’s own named branch/worktree through coord-core.py’s documented worktree lifecycle. Use the repository’s naming and identity conventions.\n\nSet AGENT_SESSION and AGENT_NAME. Publish your own liveness record with objective, worktree, branch, status, and dependencies. Do not add a second ownership map or edit another session’s liveness file.\n\nRequest the narrow Core-owned tooling handoff through the repository’s prescribed request/contract protocol. Prior user authorization for this task does not silently transfer another session’s owned files.\n\nExpected implementation surface:\n- tools/verify-surface-ownership.py\n- Its existing tests or self-test mechanism, extended using established conventions.\n- A task-specific Proof Pack and required audit/lesson records.\n- An exact, separately coordinated §2 correction only if necessary to express an already-agreed assignment.\n\nFreeze the actual allowlist after opening the code. No broad tools/**, Core/**, or Workbench/** lease.\n\nUse short identity-bound file leases for the minutes of editing, and release them promptly. A refused lease is a plan defect: coordinate or narrow the work; never wait out its TTL.\n\nAvoid Shell/factory/menu wiring, Atlas paths, and Grok’s query/surface paths. If a dependency reaches them, stop that branch of work and raise a precise seam request.\n\nKeep the primary checkout untouched. No stash, reset, force-push, discard, or cleanup of another session’s work. Preserve current dirty files.\n\n## 4. Owner–Conductor–sub-agent responsibilities\n\nOwner — GPT-6 Astra:\n- Confirm the objective, scope, tier, acceptance contract, and bounded plan.\n- Decide escalated ownership ambiguities, policy questions, scope changes, and integration requests.\n- Require evidence for decisions and record them using repository mechanisms.\n- Do not become a second implementer.\n- Do not override or self-clear a reviewer’s hard veto.\n\nConductor — GPT-6 Astra, this main thread:\n- Own the execution graph, assignments, coordination, sequencing, budgets, joins, and status.\n- Delegate bounded authoring and independent review units.\n- Select each sub-agent’s available model based on task complexity, risk, and repository guidance; record the rationale. Use stronger reasoning for ownership/path semantics and adversarial review, and smaller models for deterministic bounded work where adequate.\n- Inspect returned artifacts and results; a sub-agent report alone does not verify its claims.\n- Escalate genuine decisions to the Owner with evidence, options, recommendation, and what each choice constrains.\n- Resolve routine execution details without repeatedly asking the human.\n\nSub-agents:\n- Receive an explicit objective, inputs, allowed paths, forbidden paths, dependencies, budget, exit condition, evidence requirement, and escalation route.\n- Perform only their assigned unit.\n- Use the repository’s prescribed isolated worktree/session arrangements. The Conductor provisions these according to the workflow; sub-agents must not call EnterWorktree.\n- Do not edit shared ledgers or generated artifacts concurrently outside the coordinated protocol.\n- Return commits/artifacts, observed results, residual risks, and required follow-up.\n\nParallelize only independent work. Do not dispatch an implementer before the ownership semantics and design are settled. Reviewers must be independent of the author whose work they review.\n\n## 5. Design and proof requirements\n\nBefore changing the gate, resolve from evidence:\n- Which file suffixes and paths define a “surface” under the existing contract.\n- How §2 represents explicit paths, grouped entries, directory ownership, and exceptions.\n- How recursive discovery maps to those existing declarations.\n- How duplicate basenames, overlapping assignments, stale exceptions, and malformed or ambiguous declarations are handled.\n- Which platform/path rules the repository actually requires.\n\nDo not solve recursive discovery by merely widening a scan while retaining ambiguous basename identity. Do not widen the policy beyond the existing ownership contract.\n\nWrite the affected surface list before implementation:\nfilesystem discovery → path identity → §2 parsing → ownership decision → diagnostics/exit status → test fixtures → existing gate invocation → proof/audit evidence.\n\nUse the smallest correct implementation. Prefer existing code and stdlib. No new dependency without a demonstrated need.\n\nClass → sweep → derive → prevent:\nCapture the defect class using the existing register and allocator protocol, reusing an existing class where appropriate. Convert the lesson into an executable control; prose alone is not completion.\n\nProve meaningful failures before fixes. Include fixtures that distinguish:\n- An unowned nested surface from an owned nested surface.\n- Two different paths sharing a basename.\n- A genuinely ambiguous assignment from a legitimate existing declaration.\n- A stale exception from a live unresolved exception.\n- A valid existing register from a parser that silently ignores its syntax.\n\nRun applicable tests and gates, read their actual results, and verify against the declared file population. A green exit code alone does not establish coverage. Do not run unrelated full suites unless the repository’s trigger rules require them.\n\n## 6. Integration, records, and close\n\nCoordinate the eventual join with the active Atlas recovery integrator and current peers. Parallel authoring does not authorize concurrent main integration.\n\nUse the repository’s existing join tools. Preserve append-only records through the mandated merge mechanism; regenerate derived files rather than merging them by hand, in the required order after audit writes.\n\nUse the documented audit start/close markers, prompt logging, graph metadata/index rules, and Proof Pack capture. If running inside AI-DE with AIDE_CONTRACT_LOG available, emit the required episode events and name actual repository-relative proof artifacts at close. Never invent an artifact path or acceptance result.\n\nAt completion, report:\n- Completed / Remaining / Next.\n- Verified / Inferred / Flagged.\n- Changed files, observed checks, independent gate outcomes, and residual risks.\n- Branch/worktree and integration status.\n- Evidence artifact paths.\n- Whether the worktree is retained and why.\n\nStop when the bounded completion contract is met. New gaps are findings for the Owner, not permission to expand the programme.",
+      "session": "codex-surface-ownership-conductor",
+      "shortname": "ownership-join-blocked-correction",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "summary": "Supersede script early acceptance: final fullrunner37/38PASS, sole failure primary checkout uncommitted audit-log.jsonl; requestreq-01M2JTCR30AJ256HJFZHZJNRPX. Reviewed source676f63ed joined as7fdf6ab0, checkpointdf050caf. No primary log mutation or push. Import reviewer cbf288b8 receipt verbatim; originalaudit al-01M2JT1MJWEKKRFZGH04CWNG9K remains on retained review branch.",
+      "supersedes": "al-01M2JT354ZQHZGE1E4GF8NE54K",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/mitigations.jsonl"
+      ],
+      "datetime": "2026-09-15T15:21:30Z",
+      "id": "al-01M2JTHBQ9AET7766XWR1VG8BE",
+      "kind": "script",
+      "outcome": "success",
+      "prompt": "dream.py capture-mitigation",
+      "session": "codex-surface-ownership-conductor",
+      "shortname": "capture-mitigation",
+      "skill": "dream",
+      "summary": "Captured mit-0010 (red-green): Recursive surface ownership uses canonical paths and section2 Path cells;22 baseline red fixtures,5 ",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/mitigations.jsonl",
+        "docs/proof/recursive-surface-ownership.md"
+      ],
+      "datetime": "2026-09-15T15:21:55Z",
+      "done_when": "Mitigation record names actual executable control and red-green proof",
+      "fan_out": 0,
+      "goal": "Capture proven DC118 mitigation through existing dream mechanism",
+      "id": "al-01M2JTJ496AAG7HADNE72M9CCV",
+      "kind": "script",
+      "outcome": "success",
+      "prompt": "dream.py capture-mitigation for recursive surface ownership; preserve blocked integration status",
+      "session": "codex-surface-ownership-conductor",
+      "shortname": "ownership-mitigation-proof",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "dream",
+      "summary": "mit-0010 records the independently reviewed red-green control at676f63ed. Supplement generated script audit with explicit goal and proof signals; this acceptance covers mitigation capture only, not the blocked main qualification.",
+      "supersedes": "al-01M2JTHBQ9AET7766XWR1VG8BE",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership.md",
+        "docs/proof/recursive-surface-ownership-review.md",
+        "docs/proof/recursive-surface-ownership-repair.md",
+        "docs/investigations/recursive-surface-ownership.md"
+      ],
+      "datetime": "2026-09-15T15:22:58Z",
+      "done_when": "All acceptance obligations and mandatory join qualification pass on a committed isolated programme branch",
+      "duration_seconds": 63.0,
+      "fan_out": 2,
+      "goal": "Close recursive surface ownership without inventing ownership",
+      "id": "al-01M2JTM1HRS79T82XJ33HA7CH9",
+      "kind": "skill",
+      "outcome": "blocked",
+      "prompt": "You are the Conductor for a bounded AI-DE programme: close the recursive surface-ownership verification gap.\n\nUse GPT-6 Astra for this main Conductor thread. Establish a separate GPT-6 Astra Owner agent. The Owner oversees scope and decisions; the Conductor delegates execution and escalates decisions to the Owner. Sub-agents perform bounded units assigned by the Conductor, using models the Conductor selects and right-sizes under repository guidance.\n\nRepository: C:\\projects\\ai-de\n\n## 1. Objective and completion contract\n\nGoal:\nMake surface-ownership verification cover nested Workbench surfaces without inventing ownership.\n\nDone when:\n- Surface discovery recursively covers the declared Workbench surface population.\n- Ownership matching uses repository-relative path identity, so identical basenames in different directories cannot silently alias.\n- docs/collaboration/session-contracts.md §2 remains the sole authority on ownership.\n- Meaningful red-first fixtures prove nested omissions, duplicate basenames, ambiguous ownership, and stale exceptions are handled.\n- Existing ownership decisions remain intact. Unresolved assignments are reported to their owner and are never guessed by the implementation.\n- The smallest applicable checks pass, their actual results are inspected, and independent reviewers clear all triggered gates.\n- A Proof Pack and the required audit/coordination records capture the implementation and evidence.\n- The reviewed change is committed in the isolated programme branch and ready for the agreed integration handoff.\n\nNot in scope:\n- Product source, UI behavior, or new ownership policy.\n- Atlas implementation, native E1 qualification, or Atlas recovery/integration.\n- Grok’s Understanding Views programme, census query, or new surfaces.\n- Refactoring the coordination framework.\n- Worktree cleanup belonging to other sessions.\n- Main integration without an explicit, recorded integration grant.\n\nInitial tier: T1, subject to Owner confirmation after grounding.\nInitial maximum concurrent agents: 4, including Owner and Conductor. Reduce width when dependencies or coordination overhead warrant it.\n\nThe prior assessment found that tools/verify-surface-ownership.py uses top-level discovery and basename matching, and that §2 explicitly records the nested coverage gap. Treat this as a lead: verify current code and records before planning or editing.\n\n## 2. Ground in the repository’s constitution and workflows\n\nRead AGENTS.md and applicable nested instructions first. Honor the Agent Knowledge Pack and AI-Forward Pack throughout.\n\nUse the repository’s actual workflows, skills, and scripts for HOW you work:\n- optimize-graph\n- prepare-for-coordination\n- execute-with-coordination\n- specify → define-architecture → design-slice → implement → investigate, as applicable\n- Rigor Protocol, No-Guessing Protocol, end-to-end integrity, testing strategy, continuous improvement, solution-selection ladder, instrumentation, persona review, and audit requirements.\n\nOpen the workflow definitions and inspect script help/contracts before using them. Do not replace these mechanisms with an improvised coordination system or merely claim to have followed them.\n\nScale ceremony to the task, while preserving every applicable floor. Reuse existing specification and architecture where sufficient; explicitly explain which stages need new artifacts and which are satisfied by existing evidence. Invoke investigate when an observed failure requires diagnosis.\n\nBefore substantive execution, publish:\nGoal · Done when · Not in scope · Tier · Fan-out cap.\n\nRun optimize-graph once across the whole programme at grounding. Record real dependencies, required gates, exit conditions, verification oracles, loop termination variants, and planned versus actual work. Re-plan through the workflow when material evidence changes the graph; do not repeatedly invoke it without cause.\n\n## 3. Establish isolation and current coordination state\n\nBefore repository writes:\n- Read .github/instructions/session-collaboration.instructions.md.\n- Read the sole ownership register, docs/collaboration/session-contracts.md §2, including applicable branch-local grants.\n- Read every liveness record in .agents/sessions/.\n- Inspect current worktrees, shared requests, and identity-bound lease state using the repository’s supported coordination scripts.\n- Reconcile conflicting or stale records against newer events and branch evidence. Do not equate “no response” with consent or “old live record” with current activity.\n\nCreate and enter this programme’s own named branch/worktree through coord-core.py’s documented worktree lifecycle. Use the repository’s naming and identity conventions.\n\nSet AGENT_SESSION and AGENT_NAME. Publish your own liveness record with objective, worktree, branch, status, and dependencies. Do not add a second ownership map or edit another session’s liveness file.\n\nRequest the narrow Core-owned tooling handoff through the repository’s prescribed request/contract protocol. Prior user authorization for this task does not silently transfer another session’s owned files.\n\nExpected implementation surface:\n- tools/verify-surface-ownership.py\n- Its existing tests or self-test mechanism, extended using established conventions.\n- A task-specific Proof Pack and required audit/lesson records.\n- An exact, separately coordinated §2 correction only if necessary to express an already-agreed assignment.\n\nFreeze the actual allowlist after opening the code. No broad tools/**, Core/**, or Workbench/** lease.\n\nUse short identity-bound file leases for the minutes of editing, and release them promptly. A refused lease is a plan defect: coordinate or narrow the work; never wait out its TTL.\n\nAvoid Shell/factory/menu wiring, Atlas paths, and Grok’s query/surface paths. If a dependency reaches them, stop that branch of work and raise a precise seam request.\n\nKeep the primary checkout untouched. No stash, reset, force-push, discard, or cleanup of another session’s work. Preserve current dirty files.\n\n## 4. Owner–Conductor–sub-agent responsibilities\n\nOwner — GPT-6 Astra:\n- Confirm the objective, scope, tier, acceptance contract, and bounded plan.\n- Decide escalated ownership ambiguities, policy questions, scope changes, and integration requests.\n- Require evidence for decisions and record them using repository mechanisms.\n- Do not become a second implementer.\n- Do not override or self-clear a reviewer’s hard veto.\n\nConductor — GPT-6 Astra, this main thread:\n- Own the execution graph, assignments, coordination, sequencing, budgets, joins, and status.\n- Delegate bounded authoring and independent review units.\n- Select each sub-agent’s available model based on task complexity, risk, and repository guidance; record the rationale. Use stronger reasoning for ownership/path semantics and adversarial review, and smaller models for deterministic bounded work where adequate.\n- Inspect returned artifacts and results; a sub-agent report alone does not verify its claims.\n- Escalate genuine decisions to the Owner with evidence, options, recommendation, and what each choice constrains.\n- Resolve routine execution details without repeatedly asking the human.\n\nSub-agents:\n- Receive an explicit objective, inputs, allowed paths, forbidden paths, dependencies, budget, exit condition, evidence requirement, and escalation route.\n- Perform only their assigned unit.\n- Use the repository’s prescribed isolated worktree/session arrangements. The Conductor provisions these according to the workflow; sub-agents must not call EnterWorktree.\n- Do not edit shared ledgers or generated artifacts concurrently outside the coordinated protocol.\n- Return commits/artifacts, observed results, residual risks, and required follow-up.\n\nParallelize only independent work. Do not dispatch an implementer before the ownership semantics and design are settled. Reviewers must be independent of the author whose work they review.\n\n## 5. Design and proof requirements\n\nBefore changing the gate, resolve from evidence:\n- Which file suffixes and paths define a “surface” under the existing contract.\n- How §2 represents explicit paths, grouped entries, directory ownership, and exceptions.\n- How recursive discovery maps to those existing declarations.\n- How duplicate basenames, overlapping assignments, stale exceptions, and malformed or ambiguous declarations are handled.\n- Which platform/path rules the repository actually requires.\n\nDo not solve recursive discovery by merely widening a scan while retaining ambiguous basename identity. Do not widen the policy beyond the existing ownership contract.\n\nWrite the affected surface list before implementation:\nfilesystem discovery → path identity → §2 parsing → ownership decision → diagnostics/exit status → test fixtures → existing gate invocation → proof/audit evidence.\n\nUse the smallest correct implementation. Prefer existing code and stdlib. No new dependency without a demonstrated need.\n\nClass → sweep → derive → prevent:\nCapture the defect class using the existing register and allocator protocol, reusing an existing class where appropriate. Convert the lesson into an executable control; prose alone is not completion.\n\nProve meaningful failures before fixes. Include fixtures that distinguish:\n- An unowned nested surface from an owned nested surface.\n- Two different paths sharing a basename.\n- A genuinely ambiguous assignment from a legitimate existing declaration.\n- A stale exception from a live unresolved exception.\n- A valid existing register from a parser that silently ignores its syntax.\n\nRun applicable tests and gates, read their actual results, and verify against the declared file population. A green exit code alone does not establish coverage. Do not run unrelated full suites unless the repository’s trigger rules require them.\n\n## 6. Integration, records, and close\n\nCoordinate the eventual join with the active Atlas recovery integrator and current peers. Parallel authoring does not authorize concurrent main integration.\n\nUse the repository’s existing join tools. Preserve append-only records through the mandated merge mechanism; regenerate derived files rather than merging them by hand, in the required order after audit writes.\n\nUse the documented audit start/close markers, prompt logging, graph metadata/index rules, and Proof Pack capture. If running inside AI-DE with AIDE_CONTRACT_LOG available, emit the required episode events and name actual repository-relative proof artifacts at close. Never invent an artifact path or acceptance result.\n\nAt completion, report:\n- Completed / Remaining / Next.\n- Verified / Inferred / Flagged.\n- Changed files, observed checks, independent gate outcomes, and residual risks.\n- Branch/worktree and integration status.\n- Evidence artifact paths.\n- Whether the worktree is retained and why.\n\nStop when the bounded completion contract is met. New gaps are findings for the Owner, not permission to expand the programme.",
+      "session": "codex-surface-ownership-conductor",
+      "shortname": "ownership-programme-handoff",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T15:21:55Z",
+      "summary": "Bounded implementation independently accepted676f63ed, merged7fdf6ab0 with checkpointdf050caf; all8mutants killed and17/17owners. Fullrunner37/38 twice; only primary dirtyaudit fails, exactrequestreq-01M2JTCR30AJ256HJFZHZJNRPX. Imported review cbf288b8 verbatim, capturedmit0010, finaldocs485artifacts0defects0orphans0drift and auditcapturePASS. No primarylog edits, mainpush, or gatewaiver. Retain four programme worktrees for candidate/runtime receipts and original provenance; AIDE_CONTRACT_LOG unset.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership.md"
+      ],
+      "datetime": "2026-09-15T15:25:54Z",
+      "done_when": "Latest blocker and responsible peer recorded with evidence; no unauthorized mutation",
+      "fan_out": 0,
+      "goal": "Preserve accurate blocked handoff for reviewed recursive ownership gate",
+      "id": "al-01M2JTSDRWJR62JVE59V0FE9NK",
+      "kind": "manual",
+      "outcome": "blocked",
+      "prompt": "Record latest observed shared qualification blocker without changing peer work",
+      "session": "codex-surface-ownership-conductor",
+      "shortname": "ownership-final-shared-state",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "After327528e2 primaryaudit finding cleared. Stranded-audit instead reports Understanding Views spike audit/change logs; coord lists spikeactive and Grok liveness saysN7dispatched, so abandonment is not inferred. Requestreq-01M2JTQ5G3YVP0D81XBH2ZQK6E toGrok. Source acceptance676f63ed unchanged; no peerrecord edits or gatewaiver. HTML twin equality and finalauditcapturePASS.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "tools/verify-surface-ownership.py",
+        "docs/proof/recursive-surface-ownership.md"
+      ],
+      "datetime": "2026-09-15T15:30:13Z",
+      "done_when": "main carries f7fd4707's content; verify-surface-ownership.py reports 17/17 on main; gates 38 green in the primary; pushed",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Land Codex's reviewed recursive surface-ownership gate on main under Rulings 108/113 so every *Surface.cs / *View.cs under Workbench, at any depth, has a section-2 owner or a dated UNASSIGNED entry",
+      "id": "al-01M2JV1A9HEXJ7HJH28GA5G5FV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-codex-surface-ownership",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T15:30:12Z",
+      "summary": "Join #3 of the 2026-09-15 stress test: Codex's candidate conductor/surface-ownership f7fd4707 (sessions ended, handed off) reviewed by the Claude conductor - outside docs/ and ledgers the diff is exactly tools/verify-surface-ownership.py (Ruling 113 scope); --self-test green (eight injected mutants, recursive identities, section-2 Path cells, patterns, exceptions); the gate reads 17/17 surfaces assigned on the real tree; defect-classes.md gains recurrence instances only. Two figure-only conflicts in site/*.html resolved toward HEAD and rewritten by the site-figures step. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
       "id": "al-01M2JVTAC5GY2ZFAV9DQKSH17G",
@@ -19222,6 +20034,71 @@ window.AUDIT_DATA = {
       "duration_seconds": 357.0
     },
     {
+      "actor": "claude-conductor",
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "datetime": "2026-09-15T15:50:37Z",
+      "done_when": "main carries the row and Ruling 116; verify-surface-ownership.py green on main; claude-core.md and claude-ui-experience.md gone; gates green; pushed",
+      "fan_out": 1,
+      "git": {
+        "branch": "conductor/watch-0915",
+        "pushed": null,
+        "sha": "33e9ae7e00e3edb2d44ecec006e5a3c354e69efd",
+        "short": "33e9ae7e0"
+      },
+      "goal": "Land Ruling 116's section-2 row for AtlasReaderView.cs before the Atlas candidate, and retire the two stale Claude liveness files",
+      "id": "al-01M2JW6NBF4GZEAHAAS90EW62N",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "(continuation of al-01M2JP7RMQ: the watch's fourth landing)",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "conductor-watch-0915-join4",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "conductor-watch",
+      "summary": "Ruling 116 filed (D's coupled listener selector follows the aide. rename; AtlasReaderView.cs gets a Design-table row now - the landed recursive gate was run on a tree carrying the row without the file: OK 17/17, so the row lands before the Atlas candidate per 116 (ii)); the two stale Claude liveness files retired after the Atlas fleet read them as the current acknowledgers; README says how stale liveness is retired from now on.",
+      "tags": [
+        "coordination",
+        "stress-test"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "datetime": "2026-09-15T15:51:11Z",
+      "done_when": "main carries 500cfac9; verify-surface-ownership.py green on main; gates 38 green in the primary; pushed",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Land Ruling 116 and the AtlasReaderView.cs section-2 row before the Atlas candidate; retire stale Claude liveness",
+      "id": "al-01M2JW7Q0K9YPNRGRR25CTTE3A",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of conductor/watch-0915 into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-conductor-watch-0915-4",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T15:51:10Z",
+      "summary": "Fourth coordination join of the 2026-09-15 stress test: Ruling 116 filed and the section-2 Design row for AtlasReaderView.cs landed BEFORE the Atlas candidate (the landed recursive gate tolerates a row for a file not yet on the tree - run, OK 17/17); D's coupled listener selector admitted; claude-core.md and claude-ui-experience.md (ended 2026-09-01) retired after another harness read them as the current acknowledgers; README says how stale liveness is retired. Docs only. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
       "id": "al-01M2JW8DYXMKWN9MNQ1240C0SQ",
       "shortname": "atlas-ibe-b-prepared-desktop-held",
       "datetime": "2026-09-15T15:51:35Z",
@@ -19252,6 +20129,21 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T15:45:57Z",
       "duration_seconds": 338.0
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T15:57:00Z",
+      "id": "al-01M2JWJBW25M89NXRMSDET5EZH",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "B — diagnose the 13 red tests now (read-only, no lane), fix after the Atlas landing",
+      "session": "prompt-log",
+      "shortname": "B — diagnose the 13 red tests now (read-only, no lane), fix after the At…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
     },
     {
       "id": "al-01M2JWVB1TMFV34QNP5SDE6VJK",
@@ -19316,6 +20208,74 @@ window.AUDIT_DATA = {
       "duration_seconds": 5.7
     },
     {
+      "actor": "claude-conductor",
+      "artifacts": [
+        "docs/investigations/INV-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins.md",
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "datetime": "2026-09-15T16:08:04Z",
+      "done_when": "INV-0012 on main with per-test first-red run/commit, local-run results and mechanism; the Owner has ruled on the fix order (Ruling 117)",
+      "duration_seconds": 664.0,
+      "fan_out": 2,
+      "git": {
+        "branch": "conductor/watch-0915",
+        "pushed": null,
+        "sha": "500cfac9639b5e78ea5aab1322b39ff44c187e78",
+        "short": "500cfac96"
+      },
+      "goal": "Classify each of the 13 red tests as regression vs runner/platform-environment with measured evidence; refusal tests first; escalate if any is a real regression",
+      "id": "al-01M2JX6MC750ZFEF0Z65V58M4M",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "B — diagnose the 13 red tests now (read-only, no lane), fix after the Atlas landing",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "main-red-diagnosis",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "main-red-diagnosis",
+      "started_at": "2026-09-15T15:57:00Z",
+      "summary": "Swept all 50 Build runs on main since the last green (ebe18260) from their .trx artifacts: 9 deterministic reds, each born red at a join (CV-2 c59eac66: purge sibling-held-open, Linux; sh4-2 3e5b04f6: CodingsLeftExtentTests x4, Windows runner; engines 9f2044bc: EngineCatalogTests x4, Linux) and 4 intermittent STA timeouts. Local Windows runs: 38/38 Core, 32/32 App (under the desktop hold, announced). Mechanisms opened: the locator tells shim from executable only by Windows suffix; the delete cascade's refusal is a Windows directory-move semantics; the runner's 96ch measure is 673 px vs a 451 px column. Ruling 117: no floor trip on the shipped platform; Platform=Windows scoping with residuals as tests; extent tests measured then pinned or quarantined; STA quarantined executing; the join closes only on the landed SHA's recorded CI result. The Owner caught one false fixture claim in the conductor's proposal (recorded, 117 (ii)).",
+      "tags": [
+        "main-red",
+        "diagnosis",
+        "inv-0005"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins.md",
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "datetime": "2026-09-15T16:08:37Z",
+      "done_when": "main carries 9125000d; gates 38 green in the primary; pushed",
+      "duration_seconds": 0.0,
+      "fan_out": 0,
+      "goal": "Land the main-red diagnosis and Ruling 117 so the Atlas and Grok candidates land under a known red set and the repair lane has its order",
+      "id": "al-01M2JX7MSGS8F66ST1WBXH0GGB",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of conductor/watch-0915 into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-conductor-watch-0915-5",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T16:08:37Z",
+      "summary": "Fifth coordination join of the 2026-09-15 stress test: the main-red diagnosis (INV-0012) and Ruling 117 land. Measured from all 50 Build runs since the last green and two local Windows runs: no regression on the shipped platform, no floor trip; Platform=Windows scoping with residuals as tests, extent tests measured then pinned or quarantined, STA quarantined executing, the join closes only on the landed SHA's recorded CI result. Docs only; the repair lane opens after the Atlas landing. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
       "id": "al-01M2JXQNMA4WA2TGK6AG2QD957",
       "shortname": "atlas-eim-obligation-attempt",
       "datetime": "2026-09-15T16:17:23Z",
@@ -19347,6 +20307,84 @@ window.AUDIT_DATA = {
       "duration_seconds": 396.0
     },
     {
+      "actor": "claude-conductor",
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "datetime": "2026-09-15T16:54:00Z",
+      "done_when": "main carries Ruling 118; gates green; pushed; the Atlas requests resolved with the verbatim citations",
+      "fan_out": 1,
+      "git": {
+        "branch": "conductor/watch-0915",
+        "pushed": null,
+        "sha": "9125000d6ad2948f5f63de691f6241d39a174032",
+        "short": "9125000d6"
+      },
+      "goal": "Land Ruling 118 (the supported-platform authority that closes 112 (i) for the Atlas landing)",
+      "id": "al-01M2JZTQBFSDD9FYGZZB835G3G",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "(continuation of al-01M2JP7RMQ: the watch's sixth landing)",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "conductor-watch-0915-join6",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "conductor-watch",
+      "summary": "Ruling 118 filed: v1's supported platform is Windows by recorded authority (ADR-0008:67; App and Daemon net10.0-windows; a census shows no portable process calls the purge or the launcher); the Linux no-throws are residuals with no live instance and a reference-census gate as the tripwire; 112 (i) closed for the Atlas landing with no waiver. Atlas's two Security requests resolved with the citations verbatim.",
+      "tags": [
+        "coordination",
+        "main-red"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "id": "al-01M2JZV6Y0AQ5F0V6RPCYHPE8G",
+      "shortname": "join-conductor-watch-0915-6",
+      "datetime": "2026-09-15T16:54:16Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "the join of conductor/watch-0915 into main",
+      "summary": "Sixth coordination join of the 2026-09-15 stress test: Ruling 118 lands - the supported-platform authority the Atlas Security lens asked for (ADR-0008:67, App and Daemon net10.0-windows, the caller census), closing Ruling 112 (i) for the Atlas landing with no waiver. Docs only. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land Ruling 118 so the Atlas candidate's publication is no longer held on the platform-scope question",
+      "done_when": "main carries b0b7aebc; gates 38 green in the primary; pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T16:54:15Z",
+      "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2K0HMS28QHK6YS111NHS324",
+      "shortname": "yes keep going finish remaining nodes",
+      "datetime": "2026-09-15T17:06:31Z",
+      "session": "prompt-log",
+      "prompt": "yes keep going finish remaining nodes",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-01M2K0KZ0Z3ET76XMA92FQVKND",
       "shortname": "atlas-er18-bc2-targeted-green",
       "datetime": "2026-09-15T17:07:47Z",
@@ -19376,6 +20414,338 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T16:31:44Z",
       "duration_seconds": 2163.0
+    },
+    {
+      "id": "al-01M2K0R0V50JN4ZHTXQ1Z901ZV",
+      "shortname": "three things:",
+      "datetime": "2026-09-15T17:10:00Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "three things:\n- resolve the blocker\n- provide a periodic tabular update of tasks with what they do and what their status is so i can track the table instead of snarfing through the reasoning\n- keep going with the next best action after resolving the blocker",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2K0VCANA626N5V72W3X88P2",
+      "shortname": "ownership-qualification-plan",
+      "datetime": "2026-09-15T17:11:50Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "Resolve the blocker, provide periodic task status tables, and continue with the next best action.",
+      "summary": "OwnerO8 T1: publishedfix verified; main alreadycontainsf7fd470. G->V/Q->C, separate readonlyreview andqualification, no duplicateimplementation. Full inputtree/buildpath/TRXhash match allows explicitreceipt reuse. NewCore obsoleteparagraph requestreq-01M2K0QEPYF0CEWHPBKYQ72GY6. 35Conductor/12review calls planned, no speedup claim.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/ownership-qualification.md",
+        "docs/proof/ownership-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve stale ownership qualification blocker and continue bounded next action",
+      "done_when": "Current qualification verified and status/correction handoff committed",
+      "tier": "T1",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T17:09:41Z",
+      "duration_seconds": 129.0
+    },
+    {
+      "id": "al-01M2K151CMPGVH9GDD51JHVA7Y",
+      "shortname": "ownership-current-qualification",
+      "datetime": "2026-09-15T17:17:06Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "the join of 516f7d5ad39ba2f9f7dec4a563c7cfb2836023f7 into conductor/ownership-qualification",
+      "summary": "OwnerO8/O9 and Core request resolutions authorize exact docs-only corrections; source/tests/buildinputs unchanged, originalTRXhashes matched. Independent Test/SimplifierPASS3665e51f. Qualify isolated branch; no mainpush. recount_seconds=0 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Resolve former ownership qualification blocker and close obsolete documentation",
+      "done_when": "Integrated Core corrections and existing ownership gate pass mandatory qualification",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T17:17:04Z",
+      "duration_seconds": 2.0
+    },
+    {
+      "id": "al-01M2K1GCQT3GRHWYW1RWC3B49Y",
+      "shortname": "ownership-checkpoint-correction",
+      "datetime": "2026-09-15T17:23:18Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "Resolve the blocker and keep going with the next best action.",
+      "summary": "The join appended acceptance before its checkpoint. Step 7 was refused by peer register/derived leases, so full qualification had not run. Holder subsequently explicitly released both leases in atlas-e1-native-class-view log sequences 99 and 100. Continue through the prescribed join; no bypass or expiry-based consent.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "signals": {
+        "acceptance_met": false
+      },
+      "supersedes": "al-01M2K151CMPGVH9GDD51JHVA7Y",
+      "git": {
+        "sha": "51c5c9e18db750bb00cab0176a27c7b3654afcb6",
+        "short": "51c5c9e18",
+        "branch": "conductor/ownership-qualification",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K1GV0102SQXRWRP2TW82QH",
+      "shortname": "ownership-current-qualification",
+      "datetime": "2026-09-15T17:23:33Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "the join of the resolved merge into conductor/ownership-qualification",
+      "summary": "Owner O8/O9 authorize exact Core documentation corrections. Source, tests and build inputs unchanged; original TRX hashes matched. Independent Test Architect and Simplifier PASS at 3665e51f. Holder explicitly released blocking leases. Qualify isolated branch; no main push. recount_seconds=0 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md",
+        "docs/proof/ownership-qualification-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Resolve former ownership qualification blocker and close obsolete documentation",
+      "done_when": "Integrated Core corrections and existing ownership gate pass mandatory qualification",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T17:23:31Z",
+      "duration_seconds": 2.0
+    },
+    {
+      "id": "al-01M2K1R3MANATTDTCV8NM55GTE",
+      "shortname": "ownership-qualified-close",
+      "datetime": "2026-09-15T17:27:31Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "Resolve the blocker, provide periodic task tables, and continue with the next best action.",
+      "summary": "Owner O10 authorized historical status reconciliation after full38 PASS at3284acc5. Published implementation remains unchanged. Core documentation corrections consumed under O9. Native holder explicitly released blocking leases. Independent Test Architect/Simplifier PASS3665e51f. Reused3743 executed test and5 exit-path receipts only after matching source/tests/build inputs and hashes. Final status metadata creates expected index drift before mandated regeneration. Main publication remains Core; retain evidence worktrees.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md",
+        "docs/proof/ownership-qualification-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Resolve ownership qualification blockers and close the bounded programme",
+      "done_when": "Required checks and independent review pass, status records are corrected, and committed evidence is handed to Core",
+      "tier": "T1",
+      "fan_out": 4,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T17:27:07Z",
+      "duration_seconds": 24.0,
+      "git": {
+        "sha": "3284acc55d906cdd5beb7e80527200b8bdf3f491",
+        "short": "3284acc55",
+        "branch": "conductor/ownership-qualification",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K1VDRTC41MCETH988RDHZV",
+      "shortname": "join-codex-ownership-qualification",
+      "datetime": "2026-09-15T17:29:20Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "the join of conductor/ownership-qualification into main",
+      "summary": "Join #7 of the 2026-09-15 stress test: Codex's docs-only candidate e112bee7 (base 0b3644f2) reviewed by the Claude conductor - 18 files, all docs/ledgers/derived/site figures, no source or test change, 38/38 at 3284acc5, failing set empty - joined; it carries the Claude lane's 516f7d5a (section-2 closure paragraph, INV-0012's two link ids). The primary's local-only 0b3644f2 rides to origin with it. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land Codex's closing proof docs and the Claude lane's section-2/INV-0012 corrections on main under Ruling 108",
+      "done_when": "main carries e112bee7 and 516f7d5a; gates 38 green in the primary; pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T17:29:19Z",
+      "duration_seconds": 1.0
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/accounts-and-first-use.md"
+      ],
+      "datetime": "2026-09-14T20:31:42Z",
+      "done_when": "recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "duration_seconds": 504.0,
+      "fan_out": 0,
+      "goal": "first use on a fresh machine and per-session, per-turn account switching on main",
+      "id": "al-01M2K2Z42Y0PX2P7TF8V3DXRQC",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-sessions-accounts",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T20:23:18Z",
+      "summary": "Joined lane/sessions-accounts (f833c43b): Ruling 105 (1) SessionConfig.Accounts + DefaultAccount, engine derived from provider, expand-migrate-contract from enabledBackends (singleton maps, otherwise 'choose one'); 104 (2) adapterInstallRoot optional, default ~/.aide/adapters, written only when overridden; 105 (2)/104 (3)/97(i) the sheet lists accounts under every catalog provider with derived states (not configured / needs sign-in / ready from launch path + health), Create enabled with the ruled footer, the binder's refusal names Configure; 104 (1)(a)-(e) Configure... per provider - node/npm/claude rows with cited install instructions, the root rule (a git checkout refused, tested against this machine's spike path), the pinned install on gesture with --ignore-scripts and a visible log, engine-native Sign in, providers.json written (ready after exit 0 else needs-login); 105 (2) the composer's per-turn account picker (non-ready rows disabled with their state), override as an operator row at Send, lane.session-new carries engine/model/account, settings change the default for new turns only; 104 condition 2 the fresh-machine oracle under an empty HOME against a local one-package npm registry (394 ms; a bare tarball does not work - 105 transitive deps). App 1013->1024, Core 2693->2710. The node stopped at the weekly quota after its merge with main; the conductor finished the merge commit, renamed SessionAccountOption->AccountOption (R14 b2) and fixed the session-thread spike (coverage), and pushed. Merge conflicts: three coordination ledgers, the primary's copies taken. Condition 4 (a live acceptance on the operator's second machine) RUN-PENDING. recount_seconds=503 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/accounts-and-first-use.md"
+      ],
+      "datetime": "2026-09-14T20:21:19Z",
+      "done_when": "the five commits with red-first evidence; App and Core green; gates green on the tree; the proof pack with the attended rows; pushed",
+      "duration_seconds": 7506.0,
+      "fan_out": 0,
+      "goal": "accounts as the operator-facing unit and first use on a fresh machine",
+      "id": "al-01M2K2Z42YECJFCSNFF4WVE7F3",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "One T1 slice 'accounts + first use' (Rulings 105, 104, 97(i)): the model, the sheet as account rows, Configure..., the composer's account picker, the fresh-machine oracle",
+      "session": "sessions-accounts",
+      "shortname": "lane-sessions-accounts",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "design-slice",
+      "started_at": "2026-09-14T18:16:13Z",
+      "summary": "Five commits red-first: the account is the session's unit (Accounts + DefaultAccount, engine derived, adapterInstallRoot optional with ~/.aide/adapters, expand-migrate-contract from enabledBackends); the sheet lists accounts under providers with derived states, Create stays enabled with the ruled footer, the binder's refusal names Configure; Configure... runs prerequisite rows, the root rule (a git checkout refused), the pinned install on gesture with --ignore-scripts and its log, engine-native Sign in, providers.json written; the per-turn account picker as an operator row at Send, lane.session-new carries engine/model/account, settings change the default for new turns only; the fresh-machine oracle against a local one-package npm registry (394 ms). Core 2650->2710 and App 993->1024 on the tree merged with main 7eb9fcde. The lane's node hit the weekly quota after the merge; the conductor finished its merge commit, renamed SessionAccountOption to AccountOption (R14 b2 gate) and fixed the session-thread spike's SessionConfig call (coverage gate), then pushed. Condition 4 (a live acceptance on the operator's second machine) RUN-PENDING.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/accounts-and-first-use.md"
+      ],
+      "datetime": "2026-09-14T23:42:49Z",
+      "done_when": "merge clean; recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "duration_seconds": 495.0,
+      "fan_out": 0,
+      "goal": "one derivation of 'installed' and of the engine's model, read by the sheet, first use and the dialog",
+      "id": "al-01M2K2Z42YHN83FCY652JAMAH9",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of conductor/addendum-c into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-conductor-catalog-seams",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T23:34:34Z",
+      "summary": "Joined conductor/addendum-c (beafbee1): the accounts lane's two seam requests resolved - EngineCatalog.InstallRefusal(engineId, root[, locator]) is the one 'installed' reading (an adapter's entry on disk; a native CLI's executable resolved; a row that cannot launch reads its launch refusal) and both consumers (the sheet's LaunchRefusal, FirstUse.InstallAdapterAsync) read it - the sheet had read Arguments[0] as the entry, which for a native row is '--acp' (DC-223); EngineRow.DefaultModel per row from the spike's observed currentModelId/availableModels, the dialog's DefaultModelFor table removed (DC-224); DC-225 (a PATH resolver preferring an extensionless POSIX script over its .cmd shim on Windows) registered; the lane's finding (c) filed as a DC-220 instance. TheCatalogKnowsWhatIsInstalledAndWhatModelTests (8, red-first CS0117). Attended rows F-1..F-6 for the operator (first use on their second machine is F-5). Pack finding: three joins stopped at step 1 on the primary's append-only .agents ledgers colliding with a lane's older copies; the script should read git's reason and resolve ledger paths to the primary's copy. Full recount. recount_seconds=494 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/engines-on-the-wire.md"
+      ],
+      "datetime": "2026-09-14T19:20:38Z",
+      "done_when": "recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "duration_seconds": 533.0,
+      "fan_out": 0,
+      "goal": "the four engines launchable from the product's catalog, each on an observed line",
+      "id": "al-01M2K2Z42YRRM2V2MPB133R06H",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-agentplane-engines",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T19:11:45Z",
+      "summary": "Joined lane/agentplane-engines (7cd0fc77): EngineCatalog carries five rows - copilot Native 'copilot --acp' (never --no-auto-login; COPILOT_GH_HOST from the account's host), codex Adapter with entry dist/index.js observed, gemini Native 'gemini --acp' (npm shim resolved to node bundle/gemini.js), grok Native 'grok agent stdio' (npm source @xai-official/grok 1.0.30, lazy bootstrap into GROK_HOME); ResolveLaunch resolves Native rows from PATH (exe first, .cmd shim via node, install root) with AP-0022 EngineNotOnPath; AcpLaneClient sends _meta.claudeCode.options only for a row that ReadsClaudeCodeMeta, byte-exact {cwd, mcpServers: []} otherwise (4-engine theory); initialize observed: copilot 1.0.84-6 in 1,012 ms, codex-acp 1.10.0 in 429 ms, gemini-cli 0.58.0 in 1,204 ms, grok 1.0.30 in 3,015 ms cold / 458 ms warm; simplify: comment retired; ProviderAccount.Host read; LaunchEnvironment refuses a host an engine cannot honour. Core 2650->2683. Not observed: session/prompt on the new engines, sign-in. Two derived site files regenerated. Seam request req-01M2GKC2RY667S51X22QVV7FGJ (the run and compile hosts construct the client without its row and start the engine before the binding is authorised) taken by the conductor as the next slice. recount_seconds=531 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/engines-on-the-wire.md"
+      ],
+      "datetime": "2026-09-14T19:39:44Z",
+      "done_when": "merge clean; recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "duration_seconds": 541.0,
+      "fan_out": 0,
+      "goal": "a non-claude engine gets its engine-appropriate session/new and its account's host from the product's own hosts",
+      "id": "al-01M2K2Z42YVFYACP4WYV7J9AGP",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of conductor/addendum-c into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-conductor-seam-engine-row",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T19:30:43Z",
+      "summary": "Joined conductor/addendum-c (502070d3): the engines lane's seam request resolved - GovernedRunHost and CompileCallHost construct AcpLaneClient with engine: EngineCatalog.Find(request.EngineId) and diagnostics: Report, and start the child with EngineCatalog.LaunchEnvironment(row, providers, label) (new overload; a lookup, never a binding; the compile child keeps its output cap); TheHostBindsItsClientToItsEngineTests (6, red-first CS0117; the source oracle scans by paren depth after a lambda's ';' stopped the regex). Also DC-221 (a drain that only wakes on an event) and DC-222 (an oracle over an unpumped derivation) from the r95 lane, its attended rows W-1..W-6, the liveness file. Full recount. recount_seconds=539 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     }
   ],
   "changes": [

@@ -1,8 +1,3 @@
 docs/_meta.json
 docs/_site/index.html
-docs/api/AiDe.App.Workbench.md
-docs/api/AiDe.Core.AgentPlane.md
-docs/api/AiDe.Core.Presentation.Sessions.md
-docs/api/AiDe.Core.Sessions.md
 docs/audit/audit-data.js
-docs/docs-index.js

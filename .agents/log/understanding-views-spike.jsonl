@@ -1,0 +1,9 @@
+{"agent": "grok-understanding-views-conductor", "at": 1789484957.4729545, "kind": "session-start", "path": "-", "seq": 1, "session": "understanding-views-spike", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-understanding-views-spike"}
+{"agent": "understanding-views-spike", "at": 1789485423.1385791, "kind": "claim", "path": "docs/spikes/d0-tree-toolkit/RESULT.md", "seq": 2, "session": "understanding-views-spike", "ttl": 300.0, "wi": "WI-N7"}
+{"agent": "understanding-views-spike", "at": 1789485807.421602, "kind": "claim", "path": "spikes/d0-tree-toolkit/Program.cs", "seq": 3, "session": "understanding-views-spike", "ttl": 300.0, "wi": "WI-N7"}
+{"agent": "understanding-views-spike", "at": 1789485807.487538, "kind": "claim", "path": "spikes/d0-tree-toolkit/D0TreeToolkitSpike.csproj", "seq": 4, "session": "understanding-views-spike", "ttl": 300.0, "wi": "WI-N7"}
+{"agent": "understanding-views-spike", "at": 1789485807.5502825, "kind": "claim", "path": "spikes/d0-tree-toolkit/RESULT-raw.txt", "seq": 5, "session": "understanding-views-spike", "ttl": 300.0, "wi": "WI-N7"}
+{"agent": "understanding-views-spike", "at": 1789485827.0746582, "kind": "release", "path": "docs/spikes/d0-tree-toolkit/RESULT.md", "seq": 6, "session": "understanding-views-spike", "wi": "WI-N7"}
+{"agent": "understanding-views-spike", "at": 1789485827.130522, "kind": "release", "path": "spikes/d0-tree-toolkit/Program.cs", "seq": 7, "session": "understanding-views-spike", "wi": "WI-N7"}
+{"agent": "understanding-views-spike", "at": 1789485827.182861, "kind": "release", "path": "spikes/d0-tree-toolkit/D0TreeToolkitSpike.csproj", "seq": 8, "session": "understanding-views-spike", "wi": "WI-N7"}
+{"agent": "understanding-views-spike", "at": 1789485827.2398045, "kind": "release", "path": "spikes/d0-tree-toolkit/RESULT-raw.txt", "seq": 9, "session": "understanding-views-spike", "wi": "WI-N7"}
