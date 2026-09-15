@@ -632,7 +632,7 @@ Unit of work: one `SolutionTreeAsync` invocation. Span: existing `ActivitySource
 |---|---|---|
 | Production caps 2000/5000 | **Inferred** | Retune when UV-0 emits counts. Honest `Omitted (N)` meanwhile. |
 | Empty UI vs root-in | **closed (N10 Test Architect)** | Arrange B6 as root-only DTO + no non-root nodes + no shortfall. Failing input: empty copy replaced by an Unindexed root row. |
-| Physical Ctrl+Enter | **Flagged** (spike) | PreviewKeyDown is the control; RaiseEvent is not proof. HandleKey(Control) and the node menu are the tested pointer/keyboard Reveal paths. |
+| Physical Ctrl+Enter | **closed** | GUI probe `AiDe.App.SolutionTreeProbe` SendInput Ctrl+Enter → Reveal. RaiseEvent is still not the chord. |
 | Other walkers vs Skip | **Flagged** | N7 optional widen; UV-0 binds Skip. |
 | Glyph-to-kind map | **closed (N8)** | Three stroke glyphs (folder / file / dashed-folder). UIA Name still includes the kind word. Not a per-`NodeKind` icon set. |
 | Default Left vs View-menu-only | **frozen View-menu-only** | Ruling 94 Left stays Graph. `solution-tree` is admitted; not in `ArchitectureDefault`. UX-1 still ≤ 2 steps via Show. |
@@ -664,9 +664,9 @@ Unit of work: one `SolutionTreeAsync` invocation. Span: existing `ActivitySource
 
 | | |
 |---|---|
-| **Completed** | N9 repair. UV-0 + UV-1. N8 chrome. Zone View-menu-only. N10 C1–C3, C5. N10 panel. View-source fault E2E. SRE: full SolutionTree span tags + `outcome=canceled`; privacy test calls SolutionTree; overlapping populate drops the older result (CTS + generation). Status remains **draft**. |
-| **Remaining** | Physical Ctrl+Enter Flagged (C4). Daemon CT (repo-wide). Caps 2000/5000 Inferred. Authors do **not** mark Accepted. Not `main`. |
-| **Best next action** | Do not admit D-1. Keep Ctrl+Enter Flagged until SendInput/attended. |
+| **Completed** | N9 repair. UV-0 + UV-1. N8 chrome. Zone View-menu-only. N10 C1–C5 (C4 physical Ctrl+Enter via GUI probe). N10 panel. View-source fault E2E. SRE stale-populate + span tags. Status remains **draft**. |
+| **Remaining** | Daemon CT (repo-wide). Caps 2000/5000 Inferred. Authors do **not** mark Accepted. Not `main`. |
+| **Best next action** | Do not admit D-1. |
 
 ## Gate record
 
