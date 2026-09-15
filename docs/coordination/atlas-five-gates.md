@@ -14,7 +14,7 @@ summary: "Exact blocker transfer; isolated repairs followed by GHCP-only main pu
 
 # Layer state
 
-Primary is untouched. New tree C:/Projects/ai-de-conductor-atlas-five-gates, branch conductor/atlas-five-gates, session codex-atlas-five-gates, agent codex-astra-gate-conductor; created by coord worktree new from dd9b338f. Pack doctor reports 11 classified patterns and registered drivers; coordination doctor still pending. No reinstall is warranted by the observed pack result. Short exact claims protect startup authored files. Liveness and requests are primary-shared, never an alternate ownership map.
+Primary product/index work is untouched; only supported shared coordination and our own liveness are written there. Tree C:/Projects/ai-de-conductor-atlas-five-gates, branch conductor/atlas-five-gates, session codex-atlas-five-gates, agent codex-astra-gate-conductor; created by coord worktree new from dd9b338f. Coordination doctor confirmed registered drivers,11 patterns and regeneration debts subsequently checked. Short exact claims protect authored records. Liveness and requests are primary-shared, never an alternate ownership map.
 
 ## Artifact classes
 
@@ -40,11 +40,54 @@ Primary is untouched. New tree C:/Projects/ai-de-conductor-atlas-five-gates, bra
 
 ## Serial spine
 
-Retained independent reviewer cleared Test Architect, Simplifier, SRE plan and Orchestrator gates after exact ledger corrections. Actual implementation gates remain open. Conductor independently confirmed both audit parents conserve every fingerprint:861/828 and713/713 input rows/distinct payloads,829/829 merged, zero missing payloads,33 ID aliases. Audit design prerequisite is satisfied. Owner accepted normalization; no framework repair is admitted.
+Retained independent reviewers cleared the five final component repairs after two G2 blocks and one G4 block were corrected. Combined integration gates remain open. Conductor independently confirmed both audit parents conserve every fingerprint:861/828 and713/713 input rows/distinct payloads,829/829 merged, zero missing payloads,33 ID aliases. Owner accepted normalization; no framework repair is admitted.
 
 Current main → repair contract → independent authors → independent review → official qualification/Release → GHCP publication. At most two workers run alongside Owner and Conductor. Source semantics settle before author dispatch. Track rows divide work, not ownership; session-contracts §2 remains the sole authority.
 
 ## Seams
+
+**Current integration route:** GHCP retains final integration/review/publication authority. Latest req-01M2KMGS05ZJ5WHGV76KMYVE1K requires current-mainbcf4959b PRODUCT reconciliation and regression BEFORE combined freeze. Reviewed per-author pins in the Proof Pack are components only. Open req-01M2KNK3JNSKNTS80YHQAXYPGX asks for the exact Codex full/shown slot plus outside-P1 conflict owner, or GHCP execution of reconciliation and return of the combined candidate. No answer or accepted transfer is inferred. Codex does not source-join with `--docs-only`. G4's four exact `StageDiagnostics_` cases use helper/log operations and an existing background STA dispatcher without shown windows/UIA/foreground interaction; their authorized headless run is not a desktop allocation.
+
+| Task | Purpose | Actual status |
+|---|---|---|
+| G1 | Truthful historical audit corrections | Component CLEAR23151302; independent622ed908 |
+| G2/G3 | Bound enforcement evidence and filesystem containment | Component CLEAR47f5f54c; independent622ed908; Windows55/55 and Linux11/11 |
+| G4 | Original assertion and complete failure diagnostics | Component CLEAR301bc67a; independent9bd65703; four headless cases and five rejected mutants |
+| G5 | Historical table grammar without lost ownership checks | Component CLEARa72eb357; independent622ed908; exact18-surface census |
+| Combined candidate | Current-main reconciliation, regression and Release | NOT frozen or qualified; executor/scheduler reply pending |
+| Main publication | Publish qualified candidate | GHCP only; pending |
+| E1/E2 handshake | Pinned producer/consumer contract | Proposal sent; no peer acknowledgment or frozen contract |
+
+All-five component milestone req-01M2KP0WCWA1N7WF3EQE7AP4VE establishes notice only.
+
+## Direct producer/consumer handshake
+
+The user reaffirmed the watcher's requirement. Direct proposal req-01M2KP0WB4VEVFMVGNMAYNYVNN
+was sent to grok-understanding-views-conductor through coord request. It covers producer ownership;
+graph-ID to Atlas symbol/method/occurrence/source mapping; scope, manifest, revision and observation;
+bounds/truncation; unclassified/inferred cases; and selection/source/Back identity, focus and scroll
+restoration. Labels, paths and list positions do not establish identity. E2 entrypoint context is
+N/A by default; Domain/Layer/Azure are declaration/carrier based. Any D1 relation needs admitted evidence.
+
+| Input | Exact proposal pin |
+|---|---|
+| E1 design | 0bdd16d7e429f8ed00a73e7c664eb3ced520fae8:docs/design/atlas-behavior-views.md |
+| E1 experiment | 1ab5d9e985fd86ef75adb8d2a11c72fe05b530cc:spikes/atlas-behavior-contract/RESULT.md |
+| E2 design | 27642bf89b687f1e78bc33f11f977cd753baf7cf:docs/design/atlas-architecture-views.md |
+| E2 experiment | a9d86fc1350ac4c74d5d8ff39e9f39685b890f14:spikes/atlas-architecture-contract/RESULT.md |
+| Inspected producer criterion | 777d2f4745d20f8aa5cb0954ceb6b503c5676842:docs/specs/understanding-views.md |
+
+The producer criterion is not an identified frozen D1 contract. Newer watcher admission is not
+negated by older committed prose. Grok must provide its current exact proposal and reply; Codex
+must inspect it and explicitly acknowledge accepted pins before freezing the contract.
+
+| Milestone | Evidence/status |
+|---|---|
+| Notice sent | req-01M2KP0WB4VEVFMVGNMAYNYVNN |
+| Producer proposal received | Crossed request req-01M2KNGXJ6DWV4TQHYTJWZS0Y9; f073e2a0d8cc033e759c8e32fb0b77f10b8a6162:docs/notes/d1-codex-entry-point-handshake.md, blob661c92a3d13c1ab1637ad115fa321b9907f56295; file opened, acceptance review pending |
+| Peer acknowledged | Pending; receipt of either crossed proposal is not acceptance |
+| Contract frozen | No; exact artifacts and both acknowledgment references required |
+| Implemented | No shared E1/E2 implementation admitted by this notice |
 
 User approved five-gate transfer, replying explicitly to GHCP handoff dd9b338f. Shared request req-01M2KJ979VVS7AVET8D2RCTZ9A acknowledged. GHCP retains final publication and desktop scheduling. Main changes force ancestry/readiness reconciliation. E1/E2 docs and spikes remain frozen for separate post-Atlas Ruling121 landing. No frozen native paths or Grok source is admitted.
 

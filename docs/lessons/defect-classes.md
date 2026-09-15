@@ -4090,6 +4090,14 @@ for both or split.*
 
 ### DC-104 — A new control's first run is a test of the control, not of the code
 
+- **Recurrence (Atlas five-gate repair, 2026-09-15):** a real ownership register failed while
+  its scanner self-test passed, and an indirectly enforced byte cap looked unenforced. Sweep:
+  historical table grammar, actual capture at/over the byte boundary, removed forwarding/clamp,
+  and truthful audit supersession rather than invented historical acceptance. Prevent: the new
+  table fixtures fail the old parser; production index tests kill both bypasses; existing capture
+  guards reject incomplete superseders. Proofs remain on the exact author branches named in
+  `docs/proof/atlas-five-gates.md` until the integrator joins them. Independent review is required.
+
 - **Shape:** a verifier, gate or harness is written, run, and reports something about the codebase.
   The report is treated as a finding. But nothing has yet established that the control works, so the
   first run is evidence about **two** things at once and the far likelier defect is in the control —
@@ -4941,6 +4949,22 @@ for both or split.*
   still hangs silently
 
 ### DC-118 — Transcription is a width-changing step, and nothing checks the width: a ruling becomes a clause, a clause becomes a guard, and the scope silently moves
+
+- **Recurrence (Atlas five-gate repair, 2026-09-15):** a detector's whole-file substring match
+  accepted a correct-looking decoy beside an unbounded live call. Independent review blocked it.
+  Sweep: real caller/class, nested helper/class, forwarded variable, clamp order, comments/literals
+  and decoys. Scoped caller/helper extraction ALSO accepted an uncalled local-function decoy,
+  so independent review blocked it again. Derive: a partial C# parser did not prove live control
+  flow. Prevent: Owner selected the exact reviewed-source SHA256 pin, normalized only for CRLF;
+  any change fails until behavioral requalification and independent review authorize a new pin.
+  Seventeen detector fixtures and production forwarding/clamp bypass mutants are separate controls.
+  G4 also accepted an unrelated method's EDI guard; its final per-wrapper identity/collection
+  correlation is exercised by eleven TCS and nine EDI fixtures, plus five compiled helper mutants.
+  Both final components received independent clearance. In coordination, an obsolete
+  liveness prohibition also widened a desktop hold to four headless tests. The Conductor checked
+  the current handoff and every selected test body before removing that invented hold; full/shown
+  scheduling remained GHCP's. The already-loaded No-Guessing/current-authority protocol applies.
+  Evidence and retained reviewer dispositions: `docs/proof/atlas-five-gates.md`.
 
 - **Recurrence (ownership parser review, 2026-09-15):** the first recursive repair passed its own
   self-test while a reviewer found five width changes: owner context leaked across a deeper
@@ -8029,6 +8053,13 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `uncontrolled` — recorded by the profiler; the control is a pack proposal (F-25).
 
 ### DC-207 — A multi-line program passed through a shell heredoc fails on quoting or escaping, and the request that carried it is burned
+
+- **Related shell-boundary recurrence (Atlas verification, 2026-09-15):** Windows-to-WSL command
+  forwarding exposed the test filter's pipe and logger's semicolon to bash, producing command-not-
+  found errors instead of trustworthy test evidence. The corrected command was written as a bash
+  file with quoted arguments and `set -euo pipefail`, then executed as that file. Actual TRX
+  readback proved exactly 11 executed/passed cases. Reuse CT27's file-before-run control; do not
+  repair quoting by repeatedly transmitting inline programs. Evidence: `docs/proof/atlas-five-gates.md`.
 
 - **Shape:** an agent writes a Python (or shell) program inline as `python - <<'EOF' …` in Git Bash
   on Windows; a quote, a backslash or a `$` inside the program is mangled by the shell before the

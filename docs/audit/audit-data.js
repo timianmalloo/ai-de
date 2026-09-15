@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T22:44:16Z",
+  "generated": "2026-09-15T23:28:05Z",
   "audit": [
     {
       "actor": null,
@@ -21821,6 +21821,57 @@ window.AUDIT_DATA = {
         "acceptance_met": false
       },
       "supersedes": "al-01M2KKHMZ4QQR23YW7S7M17CCX"
+    },
+    {
+      "id": "al-01M2KNQWGQVSMXC8ZFZSN4V2PZ",
+      "shortname": "atlas-direct-peer-handshake-required",
+      "datetime": "2026-09-15T23:16:55Z",
+      "session": "codex-atlas-five-gates",
+      "prompt": "FYI given the need for better handoff and coordination ... note and honor this from the watcher:\n\nI’ve now required a direct peer handshake covering producer ownership, graph-ID ↔ Atlas-symbol/source mapping, scope/revision/bounds, unclassified cases, and selection/source/Back behavior—with exact artifact pins and consumer acknowledgment.\n\nThe watcher will distinguish notice sent → peer acknowledged → contract frozen → implemented. Sending a notice alone will no longer count as confirmed coordination.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2KPA308W13RHK2Q0TSV4V9M",
+      "shortname": "atlas-five-components-reviewed",
+      "datetime": "2026-09-15T23:26:52Z",
+      "session": "codex-atlas-five-gates",
+      "prompt": "FYI given the need for better handoff and coordination ... note and honor this from the watcher:\n\nI’ve now required a direct peer handshake covering producer ownership, graph-ID ↔ Atlas-symbol/source mapping, scope/revision/bounds, unclassified cases, and selection/source/Back behavior—with exact artifact pins and consumer acknowledgment.\n\nThe watcher will distinguish notice sent → peer acknowledged → contract frozen → implemented. Sending a notice alone will no longer count as confirmed coordination.",
+      "summary": "All five isolated component repairs independently cleared after inspected red/green/mutant evidence. G2 required two blocked approaches before reviewed-source fingerprint; G4 required scoped EDI correction. Current mainbcf product reconciliation, combined regression/Release, accepted handoff and publication remain pending. Direct Grok proposal sent with exact E1/E2 pins; no peer acknowledgment or frozen contract inferred. Recorded bounded-unit overruns without invented totals. Record patch rejected duplicate operations on one path before mutation; corrected to one update per path. Exact commits, raw results, open requests and residual limits in proof and coordination.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": "Codex",
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md",
+        "docs/plans/atlas-five-gates.md",
+        "docs/coordination/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Clear exact five Atlas blockers, reconcile current main and hand qualified candidate to GHCP; honor direct pinned producer-consumer handshake.",
+      "done_when": "Combined current-main qualification and Release pass with independent clearance and acknowledged GHCP handoff; peer contract freezes only after exact producer and consumer acknowledgments.",
+      "tier": "T2",
+      "fan_out": 4,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T23:00:56Z",
+      "duration_seconds": 1556.0,
+      "git": {
+        "sha": "9301207ee8f1164b53f70fb7f2ead91377f8f22a",
+        "short": "9301207ee",
+        "branch": "conductor/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
