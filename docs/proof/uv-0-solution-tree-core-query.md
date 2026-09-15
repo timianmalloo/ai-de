@@ -90,21 +90,16 @@ summary: >-
 
 ## Red-before-green (the run)
 
-First failing run (empty `ProjectionService.SolutionTree` stub):
+N12 (Test Architect, independent): the 6/19 red block below is **reconstructed, not a captured trx**. Five `[Fact]`s do not call `ProjectionService.SolutionTree`; empty `Nodes` therefore fails more than 19. There is no red-only commit. Treat the quoted 6/19 as **Flagged**.
+
+Conductor re-ran on the joined tree (filter `FullyQualifiedName~SolutionTree` in Core.Tests): **Passed 26, Failed 0** (Verified, this session). App.Tests same filter: **Passed 15, Failed 0**.
+
+Author-quoted first fail (empty stub — not independently captured):
 
 ```
 dotnet test tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj --filter FullyQualifiedName~SolutionTreeProjectionTests
-Total tests: 25  Passed: 6  Failed: 19
 StarDto_IndexedParentFileArtifact_UnindexedProbe_BinAbsentWithSkipCount
   Assert.Single() Failure: Collection: []
-  SolutionTreeProjectionTests.cs:line 89
-```
-
-Green after Compute + join + shrink:
-
-```
-dotnet test … --filter SolutionTreeProjectionTests|SolutionTree_AgreesWithTheInProcessProjection|EveryOperationFitsTheFrameTests
-Passed!  Failed: 0, Passed: 28
 ```
 
 ## E7 surface list (this slice)
