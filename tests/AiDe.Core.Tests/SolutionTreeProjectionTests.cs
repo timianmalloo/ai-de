@@ -413,18 +413,64 @@ public sealed class SolutionTreeProjectionTests
         };
         ActivitySource.AddActivityListener(listener);
 
-        star.Projections.SolutionTree(new SolutionTreeQuery());
+        var result = star.Projections.SolutionTree(new SolutionTreeQuery());
 
         var span = Assert.Single(captured, a => Equals(a.GetTagItem("projection"), "solution-tree"));
         Assert.NotNull(span.GetTagItem("returned.census_folders"));
         Assert.NotNull(span.GetTagItem("returned.file_artifacts"));
+        Assert.NotNull(span.GetTagItem("returned.indexed_parent"));
+        Assert.NotNull(span.GetTagItem("returned.unindexed"));
         Assert.NotNull(span.GetTagItem("skip.omitted"));
+        Assert.NotNull(span.GetTagItem("omitted.by_cap"));
+        Assert.NotNull(span.GetTagItem("returned.bytes"));
+        Assert.NotNull(span.GetTagItem("shrunk.attempts"));
         Assert.Equal("ok", span.GetTagItem("outcome"));
+        if (result.Disclosures.Count == 0)
+        {
+            Assert.Null(span.GetTagItem("shortfall.causes"));
+        }
+        else
+        {
+            Assert.NotNull(span.GetTagItem("shortfall.causes"));
+        }
         foreach (var (key, value) in span.Tags)
         {
             Assert.False(key.Contains("path", StringComparison.OrdinalIgnoreCase));
             Assert.DoesNotContain(star.Root, value ?? "", StringComparison.OrdinalIgnoreCase);
         }
+    }
+
+    [Fact]
+    public void CancelMidWalk_EmitsOutcomeCanceled_OmitsCountTags()
+    {
+        using var star = Star.Create();
+        var captured = new List<Activity>();
+        using var listener = new ActivityListener
+        {
+            ShouldListenTo = source => source.Name == "aide.projection.query",
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+            ActivityStopped = captured.Add,
+        };
+        ActivitySource.AddActivityListener(listener);
+
+        using var cts = new CancellationTokenSource();
+        Assert.ThrowsAny<OperationCanceledException>(() =>
+            star.Projections.SolutionTree(
+                new SolutionTreeQuery(),
+                omitRelativePaths: null,
+                abs =>
+                {
+                    cts.Cancel();
+                    cts.Token.ThrowIfCancellationRequested();
+                    return Directory.EnumerateDirectories(abs);
+                },
+                cts.Token));
+
+        var span = Assert.Single(captured, a => Equals(a.GetTagItem("projection"), "solution-tree"));
+        Assert.Equal("canceled", span.GetTagItem("outcome"));
+        Assert.Null(span.GetTagItem("returned.census_folders"));
+        Assert.Null(span.GetTagItem("returned.file_artifacts"));
+        Assert.Null(span.GetTagItem("shortfall.causes"));
     }
 
     [Fact]

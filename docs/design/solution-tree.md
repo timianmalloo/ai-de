@@ -664,8 +664,8 @@ Unit of work: one `SolutionTreeAsync` invocation. Span: existing `ActivitySource
 
 | | |
 |---|---|
-| **Completed** | N9 repair. UV-0 + UV-1. N8 chrome. Zone View-menu-only. N10 C1–C3, C5. N10 panel: Test Architect + Simplifier PWC; Patterns PASS; SRE PWC. View-source fault overlay E2E. Status remains **draft**. |
-| **Remaining** | Physical Ctrl+Enter Flagged (C4). SRE telemetry O12 in TelemetryTests; production cancel unwired. Authors do **not** mark Accepted. Not `main`. |
+| **Completed** | N9 repair. UV-0 + UV-1. N8 chrome. Zone View-menu-only. N10 C1–C3, C5. N10 panel. View-source fault E2E. SRE: full SolutionTree span tags + `outcome=canceled`; privacy test calls SolutionTree; overlapping populate drops the older result (CTS + generation). Status remains **draft**. |
+| **Remaining** | Physical Ctrl+Enter Flagged (C4). Daemon CT (repo-wide). Caps 2000/5000 Inferred. Authors do **not** mark Accepted. Not `main`. |
 | **Best next action** | Do not admit D-1. Keep Ctrl+Enter Flagged until SendInput/attended. |
 
 ## Gate record

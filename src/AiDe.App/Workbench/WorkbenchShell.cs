@@ -2167,6 +2167,9 @@ public sealed class WorkbenchShell : IDisposable
         _ = PopulateSolutionTreesAsync(toLoad, staleWhileRefresh: false);
     }
 
+    private int _solutionTreeGeneration;
+    private CancellationTokenSource? _solutionTreeCts;
+
     private void RefreshSolutionTrees()
     {
         var loaded = SurfaceContents<SolutionTreeSurface>("solution-tree").Where(s => s.HasLoaded).ToList();
@@ -2178,9 +2181,19 @@ public sealed class WorkbenchShell : IDisposable
         _ = PopulateSolutionTreesAsync(loaded, staleWhileRefresh: true);
     }
 
+    /// <summary>Test seam: start another populate while one is in flight (SRE overlapping-Show).</summary>
+    internal void RetrySolutionTreePopulate(SolutionTreeSurface surface) =>
+        _ = PopulateSolutionTreesAsync([surface], staleWhileRefresh: false);
+
     private async Task PopulateSolutionTreesAsync(
         IReadOnlyList<SolutionTreeSurface> surfaces, bool staleWhileRefresh)
     {
+        var generation = Interlocked.Increment(ref _solutionTreeGeneration);
+        var cts = new CancellationTokenSource();
+        var previous = Interlocked.Exchange(ref _solutionTreeCts, cts);
+        previous?.Cancel();
+        previous?.Dispose();
+
         foreach (var surface in surfaces)
         {
             if (staleWhileRefresh && surface.HasLoaded)
@@ -2195,6 +2208,11 @@ public sealed class WorkbenchShell : IDisposable
 
         if (_queries is null)
         {
+            if (generation != Volatile.Read(ref _solutionTreeGeneration))
+            {
+                return;
+            }
+
             foreach (var surface in surfaces)
             {
                 surface.ShowNoWorkspace();
@@ -2205,14 +2223,28 @@ public sealed class WorkbenchShell : IDisposable
 
         try
         {
-            var result = await _queries.SolutionTreeAsync(new SolutionTreeQuery(), CancellationToken.None);
+            var result = await _queries.SolutionTreeAsync(new SolutionTreeQuery(), cts.Token);
+            if (generation != Volatile.Read(ref _solutionTreeGeneration))
+            {
+                return;
+            }
+
             foreach (var surface in surfaces)
             {
                 surface.Show(result);
             }
         }
+        catch (OperationCanceledException)
+        {
+            // Superseded or disposed — not a tree-query error.
+        }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
+            if (generation != Volatile.Read(ref _solutionTreeGeneration))
+            {
+                return;
+            }
+
             foreach (var surface in surfaces)
             {
                 surface.ShowError(ex.Message);
@@ -3314,6 +3346,8 @@ public sealed class WorkbenchShell : IDisposable
         _consoles.Clear();
         _watcherPump?.Cancel();
         _watcherPump?.Dispose();
+        _solutionTreeCts?.Cancel();
+        _solutionTreeCts?.Dispose();
         _watcherHost?.Dispose();
     }
 

@@ -739,6 +739,76 @@ public sealed class SolutionTreeSurfaceTests
     }
 
     [Fact]
+    public void OverlappingPopulate_DropsTheOlderResult()
+    {
+        var hold = new TaskCompletionSource<SolutionTreeResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var queries = new RecordingTreeQueries
+        {
+            HoldFirst = hold,
+            FastResult = StarDto() with { SkipListedDirectoriesOmitted = 7 },
+        };
+
+        OnSta(() =>
+        {
+            using var shell = new WorkbenchShell(queries);
+            var window = new Window
+            {
+                Content = new ContentControl(),
+                Width = 1000,
+                Height = 640,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Left = -10000,
+                Top = -10000,
+                ShowInTaskbar = false,
+                ShowActivated = false,
+            };
+            var host = (ContentControl)window.Content;
+            var mode = new PerspectiveShell(host, shell.Hosts, () => new Grid(), shell.Announcer);
+            shell.CommandRouter = mode.Execute;
+            shell.DocumentOpening += h => mode.OnDocumentOpening(h);
+            window.Show();
+
+            try
+            {
+                mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Architecture, "test");
+                Assert.True(shell.Execute("surface.show.solution-tree"));
+                var id = shell.Architecture.Service.Zones.AllSurfaces()
+                    .Single(s => s.Kind == "solution-tree").SurfaceId;
+                var surface = shell.Architecture.Adapter.SurfaceContent<SolutionTreeSurface>(id);
+                Assert.NotNull(surface);
+                PumpUntil(() => queries.TreeCalls >= 1, timeoutMs: 2000);
+
+                shell.RetrySolutionTreePopulate(surface!);
+                PumpUntil(() => queries.TreeCalls >= 2, timeoutMs: 2000);
+                PumpUntil(
+                    () => VisibleText(surface!).Contains("7 skip-listed directories omitted", StringComparison.Ordinal),
+                    timeoutMs: 2000);
+
+                Assert.True(hold.TrySetResult(StarDto() with { SkipListedDirectoriesOmitted = 1 }));
+                var dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+                for (var i = 0; i < 15; i++)
+                {
+                    dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Background);
+                    Thread.Sleep(20);
+                }
+
+                Assert.Contains(
+                    "7 skip-listed directories omitted",
+                    VisibleText(surface!),
+                    StringComparison.Ordinal);
+                Assert.DoesNotContain(
+                    "1 skip-listed directories omitted",
+                    VisibleText(surface!),
+                    StringComparison.Ordinal);
+            }
+            finally
+            {
+                window.Close();
+            }
+        });
+    }
+
+    [Fact]
     public void FactoryRow_IsArchitectureOne_DerivedView()
     {
         var row = Assert.Single(SurfaceContentFactory.Kinds, k => k.Kind == "solution-tree");
@@ -763,6 +833,10 @@ public sealed class SolutionTreeSurfaceTests
 
         public Exception? ContentFault { get; set; }
 
+        public TaskCompletionSource<SolutionTreeResult>? HoldFirst { get; set; }
+
+        public SolutionTreeResult? FastResult { get; set; }
+
         public SolutionTreeQuery? LastQuery { get; private set; }
 
         public override Task<AiDe.Core.Projections.NodeContent> NodeContentAsync(
@@ -782,7 +856,12 @@ public sealed class SolutionTreeSurfaceTests
         {
             TreeCalls++;
             LastQuery = query;
-            return Task.FromResult(Result ?? OmitSetDto());
+            if (TreeCalls == 1 && HoldFirst is not null)
+            {
+                return HoldFirst.Task;
+            }
+
+            return Task.FromResult(FastResult ?? Result ?? OmitSetDto());
         }
 
         public override Task<WorkspaceGraph> GraphAsync(
@@ -903,7 +982,7 @@ public sealed class SolutionTreeSurfaceTests
             Thread.Sleep(20);
         }
 
-        Assert.Fail("timed out waiting for the activate-error overlay");
+        Assert.Fail("timed out waiting for the UI to settle");
     }
 
     private static void ClickNamed(DependencyObject root, string name)
