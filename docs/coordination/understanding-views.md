@@ -136,6 +136,6 @@ ADR-0030 trigger, quoted not paraphrased: *"Add an explicit `Perspectives` colum
 
 | | |
 |---|---|
-| **Completed** | N0–N12 walking skeleton; N14 stop (D-1…D-4 keep-deferred). N8 chrome: glyphs, node menu, double-click View source; zone frozen View-menu-only. Spec stays draft. Not `main`. |
-| **Remaining** | N13 recount + `tools/run-verify-gates.py`. N10 design acceptance (non-author). Physical Ctrl+Enter attended/SendInput. |
-| **Best next action** | Recount then the join gates. Do not admit D-1. |
+| **Completed** | N0–N14 this horizon. Walking skeleton + N8 chrome on `understanding-views`. N10 PASS-WITH-CONDITIONS (design stays draft). N13 38/38 at `c421fc6`. Recount App 1041 / Core 2745 (3786). N14 stop: D-1…D-4 keep-deferred. Not `main`. |
+| **Remaining** | Physical Ctrl+Enter attended/SendInput. N10 conditions (T5a/b visual-tree, US-T8 error+Retry, DC-016 pair). Not a new view. |
+| **Best next action** | Stop this horizon unless Owner re-admits one deferred view. Do not admit D-1. |

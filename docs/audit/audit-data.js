@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T18:01:03Z",
+  "generated": "2026-09-15T18:09:55Z",
   "audit": [
     {
       "actor": null,
@@ -17487,6 +17487,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "44ed80607724f8a60665e0b1f5a1acbf5d36e33a",
         "short": "44ed80607",
+        "branch": "understanding-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K45K2M19774CPAGKSYT965",
+      "shortname": "n13-join-38",
+      "datetime": "2026-09-15T18:09:50Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "yes keep going finish remaining nodes",
+      "summary": "N13 38/38 on understanding-views (c421fc68). Recount App 1041 Core 2745 portable 2570 nonportable 175 (3786). D-0 chrome landed (glyphs, menu, double-click View source, zone View-menu-only, StaleBrush). N10 PASS-WITH-CONDITIONS, design stays draft. N14 stop holds. Physical Ctrl+Enter still Flagged. Not main. Not D-1.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/understanding-views.md",
+        "tools/expected-test-counts.json"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close remaining N13 join hygiene and D-0 chrome on understanding-views without admitting D-1",
+      "done_when": "38/38 tools/run-verify-gates.py; chrome tests green; N10 note filed; recount updated; not main",
+      "tier": "T1",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "c421fc682bb1a140601fd60fd94afd195cf1d7ba",
+        "short": "c421fc682",
         "branch": "understanding-views",
         "pushed": null
       }

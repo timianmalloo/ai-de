@@ -8720,7 +8720,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ef822ec21b0a944866c17082db34725bda2889a2bf4293032e3cc06ba31ddb54"
+      "sourceSha256": "14515d43da89d21ca7b10e63e655d88e4fd09ddb75b23079312dcbbb16261a61"
     },
     {
       "id": "coordination-understanding-views-kickoff",
@@ -19669,5 +19669,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ec1fe5d2b0050462d6e577088c8b0be0d1403dc71ca4b31fb6af6d45123ee6b4"
+  "graphSha256": "388012924cb7bbd9a4e4d68794ea067ef8b444ed1ef1a137ae915d365d79ad4c"
 };
