@@ -442,20 +442,58 @@ Invalid limit, offset or observation yields typed refusal and no new selection/r
 One valid primary whose mandatory closure cannot fit yields `window-unrepresentable` and
 no new selection; D5 must supply a non-tautological trigger.
 
-### Needs Owner decision before author execution
+### Owner-frozen D1–D5 amendment and exact inventories
 
-1. **D1 marker attachment:** freeze the kind/endpoints attaching Entry, Exit and method-body
-   block, and whether ordinary nested blocks add markers. This fixes exact total counts.
-2. **D2 loop header:** decide whether the condition/header is a node, L1 value or relation
-   evidence, and freeze `LoopConditionSource` endpoints.
-3. **D3 try/finally duality:** decide whether T1/T4 and try/finally region markers coexist
-   as separate nodes, and freeze `FinallyDeclaration` endpoints.
-4. **D4 unsupported lock:** decide whether G2's empty lock body gets a block marker.
-5. **D5 unrepresentable trigger:** authorize a test-only limit policy that makes one primary
-   plus mandatory closure exceed its cap. Defaults (512 auxiliary/page; depth 64) cannot
-   produce this state from the minimal fixture, so a claimed refusal otherwise is tautological.
+Owner decision `4a81eb11ba3d190d59a2680be98be9ee0ca9238a` resolves the five
+reserved cells. These choices refine E1 design `83e1139b`; they do not claim existing code.
 
-**BLOCK author start until D1–D5 are frozen by Owner/Conductor.** Then the Astra author may
-use only the four exactly granted existing spike paths and no new package. The experiment can
-qualify structural/page feasibility only; it grants no production token, wire, UI, CFG,
-runtime, product or native acceptance.
+- **D1:** Every fixture has exactly `Entry`, `Exit`, and `MethodBody` common auxiliaries.
+  The only common edges are `Contains(MethodBody,Entry)` and
+  `Contains(MethodBody,Exit)`. The selected method is metadata, not another node.
+  Parent-region metadata drives closure and creates no implicit edge. A specialized arm,
+  loop, try or finally region replaces a duplicate generic block.
+- **D2:** L1 stores `conditionText = "more"` plus its exact condition span. It adds no
+  node. Both `LoopBodyRegion(L1,L.body)` and `LoopConditionSource(L1,L.body)` exist;
+  the latter is source evidence only. No self-loop or loop-back exists.
+- **D3:** T1/T4 remain primary. `T.try` is a try-statement region owned by T1 with parent
+  MethodBody; `T.finally` is owned by T4 with parent T.try. Required edges include
+  `Contains(T1,T.try)`, `Contains(T.try,T2)`, `Contains(T.try,T4)`,
+  `Contains(T4,T.finally)`, `Contains(T.finally,T5)`,
+  `AwaitOperand(T2,T3)`, and `FinallyDeclaration(T.try,T.finally)`. There is no
+  `ContinuationSource` or `NextInSource(T2,T4)` in this fixture.
+- **D4:** Local-function and lock constructs are opaque gaps. Neither body receives an
+  auxiliary marker; nested `Ping()` contributes no node, edge or target evidence.
+- **D5:** A local experiment-only auxiliary-cap override is admitted. It does not alter
+  production defaults or create Core tokens/receipts.
+
+The complete uncapped inventories include the two common D1 edges:
+
+| Fixture | Complete auxiliary set | Complete additional edge set | Primary / auxiliary / total / edges |
+|---|---|---|---|
+| B | Entry, MethodBody, B.true, B.false, Exit | `Contains(MethodBody,B1/B2)`; `NextInSource(B1,B2)`; `WhenTrueRegion(B2,B.true)`; `WhenFalseRegion(B2,B.false)`; `Contains(B.true,B3)`; `Contains(B.false,B4)` | **4 / 5 / 9 / 9** |
+| L | Entry, MethodBody, L.body, Exit | `Contains(MethodBody,L1)`; `LoopBodyRegion(L1,L.body)`; `LoopConditionSource(L1,L.body)`; `Contains(L.body,L2)` | **2 / 4 / 6 / 6** |
+| T | Entry, MethodBody, T.try, T.finally, Exit | `Contains(MethodBody,T1)` plus the seven D3 edges above | **5 / 5 / 10 / 10** |
+| G | Entry, MethodBody, Exit | `Contains(MethodBody,G1/G2)`; `NextInSource(G1,G2)` | **2 / 3 / 5 / 5** |
+
+Across all observations the fixed totals are **13 primary, 17 auxiliary, 30 nodes and
+30 structural edges**. These are expected values, not measurements. Closure ownership is:
+B1/B2→MethodBody, B3→B.true, B4→B.false; L1→MethodBody, L2→L.body;
+T1→MethodBody, T2/T3/T4→T.try, T5→T.finally; G1/G2→MethodBody. T3's closure
+includes T.try when T2 is outside the page, and `AwaitOperand` becomes a directional stub.
+Auxiliary endpoints may name an owner ordinal but never fabricate a primary ordinal.
+
+**Unrepresentable-window controls:** request B window `[2,3)` (B3 only), primary limit 1,
+with edge/stub caps 64, encoded cap 65,536 bytes, traversal cap 10,000 and depth 64.
+Mandatory closure is Entry, Exit, MethodBody, B.true. Auxiliary cap **3** must return
+`window-unrepresentable`, publish nothing and mint no restorable selection. Cap **4** must
+publish all four auxiliaries. B window `[0,1)` with cap **3** must publish Entry, Exit and
+MethodBody. Always-refuse, omit-B.true and ignore-cap mutations must each fail their named
+control. The first firing limit in the refusal case must be auxiliary closure.
+
+**ORACLE LEDGER: CLEAR for the bounded experiment.** The Astra author may implement against
+these exact fixtures, identities, totals, relations, page sizes, stubs, recomposition and cap
+controls in the four granted existing spike paths, with no new package. This is independent
+expected-result authorship, not subject authorship. Clearance is limited to experimental
+structural/page feasibility; it grants no production token, wire, UI, executable CFG, runtime,
+product or native acceptance, and final P0.7 semantic acceptance still needs the executed
+result plus independent review.

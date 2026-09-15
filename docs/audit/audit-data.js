@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:59:56Z",
+  "generated": "2026-09-15T21:07:12Z",
   "audit": [
     {
       "actor": null,
@@ -18766,6 +18766,53 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "d062650d41b68f6c14d1fffd9c07228a2846d7ef",
         "short": "d062650d4",
+        "branch": "review/atlas-views-design",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KEAB8E5KHVZ2YSK6PN5DWT",
+      "shortname": "atlas-e1-oracle-ledger-clearance",
+      "datetime": "2026-09-15T21:07:12Z",
+      "session": "codex-atlas-views-review",
+      "prompt": "Reconcile the independent E1 structural/page oracle ledger with Owner D1-D5 decision 4a81eb11, freeze exact node/edge equations and unrepresentable-window controls, and return a bounded experiment suitability verdict.",
+      "summary": "Cleared the E1 oracle ledger for the bounded experiment. Frozen totals are B 4/5/9/9, L 2/4/6/6, T 5/5/10/10 and G 2/3/5/5, totaling 13 primary, 17 auxiliary, 30 nodes and 30 edges. B3 auxiliary cap 3 refuses, cap 4 succeeds, and B1 cap 3 succeeds. Clearance remains experimental structural/page feasibility only.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-sol-plan-review",
+      "artifacts": [
+        "docs/proof/atlas-views-plan-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "e1-oracle-clearance"
+      ],
+      "outcome": "success",
+      "goal": "Reconcile Owner D1-D5 with the independent E1 oracle ledger and freeze exact experiment expectations.",
+      "done_when": "The ledger contains exact auxiliary ownership, relation inventories, counts and non-tautological cap controls, with a clear bounded suitability verdict.",
+      "tier": "T2",
+      "main_calls": 4,
+      "main_budget": 5,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T21:06:12Z",
+      "duration_seconds": 60.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 5,
+          "accepted": 5
+        }
+      ],
+      "git": {
+        "sha": "0ed952832f076103c4c2b766e32169f59ecd865b",
+        "short": "0ed952832",
         "branch": "review/atlas-views-design",
         "pushed": null
       }
