@@ -2,7 +2,7 @@
 id: plan-audit-gate-self-test
 title: "Audit verifier self-test: bounded execution graph"
 type: doc
-status: in-progress
+status: complete
 owner: "@timianmalloo"
 tags: [plan, testing, coordination]
 links:
@@ -56,6 +56,10 @@ Testing union: D0 hygiene, D1 mutation, D2 validator invariants and D4 real file
 Class -> sweep -> derive -> prevent: DC-104 already names controls without executable self-proof; ten gates are frozen. This slice repairs one, not all ten. Derive assertions from existing policy, demonstrate guard mutations fail, then remove only this name from the ratchet. Other frozen names remain declared debt. Required record of this instance goes through the append-only lesson convention.
 
 ## Planned versus actual
+
+Completed: G,D,A,R,J,C qualification artifacts. Full required runner38/38 passed at6fab141625fbe110b8b35ca710f03d793a560b66; final handoff uses the closing candidate SHA. One author and one independent reviewer remained serial. Material evidence added a plan revision (false-green unsupported flag) and one bounded author repair/re-review loop: exact CLI dispatch, truthful actual proof counts and Git-local environment isolation. Owner A2-A4 admitted these repairs within the original self-test scope; no normal verifier policy changed. The loop ended because all named review predicates were observed true, not because a budget fired.
+
+Actual author calls23/20 and repair11/8 (641s and424s measured); plan review9/6 and focused implementation re-review6/6. Other call totals are not reliably recorded here; do not infer that the Conductor50-call estimate or unreported budgets were met. Rework was driven by concrete red evidence and independent findings. Conductor inspected returned diffs, matching receipts and actual self-test output, then ran the required integrated join. No empirical token saving or speedup is claimed. Known scope findings are reported to Core; they did not become new tasks.
 
 Grounding observed 80 worktrees, effective merge drivers, 11 registry patterns and four shared regeneration markers owed; pack doctor 10 PASS/3 WARN/0 FAIL. Do not run shared producers over primary. Use the own-tree regeneration orchestrator as in the previous approved programme. No cleanup or installation is needed.
 

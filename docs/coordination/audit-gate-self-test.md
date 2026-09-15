@@ -2,7 +2,7 @@
 id: coord-audit-gate-self-test
 title: "Audit verifier self-test coordination"
 type: doc
-status: in-progress
+status: complete
 owner: "@timianmalloo"
 tags: [coordination, testing]
 links:
@@ -13,6 +13,10 @@ summary: "Exact tooling handoff, one author and independent review for existing 
 ---
 
 # Layer state
+
+## Completion — 2026-09-15
+
+Qualified at6fab141625fbe110b8b35ca710f03d793a560b66:38/38 required gates,11 self-test cases,7 named mutants and ratchet9. Independent Test/Python/Security/SRE/Simplifier PASS7094c147 on repaired author1581441d. Core Ruling119 is included verbatim through authorized8b164757. Final records and serialized candidate/base handoff complete this programme; no main push by Codex. See docs/proof/audit-gate-self-test.md for proof hashes, audit provenance and retained historical findings. Exact editing leases are released after each checkpoint; trees are retained for evidence/integration.
 
 Base bbd1bece; own conductor worktree. Pack revision70: 10 PASS, 3 WARN, 0 FAIL. Driver registration effective; 11 patterns; four shared regen markers owed. Codex absolute path boundaries are observed-only; separate Git trees and commit hook observed. No installation or shared-primary regeneration.
 

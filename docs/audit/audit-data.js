@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T18:39:17Z",
+  "generated": "2026-09-15T18:42:58Z",
   "audit": [
     {
       "actor": null,
@@ -17702,6 +17702,42 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T18:39:08Z",
       "duration_seconds": 8.0
+    },
+    {
+      "id": "al-01M2K627DH1P4TM52X7SPRPV7C",
+      "shortname": "close-audit-verifier-self-test",
+      "datetime": "2026-09-15T18:42:57Z",
+      "session": "codex-audit-gate-conductor",
+      "prompt": "yes do this next",
+      "summary": "Complete bounded audit verifier self-test under Ruling119. Initial paired tooling commit8d431085 plus OwnerA3/A4 selftest-only repair1581441d independently PASS7094c147. Conductor observed11cases7mutants with inherited flag, inspected unchanged policy/product inputs; scripted integrated full38 PASS6fab1416. Frozen debt10 to9. Old runtime receipts reused after matching inputs/hashes; no fresh .NET run. Historical BLOCKs and harness errors preserved; known normal-policy gaps reported to Core. Final records regenerated; clean candidate handed to Core for serialized join, no Codex main push.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/audit-gate-self-test.md",
+        "docs/proof/audit-gate-self-test-author.md",
+        "docs/proof/audit-gate-self-test-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Add meaningful self-tests to the audit-log verifier without changing its policy",
+      "done_when": "Red-first fixtures, independent review, applicable checks and committed evidence support a Core handoff",
+      "tier": "T1",
+      "fan_out": 4,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T18:14:31Z",
+      "duration_seconds": 1706.0,
+      "git": {
+        "sha": "6fab141625fbe110b8b35ca710f03d793a560b66",
+        "short": "6fab14162",
+        "branch": "conductor/audit-gate-self-test",
+        "pushed": null
+      }
     }
   ],
   "changes": [

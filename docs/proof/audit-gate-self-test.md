@@ -2,7 +2,7 @@
 id: proof-audit-gate-self-test
 title: "Audit verifier self-test programme evidence"
 type: proof-pack
-status: in-progress
+status: complete
 owner: "@timianmalloo"
 tags: [proof, testing, audit]
 links:
@@ -16,6 +16,12 @@ summary: "Observed fixtures, independent review and integrated qualification for
 ---
 
 # Evidence
+
+## Completed qualification — 2026-09-15
+
+The prescribed conductor-join.py joined repaired author1581441d and Core definition8b164757, then all38 required gates passed at6fab141625fbe110b8b35ca710f03d793a560b66. Targeted checks observed11 cases/7 named mutants; normal audit gate843 records before the join audit; ratchet36 gates with9 frozen names; ratchet self-test PASS. Regeneration checked697 audit+147 change records, all four derived views and14 site figures. Explicit docs graph validation passed with66 existing advisory review suggestions. No required failing set remains. The join audit is al-01M2K5VFX7G51FM03JSS1SVJ1G. Runtime gates consumed matching unchanged-input receipts (3,743 executed tests and5 terminal exit paths); this is not a new runtime run.
+
+This completes branch qualification and supports the serialized Core handoff. Core owns main publication; Codex used --no-push. Retain the clean conductor, author, Owner and reviewer worktrees for commit/receipt provenance until integration. Existing absent-file acceptance and non-object-JSON limitation remain unchanged and acknowledged by Core. Historical pending/BLOCK statements below are superseded by this close and the independent re-review receipt, not deleted.
 
 ## Reviewed candidate — integration pending
 

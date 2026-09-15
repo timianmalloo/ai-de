@@ -8075,7 +8075,7 @@ window.DOCS_INDEX = {
       "path": "docs/coordination/audit-gate-self-test.md",
       "title": "Audit verifier self-test coordination",
       "type": "doc",
-      "status": "in-progress",
+      "status": "complete",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-15",
@@ -8096,7 +8096,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a48fdb12c33ba5646703cdc17265e94b608c89ba1f9584c8596eac79b0a6c872"
+      "sourceSha256": "e6e341de4a960d913b08cccc62c14406fe2a24b4d9f4d5a06005a6968976dd35"
     },
     {
       "id": "coord-recursive-surface-ownership",
@@ -9858,7 +9858,7 @@ window.DOCS_INDEX = {
       "path": "docs/plans/audit-gate-self-test.md",
       "title": "Audit verifier self-test: bounded execution graph",
       "type": "doc",
-      "status": "in-progress",
+      "status": "complete",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-15",
@@ -9886,7 +9886,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n G --> D --> A --> R --> J --> C"
         }
       ],
-      "sourceSha256": "b9a549e8464d3647791f10d86261764708ceec6266cdfd7ddea7f9237b0bc8d1"
+      "sourceSha256": "ec050aa737c4017647646d7d56e9158d94d25b31bc6d52f709f6b06d0bb2cf69"
     },
     {
       "id": "plan-conductor-front-door",
@@ -15421,7 +15421,7 @@ window.DOCS_INDEX = {
       "path": "docs/proof/audit-gate-self-test.md",
       "title": "Audit verifier self-test programme evidence",
       "type": "proof-pack",
-      "status": "in-progress",
+      "status": "complete",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-15",
@@ -15455,7 +15455,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e2c7a6538868e0522a506ed64fadc0470616169db58d8ccb704a81ed6f5277ff"
+      "sourceSha256": "3dd8b11baf255bf08da0dc6c865a686ea071c4e304955d7a540771a24c5bbe7f"
     },
     {
       "id": "proof-audit-gate-self-test-author",
@@ -19302,5 +19302,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "711e37668abc5f8547f867e2bcbdb27e6ba124dae3a63c2646a1802961ee03c3"
+  "graphSha256": "cdd88612eb547c1c59d7cd30ad6c280de4af5e4a93295e495173f86740d6f50d"
 };
