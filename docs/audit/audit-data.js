@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T19:52:18Z",
+  "generated": "2026-09-15T20:03:49Z",
   "audit": [
     {
       "actor": null,
@@ -17705,6 +17705,41 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "c97a8a0f925afdae1ff6359c4b1fb3cc6fa1c2e1",
         "short": "c97a8a0f9",
+        "branch": "understanding-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KAP8WR2QR5V1KM9QW1JS8K",
+      "shortname": "implement-ctrl-enter-probe",
+      "datetime": "2026-09-15T20:03:48Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "keep going — prove physical Ctrl+Enter on D-0 Solution tree without admitting D-1",
+      "summary": "C4 closed: GUI-subsystem probe SendInput Ctrl+Enter requests Reveal in graph (exit 0, stdout ctrl+enter reveal). RaiseEvent is still not the chord. App.Tests 1051. Design stays draft. Not D-1. Not main.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.SolutionTreeProbe/Program.cs",
+        "tests/AiDe.App.Tests/SolutionTreeChordTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Prove physical Ctrl+Enter on understanding-views without admitting D-1",
+      "done_when": "Out-of-process probe green; C4 no longer Flagged; recount updated; not main",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T19:57:11Z",
+      "duration_seconds": 397.0,
+      "git": {
+        "sha": "1bfb250aeee2fe11b06fb7de0b3fafaef1ceaea4",
+        "short": "1bfb250ae",
         "branch": "understanding-views",
         "pushed": null
       }
