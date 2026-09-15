@@ -547,6 +547,44 @@ in the Architecture menu literal. Every assertion and every other perspective re
 The two exact previous menu-test failures were read from the retained original App TRX before
 this edit. No new green runtime result is claimed yet.
 
+## EIM16 observation-obligation implementation attempt
+
+The ERE2 design PASS admitted one test-file implementation, not final candidate acceptance.
+Baseline `af9a0eeae2a270c7faa534c8bb165986d36d4944` contains seven discovered Loaded sites:
+two in MainWindow, and one each in TextPromptDialog, PerspectiveShell, WebSurfaceHost,
+AtlasLoadingHost and AtlasReaderView. The replacement discovers each regex match throughout
+App C#/XAML (excluding bin/obj), gives each match a file-local ordinal, and routes it to an
+executed production probe. Registered but unexecuted, unknown, failed, and newly added sites
+fail; membership alone does not admit them.
+
+Original once/start/failure/retry and Composer/Canvas tests remain. Production probes cover
+MainWindow startup/AppStart counts, prompt selection/focus, the existing measured perspective
+switch test, WebSurfaceHost initialization/handshake assertions, and an actual Atlas host/owner
+over a recording public-port fixture. Atlas stimulus is Content detach/reinsert with pumped
+Loaded/Unloaded; no manual Activate/Deactivate or substitute owner.Track call. The port records
+cancellation separately from a held inventory completion and disposal counts; owner close must
+wait before lease/reader disposal. Faulty test-only observations use the same assertion oracle;
+they are explicitly oracle controls, not killed production mutants or native E1 qualification.
+
+**Retained semantic RED:** `semantic-red-1789488936469623000` contains original source,
+`red.patch`, `eim.trx` and full `run.json`. With registry membership but production execution not
+yet wired, the exact gate failed for `MainWindow.xaml.cs#0` having no executed witness.
+16/17 tests passed; the one semantic failure demonstrates membership is insufficient.
+Actual runner PID31792; shared START/END requests recorded, desktop released.
+
+**First production attempt:** `production-witnesses-1789488972094069100` again passed 16/17;
+the gate failed during MainWindow setup because its App.xaml `SurfaceBrush` resource was absent.
+This is a fixture setup failure, **not a semantic production failure or TDD red**. The fix copies
+the existing resource-dictionary loading recipe from `AtlasSharedHostAdmissionTests` inside the
+sole permitted test file. No product or shared harness file changes. A subsequent run is recorded
+in the audit and raw EIM receipts; no outcome is predicted here.
+
+**Open evidence boundaries:** a new generic paint-on-Loaded oracle case does not certify future
+StaticView. Final Test must disconfirm whether the actual paint observation is strong enough and
+whether site routing predicates fully cover each discovered handler. No commit or final E/I
+acceptance is justified until every production witness executes successfully and review clears.
+Raw files are under `.artifacts/atlas-main-integration/EIM/`; earlier receipts are never replaced.
+
 The native writer retains the desktop slot. IBE has not run App/shown lifecycle verification
 or changed the existing Loaded control. E still requires production-backed count/event-order
 observations and retained negative controls for missing cancellation, missing task tracking,
@@ -558,3 +596,66 @@ controls have red-first execution would violate the requested proof sequence.
 The additional ICD listener-only test-path seam remains separate from B/E. Source and test
 correctives remain uncommitted until their targeted conditions are met. No newer-main join,
 native application, relaxed assertion, status-only commit, full cohort or publication occurred.
+
+## ER18 - exact B1-B5 repair preparation
+
+This section supersedes neither historical results nor final Test acceptance. ER18 starts from
+the independently reviewed E-file SHA256
+`E0DFBFBFA6C51C1ABC74B96D6D9E38BE642A86A3242EAE951105A338FA3D19FF`
+at HEAD `af9a0eeae2a270c7faa534c8bb165986d36d4944`; it is a separate eighteen-call allocation.
+Only the same E test file and this proof are authored. Native NQ18 owns the desktop during
+preparation, so no shown production probe is run without native release and closer grant.
+
+The repaired Reader obligation retains the exact same actual Reader, observes `_unloaded`
+after real detach/reinsert, and requests a nonempty current data refresh after the actual Loaded
+transition. Host lifecycle is not manually activated, deactivated or tracked. Background is
+measured on that same Reader across its Loaded transition, including a property-change event
+count; an actual test-only Loaded perturbation changes that property and must fail the same
+checker. Identical same-value writes and other/descendant properties are outside this narrow
+observable-change claim, not implicitly certified.
+
+The Host obligation records four actual Loaded events and three reparent Unloaded events,
+one actual inventory call per generation and one healthy admission. Each real query owns its
+received token, independent completion gate and completion event. Initial and late responses
+are nonempty and distinct. The checker requires cancellation while the held gate remains
+incomplete, pending owner close, and query-finish before lease disposal before reader disposal.
+It separately rejects duplicate queries, missing attaches, populated late adoption and cleanup
+reordering. Loaded observers count events; they are not substituted lifecycle activation.
+
+An inner finally releases all created gates, detaches and awaits owner cleanup, removes token
+registrations, and retains any primary assertion. A deliberate failure while a real query is
+held must return that assertion and zero pending gates/operations. Per-run event/cleanup output
+is assertion-bearing evidence; no independent permanent site ledger is claimed.
+
+**New semantic oracle RED, not production mutation proof:** the new typed fault controls ran
+without GUI against the count-only pre-repair predicates. `oracle-red-1789490904157255600`
+executed 22 tests: 7 passed, 15 failed because invalid callback/count/order/cleanup observations
+were not rejected. The compiling pre-green source is retained beside `er18.trx` and `run.json`.
+This proves those missing oracle discriminators, not that a production mutant was killed.
+The same checkers were then strengthened. Typed legal repeated activation is an explicit
+oracle unit example; positive registry admission still requires actual production probes.
+The later oracle-green and shown-production outcomes must be read from their own receipts;
+the earlier EIM 17/17 is not evidence for these repairs.
+
+**ER18 first actual production run and BC2 correction.** The acknowledged shown run
+`production-1789491204547284900` executed 31 tests: 30 passed, one failed. Its measured Host
+trace showed one admission, four Loaded/three pre-close Unloaded observations, four distinct
+queries, held-query cancellation, pending close, query-finish then lease then reader disposal,
+and zero pending resources. The intentional held-assertion cleanup and actual same-Reader
+Background perturbation controls passed. The remaining assertion demanded empty `FileRoots`
+on the detached object. Source inspection established that `ClearPresentation` clears selection,
+source, outline and receipt state but retains inventory metadata.
+
+BC2's retained Test predicate decision explicitly rejects a new cache-erasure requirement.
+The E-only correction measures host.ReaderView null, actual Reader unloaded/private `_unloaded`
+true, and inert source/outline/receipt/current-file/Back action state. It permits valid cached
+inventory but still rejects the distinct nonempty `late-detached.cs` and `late-closing.cs`
+responses. Initial/current success now uses exact RelativePath markers, including
+`retained-reader-current.cs`, never row count alone. Already-empty source/outline are reported
+as inert state, not as proof that a previously populated source/outline was purged.
+No product/cache behavior was changed. Every cancellation, query-count, event-order, cleanup,
+same-Reader reset and observable Background-change control is preserved.
+
+The failing production source is retained as `retained-before-bc2.cs` beside its raw TRX/JSON.
+The following same-selector result is recorded in the closing audit/raw receipts; BC2 resolves
+only this predicate interpretation and does not self-clear final E implementation review.

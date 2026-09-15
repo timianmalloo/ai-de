@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T16:17:23Z",
+  "generated": "2026-09-15T17:07:48Z",
   "audit": [
     {
       "actor": null,
@@ -19345,6 +19345,37 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T16:10:47Z",
       "duration_seconds": 396.0
+    },
+    {
+      "id": "al-01M2K0KZ0Z3ET76XMA92FQVKND",
+      "shortname": "atlas-er18-bc2-targeted-green",
+      "datetime": "2026-09-15T17:07:47Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "ER18 exact B1-B5 E-only repair, then BC2-approved actionable-presentation predicate and exact fresh/late markers; same31selector under serialized desktop, no product/cache edits or finalIacceptance.",
+      "summary": "Final E SHA256799C4508094576088C9EBD3FB40168052F1D74C40F48ED6318D878DA8F17CD7C. New typedORACLE semanticred22executed7pass15fail retained before samecheckersgreen22/22. Firstproduction30/31 exposed unauthorized cache-empty predicate; BC2 explicitly accepted inert actionable presentation without cacheerase. Same selector fresh31/31PASS zero skips/errors/timeouts/abort, exit0, all7sitewitnesses executed. SameReader unloadedtrue->false and exact retained-reader-current.cs; Host1admission/4loaded/3reparents/4queries, held2and4cancel before separategate release, closepending, everyqueryfinish beforelease thenreader; intentionalheldassertion returned original with0pending/onecleanup each; actualsameReader Backgroundperturbation measured1change andsamecheckerrejected. Raw ER18 production-1789491882710711900 TRX/runJSON; PID30732 start17:04:42.710711Z end17:04:50.621990Z, desktopreleased sharedreq-01M2K0EJFCDAG3RB5Z1QT061MQ. Targetedconditionalcheckpoint only, finalTestcodeverdict/newermain/wholegates/Release remainOPEN; no native/main/push.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Repair and prove B1-B5 with actual production observations and fail-safe cleanup",
+      "done_when": "Exact ER18 selector passes with seven executed site obligations, same-oracle negatives and raw cleanup evidence; final Test review remains separate",
+      "tier": "T2",
+      "main_calls": 17,
+      "main_budget": 18,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T16:31:44Z",
+      "duration_seconds": 2163.0
     }
   ],
   "changes": [
