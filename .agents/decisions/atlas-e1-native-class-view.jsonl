@@ -78,3 +78,12 @@
 {"agent": "copilot-astra-native-e1-recovery", "at": 1789496940.9563396, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs", "session": "atlas-e1-native-class-view", "wi": ""}
 {"agent": "copilot-astra-native-e1-recovery", "at": 1789496940.9680173, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Understanding/AtlasStaticCompositionTests.cs", "session": "atlas-e1-native-class-view", "wi": ""}
 {"agent": "copilot-astra-native-e1-recovery", "at": 1789496940.9786997, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Understanding/AtlasStaticViewTests.cs", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789497916.3393838, "code": null, "kind": "allowed", "path": "docs/proof/code-atlas-e1-qualification.md", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789497916.475575, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789497916.6098993, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789498136.7206626, "code": null, "kind": "allowed", "path": "docs/proof/code-atlas-e1-qualification.md", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789498136.8514514, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789498136.980501, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789498138.0086255, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789498138.0188239, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789498138.02945, "code": null, "kind": "allowed", "path": "docs/proof/code-atlas-e1-qualification.md", "session": "atlas-e1-native-class-view", "wi": ""}
