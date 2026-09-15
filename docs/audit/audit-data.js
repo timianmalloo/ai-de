@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T18:28:59Z",
+  "generated": "2026-09-15T18:48:57Z",
   "audit": [
     {
       "actor": null,
@@ -17444,6 +17444,35 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T17:24:16Z",
       "duration_seconds": 3883.0
+    },
+    {
+      "id": "al-01M2K6D6E75K2NRNYNWQM89HHN",
+      "shortname": "atlas-nfp6-frozen-native-proof",
+      "datetime": "2026-09-15T18:48:57Z",
+      "session": "atlas-e1-native-class-view",
+      "prompt": "ROOTFRESHPIXELS actuallyINSPECTED priority1180 required-disclosure.png D9B81...: complete FULL Calls and lifetime relationships +nextline are not established. nowvisible; memberlabels/tabs/footerfitinthiscapture. Bounded1180pixelclipfindingclearedforthiscapture, NOTfullUX/finalgates. NEW NFP6 SIXprospectivecalls samewriter/tree, deterministicfinalPROOFONLY no code/expectedvalue/productchanges. Firstauditstart --session atlas-e1-native-class-view. OnCURRENT e028572c frozenproduct/test bytes doONEFINALsame expandednative/reader/sharedhost/legacy selector (prior113,exactcountread) INCLUDINGnewdisclosurechecks; freshownedATLAS_PROOF_RUN, explicitDaemon/testnonincrementalbuild, actualPIDstart/end/sharedlog. YOUretainnextshortdesktopslot afterNLrelease; IAL8isHEADLESSandnoIAppgrant untilyourelease. No repeatmutants/no retriesuntilgreen; failure=>specificgapnotproductfix. Bindallcurrentphysicalsource/test/binaryhashes, namedoutcomes/error/skips, nativefocus/geometry/capturepaths; earliermutations provenancekept withchangedReaderlayout clearlynotsamewholefilehash—no fabricatedcurrentmutationrerun. Ifallpass, commitONLYexistingProof/audit/derived evidence underCopilottrailer, notproductedits orfinalselfacceptance; reportqualified-for-independent-reviewpin withremainingplatform/combinedgates. No main/rebase/push/newsource/deps/cleanup. At6ONEsubstantiveoutcome+desktopRELEASE/noactiveownedruntimePIDs; sourceclean. Stopnewimageviewattempts; roothasfresh1180pixelsandpacket. FinalnativeTest/UX/UML/C#/SRE/DS/Security/Owner acceptance stillseparate.",
+      "summary": "NFP6 PROOFONLY complete onfrozen e028572c product/testbytes: all764tracked src/testfiles10913994bytes SHAmanifestDDA322C7379866FE37FFD03C58980C5A0B28B2A2D46A490B8D56E141493DC6E0, zeroafterrundrift. ExplicitDaemon/testnonincrementalbuild0warnings/errors. ONEexpanded113/113zeroerrors/skips/timeouts/aborts including4validFULLdisclosureglyphchecks; legacyCompletedtrue FailureCount0. RawTRX32F2C7D24D9F6E43D8C1B3B300C4610921AC9A48C3B30F70C23C36CF175552D7; full113namedresultsE4D3B6BD209F7FF745D2E0E352FDCD23CB33D7E270E2FC990EA44718BC1BCA2C. AppDLL4A6D97257EC1E487FB092B8DABED50641F7AFDA34B82266DA9128C5BE065F913; TestDLLBB9B9993980E3B146FA95E6F9D9271BB6F1083BCB3F5F76FF33AEB9F04CF74F8; allbinarybytes/hash/rawfocusgeometrycapturepaths in nfp6-final-run/observations.json. Actualrunner30940 18:44:27.1103205Z->18:45:15.8680431Z exit0; sixruntimePIDs5016/11352/11972/19904/21724/26220 absent; sharedreq-01M2K64YWZZ5R22EJJZ0Y706E9resolved/desktoplevelreleased. EarliermutationprovenanceunchangedoldReader484 is NOTnewReader64A hash/no rerunclaim. Rootfresh1180D9B81pixelsboundedclearanceattributed, no newimageview. Evidence-only checkpoint qualifiedforindependentreview, NOTshipping/nativeOwneracceptance; platform/historicalcause/finalcombinedgatesseparate. No source/test/expectedvalue/dependency edits, no main/rebase/push/cleanup.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs\\proof\\code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Prove exact frozen e028 native candidate once and preserve evidence for independent review",
+      "done_when": "Current113namedcases/newdisclosurechecks pass with conservedsource/testbytes and exactbinary/process/evidencehashes; evidence-only reviewpin committed and desktopreleased",
+      "tier": "T2",
+      "main_calls": 5,
+      "main_budget": 6,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T18:39:43Z",
+      "duration_seconds": 554.0
     }
   ],
   "changes": [

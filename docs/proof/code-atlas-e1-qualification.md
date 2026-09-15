@@ -1033,3 +1033,103 @@ hashes and measured result are recorded by the closing
 No green, pixel review, whole-cohort result or native acceptance is assumed here.
 Original 26/113 receipts, NM12 three-fault controls and original images remain
 preserved; final independent/combined gates remain separate.
+
+## NFP6 frozen final scoped proof — ready for independent review
+
+NFP6 is proof-only on product/test commit
+`e028572c10a83f5279bbc7053965c5c4e254f058`. It changes no product source, test,
+expected value or dependency, repeats no mutation and performs no image-view
+attempt. The closer independently inspected NL12's fresh 1180-DIP
+`required-disclosure.png` with SHA-256
+`D9B81E0492E219B47FA370FCA0BC6EF70063D1B1013467DB699CC341730CDF07`:
+the full “Calls and lifetime relationships” and following “are not established.”
+are visible. That clears the bounded clipping finding for that capture, not
+all UX or final programme gates.
+
+### Frozen inputs and one final run
+
+`.artifacts/atlas-e1/nfp6-inputs.json` records **all 764 tracked files under
+`src/` and `tests/`, totaling 10,913,994 bytes**, with individual physical
+SHA-256 values and the exact product commit. All hashes were compared again
+after the run: **zero source/test input drift**. The manifest SHA-256 is
+`DDA322C7379866FE37FFD03C58980C5A0B28B2A2D46A490B8D56E141493DC6E0`.
+
+Explicit daemon and test-project non-incremental builds completed with zero
+warnings/errors. Exactly one expanded native/reader/shared-host/legacy selector
+ran, including the new required-disclosure assertions: **113 executed,
+113 passed; zero failures, errors, skips, timeouts, aborts or inconclusive cases**.
+All four full-disclosure measurements (1180/1280/1440 and current local 15 DIP)
+matched the complete characters and actual clipped-glyph bounds.
+The legacy receipt independently reports `Completed=true`, `FailureCount=0`.
+No retry or repair followed this run.
+
+| Artifact under `.artifacts/atlas-e1/` | Content / SHA-256 |
+|---|---|
+| `nfp6-final-scoped.trx` | Full raw 113-case run; `32F2C7D24D9F6E43D8C1B3B300C4610921AC9A48C3B30F70C23C36CF175552D7` |
+| `nfp6-named-results.json` | All 113 full names, outcomes, start/end/durations, error and stack fields; `E4D3B6BD209F7FF745D2E0E352FDCD23CB33D7E270E2FC990EA44718BC1BCA2C` |
+| `nfp6-final-run.json` | Product pin, input count/bytes/conservation, runner/PID observations, counters, disclosure checks and binary hashes |
+| `nfp6-observations.json` | Actual native focus, geometry, clipped-glyph, paint, capture, environment and teardown records |
+| `nfp6-final.stdout.txt`, `nfp6-final.stderr.txt` | Unabridged runner output |
+
+### Exact scoped physical hashes
+
+These are physical working-file hashes, not Git object identifiers.
+
+| File | SHA-256 |
+|---|---|
+| `AtlasReaderView.cs` | `64A29BE565263671E0512851F7D7D33CEF7FFDBF278A9E0DEF2968478947741F` |
+| `AtlasStaticView.cs` | `A6BC21418FA00B6BDE95C531DD7F16B38A8168B44522638E678DFC5C7BC31DCA` |
+| `AtlasStaticViewProjection.cs` | `3746CC81D13048AE8292CB1E2A025B9F197EB2A59D58C69BDC450FEF2D995B62` |
+| `AtlasStaticViewTests.cs` | `21332C26A23D283917F0F13564432EA36EF320B97E0CE48C4C41AB0BD454BBDF` |
+| `AtlasStaticCompositionTests.cs` | `5D56078AF1EFC8897C314E786876A242AF024F771FDE864E42533D05F59D7609` |
+| `AtlasDaemonMainWindowProofTests.cs` | `05EB3C1374ACF14B2E631523A42A12B7B96D7F8B085E2838589E20B4E7281855` |
+
+| Built runtime/test artifact | Bytes | SHA-256 |
+|---|---|---|
+| App DLL | 1,106,944 | `4A6D97257EC1E487FB092B8DABED50641F7AFDA34B82266DA9128C5BE065F913` |
+| App.Tests DLL | 1,519,616 | `BB9B9993980E3B146FA95E6F9D9271BB6F1083BCB3F5F76FF33AEB9F04CF74F8` |
+| Core DLL | 2,345,472 | `3EE7D4DCD7E0BE12FC9FA92352AF4A27C43497D3FA2F49B15E68F215928B4366` |
+| Daemon DLL | 16,384 | `5B7E0300D89279BD8F226E9CCFD6D929A9C4A8E92885171B2F2F5B9E11271A69` |
+| Daemon EXE | 162,304 | `DD00E1D5F2B5096AFCC5D19A748272D88D55DFF9876C3B4E01A83B4CAD663A4C` |
+
+Earlier mutation receipts retain their exact earlier source/test hashes.
+In particular, the Reader changed from hash `484087...` to current `64A29B...`
+for the measured layout correction; it is **not** the same whole-file hash.
+NFP6 does not fabricate a mutation rerun on the new hash or silently rewrite
+the historical mutation provenance. Its current evidence is the frozen-input
+113-case execution including the additional disclosure control.
+
+### Actual native observations, captures and desktop release
+
+All three native runs observed 144 native/WPF DPI, high contrast off and
+animation on. After list Back, each recorded Class presentation/page 128,
+the selected M140 occurrence, active owned window, matching focus-owner HWND,
+logical/keyboard `ListBoxItem`, list focus true and operation `RanToCompletion`.
+These observations do not retroactively establish the old intermittent lookup/
+focus causes.
+
+Fresh native receipts/captures under `.artifacts/atlas-e1/`:
+
+- `native-1180-20260915184504644-64df0412083f4a3db18ff9f3686a9de3`
+- `native-1280-20260915184451251-042627121b30401d8626227c5ca91a40`
+- `native-1440-20260915184458257-f55d0cfe50f840dcb2ae86bc06c97e38`
+- `states-92f72a23344f4988ba81a69929ee76f6`
+
+The legacy receipt is
+`artifacts/atlas-real-daemon-window-proof/nfp6-final-644ac4d84c1a4cbbaffa93e207e3216a/receipt.json`.
+Fresh image hashes and glyph/viewport facts are in the raw receipts; NFP6 makes
+no additional visual-inspection claim. Local 15-DIP testing is not OS text-scale
+or multi-monitor/hardware-DPI qualification.
+
+Actual runner PID **30940**: start `2026-09-15T18:44:27.1103205Z`, end
+`2026-09-15T18:45:15.8680431Z`, exit 0.
+Shared request `req-01M2K64YWZZ5R22EJJZ0Y706E9` contains the start/end and desktop
+release. Runtime PIDs `5016,11352,11972,19904,21724,26220`, read from receipts,
+were all absent at completion. No active owned runtime remained; no further
+NFP6 shown run was started. There is no OS-wide lock or human-exclusion claim.
+
+This evidence-only checkpoint is **qualified for independent review**, not
+self-accepted for shipping. Native Test/UX/UML/C#/SRE/DS/Security/Owner decisions,
+the final combined-tree A/R, release/platform obligations and any further
+required pixel coverage remain separate. No main update, rebase, push, cleanup,
+new source or dependency change occurred.
