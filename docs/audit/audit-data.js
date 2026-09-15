@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T03:20:43Z",
+  "generated": "2026-09-15T03:42:36Z",
   "audit": [
     {
       "actor": null,
@@ -17087,6 +17087,38 @@ window.AUDIT_DATA = {
         "branch": "conductor/code-atlas",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2HJHKCSHF42RXEAA27BRY7N",
+      "shortname": "atlas-owner86-canonical-pair-adoption",
+      "datetime": "2026-09-15T03:42:35Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner86normalpairED7F/8E95approved; historical6353/641B/sourceprovenance unchanged. Fournewadoptionleavesdispatchedsamewriter5files,status/referenceonly,no novelcode. Security6cumulativefixtureleavesfinalPASS; Test/SREboundedcandidateclear, forcedkill/race/broadrootlimits explicit. ConditionalexactCorecea/accessor1791/approvedfixturecommitjoins+8verificationleaves; no literalcloneclaimorUI/main/normativeacceptance. Parentfailedonepatchcontextwithoutchanges thenappliedexactregistersection; correctedno sourceimpact. Main780 unchanged.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Commit the approved genuine fixture and prove joined delivery before native authoring",
+      "done_when": "Approved-modefive-filecommit/hashreadback andjoined/freshworktreeordinaryreceipts supportCore/fixtureclosure",
+      "tier": "T2",
+      "main_calls": 765,
+      "main_budget": 780,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-15T03:42:35Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "dd682d27a5baf8f10e1880a0a7e90a2f40f770cf",
+        "short": "dd682d27a",
+        "branch": "conductor/code-atlas",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -21189,6 +21221,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "dec1ec13",
         "after": "dec1ec131e250b7337225816e309ddd9abb1d69a",
+        "branch": "conductor/code-atlas",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2HJHK98VAXC25KKN4966W4F",
+      "datetime": "2026-09-15T03:42:35Z",
+      "session": "copilot-atlas-fleet-45bbc625",
+      "kind": "decision",
+      "skill": "implement",
+      "title": "Approve canonical legacy fixture pair for normal preparation",
+      "prompt": "ok keep going - give me a periodic refresh of the todo table so i can see where things sit... whats in flight, whats still to be done",
+      "summary": "Owner86approvesED7FCore/8E95peerunderbaseline-source/patch/canonicalbuildprovenance, nothistoricalbyteidentity.4leavesadoptmanifeststatus/referenceonly, normalApprovedverification/commit. ConditionalCore/accessor/fixturejointhenjoined+freshownedworktreeproof8leaves;nativegrantseparate.",
+      "rationale": "AllcurrentdeliverySecuritypredicatesclearwithguard-specificevidence; Test/SREcandidate-treeclearances+parentordinary497/497supportnormalpairapprovalwhilecommittedfreshdeliveryremainsrequired.",
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "dd682d27",
+        "after": "dd682d27a5baf8f10e1880a0a7e90a2f40f770cf",
         "branch": "conductor/code-atlas",
         "pushed": null,
         "commits": []

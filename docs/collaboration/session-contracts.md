@@ -1271,6 +1271,28 @@ the QualificationOnly status, and obtain actual Security disposition. Normal
 expected-pair approval, fixture commit and Core/accessor/fixture joins remain
 separate decisions. Parent ordinary replay remains required; no native/main grant.
 
+Owner turn 86 approves NORMAL use of the canonical legacy fixture pair:
+Core `ED7F23CDA7DBB749511D1D879CF0886543E4E76680009749398D19CA9E445EC5`;
+peer `8E95C84ED6887572B62F35664222A771E0EF283980E430B69F64AFEA5BC583BA`.
+This approval preserves archived-source, patch, baseline and deterministic build
+provenance; it is not byte-identical historical reproduction or E1 acceptance.
+Historical 6353/641B references and all failed preparations remain evidence.
+
+Four new adoption/commit leaves are granted in the same five-file scope. Change
+only `canonicalCandidate.status=Approved` and its approval reference before
+ordinary Approved-mode verification, hash readback, commit and release. The
+previous two unused leaves do not transfer. Any other needed code change returns
+as an exact finding; no new preparation/compiler/hash-policy logic is authorized.
+
+After parent commit/path/hash readback, only Core `cea76307`, accessor `1791f95d`
+and the approved five-file fixture commit may join. Eight verification leaves
+cover joined and fresh-owned-worktree ordinary invocation with empty owned
+artifact/output locations and no `ATLAS_FROZEN_LEGACY_DIRECTORY` override.
+Read actual provenance, hashes, both mixed-role results and cleanup; distinguish
+a fresh worktree from a literal clone. Fixture/Core closure follows that proof,
+then a separately budgeted native request. Mainline remains 780; no native
+authoring, main/push, normative E or programme closure is implied.
+
 ### Core owns
 
 | Path | Why |
