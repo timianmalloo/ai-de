@@ -79,6 +79,28 @@ index.Digest(MaxIndexBytes, ...) chain and guard-before-hash order. Add wrong-cl
 live-unbounded-with-decoy mutants. Product tests need not be rerun for a scanner-only
 repair; the corrected scanner/self-test and focused diff are the next clearance inputs.
 
+### Retained-seat review of correction 7a439285
+
+The correction masks comments/literals and extracts the named outer class, capture method,
+nested NativePin class and Digest method. It rejects the original cross-class decoys, wrong
+member names and quoted decoy; its self-test reports 15/15 and the actual source is accepted.
+This clears the original placement finding but not live-call correlation.
+
+An independent actual-source mutation replaced the live pair with
+liveIndex = pins.Add(association.Index, ...) and
+liveIndex.Digest(long.MaxValue, ...), then added the exact INDEX_CALL inside an uncalled local
+function in the real CaptureForQualificationAsync method. The mutation was applied once and
+the corrected predicate returned:
+
+    same_method_live_unbounded_plus_local_decoy=True
+
+This is valid same-method C# shape and leaves the scanner's required text inside the named
+method while the live index is unbounded. **G2 remains BLOCKED.** Add this exact mutant to the
+executable self-test and make the predicate reject it while accepting the unchanged source.
+The clearance predicate is behavioral: evidence must bind to the live association.Index call,
+not merely any nested text inside the containing method. No product/test rerun is required for
+this scanner-only correction.
+
 ## G3 — containment comparisons
 
 The only product edits replace the two dispatched OrdinalIgnoreCase comparisons with
