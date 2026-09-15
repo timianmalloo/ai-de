@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generator": "docs-graph.py flag",
+  "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
     "knowledge",
@@ -7153,6 +7153,82 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "910ca00625a52fa49f3333a77f8303b0672468c81c8f7402da71727e20d8aded"
+    },
+    {
+      "id": "design-solution-tree",
+      "path": "docs/design/solution-tree.md",
+      "title": "D-0 Solution tree — UV-0 Core query then UV-1 Architecture kind",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "Walking-skeleton design for D-0: UV-0 adds one Core query-time census join (SolutionTreeAsync / IPC solution-tree / one SolutionTreeQuery of two ints) with grain (path, kind), no folder_dim, T5c omit off the wire; UV-1 then admits one Architecture SurfaceKind and a WPF TreeView. Status draft — N10 review is later.",
+      "tags": [
+        "design",
+        "D-0",
+        "solution-tree",
+        "census",
+        "ipc",
+        "wpf",
+        "treeview",
+        "UV-0",
+        "UV-1",
+        "understanding-views"
+      ],
+      "links": [
+        {
+          "to": "spec-understanding-views",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spike-d0-tree-toolkit",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0009-in-process-first-daemon",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-n1-inventory",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "depends-on"
+        },
+        {
+          "to": "threat-model-ai-native-ide",
+          "rel": "relates-to"
+        },
+        {
+          "to": "privacy-review-ai-native-ide",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a0560d7b2a40cfc72465f191fc897e05adea651c0f3eaeb2e3cee60101b6568e"
     },
     {
       "id": "design-watcher-advisory-evaluator",
@@ -15519,6 +15595,11 @@ window.DOCS_INDEX = {
           "by": "spec-ai-native-ide",
           "on": "2026-08-26",
           "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        },
+        {
+          "by": "design-solution-tree",
+          "on": "2026-09-15",
+          "reason": "N9 draft design for D-0 UV-0 then UV-1 (SolutionTreeAsync + Architecture kind)"
         }
       ],
       "summary": "Defines the privacy posture for local AI-IDE workspace data: data inventory, purpose, retention, deletion, indirect model egress, and LINDDUN-lite dispositions. It is a pre-implementation gate for the AI-native IDE specification.",
@@ -15537,10 +15618,14 @@ window.DOCS_INDEX = {
         {
           "to": "knowledge-hub",
           "rel": "relates-to"
+        },
+        {
+          "to": "design-solution-tree",
+          "rel": "documents"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "32b4814e4d2bd7463961ca3f0822adde409eddbe18b8fa45b47ff68df81968ba"
+      "sourceSha256": "c9c01e5d12468641b20f2b6ff70fe7e98cc1c8aaa68f48d8f2cfc23645cb2e41"
     },
     {
       "id": "privacy-review-conductor",
@@ -17339,6 +17424,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "305365f383e220a689a6a688c2d326ef35a65d0b087a5e355256d9440d86569f"
     },
     {
+      "id": "proof-uv-0-solution-tree-core-query",
+      "path": "docs/proof/uv-0-solution-tree-core-query.md",
+      "title": "Proof Pack — UV-0 Core SolutionTreeAsync census join",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "UV-0 walking skeleton: Core SolutionTreeAsync / IPC solution-tree, production UnanalysedLanguages.Skip, ResolveWithinWorkspace join, T5c omit off the wire. F* DTO tests seen red (19 failed on empty stub) then green (28 passed).",
+      "tags": [
+        "proof-pack",
+        "D-0",
+        "solution-tree",
+        "UV-0",
+        "census",
+        "ipc"
+      ],
+      "links": [
+        {
+          "to": "spec-understanding-views",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-solution-tree",
+          "rel": "tested-by"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "70cd148d2f18b0c7a41bcbc83097d5c817b4815c2fae920b705c1c53de016531"
+    },
+    {
       "id": "proof-watcher-advisory-evaluator",
       "path": "docs/proof/watcher-advisory-evaluator.md",
       "title": "Proof Pack - Loomkeeper Local Advisory Evaluator & Egress Guard (connective 3)",
@@ -19113,6 +19234,11 @@ window.DOCS_INDEX = {
           "by": "spec-ai-native-ide",
           "on": "2026-08-26",
           "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        },
+        {
+          "by": "design-solution-tree",
+          "on": "2026-09-15",
+          "reason": "N9 draft design for D-0 UV-0 then UV-1 (SolutionTreeAsync + Architecture kind)"
         }
       ],
       "summary": "Disposes STRIDE threats across workspace IPC, filesystem identity, terminal and rendering content, prompt delivery, MCP, audit evidence, and dependency acquisition with required negative controls.",
@@ -19135,10 +19261,14 @@ window.DOCS_INDEX = {
         {
           "to": "privacy-review-ai-native-ide",
           "rel": "relates-to"
+        },
+        {
+          "to": "design-solution-tree",
+          "rel": "documents"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b8bd5ee4e4b5516c7b3bf7bb0994e6016d7bea411c248a0302d8f077639b5cb0"
+      "sourceSha256": "7baa01e81338efdea1745c56efa2c18e578ee37a061a814dc8f58d5879265d34"
     }
   ],
   "surfaces": [
@@ -19362,5 +19492,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "537663ff39b7569141a88f910fd85ee947bc909466c82bec7cdecaf50258098e"
+  "graphSha256": "c2c39123439d97b22c2f3a42ade7e1e78480ee3815449b5e569a1613f58018c5"
 };

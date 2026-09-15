@@ -45,7 +45,7 @@ public static class UnanalysedLanguages
         (".swift", "Swift"),
     ];
 
-    private static readonly HashSet<string> Skip = new(StringComparer.OrdinalIgnoreCase)
+    internal static readonly HashSet<string> Skip = new(StringComparer.OrdinalIgnoreCase)
     {
         "bin", "obj", ".git", ".vs", "node_modules", "artifacts", "packages", "dist", "build",
         "__pycache__", ".venv", "venv", ".tox", "target", "vendor",

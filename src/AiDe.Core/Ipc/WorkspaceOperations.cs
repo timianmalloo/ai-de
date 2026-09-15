@@ -153,6 +153,9 @@ public static class WorkspaceOperations
     public const string Paths = "paths";
 
     public const string Overview = "overview";
+
+    /// <summary>Census join of disk-now folders and indexed file-artifacts (ADR-0038).</summary>
+    public const string SolutionTree = "solution-tree";
     public const string DispatchBegin = "dispatch.begin";
     public const string DispatchFinalize = "dispatch.finalize";
     public const string IndexSolution = "index.solution";
@@ -232,6 +235,10 @@ public static class WorkspaceOperations
         endpoint.Register(Knowledge, (request, _) =>
             Refusable(() => Handle<KnowledgeRequest>(request, body =>
                 projections.Knowledge(new KnowledgeQuery(body.Term, body.Type, body.MaxResults)))));
+
+        endpoint.Register(SolutionTree, (request, _) =>
+            Refusable(() => Handle<SolutionTreeQuery>(request, body =>
+                projections.SolutionTree(body))));
     }
 
     /// <summary>

@@ -58,6 +58,9 @@ public abstract class FakeWorkspaceQueries : IWorkspaceQueries
     public virtual Task<WorkspaceOverview> OverviewAsync(
         OverviewQuery query, CancellationToken cancellationToken) => Refuse<WorkspaceOverview>();
 
+    public virtual Task<SolutionTreeResult> SolutionTreeAsync(
+        SolutionTreeQuery query, CancellationToken cancellationToken) => Refuse<SolutionTreeResult>();
+
     private static Task<T> Refuse<T>([System.Runtime.CompilerServices.CallerMemberName] string member = "") =>
         throw new NotSupportedException(
             $"this test's double does not implement {member} — it was not expected to be called");
