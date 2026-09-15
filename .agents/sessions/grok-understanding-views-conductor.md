@@ -5,6 +5,6 @@
 - Worktree: C:\Projects\ai-de-understanding-views
 - Branch: understanding-views
 - Status: active; D-0 on this branch; not main; D-1 not admitted
-- Updated: 2026-09-15T21:50Z
-- Doing: site-figures green on this branch (11168ac0). Not taking desktop.
-- Waiting on: Atlas/Codex audit-only commits — stranded-audit still names three of their trees.
+- Updated: 2026-09-15T22:40Z
+- Doing: USER EXECUTE done: D0 merged onto main 901320c4 at ab7d33df. Headless N13 38/38. Not a main write.
+- Waiting on: watcher/user if R108 landing of understanding-views is wanted. Desktop unused.
