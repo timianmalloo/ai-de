@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T19:23:25Z",
+  "generated": "2026-09-15T19:47:58Z",
   "audit": [
     {
       "actor": null,
@@ -17504,6 +17504,35 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T19:07:57Z",
       "duration_seconds": 928.0
+    },
+    {
+      "id": "al-01M2K9S9BT1TNSMT39XS5849W6",
+      "shortname": "atlas-fq6-current-guard-final-proof",
+      "datetime": "2026-09-15T19:47:58Z",
+      "session": "atlas-e1-native-class-view",
+      "prompt": "FQ6 SIX prospective calls proof-only on current4d506 render-generationguard; waitI IQV16desktoprelease+closergrant, then ONE expandednative/reader/sharedhost/legacy selector (old113+2RGtheorycases, actualcountread), explicitDaemon/testnonincrementalbuild, freshownedATLAS_PROOF_RUN, actualPID/start/end/sharednotices. Bindallsrc/test/binaryhashes before/after; fullnamedoutcomes/errors/skips/focus/geometry/cleanup. No repair/mutant/image/source/expectedvalue changes orretry. IfgreencommitonlyexistingProof/audit/derived withCopilottrailer, qualified-for-finalindependentreviewnotshippingapproval. Historicalmutations/oldhashespreserved. No main/rebase/push/deps. At6directreceipt+desktoprelease; finalnative/combinedOwnergatesseparate.",
+      "summary": "FQ6 currentguard product/test4d506 exactProofSucceeded=True executed=115 passed=115 failed=0 named=115 currentall764src/testinputs10917501bytes zeroDrift=True manifestF63A7BD3D4FD807A386639FE011162EDA20D730CB9F1675A970AD72817E614AB. Disclosurechecks=4/4 legacyCompleted=True FailureCount=0. TRX=EE781F9CA9644832BF285119EFA5A066683516C7E1CA60F3F2799EC888809BEA namedResults=9702FAECE2FDD0B25815820CDDF0A434F1DC2FB1B00745FCDB5B54114EE8F570; allfullruntime/source/binary/focus/geometry/capturefacts .artifacts/atlas-e1/fq6-final-run.json,fq6-observations.json,fq6-named-results.json; stdout/stderr retained. RunnerPID=23748 start=2026-09-15T19:47:07.5231296Z end=2026-09-15T19:47:58.3293033Z actualruntime=2548,7404,7620,21272,22512,33068 live= desktopReleased=True. No source/test/product/expectedvalue changes, no retries/mutants/images. Twoauditstartcalls consumed2/6; earliest actual19:36:13Z preserved explicitly, notshortened toduplicate19:38:10Z. Thisaudit records measuredlatestcurrentguardproof; earlierProof RGmechanism/historical113 remainunchanged, NOTrelabelledcurrent115. Finalindependent/combined/platform/Owneracceptance separate.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs\\proof\\code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Prove current render-generation guard candidate once with complete input/output conservation",
+      "done_when": "One currentexpandedcohort and namedoutcomes/hashes/resources recorded, evidence-onlyreviewpin ifgreen, desktopreleased and finalgates separate",
+      "tier": "T2",
+      "main_calls": 5,
+      "main_budget": 6,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T19:36:13Z",
+      "duration_seconds": 705.0
     }
   ],
   "changes": [
