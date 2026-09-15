@@ -660,3 +660,54 @@ it; do not act on older queued continuation while the requested decision is
 unanswered. NP6 consumes the queued rejection before editing. Exact 300-second
 leases and explicit checks precede this edit, and leases are released before
 long tests. No continuity is inferred from merely retaining the same identity.
+
+## NA10 A-only coordinate-frame repair: committed red checkpoint
+
+Ruling 115 and the responsible current Core/Design owner's resolution of
+`req-01M2JQMKGC16MV3TH3XK04JYPD` explicitly acknowledge only the legacy proof
+test's coordinate-frame computation. The native writer does not execute B-E.
+All expected values, readability/geometry assertions, product MainWindow/Core,
+existing failure baselines and final independent gates remain unchanged.
+
+The failing oracle already exists in separate earlier commit
+`a8e09f355e6785e7b0f24b009cc64e7f9785fc54` and is unchanged in WIP checkpoint
+`7c8cecafe5858965b4c7cf415df2e0aedabd6d8c`.
+`AtlasDaemonMainWindowProofTests.cs` SHA-256 before the fix:
+`C9827383FB6A4375DDD225817F4EC0587E9742E2D52043F9317B789DA7813CB5`.
+An executed Git diff against that WIP commit reported no test-source change.
+
+**Red observed before any fix:** explicit non-incremental daemon and test builds
+both passed with zero warnings/errors. One fresh owned shown-window run executed
+the committed
+`MainWindow_RealDaemonReplacement_AcknowledgesHealthyReleaseAndPreservesBorrowedClient`.
+It failed exactly at `MeasureReading` (`SourceRect`, lines 431/442): global/full
+source offset **48** was passed into a member-local document of length **26**.
+This is the admitted semantic coordinate failure, not setup, cleanup, a
+manufactured expected-value change or a newly introduced oracle.
+
+- Raw TRX: `.artifacts/atlas-e1/na10-red.trx`, one executed/failed, zero skipped.
+  SHA-256 `0DBF9E11F107F86697DF699D90AFC3579C7A39CE34D06807592EEEDD7AF750AB`.
+- Raw output: `na10-red.stdout.txt`, `na10-red.stderr.txt`, and
+  `na10-red-run.json`, under the same directory.
+- Native receipt/capture directory:
+  `artifacts/atlas-real-daemon-window-proof/na10-red-ee829bcff7494bfcb0d80bdcf80fb842/`.
+- Actual dotnet test-runner PID **18120**; start
+  `2026-09-15T15:42:34.3285093Z`, end `2026-09-15T15:42:38.7154695Z`, exit 1.
+  This PID is the runner, not an invented GUI-host PID.
+- Shared run-start/end record: `req-01M2JVQXWGJ7T8CPZA0AJDESD4`.
+  The end announcement was delayed by a PowerShell expression error after the
+  runner had already exited. It was then explicitly resolved; no second red
+  run occurred. The JSON retains the precise UTC instants.
+
+The frame mismatch is established from both source and execution. The caller
+passes the actual full source and issued highlight spans. `MeasureReading`
+currently traverses every line of that full source and uses global highlight
+offsets directly, although AvalonEdit now holds the returned bounded page.
+The proposed repair binds the frame to the actual returned page, checks that
+its full-source substring equals both returned and rendered text, and subtracts
+only the page start from issued highlight offsets. No clamp, expected-value
+change, smaller viewport or weaker readability threshold is permitted.
+
+This evidence section is committed **before** that coordinate-only repair.
+The raw receipts remain unstaged, and the original 26-case/NP6/mutation evidence
+and backups remain untouched. This red checkpoint is not qualification.

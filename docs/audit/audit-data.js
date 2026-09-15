@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T15:27:31Z",
+  "generated": "2026-09-15T15:46:12Z",
   "audit": [
     {
       "actor": null,
@@ -17296,6 +17296,35 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T15:23:56Z",
       "duration_seconds": 215.0
+    },
+    {
+      "id": "al-01M2JVYJG2KC9GJGG2B7NYN7QR",
+      "shortname": "atlas-na10-red-before-coordinate-fix",
+      "datetime": "2026-09-15T15:46:12Z",
+      "session": "atlas-e1-native-class-view",
+      "prompt": "NA10 A only, Ruling115 ACK req-01M2JQMKGC: committed earlier failing oracle, exact real RED before coordinate computation fix; no expected-value weakening; one shown run at a time with actual PID/start/end shared announcements; commit red before fix; retain raw evidence unstaged.",
+      "summary": "PRE-FIX RED observed on committed7c8cecaf; unchanged earlier test oracle a8e09f35, sourceSHA C9827383FB6A4375DDD225817F4EC0587E9742E2D52043F9317B789DA7813CB5. One executed/failed0skipped: GetLocation offset48 in member document26, exactly admitted frame mismatch, not setup/cleanup. REDTRX0DBF9E11F107F86697DF699D90AFC3579C7A39CE34D06807592EEEDD7AF750AB. RunnerPID18120 start2026-09-15T15:42:34.3285093Z end2026-09-15T15:42:38.7154695Z exit1; shared req-01M2JVQXWGJ7T8CPZA0AJDESD4 resolved, end announcement expression error corrected without rerun. No legacy source fix yet; committing this existingProof/audit record first. No fullcohort/otherfunctionalrepair/nativeacceptance/mainpush.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs\\proof\\code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Persist separate pre-fix committed coordinate-oracle RED",
+      "done_when": "Earlier oracle and fresh exact RED are committed before any coordinate fix",
+      "tier": "T2",
+      "main_calls": 7,
+      "main_budget": 10,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T15:38:02Z",
+      "duration_seconds": 490.0
     }
   ],
   "changes": [
