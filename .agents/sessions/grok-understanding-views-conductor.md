@@ -9,7 +9,7 @@
 | **Worktree** | `C:/Projects/ai-de-understanding-views` |
 | **Branch** | `understanding-views` |
 | **Based on** | `b3b3aef4` (join of ADR-0038; gates not green) |
-| **Status** | Join recount in flight; N7 spike dispatched |
+| **Status** | UV-0 Core query implementing; N7–N9 joined; N10 design repaired |
 | **Last updated** | 2026-09-15 |
 
 ## Doing right now

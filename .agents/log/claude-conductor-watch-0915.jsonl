@@ -16,3 +16,5 @@
 {"agent": "claude-conductor", "at": 1789485227.0408423, "kind": "release", "path": "tools/verify-stranded-audit.py", "seq": 16, "session": "claude-conductor-watch-0915", "wi": "WI-0"}
 {"agent": "claude-conductor", "at": 1789487377.7224522, "kind": "claim", "path": "docs/collaboration/session-contracts.md", "seq": 17, "session": "claude-conductor-watch-0915", "ttl": 600.0, "wi": "ruling-116-row"}
 {"agent": "claude-conductor", "at": 1789487407.3423083, "kind": "claim", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 18, "session": "claude-conductor-watch-0915", "ttl": 600.0, "wi": "ruling-116"}
+{"agent": "claude-conductor", "at": 1789488457.0635684, "kind": "claim", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 19, "session": "claude-conductor-watch-0915", "ttl": 600.0, "wi": "ruling-117"}
+{"agent": "claude-conductor", "at": 1789488457.165527, "kind": "claim", "path": "docs/investigations/INV-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins.md", "seq": 20, "session": "claude-conductor-watch-0915", "ttl": 600.0, "wi": "inv-0012"}
