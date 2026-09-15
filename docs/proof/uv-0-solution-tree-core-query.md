@@ -68,7 +68,7 @@ summary: >-
 - **Oracle:** INV-0003 class; record-level `Assert.Equal` on `IReadOnlyList` is reference equality (existing daemon idiom compares fields).
 - **Red observed before green:** HostileCensus asserted `OmittedByCap > 0` against the empty stub. Daemon test added after green of the DTO suite.
 - **Confidence:** Verified
-- **Residual risk:** production caps 2000/5000 remain Inferred.
+- **Residual risk:** production caps 2000/5000 remain Inferred. F* is well below them (`StarCensus` vs `DefaultMax*`); that is not a production cardinality.
 
 ### Claim 7: Telemetry tags, no path; cancel is OCE
 - **Evidence:** `SolutionTreeSpan_EmitsCountsNotPaths` — tag `projection=solution-tree`, census/file/skip counts, outcome ok, no `path` key, workspace root absent from tag values. `CancelMidWalk_ThrowsOperationCanceled_NotAPartialTree`.

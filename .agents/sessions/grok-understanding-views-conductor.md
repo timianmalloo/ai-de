@@ -5,6 +5,6 @@
 - Worktree: C:\Projects\ai-de-understanding-views
 - Branch: understanding-views
 - Status: active; D-0 on this branch; not main; D-1 not admitted
-- Updated: 2026-09-15T20:20Z
-- Doing: Coordinating after an unannounced SendInput Ctrl+Enter probe (Ruling 115). Probe now announces PID start/end. No shown-window run in flight.
-- Waiting on: nothing. Will not take the desktop without START.
+- Updated: 2026-09-15T20:30Z
+- Doing: Docs-only catch-up (coordination status, F* vs cap measurement). No desktop. No collision files.
+- Waiting on: nothing. Desktop RELEASED. Will not take it without START.

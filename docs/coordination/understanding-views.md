@@ -136,6 +136,6 @@ ADR-0030 trigger, quoted not paraphrased: *"Add an explicit `Perspectives` colum
 
 | | |
 |---|---|
-| **Completed** | N0–N14 this horizon. Walking skeleton + N8 chrome on `understanding-views`. N10 PASS-WITH-CONDITIONS (design stays draft). N13 38/38 at `c421fc6`. Recount App 1041 / Core 2745 (3786). N14 stop: D-1…D-4 keep-deferred. Not `main`. |
-| **Remaining** | Physical Ctrl+Enter attended/SendInput. N10 conditions (T5a/b visual-tree, US-T8 error+Retry, DC-016 pair). Not a new view. |
-| **Best next action** | Stop this horizon unless Owner re-admits one deferred view. Do not admit D-1. |
+| **Completed** | N0–N14. UV-0/UV-1 + chrome on `understanding-views`. N10 panel (TA/Simplifier PWC, Patterns PASS, SRE PWC). C4 physical Ctrl+Enter via GUI probe, now Ruling 115-gated. N13 38/38. Not `main`. |
+| **Remaining** | Caps 2000/5000 Inferred (F* is below them, not a production census). Daemon CT repo-wide. Design stays draft. Ruling 115: announce PID before any shown-window run. |
+| **Best next action** | Stop this horizon unless Owner re-admits one deferred view. Do not admit D-1. Do not take the desktop without START. |

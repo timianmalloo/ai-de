@@ -425,6 +425,14 @@ public sealed class SolutionTreeProjectionTests
         Assert.NotNull(span.GetTagItem("returned.bytes"));
         Assert.NotNull(span.GetTagItem("shrunk.attempts"));
         Assert.Equal("ok", span.GetTagItem("outcome"));
+        var folders = result.Nodes.Count(n => n.Kind == SolutionTreeNodeKind.CensusFolder);
+        var files = result.Nodes.Count(n => n.Kind == SolutionTreeNodeKind.FileArtifact);
+        Assert.True(
+            folders < SolutionTreeProjection.DefaultMaxCensusFolders,
+            $"F* census folders {folders} reached the production cap {SolutionTreeProjection.DefaultMaxCensusFolders}");
+        Assert.True(
+            files < SolutionTreeProjection.DefaultMaxFileArtifacts,
+            $"F* file-artifacts {files} reached the production cap {SolutionTreeProjection.DefaultMaxFileArtifacts}");
         if (result.Disclosures.Count == 0)
         {
             Assert.Null(span.GetTagItem("shortfall.causes"));
