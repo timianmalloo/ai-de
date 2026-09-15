@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:33:23Z",
+  "generated": "2026-09-15T14:33:28Z",
   "audit": [
     {
       "actor": null,
@@ -16580,6 +16580,32 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M2JQSC0YN0RA479KTSXKV797",
+      "shortname": "ownership-main-rulings",
+      "datetime": "2026-09-15T14:33:27Z",
+      "session": "codex-surface-ownership-conductor",
+      "prompt": "the join of the resolved merge into conductor/surface-ownership",
+      "summary": "Consume Core113 narrow handoff and114 ProseView section2 assignment; source authority retained. recount_seconds=0 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Use published ownership authority for recursive gate qualification.",
+      "done_when": "Published section2 and rulings incorporated with checks and full runner observed.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T14:33:26Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
