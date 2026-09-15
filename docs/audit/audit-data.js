@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:25:41Z",
+  "generated": "2026-09-15T14:35:01Z",
   "audit": [
     {
       "actor": null,
@@ -16356,6 +16356,60 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-09-15T14:24:49Z",
       "duration_seconds": 52.0
+    },
+    {
+      "id": "al-01M2JQW7K5E5SH3FBVKKYMKRDW",
+      "shortname": "owner-decision-capture-correction",
+      "datetime": "2026-09-15T14:35:01Z",
+      "session": "codex-surface-ownership-owner",
+      "prompt": "Correct Owner decision-only audit capture after verify-audit-capture observed missing signals; preserve original entry.",
+      "summary": "Correction class: decision-only audit records omitted explicit verification-path=false. Original decision scope completed; no implementation Proof Pack or product acceptance was claimed. Existing verify-audit-capture is the executable control and now forms the pre-commit check for these correction records.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "GPT-6 Astra Owner",
+      "artifacts": [
+        "docs/notes/recursive-surface-ownership-owner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Give the Conductor a bounded evidence-grounded decision contract",
+      "done_when": "Owner semantics, scope, graph conditions, and join scope are recorded for independent review",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "supersedes": "al-01M2JQ7PYW3WYGXM3N3R05K0M5"
+    },
+    {
+      "id": "al-01M2JQW7PC3RX7R3DQ4B01ED4S",
+      "shortname": "owner-ruling113-capture-correction",
+      "datetime": "2026-09-15T14:35:01Z",
+      "session": "codex-surface-ownership-owner",
+      "prompt": "Correct Owner Ruling113 decision-only audit capture after verify-audit-capture observed missing signals; preserve original entry.",
+      "summary": "Correction class: decision-only audit records omitted explicit verification-path=false. Ruling113 reconciliation completed; no implementation Proof Pack or product acceptance was claimed. Swept both Owner entries and added explicit evidence absence; verify-audit-capture is the existing recurrence control.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "GPT-6 Astra Owner",
+      "artifacts": [
+        "docs/notes/recursive-surface-ownership-owner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Reconcile bounded parser decision with binding Core Ruling113",
+      "done_when": "Owner note and explicit verdict incorporate unique standalone bare-name resolution before author dispatch",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "supersedes": "al-01M2JQB4XGFHSA2PTN53Q8QZNG"
     }
   ],
   "changes": [
