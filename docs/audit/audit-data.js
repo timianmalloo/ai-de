@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:53:00Z",
+  "generated": "2026-09-15T20:58:42Z",
   "audit": [
     {
       "actor": null,
@@ -19187,6 +19187,52 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
+      "id": "al-01M2JQ7PYW3WYGXM3N3R05K0M5",
+      "shortname": "recursive-surface-owner-decisions",
+      "datetime": "2026-09-15T14:23:48Z",
+      "session": "codex-surface-ownership-owner",
+      "prompt": "Act as separate Owner for the bounded recursive surface-ownership programme. Confirm T1, inspect current code and section 2, decide recursive discovery, relative identity, grouped declarations, ambiguity and malformed rows. Review grounding/handoff to design review to single author red/green to independent review to join/proof/commit graph. Write only the bounded Owner decision note; no implementation or main integration. Evaluate Python-only programme-local join contract without .NET recount/build or push.",
+      "summary": "Confirmed T1 and bounded interpretation. Observed existing gate passing 13 while independent recursive inventory has 17, including unassigned Sessions/ProseView.cs. Required path-cell-only parsing, exact relative identities, grouped same-cell directory inheritance, cross-owner ambiguity failure, stale exceptions, and independent plan review. Approved programme-local join scope conditional on Test Architect gate selection. No implementation acceptance.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": "GPT-6 Astra Owner",
+      "artifacts": [
+        "docs/notes/recursive-surface-ownership-owner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Give the Conductor a bounded evidence-grounded decision contract",
+      "done_when": "Owner semantics, scope, graph conditions, and join scope are recorded for independent review",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-09-15T14:20:29Z",
+      "duration_seconds": 199.0
+    },
+    {
+      "id": "al-01M2JQB4XGFHSA2PTN53Q8QZNG",
+      "shortname": "recursive-owner-ruling113",
+      "datetime": "2026-09-15T14:25:41Z",
+      "session": "codex-surface-ownership-owner",
+      "prompt": "Handle Ruling113 reconciliation. Read primary request resolution req-01M2JQ113TK7HGE7YKQ4CB92GA: standalone bare-name allowed only unique populated filename; ambiguity fails naming both. Amend Owner O1 to honor Core grant preserving grouped row directory semantics. Need updated verdict before author. Start new design-slice audit marker; same own worktree and identity; no tool authoring. Commit note and audit updates.",
+      "summary": "Observed Core grant and superseded earlier bare-first refusal with unique populated-basename resolution followed by exact relative identity. Multiple matches fail naming all; zero unresolved. Exceptions carry pending request/ruling and retirement condition. Recorded second-lander Atlas reconciliation and integration conditions. Independent review remains required.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "GPT-6 Astra Owner",
+      "artifacts": [
+        "docs/notes/recursive-surface-ownership-owner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Reconcile bounded parser decision with binding Core Ruling113",
+      "done_when": "Owner note and explicit verdict incorporate unique standalone bare-name resolution before author dispatch",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-09-15T14:24:49Z",
+      "duration_seconds": 52.0
+    },
+    {
       "actor": "claude-conductor",
       "artifacts": [
         "docs/collaboration/session-contracts.md",
@@ -19350,6 +19396,71 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
+      "id": "al-01M2JQPXCYB8G0WWR0008YDPX7",
+      "shortname": "recursive-surface-ownership-plan-review",
+      "datetime": "2026-09-15T14:32:06Z",
+      "session": "codex-surface-ownership-review",
+      "prompt": "Independent pre-author plan review for the recursive surface-ownership programme; return separate Test Architect, Simplifier, Python, SRE and Orchestrator verdicts, the Testing Strategy union, and exact join gates; do not implement or edit policy.",
+      "summary": "Cleared the corrected plan for one author. Frozen semantics use grouped same-cell context plus Ruling 113 unique standalone bare-name resolution; Ruling 114 assigns ProseView. Accepted the task join with empty .NET recount/build, no push, selected Python/register/docs gates and the full mandatory gate runner.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership-plan-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Independently review the recursive surface ownership plan across Test Architect, Simplifier, Python, and SRE/Orchestrator lenses without implementation or policy edits.",
+      "done_when": "Separate shaped verdicts, complete test-trigger union, exact join commands, veto-clear predicates, unresolved choices, and measured review cost are recorded and committed.",
+      "tier": "T1",
+      "main_calls": 19,
+      "main_budget": 25,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T14:24:43Z",
+      "duration_seconds": 443.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 2,
+          "accepted": 2
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "python-developer",
+          "raised": 2,
+          "accepted": 2
+        },
+        {
+          "persona": "sre-diagnostician",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "orchestrator",
+          "raised": 2,
+          "accepted": 2
+        }
+      ],
+      "git": {
+        "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
+        "short": "bab5035e7",
+        "branch": "review/surface-ownership",
+        "pushed": null
+      }
+    },
+    {
       "actor": null,
       "artifacts": [],
       "datetime": "2026-09-15T14:32:43Z",
@@ -19422,6 +19533,60 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M2JQW7K5E5SH3FBVKKYMKRDW",
+      "shortname": "owner-decision-capture-correction",
+      "datetime": "2026-09-15T14:35:01Z",
+      "session": "codex-surface-ownership-owner",
+      "prompt": "Correct Owner decision-only audit capture after verify-audit-capture observed missing signals; preserve original entry.",
+      "summary": "Correction class: decision-only audit records omitted explicit verification-path=false. Original decision scope completed; no implementation Proof Pack or product acceptance was claimed. Existing verify-audit-capture is the executable control and now forms the pre-commit check for these correction records.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "GPT-6 Astra Owner",
+      "artifacts": [
+        "docs/notes/recursive-surface-ownership-owner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Give the Conductor a bounded evidence-grounded decision contract",
+      "done_when": "Owner semantics, scope, graph conditions, and join scope are recorded for independent review",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "supersedes": "al-01M2JQ7PYW3WYGXM3N3R05K0M5"
+    },
+    {
+      "id": "al-01M2JQW7PC3RX7R3DQ4B01ED4S",
+      "shortname": "owner-ruling113-capture-correction",
+      "datetime": "2026-09-15T14:35:01Z",
+      "session": "codex-surface-ownership-owner",
+      "prompt": "Correct Owner Ruling113 decision-only audit capture after verify-audit-capture observed missing signals; preserve original entry.",
+      "summary": "Correction class: decision-only audit records omitted explicit verification-path=false. Ruling113 reconciliation completed; no implementation Proof Pack or product acceptance was claimed. Swept both Owner entries and added explicit evidence absence; verify-audit-capture is the existing recurrence control.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "GPT-6 Astra Owner",
+      "artifacts": [
+        "docs/notes/recursive-surface-ownership-owner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Reconcile bounded parser decision with binding Core Ruling113",
+      "done_when": "Owner note and explicit verdict incorporate unique standalone bare-name resolution before author dispatch",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "supersedes": "al-01M2JQB4XGFHSA2PTN53Q8QZNG"
     },
     {
       "actor": null,
@@ -19575,6 +19740,71 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M2JS1PYHM37VK5BK5DNQAZ7C",
+      "shortname": "recursive-surface-ownership-implementation-review",
+      "datetime": "2026-09-15T14:55:29Z",
+      "session": "codex-surface-ownership-review",
+      "prompt": "Independently review frozen author commit 18a4a19f with a byte-pinned snapshot, adversarial parser and ownership oracles, real 17-file register state, author proof and exact scope; do not edit author code or rerun .NET.",
+      "summary": "Blocked 18a4a19f after a 4/9 independent adversarial run. Five fixtures expose missing heading resets, missing Path-header and delimiter diagnostics, overbroad non-surface relevance, and indented section-end parsing. Built-in self-test and 17/17 live register still pass but do not cover these failures.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership-review.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Independently review frozen commit 18a4a19f for recursive surface ownership correctness, Python quality, simplicity, and bounded evidence.",
+      "done_when": "Byte-pinned tests, real-register outcomes, scope inspection, shaped persona verdicts, executable counterexamples, and veto-clear predicates are recorded and committed.",
+      "tier": "T1",
+      "main_calls": 14,
+      "main_budget": 25,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false,
+        "regression": false
+      },
+      "started_at": "2026-09-15T14:47:28Z",
+      "duration_seconds": 481.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 2,
+          "accepted": 2
+        },
+        {
+          "persona": "python-developer",
+          "raised": 3,
+          "accepted": 3
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 1,
+          "accepted": 1
+        },
+        {
+          "persona": "sre-diagnostician",
+          "raised": 1,
+          "accepted": 1
+        },
+        {
+          "persona": "data-persistence-architect",
+          "raised": 1,
+          "accepted": 1
+        }
+      ],
+      "git": {
+        "sha": "8690c5fa83562d1204554be178c8a52b016e3293",
+        "short": "8690c5fa8",
+        "branch": "review/surface-ownership",
+        "pushed": null
+      }
     },
     {
       "id": "al-01M2JS40SWDP3JE7ER315MF902",
@@ -19745,6 +19975,71 @@ window.AUDIT_DATA = {
       ],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M2JT1MJWEKKRFZGH04CWNG9K",
+      "shortname": "recursive-surface-ownership-final-review",
+      "datetime": "2026-09-15T15:12:55Z",
+      "session": "codex-surface-ownership-review",
+      "prompt": "Re-review frozen repairs 1105bb83 and 676f63ed. Preserve the initial BLOCK and corrected provisional PASS history; require the prior nine oracles, broad Workbench pattern conflict, live 17/17 state, and targeted heading/delimiter mutation proofs before clearing vetoes.",
+      "summary": "Final bounded PASS on 676f63ed. The 1105bb83 semantic repair passed 9/9 plus the broad pattern probe but remained blocked until 676f63ed added the two required mutation oracles. The byte-pinned final self-test reports all eight injected mutants killed. No full repository green is claimed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/recursive-surface-ownership-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Independently re-review the frozen recursive surface ownership repair and clear no veto without observed semantic and mutation evidence.",
+      "done_when": "The frozen source hash, prior BLOCK history, nine semantic oracles, broad pattern conflict, two targeted mutations, eight-mutant self-test, scoped diff and final persona verdicts are recorded and committed.",
+      "tier": "T1",
+      "main_calls": 16,
+      "main_budget": 16,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T15:04:13Z",
+      "duration_seconds": 522.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 1,
+          "accepted": 1
+        },
+        {
+          "persona": "python-developer",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "sre-diagnostician",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "data-persistence-architect",
+          "raised": 0,
+          "accepted": 0
+        }
+      ],
+      "git": {
+        "sha": "3d9768bdfa5832acda572bb2eceb754831191285",
+        "short": "3d9768bdf",
+        "branch": "review/surface-ownership",
+        "pushed": null
+      }
     },
     {
       "actor": "claude-conductor",
@@ -20460,6 +20755,56 @@ window.AUDIT_DATA = {
       "duration_seconds": 129.0
     },
     {
+      "id": "al-01M2K13QBTAVSKMYC3AMS1DK44",
+      "shortname": "ownership-qualification-review",
+      "datetime": "2026-09-15T17:16:23Z",
+      "session": "codex-ownership-qualification-review",
+      "prompt": "Independently verify the published Core stranded-audit blocker fix and continuation plan without reimplementation; test self-test and normal mode, pin unchanged recursive gate and receipt inputs, and return Test Architect and Simplifier verdicts.",
+      "summary": "Qualified the published primary-log liveness fix: current self-test and normal linked-tree run passed; a temporary old-lookup mutant failed; recursive gate, .NET source/test inputs, and retained receipt hashes matched. Recorded external docs-link repair as pending integration dependency. The 12-call estimate was exceeded by two calls after a stale receipt patch context required inspection and retry.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/ownership-qualification-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Independently qualify the published Core blocker fix and continuation plan.",
+      "done_when": "Test Architect and Simplifier verdicts cite fixed stranded-check behavior, its self-test, unchanged recursive gate blob, actual plan/proof inputs, and the remaining integration boundary.",
+      "tier": "T1",
+      "main_calls": 14,
+      "main_budget": 12,
+      "main_over_budget": true,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T17:11:43Z",
+      "duration_seconds": 280.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 0,
+          "accepted": 0
+        }
+      ],
+      "git": {
+        "sha": "0b3644f22f16dffee32bd9a9a7fb212ad1639508",
+        "short": "0b3644f22",
+        "branch": "review/ownership-qualification",
+        "pushed": null
+      }
+    },
+    {
       "id": "al-01M2K151CMPGVH9GDD51JHVA7Y",
       "shortname": "ownership-current-qualification",
       "datetime": "2026-09-15T17:17:06Z",
@@ -20763,6 +21108,34 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
+      "id": "al-01M2K3XBYV34EXG1QW3EYBQTRW",
+      "shortname": "audit-gate-self-test-owner",
+      "datetime": "2026-09-15T18:05:21Z",
+      "session": "codex-audit-gate-owner",
+      "prompt": "New bounded programme Astra Owner no implementation. Start design-slice audit in provisioned isolated worktree. Confirm T1 objective bounded acceptance and design with unchanged policy. Inspect verifier and repo guidance. Decide fixture strategy real temporary Git repo, valid legacy/ULID/appends, duplicates/deletion/malformed/missing/invalid-ID and mutant-proof diagnostic/status assertions. Author only docs/notes/audit-gate-self-test-owner.md plus official audit/derived outputs using short exact lease. Budget10 calls/12min/12k tokens. End with committed decision receipt and scope/gates. No spawn, EnterWorktree or main push. Core grant request pending; no author before grant. Independent reviewer clears veto.",
+      "summary": "T1 design scope confirmed. Source-inspected existing policy and real HEAD comparison; selected isolated real-Git CLI fixtures and semantic mutants. Missing means missing id; absent file stays accepted. Primitive JSON potential crash explicitly outside scope. Core grant and independent reviews remain conditions. Decision artifact only; no implementation evidence claimed.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "GPT-6 Astra Owner",
+      "artifacts": [
+        "docs/notes/audit-gate-self-test-owner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Define bounded audit-gate self-test acceptance without policy changes",
+      "done_when": "Owner decision receipt defines fixture oracles, scope, and independent review floors for Conductor execution",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T18:02:48Z",
+      "duration_seconds": 153.0
+    },
+    {
       "actor": null,
       "artifacts": [
         "docs/plans/audit-gate-self-test.md",
@@ -20791,6 +21164,71 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M2K495Q25KRANG6BKXFTQCS7",
+      "shortname": "audit-gate-plan-review",
+      "datetime": "2026-09-15T18:11:48Z",
+      "session": "codex-audit-gate-review",
+      "prompt": "Independently review the audit verifier self-test plan under Ruling 119; require real temporary Git fixtures, canonical allocator-generated ULIDs, discriminating CLI oracles, red-first mutation evidence, and no normal-policy expansion.",
+      "summary": "Initially blocked the plan after observing that the old CLI treated --self-test as an absent positional file and exited 0. Re-reviewed a95a8182 and 11d9f8a7; the latter supplied the Owner-approved disposable-copy red sequence, seven exact mutants, fixed cases, allocator and scope boundaries. Cleared Test, Simplifier, Python, SRE and Orchestrator plan verdicts while preserving the initial BLOCK history.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/audit-gate-plan-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Independently review the audit-gate self-test plan against Ruling 119 and real verifier contracts.",
+      "done_when": "Test Architect, Simplifier, Python, SRE and Orchestrator verdicts cover D0/D1/D2/D4, fixture fidelity, CLI diagnostics and scope boundaries before author dispatch.",
+      "tier": "T1",
+      "main_calls": 9,
+      "main_budget": 6,
+      "main_over_budget": true,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T18:06:24Z",
+      "duration_seconds": 324.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 2,
+          "accepted": 2
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 1,
+          "accepted": 1
+        },
+        {
+          "persona": "python-developer",
+          "raised": 1,
+          "accepted": 1
+        },
+        {
+          "persona": "sre-systems-diagnostician",
+          "raised": 1,
+          "accepted": 1
+        },
+        {
+          "persona": "orchestrator",
+          "raised": 1,
+          "accepted": 1
+        }
+      ],
+      "git": {
+        "sha": "bbd1bece3b0f83148a66696a0e778ef2cd20235e",
+        "short": "bbd1bece3",
+        "branch": "review/audit-gate-self-test",
+        "pushed": null
+      }
     },
     {
       "id": "al-01M2K4G314YZK25970RSQ7QSQS",
@@ -20868,6 +21306,71 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
+      "id": "al-01M2K5AS8TJH31K3MJ2X9PQW3P",
+      "shortname": "audit-gate-implementation-review",
+      "datetime": "2026-09-15T18:30:09Z",
+      "session": "codex-audit-gate-review",
+      "prompt": "Independently review frozen author commit 8d431085 against Ruling 119, execute self-test and normal/ratchet gates, probe argparse abbreviation and inherited mutation-control environment, and return persona vetoes without editing author source.",
+      "summary": "Blocked the frozen candidate after observing inherited AUDIT_GATE_MUTANT skip all seven mutants while reporting success and argparse abbreviation route --self into self-test. Verified the nine-case/seven-mutant normal run, canonical allocator seam, unchanged normal logic, candidate-root ratchets, compilation and isolated cleanup. Corrected a wrong-cwd ratchet run and withdrew a shared-prefix cleanup attribution after isolated disconfirmation.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/audit-gate-self-test-review.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Independently review frozen audit-gate self-test implementation against Ruling 119 and the approved plan.",
+      "done_when": "Test Architect, Python, SRE, Simplifier and Security verdicts cite observed gates, adversarial environment/CLI probes, policy scope, allocator fidelity and fixture isolation.",
+      "tier": "T1",
+      "main_calls": 9,
+      "main_budget": 12,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false,
+        "regression": true
+      },
+      "started_at": "2026-09-15T18:25:02Z",
+      "duration_seconds": 307.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 2,
+          "accepted": 0
+        },
+        {
+          "persona": "python-developer",
+          "raised": 2,
+          "accepted": 0
+        },
+        {
+          "persona": "security-identity-architect",
+          "raised": 1,
+          "accepted": 0
+        },
+        {
+          "persona": "sre-systems-diagnostician",
+          "raised": 1,
+          "accepted": 0
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 1,
+          "accepted": 0
+        }
+      ],
+      "git": {
+        "sha": "037e1427a7787c6969c9dcde1efa8a9fc38b755b",
+        "short": "037e1427a",
+        "branch": "review/audit-gate-self-test",
+        "pushed": null
+      }
+    },
+    {
       "actor": "codex-sol-author",
       "artifacts": [
         "docs/proof/audit-gate-self-test-author.md",
@@ -20909,6 +21412,71 @@ window.AUDIT_DATA = {
       ],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M2K5REEWBT50CJCYH0JJR8HP",
+      "shortname": "audit-gate-focused-rereview",
+      "datetime": "2026-09-15T18:37:37Z",
+      "session": "codex-audit-gate-review",
+      "prompt": "Focused independent re-review of frozen repair 1581441d: reproduce inherited mutation environment, exact CLI argv, inherited Git repository environment, actual counts, cleanup, unchanged normal policy, ratchet and compilation.",
+      "summary": "Cleared the prior implementation vetoes. Inherited AUDIT_GATE_MUTANT ran all seven mutants; --self/--help/--other retained positional behavior; spectator Git variables were scrubbed with unchanged HEAD/index/config/status; isolated temp parent was empty. Normal audit gate, ratchet normal/self-test and compilation passed. Frozen blob and SHA-256 matched.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-sol-review",
+      "artifacts": [
+        "docs/proof/audit-gate-self-test-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Independently re-review frozen audit-gate repair against the three recorded veto conditions.",
+      "done_when": "Exact flag behavior, inherited mutation and Git environments, actual counts, normal policy scope, ratchet state, cleanup and persona veto clearance are observed.",
+      "tier": "T1",
+      "main_calls": 6,
+      "main_budget": 6,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T18:35:27Z",
+      "duration_seconds": 130.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "python-developer",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "security-identity-architect",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "sre-systems-diagnostician",
+          "raised": 0,
+          "accepted": 0
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 0,
+          "accepted": 0
+        }
+      ],
+      "git": {
+        "sha": "d27b69c55d04271dd99287d9d7d97b515c2f45ef",
+        "short": "d27b69c55",
+        "branch": "review/audit-gate-self-test",
+        "pushed": null
+      }
     },
     {
       "id": "al-01M2K5VFX7G51FM03JSS1SVJ1G",
@@ -21474,6 +22042,34 @@ window.AUDIT_DATA = {
       "duration_seconds": 1779.0
     },
     {
+      "id": "al-01M2K9MRY6CT65D2PYN2AYSJT7",
+      "shortname": "join-conductor-watch-0915-9",
+      "datetime": "2026-09-15T19:45:31Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "the join of conductor/watch-0915 into main",
+      "summary": "Ninth coordination join: Codex's Owner/reviewer sub-lanes had logged 12 audit entries on owner/* and review/* branches that never merged; unioned by id into main's audit log, verbatim, nothing rewritten; verify-audit-log OK (858 entries, every id claimed once); derived regenerated. Docs only. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/audit/audit-log.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Complete the publication of Codex's review history on main as the ledger's append-only union requires",
+      "done_when": "main carries the 12 rows; verify-audit-log OK; gates 38 green; pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T19:45:30Z",
+      "duration_seconds": 1.0
+    },
+    {
       "id": "al-01M2KBFW9GXG8CAMSV7PQGB2XJ",
       "shortname": "atlas-udg-uia-unreproduced",
       "datetime": "2026-09-15T20:17:47Z",
@@ -21534,6 +22130,381 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T20:32:24Z",
       "duration_seconds": 1235.0
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/accounts-and-first-use.md"
+      ],
+      "datetime": "2026-09-14T20:21:19Z",
+      "done_when": "the five commits with red-first evidence; App and Core green; gates green on the tree; the proof pack with the attended rows; pushed",
+      "duration_seconds": 7506.0,
+      "fan_out": 0,
+      "goal": "accounts as the operator-facing unit and first use on a fresh machine",
+      "id": "al-01M2KDTRBH0RTF2RB89446Q3P2",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "One T1 slice 'accounts + first use' (Rulings 105, 104, 97(i)): the model, the sheet as account rows, Configure..., the composer's account picker, the fresh-machine oracle",
+      "session": "sessions-accounts",
+      "shortname": "lane-sessions-accounts",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "design-slice",
+      "started_at": "2026-09-14T18:16:13Z",
+      "summary": "Five commits red-first: the account is the session's unit (Accounts + DefaultAccount, engine derived, adapterInstallRoot optional with ~/.aide/adapters, expand-migrate-contract from enabledBackends); the sheet lists accounts under providers with derived states, Create stays enabled with the ruled footer, the binder's refusal names Configure; Configure... runs prerequisite rows, the root rule (a git checkout refused), the pinned install on gesture with --ignore-scripts and its log, engine-native Sign in, providers.json written; the per-turn account picker as an operator row at Send, lane.session-new carries engine/model/account, settings change the default for new turns only; the fresh-machine oracle against a local one-package npm registry (394 ms). Core 2650->2710 and App 993->1024 on the tree merged with main 7eb9fcde. The lane's node hit the weekly quota after the merge; the conductor finished its merge commit, renamed SessionAccountOption to AccountOption (R14 b2 gate) and fixed the session-thread spike's SessionConfig call (coverage gate), then pushed. Condition 4 (a live acceptance on the operator's second machine) RUN-PENDING.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T17:10:00Z",
+      "id": "al-01M2KDTRBH4MSHPNF2W1RAH53X",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "three things:\n- resolve the blocker\n- provide a periodic tabular update of tasks with what they do and what their status is so i can track the table instead of snarfing through the reasoning\n- keep going with the next best action after resolving the blocker",
+      "session": "codex-ownership-qualification",
+      "shortname": "three things:",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md"
+      ],
+      "datetime": "2026-09-15T17:17:06Z",
+      "done_when": "Integrated Core corrections and existing ownership gate pass mandatory qualification",
+      "duration_seconds": 2.0,
+      "fan_out": 0,
+      "goal": "Resolve former ownership qualification blocker and close obsolete documentation",
+      "id": "al-01M2KDTRBH4QSDN8M8X7J66XA3",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of 516f7d5ad39ba2f9f7dec4a563c7cfb2836023f7 into conductor/ownership-qualification",
+      "session": "codex-ownership-qualification",
+      "shortname": "ownership-current-qualification",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T17:17:04Z",
+      "summary": "OwnerO8/O9 and Core request resolutions authorize exact docs-only corrections; source/tests/buildinputs unchanged, originalTRXhashes matched. Independent Test/SimplifierPASS3665e51f. Qualify isolated branch; no mainpush. recount_seconds=0 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md",
+        "docs/proof/ownership-qualification-review.md"
+      ],
+      "datetime": "2026-09-15T17:23:33Z",
+      "done_when": "Integrated Core corrections and existing ownership gate pass mandatory qualification",
+      "duration_seconds": 2.0,
+      "fan_out": 0,
+      "goal": "Resolve former ownership qualification blocker and close obsolete documentation",
+      "id": "al-01M2KDTRBHC5SHX53CDYFRYC73",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into conductor/ownership-qualification",
+      "session": "codex-ownership-qualification",
+      "shortname": "ownership-current-qualification",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T17:23:31Z",
+      "summary": "Owner O8/O9 authorize exact Core documentation corrections. Source, tests and build inputs unchanged; original TRX hashes matched. Independent Test Architect and Simplifier PASS at 3665e51f. Holder explicitly released blocking leases. Qualify isolated branch; no main push. recount_seconds=0 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T17:06:31Z",
+      "id": "al-01M2KDTRBHG1Q3H7048P8XBMCX",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "yes keep going finish remaining nodes",
+      "session": "prompt-log",
+      "shortname": "yes keep going finish remaining nodes",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "datetime": "2026-09-15T16:54:16Z",
+      "done_when": "main carries b0b7aebc; gates 38 green in the primary; pushed",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Land Ruling 118 so the Atlas candidate's publication is no longer held on the platform-scope question",
+      "id": "al-01M2KDTRBHHCMJX72BAAVHM7KG",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of conductor/watch-0915 into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-conductor-watch-0915-6",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T16:54:15Z",
+      "summary": "Sixth coordination join of the 2026-09-15 stress test: Ruling 118 lands - the supported-platform authority the Atlas Security lens asked for (ADR-0008:67, App and Daemon net10.0-windows, the caller census), closing Ruling 112 (i) for the Atlas landing with no waiver. Docs only. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/engines-on-the-wire.md"
+      ],
+      "datetime": "2026-09-14T19:39:44Z",
+      "done_when": "merge clean; recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "duration_seconds": 541.0,
+      "fan_out": 0,
+      "goal": "a non-claude engine gets its engine-appropriate session/new and its account's host from the product's own hosts",
+      "id": "al-01M2KDTRBHHR9CN3EKD4T2DBPX",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of conductor/addendum-c into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-conductor-seam-engine-row",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T19:30:43Z",
+      "summary": "Joined conductor/addendum-c (502070d3): the engines lane's seam request resolved - GovernedRunHost and CompileCallHost construct AcpLaneClient with engine: EngineCatalog.Find(request.EngineId) and diagnostics: Report, and start the child with EngineCatalog.LaunchEnvironment(row, providers, label) (new overload; a lookup, never a binding; the compile child keeps its output cap); TheHostBindsItsClientToItsEngineTests (6, red-first CS0117; the source oracle scans by paren depth after a lambda's ';' stopped the regex). Also DC-221 (a drain that only wakes on an event) and DC-222 (an oracle over an unpumped derivation) from the r95 lane, its attended rows W-1..W-6, the liveness file. Full recount. recount_seconds=539 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/accounts-and-first-use.md"
+      ],
+      "datetime": "2026-09-14T23:42:49Z",
+      "done_when": "merge clean; recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "duration_seconds": 495.0,
+      "fan_out": 0,
+      "goal": "one derivation of 'installed' and of the engine's model, read by the sheet, first use and the dialog",
+      "id": "al-01M2KDTRBHJRS9WTMMT5FK50T4",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of conductor/addendum-c into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-conductor-catalog-seams",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T23:34:34Z",
+      "summary": "Joined conductor/addendum-c (beafbee1): the accounts lane's two seam requests resolved - EngineCatalog.InstallRefusal(engineId, root[, locator]) is the one 'installed' reading (an adapter's entry on disk; a native CLI's executable resolved; a row that cannot launch reads its launch refusal) and both consumers (the sheet's LaunchRefusal, FirstUse.InstallAdapterAsync) read it - the sheet had read Arguments[0] as the entry, which for a native row is '--acp' (DC-223); EngineRow.DefaultModel per row from the spike's observed currentModelId/availableModels, the dialog's DefaultModelFor table removed (DC-224); DC-225 (a PATH resolver preferring an extensionless POSIX script over its .cmd shim on Windows) registered; the lane's finding (c) filed as a DC-220 instance. TheCatalogKnowsWhatIsInstalledAndWhatModelTests (8, red-first CS0117). Attended rows F-1..F-6 for the operator (first use on their second machine is F-5). Pack finding: three joins stopped at step 1 on the primary's append-only .agents ledgers colliding with a lane's older copies; the script should read git's reason and resolve ledger paths to the primary's copy. Full recount. recount_seconds=494 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "datetime": "2026-09-15T17:29:20Z",
+      "done_when": "main carries e112bee7 and 516f7d5a; gates 38 green in the primary; pushed",
+      "duration_seconds": 1.0,
+      "fan_out": 0,
+      "goal": "Land Codex's closing proof docs and the Claude lane's section-2/INV-0012 corrections on main under Ruling 108",
+      "id": "al-01M2KDTRBHNZFHSPKGM276PHT6",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of conductor/ownership-qualification into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-codex-ownership-qualification",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T17:29:19Z",
+      "summary": "Join #7 of the 2026-09-15 stress test: Codex's docs-only candidate e112bee7 (base 0b3644f2) reviewed by the Claude conductor - 18 files, all docs/ledgers/derived/site figures, no source or test change, 38/38 at 3284acc5, failing set empty - joined; it carries the Claude lane's 516f7d5a (section-2 closure paragraph, INV-0012's two link ids). The primary's local-only 0b3644f2 rides to origin with it. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/plans/ownership-qualification.md",
+        "docs/proof/ownership-qualification.md"
+      ],
+      "datetime": "2026-09-15T17:11:50Z",
+      "done_when": "Current qualification verified and status/correction handoff committed",
+      "duration_seconds": 129.0,
+      "fan_out": 2,
+      "goal": "Resolve stale ownership qualification blocker and continue bounded next action",
+      "id": "al-01M2KDTRBHPCYRBEADH2HCSKFS",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "Resolve the blocker, provide periodic task status tables, and continue with the next best action.",
+      "session": "codex-ownership-qualification",
+      "shortname": "ownership-qualification-plan",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "optimize-graph",
+      "started_at": "2026-09-15T17:09:41Z",
+      "summary": "OwnerO8 T1: publishedfix verified; main alreadycontainsf7fd470. G->V/Q->C, separate readonlyreview andqualification, no duplicateimplementation. Full inputtree/buildpath/TRXhash match allows explicitreceipt reuse. NewCore obsoleteparagraph requestreq-01M2K0QEPYF0CEWHPBKYQ72GY6. 35Conductor/12review calls planned, no speedup claim.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/engines-on-the-wire.md"
+      ],
+      "datetime": "2026-09-14T19:20:38Z",
+      "done_when": "recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "duration_seconds": 533.0,
+      "fan_out": 0,
+      "goal": "the four engines launchable from the product's catalog, each on an observed line",
+      "id": "al-01M2KDTRBHSFWFSA8TDRXW9P1A",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-agentplane-engines",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T19:11:45Z",
+      "summary": "Joined lane/agentplane-engines (7cd0fc77): EngineCatalog carries five rows - copilot Native 'copilot --acp' (never --no-auto-login; COPILOT_GH_HOST from the account's host), codex Adapter with entry dist/index.js observed, gemini Native 'gemini --acp' (npm shim resolved to node bundle/gemini.js), grok Native 'grok agent stdio' (npm source @xai-official/grok 1.0.30, lazy bootstrap into GROK_HOME); ResolveLaunch resolves Native rows from PATH (exe first, .cmd shim via node, install root) with AP-0022 EngineNotOnPath; AcpLaneClient sends _meta.claudeCode.options only for a row that ReadsClaudeCodeMeta, byte-exact {cwd, mcpServers: []} otherwise (4-engine theory); initialize observed: copilot 1.0.84-6 in 1,012 ms, codex-acp 1.10.0 in 429 ms, gemini-cli 0.58.0 in 1,204 ms, grok 1.0.30 in 3,015 ms cold / 458 ms warm; simplify: comment retired; ProviderAccount.Host read; LaunchEnvironment refuses a host an engine cannot honour. Core 2650->2683. Not observed: session/prompt on the new engines, sign-in. Two derived site files regenerated. Seam request req-01M2GKC2RY667S51X22QVV7FGJ (the run and compile hosts construct the client without its row and start the engine before the binding is authorised) taken by the conductor as the next slice. recount_seconds=531 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/accounts-and-first-use.md"
+      ],
+      "datetime": "2026-09-14T20:31:42Z",
+      "done_when": "recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "duration_seconds": 504.0,
+      "fan_out": 0,
+      "goal": "first use on a fresh machine and per-session, per-turn account switching on main",
+      "id": "al-01M2KDTRBHYS8ZYMM7VX2K7NCG",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-sessions-accounts",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T20:23:18Z",
+      "summary": "Joined lane/sessions-accounts (f833c43b): Ruling 105 (1) SessionConfig.Accounts + DefaultAccount, engine derived from provider, expand-migrate-contract from enabledBackends (singleton maps, otherwise 'choose one'); 104 (2) adapterInstallRoot optional, default ~/.aide/adapters, written only when overridden; 105 (2)/104 (3)/97(i) the sheet lists accounts under every catalog provider with derived states (not configured / needs sign-in / ready from launch path + health), Create enabled with the ruled footer, the binder's refusal names Configure; 104 (1)(a)-(e) Configure... per provider - node/npm/claude rows with cited install instructions, the root rule (a git checkout refused, tested against this machine's spike path), the pinned install on gesture with --ignore-scripts and a visible log, engine-native Sign in, providers.json written (ready after exit 0 else needs-login); 105 (2) the composer's per-turn account picker (non-ready rows disabled with their state), override as an operator row at Send, lane.session-new carries engine/model/account, settings change the default for new turns only; 104 condition 2 the fresh-machine oracle under an empty HOME against a local one-package npm registry (394 ms; a bare tarball does not work - 105 transitive deps). App 1013->1024, Core 2693->2710. The node stopped at the weekly quota after its merge with main; the conductor finished the merge commit, renamed SessionAccountOption->AccountOption (R14 b2) and fixed the session-thread spike (coverage), and pushed. Merge conflicts: three coordination ledgers, the primary's copies taken. Condition 4 (a live acceptance on the operator's second machine) RUN-PENDING. recount_seconds=503 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md"
+      ],
+      "datetime": "2026-09-15T17:23:18Z",
+      "git": {
+        "branch": "conductor/ownership-qualification",
+        "pushed": null,
+        "sha": "51c5c9e18db750bb00cab0176a27c7b3654afcb6",
+        "short": "51c5c9e18"
+      },
+      "id": "al-01M2KDTRBHZAEGCQPGF0VGAYV2",
+      "kind": "manual",
+      "outcome": "blocked",
+      "prompt": "Resolve the blocker and keep going with the next best action.",
+      "session": "codex-ownership-qualification",
+      "shortname": "ownership-checkpoint-correction",
+      "signals": {
+        "acceptance_met": false
+      },
+      "skill": null,
+      "summary": "The join appended acceptance before its checkpoint. Step 7 was refused by peer register/derived leases, so full qualification had not run. Holder subsequently explicitly released both leases in atlas-e1-native-class-view log sequences 99 and 100. Continue through the prescribed join; no bypass or expiry-based consent.",
+      "supersedes": "al-01M2K151CMPGVH9GDD51JHVA7Y",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md",
+        "docs/proof/ownership-qualification-review.md"
+      ],
+      "datetime": "2026-09-15T17:27:31Z",
+      "done_when": "Required checks and independent review pass, status records are corrected, and committed evidence is handed to Core",
+      "duration_seconds": 24.0,
+      "fan_out": 4,
+      "git": {
+        "branch": "conductor/ownership-qualification",
+        "pushed": null,
+        "sha": "3284acc55d906cdd5beb7e80527200b8bdf3f491",
+        "short": "3284acc55"
+      },
+      "goal": "Resolve ownership qualification blockers and close the bounded programme",
+      "id": "al-01M2KDTRBHZQ8R3PRPV1HWBAFW",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Resolve the blocker, provide periodic task tables, and continue with the next best action.",
+      "session": "codex-ownership-qualification",
+      "shortname": "ownership-qualified-close",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-15T17:27:07Z",
+      "summary": "Owner O10 authorized historical status reconciliation after full38 PASS at3284acc5. Published implementation remains unchanged. Core documentation corrections consumed under O9. Native holder explicitly released blocking leases. Independent Test Architect/Simplifier PASS3665e51f. Reused3743 executed test and5 exit-path receipts only after matching source/tests/build inputs and hashes. Final status metadata creates expected index drift before mandated regeneration. Main publication remains Core; retain evidence worktrees.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     }
   ],
   "changes": [
