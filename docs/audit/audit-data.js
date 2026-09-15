@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:05:17Z",
+  "generated": "2026-09-15T21:28:22Z",
   "audit": [
     {
       "actor": null,
@@ -18507,6 +18507,42 @@ window.AUDIT_DATA = {
         "branch": "owner/atlas-views",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2KFH2P3PK10990QDT77RPG4",
+      "shortname": "atlas-owner-e1-relation-order-scope",
+      "datetime": "2026-09-15T21:28:21Z",
+      "session": "codex-atlas-views-owner",
+      "prompt": "You are separate Astra programme Owner for existing bounded Atlas5views programme (E1 Sequence/Activity; E2domain/layer/Azure). Read AGENTS and existing Owner note C:/Projects/ai-de-owner-atlas-views/docs/notes/atlas-views-owner.md latest4a81eb11. Need ONE read-only decision, no implementation or review veto override. Conductor root scope experiments only Ruling121; product/foundation/mocks not granted. E1 frozen1ab5d9e985fd86ef75adb8d2a11c72fe05b530cc tree C:/Projects/ai-de-atlas-behavior-views: finite4synthetic structural-source graph/page cases, notCFG. Independent reviewer observed sixlegacygroups,8faults/10rejections,30nodes30relations28pages16recompositions matching fixedledger205d5da4 and OwnerD1-D5. Finding: design docs/design/atlas-behavior-views.md at83e1139b §5.1 orders edges by endpoint ordinal, kind rank, armindex. Subject and expected table both sort relationID lexicographically; no auxiliary endpointordinal/kindrank defined byOwner. Options A freeze exact new orderkey + implement/retest (expands fixed experiment semantics); B explicitly narrow experiment to relation SET preservation, keep production display ordering unqualified and amend experiment claims; existing design ordering remains future requirement. Recommendation B: Ruling121 goal structural relation preservation/page feasibility, no product rendering; do not invent new ordering policy to clear scope. Check evidence, decide/record via existing Owner mechanisms if warranted, exact Owner note lease session codex-atlas-views-owner agent codex-astra-owner, own existing tree. Budget8calls/10min. Return decision and constraints to root promptly then commit receipt/audit under protocols. Reviewer still independently clears bounded experiment; never override veto.",
+      "summary": "Directly inspected frozen subject, expected and recomposition relation-ID sorts and design endpoint-ordinal/kind-rank clause. Chose explicit relation-set scope; required claim/ledger correction, retained primary/auxiliary order and all D1-D5 predicates, left production order unqualified and reviewer veto intact. No experiment executed. Eight orchestration calls planned; no AIDE contract environment.",
+      "kind": "manual",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "codex-astra-owner",
+      "artifacts": [
+        "docs/notes/atlas-views-owner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Settle one bounded E1 relation-ordering scope finding without implementation or veto override.",
+      "done_when": "Owner note and audit record exact claim limits and retained obligations for Conductor and independent review.",
+      "tier": "T2",
+      "main_calls": 8,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T21:26:45Z",
+      "duration_seconds": 96.0,
+      "git": {
+        "sha": "4a81eb11ba3d190d59a2680be98be9ee0ca9238a",
+        "short": "4a81eb11b",
+        "branch": "owner/atlas-views",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -22343,6 +22379,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "a766afa88cb4cbbd20c84dc383b213a4ab4e5e94",
         "after": "a766afa88cb4cbbd20c84dc383b213a4ab4e5e94",
+        "branch": "owner/atlas-views",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2KFH2JPKS3H0SNG3N6A4F5B",
+      "datetime": "2026-09-15T21:28:21Z",
+      "session": "codex-atlas-views-owner",
+      "kind": "decision",
+      "skill": "design-slice",
+      "title": "E1 experiment qualifies relation sets; display ordering remains open",
+      "prompt": "You are separate Astra programme Owner for existing bounded Atlas5views programme (E1 Sequence/Activity; E2domain/layer/Azure). Read AGENTS and existing Owner note C:/Projects/ai-de-owner-atlas-views/docs/notes/atlas-views-owner.md latest4a81eb11. Need ONE read-only decision, no implementation or review veto override. Conductor root scope experiments only Ruling121; product/foundation/mocks not granted. E1 frozen1ab5d9e985fd86ef75adb8d2a11c72fe05b530cc tree C:/Projects/ai-de-atlas-behavior-views: finite4synthetic structural-source graph/page cases, notCFG. Independent reviewer observed sixlegacygroups,8faults/10rejections,30nodes30relations28pages16recompositions matching fixedledger205d5da4 and OwnerD1-D5. Finding: design docs/design/atlas-behavior-views.md at83e1139b §5.1 orders edges by endpoint ordinal, kind rank, armindex. Subject and expected table both sort relationID lexicographically; no auxiliary endpointordinal/kindrank defined byOwner. Options A freeze exact new orderkey + implement/retest (expands fixed experiment semantics); B explicitly narrow experiment to relation SET preservation, keep production display ordering unqualified and amend experiment claims; existing design ordering remains future requirement. Recommendation B: Ruling121 goal structural relation preservation/page feasibility, no product rendering; do not invent new ordering policy to clear scope. Check evidence, decide/record via existing Owner mechanisms if warranted, exact Owner note lease session codex-atlas-views-owner agent codex-astra-owner, own existing tree. Budget8calls/10min. Return decision and constraints to root promptly then commit receipt/audit under protocols. Reviewer still independently clears bounded experiment; never override veto.",
+      "summary": "Owner chose B: exact relation-set and page preservation only; primary and auxiliary ordering remain required; production display-order requirement remains unqualified. Independent review retains veto.",
+      "rationale": "Frozen subject and oracle both canonicalize relation IDs; this does not demonstrate the different design display-order key. No new policy is admitted to enlarge the fixed experiment.",
+      "artifacts": [
+        "docs/notes/atlas-views-owner.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "4a81eb11",
+        "after": "4a81eb11ba3d190d59a2680be98be9ee0ca9238a",
         "branch": "owner/atlas-views",
         "pushed": null,
         "commits": []

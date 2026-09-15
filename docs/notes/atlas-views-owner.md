@@ -622,3 +622,66 @@ does not clear that review. The experiment stays in the existing four Ruling-121
 files, with four fixtures, no new packages, no production wire/source authority and
 no native/runtime/CFG claim. Any incompatible expected edge or count returns here;
 the author must not silently alter the oracle to fit generated output.
+
+## E1 relation ordering scope decision — 2026-09-15
+
+**Goal:** settle the relation-ordering finding for the existing bounded structural
+experiment. **Done when:** one exact scope decision and its retained requirements
+are recorded for Conductor and independent review. **Tier T2; fan-out 0.** The
+opening read-only triage called this T1; the recorded scope decision uses the
+programme's T2 decision tier. No product authoring or reviewer veto clearance.
+
+This continues the existing programme graph: inspect frozen evidence → decide →
+record and return to the independent reviewer. Stage-0 triage skips a new planning
+artifact for this bounded decision and receipt. Surface list: Owner scope note →
+experiment proof/RESULT claims → independent ledger/review; production model, wire,
+UI and compute readers receive no change. The design requirement remains visible.
+
+**Verified by direct source/document reads:** at experiment
+`1ab5d9e985fd86ef75adb8d2a11c72fe05b530cc`,
+`spikes/atlas-behavior-contract/Program.cs` lines 396, 636 and 694 sort subject,
+expected and recomposed relations by relation ID using ordinal string comparison.
+Design `83e1139b580ef977bebcf68b38e84dd1a871da82` §5.1 instead specifies endpoint
+ordinal, kind rank and arm index. The D1–D5 supplement defines complete relation
+sets and auxiliary order; it does not supply an auxiliary endpoint ordinal or
+relation-kind rank for that display key. The independent ledger's recomposition
+clause says “relation and order,” so leaving that claim unqualified is insufficient.
+RESULT's 30 nodes, 30 edges, 28 pages and 16 recompositions were read as recorded
+experiment output, not independently executed by this Owner.
+
+**Decision B: narrow only the bounded experiment's relation-order claim.** The
+four fixed fixtures qualify exact structural **relation-set preservation** and
+page feasibility, subject to independent review. Equality still includes canonical
+identity, endpoints, kind, arm index, predicate, source anchor and confidence.
+Per-page closure, directional outside-window stubs, their metadata and complete
+recomposition remain required. Missing, extra, duplicated or changed relations
+cannot be excused as ordering differences. All D1–D5 inventories and cap controls
+remain unchanged.
+
+Primary source-ordinal order and the D1–D5 canonical auxiliary order remain required.
+Relation-ID sorting is an internal comparison canonicalization, not evidence for
+the design's relation display order. Stable relation identity does not acquire a
+display-order component. No new ordinal/rank policy is chosen to make this fixed
+experiment satisfy a different contract.
+
+Conductor must make the narrower claim explicit in the admitted experiment
+proof/RESULT and obtain the independent reviewer's corresponding ledger disposition.
+Where the ledger says “relation and order,” retain primary/auxiliary ordering and
+state that relation display ordering is outside this experiment's qualification.
+This is an explicit Owner scope amendment, not a silent change of expected output.
+The production §5.1 ordering requirement remains **unqualified and unmet by this
+experiment**. Before product admission, its exact auxiliary endpoint and kind-rank
+semantics need a frozen policy and independent falsifying proof on the relevant
+rendered surfaces. This decision neither deletes nor clears that future requirement.
+
+No new fixture, changed expected relation set, semantic implementation expansion,
+package, product/foundation/mock grant, executable CFG or native/runtime claim is
+admitted. Independent Test/UML and other triggered reviewers retain their vetoes.
+The Owner does not convert the recorded experiment totals into an acceptance verdict.
+
+**Completed:** one bounded scope decision. **Remaining:** claim correction and
+independent experiment disposition; product ordering and all production gates.
+Planned and actual shape: evidence → decision → recorded handoff, no fan-out or
+implementation. The existing Owner tree is retained for programme continuity.
+No AIDE session/contract environment was present; no registered episode-close event
+can be emitted by this worker. Evidence is named in this note and the official audit.
