@@ -17,3 +17,12 @@
 {"agent": "codex-astra-conductor", "at": 1789482538.947008, "kind": "claim", "path": "site/collaboration.html", "seq": 17, "session": "codex-surface-ownership-conductor", "ttl": 300.0, "wi": "ownership-plan"}
 {"agent": "codex-astra-conductor", "at": 1789482539.013077, "kind": "claim", "path": "site/index.html", "seq": 18, "session": "codex-surface-ownership-conductor", "ttl": 300.0, "wi": "ownership-plan"}
 {"agent": "codex-astra-conductor", "at": 1789482539.0803533, "kind": "claim", "path": "site/model.html", "seq": 19, "session": "codex-surface-ownership-conductor", "ttl": 300.0, "wi": "ownership-plan"}
+{"agent": "codex-astra-conductor", "at": 1789482682.1493318, "kind": "release", "path": "docs/coordination/recursive-surface-ownership.md", "seq": 20, "session": "codex-surface-ownership-conductor", "wi": "WI-0"}
+{"agent": "codex-astra-conductor", "at": 1789482682.2024858, "kind": "release", "path": "docs/coordination/recursive-surface-ownership.html", "seq": 21, "session": "codex-surface-ownership-conductor", "wi": "WI-0"}
+{"agent": "codex-astra-conductor", "at": 1789482682.2610018, "kind": "release", "path": "docs/plans/recursive-surface-ownership.md", "seq": 22, "session": "codex-surface-ownership-conductor", "wi": "WI-0"}
+{"agent": "codex-astra-conductor", "at": 1789482682.3141456, "kind": "release", "path": "docs/coordination/recursive-surface-ownership-request.txt", "seq": 23, "session": "codex-surface-ownership-conductor", "wi": "WI-0"}
+{"agent": "codex-astra-conductor", "at": 1789482682.3714461, "kind": "release", "path": "docs/coordination/recursive-surface-ownership-trailer.txt", "seq": 24, "session": "codex-surface-ownership-conductor", "wi": "WI-0"}
+{"agent": "codex-astra-conductor", "at": 1789482682.4279222, "kind": "release", "path": "docs/coordination/recursive-surface-ownership-join.json", "seq": 25, "session": "codex-surface-ownership-conductor", "wi": "WI-0"}
+{"agent": "codex-astra-conductor", "at": 1789482682.488123, "kind": "release", "path": "site/collaboration.html", "seq": 26, "session": "codex-surface-ownership-conductor", "wi": "WI-0"}
+{"agent": "codex-astra-conductor", "at": 1789482682.5421479, "kind": "release", "path": "site/index.html", "seq": 27, "session": "codex-surface-ownership-conductor", "wi": "WI-0"}
+{"agent": "codex-astra-conductor", "at": 1789482682.5963225, "kind": "release", "path": "site/model.html", "seq": 28, "session": "codex-surface-ownership-conductor", "wi": "WI-0"}

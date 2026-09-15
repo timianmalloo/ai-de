@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:18:39Z",
+  "generated": "2026-09-15T14:31:29Z",
   "audit": [
     {
       "actor": null,
@@ -16172,135 +16172,296 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2GNTFZ2WXX6ST5SJQQ52Z79",
-      "shortname": "join-agentplane-engines",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/engines-on-the-wire.md"
+      ],
       "datetime": "2026-09-14T19:20:38Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "the join of the resolved merge into main",
-      "summary": "Joined lane/agentplane-engines (7cd0fc77): EngineCatalog carries five rows - copilot Native 'copilot --acp' (never --no-auto-login; COPILOT_GH_HOST from the account's host), codex Adapter with entry dist/index.js observed, gemini Native 'gemini --acp' (npm shim resolved to node bundle/gemini.js), grok Native 'grok agent stdio' (npm source @xai-official/grok 1.0.30, lazy bootstrap into GROK_HOME); ResolveLaunch resolves Native rows from PATH (exe first, .cmd shim via node, install root) with AP-0022 EngineNotOnPath; AcpLaneClient sends _meta.claudeCode.options only for a row that ReadsClaudeCodeMeta, byte-exact {cwd, mcpServers: []} otherwise (4-engine theory); initialize observed: copilot 1.0.84-6 in 1,012 ms, codex-acp 1.10.0 in 429 ms, gemini-cli 0.58.0 in 1,204 ms, grok 1.0.30 in 3,015 ms cold / 458 ms warm; simplify: comment retired; ProviderAccount.Host read; LaunchEnvironment refuses a host an engine cannot honour. Core 2650->2683. Not observed: session/prompt on the new engines, sign-in. Two derived site files regenerated. Seam request req-01M2GKC2RY667S51X22QVV7FGJ (the run and compile hosts construct the client without its row and start the engine before the binding is authorised) taken by the conductor as the next slice. recount_seconds=531 (docs_only=False).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/engines-on-the-wire.md"
-      ],
-      "tags": [],
-      "outcome": "success",
+      "done_when": "recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "duration_seconds": 533.0,
+      "fan_out": 0,
       "goal": "the four engines launchable from the product's catalog, each on an observed line",
-      "done_when": "recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
-      "tier": "T1",
-      "fan_out": 0,
+      "id": "al-01M2GNTFZ2WXX6ST5SJQQ52Z79",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-agentplane-engines",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-09-14T19:11:45Z",
-      "duration_seconds": 533.0
+      "summary": "Joined lane/agentplane-engines (7cd0fc77): EngineCatalog carries five rows - copilot Native 'copilot --acp' (never --no-auto-login; COPILOT_GH_HOST from the account's host), codex Adapter with entry dist/index.js observed, gemini Native 'gemini --acp' (npm shim resolved to node bundle/gemini.js), grok Native 'grok agent stdio' (npm source @xai-official/grok 1.0.30, lazy bootstrap into GROK_HOME); ResolveLaunch resolves Native rows from PATH (exe first, .cmd shim via node, install root) with AP-0022 EngineNotOnPath; AcpLaneClient sends _meta.claudeCode.options only for a row that ReadsClaudeCodeMeta, byte-exact {cwd, mcpServers: []} otherwise (4-engine theory); initialize observed: copilot 1.0.84-6 in 1,012 ms, codex-acp 1.10.0 in 429 ms, gemini-cli 0.58.0 in 1,204 ms, grok 1.0.30 in 3,015 ms cold / 458 ms warm; simplify: comment retired; ProviderAccount.Host read; LaunchEnvironment refuses a host an engine cannot honour. Core 2650->2683. Not observed: session/prompt on the new engines, sign-in. Two derived site files regenerated. Seam request req-01M2GKC2RY667S51X22QVV7FGJ (the run and compile hosts construct the client without its row and start the engine before the binding is authorised) taken by the conductor as the next slice. recount_seconds=531 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2GPXF95DJBM8HW4KVPMF43F",
-      "shortname": "join-conductor-seam-engine-row",
-      "datetime": "2026-09-14T19:39:44Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "the join of conductor/addendum-c into main",
-      "summary": "Joined conductor/addendum-c (502070d3): the engines lane's seam request resolved - GovernedRunHost and CompileCallHost construct AcpLaneClient with engine: EngineCatalog.Find(request.EngineId) and diagnostics: Report, and start the child with EngineCatalog.LaunchEnvironment(row, providers, label) (new overload; a lookup, never a binding; the compile child keeps its output cap); TheHostBindsItsClientToItsEngineTests (6, red-first CS0117; the source oracle scans by paren depth after a lambda's ';' stopped the regex). Also DC-221 (a drain that only wakes on an event) and DC-222 (an oracle over an unpumped derivation) from the r95 lane, its attended rows W-1..W-6, the liveness file. Full recount. recount_seconds=539 (docs_only=False).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/engines-on-the-wire.md"
       ],
-      "tags": [],
-      "outcome": "success",
+      "datetime": "2026-09-14T19:39:44Z",
+      "done_when": "merge clean; recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "duration_seconds": 541.0,
+      "fan_out": 0,
       "goal": "a non-claude engine gets its engine-appropriate session/new and its account's host from the product's own hosts",
-      "done_when": "merge clean; recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
-      "tier": "T1",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-09-14T19:30:43Z",
-      "duration_seconds": 541.0
-    },
-    {
-      "id": "al-01M2GS9KKEXPF2018MXVSYP8XM",
-      "shortname": "lane-sessions-accounts",
-      "datetime": "2026-09-14T20:21:19Z",
-      "session": "sessions-accounts",
-      "prompt": "One T1 slice 'accounts + first use' (Rulings 105, 104, 97(i)): the model, the sheet as account rows, Configure..., the composer's account picker, the fresh-machine oracle",
-      "summary": "Five commits red-first: the account is the session's unit (Accounts + DefaultAccount, engine derived, adapterInstallRoot optional with ~/.aide/adapters, expand-migrate-contract from enabledBackends); the sheet lists accounts under providers with derived states, Create stays enabled with the ruled footer, the binder's refusal names Configure; Configure... runs prerequisite rows, the root rule (a git checkout refused), the pinned install on gesture with --ignore-scripts and its log, engine-native Sign in, providers.json written; the per-turn account picker as an operator row at Send, lane.session-new carries engine/model/account, settings change the default for new turns only; the fresh-machine oracle against a local one-package npm registry (394 ms). Core 2650->2710 and App 993->1024 on the tree merged with main 7eb9fcde. The lane's node hit the weekly quota after the merge; the conductor finished its merge commit, renamed SessionAccountOption to AccountOption (R14 b2 gate) and fixed the session-thread spike's SessionConfig call (coverage gate), then pushed. Condition 4 (a live acceptance on the operator's second machine) RUN-PENDING.",
+      "id": "al-01M2GPXF95DJBM8HW4KVPMF43F",
       "kind": "skill",
-      "skill": "design-slice",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/accounts-and-first-use.md"
-      ],
-      "tags": [],
       "outcome": "success",
-      "goal": "accounts as the operator-facing unit and first use on a fresh machine",
-      "done_when": "the five commits with red-first evidence; App and Core green; gates green on the tree; the proof pack with the attended rows; pushed",
-      "tier": "T1",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": false
-      },
-      "started_at": "2026-09-14T18:16:13Z",
-      "duration_seconds": 7506.0
-    },
-    {
-      "id": "al-01M2GSWMFVBW7QM3J32VN5P909",
-      "shortname": "join-sessions-accounts",
-      "datetime": "2026-09-14T20:31:42Z",
-      "session": "claude-conductor-addendum-c",
-      "prompt": "the join of the resolved merge into main",
-      "summary": "Joined lane/sessions-accounts (f833c43b): Ruling 105 (1) SessionConfig.Accounts + DefaultAccount, engine derived from provider, expand-migrate-contract from enabledBackends (singleton maps, otherwise 'choose one'); 104 (2) adapterInstallRoot optional, default ~/.aide/adapters, written only when overridden; 105 (2)/104 (3)/97(i) the sheet lists accounts under every catalog provider with derived states (not configured / needs sign-in / ready from launch path + health), Create enabled with the ruled footer, the binder's refusal names Configure; 104 (1)(a)-(e) Configure... per provider - node/npm/claude rows with cited install instructions, the root rule (a git checkout refused, tested against this machine's spike path), the pinned install on gesture with --ignore-scripts and a visible log, engine-native Sign in, providers.json written (ready after exit 0 else needs-login); 105 (2) the composer's per-turn account picker (non-ready rows disabled with their state), override as an operator row at Send, lane.session-new carries engine/model/account, settings change the default for new turns only; 104 condition 2 the fresh-machine oracle under an empty HOME against a local one-package npm registry (394 ms; a bare tarball does not work - 105 transitive deps). App 1013->1024, Core 2693->2710. The node stopped at the weekly quota after its merge with main; the conductor finished the merge commit, renamed SessionAccountOption->AccountOption (R14 b2) and fixed the session-thread spike (coverage), and pushed. Merge conflicts: three coordination ledgers, the primary's copies taken. Condition 4 (a live acceptance on the operator's second machine) RUN-PENDING. recount_seconds=503 (docs_only=False).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/proof/accounts-and-first-use.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "first use on a fresh machine and per-session, per-turn account switching on main",
-      "done_when": "recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
-      "tier": "T1",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-09-14T20:23:18Z",
-      "duration_seconds": 504.0
-    },
-    {
-      "id": "al-01M2H4TJZCNBFCMPEFFHY7195C",
-      "shortname": "join-conductor-catalog-seams",
-      "datetime": "2026-09-14T23:42:49Z",
-      "session": "claude-conductor-addendum-c",
       "prompt": "the join of conductor/addendum-c into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-conductor-seam-engine-row",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T19:30:43Z",
+      "summary": "Joined conductor/addendum-c (502070d3): the engines lane's seam request resolved - GovernedRunHost and CompileCallHost construct AcpLaneClient with engine: EngineCatalog.Find(request.EngineId) and diagnostics: Report, and start the child with EngineCatalog.LaunchEnvironment(row, providers, label) (new overload; a lookup, never a binding; the compile child keeps its output cap); TheHostBindsItsClientToItsEngineTests (6, red-first CS0117; the source oracle scans by paren depth after a lambda's ';' stopped the regex). Also DC-221 (a drain that only wakes on an event) and DC-222 (an oracle over an unpumped derivation) from the r95 lane, its attended rows W-1..W-6, the liveness file. Full recount. recount_seconds=539 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/accounts-and-first-use.md"
+      ],
+      "datetime": "2026-09-14T20:21:19Z",
+      "done_when": "the five commits with red-first evidence; App and Core green; gates green on the tree; the proof pack with the attended rows; pushed",
+      "duration_seconds": 7506.0,
+      "fan_out": 0,
+      "goal": "accounts as the operator-facing unit and first use on a fresh machine",
+      "id": "al-01M2GS9KKEXPF2018MXVSYP8XM",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "One T1 slice 'accounts + first use' (Rulings 105, 104, 97(i)): the model, the sheet as account rows, Configure..., the composer's account picker, the fresh-machine oracle",
+      "session": "sessions-accounts",
+      "shortname": "lane-sessions-accounts",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "design-slice",
+      "started_at": "2026-09-14T18:16:13Z",
+      "summary": "Five commits red-first: the account is the session's unit (Accounts + DefaultAccount, engine derived, adapterInstallRoot optional with ~/.aide/adapters, expand-migrate-contract from enabledBackends); the sheet lists accounts under providers with derived states, Create stays enabled with the ruled footer, the binder's refusal names Configure; Configure... runs prerequisite rows, the root rule (a git checkout refused), the pinned install on gesture with --ignore-scripts and its log, engine-native Sign in, providers.json written; the per-turn account picker as an operator row at Send, lane.session-new carries engine/model/account, settings change the default for new turns only; the fresh-machine oracle against a local one-package npm registry (394 ms). Core 2650->2710 and App 993->1024 on the tree merged with main 7eb9fcde. The lane's node hit the weekly quota after the merge; the conductor finished its merge commit, renamed SessionAccountOption to AccountOption (R14 b2 gate) and fixed the session-thread spike's SessionConfig call (coverage gate), then pushed. Condition 4 (a live acceptance on the operator's second machine) RUN-PENDING.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/accounts-and-first-use.md"
+      ],
+      "datetime": "2026-09-14T20:31:42Z",
+      "done_when": "recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "duration_seconds": 504.0,
+      "fan_out": 0,
+      "goal": "first use on a fresh machine and per-session, per-turn account switching on main",
+      "id": "al-01M2GSWMFVBW7QM3J32VN5P909",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-sessions-accounts",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T20:23:18Z",
+      "summary": "Joined lane/sessions-accounts (f833c43b): Ruling 105 (1) SessionConfig.Accounts + DefaultAccount, engine derived from provider, expand-migrate-contract from enabledBackends (singleton maps, otherwise 'choose one'); 104 (2) adapterInstallRoot optional, default ~/.aide/adapters, written only when overridden; 105 (2)/104 (3)/97(i) the sheet lists accounts under every catalog provider with derived states (not configured / needs sign-in / ready from launch path + health), Create enabled with the ruled footer, the binder's refusal names Configure; 104 (1)(a)-(e) Configure... per provider - node/npm/claude rows with cited install instructions, the root rule (a git checkout refused, tested against this machine's spike path), the pinned install on gesture with --ignore-scripts and a visible log, engine-native Sign in, providers.json written (ready after exit 0 else needs-login); 105 (2) the composer's per-turn account picker (non-ready rows disabled with their state), override as an operator row at Send, lane.session-new carries engine/model/account, settings change the default for new turns only; 104 condition 2 the fresh-machine oracle under an empty HOME against a local one-package npm registry (394 ms; a bare tarball does not work - 105 transitive deps). App 1013->1024, Core 2693->2710. The node stopped at the weekly quota after its merge with main; the conductor finished the merge commit, renamed SessionAccountOption->AccountOption (R14 b2) and fixed the session-thread spike (coverage), and pushed. Merge conflicts: three coordination ledgers, the primary's copies taken. Condition 4 (a live acceptance on the operator's second machine) RUN-PENDING. recount_seconds=503 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/accounts-and-first-use.md"
+      ],
+      "datetime": "2026-09-14T23:42:49Z",
+      "done_when": "merge clean; recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "duration_seconds": 495.0,
+      "fan_out": 0,
+      "goal": "one derivation of 'installed' and of the engine's model, read by the sheet, first use and the dialog",
+      "id": "al-01M2H4TJZCNBFCMPEFFHY7195C",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of conductor/addendum-c into main",
+      "session": "claude-conductor-addendum-c",
+      "shortname": "join-conductor-catalog-seams",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-14T23:34:34Z",
       "summary": "Joined conductor/addendum-c (beafbee1): the accounts lane's two seam requests resolved - EngineCatalog.InstallRefusal(engineId, root[, locator]) is the one 'installed' reading (an adapter's entry on disk; a native CLI's executable resolved; a row that cannot launch reads its launch refusal) and both consumers (the sheet's LaunchRefusal, FirstUse.InstallAdapterAsync) read it - the sheet had read Arguments[0] as the entry, which for a native row is '--acp' (DC-223); EngineRow.DefaultModel per row from the spike's observed currentModelId/availableModels, the dialog's DefaultModelFor table removed (DC-224); DC-225 (a PATH resolver preferring an extensionless POSIX script over its .cmd shim on Windows) registered; the lane's finding (c) filed as a DC-220 instance. TheCatalogKnowsWhatIsInstalledAndWhatModelTests (8, red-first CS0117). Attended rows F-1..F-6 for the operator (first use on their second machine is F-5). Pack finding: three joins stopped at step 1 on the primary's append-only .agents ledgers colliding with a lane's older copies; the script should read git's reason and resolve ledger paths to the primary's copy. Full recount. recount_seconds=494 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T01:21:55Z",
+      "id": "al-01M2HAG1G4X73F91RF00S2748Z",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "ground yourself in the repo; there is a claude code session and a github copilot session already underway using coordination skills; go through the specs, architecture and outstanding work and give me a table of things still to be done",
+      "session": "prompt-log",
+      "shortname": "ground yourself in the repo; there is a claude code session and a github…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T01:42:40Z",
+      "id": "al-01M2HBP0R4J0VYHPCXNJVTWVKY",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "lets get started with Addendum C deferred understanding views; create a kickoff prompt for a Grok owner-conductor-subagent fleet with own worktrees, owner grok-4.6 xhigh, conductor grok-4.6 high, using optimize-graph, prepare-for-coordination, execute-with-coordination and the pack skills",
+      "session": "prompt-log",
+      "shortname": "lets get started with Addendum C deferred understanding views; create a …",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T01:55:24Z",
+      "id": "al-01M2HCDB62Q4P04A4KTXWFRSJH",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "You are the Conductor for AI-DE's Addendum C deferred understanding views (execute kickoff: N0 Owner first)",
+      "session": "prompt-log",
+      "shortname": "You are the Conductor for AI-DE's Addendum C deferred understanding view…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T13:55:33Z",
+      "id": "al-01M2JNKZQNJ99QQYD91MKMBDG0",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "looks like my laptop rebooted over night; take stock of where the last Grok session was working in the repo; give me a summary of what was done not done (tabular form); key next steps and recommended sequence of events to continue",
+      "session": "prompt-log",
+      "shortname": "looks like my laptop rebooted over night; take stock of where the last G…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T13:58:48Z",
+      "id": "al-01M2JNSY77A2406WDGSEX7T409",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "yes do your sequence... start in the ai-de-understanding-views worktree as you suggested above",
+      "session": "prompt-log",
+      "shortname": "yes do your sequence... start in the ai-de-understanding-views worktree …",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-15T14:06:21Z",
+      "id": "al-01M2JP7RMQKNWXGF1R7PSN3HY2",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "it looks like my laptop rebooted while sessions were active. evaluate all sessions to understand what is going on. when we ended yesterday claude code did not have any active workstreams BUT we need your Owner-Conductor-Sub.Agents to be listening for messages as the other sessions continue and I want the Claude Code Owner and Conductor actively monitoring merges to main and understanding/coordinating across sessions. I am going to actively stress test our coordination capability by having sessions run in GHCP, Grok, Codex while you are watching and coordinating",
+      "session": "prompt-log",
+      "shortname": "it looks like my laptop rebooted while sessions were active. evaluate al…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": "claude-conductor",
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/addendum-c-council-rulings.md",
+        "tools/merge-append-only-log.py",
+        ".agents/sessions/claude-conductor.md"
+      ],
+      "datetime": "2026-09-15T14:26:28Z",
+      "done_when": "per-session status table; Owner/Conductor provably receiving messages (request-add to claude-conductor answered within one poll); a merge-to-main watch active and reporting",
+      "duration_seconds": 1212.0,
+      "fan_out": 1,
+      "git": {
+        "branch": "conductor/watch-0915",
+        "pushed": null,
+        "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
+        "short": "bab5035e7"
+      },
+      "goal": "Recover situational awareness after the reboot and stand the Claude Owner + Conductor back up as a live listener/coordinator over main and the cross-session ledgers",
+      "id": "al-01M2JQCJRQCVRABT7AW8ZMMWYT",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "it looks like my laptop rebooted while sessions were active. evaluate all sessions to understand what is going on. Owner-Conductor sub-agents listening for messages; Claude Code Owner and Conductor actively monitoring merges to main and coordinating across sessions during a GHCP/Grok/Codex stress test",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "conductor-watch-0915",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "conductor-watch",
+      "started_at": "2026-09-15T14:06:16Z",
+      "summary": "Grounded 5 (then 8) live non-Claude sessions post-reboot; persistent watcher over main/lane tips, requests.jsonl, liveness, session log and primary git state (15 s poll) - proven two-way with GHCP and Codex within the hour; Owner sub-agent resident, Rulings 106-114 filed (Atlas landing contract; Claude coordination-only; landing-intent sequencing; E1 tree frozen; unregistered-session rule; stale requests; main-is-red rule; Codex tool grant; ProseView section-2 row). FOUND main RED since 2026-09-12 (issue #13; 13 tests at bab5035e, named) - every 09-13/09-14 join landed on red (INV-0005 recurrence). FIXED tools/merge-append-only-log.py (called auditlog._reserve, removed at pack rev 59; blocked the Atlas change-log union) with a --self-test on a real conflict under both allocators - the self-test's first run caught a write to ROOT instead of the conflict's repo (DC-104 shape). Section 10 appended; section 2 line 165 path cell + ProseView.cs; 6 requests resolved, 5 sent.",
+      "tags": [
+        "coordination",
+        "stress-test",
+        "main-red"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "id": "al-01M2JQNQYPGBM4FD84EJRC1P11",
+      "shortname": "join-conductor-watch-0915",
+      "datetime": "2026-09-15T14:31:28Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "the join of conductor/watch-0915 into main",
+      "summary": "The Claude conductor's coordination landing for the 2026-09-15 stress test: section 10 of session-contracts.md, Rulings 106-114 in the council register, ProseView.cs into the section-2 Design row (Ruling 114), tools/merge-append-only-log.py repaired (removed auditlog._reserve; --self-test on a real conflict under both allocators), the conductor's liveness. main is red (Ruling 112) - this join is docs + one Python tool, no product code, no test change. recount_seconds=0 (docs_only=True).",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/accounts-and-first-use.md"
+        "docs/collaboration/session-contracts.md",
+        "docs/notes/addendum-c-council-rulings.md",
+        "tools/merge-append-only-log.py"
       ],
       "tags": [],
       "outcome": "success",
-      "goal": "one derivation of 'installed' and of the engine's model, read by the sheet, first use and the dialog",
-      "done_when": "merge clean; recount whole + Core halves + outcome green; 38 gates; pushed; Release built",
+      "goal": "Land the coordination artifacts the live GHCP/Grok/Codex sessions are waiting on (Ruling 106 contract, the merge tool, section 10) on main under Ruling 107",
+      "done_when": "main carries ba67d180's content; gates green in the primary; pushed; the watcher reports MAIN moved",
       "tier": "T1",
       "fan_out": 0,
       "signals": {
@@ -16308,83 +16469,8 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-09-14T23:34:34Z",
-      "duration_seconds": 495.0
-    },
-    {
-      "id": "al-01M2HAG1G4X73F91RF00S2748Z",
-      "shortname": "ground yourself in the repo; there is a claude code session and a github…",
-      "datetime": "2026-09-15T01:21:55Z",
-      "session": "prompt-log",
-      "prompt": "ground yourself in the repo; there is a claude code session and a github copilot session already underway using coordination skills; go through the specs, architecture and outstanding work and give me a table of things still to be done",
-      "summary": "prompt logged for reuse",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-01M2HBP0R4J0VYHPCXNJVTWVKY",
-      "shortname": "lets get started with Addendum C deferred understanding views; create a …",
-      "datetime": "2026-09-15T01:42:40Z",
-      "session": "prompt-log",
-      "prompt": "lets get started with Addendum C deferred understanding views; create a kickoff prompt for a Grok owner-conductor-subagent fleet with own worktrees, owner grok-4.6 xhigh, conductor grok-4.6 high, using optimize-graph, prepare-for-coordination, execute-with-coordination and the pack skills",
-      "summary": "prompt logged for reuse",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-01M2HCDB62Q4P04A4KTXWFRSJH",
-      "shortname": "You are the Conductor for AI-DE's Addendum C deferred understanding view…",
-      "datetime": "2026-09-15T01:55:24Z",
-      "session": "prompt-log",
-      "prompt": "You are the Conductor for AI-DE's Addendum C deferred understanding views (execute kickoff: N0 Owner first)",
-      "summary": "prompt logged for reuse",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-01M2JNKZQNJ99QQYD91MKMBDG0",
-      "shortname": "looks like my laptop rebooted over night; take stock of where the last G…",
-      "datetime": "2026-09-15T13:55:33Z",
-      "session": "prompt-log",
-      "prompt": "looks like my laptop rebooted over night; take stock of where the last Grok session was working in the repo; give me a summary of what was done not done (tabular form); key next steps and recommended sequence of events to continue",
-      "summary": "prompt logged for reuse",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-01M2JNSY77A2406WDGSEX7T409",
-      "shortname": "yes do your sequence... start in the ai-de-understanding-views worktree …",
-      "datetime": "2026-09-15T13:58:48Z",
-      "session": "prompt-log",
-      "prompt": "yes do your sequence... start in the ai-de-understanding-views worktree as you suggested above",
-      "summary": "prompt logged for reuse",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
-      "actor": null,
-      "artifacts": [],
-      "tags": [],
-      "outcome": "success"
+      "started_at": "2026-09-15T14:31:27Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [
