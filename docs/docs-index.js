@@ -4499,6 +4499,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "8401c1a896861a28910865d9c257bdf1baffbb46afefb989418de30bf457de3c"
     },
     {
+      "id": "note-audit-gate-self-test-owner",
+      "path": "docs/notes/audit-gate-self-test-owner.md",
+      "title": "Audit verifier self-test: bounded Owner decisions",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Adds observable proof of existing audit-verifier behavior through an isolated self-test. Preserves policy, allocator behavior, live logs, and every other frozen gate entry.",
+      "tags": [
+        "audit",
+        "verification",
+        "decision",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "137913943e90a10acc7bd4bcef45c68e6e98bd5a894e6e936871837dc0103f26"
+    },
+    {
       "id": "note-avalondock-tab-styling",
       "path": "docs/notes/avalondock-tab-styling-decision.md",
       "title": "Decision — AvalonDock document-tab accent & corner styling",
@@ -19086,5 +19112,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f9e137477ec8d7508a0a2560f1abaf3e80274198e0ebdc81d70ee8357a65a3f6"
+  "graphSha256": "5f957acc4665a2d92283cffca249ee4652cb0fff64090d362eeee0c62cf2e466"
 };

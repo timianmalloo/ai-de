@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T17:29:21Z",
+  "generated": "2026-09-15T18:05:21Z",
   "audit": [
     {
       "actor": null,
@@ -17540,6 +17540,34 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T17:29:19Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2K3XBYV34EXG1QW3EYBQTRW",
+      "shortname": "audit-gate-self-test-owner",
+      "datetime": "2026-09-15T18:05:21Z",
+      "session": "codex-audit-gate-owner",
+      "prompt": "New bounded programme Astra Owner no implementation. Start design-slice audit in provisioned isolated worktree. Confirm T1 objective bounded acceptance and design with unchanged policy. Inspect verifier and repo guidance. Decide fixture strategy real temporary Git repo, valid legacy/ULID/appends, duplicates/deletion/malformed/missing/invalid-ID and mutant-proof diagnostic/status assertions. Author only docs/notes/audit-gate-self-test-owner.md plus official audit/derived outputs using short exact lease. Budget10 calls/12min/12k tokens. End with committed decision receipt and scope/gates. No spawn, EnterWorktree or main push. Core grant request pending; no author before grant. Independent reviewer clears veto.",
+      "summary": "T1 design scope confirmed. Source-inspected existing policy and real HEAD comparison; selected isolated real-Git CLI fixtures and semantic mutants. Missing means missing id; absent file stays accepted. Primitive JSON potential crash explicitly outside scope. Core grant and independent reviews remain conditions. Decision artifact only; no implementation evidence claimed.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "GPT-6 Astra Owner",
+      "artifacts": [
+        "docs/notes/audit-gate-self-test-owner.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Define bounded audit-gate self-test acceptance without policy changes",
+      "done_when": "Owner decision receipt defines fixture oracles, scope, and independent review floors for Conductor execution",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T18:02:48Z",
+      "duration_seconds": 153.0
     }
   ],
   "changes": [
@@ -21292,6 +21320,28 @@ window.AUDIT_DATA = {
         ]
       },
       "audit_ref": "al-01M2DZ3GA6T04XHQ6EAD7HRY8R"
+    },
+    {
+      "id": "cl-01M2K3XBVCHM2V2FS9MJFVYSE2",
+      "datetime": "2026-09-15T18:05:21Z",
+      "session": "codex-audit-gate-owner",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Audit verifier self-test preserves existing policy",
+      "prompt": "Define bounded Owner acceptance and fixture design for audit-log verifier self-test and removal of only its frozen ratchet entry; no implementation or policy changes.",
+      "summary": "Real temporary Git fixtures exercise CLI status and diagnostics for valid numeric/ULID/append and duplicate/deletion/malformed/missing-id/invalid-id cases. Preserve absent-file behavior; JSON primitive crash remains separate finding. Independent hard veto required.",
+      "rationale": "Prove existing control against discriminating failures without expanding policy or mocking its HEAD comparison.",
+      "artifacts": [
+        "docs/notes/audit-gate-self-test-owner.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "bbd1bece",
+        "after": "bbd1bece3b0f83148a66696a0e778ef2cd20235e",
+        "branch": "owner/audit-gate-self-test",
+        "pushed": null,
+        "commits": []
+      }
     }
   ]
 };
