@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T15:22:35Z",
+  "generated": "2026-09-15T15:39:57Z",
   "audit": [
     {
       "actor": null,
@@ -16825,6 +16825,44 @@ window.AUDIT_DATA = {
         "branch": "understanding-views-spike",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2JVJWK53X6880RW6K55F4AC",
+      "shortname": "ui-design-solution-tree",
+      "datetime": "2026-09-15T15:39:49Z",
+      "session": "understanding-views-ui-design",
+      "prompt": "N8 /ui-design create for D-0 Solution tree. Self-contained mockup of the Architecture-pane Solution tree with hard states and review harness. Toolkit already spiked: WPF TreeView. Done when docs/mockups/solution-tree.html + hub exist; hard states rendered; tokens from DESIGN.md; ui-craft-gate.py / design-lint.py run; committed on this branch.",
+      "summary": "Created docs/mockups/solution-tree.html + hub with F* hard states and review harness. DESIGN.md copy section added (no new colour). Native proof pack Flagged until UV-1. Craft gate: 1 Minor cramped-padding (CD16, 16px expander slot). design-lint clean. UX & Accessibility veto PASS-WITH-CONDITIONS; author does not clear.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/solution-tree.html",
+        "docs/mockups/solution-tree.md",
+        "DESIGN.md",
+        "docs/proof/native-ui-solution-tree.md",
+        "docs/notes/n8-solution-tree-direction.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Self-contained Architecture-pane Solution tree mockup with hard states and review harness",
+      "done_when": "docs/mockups/solution-tree.html + hub exist; hard states rendered; tokens from DESIGN.md; craft/lint gates run; committed",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T15:25:24Z",
+      "duration_seconds": 865.0,
+      "git": {
+        "sha": "2089e02522bceb0e118beee1583b853d2381e011",
+        "short": "2089e0252",
+        "branch": "understanding-views-ui-design",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -20676,6 +20714,31 @@ window.AUDIT_DATA = {
         "commits": []
       },
       "audit_ref": "al-01M2JTK3G3M92P2TQ23H5P7249"
+    },
+    {
+      "id": "cl-01M2JVK4T1Z75RH7EMQCN326XW",
+      "datetime": "2026-09-15T15:39:57Z",
+      "session": "understanding-views-ui-design",
+      "kind": "design",
+      "skill": "ui-design",
+      "title": "N8 Solution tree mockup (D-0 direction)",
+      "prompt": null,
+      "summary": "Keyboard-Velocity navigator mockup in Architecture: F* hard states, Unindexed as {colors.unverified} word+glyph, skip-count chrome, dual-activate Enter/Ctrl+Enter, Reveal on node menu. HTML is direction; native PASS Flagged. No new colour token.",
+      "rationale": "Spec Part C required /ui-design before UV-1. N4 residual: pointer path for Reveal. Spike froze TreeView; this turn freezes chrome and copy.",
+      "artifacts": [
+        "docs/mockups/solution-tree.html",
+        "docs/mockups/solution-tree.md",
+        "DESIGN.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "2089e025",
+        "after": "2089e02522bceb0e118beee1583b853d2381e011",
+        "branch": "understanding-views-ui-design",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M2JVJWK53X6880RW6K55F4AC"
     }
   ]
 };
