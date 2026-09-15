@@ -848,3 +848,117 @@ uninspected pixels, historical causes and independent combined A/R plus
 UX/UML/C#/SRE/DS/Security/Owner gates remain explicit. No unproven product repair,
 Core/factory/chrome/dependency change, rebase, main mutation or push occurred.
 Original raw 26-case proof, older reds, mutations and backups remain unstaged.
+
+## NM12: remaining three fault controls discharged; rendering gate still open
+
+NM12 is a separate 12-call allocation, started at `2026-09-15T16:51:32Z`,
+with exactly three cases. It makes **no permanent product or test-source
+change**. The prior NQ18 113-case receipt is preserved, not rerun or relabelled.
+The sole reusable harness is the owned ignored artifact
+`.artifacts/atlas-e1/nm12-mutations.py`, SHA-256
+`E56D8D756696985BCC2167F60D34667362B67E8540934AFE6346D732068DD361`.
+
+The worklist is explicit and finite. Each case verifies source/test hashes,
+requires exactly one matching mutation site, resolves the exact assertion line
+from the unchanged test, writes a complete backup and live-mutation marker,
+and applies only one fault. A red must match the named method, source assertion
+line and semantic message for every selected case; missing TRX/count, a survivor,
+wrong assertion, setup/build failure or active runtime stops the worklist.
+Restoration is in `finally`, byte-checked, and followed by a non-incremental
+build before the matching green. Successful cases are not repeated on resume.
+
+### Exact fault/oracle matrix
+
+| Case | One injected fault | Named semantic red | Restored green |
+|---|---|---|---|
+| Off-page parent/classifier admission | In `AtlasStaticViewProjection.Create`, replace only `?? classifiers.FirstOrDefault();` with `?? rows.FirstOrDefault();` | `Projection_OffPageParentIsNotBorrowedFromPreviousPage`, `AtlasStaticViewTests.cs:93`, `Assert.Null(next.Classifier)`: actual orphan Method Member, UTF-16 40000-40003, OutsidePage. 1/1 failed | 1/1 passed |
+| Back page | In `GoBackAsync`, replace only `_outlinePageOffset = frame.OutlinePageOffset;` with `_outlinePageOffset = 0;` | Real-pipe journey, `AtlasStaticCompositionTests.cs:191`: expected 128, actual 0. All three viewport cases failed this exact assertion | 3/3 passed |
+| Originating Back focus | In `AtlasStaticView.RestoreFocus`, replace only `return button.Focus();` with `return _classifiers.Focus();` | Real-pipe journey, `AtlasStaticCompositionTests.cs:164`: originating compartment-button focus predicate not matched. All three viewport cases failed this exact assertion | 3/3 passed |
+
+The off-page fault promotes an off-page orphan into a classifier fallback; it
+does not claim to exercise a historical cache that this stateless projection
+does not have. The focus fault changes the focus destination, not the saved
+token or mode. These are separate post-hoc mutation controls, not rewrites of
+historical TDD evidence. No assertion or expected value was weakened.
+
+The off-page test and its DTO helpers were opened and proven non-shown before
+execution: no Window, Show, UIA, daemon or dispatcher is used by that selected
+pure test. It ran while integration held the desktop. The harness then stopped
+with source restored, no live marker and exactly two pending GUI cases.
+
+### Desktop grant, sequential runs and release
+
+The two GUI cases ran only after the closer's explicit grant:
+`closer-ed7d1cd1-NM12-after-ER18-PID30732-20260915T170450Z`.
+The reported integration runner ended at `17:04:50.621990Z`; the first NM12 shown
+runner was observed launched at `17:13:33.048768Z`.
+No integration/native overlap or OS-wide human exclusion is inferred beyond
+the observed handoff contract.
+
+| Run | Actual runner PID | Launcher-observed start UTC | Exit-observed UTC | Shared start/end request |
+|---|---|---|---|---|
+| Back-page red | 14588 | 17:13:33.048768 | 17:13:54.636370 | `req-01M2K0YGN8VBPCRHX0DRB37YSX` |
+| Back-page green | 28336 | 17:13:59.516594 | 17:14:22.841971 | `req-01M2K0ZAG8EBWXJSQ0S15Q5GDE` |
+| Back-focus red | 25008 | 17:14:32.606229 | 17:14:49.788090 | `req-01M2K10ATD3F55X51V4EJCR0HN` |
+| Back-focus green | 21600 | 17:14:56.941263 | 17:15:21.031231 | `req-01M2K112JWC9EEGG3BE6A60E1Y` |
+
+All dates are 2026-09-15. These are measured launcher observations, not invented
+OS process-creation timestamps. All four shared requests were resolved with
+their actual runner, native receipt paths and PID census. After the last run,
+known runtime PIDs `6400,11656,30168,32348` were all absent. Every shown-run
+record has `desktop_released=true`; the desktop is released to the closer.
+No further shown run or whole cohort was launched.
+
+### Exact receipts, restoration and reusable harness output
+
+All case files are under `.artifacts/atlas-e1/nm12-mutations/<case>/`:
+`red.trx`, `green.trx`, `red-run.json`, `green-run.json`, build/test logs and
+the complete original source backup. The run JSON contains full named results,
+exact assertion stacks, counters, runtime/desktop observations and hashes.
+The aggregate `progress.json` reports
+`three-controls-complete-not-product-acceptance`, `remaining=0`, SHA-256
+`8B6F3D9EF3B9A5879E3691BEC251A56C60C183DC621E9B69AF073ED210122F89`.
+
+| Case | Red TRX SHA-256 | Restored green TRX SHA-256 |
+|---|---|---|
+| Off-page | `E3E374979CCAE49A4449398FE013382915C0536F381A5E30B86CE4C6D2E48EF0` | `EE9FCF9EC52C5DFD7FF135ED0A5577D373F1AC8D34D7F0EDBF19037F2A7BFBD0` |
+| Back page | `83AB99DF930D5B77677202A2145A7838D2C1CF7298A7B1871BCA3AF2CBEDE755` | `C7D35894B1173818B0EDB9C0E73C0BDD3ED1CA0C410E30929E2D9D8367722D59` |
+| Back focus | `76AA8A62412CB689DA5078518AFAF5E85AFDC895A1AB439CFFD64855B2553ECF` | `B3DEE862D5B830BCED01B73D6D1B4FC46933684E1115EBCE07FB13E6ADAC5B2B` |
+
+| Source | Original/restored SHA-256 | Mutant SHA-256 |
+|---|---|---|
+| Projection | `3746CC81D13048AE8292CB1E2A025B9F197EB2A59D58C69BDC450FEF2D995B62` | `771F3B1A10111B1AE411CA936B2F1BF19D5B22657CD0D35EEE8824A16C62607A` |
+| Reader | `48408746563FAB04AFB62D0C86E9EEFAAF2AE4AF337A8C75DE5A4654824BD187` | `358AC2D30C3FEB18439B6337784030FA7F97EDB90E7B50FE4ADB1214857FF0A9` |
+| Static view | `A6BC21418FA00B6BDE95C531DD7F16B38A8168B44522638E678DFC5C7BC31DCA` | `C6F3E005545B3B2654A7EB2C1E6A4CF03733A97619DDBE23615C0EA20357F282` |
+
+The unchanged unit-test hash is
+`768B0FC09C54FDE9D81C9095806A7B5115FAB3DA41D74EF52B031555DD8B51CE`;
+composition-test hash is
+`7C9FC49F1AC2B7A4B1322FE43AED8FF95937E27D153CE186084A876B94C23377`.
+After each restoration, non-incremental builds produced App DLL hash
+`86409741D53E4F20C8CC24578BD97EBB95BA43E22338B1FBC0466977C5A7ACAE`
+and App.Tests DLL hash
+`D67938AAE0C238464ABFBEA3B026E8DA078A53511ED411C88A12BD02D751B428`.
+The live-mutation marker is absent and the tracked source diff is empty.
+Source leases were claimed/checked before mutation and restoration, then
+released before builds/tests; evidence leases are separate.
+
+### Remaining independent rendering and admission gates
+
+The three missing fault controls are now discharged within the stated
+boundaries. **This is not native product acceptance.** The independent root
+pixel review reports a Major required-disclosure clipping defect at 1180 DIP,
+confirmed on the final NQ18 capture:
+`native-1180-20260915162520364-4e67909d32994c24bc7cfbbb810470de/class.png`
+under `.artifacts/atlas-e1/`. The final “e” of “Calls and lifetime relationships
+are” is not visible at the right edge. This is attributed to the independent
+root's actual pixel inspection; NM12 made no image-view attempt or layout fix,
+and does not infer its cause.
+
+A separate bounded rendered-glyph versus ancestor-clipped-viewport control and
+full-wording repair remain required. Missing pixel coverage, hardware/OS-scale
+limits, historical lookup/focus uncertainty and the final independent combined
+A/R plus UX/UML/C#/SRE/DS/Security/Owner gates remain open. Original 26-case,
+NQ18 113-case, historical TDD and earlier mutation receipts remain unchanged and
+unstaged. No Core/factory/chrome/dependency edit, rebase, main update or push
+occurred.

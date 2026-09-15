@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T16:26:56Z",
+  "generated": "2026-09-15T17:19:53Z",
   "audit": [
     {
       "actor": null,
@@ -17385,6 +17385,35 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T16:19:34Z",
       "duration_seconds": 441.0
+    },
+    {
+      "id": "al-01M2K1A4DYVJTGK28DPKWMS1TX",
+      "shortname": "atlas-nm12-three-mutation-controls",
+      "datetime": "2026-09-15T17:19:53Z",
+      "session": "atlas-e1-native-class-view",
+      "prompt": "NEW NM12 TWELVEprospectivecalls, samewriter/tree, separatecompletedNQ18. Rootverifiedd878dc37and113/113; missingexact3faults remainNOTqualified. GoalONLY SINGLE-FAULT Backpage,Backfocus,offpage-parent oracles; no repeatfinalcohortbeforeall3discharged. Firstsupportedauditstart --session atlas-e1-native-class-view ownidentity/tree. UseDETERMINISTICbounded3-itemartifactscript/harness (filethenrun) for mutation->matchedsemanticred->finallyexactrestore/hash->nonincrementalrestoredbuild->matchinggreen; finiteworklistandpercasefailureSTOP, no unrelatedfaults/sleeps/retryuntilgreen. Inspectexactoracle/sourcebeforefault; no guessedreplacement. Preserveallvalidpreviousreds/TDD/113receipt; no imageviewattempts. Test-onlyoracle strengtheninginsideexistingfivefilesperoriginalscopeallowedifmutantsurvivesactualweakpredicate; no unprovenproductrepair/expectedvalueweakening. I ER18CURRENTLYDESKTOPHOLDER; onlyprovenNONSHOWNprep/unitworkcanproceed. Backfocusanyrealwindow waits Irelease+closergrant—endturnrestoredwithscriptready ifwaiting, notstatusack. Root1180classpixelclippingfinding isrecorded butNOTinNM12repairscope; don'tchaseitduringfaultwork. At12returnexact3status/reusablecode+testhash/oracle/red/green/restorationreceiptsandpinifappropriate, anyremaininggap; no newwholecohortunlessall3completeandbudgetexplicitlyallowsONErestoredrunafterdesktopgrant. No main/rebase/push/deps/newscope. Lease/checkrenewbeforeedit, releasebeforetests, nomutantleftatwait/end. No newqualificationclaim untilcoverageandrender/finalgatesclear.",
+      "summary": "NM12 exact3controls complete with no permanent product/testsourcechange. Boundedartifactharness E56D8D756696985BCC2167F60D34667362B67E8540934AFE6346D732068DD361; progressSHA8B6F3D9EF3B9A5879E3691BEC251A56C60C183DC621E9B69AF073ED210122F89 remaining0. Offpageorphanpromotion red1/1 atStaticViewTests93 thenrestoregreen1/1, NONSHOWN whileIheld. AfterexplicitER18release+closergrant, Backpagefault expected128actual0 red3/3 atCompositionTests191 thenexactrestore/nonincrementalgreen3/3; Backfocuswrongclassifierdestination red3/3 at164 thenexactrestore/nonincrementalgreen3/3. Everyredmatchedmethod/assertionsourceline/message, no setup/compile red counted, no retries/survivors. Fourshownrunners14588,28336,25008,21600 sequentialSTART/ENDsharednotices resolved; lastknown6400/11656/30168/32348 absent anddesktopreleased17:15:21.031231Z launcherobservation. No mutationmarker, sourcehashesrestored, all3restoredAppDLL86409741D53E4F20C8CC24578BD97EBB95BA43E22338B1FBC0466977C5A7ACAE/TestDLLD67938AAE0C238464ABFBEA3B026E8DA078A53511ED411C88A12BD02D751B428. ExistingProof recordsfullmatrix/hashes/rawpaths. Fresh1131180disclosureclippingMajor fromindependentroot remains, noimage/layoutrepair; historicalcauses/render/combinedindependent/OwnergatesOPEN. No newwholecohort/main/rebase/push, no falseproductacceptance. Original26/113/TDD/mutations/backups preservedunstaged.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs\\proof\\code-atlas-e1-qualification.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Discharge only remaining three single-fault native oracles with exact restoration",
+      "done_when": "Each exactfault has matchedsemanticred and restorednonincrementalmatchinggreen; reusableharness/evidence pinned and remainingrender/finalgates explicit",
+      "tier": "T2",
+      "main_calls": 10,
+      "main_budget": 12,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T16:51:32Z",
+      "duration_seconds": 1701.0
     }
   ],
   "changes": [
