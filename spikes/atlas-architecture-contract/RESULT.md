@@ -8,10 +8,43 @@ tags: [atlas, spike, domain, azure]
 links:
   - { to: design-atlas-architecture-views, rel: relates-to }
 review-by: 2026-12-15
-summary: "57 synthetic checks and seven rejected subject faults; full relation anchor equality is now observed."
+summary: "57 synthetic checks and eight rejected subject faults; both complete expected relation rows are compared."
 ---
 
 # E2 contract spike result
+
+## Complete semantic row proof correction — 2026-09-15
+
+Independent review corrected the clearance of `ed7efe79`: its oracle did not
+independently compare the dependency row's Basis. Checking the first explicit
+declaration row did not prove the second row. The earlier semantic proof was incomplete.
+
+New subject fault `relation-dependency-basis` changes only the produced dependency
+Basis to `explicit-declaration`, retaining its supported-source label and all other
+fields. Before repair, the rebuilt fault command exited 0, `PASS 57 contract checks`;
+the emitted dependency visibly carried that inconsistent Basis. After repair it
+exited 1 at `FAIL InvalidOperationException: relation-produced-target-and-current`.
+
+Command before and after:
+`dotnet run --project spikes/atlas-architecture-contract/AtlasArchitectureContractSpike.csproj -- --fault relation-dependency-basis`.
+The same command without fault then rebuilt and passed 57 checks, exit 0.
+All seven previous faults were rerun after that rebuild with `--no-build`, each
+exit 1 at its previously recorded oracle. Totals: **57 normal checks, eight rejected
+subject faults**. No earlier control was removed.
+
+The two independently fixed expected rows contain every field: Id, From, To, Kind,
+State, Basis, Label, exact AnchorEvidence sequence and exact AssertionRefs sequence.
+`MatchesExpectedRelations` compares every scalar and both sequences, exact row count,
+order, and absence of errors/unresolved results. Both the target-positive oracle and
+the current-declaration oracle use this comparison; the latter changes only expected
+declaration State to current and still checks the entire dependency row.
+Expected rows are literal test expectations, not copied from the fixture or output.
+
+Class/control: partial semantic equality shares the prior partial-binding defect
+class. Swept both relation positive oracles and replaced field subsets with complete
+row comparisons. The Basis-only mutation exercises the missed discriminator.
+Independent re-review and final platform qualification remain required; no product
+authority, design, source producer or deployment identity claim changed.
 
 ## Relation binding proof correction — 2026-09-15
 

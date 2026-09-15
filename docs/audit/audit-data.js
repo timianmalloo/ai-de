@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:11:24Z",
+  "generated": "2026-09-15T21:26:32Z",
   "audit": [
     {
       "actor": null,
@@ -18594,6 +18594,51 @@ window.AUDIT_DATA = {
       "started_at": "2026-09-15T21:09:53Z",
       "duration_seconds": 91.0,
       "supersedes": "al-01M2KE8Y0HC2MDQ5ZGQC4FWSQR"
+    },
+    {
+      "id": "al-01M2KFDQPQ4Y2XPWG513SVM4PV",
+      "shortname": "Repair incomplete semantic relation oracle: fixed expected rows compare …",
+      "datetime": "2026-09-15T21:26:31Z",
+      "session": "prompt-log",
+      "prompt": "Repair incomplete semantic relation oracle: fixed expected rows compare all fields and sequences; Basis-only dependency subject fault must fail after old false pass. Preserve57 controls and7prior faults. Existing spike scope only.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2KFDQSVVWYYNCD1JR9PM0W5",
+      "shortname": "atlas-e2-complete-relation-proof",
+      "datetime": "2026-09-15T21:26:31Z",
+      "session": "codex-atlas-e2-architecture",
+      "prompt": "Reviewer corrected clearance: dependency Basis not independently checked. Compare two complete fixed expected rows and add Basis-only subject fault.",
+      "summary": "Basis-only fault falsely passed prior oracle57 then failed complete-row oracle. Normal rebuilt57 PASS; seven prior faults rerun exit1; eight total faults rejected. Both relation positive controls now compare every scalar and exact evidence/reference sequences; review pending.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "GPT-6 Astra E2 author",
+      "artifacts": [
+        "spikes/atlas-architecture-contract/RESULT.md",
+        "docs/proof/atlas-architecture-contract.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Prove complete semantics of both synthetic relation output rows.",
+      "done_when": "Basis-only corruption rejected and normal checks retained, with committed correction evidence for independent review.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T21:24:48Z",
+      "duration_seconds": 103.0,
+      "supersedes": "al-01M2KEJ1RNG0PQCQQCYNSD9JYB"
     }
   ],
   "changes": [

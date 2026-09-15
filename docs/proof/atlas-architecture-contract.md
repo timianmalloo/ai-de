@@ -8,10 +8,24 @@ tags: [atlas, proof, spike, domain, azure]
 links:
   - { to: design-atlas-architecture-views, rel: relates-to }
 review-by: 2026-12-15
-summary: "57 Windows synthetic checks and seven rejected faults, including full relation binding corruption."
+summary: "57 Windows synthetic checks and eight rejected faults; complete expected relation semantics are compared."
 ---
 
 # Bounded E2 contract evidence
+
+## Latest semantic row correction (2026-09-15)
+
+Reviewer corrected clearance of `ed7efe79`: dependency Basis was not independently
+checked. `relation-dependency-basis` changes only that produced field. It first
+passed the previous oracle (exit 0, 57 checks), then failed the complete-row oracle
+at `relation-produced-target-and-current` (exit 1). Normal rebuild passes 57;
+all seven earlier faults were rerun and rejected, for eight total subject faults.
+
+Both relation-positive oracles now compare both independently fixed expected rows,
+all scalars, exact anchor records and exact assertion-reference sequences. The
+[RESULT correction](../../spikes/atlas-architecture-contract/RESULT.md#complete-semantic-row-proof-correction--2026-09-15)
+preserves the observed prior false pass and commands. Re-review and platform proof
+remain pending; synthetic scope and unresolved production authority remain unchanged.
 
 ## Latest binding proof correction (2026-09-15)
 

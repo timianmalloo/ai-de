@@ -16,7 +16,7 @@ internal static class Program
         {
             if (args.Length != 0)
             {
-                if (args.Length != 2 || args[0] != "--fault" || args[1] is not ("alias-drop" or "alias-wrong-root" or "scope-drop" or "relation-drop" or "relation-wrong-endpoint" or "relation-admit-mismatch" or "relation-corrupt-binding"))
+                if (args.Length != 2 || args[0] != "--fault" || args[1] is not ("alias-drop" or "alias-wrong-root" or "scope-drop" or "relation-drop" or "relation-wrong-endpoint" or "relation-admit-mismatch" or "relation-corrupt-binding" or "relation-dependency-basis"))
                     throw new ArgumentException("Only named experimental fault injections are accepted.");
                 _fault = args[1];
             }
@@ -299,6 +299,7 @@ internal static class Program
             }
             if (_fault == "relation-corrupt-binding") evidence = evidence.Select(a => a with { Scope = "wrong-scope", Hash = "wrong-hash", Start = 1, Length = 2 }).ToList();
             edges.Add(new(Text(r, "id")!, from, _fault == "relation-wrong-endpoint" ? from : to, kind!, state!, basis!, basis == "explicit-declaration" ? "Declared relationship" : "Synthetic supported depends_on", evidence.ToArray(), assertions));
+            if (_fault == "relation-dependency-basis" && Text(r, "id") == "dependency") edges[^1] = edges[^1] with { Basis = "explicit-declaration" };
         }
         return new(errors.ToArray(), unresolved.ToArray(), errors.Count != 0 || unresolved.Count != 0 || _fault == "relation-drop" ? [] : edges.ToArray());
     }
@@ -340,15 +341,27 @@ internal static class Program
         var positive = ProjectRelations(valid);
         var expectedBinding = new AnchorEvidence("a", "synthetic:abc", "fixture",
             "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad", 0, 3);
-        Assert("relation-produced-target-and-current", positive.Errors.Length == 0 && positive.Unresolved.Length == 0 && positive.Edges.Length == 2
-            && positive.Edges[0] is { From: "concept:order", To: "concept:money", Kind: "domain-association", State: "target", Basis: "explicit-declaration", Label: "Declared relationship" }
-            && positive.Edges[1] is { From: "resource:resource-a", To: "resource:resource-b", Kind: "deployment-dependency", State: "current", Label: "Synthetic supported depends_on" }
-            && positive.Edges.All(e => e.Anchors.SequenceEqual([expectedBinding]))
-            && positive.Edges[1].Assertions.SequenceEqual(["synthetic-dependency"]), JsonSerializerOutput(positive));
+        RelationEdge[] expected = [
+            new("declared", "concept:order", "concept:money", "domain-association", "target",
+                "explicit-declaration", "Declared relationship", [expectedBinding], []),
+            new("dependency", "resource:resource-a", "resource:resource-b", "deployment-dependency", "current",
+                "supported-source-assertion", "Synthetic supported depends_on", [expectedBinding], ["synthetic-dependency"])
+        ];
+        Assert("relation-produced-target-and-current", MatchesExpectedRelations(positive, expected), JsonSerializerOutput(positive));
         var current = (JsonObject)valid.DeepClone(); current["relations"]![0]!["state"] = "current";
         var declaration = ProjectRelations(current);
-        Assert("current-declaration-stays-declared", declaration.Edges.Length == 2 && declaration.Edges[0].Label == "Declared relationship" && declaration.Edges[0].Basis == "explicit-declaration", JsonSerializerOutput(declaration));
+        Assert("current-declaration-stays-declared", MatchesExpectedRelations(declaration,
+            [expected[0] with { State = "current" }, expected[1]]), JsonSerializerOutput(declaration));
     }
+
+    private static bool MatchesExpectedRelations(RelationProjection actual, RelationEdge[] expected) =>
+        actual.Errors.Length == 0 && actual.Unresolved.Length == 0 && actual.Edges.Length == expected.Length
+        && actual.Edges.Zip(expected).All(pair => pair.First.Id == pair.Second.Id
+            && pair.First.From == pair.Second.From && pair.First.To == pair.Second.To
+            && pair.First.Kind == pair.Second.Kind && pair.First.State == pair.Second.State
+            && pair.First.Basis == pair.Second.Basis && pair.First.Label == pair.Second.Label
+            && pair.First.Anchors.SequenceEqual(pair.Second.Anchors)
+            && pair.First.Assertions.SequenceEqual(pair.Second.Assertions));
 
     private static string JsonSerializerOutput(RelationProjection p) => System.Text.Json.JsonSerializer.Serialize(p.Edges);
     private sealed record RelationEdge(string Id, string From, string To, string Kind, string State, string Basis, string Label, AnchorEvidence[] Anchors, string[] Assertions);
