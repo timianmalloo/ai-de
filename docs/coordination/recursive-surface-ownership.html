@@ -1,0 +1,114 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Recursive surface ownership programme</title><style>:root{color-scheme:light dark}body{max-width:90ch;margin:3rem auto;padding:0 1rem;font:16px/1.55 system-ui}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit}</style><main><h1>Recursive surface ownership programme</h1><pre>---
+id: coord-recursive-surface-ownership
+title: &quot;Recursive surface ownership: bounded Codex programme&quot;
+type: doc
+status: in-progress
+owner: &quot;@timianmalloo&quot;
+tags: [coordination, ownership, tooling]
+links:
+  - { to: session-contracts, rel: depends-on }
+  - { to: plan-recursive-surface-ownership, rel: relates-to }
+review-by: 2026-12-15
+summary: &quot;One tooling author, an Astra Owner and Conductor, and independent review close recursive ownership coverage without changing ownership policy.&quot;
+---
+
+# Recursive surface ownership
+
+## Goal contract
+
+**Goal:** Make surface-ownership verification cover nested Workbench surfaces without inventing ownership.
+**Done when:** recursive discovery and repository-relative identity are proven red-first; &#167;2 remains sole authority; ambiguities are resolved by owners or reported; applicable checks and independent gates pass; proof and audit records accompany a committed programme branch ready for integration handoff.
+**Not in scope:** product changes, Atlas/Grok implementation, ownership policy changes, another session&#39;s worktrees, or main integration.
+**Tier:** T1 (Owner confirmed). **Concurrency cap:** four including Owner/Conductor; normally three, one author at a time.
+
+## Layer state
+
+Grounding base: `bab5035e75a1`. Conductor tree `C:/Projects/ai-de-conductor-surface-ownership`, branch `conductor/surface-ownership`, identity `codex-surface-ownership-conductor`. Owner tree `C:/Projects/ai-de-owner-surface-ownership`; reviewer tree `C:/Projects/ai-de-review-surface-ownership`.
+
+Verified: pack-doctor reports revision 70, 10 PASS, 3 WARN, 0 FAIL; 11 classified patterns and registered drivers. Warnings concern Windows python3 alias, Copilot long context defaults and docs graph freshness. No installation/configuration change warranted. `coord doctor` completed exit 0: registry 11 patterns, both coord-regen and coord-register declared and registered, no regeneration owed. Its historical Claude/Copilot capability statements do not certify Codex. Do not install/classify in a linked tree: inherited installation exists. Preflight must inspect the final doctor result before author dispatch.
+
+Coordination transport is the primary checkout&#39;s shared pull log, never a branch-local stale copy. Request `req-01M2JQ113TK7HGE7YKQ4CB92GA` was granted by Claude under Ruling 113 for the gate and self-test only. `req-01M2JQ3T5VMQWJ59Q3M0ZE420T` asks the accountable owner to resolve `Sessions/ProseView.cs`, absent from &#167;2 path rows. Silence is not consent.
+
+Observed delegate mechanism: a separately selected Astra Owner received its bounded contract and returned source-based decisions. Separate Git trees are verified. Absolute cwd/path compliance is observed-only, not a filesystem sandbox; author and reviewer run serially, with path diffs checked before joins. Model selection: Astra Owner/Conductor as requested; Sol high for a small Python author and independent parser/Test review, with escalation to Owner on semantic uncertainty. No unsupported automatic enforcement is claimed.
+
+## Artifact classes
+
+| path | class | mechanism | coordination needed |
+|---|---|---|---|
+| `tools/verify-surface-ownership.py` | authored | exact short lease; Core handoff | yes |
+| `docs/collaboration/session-contracts.md` | authored | sole &#167;2 authority; peer owns assignment resolution | yes; no Codex edit without exact grant |
+| programme plan, decision and proof files | authored | distinct named paths, short leases | yes |
+| `docs/lessons/defect-classes.md` | authored append-only by convention | reuse DC-118; append an instance only | yes |
+| `docs/audit/*.jsonl`, `.agents/log/*.jsonl`, `.agents/decisions/*.jsonl` | register | mandated append/union | no lease; isolated storage and controlled join |
+| docs index, audit data, API docs, viewer outputs | derived | repository regeneration tools | no authorship lease; serialize generation per tree |
+
+## Tracks
+
+| track | owns authored | depends on | tier | fan-out cap | budget | exit evidence | harness |
+|---|---|---|---|---|---|---|---|
+| owner | own decision note; no product/gate authoring | grounded contract | T1 | 0 | 20 calls / 20 min / 20k tokens, inferred | scope and semantic rulings; escalations decided | GPT-6 Astra, separate tree and receipt |
+| conductor | this plan, graph, programme join/proof records | all receipts at joins | T1 | 3 | 70 calls / 60 min / 40k tokens, inferred | frozen plan, inspected checks, committed handoff | GPT-6 Astra, main thread |
+| author | gate including existing self-test; author proof | Core grant, Owner semantics, independent plan gate | T1 | 0 | 35 calls / 30 min / 25k tokens, inferred | red-before-green, real-register census, commit | GPT-5.6 Sol high, dedicated tree |
+| review | own review/proof artifact only | plan before author; frozen candidate after author | T1 | 0 | 25 calls per phase / 20 min / 20k tokens, inferred | separate Test, Simplifier, Python, SRE/Orchestrator verdicts; mutation/CLI receipts | GPT-5.6 Sol high, dedicated tree |
+
+Budgets are circuit breakers; firing requires diagnosis/re-plan, never omission of proof. Context ceiling 400k; compact or split before it. No sub-agent calls EnterWorktree. Every dispatch starts its audit marker, states absolute cwd, exact writes, forbidden neighboring scope and receipt conditions.
+
+## Serial spine
+
+Ground and handoff → Owner semantics and plan → independent plan gate → author red/green → frozen candidate independent review → conductor script join and proof → handoff. Owner decision work can overlap Conductor coordination; implementation cannot overlap unsettled semantics. Review cannot self-clear an authored gate.
+
+## Seams
+
+| from -&gt; to | request | resolved by |
+|---|---|---|
+| Codex -&gt; Claude Core | exact gate handoff and ProseView assignment | shared request resolution and sole &#167;2 record |
+| Owner -&gt; author | path-cell-only semantics, no inferred ownership | Owner note + accepted design below |
+| author -&gt; reviewer | commit, red/green receipts, census and scope diff | independent observed review |
+| conductor -&gt; Atlas recovery/Claude | integration-ready notice, no main mutation | later explicit integration arrangement |
+
+## Specification and design slice
+
+Reuse &#167;2 and the gate&#39;s existing contract as the functional specification; architecture remains one stdlib Python gate reading the same durable Markdown register. No new aggregate, schema, service or ADR. UX is the existing CLI success/failure diagnostic and exit status; UI N/A. The design-slice narrows a parser and discovery defect, not a product surface. Investigation is triggered only by unexpected failures.
+
+Bounded context: repository ownership verification. One discovered item is exactly one root-relative POSIX file path. One ownership declaration associates a path/pattern with an owner in &#167;2. The derived owner set must have one owner, or an explicit unresolved exception; a cross-owner conflict always fails. Counts are additive across disjoint file populations; ownership itself is non-additive. No new persistence; derive from &#167;2 on every run.
+
+Discovery root `src/AiDe.App/Workbench`; recursion enabled; suffix token set exactly `Surface.cs`, `View.cs`; no added Page/Builder/Dialog suffix. Parser scans &#167;2 `### &lt;owner&gt; owns` table Path cells only, never prose/Why/later sections/shared headers. Explicit repo-relative paths establish row-local directory context; following bare tokens inherit only that directory. Per Core Ruling 113 and amended Owner O1, a standalone bare filename resolves only if exactly one recursive populated path has that basename; zero or multiple matches fail, naming candidates. Explicit new paths reset context. Support only existing segment-local `*` and recursive directory `/**` patterns; ordinary stars never cross `/`. Unsupported or escaping surface-relevant paths are diagnosed. Same-owner overlap deduplicates; different-owner overlap fails without precedence. Exceptions use full paths and nonblank reasons carrying request/ruling provenance and a retirement condition; absent or newly owned exceptions are stale.
+
+Affected surface list: filesystem discovery → path identity → &#167;2 parsing → owner decision → diagnostic/exit → real-file fixtures → unchanged CI invocation → proof/audit.
+
+Testing union: T1/T2/T4 (+ CLI T6), D0 deterministic hermetic tests, D1 mutation resistance, D2 generated invariants, D4 real temporary filesystem, provider CLI compatibility. Existing CI calls normal CLI and `--self-test`; preserve both. Oracle mutations: remove recursion, reduce identity to basename, include Why/prose, suppress cross-owner conflict, suppress stale exception check. Test additions/removals and declaration order invariance with deterministic generated fixtures. Observed baseline: CLI passes 13/13; recursive inventory contains 17 including unassigned ProseView. No .NET product code changes.
+
+Class → sweep → derive → prevent: DC-118 control half (b) already describes a scan narrower than its claim. Sweep all recursive matching files and the declaration grammar; derive exact identity and scope invariants; enforce through real-file red-first fixtures. Do not allocate a new class for this existing shape.
+
+## Struck tracks
+
+| track | reason |
+|---|---|
+| parallel parser and discovery authors | same small file, coupled identity contract |
+| new language parser dependency | stdlib and bounded existing grammar suffice |
+| product ownership reassignment | outside authority; request instead |
+| UI authoring or general coordination rewrite | outside goal |
+| main integration | not granted; Atlas recovery owns active integration |
+
+## Order of operations
+
+1. Finish doctor/ownership preflight; record exact source confidence.
+2. Obtain independent plan gate and Core grant; resolve ProseView without inference.
+3. Provision author tree, dispatch frozen design, observe red then green.
+4. Freeze commit and run independent review with mutation oracles and real register.
+5. Join through conductor-join.py using an agreed task-scoped contract; no push/main change. Inspect actual states and regenerate with repository tools.
+6. Complete proof, audit, DC-118 instance and mitigation capture; commit handoff; retain unmerged worktrees by name/reason.
+
+## Status
+
+| Completed | Remaining | Best next action |
+|---|---|---|
+| isolated identities, baseline observation, Owner O1/O2 | handoff, independent plan gate, author/review/join | finish measured preflight |
+
+## Planned versus actual
+
+At creation: one Owner delegated; no implementer dispatched; gate baseline observed 13 and recursive census 17. Duration and token costs remain not recorded until closing audit; no modeled number is reported as measured. Rework and final receipts append at close.
+
+</pre></main></html>
+
+

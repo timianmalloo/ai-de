@@ -1,0 +1,24 @@
+{
+  "checks": [
+    ["python", "-m", "py_compile", "tools/verify-surface-ownership.py"],
+    ["python", "tools/verify-surface-ownership.py", "--self-test"],
+    ["python", "tools/verify-surface-ownership.py"],
+    ["python", "tools/verify-gate-self-tests.py"],
+    ["python", "tools/verify-defect-register.py"]
+  ],
+  "recount": [],
+  "regenerate": [["python", "tools/regenerate-derived.py"]],
+  "gates": [
+    ["python", "tools/verify-surface-ownership.py"],
+    ["python", "tools/verify-surface-ownership.py", "--self-test"],
+    ["python", "tools/verify-gate-self-tests.py"],
+    ["python", "tools/verify-defect-register.py"],
+    ["python", "tools/verify-audit-log.py"],
+    ["python", "docs/ai-forward-pack/scripts/docs-graph.py", "validate"],
+    ["python", "tools/verify-derived-views.py"],
+    ["python", "tools/run-verify-gates.py"]
+  ],
+  "build": [],
+  "trailer_file": "docs/coordination/recursive-surface-ownership-trailer.txt",
+  "push_remote": "origin"
+}

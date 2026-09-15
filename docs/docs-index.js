@@ -8019,6 +8019,35 @@ window.DOCS_INDEX = {
       "sourceSha256": "6549168b93046ac99c21691b61f11f8ca8e7baa58b4cf8ee2e82340e61b34615"
     },
     {
+      "id": "coord-recursive-surface-ownership",
+      "path": "docs/coordination/recursive-surface-ownership.md",
+      "title": "Recursive surface ownership: bounded Codex programme",
+      "type": "doc",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "One tooling author, an Astra Owner and Conductor, and independent review close recursive ownership coverage without changing ownership policy.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "tooling"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "plan-recursive-surface-ownership",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ba6d827c01d9f89d750d3d9ff2c1fb13da074fe76563a4fd4f4d1f060b3209f8"
+    },
+    {
       "id": "coordination-addendum-cd",
       "path": "docs/coordination/addendum-cd.md",
       "title": "Coordination plan - Addenda C and D (the perspective shell and the compile step)",
@@ -9933,6 +9962,41 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "62577cd18a0caecf5aa001fb22370aa7cca8608829123d3a4f3742a4537037ef"
+    },
+    {
+      "id": "plan-recursive-surface-ownership",
+      "path": "docs/plans/recursive-surface-ownership.md",
+      "title": "Execution graph: recursive ownership gate",
+      "type": "doc",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "A single author spine with independent pre-author and post-author gates; ownership decisions precede implementation.",
+      "tags": [
+        "plan",
+        "execution-graph",
+        "ownership"
+      ],
+      "links": [
+        {
+          "to": "coord-recursive-surface-ownership",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Execution graph",
+          "mermaid": "flowchart LR\n G --> O --> P --> A --> R --> J\n G --> P"
+        }
+      ],
+      "sourceSha256": "bd1792f9d53bf7fb60dfc9b8f36f63b440e136f6fa6b0bc33e241c00d529087b"
     },
     {
       "id": "plan-ui-and-windowing",
@@ -18626,6 +18690,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-named-dock-zones"
     },
     {
+      "id": "surface-coordination-recursive-surface-ownership",
+      "path": "docs/coordination/recursive-surface-ownership.html",
+      "title": "Recursive surface ownership programme",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coord-recursive-surface-ownership"
+    },
+    {
       "id": "surface-mockups-uml-erm-surfaces",
       "path": "docs/mockups/uml-erm-surfaces.html",
       "title": "UML & ERM Surfaces — derived views (mockup)",
@@ -18634,5 +18706,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c098a7937db9de42729b1f524d005a86ab7ce5e85832d27fdc17ed24d0550635"
+  "graphSha256": "67931227b5fa56599c36d40889fef2d70b22c251d3ee06b7ea87e8a599267ee5"
 };
