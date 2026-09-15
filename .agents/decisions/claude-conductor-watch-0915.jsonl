@@ -123,3 +123,14 @@
 {"agent": "claude-conductor", "at": 1789485257.4918408, "code": "COORD-REFUSED", "kind": "refused", "path": "site/index.html", "session": "claude-conductor-watch-0915", "wi": "ownership-join"}
 {"agent": "claude-conductor", "at": 1789485281.3444848, "code": "COORD-REFUSED", "kind": "refused", "path": "site/collaboration.html", "session": "claude-conductor-watch-0915", "wi": "ownership-join"}
 {"agent": "claude-conductor", "at": 1789485292.9313343, "code": "COORD-REFUSED", "kind": "refused", "path": "site/collaboration.html", "session": "claude-conductor-watch-0915", "wi": "ownership-join"}
+{"agent": "claude-conductor", "at": 1789485540.21071, "code": null, "kind": "allowed", "path": ".agents/decisions/claude-conductor-watch-0915.jsonl", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789485540.2209272, "code": null, "kind": "allowed", "path": ".agents/log/codex-surface-ownership-conductor.jsonl", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789485540.2305553, "code": null, "kind": "allowed", "path": ".agents/log/understanding-views-spike.jsonl", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789485540.2400548, "code": null, "kind": "allowed", "path": ".agents/regen-owed.txt", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789485540.2491462, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789485540.2606256, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789485540.269259, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789485540.279588, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789485540.2892852, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789485540.2983887, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "claude-conductor-watch-0915", "wi": ""}
+{"agent": "claude-conductor", "at": 1789485540.3096204, "code": null, "kind": "allowed", "path": "site/index.html", "session": "claude-conductor-watch-0915", "wi": ""}
