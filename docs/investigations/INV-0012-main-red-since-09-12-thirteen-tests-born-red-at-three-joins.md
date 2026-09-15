@@ -7,10 +7,10 @@ owner: "@timianmalloo"
 phase: "conductor-watch-0915"
 tags: [main-red, ci, inv-0005, join, recount, linux, runner, engine-catalog, envelope-store, codings-left-extent, sta, dc-104]
 links:
-  - { to: inv-0005-a-red-main-nobody-consumed, rel: relates-to }
+  - { to: INV-0005-the-gate-runs-everything-and-has-been-red-for-two-days, rel: relates-to }
   - { to: defect-classes, rel: relates-to }
   - { to: session-contracts, rel: relates-to }
-  - { to: addendum-c-council-rulings, rel: relates-to }
+  - { to: note-addendum-c-council-rulings, rel: relates-to }
 review-by: ""
 summary: >-
   Option B of the operator's 2026-09-15 main-red decision: diagnose read-only, fix after the Atlas
