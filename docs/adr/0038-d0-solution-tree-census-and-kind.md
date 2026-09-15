@@ -19,17 +19,17 @@ links:
 review-by: 2027-03-15
 summary: >-
   Admit D-0 as one Architecture-only SurfaceKind (solution-tree) whose payload is one new
-  Core query-time census join (SolutionTreeAsync / IPC solution-tree). Coverage is
-  indexed-parent | unindexed; Not recorded and Omitted (N) are Disclosure. Cap tests inject
-  a named drop-set. Skip policy is consumed, not copied; the member survivor is N7.
-  Status proposed — N6 council has not sat.
+  Core query-time census join (SolutionTreeAsync / IPC solution-tree / one SolutionTreeQuery).
+  File-artifacts resolve through ResolveWithinWorkspace; census does not follow reparse points;
+  UV-0 consumes UnanalysedLanguages.Skip. Named drop-set is projection/test-host only, not IPC.
+  Status proposed — N6 Security BLOCK repaired; authors do not self-clear.
 ---
 
 # ADR-0038: D-0 Solution tree — one Architecture kind, one query-time census, no second store
 
-- **Status:** Proposed (2026-09-15). Authors do **not** self-clear. N6 architecture council is a later Conductor panel. Spec `spec-understanding-views` stays draft.
+- **Status:** Proposed (2026-09-15; N6 Security BLOCK repaired same day). Authors do **not** self-clear. N6 re-review is a later Conductor panel. Spec `spec-understanding-views` stays draft.
 - **Date:** 2026-09-15
-- **Deciders (Peer Mode, this turn):** Enterprise Architect (fit/longevity), Data & Persistence Architect (durable representation), Tech Lead (smallest correct). Session `understanding-views-architecture`.
+- **Deciders (Peer Mode, this turn):** Enterprise Architect (fit/longevity), Data & Persistence Architect (durable representation), Tech Lead (smallest correct). Session `understanding-views-architecture`. N6 Security BLOCK closed in text here; authors do not mark Accepted.
 - **Context spec/architecture:** `docs/specs/understanding-views.md`; `docs/architecture.md` §Understanding views / D-0; ADR-0030; Addendum C §A5 AR3.
 
 ## Context
@@ -53,11 +53,11 @@ N1 inventory **[Verified]:** `IWorkspaceQueries` (`:20-105`) has no tree method;
 
 ## Decision
 
-We will admit D-0 as one Architecture-only `SurfaceKind` (`solution-tree`) whose payload is one new Core query-time census join (`SolutionTreeAsync` / IPC `solution-tree`), with Coverage two-valued, honest Disclosure, a test-overridable named drop-set for the cap, one consumed skip policy (member survivor Flagged for N7), and activate only through existing `NodeContentAsync` and `GraphAsync`/`DescribeAsync`. We will not store a census, walk disk from the App, reuse `OverviewAsync`/`GraphAsync` as the tree, scaffold D-1…D-6, or freeze the tree toolkit.
+We will admit D-0 as one Architecture-only `SurfaceKind` (`solution-tree`) whose payload is one new Core query-time census join (`SolutionTreeAsync` / IPC `solution-tree` / one `SolutionTreeQuery` record). File-artifacts resolve through existing `ResolveWithinWorkspace` (containment + `File.Exists`); the census walk does not follow reparse points (`EnvelopePurge` class); UV-0 consumes `UnanalysedLanguages.Skip` (fail-closed; no tenth `HashSet`; no public skip/census interfaces); integer caps travel on the wire and a Graph-style shrink keeps the payload under `IpcFraming.MaxFrameBytes`; the US-T5c named drop-set lives only on the projection/test host. Coverage is two-valued with ancestor `indexed-parent`; Disclosure `Omitted (N)` derives from one `OmittedByCap`. We will not store a census, walk disk from the App, put `DropRelativePaths` on IPC, reuse `OverviewAsync`/`GraphAsync` as the tree, scaffold D-1…D-6, or freeze the tree toolkit.
 
 ## Chosen shape (the remaining honest one)
 
-Core, at tree-open, walks the workspace root on the daemon side of DC-022, emits census-folders minus the skip policy, joins latest-generation file-artifacts onto those paths, and returns a bounded `SolutionTreeResult`. The App projects that DTO. Folder identity comes only from the census emission. `declared_at` never mints a folder; it only widens Coverage of a census-emitted path to `indexed-parent`.
+Core, at tree-open, walks the workspace root on the daemon side of DC-022 without following reparse points, emits census-folders minus `UnanalysedLanguages.Skip`, joins latest-generation file-artifacts through `ResolveWithinWorkspace`, and returns a bounded `SolutionTreeResult` (count caps and frame shrink). The App projects that DTO. Folder identity comes only from the census emission. `declared_at` never mints a folder; it only widens Coverage of a census-emitted path (and ancestors) to `indexed-parent`.
 
 ### 1. Kind admission (described, not implemented this turn)
 
@@ -90,18 +90,12 @@ Task<SolutionTreeResult> SolutionTreeAsync(
 
 **IPC operation id** (new `WorkspaceOperations` const; catalog is `WorkspaceOperations.cs:130-158` **[Verified]**, not `IpcContract.cs`): `solution-tree` (kebab, matching `search-content`).
 
-**Request / query / result types** (Core’s own, same rule as `WorkspaceClient` remarks `:28-31` — no parallel App DTO):
+**One query record on the seam and the wire** (fields would otherwise be identical — collapse; Core’s own types, `WorkspaceClient` remarks `:28-31`):
 
 ```
 public sealed record SolutionTreeQuery(
     int MaxCensusFolders = SolutionTreeProjection.DefaultMaxCensusFolders,
-    int MaxFileArtifacts = SolutionTreeProjection.DefaultMaxFileArtifacts,
-    IReadOnlyList<string>? DropRelativePaths = null);
-
-public sealed record SolutionTreeRequest(
-    int MaxCensusFolders,
-    int MaxFileArtifacts,
-    IReadOnlyList<string>? DropRelativePaths = null);
+    int MaxFileArtifacts = SolutionTreeProjection.DefaultMaxFileArtifacts);
 
 public enum SolutionTreeNodeKind { FileArtifact, CensusFolder }
 
@@ -109,7 +103,7 @@ public enum CensusFolderCoverage { IndexedParent, Unindexed }
 
 public enum SolutionTreeShortfallCause
 {
-    Io, Permission, Cap, UnresolvablePath, PythonTsPerFile
+    Io, Permission, Cap, UnresolvablePath, PythonTsPerFile, ReparsePoint
 }
 
 public sealed record SolutionTreeNode(
@@ -133,16 +127,19 @@ public sealed record SolutionTreeResult(
     string SourceRevision);
 ```
 
-Grain on the wire: one `SolutionTreeNode` is exactly one `(Path, Kind)`. `Path` is workspace-relative with `/` separators; workspace root is `""`. `Coverage` is non-null iff `Kind == CensusFolder`. `NodeId` is the activate handle for `file-artifact` (representative latest-generation subject, same choice as `StoreReader.FilesToSearch` `:242-263` **[Verified]**); null on census-folders. `NodeKind` is `node_dim.node_kind` / `has_type` for glyphs; glyph-to-kind chrome is N8, not this ADR.
+No `SolutionTreeRequest` twin. `WorkspaceOperations.Handle<SolutionTreeQuery>`. No `DropRelativePaths` field on the query, the IPC payload, or `IWorkspaceQueries`.
+
+Grain on the wire: one `SolutionTreeNode` is exactly one `(Path, Kind)`. `Path` is workspace-relative, `/` separators, **no trailing slash**, workspace root `""`. Identity, collapse of many assertions to one path, parent-of-file, and `declared_at` equality all use this normalisation **and** `PathComparison.ForThisFileSystem` (`PathComparison.cs:40-42` **[Verified]**). `Coverage` is non-null iff `Kind == CensusFolder`. `NodeId` is the activate handle for `file-artifact` (representative latest-generation subject, same choice as `StoreReader.FilesToSearch` `:242-263` **[Verified]**); null on census-folders. `NodeKind` is `node_dim.node_kind` / `has_type` for glyphs; glyph-to-kind chrome is N8, not this ADR.
 
 **Join (query-time, not stored):**
 
-1. Census: Core walks directories under the workspace root (same side of the boundary as `UnanalysedLanguages.Enumerate` / `SearchContentAsync`). A census-folder exists iff the walk emitted it and the skip policy does not name that directory’s name. Skip-listed directories are **not nodes**; they increment `SkipListedDirectoriesOmitted`.
-2. File-artifacts: latest-generation assertions (`evidence_assertion_fact` joined to committed snapshot generation) whose resolved path is a **file** Core observed. Resolve C# / SQL / knowledge / fixture paths via `StoreReader.ScopeLocation` (`declared_at`, `:274-285` **[Verified]**) + `artifact_path_id`. Many assertions for one file path collapse to one node. Directory-valued assertions are not file-artifact nodes.
-3. Coverage of census-folder `P`: `indexed-parent` iff at least one file-artifact joins under `P` **or** some scope’s `declared_at` equals `P`; else `unindexed` (non-expanding leaf).
-4. Python/TS: extractors store `request.ScopeId` as `Provenance.ArtifactPathId` with null source location (`PythonExtractor.cs:399-404`, `TypeScriptExtractor.cs:780-785` per N1 **[Verified]**). Do **not** rewrite extractors this horizon. Zero `.py`/`.ts` file-artifact nodes from a second walk. If census emitted `P` and a Python/TS scope `declared_at` equals `P`, Coverage is `indexed-parent`. Disclosure copy (exact): `Python and TypeScript files are not listed individually. The scope folder is indexed.` Cause `PythonTsPerFile`.
-5. Bicep filename-only: resolve via scope location onto an **existing** census-folder; never treat the filename as a folder. Else Disclosure `Not recorded` (cause `UnresolvablePath`), no node.
-6. Unresolvable / hostile assertion paths: Disclosure, no invented folder.
+1. Census: Core walks directories under the workspace root on the daemon side of DC-022. A census-folder exists iff the walk emitted it and `UnanalysedLanguages.Skip` does not name that directory’s name. Skip-listed directories are **not nodes**; they increment `SkipListedDirectoriesOmitted`. **Reparse points / junctions are not followed** — same refusal class as `EnvelopePurge.Resolve` (`EnvelopePurge.cs:77-81` **[Verified]**: `DirectoryInfo.Attributes.HasFlag(FileAttributes.ReparsePoint)` → do not descend; Disclosure cause `ReparsePoint`, no node for the unobserved target). Do **not** reuse `UnanalysedLanguages.Enumerate` (`:86-110` **[Verified]**): it follows junctions (`Directory.EnumerateDirectories`) and swallows IO/permission (`:97-103`). Census walk is a private/internal method on the projection; **no public** `IWorkspaceDirectoryCensus`.
+2. File-artifacts: latest-generation assertions whose path **`ResolveWithinWorkspace` accepts as a file**. That helper (`ProjectionService.cs:1197-1227` **[Verified]**) combines `ScopeLocation` + `artifact_path_id`, `Path.GetFullPath`, separator-terminated prefix with `PathComparison.ForThisFileSystem`, **and** `File.Exists`. UV-0 **calls this existing method** (lift to `internal` if the census lives beside it — not a second containment function). `File.Exists` false → not a file-artifact (covers directory-valued assertions, Python/TS `ScopeId` strings, hostile `..`, missing files). Do not join on raw `ScopeLocation` + `artifact_path_id`. Many assertions that resolve to one path collapse to one node under `PathComparison.ForThisFileSystem`.
+3. Coverage of census-folder `P`, computed **bottom-up**: `indexed-parent` iff (a) at least one file-artifact joins under `P` (child or descendant), **or** (b) some scope’s `declared_at` equals `P` under the same normalisation/`PathComparison`, **or** (c) a **descendant census-folder is `indexed-parent`**. Else `unindexed` (non-expanding leaf). (c) is load-bearing: a Python/TS-only ancestor must not hide an indexed descendant.
+4. After count-cap / shrink / test-host drop: **drop every file-artifact whose parent census-folder is absent from `Nodes`**. No orphan files under a skipped, unobserved, or cap-omitted parent.
+5. Python/TS: extractors store `request.ScopeId` as `Provenance.ArtifactPathId` with null source location (N1 **[Verified]**). `ResolveWithinWorkspace` will not treat those as files. Zero `.py`/`.ts` file-artifact nodes from a second walk. If census emitted `P` and a Python/TS scope `declared_at` equals `P`, Coverage is `indexed-parent` (and ancestors via rule 3c). Disclosure copy (exact): `Python and TypeScript files are not listed individually. The scope folder is indexed.` Cause `PythonTsPerFile`.
+6. Bicep filename-only: `ResolveWithinWorkspace` onto an **existing** census-folder; never treat the filename as a folder. Else Disclosure `Not recorded` (cause `UnresolvablePath`), no node.
+7. Unresolvable / hostile assertion paths: Disclosure, no invented folder.
 
 **Honest shortfall (never a plausible empty tree):**
 
@@ -150,47 +147,49 @@ Grain on the wire: one `SolutionTreeNode` is exactly one `(Path, Kind)`. `Path` 
 |---|---|---|
 | IOException on a census path | no node for the unobserved path | `Not recorded`, cause `Io` |
 | UnauthorizedAccessException | no node for the denied path | `Not recorded`, cause `Permission` |
-| Cap / named drop-set | named paths absent | `Omitted (N)` with integer N, cause `Cap` |
+| Reparse point / junction | no node; do not descend | `Not recorded`, cause `ReparsePoint` |
+| Integer cap or frame shrink | named paths absent | `Omitted (N)` **derived from** `OmittedByCap` |
 | Skip-listed directory | no node | chrome count `N skip-listed directories omitted` (N on the result; copy is UI) |
 | Unresolvable assertion path | no node from that path | `Not recorded`, cause `UnresolvablePath` |
 | Python/TS per-file | n/a | exact US-T6 copy, cause `PythonTsPerFile` |
 
-IPC/daemon failure is **not** a Disclosure; it is the existing error+Retry on the query (US-T9). `UnanalysedLanguages.Enumerate` swallows IO/permission (`:97-103` **[Verified]**). Census **must not** reuse that enumerator as-is; it consumes the skip **policy**, and the walk’s catch emits Disclosure.
+IPC/daemon failure is **not** a Disclosure; it is the existing error+Retry on the query (US-T9). IO/permission tests arrange a real filesystem shortfall on a named path that is not `unindexed_probe` or `bin` (ACL / missing-intermediate), or construct the projection in-process; they do **not** require a public walker interface.
 
-**Bounds:**
+**Bounds (count and bytes):**
 
-- Production defaults **[Inferred — gap: no measured folder-census cardinality this turn]:** `DefaultMaxCensusFolders = 2_000`; `DefaultMaxFileArtifacts = 5_000` (aligned with `GraphProjection.DefaultMaxNodes = 5_000` **[Verified]** `GraphProjection.cs:191`). Clamp like other projections (`ProjectionService` Clamp + ceiling). Retune the constants when core-query emits counts; do not change the drop-set seam to retune.
-- Overflow of the integer caps is Disclosure `Omitted (N)`, cause `Cap`. Ranking for production overflow: keep the workspace root; keep indexed-parent folders before unindexed; keep shallower paths before deeper; then ordinal path. This ranking is **not** how tests arrange US-T5c.
+- Production count defaults **[Inferred — gap: no measured folder-census cardinality this turn]:** `DefaultMaxCensusFolders = 2_000`; `DefaultMaxFileArtifacts = 5_000` (aligned with `GraphProjection.DefaultMaxNodes = 5_000` **[Verified]** `GraphProjection.cs:191`). Clamp like other projections. Retune the constants when core-query emits counts.
+- Count overflow ranking: keep the workspace root; keep indexed-parent folders before unindexed; keep shallower paths before deeper; then ordinal path under `PathComparison.ForThisFileSystem`. This ranking is **not** how tests arrange US-T5c.
+- **Byte/frame bound:** count caps are not enough. After the count trim, shrink like `ProjectionService.Graph` (`:596-654` **[Verified]**) until `FramedCost` ≤ `ProjectionService.MaxFramedGraphBytes` (`:251` **[Verified]** = `IpcFraming.MaxFrameBytes` − 64 KiB; frame is `1_048_576` at `IpcFraming.cs:53` **[Verified]**). Nodes dropped by shrink increment `OmittedByCap`. UV-0 adds `SolutionTreeAsync` to `EveryOperationFitsTheFrameTests.AtCeiling` (`:85-126` **[Verified]** — reflective census of `IWorkspaceQueries`).
 
-**Cap / T5c named drop-set (test-overridable):**
+**One numeric home for cap-omit:** `SolutionTreeResult.OmittedByCap` is the only cap-omit integer (count-cap + shrink + test-host named drop). Disclosure `Omitted (N)` is derived: if `OmittedByCap > 0`, one Cap disclosure with `Count = OmittedByCap` and exact copy `Omitted (N)`; if zero, no Cap disclosure. Do not store a second omit count on a disclosure independently of this field.
 
-`DropRelativePaths` is the T5c seam. Compared workspace-relative, `/` separators, no trailing slash, `PathComparison.ForThisFileSystem`. When non-null/non-empty, those census-folders are omitted **after** skip-filter and counted in `OmittedByCap`, regardless of walk order or integer cap. Production App callers pass `null`. US-T5c sets `DropRelativePaths` to `omit_probe` and `omit_probe_2` and a `MaxCensusFolders` high enough that `unindexed_probe` survives. A test that lowers `MaxCensusFolders` until an alphabetical prefix drops `unindexed_probe` is the forbidden arrange and fails the spec’s failing-input line.
+**Cap / T5c named drop-set (not on the wire):**
 
-IO/permission tests arrange a Core census walker seam (`IWorkspaceDirectoryCensus` or equivalent) to fail a named relative path that is not `unindexed_probe` or `bin`.
+`DropRelativePaths` is **not** a member of `SolutionTreeQuery` and **not** an IPC field. Production cannot hide folders behind `Omitted (N)` by sending a list. The named drop-set for US-T5c (`omit_probe`, `omit_probe_2`) lives on the **projection/test host**: Core tests construct `SolutionTreeProjection` (or `ProjectionService` in-process) with an internal/test-only omit set compared under the same normalisation/`PathComparison`. Daemon IPC tests that need T5c construct that projection; they do not send the list on `solution-tree`. A test that only lowers `MaxCensusFolders` until an alphabetical prefix drops `unindexed_probe` remains the forbidden arrange.
 
-**Registration (N1 §7, opened):** new const + `SolutionTreeRequest` + `Register` arm on `WorkspaceOperations`; `WorkspaceClient.SolutionTreeAsync`; `LocalWorkspaceQueries` adapter; `FakeWorkspaceQueries` virtual refuse (so adding the method does not churn every stub). Daemon `WorkspaceOperations.Register(endpoint, projections)` already takes `ProjectionService` — add the arm there, not a second Register method.
+**Registration (N1 §7, opened):** new const + `Handle<SolutionTreeQuery>` arm on `WorkspaceOperations`; `WorkspaceClient.SolutionTreeAsync`; `LocalWorkspaceQueries` adapter; `FakeWorkspaceQueries` virtual refuse. Daemon `WorkspaceOperations.Register(endpoint, projections)` already takes `ProjectionService` — add the arm there.
 
-**Instrumentation (IO1):** on the normal path, emit duration, census-folder count, file-artifact count, indexed-parent count, unindexed count, skip omitted, cap omitted, shortfall causes, error code. Degrade to “not recorded”, never a plausible wrong number. Latency is recorded, not CI-asserted (ADR-0029).
+**Instrumentation (IO1):** on the normal path, emit duration, census-folder count, file-artifact count, indexed-parent count, unindexed count, skip omitted, `OmittedByCap`, framed bytes, shortfall causes, error code. Degrade to “not recorded”, never a plausible wrong number. Latency is recorded, not CI-asserted (ADR-0029).
 
-### 3. Skip set — consume one policy; do not freeze the survivor
+### 3. Skip set — UV-0 consumes `UnanalysedLanguages.Skip`
 
-Census takes **one** `IDirectorySkipPolicy` (or the unified type the N7 spike names). It does **not** copy a fourth `HashSet`.
+Census **consumes the existing** `UnanalysedLanguages.Skip` (`UnanalysedLanguages.cs:48-52` **[Verified]**). It does **not** copy a tenth `HashSet`. It does **not** ship public `IDirectorySkipPolicy` or `IWorkspaceDirectoryCensus`. Visibility of `Skip` may become `internal` so `AiDe.Core` projections can read the same instance; that is not a new set and not a public API.
 
-Opened disagreeing lists **[Verified this turn]:**
+**Fail-closed in production, not only in tests:** that existing set already contains `bin`, `obj`, `.git`, `node_modules` (and more). UV-0 production wiring always consults it. A test host must not replace it with a set that omits those four; F* `bin/` is omitted because the production skip names `bin`, not because a test injected `bin`.
+
+Opened disagreeing lists remain (N7 may **widen other walkers** onto this same set; UV-0 is not blocked on that):
 
 | Site | Members (directory names) |
 |---|---|
+| `UnanalysedLanguages.Skip` `:48-52` — **UV-0 binds here** | `bin`, `obj`, `.git`, `.vs`, `node_modules`, `artifacts`, `packages`, `dist`, `build`, `__pycache__`, `.venv`, `venv`, `.tox`, `target`, `vendor` |
 | `CSharpScopeDiscovery.Skip` `:31-32` | `bin`, `obj`, `.git`, `node_modules`, `artifacts` |
 | `CSharpScopeDiscovery` knowledge walk `:151-154` | Skip **plus** `.vs`, `dist`, `build`, `out`, `__pycache__`, `.venv`, `venv`, `packages`, `artifacts` |
 | `CSharpScopeDiscovery` Python walk `:296-299` | Skip **plus** `__pycache__`, `.venv`, `venv`, `.tox`, `site-packages` |
-| `UnanalysedLanguages.Skip` `:48-52` | `bin`, `obj`, `.git`, `.vs`, `node_modules`, `artifacts`, `packages`, `dist`, `build`, `__pycache__`, `.venv`, `venv`, `.tox`, `target`, `vendor` |
 | `ScopeFingerprints.Skip` `:99-102` | `bin`, `obj`, `.git`, `.vs`, `node_modules`, `artifacts`, `packages`, `TestResults` |
 | `TypeScriptExtractor.SkippedDirectories` `:296-301` | `.git`, `node_modules`, `bin`, `obj`, `artifacts`, `publish`, `_framework`, `dist`, `build`, `out`, `.next`, `coverage` |
 | `PythonExtractor.Files` `:409-412` | `__pycache__`, `.venv`, `venv`, `.tox`, `node_modules`, `.git`, `build`, `dist` |
 | `KnowledgeExtractor.AllFiles` `:587-591` | `node_modules`, `bin`, `obj`, `.git`, `.vs`, `dist`, `build`, `out`, `__pycache__`, `.venv`, `venv`, `packages`, `artifacts` |
 | `SqlSchemaExtractor.Files` `:367-370` | `node_modules`, `bin`, `obj`, `.git`, `packages` |
-
-The `artifacts` disagreement is already named DC-022 in `CSharpScopeDiscovery.cs:26-30`. Picking the smallest list would flood Unindexed with `dist`/`build`/`.venv`. Picking the largest would hide directories some extractors still walk. **Survivor is Flagged.** N7 skip-set spike measures union vs each list on F* (`bin` must omit) and one real workspace; then existing walkers consume the one policy type. Core-query must not ship a copied HashSet while waiting; tests inject a policy that contains `bin`.
 
 ### 4. Activate — two existing paths, no third
 
@@ -201,7 +200,9 @@ The `artifacts` disagreement is already named DC-022 in `CSharpScopeDiscovery.cs
 | Indexed-parent census-folder | Expand / collapse | no content, no graph entity |
 | Unindexed census-folder | Leaf; Enter/Right/Left do not expand | no children, no activate |
 
-No Atlas types (`AiDe.Core.Understanding`). No third IPC. Reveal failure / View source failure → error + Retry on **that** surface; tree selection unchanged. App PROBE-FILE-READ: no `File.ReadAllText` / `OpenRead` on the workspace path.
+No Atlas types (`AiDe.Core.Understanding`). No third IPC. Reveal failure / View source failure → error + Retry on **that** surface; tree selection unchanged. App PROBE-FILE-READ: no `File.ReadAllText` / `OpenRead` on the workspace path from App code.
+
+**PROBE-APP-ENUM** is an **App-assembly / non-`IWorkspaceQueries` caller** rule, not a PID rule. ADR-0009 keeps the authority core in-process in Phase 1 (`docs/adr/0009-in-process-first-daemon.md` Decision **[Verified]**): Core census `EnumerateDirectories` may run in the same process as the App. A probe that fails because the PID enumerated is a false red. The oracle is: types in `AiDe.App` (and App test hosts) that are not `IWorkspaceQueries` implementations must not invoke `Directory.EnumerateFileSystemEntries` / `EnumerateDirectories` / `EnumerateFiles` / `GetDirectories` / `GetFiles` / `GetFileSystemEntries` on the workspace root or a descendant. Core’s census inside `LocalWorkspaceQueries` / `ProjectionService` / `SolutionTreeProjection` is allowed, in-process or out.
 
 ### 5. Durable representation (DM13)
 
@@ -225,15 +226,19 @@ No Atlas types (`AiDe.Core.Understanding`). No third IPC. Reveal failure / View 
 - **Scaffold D-1…D-6 kind rows:** rejected — AR3; ADR-0030 mutation test exists to punish the second list.
 - **Freeze WPF `TreeView` in this ADR:** rejected — N7 Spike Protocol; spec non-goal 14.
 - **Two ADRs (kind vs query):** rejected — N4 close asked for one unless they cannot share; they share: one kind whose only payload is this query.
-- **Reuse `UnanalysedLanguages.Enumerate` wholesale:** rejected — it swallows IO/permission; US-T5a/b require Disclosure.
+- **Reuse `UnanalysedLanguages.Enumerate` wholesale:** rejected — it follows junctions and swallows IO/permission (`:86-110`); US-T5a/b and Security reparse refusal require a different walk that still **consumes** `UnanalysedLanguages.Skip`.
+- **`DropRelativePaths` on `SolutionTreeQuery` / IPC:** rejected at N6 — a hostile (or merely curious) client could hide folders behind `Omitted (N)`. Named drop-set is projection/test-host only.
+- **Public `IDirectorySkipPolicy` / `IWorkspaceDirectoryCensus`:** rejected — YAGNI; a public seam is a second skip policy. Consume the existing field; tests construct the projection.
+- **Raw `ScopeLocation` + `artifact_path_id` join:** rejected at N6 — skips containment and `File.Exists`; `ResolveWithinWorkspace` is the existing function.
 - **Integer-only cap as the T5c arrange:** rejected — Test Architect residual; alphabetical prefix can drop `unindexed_probe`.
+- **Count caps without a byte/frame shrink:** rejected — INV-0003 class; `EveryOperationFitsTheFrameTests` exists because item caps overflow bytes.
 - **LOA D (Grounded Synthesizer) inventing folders:** rejected — a model must not mint Coverage.
 
 ## Consequences
 
 - **Positive:** D-0 can be built as a walking skeleton (Core query reds, then one kind row) without a schema migration, without a second store, and without a hand-written menu. Unindexed, skip-omission, and Not-recorded stay distinct. AR3 holds for D-1…D-6.
-- **Negative / accepted:** Python/TS files are not listed individually this horizon (disclosed). Skip-set member list is Flagged until N7. Production folder-cap number is Inferred until measured. `DropRelativePaths` on the query is a test seam a hostile client could also set — same class as `GraphQuery.MaxNodes`; Disclosure still fires.
-- **Follow-ups / new risks:** N6 council (do not self-clear). N7 toolkit spike. N7 skip-set survivor spike. N8 `ui-design`. Core-query then shell-surface. `EveryOperationFitsTheFrameTests` must gain a `SolutionTreeAsync` case when the method lands (reflective census of `IWorkspaceQueries` **[Verified]** `EveryOperationFitsTheFrameTests.cs:19-22`). `CanvasGraphViewModelTests.StubQueries` still implements the interface by hand (not `FakeWorkspaceQueries`) — it will fail to compile until updated.
+- **Negative / accepted:** Python/TS files are not listed individually this horizon (disclosed). Other walkers still disagree with `UnanalysedLanguages.Skip` until N7 widens them. Production folder-cap numbers 2000/5000 stay **Inferred** until measured. US-T5c cannot be arranged over IPC; Core tests construct the projection.
+- **Follow-ups / new risks:** N6 re-review (do not self-clear). N7 toolkit spike. N7 may widen other skip lists onto `UnanalysedLanguages.Skip`. N8 `ui-design`. Core-query then shell-surface. `EveryOperationFitsTheFrameTests` must gain a `SolutionTreeAsync` case when the method lands. `CanvasGraphViewModelTests.StubQueries` still implements the interface by hand (not `FakeWorkspaceQueries`) — it will fail to compile until updated.
 
 ## E7 surface list (Owner N0 as closed by the spec)
 
@@ -241,8 +246,8 @@ No Atlas types (`AiDe.Core.Understanding`). No third IPC. Reveal failure / View 
 |---|---|
 | **store** | Existing SQLite: `node_dim`, `evidence_assertion_fact`, scope snapshot facts. No second graph store. No `folder_dim`. |
 | **model** | One tree node = `(path, kind)`, `kind ∈ {file-artifact, census-folder}`. Coverage two-valued on census-folders. Disclosure is not Coverage. |
-| **service** | `IWorkspaceQueries.SolutionTreeAsync`. Census + latest-generation join. One skip policy. Test-overridable `DropRelativePaths`. |
-| **projection/wire** | IPC `solution-tree` / `SolutionTreeRequest` → `SolutionTreeResult`. Bounded. `Not recorded` / `Omitted (N)`. |
+| **service** | `IWorkspaceQueries.SolutionTreeAsync`. Census + `ResolveWithinWorkspace` join. Consumes `UnanalysedLanguages.Skip`. Named drop-set on the projection/test host only. |
+| **projection/wire** | IPC `solution-tree` / one `SolutionTreeQuery` (integer caps only) → `SolutionTreeResult`. Count caps **and** frame shrink. `Not recorded` / `Omitted (N)` derived from `OmittedByCap`. |
 | **client type** | Architecture docking-host tree. Toolkit unfrozen (N7). |
 | **UI** | Architecture pane. Hard states: empty, loading, unindexed leaf, error, no-workspace, stale-while-refresh; skip-count; US-T6 copy. Empty → Show Graph. |
 | **compute reader** | View source → `NodeContentAsync` / `codeviewer`. Reveal in graph → `GraphAsync` / `DescribeAsync`. No third path. No Atlas. |
@@ -259,33 +264,54 @@ P1 cheapest sufficient: one query + one kind row. P2 determinism: derived menu, 
 
 | Phase | Proves | Real | Mocked | Human | E2E | Unblocks |
 |---|---|---|---|---|---|---|
-| **UV-0 Core query (walking skeleton, first)** | F* grain: indexed-parent, `unindexed_probe` Unindexed, `bin` absent + skip-count, T5a–c Disclosures, Python/TS honesty, Bicep resolve, PROBE-APP-ENUM in Core tests | `SolutionTreeAsync`, IPC, skip-policy seam, `DropRelativePaths` | Shell surface (none yet); no kind row (AR3) | (headless) | US-T1, T2, T3 query-DTO, T4, T5a–c query-DTO, T6, T7, T11 minus visual-tree; frame-size test | UV-1 |
+| **UV-0 Core query (walking skeleton, first)** | F* grain: indexed-parent, `unindexed_probe` Unindexed, `bin` absent + skip-count, T5a–c Disclosures, Python/TS honesty, Bicep resolve, frame fit | `SolutionTreeAsync`, IPC integer caps, consume `UnanalysedLanguages.Skip`, `ResolveWithinWorkspace`, no-follow reparse | Shell surface (none yet); no kind row (AR3); T5c omit set on the test-constructed projection | (headless) | US-T1, T2, T3 query-DTO, T4, T5a–c query-DTO (T5c via projection host), T6, T7, T11 minus visual-tree; `EveryOperationFitsTheFrameTests` | UV-1 |
 | **UV-1 Shell surface + one kind row (serial after UV-0)** | Show Solution tree derived; visual-tree oracles; activate | One `solution-tree` row `{Architecture}`; surface; Enter / Ctrl+Enter | Toolkit from N7; default-zone choreography may still be design-slice | Open Architecture, Show Solution tree on F* | US-T3/T5 visual-tree, T8, T9, T10, T13 | Proof Pack; join onto `understanding-views` |
 
 Serial. Not this turn’s code. D-1…D-6 stay out.
 
 ## Files later slices may touch (seam, not implementation)
 
-**Core-query (UV-0):** `src/AiDe.Core/Projections/IWorkspaceQueries.cs`; new `src/AiDe.Core/Projections/SolutionTreeProjection.cs` (types + compute); `src/AiDe.Core/Projections/ProjectionService.cs` (delegate + activity tags); `src/AiDe.Core/Ipc/WorkspaceOperations.cs`; `src/AiDe.Core/Ipc/WorkspaceClient.cs`; `src/AiDe.Core/Store/StoreReader.cs` (reuse `FilesToSearch` / `ScopeLocation`; add helpers only if the join cannot share them); skip-policy type after N7 (existing extraction skip sites listed in §3 — **consume**, do not copy); `src/AiDe.Daemon/Program.cs` only if registration cannot stay on `WorkspaceOperations.Register`; `tests/Shared/FakeWorkspaceQueries.cs`; `tests/AiDe.Core.Tests/CanvasGraphViewModelTests.cs` (`StubQueries`); `tests/AiDe.Core.Tests/EveryOperationFitsTheFrameTests.cs`; `tests/AiDe.Core.Tests/DaemonOperationsTests.cs`; new Core tests for F*.
+**Core-query (UV-0):** `src/AiDe.Core/Projections/IWorkspaceQueries.cs`; new `src/AiDe.Core/Projections/SolutionTreeProjection.cs` (types + compute; test-host omit set as constructor/`internal` parameter, not a query field); `src/AiDe.Core/Projections/ProjectionService.cs` (delegate, activity tags, **call existing `ResolveWithinWorkspace`**, Graph-style shrink); `src/AiDe.Core/Extraction/UnanalysedLanguages.cs` (`Skip` visibility `internal` if needed — same instance, not a copy); `src/AiDe.Core/Ipc/WorkspaceOperations.cs`; `src/AiDe.Core/Ipc/WorkspaceClient.cs`; `src/AiDe.Core/Store/StoreReader.cs` (reuse `FilesToSearch` / `ScopeLocation` only as inputs to `ResolveWithinWorkspace`); `src/AiDe.Daemon/Program.cs` only if registration cannot stay on `WorkspaceOperations.Register`; `tests/Shared/FakeWorkspaceQueries.cs`; `tests/AiDe.Core.Tests/CanvasGraphViewModelTests.cs` (`StubQueries`); `tests/AiDe.Core.Tests/EveryOperationFitsTheFrameTests.cs`; `tests/AiDe.Core.Tests/DaemonOperationsTests.cs`; new Core tests for F* (T5c constructs the projection).
 
-**Shell-surface (UV-1):** `src/AiDe.App/Workbench/SurfaceContentFactory.cs` (one row); new surface type under `src/AiDe.App/Workbench/` (name after N7 toolkit); `src/AiDe.App/Workbench/NodeViewMenu.cs` only if the tree must offer Open-as — default is Enter/Ctrl+Enter mapped to existing `NodeViewKind` values, no new enum member; **not** `MainMenuBuilder` lists (derived); `tests/AiDe.App.Tests/` menu mutation, visual-tree, PROBE-APP-ENUM / PROBE-ATLAS / PROBE-FILE-READ. Default layout (`ZoneLayout`) only if design-slice includes the tree in Architecture’s default — not required to admit the kind.
+**Shell-surface (UV-1):** `src/AiDe.App/Workbench/SurfaceContentFactory.cs` (one row); new surface type under `src/AiDe.App/Workbench/` (name after N7 toolkit); `src/AiDe.App/Workbench/NodeViewMenu.cs` only if the tree must offer Open-as — default is Enter/Ctrl+Enter mapped to existing `NodeViewKind` values, no new enum member; **not** `MainMenuBuilder` lists (derived); `tests/AiDe.App.Tests/` menu mutation, visual-tree, PROBE-APP-ENUM (App-assembly / non-`IWorkspaceQueries` callers — not PID), PROBE-ATLAS / PROBE-FILE-READ. Default layout (`ZoneLayout`) only if design-slice includes the tree in Architecture’s default — not required to admit the kind.
 
 **Must not touch this horizon:** `src/AiDe.Core/Understanding/**`; Atlas; `session-contracts.md` as a D-0 seam; extractor Python/TS provenance rewrite; Addenda C/D compile types; D-1…D-6 rows.
 
 ## N7 spike list (do not execute here)
 
 1. **Tree toolkit** — WPF `TreeView` vs alternative. Spike Protocol (read + run on the installed WPF). Do not freeze a control in this ADR. Exit: a named control that can render F* hard states with UIA Name containing kind/coverage, 28px full-row hit, non-expanding unindexed leaf.
-2. **Skip-set survivor** — Flagged. Measure the nine opened lists on F* and one real workspace. Unify to one policy type existing walkers consume. Census consumes that type. Do not guess the member set in UV-0 production wiring; tests inject `bin`.
+2. **Widen other walkers onto `UnanalysedLanguages.Skip`** (optional after UV-0). UV-0 is already bound to that existing set. N7 may make C# / TS / Python / knowledge / SQL walks consume the same instance so they stop disagreeing. Not a UV-0 blocker. Not a new HashSet.
 
-No unfamiliar/preview SDK is a dependency of this ADR. Do not spike NodeContent / Graph / IPC — those are opened Core.
+No unfamiliar/preview SDK is a dependency of this ADR. Do not spike NodeContent / Graph / IPC / `EnvelopePurge` / `ResolveWithinWorkspace` — those are opened Core.
 
 ## Falsifying tests (red in UV-0 / UV-1; not this turn)
 
 1. `IWorkspaceQueries` declares `SolutionTreeAsync`; `WorkspaceOperations` catalog contains `solution-tree` and not a mapping onto `overview`/`graph`. *Headless, Core.*
 2. F* query DTO: indexed-parent folder + file-artifact; `unindexed_probe` coverage `unindexed`; no `bin` node; skip-count ≥ 1. *Headless, Core.*
-3. US-T5c: `DropRelativePaths = {omit_probe, omit_probe_2}` omits those paths, `Omitted (N)` N≥2, `unindexed_probe` remains. A test that only lowers `MaxCensusFolders` and loses `unindexed_probe` fails. *Headless, Core; visual-tree in UV-1.*
+3. US-T5c: Core test constructs the projection with named omit `{omit_probe, omit_probe_2}`; those paths absent, `OmittedByCap` ≥ 2, Disclosure `Omitted (N)` derives from it, `unindexed_probe` remains. `SolutionTreeQuery` JSON has no `dropRelativePaths`. A test that only lowers `MaxCensusFolders` and loses `unindexed_probe` fails. *Headless, Core; visual-tree in UV-1.*
 4. After the kind row: US-C4 mutation still holds; Architecture menu gains Show Solution tree with no builder-list edit; Coding/Explore do not admit `solution-tree`. *Headless, App. UV-1.*
-5. PROBE-APP-ENUM / PROBE-ATLAS / PROBE-FILE-READ. *UV-1.*
+5. PROBE-APP-ENUM (App assembly / non-`IWorkspaceQueries` callers, not PID) / PROBE-ATLAS / PROBE-FILE-READ. *UV-1.*
+6. `EveryOperationFitsTheFrameTests` covers `SolutionTreeAsync`; a hostile census payload shrinks under `MaxFramedGraphBytes`. *Headless, Core. UV-0.*
+7. Production skip: F* `bin` omitted with no test-injected skip set. *Headless, Core. UV-0.*
+8. Ancestor coverage: a Python/TS-only parent of an indexed-parent descendant is `indexed-parent`, not `unindexed`. *Headless, Core. UV-0.*
+9. File-artifact whose parent folder is absent from `Nodes` is absent. *Headless, Core. UV-0.*
+10. Census does not descend a junction; Disclosure cause `ReparsePoint`. *Headless, Core. UV-0.*
+
+## N6 close-outs (quoted; authors do not self-clear)
+
+N6 Security **BLOCK**ed. Each major below is closed in this ADR. Status remains **Proposed**.
+
+1. **File-artifact join uses existing `ResolveWithinWorkspace` (containment + `File.Exists`), not raw `ScopeLocation` + `artifact_path_id`. Directory/ScopeId rows are not file-artifact nodes.** Closed: §2 join step 2 cites `ProjectionService.cs:1197-1227`.
+2. **Census walk does not follow reparse points / junctions. Cite `EnvelopePurge` as the existing refusal class; do not reuse `UnanalysedLanguages.Enumerate` as-is.** Closed: §2 join step 1 cites `EnvelopePurge.cs:77-81`; Enumerate rejected `:86-110`.
+3. **UV-0 skip binding: consume `UnanalysedLanguages.Skip`. Fail-closed: at least `bin`, `node_modules`, `.git`, `obj` omitted in production, not only in tests. Do not copy a tenth HashSet. Do not ship public `IDirectorySkipPolicy` / `IWorkspaceDirectoryCensus`. N7 may widen other walkers.** Closed: §3; Skip `:48-52`.
+4. **`DropRelativePaths` is not on `SolutionTreeQuery` / `SolutionTreeRequest` / IPC. Integer caps stay on the wire. Named drop-set for US-T5c lives on the projection/test host. Production cannot hide folders behind `Omitted (N)`.** Closed: §2 one query record; T5c paragraph; no `SolutionTreeRequest`.
+5. **PROBE-APP-ENUM is App-assembly / non-`IWorkspaceQueries` callers, not a PID rule (ADR-0009 in-process host).** Closed: §4 PROBE-APP-ENUM paragraph.
+6. **Payload: count caps and a byte/frame bound (name `EveryOperationFitsTheFrameTests` / shrink like Graph). Count-only is not enough.** Closed: §2 Bounds; `MaxFramedGraphBytes` `:251`; `IpcFraming.MaxFrameBytes` `:53`.
+7. **Identity, collapse, and `declared_at` equality use `PathComparison.ForThisFileSystem` and the same `/` no-trailing-slash normalisation.** Closed: §2 grain paragraph; `PathComparison.cs:40-42`.
+8. **Coverage `indexed-parent` also if a descendant census-folder is indexed-parent (Python/TS-only ancestor chain must not hide an indexed descendant).** Closed: §2 join step 3(c).
+9. **Drop file-artifacts whose parent census-folder is absent from `Nodes`.** Closed: §2 join step 4.
+10. **One numeric home for cap-omit (`OmittedByCap`); Disclosure `Omitted (N)` derives from it.** Closed: §2 “One numeric home”.
+11. **Collapse Query/Request to one record if fields stay identical. Caps 2000/5000 stay labelled Inferred.** Closed: one `SolutionTreeQuery`; defaults labelled **Inferred**.
 
 ## Evidence
 
@@ -303,15 +329,22 @@ No unfamiliar/preview SDK is a dependency of this ADR. Do not spike NodeContent 
 | NodeViewKind.Source / GraphNeighbourhood | `NodeViewMenu.cs` `:6-14`, `:53`, `:68` | **Verified** |
 | Skip-list disagreement | extraction files cited in §3 | **Verified** |
 | `FilesToSearch` / `ScopeLocation` | `StoreReader.cs` `:229-285` | **Verified** |
+| `ResolveWithinWorkspace` containment + `File.Exists` | `ProjectionService.cs` `:1197-1227` | **Verified** |
 | Graph DefaultMaxNodes = 5000 | `GraphProjection.cs` `:191` | **Verified** |
+| Frame shrink pattern / `MaxFramedGraphBytes` | `ProjectionService.cs` `:596-654`, `:251` | **Verified** |
+| `IpcFraming.MaxFrameBytes` = 1 MiB | `IpcFraming.cs` `:53` | **Verified** |
+| Reparse refusal class | `EnvelopePurge.cs` `:77-81` | **Verified** |
+| `UnanalysedLanguages.Skip` contains bin/obj/.git/node_modules | `UnanalysedLanguages.cs` `:48-52` | **Verified** |
+| `PathComparison.ForThisFileSystem` | `PathComparison.cs` `:40-42` | **Verified** |
+| ADR-0009 in-process host | `docs/adr/0009-in-process-first-daemon.md` Decision | **Verified** |
 | N4 PASS; T5c residual | `note-understanding-views-n4-pass.md` `:47-56` | **Verified** |
-| Production folder cap 2000 | no measured census cardinality | **Inferred** (gap named) |
-| Skip-set survivor | nine lists disagree | **Flagged** (N7) |
+| Production folder cap 2000 / file cap 5000 | no measured census cardinality | **Inferred** (gap named) |
+| Other walkers vs UV-0 skip | nine lists still disagree | **Flagged** (N7 widen, not UV-0 bind) |
 | Toolkit | unfrozen | **Flagged** (N7) |
 
 ## Gate
 
-Stage 4 architect council is **skipped this turn** (N6 is a separate Conductor panel). Status remains **Proposed**. Authors did not self-clear.
+N6 sat and **BLOCK**ed (Security). This amendment repairs the BLOCK in text. Status remains **Proposed**. Authors did not self-clear; a re-review panel is Conductor’s. UV-0 is not implemented this turn.
 
 ## Drift
 

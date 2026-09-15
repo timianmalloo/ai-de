@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generator": "docs-graph.py flag",
+  "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
     "knowledge",
@@ -1906,7 +1906,7 @@ window.DOCS_INDEX = {
       "phase": "understanding-views",
       "reviewBy": "2027-03-15",
       "reviewSuggested": [],
-      "summary": "Admit D-0 as one Architecture-only SurfaceKind (solution-tree) whose payload is one new Core query-time census join (SolutionTreeAsync / IPC solution-tree). Coverage is indexed-parent | unindexed; Not recorded and Omitted (N) are Disclosure. Cap tests inject a named drop-set. Skip policy is consumed, not copied; the member survivor is N7. Status proposed — N6 council has not sat.",
+      "summary": "Admit D-0 as one Architecture-only SurfaceKind (solution-tree) whose payload is one new Core query-time census join (SolutionTreeAsync / IPC solution-tree / one SolutionTreeQuery). File-artifacts resolve through ResolveWithinWorkspace; census does not follow reparse points; UV-0 consumes UnanalysedLanguages.Skip. Named drop-set is projection/test-host only, not IPC. Status proposed — N6 Security BLOCK repaired; authors do not self-clear.",
       "tags": [
         "architecture",
         "D-0",
@@ -1956,7 +1956,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "850dd061a403ccfaf0044a4cc77b898290a359e6edb070e42343eb566c2e314a"
+      "sourceSha256": "416921348ff408cc5fd946c55b3b1db12c26c93f0e8f29cc3cb919a440e56474"
     },
     {
       "id": "api-aide-app",
@@ -2842,10 +2842,10 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "UV.2 Chosen shape",
-          "mermaid": "flowchart LR\n  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  disk[Workspace disk now] --> census[Core census walk]\n  skip[One IDirectorySkipPolicy] --> census\n  facts[node_dim + evidence_assertion_fact + scope snapshots] --> join[Latest-generation join]\n  census --> join\n  join --> dto[SolutionTreeResult]\n  dto --> ipc[\"IPC solution-tree\"]\n  ipc --> tree[Architecture Solution tree]\n  tree -->|Enter| src[NodeContentAsync / codeviewer]\n  tree -->|Ctrl+Enter| graph[GraphAsync / DescribeAsync]"
+          "mermaid": "flowchart LR\n  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  disk[Workspace disk now] --> census[Core census walk]\n  skip[UnanalysedLanguages.Skip] --> census\n  facts[node_dim + evidence_assertion_fact + scope snapshots] --> join[Latest-generation join]\n  census --> join\n  join --> dto[SolutionTreeResult]\n  dto --> ipc[\"IPC solution-tree\"]\n  ipc --> tree[Architecture Solution tree]\n  tree -->|Enter| src[NodeContentAsync / codeviewer]\n  tree -->|Ctrl+Enter| graph[GraphAsync / DescribeAsync]"
         }
       ],
-      "sourceSha256": "cca158bfd952dbfc0943fa66f8ba6e027de5dc629963b202fd70668afa5ee94d"
+      "sourceSha256": "55c50b9e2d16a00f5f75ea37223e587e3f4d239dcb44f1ee901ac8cb39d87613"
     },
     {
       "id": "architecture-agent-plane",
@@ -19147,5 +19147,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d2cebbc95e0bfc3138efa530ff98ee78f90041fce5730dfe2ec2ad1db041852b"
+  "graphSha256": "d055dcf4e09b0a0b452a8da1df9caba4a26c4650219a72591099979574fc5061"
 };

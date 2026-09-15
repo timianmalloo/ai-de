@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:24:14Z",
+  "generated": "2026-09-15T14:45:36Z",
   "audit": [
     {
       "actor": null,
@@ -16642,6 +16642,46 @@ window.AUDIT_DATA = {
         "branch": "understanding-views-architecture",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2JRFM31VF877D2MAHMH08TF",
+      "shortname": "define-architecture-d0-n6-repair",
+      "datetime": "2026-09-15T14:45:36Z",
+      "session": "understanding-views-architecture",
+      "prompt": "Resume N5 architecture author. Repair ADR-0038 after N6 Security BLOCK. Do not mark the ADR accepted. Close majors 1-11 (ResolveWithinWorkspace, no-follow reparse/EnvelopePurge, consume UnanalysedLanguages.Skip, DropRelativePaths off IPC, PROBE-APP-ENUM not PID, byte/frame bound, PathComparison identity, ancestor indexed-parent, drop orphan files, one OmittedByCap, collapse Query/Request).",
+      "summary": "N6 Security BLOCK repaired in ADR-0038 + architecture UV section. Majors 1-11 closed in text. ADR remains proposed. No src/.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md"
+      ],
+      "tags": [
+        "understanding-views",
+        "D-0",
+        "N6"
+      ],
+      "outcome": "success",
+      "goal": "Repair ADR-0038 after N6 Security BLOCK so re-review can pass.",
+      "done_when": "Majors 1-11 closed in ADR + architecture section; ADR still proposed; committed on understanding-views-architecture.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T14:40:16Z",
+      "duration_seconds": 320.0,
+      "change": "cl-01M2JRF7PFTH07QDQPXB6VSF52",
+      "git": {
+        "sha": "46160f215e96d5a8e4f05076b029ebdd546aa381",
+        "short": "46160f215",
+        "branch": "understanding-views-architecture",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -20438,6 +20478,29 @@ window.AUDIT_DATA = {
       "git": {
         "before": "cb868bce441246f0aa921aec649901dc755b56ce",
         "after": "cb868bce441246f0aa921aec649901dc755b56ce",
+        "branch": "understanding-views-architecture",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2JRF7PFTH07QDQPXB6VSF52",
+      "datetime": "2026-09-15T14:45:23Z",
+      "session": "understanding-views-architecture",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "ADR-0038 N6 Security BLOCK repair: containment, skip bind, drop-set off wire",
+      "prompt": "Resume N5 architecture author. Repair ADR-0038 after N6 Security BLOCK. Do not mark the ADR accepted. Close majors 1-11 (ResolveWithinWorkspace, no-follow reparse/EnvelopePurge, consume UnanalysedLanguages.Skip, DropRelativePaths off IPC, PROBE-APP-ENUM not PID, byte/frame bound, PathComparison identity, ancestor indexed-parent, drop orphan files, one OmittedByCap, collapse Query/Request).",
+      "summary": "Repaired proposed ADR-0038 and architecture §Understanding views / D-0. File-artifacts via ResolveWithinWorkspace; census does not follow reparse points (EnvelopePurge class); UV-0 consumes UnanalysedLanguages.Skip; DropRelativePaths off IPC; count+frame bounds; PathComparison identity; ancestor indexed-parent; one OmittedByCap. Status remains proposed.",
+      "rationale": "N6 Security BLOCK. Conductor does not override. Close majors 1-11 in text so re-review can pass. Authors do not self-clear.",
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "46160f215e96d5a8e4f05076b029ebdd546aa381",
+        "after": "46160f215e96d5a8e4f05076b029ebdd546aa381",
         "branch": "understanding-views-architecture",
         "pushed": null,
         "commits": []

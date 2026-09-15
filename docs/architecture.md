@@ -1056,9 +1056,9 @@ Pack items named there (P-4, P-7, P-D4, P-D5, P-D8, P-D9). Findings for the Owne
 ## Understanding views / D-0 (2026-09-15)
 
 *Amendment from `/define-architecture` of `spec-understanding-views` (session
-`understanding-views-architecture`). N4 PASS is `note-understanding-views-n4-pass`. Status of
-ADR-0038 is **proposed** — Stage 4 council is N6 (Conductor), not this turn. Authors do not
-self-clear. Allow-list change is **described, not implemented.***
+`understanding-views-architecture`). N4 PASS is `note-understanding-views-n4-pass`. N6 Security
+BLOCK repaired in ADR-0038 text the same day. Status of ADR-0038 remains **proposed** — authors
+do not self-clear. Allow-list change is **described, not implemented.***
 
 **Drift from §C/D.2 and §C/D.12.** Those sections excluded D-0…D-6 from Addenda C/D slices. They
 still do. This section admits **D-0 only** in a later horizon. It does not rewrite C-1's kind rows
@@ -1091,7 +1091,7 @@ flowchart LR
   classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF
   classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF
   disk[Workspace disk now] --> census[Core census walk]
-  skip[One IDirectorySkipPolicy] --> census
+  skip[UnanalysedLanguages.Skip] --> census
   facts[node_dim + evidence_assertion_fact + scope snapshots] --> join[Latest-generation join]
   census --> join
   join --> dto[SolutionTreeResult]
@@ -1126,13 +1126,17 @@ Opened type: shipped `SurfaceKind.Perspectives` is `IReadOnlyList<Perspective>`
 |---|---|
 | Method | `IWorkspaceQueries.SolutionTreeAsync(SolutionTreeQuery, CancellationToken)` → `SolutionTreeResult` |
 | IPC | `solution-tree` (`WorkspaceOperations` catalog; not `overview` / `graph`) |
-| DTOs | `SolutionTreeQuery` / `SolutionTreeRequest` / `SolutionTreeNode` / `SolutionTreeDisclosure` / `SolutionTreeResult` |
+| DTOs | **one** `SolutionTreeQuery` (integer caps only) / `SolutionTreeNode` / `SolutionTreeDisclosure` / `SolutionTreeResult`. No `SolutionTreeRequest` twin. No `DropRelativePaths` on the wire. |
 | Production caps **[Inferred]** | `DefaultMaxCensusFolders = 2_000`; `DefaultMaxFileArtifacts = 5_000` (aligned with `GraphProjection.DefaultMaxNodes` **[Verified]**). Retune when counts are emitted. |
-| T5c seam | `DropRelativePaths` — named drop-set (`omit_probe`, `omit_probe_2`). Forbidden: prefix-integer cap + alphabetical walk that drops `unindexed_probe`. |
-| Shortfalls | `Not recorded` (Io / Permission / UnresolvablePath); `Omitted (N)` (Cap); skip-count on the result; exact US-T6 Python/TS copy |
-| Census | query-time Core, confined to the workspace root. Consumes **one** skip policy; does **not** copy a fourth `HashSet`; does **not** reuse `UnanalysedLanguages.Enumerate` (it swallows IO). |
+| Byte bound | After count trim, shrink like `ProjectionService.Graph` to `MaxFramedGraphBytes` (`IpcFraming.MaxFrameBytes` − 64 KiB). `EveryOperationFitsTheFrameTests` covers `SolutionTreeAsync`. |
+| T5c seam | Named drop-set (`omit_probe`, `omit_probe_2`) on the **projection/test host**, not IPC. Forbidden: prefix-integer cap + alphabetical walk that drops `unindexed_probe`. Production cannot hide folders via a query field. |
+| Shortfalls | `Not recorded` (Io / Permission / UnresolvablePath / ReparsePoint); `Omitted (N)` **derived from** one `OmittedByCap`; skip-count on the result; exact US-T6 Python/TS copy |
+| Census | query-time Core, confined to the workspace root. Consumes **`UnanalysedLanguages.Skip`** (fail-closed: `bin`, `node_modules`, `.git`, `obj` in production). Does **not** copy a HashSet. Does **not** follow reparse points (`EnvelopePurge` class). Does **not** reuse `UnanalysedLanguages.Enumerate`. No public `IDirectorySkipPolicy` / `IWorkspaceDirectoryCensus`. |
+| File join | Existing `ResolveWithinWorkspace` (containment + `File.Exists`). Directory/ScopeId rows are not file-artifact nodes. Drop file-artifacts whose parent census-folder is absent from `Nodes`. |
+| Identity | `/` no-trailing-slash paths; `PathComparison.ForThisFileSystem` for identity, collapse, `declared_at`. |
+| Coverage | `indexed-parent` also if a descendant census-folder is `indexed-parent`. |
 
-Skip-set survivor is **Flagged** (nine opened lists disagree — ADR-0038 §3). N7 measures; tests inject `bin`.
+N7 may widen other walkers onto `UnanalysedLanguages.Skip`. UV-0 is already bound.
 
 ### UV.5 Activate
 
@@ -1149,12 +1153,12 @@ Python/TS `ScopeId`-as-path extractor rewrite is **cut**. Disclose, do not compl
 ### UV.7 E7 surface list (Owner N0 as closed by the spec)
 
 **store** (`node_dim`, `evidence_assertion_fact`, scope snapshots — no `folder_dim`) →
-**model** (`(path, kind)` node; Coverage two-valued; Disclosure ≠ Coverage) →
-**service** (`SolutionTreeAsync`; one skip policy; `DropRelativePaths`) →
-**projection/wire** (IPC `solution-tree`; `Not recorded` / `Omitted (N)`) →
+**model** (`(path, kind)` node; Coverage two-valued including ancestor indexed-parent; Disclosure ≠ Coverage) →
+**service** (`SolutionTreeAsync`; consume `UnanalysedLanguages.Skip`; `ResolveWithinWorkspace`; named drop-set on projection/test host only) →
+**projection/wire** (IPC `solution-tree` / one `SolutionTreeQuery`; count caps **and** frame shrink; `Omitted (N)` from `OmittedByCap`) →
 **client type** (Architecture dock-host tree; toolkit N7) →
 **UI** (hard states + skip-count + US-T6 copy; empty → Show Graph) →
-**compute reader** (`NodeContentAsync` / `GraphAsync`+`DescribeAsync`; no Atlas).
+**compute reader** (`NodeContentAsync` / `GraphAsync`+`DescribeAsync`; no Atlas). PROBE-APP-ENUM is App-assembly / non-`IWorkspaceQueries` callers, not PID (ADR-0009).
 
 ### UV.8 LOA for this addition
 
@@ -1173,15 +1177,15 @@ not `main`.
 ### UV.10 N7 spikes (named, not executed)
 
 1. Tree toolkit (WPF `TreeView` vs alternative).
-2. Skip-set survivor (Flagged).
+2. Widen other walkers onto `UnanalysedLanguages.Skip` (UV-0 already binds that set).
 
 No unfamiliar SDK. Do not freeze a control in ADR-0038.
 
 ### UV.11 Gate
 
 `GATE define-architecture (Understanding views D-0) · 2026-09-15 · session understanding-views-architecture
-· Stage 4 skipped (N6) · ADR-0038 proposed.` Residual: skip-set survivor; production folder-cap
-unmeasured; toolkit unfrozen.
+· N6 Security BLOCK repaired in ADR-0038 text · ADR-0038 remains proposed (authors do not self-clear).`
+Residual: other walkers still disagree until N7; production folder-cap unmeasured; toolkit unfrozen.
 
 ## LOA conformance check
 
@@ -1244,7 +1248,7 @@ unmeasured; toolkit unfrozen.
 |---|---|
 | **Completed** | Superseded the 2026-08-25 draft; **executed and committed the SQLite, MCP (stdio + hostile-Origin), and ConPTY spikes**; recovered and committed the release plan; fixed the `.gitignore` rules that hid `docs/release/` and `spikes/`; resolved the three hard and two soft vetoes and the verified contradictions; added ADR-0008..0011; produced the revised component architecture, durable model, phasing, and Phase-1 proof plan. **Addenda C and D (2026-09-11):** ADR-0030–0037. **Understanding views D-0 (2026-09-15):** ADR-0038 proposed; §Understanding views / D-0; allow-list described not implemented. |
 | **Remaining** | Phases 1–5 in order; Phase 1 first resolves the in-process core, write-ahead dispatch, knowledge projection, and MCP egress design. **Addenda C and D (2026-09-11):** slices C-0 → C-1 → C-2 → C-3 → D-1 → D-2 → D-3 (§C/D.12), gated spike → advisory → measured → agentic. **Understanding views D-0:** N6 council (ADR-0038 stays proposed until that panel); N7 toolkit + skip-set spikes; N8 ui-design; UV-0 Core query then UV-1 Shell surface + one kind row. |
-| **Best next action** | N6 architecture council on ADR-0038 (Conductor panel — authors do not self-clear). Not `src/` and not marking the ADR accepted from this session. |
+| **Best next action** | Conductor: N6 re-review of repaired ADR-0038 (authors do not self-clear; do not mark accepted). |
 
 ## Review resolution
 
