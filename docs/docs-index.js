@@ -11706,7 +11706,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "007bcb571e4d97d5c364f9ee5640964d7d6dd7c968941f6e43884d222ff1ab12"
+      "sourceSha256": "adb50226c350725f59d0554f4a9c86b1beb1167e87619b1533fdce0626cc93a2"
     },
     {
       "id": "investigation-redraw-isolation",
@@ -16435,7 +16435,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b885fce34e1b24de3a3873d1e05bfa7da30ba4fc1f137d68c7ed0e580e2c64df"
+      "sourceSha256": "b8ca8cb601f766144e1fceeaa527a48be03f13a7c62b70d0c82b892985b22a0f"
     },
     {
       "id": "proof-s2-settings-and-sentinels",
@@ -18732,5 +18732,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "579b387170928c18a23ab9e1606b758ba7df5b8136523d49595cfc244a51ea67"
+  "graphSha256": "2c6225f868bb990c53aac1770d9bac2a72b2f87addf246f4c616b4ec33adcb3d"
 };

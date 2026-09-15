@@ -19,7 +19,8 @@ summary: >-
 
 - **Pinned blocked commit:** `18a4a19f82eff6130c9938bdf401539cd2a8944f`
 - **Blocked source blob:** `0f53658b30857222d8207b9b6fdfe706039b6e8b`
-- **Repaired source blob before commit:** `112d2200e7f746087e0c39ab2f8c1fc68f9c6e1b`
+- **Intermediate five-case repair blob:** `112d2200e7f746087e0c39ab2f8c1fc68f9c6e1b`
+- **Final broad-pattern repair blob before commit:** `3b66c0778c131b06bf7fd1adad01c888bf5b6b00`
 - **Investigation:** `investigation-recursive-surface-ownership`
 - **Tier:** T1
 - **Author/date:** `codex-sol-author`, 2026-09-15
@@ -36,6 +37,7 @@ summary: >-
 | original behavior remains protected | complete self-test plus six source mutants | five new tests red before repair | exit 0 in 1.0399975 s | Verified |
 | independent fixture accepts repaired behavior | reviewer-owned nine-case script | 4/9, exit 1 | 9/9, exit 0 in 0.1275984 s | Verified |
 | live header reuse survives | real §2 rows after prose plus real register checks | N/A | base only ProseView red; Conductor 17/17 green | Verified |
+| every supported pattern enters jurisdiction before matching | Core `/**` plus Design `/*.cs` | conflict silently absent; exit 1 in 0.9924614 s | cross-owner conflict reported | Verified |
 
 The five added tests ran together before repair and exited 1 in 0.9486139 seconds with these exact
 names:
@@ -72,4 +74,3 @@ repair scope. No product source, §2 authority, other tool, or lesson register c
 | **Completed** | Failing-first repair fixtures, bounded parser repair, full self-test, independent reproducer rerun, and real-register checks |
 | **Remaining** | Independent frozen-candidate review and Conductor join |
 | **Best next action** | Commit and hand the frozen SHA/source blob to the reviewer |
-

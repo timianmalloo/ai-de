@@ -62,8 +62,7 @@ OWNER_TABLE = re.compile(r"^### (.+?) owns\s*$")
 MARKDOWN_HEADING = re.compile(r"^#{1,6}\s+")
 CODE_TOKEN = re.compile(r"`([^`]+)`")
 SURFACE_NAME = re.compile(r"[^/\s`|]*(?:Surface|View)\.cs")
-RECURSIVE_SURFACE_PATTERN = re.compile(
-    re.escape(SURFACES) + r"(?:/[^/\s`|]+)*/\*\*")
+SURFACE_PATTERN = re.compile(re.escape(SURFACES) + r"/[^\s`|]*\*[^\s`|]*")
 TABLE_SEPARATOR = re.compile(r"^:?-{3,}:?$")
 PROVENANCE = re.compile(r"(?:\breq-[A-Za-z0-9]+\b|\bRuling\s+\d+\b)", re.IGNORECASE)
 RETIREMENT = re.compile(r"\b(?:remove|retire)\s+when\b|\buntil\b", re.IGNORECASE)
@@ -93,7 +92,7 @@ def surfaces(root: Path) -> list[str]:
 
 def _surface_relevant(value: str) -> bool:
     return (SURFACE_NAME.search(value) is not None or
-            RECURSIVE_SURFACE_PATTERN.search(value) is not None)
+            SURFACE_PATTERN.search(value) is not None)
 
 
 def _table_cells(line: str) -> list[str] | None:
@@ -492,6 +491,19 @@ def self_test() -> int:
         require("ordinary star never crosses a slash", has(
             check(segment_star, unassigned={}), f"{SURFACES}/Nested/DeepView.cs", "has no owner"),
             f"got {check(segment_star, unassigned={})!r}")
+
+        broad_star = base / "broad-star"
+        fixture(
+            broad_star,
+            [f"{SURFACES}/HiddenView.cs"],
+            "### Core owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/**` | core broad |\n\n"
+            "### Design owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/*.cs` | supported segment star |\n")
+        require("segment-local broad pattern remains declaration-relevant", has(
+            check(broad_star, unassigned={}), f"{SURFACES}/HiddenView.cs",
+            "more than one owner", "Core", "Design"),
+            f"got {check(broad_star, unassigned={})!r}")
 
         suffix_population = base / "suffix-population"
         suffix_paths = [

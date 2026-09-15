@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T15:00:26Z",
+  "generated": "2026-09-15T15:03:03Z",
   "audit": [
     {
       "actor": null,
@@ -16388,6 +16388,47 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "18a4a19f82eff6130c9938bdf401539cd2a8944f",
         "short": "18a4a19f8",
+        "branch": "fix/recursive-surface-ownership",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2JSFJSWJS95C5F7TEJHVC5K",
+      "shortname": "investigate-surface-pattern-jurisdiction",
+      "datetime": "2026-09-15T15:03:03Z",
+      "session": "codex-surface-ownership-author",
+      "prompt": "Check the same-class supported segment-local broad pattern boundary before final freeze.",
+      "summary": "Observed Core Workbench/** plus Design Workbench/*.cs silently miss a conflict, added a failing-first fixture, widened only declaration-pattern jurisdiction, and kept exact WorkbenchShell.cs outside scope. Proof updated in docs/proof/recursive-surface-ownership-repair.md.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": "codex-sol-author",
+      "artifacts": [
+        "tools/verify-surface-ownership.py",
+        "docs/investigations/recursive-surface-ownership.md",
+        "docs/proof/recursive-surface-ownership-repair.md",
+        "docs/docs-index.js"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Ensure every supported Workbench star pattern enters surface declaration matching without admitting exact non-surface files.",
+      "done_when": "The broad-star conflict is red before repair, green after repair, and prior self-test/reviewer behavior remains green.",
+      "tier": "T1",
+      "main_calls": 17,
+      "main_budget": 18,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T15:03:03Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "a3e9bcdcbcf8536ef401c46a8858871c128483ee",
+        "short": "a3e9bcdcb",
         "branch": "fix/recursive-surface-ownership",
         "pushed": null
       }

@@ -64,6 +64,13 @@ for all four now pass. Recursive directory patterns such as `Workbench/Nested/**
 without containing a literal Surface/View filename. Exact non-surface paths such as
 `WorkbenchShell.cs` remain outside this gate's jurisdiction.
 
+The same sweep found a third boundary before final freeze: supported segment-local patterns can
+match the population without spelling either suffix. On the intermediate repair,
+Core `Workbench/**` plus Design `Workbench/*.cs` over `HiddenView.cs` returned no problem. The new
+fixture observed that red in 0.9924614 seconds. Pattern jurisdiction now requires a `*` inside an
+explicit Workbench path; the existing matcher still decides which discovered surfaces it covers.
+This keeps exact `WorkbenchShell.cs` outside jurisdiction while making `*.cs` conflicts visible.
+
 Root has recorded the recurrence under DC-118 and the enforcement limitation under DC-088 at
 `bf6453be`; this bounded branch does not duplicate or edit the shared lesson register.
 
@@ -73,7 +80,7 @@ Root has recorded the recurrence under DC-118 and the enforcement limitation und
 |---|---|---|---|---|
 | R1 | add the five reviewer cases to the existing self-test | all five fail together on the un-fixed parser | exit 1, 0.9486139 s | revert test-only hunk if Owner rejects the existing contract |
 | R2 | align headings, section end, row states, and token jurisdiction | R1 plus the independent reviewer fixture | self-test exit 0; reviewer 9/9 | revert R2 while retaining R1 red evidence |
-| R3 | sweep suffix population and recursive-pattern relevance | literal, underscore, non-ASCII and nested `/**` fixtures | included in final self-test exit 0 | revert only the relevance predicate/test additions |
+| R3 | sweep suffix population and all supported pattern relevance | literal, underscore, non-ASCII, nested `/**`, and broad `/*.cs` fixtures | included in final self-test exit 0 | revert only the relevance predicate/test additions |
 | R4 | independent review and Conductor join | frozen commit plus real Ruling 114 register | pending independent veto and full runner | do not join the author commit |
 
 ## Inline adversarial lenses
@@ -95,4 +102,3 @@ Root has recorded the recurrence under DC-118 and the enforcement limitation und
 | **Completed** | Five-case reproduction, necessary/sufficient cause trace, disconfirmation, sibling sweep, bounded repair, and local/external fixture verification |
 | **Remaining** | Independent frozen-commit review and Conductor integration |
 | **Best next action** | Freeze and hand the repair commit to the independent reviewer; do not self-clear |
-
