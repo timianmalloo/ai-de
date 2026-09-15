@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:21:06Z",
+  "generated": "2026-09-15T21:28:27Z",
   "audit": [
     {
       "actor": null,
@@ -18468,6 +18468,36 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "83e1139b580ef977bebcf68b38e84dd1a871da82",
         "short": "83e1139b5",
+        "branch": "atlas/behavior-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KFH7Z9655C4Y0NZJB4Y442",
+      "shortname": "document-atlas-relation-set-scope",
+      "datetime": "2026-09-15T21:28:26Z",
+      "session": "codex-atlas-e1-behavior",
+      "prompt": "Owner atlas_scope_owner chooses B on review ordergap: frozen Program396/636/694 lexicographically canonicalizes relations whereas design section5.1 displayorder endpointordinal/kindrank/armindex remains unspecifiedauxkey. Amend existing RESULT/proof ONLY to explicitly qualify relation SET identity/endpoints/kind/arm/predicate/anchor/confidence, closure/stubs/recomposition. SortingbyID is comparison canonicalization only; no displayorder claim. Keep primary ordinal andauxchecks unchanged. No source/fixture/expectationchange. Reviewer amends ledger separately. Existing exactRuling121paths, leases/audit/derived commit. Budget5calls/8min. Return frozen doccommit promptly; Ownerdecision supplement committing now. No product gate cleared.",
+      "summary": "Narrowed RESULT/proof to relation-set equality: identity/endpoints/kind/arm/predicate/anchor/confidence, closure/stubs/recomposition. Verified Program396/636/694 sort by ID; canonicalization is not design display-order proof. Primary ordinal and auxiliary checks remain unchanged. No source/fixture/expectation/output changes or product clearance. Reviewer owns ledger amendment and display-order gate remains open.",
+      "kind": "skill",
+      "skill": "document",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "spikes/atlas-behavior-contract/RESULT.md",
+        "docs/proof/atlas-behavior-contract.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Qualify structural experiment evidence as relation-set equality without display-order acceptance.",
+      "done_when": "RESULT and proof scope corrected, source unchanged, audited and committed.",
+      "tier": "T0",
+      "fan_out": 0,
+      "started_at": "2026-09-15T21:27:35Z",
+      "duration_seconds": 51.0,
+      "git": {
+        "sha": "1ab5d9e985fd86ef75adb8d2a11c72fe05b530cc",
+        "short": "1ab5d9e98",
         "branch": "atlas/behavior-views",
         "pushed": null
       }

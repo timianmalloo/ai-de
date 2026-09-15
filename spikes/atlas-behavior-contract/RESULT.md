@@ -128,6 +128,16 @@ SUMMARY fixture_groups=6 failures=0 disclosure="static reconstruction — not ob
 
 ## Structural/page extension — Owner D1-D5
 
+**Owner option B — relation-order qualification (2026-09-15).** This experiment
+qualifies the **relation set**: identity, endpoints, kind, arm, predicate, anchor
+and confidence, including closure, directional stubs and page recomposition.
+Sorting relations lexicographically by ID is comparison canonicalization only.
+It does **not** qualify the design's endpoint-ordinal/kind-rank/arm-index display
+order; the auxiliary endpoint display key and that display-order oracle remain
+unproved. Primary ordinal checks and auxiliary inventory/order checks are unchanged.
+The recorded output, source, fixtures and expectations are unchanged; no product
+gate is cleared by this narrower evidence claim.
+
 **Verified author observation, Windows:** the first complete structural run observed
 13 primary facts, 17 auxiliaries, 30 nodes and 30 structural relations; 28 pages and
 16 exact recompositions; ten failing-oracle receipts across eight subject faults.

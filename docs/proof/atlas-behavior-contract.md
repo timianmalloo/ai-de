@@ -123,6 +123,17 @@ or mine`; that is the successful coordination observation for this commit.
 
 ## Structural/page experiment — 2026-09-15
 
+**Owner option B — relation-order qualification (2026-09-15).** The experiment
+qualifies relation **set equality** over identity, endpoints, kind, arm, predicate,
+anchor and confidence, plus closure, directional stubs and page recomposition.
+Program.cs sorts relations lexicographically by ID to canonicalize comparisons;
+this is not evidence for the design's endpoint-ordinal/kind-rank/arm-index display
+order. The auxiliary endpoint display key and the display-order oracle remain open.
+Primary ordinal and auxiliary inventory/order checks retain their existing scope.
+No source, fixture, expectation or recorded output changes accompany this
+qualification, and no product gate is cleared. Independent review owns the ledger
+amendment; this author does not substitute ID sorting for the missing display test.
+
 This extension supersedes the earlier no-paging statement only for the four frozen
 synthetic literals. It preserves all prior evidence and leaves product semantics,
 native acceptance and production contracts open. **Verified author run:**
