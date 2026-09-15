@@ -1,0 +1,2 @@
+{"agent": "codex-surface-ownership-review", "at": 1789482085.9679399, "kind": "session-start", "path": "-", "seq": 1, "session": "codex-surface-ownership-review", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-review-surface-ownership"}
+{"agent": "codex-sol-review", "at": 1789482538.5593708, "kind": "claim", "path": "docs/proof/recursive-surface-ownership-plan-review.md", "seq": 2, "session": "codex-surface-ownership-review", "ttl": 300.0, "wi": "recursive-surface-ownership-plan-review"}

@@ -1,0 +1,14 @@
+{"agent": "codex-astra-conductor", "at": 1789482539.3385408, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "codex-surface-ownership-conductor", "wi": ""}
+{"agent": "codex-astra-conductor", "at": 1789482539.3495457, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "codex-surface-ownership-conductor", "wi": ""}
+{"agent": "codex-astra-conductor", "at": 1789482539.3611434, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-surface-ownership-conductor", "wi": ""}
+{"agent": "codex-astra-conductor", "at": 1789482539.3731554, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-surface-ownership-conductor", "wi": ""}
+{"agent": "codex-astra-conductor", "at": 1789482539.3836713, "code": null, "kind": "allowed", "path": "docs/coordination/recursive-surface-ownership-join.json", "session": "codex-surface-ownership-conductor", "wi": ""}
+{"agent": "codex-astra-conductor", "at": 1789482539.3937182, "code": null, "kind": "allowed", "path": "docs/coordination/recursive-surface-ownership-request.txt", "session": "codex-surface-ownership-conductor", "wi": ""}
+{"agent": "codex-astra-conductor", "at": 1789482539.4027102, "code": null, "kind": "allowed", "path": "docs/coordination/recursive-surface-ownership-trailer.txt", "session": "codex-surface-ownership-conductor", "wi": ""}
+{"agent": "codex-astra-conductor", "at": 1789482539.4122455, "code": null, "kind": "allowed", "path": "docs/coordination/recursive-surface-ownership.html", "session": "codex-surface-ownership-conductor", "wi": ""}
+{"agent": "codex-astra-conductor", "at": 1789482539.421254, "code": null, "kind": "allowed", "path": "docs/coordination/recursive-surface-ownership.md", "session": "codex-surface-ownership-conductor", "wi": ""}
+{"agent": "codex-astra-conductor", "at": 1789482539.4302917, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "codex-surface-ownership-conductor", "wi": ""}
+{"agent": "codex-astra-conductor", "at": 1789482539.440816, "code": null, "kind": "allowed", "path": "docs/plans/recursive-surface-ownership.md", "session": "codex-surface-ownership-conductor", "wi": ""}
+{"agent": "codex-astra-conductor", "at": 1789482539.450819, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-surface-ownership-conductor", "wi": ""}
+{"agent": "codex-astra-conductor", "at": 1789482539.4660661, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-surface-ownership-conductor", "wi": ""}
+{"agent": "codex-astra-conductor", "at": 1789482539.478593, "code": null, "kind": "allowed", "path": "site/model.html", "session": "codex-surface-ownership-conductor", "wi": ""}

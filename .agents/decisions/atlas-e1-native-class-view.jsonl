@@ -1,0 +1,7 @@
+{"agent": "copilot-atlas-native", "at": 1789446680.962502, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Understanding/AtlasStaticViewProjection.cs", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-atlas-native", "at": 1789446681.0322993, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Understanding/AtlasStaticView.cs", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-atlas-native", "at": 1789446681.098367, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-atlas-native", "at": 1789446681.1624353, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Understanding/AtlasStaticViewTests.cs", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-atlas-native", "at": 1789446681.223811, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Understanding/AtlasStaticCompositionTests.cs", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789481072.1891763, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs", "session": "atlas-e1-native-class-view", "wi": ""}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789481426.6103895, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs", "session": "atlas-e1-native-class-view", "wi": ""}

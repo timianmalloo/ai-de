@@ -1,0 +1,3 @@
+{"agent": "grok-understanding-views-conductor", "at": 1789437940.6308823, "kind": "session-start", "path": "-", "seq": 1, "session": "understanding-views-inventory", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-understanding-views-inventory"}
+{"agent": "understanding-views-inventory", "at": 1789438356.899191, "kind": "claim", "path": "docs/notes/understanding-views-n1-inventory.md", "seq": 2, "session": "understanding-views-inventory", "ttl": 600.0, "wi": "n1"}
+{"agent": "understanding-views-inventory", "at": 1789438358.1800723, "kind": "release", "path": "docs/notes/understanding-views-n1-inventory.md", "seq": 3, "session": "understanding-views-inventory", "wi": "WI-0"}

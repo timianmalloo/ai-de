@@ -1,0 +1,14 @@
+{"agent": "grok-understanding-views-conductor", "at": 1789437415.883626, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789437415.8924398, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789437415.900948, "code": null, "kind": "allowed", "path": "docs/coordination/understanding-views-kickoff.md", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789437415.9094555, "code": null, "kind": "allowed", "path": "docs/coordination/understanding-views.html", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789437415.917481, "code": null, "kind": "allowed", "path": "docs/coordination/understanding-views.md", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789437415.9264987, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789437415.9345162, "code": null, "kind": "allowed", "path": "docs/plans/understanding-views.md", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789480967.9982061, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789480968.0072448, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789480968.0157707, "code": null, "kind": "allowed", "path": "docs/coordination/understanding-views.html", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789480968.0247695, "code": null, "kind": "allowed", "path": "docs/coordination/understanding-views.md", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789480968.033293, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789480968.042795, "code": null, "kind": "allowed", "path": "docs/notes/understanding-views-n4-pass.md", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789480968.0518098, "code": null, "kind": "allowed", "path": "docs/specs/understanding-views.md", "session": "grok-understanding-views-conductor", "wi": ""}
