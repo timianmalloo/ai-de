@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:10:39Z",
+  "generated": "2026-09-15T20:13:25Z",
   "audit": [
     {
       "actor": null,
@@ -18459,6 +18459,53 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "9816426d56bf088ad6283f58c21f78ed35298c62",
         "short": "9816426d5",
+        "branch": "review/atlas-views-design",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KB7VRFZ2RHBTVCH3B49WD5",
+      "shortname": "atlas-views-evidence-node-rereview",
+      "datetime": "2026-09-15T20:13:25Z",
+      "session": "codex-atlas-views-review",
+      "prompt": "Focused re-review of Conductor commit 137d4fe5e364ed320abde95fb6602dd8af28f204: clear or retain only the missing explicit evidence-node finding; preserve every other implementation barrier and grant no product admission.",
+      "summary": "Cleared the missing-evidence-node finding: E1-P and E2-P name exact proof paths, frozen revision/raw inputs and failure oracles before independent R-I; all other implementation barriers remain.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": "codex-sol-plan-review",
+      "artifacts": [
+        "docs/proof/atlas-views-plan-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "focused-rereview"
+      ],
+      "outcome": "success",
+      "goal": "Re-review only the explicit evidence-node repair in the frozen Conductor graph.",
+      "done_when": "The prior missing-evidence-node finding is cleared or retained with a falsifiable reason, and the disposition is committed with audit and derived artifacts.",
+      "tier": "T2",
+      "main_calls": 3,
+      "main_budget": 3,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T20:12:31Z",
+      "duration_seconds": 54.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 1,
+          "accepted": 1
+        }
+      ],
+      "git": {
+        "sha": "e07c9e59cffd3c45e17de07880e62d9db5ef72c2",
+        "short": "e07c9e59c",
         "branch": "review/atlas-views-design",
         "pushed": null
       }

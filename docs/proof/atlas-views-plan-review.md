@@ -86,3 +86,22 @@ barriers. Those barriers remain load-bearing.
 **Residual risk:** the design lanes may discover a real cross-lane decision edge. The plan's
 re-plan trigger covers that case; it must return to the Conductor rather than widening either
 worker's scope.
+
+## Focused evidence-node disposition
+
+Reviewed Conductor repair `137d4fe5e364ed320abde95fb6602dd8af28f204`
+against the missing-evidence-node clearance above.
+
+**CLEARED.** `E1-P` and `E2-P` are separate T2 nodes after their respective
+implementation nodes and before independent `R-I`. Each names an exact committed Proof
+Pack path, requires the exact revision and raw receipts, and fails when observations are
+missing, unexecuted or contradictory. `R-I` now opens those frozen proofs and raw results
+rather than accepting an author summary. The Mermaid DAG matches the node table.
+
+The cost change is honest: each inferred `I=4` allocation became `I=3` plus `P=1`.
+Therefore `T1=23`, `T∞=15`, and the two-lane Brent bound `19` remain unchanged. No
+speedup or measured duration is newly claimed.
+
+This disposition clears only the missing evidence-node finding. The accepted-foundation,
+exact-grant, shared-guard and independent-design barriers remain open. It grants no product
+implementation, native run, integration or publication.
