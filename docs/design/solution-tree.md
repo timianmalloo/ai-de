@@ -617,7 +617,7 @@ Unit of work: one `SolutionTreeAsync` invocation. Span: existing `ActivitySource
 | `src/AiDe.App/Workbench/SolutionTreeSurface.cs` (name) | TreeView + N7 attachments + VM nest |
 | `src/AiDe.App/Workbench/NodeViewMenu.cs` | **only if** Open-as must list the tree — default is Enter/Ctrl+Enter mapped to existing `NodeViewKind`; **no new enum member** |
 | **not** `MainMenuBuilder` lists | derived |
-| **not** `ZoneLayout` | do not freeze default layout |
+| **not** `ZoneLayout` | freeze View-menu-only: Ruling 94 Left stays Graph; `solution-tree` admitted, not in `ArchitectureDefault` |
 | `tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs` | `TheAllowListsEqualTheSpecsTable` expected row; US-C4 still holds |
 | `tests/AiDe.App.Tests/` | visual-tree (T5c via Fake/golden DTO, **not** Core omit ctor); menu mutation; PROBE-APP-ENUM (incl. `DirectoryInfo.EnumerateDirectories` / `EnumerateFileSystemInfos` / `GetFileSystemInfos`) / ATLAS / FILE-READ |
 | `tests/AiDe.Core.Tests/FieldsSurviveTheClientBoundaryTests.cs` | node → row pair |

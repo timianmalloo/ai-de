@@ -559,10 +559,10 @@ public sealed class SolutionTreeSurface : ContentControl
                 VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(0, 0, 8, 0),
             };
-            glyph.SetResourceReference(Shape.StrokeProperty, "InferredBrush");
+            glyph.SetResourceReference(Shape.StrokeProperty, "StaleBrush");
             var stale = Muted("Stale");
             stale.Margin = new Thickness(0);
-            stale.SetResourceReference(TextBlock.ForegroundProperty, "InferredBrush");
+            stale.SetResourceReference(TextBlock.ForegroundProperty, "StaleBrush");
             row.Children.Add(glyph);
             row.Children.Add(stale);
             _chrome.Children.Add(row);
