@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T23:42:50Z",
+  "generated": "2026-09-15T14:45:55Z",
   "audit": [
     {
       "actor": null,
@@ -16310,6 +16310,46 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T23:34:34Z",
       "duration_seconds": 495.0
+    },
+    {
+      "id": "al-01M2JRG6QSVM39E8B7QC0VC0KQ",
+      "shortname": "implement-recursive-surface-ownership",
+      "datetime": "2026-09-15T14:45:55Z",
+      "session": "codex-surface-ownership-author",
+      "prompt": "Verbatim author task brief: docs/proof/recursive-surface-ownership-author.md, Author contract (verbatim handoff).",
+      "summary": "Implemented recursive repository-relative Workbench surface ownership verification; expanded red-first self-test from the baseline to cover parser, path, exception, CLI, deterministic, and six injected mutation oracles; base register fails only ProseView while Ruling 114 Conductor register passes 17/17. Proof: docs/proof/recursive-surface-ownership-author.md.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "codex-sol-author",
+      "artifacts": [
+        "tools/verify-surface-ownership.py",
+        "docs/proof/recursive-surface-ownership-author.md",
+        "docs/docs-index.js"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Implement the bounded recursive Workbench surface-ownership gate without inferring ownership.",
+      "done_when": "Expanded red-first self-tests pass; the base gate fails only ProseView; the Ruling 114 register passes 17/17; proof and audit are committed for independent review.",
+      "tier": "T1",
+      "main_calls": 47,
+      "main_budget": 35,
+      "main_over_budget": true,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-15T14:29:34Z",
+      "duration_seconds": 981.0,
+      "git": {
+        "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
+        "short": "bab5035e7",
+        "branch": "fix/recursive-surface-ownership",
+        "pushed": null
+      }
     }
   ],
   "changes": [

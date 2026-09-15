@@ -31,6 +31,7 @@ Exit 0 when clean, 1 otherwise. Stdlib only.
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import subprocess
 import sys
@@ -57,8 +58,13 @@ UNASSIGNED: dict[str, str] = {
     # assignment needs a decision nobody has made yet — with the reason, and not for long.
 }
 
-OWNER_TABLE = re.compile(r"^### (.+?) owns\s*$", re.MULTILINE)
-FILE_NAME = re.compile(r"([A-Za-z][A-Za-z0-9_]*(?:Surface|View|Page|Builder)\.cs)")
+OWNER_TABLE = re.compile(r"^### (.+?) owns\s*$")
+LEVEL_THREE_HEADING = re.compile(r"^###\s+")
+CODE_TOKEN = re.compile(r"`([^`]+)`")
+SURFACE_NAME = re.compile(r"[A-Za-z][A-Za-z0-9_]*(?:Surface|View)\.cs")
+TABLE_SEPARATOR = re.compile(r"^:?-{3,}:?$")
+PROVENANCE = re.compile(r"(?:\breq-[A-Za-z0-9]+\b|\bRuling\s+\d+\b)", re.IGNORECASE)
+RETIREMENT = re.compile(r"\b(?:remove|retire)\s+when\b|\buntil\b", re.IGNORECASE)
 
 
 def repo_root() -> Path:
@@ -68,51 +74,190 @@ def repo_root() -> Path:
 
 
 def surfaces(root: Path) -> list[str]:
+    """Discover recursive Workbench Surface.cs/View.cs files as root-relative POSIX paths.
+
+    Scan contract (DC-118 control half (b)): root ``src/AiDe.App/Workbench``; recursive;
+    token set exactly ``Surface.cs`` and ``View.cs`` suffixes; allowlist empty.
+    """
     directory = root / SURFACES
 
     if not directory.is_dir():
         return []
 
     return sorted(
-        f.name for f in directory.iterdir()
+        f.relative_to(root).as_posix() for f in directory.rglob("*")
         if f.is_file() and (f.name.endswith("Surface.cs") or f.name.endswith("View.cs")))
 
 
-def owners(root: Path) -> dict[str, list[str]]:
-    """Which owner table names each file, from §2 only."""
+def _surface_relevant(value: str) -> bool:
+    return SURFACES in value or SURFACE_NAME.search(value) is not None
+
+
+def _table_cells(line: str) -> list[str] | None:
+    stripped = line.strip()
+    if not stripped.startswith("|") or not stripped.endswith("|"):
+        return None
+    return [cell.strip() for cell in stripped[1:-1].split("|")]
+
+
+def _path_problem(token: str) -> str | None:
+    if "\\" in token:
+        return "backslashes are not repository-relative POSIX separators"
+    if token.startswith("/") or re.match(r"^[A-Za-z]:", token):
+        return "absolute paths are forbidden"
+    parts = token.split("/")
+    if any(part in ("", ".", "..") for part in parts):
+        return "empty, dot, and traversal segments are forbidden"
+    if any(character in token for character in "?[]{}"):
+        return "only segment-local '*' and a trailing '/**' are supported"
+    if "**" in token and (not token.endswith("/**") or token.count("**") != 1):
+        return "recursive '/**' is supported only at the end"
+    if not token.startswith(SURFACES + "/"):
+        return f"surface declarations must be under {SURFACES}"
+    return None
+
+
+def _pattern_matches(pattern: str, path: str) -> bool:
+    if pattern.endswith("/**"):
+        prefix = pattern[:-3]
+        return path.startswith(prefix + "/")
+    expression = "^" + re.escape(pattern).replace(r"\*", "[^/]*") + "$"
+    return re.fullmatch(expression, path) is not None
+
+
+def _resolve_token(
+        token: str,
+        context: str | None,
+        present: list[str],
+) -> tuple[str | None, list[str], str | None]:
+    """Resolve one Path-cell token and return next same-cell directory context."""
+    token = token.strip()
+    qualified = "/" in token or "\\" in token
+
+    if qualified:
+        problem = _path_problem(token)
+        if problem:
+            return context, [], problem
+        resolved = token
+        next_context = token.rsplit("/", 1)[0]
+    elif context is not None:
+        resolved = f"{context}/{token}"
+        next_context = context
+        problem = _path_problem(resolved)
+        if problem:
+            return context, [], problem
+    else:
+        if "*" in token:
+            return context, [], "a bare pattern has no directory context"
+        candidates = [path for path in present if path.rsplit("/", 1)[-1] == token]
+        if not candidates:
+            return context, [], "no discovered candidate has this bare filename"
+        if len(candidates) > 1:
+            return context, [], "ambiguous bare filename; candidates: " + ", ".join(candidates)
+        return context, candidates, None
+
+    matches = [path for path in present if _pattern_matches(resolved, path)]
+    if not matches and not qualified:
+        return next_context, [], "same-cell shorthand matches no discovered surface"
+    return next_context, matches, None
+
+
+def _parse_owners(root: Path, present: list[str]) -> tuple[dict[str, list[str]], list[str]]:
+    """Read ownership declarations only from Path cells in §2 owner tables."""
     path = root / CONTRACT
 
     if not path.exists():
-        return {}
+        return {}, [f"ownership contract {CONTRACT} does not exist"]
 
     text = path.read_text(encoding="utf-8", errors="replace")
-
-    # §2 only. A file named in a later section is prose about it, not an assignment — the same
-    # distinction that made verify-id-allocators read ADR ids out of the wrong file once.
-    start = text.find("## 2. File ownership")
-    end = text.find("## 3.", start + 1)
-
-    if start < 0:
-        return {}
-
-    section = text[start:end if end > 0 else len(text)]
-
+    lines = text.splitlines()
+    start = next((index for index, line in enumerate(lines)
+                  if line.strip() == "## 2. File ownership"), None)
+    if start is None:
+        return {}, [f"ownership contract {CONTRACT} has no '## 2. File ownership' section"]
+    end = next((index for index in range(start + 1, len(lines))
+                if lines[index].startswith("## ")), len(lines))
     found: dict[str, list[str]] = {}
-    table = "(unnamed)"
+    problems: list[str] = []
+    owner: str | None = None
+    path_column: int | None = None
+    table_started = False
 
-    for line in section.splitlines():
-        heading = OWNER_TABLE.match(line)
-
+    for offset, line in enumerate(lines[start + 1:end], start=start + 2):
+        heading = OWNER_TABLE.fullmatch(line.strip())
         if heading:
-            table = heading.group(1)
+            owner = heading.group(1).strip()
+            path_column = None
+            table_started = False
+            continue
+        if LEVEL_THREE_HEADING.match(line.strip()):
+            owner = None
+            path_column = None
+            table_started = False
             continue
 
-        for name in FILE_NAME.findall(line):
-            found.setdefault(name, [])
-            if table not in found[name]:
-                found[name].append(table)
+        cells = _table_cells(line)
+        if cells is not None and "Path" in cells:
+            path_column = cells.index("Path")
+            table_started = True
+            continue
+        if cells is None:
+            if table_started and line.strip() and "|" in line and _surface_relevant(line):
+                problems.append(
+                    f"line {offset} has a malformed Path-table row containing a surface path: "
+                    f"{line.strip()}")
+            if line.strip():
+                table_started = False
+            continue
+        if path_column is None:
+            continue
+        table_started = True
+        if all(TABLE_SEPARATOR.fullmatch(cell) for cell in cells):
+            continue
+        if path_column >= len(cells):
+            if _surface_relevant(line):
+                problems.append(f"line {offset} has a malformed Path-table row with no Path cell")
+            continue
 
-    return found
+        path_cell = cells[path_column]
+        code_tokens = CODE_TOKEN.findall(path_cell)
+        unquoted = CODE_TOKEN.sub("", path_cell)
+        if _surface_relevant(unquoted):
+            problems.append(
+                f"line {offset} has a malformed surface declaration in the Path cell; "
+                f"paths must be code tokens: {unquoted.strip()}")
+        relevant_tokens = [token for token in code_tokens if _surface_relevant(token)]
+        if not relevant_tokens:
+            continue
+        if owner is None:
+            problems.append(
+                f"line {offset} has a malformed surface declaration outside a '### <owner> owns' "
+                f"table: {', '.join(f'`{token}`' for token in relevant_tokens)}")
+            continue
+
+        context: str | None = None
+        for token in code_tokens:
+            if not _surface_relevant(token):
+                if "/" in token and "\\" not in token:
+                    context = token.rsplit("/", 1)[0]
+                continue
+            context, matches, problem = _resolve_token(token, context, present)
+            if problem:
+                problems.append(f"line {offset} has malformed Path token `{token}`: {problem}")
+                continue
+            for matched in matches:
+                owners = found.setdefault(matched, [])
+                if owner not in owners:
+                    owners.append(owner)
+
+    return ({path: sorted(owner_names) for path, owner_names in sorted(found.items())},
+            sorted(set(problems)))
+
+
+def owners(root: Path) -> dict[str, list[str]]:
+    """Which §2 owner tables name each discovered root-relative surface path."""
+    present = surfaces(root)
+    return _parse_owners(root, present)[0]
 
 
 def check(root: Path, unassigned: dict[str, str] | None = None) -> list[str]:
@@ -122,43 +267,82 @@ def check(root: Path, unassigned: dict[str, str] | None = None) -> list[str]:
 
     problems: list[str] = []
     present = surfaces(root)
-    assigned = owners(root)
 
     if not present:
         return [f"no surface files found under {SURFACES} — this check is looking at nothing"]
 
-    for name in present:
-        tables = assigned.get(name, [])
+    assigned, parse_problems = _parse_owners(root, present)
+    problems.extend(parse_problems)
+
+    for path in present:
+        tables = assigned.get(path, [])
 
         if len(tables) > 1:
             problems.append(
-                f"{name} is assigned to more than one owner in §2 ({', '.join(tables)}) — two "
+                f"{path} is assigned to more than one owner in §2 ({', '.join(tables)}) — two "
                 "owners is the contradiction §8.2 was about, and both will assume the other has it")
             continue
 
         if tables:
             continue
 
-        if name in unassigned:
+        if path in unassigned:
             continue
 
         problems.append(
-            f"{name} has no owner in §2 and is not listed as unassigned. With no entry to look up, "
+            f"{path} has no owner in §2 and is not listed as unassigned. With no entry to look up, "
             "an owner gets inferred from what the symptom looks like — which has already sent a "
             "Core-owned registry defect to the design session. Add a row to §2, or add it to "
             "UNASSIGNED in tools/verify-surface-ownership.py with the reason.")
 
-    for name, why in sorted(unassigned.items()):
-        if name not in present:
+    for declared_path, why in sorted(unassigned.items()):
+        canonical_problem = _path_problem(declared_path)
+        if (canonical_problem or "*" in declared_path or
+                not (declared_path.endswith("Surface.cs") or declared_path.endswith("View.cs"))):
             problems.append(
-                f"UNASSIGNED lists {name} ({why}), which no longer exists — remove the entry so the "
+                f"UNASSIGNED path {declared_path!r} is not a canonical full surface path under "
+                f"{SURFACES}")
+            continue
+        if not why.strip():
+            problems.append(
+                f"UNASSIGNED lists {declared_path} without a nonblank reason")
+        else:
+            if not PROVENANCE.search(why):
+                problems.append(
+                    f"UNASSIGNED reason for {declared_path} must cite a request or ruling")
+            if not RETIREMENT.search(why):
+                problems.append(
+                    f"UNASSIGNED reason for {declared_path} must state a retirement condition")
+        if declared_path not in present:
+            problems.append(
+                f"UNASSIGNED lists {declared_path} ({why}), which no longer exists — remove the entry so the "
                 "list keeps describing the code")
-        elif assigned.get(name):
+        elif assigned.get(declared_path):
             problems.append(
-                f"UNASSIGNED lists {name}, but §2 now assigns it to "
-                f"{', '.join(assigned[name])} — remove the entry")
+                f"UNASSIGNED lists {declared_path}, but §2 now assigns it to "
+                f"{', '.join(assigned[declared_path])} — remove the entry")
 
-    return problems
+    return sorted(set(problems))
+
+
+def run(root: Path, unassigned: dict[str, str] | None = None) -> int:
+    """Render the CLI result for a repository root and return its process exit code."""
+    effective_unassigned = UNASSIGNED if unassigned is None else unassigned
+    problems = check(root, effective_unassigned)
+
+    if problems:
+        print("verify-surface-ownership: FAILED")
+        for problem in problems:
+            print(f"  - {problem}")
+        return 1
+
+    present = surfaces(root)
+    assigned = owners(root)
+    owned = sum(1 for path in present if len(assigned.get(path, [])) == 1)
+    print(
+        f"verify-surface-ownership: OK — {len(present)} surface(s), {owned} assigned in §2, "
+        f"{len(effective_unassigned)} recorded as awaiting a joint decision.")
+    return 0
 
 
 def main() -> int:
@@ -173,58 +357,327 @@ def main() -> int:
     if args.self_test:
         return self_test()
 
-    problems = check(root)
-
-    if problems:
-        print("verify-surface-ownership: FAILED")
-        for problem in problems:
-            print(f"  - {problem}")
-        return 1
-
-    present = surfaces(root)
-    owned = sum(1 for n in present if n not in UNASSIGNED)
-
-    print(
-        f"verify-surface-ownership: OK — {len(present)} surface(s), {owned} assigned in §2, "
-        f"{len(UNASSIGNED)} recorded as awaiting a joint decision.")
-    return 0
+    return run(root)
 
 
 def self_test() -> int:
-    """The control must be observed FAILING, or it is not a control (CI6)."""
+    """Exercise the recursive identity, parser boundary, exception, and CLI contracts."""
     import tempfile
 
-    with tempfile.TemporaryDirectory() as directory:
-        place = Path(directory)
-        (place / SURFACES).mkdir(parents=True)
-        (place / "docs" / "collaboration").mkdir(parents=True)
+    failures: list[str] = []
 
-        (place / CONTRACT).write_text(
-            "## 2. File ownership\n\n"
+    def fixture(place: Path, files: list[str], section: str) -> None:
+        for relative in files:
+            target = place / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("// probe\n", encoding="utf-8")
+        contract = place / CONTRACT
+        contract.parent.mkdir(parents=True, exist_ok=True)
+        contract.write_text(
+            "## 2. File ownership\n\n" + section + "\n## 3. Later\n",
+            encoding="utf-8")
+
+    def require(name: str, condition: bool, detail: str) -> None:
+        if not condition:
+            failures.append(f"{name}: {detail}")
+
+    def has(problems: list[str], *parts: str) -> bool:
+        return any(all(part in problem for part in parts) for problem in problems)
+
+    with tempfile.TemporaryDirectory() as directory:
+        base = Path(directory)
+
+        recursion = base / "recursion"
+        fixture(
+            recursion,
+            [
+                f"{SURFACES}/RootSurface.cs",
+                f"{SURFACES}/Nested/KnownView.cs",
+                f"{SURFACES}/Other/OrphanView.cs",
+            ],
             "### Core owns\n\n"
             "| Path | Why |\n|---|---|\n"
-            "| `src/AiDe.App/Workbench/KnownSurface.cs` | assigned |\n\n"
-            "## 3. Next\n", encoding="utf-8")
+            f"| `{SURFACES}/RootSurface.cs` | exact |\n"
+            f"| `{SURFACES}/Nested/KnownView.cs` | nested |\n")
+        expected_paths = [
+            f"{SURFACES}/Nested/KnownView.cs",
+            f"{SURFACES}/Other/OrphanView.cs",
+            f"{SURFACES}/RootSurface.cs",
+        ]
+        require("recursive repository-relative identities", surfaces(recursion) == expected_paths,
+                f"got {surfaces(recursion)!r}")
+        recursion_problems = check(recursion, unassigned={})
+        require("nested unowned surface", has(
+            recursion_problems, f"{SURFACES}/Other/OrphanView.cs", "has no owner"),
+            f"got {recursion_problems!r}")
+        require("nested exact ownership", not has(
+            recursion_problems, f"{SURFACES}/Nested/KnownView.cs", "has no owner"),
+            f"got {recursion_problems!r}")
 
-        for name in ("KnownSurface.cs", "OrphanSurface.cs"):
-            (place / SURFACES / name).write_text("// probe\n", encoding="utf-8")
+        exact = base / "exact"
+        fixture(
+            exact,
+            [f"{SURFACES}/AnchorSurface.cs", f"{SURFACES}/A/DuplicateView.cs",
+             f"{SURFACES}/B/DuplicateView.cs"],
+            "### Core owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/AnchorSurface.cs` | anchor |\n"
+            f"| `{SURFACES}/A/DuplicateView.cs` | A |\n\n"
+            "### Design owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/B/DuplicateView.cs` | B |\n")
+        require("duplicate basenames keep exact identities", check(exact, unassigned={}) == [],
+                f"got {check(exact, unassigned={})!r}")
 
-        problems = check(place, unassigned={})
+        ambiguous = base / "ambiguous"
+        fixture(
+            ambiguous,
+            [f"{SURFACES}/AnchorSurface.cs", f"{SURFACES}/A/DuplicateView.cs",
+             f"{SURFACES}/B/DuplicateView.cs"],
+            "### Core owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/AnchorSurface.cs` | anchor |\n"
+            f"| `{SURFACES}/A/DuplicateView.cs` | exact does not remove ambiguity |\n"
+            "| `DuplicateView.cs` | ambiguous shorthand |\n")
+        ambiguous_problems = check(ambiguous, unassigned={})
+        require("ambiguous bare filename names every candidate", has(
+            ambiguous_problems, "DuplicateView.cs", f"{SURFACES}/A/DuplicateView.cs",
+            f"{SURFACES}/B/DuplicateView.cs"), f"got {ambiguous_problems!r}")
 
-    for problem in problems:
-        print(f"  planted -> {problem.splitlines()[0]}")
+        grouped = base / "grouped"
+        fixture(
+            grouped,
+            [f"{SURFACES}/Group/FirstSurface.cs", f"{SURFACES}/Group/SecondView.cs",
+             f"{SURFACES}/Other/ThirdSurface.cs"],
+            "### Core owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/Group/FirstSurface.cs`, `SecondView.cs`, "
+            f"`{SURFACES}/Other/ThirdSurface.cs` | grouped |\n")
+        require("grouped shorthand inherits only same-cell directory",
+                check(grouped, unassigned={}) == [], f"got {check(grouped, unassigned={})!r}")
 
-    if not any("OrphanSurface.cs has no owner" in p for p in problems):
-        print("verify-surface-ownership: SELF-TEST FAILED — an unowned surface was not reported.")
+        grouped_reset = base / "grouped-reset"
+        fixture(
+            grouped_reset,
+            [f"{SURFACES}/A/FirstSurface.cs", f"{SURFACES}/A/SecondView.cs"],
+            "### Core owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/A/FirstSurface.cs`, `src/Other/Marker.cs`, `SecondView.cs` | reset |\n")
+        require("a new qualified token resets grouped directory context", has(
+            check(grouped_reset, unassigned={}), "SecondView.cs", "malformed", "under"),
+            f"got {check(grouped_reset, unassigned={})!r}")
+
+        overlap = base / "overlap"
+        fixture(
+            overlap,
+            [f"{SURFACES}/OneSurface.cs", f"{SURFACES}/Nested/TwoView.cs"],
+            "### Core owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/*Surface.cs` | pattern |\n"
+            f"| `{SURFACES}/OneSurface.cs` | same-owner duplicate |\n"
+            f"| `{SURFACES}/**` | recursive pattern |\n")
+        require("same-owner overlap deduplicates", check(overlap, unassigned={}) == [],
+                f"got {check(overlap, unassigned={})!r}")
+
+        segment_star = base / "segment-star"
+        fixture(
+            segment_star,
+            [f"{SURFACES}/RootView.cs", f"{SURFACES}/Nested/DeepView.cs"],
+            "### Core owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/*View.cs` | one segment only |\n")
+        require("ordinary star never crosses a slash", has(
+            check(segment_star, unassigned={}), f"{SURFACES}/Nested/DeepView.cs", "has no owner"),
+            f"got {check(segment_star, unassigned={})!r}")
+
+        overlap_contract = overlap / CONTRACT
+        overlap_contract.write_text(
+            overlap_contract.read_text(encoding="utf-8").replace(
+                "## 3. Later", "### Design owns\n\n| Path | Why |\n|---|---|\n"
+                f"| `{SURFACES}/OneSurface.cs` | conflict |\n\n## 3. Later"),
+            encoding="utf-8")
+        require("cross-owner overlap always conflicts", has(
+            check(overlap, unassigned={}), f"{SURFACES}/OneSurface.cs",
+            "more than one owner", "Core", "Design"),
+            f"got {check(overlap, unassigned={})!r}")
+
+        contamination = base / "contamination"
+        fixture(
+            contamination,
+            [f"{SURFACES}/AnchorSurface.cs", f"{SURFACES}/ProseView.cs",
+             f"{SURFACES}/WhyView.cs", f"{SURFACES}/SharedView.cs",
+             f"{SURFACES}/LaterView.cs"],
+            "### Core owns\n\n"
+            f"Prose about `{SURFACES}/ProseView.cs` is not an assignment.\n\n"
+            "| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/AnchorSurface.cs` | mentions `{SURFACES}/WhyView.cs` |\n\n"
+            "### Shared, and therefore rule-bound\n\n| Path | Rule |\n|---|---|\n"
+            f"| `{SURFACES}/SharedView.cs` | shared is not an owner |\n")
+        (contamination / CONTRACT).write_text(
+            (contamination / CONTRACT).read_text(encoding="utf-8") +
+            f"\n| `{SURFACES}/LaterView.cs` | outside section 2 |\n",
+            encoding="utf-8")
+        contamination_problems = check(contamination, unassigned={})
+        for filename in ("ProseView.cs", "WhyView.cs", "SharedView.cs", "LaterView.cs"):
+            require(f"Path-cell-only scope excludes {filename}", has(
+                contamination_problems, f"{SURFACES}/{filename}", "has no owner"),
+                f"got {contamination_problems!r}")
+        require("ownerless Path table is diagnosed", has(
+            contamination_problems, "SharedView.cs", "malformed", "outside"),
+            f"got {contamination_problems!r}")
+
+        malformed_cases = {
+            "unquoted path": f"| {SURFACES}/BrokenView.cs | no code token |",
+            "missing table delimiter": f"| `{SURFACES}/BrokenView.cs` | missing end",
+            "traversal": f"| `{SURFACES}/../BrokenView.cs` | escape |",
+            "backslash": r"| `src\AiDe.App\Workbench\BrokenView.cs` | not POSIX |",
+            "unsupported recursive glob": f"| `{SURFACES}/**/BrokenView.cs` | unsupported |",
+        }
+        for index, (name, row) in enumerate(malformed_cases.items()):
+            place = base / f"malformed-{index}"
+            fixture(
+                place,
+                [f"{SURFACES}/AnchorSurface.cs", f"{SURFACES}/BrokenView.cs"],
+                "### Core owns\n\n| Path | Why |\n|---|---|\n"
+                f"| `{SURFACES}/AnchorSurface.cs` | anchor |\n{row}\n")
+            require(f"malformed {name} is visible", has(
+                check(place, unassigned={}), "BrokenView.cs", "malformed"),
+                f"got {check(place, unassigned={})!r}")
+
+        zero_bare = base / "zero-bare"
+        fixture(
+            zero_bare,
+            [f"{SURFACES}/AnchorSurface.cs"],
+            "### Core owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/AnchorSurface.cs` | anchor |\n"
+            "| `MissingView.cs` | no candidate |\n")
+        require("zero-match bare filename fails", has(
+            check(zero_bare, unassigned={}), "MissingView.cs", "no discovered candidate"),
+            f"got {check(zero_bare, unassigned={})!r}")
+
+        exception = base / "exception"
+        fixture(
+            exception,
+            [f"{SURFACES}/AnchorSurface.cs", f"{SURFACES}/PendingView.cs"],
+            "### Core owns\n\n| Path | Why |\n|---|---|\n"
+            f"| `{SURFACES}/AnchorSurface.cs` | anchor |\n")
+        pending = f"{SURFACES}/PendingView.cs"
+        valid_reason = "pending req-01TEST; remove when Ruling 999 assigns an owner"
+        require("live canonical exception", check(exception, {pending: valid_reason}) == [],
+                f"got {check(exception, {pending: valid_reason})!r}")
+        for name, entries, expected in (
+            ("blank exception reason", {pending: ""}, "nonblank reason"),
+            ("exception without provenance", {pending: "remove when assigned"}, "request or ruling"),
+            ("exception without retirement", {pending: "pending req-01TEST"}, "retirement"),
+            ("noncanonical exception path", {"PendingView.cs": valid_reason}, "canonical"),
+            ("stale missing exception", {f"{SURFACES}/GoneView.cs": valid_reason}, "no longer exists"),
+        ):
+            require(name, has(check(exception, entries), expected),
+                    f"got {check(exception, entries)!r}")
+        exception_contract = exception / CONTRACT
+        exception_contract.write_text(
+            exception_contract.read_text(encoding="utf-8").replace(
+                "## 3. Later", f"| `{pending}` | now assigned |\n\n## 3. Later"),
+            encoding="utf-8")
+        require("newly assigned exception is stale", has(
+            check(exception, {pending: valid_reason}), pending, "now assigns"),
+            f"got {check(exception, {pending: valid_reason})!r}")
+
+        deterministic = base / "deterministic"
+        fixture(
+            deterministic,
+            [f"{SURFACES}/ZedView.cs", f"{SURFACES}/AlphaSurface.cs",
+             f"{SURFACES}/Middle/ItemView.cs"],
+            "### Core owns\n\n| Path | Why |\n|---|---|\n")
+        first = check(deterministic, unassigned={})
+        second = check(deterministic, unassigned={})
+        require("generated diagnostics are deterministic", first == second == sorted(first),
+                f"first={first!r}, second={second!r}")
+        before = set(first)
+        owned = deterministic / SURFACES / "OwnedSurface.cs"
+        owned.write_text("// probe\n", encoding="utf-8")
+        contract_text = (deterministic / CONTRACT).read_text(encoding="utf-8")
+        (deterministic / CONTRACT).write_text(
+            contract_text.replace("## 3. Later", f"| `{SURFACES}/OwnedSurface.cs` | owned |\n"
+                                  "\n## 3. Later"), encoding="utf-8")
+        require("adding an owned file does not erase existing findings",
+                before.issubset(set(check(deterministic, unassigned={}))),
+                f"before={before!r}, after={check(deterministic, unassigned={})!r}")
+
+        missing_contract = base / "missing-contract"
+        target = missing_contract / SURFACES / "OnlySurface.cs"
+        target.parent.mkdir(parents=True)
+        target.write_text("// probe\n", encoding="utf-8")
+        require("missing ownership contract fails closed", has(
+            check(missing_contract, unassigned={}), CONTRACT, "does not exist"),
+            f"got {check(missing_contract, unassigned={})!r}")
+
+        missing_section = base / "missing-section"
+        fixture(missing_section, [f"{SURFACES}/OnlySurface.cs"], "### Core owns\n")
+        (missing_section / CONTRACT).write_text("## 1. Other\n", encoding="utf-8")
+        require("missing section 2 fails closed", has(
+            check(missing_section, unassigned={}), "no '## 2. File ownership'"),
+            f"got {check(missing_section, unassigned={})!r}")
+
+        zero_population = base / "zero-population"
+        fixture(zero_population, [], "### Core owns\n")
+        require("zero population fails closed", has(
+            check(zero_population, unassigned={}), "no surface files found"),
+            f"got {check(zero_population, unassigned={})!r}")
+
+        runner = globals().get("run")
+        if runner is None:
+            failures.append("temporary-filesystem CLI exit behavior: run() is missing")
+        else:
+            require("temporary-filesystem CLI failure exit", runner(recursion, {}) == 1,
+                    "unowned fixture did not exit 1")
+            require("temporary-filesystem CLI success exit", runner(grouped, {}) == 0,
+                    "fully owned fixture did not exit 0")
+
+        if not os.environ.get("SURFACE_GATE_MUTANT"):
+            source = Path(__file__).read_text(encoding="utf-8")
+            mutations = {
+                "nonrecursive discovery": ('directory.rglob("*")', 'directory.glob("*")'),
+                "basename identity alias": (
+                    "f.relative_to(root).as_posix()", "f.name"),
+                "non-Path cell contamination": (
+                    "code_tokens = CODE_TOKEN.findall(path_cell)",
+                    "code_tokens = CODE_TOKEN.findall(line)"),
+                "ambiguous bare-name bypass": (
+                    "if len(candidates) > 1:", "if False and len(candidates) > 1:"),
+                "cross-owner conflict suppression": (
+                    "if len(tables) > 1:", "if False and len(tables) > 1:"),
+                "stale assigned exception retention": (
+                    "elif assigned.get(declared_path):",
+                    "elif False and assigned.get(declared_path):"),
+            }
+            mutant_environment = os.environ.copy()
+            mutant_environment["SURFACE_GATE_MUTANT"] = "1"
+            for index, (name, (old, new)) in enumerate(mutations.items()):
+                if old not in source:
+                    failures.append(f"mutation oracle {name}: source target is absent")
+                    continue
+                mutant = base / f"mutant-{index}.py"
+                mutant.write_text(source.replace(old, new, 1), encoding="utf-8")
+                result = subprocess.run(
+                    [sys.executable, str(mutant), "--self-test"],
+                    cwd=root_for_self_test(),
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                    env=mutant_environment,
+                    check=False)
+                require(f"mutation oracle {name}", result.returncode != 0,
+                        "mutated gate still passed its self-test")
+
+    if failures:
+        print("verify-surface-ownership: SELF-TEST FAILED")
+        for failure in failures:
+            print(f"  - {failure}")
         return 1
 
-    if any("KnownSurface.cs has no owner" in p for p in problems):
-        print("verify-surface-ownership: SELF-TEST FAILED — a surface §2 DOES assign was reported "
-              "as unowned; the gate would be red on a correct contract.")
-        return 1
-
-    print("verify-surface-ownership: self-test OK — an unowned surface fails, an owned one does not.")
+    print("verify-surface-ownership: self-test OK — recursive identities, §2 Path cells, "
+          "patterns, exceptions, deterministic diagnostics, and CLI exits are proven.")
     return 0
+
+
+def root_for_self_test() -> Path:
+    """Keep mutation subprocesses in the repository so repo_root() has a Git context."""
+    return repo_root()
 
 
 if __name__ == "__main__":

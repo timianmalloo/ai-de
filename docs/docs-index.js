@@ -16340,6 +16340,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "6d8859bbc9cc1635e9b7aa19807ae8cb3c0ff07354368f08de9465546d2a1845"
     },
     {
+      "id": "proof-recursive-surface-ownership-author",
+      "path": "docs/proof/recursive-surface-ownership-author.md",
+      "title": "Recursive surface ownership: author proof",
+      "type": "proof-pack",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "recursive surface-ownership gate authoring",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Records red-first, mutation, temporary-filesystem, CLI, and live-register evidence for the recursive Workbench surface-ownership gate. The author base remains honestly red only for ProseView; the read-only Ruling 114 Conductor register is green at 17 of 17.",
+      "tags": [
+        "coordination",
+        "ownership",
+        "python",
+        "verification"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6e7bfcc4ebaa673a7ff2456ae0ef8e53427b383c788196ab0afecdf0eba6db7d"
+    },
+    {
       "id": "proof-s2-settings-and-sentinels",
       "path": "docs/proof/s2-settings-and-sentinels.md",
       "title": "Proof Pack — S2: the settings and sentinels commit",
@@ -18634,5 +18664,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c098a7937db9de42729b1f524d005a86ab7ce5e85832d27fdc17ed24d0550635"
+  "graphSha256": "a570dd8ea29eaec9a94189dd2e567c0d6d0dd20256abf6ed3c112bdd003b8667"
 };
