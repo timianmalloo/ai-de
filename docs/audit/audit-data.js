@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T15:40:01Z",
+  "generated": "2026-09-15T15:56:18Z",
   "audit": [
     {
       "actor": null,
@@ -16864,6 +16864,40 @@ window.AUDIT_DATA = {
         "branch": "understanding-views-design",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2JWGXRESZNJH0G0065CJXNB",
+      "shortname": "design-slice-solution-tree-ta-repair",
+      "datetime": "2026-09-15T15:56:13Z",
+      "session": "understanding-views-design",
+      "prompt": "Resume N9 design author. Peer Mode. Repair docs/design/solution-tree.md for N10 Test Architect BLOCK. Do not mark accepted. Do not implement src/. Six closes: UV-1 T5c Fake/golden arrange; US-T6/UI-8 visual-tree; B6 root-only empty; F* io_probe/; DirectoryInfo PROBE-APP-ENUM; UV-0 T5c falsifying inputs.",
+      "summary": "N9 repair of N10 Test Architect BLOCK on design-solution-tree: six closes; status remains draft.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/solution-tree.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Repair docs/design/solution-tree.md for N10 Test Architect BLOCK",
+      "done_when": "six closes landed, status draft, committed",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T15:53:51Z",
+      "duration_seconds": 142.0,
+      "git": {
+        "sha": "dd6026c2a959a280e84fc109d3236d0fd78f7bb7",
+        "short": "dd6026c2a",
+        "branch": "understanding-views-design",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -20738,6 +20772,29 @@ window.AUDIT_DATA = {
         "commits": []
       },
       "audit_ref": "al-01M2JVK2GYYJ6RVGWZ99CY8PG1"
+    },
+    {
+      "id": "cl-01M2JWH2MSDPYNMWBFZ6F2ZY4W",
+      "datetime": "2026-09-15T15:56:18Z",
+      "session": "understanding-views-design",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "N10 Test Architect BLOCK closed in D-0 solution-tree design (draft)",
+      "prompt": "Resume N9 design author. Peer Mode. Repair docs/design/solution-tree.md for N10 Test Architect BLOCK. Do not mark accepted. Do not implement src/. Six closes: UV-1 T5c Fake/golden arrange; US-T6/UI-8 visual-tree; B6 root-only empty; F* io_probe/; DirectoryInfo PROBE-APP-ENUM; UV-0 T5c falsifying inputs.",
+      "summary": "Six Test Architect closes in docs/design/solution-tree.md. Status remains draft.",
+      "rationale": "App.Tests must not construct the Core omit set or send DropRelativePaths; B6 empty must not render Unindexed root; F* T5a needs io_probe/; PROBE-APP-ENUM must cover DirectoryInfo; T5c falsifying column must list failing inputs.",
+      "artifacts": [
+        "docs/design/solution-tree.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "dd6026c2a959a280e84fc109d3236d0fd78f7bb7",
+        "after": "dd6026c2a959a280e84fc109d3236d0fd78f7bb7",
+        "branch": "understanding-views-design",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M2JWGXRESZNJH0G0065CJXNB"
     }
   ]
 };
