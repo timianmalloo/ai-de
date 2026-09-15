@@ -3,7 +3,14 @@
   "sourcePin": "b91d4bb5b0f59352b7f90b94e0b2733a647452dc",
   "sourcePolicy": "Transitive six-project own-repository C#/project/embedded-template/build inputs, shared C# links and licenses; no binaries, caches or fixture corpus",
   "archiveSha256": "4FBC05719148617AFA5D9C5D7D67B3CA5D84F0FD1294C575CBC0255941ED5D88",
-  "patchSha256": "9639153170D247C8D0587DF09502E82414280D4EA5C77E080944FF18991DE0F4",
+  "patchSha256": "DA1AFEE0B66F027C35E4B9D50966C47A1BF30EB491122080B58D61F315B90A39",
+  "historicalPatchSha256": "9639153170D247C8D0587DF09502E82414280D4EA5C77E080944FF18991DE0F4",
+  "patchRepresentation": {
+    "policy": "Canonical UTF-8 LF, matching the Git blob and text=auto/eol=lf checkout policy.",
+    "approval": "Owner87 recorded decision (2026-09-14): input representation correction only; 130 CRLF separators converted to LF without changing patch content or the qualified peer source.",
+    "historicalBytes": 7590,
+    "canonicalBytes": 7460
+  },
   "entries": [
     {
       "path": ".editorconfig",
