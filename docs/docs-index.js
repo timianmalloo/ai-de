@@ -8049,7 +8049,7 @@ window.DOCS_INDEX = {
       "path": "docs/coordination/recursive-surface-ownership.md",
       "title": "Recursive surface ownership: bounded Codex programme",
       "type": "doc",
-      "status": "blocked",
+      "status": "complete",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-15",
@@ -8071,7 +8071,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7cff295ce9d8e703491162cd64707cc27b168309ea9031ab8587e3676800844b"
+      "sourceSha256": "e0e693a79024db3d297413cc6db40e629b7002ad5f020f19974a34f361a25a60"
     },
     {
       "id": "coordination-addendum-cd",
@@ -9994,7 +9994,7 @@ window.DOCS_INDEX = {
       "path": "docs/plans/ownership-qualification.md",
       "title": "Qualify the landed ownership gate and close stale status",
       "type": "doc",
-      "status": "in-progress",
+      "status": "complete",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-15",
@@ -10018,18 +10018,18 @@ window.DOCS_INDEX = {
       "diagrams": [
         {
           "kind": "flowchart",
-          "title": "Goal state and bounded graph",
+          "title": "Superseding completion — 2026-09-15",
           "mermaid": "flowchart LR\n G --> V --> C\n G --> Q --> C"
         }
       ],
-      "sourceSha256": "c38831c59ce3512cd1583f1b6553a98b33527e63f8c8afc909a96f61c2ee57d2"
+      "sourceSha256": "94046bbf448dc698a1c3aa5b789f9c6b5ca9d0fca67eef2de320d15712840a54"
     },
     {
       "id": "plan-recursive-surface-ownership",
       "path": "docs/plans/recursive-surface-ownership.md",
       "title": "Execution graph: recursive ownership gate",
       "type": "doc",
-      "status": "blocked",
+      "status": "complete",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-15",
@@ -10053,7 +10053,7 @@ window.DOCS_INDEX = {
       "diagrams": [
         {
           "kind": "flowchart",
-          "title": "Execution graph",
+          "title": "Superseding status — 2026-09-15",
           "mermaid": "flowchart LR\n G --> O --> P --> A --> R --> J\n G --> P"
         },
         {
@@ -10062,7 +10062,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n R[Review BLOCK] --> I[Investigate: reproduce five cases] --> A2[Bounded same-author repair] --> R2[Independent review] --> J[Join]"
         }
       ],
-      "sourceSha256": "d278435deef29d864fd192b30ee47eb4b9652d67661a184f2808c90647338585"
+      "sourceSha256": "40712ff0a73a3edf22ae67d2999b87ad8e0beff54317a842d48477f81013d932"
     },
     {
       "id": "plan-ui-and-windowing",
@@ -16349,7 +16349,7 @@ window.DOCS_INDEX = {
       "path": "docs/proof/ownership-qualification.md",
       "title": "Published ownership gate qualification",
       "type": "proof-pack",
-      "status": "in-progress",
+      "status": "complete",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-15",
@@ -16379,7 +16379,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4ef6dd2d6b26b8afcf023fa49423d722bfa870f18f66248d854ae5072a29061f"
+      "sourceSha256": "2faa2a4f8b7bce7150625737108efa48d23b08f4768059cfae7897769ca9b7a3"
     },
     {
       "id": "proof-ownership-qualification-review",
@@ -16616,7 +16616,7 @@ window.DOCS_INDEX = {
       "path": "docs/proof/recursive-surface-ownership.md",
       "title": "Recursive surface ownership: programme evidence",
       "type": "proof-pack",
-      "status": "blocked",
+      "status": "complete",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-15",
@@ -16651,7 +16651,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0322de91737132a52ea693ef0ef5bb48fff2446d2de88063990f2848227545f4"
+      "sourceSha256": "a5005d42c8bb8b1cf747ab9925891ba2e5ebf8fc29f394faf2d702e8129b3dc6"
     },
     {
       "id": "proof-recursive-surface-ownership-author",
@@ -19086,5 +19086,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "db1532f9ef0d7f53d726d476279cee34e569f9e47c7f893b060f645cba457ed6"
+  "graphSha256": "f9e137477ec8d7508a0a2560f1abaf3e80274198e0ebdc81d70ee8357a65a3f6"
 };

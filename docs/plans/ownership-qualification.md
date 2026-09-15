@@ -2,7 +2,7 @@
 id: plan-ownership-qualification
 title: "Qualify the landed ownership gate and close stale status"
 type: doc
-status: in-progress
+status: complete
 owner: "@timianmalloo"
 tags: [coordination, ownership, qualification]
 links:
@@ -13,6 +13,12 @@ summary: "Verify the already-published fix, qualify unchanged inputs, and coordi
 ---
 
 # Goal state and bounded graph
+
+## Superseding completion — 2026-09-15
+
+G, V, Q and C are complete on the isolated branch. Full required runner: 38/38 PASS at `3284acc55d906cdd5beb7e80527200b8bdf3f491`; independent Test Architect/Simplifier PASS at `3665e51f`. Core's exact corrections were consumed through the prescribed join. The peer holder explicitly released the conflicting audit leases; no expiry or bypass supplied consent. Owner O10 authorizes the final status reconciliation and Core handoff. Main publication of this continuation remains a separate Core action. See `docs/proof/ownership-qualification.md` for exact evidence and receipt reuse limits.
+
+Actual work added a coordinated lease interruption and two Core-owned metadata corrections to the planned graph. Conductor call total is not reliably available after continuation; do not infer a measured total or claim the 35-call estimate was met. Reviewer 14/12-call overrun is recorded. Required checks and scope were preserved; the unresolved qualification obligations reached zero. Earlier planning and checkpoint statements below remain historical.
 
 Goal: resolve the former shared-audit blocker and continue with the next isolated action.
 Done when: current qualification is observed, the landed programme status is reconciled, and the obsolete section-2 prose is corrected by its owner or has an exact coordinated handoff.

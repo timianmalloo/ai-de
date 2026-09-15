@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T17:23:34Z",
+  "generated": "2026-09-15T17:28:09Z",
   "audit": [
     {
       "actor": null,
@@ -17476,6 +17476,41 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T17:23:31Z",
       "duration_seconds": 2.0
+    },
+    {
+      "id": "al-01M2K1R3MANATTDTCV8NM55GTE",
+      "shortname": "ownership-qualified-close",
+      "datetime": "2026-09-15T17:27:31Z",
+      "session": "codex-ownership-qualification",
+      "prompt": "Resolve the blocker, provide periodic task tables, and continue with the next best action.",
+      "summary": "Owner O10 authorized historical status reconciliation after full38 PASS at3284acc5. Published implementation remains unchanged. Core documentation corrections consumed under O9. Native holder explicitly released blocking leases. Independent Test Architect/Simplifier PASS3665e51f. Reused3743 executed test and5 exit-path receipts only after matching source/tests/build inputs and hashes. Final status metadata creates expected index drift before mandated regeneration. Main publication remains Core; retain evidence worktrees.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/ownership-qualification.md",
+        "docs/proof/ownership-qualification-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Resolve ownership qualification blockers and close the bounded programme",
+      "done_when": "Required checks and independent review pass, status records are corrected, and committed evidence is handed to Core",
+      "tier": "T1",
+      "fan_out": 4,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T17:27:07Z",
+      "duration_seconds": 24.0,
+      "git": {
+        "sha": "3284acc55d906cdd5beb7e80527200b8bdf3f491",
+        "short": "3284acc55",
+        "branch": "conductor/ownership-qualification",
+        "pushed": null
+      }
     }
   ],
   "changes": [

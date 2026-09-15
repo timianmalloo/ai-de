@@ -2,7 +2,7 @@
 id: plan-recursive-surface-ownership
 title: "Execution graph: recursive ownership gate"
 type: doc
-status: blocked
+status: complete
 owner: "@timianmalloo"
 tags: [plan, execution-graph, ownership]
 links:
@@ -13,6 +13,10 @@ summary: "A single author spine with independent pre-author and post-author gate
 ---
 
 # Execution graph
+
+## Superseding status — 2026-09-15
+
+All bounded graph nodes are complete. Core published the original candidate at `33e9ae7e`; current qualification passed 38/38 required gates at `3284acc55d906cdd5beb7e80527200b8bdf3f491`. See [qualification proof](../proof/ownership-qualification.md). Earlier blocked checkpoints below remain historical. Publication of the continuation's documentation is a separate Core handoff; no Codex main push.
 
 Goal, done-when, exclusions, budgets and surfaces are in the linked coordination plan. This is optimize-graph's one whole-programme pass.
 

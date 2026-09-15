@@ -2,7 +2,7 @@
 id: coord-recursive-surface-ownership
 title: &quot;Recursive surface ownership: bounded Codex programme&quot;
 type: doc
-status: blocked
+status: complete
 owner: &quot;@timianmalloo&quot;
 tags: [coordination, ownership, tooling]
 links:
@@ -13,6 +13,10 @@ summary: &quot;One tooling author, an Astra Owner and Conductor, and independent
 ---
 
 # Recursive surface ownership
+
+## Superseding status — 2026-09-15
+
+The original reviewed candidate landed through Core at `33e9ae7e`. Core repaired the shared-liveness lookup; the holder explicitly released the conflicting audit leases. Current qualification passed 38/38 required gates at `3284acc55d906cdd5beb7e80527200b8bdf3f491`, with independent Test Architect/Simplifier PASS. See [qualification proof](../proof/ownership-qualification.md). Historical blocked checkpoints below are superseded. The isolated `conductor/ownership-qualification` branch is for Core&#39;s serialized documentation handoff; Codex has not pushed main. Retain worktrees for provenance.
 
 ## Goal contract
 
@@ -119,5 +123,4 @@ Latest observation after `327528e2`: primary logs no longer fail the standalone 
 
 
 </pre></main></html>
-
 
