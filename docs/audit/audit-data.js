@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-14T23:42:50Z",
+  "generated": "2026-09-15T01:50:38Z",
   "audit": [
     {
       "actor": null,
@@ -16310,6 +16310,62 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-14T23:34:34Z",
       "duration_seconds": 495.0
+    },
+    {
+      "id": "al-01M2HC4C4TCNPZZGE5SCNHMS3E",
+      "shortname": "coordination-understanding-views",
+      "datetime": "2026-09-15T01:50:30Z",
+      "session": "grok-understanding-views-kickoff",
+      "prompt": "lets get started with Addendum C deferred understanding views; create a kickoff prompt for a Grok owner-conductor-subagent fleet",
+      "summary": "6 tracks (owner, specify, architecture, core-query, shell-surface, conductor); serial spine Owner-then-spec-then-arch-then-spike-then-core-then-shell; struck 7-way parallel, D-5/D-6, Atlas, Tests, main; kickoff prompt written",
+      "kind": "skill",
+      "skill": "prepare-for-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/understanding-views.md",
+        "docs/coordination/understanding-views.html",
+        "docs/coordination/understanding-views-kickoff.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "A kickoff prompt and coordination plan that starts Addendum C deferred understanding views under owner-conductor-sub-agent, one worktree per agent",
+      "done_when": "Pasteable prompt plus committed plan/graph; Owner not yet spawned",
+      "tier": "T1",
+      "fan_out": 0,
+      "git": {
+        "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
+        "short": "bab5035e7",
+        "branch": "understanding-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2HC4KW95Y4Q3F7BNE7H3RTD",
+      "shortname": "optimize-graph-understanding-views",
+      "datetime": "2026-09-15T01:50:38Z",
+      "session": "grok-understanding-views-kickoff",
+      "prompt": "lets get started with Addendum C deferred understanding views; create a kickoff prompt for a Grok owner-conductor-subagent fleet",
+      "summary": "before: 5 unbounded nodes / 7 parallel implementers; after: 15 nodes, span 13, width 2 after N0 plus review panels cap 4, one-view loop bounded cap 7, floors F-OWNER through F-JOIN present",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/understanding-views.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Optimized execution graph for D-0..D-6 re-admission",
+      "done_when": "Graph with capabilities, floors, fan-out and loop contracts",
+      "tier": "T2",
+      "fan_out": 0,
+      "git": {
+        "sha": "bab5035e75a10e97e57934891650cd4ddefecd76",
+        "short": "bab5035e7",
+        "branch": "understanding-views",
+        "pushed": null
+      }
     }
   ],
   "changes": [

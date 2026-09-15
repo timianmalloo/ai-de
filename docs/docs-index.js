@@ -8115,6 +8115,89 @@ window.DOCS_INDEX = {
       "sourceSha256": "55bf5b1e116bcd69a8ddb05ee1c3fd879b7a287f3575aad6b2da08a5f54edca5"
     },
     {
+      "id": "coordination-understanding-views",
+      "path": "docs/coordination/understanding-views.md",
+      "title": "Coordination plan - Addendum C deferred understanding views",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-14",
+      "reviewSuggested": [],
+      "summary": "Owner rules first; then one serial spine (specify → architecture → spike → ui-design → design-slice → implement → join) for a single admitted view. Two read-only tracks may run after the ruling. Seven parallel implementers and a D-5/D-6 code track are struck. Atlas files stay with the Copilot fleet.",
+      "tags": [
+        "coordination",
+        "worktrees",
+        "parallelism",
+        "addendum-c",
+        "understanding-views",
+        "grok"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "plan-understanding-views",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0e3f7eb4b16c5ef5796f73b1cd0fbf64da837592a011f6150a7761d869b86445"
+    },
+    {
+      "id": "coordination-understanding-views-kickoff",
+      "path": "docs/coordination/understanding-views-kickoff.md",
+      "title": "Kickoff prompt — Addendum C deferred understanding views (Owner–Conductor–sub-agents)",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-14",
+      "reviewSuggested": [],
+      "summary": "Paste-ready prompt that starts the Owner–Conductor–sub-agent fleet for Addendum C deferred understanding views. Conductor is Grok 4.6 high; Owner is Grok 4.6 xhigh; each agent has its own coord worktree.",
+      "tags": [
+        "coordination",
+        "kickoff",
+        "grok",
+        "addendum-c",
+        "understanding-views"
+      ],
+      "links": [
+        {
+          "to": "coordination-understanding-views",
+          "rel": "documents"
+        },
+        {
+          "to": "plan-understanding-views",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c50ec10e22accd66cb2f85263d2808c81dca4eca722375e9f2da176c5334173a"
+    },
+    {
       "id": "defect-classes",
       "path": "docs/lessons/defect-classes.md",
       "title": "Defect-class register",
@@ -9966,6 +10049,63 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "2d5ebde012f5c21f85aaa095489501b42cd9371ffcced0c19292c6e3dbb37797"
+    },
+    {
+      "id": "plan-understanding-views",
+      "path": "docs/plans/understanding-views.md",
+      "title": "Execution graph — Addendum C deferred understanding views (D-0…D-6)",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2026-12-14",
+      "reviewSuggested": [],
+      "summary": "Optimized execution graph for re-admitting Addendum C's deferred understanding views. Ruling 54 admits one view at a time. Owner rules first. Spec, architecture, spike, UX, design, implement, join follow for that view only. D-5/D-6 stay deferred until the compile ladder can host a deriver.",
+      "tags": [
+        "execution-graph",
+        "addendum-c",
+        "understanding-views",
+        "coordination",
+        "grok"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "coordination-addendum-cd",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Optimized graph",
+          "mermaid": "flowchart TD\n  N0[N0 Owner ruling]\n  N1[N1 Current-state inventory]\n  N2[N2 Comparables research]\n  N3[N3 Specify admitted view]\n  N4[N4 Spec adversarial review]\n  N5[N5 Architecture + ADR]\n  N6[N6 Architecture council]\n  N7[N7 Spike unfamiliar contracts]\n  N8[N8 UX Part B + ui-design]\n  N9[N9 design-slice]\n  N10[N10 Design adversarial]\n  N11[N11 implement TDD]\n  N12[N12 Proof Pack review]\n  N13[N13 conductor-join]\n  N14[N14 Owner next-view or stop]\n  N0 --> N1\n  N0 --> N2\n  N1 --> N3\n  N2 --> N3\n  N3 --> N4\n  N4 --> N5\n  N5 --> N6\n  N6 --> N7\n  N7 --> N8\n  N8 --> N9\n  N9 --> N10\n  N10 --> N11\n  N11 --> N12\n  N12 --> N13\n  N13 --> N14"
+        }
+      ],
+      "sourceSha256": "9e61d57a0e9a194f671837afc66f920506b2d30c472c4b5bdb2a5cb396d4272c"
     },
     {
       "id": "profile-addendum-cd",
@@ -18570,6 +18710,14 @@ window.DOCS_INDEX = {
       "artifactId": "coordination-addendum-cd"
     },
     {
+      "id": "surface-coordination-understanding-views",
+      "path": "docs/coordination/understanding-views.html",
+      "title": "Coordination plan - Addendum C deferred understanding views",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "coordination-understanding-views"
+    },
+    {
       "id": "surface-mockups-editor-surfaces",
       "path": "docs/mockups/editor-surfaces.html",
       "title": "Editor & content surfaces — mockup",
@@ -18634,5 +18782,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c098a7937db9de42729b1f524d005a86ab7ce5e85832d27fdc17ed24d0550635"
+  "graphSha256": "84ca5f12f2ad5c038f125cfda5cf68f1d4b28376270e538bb4daffaf8b899f9f"
 };
