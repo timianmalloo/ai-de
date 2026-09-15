@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:54:17Z",
+  "generated": "2026-09-15T15:29:12Z",
   "audit": [
     {
       "actor": null,
@@ -16765,6 +16765,259 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T14:54:16Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2JTZDEE6S0HY213CCYEPD4G",
+      "shortname": "al5b-supersede",
+      "datetime": "2026-09-15T15:29:11Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "summary": "Supersedes al-01M2HC4C4TCNPZZGE5SCNHMS3E: docs-only skill run; no Proof Pack.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "AL5b correction of al-01M2HC4C4TCNPZZGE5SCNHMS3E",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false
+      },
+      "supersedes": "al-01M2HC4C4TCNPZZGE5SCNHMS3E"
+    },
+    {
+      "id": "al-01M2JTZDHCF0VYFQ0H15676DRC",
+      "shortname": "al5b-supersede",
+      "datetime": "2026-09-15T15:29:11Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "summary": "Supersedes al-01M2HC4KW95Y4Q3F7BNE7H3RTD: docs-only skill run; no Proof Pack.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "AL5b correction of al-01M2HC4KW95Y4Q3F7BNE7H3RTD",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false
+      },
+      "supersedes": "al-01M2HC4KW95Y4Q3F7BNE7H3RTD"
+    },
+    {
+      "id": "al-01M2JTZDM6BBCEB61QTMX9AMG0",
+      "shortname": "al5b-supersede",
+      "datetime": "2026-09-15T15:29:11Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "summary": "Supersedes al-01M2HCZKQTNDKK80C1XB71Y9AP: docs-only skill run; no Proof Pack.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "AL5b correction of al-01M2HCZKQTNDKK80C1XB71Y9AP",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false
+      },
+      "supersedes": "al-01M2HCZKQTNDKK80C1XB71Y9AP"
+    },
+    {
+      "id": "al-01M2JTZDQ4F03P8NDB9D6TPNAJ",
+      "shortname": "al5b-supersede",
+      "datetime": "2026-09-15T15:29:11Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "summary": "Supersedes al-01M2HDCVGG79M0A6ZRHQVHAZ1C: docs-only skill run; no Proof Pack.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "AL5b correction of al-01M2HDCVGG79M0A6ZRHQVHAZ1C",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false
+      },
+      "supersedes": "al-01M2HDCVGG79M0A6ZRHQVHAZ1C"
+    },
+    {
+      "id": "al-01M2JTZDT2Q7T7PGW815V3797E",
+      "shortname": "al5b-supersede",
+      "datetime": "2026-09-15T15:29:11Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "summary": "Supersedes al-01M2HDP2CS1SFN6P9Y6R5WX7FS: docs-only skill run; no Proof Pack.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "AL5b correction of al-01M2HDP2CS1SFN6P9Y6R5WX7FS",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false
+      },
+      "supersedes": "al-01M2HDP2CS1SFN6P9Y6R5WX7FS"
+    },
+    {
+      "id": "al-01M2JTZDWXQ9513JZG38FM7PZ0",
+      "shortname": "al5b-supersede",
+      "datetime": "2026-09-15T15:29:11Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "summary": "Supersedes al-01M2HEBKBNYNV1YKN3CY24N4J7: docs-only skill run; no Proof Pack.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "AL5b correction of al-01M2HEBKBNYNV1YKN3CY24N4J7",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false
+      },
+      "supersedes": "al-01M2HEBKBNYNV1YKN3CY24N4J7"
+    },
+    {
+      "id": "al-01M2JTZDZVR3NJVB0N7F4F6A6S",
+      "shortname": "al5b-supersede",
+      "datetime": "2026-09-15T15:29:11Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "summary": "Supersedes al-01M2HFBT5K8MF3267Y3GR3GSW7: docs-only skill run; no Proof Pack.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "AL5b correction of al-01M2HFBT5K8MF3267Y3GR3GSW7",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false
+      },
+      "supersedes": "al-01M2HFBT5K8MF3267Y3GR3GSW7"
+    },
+    {
+      "id": "al-01M2JTZE2SRM96J40PVCY4PJAC",
+      "shortname": "al5b-supersede",
+      "datetime": "2026-09-15T15:29:11Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "summary": "Supersedes al-01M2HFP02HVP3QY1ADWVV1T1H6: docs-only skill run; no Proof Pack.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "AL5b correction of al-01M2HFP02HVP3QY1ADWVV1T1H6",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false
+      },
+      "supersedes": "al-01M2HFP02HVP3QY1ADWVV1T1H6"
+    },
+    {
+      "id": "al-01M2JTZE5N81PYDC2JDWW3VMHN",
+      "shortname": "al5b-supersede",
+      "datetime": "2026-09-15T15:29:11Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "summary": "Supersedes al-01M2JP0W9B791HV36560236TN8: docs-only skill run; no Proof Pack.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "AL5b correction of al-01M2JP0W9B791HV36560236TN8",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false
+      },
+      "supersedes": "al-01M2JP0W9B791HV36560236TN8"
+    },
+    {
+      "id": "al-01M2JTZE8H3QMP0SCK6C0TBMX8",
+      "shortname": "al5b-supersede",
+      "datetime": "2026-09-15T15:29:11Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "summary": "Supersedes al-01M2JR42W1K48C5KJDFC28P74Q: docs-only skill run; no Proof Pack.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "AL5b correction of al-01M2JR42W1K48C5KJDFC28P74Q",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false
+      },
+      "supersedes": "al-01M2JR42W1K48C5KJDFC28P74Q"
+    },
+    {
+      "id": "al-01M2JTZEBGA6WA43XERQ85NX04",
+      "shortname": "al5b-supersede",
+      "datetime": "2026-09-15T15:29:12Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "AL5b supersede of a docs-only skill run that omitted signals",
+      "summary": "Supersedes al-01M2JRYS6MGB7PJ887T3G8BBHF: docs-only skill run; no Proof Pack.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "AL5b correction of al-01M2JRYS6MGB7PJ887T3G8BBHF",
+      "done_when": "Episode-shaped with honest verification-path signal",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false
+      },
+      "supersedes": "al-01M2JRYS6MGB7PJ887T3G8BBHF"
     }
   ],
   "changes": [
