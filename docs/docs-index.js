@@ -8734,7 +8734,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3906b68715c194b0073d2d4c57483faaca091ca4a6c11e24b9de86b4c1bb6cf7"
+      "sourceSha256": "e7bc50d9db52a723106ce86f46d7d8e865ab9d80677a0056a873b5b1c09ea64e"
     },
     {
       "id": "coordination-code-atlas-resume",
@@ -20678,5 +20678,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c21b9c6aee29a8d0a18a032cb33d71e6ea2052f6c811b06c331aa5450dd747ec"
+  "graphSha256": "f0460c785f935c51164d6f90d4717202dc88b0e6a5ac5095206414d01a3f4fed"
 };

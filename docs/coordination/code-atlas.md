@@ -105,6 +105,42 @@ latest-main reconciliation remain pending. No new whole cohort, full gate runner
 has run. An isolated merge checkpoint is evidence for review, not accepted publication or a final
 qualification freeze; all remaining gates still apply.
 
+### Owner technical scope pending counterpart acknowledgement
+
+The decision-only Owner reviewed the IRP six-call frame. **B-E below are technically approved
+but NONEXECUTABLE** until the responsible current §2 owner acknowledges the exact writer and
+paths. This section records review conditions, not a second ownership map or an execution grant.
+The closer requested Claude's counterpart acknowledgement. Silence, elapsed leases, queued
+messages, and the technical ruling itself do not supply it.
+
+- **B, menu:** the exact Architecture-only canonical Atlas row is admitted technically.
+  Candidate test path: `tests/AiDe.App.Tests/Workbench/PerspectiveMenuTests.cs`. Retain the
+  literal-table assertions and all existing main rows; no broad expected-set relaxation.
+- **C, private lease names:** prefer only two meaningful private Atlas lease-type renames and
+  references in those same files: `src/AiDe.Core/Ipc/AtlasRemoteReader.cs` and
+  `src/AiDe.Core/Understanding/AtlasGitMembership.cs`. Leave the Composer mint guard unchanged.
+- **D, privacy coverage:** replace only leading `AiDe.` with `aide.` in the three existing
+  ActivitySource literals in `AtlasRemoteReader.cs`,
+  `src/AiDe.Core/Understanding/AtlasDirectoryEnumerator.cs`, and
+  `src/AiDe.Core/Understanding/AtlasQueryService.cs`. Preserve each remaining semantic suffix,
+  all Meter names, span names, tags, runtime behavior and assertions.
+- **E, lifecycle guard:** the named test
+  `TheWebSurfacesInitialiseOnceAcrossReparentsTests.NoElementOutsideTheHostHooksLoadedForItsOwnInitialisation`
+  in `tests/AiDe.App.Tests/TheWebSurfacesInitialiseOnceAcrossReparentsTests.cs` needs an exact,
+  acknowledged reconciliation with companion lifecycle negative controls. Distinguish tracked
+  per-attach activation from one-time initialization. The controls must reject missing
+  cancellation, missing task tracking, disposal of a healthy scope during reparent, and a native
+  paint-Loaded hack. Exact companion writer/path acknowledgement remains required; no broad
+  allowlist, fresh Loaded hook, renamed assertion or removed assertion is admitted here.
+
+The native paint-Loaded workaround is rejected. NP6 repair belongs to the separately authorized
+native writer's own files; integration must not edit the native reader. The released integration
+environment repair remains a fresh proof label plus explicit daemon build, never a legacy-file
+edit. Already authorized Zone/helper/environment/plan work is unchanged. IRP retains its original
+**24-call** allocation; this technical ruling adds neither calls nor implementation authority.
+The worker ends the turn when requesting a decision and does not continue past an unresolved
+gate in anticipation of a queued response.
+
 **Safety and handoff:** no private proposal/TheTerrace import, dependency or shared-gate weakening,
 native dirty-file import, global stash, worktree installation/deletion, resource kill, or worker
 publication. MainWindow, IPC admission/security, source grants and borrowed/owned lifetime remain

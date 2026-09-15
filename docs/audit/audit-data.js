@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:49:29Z",
+  "generated": "2026-09-15T14:56:45Z",
   "audit": [
     {
       "actor": null,
@@ -19157,6 +19157,37 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T14:37:18Z",
       "duration_seconds": 730.0
+    },
+    {
+      "id": "al-01M2JS40SWDP3JE7ER315MF902",
+      "shortname": "atlas-irp-owner-scope-pending",
+      "datetime": "2026-09-15T14:56:44Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "Record Owner technical scopes B-E in the existing recovery plan; they remain nonexecutable until current section-2 exact writer/path acknowledgement. No product or test repairs.",
+      "summary": "Recorded exact canonical menu, private Atlas lease naming, three ActivitySource prefixes and lifecycle negative-control conditions. Counterpart acknowledgement remains absent; no B-E source/test execution, native changes or new qualification. Original IRP24 budget unchanged.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/coordination/code-atlas.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Persist the Owner technical conditions without crossing the counterpart authority gate",
+      "done_when": "Existing recovery plan distinguishes technical approval from executable writer/path authority",
+      "tier": "T2",
+      "main_calls": 17,
+      "main_budget": 24,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T14:55:47Z",
+      "duration_seconds": 57.0
     }
   ],
   "changes": [
