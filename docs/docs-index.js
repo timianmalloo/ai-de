@@ -1897,6 +1897,68 @@ window.DOCS_INDEX = {
       "sourceSha256": "92658f5a21220d232e56dd004be03f4e3f4e03482e87ff9c6408730016e864d7"
     },
     {
+      "id": "adr-0038-d0-solution-tree-census-and-kind",
+      "path": "docs/adr/0038-d0-solution-tree-census-and-kind.md",
+      "title": "ADR-0038 — D-0 Solution tree: one Architecture kind, one query-time census, no second store",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [],
+      "summary": "Admit D-0 as one Architecture-only SurfaceKind (solution-tree) whose payload is one new Core query-time census join (SolutionTreeAsync / IPC solution-tree). Coverage is indexed-parent | unindexed; Not recorded and Omitted (N) are Disclosure. Cap tests inject a named drop-set. Skip policy is consumed, not copied; the member survivor is N7. Status proposed — N6 council has not sat.",
+      "tags": [
+        "architecture",
+        "D-0",
+        "solution-tree",
+        "census",
+        "allow-list",
+        "ipc",
+        "adr-0030",
+        "understanding-views"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-n4-pass",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-n1-disposition",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-ruling",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "850dd061a403ccfaf0044a4cc77b898290a359e6edb070e42343eb566c2e314a"
+    },
+    {
       "id": "api-aide-app",
       "path": "docs/api/AiDe.App.md",
       "title": "API: AiDe.App",
@@ -2579,7 +2641,7 @@ window.DOCS_INDEX = {
       "status": "in-review",
       "owner": "@timianmalloo",
       "phase": "0",
-      "reviewBy": "2027-03-11",
+      "reviewBy": "2027-03-15",
       "reviewSuggested": [
         {
           "by": "spec-ai-native-ide",
@@ -2595,9 +2657,14 @@ window.DOCS_INDEX = {
           "by": "adr-0013-layout-persistence-envelope",
           "on": "2026-09-11",
           "reason": "ADR-0013 amended (Ruling 52, ADR-0032): one zone-envelope file per host perspective; drop-with-report at restore; tested rollback"
+        },
+        {
+          "by": "adr-0038-d0-solution-tree-census-and-kind",
+          "on": "2026-09-15",
+          "reason": "ADR-0038 proposed: D-0 Solution tree kind + query-time census; Addenda C/D slices still exclude D-0"
         }
       ],
-      "summary": "Defines AI-DE as a WPF+WebView2 workspace shell over a per-workspace local authority core that builds provenance-labelled facts from repository artifacts, serves derived visual projections and session-class-governed MCP tools, delivers prompts under a write-ahead two-phase receipt, and keeps agent/model capability outside deterministic source truth. Supersedes the 2026-08-25 draft; resolves the council review's three hard and two soft vetoes. Amended 2026-09-11 for Addenda C and D: the Perspective shell (ADR-0017 as amended; ADR-0030–0032) and the Prompt Compilation bounded context (ADR-0033–0037).",
+      "summary": "Defines AI-DE as a WPF+WebView2 workspace shell over a per-workspace local authority core that builds provenance-labelled facts from repository artifacts, serves derived visual projections and session-class-governed MCP tools, delivers prompts under a write-ahead two-phase receipt, and keeps agent/model capability outside deterministic source truth. Supersedes the 2026-08-25 draft; resolves the council review's three hard and two soft vetoes. Amended 2026-09-11 for Addenda C and D: the Perspective shell (ADR-0017 as amended; ADR-0030–0032) and the Prompt Compilation bounded context (ADR-0033–0037). Amended 2026-09-15 for Understanding views D-0 (ADR-0038 proposed): one Architecture kind, query-time census, no second store. Addenda C/D slices still exclude D-0; see §Understanding views / D-0.",
       "tags": [
         "architecture",
         "ai-native-ide",
@@ -2736,6 +2803,18 @@ window.DOCS_INDEX = {
           "rel": "depends-on"
         },
         {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "implements"
+        },
+        {
+          "to": "note-understanding-views-n4-pass",
+          "rel": "relates-to"
+        },
+        {
           "to": "note-addendum-cd-architecture-p1-inputs",
           "rel": "relates-to"
         },
@@ -2759,9 +2838,14 @@ window.DOCS_INDEX = {
           "kind": "flowchart",
           "title": "C/D.5 Component map — the compile step",
           "mermaid": "flowchart LR\n  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2\n  classDef store fill:#0D1014,stroke:#D8A650,color:#D8A650\n\n  Editor[\"Composer editor<br/>source_text (the only lease source — Ruling 66)\"]:::app\n  Pre[\"PreCompile (T0, debounced, in memory)<br/>shape · tier rule · cap · lease display · profile ·<br/>constitution manifest · history window · snapshots\"]:::core\n  Send1[\"Send gesture #1<br/>opens the envelope\"]:::app\n  Call[\"CompileCallHost (App/Conductor, T3)<br/>ResolveLaunch → process → handshake → Authorize →<br/>session/new tools:[] → prompt ≤ 60 s → counts<br/>(ADR-0035)\"]:::app\n  TB{{\"CompileOutputValidator (T0)<br/>schema · allow-list · open lines · type ·<br/>mention scan · spans (ADR-0033)\"}}:::core\n  Env[(\"EnvelopeStore<br/>envelope-events.jsonl · append-only ·<br/>FileShare.None · prev_sha (ADR-0034)\")]:::store\n  Prep[\"Prepare (App, WPF controls)<br/>marks · tier control · what-was-read ·<br/>operator rows\"]:::app\n  Proj[\"Project(Fold(events)) (T0)<br/>shape · tier+rationale · cap · GoalBlock ·<br/>lease · prompt · task class · projection_sha\"]:::core\n  Gate[\"ComposerSendGate.Send<br/>the 2nd named construction site of<br/>GovernedRunRequest — unchanged\"]:::app\n  Root[\"GovernedRunHost.RunAsync<br/>the one run root (agent-plane §4)\"]:::app\n  Adapter[\"claude-agent-acp 0.75.1<br/>sha pinned\"]:::ext\n  Profile[\"craft-profiles/<family>@<version>.md<br/>pack-owned Type-2 (ADR-0037)\"]:::store\n  Gates[\"Deployment gates (ADR-0036)<br/>compile-pin-spike.json ·<br/>compile-eval-admission.json\"]:::store\n\n  Editor --> Pre --> Send1 --> Env\n  Send1 -->|\"mode admits\"| Call --> Adapter\n  Adapter --> Call --> TB --> Env\n  Env --> Prep --> Env\n  Env --> Proj --> Gate --> Root\n  Profile -.-> Pre\n  Gates -.->|\"settings model reads\"| Send1\n  Root -.->|\"consumed {run_id}\"| Env"
+        },
+        {
+          "kind": "flowchart",
+          "title": "UV.2 Chosen shape",
+          "mermaid": "flowchart LR\n  classDef core fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  disk[Workspace disk now] --> census[Core census walk]\n  skip[One IDirectorySkipPolicy] --> census\n  facts[node_dim + evidence_assertion_fact + scope snapshots] --> join[Latest-generation join]\n  census --> join\n  join --> dto[SolutionTreeResult]\n  dto --> ipc[\"IPC solution-tree\"]\n  ipc --> tree[Architecture Solution tree]\n  tree -->|Enter| src[NodeContentAsync / codeviewer]\n  tree -->|Ctrl+Enter| graph[GraphAsync / DescribeAsync]"
         }
       ],
-      "sourceSha256": "abb24e6209073378930d8129f8a546faa1605e1e6fea60058b4b377aeb752729"
+      "sourceSha256": "cca158bfd952dbfc0943fa66f8ba6e027de5dc629963b202fd70668afa5ee94d"
     },
     {
       "id": "architecture-agent-plane",
@@ -19063,5 +19147,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6ed1a7b9524d2e04b03c0580a8fe4e506062dfd341550979aa88ce57261512dd"
+  "graphSha256": "d2cebbc95e0bfc3138efa530ff98ee78f90041fce5730dfe2ec2ad1db041852b"
 };

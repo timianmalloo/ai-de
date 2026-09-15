@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:02:36Z",
+  "generated": "2026-09-15T14:24:14Z",
   "audit": [
     {
       "actor": null,
@@ -16603,6 +16603,45 @@ window.AUDIT_DATA = {
         "branch": "understanding-views",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2JQ8GAT99FQJJY3WMZEZ24V",
+      "shortname": "define-architecture-understanding-views-d0",
+      "datetime": "2026-09-15T14:24:14Z",
+      "session": "understanding-views-architecture",
+      "prompt": "N5: /define-architecture amendment: one new kind, derived menu, no second store.\n\nDone when: Architecture section + ADR for D-0 admission. Allow-list change described, not implemented. Status of ADR is proposed (you do not self-clear; N6 council is a later Conductor panel).\n\nTier: T2. Fan-out cap: 0. Skip Stage 4 council.",
+      "summary": "ADR-0038 proposed + architecture.md §Understanding views / D-0. Kind solution-tree described not implemented. Query SolutionTreeAsync / IPC solution-tree. Stage 4 skipped (N6). Spec stays draft.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md"
+      ],
+      "tags": [
+        "understanding-views",
+        "D-0"
+      ],
+      "outcome": "success",
+      "goal": "N5 /define-architecture amendment: one new kind, derived menu, no second store.",
+      "done_when": "Architecture section + proposed ADR for D-0 admission; allow-list described not implemented; committed on understanding-views-architecture.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": false,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T14:07:07Z",
+      "duration_seconds": 1027.0,
+      "change": "cl-01M2JQ7S3EDVEHP93AHEFXZMXW",
+      "git": {
+        "sha": "cb868bce441246f0aa921aec649901dc755b56ce",
+        "short": "cb868bce4",
+        "branch": "understanding-views-architecture",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -20377,6 +20416,29 @@ window.AUDIT_DATA = {
         "before": "475d46e6a7e19b746ea9f9cf8449fd84119bae9e",
         "after": "475d46e6a7e19b746ea9f9cf8449fd84119bae9e",
         "branch": "understanding-views-comparables",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2JQ7S3EDVEHP93AHEFXZMXW",
+      "datetime": "2026-09-15T14:23:50Z",
+      "session": "understanding-views-architecture",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "ADR-0038 proposed: D-0 Solution tree is one Architecture kind over one query-time Core census",
+      "prompt": "N5: /define-architecture amendment: one new kind, derived menu, no second store.\n\nDone when: Architecture section + ADR for D-0 admission. Allow-list change described, not implemented. Status of ADR is proposed (you do not self-clear; N6 council is a later Conductor panel).\n\nTier: T2. Fan-out cap: 0. Skip Stage 4 council.",
+      "summary": "Admitted D-0 as SurfaceKind solution-tree (described, not added) whose payload is IWorkspaceQueries.SolutionTreeAsync / IPC solution-tree. Coverage two-valued; Disclosure for shortfalls; test-overridable DropRelativePaths for US-T5c; skip policy consumed not copied (survivor N7). Addenda C/D slices still exclude D-0. ADR status proposed; Stage 4 skipped (N6).",
+      "rationale": "Owner N1 census admission + N4 PASS grain close + AR3/ADR-0030 derived menu + DC-022 + Ruling 53. Rejected OverviewAsync, App disk walk, folder_dim, path-split, Atlas, D-1..D-6 scaffolding.",
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0038-d0-solution-tree-census-and-kind.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "cb868bce441246f0aa921aec649901dc755b56ce",
+        "after": "cb868bce441246f0aa921aec649901dc755b56ce",
+        "branch": "understanding-views-architecture",
         "pushed": null,
         "commits": []
       }
