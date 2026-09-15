@@ -105,3 +105,69 @@ speedup or measured duration is newly claimed.
 This disposition clears only the missing evidence-node finding. The accepted-foundation,
 exact-grant, shared-guard and independent-design barriers remain open. It grants no product
 implementation, native run, integration or publication.
+
+## Independent E2 contract-spike review
+
+Reviewed frozen E2 spike `55df5b6e75e2a7b52f2f5aeb5433e19383196570`,
+including `RESULT.md`, `Program.cs`, `architecture.fixture.json` and
+`docs/proof/atlas-architecture-contract.md`, against Owner F1/F2 decision
+`57a09ed6`. The frozen console was executed on Windows and reproduced exit 0 and
+all 23 printed PASS rows.
+
+**BLOCK independent spike clearance.** The process does execute exactly 23 named
+assertions, and 16 rejection/unresolved assertions run before the positive fixture.
+That count is true as an execution count. It is not yet 23 independent contract
+oracles because three advertised semantic checks cannot fail when their claimed
+behavior is removed or changed.
+
+### Findings and clearance
+
+1. **[Blocker, Verified] Alias collapse/provenance is read back from the fixture, not
+   produced by the subject.** `two-aliases-one-declaration` directly checks that both
+   input rows already contain the same `rootRef` and anchor. `Validate` only rejects a
+   `rootRef` absent from resource IDs; it emits no grouped root or retained-alias result.
+   The check would still pass if no collapse behavior existed. **Clear when:** an
+   admitted pure projection consumes validated rows and returns one declaration root
+   with both distinct alias evidence records; a negative mutation proves an alias to a
+   different/missing root does not collapse, and both anchors survive in output.
+
+2. **[Major, Verified] The distinct-scope oracle is confounded by a second differing
+   field.** `equal-symbols-distinct-scopes` compares a local key over workspace, scope,
+   file and symbol, while the two fixture resources differ in both `scope` and `file`.
+   Removing scope from the key would leave the check green. **Clear when:** the two
+   cases are identical in every identity component except scope and the subject still
+   keeps them distinct; add the complementary equality case only when an admitted
+   fully known deployment-scope producer exists.
+
+3. **[Major, Verified] Authority containment is a constant assertion.** `Result.Authority`
+   always returns `unestablished` and `EnforcementProven` always returns false.
+   `authority-not-promoted` therefore cannot detect a future promotion path. The two
+   unknown-field rejection tests do meaningfully reject injected `accepted` markers,
+   but the constant adds no independent evidence. **Clear when:** authority status is
+   an output of the validated carrier path and malicious marker mutations demonstrate
+   that it remains unestablished, or remove this row from the independent check count
+   and describe it as a static containment sentinel.
+
+4. **[Major, Verified] Several reported carrier limits have no negative-first oracle.**
+   `Validate` contains `layer-kind`, 32-row and 256-character rejection branches, but
+   the 23 checks do not exercise them. Required non-ID strings also accept whitespace.
+   `RESULT.md` says these limits are part of the contract actually exercised. **Clear
+   when:** negative cases cover unknown layer kind, row overflow, text overflow and
+   blank required strings with stable diagnostics, or the evidence narrows its claim
+   to the rejection branches actually executed.
+
+### Claims that clear in this bounded run
+
+- **[Verified]** Duplicate IDs, role/shape faults, aggregate references, layer
+  membership/dimension/state, alias-to-alias misuse, hostile acceptance fields and
+  stale/missing/foreign anchors reach their named rejection or unresolved diagnostics.
+- **[Verified]** `ReadLiteralBicep` is a deliberately narrow regex over fixed literal
+  source. It neither compiles nor evaluates Bicep. Expression names remain null,
+  deployment scope remains null, and `SameDeployment` refuses partial identity.
+- **[Verified]** The proof explicitly leaves fully known deployment equality and
+  US-E8 acceptance unresolved. It makes no cloud, authorization, native or product
+  acceptance claim. Linux evidence also remains pending with the Conductor.
+
+No E1 result was reviewed. This BLOCK applies only to the independent evidentiary value
+of the E2 spike; it does not reject the Owner's bounded design direction or grant any
+product work.

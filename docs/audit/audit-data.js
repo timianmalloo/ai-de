@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T20:13:25Z",
+  "generated": "2026-09-15T20:31:00Z",
   "audit": [
     {
       "actor": null,
@@ -18506,6 +18506,53 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "e07c9e59cffd3c45e17de07880e62d9db5ef72c2",
         "short": "e07c9e59c",
+        "branch": "review/atlas-views-design",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KC824TA3MHWX740P762KFH",
+      "shortname": "atlas-e2-spike-review",
+      "datetime": "2026-09-15T20:31:00Z",
+      "session": "codex-atlas-views-review",
+      "prompt": "Independently review frozen E2 spike 55df5b6e75e2a7b52f2f5aeb5433e19383196570 for its six-group oracles, negative-first behavior, source-as-data limits and truth of the 23-check claim; no product acceptance or E1 review.",
+      "summary": "Blocked independent E2 spike clearance: 23 assertions execute, but alias collapse is fixture introspection, scope distinctness is confounded by file identity, authority containment is constant, and claimed carrier limits lack negative oracles. Source-as-data and unresolved-deployment limits are honest.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-sol-plan-review",
+      "artifacts": [
+        "docs/proof/atlas-views-plan-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "e2-spike-review"
+      ],
+      "outcome": "blocked",
+      "goal": "Determine whether frozen E2 spike 55df5b6e proves its six oracle groups and reported 23 checks without semantic overclaim.",
+      "done_when": "Each claim is traced to executable assertions and negative cases, with a CLEAR/BLOCK verdict and scoped fixes committed to the existing review receipt.",
+      "tier": "T2",
+      "main_calls": 5,
+      "main_budget": 10,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T20:28:19Z",
+      "duration_seconds": 161.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 4,
+          "accepted": 0
+        }
+      ],
+      "git": {
+        "sha": "59bac4eea5a1a96228c627130c93fd78b2bc86d1",
+        "short": "59bac4eea",
         "branch": "review/atlas-views-design",
         "pushed": null
       }
