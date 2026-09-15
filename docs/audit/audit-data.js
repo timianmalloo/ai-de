@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T14:56:45Z",
+  "generated": "2026-09-15T16:01:55Z",
   "audit": [
     {
       "actor": null,
@@ -19188,6 +19188,101 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T14:55:47Z",
       "duration_seconds": 57.0
+    },
+    {
+      "id": "al-01M2JVTAC5GY2ZFAV9DQKSH17G",
+      "shortname": "atlas-icd-subscriber-seam-blocked",
+      "datetime": "2026-09-15T15:43:52Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "ICD10: execute only admitted C/D private lease type disambiguation and three ActivitySource prefixes; unchanged guards and direct coupled tests, no GUI/native/B-E/main join.",
+      "summary": "Four admitted Core files changed with no control-source changes. Original raw guard reds preserved. Fresh Composer guard1/1 green; Core selection179/182 with privacy guard green and three new directory telemetry reds. Old listener subscribes to pre-rename ActivitySource; exact listener-only test path requires new acknowledgement. Corrective commit withheld. R113 read-only census yields AtlasReaderView.cs only; no owner assigned.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/coordination/code-atlas.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Clear C/D without weakening controls inside ten calls",
+      "done_when": "Unchanged guards and directly coupled tests pass or exact additional seam is returned",
+      "tier": "T2",
+      "main_calls": 9,
+      "main_budget": 10,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T15:37:55Z",
+      "duration_seconds": 357.0
+    },
+    {
+      "id": "al-01M2JW8DYXMKWN9MNQ1240C0SQ",
+      "shortname": "atlas-ibe-b-prepared-desktop-held",
+      "datetime": "2026-09-15T15:51:35Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "IBE12: apply exact canonical B menu amendment and prepare production-observation E controls; shown/App verification waits native release and closer handoff.",
+      "summary": "B exact two-line amendment applied after reading both original raw menu reds; all assertions and other perspectives unchanged. Nonincremental App test-project build succeeded. No App test or shown lifecycle run launched. E guard remains intact pending red-first production-backed observation controls and desktop handoff. ICD listener-only test path still needs exact added scope. No commit, native application, main join, gate relaxation or push.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md",
+        "docs/coordination/code-atlas.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Repair admitted B/E without weakening controls or violating desktop serialization",
+      "done_when": "Targeted B/E controls and negative cases proven or exact pending execution seam returned",
+      "tier": "T2",
+      "main_calls": 7,
+      "main_budget": 12,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T15:45:57Z",
+      "duration_seconds": 338.0
+    },
+    {
+      "id": "al-01M2JWVB1TMFV34QNP5SDE6VJK",
+      "shortname": "atlas-icl-coupled-listener-green",
+      "datetime": "2026-09-15T16:01:54Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "ICL6 Ruling116: change only the acknowledged directory telemetry listener prefix, preserve all assertions, rerun identical ICD selections and commit C/D plus listener only when targeted conditions pass.",
+      "summary": "ICL supersedes the historical ICD subscriber block: exact one-line ShouldListenTo prefix changed to aide.Core.Understanding.AtlasDirectoryEnumerator; no other line in that test changed. Fresh unchanged Composer guard1/1 PASS exit0; identical Core guard/direct-coupled selection182/182 PASS exit0, zero skips/errors/timeouts. Entries/depth/descriptors all PASS, with old ICD three-red TRX preserved. Composer/Privacy source files match HEAD and SHA256 before/after. Evidence .artifacts/atlas-main-integration/ICL/run-1789487966265368400 contains full01/02 JSON, bothicl TRXs, preserved-icd-three-reds.trx and protected-guard-sha256.json. C/D scope only two private type renames/same-file refs and three ActivitySource prefixes; no Meter/span/tag/assertion changes. B menu amendment remains untested and excluded from corrective commit; E and newer-main/fullI gates remain pending. No GUI/native/main/push. ICL evidence recorded here as continuation of existing production-adapters proof; historical ICD block remains preserved.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close only the admitted C/D coupled-listener seam without weakening guards",
+      "done_when": "Same unchanged guard and182coupled tests pass with one-line listener diff; B remains separate",
+      "tier": "T2",
+      "main_calls": 5,
+      "main_budget": 6,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T15:58:34Z",
+      "duration_seconds": 200.0
     }
   ],
   "changes": [

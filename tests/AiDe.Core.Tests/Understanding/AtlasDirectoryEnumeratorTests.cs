@@ -293,7 +293,7 @@ public sealed class AtlasDirectoryEnumeratorTests : IDisposable
         var activities = new System.Collections.Concurrent.ConcurrentBag<Activity>();
         using var listener = new ActivityListener
         {
-            ShouldListenTo = source => source.Name == "AiDe.Core.Understanding.AtlasDirectoryEnumerator",
+            ShouldListenTo = source => source.Name == "aide.Core.Understanding.AtlasDirectoryEnumerator",
             Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData,
             ActivityStopped = activity => activities.Add(activity)
         };

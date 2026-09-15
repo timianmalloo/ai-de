@@ -8734,7 +8734,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e7bc50d9db52a723106ce86f46d7d8e865ab9d80677a0056a873b5b1c09ea64e"
+      "sourceSha256": "394cc82193b7457d37e6958b195a90f049dc35182375d7157ce6a88e2ae6996b"
     },
     {
       "id": "coordination-code-atlas-resume",
@@ -11651,7 +11651,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "dd7d01b150c80593f1ddadf0a008eceea6c9d63415717fd75ba0d7f254be5e42"
+      "sourceSha256": "09a562f47b6a6946f5ccc40b3686795622ec9765c318e0f53ac015676b6b0b9e"
     },
     {
       "id": "proof-code-atlas-real-daemon-mainwindow",
@@ -20678,5 +20678,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f0460c785f935c51164d6f90d4717202dc88b0e6a5ac5095206414d01a3f4fed"
+  "graphSha256": "4b00df93149e4180f5b264de5c7d2fa238309c8bbaf20560af33bfeb21a970b2"
 };

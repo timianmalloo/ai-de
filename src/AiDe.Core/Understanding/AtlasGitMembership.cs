@@ -507,7 +507,7 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
         private readonly Dictionary<string, NativePin> _pins = new(StringComparer.OrdinalIgnoreCase);
         private bool _disposed;
         private bool _diagnosticLoss;
-        private NativeWatchIssuer.Lease? _issuerLease;
+        private NativeWatchIssuer.NativeWatchLease? _issuerLease;
         private readonly object _cleanupGate = new();
         private readonly List<IDisposable> _unpublished = [];
         private bool _registered;
@@ -747,14 +747,14 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
             }
         }
 
-        internal static Lease Acquire(AtlasCleanupFaultPlan? cleanupFaults = null)
+        internal static NativeWatchLease Acquire(AtlasCleanupFaultPlan? cleanupFaults = null)
         {
             lock (Gate)
             {
                 var owner = _shared ??= new NativeWatchIssuer();
                 Require(!owner._stopping, AtlasMembershipCaptureState.Unavailable, "native-issuer-shutdown-pending");
                 owner._references++;
-                return new Lease(owner, cleanupFaults);
+                return new NativeWatchLease(owner, cleanupFaults);
             }
         }
 
@@ -842,11 +842,11 @@ internal sealed class AtlasGitMembership(string executable, string expectedSha25
             }
         }
 
-        internal sealed class Lease(NativeWatchIssuer owner, AtlasCleanupFaultPlan? cleanupFaults) : IDisposable
+        internal sealed class NativeWatchLease(NativeWatchIssuer owner, AtlasCleanupFaultPlan? cleanupFaults) : IDisposable
         {
             private NativeWatchIssuer? _owner = owner;
             private readonly object _releaseGate = new();
-            internal NativeWatchIssuer Owner => _owner ?? throw new ObjectDisposedException(nameof(Lease));
+            internal NativeWatchIssuer Owner => _owner ?? throw new ObjectDisposedException(nameof(NativeWatchLease));
             public void Dispose()
             {
                 lock (_releaseGate)

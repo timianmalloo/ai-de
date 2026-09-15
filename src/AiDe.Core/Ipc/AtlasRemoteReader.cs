@@ -12,7 +12,7 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
 {
     private static readonly Meter Meter = new("AiDe.Core.AtlasRemoteReader");
     private static readonly Counter<long> Exchanges = Meter.CreateCounter<long>("atlas.remote.exchanges");
-    private static readonly ActivitySource Activities = new("AiDe.Core.AtlasRemoteReader");
+    private static readonly ActivitySource Activities = new("aide.Core.AtlasRemoteReader");
     private readonly SemaphoreSlim _exchange = new(1, 1);
     private readonly object _state = new();
     private readonly CancellationTokenSource _shutdown = new();
@@ -20,7 +20,7 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
     private string? _capability;
     private long _epoch;
     private bool _staticStructure;
-    private Lease? _lease;
+    private ReaderLease? _lease;
     private Attempt? _attempt;
     private bool _terminal = true;
     private bool _disposed;
@@ -64,7 +64,7 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
                         throw new JsonException("Admission is not current.");
                     return dto;
                 },
-                dto => _lease = new Lease(this, dto), waiting.Token).ConfigureAwait(false);
+                dto => _lease = new ReaderLease(this, dto), waiting.Token).ConfigureAwait(false);
             _ = admission;
             cancellationToken.ThrowIfCancellationRequested();
             return _lease!;
@@ -175,7 +175,7 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
         }
     }
 
-    private async ValueTask<T> QueryAsync<T>(Lease lease, string operation, object request,
+    private async ValueTask<T> QueryAsync<T>(ReaderLease lease, string operation, object request,
         Func<JsonElement?, T> validate, Action<T> adopt, CancellationToken cancellationToken)
     {
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, lease.Invalidated, _shutdown.Token);
@@ -212,7 +212,7 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
         _capability = null;
     }
 
-    private async ValueTask ReleaseLeaseAsync(Lease lease)
+    private async ValueTask ReleaseLeaseAsync(ReaderLease lease)
     {
         using var cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(2));
         await EnterAsync(cleanup.Token).ConfigureAwait(false);
@@ -264,7 +264,7 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
     private static AtlasReadException Invalid() => new("Atlas.ScopeInvalid", "The Atlas lease is terminal; admit again.");
     private sealed class Attempt { internal bool MayHaveWritten; }
 
-    private sealed class Lease : IAtlasReaderLease, IAtlasReaderQueries
+    private sealed class ReaderLease : IAtlasReaderLease, IAtlasReaderQueries
     {
         private readonly AtlasRemoteReader _owner;
         private readonly CancellationTokenSource _invalidated = new();
@@ -281,7 +281,7 @@ internal sealed class AtlasRemoteReader(string pipeName) : IAtlasWorkspaceReader
         public CancellationToken Invalidated => _invalidatedToken;
         public bool IsTerminal => _invalidated.IsCancellationRequested;
 
-        internal Lease(AtlasRemoteReader owner, AtlasAdmitDto admission)
+        internal ReaderLease(AtlasRemoteReader owner, AtlasAdmitDto admission)
         {
             _owner = owner;
             ScopeToken = admission.ScopeToken;

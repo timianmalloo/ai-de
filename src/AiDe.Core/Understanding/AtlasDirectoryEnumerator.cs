@@ -17,7 +17,7 @@ public sealed class AtlasDirectoryEnumerator(
     TimeProvider? timeProvider = null,
     Func<AtlasRootGrant, bool>? isGrantCurrent = null) : IAtlasDirectoryEnumerator
 {
-    private static readonly ActivitySource ActivitySource = new("AiDe.Core.Understanding.AtlasDirectoryEnumerator");
+    private static readonly ActivitySource ActivitySource = new("aide.Core.Understanding.AtlasDirectoryEnumerator");
     private static readonly string ObservationEpoch = Guid.NewGuid().ToString("N");
     private static long _sequence;
     // Sharing exclusion requires data-read access; metadata-only ACLs may refuse this open.

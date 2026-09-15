@@ -45,7 +45,7 @@ internal sealed class AtlasQueryService : IAtlasQueries, IDisposable
     private const int MaxReceipts = 100;
     private const int MaxActive = 4;
     private const int MaxPending = 16;
-    private static readonly ActivitySource Activities = new("AiDe.Core.Understanding.AtlasQueries");
+    private static readonly ActivitySource Activities = new("aide.Core.Understanding.AtlasQueries");
     private static readonly Meter Metrics = new("AiDe.Core.Understanding.AtlasQueries");
     private static readonly Counter<long> Operations = Metrics.CreateCounter<long>("atlas.query.operations");
     private static readonly Counter<long> Failures = Metrics.CreateCounter<long>("atlas.query.failures");

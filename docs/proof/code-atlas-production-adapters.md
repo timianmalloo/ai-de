@@ -478,3 +478,83 @@ shared Background-priority pump loop. The owned full-dispatcher control complete
 work, borrowed-query use, Core disposal and fixture deletion in about 154 ms.
 The same MainWindow composition under the local full dispatcher is the next controlled
 comparison; this is not yet a claim that every product lifecycle path is correct.
+
+## ICD C/D-only corrective attempt, 2026-09-15 - blocked subscriber seam
+
+**Scope and authority.** ICD received ten prospective calls, separate from integration50 and
+IRP24. Ruling115 at main `33e9ae7e00e3edb2d44ecec006e5a3c354e69efd` acknowledges exact C/D paths.
+B/E remain nonexecutable because the admitted scopes conflict with the unchanged-control-source
+conditions; the closer is seeking clarification. No native or GUI work, whole cohort, newer-main
+join, owner assignment, gate edit, or publication occurred.
+
+**Exact uncommitted corrective diff.** Only four Core files changed: private `Lease` became
+`ReaderLease` in `AtlasRemoteReader.cs`; `NativeWatchIssuer.Lease` became
+`NativeWatchIssuer.NativeWatchLease` in `AtlasGitMembership.cs`, including same-file references.
+No Composer lease inheritance, wrapping, conversion or allowed mint site was added. Only the
+leading `AiDe.` became `aide.` in the three ActivitySource literals in `AtlasRemoteReader.cs`,
+`AtlasDirectoryEnumerator.cs`, and `AtlasQueryService.cs`. Meter names, semantic suffixes, spans,
+tags, and all existing test/control source remained unchanged. Source leases and explicit checks
+preceded the edit; leases were released before the tests.
+
+| Claim | Evidence and oracle | Red observed | Confidence / boundary |
+|---|---|---|---|
+| Composer mint guard no longer confuses private Atlas lease types | Unchanged `ALeaseIsMintedAtExactlyTwoNamedSitesAndByNoOtherPattern`: 1/1 passed, process exit 0; allowed-site array untouched | Original full-App TRX contains that exact failed test; raw file copied and parsed before the fresh run | Verified for this unchanged source-text control; no new GUI or full-App qualification |
+| The three emitters now fall inside the privacy prefix | Unchanged `EveryActivitySource_IsUnderTheAideNamespace` passed in the fresh Core TRX | Original full-Core TRX contains that exact failed test | Verified for the naming guard, not all telemetry consumers |
+| Directly coupled tests preserve their behavior | Core selection: 182 executed, 179 passed, **3 failed**, zero skipped; process exit 1 | All three currently failed directory telemetry cases were **Passed** in the original Core TRX | **Not satisfied; corrective commit withheld** |
+
+**Primary failure, not a success-shaped summary.**
+`AtlasDirectoryEnumeratorTests.EnumerateAsync_Limits_ReportActualDimensionAndBoundedTelemetry`
+fails for `entries`, `depth`, and `descriptors` at its existing `Assert.Single` around line312.
+The current test listener around line295 still uses
+`source.Name == "AiDe.Core.Understanding.AtlasDirectoryEnumerator"`; the admitted emitter now
+uses `"aide.Core.Understanding.AtlasDirectoryEnumerator"`. The three fresh collections are empty.
+No assertion, expected bound, listener, or test file was changed to hide this.
+
+**Class / sweep / derive / prevent.** Class: a producer's identity rename leaves a subscriber's
+exact-name selector obsolete. Sweep: the three admitted emitter literals and directly coupled
+tests were run; the observed mismatch is the one directory listener and its three parameter cases.
+Derive: a shared identity would avoid two independently authored spellings, but introducing it is
+outside this grant. Prevent: the existing activity-presence assertion detects the mismatch and was
+observed red after previously passing; it must remain. Register/test repair is returned as a scope
+request rather than silently expanding the admitted four product files.
+
+**Exact requested seam:** authorize only the listener's source-name prefix in
+`tests/AiDe.Core.Tests/Understanding/AtlasDirectoryEnumeratorTests.cs` to follow the admitted D
+rename, preserving every assertion/expected value. This is not authorized by D's product-literals-only
+grant, so no such edit has been made. Until it is admitted and the same selection passes, there is
+no C/D corrective commit or qualified freeze.
+
+**Raw evidence** (ignored, old files preserved):
+`.artifacts/atlas-main-integration/ICD/01.json` (mint guard),
+`02.json` (Core selection), `icd-composer-guard.trx`,
+`icd-core-guards-and-coupled.trx`, and copied `original-red-AiDe.App.Tests.trx` /
+`original-red-AiDe.Core.Tests.trx`. Both protected guard source files were checked unchanged against
+HEAD `e2724fc6cdfac24bb549d5545ac9541c0c711baa` before execution.
+
+**Ruling113(ii) request, not assignment.** Applying the newly landed gate's actual recursive
+`Surface.cs` / `View.cs` suffix rule to this accepted Atlas directory yields exactly
+`src/AiDe.App/Workbench/Understanding/AtlasReaderView.cs`; `r113-paths.json` records that read-only
+inventory. No native candidate was included, no owner inferred, and no gate/allowlist changed.
+
+## IBE B amendment prepared under the desktop hold
+
+The user explicitly clarified that the acknowledged B/E test amendments are executable:
+unchanged-control conditions prohibit weaker controls, not those exact amendments. IBE has
+twelve prospective calls, separate from ICD10. B adds exactly the Architecture-only,
+single-instance `code-atlas` row to `PerspectiveMenuTests`' canonical literal table, taking its
+derived expected length from 18 to 19, and adds exactly `Show code Atlas` before `Show graph`
+in the Architecture menu literal. Every assertion and every other perspective remains unchanged.
+The two exact previous menu-test failures were read from the retained original App TRX before
+this edit. No new green runtime result is claimed yet.
+
+The native writer retains the desktop slot. IBE has not run App/shown lifecycle verification
+or changed the existing Loaded control. E still requires production-backed count/event-order
+observations and retained negative controls for missing cancellation, missing task tracking,
+healthy-scope disposal, duplicate one-time initialization, and paint-on-Loaded. A synthetic-only
+trace validator or a new path/type exception list would not establish those product claims.
+The current `Sta.Pump` lifecycle drivers show windows; replacing the old guard before the new
+controls have red-first execution would violate the requested proof sequence.
+
+The additional ICD listener-only test-path seam remains separate from B/E. Source and test
+correctives remain uncommitted until their targeted conditions are met. No newer-main join,
+native application, relaxed assertion, status-only commit, full cohort or publication occurred.

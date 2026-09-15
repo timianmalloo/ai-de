@@ -141,6 +141,45 @@ edit. Already authorized Zone/helper/environment/plan work is unchanged. IRP ret
 The worker ends the turn when requesting a decision and does not continue past an unresolved
 gate in anticipation of a queued response.
 
+### ICD10 - acknowledged C/D, B/E still held
+
+The new ten-call ICD allocation admits only C and D under Ruling115, read from main
+`33e9ae7e00e3edb2d44ecec006e5a3c354e69efd`. B/E remain held: their apparent scope admission
+contradicts clauses requiring unchanged Claude control source, and the closer is seeking an
+explicit clarification. No B/E edit or newer-main join is permitted by the C/D run.
+
+The two private type renames and three ActivitySource prefix changes were applied in the four
+admitted Core files, with exact 300-second leases/checks and release before tests. Original raw
+guard failures were preserved and parsed. Fresh unchanged Composer guard: **1/1 passed**.
+Fresh Core guard/directly coupled selection: **179/182 passed, three failed, zero skipped**;
+the privacy-prefix guard passed, but the directory telemetry test's exact-name listener still
+subscribes to the old prefix. All three failing parameter cases passed in the original receipt.
+No test was altered, and no corrective commit is permitted while these conditions remain red.
+
+The exact additional listener-only test-path request and Ruling113(ii)'s one discovered Atlas
+View path are recorded in existing `docs/proof/code-atlas-production-adapters.md`. That is a request
+for authority, not an assignment or an assertion relaxation. No GUI, native application, whole
+cohort, gate weakening, main mutation or push occurred. Raw ICD receipts remain ignored; the
+worker stops at the ten-call handoff with its explicit uncommitted diff and no final qualification.
+
+### IBE12 - execute the acknowledged B/E amendments, preserve proof order
+
+The user's explicit clarification releases B/E amendments: the unchanged-control-source
+condition means no weakened guard, not a ban on the exact acknowledged test edits. This is not
+another ownership research step. IBE receives twelve prospective calls; ICD remains separately
+blocked on its additional directory-listener selector path.
+
+B's two literal amendments are prepared in `PerspectiveMenuTests.cs`: exactly one
+Architecture-only/single-instance Atlas row (19 total expected rows) and its exact Architecture
+opener. All existing assertions, other rows and other perspectives are unchanged; old raw reds
+were read before the edit. Fresh App verification has not yet run under the native desktop hold.
+
+E must replace the path/name-only Loaded rule with production-backed lifecycle observations,
+plus new retained negative controls that prove the five requested failures. The old guard is
+not removed before that red-first evidence exists. No synthetic-only success, path/type
+exception list, native reader edit or Loaded-paint workaround is admitted. Shown lifecycle/App
+verification waits for native release and the closer's explicit integration handoff.
+
 **Safety and handoff:** no private proposal/TheTerrace import, dependency or shared-gate weakening,
 native dirty-file import, global stash, worktree installation/deletion, resource kill, or worker
 publication. MainWindow, IPC admission/security, source grants and borrowed/owned lifetime remain
