@@ -659,3 +659,72 @@ same-Reader reset and observable Background-change control is preserved.
 The failing production source is retained as `retained-before-bc2.cs` beside its raw TRX/JSON.
 The following same-selector result is recorded in the closing audit/raw receipts; BC2 resolves
 only this predicate interpretation and does not self-clear final E implementation review.
+
+## IJ20 - fresh-main integration, blocked at the unchanged recount outcome gate
+
+**Frozen merge:** `70b9ef3000855a1a18b909562053fbccab7f017e` preserves accepted-I parent
+`92d7b3162d517b8168e425b7cb992b88c0422371` and main
+`bbd1bece3b0f83148a66696a0e778ef2cd20235e`. Main and origin/main were both that pin at the
+execution boundary and after the run. The only manual conflicts were the append seam between
+session-contracts §§9/10 and three site figure blocks. Both sections and §4ac were retained;
+authored site prose was not replaced. R116's Design row arrives from main; no owner or UNASSIGNED
+entry was invented. Product/test files are unchanged from accepted I, including E SHA256
+`799C4508094576088C9EBD3FB40168052F1D74C40F48ED6318D878DA8F17CD7C`.
+Native work and Grok's separate branches are excluded.
+
+The official append-only helper retained 802 audit entries and 165 change entries. Five incoming
+audit IDs were reissued; raw mapping is in
+`.artifacts/atlas-main-integration/IJ/union-1789494529824232300/`. Verification compared full
+payload multiplicities and retained upstream identity, not ID-only membership. The parent publisher
+still owns preservation of any later primary dirty ledger entries; this worker did not touch them.
+
+The unchanged official conductor join used the explicit Copilot trailer file and `--no-push`,
+with no docs-only or no-build switch. Whole, portable, nonportable and closing `--no-run` commands
+all executed. Their observed outcomes are:
+
+| receipt | total | executed | passed | failed | not executed |
+|---|---:|---:|---:|---:|---:|
+| AiDe.App.Tests | 1133 | 1133 | 1133 | 0 | 0 |
+| AiDe.Core.Tests | 3162 | 3161 | 3158 | 3 | 1 |
+| AiDe.Core.Tests.portable | 2818 | 2817 | 2814 | 3 | 1 |
+| AiDe.Core.Tests.nonportable | 344 | 344 | 344 | 0 | 0 |
+
+Split rows are subsets, not extra distinct tests. The one unexecuted case is
+`PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched`: this host cannot create a file
+symbolic link; the test records its directory-junction coverage rationale. No test/filter was
+removed. The configured updater raised App's executed floor from 1109 to 1133.
+
+**Three new candidate-side failures, repeated in whole and portable runs:**
+
+- `AtlasProductionAdmissionTests.ConcurrentReaderDisposalAwaitsTheSameInFlightDrain`:
+  timeout waiting for the Select activity at line38.
+- `AtlasProductionAdmissionTests.CompletedAttemptCancellationCannotCloseTheFollowingExchange`:
+  the `sending` task is not completed at line74.
+- `AtlasProductionAdmissionTests.PossibleWriteCancellationIsTerminalAndRequiresFreshAdmission`:
+  no OperationCanceledException at line101.
+
+**Verified selector mismatch; no corrective run claimed.** Those three tests still select
+`"AiDe.Core.AtlasRemoteReader"` at lines28/60/92 of
+`tests/AiDe.Core.Tests/Understanding/AtlasProductionAdmissionTests.cs`; the admitted D emitter
+is `"aide.Core.AtlasRemoteReader"`. Each test uses ActivityStarted to signal or induce the
+condition it asserts. A repository test-source search found exactly these three old selectors.
+This is another instance of the producer-identity/subscriber-selector class recorded in ICD.
+The earlier 182-case C/D selection did not contain this production-admission class.
+
+**Exact returned repair seam:** authorize only those three listener-prefix literals and rerun the
+unchanged production-admission controls before another full cohort. Do not remove assertions,
+grow timeouts, weaken gates, or label them as the old main 13. No additional test/product path
+was edited in IJ20, and no blind cohort retry occurred.
+
+The closing `verify-test-run.py --no-run` returned **1**; official join stopped with **4 at
+recount**. The full verification gate runner and configured Release build were **not reached**.
+There is no new Release binary hash to present as candidate proof. Conflict-marker, defect-register
+and own derived checks passing do not substitute for those missing gates.
+
+**Raw run:** `.artifacts/atlas-main-integration/IJ/atlas-ij-1789494689823268300/` contains full
+join-level command JSON, `join-result.json`, and copied `test-results/` with all four TRX files.
+Actual official-join host PID32564 ran from `2026-09-15T17:51:29.887151Z` to
+`2026-09-15T18:03:30.817182Z`, exit4. Shared start/end requests
+`req-01M2K3404F5YZP5S855DCTY2B9` / `req-01M2K3T05EMCRG9E2575F10T9V` record desktop release.
+Ref checks recorded no main/candidate movement during qualification. Final publication and final
+Security/Test/I review remain blocked; this is evidence of a failed gate, not a qualified release.

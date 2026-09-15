@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T17:48:51Z",
+  "generated": "2026-09-15T18:15:35Z",
   "audit": [
     {
       "actor": null,
@@ -20746,6 +20746,37 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M2K4G314YZK25970RSQ7QSQS",
+      "shortname": "atlas-ij-main-recount-blocked",
+      "datetime": "2026-09-15T18:15:34Z",
+      "session": "atlas-main-integration-b0d0",
+      "prompt": "IJ20 join fresh main into accepted Atlas only, run unchanged full/split recounts and gates/Release without publishing; stop on new failures.",
+      "summary": "Merged frozen mainbbd1bece into acceptedI92d7b316 at70b9ef30. Four doc/figure conflicts resolved, sections4ac/9/10 preserved; no product/test delta from acceptedI, Ehash799C4508 unchanged. Official ledger union802audit/165change retained fullcontentmultiplicity/upstreamidentity, five auditIDs reissued. FullApp1133/1133PASS; Core3161executed3158pass3fail1skip; portable2817executed2814pass3fail1skip; nonportable344/344PASS. Closing--no-run exit1, officialjoin exit4 at recount; fullgaterunner/Release not reached. Three production-admission controls still listen to old AiDe.Core.AtlasRemoteReader at28/60/92 while D emits aide.Core.AtlasRemoteReader, so their signal/cancellation callbacks do not fire. No extra test edit or cohort rerun; exact3literal repair seam returned. Desktop PID32564 ended18:03:30.817182Z andreleased; no refmovement duringrun. Raw IJ/atlas-ij-1789494689823268300 contains all4TRXs/commandreceipts. No finalreview or publication clearance.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/code-atlas-production-adapters.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Qualify accepted Atlas plus fresh main without publication or gate weakening",
+      "done_when": "Unchanged recount outcomes, all gates and prepublication Release build pass, or exact blocker is returned",
+      "tier": "T2",
+      "main_calls": 19,
+      "main_budget": 20,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-15T17:17:40Z",
+      "duration_seconds": 3474.0
     }
   ],
   "changes": [
