@@ -10728,7 +10728,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ed117b69ab96f88534316d8a6ff15bc209f3fb59d7b9f2f0c6bdb6bb3e2b622e"
+      "sourceSha256": "8db1b8c2d263d7d044518d5aeb535b813a1f1856c838c9d72be80a885c9a615d"
     },
     {
       "id": "session-profiles",
@@ -11721,7 +11721,7 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
-          "to": "inv-0005-a-red-main-nobody-consumed",
+          "to": "INV-0005-the-gate-runs-everything-and-has-been-red-for-two-days",
           "rel": "relates-to"
         },
         {
@@ -11733,12 +11733,12 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         },
         {
-          "to": "addendum-c-council-rulings",
+          "to": "note-addendum-c-council-rulings",
           "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "40afa38a1853c0784d87a0a88a7bb4bd00cadec178d8e40c05497ec758d4c710"
+      "sourceSha256": "f7f512919b02fcbbc3adca4c48c208d1351022658d11bd9adfa68975b79d3fae"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -18989,5 +18989,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "8f2faf3565aa5aea3d93391e8c56ab50ebf5bc18ff5a9ff856e57482cbc3b020"
+  "graphSha256": "dee2e9d11095612cc814b360c3366ed501ce0501f3411b717e5fd407be0ae29a"
 };
