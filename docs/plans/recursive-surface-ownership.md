@@ -2,7 +2,7 @@
 id: plan-recursive-surface-ownership
 title: "Execution graph: recursive ownership gate"
 type: doc
-status: in-progress
+status: blocked
 owner: "@timianmalloo"
 tags: [plan, execution-graph, ownership]
 links:
@@ -52,7 +52,11 @@ This adds two material nodes and one rework pass; no added parallel implementer.
 
 ## Planned versus actual
 
-G, O and P completed: Core Rulings 113/114 resolve the tooling grant and the only newly discovered assignment gap; Owner confirmed T1; independent Test/Simplifier/Python/SRE plan receipts are recorded in the programme proof. A completed at `18a4a19f`: 22 red-first failures and six killed mutants are recorded by the author. R is evaluating that frozen commit; J remains dependent on its verdict.
+G, O and P completed: Core Rulings 113/114 resolve the tooling grant and the only newly discovered assignment gap; Owner confirmed T1; independent Test/Simplifier/Python/SRE plan receipts are recorded in the programme proof. Initial A completed at `18a4a19f` with 22 red-first failures and six mutants. R blocked five parser counterexamples; I and bounded repair closed them plus the broad `*.cs` sibling. Re-review exposed two required missing mutants; the final test-only repair at `676f63ed` brought the mutation set to eight. Final independent Test/Python/Simplifier/SRE/Data integrity PASS is recorded at reviewer `cbf288b8`.
+
+J merged through the repository script at `7fdf6ab0`, checkpoint `df050caf`. The full mandatory runner passed 37/38 twice; the sole failure is another session's uncommitted PRIMARY audit log. No gate was waived, no peer log edited, no push performed. Shared request `req-01M2JTCR30AJ256HJFZHZJNRPX` is the next dependency; it is not evidence of consent. The graph is blocked at J qualification, with the reviewed candidate preserved.
+
+Actual rework: five parser cases, one same-class broad-pattern case, then one two-mutant evidence-only completion. Every repaired obligation decreased the unresolved set; no cap was treated as acceptance. First repair 18/18 calls, final mutation unit 14/6 calls and 222 measured seconds, final review 16/16 calls. Stale script/patch assumptions caused the final estimate overrun. Token cost and a reliable whole-Conductor count are not recorded. Full runner repetition was necessary only because the join wrapper omitted the failed gate's name from its final eight output lines.
 
 One author preserved the planned dependency spine. Model allocation: Astra Owner and Conductor for scope and decisions; Sol with high reasoning for the bounded Python author and independent adversarial reviewer. No second implementer or unnecessary extra lane was created. Author actual: 981 measured seconds at its audit close, final reported 58 calls versus 35 planned. This is an estimate overrun; it does not authorize more scope. Token cost is not recorded. Plan reviewer actual: 443 seconds, 25/25 calls.
 

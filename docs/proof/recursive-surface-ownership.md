@@ -2,12 +2,15 @@
 id: proof-recursive-surface-ownership
 title: "Recursive surface ownership: programme evidence"
 type: proof-pack
-status: in-progress
+status: blocked
 owner: "@timianmalloo"
 tags: [proof, ownership, coordination, tooling]
 links:
   - { to: coord-recursive-surface-ownership, rel: relates-to }
   - { to: session-contracts, rel: depends-on }
+  - { to: proof-recursive-surface-ownership-review, rel: relates-to }
+  - { to: proof-recursive-surface-ownership-repair, rel: relates-to }
+  - { to: investigation-recursive-surface-ownership, rel: relates-to }
 review-by: 2026-12-15
 summary: "Observed scope, red-first evidence, independent receipts, and integration limitations for the recursive Python ownership gate."
 ---
@@ -64,7 +67,7 @@ DC-118 control half (b): the scan's root, recursion, suffix set and exceptions m
 
 ## Completion state
 
-Implementation candidate `18a4a19f` is independently BLOCKED; repair, re-review and final join are pending. No full-green, main-integration or final acceptance claim is made by this intermediate proof. Reviewer reports five concrete parser counterexamples despite the passing author self-test. Owner O7 admits a bounded investigation and repair; this does not clear the independent veto.
+The bounded implementation is reviewed and committed. Integration qualification is BLOCKED by another session's uncommitted primary audit log. No full-green or main-integration claim is made. Final reviewed author `676f63ed3899cd5282f23db51eb582ebad169e17` joined through the prescribed script at `7fdf6ab0`; join checkpoint `df050caf` retains the implementation and its evidence. No push occurred.
 
 ## Mandatory runtime receipts
 
@@ -84,3 +87,46 @@ Ignored runtime files remain in the retained Conductor worktree; they are not cl
 Author commit `18a4a19f82eff6130c9938bdf401539cd2a8944f` contains gate blob `0f53658b30857222d8207b9b6fdfe706039b6e8b`. Conductor independently checked the full base, plan and blob identities against Git. The author proof records 22 observed baseline failures, final self-test exit 0, six killed mutants and the Ruling 114 population result of 17/17. Independent implementation review remains the acceptance boundary; a reported result is not promoted solely by citation.
 
 The author's audit records 981 measured seconds, 47 calls against a 35-call estimate; final handoff reports 58 calls including later status and completion work. This overrun is a planning defect, not a raised budget. Tokens are not recorded. The author also reports its commit hook lacked `AGENT_SESSION`; separately granted/checked leases do not prove commit-time enforcement. This repeats the identity-order defect already recorded above and in DC-088. Conductor joins must set identity before their first mutation.
+
+## Repair and independent acceptance
+
+Conductor reproduced the first review harness: 4/9 pass, exit 1. Investigation traced five parser state/relevance failures; Owner O7 confirmed same-scope repair. The five new embedded cases ran red before repair. A subsequent Conductor probe found another DC-118 sibling: `Core` `Workbench/**` plus `Design` `Workbench/*.cs` silently lost the conflict. That fixture was also observed red before correction, then independently observed to name the conflicting `HiddenView.cs` path.
+
+An early re-review PASS was corrected to BLOCK when Conductor compared it with the review's recorded veto predicate: two targeted source mutations were still missing. The final test-only delta added heading-reset suppression and delimiter-free-row suppression to the original six mutants. The reviewer then observed the final eight-mutant self-test passing and cleared every triggered veto. No earlier blocked candidate was joined.
+
+Final gate blob: `ce11ae27eb79b97f54a1cf0fec4e5036f7ad90c4`. Reviewer byte snapshot SHA-256: `00bacad13ad925019bf5118cb6b9c4676edafddfc3fb3b4a5c01e820eafcda08`. Conductor inspected the final two-mutant diff and the committed review receipt. Receipt `docs/proof/recursive-surface-ownership-review.md` is imported verbatim from `cbf288b803860ee4cc7050aec5296b7a38748dba`, SHA-256 `3fa78362c62e33417ccb65fd3db64f230fd348dcc1b8ea1ad88b5fe0c264c8e0`; source and destination hashes matched. Original review audit `al-01M2JT1MJWEKKRFZGH04CWNG9K` remains on the retained source branch; it is not duplicated under a new identity.
+
+Independent final verdicts: Test Architect PASS; Python PASS; Simplifier PASS; SRE/Data integrity PASS. Evidence: nine adversarial cases, broad-pattern conflict, eight killed mutants, valid real-register parsing and bounded source diff. Review does not certify unrelated full-repository gates.
+
+Repair costs: investigation audit 455 seconds; first repair 18/18 calls. Final two-mutant unit audit 222 seconds, 14/6 calls; stale CLI and patch-context assumptions caused the estimate overrun. Final re-review 16/16 calls. Tokens and a reliable whole-Conductor invocation count are not recorded. No estimated speedup is claimed.
+
+## Observed join results and blocker
+
+`conductor-join.py` ran the task-specific contract with `recount: []`, `build: []`, and `--no-push`; it did not use `--docs-only` or skip mandatory gates. Merge and checkpoint commits set identity before Git; the checkpoint hook reported eight staged paths checked. The script's full runner failed 1/38. Its truncated output omitted the failing gate, so the unchanged full runner was repeated with live output to identify the failure. It again reported 37/38 passing.
+
+| Check | Observed result |
+|---|---|
+| Normal surface gate | PASS: 17 discovered, 17 assigned, zero pending |
+| Embedded self-test | PASS: eight injected mutants rejected; intentional orphan fixture prints a failure before expected success |
+| Python compile / gate self-test registry | PASS; 36 registered gates, 10 frozen self-test debts unchanged |
+| Audit IDs / defect register / derived views | PASS; no duplicate audit IDs, 225 classes, four derived views current |
+| Docs graph validation | No failing validation error; 66 existing review suggestions, zero stale items |
+| Full runner | 37/38 PASS on two runs; no skip or waiver |
+| Project coverage | PASS: all 39 tracked projects compile |
+| Runtime receipts | PASS: 3,743 executed tests; five terminal-host exit paths |
+| Stranded audit | FAIL: `C:/Projects/ai-de/docs/audit/audit-log.jsonl` uncommitted in PRIMARY |
+
+The stranded-audit gate had passed earlier, then failed as shared state changed. Conductor read its full diagnostic and raised `req-01M2JTCR30AJ256HJFZHZJNRPX` to `claude-conductor`. The primary log is outside this lane; it was not committed, discarded or rewritten by Codex. The join script emits acceptance before its final gates; premature entry `al-01M2JT354ZQHZGE1E4GF8NE54K` is corrected append-only by `al-01M2JTDQ908JTSDTZGNTP7CMTM`, acceptance false/outcome blocked.
+
+## Handoff and residuals
+
+Mitigation `mit-0010` was captured through `dream.py capture-mitigation` for DC-118, naming the actual gate/self-test control and its red-green boundary. Its generated audit `al-01M2JTHBQ9AET7766XWR1VG8BE` omitted explicit proof signals; official supersession `al-01M2JTJ496AAG7HADNE72M9CCV` supplies the goal and proof. That acceptance covers mitigation capture only. Final documentation validation observed 485 artifacts, zero defects, zero orphans and zero index drift, with 66 existing review suggestions. Audit-capture validation passed.
+
+- **Completed / Verified:** recursive canonical identity gate, unchanged ownership decisions, red-first and mutation controls, independent acceptance, script-driven isolated merge, proof and audit capture.
+- **Remaining / Flagged:** primary audit preservation by its owner, then unchanged mandatory join qualification. Main integration additionally requires an explicit recorded grant; none was requested as implied consent or exercised.
+- **Next:** coordinator resolves the precise primary-log seam; integrator rechecks the current recursive population, including any later Atlas/Grok surfaces, against sole §2 authority before publication.
+- **Inferred:** no claim that future surfaces or unsupported Markdown syntax are covered. The parser is deliberately bounded to the accepted §2 grammar.
+- **Retained worktrees:** Conductor for the blocked candidate and ignored runtime receipts; author for source/red-first evidence; Owner and reviewer for original decision/audit provenance. None is removed.
+- **Capture limitation:** `AIDE_CONTRACT_LOG` was unset. No invented episode channel/path or event is claimed; the actual committed proof and official audit records are the available capture.
+
+Changed implementation: only `tools/verify-surface-ownership.py` including its existing self-test. Supporting changes are this programme's coordination/plan, investigation, Owner/reviewer/author proof artifacts, append-only audit/lesson/mitigation records and regenerated documentation views. No product source, tests, test-count baseline, ownership assignment authored by Codex, neighboring gate or coordination framework changed. Ruling 114 was imported from its owning coordinator.

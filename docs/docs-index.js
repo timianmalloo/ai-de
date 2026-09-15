@@ -8049,7 +8049,7 @@ window.DOCS_INDEX = {
       "path": "docs/coordination/recursive-surface-ownership.md",
       "title": "Recursive surface ownership: bounded Codex programme",
       "type": "doc",
-      "status": "in-progress",
+      "status": "blocked",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-15",
@@ -8071,7 +8071,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f37e1c5b5aec03cd4d8f8cf0591bc42e1c52ef0565bee8ffcb6a8275a167f3f4"
+      "sourceSha256": "b2d1e064f0dd64c95b4f7d48a5133125d0aec9c8be456f475e807dcf0a8e6a7e"
     },
     {
       "id": "coordination-addendum-cd",
@@ -8196,7 +8196,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0dbe92a51af71863eb9bf491f5163f85cc6b5852299d067e0c15c4da6d99205d"
+      "sourceSha256": "c7c2fbb7bc13fce45d3280747a82bd1a5d2547def1574388dabfe555b5a939c1"
     },
     {
       "id": "design-session-profiler",
@@ -9994,7 +9994,7 @@ window.DOCS_INDEX = {
       "path": "docs/plans/recursive-surface-ownership.md",
       "title": "Execution graph: recursive ownership gate",
       "type": "doc",
-      "status": "in-progress",
+      "status": "blocked",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-15",
@@ -10027,7 +10027,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n R[Review BLOCK] --> I[Investigate: reproduce five cases] --> A2[Bounded same-author repair] --> R2[Independent review] --> J[Join]"
         }
       ],
-      "sourceSha256": "44418d38ef3f3f7bad3a1b2cab9d6ec3c6bf058b41bbae6bf0cec611cc4eb355"
+      "sourceSha256": "ae64b6bcf93d0a7487fb1825c59e1e9f5d6265c12b5e1223eec0fc54863c26aa"
     },
     {
       "id": "plan-ui-and-windowing",
@@ -16473,7 +16473,7 @@ window.DOCS_INDEX = {
       "path": "docs/proof/recursive-surface-ownership.md",
       "title": "Recursive surface ownership: programme evidence",
       "type": "proof-pack",
-      "status": "in-progress",
+      "status": "blocked",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-15",
@@ -16493,10 +16493,22 @@ window.DOCS_INDEX = {
         {
           "to": "session-contracts",
           "rel": "depends-on"
+        },
+        {
+          "to": "proof-recursive-surface-ownership-review",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-recursive-surface-ownership-repair",
+          "rel": "relates-to"
+        },
+        {
+          "to": "investigation-recursive-surface-ownership",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ab031bc9e534075c87f21ec25b47dd9e075de303954c4c51ee782ef3009e772f"
+      "sourceSha256": "b4788f40c783efa5f20155d1d383da90c532a70ebc129151ea81d1122aa4e734"
     },
     {
       "id": "proof-recursive-surface-ownership-author",
@@ -16592,6 +16604,41 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "d9b5e5d3bdd5ff4a18a765bb84e12fb75bb9be1a046542c2b9a23ca4bb164acc"
+    },
+    {
+      "id": "proof-recursive-surface-ownership-review",
+      "path": "docs/proof/recursive-surface-ownership-review.md",
+      "title": "Recursive surface ownership: independent implementation review",
+      "type": "proof-pack",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "The initial candidate was blocked by five counterexamples; final repair 676f63ed clears every recorded veto.",
+      "tags": [
+        "proof",
+        "review",
+        "ownership",
+        "python",
+        "testing"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-recursive-surface-ownership-plan-review",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3fa78362c62e33417ccb65fd3db64f230fd348dcc1b8ea1ad88b5fe0c264c8e0"
     },
     {
       "id": "proof-s2-settings-and-sentinels",
@@ -18896,5 +18943,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "8972c01f52a5d7fa940c81ef68ff9390d624f0544829c3a6cef829fb56a997ba"
+  "graphSha256": "ae039a5982f0d0ee2440c21fc7461d5695cfb3cedbecc0356c7b347a32729bc6"
 };

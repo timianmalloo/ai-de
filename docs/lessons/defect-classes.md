@@ -4878,6 +4878,13 @@ for both or split.*
   share the same surface boundary while preserving the register's actual table syntax. Prevent:
   five red-first regression fixtures and independent re-review before joining; the author's
   passing self-test alone was insufficient. Evidence: `docs/proof/recursive-surface-ownership.md`.
+- **Verification-handoff recurrence in the same programme:** a provisional re-review PASS omitted
+  two controls explicitly required by the earlier veto-clear predicate. The Conductor compared
+  the receipt with that predicate and the reviewer corrected PASS to BLOCK before any join.
+  Prevention: heading-reset and delimiter-free-row suppression mutants are now permanent members
+  of the gate's eight-mutant self-test; independent final review observed them rejected. The same
+  task also required correcting stale CLI/patch-context assumptions; open the exact contract and
+  source before each dependent edit, and record budget overruns instead of raising the estimate.
 - **Instance (recursive ownership programme, 2026-09-15):** the gate promised every Workbench
   `*Surface.cs`/`*View.cs` but scanned only the directory top level and used basenames as identity.
   At `bab5035e` it passed 13 files while a recursive inventory found 17. Sweep: discovery,
