@@ -6435,6 +6435,117 @@ window.DOCS_INDEX = {
       "sourceSha256": "3766b1af9dd680b874988ee28f0a57eaf9b3d0e179279e0df8e2b2a4205bdb90"
     },
     {
+      "id": "note-understanding-views-n10-patterns",
+      "path": "docs/notes/understanding-views-n10-patterns.md",
+      "title": "N10 D-0 Solution tree: Patterns Expert PASS; four named patterns hold",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [
+        {
+          "by": "design-solution-tree",
+          "on": "2026-09-15",
+          "reason": "N10 Patterns Expert PASS; wrap-not-twin belongs in the P-table; design stays draft"
+        }
+      ],
+      "summary": "N10 Patterns Expert (advisory, Adversary Mode) on D-0 Solution tree: PASS. Query-time join, derived menu (ADR-0030), WPF TreeView, wrap-VM-not-Presentation-twin are the right named patterns. Soft veto not raised. Blast radius: no design Accepted, no D-1, no main; SRE still unsat.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "N10",
+        "D-0",
+        "solution-tree",
+        "patterns"
+      ],
+      "links": [
+        {
+          "to": "design-solution-tree",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spike-d0-tree-toolkit",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-n10-design-acceptance",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-owner-n14",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1df6ac37c0cb24ae89ca5823b9e87914f79bdb8e234dbd25510844da2aef8f56"
+    },
+    {
+      "id": "note-understanding-views-n10-sre",
+      "path": "docs/notes/understanding-views-n10-sre.md",
+      "title": "N10 D-0 Solution tree SRE: PASS-WITH-CONDITIONS; design stays draft",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [
+        {
+          "by": "design-solution-tree",
+          "on": "2026-09-15",
+          "reason": "N10 SRE PASS-WITH-CONDITIONS; design stays draft; O12 tag table incomplete in TelemetryTests; production cancel not wired; caps stay Inferred"
+        }
+      ],
+      "summary": "N10 SRE & Systems Diagnostician (advisory) on D-0 Solution tree: PASS-WITH-CONDITIONS. Operator questions are named and mostly emitted on the success path. Caps 2000/5000 stay honestly Inferred. Cancel throws, not a partial tree, but the shell never cancels. Blast radius: no design Accepted, no D-1, no main.",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "N10",
+        "D-0",
+        "solution-tree",
+        "sre",
+        "telemetry"
+      ],
+      "links": [
+        {
+          "to": "design-solution-tree",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-n10-design-acceptance",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-owner-n14",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-uv-0-solution-tree-core-query",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b12c23d3f493f2c47f8c08ae7214f89543ce762f50b404b99fb1d6acc58b4fd8"
+    },
+    {
       "id": "note-understanding-views-n2-comparables",
       "path": "docs/notes/understanding-views-n2-comparables.md",
       "title": "D-0 Solution/tree view comparables (Architecture-pane indexed artifacts)",
@@ -7356,7 +7467,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "aa41a40a7d70bfb9cdd4d3a54be2e8aa0bf6617d51fb811732f61a3e7cfe9409"
+      "sourceSha256": "6f0938e168d8a6a43dbdd261f2665a90ceb1ca558af722d2727fe9698535b507"
     },
     {
       "id": "design-watcher-advisory-evaluator",
@@ -16971,7 +17082,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9690ba12e072db598628c886056bc9cf8683831f034c910be8481f46a03b3d4f"
+      "sourceSha256": "931fffce743e3c87d8e941216f939b8e9a77044e30b5e31f8e29b2f98efdc30a"
     },
     {
       "id": "proof-perspective-content",
@@ -19669,5 +19780,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a28c66d7cfca000009c87221bb6d6fe9545117dbac2ff11cf17b1a38c6b38b8f"
+  "graphSha256": "3f63078bc9a58475cc17a9d70d443312702531de15019e2096f458a5e3a0ee40"
 };

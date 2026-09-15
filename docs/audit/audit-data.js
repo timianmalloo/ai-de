@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T19:00:28Z",
+  "generated": "2026-09-15T19:07:53Z",
   "audit": [
     {
       "actor": null,
@@ -17601,6 +17601,74 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "ac584d9b08b3bf1a085aaf99f3454faf83e45911",
         "short": "ac584d9b0",
+        "branch": "understanding-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K764PS7E6GFY0PZX27KAVF",
+      "shortname": "understanding-views-n10-sre",
+      "datetime": "2026-09-15T19:02:34Z",
+      "session": "understanding-views-n10",
+      "prompt": "N10 SRE / Observability for D-0 Solution tree. Adversary Mode. Write docs/notes/understanding-views-n10-sre.md. Verdict PASS / PASS-WITH-CONDITIONS / BLOCK. Do not implement src/. Do not admit D-1. Do not join main. Do not mark the design Accepted.",
+      "summary": "PASS-WITH-CONDITIONS. Operator questions named; success path emits duration, counts, shortfall causes, outcome ok. Caps 2000/5000 stay Inferred. Cancel throws in Core; shell passes None. Design stays draft. No D-1. No main.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n10-sre.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "N10 SRE adversary review of D-0 Solution tree telemetry, caps, cancel, and failure modes",
+      "done_when": "decision note committed with PASS / PASS-WITH-CONDITIONS / BLOCK; design stays draft; no src/; no D-1; no main",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "d7888f377713b045f51f6ded818e2c71683114e8",
+        "short": "d7888f377",
+        "branch": "understanding-views",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2K7FW1K7BRH6J0N1X834QKD",
+      "shortname": "n10-panel-c4-flagged",
+      "datetime": "2026-09-15T19:07:53Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "keep going — N10 Patterns+SRE, View-source fault E2E, Ctrl+Enter stays Flagged",
+      "summary": "N10 panel complete: Patterns PASS (9e3c1108), SRE PASS-WITH-CONDITIONS (d7888f37). View-source fault overlay E2E green. Physical Ctrl+Enter remains Flagged (DC-014 testhost foreground). Design stays draft. Not D-1. Not main.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-n10-patterns.md",
+        "docs/notes/understanding-views-n10-sre.md",
+        "tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Finish remaining D-0 follow-through: N10 Patterns+SRE receipts and proveable Ctrl+Enter",
+      "done_when": "Patterns and SRE notes committed; View-source fault E2E green; C4 still Flagged; not main",
+      "tier": "T1",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-15T18:54:32Z",
+      "duration_seconds": 801.0,
+      "git": {
+        "sha": "aab4f9ae42ddcaa2c53d3e2f247194407d7fe49f",
+        "short": "aab4f9ae4",
         "branch": "understanding-views",
         "pushed": null
       }
