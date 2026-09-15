@@ -69,6 +69,14 @@ narrower than the sentence it enforces ("every surface has a declared owner") �
 change to a shared control, which belongs to whoever owns that decision rather than to the node that
 noticed.
 
+**Closed 2026-09-15 at `33e9ae7e`.** The gate is recursive now — Codex's `conductor/surface-ownership`
+programme, admitted under Ruling 113 and joined by the Claude conductor: repository-relative identity,
+a bare-name row that matches two files fails naming both, eight injected mutants proven by its
+self-test — and it reads **17 of 17** `*Surface.cs` / `*View.cs` under Workbench at any depth as
+assigned here (Ruling 114 added `ProseView.cs`, the one file the census found unnamed; Ruling 116 added
+`Understanding/AtlasReaderView.cs` ahead of the Atlas landing). The paragraph above is kept as the
+history of the gap, not as its state.
+
 *Why this line exists.* Everything in this section was correct while it silently stopped describing
 the app: it assigned four of thirteen surfaces, because it is appended to and never revisited, and
 the decay is invisible when every individual line still checks out. A reader cannot tell a current
