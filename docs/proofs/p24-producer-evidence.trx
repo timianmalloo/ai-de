@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="657a516e-b908-47b2-8860-03e2b944f150" name="malla@TIMMALLSTRIX 2026-09-16 15:54:08" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-16T15:54:08.7171942-07:00" queuing="2026-09-16T15:54:08.7171943-07:00" start="2026-09-16T15:54:07.9379342-07:00" finish="2026-09-16T15:54:08.7461443-07:00" />
+  <TestSettings name="default" id="c95f6be7-6efc-4161-99af-4e2956b4ea04">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-16_15_54_08" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="aab8c6b9-d114-4f68-844f-c70072b8ea5f" testId="54d5194c-f772-c9eb-cf23-e0b7e57b5f35" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLineAt64KiB_AcceptsExactlyTheBound(glyph: 'A')" computerName="TIMMALLSTRIX" duration="00:00:00.0029161" startTime="2026-09-16T15:54:08.5981541-07:00" endTime="2026-09-16T15:54:08.6003636-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aab8c6b9-d114-4f68-844f-c70072b8ea5f">
+      <Output>
+        <StdOut>glyph=U+0041; completeLineBytes=65536; terminalByte=10</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="07ece242-a95f-4e1a-817e-37c4374340f4" testId="e5adf78c-c56c-430f-1e34-a1f03bda4907" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.End_AppendDeniedThenRetried_DurablyEndsExactlyOnceAndKeepsRegistration" computerName="TIMMALLSTRIX" duration="00:00:00.0070780" startTime="2026-09-16T15:54:08.5860110-07:00" endTime="2026-09-16T15:54:08.5866783-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="07ece242-a95f-4e1a-817e-37c4374340f4">
+      <Output>
+        <StdOut>liveAfterFailure=0; durableEnds=0; records=1; liveAfterRetry=0</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Single() Failure: The collection was empty</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProducerTests.End_AppendDeniedThenRetried_DurablyEndsExactlyOnceAndKeepsRegistration() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationProducerTests.cs:line 62&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="68e4f642-3c11-4b9b-aab5-e5a092d74477" testId="e14681a0-bd2a-7068-ef30-2afd97ff685c" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(glyph: 'A')" computerName="TIMMALLSTRIX" duration="00:00:00.0293524" startTime="2026-09-16T15:54:08.5391422-07:00" endTime="2026-09-16T15:54:08.5768604-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="68e4f642-3c11-4b9b-aab5-e5a092d74477">
+      <Output>
+        <StdOut>glyph=U+0041; candidateCompleteLineBytes=65537; acceptedBytes=65537; refusal=none</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 0&#xD;
+Actual:   65537</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(Char glyph) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationProducerTests.cs:line 146&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a70013cd-5aab-446f-80ad-9a4bfc36bcea" testId="5bac2949-61b9-f7c6-d2e4-688c29b67c46" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_AppendDeniedThenRetried_DurablyRegistersExactlyOnce" computerName="TIMMALLSTRIX" duration="00:00:00.0014152" startTime="2026-09-16T15:54:08.6269511-07:00" endTime="2026-09-16T15:54:08.6280847-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a70013cd-5aab-446f-80ad-9a4bfc36bcea">
+      <Output>
+        <StdOut>liveAfterFailure=1; durableRegisters=0; liveAfterRetry=1</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Single() Failure: The collection was empty</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_AppendDeniedThenRetried_DurablyRegistersExactlyOnce() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationProducerTests.cs:line 36&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6716aadc-7873-488d-b333-dfc9fedffda2" testId="e3042e1b-1946-092d-0f72-43b035fc64ce" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(glyph: 'é')" computerName="TIMMALLSTRIX" duration="00:00:00.0024642" startTime="2026-09-16T15:54:08.5849152-07:00" endTime="2026-09-16T15:54:08.5849902-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6716aadc-7873-488d-b333-dfc9fedffda2">
+      <Output>
+        <StdOut>glyph=U+00E9; candidateCompleteLineBytes=65537; acceptedBytes=65537; refusal=none</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 0&#xD;
+Actual:   65537</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(Char glyph) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationProducerTests.cs:line 146&#xD;
+   at InvokeStub_CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="78dbc47f-9345-40c5-8174-f46c029ea063" testId="c702d844-fe94-959e-0aec-9356d406edd9" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLineAt64KiB_AcceptsExactlyTheBound(glyph: 'é')" computerName="TIMMALLSTRIX" duration="00:00:00.0106271" startTime="2026-09-16T15:54:08.5869146-07:00" endTime="2026-09-16T15:54:08.5977148-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="78dbc47f-9345-40c5-8174-f46c029ea063">
+      <Output>
+        <StdOut>glyph=U+00E9; completeLineBytes=65536; terminalByte=10</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5f197518-5c30-4696-a7e0-3169405ff837" testId="f9b0247d-4bf8-0a96-71f3-1925b4eeb6d8" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_OtherSessionAppendDenied_IndependentSessionStillCompletes" computerName="TIMMALLSTRIX" duration="00:00:00.0021446" startTime="2026-09-16T15:54:08.6779002-07:00" endTime="2026-09-16T15:54:08.6796835-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5f197518-5c30-4696-a7e0-3169405ff837">
+      <Output>
+        <StdOut>deniedSubjectBytes=0; otherSessionRecords=3; otherSessionEnded=true</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8807a7ee-fdb6-4de9-a6af-1b7f7c809ca4" testId="6f07f9d9-aee4-3e36-a0b0-c27768bd235a" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_OrdinaryLifecycle_RecordsOneRegisterHeartbeatAndEnd" computerName="TIMMALLSTRIX" duration="00:00:00.0066820" startTime="2026-09-16T15:54:08.6979267-07:00" endTime="2026-09-16T15:54:08.6979800-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8807a7ee-fdb6-4de9-a6af-1b7f7c809ca4">
+      <Output>
+        <StdOut>durableRegisters=1; durableHeartbeats=1; durableEnds=1; live=0</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a4baa210-a27c-470b-b226-45cdfa476b11" testId="fc3a0066-c1ad-ea9a-4efe-35a074397784" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.WriteHeartbeat_RootAlreadyHas128Files_RefusesFile129" computerName="TIMMALLSTRIX" duration="00:00:00.0260233" startTime="2026-09-16T15:54:08.6004479-07:00" endTime="2026-09-16T15:54:08.6265780-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a4baa210-a27c-470b-b226-45cdfa476b11">
+      <Output>
+        <StdOut>rootFilesBefore=128; rootFilesAfter=129; acceptedBytes=92; refusal=none</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 128&#xD;
+Actual:   129</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProducerTests.WriteHeartbeat_RootAlreadyHas128Files_RefusesFile129() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationProducerTests.cs:line 164&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="83f6eedd-a7c7-4d60-856e-8a1c86e7cb0e" testId="5d1cf3ec-0db5-6f86-aa06-7ddb8bf9293b" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.WriteHeartbeat_RootAlreadyHas32MiB_RefusesWithoutChangingExistingBytes" computerName="TIMMALLSTRIX" duration="00:00:00.0492572" startTime="2026-09-16T15:54:08.6283159-07:00" endTime="2026-09-16T15:54:08.6775369-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="83f6eedd-a7c7-4d60-856e-8a1c86e7cb0e">
+      <Output>
+        <StdOut>rootBytesBefore=33554432; rootBytesAfter=33554524; acceptedBytes=92; refusal=none</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 33554432&#xD;
+Actual:   33554524</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProducerTests.WriteHeartbeat_RootAlreadyHas32MiB_RefusesWithoutChangingExistingBytes() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationProducerTests.cs:line 186&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.WriteHeartbeat_RootAlreadyHas32MiB_RefusesWithoutChangingExistingBytes" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="5d1cf3ec-0db5-6f86-aa06-7ddb8bf9293b">
+      <Execution id="83f6eedd-a7c7-4d60-856e-8a1c86e7cb0e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="WriteHeartbeat_RootAlreadyHas32MiB_RefusesWithoutChangingExistingBytes" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(glyph: 'A')" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="e14681a0-bd2a-7068-ef30-2afd97ff685c">
+      <Execution id="68e4f642-3c11-4b9b-aab5-e5a092d74477" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(glyph: 'é')" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="e3042e1b-1946-092d-0f72-43b035fc64ce">
+      <Execution id="6716aadc-7873-488d-b333-dfc9fedffda2" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.End_AppendDeniedThenRetried_DurablyEndsExactlyOnceAndKeepsRegistration" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="e5adf78c-c56c-430f-1e34-a1f03bda4907">
+      <Execution id="07ece242-a95f-4e1a-817e-37c4374340f4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="End_AppendDeniedThenRetried_DurablyEndsExactlyOnceAndKeepsRegistration" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_AppendDeniedThenRetried_DurablyRegistersExactlyOnce" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="5bac2949-61b9-f7c6-d2e4-688c29b67c46">
+      <Execution id="a70013cd-5aab-446f-80ad-9a4bfc36bcea" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Register_AppendDeniedThenRetried_DurablyRegistersExactlyOnce" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_OrdinaryLifecycle_RecordsOneRegisterHeartbeatAndEnd" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6f07f9d9-aee4-3e36-a0b0-c27768bd235a">
+      <Execution id="8807a7ee-fdb6-4de9-a6af-1b7f7c809ca4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Register_OrdinaryLifecycle_RecordsOneRegisterHeartbeatAndEnd" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.WriteHeartbeat_RootAlreadyHas128Files_RefusesFile129" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="fc3a0066-c1ad-ea9a-4efe-35a074397784">
+      <Execution id="a4baa210-a27c-470b-b226-45cdfa476b11" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="WriteHeartbeat_RootAlreadyHas128Files_RefusesFile129" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLineAt64KiB_AcceptsExactlyTheBound(glyph: 'A')" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="54d5194c-f772-c9eb-cf23-e0b7e57b5f35">
+      <Execution id="aab8c6b9-d114-4f68-844f-c70072b8ea5f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Write_CompleteEncodedLineAt64KiB_AcceptsExactlyTheBound" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLineAt64KiB_AcceptsExactlyTheBound(glyph: 'é')" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="c702d844-fe94-959e-0aec-9356d406edd9">
+      <Execution id="78dbc47f-9345-40c5-8174-f46c029ea063" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Write_CompleteEncodedLineAt64KiB_AcceptsExactlyTheBound" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_OtherSessionAppendDenied_IndependentSessionStillCompletes" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f9b0247d-4bf8-0a96-71f3-1925b4eeb6d8">
+      <Execution id="5f197518-5c30-4696-a7e0-3169405ff837" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Register_OtherSessionAppendDenied_IndependentSessionStillCompletes" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="54d5194c-f772-c9eb-cf23-e0b7e57b5f35" executionId="aab8c6b9-d114-4f68-844f-c70072b8ea5f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e5adf78c-c56c-430f-1e34-a1f03bda4907" executionId="07ece242-a95f-4e1a-817e-37c4374340f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e14681a0-bd2a-7068-ef30-2afd97ff685c" executionId="68e4f642-3c11-4b9b-aab5-e5a092d74477" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5bac2949-61b9-f7c6-d2e4-688c29b67c46" executionId="a70013cd-5aab-446f-80ad-9a4bfc36bcea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e3042e1b-1946-092d-0f72-43b035fc64ce" executionId="6716aadc-7873-488d-b333-dfc9fedffda2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c702d844-fe94-959e-0aec-9356d406edd9" executionId="78dbc47f-9345-40c5-8174-f46c029ea063" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f9b0247d-4bf8-0a96-71f3-1925b4eeb6d8" executionId="5f197518-5c30-4696-a7e0-3169405ff837" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6f07f9d9-aee4-3e36-a0b0-c27768bd235a" executionId="8807a7ee-fdb6-4de9-a6af-1b7f7c809ca4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fc3a0066-c1ad-ea9a-4efe-35a074397784" executionId="a4baa210-a27c-470b-b226-45cdfa476b11" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5d1cf3ec-0db5-6f86-aa06-7ddb8bf9293b" executionId="83f6eedd-a7c7-4d60-856e-8a1c86e7cb0e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="10" executed="10" passed="4" failed="6" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.28]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.29]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.34]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.34]       Expected: 0&#xD;
+[xUnit.net 00:00:00.34]       Actual:   65537&#xD;
+[xUnit.net 00:00:00.34]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationProducerTests.cs(146,0): at AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(Char glyph)&#xD;
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.34]       Output:&#xD;
+[xUnit.net 00:00:00.34]         glyph=U+0041; candidateCompleteLineBytes=65537; acceptedBytes=65537; refusal=none&#xD;
+[xUnit.net 00:00:00.35]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.35]       Expected: 0&#xD;
+[xUnit.net 00:00:00.35]       Actual:   65537&#xD;
+[xUnit.net 00:00:00.35]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.35]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationProducerTests.cs(146,0): at AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(Char glyph)&#xD;
+[xUnit.net 00:00:00.35]            at InvokeStub_CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.35]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.35]       Output:&#xD;
+[xUnit.net 00:00:00.35]         glyph=U+00E9; candidateCompleteLineBytes=65537; acceptedBytes=65537; refusal=none&#xD;
+[xUnit.net 00:00:00.35]       Assert.Single() Failure: The collection was empty&#xD;
+[xUnit.net 00:00:00.35]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.35]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationProducerTests.cs(62,0): at AiDe.Core.Tests.Watcher.CoordinationProducerTests.End_AppendDeniedThenRetried_DurablyEndsExactlyOnceAndKeepsRegistration()&#xD;
+[xUnit.net 00:00:00.35]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.35]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.35]       Output:&#xD;
+[xUnit.net 00:00:00.35]         liveAfterFailure=0; durableEnds=0; records=1; liveAfterRetry=0&#xD;
+[xUnit.net 00:00:00.39]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.39]       Expected: 128&#xD;
+[xUnit.net 00:00:00.39]       Actual:   129&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationProducerTests.cs(164,0): at AiDe.Core.Tests.Watcher.CoordinationProducerTests.WriteHeartbeat_RootAlreadyHas128Files_RefusesFile129()&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.39]       Output:&#xD;
+[xUnit.net 00:00:00.39]         rootFilesBefore=128; rootFilesAfter=129; acceptedBytes=92; refusal=none&#xD;
+[xUnit.net 00:00:00.39]       Assert.Single() Failure: The collection was empty&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationProducerTests.cs(36,0): at AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_AppendDeniedThenRetried_DurablyRegistersExactlyOnce()&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.39]       Output:&#xD;
+[xUnit.net 00:00:00.39]         liveAfterFailure=1; durableRegisters=0; liveAfterRetry=1&#xD;
+[xUnit.net 00:00:00.44]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.44]       Expected: 33554432&#xD;
+[xUnit.net 00:00:00.44]       Actual:   33554524&#xD;
+[xUnit.net 00:00:00.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationProducerTests.cs(186,0): at AiDe.Core.Tests.Watcher.CoordinationProducerTests.WriteHeartbeat_RootAlreadyHas32MiB_RefusesWithoutChangingExistingBytes()&#xD;
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.44]       Output:&#xD;
+[xUnit.net 00:00:00.44]         rootBytesBefore=33554432; rootBytesAfter=33554524; acceptedBytes=92; refusal=none&#xD;
+[xUnit.net 00:00:00.46]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:54:08.5784058-07:00">
+        <Text>[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(glyph: 'A') [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:54:08.5852457-07:00">
+        <Text>[xUnit.net 00:00:00.35]     AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(glyph: 'é') [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:54:08.5868119-07:00">
+        <Text>[xUnit.net 00:00:00.35]     AiDe.Core.Tests.Watcher.CoordinationProducerTests.End_AppendDeniedThenRetried_DurablyEndsExactlyOnceAndKeepsRegistration [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:54:08.6269855-07:00">
+        <Text>[xUnit.net 00:00:00.39]     AiDe.Core.Tests.Watcher.CoordinationProducerTests.WriteHeartbeat_RootAlreadyHas128Files_RefusesFile129 [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:54:08.6282492-07:00">
+        <Text>[xUnit.net 00:00:00.39]     AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_AppendDeniedThenRetried_DurablyRegistersExactlyOnce [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:54:08.6778978-07:00">
+        <Text>[xUnit.net 00:00:00.44]     AiDe.Core.Tests.Watcher.CoordinationProducerTests.WriteHeartbeat_RootAlreadyHas32MiB_RefusesWithoutChangingExistingBytes [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

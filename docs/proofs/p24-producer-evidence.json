@@ -1,0 +1,129 @@
+{
+  "kind": "producer-red-receipt",
+  "status": "UNSHIPPABLE",
+  "session": "xh-p2-producers-b0d0",
+  "branch": "feature/xh-p2-producers",
+  "worktree": "C:\\Projects\\ai-de-feature-xh-p2-producers",
+  "base": "50aab8c1711d745c8cce937556ac5ff95dffbcea",
+  "request": "WRITE-CAPABLE C# TEST-ONLY author nativeproducer/emitter floor, <=28tools150k noagents. Own NEW separatelyregisteredworktree from50aab8c1711d745c8cce937556ac5ff95dffbcea usingOFFICIALcoord-core worktree/session --help beforecalls (notEnterWorktree/install/config/hooks), suggestedbranchfeature/xh-p2-producers sessionxh-p2-producers-b0d0 generatedpathreport. NOeditcurrentP2/P1/conductor/primarytrees. Maxglobal3parent+feedfixauthor+you. UserallP0–P5approvedexistingP2producerfloors; no featureassignments/GUI/Appslots/endpoints/upstreamresearch. Testonlyno source/schemafix; sourceactualnativeWriter+SessionCoordinationEmitter source pointersdefinedDS. ExactclaimsTTL300editonlyreleasebeforetests, envsession/name/utf8eachshell apply_patch noheredoc/outputredirect/pipedgates/newdeps/main/push/force/amend.\nCurrentDSstaticfindings needrealC#RED beforefix: CoordContractWriter.Append unboundedserializedrecord/rootfilebytescounts, countsseqthenFileStream.Write; SessionCoordinationEmitter.Register markslive BEFOREwrite,End removesBEFOREwrite sofailedwritecausesretryNOOP. FileStream.Write no shortbytecount injectprefixwritethrow laterfixturefuturetest notnowunlessexistingseam. IngestHost ConcurrentQueue RegistrationNotice reachability/boundsunknown notclaimN/A. Read actualAPIs/exampletests C#testguidanceonlyneeded no rosters/history.\nOWN exactnewtests/AiDe.Core.Tests/Watcher/CoordinationProducerTests.cs andoptionaltesthelper .cs samefolder ifneeded. OWN onlyappendauditJSONL andderivedTRXdocs/proofs/p24-producer-evidence names. DO NOTclaim/editglobalProofPack/spec/design/plan (parallelfeedauthorownsthem); returnreceipt+ownaudit forconsolidation (no secondproofpack). No actualcustomer/sessiondatafixtures allsyntheticprojectneutral; oldpluralrawreceiptfolderokaycanonicalpack finalsingularknown butnewproducerproofnotsilentcreditedoldpack.\nRuntimeREDS currentcode: Registerwritefailure thenunlocksameemitterretryMUSTdurablyregisterexactlyonce (currentlikely0becausepremembership). Endwritefailure thenretryMUSTdurablyendexactlyonce notnoop; precedingregisterstatekept. UseREALtemporaryFileStreamsharing denial onknownwriterlogfile AFTERconstructor (orotherrealIOoutage reversible) deterministicno sleep/mockonlyexceptions; don'tfailctorbeforefocalmethod. Positiveordinaryregister/end andsafeotherSessioncontrol. Readmethodsexact eventkind/fields countnotstdout. ExpectedExceptionsduringfirstoutage don'tconstituteRED; missingdurableeventafterrecovery isactualRED. No nameprocesskills.\nProducerrecord64KiB encodedCOMPLETElinebound+1 currentlyaccepted: actualserializednativewriter withlarge'A'/Unicode measuredon-wireUTF8includingnewline; assertrefusal beforeany acceptedlogappend andordinarywithin-boundPASS. No fakeclaimtypedAPIexists; oldwrappervoidshouldthrowexplicitInvalidOperation/IOException appropriateexistingcontract? Establishnewapprovedbound violationoraclewriterexceptionANDunchangedacceptedbytes whilelegacycurrentlywrites=>semanticRED. Ifexacterrorclassificationnotdesigned don'tprescribefaketype requireadmission-refused counterstateorThrownisIO? Scopejustassertno acceptedoversizewritecurrentlybreach measured.\nOptionalroot128files/32MiB+1 casesusingtempboundfixtures ifbudget; newtargetfile after128preexisting*.jsonl shouldrefusefile129; filledroot32MiB existingotherfile thenonewriterrecordshouldrefuse unchangedexistingbytes, useSetLengthsyntheticfixture don'tclaimvalidconsumerlog forquotabound. SourceWriter existingfilecountO(n) don'tinstallspillqueues. Activeproducerpending/uncertainwriteprooflater; cannotcompletefloorbytheseredtests.\nRunexactselectedportableCoreunit suite noApp; reject0selection/buildfailasproof. SavefullTRXsource/test/project/binarySHAandcountslogicalexits ownappendAudit (officialtool) +receipt output <=1100words. IntentionalREDcommitUNSHIPPABLEnojoin, Copilottrailer cleanclaimsreleasedsessionended retainedworktree. Return exactbase/branch/commitfiles testnames resultsactualstateexpected, gateproducerDSdesignstillneededbeforeSOURCEfix.",
+  "scope": {
+    "written_code": "tests/AiDe.Core.Tests/Watcher/CoordinationProducerTests.cs",
+    "source_changed": false,
+    "schema_changed": false,
+    "app_built_or_tested": false,
+    "composition": "Real CoordContractWriter -> real FileStream -> JSON event read-back; real SessionCoordinationEmitter -> same writer",
+    "fixtures": "Entirely synthetic. Project-local test-output directories, unique per test, deleted by Dispose. No OS temporary-directory API or customer data.",
+    "fixture_directories_remaining_after_run": 0,
+    "canonical_proof_pack": "Not authored or modified. This plural-folder raw receipt and TRX need explicit consolidation into the parent's current singular docs/proof/ pack. No credit is assigned to an older proof pack."
+  },
+  "execution": {
+    "sdk": "10.0.303",
+    "framework": "net10.0",
+    "xunit": "2.9.3",
+    "test_sdk": "17.14.1",
+    "configuration": "Debug",
+    "command": "dotnet test tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj --no-restore --filter FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationProducerTests --logger \"trx;LogFileName=p24-producer-evidence.trx\" --results-directory docs\\proofs --verbosity minimal",
+    "logical_exit": 1,
+    "total": 10,
+    "executed": 10,
+    "passed": 4,
+    "failed": 6,
+    "skipped": 0,
+    "start": "2026-09-16T15:54:07.9379342-07:00",
+    "finish": "2026-09-16T15:54:08.7461443-07:00",
+    "reported_test_duration_ms": 158,
+    "trx": "docs/proofs/p24-producer-evidence.trx",
+    "rejected_runs": "Two --no-restore invocations exited 0 with no tests, no assets, and no TRX. Neither is proof. Restore was performed only after directly observing missing project.assets.json. The restored run compiled and executed all 10 selected cases.",
+    "existing_build_order_dependencies": "Core test project also builds its existing MCP, daemon, terminal-host and ACP-probe references; none of their test cases or GUI surfaces were selected.",
+    "planned_vs_actual": "Six serial nodes executed: isolation, grounding, authoring, selected runtime proof, receipt/audit, retained unshippable commit. Zero delegates. Two rejected no-selection invocations; no test-code revision after the first execution. Wall-clock evidence is TRX timestamps and the official audit marker; model-token cost was not recorded."
+  },
+  "results": [
+    {
+      "test": "Register_AppendDeniedThenRetried_DurablyRegistersExactlyOnce",
+      "outcome": "Failed",
+      "expected": "Exactly one durable register after unlocking and retrying the same emitter twice.",
+      "actual": "0 durable registers; LiveCount was 1 after failed append and remained 1 after retry.",
+      "oracle": "Assert.Single on parsed durable records, not the expected initial IOException."
+    },
+    {
+      "test": "End_AppendDeniedThenRetried_DurablyEndsExactlyOnceAndKeepsRegistration",
+      "outcome": "Failed",
+      "expected": "Exactly one durable session-end after unlocking and retrying twice; preceding registration retained.",
+      "actual": "0 durable session-end records; only the original register remains. LiveCount was 0 after failed append and after retry. Registration bytes were unchanged immediately after the outage.",
+      "oracle": "Assert.Single on parsed session-end records after recovery; the first I/O exception is a precondition only."
+    },
+    {
+      "test": "Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes",
+      "cases": ["U+0041", "U+00E9"],
+      "outcome": "Failed",
+      "expected": "0 accepted bytes and explicit refusal from the existing void API, without prescribing a future exception taxonomy.",
+      "actual": "65,537 complete-line bytes accepted in each case, refusal absent.",
+      "oracle": "Accepted-file byte length equals zero. Native envelope calibration and exact-bound positive cases verify the complete serialized UTF-8 line, including newline. U+00E9 uses the native serializer's JSON escaping; it is not assumed to be raw UTF-8 in JSON."
+    },
+    {
+      "test": "WriteHeartbeat_RootAlreadyHas128Files_RefusesFile129",
+      "outcome": "Failed",
+      "expected": "128 files remain, no target file, explicit refusal.",
+      "actual": "129 files; new target contains 92 bytes; refusal absent.",
+      "oracle": "Actual root *.jsonl file count."
+    },
+    {
+      "test": "WriteHeartbeat_RootAlreadyHas32MiB_RefusesWithoutChangingExistingBytes",
+      "outcome": "Failed",
+      "expected": "Root remains 33,554,432 bytes, existing seed unchanged, no accepted target bytes.",
+      "actual": "Root grows to 33,554,524 bytes; 92 target bytes accepted; refusal absent. SHA-256 equality of pre-existing seed passed.",
+      "oracle": "Real file lengths summed over root *.jsonl files. SetLength seed is a synthetic quota fixture, not a valid consumer log."
+    },
+    {
+      "test": "Register_OrdinaryLifecycle_RecordsOneRegisterHeartbeatAndEnd",
+      "outcome": "Passed",
+      "actual": "One register, heartbeat and session-end; exact kind/session/contract/time fields; sequences 1,2,3; LiveCount 0; duplicate registration/end and post-end heartbeat produce no extra record."
+    },
+    {
+      "test": "Register_OtherSessionAppendDenied_IndependentSessionStillCompletes",
+      "outcome": "Passed",
+      "actual": "While subject file is read-share locked, independent session durably registers, heartbeats and ends; subject remains zero bytes."
+    },
+    {
+      "test": "Write_CompleteEncodedLineAt64KiB_AcceptsExactlyTheBound",
+      "cases": ["U+0041", "U+00E9"],
+      "outcome": "Passed",
+      "actual": "Exactly 65,536 bytes in each native serialized line; terminal byte 10; payload round-trips and event fields match."
+    }
+  ],
+  "sha256": {
+    "src/AiDe.Core/Watcher/CoordinationContractLog.cs": "61E65B450DA1BCAC863AEB27B537458ECA1F0478505F00D93D245CCE93BFFED6",
+    "src/AiDe.Core/Watcher/SessionCoordinationEmitter.cs": "E5C9AF92EE2D2CDD4A96AE6E9D6E910DC7B27549B1C6D62A72D909E84AD56CC2",
+    "tests/AiDe.Core.Tests/Watcher/CoordinationProducerTests.cs": "2EAB4D5CF1DE849BF372EE59E35908EF3B4C6B1D49E84D7BE509110143B53B89",
+    "tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj": "FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D",
+    "Directory.Build.props": "43D0FD406351A125E58AA5282409B22E528185BAE595CD2938E1B427BC409E69",
+    "Directory.Packages.props": "A57D2EE58BD9787119F5D71C07B956A72F986FEF30287647AABCA25212E95F64",
+    "global.json": "9A043B1D3955EFBB205F9DBD351E25DD0C7F060F9A9A08E03A54BA51A0971190",
+    "src/AiDe.Core/bin/Debug/net10.0/AiDe.Core.dll": "C73E4F529BAE0BD3917EA4D0D7DDD48344A7D11A1B3F7F703A9AE77B45A51C7C",
+    "tests/AiDe.Core.Tests/bin/Debug/net10.0/AiDe.Core.Tests.dll": "4EB296641583807C6A84448F7D4EE03CEBBBBBB11A0D415DF7759295544B0A0A",
+    "docs/proofs/p24-producer-evidence.trx": "3E7DA0A83B8F90ECD7F7D294458469D5543107C5AA3F110B87447C82569BF1E1"
+  },
+  "source_pointers": [
+    "CoordinationContractLog.cs:158-185: Append constructs seq via NextSeq, serializes complete line then calls FileStream.Write with no native record/root admission.",
+    "CoordinationContractLog.cs:207-224: NextSeq scans existing nonempty lines. No complexity or concurrent sequencing performance claim was measured.",
+    "SessionCoordinationEmitter.cs:79-94: Register adds membership before WriteRegister.",
+    "SessionCoordinationEmitter.cs:129-144: End removes membership before WriteSessionEnd."
+  ],
+  "class_sweep_derive_prevent": {
+    "class": "Producer bookkeeping commits before durable publication; native admission accepts bytes beyond its approved budget. The verification bootstrap also exhibited E2E-E/E2E-F: exit 0 with no contents executed.",
+    "sweep": "Read native Append, NextSeq, Register, Heartbeat, HeartbeatAll, End and Reconcile. Register and End have the membership-order defect; Heartbeat paths have no membership mutation; Reconcile delegates to those paths. No full repository sweep or RegistrationNotice reachability claim.",
+    "derive": "Keep admission at the single native writer; producer-state repair and uncertain-write semantics need the parent design gate. No source rule was implemented here.",
+    "prevent": "Six semantic RED cases plus four positive controls are persisted. Parse nonzero executed TRX counts and actual failures; reject silent bootstrap exits. Parent owns defect-register consolidation.",
+    "status": "Uncontrolled production defects, with executed RED floor; not a passing control."
+  },
+  "remaining": [
+    "Producer Distributed Systems design/gate still required before any SOURCE fix.",
+    "No partial/prefix-write injection: FileStream.Write has no short-byte-count result and no injection seam was introduced.",
+    "Active-producer pending limits, uncertain-write recovery, concurrent lifecycle interleavings and root quota races remain unverified.",
+    "IngestHost ConcurrentQueue<RegistrationNotice> reachability and bounds remain unknown, not N/A.",
+    "Tests assert approved admission behavior rather than the current source remark that Write validates nothing.",
+    "No cross-harness floor completion, full Core suite, App/GUI proof, or independent approval claimed.",
+    "Shared canonical proof pack, design, plan, defect register and derived index were intentionally not modified; parent consolidates this receipt and append-only audit."
+  ],
+  "gate": "UNSHIPPABLE intentional RED only; no join, push, source fix, or self-cleared producer design veto."
+}
