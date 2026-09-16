@@ -453,3 +453,92 @@ Preserved prior design/re-review evidence: artifacts/atlas-five-gates/d0-design-
 935e9e5548c46fbd356ebc3d89006c24d1ad27984fb4a60af103c0002f2df3d9.
 Latest independently advertised main remains bcf4959bc0e0e361736e6a179f05b69fcd0500f8.
 No fresh slot request or publication yet; foreground GHCP remains publisher.
+
+## Independent-review coordination unit
+
+Goal: inspect independent clearance of d8fe8b1f and stage only a cleared source tip. Done when the exact reviewer evidence has been inspected and the cleared tip is staged for qualification, or a precise veto has returned to Owner. Tier T2; fan-out cap4, actual width2 plus Owner as decisions require. Conductor budget48 boundaries/40minutes/checkpoint30, including mandatory periodic status waits. Reviewer20 calls/25minutes/checkpoint12. Dependency graph is frozen author -> independent review -> Conductor inspection -> official barrier join -> fresh scheduled qualification. No source join before CLEAR; no full/shown/native run without a fresh exact slot. A new veto is an Owner decision, never permission to weaken the gate. Prior author-coordination unit closed27/40 with partial programme acceptance; no prior budget is rewritten.
+
+Record correction: the initial PowerShell append emitted literal backslash-n separators; corrected to real newlines before commit. This was a record-formatting defect, not a source or test change.
+
+## Owner admission: source-capture and refusal-observation correction
+
+Independent reviewer reproduced a remaining capture mismatch after its own66/66 run:
+Load's syntax trees contain source A while separately reread disk fingerprints describe B.
+The isolated copied-corpus state accepted despite B containing a direct Atlas reference;
+matching B syntax rejected two ATLAS references. Conductor opened exact Program.cs/spike.log.
+This is deterministic state-seam evidence, not an observed filesystem race or frequency.
+Reviewer also measured an overflow refusal with347 loaded trees and0.297008 observer seconds
+while the guard printed corpusTrees0/seconds0. Golden generated pins worked in the new tree.
+
+Astra Owner admits8 author calls/12minutes/checkpoint5 AFTER the BLOCK receipt freezes.
+Allowed: existing tests/AiDe.App.Tests/SolutionTreeProbeTests.cs, existing proof and official
+audit. Parse syntax and fingerprint ONE captured source value, preserving the established
+encoding/hash contract. Compare later disk/inventory against that capture; missing/added/
+changed/unreadable inputs refuse. Bind immutable captured inputs. Do not claim atomic
+filesystem snapshot or measured race frequency. Deterministic fixture must traverse the real
+loader seam, not timing-dependent races or an arbitrarily reflection-corrupted object.
+Preserve legitimate in-memory mutation fixtures and all66 existing cases.
+
+Every result path reports observed corpus size and measured elapsed when available;
+unevaluated fields explicitly say not recorded, and numeric zero means observed zero.
+Add focused capture-change and refusal-metric controls. No wider dependency, generator or
+runtime policy. Independent re-review must clear the new BLOCK. No source join, slot,
+full/native run or publication is granted. Root continues the same review-coordination
+unit; graph adds one bounded correction/re-review branch after the frozen new veto.
+
+### Capture correction frozen and independent re-review provisioned
+
+Author c6868e601d057023d01feedbd25b0c3604f9f8ff commits only the same test/proof/audit.
+Conductor directly parsed73/73/0skip and7/0/7 red: changed/missing/added inputs returned
+empty old errors; unreadable old input threw IOException instead of the named CLOSURE
+result, and three refusal-metric checks failed. These are distinct failure predicates,
+not seven false-green escapes. Green TRX SHA256
+e791a66afe3b7ab2d9f31d7a2dc5007ad2f59868545c0711ddf2d2025d647789;
+source SHA2565611216eca8ebcf4f207a853938991886a9401596908730a63afe0973dd4a0de.
+Actual Load capture, source-derived fingerprint and nullable/result-finalizer code opened.
+Author9/8 after one administrative recovery, approximately8m17s; source/runs unchanged
+by recovery. Prior failures and independent BLOCK5364becb preserved.
+
+Independent Astra re-review: C:/Projects/ai-de-review-d0-atlas-capture-consistency,
+branch review/d0-atlas-capture-consistency, session codex-d0-atlas-capture-review,
+basec6868e60. Budget12 calls/15minutes/checkpoint8. Exact new authored receipt
+docs/proof/d0-atlas-capture-review.md plus official own audit only. Normal-build exact
+FullyQualifiedName~SolutionTreeProbeTests.ProbeAtlas_ filter, now73 cases; no native
+factory/full/shown run. Independently exercise the real capture seam and refusal
+measurements, preserve existing predicate coverage and clear all triggered Test Architect,
+architecture/Security/SRE vetoes or return a precise BLOCK. No source repairs by reviewer.
+No D0 source join before CLEAR, no fresh-slot qualification yet, GHCP remains publisher.
+
+## Current checkpoint: independent D0 clearance e5ee30f3
+
+Verified: independent review e5ee30f30330010395d430c7b43474ad441de550 clears FR004/FR005 and all triggered Test
+Architect, architecture/Security, SRE and Simplifier lenses. Conductor opened the full
+receipt, independent loader program and final raw log, and parsed the actual TRX:
+73 executed / 73 passed / 0 failed / 0 skipped, 73 result elements. TRX SHA256
+f45a87fc1a44cd019695241f02d96bf7234c8c45a59700e3540757e18b62ee33.
+Source SHA2565611216eca8ebcf4f207a853938991886a9401596908730a63afe0973dd4a0de
+matches author c6868e60. Independent real-loader A/A accepts; A/B, missing, added and
+unreadable inputs refuse; consistent B/B reports Atlas. Refusal corpus/time measurements
+and explicit not-recorded fields were observed. Review12/12 calls,641 measured seconds.
+The finite contract still excludes atomic filesystem snapshots, arbitrary generator/
+MSBuild configuration completeness, and runtime/transitive dependency claims.
+
+Evidence snapshot: artifacts/atlas-five-gates/d0-cleared-e5ee30f3/manifest.json,
+30 files/3888717 bytes, SHA2566f4743231811e64dd607a8a033d709b7db163f7dab848f113739904aa19ed9cb.
+All original raw failures/corpora are retained. Earlier BLOCK receipts remain history.
+Combined source is not yet joined or qualified at this checkpoint. Main publication
+remains with foreground GHCP; a fresh checked scheduling grant is still required.
+
+Next execution graph: clean committed records -> official unqualified source join of
+the exact cleared tip -> inspect merge/ancestry/allowlist/ledger conservation -> freeze
+combined HEAD -> fresh scheduler grant -> reviewed canonical qualification wrapper ->
+independent combined evidence clearance -> GHCP publication. These are real data or
+authority edges. No additional authoring fan-out is useful on this serial critical path.
+Join oracle: reviewed source unchanged, prior source conserved, all append-only entries
+retained; intentional assembly barrier stops before qualification. Qualification oracle:
+actual complete TRXs, gate contents, Release result, matching source and native receipt.
+Any conflict is resolved within the authorized transfer, with derived data regenerated.
+Any new semantic failure returns to Owner, never a retry-until-green loop. Waiting ends
+only on actual grant or a reported external blocker; elapsed time is not authorization.
+Next assembly/slot-request unit budget24 calls/25minutes, checkpoint16, width1 plus Owner
+on decisions; qualification is its own scheduled unit. Cost is a planning estimate.

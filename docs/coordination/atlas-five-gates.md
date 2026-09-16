@@ -314,3 +314,56 @@ Preserved prior design/re-review evidence: artifacts/atlas-five-gates/d0-design-
 935e9e5548c46fbd356ebc3d89006c24d1ad27984fb4a60af103c0002f2df3d9.
 Latest independently advertised main remains bcf4959bc0e0e361736e6a179f05b69fcd0500f8.
 No fresh slot request or publication yet; foreground GHCP remains publisher.
+
+## Capture correction checkpoint after independent review5364becb
+
+Review5364becbdcb2f19061cbdd78464720797989eed1 independently passes66/66 and clears
+the earlier finite binding counterexample; FR004 capture consistency and FR005 false
+numeric defaults remain BLOCK. Conductor read the complete receipt and actual scratch
+program/results, then parsed its66-result TRX; SHA256
+e9a9ed0da767ba14278524c05fc91d23c604129e720697c95b0c21da5a1e3858.
+Own reviewer13/20 boundaries and587 seconds. Source remains d8fe8b1f and unjoined.
+
+Owner decision cl-01M2M1X65X5WECX0V5HBNCV424 admits the exact8-call/12-minute correction
+in provisioned C:/Projects/ai-de-fix-d0-atlas-capture-consistency,
+branch fix/d0-atlas-capture-consistency, session codex-d0-atlas-capture-consistency,
+base5364becb. Required predicates are in the plan; independent re-review follows.
+No main/primary source change, slot, full/shown/native qualification or publication.
+Latest prior author/review evidence was byte-copied before correction:22 files/3855028
+bytes at artifacts/atlas-five-gates/d0-capture-review-5364becb/manifest.json,
+SHA25619f191de38d8626cd75dacfc7a8acfa76a955591e3aceef262d11e06841a96f3.
+This snapshot is BLOCK evidence, not accepted integrated proof. All originals retained.
+
+## Current checkpoint: independent D0 clearance e5ee30f3
+
+Verified: independent review e5ee30f30330010395d430c7b43474ad441de550 clears FR004/FR005 and all triggered Test
+Architect, architecture/Security, SRE and Simplifier lenses. Conductor opened the full
+receipt, independent loader program and final raw log, and parsed the actual TRX:
+73 executed / 73 passed / 0 failed / 0 skipped, 73 result elements. TRX SHA256
+f45a87fc1a44cd019695241f02d96bf7234c8c45a59700e3540757e18b62ee33.
+Source SHA2565611216eca8ebcf4f207a853938991886a9401596908730a63afe0973dd4a0de
+matches author c6868e60. Independent real-loader A/A accepts; A/B, missing, added and
+unreadable inputs refuse; consistent B/B reports Atlas. Refusal corpus/time measurements
+and explicit not-recorded fields were observed. Review12/12 calls,641 measured seconds.
+The finite contract still excludes atomic filesystem snapshots, arbitrary generator/
+MSBuild configuration completeness, and runtime/transitive dependency claims.
+
+Evidence snapshot: artifacts/atlas-five-gates/d0-cleared-e5ee30f3/manifest.json,
+30 files/3888717 bytes, SHA2566f4743231811e64dd607a8a033d709b7db163f7dab848f113739904aa19ed9cb.
+All original raw failures/corpora are retained. Earlier BLOCK receipts remain history.
+Combined source is not yet joined or qualified at this checkpoint. Main publication
+remains with foreground GHCP; a fresh checked scheduling grant is still required.
+
+Next execution graph: clean committed records -> official unqualified source join of
+the exact cleared tip -> inspect merge/ancestry/allowlist/ledger conservation -> freeze
+combined HEAD -> fresh scheduler grant -> reviewed canonical qualification wrapper ->
+independent combined evidence clearance -> GHCP publication. These are real data or
+authority edges. No additional authoring fan-out is useful on this serial critical path.
+Join oracle: reviewed source unchanged, prior source conserved, all append-only entries
+retained; intentional assembly barrier stops before qualification. Qualification oracle:
+actual complete TRXs, gate contents, Release result, matching source and native receipt.
+Any conflict is resolved within the authorized transfer, with derived data regenerated.
+Any new semantic failure returns to Owner, never a retry-until-green loop. Waiting ends
+only on actual grant or a reported external blocker; elapsed time is not authorization.
+Next assembly/slot-request unit budget24 calls/25minutes, checkpoint16, width1 plus Owner
+on decisions; qualification is its own scheduled unit. Cost is a planning estimate.

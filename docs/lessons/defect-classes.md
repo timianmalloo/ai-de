@@ -244,6 +244,15 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   the 2026-08-26 register repair, which is itself an instance of DC-001.
 - **Status:** `partially-controlled`
 
+- **Recurrence closed (D0 refusal telemetry, 2026-09-16):** early exits printed
+  default zero corpus/time even when a real captured corpus and elapsed work existed.
+  Sweep: closure, missing-root and assignment-overflow refusals. Derive: unknown stages
+  and observed zero are different data. Prevent: shared Result finishing measures captured
+  trees/Stopwatch time on every return; nullable unevaluated fields render not-recorded.
+  Permanent refusal fixtures plus independent e5ee30f3 observations verify346/347 trees,
+  positive elapsed, and preserved observed0 assignments. No invented timing or inferred
+  production frequency. Evidence: `docs/proof/d0-atlas-capture-review.md`.
+
 *Instance appended 2026-08-29 — **a timer that bundled two costs**. A stopwatch wrapped
 `File.ReadAllText` and `ParseText` together and its output was labelled "parse". The number was
 real, the label was wrong, and the conclusion drawn from it — "parsing is 97% of extraction, so cache
@@ -4950,6 +4959,29 @@ for both or split.*
 
 ### DC-118 — Transcription is a width-changing step, and nothing checks the width: a ruling becomes a clause, a clause becomes a guard, and the scope silently moves
 
+- **Recurrence closed (D0 capture identity, 2026-09-16):** syntax parsed from one
+  disk read while fingerprints came from another admitted an A/B captured state. Sweep:
+  matching A/A and B/B, after-capture changed/missing/added/unreadable source, prior finite
+  assignment controls. Derive: the identity proof must describe the analyzed value.
+  Prevent: c6868e60 captures decoded text once for syntax and fingerprints, validates
+  later disk inventory/content, and adds real-loader callback fixtures. Independent
+  e5ee30f3 observes A/A acceptance, A/B CLOSURE refusal and B/B Atlas refusal,73/73.
+  This closes the finite capture gap, not an atomic-filesystem or runtime guarantee.
+  Evidence: `docs/proof/d0-atlas-capture-review.md` at e5ee30f3.
+
+- **Recurrence (D0 finite assignment closure, 2026-09-16):** exposing all conditional
+  branches and singleton states missed an intermediate A+B overload ambiguity. Baseline-only
+  declaration-owner matching also missed an inactive extension owner. Class: verification
+  width exceeded the states actually examined. Sweep: all project/symbol assignments, Core
+  reference propagation, unrelated namespace/receiver positives, ambiguity, exact identities,
+  fixed build inputs and overflow. Derive: binding identity and configuration coverage are
+  separate obligations. Prevent: d8fe8b1f adds complete enumeration up to eight states or explicit
+  refusal plus permanent masking, identity, closure and coexistence controls in
+  `tests/AiDe.App.Tests/SolutionTreeProbeTests.cs`. Conductor inspected66/66 author results and
+  meaningful App/Core RELEASE red failures. Independent clearance and integrated qualification
+  remain pending at this checkpoint; this entry does not clear the earlier BLOCK. Evidence:
+  `docs/proof/d0-atlas-independence.md` atd8fe8b1f; `docs/proof/atlas-five-gates.md`.
+
 - **Recurrence (inactive extension binding, 2026-09-16):** classifying possible declarations
   only by the owners bound today misses a new conditional extension owner. The inactive guard
   passed while activation changed selected D0 ToList calls; the unimported namespace control did
@@ -7173,6 +7205,17 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 
 ### DC-160 — A Proof Pack figure or "red observed" cell is written before the measurement that would fill it
 
+- **Related lifecycle-evidence recurrence (D0 author closure, 2026-09-16):** own liveness
+  said leases were released before the administrative chain reached release. The official
+  audit writer rejected missing required --shortname and correctly prevented commit; the
+  planned lifecycle state was therefore not observed state. Sweep: writer result, exact
+  staged paths, source/TRX identity and actual lease release. Derive: record completion after
+  the operation and readback, not in the text prepared before it. Prevent: the retained
+  recovery program supplies the required argument, stops on failures, asserts frozen source
+  and test counters, releases in finally, then writes actual own liveness. Author21/20 remains
+  an overrun. The audit's existing required-field rejection is preserved, not weakened.
+  Evidence: `docs/proof/d0-atlas-independence.md` administrative-recovery section atd8fe8b1f.
+
 *Id left for the conductor to allocate at the join (the plan's shared-surface rule: the register is append-only, ids are allocated at each join).*
 
 - **Shape:** the pack is drafted while the suites run, and a cell that will hold a measured number —
@@ -8085,6 +8128,15 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 
 ### DC-207 — A multi-line program passed through a shell heredoc fails on quoting or escaping, and the request that carried it is burned
 
+- **Related record-formatting recurrence (Conductor review phase, 2026-09-16):** a
+  single-quoted PowerShell append emitted literal backslash-n instead of Markdown newlines.
+  A separate earlier variable-plus-colon interpolation failed parsing before any command ran.
+  Sweep: the affected append and its readback; no source/test action is attributed to either
+  failure. Derive/prevent: reuse CT27's file-before-run control; the retained Python repair
+  asserts the exact malformed marker, writes explicit UTF-8 atomically and reads actual bytes.
+  The record was corrected before commit. No new coordination framework or global enforcement
+  claim is introduced. Evidence: `docs/plans/atlas-five-gates.md` review-phase correction.
+
 - **Related shell-boundary recurrence (Atlas verification, 2026-09-15):** Windows-to-WSL command
   forwarding exposed the test filter's pipe and logger's semicolon to bash, producing command-not-
   found errors instead of trustworthy test evidence. The corrected command was written as a bash
@@ -8206,6 +8258,17 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Status:** `uncontrolled` — registered at the join of 2026-09-14; the control lands with the wave-2 slice.
 
 ### DC-211 — A byte-identity oracle decodes one side with the locale and reads its own committed bytes as changed; and the oracle cannot be repaired because its own ordering clause forbids a post-run edit
+
+- **Related representation recurrence (D0 generated-input pins, 2026-09-16):** a pin
+  hashed BOM-bearing file bytes while Roslyn and File.ReadAllText consumed decoded source text.
+  The unchanged generated inputs then appeared different. Sweep: four generated inputs,
+  committed text, LF/CRLF, source-versus-metadata identity and distinct worktree execution.
+  Derive: name one comparison representation before hashing either side. Prevent: the test's
+  single Fingerprint contract uses decoded UTF-8 text with only CRLF-to-LF normalization;
+  required generated-input and changed-input controls exercise that same representation.
+  First implementation56/12/44 and final66/66 are retained; independent new-worktree review
+  is pending. This recurrence is not covered merely by the existing subprocess lint.
+  Evidence: `docs/proof/d0-atlas-independence.md` atd8fe8b1f.
 
 - **Shape:** `subprocess.run(..., text=True)` with no `encoding=` decodes the child's bytes with the
   interpreter's locale codec — cp1252 on this machine — while every file the repository writes is

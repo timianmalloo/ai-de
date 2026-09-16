@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T02:39:16Z",
+  "generated": "2026-09-16T03:18:16Z",
   "audit": [
     {
       "actor": null,
@@ -24243,6 +24243,39 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2M3HRYFJJ3AVXDC031776BK",
+      "shortname": "atlas-d0-independent-clearance",
+      "datetime": "2026-09-16T03:18:15Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "The conflicts are yours to resolve. Continue the five-gate priority through reviewed qualification and GHCP publication, then E1/E2.",
+      "summary": "Independent final e5ee30f3 CLEAR inspected:73/73; real-loader capture discrimination and refusal metrics. New FR004/005 required Owner-bounded correction9/8 and independent review12/12,641 seconds; prior BLOCK retained. No source join or canonical acceptance yet. Current phase ends at this audit; next serial assembly unit is recorded. Call count40 includes resumed evidence/closure tool boundary; measured duration from own skill marker.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md",
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Inspect independent D0 clearance and prepare the exact cleared source join.",
+      "done_when": "Actual review and raw evidence inspected, decisions and lessons captured, records ready for official join; no acceptance inferred.",
+      "tier": "T2",
+      "main_calls": 40,
+      "main_budget": 48,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-16T02:39:52Z",
+      "duration_seconds": 2303.0,
+      "git": {
+        "sha": "5c8dd30e8f8576a74ba66930e638d2e3b1ff3eb0",
+        "short": "5c8dd30e8",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -28684,6 +28717,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "caac0666269202b66917aae7be68947c7038a875",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2M1X65X5WECX0V5HBNCV424",
+      "datetime": "2026-09-16T02:49:32Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "decision",
+      "skill": "design-slice",
+      "title": "Admit one-capture D0 verification correction",
+      "prompt": "the conflicts are yours to resolve",
+      "summary": "\n## Owner admission: source-capture and refusal-observation correction\n\nIndependent reviewer reproduced a remaining capture mismatch after its own66/66 run:\nLoad's syntax trees contain source A while separately reread disk fingerprints describe B.\nThe isolated copied-corpus state accepted despite B containing a direct Atlas reference;\nmatching B syntax rejected two ATLAS references. Conductor opened exact Program.cs/spike.log.\nThis is deterministic state-seam evidence, not an observed filesystem race or frequency.\nReviewer also measured an overflow refusal with347 loaded trees and0.297008 observer seconds\nwhile the guard printed corpusTrees0/seconds0. Golden generated pins worked in the new tree.\n\nAstra Owner admits8 author calls/12minutes/checkpoint5 AFTER the BLOCK receipt freezes.\nAllowed: existing tests/AiDe.App.Tests/SolutionTreeProbeTests.cs, existing proof and official\naudit. Parse syntax and fingerprint ONE captured source value, preserving the established\nencoding/hash contract. Compare later disk/inventory against that capture; missing/added/\nchanged/unreadable inputs refuse. Bind immutable captured inputs. Do not claim atomic\nfilesystem snapshot or measured race frequency. Deterministic fixture must traverse the real\nloader seam, not timing-dependent races or an arbitrarily reflection-corrupted object.\nPreserve legitimate in-memory mutation fixtures and all66 existing cases.\n\nEvery result path reports observed corpus size and measured elapsed when available;\nunevaluated fields explicitly say not recorded, and numeric zero means observed zero.\nAdd focused capture-change and refusal-metric controls. No wider dependency, generator or\nruntime policy. Independent re-review must clear the new BLOCK. No source join, slot,\nfull/native run or publication is granted. Root continues the same review-coordination\nunit; graph adds one bounded correction/re-review branch after the frozen new veto.\n",
+      "rationale": "Actual independent disconfirmation identifies a bounded source-version seam and false default metrics; independent veto remains.",
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "5c8dd30e8f8576a74ba66930e638d2e3b1ff3eb0",
         "branch": "integration/atlas-five-gates",
         "pushed": null,
         "commits": []
