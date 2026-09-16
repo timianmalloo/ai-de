@@ -1,6 +1,6 @@
 ---
 id: proof-cross-harness-coordination
-title: "Cross-harness coordination: dormant P1 repair evidence and pending runtime gates"
+title: "Cross-harness coordination: P1 foundation and P2 native replay evidence"
 type: proof-pack
 status: draft
 owner: "@timianmalloo"
@@ -1470,3 +1470,143 @@ deliberately identifies **executed working bytes**, not an asserted Git blob has
 
 **Next:** independent C#/Data/DS review of the second commit and this exact proof.
 Keep the tree for that review; no merge/push, P1 integration or activation.
+
+## P2.3 native replay/effect author receipt — 2026-09-16
+
+**Result:** the four original R1/R2 failures now pass unchanged through the real
+writer, SQLite pump and reopened composition. The final scoped run is **259
+executed / 259 passed / 0 failed / 0 skipped**, logical exit **0**. This is a
+code-and-tests author checkpoint, **not a full-P2 or independent-gate PASS**.
+The historical report above is retained unchanged; this section supersedes only
+its statement that R1/R2 are still unimplemented.
+
+### Scope and execution contract
+
+Goal: atomically project native source records and replay their original effects.
+Done when: the four original REDs, rollback/lost-ack/restart, source-integrity and
+independent-connection controls pass, and code/tests/proof are committed.
+Not in scope: P1 merge/copy, activation, authorization policy changes, canonical
+adapter, retry scheduler, UI, P3–P5, live stores/endpoints, or upstream work.
+Tier T2; fan-out 0; main-line budget 45 calls. Worktree:
+`C:\Projects\ai-de-feature-xh-p2-projection`, base
+`b6339e771c23772d9d9f4ffdc47310b0c342b527`.
+
+Execution graph: source/API grounding → unchanged baseline RED → typed native
+implementation → focused compatibility run → checkpoint correction → adversarial
+commit-order mutation → restored final run → evidence/commit. These are data or
+decision edges, not independent branches. No delegates or external research.
+No measured token/spend estimate is available. Tool-output overflow caused repeated
+grounding reads; that is an execution-cost finding, not evidence of extra rigor.
+
+### Change reach and authority boundary
+
+| Surface | Writer → reader; evidence |
+|---|---|
+| Raw source | `CoordContractWriter` → bounded immutable `CoordinationSourceCapture`; validated UTF-8, raw SHA-256 and byte coordinates precede lossy parser attributes |
+| Source identity | trusted normalized directory + normalized file path, injectively encoded; fixed logical epoch; checkpoint read before capture and reloaded under the SQLite writer |
+| Prepared input | inert typed records, canonical bytes and corrected binding; trusted ID factories are separate composition inputs, called only inside the transaction |
+| Durable admission | initial feed receipt → event reference → native effects → terminal feed receipt → checkpoint → COMMIT; same owning SQLite connection/IMMEDIATE transaction |
+| Session mapping | immutable applied registration receipt external id → native session id/generation; native readers and subsequent board/session observations use it |
+| Native session | session dimension, heartbeat and ended rows written transactionally; historical replay does not mint capabilities, increment generation, clear ended, or refresh heartbeat |
+| Native board | quarantined content and injection flag, bound session/repository provenance, parent existence and same-repository checks, native max+1 order under the same writer |
+| Acknowledgement | only after commit, `InjectedContractIngest.Observe` publishes a `SessionRecord` observation, not a capability; replay returns original admission/message identifiers |
+| Legacy direct Apply | exact captured typed registration is recognized durably without source coordinates or a call to `Register`; original phase-only R2 assertion remains intact |
+| UI/canonical/live authority | unchanged and not claimed; public `Post`, `Reply`, `Acknowledge`, `Register`, capability verification and production DENY/enhanced-append-disabled policy remain unchanged |
+
+The accepted three-table v8 DDL is unchanged. There is no fourth status/ACK table,
+consumed-file ledger, in-memory replay dedup substitute, general callback transaction
+framework, or payload-selected fault switch. The internal, instance-local fault enum
+is a deterministic test seam immediately before and after commit.
+
+### Executed receipts and falsifying inputs
+
+All filenames below are beneath `docs/proofs/p23-native-evidence/`.
+TRX files contain the complete test-run result records, failures and test output.
+
+| Claim / oracle | Evidence and logical exit | Red observed | Confidence / limitation |
+|---|---|---|---|
+| Original pump replay and both restart variants retain one message, generation, ended flag and heartbeat | `p23-baseline-red.trx`: 7 total, 4 fail, 3 pass, exit 1; `p23-runtime-green.trx`: same 7 pass, exit 0 | Four unchanged baseline tests failed against base source | Verified, real writer/pump/SQLite/new composition |
+| Direct replayed registration alone cannot reset lifecycle | Original `Apply_ReplayedRegisterOfEndedSession_PreservesEndedGenerationAndHeartbeat`, unchanged | Original R2 phase-only failure retained in baseline | Verified; value-only legacy path does not acquire authority |
+| Receipt/event/native effect/checkpoint roll back together | `Pump_BeforeCommit_RollsBackEffectsReceiptsCheckpointAndMemory`; independent read-only connection asserts all durable tables/native effects empty and observation map absent | `p23-commit-order-mutant-red.trx`: moving COMMIT before the fault fails `Assert.Empty` on durable session; 1 fail, exit 1 | Verified; rollback mutant restored byte-for-byte before final build |
+| Lost post-commit acknowledgement cannot duplicate effects or issue authority | `Pump_AfterCommitBeforeAcknowledgement_ReplayReturnsOriginalReceiptAndEffectWithoutAuthority`; reopened composition, original admission/message returned, unchanged feed count, public Post rejects forged capability | Explicit injected post-COMMIT IOException; committed native facts read independently before retry | Verified for the internal fault seam; not an OS process-kill campaign |
+| Exact appended duplicate is accounted once; changed bytes under the same key cannot rewrite history | exact-duplicate and conflicting-duplicate runtime tests; original message/receipt ids retained; conflict preserves old checkpoint | Conflicting input returns `COORD_DUPLICATE_CONFLICT`; checkpoint growth tests initially failed with `COORD_CHECKPOINT_GAP` | Verified |
+| Accepted source mutation/truncation/missing file cannot advance | three `Pump_AcceptedSourceGap_RefusesWithoutAdvance` cases; diagnostic and unchanged native/checkpoint state | Each adversarial source yields `COORD_SOURCE_GAP` | Verified optimistic snapshot contract, not filesystem exclusion/ABA |
+| Incomplete tail defers, unsupported version receives explicit refusal | `Pump_IncompleteTail_DefersUntilLfAndReportsUnsupportedVersion`; counts/native state/checkpoint checked | Partial input is unaccepted; adding LF produces version-refused receipt | Verified |
+| Bounded capture and page checkpoint transitions | record >64 KiB and >128 files refuse before admission; 127/128/129/257 record scenarios replay stably | Over-bound cases throw; growth controls failed before checkpoint correction | Verified selected boundaries; 32 MiB aggregate and 4 MiB page exact limits are implemented but not independently boundary-tested here |
+| Stale capture loses no competing writer's effects | `Project_StaleCapture_DiscardsWithoutAllocatingOrPublishing`; allocators throw if called; independent connections | A stale expected checkpoint returns `Stale`, no results or allocations | Verified |
+| Independent SQLite writers produce one map/message | `Pump_IndependentWriters_CommitOneMappingAndEffect`, plus unchanged native ordering tests | Concurrent independent connections and bounded completion; original ordering mutants are supplied foundation evidence below | Verified executions; this new test is not a deterministic barrier-controlled overlap proof |
+| Pending work is not represented as completed | late-parent and episode fixtures retain non-null source/canonical bytes, `pending` state and explicit initial pending reason | Parent absent and no trusted lifecycle prevent application | Verified retention only; re-drive is not implemented |
+
+Intermediate `p23-watcher-candidate.trx`: **226 total, 222 pass, 4 fail**, exit 1.
+Its four failures shared the new checkpoint-advance defect. Explicit insert/update
+branches produced `p23-watcher-green.trx`: **231/231**, exit 0. The restored final
+run adds all `BoardOrderingTests` and `ContractBoardPostTests`: **259/259**, exit 0.
+No test was skipped, weakened, or removed. `CoordinationReliabilityTests.cs` is
+unchanged. Existing schema and native-ordering controls remain in the final selection.
+
+Final command (from the assigned worktree):
+
+```powershell
+dotnet test tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --no-restore --filter 'FullyQualifiedName~Coordination|FullyQualifiedName~MessageBoard|FullyQualifiedName~BoardOrderingTests|FullyQualifiedName~ContractBoardPostTests|FullyQualifiedName~SqliteWatcherObservationStore|FullyQualifiedName~IngestHostTests|FullyQualifiedName~TrustedRegistrar|FullyQualifiedName~RestartDoesNotMultiplySessions|FullyQualifiedName~WatcherHostTests' --logger 'trx;LogFileName=p23-final-restored-green.trx' --results-directory docs\proofs\p23-native-evidence --verbosity quiet
+```
+
+### Exact source / project / binary identities
+
+`final-identities.json` records SHA-256 for all changed C# sources, unchanged v8
+DDL, unchanged original reliability test, new runtime tests, Core/test project
+files and the actual Core/test binaries used in the final run. It records base,
+timestamp, result counts and logical exit. `mutation-identities.json` records the
+mutant source/test/project/Core-binary/test-binary identities and exit 1.
+The restored projection source SHA-256 is
+`16CE12EAAD11A3D675F357EF33E3D35D1DBEF5D3A744B24BAAE147BF19892A64`,
+identical to its measured pre-mutation SHA. The baseline binary SHA was not captured
+before rebuilding; it is **not recorded**, not reconstructed. Its source is the
+named base commit and its execution is the retained baseline TRX.
+
+### Foundation gate receipts — supplied, narrow, not reissued by the author
+
+- Native ordering `5bb`: independent **91 PASS** reported; real-overlap deferred
+  mutant fails while both writes commit. Applies to native ordering only.
+- Schema Data S1/S6 **PASS** at `85a` reported. Applies to the accepted v8 foundation.
+- Schema/Test failure-evidence **PASS** at `b633` reported: 23 focal mutant failures,
+  23 positive/restored greens, 202 candidate greens; production source unchanged.
+- P1 mechanics `535b` independent **PASS** is a reference only. Nothing from that
+  branch is merged/copied here.
+
+These are provenance-labelled supplied review receipts, not fresh independent
+review of this runtime patch. **Next gate: independent Data/Distributed Systems/Test
+review of this exact code, artifacts and commit.** The author does not clear it.
+
+### Correction class and instrumentation
+
+**Class:** an INSERT-or-update shortcut conflicts with immutable INSERT guards,
+even when the intended UPDATE would be valid. **Sweep:** the new runtime had one
+checkpoint upsert; the native session metadata upsert intentionally targets a
+mutable dimension and is not governed by the immutable checkpoint trigger.
+**Derive:** read checkpoint under IMMEDIATE, choose INSERT for absence or UPDATE
+for presence. **Prevent:** unchanged emitter growth tests plus duplicate/tail/page
+boundary controls were observed failing and now pass. The central defect register
+is outside this author's ownership; conductor integration remains explicit.
+
+Operator questions have named sources: how many records/bytes, how many replayed,
+pending/refused, which failure, and elapsed milliseconds are emitted in `LastRun`
+on the normal path. A native-pump Activity carries the counters and error status
+without raw content, session ids or repository paths. Durable feed/state/checkpoint
+rows expose original admission and application state. Runtime tests assert volume,
+replay, elapsed non-negativity, refusals and source diagnostic readback.
+Activity export/listener behavior is not separately tested here; process-level
+SLIs/export configuration and token/spend measurements remain unverified. On an
+early capture failure, the counters describe returned/processed captures, not total
+filesystem bytes attempted. No production latency or capacity claim is made.
+
+### Remaining, explicitly not waived
+
+Full P2 still requires canonical origin/adapter/bridge integration, pending-parent
+and retry scheduling, full rebuild/tombstone behavior, 401/MCP-feed work, exact
+aggregate/page-limit and broader malformed/property/mutation campaigns, actual
+old-binary rollback/deployment, independent runtime gates and final instrumentation
+qualification. UI/composition rendering is not exercised by this portable Core
+slice. No source investigation report, lessons/site claim, P1 source, activation,
+dependency/configuration/hook, live database, endpoint or upstream repository was
+changed. P3/P4/P5 remain later work; upstream work follows verification of all six
+phases. Keep this worktree for independent review; no push or merge.

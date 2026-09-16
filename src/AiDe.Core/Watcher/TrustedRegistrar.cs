@@ -69,6 +69,10 @@ public sealed class TrustedRegistrar : ITrustedRegistrar
         return Issue(sessionId, new SessionGeneration(1), binding);
     }
 
+    // Observation projection borrows the composition's allocator, never its authority issuer.
+    internal Func<string> ObservationIds => _newSessionId;
+    internal long ObservationTicks => _clock.Ticks;
+
     public RegisteredSession RegisterNextGeneration(string sessionId, SessionBinding binding)
     {
         ArgumentException.ThrowIfNullOrEmpty(sessionId);

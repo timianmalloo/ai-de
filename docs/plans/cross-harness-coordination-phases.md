@@ -541,3 +541,24 @@ not omitted evidence promoted to Verified. Overall tool-count reconciliation is 
 audit's declared count; no token/cost or production latency measurement is inferred.
 Full-P2 correctness, review and instrumentation floors remain open. Independent
 C#/Data/DS gate is the next action, not a renewed human scope approval.
+
+### P2.3 native runtime author checkpoint — 2026-09-16
+
+Code, not another schema-only increment: the SQLite pump now captures bounded raw
+source bytes and writes typed observation effects, durable session mappings,
+receipts and checkpoints under one IMMEDIATE transaction. Historical registration
+replay creates no capabilities or new generation and does not reset ended/liveness.
+The original four R1/R2 tests remain unchanged and pass.
+
+The linked Proof Pack's **P2.3 native replay/effect author receipt** records:
+7 original cases (4 RED → 7 GREEN), rollback/lost-ack and independent-connection
+controls, source-gap/bounds/pending tests, a deliberately failing commit-before-fault
+mutant, restored source SHA, and the final **259/259** portable Core subset.
+Checkpoint advancement needed one correction after an immutable-trigger/upsert
+conflict; that RED and its class/control are preserved there.
+
+Next: independent Data/Distributed Systems/Test review of the code and exact
+receipts. No renewed product approval is needed. This is not full-P2 approval:
+canonical bridge, re-drive/late-parent scheduling, rollback/deployment, remaining
+capacity/fault/instrumentation qualification and full-phase join are still open.
+P1 `535b` is reference-only and unmerged; P3–P5 and upstream work remain later.

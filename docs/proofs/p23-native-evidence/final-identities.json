@@ -1,0 +1,70 @@
+{
+  "identities": [
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationProjection.cs",
+      "sha256": "16CE12EAAD11A3D675F357EF33E3D35D1DBEF5D3A744B24BAAE147BF19892A64"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationSourceCapture.cs",
+      "sha256": "6B3087BC9FE4186165C41A40889ECE86E66E6A237CD9E0B1B5624453A00CA0FE"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationContract.cs",
+      "sha256": "623C9BC5CF8C8B74951D60B7C1A4DC24EE9D04B417A54229DFD6058D4E43775E"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationContractLog.cs",
+      "sha256": "DDAA9154591F4B7FF1D2D87BB843E5FFF4493E0D934ADF49C180FE30A808FEE7"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\IngestHost.cs",
+      "sha256": "533E34A1D522FD90B90771BBA2F3686D81F038A5F398B36C153E26CFC27ABE14"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\TrustedRegistrar.cs",
+      "sha256": "82B3DB573397EE37A3D7F7B84F21732E0FD3947967151789FEBAF8CEC3277B15"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\MessageBoard.cs",
+      "sha256": "E9E6597E8164D5895218F24E42F1F309406448EE94550FE84050CAF605698C04"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\SqliteWatcherObservationStore.cs",
+      "sha256": "CDA7A302CEA06D570AF4DD17B41A081E1FEC5208C751D923D525A3D72AA58C64"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\SqliteWatcherObservationStore.Coordination.cs",
+      "sha256": "40442BFEB7DC311B1972EB51D511ACC4BD7D8DFF79272D31422F9082077D0C31"
+    },
+    {
+      "path": "src\\AiDe.Core\\AiDe.Core.csproj",
+      "sha256": "B63C41B97201DC3E1016B72B404A32411AC31E477231B281219DDA64D0AD584A"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationReliabilityTests.cs",
+      "sha256": "F582F7B3BBBC84A481AC4459925B19449D3099F5EC014DEB995E6CB398FADA43"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionRuntimeTests.cs",
+      "sha256": "758490E6579B9BDE20937196B81667B03A329814F177A4CF542A439A890733E0"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "sha256": "FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.dll",
+      "sha256": "E5603805EEAC3838BCD83D8826812AF016394A765B95AFFD4044FD635744F342"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll",
+      "sha256": "FD76CC90AFB1980F1FC220675D8B759D9148760AE025E0376FB3C03A3B23E701"
+    }
+  ],
+  "logicalExit": 0,
+  "base": "b6339e771c23772d9d9f4ffdc47310b0c342b527",
+  "passed": "259",
+  "at": "2026-09-16T21:15:19.4788987+00:00",
+  "total": "259",
+  "failed": "0"
+}

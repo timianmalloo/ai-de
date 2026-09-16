@@ -252,18 +252,81 @@ public static class CoordContractLog
 
 /// <summary>
 /// Reads a contract log directory and applies it to an <see cref="InjectedContractIngest"/>. Re-running
-/// is safe: the adapter is idempotent (a duplicate register is ignored, a heartbeat merely refreshes
-/// liveness), so a whole-directory re-read never double-registers - which is why a naive "read it all"
-/// pump is correct here without tracking file offsets.
+/// uses durable source receipts for SQLite observation projection. The value-only in-memory adapter
+/// remains a compatibility path; it does not claim durable replay or source-gap detection.
 /// </summary>
 public sealed class CoordContractLogPump(string logDir, InjectedContractIngest ingest)
 {
     private readonly string _logDir = !string.IsNullOrEmpty(logDir) ? logDir : throw new ArgumentException("logDir is required", nameof(logDir));
     private readonly InjectedContractIngest _ingest = ingest ?? throw new ArgumentNullException(nameof(ingest));
 
-    /// <summary>Reads the log directory once and applies every event; returns the count applied.</summary>
+    /// <summary>Diagnostics from the last bounded capture, including replayed records.</summary>
+    public CoordinationPumpStats LastRun { get; private set; } = new(0, 0, 0, 0, 0, 0, null);
+
+    /// <summary>Returns recognized records in the capture, including already admitted records.</summary>
     public int PumpOnce()
     {
+        if (_ingest.Host.CoordinationStore is { } store)
+        {
+            using var activity = new System.Diagnostics.Activity("coordination.native.pump").Start();
+            var started = System.Diagnostics.Stopwatch.GetTimestamp();
+            var records = 0;
+            long bytes = 0;
+            var replayed = 0;
+            var pending = 0;
+            var refused = 0;
+            string? diagnostic = null;
+            try
+            {
+                foreach (var capture in CoordinationSourceCapture.Read(_logDir, store, _ingest.Host))
+                {
+                    bytes += capture.Bytes;
+                    records += capture.Recognized;
+                    var expected = capture.Checkpoint;
+                    foreach (var page in capture.Pages)
+                    {
+                        var result = store.ProjectCoordination(page, expected, _ingest.Host.ObservationAllocators);
+                        if (result.Stale)
+                        {
+                            diagnostic = CoordinationErrors.StaleSnapshot;
+                            break;
+                        }
+                        expected = result.Checkpoint;
+                        foreach (var item in result.Results)
+                        {
+                            _ingest.Observe(item);
+                            replayed += item.Replayed ? 1 : 0;
+                            pending += item.State == "pending" ? 1 : 0;
+                            refused += item.State == "refused" ? 1 : 0;
+                        }
+                    }
+                }
+                return records;
+            }
+            catch (CoordinationSourceException error)
+            {
+                diagnostic = error.Code;
+                throw;
+            }
+            catch (Exception)
+            {
+                diagnostic = "COORD_PUMP_FAILED";
+                throw;
+            }
+            finally
+            {
+                LastRun = new(records, bytes, replayed, pending, refused,
+                    System.Diagnostics.Stopwatch.GetElapsedTime(started).TotalMilliseconds, diagnostic);
+                activity.SetTag("coordination.records", records);
+                activity.SetTag("coordination.capture.bytes", bytes);
+                activity.SetTag("coordination.replayed", replayed);
+                activity.SetTag("coordination.pending", pending);
+                activity.SetTag("coordination.refused", refused);
+                activity.SetTag("error.type", diagnostic);
+                activity.SetStatus(diagnostic is null
+                    ? System.Diagnostics.ActivityStatusCode.Ok : System.Diagnostics.ActivityStatusCode.Error);
+            }
+        }
         var events = CoordContractLog.ReadDirectory(_logDir);
         _ingest.ApplyAll(events);
         return events.Count;

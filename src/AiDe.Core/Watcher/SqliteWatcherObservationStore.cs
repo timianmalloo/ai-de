@@ -182,6 +182,9 @@ public sealed partial class SqliteWatcherObservationStore : IWatcherObservationS
     }
 
     public void RecordSession(SessionRecord session)
+        => RecordSession(session, null);
+
+    private void RecordSession(SessionRecord session, SqliteTransaction? transaction)
     {
         ArgumentNullException.ThrowIfNull(session);
         var b = session.Binding;
@@ -203,6 +206,7 @@ public sealed partial class SqliteWatcherObservationStore : IWatcherObservationS
                     agent_name = $agent, harness_name = $hName, harness_version = $hVer,
                     model_name = $mName, model_version = $mVer, trust = $trust;
                 """,
+                transaction,
                 ("$id", session.SessionId),
                 ("$gen", session.Generation.Value),
                 ("$repoPath", b.Repository.CanonicalPath),
@@ -220,10 +224,14 @@ public sealed partial class SqliteWatcherObservationStore : IWatcherObservationS
     }
 
     public SessionRecord? FindSession(string sessionId)
+        => FindSession(sessionId, null);
+
+    private SessionRecord? FindSession(string sessionId, SqliteTransaction? transaction)
     {
         lock (_gate)
         {
             using var command = _connection.CreateCommand();
+            command.Transaction = transaction;
             command.CommandText =
                 """
                 SELECT generation, repo_path, repo_display, worktree_branch, worktree_path, terminal_id,

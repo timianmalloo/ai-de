@@ -333,6 +333,7 @@ public sealed class InjectedContractIngest
 {
     private readonly IngestHost _host;
     private readonly Dictionary<string, RegisteredSession> _byExternalId = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, SessionRecord> _observations = new(StringComparer.Ordinal);
 
     private long _registered;
     private long _heartbeats;
@@ -358,6 +359,40 @@ public sealed class InjectedContractIngest
     public CoordContractStats Stats => new(
         _registered, _heartbeats, _unknown, _duplicateRegister, _quarantined, _updated,
         _episodesOpened, _episodesClosed, _boardPosts, _artifactsDeclared);
+
+    internal IngestHost Host => _host;
+
+    internal void Observe(CoordinationResult result)
+    {
+        if (result.Session is not null && result.ExternalId is not null)
+        {
+            _observations[result.ExternalId] = result.Session;
+        }
+        if (result.Replayed)
+        {
+            _duplicateRegister += result.Kind is ContractRegister ? 1 : 0;
+            return;
+        }
+        if (result.State == "refused")
+        {
+            _quarantined++;
+            return;
+        }
+        if (result.State != "applied")
+        {
+            _unknown++;
+            return;
+        }
+        switch (result.Kind)
+        {
+            case ContractRegister: _registered++; break;
+            case ContractBoardPost: _boardPosts++; break;
+            case ContractHeartbeat: _heartbeats++; break;
+            case ContractUpdate: _updated++; break;
+        }
+    }
+
+    internal SessionRecord? ObservedSession(string externalId) => _observations.GetValueOrDefault(externalId);
 
     /// <summary>Applies a batch in order. Callers pass parser output, already sorted.</summary>
     public void ApplyAll(IEnumerable<CoordContractEvent> events)
@@ -633,6 +668,13 @@ public sealed class InjectedContractIngest
 
     private void ApplyRegister(ContractRegister register)
     {
+        // The value-only legacy entry point has no source coordinates. It can recognize history,
+        // but cannot bind a new generation or reconstruct a capability from that history.
+        if (_host.CoordinationStore?.HasCapturedRegistration(register) == true)
+        {
+            _duplicateRegister++;
+            return;
+        }
         if (_byExternalId.ContainsKey(register.ExternalSessionId))
         {
             _duplicateRegister++; // idempotent: the first registration's capability stands

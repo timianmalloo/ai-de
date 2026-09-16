@@ -1,0 +1,11 @@
+{
+  "supplementCount": "33",
+  "primaryCount": "259",
+  "baseline": "p22-s1s6-first-green.trx",
+  "coreBinary": "E5603805EEAC3838BCD83D8826812AF016394A765B95AFFD4044FD635744F342",
+  "includedFromPrimary": 170,
+  "testBinary": "FD76CC90AFB1980F1FC220675D8B759D9148760AE025E0376FB3C03A3B23E701",
+  "remainingAfterSupplement": [],
+  "baselineTotal": 202,
+  "supplementLogicalExit": 0
+}

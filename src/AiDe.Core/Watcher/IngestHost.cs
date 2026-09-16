@@ -136,6 +136,17 @@ public sealed class IngestHost
         return session;
     }
 
+    internal SqliteWatcherObservationStore? CoordinationStore => _store as SqliteWatcherObservationStore;
+
+    internal CoordinationAllocators ObservationAllocators =>
+        _registrar is TrustedRegistrar registrar && _board is MessageBoardService board
+            ? new(registrar.ObservationIds, board.ObservationIds, registrar.ObservationTicks, _time.GetUtcNow())
+            : throw new NotSupportedException("COORD_OBSERVATION_COMPOSITION");
+
+    internal SessionBinding PrepareObservation(ContractRegister registration) =>
+        RepositoryCorrection.Apply(
+            OtelSpanMapper.MapRegistration(new HarnessRegistration(registration.Attributes)), _locator).Binding;
+
     /// <summary>
     /// Takes the registration corrections that have not yet been delivered, emptying the queue.
     /// </summary>

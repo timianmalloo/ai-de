@@ -112,6 +112,8 @@ public sealed class MessageBoardService : IMessageBoard
         return Append(repositoryKey, sessionId, capability, kind, parentMessageId: null, content);
     }
 
+    internal Func<string> ObservationIds => _newMessageId;
+
     public BoardMessage Reply(string repositoryKey, string sessionId, SessionCapability capability, string parentMessageId, string content)
         => Append(repositoryKey, sessionId, capability, BoardMessageKind.Reply, RequireParent(repositoryKey, parentMessageId), content);
 

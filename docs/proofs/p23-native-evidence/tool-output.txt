@@ -1,0 +1,36 @@
+Observed tool console receipts. Complete per-test output and error records are in the named TRX files.
+
+Baseline, unchanged source at b6339e771c23772d9d9f4ffdc47310b0c342b527:
+dotnet test tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --no-restore --filter FullyQualifiedName~CoordinationReliabilityTests --logger 'trx;LogFileName=p23-baseline-red.trx' --results-directory docs\proofs\p23-native-evidence --verbosity quiet
+Failed!  - Failed:     4, Passed:     3, Skipped:     0, Total:     7, Duration: 203 ms - AiDe.Core.Tests.dll (net10.0)
+Logical exit: 1
+
+Initial runtime fix, unchanged seven tests:
+Passed!  - Failed:     0, Passed:     7, Skipped:     0, Total:     7, Duration: 211 ms - AiDe.Core.Tests.dll (net10.0)
+Logical exit: 0
+
+Intermediate wider run:
+Failed!  - Failed:     4, Passed:   222, Skipped:     0, Total:   226, Duration: 3 s - AiDe.Core.Tests.dll (net10.0)
+TEST_LOGICAL_EXIT=1
+Four failures: COORD_CHECKPOINT_GAP, from End_WritesSessionEnd_AndStopsTracking;
+Reconcile_Registers_Heartbeats_AndEnds_FromASnapshot;
+Pump_ExactDuplicateOccurrence_AccountsBytesWithoutNewEffectOrAdmission;
+Pump_IncompleteTail_DefersUntilLfAndReportsUnsupportedVersion.
+
+Checkpoint correction and page boundary controls:
+Passed!  - Failed:     0, Passed:   231, Skipped:     0, Total:   231, Duration: 4 s - AiDe.Core.Tests.dll (net10.0)
+TEST_LOGICAL_EXIT=0
+
+Commit-before-fault mutation:
+dotnet test tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --no-restore --filter FullyQualifiedName~Pump_BeforeCommit_RollsBackEffectsReceiptsCheckpointAndMemory --logger 'trx;LogFileName=p23-commit-order-mutant-red.trx' --results-directory docs\proofs\p23-native-evidence --verbosity quiet
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 79 ms - AiDe.Core.Tests.dll (net10.0)
+MUTANT_LOGICAL_EXIT=1
+Assert.Empty() Failure: Collection was not empty
+Full durable SessionRecord failure is in p23-commit-order-mutant-red.trx.
+
+Restored final source with native ordering and contract board controls:
+Passed!  - Failed:     0, Passed:   259, Skipped:     0, Total:   259, Duration: 4 s - AiDe.Core.Tests.dll (net10.0)
+TEST_LOGICAL_EXIT=0
+Counters read back from TRX: total=259 executed=259 passed=259 failed=0 notExecuted=0.
+Restored CoordinationProjection.cs SHA256:
+16CE12EAAD11A3D675F357EF33E3D35D1DBEF5D3A744B24BAAE147BF19892A64

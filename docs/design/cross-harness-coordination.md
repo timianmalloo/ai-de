@@ -849,3 +849,36 @@ Four real SQLite R1/R2 REDs were observed on `5bb8bf21` before source changes.
 The finite author checkpoint is schema/receipt constraints plus exact replay and
 conflicting-position refusals. If the author budget ends at this checkpoint,
 R1/R2 and native source-effect-checkpoint atomicity remain blocking—not waived.
+
+### P2.3 native runtime implementation contract
+
+The legacy SQLite pump now uses the trusted composition's normalized log-directory
+root, normalized file path, and fixed `legacy-native-1` logical epoch. Base64 UTF-8
+components separated by `|` are injective; neither timestamps nor payload repository
+attributes identify the source. Capture is bounded to 128 files, 32 MiB total,
+64 KiB per complete LF record, and 128 records/4 MiB per transaction page.
+Only complete records are eligible. The accepted prefix is verified once against
+the immutable capture; each writer reloads the checkpoint and discards stale pages.
+This is optimistic validation, not linearizable filesystem exclusion or ABA detection.
+
+Prepared records carry only bytes, typed events, binding data and timestamps.
+The trusted composition supplies existing ID factories separately; they allocate
+only under SQLite IMMEDIATE, after receipt/key lookup. They do not call services
+or registrars and cannot be selected by payload. Initial pending receipt → event →
+native observation → terminal receipt → checkpoint commit is the write order.
+Internal enum fault points bracket commit; no public callback or payload switch exists.
+
+Registration/session/end/heartbeat and valid board content are observations, not
+authority. Durable registration receipts retain the external/internal mapping.
+Post-commit memory holds only SessionRecord, never RegisteredSession/capability.
+Public Post/Reply/Acknowledge authorization remains unchanged. Authority-dependent
+episode work and late parents stay pending with their source bytes; they are not
+quarantined as completed. Direct legacy Apply retains its public signature and
+recognizes an exact previously captured registration by typed value, without
+inventing source identity or re-registering historical sessions.
+
+The runtime counters and last diagnostic report capture volume, replay, stale
+snapshot, pending/refused dispositions and elapsed duration on each normal pump.
+Fault/restart tests must read all three cache tables and native effects through
+independent SQLite connections. This author checkpoint does not clear full P2,
+canonical bridging, parent retry scheduling, P3–P5, activation, or independent gates.
