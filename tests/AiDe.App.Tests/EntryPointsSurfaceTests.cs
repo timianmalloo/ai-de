@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Input;
 using AiDe.App.Workbench;
 using AiDe.Core.Projections;
 
@@ -41,14 +42,25 @@ public sealed class EntryPointsSurfaceTests
             try
             {
                 surface.Show(new EntryPointsResult(
-                    [new EntryPointRow(EntryPointKind.Unclassified, "Api.Orders", "Api.Orders", "classifier-not-admitted")],
+                    [new EntryPointRow(EntryPointKind.Api, "Orders.OrdersController", "Orders.OrdersController", null)],
                     0,
                     [],
                     "rev-1"));
                 Assert.False(surface.OpenSequenceEnabled);
                 Assert.Contains("mapping-unavailable", AutomationProperties.GetName(
                     FindSequence(surface)), StringComparison.Ordinal);
-                Assert.Contains("Api.Orders", VisibleText(surface), StringComparison.Ordinal);
+                Assert.Contains("Orders.OrdersController", VisibleText(surface), StringComparison.Ordinal);
+
+                surface.ListSelectFirst();
+                EntryPointsActivate? seen = null;
+                surface.ActivateRequested += (_, a) => seen = a;
+                surface.HandleKey(Key.Return, ModifierKeys.None);
+                Assert.NotNull(seen);
+                Assert.Equal("Orders.OrdersController", seen!.NodeId);
+                Assert.Equal(NodeViewKind.GraphNeighbourhood, seen.Kind);
+                surface.HandleKey(Key.Return, ModifierKeys.Control);
+                Assert.Equal(NodeViewKind.Source, seen.Kind);
+                Assert.False(surface.OpenSequenceEnabled);
             }
             finally
             {

@@ -34,6 +34,41 @@ public sealed class EntryPointsSurface : ContentControl
         _body.Children.Add(_list);
         Content = _body;
         AutomationProperties.SetName(this, Title);
+        _list.MouseDoubleClick += (_, _) => Activate(source: false);
+        _list.PreviewKeyDown += (_, e) =>
+        {
+            if (e.Key is Key.Return or Key.Enter)
+            {
+                HandleKey(e.Key, Keyboard.Modifiers);
+                e.Handled = true;
+            }
+        };
+    }
+
+    /// <summary>Enter = graph neighbourhood; Ctrl+Enter = View source. Sequence is not this path.</summary>
+    internal void HandleKey(Key key, ModifierKeys modifiers)
+    {
+        if (key is not (Key.Return or Key.Enter))
+        {
+            return;
+        }
+
+        Activate(source: (modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+    }
+
+    private void Activate(bool source)
+    {
+        if (_list.SelectedItem is not EntryPointListItem item
+            || string.IsNullOrEmpty(item.Row.NodeId))
+        {
+            return;
+        }
+
+        ActivateRequested?.Invoke(
+            this,
+            new EntryPointsActivate(
+                item.Row.NodeId,
+                source ? NodeViewKind.Source : NodeViewKind.GraphNeighbourhood));
     }
 
     public string Title { get; }
@@ -42,6 +77,8 @@ public sealed class EntryPointsSurface : ContentControl
 
     public event EventHandler? RetryRequested;
 
+    public event EventHandler<EntryPointsActivate>? ActivateRequested;
+
     public void Show(EntryPointsResult result)
     {
         ArgumentNullException.ThrowIfNull(result);
@@ -49,12 +86,16 @@ public sealed class EntryPointsSurface : ContentControl
         _list.Items.Clear();
         foreach (var row in result.Rows)
         {
-            _list.Items.Add($"{row.Kind}: {row.Display}");
+            _list.Items.Add(new EntryPointListItem(row));
         }
 
+        var api = result.Rows.Count(r => r.Kind == EntryPointKind.Api);
+        var ux = result.Rows.Count(r => r.Kind == EntryPointKind.Ux);
+        var cli = result.Rows.Count(r => r.Kind == EntryPointKind.Cli);
+        var unc = result.Rows.Count(r => r.Kind == EntryPointKind.Unclassified);
         _chrome.Text = result.OmittedByCap > 0
             ? string.Join(" · ", result.Disclosures)
-            : $"{result.Rows.Count} entry-point candidates (unclassified until classifier)";
+            : $"{api} api · {ux} ux · {cli} cli · {unc} unclassified";
         _openSequence.IsEnabled = false;
     }
 
@@ -78,4 +119,19 @@ public sealed class EntryPointsSurface : ContentControl
     }
 
     internal bool OpenSequenceEnabled => _openSequence.IsEnabled;
+
+    internal void ListSelectFirst()
+    {
+        if (_list.Items.Count > 0)
+        {
+            _list.SelectedIndex = 0;
+        }
+    }
+
+    internal sealed record EntryPointListItem(EntryPointRow Row)
+    {
+        public override string ToString() => $"{Row.Kind}: {Row.Display}";
+    }
 }
+
+public sealed record EntryPointsActivate(string NodeId, NodeViewKind Kind);

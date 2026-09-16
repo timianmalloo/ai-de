@@ -2144,6 +2144,8 @@ public sealed class WorkbenchShell : IDisposable
         {
             pane.RetryRequested -= OnEntryPointsRetryRequested;
             pane.RetryRequested += OnEntryPointsRetryRequested;
+            pane.ActivateRequested -= OnEntryPointsActivateRequested;
+            pane.ActivateRequested += OnEntryPointsActivateRequested;
         }
 
         if (_queries is null)
@@ -2163,6 +2165,33 @@ public sealed class WorkbenchShell : IDisposable
         }
 
         _ = PopulateEntryPointsAsync(toLoad);
+    }
+
+    private void OnEntryPointsActivateRequested(object? sender, EntryPointsActivate request)
+    {
+        if (string.IsNullOrEmpty(request.NodeId))
+        {
+            return;
+        }
+
+        switch (request.Kind)
+        {
+            case NodeViewKind.Source:
+            case NodeViewKind.Read:
+                _lastSelectedNodeId = request.NodeId;
+                Announcer.Announce(OpenKind(Architecture, "codeviewer", false));
+                _ = ShowNodeInCodeViewersAsync(request.NodeId, OpenCodeViewers());
+                break;
+            case NodeViewKind.GraphNeighbourhood:
+                Announcer.Announce(OpenKind(Architecture, "canvas", showExisting: true));
+                var canvas = OpenCanvas();
+                if (canvas is not null)
+                {
+                    _ = CentreOnAsync(canvas, request.NodeId, request.NodeId);
+                }
+
+                break;
+        }
     }
 
     private async void OnEntryPointsRetryRequested(object? sender, EventArgs e)
