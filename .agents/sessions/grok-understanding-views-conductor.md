@@ -5,6 +5,6 @@
 - Worktree: C:\Projects\ai-de-understanding-views-d1
 - Branch: understanding-views-d1
 - Status: D-1 admitted; handshake proposed, not frozen
-- Updated: 2026-09-16T18:35Z
-- Doing: Mapper claimed by Grok (Owner). r4 NOTICE SENT blob a8c05bc7. Listing spec draft 2aaf304b. Open Sequence still dark.
-- Waiting on: Codex ACK of r4 to freeze mapper. Listing architecture can proceed. No GUI.
+- Updated: 2026-09-16T18:50Z
+- Doing: Polled r4 — Codex ACK DROPPED. Re-asked with copy-paste contract. Listing query architecture draft. Sequence still dark.
+- Waiting on: ledger line to us: CONSUMER ACK AS WRITTEN: r4 blob a8c05bc77451b0438ebea24eaad9b15db6c99601
