@@ -562,3 +562,33 @@ receipts. No renewed product approval is needed. This is not full-P2 approval:
 canonical bridge, re-drive/late-parent scheduling, rollback/deployment, remaining
 capacity/fault/instrumentation qualification and full-phase join are still open.
 P1 `535b` is reference-only and unmerged; P3–P5 and upstream work remain later.
+
+### P2.4 test-only recovery RED checkpoint — 2026-09-16
+
+Native runtime evidence now exists for the missing R5 recovery behavior. The
+canonical `docs/proof/cross-harness-coordination-proof-pack.md` P2.4 section links
+the exact source/test/project/binary hashes and `docs/proofs/p24-recovery-evidence/`
+TRX/JSON receipts. No production/schema change or new API accompanies it.
+
+The five new `CoordinationRecoveryTests` cases execute through the actual writer,
+native capture/pump and SQLite store. Late same-repository parent recovery is RED:
+parent 301 commits, child remains pending at original admission 3. Capacity is
+RED: 1,025 pending children remain after twenty pumps, with the later parent
+visible and 323,572 retained payload bytes. Parent-first, wrong-repository-parent
+and permanently-missing-parent/observation-only lifecycle controls PASS.
+The unchanged prior native/root selection remains **304/304 PASS**. Combined:
+**309 executed, 307 passed, 2 intentional semantic failures**, no skips.
+
+The four-stage execution graph is trace → tests → runtime evidence → record and
+checkpoint (all data edges, width one; zero new agents). Finite item/turn loops
+end at zero. Twenty post-parent turns cover 1,025 children at a proposed future
+64-attempt turn without claiming such a scheduler exists today. The 16-MiB byte
+comparison passed only for this small-payload sample; byte-limit enforcement and
+future active/backlog fields are not proven.
+
+**Unshippable RED checkpoint; no join.** All P0–P5 approvals remain in force.
+R5/R6 implementation, canonical bridge, 401 feed, retry-eight, actual old-binary
+rollback/migration and independent final gates remain pending. Next is the
+approved recovery implementation against these counterexamples, not a request
+for fresh permission. Derived-index and central defect-register integration
+remain with the conductor; this author only edits the assigned evidence surfaces.

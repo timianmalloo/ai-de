@@ -20,6 +20,152 @@ summary: >-
 
 # Proof Pack — dormant P1 candidate; independent code gate pending
 
+## P2.4 recovery counterexamples — 2026-09-16
+
+**Intentionally RED, unshippable checkpoint. No join or full-P2 clearance.**
+The only C# change is `tests/AiDe.Core.Tests/Watcher/CoordinationRecoveryTests.cs`.
+Production source, schema, dependencies, configuration, hooks and P1 remain unchanged.
+This implements the requested evidence slice, not recovery itself. All P0–P5
+approvals stand; this record requests no new product permission.
+
+### Goal, graph and scope
+
+- **Goal:** establish missing recovery against the current native runtime.
+- **Done when:** actual semantic RED and passing controls are durable, pinned and
+  distinguishable from missing APIs, compilation errors or imagined schema columns.
+- **Not in scope:** production repair, migration, canonical bridge, activation,
+  retry scheduler, 401 feed, GUI, live data/endpoints, upstream work or join.
+- **Tier:** T2, evidence-only. **Fan-out:** zero. **Main-line budget:** 28 calls.
+  The existing assigned worktree/session was reopened, not replaced.
+- **Graph:** source/fixture trace → test authoring → runtime proof → documentation,
+  audit and checkpoint. Each edge carries data. Source/test design requires
+  reasoning; execution and capture are deterministic mechanics. There is no new
+  independent-review node: this checkpoint does not clear an implementation gate.
+  Four stages, width one, no additional agents. In normalized stage units,
+  `T1=T∞=4`, so parallel speedup is one; this is **Inferred**, not timing.
+- **Execution bounds:** the small recovery case receives four post-parent pumps
+  plus two replay pumps after successful recovery. Capacity receives twenty turns
+  after the parent arrives: enough for 1,025 children at a proposed 64 attempts per
+  turn. Each loop decrements a finite turn/item count to zero. These are test
+  observation windows, not a claimed production recovery scheduler or latency SLO.
+
+### Source-grounded surface trace
+
+Real `CoordContractWriter` → separate native session JSONL files →
+`CoordinationSourceCapture` → `CoordContractLogPump.PumpOnce` →
+`SqliteWatcherObservationStore.ProjectCoordination` → immutable initial/transition
+feed receipts and current event cache → real `board_message_fact`/board reader.
+No schema/production write path was added. No UI or endpoint was exercised.
+Graph output was absent, so grounding used the assigned source and the existing
+phase plan's P2 pending-parent/capacity gates directly.
+
+`CoordinationProjection.cs` admits pending once, then its existing-record branch
+returns the prior result before `ApplyObservation`. `CoordinationContractLog.cs`
+pumps captured pages but does not re-drive pending application. The late-parent
+fixture distinguishes this from an invalid parent: the same serial parent-first
+path succeeds, whereas child-first remains pending after a committed same-repo
+parent appears. `original_id` is the external **session**, not a native event ID.
+The test identifies the child's non-registration record by source offset and
+retains its actual first receipt number.
+
+The native allocator is supplied through real `MessageBoardService`; its first
+message is deterministic `"301"`. Separate `a-child.jsonl` and `b-parent.jsonl`
+files exercise supported cross-session parents. The wrong-repository control
+uses a distinct real fixture directory, with the normal repository locator.
+No fabricated effect, inserted parent row or mock store substitutes for the pump.
+
+### Executed results and oracles
+
+Evidence directory: `docs/proofs/p24-recovery-evidence/`.
+All five tests are in `AiDe.Core.Tests.Watcher.CoordinationRecoveryTests`.
+
+| Test suffix | Observed result and oracle | Confidence / limits |
+|---|---|---|
+| `Pump_LateSameRepositoryParent_AppliesChildOnceWithOriginalAdmission` | **RED:** `Late parent committed, but child remains pending at admission 3.` Readback: original admission 3, pending 1, board messages 1. Empty board before parent and parent ID 301 after arrival both passed. | **Verified counterexample.** Applied child, fresh transition `n`, exactly one applied receipt and stable replay assertions are deliberately after the failing assertion and remain **unverified**. |
+| `Pump_ParentAlreadyCommitted_AppliesCrossSessionChildOnce` | **PASS:** parent 301, exactly one child reply, two board messages, zero pending, exactly one applied child receipt after three pumps. | **Verified control.** Serial arrival is not late-parent recovery. |
+| `Pump_ParentInAnotherRepository_NeverSatisfiesPendingChild` | **PASS:** foreign parent 301 exists, child admission unchanged, payload retained pending, zero applied child transitions after four pumps. | **Verified bounded negative control**, not proof across an infinite time horizon. |
+| `Pump_PermanentlyMissingParent_RetainsPayloadWithoutBoardOrLifecycleAuthority` | **PASS:** five pumps leave missing-parent reply and episode-open pending with complete payloads, no board message, one `TRUSTED_LIFECYCLE_REQUIRED` receipt and no non-registration applied receipt. | **Verified observation-only control.** It does not exercise a harness run-permission API or a live turn. |
+| `Pump_PendingLimitPlusOne_AccountsForParentWithoutExceedingActiveBoundsOrLosingChildren` | **RED:** `Active pending count 1025 exceeds 1024; retained bytes=323572.` Parent was visible after twenty pumps, all 1,025 obligations remained represented, and retained bytes were below 16 MiB. | **Verified count-bound counterexample.** This small-payload sample does **not** prove enforcement at the 16-MiB boundary. Eventual application of all children remains unverified after the count assertion fails. |
+
+`p24-recovery-red.trx`: **5 executed, 3 passed, 2 failed, 0 skipped**;
+logical `dotnet test` exit **1**. Compilation completed and both failures are the
+named semantic assertions above; neither is an argument/API/schema error.
+
+`p24-prior-304-green.trx`: **304 executed, 304 passed, 0 failed/skipped**;
+logical exit **0**. Its exact method selector was derived from the existing
+`p23-root-alias-full-union-green.trx`, not reconstructed from a guessed class list.
+This preserves the prior native R1/R2/root controls without editing them.
+Combined observed selection: **309 cases, 307 passed, 2 intentional failures**.
+This is not a claim that the full repository suite ran.
+
+`receipt.json` records the original production HEAD, both logical exits, TRX
+counters, exact test outcomes/stdout and SHA-256 values. TRX timings and pump
+diagnostics are measurements; no production timing or throughput claim is made.
+Commands used the existing `net10.0` project and installed packages, first
+building the new tests with `--no-restore`, then reusing the same binary with
+`--no-build --no-restore` for the prior 304 cases.
+
+### Capacity fixture fidelity and limits
+
+The first capacity child is serialized by `CoordContractWriter`. The remaining
+1,024 synthetic consumer records copy that actual JSON shape, change only `seq`
+and content, and append once before capture. This avoids repeatedly rescanning
+the growing log in the producer. It is **consumer** evidence, not 1,025 producer
+admission tests. The real capture splits at 128 records per page and the real
+pump traverses all pages. SQL reads only existing cache/feed columns; no
+proposed retry/backoff/active-queue columns or new API were asserted.
+
+No redundant standalone fairness test was added: the actual runtime currently
+re-drives none of these pending children, and the capacity case already crosses
+64. Active pending count is the measured current `application_state='pending'`
+population; a future separate active/backlog model will require a separately
+reviewed representation and corresponding observable-state oracle.
+
+### Reproducibility pins (SHA-256)
+
+Production source HEAD: `821f40e1d8fe90067deeb611c78d54f9dc7bf2d3`.
+
+| File | SHA-256 |
+|---|---|
+| `src/AiDe.Core/Watcher/CoordinationProjection.cs` | `16CE12EAAD11A3D675F357EF33E3D35D1DBEF5D3A744B24BAAE147BF19892A64` |
+| `src/AiDe.Core/Watcher/CoordinationContractLog.cs` | `DDAA9154591F4B7FF1D2D87BB843E5FFF4493E0D934ADF49C180FE30A808FEE7` |
+| `src/AiDe.Core/Watcher/CoordinationSourceCapture.cs` | `CA2600BC46D7B0735E94E9ADC69FC24E2B3F66A222617507114CA1E8A3F1E899` |
+| `tests/AiDe.Core.Tests/Watcher/CoordinationRecoveryTests.cs` | `8314C36705B7511F0ADE9D065DAE48B2EDE378A1FAD7F619EEB4BF8D757422A6` |
+| `tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj` | `FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D` |
+| `src/AiDe.Core/AiDe.Core.csproj` | `B63C41B97201DC3E1016B72B404A32411AC31E477231B281219DDA64D0AD584A` |
+| `tests/AiDe.Core.Tests/bin/Debug/net10.0/AiDe.Core.Tests.dll` | `5C3C40434F59FA3E30921A9AE44BB35862A7A3BA8084C5B3A9FB9FA6DEA56709` |
+| `tests/AiDe.Core.Tests/bin/Debug/net10.0/AiDe.Core.dll` | `97D00203214391C49B86280CACA5DEE249BD613A3697A4C01413DBA7100E2585` |
+
+### Class, sweep, derive, prevent
+
+**Class:** replay deduplication freezes a deferred obligation by treating prior
+admission as completed application. **Sweep:** the existing-record return
+precedes application for every native kind; board-parent, registration-required
+and trusted-lifecycle cases all retain the pending initial receipt. Lifecycle
+work must not be made authoritative by blindly replaying it. **Derive:** retain
+the existing immutable admission and append a distinct application transition;
+the approved recovery implementation is still pending. **Prevent:** the new
+late-parent test and limit-plus-one test are observed failing against current
+production source. They detect the missing behavior, not a repaired implementation.
+Central defect-register integration belongs to the conductor and is not edited
+outside this author's assigned file scope.
+
+One authoring correction was caught before compilation: the writer helper was
+initially guessed as `FileName`, then checked against source and corrected to
+`FileNameFor`. It is not counted as runtime RED. This is the existing RIG-A
+unchecked-own-API class; source signature inspection and successful compilation
+control this occurrence.
+
+Test-shape union: D0 determinism/isolation; D4 real SQLite/filesystem; D6
+actual writer-derived synthetic payload; bounded replay/idempotency assertions.
+No new boundary substitute, dependencies, probabilistic model calls or UI exists.
+No mutation run or independent implementation clearance is claimed.
+The capacity counterexample and two semantic failures are the RED floor, not
+evidence of a finished feature. P2 canonical bridge, 401 feed, retry-eight,
+full migration/old-binary rollback, deployment and independent final gates remain
+pending. No fresh approval is requested. Keep this worktree for recovery repair;
+do not join or ship the checkpoint.
+
 ## P2.3 R3 source-root spelling correction — 2026-09-16
 
 **Narrow author correction; independent code re-gate remains pending.** The supplied

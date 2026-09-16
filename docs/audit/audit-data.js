@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T21:40:31Z",
+  "generated": "2026-09-16T22:03:03Z",
   "audit": [
     {
       "actor": null,
@@ -20566,6 +20566,37 @@ window.AUDIT_DATA = {
         "branch": "feature/xh-p2-projection",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2P3XAX32WKBD9HV1B6ZX25Q",
+      "shortname": "p24-recovery-red-checkpoint",
+      "datetime": "2026-09-16T22:03:03Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "WRITE-CAPABLE C# TEST-ONLY author <=28tools150k noagents. OwnregisteredC:\\Projects\\ai-de-feature-xh-p2-projection HEAD821f40e1d8fe90067deeb611c78d54f9dc7bf2d3 sessionxh-p2-projection-b0d0 endedreopen. DataREADONLYpeerparallel nofileclaims. Parentmax3. Testonlynewtests/AiDe.Core.Tests/Watcher/CoordinationRecoveryTests.cs +existingcanonicaldocs/proof/cross-harness-coordination-proof-pack.md/phaseplan+owndaudit namedTRXdocs/proofs/p24-recovery-evidence. NOproductioncode/schema! AllP0–P5approved nofreshpermission. Envsession/name/utf8 eachshell, exactTTL300editclaimsreleasebeforetests; apply_patch noheredoc/outputredirect/pipedgates/config/hooks/deps/main/push/force/amend/GUI/App/slots/liveDB/endpoints/upstreamresearch/peerfeaturework.\nNeed actualCURRENTnativepump C#/Sqlite runtimeRED for newlysource-verified missingrecovery notmissingAPIassertions. ExistingnativeR1R2/rootgate304PASS sourcecurrent. SourceCoordinationProjection.cs ProjectRecordreturnsprioradmission pendingneverApplyObservationagain; pumpnoneRecover. DSsourcefixturecounterexamplelateparentchildpending→parentlatercommits→replayneverapplieschild. TestproducerrealCoordContractWriter +actualstore/pump tempfiles, same-repo crosssession separatefiles (supportedexistingreply301 fixture), parentmessageIDknown deterministicIDallocator ascurrenttests. Requiredsmalloraclelateparent: firstchildpendingwithoutfalseboardeffect, thenparentarrives, boundedpumps exactchildmessage appliedONCEnewtransitionn retainsoriginaladmission; currentexpectedRED. SerialexistingparentcontrolPASS. Wrong-repo parentNEVERsatisfies; pending retainednotaccepted; permanentmissingparentnorunpermissioncontrol. Do notinventnativeeventID original_id meanssession; readactualfixture.\nSecondary semanticRED fairness>64 ifcurrentnoRecover allpendingalreadydemonstrates but no duplicationredundanttests. Capacitylarge1025latechildren cap+1scenario fullactualcontractproposed1024active16MiB, currentboundedcaptures128recordsperpage ensureenoughboundedpumps; writerpreparesunboundedFile.ReadLinesseqO(n2)mayexceedbudget. Prefer datasetcurrentlog writerone bulkfixture fromactualserializedwriterpattern acceptableforPENDINGconsumerfloor butdon'tclaimproduceradmissiontested. Limit+1explicitverifyactivebytes/state stats viaSQLactualcachetables currentno newfields; assertcurrentSUMraw+canonical retained<=16MiB andactive pendingcount<=1024 after1025boundedvalidpendingrecords; expectedRED retains1025. Ensureparentlaterrecordaccountedvisibleevenoverflow sofuturedesiredtestexpectsparentfoundw/infiniteboundedpages andnoobligationloss. IfthisrequiresnewAPI/currentfieldnone reportAPIpending notmissing-columnREDassemanticproof. Need notimplementfixture capacityconfig inprod. No tests forunknownfuturecontrolsonlycurrentmeasurablestate.\nDSalsoProduceroversizeRecord64KiB/nativewriteracceptsbeyondcapturebound andEmittermembershipprefailedwrite, these separateunit scopeNOTyours now. P2canonicalbridge/401feed/retry8/fullmigrationoldbinary remainspending. Keepall304prior testshealthyexceptnewtestsintentionalRED; commitREDcheckpoint explicitlyunshippable andnojoin. Nameexactfailassertionstate/count/noargs errors. No giantproofsourcecopies; finalsource/test/project/binSHA+TRXnames/testcounts logicalexit. ReadC#testingguidancebeforetests andfreshactualsourceownedtraceonlynohistoryrosters. CommitCopilottrailer cleanclaimsreleasedended<=1000wordsexactcommitcurrentRED/PASS names truths andlimits. No newdesigngatefor userproofpathcorrected don'tmovebackplural. User scopecontext syntheticlist vsnewmapper handledP1alreadyPASS nofeatureedits.",
+      "summary": "P2.4 test-only unshippable RED checkpoint: five cases execute, late-parent and 1025-pending count semantic RED; three controls PASS; prior 304/304 PASS. Original admission=3; activePending=1025; retainedBytes=323572; parent visible after 20 turns. Four sequential stages, zero agents; exact TRX/exits/source-test-project-bin SHA receipt. No production/schema changes, no join/push. Central register and derived integration remain conductor-owned. Initial large read outputs were truncated; bounded source rereads recovered grounding. FileName helper typo corrected to source-verified FileNameFor before compiling; not counted as runtime RED.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/Watcher/CoordinationRecoveryTests.cs",
+        "docs/proof/cross-harness-coordination-proof-pack.md",
+        "docs/plans/cross-harness-coordination-phases.md",
+        "docs/proofs/p24-recovery-evidence/receipt.json",
+        "docs/proofs/p24-recovery-evidence/p24-recovery-red.trx",
+        "docs/proofs/p24-recovery-evidence/p24-prior-304-green.trx"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Commit source-grounded native recovery counterexamples without production changes",
+      "done_when": "Two actual semantic RED cases, passing controls, unchanged prior 304 cases and exact persistent evidence committed as unshippable",
+      "tier": "T2",
+      "main_calls": 28,
+      "main_budget": 28,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-16T21:57:06Z",
+      "duration_seconds": 357.0
     }
   ],
   "changes": [

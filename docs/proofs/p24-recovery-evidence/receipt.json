@@ -1,0 +1,73 @@
+{
+  "sourceHead": "821f40e1d8fe90067deeb611c78d54f9dc7bf2d3",
+  "recoveryExit": 1,
+  "baselineExit": 0,
+  "recoveryCounters": "<Counters total=\"5\" executed=\"5\" passed=\"3\" failed=\"2\" error=\"0\" timeout=\"0\" aborted=\"0\" inconclusive=\"0\" passedButRunAborted=\"0\" notRunnable=\"0\" notExecuted=\"0\" disconnected=\"0\" warning=\"0\" completed=\"0\" inProgress=\"0\" pending=\"0\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />",
+  "baselineCounters": "<Counters total=\"304\" executed=\"304\" passed=\"304\" failed=\"0\" error=\"0\" timeout=\"0\" aborted=\"0\" inconclusive=\"0\" passedButRunAborted=\"0\" notRunnable=\"0\" notExecuted=\"0\" disconnected=\"0\" warning=\"0\" completed=\"0\" inProgress=\"0\" pending=\"0\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />",
+  "hashes": [
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationProjection.cs",
+      "sha256": "16CE12EAAD11A3D675F357EF33E3D35D1DBEF5D3A744B24BAAE147BF19892A64"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationContractLog.cs",
+      "sha256": "DDAA9154591F4B7FF1D2D87BB843E5FFF4493E0D934ADF49C180FE30A808FEE7"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationSourceCapture.cs",
+      "sha256": "CA2600BC46D7B0735E94E9ADC69FC24E2B3F66A222617507114CA1E8A3F1E899"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationRecoveryTests.cs",
+      "sha256": "8314C36705B7511F0ADE9D065DAE48B2EDE378A1FAD7F619EEB4BF8D757422A6"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "sha256": "FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D"
+    },
+    {
+      "path": "src\\AiDe.Core\\AiDe.Core.csproj",
+      "sha256": "B63C41B97201DC3E1016B72B404A32411AC31E477231B281219DDA64D0AD584A"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll",
+      "sha256": "5C3C40434F59FA3E30921A9AE44BB35862A7A3BA8084C5B3A9FB9FA6DEA56709"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.dll",
+      "sha256": "97D00203214391C49B86280CACA5DEE249BD613A3697A4C01413DBA7100E2585"
+    }
+  ],
+  "tests": [
+    {
+      "name": "AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PendingLimitPlusOne_AccountsForParentWithoutExceedingActiveBoundsOrLosingChildren",
+      "outcome": "Failed",
+      "error": "Active pending count 1025 exceeds 1024; retained bytes=323572.",
+      "stdout": "children=1025; activePending=1025; retainedBytes=323572; parentVisible=true; turns=20"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ParentAlreadyCommitted_AppliesCrossSessionChildOnce",
+      "outcome": "Passed",
+      "error": "",
+      "stdout": ""
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PermanentlyMissingParent_RetainsPayloadWithoutBoardOrLifecycleAuthority",
+      "outcome": "Passed",
+      "error": "",
+      "stdout": ""
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_LateSameRepositoryParent_AppliesChildOnceWithOriginalAdmission",
+      "outcome": "Failed",
+      "error": "Late parent committed, but child remains pending at admission 3.",
+      "stdout": "originalAdmission=3; pending=1; boardMessages=1"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ParentInAnotherRepository_NeverSatisfiesPendingChild",
+      "outcome": "Passed",
+      "error": "",
+      "stdout": ""
+    }
+  ]
+}
