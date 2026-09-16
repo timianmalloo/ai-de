@@ -36,6 +36,7 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
         Assert.Single(records);
         AssertEvent(records[0], "register", Subject);
         Assert.Equal("synthetic-project", records[0].GetProperty("attrs").GetProperty(OtelAttributes.RepoDisplay).GetString());
+        Assert.Equal(0, liveAfterFailure);
         Assert.Equal(1, emitter.LiveCount);
     }
 
@@ -64,7 +65,141 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
         AssertEvent(records[0], "register", Subject);
         AssertEvent(records[1], "session-end", Subject);
         Assert.Equal(registration, File.ReadAllBytes(files.Log(Subject))[..registration.Length]);
+        Assert.Equal(1, liveAfterFailure);
         Assert.Equal(0, emitter.LiveCount);
+    }
+
+    [Fact]
+    public async Task Register_PausedInsideWriter_IndependentSessionCompletes()
+    {
+        using var time = new PausedTime();
+        using var files = new ProducerDirectory(time);
+        var emitter = new SessionCoordinationEmitter(files.Writer);
+        const string other = "synthetic-independent";
+        Task? independent = null;
+
+        await WhileWritePaused(time, () => emitter.Register(Subject, Identity()), async () =>
+        {
+            independent = Task.Run(() =>
+            {
+                emitter.Register(other, Identity());
+                emitter.Heartbeat(other);
+                emitter.End(other);
+            });
+            await independent.WaitAsync(WaitBound);
+            Assert.Equal(new[] { "register", "heartbeat", "session-end" }, Kinds(files, other));
+            Assert.False(File.Exists(files.Log(Subject)));
+        }, () => independent);
+
+        Assert.Equal(new[] { "register" }, Kinds(files, Subject));
+        Assert.Equal(1, emitter.LiveCount);
+        Assert.Equal(0, GateCount(emitter));
+    }
+
+    [Fact]
+    public async Task Register_PausedAppend_ConcurrentDuplicateRegistersOnce()
+    {
+        using var time = new PausedTime();
+        using var files = new ProducerDirectory(time);
+        var emitter = new SessionCoordinationEmitter(files.Writer);
+        Task? duplicate = null;
+
+        await WhileWritePaused(time, () => emitter.Register(Subject, Identity()), () =>
+        {
+            duplicate = Task.Run(() => emitter.Register(Subject, Identity()));
+            WaitForContender(emitter, duplicate);
+            Assert.Equal(0, emitter.LiveCount);
+            return Task.CompletedTask;
+        }, () => duplicate);
+
+        Assert.Equal(new[] { "register" }, Kinds(files, Subject));
+        Assert.Equal(1, emitter.LiveCount);
+        Assert.Equal(0, GateCount(emitter));
+    }
+
+    [Fact]
+    public async Task Register_PausedAppend_EndWaitsForDurableRegistration()
+    {
+        using var time = new PausedTime();
+        using var files = new ProducerDirectory(time);
+        var emitter = new SessionCoordinationEmitter(files.Writer);
+        Task? end = null;
+
+        await WhileWritePaused(time, () => emitter.Register(Subject, Identity()), () =>
+        {
+            end = Task.Run(() => emitter.End(Subject));
+            WaitForContender(emitter, end);
+            return Task.CompletedTask;
+        }, () => end);
+
+        Assert.Equal(new[] { "register", "session-end" }, Kinds(files, Subject));
+        Assert.Equal(0, emitter.LiveCount);
+        Assert.Equal(0, GateCount(emitter));
+    }
+
+    [Fact]
+    public async Task HeartbeatAll_PausedAppend_ConcurrentEndCannotPrecedeHeartbeat()
+    {
+        using var time = new PausedTime();
+        using var files = new ProducerDirectory(time);
+        var emitter = new SessionCoordinationEmitter(files.Writer);
+        emitter.Register(Subject, Identity());
+        Task? end = null;
+
+        await WhileWritePaused(time, emitter.HeartbeatAll, () =>
+        {
+            end = Task.Run(() => emitter.End(Subject));
+            WaitForContender(emitter, end);
+            return Task.CompletedTask;
+        }, () => end);
+        emitter.HeartbeatAll();
+        emitter.Heartbeat(Subject);
+        emitter.End(Subject);
+
+        Assert.Equal(new[] { "register", "heartbeat", "session-end" }, Kinds(files, Subject));
+        Assert.Equal(0, emitter.LiveCount);
+        Assert.Equal(0, GateCount(emitter));
+    }
+
+    [Fact]
+    public async Task HeartbeatAll_StaleSnapshot_DoesNotHeartbeatEndedSession()
+    {
+        using var time = new PausedTime();
+        using var files = new ProducerDirectory(time);
+        var emitter = new SessionCoordinationEmitter(files.Writer);
+        emitter.Register(Subject, Identity());
+        emitter.Register("synthetic-second", Identity());
+        // Read the actual snapshot order, not an assumed HashSet enumeration contract.
+        var live = (IEnumerable<string>)PrivateField(emitter, "_live")!;
+        var ended = live.Last();
+        Task? end = null;
+
+        await WhileWritePaused(time, emitter.HeartbeatAll, async () =>
+        {
+            end = Task.Run(() => emitter.End(ended));
+            await end.WaitAsync(WaitBound);
+            Assert.Equal(new[] { "register", "session-end" }, Kinds(files, ended));
+        }, () => end);
+
+        Assert.Equal(new[] { "register", "session-end" }, Kinds(files, ended));
+        Assert.Equal(1, emitter.LiveCount);
+        Assert.Equal(0, GateCount(emitter));
+    }
+
+    [Fact]
+    public void Register_RepeatedFailedFirstRegistrations_ReclaimsEverySessionGate()
+    {
+        using var files = new ProducerDirectory();
+        var emitter = new SessionCoordinationEmitter(files.Writer);
+        for (var index = 0; index < 32; index++)
+        {
+            var session = $"synthetic-denied-{index}";
+            using var denied = files.DenyAppend(session);
+            Assert.IsAssignableFrom<IOException>(
+                Record.Exception(() => emitter.Register(session, Identity())));
+            Assert.Equal(0, emitter.LiveCount);
+            Assert.Equal(0, GateCount(emitter));
+        }
     }
 
     [Fact]
@@ -225,10 +360,10 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
 
         public CoordContractWriter Writer { get; }
 
-        public ProducerDirectory()
+        public ProducerDirectory(TimeProvider? time = null)
         {
             Directory.CreateDirectory(Root);
-            Writer = new CoordContractWriter(Root, new EpochTime());
+            Writer = new CoordContractWriter(Root, time ?? new EpochTime());
         }
 
         public string Log(string session) => Path.Combine(Root, session + ".jsonl");
@@ -254,5 +389,83 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
     private sealed class EpochTime : TimeProvider
     {
         public override DateTimeOffset GetUtcNow() => DateTimeOffset.UnixEpoch;
+    }
+
+    private static readonly TimeSpan WaitBound = TimeSpan.FromSeconds(10);
+
+    private static string[] Kinds(ProducerDirectory files, string session) =>
+        files.Read(session).Select(record => record.GetProperty("kind").GetString()!).ToArray();
+
+    private static object? PrivateField(object instance, string name) =>
+        instance.GetType().GetField(name,
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)?.GetValue(instance);
+
+    private static int GateCount(SessionCoordinationEmitter emitter)
+    {
+        lock (PrivateField(emitter, "_gate")!)
+        {
+            var gates = Assert.IsAssignableFrom<System.Collections.IDictionary>(
+                PrivateField(emitter, "_sessionGates"));
+            return gates.Count;
+        }
+    }
+
+    private static void WaitForContender(SessionCoordinationEmitter emitter, Task contender)
+    {
+        Assert.True(SpinWait.SpinUntil(() =>
+        {
+            lock (PrivateField(emitter, "_gate")!)
+            {
+                var gates = PrivateField(emitter, "_sessionGates") as System.Collections.IDictionary;
+                var gate = gates?[Subject];
+                var references = gate?.GetType().GetField("References")?.GetValue(gate) as int?;
+                return contender.IsCompleted || references >= 2;
+            }
+        }, WaitBound), "Contender neither finished nor acquired a gate reference.");
+    }
+
+    private static async Task WhileWritePaused(
+        PausedTime time, Action write, Func<Task> concurrent, Func<Task?> contender)
+    {
+        time.Arm();
+        var writing = Task.Run(write);
+        try
+        {
+            Assert.True(time.Entered.Wait(WaitBound), "Real writer did not enter its time seam.");
+            await concurrent();
+        }
+        finally
+        {
+            time.Release.Set();
+            await Task.WhenAll(writing, contender() ?? Task.CompletedTask).WaitAsync(WaitBound);
+        }
+    }
+
+    private sealed class PausedTime : TimeProvider, IDisposable
+    {
+        private int _armed;
+        public ManualResetEventSlim Entered { get; } = new();
+        public ManualResetEventSlim Release { get; } = new();
+
+        public void Arm() => Interlocked.Exchange(ref _armed, 1);
+
+        public override DateTimeOffset GetUtcNow()
+        {
+            if (1 == Interlocked.Exchange(ref _armed, 0))
+            {
+                Entered.Set();
+                if (!Release.Wait(WaitBound))
+                {
+                    throw new TimeoutException("Test writer seam was not released.");
+                }
+            }
+            return DateTimeOffset.UnixEpoch;
+        }
+
+        public void Dispose()
+        {
+            Entered.Dispose();
+            Release.Dispose();
+        }
     }
 }

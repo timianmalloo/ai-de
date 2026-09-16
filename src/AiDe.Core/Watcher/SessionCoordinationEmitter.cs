@@ -66,6 +66,7 @@ public sealed class SessionCoordinationEmitter(CoordContractWriter writer)
     private readonly CoordContractWriter _writer = writer ?? throw new ArgumentNullException(nameof(writer));
     private readonly HashSet<string> _live = new(StringComparer.Ordinal);
     private readonly object _gate = new();
+    private readonly Dictionary<string, SessionGate> _sessionGates = new(StringComparer.Ordinal);
 
     /// <summary>The number of sessions currently registered and not yet ended.</summary>
     public int LiveCount
@@ -78,30 +79,29 @@ public sealed class SessionCoordinationEmitter(CoordContractWriter writer)
     {
         ArgumentException.ThrowIfNullOrEmpty(externalSessionId);
         ArgumentNullException.ThrowIfNull(identity);
-        lock (_gate)
+        ForSession(externalSessionId, () =>
         {
-            if (!_live.Add(externalSessionId))
+            if (IsLive(externalSessionId))
             {
                 return; // already registered - the register event is idempotent, but do not re-write it
             }
-        }
 
-        _writer.WriteRegister(externalSessionId, identity.ToAttributes());
+            _writer.WriteRegister(externalSessionId, identity.ToAttributes());
+            lock (_gate) { _live.Add(externalSessionId); }
+        });
     }
 
     /// <summary>Writes a heartbeat for one registered session; a no-op for an unknown/ended session.</summary>
     public void Heartbeat(string externalSessionId)
     {
         ArgumentException.ThrowIfNullOrEmpty(externalSessionId);
-        lock (_gate)
+        ForSession(externalSessionId, () =>
         {
-            if (!_live.Contains(externalSessionId))
+            if (IsLive(externalSessionId))
             {
-                return;
+                _writer.WriteHeartbeat(externalSessionId);
             }
-        }
-
-        _writer.WriteHeartbeat(externalSessionId);
+        });
     }
 
     /// <summary>Heartbeats every live session - the shell calls this on its refresh tick.</summary>
@@ -115,7 +115,7 @@ public sealed class SessionCoordinationEmitter(CoordContractWriter writer)
 
         foreach (var id in ids)
         {
-            _writer.WriteHeartbeat(id);
+            Heartbeat(id);
         }
     }
 
@@ -123,15 +123,57 @@ public sealed class SessionCoordinationEmitter(CoordContractWriter writer)
     public void End(string externalSessionId)
     {
         ArgumentException.ThrowIfNullOrEmpty(externalSessionId);
-        lock (_gate)
+        ForSession(externalSessionId, () =>
         {
-            if (!_live.Remove(externalSessionId))
+            if (!IsLive(externalSessionId))
             {
                 return;
             }
+
+            _writer.WriteSessionEnd(externalSessionId);
+            lock (_gate) { _live.Remove(externalSessionId); }
+        });
+    }
+
+    private bool IsLive(string session)
+    {
+        lock (_gate) { return _live.Contains(session); }
+    }
+
+    private void ForSession(string session, Action operation)
+    {
+        SessionGate gate;
+        lock (_gate)
+        {
+            if (!_sessionGates.TryGetValue(session, out gate!))
+            {
+                gate = new SessionGate();
+                _sessionGates.Add(session, gate);
+            }
+            gate.References++;
         }
 
-        _writer.WriteSessionEnd(externalSessionId);
+        // Count waiters before releasing the lookup lock, so a gate cannot be replaced beneath them.
+        // Never wait or perform I/O under the emitter-wide membership lock.
+        try
+        {
+            lock (gate) { operation(); }
+        }
+        finally
+        {
+            lock (_gate)
+            {
+                if (0 == --gate.References)
+                {
+                    _sessionGates.Remove(session);
+                }
+            }
+        }
+    }
+
+    private sealed class SessionGate
+    {
+        public int References;
     }
 
     /// <summary>
