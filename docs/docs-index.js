@@ -5540,6 +5540,46 @@ window.DOCS_INDEX = {
       "sourceSha256": "af85cdadb1ef2c942a16aed8c5cacb2fdb770d63d32d423bbfee35934d662f3e"
     },
     {
+      "id": "note-d1-codex-entry-point-handshake-r2",
+      "path": "docs/notes/d1-codex-entry-point-handshake-r2.md",
+      "title": "D-1 ↔ Codex handshake r2 — answers to five-gates questions; still not frozen",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Producer answers to Codex five-gates questions against blob 661c92a3. Withdraws node_id→InteractionAsync as the E1 contract. Freeze still requires Codex ACK of this revision. No DTOs invented. No shared implementation.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "entry-points",
+        "atlas-e1",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake",
+          "rel": "supersedes"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-admission",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3e860fbf0e6932ec762c4cf6910fd9f05e23415c9033b98228febc8544cfba3b"
+    },
+    {
       "id": "note-dc-115-evidence-in-a-lanes-own-checkout",
       "path": "docs/notes/dc-115-evidence-in-a-lanes-own-checkout.md",
       "title": "DC-115 — verifying a lane's evidence in the checkout it committed it in",
@@ -20595,5 +20635,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "323f7db2b3e3e5c22e8b9d3b87b07e79d3e07caedbe1be28c6c32dd9a452d96f"
+  "graphSha256": "be8479a608796b23364e277624c7370d67eca72e92e862a823e6d49ae12bdb12"
 };
