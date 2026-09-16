@@ -13,14 +13,81 @@ links:
   - { to: proof-cross-harness-coordination, rel: tested-by }
 review-by: 2026-10-16
 summary: >-
-  Preserves every approved P0–P5 repair floor while executing only the P0 document receipt.
-  Names dependency gates, finite phase stops, rollback obligations, independent review
-  and the next P1 handoff; future work is not represented as completed.
+  Preserves every approved P0–P5 repair floor and records the dormant P1 four-finding
+  repair with independent re-review pending. Names remaining implementation gates,
+  finite stops, rollback and the deferred upstream handoff.
 ---
 
 # Durable phase graph
 
-## Current checkpoint — dormant P1 candidate
+## Current checkpoint — dormant P1 four-finding repair
+
+The Python author repaired independent F1–F4 on
+`ec85de0be8713bbd20d2b2035df2c4c5bf4c8126` in the same officially reopened
+`xh-p1-responses-b0d0` worktree/session. The linked Proof Pack is the record of
+source/test SHA-256 pins, actual CLI receipts, meaningful RED and killed-mutant results.
+**Independent re-review is pending; full P1 and every runtime activation remain uncleared.**
+
+| Milestone | Current implementation / next required evidence |
+|---|---|
+| M0 / P0 | Limited PASS at `62af66ca` admits dormant P1 code only; not authority/runtime approval |
+| M1 / P1 | F1 typed legacy conflict, F2 reserved-envelope refusal, F3 explicit collaboration CLI failure and F4 five independent correlation controls repaired. 27 tests GREEN; RED 21 subtest failures/0 errors; correlation mutant killed by 10 subtest failures. Next: independent re-review, then acceptance, consumption, proposal supersession/full immutable reference and authority verification, cross-language vectors, and unchanged mixed-client contention/complete-record/conflict qualification |
+| M2 / P2 | Pending real SQLite service/store tests, source effect + receipt/checkpoint transaction, pagination, pending/retry bounds, crash/rebuild and additive migration/rollback; Data/DS coapprove before code |
+| M3 / P3 | Pending installed-version/vendor spikes against real supported endpoints; each arrival/consumption/post-turn-wake positive cell remains BLOCKED until actual evidence, not fakes |
+| M4 / P4 | Pending qualified launcher actor/generation/worktree/candidate/run binding, PID/creation/parent provenance, single-use admission and real bounded launcher proof |
+| M5 / P5 | Pending same-corpus queue/board/MCP/UI conformance, hard-state accessibility and measured cross-surface SLIs; targets are not measurements |
+
+### Finite repair graph and cost ledger
+
+| Node | Capability | Input → exit condition | Dependency |
+|---|---|---|---|
+| R1 | Reasoning | Assigned tree, actual code and governing spec/design → contracts and official session reopened | None |
+| R2 | Deterministic mechanics | Four findings → new tests observed failing against unchanged `ec85de0b` | R1 decision |
+| R3 | Reasoning | Final RED → smallest source repair; no new runtime capability | R2 data |
+| R4 | Deterministic mechanics | Fixed source → GREEN, actual CLI and pinned old-client rollback, guard-False mutant killed, pristine discovery GREEN | R3 data |
+| R5 | Deterministic mechanics | Receipts → proof/plan/audit committed; edit claims released; session ended | R4 data |
+| G1 | Independent review | Exact author commit → reviewer dispositions, not author approval | R5 data |
+
+```mermaid
+flowchart LR
+  R1[Inspect and reopen] --> R2[Final RED]
+  R2 --> R3[Four-findings repair]
+  R3 --> R4[GREEN and killed mutant]
+  R4 --> R5[Evidence and clean commit]
+  R5 --> G1[Independent re-review pending]
+```
+
+No nested agents; global conductor cap remains three. Per-author budget **35 tool calls**,
+context ceiling **150k**. Shared source/test resources keep edits serial. Before/after
+normalized work/span are **6/6 nodes, inferred**, width one, speedup ceiling one;
+independent review stays outside author completion. No measured speedup claim.
+Variant: unaddressed findings `{F1,F2,F3,F4}` → empty after R4; floor zero.
+A budget firing stops with explicit evidence gaps, never silently clears a gate.
+One fixture-only rework isolated append subcases before final RED. Several oversized
+initial read outputs required narrowed reads; these were investigation overhead, not
+extra product scope. Runtime tokens were not recorded. The audit start marker was set
+at 17:54:38Z, after early reads/session reopen; its duration is not full-turn elapsed time.
+The official closing audit records calls consumed through that append against the declared
+budget; final lifecycle verification is reported separately if another call is needed.
+
+### Deferred reusable-versus-product inventory — remaining design only
+
+Actual-human approval covers P0–P5. No repeated phase permissions are requested.
+The subsequent upstream AI-Forward push is an explicit user request **dependent on
+verified P0–P5**, to be performed later from its own worktree. It is not authorized
+work in this repair. No upstream repository was discovered, inspected or modified.
+
+| Candidate boundary | Later disposition |
+|---|---|
+| Shared protocol, portable envelope validation, canonical fold, CLI contracts and synthetic compatibility controls | Keep project-neutral where demonstrated reuse exists; inventory for upstream only after P0–P5 verification |
+| AI-DE watcher-store/SQLite integration, WPF projections and composition-root adapters | Keep product-specific and separate from shared contracts |
+| Generic layers without a proven second use | Do not introduce speculative abstractions |
+| Private/session/customer data, real transcripts, credentials or endpoint state | Exclude from any upstream handoff; use scrubbed synthetic contract fixtures |
+
+Final programme handoff must name verified reusable artifacts, product adapter boundaries,
+remaining gaps and evidence before the separately requested upstream push.
+
+## Prior checkpoint — original dormant P1 candidate (historical)
 
 The P0-only account below is historical. Supplied conductor Test/DS P0-delta gate passed
 **for dormant P1 only**, with F1 resolved; it does not clear authority/runtime floors.

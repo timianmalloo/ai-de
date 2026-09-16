@@ -393,7 +393,7 @@ def append_record(path, record):
     Enhanced admission is deliberately unavailable, even with a synthetic verifier.
     No cooperative mutex can qualify coexistence with the unchanged unlocked writer.
     """
-    if record.get("kind") == "coordination-v1" or "schemaVersion" in record:
+    if _is_enhanced_record(record):
         raise CoordError("XH.ENHANCED_DISABLED", "enhanced append is not qualified")
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     payload = json.dumps(record, sort_keys=True) + "\n"
@@ -414,6 +414,12 @@ def append_record(path, record):
 
 def request_log_path(root):
     return Path(root) / REQUESTS_FILE
+
+
+def _is_enhanced_record(event: dict) -> bool:
+    kind = event.get("kind")
+    return "schemaVersion" in event or (
+        isinstance(kind, str) and kind.startswith("coordination-v"))
 
 
 def _unique_object(pairs: list) -> dict:
@@ -500,7 +506,7 @@ def _request_event(event: object, seen: dict) -> dict:
         raise ValueError("XH.INVALID_TIMESTAMP")
     if "id" in event and not isinstance(event["id"], str):
         raise ValueError("XH.INVALID_ID")
-    if event.get("kind") == "coordination-v1":
+    if _is_enhanced_record(event):
         canonical = validate_response(event)
         key = (event["repositoryId"], event["streamId"], event["eventId"])
         if key in seen and seen[key] != canonical:
@@ -537,14 +543,16 @@ def fold_requests(events, *, enhanced=False, generations=None):
     requests, resolutions, replies, seen = {}, {}, {}, {}
     for event in events:
         _request_event(event, seen)
-        if event.get("kind") == "coordination-v1":
+        if _is_enhanced_record(event):
             replies.setdefault((event["repositoryId"], event["streamId"], event["eventId"]), event)
             continue
         rid = event.get("id")
         if not rid:
             continue
         if event.get("kind") == "request-add":
-            if rid in requests and requests[rid] != event:
+            if rid in requests and (
+                    json.dumps(requests[rid], sort_keys=True, allow_nan=False) !=
+                    json.dumps(event, sort_keys=True, allow_nan=False)):
                 raise CoordError("XH.EVENT_CONFLICT", "legacy request ID has unequal adds")
             requests.setdefault(rid, dict(event))
         elif event.get("kind") == "request-resolve":
@@ -1913,10 +1921,25 @@ def cmd_session_list(root, now, as_json=False):
 def cmd_collaborate(root, repo, action, now, as_json=False):
     if action not in ("check", "summary"):
         return 2
+    started = time.monotonic()
+    request_events, request_errors = read_request_events(root)
+    try:
+        if request_errors:
+            raise CoordError("COORD-REQUEST-NOT-CHECKED", "request ledger contains invalid records")
+        requests = fold_requests(request_events)
+    except (CoordError, ValueError) as exc:
+        code = getattr(exc, "code", "COORD-REQUEST-NOT-CHECKED")
+        payload = {"status": "not-checked", "code": code,
+                   "request_errors": request_errors or [code],
+                   "duration_seconds": time.monotonic() - started}
+        if as_json:
+            print(json.dumps(payload, indent=2, sort_keys=True))
+        else:
+            print("{}  {}".format(code, _safe("; ".join(payload["request_errors"][:2]), 200)),
+                  file=sys.stderr)
+        return 4
     sessions, errors, files = active_sessions(root, now)
     findings = collaboration_findings(root, repo, now, snapshot=(sessions, errors, files))
-    request_events, request_errors = read_request_events(root)
-    requests = fold_requests(request_events)
     open_requests = [r for r in requests if r.get("status") == "open"]
     payload = {"files_scanned": files, "active_sessions": sessions, "findings": findings,
                "contract": SESSION_CONTRACT, "contract_exists": session_contract_path(repo).is_file()}

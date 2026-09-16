@@ -1,6 +1,6 @@
 ---
 id: proof-cross-harness-coordination
-title: "Cross-harness coordination: P0 confidence ledger and pending oracles"
+title: "Cross-harness coordination: dormant P1 repair evidence and pending runtime gates"
 type: proof-pack
 status: draft
 owner: "@timianmalloo"
@@ -13,14 +13,171 @@ links:
   - { to: investigation-cross-harness-message-delivery, rel: depends-on }
 review-by: 2026-10-16
 summary: >-
-  Single confidence ledger for the P0 draft, preserving unexecuted runtime and authority
-  gates as pending or blocked. Pins fresh source evidence and defines falsifiable
-  phase-specific tests without presenting old investigation results as new passes.
+  Records dormant P1 four-finding repair RED/GREEN, actual CLI and killed-correlation-mutant
+  evidence with immutable source/test pins. Preserves historical P0 receipts and explicitly
+  pending independent re-review, runtime, authority and later-phase gates.
 ---
 
 # Proof Pack — dormant P1 candidate; independent code gate pending
 
-## Current receipt — 2026-09-16, Python author
+## Current receipt — four-finding repair, 2026-09-16, Python peer author
+
+**Outcome: F1–F4 repaired and regression-tested in the dormant P1 candidate;
+independent re-review pending. Full P1 and runtime activation are not cleared.**
+The author reopened official session `xh-p1-responses-b0d0` in the existing
+`C:\Projects\ai-de-feature-xh-p1-responses` tree, branch `feature/xh-p1-responses`.
+Repair baseline is `ec85de0be8713bbd20d2b2035df2c4c5bf4c8126`.
+The limited P0 gate at `62af66ca98ef0fed810b6b07d59f79f2b227176a` remains
+**dormant-code-only**. This record does not promote it to full P1 approval.
+
+### Exact scope, surfaces and implementation
+
+The finite worklist was the independent review's four findings, not a new investigation.
+Inputs remain original JSONL occurrences; derived folds are not another stored status.
+Surfaces reached: synthetic raw ledger → official `read_request_events` →
+`_request_event`/`validate_response` → `fold_requests`/`_fold_responses` →
+official subprocess `collaborate summary|check`, JSON and text modes.
+The existing actionable by-ID CLI and real pinned old-worktree rollback test also ran.
+No database, WPF, launcher or endpoint adapter was changed.
+
+* **F1:** duplicate legacy adds compare sorted JSON serialization instead of Python
+  dictionary equality. Nested booleans, integers and floats retain distinct serialization;
+  object-property ordering remains immaterial and array order remains significant.
+  Neither input dictionaries nor original raw history are rewritten.
+* **F2:** `_is_enhanced_record` is the shared append/reader/fold discriminator:
+  a `schemaVersion` key, regardless of its value, or a string `kind` beginning
+  `coordination-v` reserves an envelope for strict validation. Missing, changed,
+  unsupported or malformed discriminators on that path refuse `XH.SCHEMA_INVALID`;
+  the disabled append path refuses `XH.ENHANCED_DISABLED` before filesystem effects.
+  Genuinely markerless legacy extensions remain tolerant. An `eventType` alone is
+  not an enhanced marker: reserving every extension name would break that tolerance.
+* **F3:** invalid request-ledger records or fold conflicts terminate both collaboration
+  commands with logical exit **4**. JSON emits `status: not-checked`, stable `code`,
+  `request_errors`, and measured `duration_seconds`; it emits no partial `requests`,
+  `findings` or `active_sessions` claimed as checked. Text mode emits the refusal on
+  stderr, not an uncaught traceback or `check: OK`. Valid-path output is unchanged.
+* **F4:** production correlation logic was already rejecting mismatches. Its missing
+  control now independently changes repository, stream, thread, obligation and causation,
+  in both event orders. Each retained original reply has `XH.CORRELATION_MISMATCH`,
+  unanswered/remaining true, latest disposition/next null, and acceptance/execution false.
+
+### Executed receipts and immutable source pins
+
+All rows below are **Verified by execution**. Counts distinguish selected test methods
+from failing subtests. Raw receipts are local, reproducible files under `.agents`;
+this committed table preserves their results even when those local files are absent.
+The five run-output files are removed during final cleanup rather than committed as
+additional authored files. Every per-test fixture was torn down after its run.
+
+| Run / tool receipt | Source | Selected tests | Failing subtests / errors | Logical exit | Measured elapsed |
+|---|---|---:|---:|---:|---:|
+| Unchanged candidate baseline, shell 683, `.agents\xh-p1-repair-baseline.txt` | `ec85de0b` | 19 | 0 / 0 | 0 | 0.781 s |
+| Final RED, shell 687, `.agents\xh-p1-four-findings-red-final.txt` | unchanged `ec85de0b`, new tests | 27 | 21 / 0 | 1 | 1.220 s |
+| GREEN, shell 689, `.agents\xh-p1-four-findings-green.txt` | fixed source | 27 | 0 / 0 | 0 | 1.287 s |
+| Guard-False mutant, shell 691, `.agents\xh-p1-four-findings-mutant.txt` | fixed source; function mutated in memory only | 27 | 10 / 0 | 1 | 1.218 s |
+| Pristine discovery after mutant, shell 692 | fixed on-disk source | 27 | 0 / 0 | 0 | 1.225 s |
+
+`git diff --check` also returned 0 in shell 692. The eight new methods and their
+oracles are listed below. Existing 19 methods were retained.
+
+| Control (`ResponseTests` method) | Claim and falsifying oracle | RED evidence / remaining limit |
+|---|---|---|
+| `test_Fold_NestedJsonTypes_ConflictingAddsRefusedInEitherOrder` | F1: nested `true/1`, `false/0`, `1/1.0`, each in both orders, must raise `XH.EVENT_CONFLICT`; raw bytes and parsed inputs unchanged | 6 failing subtests on `ec85de0b`; GREEN. Does not qualify cross-language canonicalization |
+| `test_Fold_ReorderedObjectProperties_AreLegitimateDuplicates` | Object key permutations plus resolve yield exactly one resolved row; original raw file unchanged | Positive preservation control, six permutations; passes before/after, not separately claimed RED |
+| `test_ReadAndFold_ReservedMarkers_ExplicitSchemaRefusal` | F2: 13 malformed/unsupported discriminator cases reject at reader and direct fold; raw file unchanged | 6 failing subtests on `ec85de0b`; other cases already rejected. GREEN reaches both direct fold modes for every case |
+| `test_ReadAndFold_UnversionedLegacyExtensions_StayTolerant` | Markerless unknown fields/types and extension payload survive; ordinary request stays open | Positive preservation control; passes before/after, not separately claimed RED |
+| `test_Append_ReservedMarkers_RejectBeforeFilesystemEffects` | Every reserved marker refuses, with no parent directory/file created | 1 failing subtest on `ec85de0b`; GREEN. No live enhanced append performed |
+| `test_Cli_CollaborateConflictingAdds_ExplicitFailureWithoutPartialState` | F3: two actions × JSON/text, stable exit 4 and no traceback/partial checked state | 4 failures: old CLI exit 1 with traceback instead of structured refusal; GREEN through real subprocess |
+| `test_Cli_CollaborateUnsupportedEnvelope_ExplicitFailureWithoutPartialState` | F2/F3: unsupported envelope must not disappear into a successful partial summary/check | 4 failures on `ec85de0b`; GREEN through real subprocess |
+| `test_Fold_EachCorrelationMismatch_RetainsReplyWithoutAnswering` | F4: all five context dimensions, each independently changed in two event orders | Original guard passes; guard-False mutation yields exactly 10 failing subtests, zero errors |
+
+The earlier pre-P1 run's **22 failures + 22 errors** is historical evidence, not the RED
+oracle for these new assertions. In particular, its 17 unsupported-enhanced-API errors
+cannot establish any new semantic assertion. This repair's final RED has **zero errors**.
+An initial repair-test run (shell 685: 24 failures) included three cascading fixture
+failures: a first failing append created the directory shared by subsequent subtests.
+Each case now owns a distinct `absent-<index>` path. That test-only correction preceded
+the final RED and is not counted as three product defects.
+
+| Pin | Value |
+|---|---|
+| Supplied pre-P1 parent source Git blob, verified via `ec85de0b^:<path>` | `b2ed495fcf4b6332ddf517aee17144173ac5b96b` |
+| Actual repair-baseline source Git blob, verified via `ec85de0b:<path>` | `be4767487c8af98ed9b1468ab8dfb48c5daa9f44` |
+| Repair-baseline source SHA-256, executed bytes | `0f16846da8664a3e39bc1eef42d143d04e1f71405210977034be701897bc937b` |
+| Fixed source Git blob | `ee3981c854c857884d2af324d7cc0d1de1efdad4` |
+| Fixed source SHA-256, executed and Git/LF bytes | `67b6db01231a1f695a1b1e35390530f76681b714996bcc574f1e3b0e91475c77` |
+| Final tests Git blob | `e7fdcc8c55fe97611f5a2a1891f09567c9ee5051` |
+| Final tests SHA-256, executed Windows bytes in RED/GREEN/mutant | `beba2b5e54683ee3e167d990bb971ac42973294cab85f871c3cdf0fd9d481360` |
+| Final tests SHA-256, normalized Git/LF bytes | `705ffb2237a60e777899747593c8278f6e71ca4c1540a447528a4bc1d61b7f36` |
+| Unmodified compatibility client commit / source SHA-256 | `94ec9036dd0b72aa5b759badcf21a9e3aba6659b` / `f73185a306f7a5b63184cd0cc759569030d29bf7115ad8bd30adf6c19f8bdacf` |
+
+Source path: `docs/ai-forward-pack/scripts/coord-core.py`; tests path:
+`docs/ai-forward-pack/scripts/tests/test_coord_responses.py`.
+The LF and executed test hashes differ only by checkout line endings; neither is
+presented as the other. The compatibility method
+`test_Cli_PinnedUnenrolledLegacy_ActualLinkedTreeAndRollback` executes the unmodified
+client's actual add→resolve→list from an unenrolled linked tree, compares IDs/payloads
+with the upgraded reader, then replaces upgraded files with pinned originals and repeats.
+It does **not** prove mixed-client contention, complete-record atomicity or live authority.
+
+Reproduce the candidate and discovery receipts with the existing official test entry:
+
+```powershell
+python docs\ai-forward-pack\scripts\tests\test_coord_responses.py --receipt .agents\xh-p1-four-findings-green.txt
+python -m unittest discover -s docs\ai-forward-pack\scripts\tests -p test_coord_responses.py -v
+```
+
+The mutation run imported that same test module and real official helper, parsed only
+`_fold_responses` with stdlib `ast`, selected the **single** `if` whose test contains
+all five correlation field names (asserting exactly one match), replaced its test with
+`ast.Constant(False)`, compiled the function back into the isolated imported module,
+and ran all 27 methods. No production file was edited. All 10 failures belonged to
+`test_Fold_EachCorrelationMismatch_RetainsReplyWithoutAnswering`: each field listed
+above failed in both `[request-add, coordination-v1]` and reverse order. This is an
+observed killed mutant, not a mutation-score claim or a claim about subprocess mutation.
+
+### Class → sweep → derive → prevent; gate and remaining work
+
+| Class | Bounded sweep / derivation | Control |
+|---|---|---|
+| Host-language equality erases wire types | Legacy duplicate comparison, enhanced canonical bytes and resolution tie-breaking inspected; enhanced bytes already preserve JSON types | F1 nested-type permutation test; use sorted JSON rather than dict equality |
+| Marker detection differs across admission and reading | Append, `_request_event` and fold all inspected and moved to one predicate | F2 reserved-marker reader/fold/append matrix; tolerant legacy positive |
+| A throwing fold escapes a CLI status boundary | Both collaborate actions/modes inspected and exercised; request-list already catches fold conflicts | F3 actual subprocess tests and explicit not-checked output. Request-resolve's separate pre-existing conflict path is outside this four-finding repair and not qualified here |
+| Composite guard lacks independent negative cases | Five correlation operands and both event orders enumerated; positive correlated response remains covered | F4 10-case killed guard-False mutant |
+| A failing subtest contaminates later filesystem cases | New append cases swept; shared absent directory replaced by per-case path | Final RED count excludes three cascading fixture failures |
+| A lower-level helper has a different root contract from its CLI | Initial audit append used repository root, but the official helper takes the docs root; status read-back found only this run's two untracked entries | Shell 703 asserts the resolved canonical path, exact two owned IDs, original byte-prefix preservation and appended event equality; then removes only the stray files |
+
+These controls and the bounded class sweep are recorded here because the author does
+not own the lessons register or site surfaces; conductor owns any register incorporation.
+D0/D1/D2/D4/D5-provider/D6 apply to this change. No dependency or API installation was
+needed. Failure telemetry was read back from real CLI JSON: stable refusal and measured
+duration are emitted by the ordinary failure path, not a debug switch.
+
+**GATE F1–F4 repair · 2026-09-16 · Python peer author · author evidence complete;
+independent Security/Test/DS re-review PENDING · no author self-clearance.**
+No enhanced writer, send, grant, transfer or launcher was activated.
+Remaining: P1 acceptance/consumption/proposal-supersession/full authority and proposal
+verification, cross-language digest vectors and unchanged mixed-client qualification;
+P2 real SQLite atomicity/migration/rebuild; P3 pinned real endpoint spikes and
+arrival/consumption/wake receipts; P4 qualified launcher provenance; P5 cross-surface
+conformance and measured SLIs. User approval for all phases remains; this repair
+does not request it again. Deferred upstream reuse is recorded in the phase plan only.
+
+Finalization uses the existing audit module's `next_id`, `consume_start`,
+`duration_fields` and `append_log` helpers. Its `cmd_append` unconditionally renders
+derived pages; using the append-only helpers honors the conductor's explicit prohibition
+on derived/site writes. No audit implementation is changed. `AIDE_CONTRACT_LOG` was
+absent, so no episode-close capture could be emitted; no evidence path was invented.
+The worktree is retained for independent review and integration, not removed while
+it carries the only unmerged repair commit.
+Official graph audit `al-01M2NPCVC7N695D3BN42ZWZJVF` and repair audit
+`al-01M2NPCVC8FYZM78P6ZFGM61G6` are in the canonical `docs/audit/audit-log.jsonl`.
+The corrected repair append consumed the original 17:54:38Z start marker and records
+**792.0 measured seconds**, excluding the earlier reads as stated in the phase plan.
+The audit reports **29/35 calls through its corrected append**; later claim release,
+commit and final state verification are lifecycle calls, not unrecorded product work.
+
+## Prior receipt — 2026-09-16, original dormant P1 author (historical)
 
 The P0 account below is historical. This section supersedes its pending-P0 status, not
 its unperformed runtime gates. Supplied conductor gate, not authored self-clearance:

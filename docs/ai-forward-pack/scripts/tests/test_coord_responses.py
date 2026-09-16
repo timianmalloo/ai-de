@@ -99,6 +99,168 @@ class ResponseTests(unittest.TestCase):
             with self.subTest(events=events):
                 self.assertEqual("resolved", coord.fold_requests(events)[0]["status"])
 
+    def test_Fold_NestedJsonTypes_ConflictingAddsRefusedInEitherOrder(self) -> None:
+        for first, second in ((True, 1), (False, 0), (1, 1.0)):
+            q = question()
+            q["extension"] = {"nested": [{"value": first}]}
+            other = copy.deepcopy(q)
+            other["extension"]["nested"][0]["value"] = second
+            for events in itertools.permutations([q, other]):
+                with self.subTest(types=(type(first).__name__, type(second).__name__),
+                                  order=json.dumps(events)):
+                    self.write_events(events)
+                    original = (self.root / "requests.jsonl").read_bytes()
+                    parsed, errors = coord.read_request_events(self.root)
+                    self.assertEqual([], errors)
+                    with self.assertRaises(coord.CoordError) as raised:
+                        coord.fold_requests(parsed)
+                    self.assertEqual("XH.EVENT_CONFLICT", raised.exception.code)
+                    self.assertEqual(original, (self.root / "requests.jsonl").read_bytes())
+                    self.assertEqual(json.dumps(events), json.dumps(parsed))
+
+    def test_Fold_ReorderedObjectProperties_AreLegitimateDuplicates(self) -> None:
+        q = question()
+        q["extension"] = {"nested": [{"first": True, "second": 1, "third": 1.0}]}
+        other = dict(reversed(list(copy.deepcopy(q).items())))
+        other["extension"]["nested"][0] = {"third": 1.0, "second": 1, "first": True}
+        resolved = {"kind": "request-resolve", "id": "q", "at": 2, "resolution": "done"}
+        for events in itertools.permutations([q, other, resolved]):
+            with self.subTest(order=json.dumps(events)):
+                original = json.dumps(events)
+                self.write_events(events)
+                raw = (self.root / "requests.jsonl").read_bytes()
+                parsed, errors = coord.read_request_events(self.root)
+                self.assertEqual([], errors)
+                rows = coord.fold_requests(parsed)
+                self.assertEqual(1, len(rows))
+                self.assertEqual("resolved", rows[0]["status"])
+                self.assertEqual(q["extension"], rows[0]["extension"])
+                self.assertEqual(original, json.dumps(events))
+                self.assertEqual(raw, (self.root / "requests.jsonl").read_bytes())
+
+    def test_ReadAndFold_ReservedMarkers_ExplicitSchemaRefusal(self) -> None:
+        cases = [response(kind="coordination-v2", schemaVersion=2),
+                 response(kind="request-add"), response(kind=None), response(kind=[]),
+                 response(schemaVersion=None), response(schemaVersion=True),
+                 response(schemaVersion="1"), response(schemaVersion=1.0),
+                 response(eventType="future-event")]
+        for field in ("kind", "schemaVersion", "eventType"):
+            event = response()
+            del event[field]
+            cases.append(event)
+        future = response(kind="coordination-v2")
+        del future["schemaVersion"]
+        cases.append(future)
+        for event in cases:
+            with self.subTest(envelope=event):
+                self.write_events([question(), event])
+                raw = (self.root / "requests.jsonl").read_bytes()
+                events, errors = coord.read_request_events(self.root)
+                self.assertEqual([question()], events)
+                self.assertEqual(1, len(errors))
+                self.assertIn("XH.SCHEMA_INVALID", errors[0])
+                for enhanced in (False, True):
+                    with self.assertRaises(coord.CoordError) as raised:
+                        coord.fold_requests([question(), event], enhanced=enhanced)
+                    self.assertEqual("XH.SCHEMA_INVALID", raised.exception.code)
+                self.assertEqual(raw, (self.root / "requests.jsonl").read_bytes())
+
+    def test_ReadAndFold_UnversionedLegacyExtensions_StayTolerant(self) -> None:
+        q = question()
+        q.update(eventType="response-recorded", extension={"nested": [True, 1, 1.0]})
+        unknown = {"kind": "legacy-extension", "eventType": "future-event", "payload": []}
+        self.write_events([q, unknown])
+        raw = (self.root / "requests.jsonl").read_bytes()
+        events, errors = coord.read_request_events(self.root)
+        self.assertEqual([q, unknown], events)
+        self.assertEqual([], errors)
+        rows = coord.fold_requests(events)
+        self.assertEqual([dict(q, status="open")], rows)
+        self.assertEqual(raw, (self.root / "requests.jsonl").read_bytes())
+
+    def test_Append_ReservedMarkers_RejectBeforeFilesystemEffects(self) -> None:
+        for index, event in enumerate((
+                {"kind": "coordination-v2"}, {"schemaVersion": None},
+                {"kind": "request-add", "schemaVersion": 2}, {"kind": "coordination-v1"})):
+            with self.subTest(event=event):
+                parent = self.root / ("absent-" + str(index))
+                with self.assertRaises(coord.CoordError) as raised:
+                    coord.append_record(parent / "requests.jsonl", event)
+                self.assertEqual("XH.ENHANCED_DISABLED", raised.exception.code)
+                self.assertFalse(parent.exists())
+
+    def test_Fold_EachCorrelationMismatch_RetainsReplyWithoutAnswering(self) -> None:
+        for field in ("repositoryId", "streamId", "threadId", "obligationId", "causationId"):
+            r = response(**{field: "unrelated"})
+            for events in itertools.permutations([question(), r]):
+                with self.subTest(field=field, order=[e["kind"] for e in events]):
+                    original = json.dumps(events)
+                    row = self.enhanced(events)[0]
+                    self.assertEqual([r], row["responses"])
+                    self.assertEqual([{"eventId": "r", "code": "XH.CORRELATION_MISMATCH"}],
+                                     row["response_errors"])
+                    self.assertTrue(row["unanswered"])
+                    self.assertTrue(row["remaining"])
+                    self.assertFalse(row["accepted"])
+                    self.assertFalse(row["execution_eligible"])
+                    self.assertIsNone(row["latest_disposition"])
+                    self.assertIsNone(row["next"])
+                    self.assertEqual(original, json.dumps(events))
+
+    def collaborate(self, action: str, as_json: bool) -> subprocess.CompletedProcess:
+        env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+        env.update(COORD_ROOT=str(self.root), AGENT_SESSION="synthetic-reader",
+                   AGENT_NAME="synthetic", PYTHONIOENCODING="utf-8")
+        return subprocess.run(
+            [sys.executable, str(SCRIPTS / "coord-core.py"), "collaborate", action]
+            + (["--json"] if as_json else []),
+            cwd=self.root, env=env, capture_output=True, text=True, encoding="utf-8", timeout=30)
+
+    def test_Cli_CollaborateConflictingAdds_ExplicitFailureWithoutPartialState(self) -> None:
+        other = question()
+        other["contract"] = "different"
+        self.write_events([question(), other])
+        raw = (self.root / "requests.jsonl").read_bytes()
+        for action, as_json in itertools.product(("summary", "check"), (True, False)):
+            with self.subTest(action=action, as_json=as_json):
+                proc = self.collaborate(action, as_json)
+                self.assertEqual(4, proc.returncode, proc.stdout + proc.stderr)
+                self.assertNotIn("Traceback", proc.stderr)
+                self.assertNotIn("check: OK", proc.stdout)
+                if as_json:
+                    payload = json.loads(proc.stdout)
+                    self.assertEqual("not-checked", payload["status"])
+                    self.assertEqual("XH.EVENT_CONFLICT", payload["code"])
+                    self.assertEqual(["XH.EVENT_CONFLICT"], payload["request_errors"])
+                    self.assertGreaterEqual(payload["duration_seconds"], 0)
+                    self.assertTrue({"requests", "findings", "active_sessions"}.isdisjoint(payload))
+                else:
+                    self.assertEqual("", proc.stdout)
+                    self.assertIn("XH.EVENT_CONFLICT", proc.stderr)
+                self.assertEqual(raw, (self.root / "requests.jsonl").read_bytes())
+
+    def test_Cli_CollaborateUnsupportedEnvelope_ExplicitFailureWithoutPartialState(self) -> None:
+        self.write_events([question(), response(kind="coordination-v2", schemaVersion=2)])
+        raw = (self.root / "requests.jsonl").read_bytes()
+        for action, as_json in itertools.product(("summary", "check"), (True, False)):
+            with self.subTest(action=action, as_json=as_json):
+                proc = self.collaborate(action, as_json)
+                self.assertEqual(4, proc.returncode, proc.stdout + proc.stderr)
+                self.assertNotIn("Traceback", proc.stderr)
+                self.assertNotIn("check: OK", proc.stdout)
+                if as_json:
+                    payload = json.loads(proc.stdout)
+                    self.assertEqual("not-checked", payload["status"])
+                    self.assertEqual("COORD-REQUEST-NOT-CHECKED", payload["code"])
+                    self.assertEqual(1, len(payload["request_errors"]))
+                    self.assertIn("XH.SCHEMA_INVALID", payload["request_errors"][0])
+                    self.assertGreaterEqual(payload["duration_seconds"], 0)
+                    self.assertTrue({"requests", "findings", "active_sessions"}.isdisjoint(payload))
+                else:
+                    self.assertEqual("", proc.stdout)
+                    self.assertIn("XH.SCHEMA_INVALID", proc.stderr)
+                self.assertEqual(raw, (self.root / "requests.jsonl").read_bytes())
+
     def test_Read_MalformedObjects_ReportsInsteadOfSorting(self) -> None:
         for raw in ('null\n', '[]\n', '1\n', '{"kind":"request-add","id":[]}\n',
                     '{"kind":"request-add","id":"q","at":{}}\n',
