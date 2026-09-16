@@ -234,3 +234,19 @@ pair -> independent interpretation remain. This refines the already planned node
 no renewed whole-programme optimize-graph run or new scope is needed. No shown
 execution/main publication/source join occurred. P1-03 BLOCK remains; future
 scaffolding disposition returns to Owner. Root retained all worktrees/raw evidence.
+
+## Owner correction: preparation admission is already sufficient
+
+The Owner checked b52c890d and expressly confirmed that its recorded admission,
+conditioned on independent CLEAR, authorizes the exact branch-local proof script,
+normal builds, manifests and harmless subprocess controls. CLEAR1d46d651 meets
+that condition. Authority derives from the user-delegated programme and exact
+Owner decision, not an absent ownership entry or watcher silence. The Conductor's
+extra watcher-preparation approval gate was an erroneous transcription and is
+withdrawn. This paragraph supersedes the earlier "grant must be read" condition.
+Request req-01M2NYTSRKJZ22SS0KR0PBKAS6 preserves its original history and is resolved
+by the Conductor as a preparation-status notice; no watcher approval is fabricated.
+Exact paths,18/25minute author and8/15minute reviewer budgets, isolation and leases
+remain. No shown arms/product/test/shared-runner/canonical/main action is admitted.
+Independent runner review and a fresh checked watcher EXECUTION slot still gate
+every experimental arm. No human response or extra preparation ACK is awaited.

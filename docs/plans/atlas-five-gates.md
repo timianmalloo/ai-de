@@ -12,7 +12,7 @@ review-by: 2026-12-15
 summary: "Repair the five frozen Atlas integration failures before main publication and E1/E2 continuation."
 ---
 
-# Current state: transition preparation CLEAR; runner preparation requested
+# Current state: transition preparation CLEAR; Owner-admitted runner preparation
 
 Goal: resolve the current Grok consumer request and continue the admitted Atlas qualification
 preparation. Done when the exact proposal has a direct semantic response and recorded
@@ -32,6 +32,22 @@ Astra Owner and Conductor. Main publication stays with foreground GHCP.
 | Native qualification / main | Establish combined runtime acceptance before publication | P1-03 App1257/1258; native failure; remaining canonical steps stopped and slot released; independent RCA active |
 | Transition experiment | Distinguish loading-time traversal association | c192a7ed preparation CLEAR1d46d651; independent43/43 inspected; runner preparation requested |
 | E1/E2 | Continue admitted Sequence/Activity and architecture view work | Integration remains the priority |
+
+## Owner correction: preparation admission is already sufficient
+
+The Owner checked b52c890d and expressly confirmed that its recorded admission,
+conditioned on independent CLEAR, authorizes the exact branch-local proof script,
+normal builds, manifests and harmless subprocess controls. CLEAR1d46d651 meets
+that condition. Authority derives from the user-delegated programme and exact
+Owner decision, not an absent ownership entry or watcher silence. The Conductor's
+extra watcher-preparation approval gate was an erroneous transcription and is
+withdrawn. This paragraph supersedes the earlier "grant must be read" condition.
+Request req-01M2NYTSRKJZ22SS0KR0PBKAS6 preserves its original history and is resolved
+by the Conductor as a preparation-status notice; no watcher approval is fabricated.
+Exact paths,18/25minute author and8/15minute reviewer budgets, isolation and leases
+remain. No shown arms/product/test/shared-runner/canonical/main action is admitted.
+Independent runner review and a fresh checked watcher EXECUTION slot still gate
+every experimental arm. No human response or extra preparation ACK is awaited.
 
 ## Independent preparation CLEAR and next runner boundary — 2026-09-16
 

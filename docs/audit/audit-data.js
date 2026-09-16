@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T20:37:00Z",
+  "generated": "2026-09-16T20:41:20Z",
   "audit": [
     {
       "actor": null,
@@ -26522,6 +26522,36 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2NZ7NVG77S3T10CEAHVM5VG",
+      "shortname": "atlas-owner-preparation-correction",
+      "datetime": "2026-09-16T20:41:19Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going",
+      "summary": "Removed self-imposed extra preparation approval gate after explicit Owner clarification; official request resolution and current plan corrected before dispatch. No shown execution authorized. DC118 recurrence and executable handoff control captured.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Dispatch already authorized runner preparation without an invented approval dependency.",
+      "done_when": "Owner clarification is recorded and the exact preparation boundary is concrete for dispatch; execution controls remain intact.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-16T20:39:28Z",
+      "duration_seconds": 111.0,
+      "git": {
+        "sha": "b52c890d36f6fa7816e37f645fa0d844bace6a41",
+        "short": "b52c890d3",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -31227,6 +31257,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "cc83a8aa5e3cd5afb7ce487d7640bc165e45b275",
         "after": "cc83a8aa5e3cd5afb7ce487d7640bc165e45b275",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2NZ7NQKT42ERZQE2KZQVK23",
+      "datetime": "2026-09-16T20:41:19Z",
+      "session": null,
+      "kind": "design",
+      "skill": "execute-with-coordination",
+      "title": "Use actual Owner admission for bounded pair preparation",
+      "prompt": "keep going",
+      "summary": "Owner explicitly confirms its exact admission plus independentCLEAR suffices for preparation. Withdraw Conductor-added watcher preparation wait; preserve request history as status notice. Exact scope unchanged; independent runner review and fresh watcher execution slot remain mandatory.",
+      "rationale": "Preparation is within delegated programme scope and exact Owner bounds; adding an approval condition narrowed that recorded authority without evidence. No authorization derives from silence.",
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "b52c890d36f6fa7816e37f645fa0d844bace6a41",
+        "after": "b52c890d36f6fa7816e37f645fa0d844bace6a41",
         "branch": "integration/atlas-five-gates",
         "pushed": null,
         "commits": []

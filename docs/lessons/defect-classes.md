@@ -5174,6 +5174,17 @@ for both or split.*
   not an assumption: the difference between a control that exists and a control that is installed
   is exactly the gap DC-114 is about.
 
+- **Recurrence (2026-09-16, preparation authority):** the Conductor transcribed
+  an Owner admission into a plan with an extra watcher approval prerequisite,
+  delaying already authorized headless work. **Class -> sweep -> derive -> prevent:**
+  reuse DC-118's ruling-to-clause width change; compare the exact Owner decision,
+  plan and request; separate preparation admission from shown execution authority;
+  the executable handoff check requires the recorded correction, resolved notice
+  identity and retained execution-slot exclusion before dispatch. No watcher grant
+  is invented and no execution guard removed. This local control is captured in
+  artifacts/atlas-five-gates/transition-source-handoff/admit_pair_preparation.py;
+  evidence and the exact ruling are in docs/proof/atlas-p1-03-transition-design-review.md.
+
 ### DC-119 — A "gate set green" claim made from one platform, for a gate set that runs on two
 
 - **Shape:** the repo's suites are split by platform on purpose — `AiDe.Core.Tests.portable` runs on
