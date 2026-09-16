@@ -650,3 +650,24 @@ Next: independent Test/Security/Data code gate for A. B eligibility/counter-doma
 clarification, recovery implementation, producer/canonical bridge proof and actual
 released-binary rollback remain open; P3–P5/upstream follow the approved phase
 order. No new general proposal, activation, source investigation or upstream change.
+
+### P2.4B bounded author graph — 2026-09-16
+
+Goal: close the two existing runtime recovery failures under the finite-B contract.
+Done when: five original recovery tests pass and runtime bounds have persisted evidence.
+Not in scope: producers/canonical bridge, old-binary qualification, P3–P5 or activation.
+Tier: T2. Fan-out cap: 0. Main-line budget: 45 calls.
+
+| Node | Capability | Input → exit | Dependency |
+|---|---|---|---|
+| B0 | Reasoning | Accepted Data/DS contract → committed design/ADR ERRATUM | None |
+| B1 | Deterministic mechanics | Existing source/tests → observed 3 PASS / 2 semantic RED | None |
+| B2 | Reasoning | B0/B1 → bounded store/pump and runtime oracles | Data/decision |
+| B3 | Deterministic mechanics | B2 → recovery, schema and original union results/pins | Data |
+| B4 | Deterministic mechanics | B3 → honest proof, commit, leases released/session ended | Data |
+
+Width one; T1=T∞=five dependent work units (Inferred, not elapsed measurements).
+No separate-context fan-out. Fixed test cases and bounded remaining candidates are
+loop variants; failed gates are reported, not weakened to meet the budget.
+Independent Data/DS/Test review follows this author checkpoint. Acceptance of
+design is not acceptance of implementation.

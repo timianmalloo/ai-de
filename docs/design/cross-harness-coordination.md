@@ -947,3 +947,65 @@ BoardTools.Read and producer behavior retain their tests. Structural source-bind
 proof is not human-channel qualification. Recovery eligibility/counter semantics,
 full P2, producer/canonical bridge qualification, actual binary rollback, and
 P3–P5 remain outside this unit.
+
+### P2.4B — finite recovery amendment and ERRATUM (2026-09-16)
+
+**ERRATUM:** the earlier Data statement “eligibility and presence are booleans”
+was wrong. `eligibility_generation` is a nonnegative NOT NULL INTEGER counter.
+`payload_presence` alone is a NOT NULL 0/1 flag. `recovery_status` is NOT NULL
+`none|active|deferred|exhausted`. Neither counter is live authority or a session
+generation. Production authority remains DENY; enhanced canonical append is disabled.
+
+The counter increases once per newly observed qualified dependency component:
+original registration mapping and same-repository requested parent. Registration
+then parent means 0→1→2; finding both together means 0→2 with no intermediate
+budget. Seen components are cumulative. Repeated polls, disappearance/reappearance,
+capacity and status changes never reset attempts. Each event/generation gets eight
+attempts. Overflow refuses atomically. An eighth failed attempt releases both
+payloads and retains the source obligation. Exhausted references receive bounded
+eligibility probes, not absent-parent semantic retries.
+
+The same three fresh unreleased-v8 caches carry the representation; this is not an
+upgrade of existing candidate-v8 data. Released-v7 old-binary qualification remains
+later. Each event retains source offsets, raw and canonical digests/version,
+requested parent ID, seen components, attempt 0..8 and UTC due time. Feed receipts
+snapshot the target application/recovery/eligibility/presence tuple. A NOT NULL
+deferred composite current-receipt FK includes that entire tuple. Terminal tag is
+`none`, never NULL; diagnostic application state is NULL and cannot be current.
+Optional same-scope parent FKs remain optional; a cross-stream board parent is
+resolved by same-repository board ID, including legacy facts with no receipt.
+
+Within BEGIN IMMEDIATE, recheck expected receipt/generation/binding/dependencies/
+capacity. Insert a transition whose trigger advances **only current_receipt_n**;
+old state/tag/payload tuple remains locally valid. One guarded UPDATE installs the
+complete target tuple and both payloads. Staging requires a settled old tuple;
+another transition while unsettled refuses. Missing finalization or half-null
+payloads fail commit. Payloads unchanged by a transition stay byte-identical.
+Only source-validated pending references can rehydrate; terminal resurrection
+is forbidden. Operational attempt/due changes preserve the settled tuple.
+
+Ordinary admissions retain at most 1,023 pending pairs and 16,646,144 bytes.
+One slot plus 131,072 bytes is reserved for verified-ready reference rehydration
+and application in the same transaction (absolute 1,024 / 16,777,216 bytes).
+Blocked reserve activation rolls back. Overflow admits a visible deferred
+reference plus pending receipt and checkpoint, without payload copies. No
+alternative pending JSON list, new queue, historical DROP or dedup is permitted.
+Capacity derives from indexed bounded active rows, not competing counters.
+
+Each complete pump pass has 64 attempts (32 dependency-ready, 16 deferred, 16
+ordinary-due) and 256 metadata examinations (128/64/64). Each lane has fixed
+checkpoint columns for last-examined admission, frozen high-water and last-served
+logical turn. Least-served source then scope determines service. Blocked probes
+advance; wrapping starts next pass. Borrow only after every lane has opportunity.
+Attempt keys are deduplicated per pass. Source capture verifies one bounded
+32-MiB root snapshot per pass; recovery reuses its validated ≤64-KiB records.
+Source deletion/GAP/mismatch keeps the obligation and reports a typed failure.
+Native effect, transition and recovery checkpoint commit together; observation
+publication follows commit. No recovery registration callback, capability mint,
+heartbeat or end refresh is allowed.
+
+Surface list: cache DDL → inert recovery rows → existing ProjectRecord/native SQL
+→ pump pass boundary → post-commit Observe → actual pass counters and tests.
+Feed A historical outcomes remain immutable; no invented recovery-health zero.
+TimeProvider-derived UTC is scheduling only, with no unconditional SLA.
+Independent Data/DS/Test implementation review remains required.

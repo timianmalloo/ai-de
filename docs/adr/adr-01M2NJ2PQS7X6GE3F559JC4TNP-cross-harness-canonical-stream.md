@@ -233,3 +233,23 @@ Public Post authorization is unchanged. Production authority remains DENY and
 enhanced canonical append disabled. Data/DS design approval is not code approval:
 independent Test/Security/Data gates, recovery B, full P2 producer/bridge proof,
 released-v7 binary rollback and P3–P5 remain open.
+
+### P2.4B finite recovery decision / ERRATUM — 2026-09-16
+
+Adopt design §P2.4B, committed before recovery code. Correct the earlier Data
+description: eligibility is a nonnegative INTEGER generation counter, **not a
+boolean**; only payload presence is boolean. New cumulative qualified registration
+and parent components advance generation once each. Status/poll changes never
+renew the eight-attempt budget. Refuse overflow without effects.
+
+Choose paired deferred current-receipt FK plus staged-pointer/one-update
+finalization, fixed per-lane checkpoint cursors, bounded same-repository dependency
+lookups and reference-only overflow admissions. Reject boolean eligibility,
+nullable tuple keys, poll-budget renewal, a second queue/writer, newest-sequence
+parent discovery and blocked holders in reserved capacity. Counts derive from
+bounded active rows. Source-validated ready references use the reserve only in
+the transaction that applies them.
+
+This is fresh unreleased-v8 design approval only. Existing candidate-v8 upgrade,
+actual old-binary rollback, independent code gates and full P2 remain unclaimed.
+All authority grants remain false; the canonical bridge and producers are separate.
