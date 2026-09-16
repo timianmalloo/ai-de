@@ -13,14 +13,163 @@ links:
   - { to: investigation-cross-harness-message-delivery, rel: depends-on }
 review-by: 2026-10-16
 summary: >-
-  Records dormant P1 four-finding repair RED/GREEN, actual CLI and killed-correlation-mutant
-  evidence with immutable source/test pins. Preserves historical P0 receipts and explicitly
-  pending independent re-review, runtime, authority and later-phase gates.
+  Records bounded P1 proposal, acceptance, consumption and local-reference mechanics:
+  failing-first controls, 49 passing tests and nine killed guard mutations. Production
+  authority and enhanced append remain disabled; independent code gates remain pending.
 ---
 
 # Proof Pack — dormant P1 candidate; independent code gate pending
 
-## Current receipt — four-finding repair, 2026-09-16, Python peer author
+## Current receipt — bounded P1 mechanics, 2026-09-16, Python peer author
+
+**Candidate, not full P1 acceptance.** Baseline:
+`f4109e144d4c56d16b4548013e948d0ba1f50e36`; same registered worktree/branch/session.
+The source-backed Security peer contract in the current task was recorded in the design
+**before source edits**. This is not an independent review of the resulting code.
+
+> GATE dormant-four-fixes · 2026-09-16 · independent Test / Distributed Systems / Security
+> (supplied conductor receipt) · exact source f4109e144d4c56d16b4548013e948d0ba1f50e36 ·
+> exit criteria: 27 GREEN; baseline 21 semantic failures / 0 errors; full correlation
+> guard-False 10 failures; five operand mutants two failures each; 15 hostile cases PASS ·
+> tool receipts 722 / 726 · verdict PASS **for those four dormant fixes only** · vetoes none
+> in that bounded gate. This author did not rerun those independent review episodes.
+
+> GATE P1-mechanics-code · 2026-09-16 · independent Test / Security ·
+> exit criteria: review exact committed candidate, trust-boundary/shape/mutation and
+> compatibility evidence below · verdict **PENDING**; author cannot clear this gate.
+
+### Change reach and trust boundary
+
+`coord-core.py` official JSONL reader now bounds records and calls closed validation;
+the same official enhanced thread fold calls the small adjacent `coord_protocol.py`.
+No separate executable, alternate ledger, framework, dependency or live writer is added.
+Standalone `obligation-created` publications appear as enhanced threads; default legacy
+list output continues to omit enhanced-only threads. Original legacy payloads/IDs remain
+unchanged. The old reader/writer itself remains **unmodified and unenrolled**.
+
+| Field / immutable fact | Writer/input → compute reader |
+|---|---|
+| Full repository/commit/path/object-format/blob/SHA-256/section reference | Inert synthetic fact → real local Git object/type/size/bytes/heading integrity checker |
+| Proposal id/revision + full artifact identity | `obligation-created` → exact publication map/current-revision fold |
+| Required endpoint set | Independently supplied verified proposal contract, checked against publication payload → per-peer acceptance set |
+| Explicit old/new full references | Authorized `proposal-superseded` → graph traversal; forks, merges, cycles and disconnected publications refuse ambiguity |
+| Named accepting endpoint/generation | `proposal-accepted` → unique `(exact revision, endpoint)` set; only all required peers yield accepted |
+| Event ID/digest/checkpoint + recipient generation | `recipient-consumed` → exact target correlation and attester check; deduplicated consumption view |
+| Typed responses | Existing `response-recorded` → response fold; a consumed answer remains separate from acceptance |
+| Trusted context and verification result | Trusted in-process composition only → bound event digest/action/subject/repository, explicit issuer/authorization/current-revocation results |
+
+Production composition supplies **no verifier and no trusted context**. Serialized
+authority locators, file contents, environment flags and synthetic “verified” labels
+cannot create one. The real subprocess `request list --actionable --json` exposes
+shaped claims but reports authority unverified and no acceptance. No grants, transfers,
+endpoint sends or launches occur; all four rights fields and execution eligibility stay
+false even in synthetic positive controls. Enhanced append refuses every new fact
+before creating its destination directory. No private inputs or real consent fixtures exist.
+
+### Executed evidence, including negative observations
+
+Python **3.12.10**, Git **2.55.0.windows.2** (shell 765). Real Git fixtures are isolated
+under the assigned worktree's `.agents` and removed by test cleanup; no shared live
+ledger, external endpoint, global Git configuration or temporary-directory fixture is used.
+Commands use unittest discovery over exactly the two named test files; the final runner
+fails when it selects zero tests. Subtest failures are not distinct test-method counts.
+
+| Tool receipt | Observation | Selected methods | Assertion failures / errors | Logical exit |
+|---|---|---:|---:|---:|
+| 751 / 753 | New contracts RED against unchanged f4109e; bounded receipt from 753 | 16 | 41 / 0 | 1 |
+| 755 | **Invalid verification attempt:** selector chose no tests; discarded, not GREEN | 0 | 0 / 0 | 0 |
+| 756 | Corrected nonzero runner: first integrated GREEN | 43 | 0 / 0 | 0 |
+| 761 | Additional standalone, response-consumption, malformed-selector RED | 22 | 4 / 0 | 1 |
+| 764 | Integrated GREEN, measured 12.468 s | 49 | 0 / 0 | 0 |
+| 764 | First nine guard mutants: eight killed; generation survived redundant peer denial | 9 one-method runs | 9 / 0 total | mutation runner 1 |
+| 767 | Strengthened recipient-generation case: nine of nine mutants killed | 9 one-method runs | 10 / 0 total | mutation runner 0 |
+| 767 | Pristine on-disk discovery after mutations; measured 12.796 s | 49 | 0 / 0 | 0 |
+
+Each mutant in shell 767 causes one assertion failure, except ambiguity, which causes
+two. All cause **zero errors**. Mutants: issuer, authorization, current revocation,
+artifact byte digest, required-peer contract, generation, consumed-event digest,
+all-required-peers and ambiguous revision graph. The mutation runner edits only the
+loaded in-memory module; it never rewrites source or supplies a production test flag.
+This is a selected-guard result, **not a whole-module mutation score**.
+
+| Claim / oracle | Named executable control | RED / confidence / limit |
+|---|---|---|
+| Same exact revision, every required peer, count once, no rights | `test_Fold_AllRequiredPeers_AcceptsWithoutRightsOrResponse`, `test_Fold_OnePeerDuplicateAndAck_NotAccepted`, `test_Fold_RequiredPeersNotSenderSelected_DenySubstitution` | 753 RED; 767 GREEN; all-peer and contract mutants killed. Verified synthetic mechanics only |
+| Production cannot select the synthetic provider | `test_Cli_ProductionClaimsEnvAndReceipt_CannotSelectSyntheticProvider`, `test_Fold_ProductionComposition_DeniesPerfectSyntheticClaims`, `test_Append_AllNewFacts_RefusedBeforeEffects` | CLI/fold RED 753, GREEN 767; append existing refusal retained. No production-positive authority claim |
+| Separate integrity, issuer, exact authorization and revocation | `test_Fold_IntegrityFullGitObjects_RejectsSubstitutions`, `test_Fold_UnknownIssuerRevocationAndAuthorization_Deny`, `test_Fold_VerifierResultBinding_SubstitutionDenied` | Real Git negative/positive checks; selected hash/issuer/auth/revocation mutants killed. No real human-channel fidelity fixture |
+| Supersession explicit; historical H cannot count as H2 | `test_Fold_Supersession_OldAcceptanceHistoricalNotCurrent`, `test_Fold_CycleCompetingSuccessorUnauthorizedReviser_NoClockWinner` | 753 RED; 767 GREEN; ambiguity mutant killed. No timestamp winner |
+| Consumption is exact attestation, not delivery or understanding | `test_Fold_ExactRecipientConsumption_NotAcceptanceOrUnderstanding`, `test_Fold_ConsumptionWrongDigestAttesterRestart_Denied`, `test_Fold_ResponseConsumption_DoesNotBecomeAcceptance` | 753/761 RED, 767 GREEN, digest mutant killed; original G1 is not relabelled G2 |
+| Generation/correlation checks independent of peer authorization | `test_Fold_GenerationAndCorrelationMismatches_Deny` | Surviving sender-generation mutant exposed masking; added recipient-generation case kills it. Verified selected guard |
+| 64 KiB record, depth 16, refs 16, 1 MiB artifact caps | `test_Read_RecordLimitAndLimitPlusOne_PreservesNextRecord`, `test_Read_DepthAndReferenceExactLimits_Accept`, `test_Read_DuplicateNonfiniteDepthAndReferenceBounds_Refuse`, `test_Fold_ArtifactLimitAndLimitPlusOne_BoundedGitRead` | Exact-limit positives and limit+1 refusals, including oversized-record recovery; initial new limits RED 753; GREEN 767 |
+| Typed marker failures are structured, not Python exceptions | `test_Read_MalformedDiscriminatorFiniteOverflow_ExplicitRefusal` | Two unhashable-selector cases RED 761; GREEN 767 |
+| Canonical Python byte vector and absent/null distinction | `test_Digest_GoldenBytes_PreservesTypesNullAndUnicode` | Golden literal with boolean/int/float/non-ASCII bytes. Python only; C# comparison BLOCKED |
+| Legacy CLI compatibility and rollback | Existing `test_Cli_PinnedUnenrolledLegacy_ActualLinkedTreeAndRollback` | Passed in all scoped GREEN runs. Pinned unmodified `94ec9036dd0b72aa5b759badcf21a9e3aba6659b`; only upgraded fixture receives the new helper |
+
+### Immutable source and test pins
+
+Shells 767/769 read these back. Working-byte SHA-256 includes Windows line endings;
+LF SHA-256 and Git blob identity separately identify the committed representation.
+Source pins are not authority credentials.
+
+| File (under `docs/ai-forward-pack/scripts/`) | Executed-byte SHA-256 | LF SHA-256 / Git blob |
+|---|---|---|
+| `coord-core.py` | `a08baf410ba43e9c890f59bb166498e06920b8586548604f135dfdcaa2ba038d` | same / `3bca66d53e1a30dd72e61c0ea555c07cf7581af4` |
+| `coord_protocol.py` | `3d7b181234ba3db6391e9ef14fc5dd94c9c6f6410b2e592c0f1dd1a79157cd0e` | `2029ee712e9923b0dd49a54811cd237d22fe54dbddd6d0fcac9568ae189ef16b` / `b4033b055b3ce3f773efa8504727759f2e689c73` |
+| `tests/test_coord_responses.py` | `89b465a7c8b2e329253df7ad11e3dbe150de66d630667b5ed23dbd363ffb3da9` | `b01d81846b4664f1b23da0546954931432d005d43efff07d2b9b10d3e5b785e9` / `ca34a2fbcc3bff17d3489fd8ffb32bb88ddb27a3` |
+| `tests/test_coord_protocol.py` | `88730bdb53cf9e769ce6346563ce640ca344baa8888c8b0738b414b18d77e0f2` | `852f1c6b9dec5004427fe463ea349d20c62e0f4d8e5b01af1d1e0e27d0cc2512` / `7adf839b1543e3b5371bfb6a4c761e709b88ed10` |
+
+### Corrections, controls and unmet floors
+
+Class → sweep → derive → prevent, within the authorized files (no lesson-register ownership):
+
+* **E2E-E / zero-selection verifier:** shell 755 filtered a nested suite incorrectly.
+  Swept later runners; each now requires a nonzero count, reports per-run results,
+  and propagates the runner status. Never promote 755's exit 0 to evidence.
+* **Redundant-denial masking:** sender-generation mutation survived because the
+  required-peer check also rejected that sender. Swept all nine critical guards;
+  the named recipient-generation case isolates the actual generation predicate.
+* **Shape reaches validator but not its consumer:** standalone publications and consumed
+  full-reference responses initially lacked the complete official path. Added their
+  tests first, observed RED, then completed the same official fold/response validation.
+* **Unhashable untrusted discriminator:** a newly introduced membership check could throw
+  on lists/dicts. Swept new event-type dispatch; use a type check before set membership.
+  Four malformed selectors plus nonfinite overflow now have structured-refusal controls.
+
+T0 deterministic functions and trusted injection are not a substitute for qualified
+production composition. D0/D1/D2/D4/D6 apply; D3's official-reader composition is exercised.
+D7 synthetic policy is intentionally a mechanics fixture, **not a claim of fidelity to
+an implemented human resolver**. D5/C# cross-language qualification remains unperformed.
+Bounded permutations, exact-limit tests and selected mutations are not exhaustive fuzzing.
+Only SHA-1 fixture repos ran; SHA-256 object-format positive qualification remains open.
+`sectionOrDecisionId` currently accepts an exact Markdown heading, not arbitrary decision
+IDs; richer authenticated decision resolution is a named integration gap, not guessed.
+Unexpected trusted-provider failures are not normalized beyond the documented exception
+set; production has no provider. Reviewer disposition remains required before activation.
+
+Operator readback: existing actionable CLI `duration_seconds`, `events_scanned`,
+`enhanced_writer: disabled`, per-fact verification and stable refusal codes were observed.
+No model/token spend or endpoint latency is measured because none is invoked.
+Full-trace/SLI instrumentation and all surfaces outside the Python CLI remain later-phase
+work. No new GUI or HTTP surface exists in this candidate.
+
+**Unmet completion floors:** independent Test/Security code review; authenticated immutable
+human-decision fixture and current-revocation integration; mixed-client complete-record/
+conflict proof before enhanced writes; C# shared vectors and reader; P2 store and
+Data/DS approval; real P3 endpoints; P4 launcher; P5 same-corpus/UI/SLIs. Lesson-register,
+derived site/index/audit rendering and inbound-neighbor propagation belong to the conductor
+and were explicitly excluded from this author task. `AIDE_CONTRACT_LOG` is absent (765):
+no episode-close was fabricated. The existing authorized proof path is `docs/proofs/`,
+not the watcher's supported `docs/proof/`; capture qualification therefore remains open.
+
+No nested agents, upstream repository discovery, installs, hooks/configuration changes,
+main writes, pushes or real grants occurred. Finite plan: inspect → contract + RED →
+helper/official integration → guard evidence → commit. One additional boundary correction
+and one test-only mutation correction; token spend not recorded. Initial oversized reads
+were narrowed; read warnings did not become source evidence. The worktree is retained for
+the parent to review/land the candidate. C02 deterministic progress does not depend on
+C08 real-endpoint qualification; P1 is not declared complete.
+
+## Historical receipt — four-finding repair, 2026-09-16, Python peer author
 
 **Outcome: F1–F4 repaired and regression-tested in the dormant P1 candidate;
 independent re-review pending. Full P1 and runtime activation are not cleared.**

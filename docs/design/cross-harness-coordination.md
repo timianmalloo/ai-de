@@ -171,6 +171,75 @@ prose stays inert; neither a matching hash nor an injection scanner promotes it 
 
 ## 3. Data & Persistence co-authored P2 floor
 
+### P1 deterministic contract delta (2026-09-16; independent code gate pending)
+
+C02 mechanics do not depend on C08 endpoint qualification. The supplied Security peer
+contract establishes that `TrustedRegistrar.Register/RegisterNextGeneration/Verify` are
+capability mechanics, not human verification. `DaemonEndpoint.Register(string,
+Func<IpcRequest,IpcPeer,IpcResponse>)` authenticates a process; SID/PID do not prove human
+consent. Peer-to-session lifecycle binding and an authenticated immutable human-decision
+resolver remain P3/P4 integration gaps. This author has not independently requalified
+those C# seams and changes no C#. Production has **no qualified verifier**, explicitly DENY.
+
+The dormant Python boundary consumes inert JSON facts plus an optional trusted composition
+context. There is no serialized, CLI, environment, ledger, observation-label or hash switch
+that creates that context. An independent verifier supplies a digest-bound result for the
+exact event, actor/generation, action and repository; it must check current revocation,
+scope/proposal and §2 plus immutable authenticated decisions. Integrity is checked locally
+and separately against full commit/object-format/path/blob/SHA-256 and an exact section
+heading. Issuer and authorization are explicit results, not implications of integrity.
+No authority database, bearer-token cache, content execution or remote fetch is introduced.
+NEW transfers remain denied and require the actual human in the future qualified channel.
+
+The minimum separate `coord_protocol.py` module holds only bounded validation, local Git
+reference checking and the deterministic proposal/consumption fold. `coord-core.py` owns
+the official read and append seams; it calls this helper, not a disconnected test utility.
+Legacy default output and writers remain unchanged. Enhanced append stays disabled until
+unchanged mixed-client contention/complete-record/conflict safety is demonstrated.
+
+Closed pilot fact shapes reuse the P0 envelope and vocabulary:
+
+* `obligation-created` publishes one proposal revision; `inReplyTo`, `threadId`,
+  `obligationId`, `causationId` identify its initiating obligation. `payload.requiredPeers`
+  names a nonempty unique set of endpoints, independently matched to the verifier's
+  immutable proposal contract, never chosen by an acceptance sender.
+* `proposal-superseded` carries the complete old revision reference in `supersedes`
+  and the complete new reference in `proposal`. Only an authorized reviser can contribute
+  an edge. A missing publication, competing successors, merges or cycles are ambiguous;
+  no producer timestamp chooses a winner. Historical acceptances retain their old revision.
+* `proposal-accepted` names exactly one published revision. Each authorized required peer
+  counts once for that exact repository/commit/path/blob/hash/revision and generation.
+  An ACK, response disposition or legacy “approved” never counts.
+* `recipient-consumed` carries `payload.eventId`, `payload.eventDigest` and
+  `payload.checkpoint`; sender is the named recipient's same generation on the target
+  event. Queued/arrived are not consumed; consumed is not understood or accepted.
+
+Proposal references add `repositoryIdentity`, `fullCommitId`, `repositoryRelativePath`,
+`gitObjectFormat`, `fullBlobId`, `sectionOrDecisionId` to `id/revision/sha256`.
+AuthorityRefs carry the same integrity fields (without proposal id/revision) plus
+`scope`, `issuerEvidenceRef`, `verifierReceiptRef`; the last fields remain inert locators.
+Null disposition is mandatory for these four facts; response shapes remain compatible.
+Every resulting row exposes immutable `protocol_facts`, per-fact integrity/issuer/
+authorization results and stable errors, current proposal, historical acceptances and
+consumption. All paths set ownership/run/transfer/start grants and execution eligibility
+false, including synthetic accepted=true. Production reads keep shaped claims visible
+but untrusted; a synthetic provider exists only in tests.
+
+Pilot limits: 64 KiB per JSONL record (excluding newline), depth 16 (root object is depth
+1), 16 authority references/required peers, and 1 MiB per resolved Git blob. These bound
+untrusted parsing, traversal and local subprocess memory, not measured throughput claims.
+The prior response-only 32 KiB canonical/16 KiB text bounds remain stricter for responses.
+Duplicate keys, nonfinite numbers and limit+1 fail before verifier or artifact effects;
+oversized records are drained in bounded chunks to preserve the next complete record.
+Canonical bytes remain the dormant Python v1 contract, not qualified cross-language JSON:
+no C# digest/reader qualification is claimed until it runs the same vectors.
+
+Surface list: official JSONL reader → closed validation → immutable facts → trusted-context
+checks/local Git integrity → official enhanced thread fold → CLI JSON. Tests exercise each
+seam. No store migration, transport send, actual consent fixture or launcher is included.
+Operator questions use the existing normal CLI `duration_seconds`/`events_scanned` plus
+per-fact errors and verification results; no model spend or remote operation exists here.
+
 ### Logical grain, history, additivity and field-complete reader trace
 
 | Logical record → candidate physical representation | Grain / key / recorded when | History and additivity | Writer → compute reader |

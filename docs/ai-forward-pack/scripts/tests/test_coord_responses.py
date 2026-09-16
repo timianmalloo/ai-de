@@ -434,6 +434,7 @@ class ResponseTests(unittest.TestCase):
                 cwd=REPO, env=env)
             (old / name).write_bytes(pinned[name])
             (upgraded / name).write_bytes((SCRIPTS / name).read_bytes())
+        (upgraded / "coord_protocol.py").write_bytes((SCRIPTS / "coord_protocol.py").read_bytes())
         self.assertEqual(BASE_SHA, hashlib.sha256((old / "coord-core.py").read_bytes()).hexdigest())
         self.assertEqual(primary, coord.repo_root(old))
         self.assertEqual(primary, coord.repo_root(upgraded))

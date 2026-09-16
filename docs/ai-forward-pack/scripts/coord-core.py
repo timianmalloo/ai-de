@@ -444,13 +444,30 @@ def _response_bytes(event: dict) -> bytes:
 
     Python golden bytes only; cross-language qualification remains a writer gate.
     """
-    semantic = {k: v for k, v in event.items() if k not in ("payloadDigest", "recordedAt")}
-    return json.dumps(semantic, sort_keys=True, separators=(",", ":"),
-                      ensure_ascii=False, allow_nan=False).encode("utf-8")
+    return _protocol().canonical_bytes(event)
+
+
+def _protocol():
+    """Load the adjacent pure helper, including when this script is loaded by file path."""
+    import importlib.util
+    name = "coord_protocol"
+    if name not in sys.modules:
+        spec = importlib.util.spec_from_file_location(name, Path(__file__).with_name(name + ".py"))
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[name] = module
+        spec.loader.exec_module(module)
+    return sys.modules[name]
 
 
 def validate_response(event: dict) -> bytes:
-    """Validate the dormant response-only subset, never acceptance or authority."""
+    """Validate dormant semantic envelopes; validation does not authenticate facts."""
+    protocol = _protocol()
+    try:
+        protocol.check_tree(event)
+        if isinstance(event.get("eventType"), str) and event["eventType"] in protocol.FACT_TYPES:
+            return protocol.validate_fact(event)
+    except protocol.ProtocolError as exc:
+        raise CoordError(exc.code, str(exc)) from exc
     fields = {"kind", "schemaVersion", "eventType", "eventId", "repositoryId", "streamId",
               "threadId", "obligationId", "inReplyTo", "causationId", "sender", "recipient",
               "proposal", "producerSeq", "producerAt", "recordedAt", "disposition",
@@ -475,13 +492,14 @@ def validate_response(event: dict) -> bytes:
     require(all(_finite_number(event[k]) for k in ("producerAt", "recordedAt")))
     require(isinstance(event["disposition"], str) and event["disposition"] in dispositions)
     require(event["supersedes"] is None or text(event["supersedes"]))
-    require(isinstance(event["authorityRefs"], list))
+    require(isinstance(event["authorityRefs"], list) and len(event["authorityRefs"]) <= 16)
     for key in ("sender", "recipient"):
         endpoint = event[key]
         require(isinstance(endpoint, dict) and set(endpoint) == {"session", "generation"})
         require(all(text(v) for v in endpoint.values()))
     proposal = event["proposal"]
-    require(isinstance(proposal, dict) and set(proposal) == {"id", "revision", "sha256"})
+    require(isinstance(proposal, dict) and
+            set(proposal) in ({"id", "revision", "sha256"}, protocol.PROPOSAL_FIELDS))
     require(all(text(v) for v in proposal.values()))
     require(re.fullmatch(r"[0-9a-f]{64}", proposal["sha256"]) is not None)
     payload = event["payload"]
@@ -520,13 +538,22 @@ def read_request_events(root):
     if not path.is_file():
         return [], []
     events, errors, seen = [], [], {}
+    protocol = _protocol()
     with open(path, "rb") as fh:
-        for lineno, line in enumerate(fh, 1):
+        lineno = 0
+        while line := fh.readline(protocol.MAX_RECORD + 2):
+            lineno += 1
+            if len(line.removesuffix(b"\n").removesuffix(b"\r")) > protocol.MAX_RECORD:
+                while line and not line.endswith(b"\n"):
+                    line = fh.readline(protocol.MAX_RECORD + 2)
+                errors.append("{}:{}: XH.RECORD_TOO_LARGE".format(path.name, lineno))
+                continue
             if not line.strip():
                 continue
             try:
                 event = json.loads(line.decode("utf-8"), object_pairs_hook=_unique_object,
                                    parse_constant=_reject_constant)
+                protocol.check_tree(event)
                 events.append(_request_event(event, seen))
             except (ValueError, CoordError, UnicodeError, OverflowError, RecursionError) as exc:
                 code = exc.code if isinstance(exc, CoordError) else str(exc)
@@ -534,11 +561,12 @@ def read_request_events(root):
     return events, errors
 
 
-def fold_requests(events, *, enhanced=False, generations=None):
+def fold_requests(events, *, enhanced=False, generations=None, trusted_context=None):
     """Fold complete history without producer-clock ordering or transport reopening.
 
-    `generations` is an isolated contract-fixture input, NOT authentication. Production
-    CLI never supplies it. Enhanced reads remain opt-in and can never grant execution.
+    `generations` supports response-only contract fixtures, NOT authentication.
+    `trusted_context` can only come from trusted composition, never payload/env/CLI.
+    Production supplies neither. Enhanced reads never grant execution.
     """
     requests, resolutions, replies, seen = {}, {}, {}, {}
     for event in events:
@@ -557,6 +585,16 @@ def fold_requests(events, *, enhanced=False, generations=None):
             requests.setdefault(rid, dict(event))
         elif event.get("kind") == "request-resolve":
             resolutions.setdefault(rid, []).append(event)
+    if enhanced:
+        for event in sorted(replies.values(), key=lambda e: e["eventId"]):
+            if event["eventType"] == "obligation-created":
+                rid = event["threadId"]
+                requests.setdefault(rid, {
+                    "id": rid, "repositoryId": event["repositoryId"],
+                    "streamId": event["streamId"], "sender": event["sender"],
+                    "recipient": event["recipient"], "proposal": event["proposal"],
+                    "at": event["producerAt"], "to": event["recipient"]["session"],
+                    "contract": "proposal revision"})
     for rid, row in requests.items():
         row["status"] = "open"
         if rid in resolutions:
@@ -565,7 +603,12 @@ def fold_requests(events, *, enhanced=False, generations=None):
             row.update(status="resolved", resolution=latest.get("resolution", ""),
                        resolved_at=latest.get("at"), resolved_by=latest.get("session", ""))
         if enhanced:
-            _fold_responses(row, list(replies.values()), generations or {})
+            protocol = _protocol()
+            all_replies = list(replies.values())
+            _fold_responses(row, [e for e in all_replies if e["eventType"] == "response-recorded"],
+                            generations or {})
+            protocol.fold_protocol(row, [e for e in all_replies if e["eventType"] in protocol.FACT_TYPES],
+                                   all_replies, trusted_context)
     return sorted(requests.values(), key=lambda r: (r.get("at", 0.0), r["id"]))
 
 

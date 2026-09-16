@@ -13,14 +13,53 @@ links:
   - { to: proof-cross-harness-coordination, rel: tested-by }
 review-by: 2026-10-16
 summary: >-
-  Preserves every approved P0–P5 repair floor and records the dormant P1 four-finding
-  repair with independent re-review pending. Names remaining implementation gates,
-  finite stops, rollback and the deferred upstream handoff.
+  Preserves every approved P0–P5 repair floor and records the bounded P1 mechanics
+  candidate with 49 passing tests and nine killed selected guard mutants. Production
+  authorization and enhanced append remain disabled; independent code review is next.
 ---
 
 # Durable phase graph
 
-## Current checkpoint — dormant P1 four-finding repair
+## Current checkpoint — bounded P1 mechanics candidate
+
+All **M0–M5 remain the approved programme goal**. This increment implements C02's
+deterministic acceptance/consumption/proposal/reference mechanics without claiming C08
+endpoint qualification. It has no circular P1→P3→P1 admission requirement.
+
+| Milestone | Evidence and next gate |
+|---|---|
+| M0 / P0 | Limited dormant-code gate retained. Supplied independent Test/DS/Security four-fix PASS on exact `f4109e144d4c56d16b4548013e948d0ba1f50e36`, receipts 722/726, recorded verbatim in scope in Proof Pack |
+| M1 / P1 | Official enhanced fold now reads standalone proposals, explicit revisions/supersession, all-required-peer exact acceptance and exact recipient consumption. Local real-Git integrity plus externally supplied trusted policy context; production context absent/DENY. 49 tests GREEN and nine selected guard mutants killed (767). **Next: independent Test/Security gate on committed candidate**, then unmet shared-vector/C# and mixed-client writer qualification. Full P1 not complete |
+| M2 / P2 | **Data & Persistence and Distributed Systems schema approval before code.** Additive existing watcher.db cache behind current store seam only; real SQLite effect/receipt/checkpoint transactions, pagination, pending/retry bounds, crash/rebuild and migration/rollback proof owed |
+| M3 / P3 | Real installed-harness/version spikes; authenticated peer→session lifecycle and decision-resolver integration; foreground/background arrival/consumption/post-turn-wake cells remain BLOCKED, never replaced by fakes |
+| M4 / P4 | Actual-human NEW-transfer authorization and qualified launcher/candidate/session/generation/process/single-use run binding; no launcher, slots or run activation in P1 |
+| M5 / P5 | Same-corpus queue/board/MCP/UI conformance, hard-state accessibility and measured cross-surface SLIs; no inferred targets promoted to measurements |
+
+The small shared Python helper is project-neutral where the contract is already concrete.
+It is not an authority database, cached token, generic framework or product adapter.
+Synthetic policy is selected solely in test composition. Canonical data, env values,
+CLI options and receipt strings cannot enable it in production. All acceptance paths
+still confer **zero ownership/run/transfer/START rights**. Enhanced production append stays
+disabled until unchanged-client contention/complete-record/conflict evidence is available.
+Default legacy list/writer compatibility and unmodified `94ec9036` real-CLI rollback ran.
+
+Execution graph: contract/grounding → failing-first tests → minimum helper + official
+integration → finite boundary/guard evidence → clean candidate commit → independent review.
+Nodes are reasoning, deterministic mechanics, then independent review; no nested agents.
+Serial span equals work (five author nodes; normalized estimate, **Inferred**); widening
+would buy no span reduction over shared source edits. Budget 45 calls / 150k context;
+no re-budgeting. Remaining-finding count terminates each finite correction; budget stops
+with a coherent candidate, never with self-cleared qualification.
+Observed overhead: oversized initial read outputs, one zero-test runner correction,
+one new-boundary correction and one surviving-generation-mutant test correction.
+The Proof Pack names exact red/green/mutation receipts, pins, controls and unmet floors.
+
+**Deferred upstream dependency is unchanged:** only **after verified P0–P5**, prepare the
+explicitly requested AI-Forward upstream handoff in its own worktree. No upstream discovery
+or edits now. Shared protocol/CLI mechanics may be reused; watcher/store/WPF/composition
+adapters remain product-specific. Private/session/customer material never transfers.
+
+## Historical checkpoint — dormant P1 four-finding repair
 
 The Python author repaired independent F1–F4 on
 `ec85de0be8713bbd20d2b2035df2c4c5bf4c8126` in the same officially reopened
