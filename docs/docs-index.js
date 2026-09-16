@@ -9034,7 +9034,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ca1c9fa5828cf6d1c8c551fb565e4d4de9685e4619e1aea53967269a1bfb53c0"
+      "sourceSha256": "36b55687af31b37193fab986062795499e13b65a0c39e885764ddd8b6ffc707f"
     },
     {
       "id": "design-session-profiler",
@@ -12861,6 +12861,45 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "ff71dbe76956b39245cdb544b102aa05b5dda15741ff768a2fe8e9065fedfebd"
+    },
+    {
+      "id": "investigation-cross-harness-message-delivery",
+      "path": "docs/investigations/cross-harness-message-delivery.md",
+      "title": "Cross-harness message delivery: receipt is not agreement",
+      "type": "investigation",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "investigation",
+      "reviewBy": "2026-10-16",
+      "reviewSuggested": [],
+      "summary": "Six bounded coordination cases separate recorded responses from consumed dispositions, contract acceptance, receiver availability, and execution authority. Actual-fold diagnostics demonstrate threading and replay hazards; this report proposes repairs and conditional service objectives, not an implemented protocol or permission to resume blocked work.",
+      "tags": [
+        "coordination",
+        "messaging",
+        "liveness",
+        "root-cause",
+        "human-review"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0023-watcher-observation-projection",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b866cbcbfb60429405b3cd78e4fb85361b88c938543f53cb5c6f72fbfe202b04"
     },
     {
       "id": "investigation-recursive-surface-ownership",
@@ -20478,5 +20517,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d835155d07f75e4983887e0f6cd3d7b7716282d981e68c8c5d55b097de52f2cb"
+  "graphSha256": "be803a2121f5fc0b979fa07506833b302ecaebda26aaf40227a294e7d80ae1cb"
 };

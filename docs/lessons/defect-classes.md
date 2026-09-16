@@ -1848,6 +1848,18 @@ for both or split.*
 - **Status:** `controlled`
 
 ### DC-045 — The write succeeds, the screen keeps the old answer, and both halves report success
+- **Cross-harness instance (2026-09-16; diagnostic only):** a new response request leaves the
+  initiating question OPEN because `coord-core.py::fold_requests` correlates only by request ID,
+  not prose references. Codex explicitly resolved `req-01M2KSDD8MXW7K3JEQ6N9WK7ZZ` as
+  CHANGES REQUESTED, not ACK, acknowledging that earlier open requests obscured disposition.
+  An in-memory call to the actual fold reproduced an apparently unanswered question after a
+  separate reply; adding its explicit resolution removed that state. Open-only reads also
+  exclude completed answers. This is the cross-channel stale-view shape, not a claim that the
+  original UI event mechanism recurred. **Why the old control did not hold:** refreshing a
+  projection cannot recover correlation absent from its input contract.
+  **Control for this instance:** demonstrated inert diagnostic, then register-only; typed
+  reply/disposition projection and failing-first production tests remain PROPOSED, not controlled.
+  See [investigation and human-gated repair plan](../investigations/cross-harness-message-delivery.md).
 - **Signature:** a command changes what the store holds and completes normally. Every open surface goes on rendering the projection it fetched when it loaded. The command's own report is accurate, each pane's content is internally consistent, and the only thing wrong is that they describe different moments. The user reads the stale number *as the result of the action they just took*, which is worse than an error — it is a confident wrong answer with a success message attached.
 - **Why it survives:** every component passes its own tests, because every component is correct. The defect is in the seam, and a seam has no owner by default. It is invisible to unit tests (each side is right), to integration tests that assert against the store (the store is right), and to a render test that loads a pane fresh (loading is the case that works). It needs a test of the *sequence* — change, then look — which is the one nobody writes because both halves are known good.
 - **Instance:** 2026-08-30. A re-index of TheTerrace wrote all 38 knowledge scopes — 10,242 assertions, 2,343 `node_class` facts, 2,502 knowledge nodes — committed at 17:20:24 local. A screenshot at 17:20:50, twenty-six seconds later, showed the graph's Knowledge chip reading **0**, with a node total (1,996) matching the pre-index projection exactly. `IndexSolution` announced its outcome and told nothing else. Diagnosed by timestamp, not by inspection: the store proved itself correct, and the current build's own projection returned 236 knowledge nodes over that same store.
@@ -5704,6 +5716,15 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Confidence:** v  - **Source:** fleet (drm-0009/p12)
 
 ### TWO-REGISTERS-OF-ONE - Two registers of one quantity, created by a session that had not opened the first one
+- **Cross-harness instance/risk (2026-09-16):** filesystem request/resolution records and the
+  existing Loomkeeper board are different wires, with no request-add/request-resolve branch in
+  the inspected board parser. A proposed ACK database would create another interpretation of
+  the same obligation. Keep cross-harness events authoritative in the existing repository queue,
+  project them into the board, and retain `session-contracts.md §2` as the sole ownership source.
+  **Control status for this instance:** investigation/register-only; adapter, durable replay
+  deduplication and authority-verification controls are PROPOSED and require human approval.
+  The existing ownership/liveness separation does not itself solve message correlation.
+  Evidence and negative controls: [cross-harness investigation](../investigations/cross-harness-message-delivery.md).
 - **Control:** Coordination state splits into exactly TWO stores with different lifetimes and one authority rule: a TRACKED ownership register that is the sole authority on who owns what, and an UNTRACKED liveness store that says only who is running right now, in which tree, on what, and what they are blocked on — and that states no path or ownership table at all. A lint fails the liveness store when it contains an ownership/path table, and the liveness store's own header must point at the tracked register and declare that the tracked one wins on any disagreement. Add as a WT-series directive in session-worktree-discipline.md with the lint in coord doctor. (automated control)
 - **Boundary:** Applies wherever more than one agent session writes to one repository. Does not apply to a single-session repo, where one register is correct and a second store is pure ceremony.
 - **Confidence:** v  - **Source:** fleet (drm-0009/p14)
