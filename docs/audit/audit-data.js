@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T18:20:41Z",
+  "generated": "2026-09-16T18:55:29Z",
   "audit": [
     {
       "actor": null,
@@ -26150,6 +26150,54 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2NS3HKD0PMW0XMQ6MZVC929",
+      "shortname": "atlas-p1-03-investigate",
+      "datetime": "2026-09-16T18:54:12Z",
+      "session": "codex-atlas-p1-03-rca",
+      "prompt": "Independent bounded read-only RCA under Astra Owner decision. FIRST: in C:/Projects/ai-de-investigation-atlas-p1-03-uia set AGENT_SESSION=codex-atlas-p1-03-rca, AGENT_NAME=codex-astra-p1-03-investigator, PYTHONIOENCODING=utf-8/PYTHONUTF8=1, and run python docs/ai-forward-pack/scripts/audit-log.py start --session codex-atlas-p1-03-rca --skill investigate. Conductor provisioned own branch investigation/atlas-p1-03-uia via coord worktree new, base5406ea69fc21f2cc765a329b4a99be28fc3583fb. No EnterWorktree/install. Applicable AGENTS/knowledgepack/investigate/no-guessing/end-to-end/testing/coordination guidance must be used. Read only relevant grounding; avoid giant entire-history output. Root doctor already verified registry11patterns and effective merge drivers; pending derived owed cannot count as green. No duplicate long doctor scan needed for inherited registration.\nGoal: explain or precisely bound the native Atlas UIA failure observed in full cohort P1-03 using the new correlated observer evidence and prior single-case pass. Done when you return supported causal finding OR precise remaining gap plus smallest discriminating experiment/repair seam. TierT2, no delegates;8 substantivecalls/15minutes checkpoint5, context400k; budget firing is defectsignal not certainty. Astra chosen for adversarial temporal/provider/STA semantics. Escalate to Conductor/Owner; no human approval dependency. No rerun/test/build/GUI/debugger attachment, source edit, changed selector/wait/timeout/cleanup, scope enlargement or new isolation policy. You may write only own start marker and ignored read-only analysis output if needed; return analysis and exact source/event references. Later artifact authorization will be separate. Do not touch shared ledgers/derived/site or other sessions.\nEvidence all in C:/Projects/ai-de-integration-atlas-five-gates. Failed label atlas-five-gates-p1-03-5406ea69-20260916T1831Z: artifacts/atlas-five-gates/qualification/<label>/state.json and00-AiDe.App.Tests.trx; native artifacts/atlas-real-daemon-window-proof/<label>/receipt.json and images. FreshAppTRX SHA51d0a17a7a4d0e99bb4d72bd6a773e223782bed26b25278cf266af28cca527ac:1258 executed,1257passed,1failed,0skipped; sole failure AtlasDaemonMainWindowProofTests.MainWindow_RealDaemonReplacement_AcknowledgesHealthyReleaseAndPreservesBorrowedClient Assert.NotNull Value null. Native Completedfalse/FailureCount4. Root sourceexactreviewed626d16a2; native file tests/AiDe.App.Tests/Workbench/Understanding/AtlasDaemonMainWindowProofTests.cs SHA6af54fc651f355fbf22a4b17ecb256007fe6fa4ca8061b382cf61a45eb59841a. Sourceunchanged between successful input7ccef6d8 andfailed5406ea69.\nSuccessful one-case label atlas-native-diag-01-7ccef6d8-20260916T180403Z: native sameartifactparent receipt.json; qualification-like state artifacts/atlas-five-gates/native-diagnostic/<label>/state.json. Native1/1passed,10originalUIAfinds,10WPFpackets,normaldaemonexit. docs/proof/atlas-native-diag-01.md currentproof. HistoricalP1-02 failure labels docs/proof/atlas-p1-02-native-uia.md; causeunknown, do not reuse unprovedGrok attribution.\nRoot personally readfailedquery: expectedAtlas files, ownHWND853084/process21604, OriginalFoundfalse at18:37:32.1223591Z;51.8185ms. RootRuntimeIdafterquery[42,853084], correctprocess/windowtitle. FourWPFpackets: beforequery18:37:32.0680Z/after18:37:32.2712Z, samewindow5/host3/currentcontentview4, attached/loaded/visibletrue, fileRoots2/outlineRows2/highlights1;383nodes/notrunc/unavailable. Host State loading derivesStatusText and is NOTproof ofplaceholder; actualcurrentchildAtlasReaderView. Compare relationships/order, not run-localIDnumbers across runs. Primary failure precedes forceddaemoncleanup32872/35364; fullsuiteended18:37:44, wrapperstoppednextcanonicalwork and END/RELEASE18:37:45.442778Z. Resource27GBtesthostobservationearlier is separate; proposedcontainmentwindowbeganafterterminal, NOresource-limitstop.\nFocus perOwner: firstfailedoriginalquery exactroot/timing/exception; WPFcurrentchild+viewrelationships; actualdifferencesfrompass; concretecohortstate includingTRXtiming/overlap, sharedWPF/UIA initialization/lifetime seams; primaryvscleanup. Memorygrowth/cohortmembershipaloneprovesnocause. Use actual rawcensus ifitdiscriminatesprovider/layoutcontent. Need prove necessary+sufficient before recommendingfix ascausal; otherwiseprecisegap+smallestboundedrepro proposal forwatchernewslot. Subagentreportisnotevidenceuntilrootinspectsreturneddata.",
+      "summary": "Read-only RCA completed in eight calls: original null, post-query loading ancestry, bracketing current reader, no overlapping recorded test. Cause remains unresolved; duration marker consumed only at authorized artifact capture.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Explain or precisely bound P1-03 native UIA failure.",
+      "done_when": "Return supported cause or precise remaining gap plus smallest discriminator.",
+      "tier": "T2",
+      "main_calls": 8,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-16T18:41:48Z",
+      "duration_seconds": 744.0
+    },
+    {
+      "id": "al-01M2NS3HPR6M29C53JW1RDDVCN",
+      "shortname": "atlas-p1-03-design",
+      "datetime": "2026-09-16T18:54:12Z",
+      "session": "codex-atlas-p1-03-rca",
+      "prompt": "Owner admits next design/proof unit6calls/10min checkpoint4 in your existing owned tree: docs/investigations/atlas-p1-03-uia.md, official own audit and required derived records only. No executable code/tests/build/GUI/product repair. Preserve the completed8/8 read-only findings and close its existing investigate marker truthfully (do not overwrite unconsumed marker); mark the new design unit before grounding/writes per actual workflow; new session identity if the repo classifies this as a new task. Conductor authorizes the exact investigation/design artifact in this same programme lane. Do not fabricate artifacts or claim the unknowncause resolved.\nGoal: committed evidence-based RCA + exact smallest two-arm diagnostic design, reviewable before watcher authoring/execution grant. Use existing spec/arch/host and originaloracle. Owner requirements: onlydeliberatedifference UIAtraversalwhileloadingcurrent; neitherarmrefreshes/invalidatespeers/retriesquery; identicalfrozenbuildinputs+binaries, preferablyfreshprocessperarm/norebuildbetween; reuseactualdock/host/admissionpath, declaretest-ownedsynchronization and anysubstitution/limits, nosleeps/guessedreadiness; originalownedHWND/nameoracle plusindependenttransitiontiming/currentchild/providerancestry; fixedexec count/cleanup/containment and outcomeinterpretations. Bothpassing leaveshypothesisunestablished; armdifferenceonlysupports testedmechanism. Priorpass/faildifferentassemblyhashes:notcontrolledcohortcomparison.\nOpen actualcode to settle exact proposed implementationallowlist (smallest test/proof-only seam; no broadpaths or assumption oldobservergrantcoversloadingtraversal). Name exact authoring paths and commands needed in later watcherrequest; noexecutionnow. Independentdesignreview4calls/8min follows artifact. No centraldefectclassallocation untilcausalevidence; captureclasscandidate/controls boundary honestly. Usevalidgraphmetadata summary and existingrelations, officialaudit/regen, exactshortproof/siteleases. Root is abouttojoin876acbfa BLOCKreceipt andmaybrieflyholdsite; prepareartifact/analysisindependently, coordinate before site edit—no TTLwaiting. Signalreadyforreleasehandoff if needed. Returncommit,actualchecks,proposedallowlist/experimentcontract,residuallimits,budget. ModelAstra remains right-sized for temporal/provider design.",
+      "summary": "Proposed test-only two-arm loading-traversal discriminator; causal repair and execution remain blocked pending independent review of publication and provider-owner observation contracts.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Commit evidence-based RCA and smallest two-arm diagnostic design.",
+      "done_when": "Artifact is reviewable with exact seams, controlled difference, oracle, cleanup and remaining contracts.",
+      "tier": "T2",
+      "main_calls": 6,
+      "main_budget": 6,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-16T18:48:56Z",
+      "duration_seconds": 316.0
     }
   ],
   "changes": [
@@ -30814,6 +30862,28 @@ window.AUDIT_DATA = {
           "12c1ddd0 docs: record identity-bound preservation checks",
           "adb328a1 docs: independently clear Atlas assembly preservation"
         ]
+      }
+    },
+    {
+      "id": "cl-01M2NS3HVMP65HFZV71TPNA5YY",
+      "datetime": "2026-09-16T18:54:12Z",
+      "session": "codex-atlas-p1-03-rca",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Propose controlled Atlas loading-traversal discriminator",
+      "prompt": "Owner-directed bounded P1-03 RCA and two-arm diagnostic design; full prompt is retained in the associated design-slice audit entry.",
+      "summary": "One test-file diagnostic seam, real admission barrier in both arms, loading-time traversal only in B; publication and node-owner observation contracts remain execution blockers.",
+      "rationale": "Existing pass and failure do not isolate cohort or provider-materialization history.",
+      "artifacts": [
+        "docs/investigations/atlas-p1-03-uia.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "5406ea69fc21f2cc765a329b4a99be28fc3583fb",
+        "after": "5406ea69fc21f2cc765a329b4a99be28fc3583fb",
+        "branch": "investigation/atlas-p1-03-uia",
+        "pushed": null,
+        "commits": []
       }
     }
   ]

@@ -15145,6 +15145,52 @@ window.DOCS_INDEX = {
       "sourceSha256": "ff71dbe76956b39245cdb544b102aa05b5dda15741ff768a2fe8e9065fedfebd"
     },
     {
+      "id": "investigation-atlas-p1-03-uia",
+      "path": "docs/investigations/atlas-p1-03-uia.md",
+      "title": "Atlas P1-03: provider/content mismatch and proposed two-arm diagnostic",
+      "type": "investigation",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-09-23",
+      "reviewSuggested": [],
+      "summary": "P1-03's original owned-HWND Atlas files query returned null while surrounding WPF packets showed the attached reader and the subsequent UIA branch exposed loading text. Cause remains unresolved. A proposed controlled loading-traversal experiment requires independent design review and separate authoring and execution grants.",
+      "tags": [
+        "atlas",
+        "investigation",
+        "uia",
+        "diagnostic-design"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-five-gates",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-atlas-native-diag-01",
+          "rel": "relates-to"
+        },
+        {
+          "to": "investigation-atlas-p1-02-native-uia",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-code-atlas-shared-host-admission",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture-code-atlas-proposed",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-e-code-atlas",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "65198f98b37f3548f07a0e2e6562b125fd98872f345265fee441f585ee7f691e"
+    },
+    {
       "id": "investigation-code-atlas-native-repair-controls",
       "path": "docs/investigations/code-atlas-native-repair-controls.md",
       "title": "Code Atlas E repair - handle access and junction teardown failures",
@@ -23272,5 +23318,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "44e41a19a1f9b34c605019b52eac96bc5cf775f667029d0055b92fa70540f094"
+  "graphSha256": "c5078b9419722caa06df718592f1bfcdef20ac4f72e23ee22dac56438075f484"
 };
