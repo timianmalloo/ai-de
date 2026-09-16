@@ -4,7 +4,7 @@ title: "Cross-harness coordination: P0 confidence ledger and pending oracles"
 type: proof-pack
 status: draft
 owner: "@timianmalloo"
-phase: P0
+phase: P1
 tags: [coordination, proof-pack, confidence, pending]
 links:
   - { to: spec-cross-harness-coordination, rel: documents }
@@ -18,7 +18,165 @@ summary: >-
   phase-specific tests without presenting old investigation results as new passes.
 ---
 
-# Proof Pack — P0 corrected draft, not independent PASS
+# Proof Pack — dormant P1 candidate; independent code gate pending
+
+## Current receipt — 2026-09-16, Python author
+
+The P0 account below is historical. This section supersedes its pending-P0 status, not
+its unperformed runtime gates. Supplied conductor gate, not authored self-clearance:
+
+**GATE P0-delta · 2026-09-16 · Test/DS · unchanged unenrolled old clients and exact
+pinned O08/O10 oracles, dormant-only zero authority, additive existing watcher.db ruling ·
+PASS FOR DORMANT P1 ONLY · F1 resolved; authority/runtime floors BLOCKED.**
+
+**Outcome: partial programme delivery, reviewable dormant response-only candidate.**
+Worktree `C:\Projects\ai-de-feature-xh-p1-responses`, branch `feature/xh-p1-responses`,
+official session `xh-p1-responses-b0d0`, base
+`62af66ca98ef0fed810b6b07d59f79f2b227176a`. Created by the official registered worktree
+command; no installation/configuration/hooks changed. Source/tests and this Proof Pack/
+plan are the only authored surfaces. Audit is append-only. Derived pages and rollups
+remain conductor-owned. No source changes in the conductor, main or primary checkout.
+
+### Implemented seam and explicit narrower boundary
+
+`coord-core.py` is still the sole official helper. No extra module or status database.
+`read_request_events` → `fold_requests` → `cmd_request` is the exercised reader path.
+Ordinary legacy commands retain their arguments and JSON shape. Added
+`request list --id <original-id> --actionable --json` reads all statuses for that ID.
+The new read is opt-in. It returns original response envelopes, refusal codes, latest
+applicable disposition and separate unanswered/remaining/accepted/execution fields.
+Production supplies **no** generation fixture map, so typed replies remain visible but
+cannot mark an unverified generation answered. A legacy resolve is not typed acceptance.
+
+The dormant schema admits **response-recorded only**, with a closed disposition set,
+explicit endpoint generations, exact `(proposal id, revision, sha256)`, correlation,
+response supersession and semantic digest. This is not the full immutable AuthorityRef
+or ProposalRef verifier. Missing full commit/path/blob proof is not silently approved.
+Proposal-superseded, proposal-accepted and recipient-consumed event implementations remain
+pending. Response supersession is supported; proposal revision supersession is not.
+
+Synthetic fold callers can supply a generation map to exercise deterministic semantics;
+that map is explicitly **not authentication** and is never supplied by the CLI. Every
+folded acceptance/execution flag is false. `append_record` rejects enhanced/schema-versioned
+records before opening a file, regardless of synthetic verifier content. There is no
+activation flag, grant/transfer operation, endpoint send or launch implementation.
+Concurrent enhanced attempts all refuse. No enhanced event was appended to a live stream.
+
+Legacy duplicate/reordered add and resolve cannot reopen a resolved request. Unequal
+duplicate legacy adds refuse rather than replace. The reader rejects non-object JSON,
+duplicate keys, invalid IDs/timestamps, non-finite constants and invalid UTF-8, without
+sorting malformed objects. Strict new-envelope validation is separate from tolerant
+legacy unknown fields/types. Same typed source key with different semantic bytes produces
+`XH.EVENT_CONFLICT`; originals and raw file history are untouched. This is **reader/fold
+conflict proof**, not successful idempotent enhanced append receipt proof.
+
+Short `os.write` counts now raise `COORD-SHORT-WRITE`. A one-byte injected append leaves
+one byte and fails. There is **no claim that an error atomically repairs or undoes that
+partial append**, no fsync/power-loss guarantee, and no cooperative-lock solution to
+unchanged-writer races. CLI request errors return nonzero with a stable error code.
+
+### Executed RED → GREEN and immutable pins
+
+Final suite: `docs/ai-forward-pack/scripts/tests/test_coord_responses.py`.
+No official Python tests directory/self-test command was found in this vendored scripts
+snapshot; this creates the requested discoverable stdlib suite. No C# test is claimed.
+Full named GREEN output and summarized RED failures are in tool receipt **shell 639**.
+The runner can regenerate full local receipts without output redirection:
+
+```powershell
+python docs\ai-forward-pack\scripts\tests\test_coord_responses.py --baseline-receipt .agents\xh-p1-red.txt
+python docs\ai-forward-pack\scripts\tests\test_coord_responses.py --receipt .agents\xh-p1-green.txt
+python -m unittest discover -s docs\ai-forward-pack\scripts\tests -p test_coord_responses.py -v
+```
+
+**Observed:** final pinned baseline ran **19 tests**, exit 1, **22 failing subtests and
+22 errors** (3 test methods passed). Candidate discovery ran **19 tests**, **0 failures,
+0 errors**, exit 0, **0.784 seconds**. Subtest counts are not test-method counts.
+Initial fixture defects (missing pinned `repo_identity.py`, inherited `GIT_CONFIG_*`,
+Windows read-only Git objects and a mocked descriptor close) were corrected before this
+final comparison. They are not counted as product RED evidence.
+
+| Pin | Observed value |
+|---|---|
+| Pre-P1 commit | `94ec9036dd0b72aa5b759badcf21a9e3aba6659b` |
+| Pre-P1 coord-core Git blob | `b2ed495fcf4b6332ddf517aee17144173ac5b96b` |
+| Pre-P1 coord-core SHA-256, asserted by legacy test | `f73185a306f7a5b63184cd0cc759569030d29bf7115ad8bd30adf6c19f8bdacf` |
+| Pinned coord_ids support blob | `6afe13e87fd37e650e790b2135c119e16b85797c` |
+| Pinned repo_identity support blob | `27425b9f40e8f3d2abde90032862b01b4969c78c` |
+| Candidate coord-core working-byte SHA-256 | `0f16846da8664a3e39bc1eef42d143d04e1f71405210977034be701897bc937b` |
+| Final test working-byte SHA-256 | `7f65bad0c32e6be7894d0e9ccdd0c9abf315f074ec4b4d363ba37c42d06cb7e8` |
+| Full final RED receipt SHA-256 (local, regenerable, not committed) | `7fdace563ab49921aad01a1b38459a642c96fbaea350ead9e00e83ba9d250d8f` |
+
+Every name below is a `test_` method of `ResponseTests`. Names are shortened only by
+that common prefix. **Verified** means executed locally, not independently accepted.
+
+| Test name | Oracle and RED observation | Confidence / remaining boundary |
+|---|---|---|
+| Append_ConcurrentEnhancedAttempts_AllRefused | 8 attempts, width 4; baseline succeeds, candidate refuses all without file | Verified denial; no mixed-client activation |
+| Append_DiskFailure_Propagates | Injected disk error propagates; both versions pass | Verified existing behavior preserved |
+| Append_EnhancedSyntheticVerifier_ZeroEffects | Baseline appends; candidate refuses before file-open/subprocess | Verified append boundary only; full O07 authority adapter pending |
+| Append_ShortWrite_FailsWithoutRepairClaim | Baseline reports success; candidate raises and retains exactly one byte | Verified; no atomic repair/durability claim |
+| Cli_AllStatusById_ReadsHistoryWithoutAuthority | Baseline rejects flags; candidate exposes exact reply, unknown generation, zero eligibility | Verified official CLI composition/read |
+| Cli_PinnedUnenrolledLegacy_ActualLinkedTreeAndRollback | Actual git primary + 2 linked trees; old client add→resolve→list; compare new/old rows and original raw records; restore exact old source/support and repeat | Verified O08 and rollback portion of O10; old client never enrolls/upgrades |
+| Fold_ConcurrentResponses_RefusesAmbiguousLatest | Concurrent unchained replies cannot pick arbitrary latest | Verified synthetic semantics |
+| Fold_CorrelatedReply_AnswersWithoutAcceptance | Changes requested clears unanswered but never acceptance/execution; inputs unchanged | Verified O01 fixture, not authenticated production answer |
+| Fold_DuplicateAndPermutedLegacy_NeverReopens | All 6 permutations of add/resolve/add; baseline reopens | Verified legacy regression |
+| Fold_DuplicatePermutedResponses_OneSemanticAnswer | All 6 permutations of parent/reply/retry; one semantic response | Verified O03 fixture |
+| Fold_LegacyAddResolve_PreservesPayload | Ordinary resolve preserves question; ACK prose has no acceptance field | Verified existing legacy behavior |
+| Fold_StaleProposal_PreservesHistoricalResponse | Different revision/hash stays historical and unanswered | Verified stale response; full O05 acceptance/supersession pending |
+| Fold_SupersedingResponse_UsesCausalLatestNotClock | All 6 permutations; later causal reply has earlier clock; deferred retains checkpoint | Verified response supersession only |
+| Fold_UnknownOldGeneration_DoesNotApply | Empty generation map and G1→G2 both refuse | Verified response applicability; O06 authenticated consumption pending |
+| Read_DigestMutation_Refuses | Alter payload after hashing; no event admitted | Verified Python digest only |
+| Read_EnvelopeValidation_RejectsInvalidSchema | 9 invalid schema/type/disposition fixtures; baseline accepts | Verified dormant subset only |
+| Read_InvalidUtf8_ReportsAndKeepsNextRecord | Invalid byte followed by valid event; baseline decoder aborts | Verified record-local refusal |
+| Read_MalformedObjects_ReportsInsteadOfSorting | 7 malformed/non-finite/duplicate-key cases | Verified parser control |
+| Read_SameEventKeyChangedPayload_ExplicitConflict | Changed bytes under same key refuse; all 3 raw records preserved | Verified reader conflict; O09 append retry receipt pending |
+
+### Class → sweep → derive → prevent
+
+**Class:** replay/arrival order used as domain state; ambiguous input normalized into a
+plausible record; attempted append reported as completed. Related standing classes are
+E2E-F, RIG-C and DC-026. **Sweep:** request reader, fold, append, resolve and list were
+traced together. `append_decision` also ignores write count, but it is explicitly best-effort
+telemetry, not canonical admission; no claim of repair there. **Derive:** one official
+fold computes the read, no second disposition/ACK/ownership store. **Prevent:** the
+permutation, malformed corpus and real one-byte write tests above fail on the baseline.
+Fixture corrections are CI-ENV/RES-LEAK-TEST shapes: pinned support plus scrubbed Git
+environment and read-only-aware teardown now live in the tests. Defect-register editing
+was outside author ownership; conductor must incorporate this receipt, not invent a lease.
+
+### Unmet floors and next independent gate
+
+* **Blocker / Verified:** enhanced writer is disabled. O09 successful retry receipts,
+  mixed unchanged-writer contention/full-record/conflict safety, cross-language golden
+  bytes and complete P1 authority checks are unimplemented/unqualified.
+* **Blocker / Flagged:** qualified verifier/human channel and authenticated generations
+  remain unavailable. O04 exact valid peer-acceptance positive, full O05 proposal
+  supersession, O06 consumption and full O07 authority-entrypoint proof remain pending.
+* **Major / Verified:** opt-in read has unknown generations in production. It displays
+  historical replies, not an authenticated actionable workflow. No new transport or
+  acceptance status is presented as live.
+* **Major / Flagged:** full parser/ledger size bounds, invalid-surrogate corpus,
+  generation revocation, privacy retention and endpoint behavior are not qualified.
+* **Independent code gate pending:** Test/DS/Security review this exact candidate; the
+  author does not clear it. P2–P5 remain approved work, not completed work.
+
+Instrumentation: enhanced CLI list emits elapsed seconds, events scanned, explicit disabled
+writer and not-qualified generation status on the normal opt-in path. Errors are returned
+without raw payload logging. No inference spend, network or endpoint latency is measured
+because none is invoked. Full OTel integration and P5 SLIs are not claimed.
+
+Closing audit `al-01M2NMW23RP1R4EC0ZESNW60NF` records **808.00 measured seconds** from
+the official start marker and outcome `partial`. The official prompt logger also wrote
+`al-01M2NMW20JGD8H8XXRMPCXZA3R`. `audit-log.py selfcheck` reported a goal/budget
+presence gap on that prompt-only entry; the implementation entry carries both. This is
+a reported tooling/record gap, not a PASS. Official audit append regenerated
+`docs/audit/audit-data.js` as a side effect; that generated diff is excluded/restored
+because the conductor owns rollups. Local synthetic Git roots and receipt scratch files
+are removed after capture; the committed tests regenerate their evidence.
+**Minor / Verified process gap:** the closing-audit paragraph was added after its prior
+lease was released. The exact Proof Pack lease was reacquired for this correction and
+released before commit. It is not represented as continuously leased editing.
 
 **Original author:** Data & Persistence peer/co-author. **Delta:** Python phase-specific
 recording of the supplied independent F1–F6 corrections. **Tier:** T2.

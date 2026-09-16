@@ -16,7 +16,9 @@ Design: docs/design/coord-core-phase1.md
 """
 import argparse
 import fnmatch
+import hashlib
 import json
+import math
 import os
 import re
 import subprocess
@@ -386,7 +388,13 @@ def read_decisions(root):
 
 
 def append_record(path, record):
-    """Append one JSONL row to a small operator ledger."""
+    """Append a legacy row; partial writes fail without rewriting history.
+
+    Enhanced admission is deliberately unavailable, even with a synthetic verifier.
+    No cooperative mutex can qualify coexistence with the unchanged unlocked writer.
+    """
+    if record.get("kind") == "coordination-v1" or "schemaVersion" in record:
+        raise CoordError("XH.ENHANCED_DISABLED", "enhanced append is not qualified")
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     payload = json.dumps(record, sort_keys=True) + "\n"
     if Path(path).exists() and Path(path).stat().st_size:
@@ -397,7 +405,9 @@ def append_record(path, record):
     flags = os.O_WRONLY | os.O_APPEND | os.O_CREAT | getattr(os, "O_BINARY", 0)
     fd = os.open(str(path), flags, 0o644)
     try:
-        os.write(fd, payload.encode("utf-8"))
+        encoded = payload.encode("utf-8")
+        if os.write(fd, encoded) != len(encoded):
+            raise CoordError("COORD-SHORT-WRITE", "partial record retained; inspect the ledger")
     finally:
         os.close(fd)
 
@@ -406,40 +416,196 @@ def request_log_path(root):
     return Path(root) / REQUESTS_FILE
 
 
+def _unique_object(pairs: list) -> dict:
+    obj = {}
+    for key, value in pairs:
+        if key in obj:
+            raise ValueError("XH.DUPLICATE_KEY")
+        obj[key] = value
+    return obj
+
+
+def _finite_number(value: object) -> bool:
+    return type(value) in (int, float) and math.isfinite(value)
+
+
+def _reject_constant(value: str) -> None:
+    raise ValueError("XH.NONFINITE_JSON")
+
+
+def _response_bytes(event: dict) -> bytes:
+    """Dormant digest v1: sorted UTF-8 JSON, no normalization, recordedAt excluded.
+
+    Python golden bytes only; cross-language qualification remains a writer gate.
+    """
+    semantic = {k: v for k, v in event.items() if k not in ("payloadDigest", "recordedAt")}
+    return json.dumps(semantic, sort_keys=True, separators=(",", ":"),
+                      ensure_ascii=False, allow_nan=False).encode("utf-8")
+
+
+def validate_response(event: dict) -> bytes:
+    """Validate the dormant response-only subset, never acceptance or authority."""
+    fields = {"kind", "schemaVersion", "eventType", "eventId", "repositoryId", "streamId",
+              "threadId", "obligationId", "inReplyTo", "causationId", "sender", "recipient",
+              "proposal", "producerSeq", "producerAt", "recordedAt", "disposition",
+              "supersedes", "authorityRefs", "payload", "digestVersion", "payloadDigest"}
+    dispositions = {"answer", "changes-requested", "rejected", "needs-human", "unable", "deferred"}
+
+    def require(condition: bool) -> None:
+        if not condition:
+            raise CoordError("XH.SCHEMA_INVALID", "unsupported dormant response envelope")
+
+    def text(value: object) -> bool:
+        return isinstance(value, str) and bool(value.strip()) and len(value) <= 512
+
+    require(isinstance(event, dict) and set(event) == fields)
+    require(event["kind"] == "coordination-v1" and event["eventType"] == "response-recorded")
+    for key in ("schemaVersion", "digestVersion"):
+        require(type(event[key]) is int and event[key] == 1)
+    for key in ("eventId", "repositoryId", "streamId", "threadId", "obligationId",
+                "inReplyTo", "causationId"):
+        require(text(event[key]))
+    require(type(event["producerSeq"]) is int and 0 < event["producerSeq"] < 2 ** 53)
+    require(all(_finite_number(event[k]) for k in ("producerAt", "recordedAt")))
+    require(isinstance(event["disposition"], str) and event["disposition"] in dispositions)
+    require(event["supersedes"] is None or text(event["supersedes"]))
+    require(isinstance(event["authorityRefs"], list))
+    for key in ("sender", "recipient"):
+        endpoint = event[key]
+        require(isinstance(endpoint, dict) and set(endpoint) == {"session", "generation"})
+        require(all(text(v) for v in endpoint.values()))
+    proposal = event["proposal"]
+    require(isinstance(proposal, dict) and set(proposal) == {"id", "revision", "sha256"})
+    require(all(text(v) for v in proposal.values()))
+    require(re.fullmatch(r"[0-9a-f]{64}", proposal["sha256"]) is not None)
+    payload = event["payload"]
+    require(isinstance(payload, dict) and isinstance(payload.get("text"), str))
+    require(len(payload["text"]) <= 16384)
+    if event["disposition"] == "deferred":
+        require(text(payload.get("nextActor")) and text(payload.get("checkpoint")))
+    try:
+        canonical = _response_bytes(event)
+    except (ValueError, TypeError, UnicodeError, OverflowError) as exc:
+        raise CoordError("XH.SCHEMA_INVALID", "invalid canonical JSON") from exc
+    require(len(canonical) <= 32768)
+    if event["payloadDigest"] != hashlib.sha256(canonical).hexdigest():
+        raise CoordError("XH.DIGEST_MISMATCH", "semantic bytes do not match the digest")
+    return canonical
+
+
+def _request_event(event: object, seen: dict) -> dict:
+    if not isinstance(event, dict):
+        raise ValueError("XH.RECORD_OBJECT_REQUIRED")
+    if "at" in event and not _finite_number(event["at"]):
+        raise ValueError("XH.INVALID_TIMESTAMP")
+    if "id" in event and not isinstance(event["id"], str):
+        raise ValueError("XH.INVALID_ID")
+    if event.get("kind") == "coordination-v1":
+        canonical = validate_response(event)
+        key = (event["repositoryId"], event["streamId"], event["eventId"])
+        if key in seen and seen[key] != canonical:
+            raise CoordError("XH.EVENT_CONFLICT", "source key has unequal semantic bytes")
+        seen[key] = canonical
+    return event
+
+
 def read_request_events(root):
     path = request_log_path(root)
     if not path.is_file():
         return [], []
-    events, errors = [], []
-    with open(path, "r", encoding="utf-8") as fh:
+    events, errors, seen = [], [], {}
+    with open(path, "rb") as fh:
         for lineno, line in enumerate(fh, 1):
             if not line.strip():
                 continue
             try:
-                events.append(json.loads(line))
-            except json.JSONDecodeError as exc:
-                errors.append("{}:{}: {}".format(path.name, lineno, exc.msg))
-    events.sort(key=lambda e: e.get("at", 0.0))
+                event = json.loads(line.decode("utf-8"), object_pairs_hook=_unique_object,
+                                   parse_constant=_reject_constant)
+                events.append(_request_event(event, seen))
+            except (ValueError, CoordError, UnicodeError, OverflowError, RecursionError) as exc:
+                code = exc.code if isinstance(exc, CoordError) else str(exc)
+                errors.append("{}:{}: {}".format(path.name, lineno, code))
     return events, errors
 
 
-def fold_requests(events):
-    requests = {}
+def fold_requests(events, *, enhanced=False, generations=None):
+    """Fold complete history without producer-clock ordering or transport reopening.
+
+    `generations` is an isolated contract-fixture input, NOT authentication. Production
+    CLI never supplies it. Enhanced reads remain opt-in and can never grant execution.
+    """
+    requests, resolutions, replies, seen = {}, {}, {}, {}
     for event in events:
+        _request_event(event, seen)
+        if event.get("kind") == "coordination-v1":
+            replies.setdefault((event["repositoryId"], event["streamId"], event["eventId"]), event)
+            continue
         rid = event.get("id")
         if not rid:
             continue
         if event.get("kind") == "request-add":
-            row = dict(event)
-            row["status"] = "open"
-            requests[rid] = row
-        elif event.get("kind") == "request-resolve" and rid in requests:
-            requests[rid] = dict(requests[rid])
-            requests[rid]["status"] = "resolved"
-            requests[rid]["resolution"] = event.get("resolution", "")
-            requests[rid]["resolved_at"] = event.get("at")
-            requests[rid]["resolved_by"] = event.get("session", "")
-    return sorted(requests.values(), key=lambda r: r.get("at", 0.0))
+            if rid in requests and requests[rid] != event:
+                raise CoordError("XH.EVENT_CONFLICT", "legacy request ID has unequal adds")
+            requests.setdefault(rid, dict(event))
+        elif event.get("kind") == "request-resolve":
+            resolutions.setdefault(rid, []).append(event)
+    for rid, row in requests.items():
+        row["status"] = "open"
+        if rid in resolutions:
+            latest = max(resolutions[rid], key=lambda r: (
+                r.get("at", 0), json.dumps(r, sort_keys=True)))
+            row.update(status="resolved", resolution=latest.get("resolution", ""),
+                       resolved_at=latest.get("at"), resolved_by=latest.get("session", ""))
+        if enhanced:
+            _fold_responses(row, list(replies.values()), generations or {})
+    return sorted(requests.values(), key=lambda r: (r.get("at", 0.0), r["id"]))
+
+
+def _fold_responses(row: dict, replies: list, generations: dict) -> None:
+    related = sorted((r for r in replies if r["inReplyTo"] == row["id"]),
+                     key=lambda r: (r["producerSeq"], r["eventId"]))
+    row.update(responses=related, response_errors=[], unanswered=True, remaining=True,
+               accepted=False, execution_eligible=False, latest_disposition=None, next=None)
+    valid = {}
+    for response in related:
+        code = None
+        if (response["repositoryId"] != row.get("repositoryId") or
+                response["streamId"] != row.get("streamId") or
+                response["threadId"] != row["id"] or response["obligationId"] != row["id"] or
+                response["causationId"] != row["id"]):
+            code = "XH.CORRELATION_MISMATCH"
+        elif response["proposal"] != row.get("proposal"):
+            code = "XH.REVISION_STALE"
+        elif response["sender"] != row.get("recipient") or response["recipient"] != row.get("sender"):
+            code = "XH.GENERATION_MISMATCH"
+        else:
+            for endpoint in (response["sender"], response["recipient"]):
+                current = generations.get(endpoint["session"])
+                if current is None:
+                    code = "XH.GENERATION_UNKNOWN"
+                    break
+                if current != endpoint["generation"]:
+                    code = "XH.GENERATION_MISMATCH"
+                    break
+        prior = response["supersedes"]
+        if code is None and prior is not None:
+            previous = valid.get(prior)
+            if previous is None or previous["producerSeq"] >= response["producerSeq"]:
+                code = "XH.SUPERSEDES_INVALID"
+        if code:
+            row["response_errors"].append({"eventId": response["eventId"], "code": code})
+        else:
+            valid[response["eventId"]] = response
+    superseded = {r["supersedes"] for r in valid.values()}
+    latest = [r for key, r in valid.items() if key not in superseded]
+    if len(latest) == 1:
+        response = latest[0]
+        disposition = response["disposition"]
+        row.update(unanswered=False, latest_disposition=disposition,
+                   remaining=disposition in ("deferred", "needs-human"),
+                   next=response["payload"] if disposition == "deferred" else None)
+    elif len(latest) > 1:
+        row["response_errors"].append({"code": "XH.RESPONSE_AMBIGUOUS"})
 
 
 # --- git plumbing -----------------------------------------------------------
@@ -608,6 +774,9 @@ def _build_parser():
     req_list = req_sub.add_parser("list", help="list seam requests")
     req_list.add_argument("--json", action="store_true")
     req_list.add_argument("--status", choices=["open", "resolved", "all"], default="open")
+    req_list.add_argument("--id", help="retrieve one original request ID across all statuses")
+    req_list.add_argument("--actionable", action="store_true",
+                          help="dormant response read; no authenticated generation or authority")
     req_resolve = req_sub.add_parser("resolve", help="resolve a seam request")
     req_resolve.add_argument("id")
     req_resolve.add_argument("--resolution", required=True)
@@ -1784,6 +1953,7 @@ def cmd_collaborate(root, repo, action, now, as_json=False):
 
 
 def cmd_request(root, action, now, session, agent, args):
+    started = time.monotonic()
     events, errors = read_request_events(root)
     if errors:
         print("COORD-REQUEST-NOT-CHECKED  {}".format(_safe("; ".join(errors[:2]), 200)),
@@ -1812,10 +1982,19 @@ def cmd_request(root, action, now, session, agent, args):
                           "resolution": args.resolution}))
         return 0
     # list
-    folded = fold_requests(events)
-    if args.status != "all":
+    try:
+        folded = fold_requests(events, enhanced=args.actionable)
+    except (CoordError, ValueError) as exc:
+        print(getattr(exc, "code", "COORD-REQUEST-NOT-CHECKED"), file=sys.stderr)
+        return 4
+    if args.id:
+        folded = [r for r in folded if r["id"] == args.id]
+    elif args.status != "all":
         folded = [r for r in folded if r.get("status") == args.status]
     payload = {"requests": folded, "events_scanned": len(events), "errors": []}
+    if args.actionable:
+        payload.update(duration_seconds=time.monotonic() - started, enhanced_writer="disabled",
+                       generation_verification="not-qualified")
     if args.json:
         print(json.dumps(payload, indent=2, sort_keys=True))
     else:
@@ -2932,7 +3111,11 @@ def main(argv=None):
         return cmd_collaborate(root, repo, args.action, now, args.json)
 
     if args.cmd == "request":
-        return cmd_request(root, args.request_action, now, session, agent, args)
+        try:
+            return cmd_request(root, args.request_action, now, session, agent, args)
+        except (CoordError, OSError, ValueError) as exc:
+            print(getattr(exc, "code", "COORD-REQUEST-IO-FAILED"), file=sys.stderr)
+            return 4
 
     if args.cmd == "check":
         decision = check(root, args.path, session, now)

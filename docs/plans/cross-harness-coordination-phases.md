@@ -4,7 +4,7 @@ title: "Cross-harness coordination P0–P5 phase graph"
 type: doc
 status: draft
 owner: "@timianmalloo"
-phase: P0
+phase: P1
 tags: [coordination, phases, rollback, handoff]
 links:
   - { to: spec-cross-harness-coordination, rel: implements }
@@ -19,6 +19,43 @@ summary: >-
 ---
 
 # Durable phase graph
+
+## Current checkpoint — dormant P1 candidate
+
+The P0-only account below is historical. Supplied conductor Test/DS P0-delta gate passed
+**for dormant P1 only**, with F1 resolved; it does not clear authority/runtime floors.
+The Python author now supplies code/tests in `feature/xh-p1-responses`, based on
+`62af66ca98ef0fed810b6b07d59f79f2b227176a`. Full receipt, source pins and exact test names
+are in the linked Proof Pack. All-six-phase implementation approval remains in force.
+
+| Milestone | Current state |
+|---|---|
+| M0 / P0 | Limited independent PASS for dormant P1 only |
+| M1 / P1 | Dormant response-only subset implemented; independent code review pending; full P1 not complete |
+| M2 / P2 | Store implementation pending, Data/DS concrete schema coapproval still required |
+| M3 / P3 | Real positive conformance BLOCKED pending supported availability |
+| M4 / P4 | Launcher/provenance implementation pending; authority activation blocked |
+| M5 / P5 | Same-corpus conformance and SLI implementation pending |
+
+Bounded author execution graph: approved docs → registered isolated tree → discoverable
+RED tests → smallest official-helper implementation → GREEN/unchanged-client rollback →
+proof/audit/commit → independent code gate (handoff). Each edge is a data dependency.
+Read/design and implementation are **Reasoning**; registration, tests, audit and commit
+are **Deterministic mechanics**; final gate is **Independent review**, not self-cleared.
+No branch was delegated (fan-out 0). Source/read/test context was kept together rather than
+spawning nested investigators. Inferred normalized work/span before and after: 7/7 nodes,
+parallel speedup ceiling 1; no timing optimization claim. The independent gate remains
+outside author completion. Tool budget 45, context ceiling 150k; a budget boundary narrows
+the deliverable explicitly, never silently clears a floor.
+
+Actual verification: 19 selected tests, pinned baseline RED (22 failed subtests, 22 errors),
+candidate GREEN (19/19, 0.784 s). Fixture rework was finite: isolate inherited Git config,
+pin the missing support module, protect mock descriptors and clean read-only Git objects.
+Variant was unresolved selected test failures, floor zero; no unbounded review loop.
+Completed scope is envelope/read/fold and append-denial only. Exact source-to-read surface
+and the unimplemented acceptance/consumption/activation predicates are recorded in the Proof
+Pack. Independent gate completion, derived rollups and lessons/register incorporation belong
+to the conductor; no site or peer-file claims were taken.
 
 **Actual-human implementation approval exists; runtime and independent review gates
 remain. This work unit stops at P0 corrected draft.** Maximum global concurrency is three including
