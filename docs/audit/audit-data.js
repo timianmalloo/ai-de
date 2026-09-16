@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T16:48:46Z",
+  "generated": "2026-09-16T17:09:54Z",
   "audit": [
     {
       "actor": null,
@@ -19901,6 +19901,38 @@ window.AUDIT_DATA = {
         "short": "aa9e16a81",
         "branch": "understanding-views-d1",
         "pushed": true
+      }
+    },
+    {
+      "id": "al-01M2NK4JCEKXXD84ED9WWR7E1N",
+      "shortname": "codex-d1-r4-consumer-review",
+      "datetime": "2026-09-16T17:09:54Z",
+      "session": "codex-atlas-d1-r4-review",
+      "prompt": "Independently evaluate exact docs/notes/d1-codex-entry-point-handshake-r4.md blob a8c05bc77451b0438ebea24eaad9b15db6c99601 for consumer ACK. Document boundary only; no implementation, build or GUI. Separate agreeing Grok author role from freezing unimplemented identity/API/authority/runtime activation. Test Architect, architecture-authority, No-Guessing and Simplifier lenses. One independent receipt docs/proof/codex-d1-r4-consumer-review.md plus own official audit/liveness/ignored scratch; existing contract/source read-only. Return CLEAR or CHANGES REQUIRED with exact clause/pin/evidence and smallest acceptable deltas; commit receipt, record actual cost, release exact short lease. Do not ACK peer or change ownership. Budget five calls/seven minutes, checkpoint at three.",
+      "summary": "CHANGES REQUIRED. Four numbered deltas distinguish proposed E1 from the legacy nodeId sink, remove an unadmitted durable-facts identity fallback, separate Grok proposal authorship from Core/path authority, and resolve ambiguity before runtime activation. Exact proposal/design/spike/native signatures inspected. Two read batches truncated; narrowed read established cited evidence. No production files, build, tests or GUI. Five functions batches, six underlying operations; tokens/spend not recorded. Parent receives capture artifact because AIDE contract environment absent.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-astra-d1-r4-review",
+      "artifacts": [
+        "docs/proof/codex-d1-r4-consumer-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Determine whether Codex can honestly ACK exact D1 r4 blob or name smallest required deltas.",
+      "done_when": "Independent committed receipt names verdict, exact evidence and numbered minimal acceptance conditions.",
+      "tier": "T1",
+      "main_calls": 6,
+      "main_budget": 5,
+      "main_over_budget": true,
+      "fan_out": 0,
+      "started_at": "2026-09-16T17:06:32Z",
+      "duration_seconds": 202.0,
+      "git": {
+        "sha": "173aa5a4ad245fda92bcc0bdadafac6ba9f0c8e4",
+        "short": "173aa5a4a",
+        "branch": "review/atlas-d1-r4-boundary",
+        "pushed": null
       }
     }
   ],
