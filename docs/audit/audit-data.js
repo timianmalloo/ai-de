@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T20:25:39Z",
+  "generated": "2026-09-16T20:32:39Z",
   "audit": [
     {
       "actor": null,
@@ -26307,6 +26307,43 @@ window.AUDIT_DATA = {
         "sha": "ebfe076125a1200345b806519b733104b3e06ea7",
         "short": "ebfe07612",
         "branch": "test/atlas-p1-03-uia-transition",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NYQSJQJ2TC6SFE71W82M44",
+      "shortname": "atlas-p1-03-transition-independent-review",
+      "datetime": "2026-09-16T20:32:38Z",
+      "session": "codex-atlas-p1-03-transition-review",
+      "prompt": "Independently review frozen test-only Atlas P1-03 transition diagnostic preparation at c192a7ed; exact selected non-GUI run only. Assess B1 publication, B2 association boundary, B3 custody races, original exception/source preservation and future runner gates; commit own receipt and official audit. No shown execution or source repairs.",
+      "summary": "Independent Test Architect/SRE/Simplifier CLEAR for experiment-only preparation at c192a7ed/SHA914a755d. Own normal Debug43/43 selected TRX parsed; exact population equals author final and discovery. Author red23/21/2 observed with unpinned red-source limitation. Original suffix preserved. Completed concern disconfirmed by actual Save gating with FailureCount. Shown publication/UIA, full binary manifest, treatment reach, process containment and watcher execution remain separate gates. No source changes/native run. Late liveness, truncated initial reads and dropped initial doctor session result disclosed; recovery doctor log is not yet promoted to a pass.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Independently assess exact diagnostic preparation without accepting shown behavior.",
+      "done_when": "Source, own selected evidence and explicit lens predicates support the committed independent receipt.",
+      "tier": "T2",
+      "main_calls": 10,
+      "main_budget": 12,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-16T20:27:00Z",
+      "duration_seconds": 338.0,
+      "git": {
+        "sha": "c192a7eddab0d794712cd505994ce7858eea86d4",
+        "short": "c192a7edd",
+        "branch": "review/atlas-p1-03-uia-transition",
         "pushed": null
       }
     }

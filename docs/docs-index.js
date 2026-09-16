@@ -12902,6 +12902,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "8846eef929f694d56d99055a97a85125ddd0130ec7fb48776683c8d5f3df7cd4"
     },
     {
+      "id": "proof-atlas-p1-03-transition-review",
+      "path": "docs/proof/atlas-p1-03-transition-review.md",
+      "title": "Independent Atlas transition diagnostic preparation review",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "CLEAR for experiment-only preparation at c192a7ed: independent 43/43 selected controls and source review; shown execution, runner containment and causal claims remain separate gates.",
+      "tags": [
+        "atlas",
+        "independent-review",
+        "diagnostic",
+        "testing"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-p1-03-uia-transition",
+          "rel": "relates-to"
+        },
+        {
+          "to": "investigation-atlas-p1-03-uia",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9b15021378d7587572a1a918fa09eb54398aa402883cc627eb84d053c1b417c7"
+    },
+    {
       "id": "proof-atlas-p1-03-uia-transition",
       "path": "docs/proof/atlas-p1-03-uia-transition.md",
       "title": "Atlas P1-03 loading traversal: experimental preparation",
@@ -23348,5 +23378,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "fd43cf8263a975964ce4b9b0fcc45efb520fb859d305dc1fccca06d0f3ecf42f"
+  "graphSha256": "dfd94bbd28d07166ddb8ac25d65491155ee36f3f573286638a7845e4e358dd1f"
 };
