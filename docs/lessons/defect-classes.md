@@ -5529,6 +5529,22 @@ for both or split.*
   control that would catch it — an analyzer or a gate over interop call sites — is named here and
   not built
 
+
+- **Recurrence (2026-09-16, Atlas P1-03 audit capture):** structured input used
+  singular `artifact`, leaving persisted `artifacts` empty; rejected correction commands
+  omitted required prompt, and discarded failures let a commit precede actual correction.
+  **Class -> sweep -> derive -> prevent:** reuse DC-125's establish-a-property return
+  shape; inspect both audit rows and their superseding rows; require actual artifact,
+  prompt and supersedes values; gate every dependent subprocess with checked return
+  and assert persisted data before regeneration/commit. The bounded capture helper
+  stopped on a real lease refusal and preserved staged work; continuation followed an
+  observed explicit holder release, not TTL expiry. Root's checkpoint helper likewise
+  asserts the exact ACK route/text and persisted audit attachments before committing.
+  Evidence: `docs/proof/codex-d1-r5-consumer-review.md`, `docs/proof/atlas-p1-03.md`,
+  and investigator corrections al-01M2NSDY27ASPF8CY8751K3C8B /
+  al-01M2NSDY5V4BDHC70BPA4TYYT7 at ebfe0761. These are executed local controls;
+  this recurrence does not claim a new repository-wide gate or controlled class.
+
 ### DC-126 — A gate verifies that an instruction is DOCUMENTED, not that it is FOLLOWABLE, and the capability it names does not exist
 
 - **Shape:** a recurring failure is diagnosed, and the remedy is written as an **instruction** into

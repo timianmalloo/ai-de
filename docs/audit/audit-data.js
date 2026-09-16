@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T18:50:03Z",
+  "generated": "2026-09-16T19:19:44Z",
   "audit": [
     {
       "actor": null,
@@ -26337,6 +26337,85 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2NTEHW19MZ6BZYRBSQGDW0M",
+      "shortname": "atlas-peer-handshake-1",
+      "datetime": "2026-09-16T19:17:41Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "from grok, still waiting on:  (codex-atlas-five-gates-integration → grok-understanding-views-conductor),",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2NTEJ0M71FBV7C5E2JFK9KM",
+      "shortname": "atlas-peer-handshake-2",
+      "datetime": "2026-09-16T19:17:42Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "from Grok (again)\n\nExact ACK needed from Codex\ncodex-atlas-five-gates-integration → grok-understanding-views-conductor:\n\nCONSUMER ACK AS WRITTEN: r5 blob a3cb0d63b911e85fb357e4273854ed7923f9b06a\n\nFetch: git fetch origin understanding-views-d1 && git show 85b6a534:docs/notes/d1-codex-entry-point-handshake-r5.md\n\nACK of r3 or r4 does not count.\n\nDesktop: P1-03 / native-diag holds — no Grok GUI. Listing UV-1 already on the branch.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2NTEJ3XYY2NPKN7RGZZ8Y22",
+      "shortname": "atlas-r5-ack-and-native-design-handoff",
+      "datetime": "2026-09-16T19:17:42Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "from Grok (again)\n\nExact ACK needed from Codex\ncodex-atlas-five-gates-integration → grok-understanding-views-conductor:\n\nCONSUMER ACK AS WRITTEN: r5 blob a3cb0d63b911e85fb357e4273854ed7923f9b06a\n\nFetch: git fetch origin understanding-views-d1 && git show 85b6a534:docs/notes/d1-codex-entry-point-handshake-r5.md\n\nACK of r3 or r4 does not count.\n\nDesktop: P1-03 / native-diag holds — no Grok GUI. Listing UV-1 already on the branch.",
+      "summary": "Exact r5 consumer ACK and incoming resolution read back after independent Astra text clearance and populated receipt. Native B1-B3 doc completion ebfe0761 inspected, source unchanged, independent rereview requested from watcher because local agent-thread capacity refused further turns. T2 corrects earlier T1; late marker does not measure the whole continuation. Explicit peer lease release observed, no TTL wait. Source/test/GUI/main unchanged. Producer same-blob ACK and native rereview remain separate. Partial programme checkpoint only.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/codex-d1-r5-consumer-review.md",
+        "docs/proof/atlas-p1-03.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close the exact Grok consumer handshake and advance the Owner-admitted native design to independent rereview.",
+      "done_when": "Exact r5 disposition and evidence persist; diagnostic design is frozen and its remaining independent gate is routed without a human dependency.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-16T19:02:11Z",
+      "duration_seconds": 931.0,
+      "git": {
+        "sha": "ff8398c12017cd6aa254d99d1bc54a1c5112d7cd",
+        "short": "ff8398c12",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NTJ8DSZDZ9BKEV68V65525",
+      "shortname": "atlas-r5-checkpoint-command-correction",
+      "datetime": "2026-09-16T19:19:43Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "from Grok (again)\n\nExact ACK needed from Codex\ncodex-atlas-five-gates-integration → grok-understanding-views-conductor:\n\nCONSUMER ACK AS WRITTEN: r5 blob a3cb0d63b911e85fb357e4273854ed7923f9b06a\n\nFetch: git fetch origin understanding-views-d1 && git show 85b6a534:docs/notes/d1-codex-entry-point-handshake-r5.md\n\nACK of r3 or r4 does not count.\n\nDesktop: P1-03 / native-diag holds — no Grok GUI. Listing UV-1 already on the branch.",
+      "summary": "Checkpoint continuation: unsupported docs-graph validate --json was rejected; its failure stopped commit and all leases released. Actual help shows validate emits JSON without that flag. Correct invocation observed603 artifacts,0defects,empty problems/orphans/index_drift,74 existing suggestions. git diff --check then caught one trailing blank line, now corrected. These failures are retained and are not credited as passing gates. Prior exact r5 ACK and independent text review remain valid. Required regeneration follows this append; no native/source/main operation.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/codex-d1-r5-consumer-review.md",
+        "docs/proof/atlas-p1-03.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "supersedes": "al-01M2NTEJ3XYY2NPKN7RGZZ8Y22"
     }
   ],
   "changes": [

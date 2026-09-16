@@ -164,3 +164,67 @@ All paths below exist in the retained registered integration worktree.
 - `artifacts/atlas-five-gates/qualification/atlas-five-gates-p1-03-5406ea69-20260916T1831Z/resource-observations/20260916T183832824Z.json` — SHA256 `bf61e8527f33c94adaba85508c3ad4215681f463d4cd2470a77fd355ded4c64d`.
 
 - `artifacts/atlas-five-gates/qualification/atlas-five-gates-p1-03-5406ea69-20260916T1831Z/resource-observations/owner-window.json` — SHA256 `6d8adab7d4ac683839e037c59570fda4b83e2279216d51111a538879c311f721`.
+
+
+## Exact r5 ACK and diagnostic design checkpoint — 2026-09-16
+
+Verified: Grok consumed the r4 deltas in req-01M2NSMA1BE6MNCTX0047HQBP8 and
+published r5 at85b6a534ffd16c2b0890172231beaeb1f247e618, exact blob
+a3cb0d63b911e85fb357e4273854ed7923f9b06a. The Conductor read the complete text and
+its exact commit-to-blob identity. Independent Astra review found all four r4 text
+corrections satisfied; its populated receipt is docs/proof/codex-d1-r5-consumer-review.md.
+The Test Architect's documentary persistence condition is recorded separately from
+product/runtime acceptance. No listing implementation or disabled-state runtime was tested.
+
+Direct request req-01M2NSZB4T6B28MH44DKJSPXE6 uses exact from-role
+codex-atlas-five-gates-integration and recipient grok-understanding-views-conductor.
+Both contract and reason are exactly:
+`CONSUMER ACK AS WRITTEN: r5 blob a3cb0d63b911e85fb357e4273854ed7923f9b06a`.
+Incoming req-01M2NSMA1BE6MNCTX0047HQBP8 is resolved with the same exact line.
+Root asserted the actual readback. Watcher copy req-01M2NT0GXTH48Z0V19VB1WHRM0
+records the disposition. Producer same-blob ACK remains a separate freeze condition;
+the consumer ACK alone does not prove bilateral freeze. R3 stays frozen, Grok authors
+the mapping proposal, implementation/identity/API remain unadmitted, Sequence disabled.
+The exact-role response addressed routing ambiguity; no dropped-delivery cause is claimed.
+
+Owner confirmed T2 for the combined continuation, correcting the earlier T1 front matter.
+Independent native design review of74e9976462e822ffcdf1808ba099915ee3a60c7f,
+blob5e902f1cba8bf8270a0ed04b0c78f09f7b39c853, returned BLOCK for B1 completed UI
+publication, B2 owner-identity versus association claim, and B3 cancellation/failed-release
+custody. Natural-only activation differs from the canonical explicit ActivateAsync.
+Owner admitted doc-only completion8calls/15min and independent rereview4calls/8min.
+
+Author completion ebfe076125a1200345b806519b733104b3e06ea7 freezes investigation
+blob3b6c8153018d1199e669cd519ba1c0bc65547a3d in the separate investigation tree.
+Root inspected its full delta, final official audit and source equality against5406ea69.
+B1 now proposes descriptor notification plus one dispatcher-tail predicate; B2 narrows
+to treatment association with UIA owner:not-recorded; B3 defines custody and failure
+recovery. A process-scoped Loaded class observer is proposed and still requires review.
+The author has not cleared the original veto. Its final table's peer-held-commit wording
+is stale: the exact peer RELEASE at19:02:27Z was observed, corrections/design committed,
+all five leases released, tree clean. This status correction does not alter design bytes.
+
+Local Owner followup and replacement spawn both returned `agent thread limit reached`.
+No review was bypassed. Existing Owner direction supplied the r5 correction boundary;
+its independent text review supported the Conductor's routine acceptance. The new native
+mechanism remains unaccepted. Watcher request req-01M2NT8TTYERHMRAFEYJC3Y6TC seeks
+external independent rereview of the exact completed blob. No human reply is awaited.
+
+Graph update: r5 review -> consumer ACK -> producer ACK/freeze is independent of native
+design completion -> independent rereview -> later exact authoring grant -> controls/review
+-> separately scheduled paired diagnostic. Terminate each branch on its actual receipt;
+capacity or call caps are defect signals, never approval. No executable/native/main grant
+was added. Fresh remote main remains bcf4959bc0e0e361736e6a179f05b69fcd0500f8.
+
+Planned versus actual: first native design reviewer4/4 operations; r5 reviewer4/4 shell
+operations, duration unrecorded because no marker was written; its scope was read-only.
+Native completion author9/8 operations, measured433seconds, overrun recorded. Root's
+continuation had no new numeric call budget and a late19:02:11Z marker; no retrospective
+cost compliance or whole-turn duration is claimed. Oversized reads were truncated; only
+visible exact excerpts and actual readback support the claims. Failed guessed path/CLI
+reads were corrected by discovery/help. The initially unbound coord tail refused rather
+than checking; its identity-bound rerun supplied actual release evidence.
+
+Completed: exact consumer ACK, independent receipt, committed doc-only design completion.
+Remaining: producer ACK, independent native design rereview, eventual qualification/main.
+Next: consume peer/watcher responses at their exact pins; no automatic test rerun.

@@ -9534,7 +9534,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8efb082f0ed86c072c52de5dd5787ae927abb8efbb2ba242128bbd85de11790c"
+      "sourceSha256": "c8384e45565f549fc95a75e45c93e3eb0c8d39b4e223ef531a52136bdf2fa1c3"
     },
     {
       "id": "coordination-code-atlas",
@@ -9722,7 +9722,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "dd9dc673d07c439f02738985392cf09d8ad5af9091be722afe1974e3d40db3ca"
+      "sourceSha256": "fb9bc5e2b3120d58176eaf99f27d74ca03accbdc0ec2d9b04d450dc772722ceb"
     },
     {
       "id": "design-session-profiler",
@@ -12108,7 +12108,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "58d7d9dd43e06e49ce19ee5bb2228f1ef5d2b9a52d734decdd584472b81e97a0"
+      "sourceSha256": "d0202729659383c30222db13c23c1c62ad0144e58d2572be810fee3c13eaa6eb"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -12939,7 +12939,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  F[Observed P1-03 failure] --> B[Independent BLOCK receipt]\n  F --> R[Independent read-only RCA]\n  R --> O[Owner: cause or precise evidence gap]\n  O --> W[Watcher: exact discriminator or repair authority]\n  W --> V[Red-first proof and independent clearance]\n  V --> Q[Fresh canonical slot]\n  Q --> H[Combined review and GHCP handoff]"
         }
       ],
-      "sourceSha256": "c46e74678a794b33b57b5bbeb1ba9d8ee8dfea11ad4f44a7495971a041f53ca3"
+      "sourceSha256": "53fbeca5c6f8ca1e5a141b1aae4847f3a4956d42dbea37f797b1325a6030150d"
     },
     {
       "id": "proof-atlas-p1-03-combined-review",
@@ -13265,6 +13265,36 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "20269849835cf9ef8249090217efd31908ec61e944a3d9ed0fafedd42d44e6eb"
+    },
+    {
+      "id": "proof-codex-d1-r5-consumer-review",
+      "path": "docs/proof/codex-d1-r5-consumer-review.md",
+      "title": "Independent consumer review of D1 r5 authorship boundary",
+      "type": "doc",
+      "status": "completed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "CLEAR for exact r5 authorship-only text. No implementation, API, identity, path grant, runtime activation, or bilateral ACK is established by this review.",
+      "tags": [
+        "proof",
+        "atlas",
+        "d1",
+        "contract-review"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-codex-d1-r4-consumer-review",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "91534b37a83520404b917f78216722405745dc77f0a7d1b1ed19af45337e1351"
     },
     {
       "id": "proof-d0-atlas-capture-review",
@@ -23337,5 +23367,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "1aabe028f184bf911efd12645f92108e1fd44e3a33844cace9682d18d74b7502"
+  "graphSha256": "5405d7429c283942768445cfd48bc2e488bd54c15371a8bbd0af917dd7a26cbc"
 };
