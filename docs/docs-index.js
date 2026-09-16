@@ -5654,6 +5654,39 @@ window.DOCS_INDEX = {
       "sourceSha256": "402c3dc5757dfb7516205cab2e78c73597c56feb5a0fce45e0042593291492c5"
     },
     {
+      "id": "note-d1-listing-query-architecture",
+      "path": "docs/notes/d1-listing-query-architecture.md",
+      "title": "D-1 listing query architecture (draft) — EntryPointsAsync; identity minting",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "Listing query lives on IWorkspaceQueries. Grain: one row per candidate occurrence. Member identity is not node_id today. Open Sequence is not this query.",
+      "tags": [
+        "decision-note",
+        "D-1",
+        "architecture"
+      ],
+      "links": [
+        {
+          "to": "spec-entry-points",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-n1-inventory",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r3",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "40fedb8fb92815a195e43ee11e8d713bc4843acb7dd33ff850d85089e0577868"
+    },
+    {
       "id": "note-d1-n1-inventory",
       "path": "docs/notes/d1-n1-inventory.md",
       "title": "D-1 N1 inventory — existing store and queries (facts; handshake not frozen)",
@@ -5712,6 +5745,32 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "d3a012d57cafc9f45733ac2e093a0b281760112c8a0ac92febc40e318b559f97"
+    },
+    {
+      "id": "note-d1-r4-ack-card",
+      "path": "docs/notes/d1-r4-ack-card.md",
+      "title": "Copy-paste ACK card for Codex five-gates — r4 mapper blob a8c05bc7",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "Exact ledger reply Codex must send. Prior r4 notice had no consumer ACK. Silence is not ACK. Only five-gates-integration may ACK.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "ack-card"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake-r4",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b363db9792257ac7fcc9e28f9a5e77266ae38b224cf73eb6ff2c7fc8aae232c5"
     },
     {
       "id": "note-dc-115-evidence-in-a-lanes-own-checkout",
@@ -20872,5 +20931,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ba7746046f990aabdb2ffb4ce55a9f8ce50bc69a464e2aaea4998c2ba3909c5a"
+  "graphSha256": "91b2d5cd3c613a5c2676902cf5b36d3af77339e4c0c0882bf854383035e00644"
 };
