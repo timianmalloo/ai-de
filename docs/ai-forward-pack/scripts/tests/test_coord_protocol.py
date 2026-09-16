@@ -184,12 +184,173 @@ class ProtocolTests(unittest.TestCase):
                 self.assertFalse(row["accepted"])
                 self.assertIn("XH.INTEGRITY_INVALID", str(row["protocol_errors"]))
 
-    def revision(self):
-        (self.root / "proposal.md").write_bytes(b"# Decision\nsynthetic two\n")
+    def revision(self, content: bytes = b"# Decision\nsynthetic two\n"):
+        (self.root / "proposal.md").write_bytes(content)
         self.git("add", "proposal.md")
         self.git("-c", "user.name=Synthetic", "-c", "user.email=synthetic@example.invalid",
                  "commit", "--quiet", "-m", "revision")
         return self.reference()
+
+    def scoped_event(self, proposal: dict, kind: str, eid: str, **changes) -> dict:
+        obligations = {"listing-boundary": "listing-obligation",
+                       "mapper-assignment": "mapper-obligation"}
+        event = self.event(kind, eid, proposal, **changes)
+        for key in ("inReplyTo", "threadId", "obligationId", "causationId"):
+            event[key] = obligations[proposal["id"]]
+        event["authorityRefs"][0]["scope"] = "proposal:" + proposal["id"]
+        event["payloadDigest"] = digest(event)
+        return event
+
+    def scoped_fold(self, proposals: tuple[dict, ...], facts: list[dict]) -> dict:
+        """Synthetic policy only: two independent obligations, never authority from prose."""
+        bindings = {"listing-boundary": "listing-obligation",
+                    "mapper-assignment": "mapper-obligation"}
+        questions = []
+        for proposal in proposals:
+            q = question()
+            q.update(id=bindings[proposal["id"]], proposal=copy.deepcopy(proposal))
+            questions.append(q)
+        context = self.context()
+
+        def verify(event, action):
+            result = context.verify(event, action)
+            proposal_id = event["proposal"]["id"]
+            scoped = (proposal_id in bindings
+                      and all(event[key] == bindings[proposal_id] for key in
+                              ("inReplyTo", "threadId", "obligationId", "causationId"))
+                      and all(ref["scope"] == "proposal:" + proposal_id
+                              for ref in event["authorityRefs"])
+                      and (event["supersedes"] is None
+                           or event["supersedes"]["id"] == proposal_id))
+            return replace(result, authorized=result.authorized and scoped)
+
+        before = copy.deepcopy([*questions, *facts])
+        rows = coord.fold_requests([*questions, *facts], enhanced=True,
+                                   generations=self.generations,
+                                   trusted_context=replace(context, verify=verify))
+        self.assertEqual(before, [*questions, *facts])
+        self.assertEqual(len(proposals), len(rows))
+        for row in rows:
+            for right in ("execution_eligible", "ownership_granted", "run_granted",
+                          "transfer_granted", "start_granted"):
+                self.assertFalse(row[right], (row["id"], right))
+        return {row["id"]: row for row in rows}
+
+    def scoped_pair(self):
+        listing = dict(self.ref, id="listing-boundary")
+        mapper = dict(self.revision(), id="mapper-assignment")
+        self.assertEqual(listing["repositoryRelativePath"], mapper["repositoryRelativePath"])
+        self.assertNotEqual(listing["sha256"], mapper["sha256"])
+        facts = [self.scoped_event(listing, "obligation-created", "listing-published")]
+        facts.extend(self.scoped_event(listing, "proposal-accepted", "listing-" + peer,
+                                       sender={"session": peer, "generation": generation},
+                                       payload={}) for peer, generation in self.peers)
+        notice = self.scoped_event(mapper, "obligation-created", "mapper-notice")
+        return listing, mapper, facts, notice
+
+    def test_Fold_SeparateMapperNotice_PreservesExactListingAcceptance(self):
+        listing, mapper, accepted_listing, notice = self.scoped_pair()
+        baseline = self.scoped_fold((listing,), accepted_listing)["listing-obligation"]
+        self.assertTrue(baseline["accepted"])
+        ack = {"kind": "request-resolve", "id": "mapper-obligation", "at": 4,
+               "resolution": "ACK"}
+        history = [*accepted_listing, notice, ack]
+        orders = (history, list(reversed(history)),
+                  [notice, accepted_listing[2], ack, accepted_listing[0], accepted_listing[1]])
+
+        for order in orders:
+            with self.subTest(order=[e.get("eventId", "ack") for e in order]):
+                rows = self.scoped_fold((listing, mapper), [*order, notice, ack, notice])
+                listed, mapped = rows["listing-obligation"], rows["mapper-obligation"]
+                self.assertTrue(listed["accepted"])
+                self.assertEqual(listing, listed["current_proposal"])
+                self.assertEqual({listing["sha256"]},
+                                 {e["proposal"]["sha256"] for e in listed["acceptances"]})
+                self.assertEqual(2, len(listed["acceptances"]))
+                self.assertEqual([], listed["protocol_errors"])
+                self.assertFalse(mapped["accepted"])
+                self.assertEqual(mapper, mapped["current_proposal"])
+                self.assertEqual([], mapped["acceptances"])
+                self.assertEqual("resolved", mapped["status"])
+                self.assertTrue(mapped["unanswered"])
+                self.assertEqual([notice], mapped["protocol_facts"])
+                self.assertEqual([], mapped["protocol_errors"])
+
+    def test_Fold_MapperSupersession_ChangesOnlyMapperRevision(self):
+        listing, mapper, accepted_listing, notice = self.scoped_pair()
+        mapper_acceptances = [
+            self.scoped_event(mapper, "proposal-accepted", "mapper-" + peer,
+                              sender={"session": peer, "generation": generation}, payload={})
+            for peer, generation in self.peers]
+        accepted = [*accepted_listing, notice, *mapper_acceptances]
+        before = self.scoped_fold((listing, mapper), accepted)
+        self.assertTrue(before["listing-obligation"]["accepted"])
+        self.assertTrue(before["mapper-obligation"]["accepted"])
+        successor = dict(self.revision(b"# Decision\nsynthetic mapper successor\n"),
+                         id="mapper-assignment")
+        publication = self.scoped_event(successor, "obligation-created", "mapper-successor")
+        unlinked = self.scoped_fold((listing, mapper), [*accepted, publication])
+        self.assertTrue(unlinked["listing-obligation"]["accepted"])
+        self.assertEqual(listing, unlinked["listing-obligation"]["current_proposal"])
+        self.assertFalse(unlinked["mapper-obligation"]["accepted"])
+        self.assertIsNone(unlinked["mapper-obligation"]["current_proposal"])
+        self.assertIn("XH.REVISION_AMBIGUOUS",
+                      {e["code"] for e in unlinked["mapper-obligation"]["protocol_errors"]})
+        supersession = self.scoped_event(successor, "proposal-superseded", "mapper-revised",
+                                        supersedes=mapper, payload={})
+        history = [*accepted, publication, supersession]
+
+        for order in (history, list(reversed(history))):
+            with self.subTest(order=[e["eventId"] for e in order]):
+                rows = self.scoped_fold((listing, mapper), [*order, notice, supersession])
+                listed, mapped = rows["listing-obligation"], rows["mapper-obligation"]
+                self.assertTrue(listed["accepted"])
+                self.assertEqual(listing, listed["current_proposal"])
+                self.assertEqual([], listed["protocol_errors"])
+                self.assertFalse(mapped["accepted"])
+                self.assertEqual(successor, mapped["current_proposal"])
+                self.assertEqual(2, len(mapped["acceptances"]))
+                self.assertEqual({mapper["sha256"]},
+                                 {e["proposal"]["sha256"] for e in mapped["acceptances"]})
+                self.assertEqual({"XH.REVISION_STALE"},
+                                 {e["code"] for e in mapped["protocol_errors"]})
+        renewed = [
+            self.scoped_event(successor, "proposal-accepted", "renewed-" + peer,
+                              sender={"session": peer, "generation": generation}, payload={})
+            for peer, generation in self.peers]
+        rows = self.scoped_fold((listing, mapper), [*history, *renewed])
+        self.assertTrue(rows["listing-obligation"]["accepted"])
+        self.assertEqual(listing, rows["listing-obligation"]["current_proposal"])
+        self.assertTrue(rows["mapper-obligation"]["accepted"])
+        self.assertEqual(successor, rows["mapper-obligation"]["current_proposal"])
+
+    def test_Fold_MapperAuthorityForListingSupersession_DeniesCrossScope(self):
+        listing, mapper, accepted_listing, notice = self.scoped_pair()
+        replacement = dict(mapper, id="listing-boundary")
+        hostile = self.scoped_event(replacement, "proposal-superseded", "cross-scope",
+                                    supersedes=listing, payload={})
+        hostile["authorityRefs"][0]["scope"] = "proposal:mapper-assignment"
+        hostile["payloadDigest"] = digest(hostile)
+        history = [*accepted_listing, notice, hostile]
+
+        for order in (history, list(reversed(history))):
+            with self.subTest(order=[e["eventId"] for e in order]):
+                rows = self.scoped_fold((listing, mapper), [*order, hostile, notice])
+                listed, mapped = rows["listing-obligation"], rows["mapper-obligation"]
+                self.assertTrue(listed["accepted"])
+                self.assertEqual(listing, listed["current_proposal"])
+                self.assertEqual(2, len(listed["acceptances"]))
+                self.assertEqual([{"repositoryId": "repo", "streamId": "stream",
+                                   "eventId": "cross-scope", "code": "XH.AUTHORITY_UNVERIFIED"}],
+                                 listed["protocol_errors"])
+                checked = next(v for v in listed["verification"] if v["eventId"] == "cross-scope")
+                self.assertEqual("verified", checked["integrity"])
+                self.assertEqual("verified", checked["issuer"])
+                self.assertEqual("denied", checked["authorization"])
+                self.assertFalse(mapped["accepted"])
+                self.assertEqual(mapper, mapped["current_proposal"])
+                self.assertEqual([], mapped["acceptances"])
+                self.assertEqual([], mapped["protocol_errors"])
 
     def test_Fold_Supersession_OldAcceptanceHistoricalNotCurrent(self):
         new = self.revision()
@@ -547,6 +708,13 @@ def mutation_receipt() -> int:
                         "errors": len(result.errors),
                         "killed": bool(result.failures) and not result.errors})
     repairs = (
+        ("global-proposal-invalidation", "protocol",
+         (('e["inReplyTo"] == row["id"]', "True"),
+          ('all(event[k] == row["id"] for k in', "all(True for k in")),
+         "test_Fold_SeparateMapperNotice_PreservesExactListingAcceptance"),
+        ("cross-scope-supersession-authorization", "protocol",
+         (("v.authorized is True and", "True and"),),
+         "test_Fold_MapperAuthorityForListingSupersession_DeniesCrossScope"),
         ("checked-source-key", "protocol",
          (("checked[source_key(event)]", 'checked[event["eventId"]]'),
           ("checked.get(source_key(event))", 'checked.get(event["eventId"])'),
