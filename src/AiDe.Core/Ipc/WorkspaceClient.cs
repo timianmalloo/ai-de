@@ -185,6 +185,14 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
         QueryAsync<NodeContent>(
             WorkspaceOperations.NodeContent, new NodeContentRequest(nodeId), cancellationToken);
 
+    public Task<SolutionTreeResult> SolutionTreeAsync(
+        SolutionTreeQuery query, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+        return QueryAsync<SolutionTreeResult>(
+            WorkspaceOperations.SolutionTree, query, cancellationToken);
+    }
+
     /// <summary>
     /// Asks the daemon to re-index a scope, and waits for it to finish.
     /// </summary>

@@ -123,6 +123,9 @@ public sealed class EveryOperationFitsTheFrameTests : IDisposable
 
         [nameof(IWorkspaceQueries.OverviewAsync)] =
             (p, _) => p.Overview(new OverviewQuery(1, ProjectionService.MaxClustersCeiling)),
+
+        [nameof(IWorkspaceQueries.SolutionTreeAsync)] =
+            (p, _) => p.SolutionTree(new SolutionTreeQuery()),
     };
 
     [Fact]

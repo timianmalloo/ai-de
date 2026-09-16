@@ -102,6 +102,17 @@ public interface IWorkspaceQueries
     /// this answers "what shape is this repository" instead of "here are 1,500 of its 2,118 dots".
     /// </remarks>
     Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// The workspace as a census join: folders Core observed on disk, plus indexed file-artifacts.
+    /// </summary>
+    /// <remarks>
+    /// Distinct from <see cref="OverviewAsync"/> (identifier-prefix clusters) and
+    /// <see cref="GraphAsync"/> (graph nodes with no path). Census is daemon-side so the App never
+    /// walks the workspace (DC-022). Query carries two integer caps only; a named drop-set is not
+    /// on this seam.
+    /// </remarks>
+    Task<SolutionTreeResult> SolutionTreeAsync(SolutionTreeQuery query, CancellationToken cancellationToken);
 }
 
 /// <summary>The read surface answered by a <see cref="ProjectionService"/> in this process.</summary>
@@ -151,4 +162,8 @@ public sealed class LocalWorkspaceQueries(ProjectionService projections) : IWork
 
     public Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken cancellationToken) =>
         Task.FromResult(projections.Overview(query));
+
+    public Task<SolutionTreeResult> SolutionTreeAsync(
+        SolutionTreeQuery query, CancellationToken cancellationToken) =>
+        Task.FromResult(projections.SolutionTree(query, cancellationToken));
 }

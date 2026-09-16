@@ -1,0 +1,29 @@
+N12 captured red — 2026-09-15
+Stub: internal ProjectionService.SolutionTree(query, omitRelativePaths, censusChildren, ct)
+returns empty Nodes and does not run the cancel hook. Stub reverted; not committed.
+
+Command:
+dotnet test tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj --filter FullyQualifiedName~SolutionTreeProjectionTests
+
+Failed!  - Failed:    19, Passed:     6, Skipped:     0, Total:    25, Duration: 1 s - AiDe.Core.Tests.dll (net10.0)
+
+Failed names (T5a/T5b/T5c named-omit/Cancel are in this list):
+TwoAssertionsForOnePath_CollapseToOneFileArtifact
+DirectoryValuedAssertion_IsCensusFolderNotFileArtifact
+CancelMidWalk_ThrowsOperationCanceled_NotAPartialTree
+GenericCapBelowCount_MayDropUnindexedProbe_AndThereforeIsNotT5c
+SolutionTreeSpan_EmitsCountsNotPaths
+Census_DoesNotDescendAJunction_DisclosesReparsePoint
+HostileCensus_ShrinksUnderTheFrame
+TwoFilesInDifferentCensusFolders_SitUnderTheEmittedParents
+HostileDotDot_DisclosesAndDoesNotInventAFolder
+AncestorCoverage_PythonTsOnlyParentOfIndexedDescendant_IsIndexedParent
+EnumsTravelAsDeclaredNames_NotKebabOrNumbers
+PermissionShortfallOnOmitProbe_DisclosesAndLeavesUnindexedProbeAndSkipCount
+BicepFilenameOnlyUnresolvable_DisclosesAndDoesNotMintAFolder
+NamedOmit_DropsOmitProbeDirs_KeepsUnindexedProbe_DerivesOmittedN
+IoShortfallOnIoProbe_DisclosesNotRecordedAndLeavesUnindexedProbe
+PythonTsScope_IndexesFolderWithoutPerFileRows_ExactCopy
+StarDto_IndexedParentFileArtifact_UnindexedProbe_BinAbsentWithSkipCount
+ExtraJsonDropRelativePaths_DoesNotOmitFolders
+BicepFilenameOnly_ResolvesUnderExistingCensusFolder

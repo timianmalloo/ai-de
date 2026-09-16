@@ -38,7 +38,9 @@ public sealed class DaemonOperationsTests : IDisposable
             TestWorkspace.Assertion("Service.Billing", "depends_on", "Service.Ledger"),
             TestWorkspace.Assertion("Service.Unrelated", "depends_on", "Service.Isolated"));
 
-        _projections = new ProjectionService(_workspace.Store);
+        var root = Path.GetDirectoryName(_workspace.DatabasePath)!;
+        Directory.CreateDirectory(Path.Combine(root, "unindexed_probe"));
+        _projections = new ProjectionService(_workspace.Store, root);
     }
 
     private async Task WithDaemon(Func<WorkspaceClient, Task> body)
@@ -126,6 +128,23 @@ public sealed class DaemonOperationsTests : IDisposable
             Assert.Equal(expected.Bounds, actual.Bounds);
             Assert.Equal(expected.SourceRevision, actual.SourceRevision);
             Assert.Equal(expected.Matches, actual.Matches);
+        });
+    }
+
+    [Fact]
+    public async Task SolutionTree_AgreesWithTheInProcessProjection()
+    {
+        var expected = _projections.SolutionTree(new SolutionTreeQuery());
+        Assert.Contains(expected.Nodes, n => n.Path == "unindexed_probe");
+
+        await WithDaemon(async client =>
+        {
+            var actual = await client.SolutionTreeAsync(new SolutionTreeQuery(), CancellationToken.None);
+            Assert.Equal(expected.SkipListedDirectoriesOmitted, actual.SkipListedDirectoriesOmitted);
+            Assert.Equal(expected.OmittedByCap, actual.OmittedByCap);
+            Assert.Equal(expected.SourceRevision, actual.SourceRevision);
+            Assert.Equal(expected.Nodes, actual.Nodes);
+            Assert.Equal(expected.Disclosures, actual.Disclosures);
         });
     }
 

@@ -93,6 +93,14 @@
     -->
     <ProjectReference Include="..\AiDe.App.ContrastProbe\AiDe.App.ContrastProbe.csproj"
                       ReferenceOutputAssembly="false" />
+
+    <!--
+      The solution-tree chord probe: Ctrl+Enter must be a real OS chord (Keyboard.Modifiers).
+      RaiseEvent is not proof (N7 F12). A testhost cannot take the foreground (DC-014).
+      Built alongside the tests so a missing exe fails loudly (DC-012 / DC-023).
+    -->
+    <ProjectReference Include="..\AiDe.App.SolutionTreeProbe\AiDe.App.SolutionTreeProbe.csproj"
+                      ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>

@@ -123,6 +123,11 @@
          choreography from public pieces would exercise a composition the product does not construct
          (DC-135). -->
     <InternalsVisibleTo Include="AiDe.App.ComposerProbe" />
+
+    <!-- The solution-tree chord probe reads Tree / SolutionTreeNodeItem to select a file and
+         SendInput Ctrl+Enter. Same internals as App.Tests, out of process so Keyboard.Modifiers
+         is the real chord (DC-014). -->
+    <InternalsVisibleTo Include="AiDe.App.SolutionTreeProbe" />
   </ItemGroup>
 
 </Project>

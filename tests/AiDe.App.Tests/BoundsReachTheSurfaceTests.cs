@@ -380,6 +380,8 @@ public sealed class BoundsReachTheSurfaceTests
             // rendered by surfaces outside this file's subject, verified by reading the render site
             "NodeContent.Shortfall",            // CodeViewerView.cs:96-98
             "ContextMapView.IsDeclared",        // ContextMapSurface.cs:77
+            "SolutionTreeResult.Disclosures",   // SolutionTreeSurface.cs:427-439
+            "SolutionTreeDisclosure.Message",   // chrome TextBlock; SolutionTreeSurfaceTests T5c/T6
             // RENDERED AND ASSERTED, not read: TheComposerRendersItsFieldLevelErrorsTests walks the
             // composer's own tree and finds the spawn contract's verbatim sentence on screen. It is
             // listed here rather than in Allowed because it is closed, not tolerated.

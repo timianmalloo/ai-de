@@ -999,6 +999,8 @@ public sealed class WorkbenchShell : IDisposable, IAsyncDisposable
         // Class diagrams derive from the graph; (re)populate any that are open (early-returns when none).
         BindClassDiagrams();
 
+        BindSolutionTrees();
+
         // Code viewers show node source (a labelled sample until Core's content query ships).
         BindCodeViewers();
 
@@ -1243,6 +1245,8 @@ public sealed class WorkbenchShell : IDisposable, IAsyncDisposable
                     break;
             }
         }
+
+        RefreshSolutionTrees();
     }
 
     /// <summary>Centres the graph on a join's endpoint.</summary>
@@ -1277,7 +1281,8 @@ public sealed class WorkbenchShell : IDisposable, IAsyncDisposable
     /// every path inside announces, including the failure. A bare <c>_ =</c> over a call that can
     /// fault observes the fault with nobody, which was the other half of the finding.</para>
     /// </remarks>
-    private async Task CentreOnAsync(CanvasSurface canvas, string nodeId, string fallbackLabel)
+    private async Task CentreOnAsync(
+        CanvasSurface canvas, string nodeId, string fallbackLabel, bool propagateFailure = false)
     {
         CanvasRefresh result;
 
@@ -1290,6 +1295,11 @@ public sealed class WorkbenchShell : IDisposable, IAsyncDisposable
             // The fault the discarded task used to swallow. Saying the graph could not be centred is
             // the whole point of catching it; silence here would rebuild the defect one layer in.
             Announcer.Announce($"The graph could not be centred on {fallbackLabel}: {ex.Message}");
+            if (propagateFailure)
+            {
+                throw;
+            }
+
             return;
         }
 
@@ -1871,6 +1881,7 @@ public sealed class WorkbenchShell : IDisposable, IAsyncDisposable
         BindContexts();
         BindJoins();
         BindClassDiagrams();
+        BindSolutionTrees();
         BindCodeViewers();
         BindDiagnostics();
         BindSearchSurfaces();
@@ -2123,6 +2134,169 @@ public sealed class WorkbenchShell : IDisposable, IAsyncDisposable
         _ = PopulateClassDiagramsAsync(surfaces);
     }
 
+    internal void BindSolutionTrees()
+    {
+        var all = SurfaceContents<SolutionTreeSurface>("solution-tree").ToList();
+        foreach (var tree in all)
+        {
+            tree.ActivateRequested -= OnSolutionTreeActivateRequested;
+            tree.ActivateRequested += OnSolutionTreeActivateRequested;
+            tree.ShowGraphRequested -= OnSolutionTreeShowGraphRequested;
+            tree.ShowGraphRequested += OnSolutionTreeShowGraphRequested;
+            tree.RetryRequested -= OnSolutionTreeRetryRequested;
+            tree.RetryRequested += OnSolutionTreeRetryRequested;
+        }
+
+        if (_queries is null)
+        {
+            foreach (var tree in all.Where(s => s.NeedsInitialBind))
+            {
+                tree.ShowNoWorkspace();
+            }
+
+            return;
+        }
+
+        var toLoad = all.Where(s => s.NeedsInitialBind || s.IsNoWorkspace).ToList();
+        if (toLoad.Count == 0)
+        {
+            return;
+        }
+
+        _ = PopulateSolutionTreesAsync(toLoad, staleWhileRefresh: false);
+    }
+
+    private int _solutionTreeGeneration;
+    private CancellationTokenSource? _solutionTreeCts;
+
+    private void RefreshSolutionTrees()
+    {
+        var loaded = SurfaceContents<SolutionTreeSurface>("solution-tree").Where(s => s.HasLoaded).ToList();
+        if (loaded.Count == 0)
+        {
+            return;
+        }
+
+        _ = PopulateSolutionTreesAsync(loaded, staleWhileRefresh: true);
+    }
+
+    /// <summary>Test seam: start another populate while one is in flight (SRE overlapping-Show).</summary>
+    internal void RetrySolutionTreePopulate(SolutionTreeSurface surface) =>
+        _ = PopulateSolutionTreesAsync([surface], staleWhileRefresh: false);
+
+    private async Task PopulateSolutionTreesAsync(
+        IReadOnlyList<SolutionTreeSurface> surfaces, bool staleWhileRefresh)
+    {
+        var generation = Interlocked.Increment(ref _solutionTreeGeneration);
+        var cts = new CancellationTokenSource();
+        var previous = Interlocked.Exchange(ref _solutionTreeCts, cts);
+        previous?.Cancel();
+        previous?.Dispose();
+
+        foreach (var surface in surfaces)
+        {
+            if (staleWhileRefresh && surface.HasLoaded)
+            {
+                surface.MarkStale();
+            }
+            else
+            {
+                surface.ShowLoading();
+            }
+        }
+
+        if (_queries is null)
+        {
+            if (generation != Volatile.Read(ref _solutionTreeGeneration))
+            {
+                return;
+            }
+
+            foreach (var surface in surfaces)
+            {
+                surface.ShowNoWorkspace();
+            }
+
+            return;
+        }
+
+        try
+        {
+            var result = await _queries.SolutionTreeAsync(new SolutionTreeQuery(), cts.Token);
+            if (generation != Volatile.Read(ref _solutionTreeGeneration))
+            {
+                return;
+            }
+
+            foreach (var surface in surfaces)
+            {
+                surface.Show(result);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Superseded or disposed — not a tree-query error.
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            if (generation != Volatile.Read(ref _solutionTreeGeneration))
+            {
+                return;
+            }
+
+            foreach (var surface in surfaces)
+            {
+                surface.ShowError(ex.Message);
+            }
+        }
+    }
+
+    private async void OnSolutionTreeActivateRequested(object? sender, SolutionTreeActivate request)
+    {
+        try
+        {
+            switch (request.Kind)
+            {
+                case NodeViewKind.Source:
+                case NodeViewKind.Read:
+                    _lastSelectedNodeId = request.NodeId;
+                    Announcer.Announce(OpenKind(Architecture, "codeviewer", false));
+                    await ShowNodeInCodeViewersAsync(request.NodeId, OpenCodeViewers(), propagateFailure: true);
+                    break;
+                case NodeViewKind.GraphNeighbourhood:
+                    Announcer.Announce(OpenKind(Architecture, "canvas", showExisting: true));
+                    var canvas = OpenCanvas()
+                        ?? throw new InvalidOperationException("Could not reveal in graph.");
+                    await CentreOnAsync(canvas, request.NodeId, request.NodeId, propagateFailure: true);
+                    break;
+                default:
+                    OpenNodeView(request.NodeId, request.Kind);
+                    break;
+            }
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            if (sender is SolutionTreeSurface tree)
+            {
+                tree.ShowActivateError(request.Kind);
+                return;
+            }
+
+            throw;
+        }
+    }
+
+    private void OnSolutionTreeShowGraphRequested(object? sender, EventArgs e) =>
+        Announcer.Announce(OpenKind(Architecture, "canvas", showExisting: true));
+
+    private void OnSolutionTreeRetryRequested(object? sender, EventArgs e)
+    {
+        if (sender is SolutionTreeSurface surface)
+        {
+            _ = PopulateSolutionTreesAsync([surface], staleWhileRefresh: false);
+        }
+    }
+
     private async Task PopulateClassDiagramsAsync(IReadOnlyList<ClassDiagramSurface> surfaces)
     {
         foreach (var surface in surfaces) { surface.ShowLoading(); }
@@ -2219,9 +2393,19 @@ public sealed class WorkbenchShell : IDisposable, IAsyncDisposable
     // Loads one node's content into the given code viewers through the SAME source the whole app uses
     // (real when a workspace is open, mock never — see NodeContentSource). Internal so a shell test can
     // drive the routing without a WebView selection event.
-    internal async Task ShowNodeInCodeViewersAsync(string nodeId, IReadOnlyList<CodeViewerView> viewers)
+    internal async Task ShowNodeInCodeViewersAsync(
+        string nodeId, IReadOnlyList<CodeViewerView> viewers, bool propagateFailure = false)
     {
-        if (viewers.Count == 0 || _queries is null) { return; }
+        if (viewers.Count == 0 || _queries is null)
+        {
+            if (propagateFailure)
+            {
+                throw new InvalidOperationException("Could not open source.");
+            }
+
+            return;
+        }
+
         try
         {
             var content = await NodeContentSource.GetAsync(nodeId, CancellationToken.None);
@@ -2229,7 +2413,10 @@ public sealed class WorkbenchShell : IDisposable, IAsyncDisposable
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
-            // Leave the viewers in their current state rather than crash on a lookup failure.
+            if (propagateFailure)
+            {
+                throw;
+            }
         }
     }
 
@@ -3176,6 +3363,8 @@ public sealed class WorkbenchShell : IDisposable, IAsyncDisposable
         _consoles.Clear();
         _watcherPump?.Cancel();
         _watcherPump?.Dispose();
+        _solutionTreeCts?.Cancel();
+        _solutionTreeCts?.Dispose();
         _watcherHost?.Dispose();
         _atlasShellResourcesDisposed = true;
     }

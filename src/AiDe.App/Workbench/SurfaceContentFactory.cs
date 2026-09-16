@@ -182,6 +182,12 @@ public sealed class SurfaceContentFactory(
             static (_, s) => new JoinSurface(s.Title),
             Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
 
+        // Pattern: Derived menu (ADR-0030). One Architecture kind; Instances.One → Show solution tree.
+        new("solution-tree", "Solution tree",
+            "Architecture-pane navigator of (path, kind) nodes over Core's census join.",
+            static (_, s) => new SolutionTreeSurface(s.Title),
+            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
+
         // ── Coding: the agentic host (UC1) ────────────────────────────────────────────────────
 
         // Opened by the entry verb `terminal.new` (File, every perspective — US-C11), never by a

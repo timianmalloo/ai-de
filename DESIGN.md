@@ -1256,3 +1256,78 @@ cap the operator enforced with its count, never a plausible number.
 | Motion inventory | — | A reasoning or detail disclosure: **0ms** (a population change, MS4). A tool item's status settling: `{motion.fast}` colour and weight only. The running item's ring: the one moving element; static under reduced motion. |
 | Copy added by this section | — | `Thinking` · `detail` · `running` · `done` · `failed` · `interrupted` · `41 chunks` · `message` · `thought` · `Console — payments extraction` *(the split's Center tab)* · `Console: every wire frame, one row per message` *(the split toggle's description)* |
 | Recorded deviations | — | The `agent.thought` row's shape is **Inferred** until a frame is captured (Ruling 82 condition 1 — the corpus has none). The reply's markdown renderer is the WPF thread's — which subset it renders (headings, lists, code, tables) is CV-5's design-slice question; the mockup renders that subset. The split's home in the Center at Left is Inferred (above). **Density at the startup size is not met** — with the session at Left and the startup default's terminal across the bottom the thread is 0px at 1440 × 900; the review's §7 puts the options to the conductor (the operator's screenshots show the Bottom collapsed). |
+
+---
+
+## Solution tree (D-0, Architecture navigator)
+
+N8 `/ui-design` create. Mockup: `docs/mockups/solution-tree.html`. Spec: `spec-understanding-views` Part B/C. Toolkit: WPF `TreeView` (`docs/spikes/d0-tree-toolkit/RESULT.md`). **No new colour token.** Unindexed uses `{colors.unverified}`. HTML is direction; native PASS is the proof pack.
+
+### Direction brief (DX5)
+
+**Who and state.** Architect / reviewer already in Architecture, expert, keyboard-first, distrusts a clean empty pane. Same person arriving from Coding is looking for a navigator beside the graph, not a second Explorer.
+
+**Job-to-be-done.** See what the index covered, what it did not, and jump to the file or the graph without taking silence for coverage.
+
+**Archetype.** B1 Keyboard-Velocity composed onto `PerspectiveShell` (spec Part C). Signature:
+
+```
+KeyboardVelocity { Type:OLTP; Arch:SPA; Layout:MasterDetail; Density:Compact; Nav:CommandPalette+Sidebar; Viewport:DesktopBound; Input:KeyboardFirst+PrecisionPointer; Color:DarkAdaptive; Type:Utilitarian; Depth:Flat; Sync:ServerStrict; Persistence:Session; Feedback:Confirmed; Motion:Micro; Pacing:Freeform; Transition:HardCut; A11y:WCAG_2.2_AA+HighLegibility; x-platform:windows; x-framework:wpf; }
+```
+
+Verified against the task: browsing the tree is serial (one focused row); reading coverage marks is parallel on the visible rows. Not H2 (no file CRUD). Not C1 (the graph already is the canvas). Not B2 (not an admin table).
+
+**Three adjectives.** Dense, not cramped. Honest, not optimistic. Calm, not ornamental.
+
+**Named references.** JetBrains Rider Project tool window: unindexed as a labelled state, never a silent hide (pattern; not yellow-as-only-signal). VS Code Explorer `files.exclude`: omission without a glyph — **do not copy** (skip-listed dirs have no row; chrome carries the count). Windows File Explorer / WPF `TreeView`: Tree/TreeItem, arrows, 16px expander slot. AI-DE Architecture host: tokens, 28px compact rows, confidence as glyph + word + colour.
+
+**Anti-goals.** Not Explorer. Not Atlas. Not a file-manager toolbar. Not a `bin` row, greyed or otherwise. Not colour-only Unindexed. Not `{colors.inferred}` or `{colors.stale}` for Unindexed. Not 44px rail rows. Not a skeleton that looks like a complete tree.
+
+**Constraints.** Native WPF on Windows; compact 28px rows, 24×24 minimum hit, `{icon.sm}` 16px inside the row; WCAG 2.2 AA; dual-activate Enter = View source, Ctrl+Enter = Reveal in graph; tree focused so Coding's composer chord is not stolen.
+
+### Personality (DX6)
+
+- **Type.** `{typography.ui}` at 13px for node names; 12px `{typography.weight-medium}` for chrome disclosures; `{typography.mono}` only when a path is shown as a path.
+- **Colour.** `{colors.accent}` + `{colors.accent-contrast}` for the selected row only. `{colors.unverified}` is the third signal for Unindexed and Not recorded. `{colors.text-muted}` for skip-count and `Omitted (N)`. `{colors.stale}` + word `Stale` for refresh-in-flight. `{colors.danger}` for errors.
+- **Space.** 8px inside a row, 12px between chrome and tree, 16px pane padding. Tighter within a parent group (indent) than between chrome and rows.
+
+### Copy added by this section (DC-196; quoted by the mockup)
+
+- `Solution tree`
+- `Unindexed`
+- `Not recorded`
+- `Omitted (N)`
+- `N skip-listed directories omitted`
+- `Open a workspace to see its solution tree.`
+- `Reading the workspace tree…`
+- `Stale`
+- `No indexed artifacts or folders to show.`
+- `Show Graph`
+- `Could not read the workspace tree.`
+- `Could not open source.`
+- `Could not reveal in graph.`
+- `Retry`
+- `Python and TypeScript files are not listed individually. The scope folder is indexed.`
+- `View source`
+- `Reveal in graph`
+
+Do not label skip-listed directories hidden or excluded. Do not say indexed folder.
+
+### Motion inventory
+
+| Moment | Duration | Why |
+|---|---|---|
+| Loading to result | **0ms** (`Transition:HardCut`) | A census is a fact, not a scene. |
+| Indexed-parent expand/collapse | `{motion.fast}` height of children only; **0ms** under reduced motion | Confirms the folder opened. Unindexed rows do not animate. |
+| Selection | `{motion.fast}` colour only | The focused path is the focal point. |
+| Skip-count / Disclosure appear | **0ms** | Chrome is structure. |
+
+### Recorded deviations (CD16)
+
+| Deviation | Reason |
+|---|---|
+| HTML mockup is direction, not native PASS | UI-T4: UIA, keyboard, DPI, High Contrast need runtime proof (`docs/proof/native-ui-solution-tree.md`). |
+| High-contrast harness uses stand-in values | Same class as the shell mockup; the audit reports *not measured* on `hc`. |
+| Default zone is Left beside Graph | Spec left this to design-slice; comparables put the tree left (**Inferred**). UX-1 still holds via View → Show Solution tree. |
+| Reveal in graph sits on the existing node menu for pointer users | N4 UX residual. Keyboard stays Ctrl+Enter. Primary pointer activate is double-click = View source (Enter). |
+| `ui-craft-gate.py` `cramped-padding` Minor on tree rows (left inset) | Compact WPF TreeView keeps a 16px expander slot (spike F9: Hidden, not absent). Inflating left padding to please the web detector would desync the mockup from the native indent. 28px row height is UI-10. |
