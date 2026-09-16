@@ -492,3 +492,147 @@ batch was truncated; relied-on decision/source fields remained visible, unseen h
 text supplied no claim. Missing not-yet-published reviewer liveness was reported to
 the reviewer; it was not treated as proof of inactivity. No retrospective budget
 compliance is asserted for Conductor. Main remains bcf4959b; P1-03 remains failed.
+
+## Diagnostic-loss investigation reviewed; two bounded next lanes — 2026-09-16
+
+Verified: investigator 5cdd01b868225b3c92a7c4b4fac368d4c62b78ce and independent
+review 13c8070dfcb482d24b6fe147a33192bbf5ae8223 preserve the four-case finding. Root read the entire scratch spike,
+actual summary/pin records, author proof delta and independent receipt. Live image
+query succeeded; synchronized same-handle exit returned native31/signaled; deliberate
+zero-capacity query while live returned122/nonsignaled. Both became the same bare
+PROCESS-IMAGE-MISSING. Four fixtures ran once. The real run_owned case contained
+total2/active0 and closed all proxy-tracked handles; direct-child evidence reconciled
+2/2 identities. That is different from the historical7/8 gap. No historical cause,
+missing eighth process, provider or Git attribution is established.
+
+Independent Test Architect/SRE/Simplifier CLEAR is limited to interpretation and
+diagnostic-only proposal suitability. FR-PI-001: the fourth fixture did not call
+verify_process_result; rejection was source-inspected, not executed. FR-PI-002:
+the scratch proxy captures the error, then makes native observation calls before
+returning false; a future maintained-output control must preserve or deliberately
+test that boundary. It must prove later error clobbering cannot replace the first
+captured error. The owned_snapshot sibling requires a direct-path control.
+Receipt Git-byte SHA256 aca3ad92bc464f965cdc8c9d3a43fdfc8d16c1b3341481b9eead7123c2404e11.
+Author8/8 calls,416 audit seconds; reviewer6/6,350 audit seconds, approximately388
+seconds through final close. Full11,630-file inventory matched before/after the
+scratch run; no maintained source or compiled/runtime input changed.
+
+Astra Owner chooses one diagnostic-only repair, ending at independent review:
+12 author calls/18minutes/checkpoint8, then6 review calls/10minutes. Official
+contract req-01M2P4X7X5184R9DN4C28X64W4; new registered session
+codex-atlas-p1-03-image-diagnostics in the ended original prepared tree. Only
+run_pair.py, existing preparation proof, own official records and ignored controls.
+Both image boundaries retain pending PID/raw birth/observed membership, immediate
+native error, separately timed later exit state and separate secondary failures.
+Red-first controls inspect maintained serialized output and actually execute the
+existing refusal verifier. No image-less observation becomes accepted identity;
+population, containment, cleanup and no-retry behavior stay intact. Old manifests
+are verified before edit and preserved. Any proposed successor changes only the
+existing runner pin; compiled/runtime inputs stay unchanged and exact comparison
+needs independent approval. No rebuild, native request, execution or source join.
+Any later native request needs an explicit information-gain and stopping argument.
+
+### R124 independent spike landing path
+
+Root directly read original resolved requests, not only forwarding notices:
+R122 admits DeclaredDeploymentContext as SPECIFIED only: exact declaration/template
+hash and spans, closed missing/conflicting/expression vocabulary, declared-resource
+grain, derived cross-declaration equality and not-recorded absence. E2 DDD/history
+design and D&P review precede a separate implementation/home ruling; US-E8.b stays
+open. R123 admits five-view G15 serialization only; UX review remains. No Color
+repair is awaited; Type grammar source correction belongs to Claude/pack.
+
+R124 on req-01M2KD3D85NBQXEN2BWPZQTAWE is now resolved and LIFTS Atlas-before-spikes
+ordering. Required before landing: one combined coverage run, expected41tracked /
+18solution /23outside /0exempt with actual elapsed/output, and Claude's personal
+inspection of both named proof files. Existing Linux evidence is once-observed
+compatibility, not CI coverage. R108 empty enumerated failing set remains required.
+Core-first R126 groups1-2 have no text overlap: root directly observed zero diff
+hunks in all three named tests. Groups3-4 remain held. Incoming notices were answered
+with these boundaries; independent Core work is not held by this programme.
+
+Owner admitted12calls/20minutes/checkpoint8 in a fresh main-based candidate:
+C:/Projects/ai-de-integration-atlas-view-spikes, integration/atlas-view-spikes,
+base bcf4959bc0e0e361736e6a179f05b69fcd0500f8 freshly checked local and advertised.
+Official contract req-01M2P4HKY34MK41S0GKXW3WBJ0. Sol/high was chosen for deterministic
+blob transport; no semantic authoring. Complete reviewed E1 source5d361f2a and
+E2 source90189411 were staged as nine exact allowed paths, not whole branch merges.
+The author reports staged source blob equality; independent candidate inspection
+remains before handoff. Allowed source is the two named spike directories and two
+matching proof files, plus official records; no src/tests/package/mockup changes.
+
+The single combined coverage command was invoked. Its PowerShell wrapper buffered
+output in memory; the exec call yielded after30.2seconds and the author emitted only
+r.output, dropping the returned session identifier. No saved wrapper/log/PID/start
+record existed. Outcome is UNKNOWN, not pass or fail. Root observed the nine staged
+paths, no artifacts and no matching active coverage invocation at22:18:20Z; absence
+is a scheduling observation, never retrospective exit proof. The rough author wall
+clock estimate is unverified and not used. No terminal ID was guessed or test rerun.
+Original12/12 unit closed partial as al-01M2P4XFYDF2QCQW840KB65M16, leases released.
+
+Owner separately admits6calls/10minutes/checkpoint4 of evidence-capture preparation,
+session codex-atlas-view-spikes-evidence, started22:20:38Z. Saved ignored wrapper
+must persist command/cwd/pins/start/PID/streams/end/exit/measuredelapsed, then prove
+durable completion with ONE harmless command beyond initial tool yield. No coverage
+execution. Conductor must inspect it and request Claude, R124 gate owner, explicitly
+reconcile ONE by granting one replacement; notify watcher. Before any granted run,
+recheck source preservation and no matching active invocation. No exemptions or
+repair expansion. The main-native experiment and all old manifests remain isolated.
+
+Recovery returned6/6, audit al-01M2P51SZ1M3WXTYJTAXM61CCA. Root directly read the
+saved wrapper and actual control: PID6864,22:22:15.499964–22:22:31.520885Z,
+16.015seconds, exit0, both complete two-line streams. The returned terminal session
+17015 was retained by the author. Wrapper SHA256de6bd6a87e65b324bfcd22bd23ebb546f4367773d5de88414afee0885f9819f0;
+staged manifest SHA256b0c4d40948c0a4e165280c45a26169bd4b1051479e0fadf6fde1086f5280eb35.
+No replacement coverage command ran. Root source review flags a remaining capture
+dependency: reader threads write durable bytes, then mirror to tool stdout/stderr;
+a mirror error can stop draining and is not propagated to main. This is an inferred
+failure-path risk, not an observed truncated control. The normal control does not
+establish independence from tool output. Owner is asked to admit direct-file
+redirection without mirror threads and one yielding live-progress control before
+any replacement request. No successful coverage or detached-capture verdict is made.
+
+### Material execution-graph update and cost
+
+New R124 evidence removes an incidental Atlas-before-spikes edge. Actual graph:
+
+```mermaid
+flowchart LR
+  J[Reviewed diagnostic-loss finding] --> D[Diagnostic repair]
+  D --> R[Independent repair review]
+  R --> O[Separate next Owner decision]
+  S[Exact spike transport; original run unknown] --> C[Durable capture control]
+  C --> G[Claude explicit replacement disposition]
+  G --> V[One granted combined verification]
+  V --> P[Claude personal proof inspection]
+  P --> H[Coordinated integration handoff]
+```
+
+Native and spike source/output trees do not overlap. The three site derivative
+leases remain a shared exclusive resource and close serially. Width cap4 including
+Owner/Conductor; two executing branches maximum. No branch retries an oracle or
+infers grants from elapsed time. Variants are unmet direct-path control obligations
+for the diagnostic branch and unreturned capture/grant/coverage/proof receipts for
+the spike branch. Each decreases only with actual evidence; a cap is a defect signal.
+Failure returns to Owner with precise state. Partial evidence never admits integration.
+Specification/architecture and prior independent spike source reviews are reused;
+no E1/E2 product implementation or new ownership policy is created.
+
+Inferred active preparation ceiling after decisions: diagnostic18+review10=28min;
+capture6-call/10min unit runs independently. Known local work ceiling38min, span28,
+parallel ceiling10 before unbounded external response times. These are budget models,
+not runtime predictions. No optimization removes a veto, source preservation, actual
+gate result, R124 personal inspection, audit or controlled join. The capture-wrapper
+failure is new material evidence requiring this graph change, not repeated planning
+without cause. Root's20-call continuation plan was exceeded by newly arrived rulings
+and recovery work; budget compliance is not claimed. A separate administrative close
+records it; no floor was waived. Exact model/token cost is not exposed.
+
+Class -> sweep -> derive -> prevent: native diagnostic loss remains a pending
+DC-078 recurrence/control obligation; current red fixtures reveal it, maintained
+prevention is not yet installed. Output-only tool forwarding also lost gate state;
+preserve full exec results and durable streams/result independently. The admitted
+harmless yielding control must demonstrate recovery before a replacement request.
+Five older consumed incoming notices were formally closed; newer R122/R123/R124/R126
+dispositions were read and answered. Grok r5 remains frozen with no consumer ACK debt.
+Main remains bcf4959b; no qualification, publication or new native clearance claimed.

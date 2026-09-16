@@ -9534,7 +9534,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "02a80d08c27d58b19c6371afcf6c0eb8dbd2d4998895064f0f08167de3f38955"
+      "sourceSha256": "0b01d7a605566176616b5ec0a4d4d006e76ff4eda3be681a890b3d9f66197b7f"
     },
     {
       "id": "coordination-code-atlas",
@@ -12113,7 +12113,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "bbc2a40e02f48521c1e0e5803d2a41301f98099a18daf82a160c7eaff0135d53"
+      "sourceSha256": "8b23f0118370a8f5c43d0bcea8b70faf1c84813f02a40107f21e9e7a82cc5dbc"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -13007,9 +13007,14 @@ window.DOCS_INDEX = {
           "kind": "flowchart",
           "title": "Observed pair refusal and investigation decision — 2026-09-16",
           "mermaid": "flowchart LR\n  A[Invalid A; B unexecuted] --> I[Independent interpretation]\n  I --> D[Owner admission]\n  D --> N[Four harmless fixtures]\n  N --> J[Independent findings review]\n  J --> O[Owner disposition]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Material execution-graph update and cost",
+          "mermaid": "flowchart LR\n  J[Reviewed diagnostic-loss finding] --> D[Diagnostic repair]\n  D --> R[Independent repair review]\n  R --> O[Separate next Owner decision]\n  S[Exact spike transport; original run unknown] --> C[Durable capture control]\n  C --> G[Claude explicit replacement disposition]\n  G --> V[One granted combined verification]\n  V --> P[Claude personal proof inspection]\n  P --> H[Coordinated integration handoff]"
         }
       ],
-      "sourceSha256": "4cb9707ad446749069690361e3bc6d11797e5e05c7d8ca7eae1c6c149f194c68"
+      "sourceSha256": "4118ff02894abd3f7bf24b710200f95929176ebaae87fb5edf92b18649eca50a"
     },
     {
       "id": "proof-atlas-peer-review-transport",
@@ -23412,5 +23417,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ae36a0c03186bc9bbfe747d6fd6eb72ae0cf6e885cd84174270b36a9b25e4a3a"
+  "graphSha256": "9b0224b5f595f89b906254a311428ca597786b0ef7ed2f07bb7e73e2219c5a92"
 };

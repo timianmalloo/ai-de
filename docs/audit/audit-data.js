@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T22:01:13Z",
+  "generated": "2026-09-16T22:25:03Z",
   "audit": [
     {
       "actor": null,
@@ -26730,6 +26730,36 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2P55JSEV6Z5TX2KZDCJBHPH",
+      "shortname": "atlas-diagnostic-and-r124-admission",
+      "datetime": "2026-09-16T22:25:02Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going",
+      "summary": "Inspected four-fixture evidence and independent13c8070d CLEAR, dispatched Ownerdiagnostic-onlyrepair. ConsumednewR122/R123/R124/R126; freshmainspikecandidateassembled but singlecoverage outcomeUNKNOWN afterlostexecstate. Admittedcapture-onlyrecovery, no automaticreplacement. Root20callplanexceededwithnewrulings/recovery; no budgetcomplianceclaimed.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md",
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Join the bounded process-image investigation and select the next action while advancing authorized main-bound work.",
+      "done_when": "Independent evidence and Owner decisions are recorded, exact isolated next units dispatched and new peer rulings reconciled without weakening gates.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-16T22:01:44Z",
+      "duration_seconds": 1398.0,
+      "git": {
+        "sha": "7b8d7508e7b4ab5db1861737ed4af0724b214f43",
+        "short": "7b8d7508e",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -31523,6 +31553,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "5f75b7cb32afc2c387edf1f81e436aeb1caead4b",
         "after": "5f75b7cb32afc2c387edf1f81e436aeb1caead4b",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2P55JNM4RF5A5NSZEZ5TNK6",
+      "datetime": "2026-09-16T22:25:02Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "decision",
+      "skill": "optimize-graph",
+      "title": "Repair diagnostic loss while independently preparing R124 spike handoff",
+      "prompt": "keep going",
+      "summary": "Owner admits diagnostic-only correction12+6 with no native retry. R124 lifts Atlas ordering for exactspikes; onecoverage outcome lost by wrapper, separately bounded6-callcapture-onlyrecovery admitted. Claude mustgrantreplacement andpersonallyinspectproofs.",
+      "rationale": "Independent13c8070d supports diagnostic-loss repair; originalR124 changes dependency; new capture failure prevents claiming coverage or automatic rerun.",
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "7b8d7508e7b4ab5db1861737ed4af0724b214f43",
+        "after": "7b8d7508e7b4ab5db1861737ed4af0724b214f43",
         "branch": "integration/atlas-five-gates",
         "pushed": null,
         "commits": []

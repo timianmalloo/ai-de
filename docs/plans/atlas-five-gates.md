@@ -12,7 +12,7 @@ review-by: 2026-12-15
 summary: "Repair the five frozen Atlas integration failures before main publication and E1/E2 continuation."
 ---
 
-# Current state: A invalid, slot released; bounded observer investigation
+# Current state: diagnostic repair and independent R124 handoff preparation
 
 Goal: diagnose the process-observer refusal without changing the frozen native experiment.
 Done when four bounded harmless fixture cases distinguish observable failure states,
@@ -29,8 +29,19 @@ and Conductor. One executing investigation branch; GHCP retains publication.
 | Native shared receipt | Keep optional observation failures from poisoning original evidence | Source715523d0 independently CLEAR for FR-NO-001 at12c1f883; own21/21 and actual replay inspected |
 | Native per-view state | Complete settled loaded/visible evidence for every observed view | Source626d16a2 independently CLEARd31eab23; own21/21 and actual JSON inspected |
 | Native qualification / main | Establish combined runtime acceptance before publication | P1-03 App1257/1258; native failure; remaining canonical steps stopped and slot released; independent RCA active |
-| Transition experiment | Distinguish loading-time traversal association | One granted attempt stopped A on PROCESS-IMAGE-MISSING; B not run; watcher released; outcome review frozen |
+| Transition experiment | Distinguish loading-time traversal association | A invalid/B unexecuted; four-fixture evidence independently reviewed; diagnostic-only correction admitted |
 | E1/E2 | Continue admitted Sequence/Activity and architecture view work | Integration remains the priority |
+
+## Current two-lane continuation
+
+Investigation5cdd01b8 independently CLEAR13c8070d for diagnostic-loss proposal only.
+Owner admits12-call diagnostic repair then6-call independent review, no native run.
+R124 separately lifts Atlas-before-spikes ordering. Exact nine-path spike candidate
+is staged on fresh main bcf4959b; its one coverage invocation has UNKNOWN outcome
+because the wrapper lost its terminal state. Six-call capture-only recovery is
+admitted; Claude must explicitly grant any replacement run and personally inspect
+both proof files before landing. Programme Proof Pack contains exact authorities,
+source pins, scope, finite variants and current evidence boundaries.
 
 ## Current diagnostic outcome
 
