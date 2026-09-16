@@ -5609,6 +5609,17 @@ for both or split.*
   the contract. The cheap form, and the one that worked here: **run the reader against the real
   document and check it is non-vacuous** — that it finds something, and that it would find the thing
   it exists to find.
+- **Recurrence (Atlas optional observer, 2026-09-16):** the observer-format fixture used
+  a separate Receipt while the native path shared one with original evidence. Independent
+  review4d005a9e reproduced a contained formatting error that left a poisonous step; a later
+  original write then failed. **Sweep:** all three observer publication paths (packet,
+  lease transition, status) now serialize to an immutable snapshot before admission.
+  **Derive/prevent:** commit715523d0 adds same-Receipt before/failure/after controls and
+  a single-write immutable-snapshot control; actual red21/17/4, validate-then-publish-original
+  mutant21/20/1, final21/21/0. Independent review12c1f883 ran its own21/21 plus actual
+  same-receipt persistence replay. Evidence: docs/proof/atlas-p1-02-native-uia.md at715523d0
+  and docs/proof/atlas-native-observer-sink-review.md at12c1f883. This controls the exact
+  shared-resource fixture shape, not arbitrary observer effects or native qualification.
 - **Status:** `partially-controlled` — the instance is closed and the oracle's self-test now covers
   the real table shape specifically, but nothing gates the class: the next reader written beside its
   own fixture will pass the same way

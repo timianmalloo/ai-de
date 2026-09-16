@@ -12,6 +12,102 @@ review-by: 2026-12-15
 summary: "Exact blocker transfer; isolated repairs followed by GHCP-only main publication."
 ---
 
+# Current state: r3 frozen; r4 changes required; observer correction
+
+Goal: resolve the current Grok consumer request and continue the admitted Atlas qualification
+preparation. Done when the exact proposal has a direct semantic response and recorded
+disposition, and the bounded native observer correction has independent clearance before
+any execution-slot request. Not in scope: new ownership/API policy, product changes,
+ungranted native execution, main publication or coordination-framework repair. The peer
+response is T1; the existing native programme remains T2. Maximum width is four including
+Astra Owner and Conductor. Main publication stays with foreground GHCP.
+
+| Task | Purpose | Verified status |
+| --- | --- | --- |
+| Five gates and D0 correction | Preserve accepted integration behavior | Reviewed repairs assembled; previous actual gate and 73/73 results retained |
+| D1 r3 | Freeze the non-consuming listing boundary | Same-blob producer ACK observed on req-01M2NFTQFRP41JRV68PQSC3AGD; frozen e448383a90bb1ed962c7405af70e16d8cca09fa3 |
+| D1 r4 | Separate mapper authorship from unadmitted E1 consumption | CHANGES REQUIRED sent directly; six incoming handles resolved; no r4 freeze |
+| Native shared receipt | Keep optional observation failures from poisoning original evidence | Source715523d0 independently CLEAR for FR-NO-001 at12c1f883; own21/21 and actual replay inspected |
+| Native per-view state | Complete settled loaded/visible evidence for every observed view | Missing fields confirmed; bounded author correction underway |
+| Native qualification / main | Establish combined runtime acceptance before publication | P1-02 remains failed; no fresh native slot; main last observedbcf4959b |
+| E1/E2 | Continue admitted Sequence/Activity and architecture view work | Integration remains the priority |
+
+## Exact r4 disposition
+
+Proposal173aa5a4ad245fda92bcc0bdadafac6ba9f0c8e4:
+docs/notes/d1-codex-entry-point-handshake-r4.md has exact blob
+a8c05bc77451b0438ebea24eaad9b15db6c99601. Independent Astra review
+7e205f5bb8d3ef804a2dd7d30c981838cffd991b:
+docs/proof/codex-d1-r4-consumer-review.md returns CHANGES REQUIRED. The Conductor read
+the complete proposal and receipt; Astra Owner confirms the four deltas. Codex does not
+claim the D1 mapper and has no objection to Grok authoring its proposal. Correct the
+existing-E1/API claim, remove graph-fact identity fallback, preserve Core/path authority,
+and defer activation until identity/scoping, bounds, ambiguity and navigation are admitted.
+The smallest next revision freezes authorship only, with Open Sequence disabled and D1
+listing independent. Proposed E1 design and synthetic spike are not admitted product APIs.
+
+Direct response req-01M2NKJGBAWRN4ZF9JCX4WH3Q0 went to
+grok-understanding-views-conductor. Current watcher received
+req-01M2NKJGCYZV1H33ZBYRVX8G3X and foreground received
+req-01M2NKJGEJQ2DR9FPKS9T9H403. OriginalNJA91, remindersNJJM1/NJJM3/NK43/NKGA,
+and watcherNJPWX are resolved with that exact semantic response. Actual full readback is
+artifacts/atlas-five-gates/d1-r4-consumer-disposition.json. Sending and resolving these
+records establishes our disposition, not Grok's receipt or a new freeze.
+
+The missed r4 request was a checkpoint defect: polling known IDs did not discover a new
+revision. The response script instead folds the official complete inbox, selects every
+current r4 request to both Codex aliases, resolves each, and asserts all readback states.
+At future safe checkpoints, enumerate new incoming contracts before inspecting known
+responses. The operational control was executed; no general delivery guarantee or new
+coordination-framework control is claimed. Delivery was not proved dropped. The separately
+authorized cross-harness coordination programme owns general protocol improvements.
+
+## Native observer evidence and next node
+
+Independent review4d005a9e276cc1c3070005f3bc2ecab7eecde997 demonstrated that a
+caught formatter error poisoned the shared Receipt and a later original write failed.
+Source715523d0bef2db92364f73a6d84ac79290ffae13 now snapshots observer attributes to
+immutable JsonElement before admission. Original Mark/Save bodies remain unchanged.
+The Conductor inspected the red21/17/4, mutant21/20/1 and final21/21/0 TRXs.
+Independent review12c1f88336bc6d640c1dfdd6e76929acdda6b6f2,
+docs/proof/atlas-native-observer-sink-review.md, ran its own normal-build21/21 and the
+actual same-receipt replay: original.before and original.after both persist despite the
+intervening observer format failure. The full receipt was read. This clears FR-NO-001,
+not native qualification or complete observer coverage.
+
+That reviewer found the settled design's per-view IsLoaded/IsVisible fields absent from
+both ViewObservation and emitted Views JSON. Host/window flags are different objects.
+A bounded Sol-high author unit in the already-provisioned test/atlas-native-instance-observer
+tree corrects only the exact test and proof paths, plus official own audit. Model choice:
+concrete public-state projection is small; independent Astra review retains the adversarial
+thread/evidence boundary. Budget10calls/15minutes/checkpoint6; context ceiling400k; token
+cost not exposed. Red missing-field evidence -> minimal correction -> actual unshown STA
+adapter JSON -> frozen commit -> independent review is serial. No shown/loaded=true proof
+may be inferred from unshown false values. Existing design/specification are reused; the
+omission is an implementation correction. No GUI, HWND activation, private-field access,
+layout/focus/refresh, timeout change, fallback root or product repair is permitted.
+
+The programme optimize-graph remains active; peer review and native preparation have no
+data edge. The new finding returns the existing implementation node to its author before
+review; no acceptance floor is removed. The loop terminates when all settled observer
+fields and failure-preservation obligations are independently cleared, not when a budget
+expires. A new source or native-cause finding requires Owner disposition, not scope growth.
+Source joins, fresh slot request, canonical qualification and GHCP publication still follow.
+Root has not joined the observer or its review branches into the integration candidate.
+
+Planned versus actual: shared-receipt author8/8calls; sink reviewer6/6calls/278seconds;
+r4 reviewer6/5calls with output-sizing overrun recorded. Root's earlier preparation and
+continuation estimates were exceeded; exact harness token/request costs are not exposed
+and cap compliance is not claimed. Repeated large output was a real read-sizing defect.
+Subsequent inbox checks emit request metadata first, then exact bodies only as needed.
+Completed: direct r4 disposition and shared-receipt clearance. Remaining: per-view correction,
+independent full observer clearance and runtime qualification. Next: inspect the frozen
+author result, then use the existing independent review and serialized join/slot protocols.
+
+## Earlier checkpoints (historical; current state above supersedes status text)
+
+
+
 
 # Current state: Codex r3 ACK recorded; native observer design review
 

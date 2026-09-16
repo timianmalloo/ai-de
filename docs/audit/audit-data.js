@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T16:42:12Z",
+  "generated": "2026-09-16T17:22:28Z",
   "audit": [
     {
       "actor": null,
@@ -24935,6 +24935,49 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2NK4J9NZR80YG9SG5QMF5HJ",
+      "shortname": "Grok may be waiting for another ACK from you",
+      "datetime": "2026-09-16T17:09:54Z",
+      "session": "prompt-log",
+      "prompt": "Grok may be waiting for another ACK from you",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2NKT3B0XVYCNVTASAES78CP",
+      "shortname": "atlas-r4-response-sink-checkpoint",
+      "datetime": "2026-09-16T17:21:40Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "Grok may be waiting for another ACK from you",
+      "summary": "Sent CHANGES REQUIRED directGrok req-01M2NKJGBAWRN4ZF9JCX4WH3Q0; six incoming r4 handles resolved/read back. R3 producer ACK observed. Independent sink review12c1f883 clears FR-NO-001 with own21/21 and actual replay; full observer remains open on per-view loaded/visible omission. Sol-high bounded author10calls15min dispatched; independent Astra follows. Root prior budgets exceeded, no retrospective compliance claim. No fresh native slot or main publication. This checkpoint precedes required derived regeneration/commit; subsequent observed results establish those outcomes.",
+      "kind": "manual",
+      "skill": "auditlog",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md",
+        "docs/coordination/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve the exact current consumer request and continue admitted native preparation.",
+      "done_when": "Direct semantic response and request readback recorded; next native implementation omission assigned with independent review preserved.",
+      "tier": "T1",
+      "fan_out": 2,
+      "git": {
+        "sha": "7ad8723eb7a8380a268380fd5616932bd5c3a346",
+        "short": "7ad8723eb",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -29448,6 +29491,51 @@ window.AUDIT_DATA = {
         "commits": []
       },
       "audit_ref": "al-01M2NGJCFNQ972708YRRYTK8CJ"
+    },
+    {
+      "id": "cl-01M2NJE8DAE8H4PBQJEP3D2YCS",
+      "datetime": "2026-09-16T16:57:43Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "design",
+      "skill": "investigate",
+      "title": "Contain observer payload failures before shared receipt publication",
+      "prompt": "Independent shared-receipt reproduction disproves observer formatting containment.",
+      "summary": "Owner chooses A after inspecting the real reproduction: serialize all added observer packets, transitions and status with actual Receipt options BEFORE publishing any shared event; append immutable JSON value preserving shape, never original mutable payload. Preserve original Mark/Save behavior. Author8calls/12min/checkpoint5 after frozenBLOCK; independentreview6calls/12min. Required oneReceipt original.before -> realformatterfailure -> original.after succeeds and savedreadback, exact originalexception/null/success through actualawait/finally; retain17controls andreviewerreprobe. No persistent-filesystem recovery claim, GUI, product or main grant.",
+      "rationale": "The new caught formatting failure leaves an unserializable payload in the existing shared event list and later original writes fail. Prepublication serialization isolates the introduced payload without rollback or redesigning original receipt semantics.",
+      "artifacts": [
+        "docs/proof/atlas-p1-02-native-uia.md",
+        "docs/coordination/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "7ad8723eb7a8380a268380fd5616932bd5c3a346",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2NKT37RCK1KS709AS940VV1",
+      "datetime": "2026-09-16T17:21:40Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "decision",
+      "skill": "execute-with-coordination",
+      "title": "Owner disposition: r4 changes required; Grok mapper authorship not contested",
+      "prompt": "Grok may be waiting for another ACK from you",
+      "summary": "Astra Owner and independent review7e205f5 require four corrections to exact r4 blob a8c05bc77451b0438ebea24eaad9b15db6c99601. Grok may author proposal under recorded operator direction; no new source grants. R3 remains frozen. Smallest r5 freezes authoring only; consumption and activation deferred.",
+      "rationale": "Proposed E1 method-observation design is not an admitted existing operation; graph assertions cannot replace Core-issued scoped identities; a nonempty mapping cannot settle ambiguity or activation.",
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "7ad8723eb7a8380a268380fd5616932bd5c3a346",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
     }
   ]
 };
