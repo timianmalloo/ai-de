@@ -311,3 +311,67 @@ count formatting produced truncated output; omitted content was not evidence.
 Named bounded rereads recovered the required fields, and this capture validates
 JSON object type and scalar counts before recording them. No retrospective root
 budget-compliance claim is made. The existing execute marker closes at this handoff.
+
+## Runner BLOCK and bounded Owner correction — 2026-09-16
+
+Independent receipt 2ab2f0b2bb2ae17ddb9bed5da1da935742bc9873:docs/proof/atlas-p1-03-pair-review.md is BLOCK. Conductor read its
+complete text and actual retained probes. Receipt Git-byte SHA256:
+c7db15d872ffe87590f4f99c405a5afe983bbee48cc3b567b2baa78ffcf572a2.
+Test Architect/SRE findings remain open; Simplifier found no complexity veto.
+All ten existing controls also passed independently. The amended graph retained
+its real dependencies, independent gates and finite variants; no graph defect
+was found and no repeated whole-programme optimization was required.
+
+Verified FR-PAIR-001: harmless process raw creation134340662446557014 versus
+CIM134340662446557010. A later sample matched exactly; the defect is precision
+dependent, not universal. Verified FR-PAIR-002: injected direct-identity decode
+failure propagated without process.json, leaving a Job handle and two retained
+process handles open; reviewer explicitly closed them. Flagged FR-PAIR-003:
+cmd/git.exe is pinned while installed mingw64/bin/git.exe is absent; actual
+downstream dependency consumption still needs measurement. Source inspection
+also found that a stack substring is insufficient to classify an original
+name-query assertion; emitted-schema classification controls remain required.
+Inspected raw probes are retained in local pair-handoff/review-* snapshots.
+
+Astra Owner read the BLOCK and admits one correction unit:16 author calls /
+25minutes/checkpoint10, then8 independent-review calls /15minutes. This is a new
+bounded unit, not retroactive enlargement of the original18-call preparation.
+Official request req-01M2P0VQ6APR7BAG5CBH4ECK2X records the exact boundary.
+New session codex-atlas-p1-03-pair-correction uses the ended preparation's isolated
+tree under WT1a, preserving its frozen outputs. The same Astra author receives
+only run_pair.py, its existing preparation Proof Pack and required own records.
+No product/test/tools/shared-runner changes, build/test command, browser/native
+execution or canonical/main publication is admitted.
+
+Owner correction contract:
+- Identity-record parse/read failures cannot bypass containment, independent
+  Job/handle closure, observer shutdown or failure evidence. Preserve primary
+  errors and record cleanup errors separately.
+- Correlate browser CIM through the same retained Job-owned process handle.
+  Require raw creation identity and a nonsignaled process before and after the
+  query, plus matching PID and executable. Exit/unavailable/mismatch refuses;
+  lossy CIM timestamps remain diagnostic and are never rounded authority.
+- Measure harmless Git executable/dependency resolution; add only justified
+  consumed mutable installation inputs to the freeze.
+- Negative classification requires the exact supported assertion type and
+  correlated failed original name-query. Provider, visibility and observer
+  faults cannot qualify. Cover emitted-schema order, duplicates, correlation
+  and cleanup with actual positive/negative controls.
+- Fully verify the old manifest before editing; preserve it and its evidence.
+  An explicit successor may change the runner pin and justified dependency
+  additions only. Prove every old compiled/runtime input identical. No rebuild
+  or silent refresh; unexpected difference returns for Owner disposition.
+
+The independent hard veto is not overridden. Corrected source -> independent
+rereview -> fresh watcher execution grant remains the critical path. No human
+approval or extra watcher preparation ACK is awaited. Main freshly observed at
+bcf4959bc0e0e361736e6a179f05b69fcd0500f8; GHCP retains publication. No native
+experiment has run and the canonical P1-03 qualification remains failed.
+
+Reviewer hit the original8-batch budget before administrative close. Conductor
+admitted two administrative-only recovery batches without further probes or
+source correction; the receipt preserves that overrun. The intermediate claim
+of13 nested tools was corrected by the reviewer to10 across the first8 batches.
+Root makes no retrospective budget-compliance claim. Historical outgoing r4
+notice req-01M2NKJGEJQ2DR9FPKS9T9H403 was resolved as superseded by the already
+frozen r5; r4 is never relabeled ACK and no additional peer response is required.

@@ -9534,7 +9534,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "625da4097788431ceba85d86cc0466d1eed5cc8f8e81422fbb5d34adfe157aa3"
+      "sourceSha256": "46562393473944111cec26652dc3d408d077f3209b116b820c38a088f52e8145"
     },
     {
       "id": "coordination-code-atlas",
@@ -12113,7 +12113,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "97ffc78fae6e4e0557410f88fc85f8ad23551d0416f9a19c73ebab4968ce4fa1"
+      "sourceSha256": "3ab29c9a73dc8eee7af9b831ae4bc81f84e59094ec6b8d16ac56a4e076a9d9ea"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -13003,7 +13003,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "77f411d94a86b8deb812cdf684dae4a7e34a8261f5123cdc73a66a2243ff50bf"
+      "sourceSha256": "6e28f608a9858790871c716714067bb60fb5bac7d1468c2e1f0f50b3faf0949f"
     },
     {
       "id": "proof-atlas-peer-review-transport",
@@ -23406,5 +23406,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "907caec480df19b60e743d1fc4666b75da2e8125737df9bdeb35d016132fbc15"
+  "graphSha256": "0c61207b6ca9fbbf6b344ae5a1986c45914e559bd5883be4197cdbcf05879db8"
 };

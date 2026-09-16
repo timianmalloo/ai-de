@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T21:06:02Z",
+  "generated": "2026-09-16T21:12:39Z",
   "audit": [
     {
       "actor": null,
@@ -26640,6 +26640,36 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2P110ZRNSQAEAMGZ1GGTETF",
+      "shortname": "atlas-pair-block-correction",
+      "datetime": "2026-09-16T21:12:38Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going",
+      "summary": "Inspected independent BLOCK and actual failed/equal creation probes, cleanup fault and independent10/10. Owner correction16/25 plus8/15 rereview recorded and author dispatched in new official session; no hard veto selfclear/native/main action. Closed historical outgoing r4 notice as superseded by frozenr5.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md",
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve the runner review blockers within the admitted diagnostic boundary.",
+      "done_when": "Exact correction is independently cleared and ready for a fresh watcher execution request.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-16T21:07:44Z",
+      "duration_seconds": 294.0,
+      "git": {
+        "sha": "63795c24d409b340c34400013ac11ffbee601aa2",
+        "short": "63795c24d",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -31389,6 +31419,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "193b940dccac0f42ceaf710b0dd2ba23875c0c45",
         "after": "193b940dccac0f42ceaf710b0dd2ba23875c0c45",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2P110VV7494PJFA9MWCVDKK",
+      "datetime": "2026-09-16T21:12:38Z",
+      "session": null,
+      "kind": "design",
+      "skill": "execute-with-coordination",
+      "title": "Correct the Atlas pair runner while preserving frozen binaries",
+      "prompt": "keep going",
+      "summary": "Owner admits16call/25minute exact runner correction after independentBLOCK, then8call/15minute rereview; same isolated tree/newsession. Handle-bound identity, failure-safe cleanup, measured Git dependency closure and exact oracle classification. Successor manifest preserves every old compiled/runtime input; no rebuild or execution.",
+      "rationale": "Independent fault injection proved lost process evidence/open handles, harmless native/CIM measurements proved precision-dependent identity refusal, and source review exposed an unclosed negative-classification gap. Fix the review unit without changing product or binary cohort.",
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "63795c24d409b340c34400013ac11ffbee601aa2",
+        "after": "63795c24d409b340c34400013ac11ffbee601aa2",
         "branch": "integration/atlas-five-gates",
         "pushed": null,
         "commits": []
