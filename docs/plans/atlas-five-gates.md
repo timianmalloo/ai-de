@@ -12,7 +12,7 @@ review-by: 2026-12-15
 summary: "Repair the five frozen Atlas integration failures before main publication and E1/E2 continuation."
 ---
 
-# Current state: transition preparation CLEAR; Owner-admitted runner preparation
+# Current state: frozen pair runner in independent review
 
 Goal: resolve the current Grok consumer request and continue the admitted Atlas qualification
 preparation. Done when the exact proposal has a direct semantic response and recorded
@@ -30,8 +30,56 @@ Astra Owner and Conductor. Main publication stays with foreground GHCP.
 | Native shared receipt | Keep optional observation failures from poisoning original evidence | Source715523d0 independently CLEAR for FR-NO-001 at12c1f883; own21/21 and actual replay inspected |
 | Native per-view state | Complete settled loaded/visible evidence for every observed view | Source626d16a2 independently CLEARd31eab23; own21/21 and actual JSON inspected |
 | Native qualification / main | Establish combined runtime acceptance before publication | P1-03 App1257/1258; native failure; remaining canonical steps stopped and slot released; independent RCA active |
-| Transition experiment | Distinguish loading-time traversal association | c192a7ed preparation CLEAR1d46d651; independent43/43 inspected; Owner-admitted runner preparation active |
+| Transition experiment | Distinguish loading-time traversal association | Runner88035753 frozen;10/10 controls and full manifest independently inspected; runner review active |
 | E1/E2 | Continue admitted Sequence/Activity and architecture view work | Integration remains the priority |
+
+## Frozen pair runner and independent review — 2026-09-16
+
+Verified candidate: 88035753581dd0bab5697e975b6ba1a53543e702 in the isolated
+test/atlas-p1-03-uia-pair branch. Conductor read its complete Proof Pack,
+actual two Debug build logs (zero warnings/errors), named10/10 harmless controls,
+two intended red failures and owned timeout evidence. Timeout control records
+three creation-bound identities, lifetime total3/active0, every retained handle
+exited and an unrelated sentinel still alive. The earlier7/8 result failed because
+job accounting reached zero before the retained handles signaled; the correction
+waits on exact handles within the existing cleanup deadline.
+
+Runner SHA2563e816170418907b5b6d624b6e1f6d29950e9e55754284bc1deb3b1356a3f487c;
+manifest SHA256ed4f937ba886f57b186ea02b0fa9cf74135bbb7137d5938cf99942d210360314.
+Manifest has11625files/1025roots and was frozen after both builds. Conductor ran
+the supported full verify command independently and observed PINS-MATCH. Build
+source remains1d46d651; src/tests/tools are unchanged between that source and the
+runner candidate. Canonical programme source remains626d16a2 and unchanged from
+the failed5406ea69 qualification. No experimental source was joined or admitted
+to canonical/main. Raw inspected records are snapshotted locally under
+artifacts/atlas-five-gates/pair-handoff/; they are not claimed committed payloads.
+
+Author actual17/18calls and1169.24seconds, audit duration1126seconds:
+al-01M2P0C59N1VXBZC02CE1DM4QX. Conductor read required audit fields and actual
+clean status/own liveness. Author reports all six leases released and session ended.
+Independent Astra review is provisioned at the exact candidate in
+C:/Projects/ai-de-review-atlas-p1-03-uia-pair, branch review/atlas-p1-03-uia-pair,
+session codex-atlas-p1-03-pair-review. Budget8calls/15minutes, no leaf fanout.
+Strong reasoning is retained for process custody, cross-API identity and adversarial
+evidence parsing. The author cannot clear these Test Architect/SRE/Simplifier gates.
+
+Review targets include actual receipt schema/negative classification, failure
+record persistence, complete input boundaries, short-lived process identity,
+and the explicitly untested CIM creation-time correlation for actual WebView
+runtime/profile consumption. Harmless controls only; no browser/native execution
+is admitted during review. The material profile graph remains active; preparation
+now exits to independent review, then an exact fresh watcher execution request.
+No approval wait from the human or extra watcher preparation grant is introduced.
+No slot is active, no native arm has run and P1-03 remains failed.
+
+Operational corrections: the continuation's opening T1 label was wrong; the
+existing native unit remains T2. One read-only coord check omitted identity and
+returned NOT_CHECKED; it was not used as edit authority and was repeated with the
+actual identity, returning ALLOW. Oversized evidence reads and PowerShell collection
+count formatting produced truncated output; omitted content was not evidence.
+Named bounded rereads recovered the required fields, and this capture validates
+JSON object type and scalar counts before recording them. No retrospective root
+budget-compliance claim is made. The existing execute marker closes at this handoff.
 
 ## Material replan: mutable WebView state versus frozen inputs
 

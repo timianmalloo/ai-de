@@ -8464,6 +8464,16 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   Evidence: c192a7ed:docs/proof/atlas-p1-03-uia-transition.md and the Conductor's
   transition-source-handoff snapshot. No product/runtime-cause inference follows.
 
+- **Recurrence (2026-09-16, Atlas owned-process containment):** job lifetime
+  accounting reached active0 before retained process handles signaled exit.
+  **Class -> sweep -> derive -> prevent:** reuse DC-222's source-before-derived
+  observation; sweep normal and timeout cleanup; require exact handle signals
+  within the same bounded cleanup deadline. Executable control
+  `test_timeout_contains_descendants_and_spares_sentinel` in runner88035753
+  reproduced the7/8 failure then passed in the final10/10 run, preserving the
+  outside sentinel. Evidence: `docs/proof/atlas-p1-03-transition-design-review.md`.
+  This is experimental runner containment, not native qualification.
+
 ### DC-223 — A launch resolver that composes a path without probing it lets "installed" be asserted by each caller's own probe, and one caller reads the wrong argument as the file
 
 - **Shape:** `EngineCatalog.ResolveLaunch` composes `<root>/node_modules/<package>/<entry>` (or a native command) and never touches disk, by design — its callers spawn the result and the spawn fails by name. Two other callers needed "is it installed?" and each probed `File.Exists` on its own reading of the launch: first use on the adapter entry; the New Session sheet on `Arguments[0]` — which for a Native row is `--acp`, not a file, so every native engine would have read *not configured* forever.

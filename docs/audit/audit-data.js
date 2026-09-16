@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T20:53:46Z",
+  "generated": "2026-09-16T21:06:02Z",
   "audit": [
     {
       "actor": null,
@@ -26607,6 +26607,36 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "193b940dccac0f42ceaf710b0dd2ba23875c0c45",
         "short": "193b940dc",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2P0MXCEYR0T6X943RQR2F97",
+      "shortname": "atlas-pair-frozen-handoff",
+      "datetime": "2026-09-16T21:06:01Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going",
+      "summary": "Inspected candidate88035753 full proof/build logs,10/10 harmless controls, containment3identities/active0/handlesexited/sentinelalive and independently verified11625-file manifest. Exact isolated Astra review dispatched8calls/15min. No native arm or canonical/main source join. Opening T1 corrected to existing T2; NOT_CHECKED read-only identity omission and truncated output recovered before claims/writes.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md",
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Finish and independently review the bounded diagnostic runner.",
+      "done_when": "Controls, frozen inputs and independent review support an exact watcher execution request.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-16T20:42:44Z",
+      "duration_seconds": 1397.0,
+      "git": {
+        "sha": "ff2fb242950449a22137d6f5d5b7e0abe8659498",
+        "short": "ff2fb2429",
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
