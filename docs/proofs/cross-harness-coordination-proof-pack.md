@@ -20,6 +20,132 @@ summary: >-
 
 # Proof Pack — dormant P1 candidate; independent code gate pending
 
+## P2.1 allocation-overlap remediation — 2026-09-16
+
+**Test-only candidate; independent Test/Data/DS re-gate pending.** Base
+`494b2488fb869846df47d365c5407fd83f8c1556`, branch `feature/xh-p2-projection`.
+The supplied independent review found that changing only `deferred:false` to
+`deferred:true` survived the existing 90 selected cases. Their green was not proof
+of writer acquisition before allocation. This receipt closes that author's missing
+oracle, not the independent hard veto or full P2.
+
+### Actual transaction-boundary scheduling
+
+New file: `tests\AiDe.Core.Tests\Watcher\SqliteAllocationOverlapTests.cs`.
+Exact test:
+`Post_OverlappingSqliteAllocations_AcquiresWriterBeforeReadingMaximum`.
+The real path is two `MessageBoardService` instances → two owned
+`SqliteWatcherObservationStore` connections → actual allocation/INSERT/COMMIT →
+third, read-only SQLite connection → `Seq > cursor`. Production code, schema,
+dependencies and existing reader-between-commits tests are unchanged.
+
+The fixture holds A in SQLite's trace callback for the allocator's MAX statement.
+B then enters the real allocator. On the candidate, SQLite calls B's **native busy
+handler**, proving actual writer contention, rather than a pause before method
+entry. The busy handler releases A and waits for the test to read A's committed
+message before allowing one native retry. On the weakened DEFERRED path, B reaches
+its MAX trace while A is still held; that callback records the violation, releases
+A, and waits for the same reader checkpoint. B's SELECT executes after release.
+Thus **both genuine writes succeed even in the mutant**; the failure is the observed
+allocation-read boundary before serialization, not an accepted SQL exception,
+timeout, fake write, duplicated backend or inferred source/IL shape.
+
+Both runs assert exact returned-versus-durable records, IDs
+`[message-a,message-b]`, sequences `[1,2]`, A alone between commits, and precisely
+B beyond A's cursor. Only after both workers complete do assertions check zero
+callback timeouts, no early MAX, and one native busy callback. Callbacks contain
+no assertions or explicit throws. Manual waits and async waits have a 15-second
+deadlock bound; `finally` releases both gates and awaits both tasks. Callbacks are
+unregistered, delegates kept alive through removal, connections disposed, and the
+owned database directory deleted. No sleeps, probabilistic workload or retry-until-
+green test loop is used.
+
+### Installed contracts and executed spike
+
+| Contract | Local evidence |
+|---|---|
+| Microsoft.Data.Sqlite 10.0.11 | Pinned package; reflected `SqliteConnection.Handle : SQLitePCL.sqlite3` and `BeginTransaction(Boolean)`; actual store transaction executed |
+| SQLitePCLRaw assembly 2.1.12.3116 | Reflected `strdelegate_trace.Invoke(Object,String)`, `raw.sqlite3_trace(sqlite3,strdelegate_trace,Object)`, and `sqlite3.DangerousGetHandle()` |
+| Native busy callback | SQLitePCLRaw has no `sqlite3_busy_handler` wrapper. `NativeLibrary.GetExport` found that exact export in installed `e_sqlite3.dll`; test-only Cdecl P/Invoke registered it with SQLITE_OK, observed one contention call, retried successfully and removed it with SQLITE_OK |
+| SQLite engine | Actual callback run reported **3.53.3**; installed win-x64 native DLL SHA-256 `B7385D722C83FB52142A00477A726723745916D22A555711EE89834C1111FB2E` |
+
+This is an installed-version execution spike, not upstream documentation research.
+Reflection is confined to the fixture's two private connections; its ceiling is
+the current single-connection store owner and the allocator's MAX statement. A
+connection-owner or SQL-shape change requires updating this scheduling fixture,
+not a new production observer/configuration. Other platforms/providers are not
+qualified by this Windows x64 run.
+
+### GREEN → exact fault injection RED → GREEN
+
+| Run | Observed result and oracle | Measured time |
+|---|---|---|
+| New test, candidate build | **1 PASS**, exit 0; `busy=1; earlyMaximum=False; callbackTimeouts=0; committed=message-a:1,message-b:2` | VSTest total **0.6790 s**, displayed test **62 ms** |
+| Isolated DEFERRED binary | **1 FAIL**, exit 1; same two successful commits; `busy=0; earlyMaximum=True; callbackTimeouts=0`; failure at line 81: “B reached the allocation SELECT before A committed; writer acquisition did not serialize allocation.” | VSTest total **0.6801 s**, displayed test **57 ms** |
+| Unmodified candidate, combined regression selection | **91 PASS**, 0 failed/skipped/aborted; exit 0; new test again reports one busy call, no early MAX or timeout | Runner duration **444 ms**; new test TRX duration **0.0161857 s** |
+
+The 91 cases are the previous 15 ordering + 75 compatibility cases and this new
+case. Exact combined filter:
+
+```text
+FullyQualifiedName~SqliteAllocationOverlapTests|FullyQualifiedName~BoardOrderingTests|FullyQualifiedName~CoordinationReliabilityTests.Post_|FullyQualifiedName~MessageBoardTests|FullyQualifiedName~SqliteWatcherObservationStoreTests|FullyQualifiedName~McpMatchesTheJsonlPathTests|FullyQualifiedName~ContractBoardPostTests|FullyQualifiedName~BoardPublisherTests
+```
+
+Candidate commands use `dotnet test tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj
+--no-restore --filter <selector>`; the combined run adds `--no-build`.
+Both use console and TRX loggers with results under the owned worktree's
+`.agents\p21-overlap-evidence`. Mutation uses `dotnet vstest
+<isolated-copy>\AiDe.Core.Tests.dll /TestCaseFilter:FullyQualifiedName~SqliteAllocationOverlapTests`.
+Existing compatibility fixture TEMP/TMP were process-local, rooted in this worktree;
+no live database, App/GUI, endpoint or new dependency was used.
+
+The mutant copied the complete built test output **within this worktree**, never
+modified source or the candidate binaries, and changed exactly one byte:
+method metadata token **100665633**, `AppendBoardMessageAllocated`, IL offset
+**38**, file offset **139722**, `ldc.i4.0` (`16`) → `ldc.i4.1` (`17`).
+Before patching, reflection resolved the following callvirt to
+`Microsoft.Data.Sqlite.SqliteConnection.BeginTransaction(Boolean)`, checked its
+sole Boolean parameter, and uniquely matched the complete original method body
+in the PE file. The harness required precisely one changed byte, parsed the RED
+TRX for one failure with the exact oracle text and successful-commit output,
+and checked the original DLL hash remained unchanged. This is a pinned mutation
+recipe, **not** a source-string or IL assertion inside the committed regression test.
+
+| Identity | SHA-256 |
+|---|---|
+| New test source | `C9BD62923980304C02055F460F57FDCAE92AD6157EDA9CD10C955F747F151782` |
+| Unchanged allocator source | `52492D886EADA2EA22FB27F82C05EC4DA79F49D90B4F5CE0005822E92DE5F784` |
+| Candidate Core DLL | `C8FBD2F84EE9C2C5BABE55821BA786F14F76B5F7C1632BBAF9327B425A766A28` |
+| Isolated DEFERRED Core DLL | `FD3108B5DA28F52AF926CCB54FD914896B1030623C6C26B55B7C26BB707531E2` |
+| Identical test DLL in both runs | `A604FF231B650F7FA4D783314DC726A5B8221C1CB95AD090E191A92C8FA4F0AB` |
+
+**Class → sweep → derive → prevent:** a scheduling test can serialize calls before
+the operation under test and therefore never exercise its claimed concurrency
+boundary. Fresh reads of `BoardOrderingTests` and `CoordinationReliabilityTests`
+found pre-entry holds in the memory case and R3; neither is promoted to SQLite
+overlap proof. The serial fidelity test remains valid. Derive scheduling evidence
+from the real engine's trace/contention callbacks, not from another store or
+production observer. The new named test kills the exact surviving mutant.
+Formal lesson-register incorporation remains conductor-owned; no unowned register
+edit was made. The two initial inspection outputs exceeded display size and were
+replaced with bounded selections; neither is test evidence.
+
+**Verified:** the local API signatures, callback spike, two successful writes and
+read checkpoint in both modes, exact one-byte mutant failure and 91-case GREEN.
+**Inferred:** broader scheduler/platform behavior beyond this fixed interleaving.
+**Flagged:** independent Test/Data/DS/C# verdicts, full P2 and production observability.
+The prior four R1/R2 failures out of the seven-case reliability suite are unchanged
+and were not rerun or repaired here. Crash/atomic receipt/checkpoint, replay,
+schema/rollback, source gaps, pending bounds, 401-row coordination-feed paging,
+outage/rebuild, P3–P5 and authority/runtime activation remain open. No self-clear.
+
+Audit inspection corrected the supplied suspicion rather than rewriting history:
+`al-01M2NV7CVPKCN4J7JQKV5TGMA3` and `al-01M2NV7CYXZXK0K90EWYWFS319`
+already contain `main_calls:42`, `main_budget:45`, `fan_out:0`, `tier:T2`.
+They are not missing budget metadata; this finding is recorded additively in the
+new audit summary. Raw cloned binaries/TRX/helper files are local execution
+artifacts, removed after this durable receipt; derived views remain conductor-owned.
+
 ## P2 real C#/SQLite RED receipt - 2026-09-16, TEST ONLY / UNSHIPPABLE
 
 This is new executed evidence, not a retrospective promotion of the static reports below.

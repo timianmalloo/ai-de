@@ -20,6 +20,44 @@ summary: >-
 
 # Durable phase graph
 
+## P2.1 finite overlap-oracle remediation — 2026-09-16
+
+Base `494b2488fb869846df47d365c5407fd83f8c1556`. One supplied independent
+Test/Data/DS finding: the DEFERRED-only mutant survived 90 tests because R3 held
+B before allocator entry. No production change or wider P2 repair was admitted
+to this unit. The [new receipt](../proofs/cross-harness-coordination-proof-pack.md#p21-allocation-overlap-remediation--2026-09-16)
+records the installed callback contracts, exact mutated IL/binary identities,
+successful commits in both modes, and the independent re-gate still required.
+
+| Node | Capability | Input → exit | Dependency / status |
+|---|---|---|---|
+| O1 | Reasoning | Review finding + fresh source + installed provider → real contention/trace boundary established | None; complete |
+| O2 | Reasoning | Exact owned test lease → one two-service/two-connection scheduling test, no production hook | O1 decision; complete |
+| O3 | Deterministic mechanics | Released leases + build → candidate 1 PASS, exact DEFERRED mutant 1 FAIL, candidate regression 91 PASS | O2 data; complete |
+| O4 | Deterministic mechanics | Observed receipts → proof/plan/own audit, clean commit and ended session | O3 data; closing |
+| G-O | Independent review | Exact author commit and mutation receipt → Test/Data/DS/C# dispositions | O4 data; **pending, not self-cleared** |
+
+No agents. Author work/span before and after **4/4 normalized nodes (Inferred)**,
+width one, speedup ceiling one. The chain is data/decision-dependent; no useful
+author concurrency is available. Budget **30 tools / 150k context**. The single
+missing-oracle worklist decreases **1 → 0** after the killed mutant; the reviewer
+veto is a separate pending gate, not a finding the author can erase. No probabilistic
+test loop or budget enlargement. Each native/async wait has a 15-second deadlock
+cap; the success predicate is actual contention plus complete ordered commits,
+never reaching the cap. D0/D1/D4 apply; no SQL semantics are mocked.
+
+Actual shape matches O1–O4. Installed raw trace plus the native busy export avoided
+a production hook, dependency or new contract. Two oversized inspection outputs
+required bounded follow-up; zero code/test rework passes. Measured test times are
+in the Proof Pack; full-turn tokens are not recorded. Audit duration begins at its
+19:40:22Z marker, excluding earlier grounding. The final audit records consumed
+calls against the declared budget. Shared docs retain their existing typed links;
+derived regeneration and formal lesson-register incorporation stay conductor-owned.
+
+**Remaining:** independent gate, the four existing R1/R2 failures, and every full-P2
+and later-phase floor. The original 90 green cases are retained; they do not become
+retroactive overlap proof. P0–P5 approval and scope are unchanged.
+
 ## P2 test-only RED checkpoint - 2026-09-16
 
 New evidence at source base `6b0c00420609ad54bf36fc38e5025c5629bba814`:
