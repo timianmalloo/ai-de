@@ -200,3 +200,77 @@ No E1/E2 polish, watcher activation, peer cleanup, new ownership decisions or un
 ## Order of operations
 
 Publish startup records and clean checkpoint; join current main with official tooling; settle exact repair manifests and plan gates; provision each author tree through coord; acquire short leases only while editing; review returned artifacts independently; use official join and append-only/register merge mechanisms; regenerate after audit; qualify in the allocated desktop window; hand to GHCP. Retain trees until commits are safely joined and cleanup predicates hold.
+
+## Exhaustive design evidence checkpoint, 2026-09-16
+
+Conductor inspected frozen spike b76581ae38bb1344457ef161326bb5bc861400a8 in
+C:/Projects/ai-de-spike-d0-inactive-binding. Proof docs/proof/d0-inactive-binding-spike.md
+SHA256 008C57DA7991484C9C957C6EE685C87775EE4618C7818CB1FFF3E7DD3464F57A matched bytes.
+Actual measurement logs and canonicalization/enumeration source were opened. Core240 plus
+App106 compiler trees contain zero conditional identifiers: one complete assignment,
+1.471713 seconds. Eight full-corpus assignments took7.794592 seconds; population16
+refused without sampling. Source-project propagation, project-symbol independence,
+unimported/incompatible positives, all eight standalone masking states and unsupported
+dynamic identity refusals were read. The canonical BuiltinOperator signature resolved
+all15 source/metadata baseline discrepancies. These are design measurements, not new
+xUnit or integrated qualification results. The standalone masking fixture is not an
+observed bypass of the retained combined root/port guard.
+
+FR-003 remains BLOCK. Owner decision requested before implementation: finite exhaustive
+coverage over the fixed current Core/App closure, cap8 or explicit refusal, preserve37
+existing cases and add measured discriminators. New source-project/generator/conditional
+MSBuild input coverage is not silently certified. No D0 source joined, no fresh desktop
+slot requested, no full/shown/native run, no push or main publication. Source remains921.
+Independent37/37 TRX was directly parsed; SHA256
+a3779cd86cd31565a7faf8c9f5e7eef6799d1b5d5ed50ac99e1f989b49865893.
+
+Graph delta: completed finite-census/identity design unit -> Owner contract decision ->
+bounded author correction -> independent veto review -> official staged join -> fresh
+scheduled qualification -> GHCP publication. No speculative implementation is admitted.
+Two author design runs each returned8/8; current Conductor checkpoint used approximately
+16 boundaries against16, with exact count unavailable after context compaction. It is
+not recorded as measured compliance. A prior PowerShell interpolation parse error ran
+no command; a scratch listing used the integration tree and reported missing path.
+Both were corrected by exact literals/known spike paths. Broad output was narrowed
+before crediting enumeration and identity results. No source or evidence was discarded.
+The current coordination HTML/planning edits are preserved and committed with this
+checkpoint. Main publication remains foreground copilot-atlas-recovery-b0d0; Grok r3
+handshake remains unacknowledged. E1/E2 implementation follows the main priority.
+
+## Owner decision: admit finite implementation after measured design
+
+Astra Owner admits option A from b76581ae38bb1344457ef161326bb5bc861400a8, subject to
+independent review. Author budget20 calls/30 minutes/checkpoint12, exact existing test
+tests/AiDe.App.Tests/SolutionTreeProbeTests.cs, docs/proof/d0-atlas-independence.md and
+official audit only. Conductor provisions fix/d0-atlas-conditional-closure at that tip.
+No product/project or central ledger edits by the author. Astra is retained because
+compiler binding, identity and closure semantics require stronger reasoning. Review
+is assigned to the independent Astra reviewer after an inspected frozen return.
+
+Acceptance: complete (project,symbol) assignment census, maximum8, overflow refuses
+before sampling; Core source reference rebuilt into App per assignment; original37
+cases/exact roots/ports and conditional refusals preserved; canonical ReducedFrom /
+OriginalDefinition and specific BuiltinOperator signatures; unsupported identity
+refuses. Coverage completion is reported separately from acceptance.
+
+Finite reviewed closure manifest is required inside the existing test: App->Core is
+the only source-project edge, Daemon/Mcp non-linking dependencies. New source files
+under admitted roots enter census automatically; do not pin incidental346 count.
+Pin relevant build-control inputs and the four explicit generated-input contract;
+missing inputs, imports/project edges, unsupported conditional Compile inclusion or
+changed generator assumptions produce named closure refusal. No automatic refresh.
+Freeze source text, parse options and metadata throughout enumeration; mutation or
+inconsistent reference refuses. Generator/configuration completeness remains outside
+the claim. An unrepresentable closure condition returns a limitation, not green.
+
+Independent review must exercise applicable RELEASE extension, Core propagation,
+all8 masking states, unrelated positives, overflow, unsupported identities and closure
+mutations. No source join or full/native qualification until independent clearance.
+Author red -> fix -> minimal existing/new union -> frozen proof is the branch variant;
+review vetoes are real exit conditions. A new material failure returns to Owner.
+
+Current Conductor unit:24 boundaries/40 minutes/checkpoint16, width at most3. Goal:
+inspect and independently qualify this correction, then stage only if CLEAR. Done:
+frozen reviewed candidate or precise unresolved veto handed to Owner, plus preserved
+records. Scope excludes main publication and unscheduled native execution. Prior
+16-boundary design checkpoint is recorded approximate, not retroactively compliant.

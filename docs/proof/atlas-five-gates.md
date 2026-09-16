@@ -303,3 +303,39 @@ Audit merge conservation was independently read back against both parents using 
 The join tool emitted al-01M2KKHMZ4QQR23YW7S7M17CCX before its gates, with acceptance_met=true despite subsequent step8 failure. Corrective entry al-01M2KKSY1HJHP4NBCP8K9VDJEK retains that original and records blocked/acceptance=false. No final gate clearance can be inferred from the intermediate entry. The repository-configured commit trailer attributes the join record to Claude; actual executing actor was Codex. Subsequent Codex join calls must provide an accurate trailer rather than inherit that stale identity.
 
 Verified: five blockers reproduced and repaired on isolated component branches; independent clearance and inspected red/green/mutant evidence exist. Flagged: no combined current-main qualification, Release, acknowledged integration handoff or publication. E1/E2 is not bundled. Its direct handshake is proposal-only, recorded in docs/coordination/atlas-five-gates.md.
+
+## Exhaustive design evidence checkpoint, 2026-09-16
+
+Conductor inspected frozen spike b76581ae38bb1344457ef161326bb5bc861400a8 in
+C:/Projects/ai-de-spike-d0-inactive-binding. Proof docs/proof/d0-inactive-binding-spike.md
+SHA256 008C57DA7991484C9C957C6EE685C87775EE4618C7818CB1FFF3E7DD3464F57A matched bytes.
+Actual measurement logs and canonicalization/enumeration source were opened. Core240 plus
+App106 compiler trees contain zero conditional identifiers: one complete assignment,
+1.471713 seconds. Eight full-corpus assignments took7.794592 seconds; population16
+refused without sampling. Source-project propagation, project-symbol independence,
+unimported/incompatible positives, all eight standalone masking states and unsupported
+dynamic identity refusals were read. The canonical BuiltinOperator signature resolved
+all15 source/metadata baseline discrepancies. These are design measurements, not new
+xUnit or integrated qualification results. The standalone masking fixture is not an
+observed bypass of the retained combined root/port guard.
+
+FR-003 remains BLOCK. Owner decision requested before implementation: finite exhaustive
+coverage over the fixed current Core/App closure, cap8 or explicit refusal, preserve37
+existing cases and add measured discriminators. New source-project/generator/conditional
+MSBuild input coverage is not silently certified. No D0 source joined, no fresh desktop
+slot requested, no full/shown/native run, no push or main publication. Source remains921.
+Independent37/37 TRX was directly parsed; SHA256
+a3779cd86cd31565a7faf8c9f5e7eef6799d1b5d5ed50ac99e1f989b49865893.
+
+Graph delta: completed finite-census/identity design unit -> Owner contract decision ->
+bounded author correction -> independent veto review -> official staged join -> fresh
+scheduled qualification -> GHCP publication. No speculative implementation is admitted.
+Two author design runs each returned8/8; current Conductor checkpoint used approximately
+16 boundaries against16, with exact count unavailable after context compaction. It is
+not recorded as measured compliance. A prior PowerShell interpolation parse error ran
+no command; a scratch listing used the integration tree and reported missing path.
+Both were corrected by exact literals/known spike paths. Broad output was narrowed
+before crediting enumeration and identity results. No source or evidence was discarded.
+The current coordination HTML/planning edits are preserved and committed with this
+checkpoint. Main publication remains foreground copilot-atlas-recovery-b0d0; Grok r3
+handshake remains unacknowledged. E1/E2 implementation follows the main priority.
