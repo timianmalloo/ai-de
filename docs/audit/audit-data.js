@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T21:50:36Z",
+  "generated": "2026-09-16T22:00:09Z",
   "audit": [
     {
       "actor": null,
@@ -26502,6 +26502,83 @@ window.AUDIT_DATA = {
         "sha": "d679e1567e2d74fa2ef85f1eddae6c44b6d5b758",
         "short": "d679e1567",
         "branch": "test/atlas-p1-03-uia-pair",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2P3P4B68DMXTD0YDHN852NV",
+      "shortname": "atlas-pair-outcome-review-request",
+      "datetime": "2026-09-16T21:59:07Z",
+      "session": "codex-atlas-p1-03-pair-outcome",
+      "prompt": "FIRST action in your provisioned tree: set AGENT_SESSION=codex-atlas-p1-03-pair-outcome AGENT_NAME=codex-astra-pair-outcome-reviewer then python docs/ai-forward-pack/scripts/audit-log.py start --session codex-atlas-p1-03-pair-outcome --skill forensicreview. Goal: independently interpret one failed native diagnostic attempt, separating runner failure from original UIA defect. Done when observed validity, containment and unknowns are recorded with Test Architect/SRE/Simplifier verdict and bounded next diagnostic recommendation. Tier T2; fanout0; GPT-6 Astra selected for adversarial Win32 identity/containment semantics. Budget8 orchestration calls/12min/checkpoint6, context ceiling400k; report before cap if remaining floors cannot fit. Conductor provisioned YOUR tree C:/Projects/ai-de-review-atlas-p1-03-pair-outcome, branch review/atlas-p1-03-pair-outcome at f8ad3323c1989855916115b3b343c4fee99566b8. Never EnterWorktree, never edit another tree. Read AGENTS/nested instructions, forensicreview workflow, relevant persona/testing/coord guidance; publish own liveness. Allowed authored path docs/proof/atlas-p1-03-pair-outcome-review.md and official own audit/required derivatives only; exact short leases, no broad claims; site derivative paths need exact leases if required. No source/runner/test edits. No builds, tests, scripts importing runner, native launches, GUI/attachment or retries. Source and raw inspection ONLY. Main/source join forbidden. Read executor proof docs/proof/atlas-p1-03-pair-execution.md then ACTUAL raw in C:/Projects/ai-de-test-atlas-p1-03-uia-pair/artifacts/atlas-uia-pairs/atlas-uia-pair-01-d679e156-20260916/{state.json,A/process.json,A/direct-child.json,A/stdout.log,A/stderr.log} and artifacts/atlas-pair-preparation/execution/{result,inspection}.json. Observe population/no TRX/native result. Compare frozen runner at d679e156 and exact error path. A failed PROCESS-IMAGE-MISSING, Job total8/active0, 7identities, retainedhandles exited; no failingPID/native error. B never launched. Do NOT attribute missing eighth process to Git/provider or infer cause from adjacency. Fullpins events before/after A. Watcher explicitly RELEASED consumed slot in req-01M2P2Z0AC7Q6W7B06J21HTNM0, no retry/newslot. Root request list can verify. Assess whether receipt accurately limits claims; identify smallest evidence/observability gap needed next. Do not self-author fix or require unrelated project gates. A gate CLEAR here means documentary interpretation only, not native/runner readiness. Conductor's existing graph F/C/M/R/S/A/B/I now reaches I; material replan for new failure remains Owner decision, no duplicate whole-programme plan. Return committed receipt, actual checks, budget/duration, residuals and exact verdict. Audit/regen/source preservation/clean state; release leases/end session/retain tree. Root will inspect returned artifact and persist decision. No wholesale experimental branch joins.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2P3P4EP4YRYP17YCCS88482",
+      "shortname": "atlas-pair-outcome-interpretation",
+      "datetime": "2026-09-16T21:59:07Z",
+      "session": "codex-atlas-p1-03-pair-outcome",
+      "prompt": "FIRST action in your provisioned tree: set AGENT_SESSION=codex-atlas-p1-03-pair-outcome AGENT_NAME=codex-astra-pair-outcome-reviewer then python docs/ai-forward-pack/scripts/audit-log.py start --session codex-atlas-p1-03-pair-outcome --skill forensicreview. Goal: independently interpret one failed native diagnostic attempt, separating runner failure from original UIA defect. Done when observed validity, containment and unknowns are recorded with Test Architect/SRE/Simplifier verdict and bounded next diagnostic recommendation. Tier T2; fanout0; GPT-6 Astra selected for adversarial Win32 identity/containment semantics. Budget8 orchestration calls/12min/checkpoint6, context ceiling400k; report before cap if remaining floors cannot fit. Conductor provisioned YOUR tree C:/Projects/ai-de-review-atlas-p1-03-pair-outcome, branch review/atlas-p1-03-pair-outcome at f8ad3323c1989855916115b3b343c4fee99566b8. Never EnterWorktree, never edit another tree. Read AGENTS/nested instructions, forensicreview workflow, relevant persona/testing/coord guidance; publish own liveness. Allowed authored path docs/proof/atlas-p1-03-pair-outcome-review.md and official own audit/required derivatives only; exact short leases, no broad claims; site derivative paths need exact leases if required. No source/runner/test edits. No builds, tests, scripts importing runner, native launches, GUI/attachment or retries. Source and raw inspection ONLY. Main/source join forbidden. Read executor proof docs/proof/atlas-p1-03-pair-execution.md then ACTUAL raw in C:/Projects/ai-de-test-atlas-p1-03-uia-pair/artifacts/atlas-uia-pairs/atlas-uia-pair-01-d679e156-20260916/{state.json,A/process.json,A/direct-child.json,A/stdout.log,A/stderr.log} and artifacts/atlas-pair-preparation/execution/{result,inspection}.json. Observe population/no TRX/native result. Compare frozen runner at d679e156 and exact error path. A failed PROCESS-IMAGE-MISSING, Job total8/active0, 7identities, retainedhandles exited; no failingPID/native error. B never launched. Do NOT attribute missing eighth process to Git/provider or infer cause from adjacency. Fullpins events before/after A. Watcher explicitly RELEASED consumed slot in req-01M2P2Z0AC7Q6W7B06J21HTNM0, no retry/newslot. Root request list can verify. Assess whether receipt accurately limits claims; identify smallest evidence/observability gap needed next. Do not self-author fix or require unrelated project gates. A gate CLEAR here means documentary interpretation only, not native/runner readiness. Conductor's existing graph F/C/M/R/S/A/B/I now reaches I; material replan for new failure remains Owner decision, no duplicate whole-programme plan. Return committed receipt, actual checks, budget/duration, residuals and exact verdict. Audit/regen/source preservation/clean state; release leases/end session/retain tree. Root will inspect returned artifact and persist decision. No wholesale experimental branch joins.",
+      "summary": "Documentary CLEAR only. Raw state/process/direct-child/log/result/inspection and file population read; five raw hashes match; frozen runner source path checked. Invalid A observer refusal, Job total8 active0 with seven identities, retained handles exited; no TRX/native oracle and B absent. FR-OUT-001 missing failing PID/birth/native error; cause unknown. Actual watcher release read. No execution, source edits or readiness claim. Eight planned batches including reserved closure; broad truncated reads narrowed and late liveness disclosed.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-astra-pair-outcome-reviewer",
+      "artifacts": [
+        "docs/proof/atlas-p1-03-pair-outcome-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Independently interpret failed pair attempt without attributing an unsupported UIA cause.",
+      "done_when": "Raw validity, containment, unknowns and bounded recommendation captured with Test/SRE/Simplifier verdict.",
+      "tier": "T2",
+      "main_calls": 8,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-16T21:54:40Z",
+      "duration_seconds": 267.0,
+      "git": {
+        "sha": "f8ad3323c1989855916115b3b343c4fee99566b8",
+        "short": "f8ad3323c",
+        "branch": "review/atlas-p1-03-pair-outcome",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2P3R05QH6P6WG7K5WKKFFQF",
+      "shortname": "atlas-pair-outcome-metadata-correction",
+      "datetime": "2026-09-16T22:00:08Z",
+      "session": "codex-atlas-p1-03-pair-outcome",
+      "prompt": "Close independent outcome review after graph validation caught a dangling optional link to an artifact absent from this tree.",
+      "summary": "Removed only the absent rereview graph link. Recorded metadata defect class/sweep/prevention in Proof Pack; deterministic graph validation is the existing control. Eight orchestration batches actual against eight planned. Documentary interpretation unchanged; source and execution untouched. Repeat official regeneration and graph checks then commit/release/end.",
+      "kind": "command",
+      "skill": null,
+      "tool": null,
+      "actor": "codex-astra-pair-outcome-reviewer",
+      "artifacts": [
+        "docs/proof/atlas-p1-03-pair-outcome-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Finish documentary receipt with locally valid graph metadata.",
+      "done_when": "Regeneration and graph checks pass; receipt committed, own leases released and session ended.",
+      "tier": "T2",
+      "main_calls": 8,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "git": {
+        "sha": "f8ad3323c1989855916115b3b343c4fee99566b8",
+        "short": "f8ad3323c",
+        "branch": "review/atlas-p1-03-pair-outcome",
         "pushed": null
       }
     }

@@ -18957,6 +18957,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "f3217d60c1f17ef1e36e87bb363bbd8481d92be96b5267b2afc889e3c6c936af"
     },
     {
+      "id": "proof-atlas-p1-03-pair-outcome-review",
+      "path": "docs/proof/atlas-p1-03-pair-outcome-review.md",
+      "title": "Atlas pair 01 independent outcome interpretation",
+      "type": "proof-pack",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "Documentary CLEAR only: an invalid arm-A runner attempt, observed owned-Job containment, incomplete identities, and no original UIA oracle outcome.",
+      "tags": [
+        "atlas",
+        "proof",
+        "forensicreview",
+        "containment"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-p1-03-pair-execution",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1ff15a255ff59df983561ebd9750b67c7004a86c1410eab57101038272289952"
+    },
+    {
       "id": "proof-audit-gate-plan-review",
       "path": "docs/proof/audit-gate-plan-review.md",
       "title": "Independent plan review: audit gate self-test",
@@ -23446,5 +23476,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "76834dcf2f3ef56d80cb8a298d69922153b617e4ed5968e4f4b5e79d7cdd81a1"
+  "graphSha256": "e509ec7bc947f6d9c1ad6c98c189c665b9f0335357cd044978fafc7caabaaa9a"
 };
