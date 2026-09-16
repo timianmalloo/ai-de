@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T17:22:28Z",
+  "generated": "2026-09-16T17:32:56Z",
   "audit": [
     {
       "actor": null,
@@ -24975,6 +24975,38 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "7ad8723eb7a8380a268380fd5616932bd5c3a346",
         "short": "7ad8723eb",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NMEQ6EDARK2M40K0Y9JGY1",
+      "shortname": "atlas-observer-preassembly-close",
+      "datetime": "2026-09-16T17:32:55Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "Resolve Grok consumer request and continue the admitted Atlas observer preparation and serialized branch assembly.",
+      "summary": "Pre-assembly checkpoint: r4 direct changes-required response and six resolutions verified; r3 frozen. Source correction626d16a2 and actual red1/0/1, final21/21/0, detached false/false JSON read. Independent complete-observer review receipt read before invoking this assembly. Existing root preparation/continuation estimates exceeded; no retrospective cap compliance or token-cost claim. This consumes the prior execute marker before the official join starts its own marker. No GUI/full-suite/main publication; reviewed receipts are about to be composed.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Retain reviewed evidence and source without asserting runtime qualification.",
+      "done_when": "Exact merge and audit conservation observed; derived records current; unqualified candidate committed.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T16:25:56Z",
+      "duration_seconds": 4019.0,
+      "git": {
+        "sha": "c98cb8af90722496cd77048971ce5fbf3d9df75c",
+        "short": "c98cb8af9",
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
