@@ -87,9 +87,12 @@ public sealed class CoordinationProjectionTests : IDisposable
         using var connection = Connect();
         Admit(connection);
         Execute(connection, """
+            BEGIN IMMEDIATE;
             INSERT INTO coord_projection_feed
-                (scope,epoch,event_key,is_initial,admission_n,outcome,application_state)
-            VALUES('scope','epoch','event',0,1,'tombstone','applied');
+                (scope,epoch,event_key,is_initial,admission_n,outcome,application_state,payload_presence)
+            VALUES('scope','epoch','event',0,1,'tombstone','applied',0);
+            UPDATE coord_projection_event SET payload_presence=0,raw_bytes=NULL,canonical_bytes=NULL;
+            COMMIT;
             """);
         Assert.Equal(2L, Scalar(connection, "SELECT current_receipt_n FROM coord_projection_event;"));
         Assert.Equal(0L, Scalar(connection,
@@ -113,8 +116,8 @@ public sealed class CoordinationProjectionTests : IDisposable
         if (parentState is not null)
         {
             using var parent = connection.BeginTransaction(deferred: false);
-            Execute(connection, Initial.Replace("'applied'", "'pending'"), parent);
-            Execute(connection, Event.Replace("'applied'", "'pending'"), parent);
+            Execute(connection, Pending(Initial), parent);
+            Execute(connection, Pending(Event), parent);
             parent.Commit();
         }
         using (var transaction = connection.BeginTransaction(deferred: false))
@@ -234,13 +237,16 @@ public sealed class CoordinationProjectionTests : IDisposable
         using var connection = Connect();
         using (var transaction = connection.BeginTransaction(deferred: false))
         {
-            Execute(connection, Initial.Replace("'applied'", "'pending'"), transaction);
-            Execute(connection, Event.Replace("'applied'", "'pending'"), transaction);
+            Execute(connection, Pending(Initial), transaction);
+            Execute(connection, Pending(Event), transaction);
             transaction.Commit();
         }
         Execute(connection, """
+            BEGIN IMMEDIATE;
             INSERT INTO coord_projection_feed(scope,epoch,event_key,is_initial,admission_n,outcome,application_state)
             VALUES('scope','epoch','event',0,1,'applied','applied');
+            UPDATE coord_projection_event SET application_state='applied',recovery_status='none';
+            COMMIT;
             """);
         Assert.Equal(1L, Scalar(connection, "SELECT first_receipt_n FROM coord_projection_event;"));
         Assert.Equal(2L, Scalar(connection, "SELECT current_receipt_n FROM coord_projection_event;"));
@@ -261,7 +267,8 @@ public sealed class CoordinationProjectionTests : IDisposable
         using var transaction = connection.BeginTransaction(deferred: false);
         Execute(connection, Initial, transaction);
         Execute(connection, Event.Replace("'scope'", $"'{scope}'").Replace("'epoch'", $"'{epoch}'")
-            .Replace("'applied'", $"'{state}'"), transaction);
+            .Replace("'applied'", $"'{state}'")
+            .Replace("'none'", state == "pending" ? "'active'" : "'none'"), transaction);
         var error = Assert.Throws<SqliteException>(() => transaction.Commit());
         Assert.Equal(787, error.SqliteExtendedErrorCode);
     }
@@ -297,16 +304,19 @@ public sealed class CoordinationProjectionTests : IDisposable
         TrustClassification.Asserted, null, "synthetic", true, false, false, DateTimeOffset.UnixEpoch, 7);
 
     private const string Initial = """
-        INSERT INTO coord_projection_feed(scope,epoch,event_key,is_initial,outcome,application_state)
-        VALUES('scope','epoch','event',1,'applied','applied');
+        INSERT INTO coord_projection_feed(scope,epoch,event_key,is_initial,outcome,application_state,recovery_status)
+        VALUES('scope','epoch','event',1,'applied','applied','none');
         """;
 
     private const string Event = """
         INSERT INTO coord_projection_event
             (scope,epoch,event_key,source_offset,source_end,raw_bytes,raw_digest,
-             canonical_version,canonical_bytes,first_receipt_n,current_receipt_n,application_state)
-        VALUES('scope','epoch','event',0,1,X'01','digest','legacy-raw/1',X'01',1,1,'applied');
+             canonical_version,canonical_bytes,first_receipt_n,current_receipt_n,application_state,recovery_status)
+        VALUES('scope','epoch','event',0,1,X'01','digest','legacy-raw/1',X'01',1,1,'applied','none');
         """;
+
+    private static string Pending(string sql) =>
+        sql.Replace("'applied'", "'pending'").Replace("'none'", "'active'");
 
     private static void Admit(SqliteConnection connection)
     {

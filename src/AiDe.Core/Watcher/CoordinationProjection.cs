@@ -347,23 +347,37 @@ public sealed partial class SqliteWatcherObservationStore
             ContractBoardPost => "NATIVE_BOARD_PENDING",
             _ => "NATIVE_SESSION_PENDING",
         };
-        var initial = AppendReceipt(scope, record.Key, null, new("pending", pendingReason), transaction);
+        var components = RecoveryComponents(scope, record.Event?.ExternalSessionId,
+            RequestedParent(record), transaction);
+        var generation = ComponentCount(components);
+        var active = HasRecoveryCapacity(record, transaction, reserved: false);
+        var status = active ? "active" : "deferred";
+        var initial = AppendReceipt(scope, record.Key, null, new("pending", pendingReason), transaction,
+            status, generation, active ? 1 : 0);
         using (var insert = CoordinationCommand(transaction, """
             INSERT INTO coord_projection_event
                 (scope,epoch,event_key,source_offset,source_end,raw_bytes,raw_digest,canonical_version,
-                 canonical_bytes,original_id,first_receipt_n,current_receipt_n,application_state)
-            VALUES($scope,$epoch,$key,$offset,$end,$raw,$digest,$version,$canonical,$external,$n,$n,'pending');
+                 canonical_bytes,original_id,first_receipt_n,current_receipt_n,application_state,
+                 canonical_digest,recovery_status,eligibility_generation,payload_presence,seen_components,
+                 current_attempt,due_utc,requested_parent_message_id)
+            VALUES($scope,$epoch,$key,$offset,$end,$raw,$digest,$version,$canonical,$external,$n,$n,'pending',
+                $canonicalDigest,$status,$generation,$presence,$seen,0,$due,$parent);
             """, ("$scope", scope), ("$epoch", CoordinationSourceCapture.Epoch), ("$key", record.Key),
-            ("$offset", record.Offset), ("$end", record.End), ("$raw", record.Raw), ("$digest", record.Digest),
-            ("$version", CoordContract.Version), ("$canonical", record.Canonical),
-            ("$external", record.Event?.ExternalSessionId), ("$n", initial)))
+            ("$offset", record.Offset), ("$end", record.End), ("$raw", active ? record.Raw : null), ("$digest", record.Digest),
+            ("$version", CoordContract.Version), ("$canonical", active ? record.Canonical : null),
+            ("$external", record.Event?.ExternalSessionId), ("$n", initial),
+            ("$canonicalDigest", CoordinationSourceCapture.Hash(record.Canonical)), ("$status", status),
+            ("$generation", generation), ("$presence", active ? 1 : 0), ("$seen", components),
+            ("$due", allocators.RecordedAt.AddSeconds(1).ToUnixTimeMilliseconds()), ("$parent", RequestedParent(record))))
         {
             insert.ExecuteNonQuery();
         }
         var effect = ApplyObservation(scope, record, allocators, transaction);
         if (effect.State != "pending")
         {
-            AppendReceipt(scope, record.Key, initial, effect, transaction);
+            var receipt = AppendReceipt(scope, record.Key, initial, effect, transaction, "none", generation, active ? 1 : 0);
+            FinalizeRecovery(scope, record, receipt, effect.State, "none", generation, active ? 1 : 0,
+                components, 0, allocators.RecordedAt, transaction);
         }
         // Pending retains the initial receipt and complete payload; it is not a successful application.
         return new(initial, effect.State, effect.MessageId, effect.Session,
@@ -501,18 +515,20 @@ public sealed partial class SqliteWatcherObservationStore
     }
 
     private long AppendReceipt(
-        string scope, string key, long? admission, CoordinationEffect effect, SqliteTransaction transaction)
+        string scope, string key, long? admission, CoordinationEffect effect, SqliteTransaction transaction,
+        string recovery = "none", long eligibility = 0, int presence = 1)
     {
         using var command = CoordinationCommand(transaction, """
             INSERT INTO coord_projection_feed
                 (scope,epoch,event_key,is_initial,admission_n,outcome,application_state,reason,
-                 session_id,session_generation,message_id,parent_event_key)
-            VALUES($scope,$epoch,$key,$initial,$admission,$state,$state,$reason,$session,$generation,$message,$parent);
+                 session_id,session_generation,message_id,parent_event_key,recovery_status,eligibility_generation,payload_presence)
+            VALUES($scope,$epoch,$key,$initial,$admission,$state,$state,$reason,$session,$generation,$message,$parent,$recovery,$eligibility,$presence);
             SELECT last_insert_rowid();
             """, ("$scope", scope), ("$epoch", CoordinationSourceCapture.Epoch), ("$key", key),
             ("$initial", admission is null ? 1 : 0), ("$admission", admission), ("$state", effect.State),
             ("$reason", effect.Reason), ("$session", effect.Session?.SessionId),
-            ("$generation", effect.Session?.Generation.Value), ("$message", effect.MessageId), ("$parent", effect.ParentKey));
+            ("$generation", effect.Session?.Generation.Value), ("$message", effect.MessageId), ("$parent", effect.ParentKey),
+            ("$recovery", recovery), ("$eligibility", eligibility), ("$presence", presence));
         return (long)command.ExecuteScalar()!;
     }
 

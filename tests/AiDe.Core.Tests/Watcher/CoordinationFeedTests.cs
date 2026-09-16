@@ -641,13 +641,19 @@ public sealed class CoordinationFeedTests
         }
 
         public void Tombstone() => Execute($"""
+            BEGIN IMMEDIATE;
             INSERT INTO coord_projection_feed
             (scope,epoch,event_key,is_initial,admission_n,outcome,application_state,
-             reason,session_id,session_generation,message_id,parent_event_key)
+             reason,session_id,session_generation,message_id,parent_event_key,
+             recovery_status,eligibility_generation,payload_presence)
             SELECT scope,epoch,event_key,0,admission_n,'tombstone','applied',
-                   'private-marker',session_id,session_generation,message_id,parent_event_key
+                   'private-marker',session_id,session_generation,message_id,parent_event_key,
+                   'none',eligibility_generation,0
             FROM coord_projection_feed WHERE scope='{Scope}' AND outcome='applied'
                 AND message_id IS NOT NULL ORDER BY n DESC LIMIT 1;
+            UPDATE coord_projection_event SET payload_presence=0,raw_bytes=NULL,canonical_bytes=NULL
+            WHERE current_receipt_n=last_insert_rowid();
+            COMMIT;
             """);
 
         public FeedFixture()

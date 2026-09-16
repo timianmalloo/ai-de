@@ -267,6 +267,9 @@ public sealed class CoordContractLogPump(string logDir, InjectedContractIngest i
     /// <summary>Diagnostics from the last bounded capture, including replayed records.</summary>
     public CoordinationPumpStats LastRun { get; private set; } = new(0, 0, 0, 0, 0, 0, null);
 
+    /// <summary>Actual metadata examinations and semantic attempts across the last complete pass.</summary>
+    public CoordinationRecoveryStats LastRecovery { get; private set; } = new(0, 0, 0);
+
     /// <summary>Returns recognized records in the capture, including already admitted records.</summary>
     public int PumpOnce()
     {
@@ -280,6 +283,7 @@ public sealed class CoordContractLogPump(string logDir, InjectedContractIngest i
             var pending = 0;
             var refused = 0;
             string? diagnostic = null;
+            LastRecovery = new(0, 0, 0);
             try
             {
                 var captures = CoordinationSourceCapture.Read(_logDir, store, _ingest.Host);
@@ -320,6 +324,14 @@ public sealed class CoordContractLogPump(string logDir, InjectedContractIngest i
                             pending += item.State == "pending" ? 1 : 0;
                             refused += item.State == "refused" ? 1 : 0;
                         }
+                    }
+                }
+                if (diagnostic is null)
+                {
+                    LastRecovery = store.RecoverCoordination(captures, _ingest.Host.ObservationAllocators, out var recovered);
+                    foreach (var item in recovered)
+                    {
+                        _ingest.Observe(item);
                     }
                 }
                 return records;

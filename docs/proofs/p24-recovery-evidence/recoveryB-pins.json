@@ -1,0 +1,62 @@
+{
+  "status": "partial-author-checkpoint",
+  "pins": [
+    {
+      "sha256": "56AB59642DBC8CEC1C9553611325B3A388668FF43685B48AE536539F0DF770DA",
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationRecovery.cs"
+    },
+    {
+      "sha256": "5879A5C4F7271A81F098E4303BB5BA245A7BF038FCBFD91FC0A3BD8EBC16BA6D",
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationProjection.cs"
+    },
+    {
+      "sha256": "6A9975BB12A0F5F9630B19B89243A0AF9F574A334B2FC549B83A9D4044B6C791",
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationContractLog.cs"
+    },
+    {
+      "sha256": "809C4EB3AAD011698A7396FAD9D9256457D4ACF9366C7E4F4E3F15729AE3539F",
+      "path": "src\\AiDe.Core\\Watcher\\SqliteWatcherObservationStore.Coordination.cs"
+    },
+    {
+      "sha256": "A8AA19AE23683673B8FE4B38B20F133BEC0CA16CFC46FCF1A93C3262D84AB0B7",
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationRecoveryTests.cs"
+    },
+    {
+      "sha256": "993E2B2CE1FD9EEFED9780277A887F33D049564D818E60A8EB43D6F95C55D60E",
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationRecoveryBoundaryTests.cs"
+    },
+    {
+      "sha256": "9E9D44DA0D8AF0C294423F415B886A68A253B80CFB5D8CD0A70B7333CC454B3C",
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionTests.cs"
+    },
+    {
+      "sha256": "CDF3C27E4B5AD34CA878A59422D7F4EDC82081654D6622232FDD002AEEC5E9EC",
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionBoundaryTests.cs"
+    },
+    {
+      "sha256": "6A4D7AAB00A565B82DC82BEBC941525C868DF5F8EFDC95616E164B1C8F3411EC",
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationFeedTests.cs"
+    },
+    {
+      "sha256": "FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D",
+      "path": "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj"
+    },
+    {
+      "sha256": "B63C41B97201DC3E1016B72B404A32411AC31E477231B281219DDA64D0AD584A",
+      "path": "src\\AiDe.Core\\AiDe.Core.csproj"
+    },
+    {
+      "sha256": "D906FFB881366951DE3583F51B00A3328FC2129790EF6ACFA5160F61BD3A455D",
+      "path": "src\\AiDe.Core\\bin\\Debug\\net10.0\\AiDe.Core.dll"
+    },
+    {
+      "sha256": "5694DF3AFCE4E0053B04779578A49CC63468CA4C0E5D5F5CC7B744049803D02C",
+      "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll"
+    }
+  ],
+  "amendment": "f2ad827e",
+  "base": "f12e8b86b5dfc1341a4526fdf0540af162ff599b",
+  "originalMultisetDifferences": 0,
+  "finalPassed": 488,
+  "finalExecuted": 488
+}

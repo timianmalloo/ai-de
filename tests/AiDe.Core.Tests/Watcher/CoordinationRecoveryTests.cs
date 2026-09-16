@@ -6,7 +6,7 @@ using Microsoft.Data.Sqlite;
 
 namespace AiDe.Core.Tests.Watcher;
 
-/// <summary>Intentional P2.4 RED checkpoint: exercise recovery through the native writer and SQLite pump.</summary>
+/// <summary>Recovery through the native writer and SQLite pump; original RED receipts remain committed.</summary>
 public sealed class CoordinationRecoveryTests(Xunit.Abstractions.ITestOutputHelper output)
 {
     private const string Child = "a-child";
@@ -152,7 +152,10 @@ public sealed class CoordinationRecoveryTests(Xunit.Abstractions.ITestOutputHelp
             SELECT COUNT(*) FROM coord_projection_event
             WHERE original_id='a-child' AND source_offset>0 AND application_state IN ('pending','applied');
             """));
-        var pending = files.PendingCount();
+        var pending = files.Number("""
+            SELECT COUNT(*) FROM coord_projection_event
+            WHERE application_state='pending' AND raw_bytes IS NOT NULL AND canonical_bytes IS NOT NULL;
+            """);
         var bytes = files.Number("""
             SELECT COALESCE(SUM(length(raw_bytes)+length(canonical_bytes)),0)
             FROM coord_projection_event WHERE application_state='pending';
@@ -164,15 +167,77 @@ public sealed class CoordinationRecoveryTests(Xunit.Abstractions.ITestOutputHelp
         Assert.Equal(0, files.PendingCount());
     }
 
+    [Fact]
+    public void Pump_MoreThan64ReadyChildren_RestartRetainsProgressAndPassBudgets()
+    {
+        using var files = new NativeRecovery();
+        using (var store = SqliteWatcherObservationStore.Open(files.Database))
+        {
+            files.Register(Child);
+            files.WriteSyntheticChildren(130);
+            files.Compose(store).PumpOnce();
+        }
+        files.Register(Parent);
+        files.Writer.WriteBoardPost(Parent, "question", "parent");
+
+        var attempts = 0;
+        for (var turn = 0; turn < 6; turn++)
+        {
+            using var store = SqliteWatcherObservationStore.Open(files.Database);
+            var pump = files.Compose(store);
+            pump.PumpOnce();
+            Assert.InRange(pump.LastRecovery.Attempts, 0, 64);
+            Assert.InRange(pump.LastRecovery.Examinations, 0, 256);
+            attempts += pump.LastRecovery.Attempts;
+            output.WriteLine($"turn={turn}; examined={pump.LastRecovery.Examinations}; attempts={pump.LastRecovery.Attempts}");
+        }
+        using var reopened = SqliteWatcherObservationStore.Open(files.Database);
+        Assert.Equal(130, reopened.AllBoardMessages().Count(message => message.ParentMessageId == ParentMessageId));
+        Assert.Equal(130, attempts);
+        Assert.Equal(0, files.PendingCount());
+    }
+
+    [Fact]
+    public void Pump_EightFailures_ExhaustsThenNewParentOpensExactlyOneGeneration()
+    {
+        using var files = new NativeRecovery();
+        using var store = SqliteWatcherObservationStore.Open(files.Database);
+        var pump = files.Compose(store);
+        files.Register(Child);
+        files.Writer.WriteBoardPost(Child, "reply", "exhausted-child", ParentMessageId);
+        pump.PumpOnce();
+        var admission = files.ChildAdmission();
+
+        for (var turn = 0; turn < 8; turn++)
+        {
+            files.Advance();
+            pump.PumpOnce();
+        }
+        Assert.Equal(8, files.Number($"SELECT current_attempt FROM coord_projection_event WHERE first_receipt_n={admission};"));
+        Assert.Equal(0, files.Number($"SELECT payload_presence FROM coord_projection_event WHERE first_receipt_n={admission};"));
+        Assert.Equal(1, files.Number($"SELECT eligibility_generation FROM coord_projection_event WHERE first_receipt_n={admission};"));
+        files.Pump(pump, 3);
+        Assert.Equal(0, pump.LastRecovery.Attempts);
+        files.Register(Parent);
+        files.Writer.WriteBoardPost(Parent, "question", "parent");
+
+        files.Pump(pump, 3);
+
+        Assert.Single(store.AllBoardMessages(), message => message.Content == "exhausted-child");
+        Assert.Equal(2, files.Number($"SELECT eligibility_generation FROM coord_projection_event WHERE first_receipt_n={admission};"));
+        Assert.Equal(1, files.Number($"SELECT current_attempt FROM coord_projection_event WHERE first_receipt_n={admission};"));
+    }
+
     private sealed class NativeRecovery : IDisposable
     {
-        private readonly FixedTimeProvider _time = new(DateTimeOffset.UnixEpoch);
+        private readonly RecoveryClock _time = new();
         private int _messageId = 300;
         private string Root { get; } = Path.Combine(Environment.CurrentDirectory, "p24-recovery-" + Guid.NewGuid().ToString("N"));
         public string Database => Path.Combine(Root, "watcher.db");
         private string Logs => Path.Combine(Root, "wire");
         public string OtherRepository => Path.Combine(Root, "other-repository");
         public CoordContractWriter Writer => new(Logs, _time);
+        public void Advance() => _time.Now = _time.Now.AddHours(1);
 
         public NativeRecovery()
         {
@@ -251,5 +316,11 @@ public sealed class CoordinationRecoveryTests(Xunit.Abstractions.ITestOutputHelp
         }
 
         public void Dispose() => Directory.Delete(Root, recursive: true);
+    }
+
+    private sealed class RecoveryClock : TimeProvider
+    {
+        internal DateTimeOffset Now { get; set; } = DateTimeOffset.UnixEpoch;
+        public override DateTimeOffset GetUtcNow() => Now;
     }
 }

@@ -671,3 +671,16 @@ No separate-context fan-out. Fixed test cases and bounded remaining candidates a
 loop variants; failed gates are reported, not weakened to meet the budget.
 Independent Data/DS/Test review follows this author checkpoint. Acceptance of
 design is not acceptance of implementation.
+
+Author result: original two runtime REDs are GREEN. Restored union is 488/488,
+including every one of the prior 471 result occurrences (multiset difference zero).
+The predecessor mutation harness still produces 23 semantic failures, no missing
+mutation anchors. Runtime restart trace is 64/64/2 attempts for 130 children.
+Proof: `docs/proof/p24-recoveryB-author-checkpoint.md`.
+
+**Partial, not finite-B closure:** initial admission attempts are not included in
+the persisted recovery-attempt counter; exact combined eight-attempt semantics,
+strict logical-turn numeric guards, SQL-work bounds and the remaining finite-B
+runtime oracles need correction/proof before independent Data/DS/Test approval.
+The selected-row examination counters do not measure SQLite VM row visits.
+No production activation, full-P2 or P3–P5 claim is made.

@@ -32,8 +32,8 @@ public sealed class CoordinationProjectionBoundaryTests : IDisposable
             if (transition)
             {
                 Execute(connection, """
-                    INSERT INTO coord_projection_feed(n,scope,epoch,event_key,is_initial,admission_n,outcome,application_state)
-                    VALUES(5,'scope','epoch','K',0,1,'tombstone','applied');
+                    INSERT INTO coord_projection_feed(n,scope,epoch,event_key,is_initial,admission_n,outcome,application_state,payload_presence)
+                    VALUES(5,'scope','epoch','K',0,1,'tombstone','applied',0);
                     """);
             }
             else
@@ -209,11 +209,13 @@ public sealed class CoordinationProjectionBoundaryTests : IDisposable
         using var connection = Connect();
         Admit(connection, "K", 0, state: "pending");
         Execute(connection, """
+            BEGIN IMMEDIATE;
             DROP TRIGGER coord_feed_transition;
             INSERT INTO coord_projection_feed(scope,epoch,event_key,is_initial,admission_n,outcome,application_state)
             VALUES('scope','epoch','K',0,1,'applied','applied');
+            UPDATE coord_projection_event SET current_receipt_n=2;
             """);
-        var mutation = $"UPDATE coord_projection_event SET current_receipt_n=2,application_state='applied',{change};";
+        var mutation = $"UPDATE coord_projection_event SET application_state='applied',recovery_status='none',{change};";
         var error = Assert.Throws<SqliteException>(() => Execute(connection, mutation));
         Assert.Contains("COORD_PAYLOAD_IMMUTABLE", error.Message);
         var trigger = Text(connection, "SELECT sql FROM sqlite_master WHERE name='coord_event_update';");
@@ -221,8 +223,11 @@ public sealed class CoordinationProjectionBoundaryTests : IDisposable
         Assert.True(clause > 0);
         Execute(connection, "DROP TRIGGER coord_event_update;");
         Execute(connection, trigger[..clause] + " END;");
+        // Joint mutant isolates the immutable-bytes clause from the new independent paired-payload CHECK.
+        Execute(connection, "PRAGMA ignore_check_constraints=ON;");
         Assert.Throws<Xunit.Sdk.ThrowsException>(() => Assert.Throws<SqliteException>(() => Execute(connection, mutation)));
         Assert.Equal(2L, Number(connection, "SELECT current_receipt_n FROM coord_projection_event;"));
+        Execute(connection, "ROLLBACK;");
         _output.WriteLine($"Isolated payload clause mutant admitted: {change}; intact={error.SqliteExtendedErrorCode}");
     }
 
@@ -400,16 +405,22 @@ public sealed class CoordinationProjectionBoundaryTests : IDisposable
         Admit(connection, "K", 0, state: "pending");
         CoordinationProjectionEvidence.Apply(connection, "semantic-generation-overstrict", _output);
         Execute(connection, """
+            BEGIN IMMEDIATE;
             INSERT INTO coord_projection_feed(scope,epoch,event_key,is_initial,admission_n,outcome,application_state,session_id,session_generation)
             VALUES('scope','epoch','K',0,1,'applied','applied','S',1);
+            UPDATE coord_projection_event SET application_state='applied',recovery_status='none';
+            COMMIT;
             """);
         Diagnostic(connection, "K", 1, 1, 2);
         Assert.Equal(2L, Number(connection, "SELECT current_receipt_n FROM coord_projection_event;"));
         Assert.Equal(1L, Number(connection, "SELECT first_receipt_n FROM coord_projection_event;"));
         Assert.Equal(1L, Number(connection, "SELECT session_generation FROM coord_projection_feed WHERE n=2;"));
         Execute(connection, """
-            INSERT INTO coord_projection_feed(scope,epoch,event_key,is_initial,admission_n,outcome,application_state,session_id,session_generation)
-            VALUES('scope','epoch','K',0,1,'tombstone','applied','S',1);
+            BEGIN IMMEDIATE;
+            INSERT INTO coord_projection_feed(scope,epoch,event_key,is_initial,admission_n,outcome,application_state,session_id,session_generation,payload_presence)
+            VALUES('scope','epoch','K',0,1,'tombstone','applied','S',1,0);
+            UPDATE coord_projection_event SET payload_presence=0,raw_bytes=NULL,canonical_bytes=NULL;
+            COMMIT;
             """);
         Assert.Equal(4L, Number(connection, "SELECT current_receipt_n FROM coord_projection_event;"));
         Assert.Equal(1L, Number(connection, "SELECT COUNT(*) FROM coord_projection_event WHERE raw_bytes IS NULL AND canonical_bytes IS NULL;"));
@@ -420,12 +431,12 @@ public sealed class CoordinationProjectionBoundaryTests : IDisposable
     {
         using var transaction = connection.BeginTransaction(deferred: false);
         Execute(connection, $"""
-            INSERT INTO coord_projection_feed(n,scope,epoch,event_key,is_initial,outcome,application_state)
-            VALUES({(n?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "NULL")},'scope','epoch','{key}',1,'{state}','{state}');
+            INSERT INTO coord_projection_feed(n,scope,epoch,event_key,is_initial,outcome,application_state,recovery_status)
+            VALUES({(n?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "NULL")},'scope','epoch','{key}',1,'{state}','{state}','{(state == "pending" ? "active" : "none")}');
             INSERT INTO coord_projection_event(scope,epoch,event_key,source_offset,source_end,raw_bytes,raw_digest,
-                canonical_version,canonical_bytes,first_receipt_n,current_receipt_n,application_state)
+                canonical_version,canonical_bytes,first_receipt_n,current_receipt_n,application_state,recovery_status)
             VALUES('scope','epoch','{key}',{start},{start + 1},X'01','digest','legacy-raw/1',X'01',
-                last_insert_rowid(),last_insert_rowid(),'{state}');
+                last_insert_rowid(),last_insert_rowid(),'{state}','{(state == "pending" ? "active" : "none")}');
             """, transaction);
         transaction.Commit();
     }
