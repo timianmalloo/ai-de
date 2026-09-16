@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Security.Cryptography;
@@ -80,6 +81,70 @@ public sealed class AtlasGitMembershipTests : IDisposable
         AssertCandidate(snapshot);
         Assert.False(File.Exists(marker));
         Assert.True(snapshot.IsCurrent());
+    }
+
+    [Theory]
+    [Trait("Platform", "Windows")]
+    [InlineData(0)]
+    [InlineData(1)]
+    public async Task CaptureAsync_IndexByteBoundary_PublishesOnlyWithinBudget(int excessBytes)
+    {
+        var repository = await Clone();
+        var indexPath = Path.Combine(repository, ".git", "index");
+        var original = File.ReadAllBytes(indexPath);
+        // Git's index-format: uppercase optional extension, network byte order, final checksum.
+        // Verify the fixture's SHA-1 format before replacing its checksum; no opaque padding.
+        Assert.Equal(SHA1.HashData(original.AsSpan(0, original.Length - 20)), original[^20..]);
+        var bounded = new byte[AtlasGitMembership.MaxIndexBytes + excessBytes];
+        var extensionOffset = original.Length - 20;
+        original.AsSpan(0, extensionOffset).CopyTo(bounded);
+        "TEST"u8.CopyTo(bounded.AsSpan(extensionOffset));
+        BinaryPrimitives.WriteInt32BigEndian(bounded.AsSpan(extensionOffset + 4), bounded.Length - original.Length - 8);
+        SHA1.HashData(bounded.AsSpan(0, bounded.Length - 20)).CopyTo(bounded.AsSpan(bounded.Length - 20));
+        File.WriteAllBytes(indexPath, bounded);
+        await Command(repository, "ls-files", "--cached", "--stage", "-z", "--full-name", "--sparse");
+        Assert.Equal(bounded.Length, new FileInfo(indexPath).Length);
+        var before = AtlasGitMembership.CleanupChargesForQualification;
+
+        await using (var snapshot = await NewMembership().CaptureAsync(repository, Identity(repository), CancellationToken.None))
+        {
+            _output.WriteLine($"INDEX_BOUNDARY bytes={bounded.Length} state={snapshot.State} reason={snapshot.Reason} invocations={snapshot.Invocations}");
+            if (excessBytes == 0)
+            {
+                AssertCandidate(snapshot);
+                Assert.Equal(2, snapshot.MembershipTotal);
+                Assert.Equal(Convert.ToHexString(SHA256.HashData(bounded)), snapshot.IndexDigest);
+                Assert.Equal(6, snapshot.Invocations);
+            }
+            else
+            {
+                Assert.Equal(AtlasMembershipCaptureState.BudgetExceeded, snapshot.State);
+                Assert.Equal("index-byte-budget", snapshot.Reason);
+                Assert.Equal(2, snapshot.Invocations);
+                Assert.Empty(snapshot.Entries);
+                Assert.Null(snapshot.MembershipTotal);
+                Assert.Null(snapshot.Association);
+                Assert.Null(snapshot.IndexDigest);
+                Assert.False(snapshot.IsCurrent());
+            }
+        }
+
+        Assert.Equal(before, AtlasGitMembership.CleanupChargesForQualification);
+        using var released = File.Open(indexPath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+    }
+
+    [Theory]
+    [InlineData("src/a.cs", true)]
+    [InlineData("src-other/a.cs", false)]
+    [InlineData("SRC/a.cs", true)]
+    public void DecodeMembership_NestedSource_UsesFilesystemBoundary(string relative, bool windowsAccepted)
+    {
+        var body = Encoding.UTF8.GetBytes("100644 " + new string('a', 40) + " 0\t" + relative + "\0");
+
+        var entries = AtlasGitMembership.DecodeMembership(body, _root, Path.Combine(_root, "src"));
+
+        var expected = relative == "SRC/a.cs" ? OperatingSystem.IsWindows() : windowsAccepted;
+        Assert.Equal(expected ? 1 : 0, entries.Length);
     }
 
     [Fact]
