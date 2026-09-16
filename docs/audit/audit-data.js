@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T17:33:23Z",
+  "generated": "2026-09-16T17:39:58Z",
   "audit": [
     {
       "actor": null,
@@ -25539,6 +25539,34 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2NMVJS38731Y4A3DXMCC0H3",
+      "shortname": "atlas-native-diagnostic-request-freeze",
+      "datetime": "2026-09-16T17:39:57Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "Keep going after resolving the current Grok ACK request.",
+      "summary": "Full observer preparation CLEARd31eab23, exact source626d16a2, author red1/0/1 and final21/21/0, independent21/21/0 and actual detached-view JSON inspected. Official native-source/review joins complete with zero missing parent audit payloads, deliberate unqualified stops and no push. Whole r4 ancestry guard refused out-of-scope peer files; review-only carrier admitted separately. Four native receipt summary fields corrected with unchanged bodies using actual repository validator. Windows default decoder failure corrected by explicit UTF-8; no unseen content claimed. Root prior budgets exceeded; no retrospective cap/token-cost claim. Slot request follows commit; no native execution or main publication.",
+      "kind": "manual",
+      "skill": "auditlog",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md",
+        "docs/proof/atlas-native-view-state-review.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Freeze independently cleared observer preparation and request its one admitted diagnostic execution.",
+      "done_when": "Source identity and review/evidence checked, truthful current records committed, exact fresh-slot request sent; no ungranted native execution.",
+      "tier": "T2",
+      "fan_out": 2,
+      "git": {
+        "sha": "b2127168721bd0db88be57907b01349890c787da",
+        "short": "b21271687",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -30093,6 +30121,50 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "7ad8723eb7a8380a268380fd5616932bd5c3a346",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2NMVJHFYHQX2N8Z553DACY6",
+      "datetime": "2026-09-16T17:39:57Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "decision",
+      "skill": "execute-with-coordination",
+      "title": "Owner selects one native diagnostic before full qualification",
+      "prompt": "Keep going; resolve coordination blockers and prioritize main publication.",
+      "summary": "After independent CLEARd31eab23 and exact assembly, request one existing MainWindow_RealDaemonReplacement_AcknowledgesHealthyReleaseAndPreservesBorrowedClient run under a fresh foreground slot. Same-tree Debug preflight, unchanged predicates/assertions/waits/cleanup, one actual test, unique evidence, owned processes and explicit release. No automatic retry or qualification; pass does not establish prior cause.",
+      "rationale": "Keep real dependencies separate while preserving independent gates and exact ownership boundaries.",
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "b2127168721bd0db88be57907b01349890c787da",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2NMVJNW9DKV780A4F6APB3P",
+      "datetime": "2026-09-16T17:39:57Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "decision",
+      "skill": "execute-with-coordination",
+      "title": "Owner admits review-only carrier without Grok ancestry",
+      "prompt": "Keep going; resolve coordination blockers and prioritize main publication.",
+      "summary": "Whole r4 review branch merge refused by manifest before mutation; it includes peer liveness/spec/proposal/coordination. Transport only exact independent reviewer commits and own audit additions from a fresh registered carrier; preserve final receipt bytes and original-to-carrier mapping, verify full selected payload conservation, regenerate officially and use an unqualified join. No source/main authority.",
+      "rationale": "Keep real dependencies separate while preserving independent gates and exact ownership boundaries.",
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "b2127168721bd0db88be57907b01349890c787da",
         "branch": "integration/atlas-five-gates",
         "pushed": null,
         "commits": []

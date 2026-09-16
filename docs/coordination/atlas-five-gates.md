@@ -12,7 +12,7 @@ review-by: 2026-12-15
 summary: "Exact blocker transfer; isolated repairs followed by GHCP-only main publication."
 ---
 
-# Current state: r3 frozen; r4 changes required; observer correction
+# Current state: observer preparation CLEAR; fresh native diagnostic requested
 
 Goal: resolve the current Grok consumer request and continue the admitted Atlas qualification
 preparation. Done when the exact proposal has a direct semantic response and recorded
@@ -28,7 +28,7 @@ Astra Owner and Conductor. Main publication stays with foreground GHCP.
 | D1 r3 | Freeze the non-consuming listing boundary | Same-blob producer ACK observed on req-01M2NFTQFRP41JRV68PQSC3AGD; frozen e448383a90bb1ed962c7405af70e16d8cca09fa3 |
 | D1 r4 | Separate mapper authorship from unadmitted E1 consumption | CHANGES REQUIRED sent directly; six incoming handles resolved; no r4 freeze |
 | Native shared receipt | Keep optional observation failures from poisoning original evidence | Source715523d0 independently CLEAR for FR-NO-001 at12c1f883; own21/21 and actual replay inspected |
-| Native per-view state | Complete settled loaded/visible evidence for every observed view | Missing fields confirmed; bounded author correction underway |
+| Native per-view state | Complete settled loaded/visible evidence for every observed view | Source626d16a2 independently CLEARd31eab23; own21/21 and actual JSON inspected |
 | Native qualification / main | Establish combined runtime acceptance before publication | P1-02 remains failed; no fresh native slot; main last observedbcf4959b |
 | E1/E2 | Continue admitted Sequence/Activity and architecture view work | Integration remains the priority |
 
@@ -77,8 +77,8 @@ not native qualification or complete observer coverage.
 
 That reviewer found the settled design's per-view IsLoaded/IsVisible fields absent from
 both ViewObservation and emitted Views JSON. Host/window flags are different objects.
-A bounded Sol-high author unit in the already-provisioned test/atlas-native-instance-observer
-tree corrects only the exact test and proof paths, plus official own audit. Model choice:
+The completed Sol-high author unit in the already-provisioned test/atlas-native-instance-observer
+tree corrected only the exact test and proof paths, plus official own audit. Model choice:
 concrete public-state projection is small; independent Astra review retains the adversarial
 thread/evidence boundary. Budget10calls/15minutes/checkpoint6; context ceiling400k; token
 cost not exposed. Red missing-field evidence -> minimal correction -> actual unshown STA
@@ -92,17 +92,63 @@ data edge. The new finding returns the existing implementation node to its autho
 review; no acceptance floor is removed. The loop terminates when all settled observer
 fields and failure-preservation obligations are independently cleared, not when a budget
 expires. A new source or native-cause finding requires Owner disposition, not scope growth.
-Source joins, fresh slot request, canonical qualification and GHCP publication still follow.
-Root has not joined the observer or its review branches into the integration candidate.
+Reviewed observer source and its design/BLOCK/clearance receipts are now joined. A fresh
+native diagnostic slot, later canonical qualification and GHCP publication still follow.
 
 Planned versus actual: shared-receipt author8/8calls; sink reviewer6/6calls/278seconds;
 r4 reviewer6/5calls with output-sizing overrun recorded. Root's earlier preparation and
 continuation estimates were exceeded; exact harness token/request costs are not exposed
 and cap compliance is not claimed. Repeated large output was a real read-sizing defect.
 Subsequent inbox checks emit request metadata first, then exact bodies only as needed.
-Completed: direct r4 disposition and shared-receipt clearance. Remaining: per-view correction,
-independent full observer clearance and runtime qualification. Next: inspect the frozen
-author result, then use the existing independent review and serialized join/slot protocols.
+Completed: direct r4 disposition, full observer preparation clearance and native source/review
+assembly. Remaining: fresh diagnostic execution and canonical runtime qualification. Next:
+request the Owner-selected single native diagnostic from foreground GHCP.
+
+## Assembled native preparation and serialized next step
+
+The native source is exactly626d16a211757db5e4da7515cf234a686f610e6c, SHA256
+6af54fc651f355fbf22a4b17ecb256007fe6fa4ca8061b382cf61a45eb59841a. Independent
+complete preparation CLEARd31eab23b429da6a7e14d496f1b4fae401f53b15 is now present as
+docs/proof/atlas-native-view-state-review.md. Conductor read its full obligation matrix
+and actual independent TRX21/21/0, SHA256b98f6abd9f539e12c63ae943993292a35da5f7447853e48168d8273a0c79465a.
+The author red1/0/1 and final21/21/0 plus persisted detached view false/false were also
+opened. Author16/10calls228seconds; independent reviewer7/8calls376seconds. The author
+overrun is recorded, not reclassified as budget compliance. Shown/loaded-true, live UIA,
+native cost and P1-02 cause remain unverified.
+
+Official conductor joins composed the final observer, design973afc97, historical
+BLOCK4d005a9e and sink CLEAR12c1f883. Each stopped at the reviewed pre-recount barrier
+(join exit4/check86), with no qualification/push/Release. Each join's marker was consumed
+by an explicit partial audit, then derived files were regenerated and committed. Both
+parents' complete audit/change payload fingerprints had zero omissions at each join.
+Assembly checkpointb2127168721bd0db88be57907b01349890c787da preserves all e6aed085
+source except this exact native test. Four native review receipts needed required summary
+metadata; the actual repository validator exposed each omission. Summaries were added
+under exact leases with unchanged verdict bodies; their original commits remain in history.
+Raw join/regeneration/conservation results are in artifacts/atlas-five-gates/observer-assembly/.
+
+The same manifest guard correctly refused a whole-branch r4 review merge because its Grok
+base also carried peer liveness/spec/proposal/coordination files outside this programme.
+Those files were not imported. Astra Owner admitted an isolated review-only carrier from
+the clean root, transporting exact reviewer commits and their audit additions only.
+Final receipt bytes, source identity, selected audit delta conservation and a narrow
+manifest are required before its later official join. That evidence transport is independent
+of native diagnosis and creates no reason to hold the completed preparation gate.
+
+Astra Owner selects one targeted diagnostic first, conditional on a fresh foreground slot:
+FullyQualifiedName=AiDe.App.Tests.AtlasDaemonMainWindowProofTests.MainWindow_RealDaemonReplacement_AcknowledgesHealthyReleaseAndPreservesBorrowedClient.
+The existing test, original selector/assertions/waits/cleanup and observer stay unchanged.
+Use the admitted same-tree Debug daemon preflight, exact frozen HEAD/source hashes,
+fresh ATLAS_PROOF_RUN, unique TRX/output paths, owned process tracking and explicit release.
+Exactly one test must actually execute; zero or unexpected selections invalidate the run.
+No automatic retry or full-qualification progression. Preserve receipt/observer packets,
+screenshots, timings/process evidence and TRX or its absence. A pass proves this execution,
+not the previous failure's cause. Either result still precedes the required whole App/Core,
+static gate, Release, combined review and foreground publication stages.
+
+This checkpoint freezes preparation for the requested diagnostic. No fresh native slot has
+yet been granted or used. The exact resulting commit and request ID are recorded through
+the shared request store after this commit, avoiding a self-referential commit claim.
 
 ## Earlier checkpoints (historical; current state above supersedes status text)
 
