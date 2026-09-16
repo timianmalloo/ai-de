@@ -12865,7 +12865,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "394f85da50009fe8042275d246befb867d84dabd676481169e5c4a0dea2422b0"
+      "sourceSha256": "45322dd1909b947b35193cd98b108be3515ce2544655244dbe80b5b778be3a12"
     },
     {
       "id": "proof-code-atlas-contract-grounding",
@@ -13104,8 +13104,8 @@ window.DOCS_INDEX = {
       "tags": [],
       "links": [
         {
-          "to": "note-d1-codex-entry-point-handshake-r3",
-          "rel": "depends-on"
+          "to": "session-contracts",
+          "rel": "relates-to"
         },
         {
           "to": "session-contracts",
@@ -13113,7 +13113,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "93500c256516dbe57f509a7079293549568b566fc0610206d8f5dadeae244986"
+      "sourceSha256": "9cc2069416a874ebbc327342fa3f33eac3fcf1844a335efabf45921ddfe9b500"
     },
     {
       "id": "proof-codex-d1-r4-consumer-review",
@@ -23212,5 +23212,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "9e2b75de8be731bfda8f8146031b665c716eb532ef614cc294d459987076ad2c"
+  "graphSha256": "abe31792db72ab472bf33285aec425a2b246ae71cf70c147dfa9038892a6f0d8"
 };

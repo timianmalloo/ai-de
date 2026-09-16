@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T17:55:43Z",
+  "generated": "2026-09-16T17:59:05Z",
   "audit": [
     {
       "actor": null,
@@ -25747,48 +25747,161 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2NN9Q8M6RGG72WXGNW6RY56",
-      "shortname": "atlas-peer-review-transport-blocked",
-      "datetime": "2026-09-16T17:47:40Z",
-      "session": "codex-atlas-peer-review-carrier",
-      "prompt": "Transport the approved r4 and corrected r3 independent review commits into the isolated carrier, conserving base and selected audit payloads and stopping before regeneration if any unauthorized ancestor payload appears.",
-      "summary": "Prior transport unit stopped at audit conservation. R4 used nine shell batches against eight; the r3 extension and diagnosis used seven against four. Both final proof blobs matched and source/src/tests/tools matched base, but the installed append-only driver preserved two Grok producer ancestor rows beyond the then-authorized union. The carrier stayed clean at a9ce139b; no regeneration or closure commit ran. An earlier read-only coord check emitted a COORD-NOT-CHECKED-IDENTITY decision because its shell lacked identity; later qualified checks do not retroactively correct it. All proof leases were explicitly released.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": "codex-peer-review-carrier",
       "actor": null,
       "artifacts": [
         "docs/proof/codex-d1-r3-consumer-review.md",
         "docs/proof/codex-d1-r4-consumer-review.md"
       ],
+      "datetime": "2026-09-16T17:47:40Z",
+      "done_when": "Both proofs are byte-identical, source trees match base, audit conservation contains only base plus selected rows, and the carrier is ready for regeneration.",
+      "duration_seconds": 680.0,
+      "git": {
+        "branch": "review/atlas-peer-receipts",
+        "pushed": null,
+        "sha": "a9ce139b42cc4071738515eb1d8c0b8aa64e325a",
+        "short": "a9ce139b4"
+      },
+      "goal": "Transport only approved independent r3/r4 review artifacts and selected audit deltas without product or ancestor changes.",
+      "id": "al-01M2NN9Q8M6RGG72WXGNW6RY56",
+      "kind": "skill",
+      "outcome": "blocked",
+      "prompt": "Transport the approved r4 and corrected r3 independent review commits into the isolated carrier, conserving base and selected audit payloads and stopping before regeneration if any unauthorized ancestor payload appears.",
+      "session": "codex-atlas-peer-review-carrier",
+      "shortname": "atlas-peer-review-transport-blocked",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-16T17:36:20Z",
+      "summary": "Prior transport unit stopped at audit conservation. R4 used nine shell batches against eight; the r3 extension and diagnosis used seven against four. Both final proof blobs matched and source/src/tests/tools matched base, but the installed append-only driver preserved two Grok producer ancestor rows beyond the then-authorized union. The carrier stayed clean at a9ce139b; no regeneration or closure commit ran. An earlier read-only coord check emitted a COORD-NOT-CHECKED-IDENTITY decision because its shell lacked identity; later qualified checks do not retroactively correct it. All proof leases were explicitly released.",
       "tags": [
         "atlas",
         "transport"
       ],
-      "outcome": "blocked",
-      "goal": "Transport only approved independent r3/r4 review artifacts and selected audit deltas without product or ancestor changes.",
-      "done_when": "Both proofs are byte-identical, source trees match base, audit conservation contains only base plus selected rows, and the carrier is ready for regeneration.",
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": false
-      },
-      "started_at": "2026-09-16T17:36:20Z",
-      "duration_seconds": 680.0,
-      "git": {
-        "sha": "a9ce139b42cc4071738515eb1d8c0b8aa64e325a",
-        "short": "a9ce139b4",
-        "branch": "review/atlas-peer-receipts",
-        "pushed": null
-      }
+      "tool": "codex-peer-review-carrier"
     },
     {
-      "id": "al-01M2NNKBHQRYJJ98139PDDSEB6",
-      "shortname": "atlas-peer-review-transport-finalization",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-peer-review-transport.md",
+        "docs/proof/codex-d1-r3-consumer-review.md",
+        "docs/proof/codex-d1-r4-consumer-review.md"
+      ],
       "datetime": "2026-09-16T17:52:56Z",
-      "session": "codex-atlas-peer-review-carrier",
+      "done_when": "Authorized audit union and proof/source hashes pass, transport receipt and raw evidence exist, official regeneration and validation pass, the hooked commit is clean, and all leases are released.",
+      "duration_seconds": 316.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/atlas-peer-receipts",
+        "pushed": null,
+        "sha": "a9ce139b42cc4071738515eb1d8c0b8aa64e325a",
+        "short": "a9ce139b4"
+      },
+      "goal": "Finalize the independent r3/r4 review carrier with the exact two-row provenance exception and no product or broader ancestry changes.",
+      "id": "al-01M2NNKBHQRYJJ98139PDDSEB6",
+      "kind": "skill",
+      "main_budget": 5,
+      "main_calls": 9,
+      "main_over_budget": true,
+      "outcome": "success",
       "prompt": "Owner resolved the carrier blocker by admitting exactly two named historical producer audit payloads. Record the exception and anonymous-check correction, preserve exact r3/r4 receipt bytes, regenerate the three site figures through official tooling, validate, commit, release leases, and return the clean carrier for later join.",
+      "session": "codex-atlas-peer-review-carrier",
+      "shortname": "atlas-peer-review-transport-finalization",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-16T17:47:40Z",
       "summary": "Finalization inputs verified: the pre-closure union was exactly 960 base, five selected review payloads and two Owner-admitted incidental producer payloads; the separately accounted prior blocked-unit audit brought the working register to 968 with no other missing or extra payloads. R3 and r4 proof blobs and source/src/tests/tools identity were preserved. The transport receipt records exact commit mapping, hashes, authority limits, budget overruns and the anonymous read-only check; original NOT CHECKED output is retained at artifacts/atlas-peer-review-transport/not-checked.txt. The official change record captures the two-row exception. Finalization exceeded five shell batches because the CLI required explicit boolean signal values, two candidate raw-evidence roots were not ignored, and one guarded patch had not executed; the repository rule identified artifacts/ as the correct ignored root. Official regeneration, validation, hooked commit and lease release execute immediately after this audit entry in the same bounded closure.",
+      "tags": [
+        "atlas",
+        "transport"
+      ],
+      "tier": "T1",
+      "tool": "codex-peer-review-carrier"
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-peer-review-transport.md",
+        "docs/proof/codex-d1-r3-consumer-review.md"
+      ],
+      "datetime": "2026-09-16T17:55:42Z",
+      "done_when": "A truthful superseding partial audit is recorded, current derived views are regenerated, the WIP commit is created under exact leases, and leases are released.",
+      "duration_seconds": 0.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/atlas-peer-receipts",
+        "pushed": null,
+        "sha": "a9ce139b42cc4071738515eb1d8c0b8aa64e325a",
+        "short": "a9ce139b4"
+      },
+      "goal": "Checkpoint owned carrier state without discarding audit or derived changes so the admitted source metadata correction can be transported safely.",
+      "id": "al-01M2NNRDJWGZ224XGMAQQG1W0G",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "Preserve the current review-carrier receipt, audit, decision and regenerated outputs as a WIP checkpoint after the full docs graph validator found one dangling link in the byte-locked r3 receipt.",
+      "session": "codex-atlas-peer-review-carrier",
+      "shortname": "atlas-peer-review-transport-graph-blocked",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-16T17:55:42Z",
+      "summary": "Supersedes the earlier finalization audit's acceptance signal. Official regeneration completed and its built-in gates passed, but the additional full docs graph validator failed on one dangling target in the byte-locked r3 receipt: note-d1-codex-entry-point-handshake-r3. Closure was not committed and READY was not claimed. The Owner commissioned a source-side metadata-only correction; this checkpoint preserves current audit, decision, receipt, index and site-figure state without changing the r3 blob or importing the missing Grok note.",
+      "supersedes": "al-01M2NNKBHQRYJJ98139PDDSEB6",
+      "tags": [
+        "atlas",
+        "graph-gate"
+      ],
+      "tier": "T1",
+      "tool": "codex-peer-review-carrier"
+    },
+    {
+      "actor": "codex-astra-d1-r3-metadata",
+      "artifacts": [
+        "docs/proof/codex-d1-r3-consumer-review.md"
+      ],
+      "datetime": "2026-09-16T17:55:34Z",
+      "done_when": "Actual metadata and target checks pass, body byte equality holds, source-side correction and own audit committed, lease released.",
+      "duration_seconds": 47.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/d1-r3-consumer-boundary",
+        "pushed": null,
+        "sha": "b9e47af85d3c7819015b8c95ea76c2e457592e14",
+        "short": "b9e47af85"
+      },
+      "goal": "Replace only the r3 receipt dangling graph link with a verified portable target.",
+      "id": "al-01M2NNR605G854MM6NDT3AVKB8",
+      "kind": "skill",
+      "main_budget": 3,
+      "main_calls": 3,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Owner-approved final source-side r3 metadata correction at b9e47af8 in existing C:/Projects/ai-de-review-d1-r3-consumer-boundary. Carrier full docs graph validation found dangling note-d1-codex-entry-point-handshake-r3 link absent from isolated carrier. Replace only that graph link with verified session-contracts relates-to, preserving every body byte, verdict and external commit/path citation. Verify current link and target, exact short proof lease, metadata-only body-equality assertion, actual frontmatter validation, commit one proof plus own audit only and release. No global reanalysis, source, Grok proposal import, site/index or private files. Budget three calls/five minutes, no agents. Return full commit, final blob and audit row. New metadata pin supersedes b9 for transport; preserve historical review identities and leave carrier root candidate 7ccef6d8 untouched.",
+      "session": "codex-d1-r3-consumer-review",
+      "shortname": "codex-d1-r3-portable-link-repair",
+      "skill": "document",
+      "started_at": "2026-09-16T17:54:47Z",
+      "summary": "Replaced only dangling r3-note graph link with session-contracts relates-to; existing session-contracts depends-on link retained. Verified target ID from actual session-contracts frontmatter. Repository _validate_frontmatter returned complete doc metadata with problem null, and every link target matched verified session-contracts. Byte equality proved body and all bytes outside the exact one-line replacement unchanged. Earlier summary validation covered metadata shape but not carrier link resolution; defect class is incomplete graph validation at a transport boundary. Control on this bounded repair checks both schema and every resulting target. Carrier still owns full joined graph validation. Existing audit-data.js bytes restored after official audit append; .artifacts untouched. Three calls of three; no agents; tokens/spend not exposed.",
+      "tags": [],
+      "tier": "T0",
+      "tool": null
+    },
+    {
+      "id": "al-01M2NNWS29FDF6CRX0Z4YZB265",
+      "shortname": "atlas-peer-review-transport-complete",
+      "datetime": "2026-09-16T17:58:05Z",
+      "session": "codex-atlas-peer-review-carrier",
+      "prompt": "Transport the admitted portable r3 metadata correction, update the transport evidence to actual outcomes, verify the exact base plus selected plus incidental plus own audit union and proof/source hashes, rerun the failed full graph gate after the mandatory post-audit regeneration, commit the narrow manifest, release leases, and retain the clean carrier for official later join.",
+      "summary": "Portable metadata transport is present as d023cb04 from source fc60fd35, producing exact r3 blob f9bac553bc0fb84dfe9a78805a9302874cbe50fa while preserving the review body and verdict. Before this entry, entry_fingerprint showed exactly 960 base, six selected, two Owner-admitted incidental and three carrier audit payloads: 971 total, no missing or extra. R4 remains exact blob f37e23be9148415e09b3b01a05c5fe5277443a35; source/src/tests/tools remain identical to base b2127168. The transport receipt records actual prior regeneration, failed graph evidence, anonymous-check provenance and retained-worktree purpose. The post-audit official regeneration, formerly failing graph gate, audit verification, manifest check, hooked commit and lease release execute immediately after this entry.",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": "codex-peer-review-carrier",
@@ -25803,62 +25916,20 @@ window.AUDIT_DATA = {
         "transport"
       ],
       "outcome": "success",
-      "goal": "Finalize the independent r3/r4 review carrier with the exact two-row provenance exception and no product or broader ancestry changes.",
-      "done_when": "Authorized audit union and proof/source hashes pass, transport receipt and raw evidence exist, official regeneration and validation pass, the hooked commit is clean, and all leases are released.",
+      "goal": "Complete the independent r3/r4 review carrier with portable graph metadata and exact audit provenance.",
+      "done_when": "The six selected payloads, two incidental rows and carrier audits are fully conserved; proof/source hashes match; official regeneration and the full graph/audit gates pass; the narrow closure commit is clean; and all leases are released.",
       "tier": "T1",
-      "main_calls": 9,
-      "main_budget": 5,
-      "main_over_budget": true,
       "fan_out": 0,
       "signals": {
         "verification_path": true,
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-09-16T17:47:40Z",
-      "duration_seconds": 316.0,
+      "started_at": "2026-09-16T17:56:31Z",
+      "duration_seconds": 94.0,
       "git": {
-        "sha": "a9ce139b42cc4071738515eb1d8c0b8aa64e325a",
-        "short": "a9ce139b4",
-        "branch": "review/atlas-peer-receipts",
-        "pushed": null
-      }
-    },
-    {
-      "id": "al-01M2NNRDJWGZ224XGMAQQG1W0G",
-      "shortname": "atlas-peer-review-transport-graph-blocked",
-      "datetime": "2026-09-16T17:55:42Z",
-      "session": "codex-atlas-peer-review-carrier",
-      "prompt": "Preserve the current review-carrier receipt, audit, decision and regenerated outputs as a WIP checkpoint after the full docs graph validator found one dangling link in the byte-locked r3 receipt.",
-      "summary": "Supersedes the earlier finalization audit's acceptance signal. Official regeneration completed and its built-in gates passed, but the additional full docs graph validator failed on one dangling target in the byte-locked r3 receipt: note-d1-codex-entry-point-handshake-r3. Closure was not committed and READY was not claimed. The Owner commissioned a source-side metadata-only correction; this checkpoint preserves current audit, decision, receipt, index and site-figure state without changing the r3 blob or importing the missing Grok note.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": "codex-peer-review-carrier",
-      "actor": null,
-      "artifacts": [
-        "docs/proof/atlas-peer-review-transport.md",
-        "docs/proof/codex-d1-r3-consumer-review.md"
-      ],
-      "tags": [
-        "atlas",
-        "graph-gate"
-      ],
-      "outcome": "partial",
-      "goal": "Checkpoint owned carrier state without discarding audit or derived changes so the admitted source metadata correction can be transported safely.",
-      "done_when": "A truthful superseding partial audit is recorded, current derived views are regenerated, the WIP commit is created under exact leases, and leases are released.",
-      "tier": "T1",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": false
-      },
-      "started_at": "2026-09-16T17:55:42Z",
-      "duration_seconds": 0.0,
-      "supersedes": "al-01M2NNKBHQRYJJ98139PDDSEB6",
-      "git": {
-        "sha": "a9ce139b42cc4071738515eb1d8c0b8aa64e325a",
-        "short": "a9ce139b4",
+        "sha": "d023cb04eac220737d7405ebec50bae4018fb465",
+        "short": "d023cb04e",
         "branch": "review/atlas-peer-receipts",
         "pushed": null
       }
