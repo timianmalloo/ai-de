@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T18:55:29Z",
+  "generated": "2026-09-16T19:13:11Z",
   "audit": [
     {
       "actor": null,
@@ -26198,6 +26198,68 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-09-16T18:48:56Z",
       "duration_seconds": 316.0
+    },
+    {
+      "id": "al-01M2NSDY27ASPF8CY8751K3C8B",
+      "shortname": "atlas-p1-03-investigate-capture-corrected",
+      "datetime": "2026-09-16T18:59:53Z",
+      "session": "codex-atlas-p1-03-rca",
+      "prompt": "Proceed with bounded administrative capture correction in your existing owned tree; 1 orchestration call / 5min, actual nested calls must be reported, no source/design expansion. Read actual audit-log.py CLI/schema first as needed; append fully specified correction records naming actual repo-relative artifact and both superseded IDs, verify persisted artifact arrays/prompt before claiming success. Fail-fast on each operation; if command fails do not continue to commit or claim correction. Correct premature prose if necessary. Exact short leases for investigation doc only if edited and site/index.html,site/collaboration.html,site/model.html; no root/peer leases held now. Official regeneration, actual checks, commit and release. Root will independently inspect and wait for final pin before review/transport. This is correction of already authorized work, no human approval needed. Capture defect class/control through existing protocol if an applicable existing class covers it; do not broaden shared lesson authorship.",
+      "summary": "Administrative correction: attach the actual investigation artifact to the prior investigate record. Singular artifact in structured input was ignored; first correction commands omitted required prompt and failed, but their exit statuses were discarded. Existing DC-125 covers the discarded failure-return shape. Control now used: subprocess return-code enforcement before every dependent operation, plus persisted artifact/prompt/supersedes readback before regeneration and commit. No original row rewritten, source changed, design clearance or causal claim.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/atlas-p1-03-uia.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "supersedes": "al-01M2NS3HKD0PMW0XMQ6MZVC929"
+    },
+    {
+      "id": "al-01M2NSDY5V4BDHC70BPA4TYYT7",
+      "shortname": "atlas-p1-03-design-capture-corrected",
+      "datetime": "2026-09-16T18:59:53Z",
+      "session": "codex-atlas-p1-03-rca",
+      "prompt": "Proceed with bounded administrative capture correction in your existing owned tree; 1 orchestration call / 5min, actual nested calls must be reported, no source/design expansion. Read actual audit-log.py CLI/schema first as needed; append fully specified correction records naming actual repo-relative artifact and both superseded IDs, verify persisted artifact arrays/prompt before claiming success. Fail-fast on each operation; if command fails do not continue to commit or claim correction. Correct premature prose if necessary. Exact short leases for investigation doc only if edited and site/index.html,site/collaboration.html,site/model.html; no root/peer leases held now. Official regeneration, actual checks, commit and release. Root will independently inspect and wait for final pin before review/transport. This is correction of already authorized work, no human approval needed. Capture defect class/control through existing protocol if an applicable existing class covers it; do not broaden shared lesson authorship.",
+      "summary": "Administrative correction: attach the actual investigation artifact to the prior design record. Singular artifact in structured input was ignored; first correction commands omitted required prompt and failed, but their exit statuses were discarded. Existing DC-125 covers the discarded failure-return shape. Control now used: subprocess return-code enforcement before every dependent operation, plus persisted artifact/prompt/supersedes readback before regeneration and commit. No original row rewritten, source changed, design clearance or causal claim.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/atlas-p1-03-uia.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "supersedes": "al-01M2NS3HPR6M29C53JW1RDDVCN"
+    },
+    {
+      "id": "al-01M2NT68C8PD56X2N225P73DDE",
+      "shortname": "atlas-p1-03-design-b1-b3",
+      "datetime": "2026-09-16T19:13:10Z",
+      "session": "codex-atlas-p1-03-rca",
+      "prompt": "Owner admits DOC-ONLY design completion 8 tool operations/15min, checkpoint5, then independent rereview4/8min. T2. Same existing tree/document plus own official records. Preserve staged verified audit corrections; peer lease handoff remains pending, no commit retry on TTL. Choose treatment-association claim: UIA owner identity explicitly not-recorded, blocks retention-cause claim rather than association result. B1 independent reviewer BLOCK: specify actual supported notification/API, subscription timing, one-shot readiness predicate and dispatcher-tail verification after synchronous publication tail. Query, first collection event, Content replacement, Loaded, or StatusText event alone insufficient. Actual AtlasReaderView.cs569–608 applies roots then manifest/count/page/status589,bounds590,loadmore591–592 synchronously; FileRoots IReadOnlyList backedObservableCollection; StatusControl public. Source/API grounding must verify ordering; no polling/sleep/new product event. Specify early/missing/canceled/late notifications and unsubscribe. B3 BLOCK: one ownership transfer with states acquisition/held/handoff/cancel/disposal; candidate retained/reachable on failed prehandoff dispose, no competing decorator/owner disposal. Open actual AtlasWorkspaceOwner.cs84–95 retention on failedrelease,157–176 drain before disposal. Provide exact race controls before admissioncompletes/held/releasehandoff/afterhandoff/faildispose. NaturalLoaded experiment differs canonical explicit ActivateAsync790; record naturalactivation/admission/contenttransition cardinalities and reject unexpectedextraactivation. No canonical-reproduction/retention-cause inference. Root read reviewer body and source; reviewers4/4, independent BLOCK. No executable preparation, source edit, build/test/GUI/slot is admitted. If B1 cannot satisfy existing contracts report limitation. Use actual docs primary contracts for unfamiliar WPF API, not guessed signature. Exact doc shortlease asneeded; keep site/derived mutations separate while peer audit-data lease active. Draft can be frozen by document blob if commit remains externally blocked; disclose uncommittedbytes/marker. Return artifact and all B1–B3 decisions; no self-clearance.",
+      "summary": "Document-only B1 notification and one-shot dispatcher-tail predicate; B2 treatment association with UIA owner:not-recorded; B3 single-owner custody/disposal race controls. Proposed process-scoped Loaded class observer requires explicit independent rereview. Atomic patch context failure caused actual9/8 operation overrun, separately admitted corrective capture; not compliance. Existing staged audit corrections preserved. Root supplied explicit peer release events before final capture; no TTL retry. No executable source/preparation, build, test or GUI.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/atlas-p1-03-uia.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Complete B1–B3 diagnostic design against actual source and primary API contracts.",
+      "done_when": "Frozen document specifies readiness and ownership or their limits, preserves association-only claim, and is returned for independent rereview.",
+      "tier": "T2",
+      "main_calls": 9,
+      "main_budget": 8,
+      "main_over_budget": true,
+      "fan_out": 0,
+      "started_at": "2026-09-16T19:05:57Z",
+      "duration_seconds": 433.0
     }
   ],
   "changes": [
@@ -30885,6 +30947,29 @@ window.AUDIT_DATA = {
         "pushed": null,
         "commits": []
       }
+    },
+    {
+      "id": "cl-01M2NT68H5WYVZB5CCS0P42BPV",
+      "datetime": "2026-09-16T19:13:10Z",
+      "session": "codex-atlas-p1-03-rca",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Complete Atlas diagnostic B1-B3 association contract",
+      "prompt": "Owner admits DOC-ONLY design completion 8 tool operations/15min, checkpoint5, then independent rereview4/8min. T2. Same existing tree/document plus own official records. Preserve staged verified audit corrections; peer lease handoff remains pending, no commit retry on TTL. Choose treatment-association claim: UIA owner identity explicitly not-recorded, blocks retention-cause claim rather than association result. B1 independent reviewer BLOCK: specify actual supported notification/API, subscription timing, one-shot readiness predicate and dispatcher-tail verification after synchronous publication tail. Query, first collection event, Content replacement, Loaded, or StatusText event alone insufficient. Actual AtlasReaderView.cs569–608 applies roots then manifest/count/page/status589,bounds590,loadmore591–592 synchronously; FileRoots IReadOnlyList backedObservableCollection; StatusControl public. Source/API grounding must verify ordering; no polling/sleep/new product event. Specify early/missing/canceled/late notifications and unsubscribe. B3 BLOCK: one ownership transfer with states acquisition/held/handoff/cancel/disposal; candidate retained/reachable on failed prehandoff dispose, no competing decorator/owner disposal. Open actual AtlasWorkspaceOwner.cs84–95 retention on failedrelease,157–176 drain before disposal. Provide exact race controls before admissioncompletes/held/releasehandoff/afterhandoff/faildispose. NaturalLoaded experiment differs canonical explicit ActivateAsync790; record naturalactivation/admission/contenttransition cardinalities and reject unexpectedextraactivation. No canonical-reproduction/retention-cause inference. Root read reviewer body and source; reviewers4/4, independent BLOCK. No executable preparation, source edit, build/test/GUI/slot is admitted. If B1 cannot satisfy existing contracts report limitation. Use actual docs primary contracts for unfamiliar WPF API, not guessed signature. Exact doc shortlease asneeded; keep site/derived mutations separate while peer audit-data lease active. Draft can be frozen by document blob if commit remains externally blocked; disclose uncommittedbytes/marker. Return artifact and all B1–B3 decisions; no self-clearance.",
+      "summary": "B1 uses documented Content/Text descriptor notifications and one-shot publication-tail verification; B2 limits association with owner identity not-recorded; B3 specifies lease custody and race controls. Loaded class observer remains proposed for independent review.",
+      "rationale": "The independent reviewer blocked unspecified readiness and failed-disposal custody; source and primary API grounding make the next review concrete.",
+      "artifacts": [
+        "docs/investigations/atlas-p1-03-uia.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "74e9976462e822ffcdf1808ba099915ee3a60c7f",
+        "after": "74e9976462e822ffcdf1808ba099915ee3a60c7f",
+        "branch": "investigation/atlas-p1-03-uia",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M2NT68C8PD56X2N225P73DDE"
     }
   ]
 };

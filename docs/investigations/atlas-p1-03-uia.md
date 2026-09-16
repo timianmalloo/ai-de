@@ -112,6 +112,11 @@ after a verified Content replacement. Bracketing snapshots cannot fill this gap.
 
 # Specific fixes
 
+**Current design contract:** the B1–B3 completion section below supersedes the earlier
+generic synchronization, ownership, node-owner and outcome wording wherever they
+differ. Its claim is treatment association only. It remains subject to independent
+rereview; no authoring or execution grant is implied.
+
 None. A proven repair would have to address the content-transition/automation-ancestry
 seam and preserve the original owned-window oracle. Refreshing or invalidating peers,
 retrying FindFirst, adding a sleep or changing the selector is not this experiment.
@@ -336,3 +341,184 @@ successful command. The attempted graph subcommand `check` was rejected by its C
 the listed `validate` subcommand is the actual metadata check. Neither failed command
 is reported as passing evidence. These are artifact-capture errors, not evidence
 about the native failure or a newly allocated causal defect class.
+
+## B1–B3 completion for independent rereview
+
+**NEW DESIGN; no executable preparation or execution.** The independent review
+blocked the earlier unspecified publication signal and candidate-disposal races.
+The following is the controlling diagnostic contract for those concerns. Earlier
+wording that requires UIA/WPF owner identity for an association result is withdrawn.
+The actual source file is `AtlasReaderView.cs`, not a XAML code-behind file.
+
+### B1: notification, synchronous publication tail and readiness
+
+**Verified source:** `AtlasReaderView.cs:321–327` sends the native branch to
+LoadReaderPageAsync. Lines 574–575 await the actual inventory page. Lines 576–585
+reject stale/canceled work and rebuild roots/children; 586–588 write manifest/count/
+next; 589 writes status; 590 writes bounds; 591–592 write pagination visibility and
+enabled state. Those writes after the await are synchronous. FileRoots is a public
+IReadOnlyList backed by ObservableCollection (25/65); StatusControl is the public
+TextBlock (80). Query return, first collection event, Content replacement, Loaded,
+or final-status notification **alone** cannot establish complete publication.
+
+While the real admission return is Held and before releasing it, subscribe to
+`DependencyPropertyDescriptor.FromProperty(ContentControl.ContentProperty,
+host.GetType())` using `AddValueChanged(host, contentHandler)`. Assert the same
+loading TextBlock is still Content and ReaderView is null after subscribing. On
+the one Content replacement with AtlasReaderView, record its reference and install
+the TextBlock.TextProperty descriptor on `view.StatusControl` synchronously inside
+that Content callback, then subscribe reader Loaded/Unloaded. Do not pump, block or
+query UIA inside callbacks. A reader already present at subscription invalidates the
+fixture; there is no retrospective transition inference.
+
+API grounding: Microsoft documents [FromProperty](https://learn.microsoft.com/en-us/dotnet/api/system.componentmodel.dependencypropertydescriptor.fromproperty?view=windowsdesktop-10.0),
+[AddValueChanged](https://learn.microsoft.com/en-us/dotnet/api/system.componentmodel.dependencypropertydescriptor.addvaluechanged?view=windowsdesktop-10.0),
+[TextBlock.TextProperty](https://learn.microsoft.com/en-us/dotnet/api/system.windows.controls.textblock.textproperty?view=windowsdesktop-10.0),
+and [RemoveValueChanged](https://learn.microsoft.com/en-us/dotnet/api/system.componentmodel.dependencypropertydescriptor.removevaluechanged?view=windowsdesktop-10.0).
+The repository's `TheWebSurfacesInitialiseOnceAcrossReparentsTests.cs:789–792,818`
+already pairs descriptor subscription/removal. .NET 10 reference source shows the
+[descriptor registering a tracker handler](https://github.com/dotnet/wpf/blob/v10.0.0/src/Microsoft.DotNet.Wpf/src/WindowsBase/MS/Internal/ComponentModel/DependencyObjectPropertyDescriptor.cs#L168)
+and [PropertyChangeTracker invoking it directly during invalidation](https://github.com/dotnet/wpf/blob/v10.0.0/src/Microsoft.DotNet.Wpf/src/WindowsBase/MS/Internal/ComponentModel/PropertyChangeTracker.cs#L19).
+This grounds installing the status listener during Content assignment, before the
+host's next LoadAsync statement. Record actual loaded WindowsBase/PresentationFramework
+versions/hashes later; reference-source v10.0.0 is not a claim about the installed
+runtime. The future notification control verifies ordering on that actual runtime.
+
+The diagnostic lease wrapper records the actual first inventory reply before returning
+it unchanged. Derive expected final status from its Completion/files/disclosures using
+the exact source format at 589; expected bounds from 674–677; expected pagination from
+NextOffset. Those independent values and the reply's synthetic inventory are the
+predicate inputs, not new product flags.
+
+The status handler records all notifications. Initial/loading/empty notifications
+are early, not ready. Canceled/unavailable status fails the fixture. The **first exact
+expected final-status notification** schedules one and only one
+`Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(VerifyPublicationTail))`.
+Retain the operation and scheduling/entry ticks. No synchronous Invoke, nested frame,
+blocking wait or manual peer action is allowed in observers.
+[BeginInvoke queues asynchronously](https://learn.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatcher.begininvoke?view=windowsdesktop-10.0);
+[Background is below Loaded/render/data-binding priorities](https://learn.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatcherpriority?view=windowsdesktop-10.0).
+That scheduling is a mechanism, not a declaration of global idleness.
+
+The tail evaluates one conjunction on the owned dispatcher: exactly one real
+admission and handoff; exactly one reader replacement and expected final-status
+notification; current Content reference equals that ReaderView; host/view attached,
+loaded and visible; no cancellation or reader Unloaded; roots and descendants match
+the actual returned synthetic inventory; status and BoundsText equal the independently
+derived full values; LoadMoreButton visibility/enabled match NextOffset. There is no
+await between source lines 576–592 and no observer pumps that stack. The tail must
+**observe** the post-status bounds/pagination values after the stack unwinds. A failed
+predicate terminates once; it never reschedules itself. On successful completion,
+asynchronous completion-source continuations resume the fixture, which retains the
+original dispatcher drain and rechecks identities/cardinalities before the original
+owned-HWND oracle.
+
+Missing expected notification has no fallback direct-read/poll: the existing outer
+fixture bound terminates as fixture-not-established. If cancellation/close wins before
+tail entry, disarm and cancel the completion source; queued callbacks become inert.
+An aborted operation, duplicate final status, second inventory reply, late replacement
+or extra Loaded/Unloaded invalidates the fixture. Record notifications through the
+pre-query checkpoint. Finally disarm first, remove the exact Content/Text descriptor
+handlers, unsubscribe reader Loaded/Unloaded, clear retained objects and have queued
+callbacks check the disarmed generation. No late callback can change a terminal result.
+
+Future non-GUI controls must force: partial first collection event; loading status;
+expected final-status callback **before** bounds/pagination setters in one synchronous
+publication action; absent final event; cancellation after scheduling/before entry;
+duplicate final event; late replacement; unsubscribe and queued-after-close. Readiness
+must remain incomplete inside the final-status handler and complete only at a valid
+tail. An intentionally incomplete tail fails without another callback. These are
+required future controls, not tests performed by this document-only unit.
+
+### Natural Loaded path: measured cardinalities and explicit substitution
+
+The fixture uses natural Loaded activation, unlike the canonical proof's additional
+explicit ActivateAsync at line 790. To observe the first Loaded event before the
+production instance handler, register one noncapturing test-only class handler before
+opening the window: `EventManager.RegisterClassHandler(typeof(AtlasLoadingHost),
+FrameworkElement.LoadedEvent, new RoutedEventHandler(OnHostLoaded))`. Microsoft
+documents [class handlers preceding instance handlers](https://learn.microsoft.com/en-us/dotnet/api/system.windows.eventmanager.registerclasshandler?view=windowsdesktop-10.0).
+Filter to the exact owned window/host via a scoped registry; never set Handled, mutate
+the host or call ActivateAsync. The registration is identical in both fresh arm
+processes. A class handler is process-scoped: this design claims no removal API for
+it. Clear the scoped registry on close so the noncapturing callback becomes inert
+and holds no window/host; process exit ends the registration. All removable instance
+and descriptor subscriptions are actually removed.
+
+This new observer footprint is explicitly subject to independent rereview; it is
+not covered by the old observation grant. If that footprint is rejected, a late
+subscription cannot be relabeled a first-Loaded measurement and the fixture remains
+blocked. [Loaded can occur more than once](https://learn.microsoft.com/en-us/dotnet/api/system.windows.frameworkelement.loaded?view=windowsdesktop-10.0).
+Record host Loaded events, real AdmitAsync calls, handoffs and Content-to-reader
+transitions as separate counts; require each equal one before the oracle. Host source
+line 24 connects each Loaded to ActivateAsync; this is natural-path evidence, not a
+private method-entry trace. Extra Loaded/associated transitions invalidate even when
+owner caching keeps the real AdmitAsync count at one. No direct diagnostic activation
+is permitted. A result is not a canonical reproduction or canonical-cause proof.
+
+### B2: association claim; UIA owner identity remains not-recorded
+
+The recorded UIA ancestor chain, runtime IDs, names and query result are provider
+observations. `uia_wpf_owner = not-recorded` remains explicit in both arms. Text/name
+equality never establishes a retained WPF owner. That gap blocks retention/stale-peer
+causation, not this narrower treatment comparison.
+
+| Pair result with valid fixtures/identical pins | Permitted interpretation |
+| --- | --- |
+| A original query passes; B original query fails after verified reader publication | Treatment association on those inputs; no retained-owner mechanism, canonical reproduction, P1-03 attribution or general cohort inference. |
+| Both pass | Hypothesis unestablished, not universal disproof. |
+| Both fail | Loading traversal was not necessary for failure in this pair. |
+| A fails; B passes | Opposite association; preserve without relabeling. |
+| Missing treatment/publication evidence, wrong cardinality/pins, uncontained cleanup, or original query not reached | Incomplete/invalid association experiment. Owner:not-recorded alone is an interpretation limit, not fixture failure. |
+
+No peer refresh/invalidation, alternate query/root, retry, sleep or manual-provider
+acceptance is introduced. The same two fixed fresh-process arm commands still apply.
+
+### B3: one ownership transfer and retained failure recovery
+
+All decorator ownership transitions are serialized under its private gate; no await
+occurs under that gate. Retain one admission task to terminal completion and at most
+one candidate-disposal task at a time. Cancellation requests state changes; callbacks
+never independently dispose. Both arms use the same state machine.
+
+| State | Candidate custody and permitted transition |
+| --- | --- |
+| Acquiring | Await real inner AdmitAsync with caller token. Before successful return there is no candidate to dispose. On success first retain the returned actual candidate, even if cancellation raced. Move to Held or CancelPending. Preserve an inner failure without inventing a candidate. |
+| Held | Decorator exclusively owns one candidate withheld from owner. Release/cancel contend under the gate; an already-requested cancellation wins. |
+| Handoff | Release winner checks cancellation and marks transfer under the gate, then returns candidate with no later await or throwing test work. The decorator permanently loses disposal authority. Later cancellation belongs to the real owner. Retained observer references carry no authority. |
+| CancelPending / Disposing | No candidate is returned. One retained disposal task invokes candidate.DisposeAsync; concurrent cancellation/decorator.DisposeAsync await the same task. Only successful disposal clears the owned candidate. |
+| DisposeFailed | Keep candidate, failed task, inner reader and failure reachable. AdmitAsync terminates with failure. A later explicit decorator.DisposeAsync can make one serialized recovery attempt; no automatic retry loop. Another failure keeps custody and returns the error. |
+| Disposed | Candidate disposal and then inner-reader disposal succeeded; only then clear owning references and report completion. |
+
+Actual `AtlasWorkspaceOwner.cs:84–95` retains a returned canceled/stale candidate in
+`_lease` before awaiting disposal, leaving it reachable if disposal fails. Its
+157–176 transition drains tracked operations before disposing `_lease` and then
+`_reader`; references clear only after successful awaits. Thus a pre-handoff failure
+is recoverable through the decorator retained in the owner's `_reader`; post-handoff
+custody is exclusively the owner's. Decorator.DisposeAsync drains admission before
+inner-reader disposal, and never disposes a handed-off lease directly. A failed
+pre-handoff disposal prevents inner-reader disposal and prevents moving to arm B.
+The canonical owner/reader cleanup sequence is reused, not competed with by a second
+watcher disposal path.
+
+Required future non-GUI controls: cancellation before inner completion with a late
+successful candidate; cancellation while Held; both release/cancel orderings at the
+gate; cancellation just after Handoff before owner continuation; failed pre-handoff
+candidate disposal; concurrent decorator disposal/cancel; failed post-handoff disposal
+through the actual owner. Assert exact transfer/disposal counts, no overlapping
+disposals, custody/reference reachability after failure, and primary error preservation.
+The failed pre-handoff control's later explicit DisposeAsync must recover the same
+candidate; the post-handoff control must demonstrate owner custody rather than
+decorator recovery. No control has run in this unit.
+
+### Rereview disposition
+
+B1 is now a concrete notification-plus-tail design, subject to runtime contract
+controls; B2 deliberately narrows the claim; B3 defines custody and race controls.
+The process-scoped Loaded class observer is a disclosed review point. The author
+does not clear any independent BLOCK. No production source, executable preparation,
+build, test, GUI, watcher slot or causal fix is admitted by these paragraphs.
+
+| Completed | Remaining | Best next action |
+| --- | --- | --- |
+| Source/API-grounded B1–B3 document completion | Independent rereview, future controls and grants; peer-held derived capture prevents current commit | Review the frozen document bytes, including class-observer lifetime and one-shot predicate |
