@@ -184,6 +184,7 @@ public sealed class PurgeAndTheSessionDeleteCascadeTests : IDisposable
     /// removed, nothing is orphaned — rather than leaving session.json gone and the envelope file behind.
     /// </summary>
     [Fact]
+    [Trait("Platform", "Windows")]   // Ruling 117: the refusal rests on a Windows directory-move refusing while a file inside is open; Linux unlinks under the open reader (INV-0012 4.2, residual per Ruling 118)
     public void ASiblingHeldOpenRefusesTheDeleteWholeAndNothingIsOrphaned()
     {
         WriteTwoEnvelopes();
