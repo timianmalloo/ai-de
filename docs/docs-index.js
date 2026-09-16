@@ -12792,6 +12792,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "723db63d8dccd0f95ef26e93b4df9f78a33c4918c5be6b1666112ecd350a1f05"
     },
     {
+      "id": "proof-atlas-native-observer-sink-review",
+      "path": "docs/proof/atlas-native-observer-sink-review.md",
+      "title": "Independent FR-NO-001 sink correction review",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Historical receipt: Independent FR-NO-001 sink correction review",
+      "tags": [],
+      "links": [
+        {
+          "to": "investigation-atlas-p1-02-native-uia",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8da93f46d18e39bb9d943266e89d139fdf950ae1b15df190cb0ab20aa6c5162e"
+    },
+    {
       "id": "proof-atlas-native-view-state-review",
       "path": "docs/proof/atlas-native-view-state-review.md",
       "title": "Independent clearance of complete admitted Atlas observer preparation",
@@ -23110,5 +23135,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "9dc2813fa3f581f685e52f25a0f746ffd562e81423ac1287e83900777ef80e32"
+  "graphSha256": "ce7d79d528211fb411ecab96123417170effb93c3382878faeed3f8513ea9319"
 };

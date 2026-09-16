@@ -8,6 +8,7 @@ links:
   - { to: investigation-atlas-p1-02-native-uia, rel: depends-on }
   - { to: session-contracts, rel: depends-on }
 review-by: 2026-12-15
+summary: "Historical receipt: Independent FR-NO-001 sink correction review"
 ---
 
 # CLEAR FR-NO-001; complete observer clearance remains open
