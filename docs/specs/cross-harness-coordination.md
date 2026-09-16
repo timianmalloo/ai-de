@@ -22,10 +22,12 @@ summary: >-
 
 # Cross-harness coordination
 
-**P0 DRAFT — T2 — Data & Persistence peer/co-author; independent gate NOT PASSED.**
+**P0 CORRECTED DRAFT — T2 — GATE P0-delta pending independent review.**
+Original Data & Persistence draft; Python phase-specific correction records independent F1–F6.
 The actual human approved implementation of P0–P5; this receipt executes P0 only.
 That approval does not give protocol users automatic authority. No new work transfer,
-run, slot, ownership reassignment, source change or later-phase execution follows from it.
+run, slot or ownership reassignment follows from this document. The approved all-six-phase
+goal is unchanged; later phases need their evidence gates, not renewed human phase approval.
 
 ## 1. FRAME, before the contract
 
@@ -50,10 +52,13 @@ that C# replay or any real endpoint has passed. Do not repeat the old timeline i
 | Transport wake alone fixes the wait | Existing fold represents only open/resolved; wake cannot express exact-hash acceptance | Insufficient, but endpoint conformance remains a P3 floor |
 | Coordination grants replace ownership register | Conflicts with session-contracts §2 and actual-human restriction | Reject; reference authority, never duplicate it |
 
-**Architecture conflict requiring an independent ruling:** ADR-0023 says extend the
-shared workspace fact store; `WatcherHost.Open` currently opens `watcher.db`. P0 does not
-silently bless that placement or migrate native board facts. The design's additive cache
-shape is conditional on P2 resolving store placement, not a second authoritative database.
+**Bounded store ruling:** coordination application/feed/checkpoint caches are additive
+behind the **existing watcher observation-store seam in the existing `watcher.db` used
+by WatcherHost/MCP**. `requests.jsonl` is the sole canonical coordination source. No new
+DB, native relocation, `workspace.db` migration or cross-DB transaction is in scope.
+The physical-placement divergence from ADR-0023 is inherited architecture debt, **not
+claimed conformant**. Data/Persistence and Distributed Systems must coapprove the concrete
+additive representation before P2 code; resolving that inherited debt is not added work.
 
 ## 2. Part A — conceptual domain model
 
@@ -134,8 +139,8 @@ expired edit lease, budget exhaustion or a “resolved” legacy request.
 | ID | Required behavior | Phase / oracle |
 |---|---|---|
 | C01 | Correlated response appears on initiating thread and all-status by-ID read; negative response is not acceptance | P1 / O01–O03 |
-| C02 | Exact revision + hash + required peers only; old-hash, ACK-only, unknown generation and unauthorized NEW transfer fail closed | P1 / O04–O07 |
-| C03 | One canonical `.agents/requests.jsonl` through official tooling; preserve old IDs, payloads, ordering evidence and legacy callers | P1 / O08–O10 |
+| C02 | Exact revision + hash + required peers only; old-hash, ACK-only, unknown generation and unauthorized NEW transfer fail closed; synthetic positive controls confer no production authority | P1 / O04–O07; qualified authority gate remains BLOCKED |
+| C03 | Unchanged, unenrolled old-worktree clients retain official request-add/request-resolve/list on the same primary `.agents/requests.jsonl`, without enrollment or upgrade; original IDs/payloads survive | P1 / O08–O10; enhanced activation requires separate mixed-client proof |
 | C04 | Duplicate stable source key yields same receipt/effect; different payload is refused, not last-write-wins | P1/P2 / O09, O11 |
 | C05 | Effect and receipt/checkpoint are atomic; restart/replay and two writers cannot lose a cursor-visible fact | P2 / O11–O15 |
 | C06 | Late/missing parents, tombstones and unsupported versions survive restart as explicit dispositions; >200 backlog is complete | P2 / O16–O19 |
@@ -145,6 +150,22 @@ expired edit lease, budget exhaustion or a “resolved” legacy request.
 | C10 | Same corpus yields same obligations across queue, board, MCP and UI; gaps, availability and pauses are honest | P5 / O26–O28 |
 
 Acceptance criteria name required future evidence; no row is reported passed here.
+
+### P0 admission is dormant, not activation
+
+Only after independent P0-delta clearance may P1 implement compatible **dormant Python
+fold/envelope/schema-validation and isolated tests**. This admission is not a deployed
+SQLite schema, enhanced writing, authority adapter, endpoint send or launcher activation,
+and the dormant subset does not complete P1. Enrollment gates **enhanced capabilities
+only**; no legacy client is disabled. Enhanced writing stays disabled until coexistence
+with unchanged legacy clients is proved, including contention, complete records and
+conflict safety; a cooperative lock cannot automatically protect old unlocked appends.
+
+All privileged production paths deny absent qualified verifier evidence, including an
+apparently valid synthetic verifier receipt submitted through the production entrypoint:
+O07 requires **zero grants, transfers, endpoint sends and launches**. Synthetic positives
+prove deterministic contract behavior only. Authenticated authority fixtures, supported-
+channel qualification and P3/P4 activation remain BLOCKED; repo/peer prose remains inert.
 
 ## 5. Non-goals and interaction requirements
 
@@ -174,4 +195,9 @@ separately. No percentile has been measured. No timeout grants acceptance or aut
 
 | Completed in this receipt | Remaining | Best next action |
 |---|---|---|
-| Source-bounded FRAME, model and P0 draft contract | Independent P0 review and all runtime oracles | Reviewer attacks exact draft; conductor records disposition before P1 |
+| P0 corrected draft recording independent F1–F6 | GATE P0-delta pending independent review; P1 pending implementation; P2–P5 pending | Independent delta reviewer, then conductor-admitted Python P1 author for dormant subset only |
+
+Live retention/erasure across every payload copy is unresolved. Foreground/background
+GHCP, Codex, Grok and Claude positive arrival/consumption/supported-wake conformance
+remains BLOCKED pending supported availability; fakes do not clear it. Proposed SLIs
+remain unmeasured; docs index and security/privacy rollups remain conductor-owned/pending.

@@ -16,17 +16,19 @@ links:
 review-by: 2026-10-16
 summary: >-
   Data & Persistence P0 co-authored blueprint for typed obligations, immutable authority
-  references and a single official request stream. Specifies conditional additive storage,
+  references and a single official request stream. Specifies bounded additive storage,
   atomic replay/cursor floors, failure/privacy controls and unperformed phase gates.
 ---
 
 # Canonical facts, not another approval database
 
-**T2 / Peer Mode / P0 DRAFT. No independent PASS; no executable schema chosen or applied.**
+**T2 / P0 CORRECTED DRAFT. GATE P0-delta pending independent review; no self-clearance.**
 Conceptual model first: [spec Part A](../specs/cross-harness-coordination.md#2-part-a--conceptual-domain-model).
-This design settles the safety contract; P2 must confirm physical placement and execute
-red tests before admitting a migration. DM1–DM18, Testing Strategy D0/trigger union,
-Observability O1–O13 and the Solution-Selection Ladder were read from `.claude/knowledge/`.
+No executable schema is chosen or applied. P2 is bounded to additive caches behind the
+existing watcher observation-store seam in existing `watcher.db` used by WatcherHost/MCP.
+Data/Persistence and Distributed Systems must coapprove the concrete representation before
+P2 code. The original receipt read DM1–DM18, Testing Strategy D0/trigger union,
+Observability O1–O13 and the Solution-Selection Ladder; this delta records independent F1–F6.
 
 ## 1. Canonical boundary and compatibility
 
@@ -47,20 +49,28 @@ accepts current-state fold/latest-per-key read cost. Patterns/Simplifier review 
 
 ### Rollout floor before a new live writer
 
-1. Pin old payload corpus and old CLI behavior. Add tolerant readers and new actionable
-   read mode first, default off; unknown new fields must not break legacy records.
-2. Keep `request-add` / `request-resolve` and legacy list semantics intact. New typed
-   response events must not pretend to be old resolution/approval. Old readers may
-   conservatively leave enhanced threads open; they cannot report enhanced completion.
-3. Upgrade **every active canonical writer** to the shared append serialization and
-   capability checks while retaining its old command surface. An unupgraded writer
-   does not magically honor a new lock. Unenrolled writers block new-mode activation;
-   expose compatibility/availability, never infer enrollment from source on disk.
-4. Golden tests cover old reader/new stream, new reader/old writer, concurrent legacy
-   command/new command, missing optional fields and unknown event types. New writer
-   activation requires explicit capability inventory, verified fallback and review.
-5. Disable new writer first to roll back; retain readable canonical events and IDs.
-   Roll back projection/read mode separately. Never revive an older writable status copy.
+1. Pin an **unmodified pre-P1 official client** and old payload corpus. Existing
+   **unchanged, unenrolled old-worktree clients** retain official `request-add`,
+   `request-resolve` and `list` on the **same primary `requests.jsonl`**, without
+   enrollment or upgrade. No legacy client is disabled.
+2. Enrollment gates **enhanced capabilities only**. Compatible dormant P1 fold/envelope/
+   schema-validation and isolated tests may begin only after independent P0-delta
+   clearance. Enhanced writing remains disabled until coexistence is proved.
+3. The primary coord-core old append is **unlocked**. A new cooperative lock cannot
+   automatically protect an unchanged old client; serializing upgraded old-command
+   implementations is not legacy compatibility evidence. An upgraded shim is not the test.
+4. O08/O10 run the pinned unmodified client from an **unenrolled synthetic worktree**:
+   add→resolve→list with enhanced disabled and across actual rollback, asserting original
+   IDs and payloads. Before enhanced activation, require **separate mixed-client
+   contention, complete-record and conflict-safety evidence** with that unchanged client.
+   No coexistence mechanism is claimed selected or proved by this draft.
+5. Add tolerant readers/actionable read mode default off. Cover old reader/new stream,
+   new reader/old writer, missing optional fields and unknown event types. Typed response
+   events cannot pretend to be old approval. Legacy readers may conservatively leave
+   enhanced threads open, but ordinary legacy add/resolve/list must still work unchanged.
+6. Disable enhanced writing first to roll back; keep unchanged legacy clients operational
+   and retain canonical events, original IDs and payloads. Roll back projection/read mode
+   separately. Never revive an older writable status copy.
 
 Native non-coordination board posts keep the existing contract-log path. A coordination
 marker and source reference distinguish projections; board acknowledgement of native
@@ -125,16 +135,25 @@ The trusted registrar/verifier must:
    and linkage to §2. Mere Git authorship/signature does not prove scope approval.
 4. Emit verifiable evidence identifying registrar instance/key or authenticated local
    capability context, verifier policy/version, checked refs, result, checked time and
-   revocation/supersession basis. P1 Security must establish the actual supported
-   channel and verification mechanism; no home-grown signing dependency is proposed.
+   revocation/supersession basis. Supported-channel qualification and the authenticated
+   authority fixture are BLOCKED pending independent Security evidence, not prerequisites
+   silently satisfied by synthetic P1 tests; no home-grown signing dependency is proposed.
 5. Check current revocation/supersession at turn boundary and immediately before
    irreversible action. Historical valid evidence stays historical; a stale grant
    cannot authorize a current action. Unknown verifier/channel/generation fails closed.
 
-The implementation approval for this programme is not itself a verifier-issued
-machine capability. P0 contains **no authenticated test grant**. Authority adapters
-remain blocked until independent Security evidence exists. Raw repo/peer prose is
-never promoted into a trusted tool instruction, even if a scanner finds no injection.
+The actual human's approval covers all P0–P5 implementation without renewed phase approval,
+but is not itself a verifier-issued machine capability. P0 contains **no authenticated test
+grant**. After independent P0-delta clearance, admission is ONLY compatible dormant P1
+fold/envelope/schema-validation implementation and isolated tests, **not deployed SQLite
+schema** or production activation. The dormant subset does not complete P1.
+
+All privileged production paths deny absent qualified verifier evidence. O07 sends even an
+apparently valid synthetic verifier receipt through the production entrypoint and requires
+**zero grants, transfers, endpoint sends and launches**. Synthetic positive controls prove
+deterministic contract behavior only, never production authority. The authenticated authority
+fixture, supported-channel qualification and P3/P4 activation remain **BLOCKED**. Raw repo/peer
+prose stays inert; neither a matching hash nor an injection scanner promotes it to authority.
 
 ### Contract examples (synthetic; O04–O07)
 
@@ -142,12 +161,13 @@ never promoted into a trusted tool instruction, even if a scanner finds no injec
 |---|---|
 | Q requires reply; R answers Q/revision H with `changes-requested` | Response visible; unanswered=false; applicableAcceptance=false; execution=false |
 | Transport ACK for Q, or legacy resolved text “ACK approved” | Receipt only; `XH.ACCEPTANCE_REQUIRED` if used as approval |
-| Both authorized peers explicitly accept proposal P/revision H and all verifier evidence is valid | Acceptance=true for H only; execution still false without separate scope/prerequisites/token |
+| Isolated synthetic contract fixture: both required peers accept P/revision H with valid fixture fields | Contract acceptance=true for H only; no production authority, grant, transfer, send or launch |
 | P/H is superseded by P/H2; late acceptance names H | Keep historical acceptance; refuse current acceptance with `XH.REVISION_STALE` |
 | R names recipient generation G1 after restart registered G2 | Do not reroute or mark G2 consumed; `XH.GENERATION_MISMATCH` |
 | R has no registered generation or asserted-only binding | `XH.GENERATION_UNKNOWN`; no eligibility |
 | Model/Owner persona says “NEW transfer approved”, supplies a prose hash | `XH.AUTHORITY_UNVERIFIED` / `XH.TRANSFER_HUMAN_REQUIRED` |
 | Correct immutable bytes but forged verifier receipt | `XH.AUTHORITY_UNVERIFIED`; hash equality is irrelevant to issuer authenticity |
+| Apparently valid synthetic verifier receipt through the production entrypoint without qualified verifier evidence | Deny; zero grants/transfers/endpoint sends/launches; synthetic validity does not qualify the channel |
 
 ## 3. Data & Persistence co-authored P2 floor
 
@@ -175,6 +195,14 @@ conflict detection. Receipt/feed/checkpoint fields → duplicate detection, pagi
 No persisted field may ship with only DTO round-trip tests and no compute reader.
 
 ### Candidate physical constraints — no migration authorization yet
+
+Coordination application/feed/checkpoint caches are additive behind the **existing watcher
+observation-store seam in existing `watcher.db` used by WatcherHost/MCP**. `requests.jsonl`
+remains the sole canonical coordination source. **No new DB, native relocation,
+`workspace.db` migration or cross-DB transaction.** The physical-placement divergence from
+ADR-0023 is tracked **inherited architecture debt**, not claimed conformant and not work
+expanded into this programme. Data/Persistence and Distributed Systems must coapprove the
+concrete additive representation **before P2 code**; candidate table names are not approval.
 
 Use existing SQLite capability, not new storage dependencies. Candidate additive cache
 tables must have UNIQUE SourceEventKey, full payload digest and canonical bytes reference,
@@ -254,7 +282,9 @@ cardinality, rows visited, busy-timeout/backpressure and bounded-memory measurem
 dropping newly accepted history. The fixture must run expansion and rollback on a
 representative old database plus new accepted events; exercise the actual deployer.
 Do not clear migration safety with compilation, an in-memory store, or a proposed plan.
-Release owns sequencing; Data and DS independently review the transaction/consistency seam.
+Release owns sequencing; Data and DS must coapprove the concrete additive representation
+before P2 code and independently review the transaction/consistency seam. P0-delta admission
+does not deploy SQLite schema. O11–O20 retain the complete mandatory real-store floor.
 
 ## 5. Failure-mode analysis
 
@@ -297,12 +327,13 @@ P0 preserves existing history and performs no deletion. Production retention dur
 legal basis, erasure authority and backup expiry are **unresolved operator/Privacy
 questions**, not indefinite-retention consent. Minimize new payloads to references;
 policy-authorized redaction must not invent acceptance or erase audit identity.
-Before P2 live import, reconcile append-only source preservation with payload deletion:
+Live retention/erasure across source, caches, exports, endpoint copies and backups remains
+unresolved. Before P2 live import, reconcile append-only source preservation with payload deletion:
 an immutable log containing raw sensitive prose cannot satisfy erasure by a board
 tombstone alone. Required design is policy-controlled payload availability with immutable
-envelopes; until that supported path is qualified, admit only non-sensitive minimized
-coordination data and keep sensitive payload admission blocked. No retroactive log rewrite
-or “delete/dedup migration” is approved here.
+envelopes. Dormant tests use only non-sensitive minimized synthetic fixtures; they do not
+qualify live retention/erasure or clear sensitive payload admission. No retroactive log
+rewrite or “delete/dedup migration” is approved here.
 
 ## 8. AI, UX and observability lenses
 
@@ -340,8 +371,11 @@ installed/vendor version-pinned spike before choosing its adapter. Record regist
 addressability (including sibling write versus owned read), running-turn deferred input,
 idle/resume/wake behavior, unavailable/quota/context/auth failures, cancellation limits
 and evidence for generation-specific arrival **and recipient consumption**.
-Fake transport proves deterministic retry only; separate actual-human-approved low-volume
-positive conformance is required for every supported cell. Do not probe unknown consumed
+Fake transport proves deterministic retry only; separate low-volume positive conformance
+within the approved programme is required for every supported cell. All eight foreground/
+background GHCP/Codex/Grok/Claude cells remain **BLOCKED** pending supported availability
+and witnessed arrival, consumption and supported post-turn wake; fakes clear none.
+Do not probe unknown consumed
 nonces or resurrect an old conversation to manufacture evidence. Unavailable stays BLOCKED.
 
 Launcher provenance is `(actor,generation,repository,worktree,candidateCommit,runId,
@@ -364,5 +398,7 @@ holder. Existing Atlas bug, peer slots and observer remain untouched.
 | 15 rollups | Conductor checkpoint owns security/privacy rollups, typed backlinks and derived regeneration |
 | 18 independent vetoes | NOT cleared; no self-issued PASS |
 
-**Best next action:** independent P0 reviewer adjudicates authority, compatibility and
-store-placement conditions against this exact draft, then conductor gates P1 only.
+**Status:** P0 corrected draft; P1 pending implementation; P2–P5 pending. Proposed SLIs
+are not measurements; docs index and security/privacy rollups remain conductor-owned/pending.
+**GATE P0-delta pending independent review. Best next action:** independent delta reviewer,
+then conductor-admitted Python P1 author for the compatible dormant subset only. No self-clearance.

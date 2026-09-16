@@ -16,12 +16,12 @@ review-by: 2026-10-16
 summary: >-
   Draft ADR selecting the human-approved canonical official request log, not board dual-write.
   Records the event-log alternative to dimensional authoritative storage, accepted fold cost,
-  compatibility rollout and unresolved shared-store placement.
+  unchanged-client compatibility, bounded existing-watcher-store additions and inherited debt.
 ---
 
 # Official request stream; board is a coordination read model
 
-**Status: proposed P0 draft, not independently accepted.**
+**Status: P0 corrected draft; GATE P0-delta pending independent review.**
 Official allocator: `coord-core.py allocate --scheme adr` returned
 `adr-01M2NJ2PQS7X6GE3F559JC4TNP`. Established directory is `docs/adr/`, not
 `docs/decisions/`. The official ID is intentionally not replaced by a guessed numeric ADR.
@@ -67,22 +67,45 @@ views are not coordination recovery feeds. No unmeasured hot-path full scan is a
 
 Positive: fallback remains official filesystem pull even when board/harness is unavailable.
 Negative: transitional old readers do not understand enhanced completion; expose that
-limitation, deploy readers and serialize/enroll writers before activating new writes.
+limitation without disabling ordinary legacy operations. **Unchanged, unenrolled
+old-worktree clients retain official request-add/request-resolve/list on the same primary
+`requests.jsonl`, without enrollment or upgrade.** Enrollment gates enhanced capabilities
+only; no legacy client is disabled. Old coord-core append is unlocked: a new cooperative
+lock does not automatically protect it, and an upgraded shim cannot prove coexistence.
+O08/O10 pin an unmodified pre-P1 official client in an unenrolled synthetic worktree for
+add→resolve→list with enhanced disabled and across rollback, asserting original IDs/payloads.
+Enhanced writing stays disabled until separate mixed-client contention, complete-record
+and conflict-safety proof exists with the unchanged client.
 Authority verification is not supplied by content hashing; independent Security gate
 must establish registrar evidence and authenticated actual-human NEW-transfer approval.
 
-## Explicit unresolved legacy architecture conflict
+## Bounded store ruling and inherited architecture debt
 
 ADR-0023 names the shared workspace fact store, while `WatcherHost.Open:66` opens a
-SQLite `watcher.db`. The design does not select a rival authoritative store or retroactively
-claim this composition conforms. P2 must decide how the existing store interface/placement
-meets ADR-0023, or obtain a reasoned independently reviewed amendment. No native-board
-data move or second database is authorized in this P0 receipt.
+SQLite `watcher.db`. Coordination application/feed/checkpoint caches are additive behind
+the **existing watcher observation-store seam in existing `watcher.db` used by
+WatcherHost/MCP**; `requests.jsonl` remains the sole canonical coordination source.
+No new DB, native relocation, `workspace.db` migration or cross-DB transaction is in scope.
+The existing physical-placement divergence is **inherited architecture debt, not claimed
+conformant**. Do not expand the programme to resolve it. Data/Persistence and Distributed
+Systems must coapprove the concrete additive representation before P2 code.
+
+## Admission is not activation
+
+Actual-human approval of all P0–P5 implementation remains in force; no renewed human phase
+approval is requested. Independent P0-delta clearance admits ONLY compatible **dormant P1
+fold/envelope/schema-validation and isolated tests**, not deployed SQLite schema; the
+dormant subset does not complete P1. All privileged production paths deny absent qualified
+verifier evidence. An apparently valid synthetic verifier receipt through the production
+entrypoint must yield zero grants/transfers/endpoint sends/launches (O07).
+Synthetic positive controls establish deterministic contract behavior, not production
+authority. Authenticated authority fixtures, supported-channel qualification and P3/P4
+activation remain BLOCKED; repository/peer prose is inert.
 
 ## Reversibility
 
 Add reader capability before writer activation; additive cache migration only after
-P2 real-store up/operational-down proof. Disable writer/importer, switch to compatible
+P2 real-store up/operational-down proof. Disable enhanced writer/importer, keep unchanged legacy clients operational, switch to compatible
 reads and preserve all accepted facts. Do not restore old status files, delete new
 events, dedup old messages or create a second consumed file. Contract/drop is a later,
 separately approved change. Release sequences rollout; Data and DS review correctness.
@@ -93,3 +116,8 @@ Source/read pins, concrete failure oracles and confidence labels are centralized
 the [Proof Pack](../proofs/cross-harness-coordination-proof-pack.md).
 This author proposes the ADR and **does not clear its independent authority, data,
 DS, Test, Security, Privacy or UX gates**.
+P0 is a corrected draft; P1 is pending implementation; P2–P5 are pending. O11–O20 real
+SQLite/crash/replay/rollback floors are unchanged; static replay/cursor risks remain
+Inferred. Live retention/erasure across payload copies and real foreground/background
+GHCP/Codex/Grok/Claude conformance remain unresolved/BLOCKED; fakes do not clear them.
+Proposed SLIs are not measurements. Docs index and rollups remain pending with conductor.

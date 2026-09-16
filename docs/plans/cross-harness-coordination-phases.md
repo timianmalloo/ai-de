@@ -21,35 +21,61 @@ summary: >-
 # Durable phase graph
 
 **Actual-human implementation approval exists; runtime and independent review gates
-remain. This work unit stops at P0 draft.** Maximum global concurrency is three including
+remain. This work unit stops at P0 corrected draft.** Maximum global concurrency is three including
 conductor; this author launches no agents. Later phase admission is conductor-owned,
 not an automatic permission inferred from this graph.
 
 ```mermaid
 flowchart LR
-  H[Actual human scope approval] --> P0[P0 draft contract]
-  P0 --> G0[Independent P0 gate]
-  G0 --> P1[P1 canonical fold and compatibility]
+  H[Actual human P0-P5 scope approval] --> P0[P0 corrected draft]
+  P0 --> G0[P0-delta independent review pending]
+  G0 --> D1[Compatible dormant P1 subset only]
+  D1 --> Q1[Remaining P1 qualification gates]
+  Q1 --> P1[P1 canonical fold and compatibility complete]
   P1 --> P2[P2 atomic projection and complete cursor]
   P2 --> P3[P3 endpoint adapters and real conformance]
-  G0 --> P4[P4 launcher provenance and single-use admission]
+  G0 --> D4[P4 design only]
+  D4 --> Q4[Authority and launcher qualification BLOCKED]
+  Q4 --> P4[P4 launcher provenance and single-use admission]
   P1 --> P4
   P3 --> P5[P5 same-corpus conformance and pilot SLIs]
   P4 --> P5
 ```
 
-P4's design can proceed independently after G0; live use still requires P1 authority/
-generation contracts and its own human scope/slot approval. Every phase adds code **and
-failing-first tests** in its own future admitted work unit. No automatic execution here.
+P4's design can proceed independently after G0; activation remains BLOCKED pending
+qualified authority/generation/launcher evidence. The actual human approved all six
+phases; do not request renewed human phase approval. Protocol NEW transfers still require
+actual-human authority, not programme prose. Implementation phases add code **and failing-
+first tests** in future admitted work units; this receipt makes no source/test changes.
+
+**P0 admission ONLY:** compatible dormant P1 fold/envelope/schema-validation implementation
+and isolated tests after independent P0-delta clearance; **not deployed SQLite schema**.
+The dormant subset does not complete P1. All privileged production paths deny absent
+qualified verifier evidence. Synthetic positives prove deterministic contract behavior
+only; an apparently valid synthetic verifier receipt through production must produce
+zero grants/transfers/endpoint sends/launches (O07). Authenticated authority fixtures,
+supported-channel qualification and P3/P4 activation remain BLOCKED. Repo/peer prose is inert.
 
 | Phase | Mandatory floor (never trimmed) | Gate and finite stop | Rollback |
 |---|---|---|---|
-| P0 | FRAME; immutable authority refs; typed obligation/disposition and revision/hash; generation/reply semantics; reject ACK-as-approval, old hash, unknown generation, NEW transfer; five linked drafts | This receipt only. Independent reviewer follows; no runtime implementation | Revert draft docs by new commit if rejected; preserve append-only audit |
-| P1 | Official correlated immutable responses/actionable thread and all-status by-ID read; legacy compatibility; duplicate/reordered non-reopening; conflict refusal; source/hash authority checks; readers/writers rollout before live new writer | O01–O10 real official-code red→green; compatibility inventory; independent Security/Test/DS review | Disable enhanced writer/read; retain events and original IDs/payloads; official legacy fallback |
-| P2 | Data co-author BEFORE schema choice; source key+canonical payload refusal; DB effect+receipt/checkpoint atomic; two service instances with reader between commits; restart/end generations, pending parents, tombstones, version errors; >200 pagination; queue/pending/retry limit+1, permanent missing parent and outage recovery | O11–O20 real SQLite/crash/query-plan/100× fixtures; additive deploy migration and real rollback; store-placement ruling; independent Data/DS/Release gates | Disable importer/new read; expanded cache inert; replay from source; no deletion/dedup/second consumed file |
+| P0 | FRAME; immutable authority refs; typed obligation/disposition and revision/hash; generation/reply semantics; reject ACK-as-approval, old hash, unknown generation, NEW transfer; five linked corrected drafts recording F1–F6 | GATE P0-delta pending independent review. No runtime implementation or self-clearance | Revert draft docs by new commit if rejected; preserve append-only audit |
+| P1 | Official correlated immutable responses/actionable thread and all-status by-ID read; unchanged unenrolled old-worktree request-add/request-resolve/list compatibility; duplicate/reordered non-reopening; conflict refusal; source/hash authority checks | O01–O10 real official-code red→green; unmodified pre-P1 compatibility/rollback proof; separate mixed-client contention/complete-record/conflict-safety before enhanced activation; independent Security/Test/DS review. Dormant subset is not P1 completion | Disable enhanced writer/read; keep unchanged legacy clients operational without enrollment/upgrade; retain events and original IDs/payloads |
+| P2 | Data/DS coapprove concrete additive application/feed/checkpoint representation behind existing watcher observation-store seam in existing watcher.db BEFORE P2 code; source key+canonical payload refusal; DB effect+receipt/checkpoint atomic; two service instances with reader between commits; restart/end generations, pending parents, tombstones, version errors; >200 pagination; queue/pending/retry limit+1, permanent missing parent and outage recovery | O11–O20 real SQLite/crash/query-plan/100× fixtures; forbidden mutations and rebuild equality; additive deploy migration and actual rollback; independent Data/DS/Release gates. No new DB/native relocation/workspace.db migration/cross-DB transaction; ADR-0023 divergence is inherited debt, not conformance | Disable importer/new read; expanded cache inert; replay from sole canonical requests.jsonl; no deletion/dedup/second consumed file |
 | P3 | Version-pinned installed/vendor spikes for foreground/background GHCP, Codex, Grok, Claude; stable generation; negative availability; running-turn defer, sibling capability asymmetry; bounded wake/poll; at-most-once semantic action; in-flight limit+1/outage | O21–O22 deterministic fakes PLUS separate approved positive real conformance per supported endpoint: actual arrival, consumption, post-turn wake. Unavailable endpoint is BLOCKED, never fake-completed | Disable adapter; manual canonical pull with visible unavailable state; no unknown nonce probe |
 | P4 | Launcher binds actor/generation/worktree/candidate/run, PID+creation+parent evidence; checked one-use token; expiry not process death; outcome separate from release; same helper under two callers | O23–O25 real bounded launcher fixture and independent scope/security/release review; do not touch Atlas/observer/peer slots | Disable new notice adapter; preserve old attribution as historical, no rewrite or rerun |
 | P5 | Same scrubbed corpus queue→board→MCP→UI; honest availability/paused/wall-clock/lag/gaps; no timeout approval; low-volume SLIs, proposed pilot targets only | O26–O28, endpoint results and UI/AI/Test/SRE/Privacy reviews; publish measured data or Not Measured | Reporting/read-only presentation rollback, never authority change |
+
+| Phase | Current state |
+|---|---|
+| P0 | Corrected draft; GATE P0-delta pending independent review |
+| P1 | Pending implementation; only dormant subset can be admitted by P0-delta |
+| P2 | Pending; Data/DS concrete additive representation coapproval before code |
+| P3 | Pending; activation and every real foreground/background endpoint positive cell BLOCKED |
+| P4 | Pending; authority/launcher activation BLOCKED |
+| P5 | Pending; SLIs proposed, not measured |
+
+Live retention/erasure across every payload copy remains unresolved. Fakes do not clear
+real GHCP/Codex/Grok/Claude arrival/consumption/supported-wake conformance or privacy gates.
 
 ## Source/test/change-surface matrix (E7)
 
@@ -106,8 +132,16 @@ Independent reviewer must see this exact commit, reject or disposition unresolve
 findings, and record the actual gate. A committed draft is not acceptance.
 
 P1 receives: these five artifacts, sole §2 authority pin, source/test matrix, O01–O10,
-legacy rollout requirement and unresolved verifier-channel choice. First action is
-failing-first official-fold/authority compatibility tests in an admitted worktree.
-Before live new writer: establish canonical encoding, serialized old-command writers,
-capability enrollment, and independent Security verification. Stop P1 at its own proof
-receipt; P2 schema and all endpoint/run work remain separate.
+unchanged-client compatibility requirement and unresolved verifier-channel qualification.
+**Next: independent delta reviewer, then Python P1 author** in a conductor-admitted
+worktree. First implementation action is failing-first official fold/envelope/schema-
+validation and isolated compatibility tests; no authority activation or SQLite deployment.
+
+O08/O10 use a pinned **unmodified pre-P1 official client from an unenrolled synthetic
+worktree**, add→resolve→list on the same primary requests.jsonl with enhanced disabled
+and across rollback; assert original IDs/payloads. Enrollment gates enhanced capabilities
+only, not legacy clients. The old primary append is unlocked; new cooperative locking does
+not automatically protect it. An upgraded shim is not compatibility evidence. Enhanced
+writing remains disabled until separate mixed-client contention/complete-record/conflict-
+safety proof and independent qualification exist. Stop at the dormant-subset proof receipt
+without claiming P1 complete; remaining P1, P2 schema and endpoint/run gates remain separate.
