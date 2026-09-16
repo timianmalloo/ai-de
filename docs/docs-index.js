@@ -5650,6 +5650,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "0a13d513ce222e1f4e323e155969cc9eb348d9fe88dd6e1dc703774566aa494d"
     },
     {
+      "id": "note-d1-r3-producer-ack",
+      "path": "docs/notes/d1-r3-producer-ack.md",
+      "title": "D-1 handshake r3 PRODUCER ACK — contract frozen at blob e448383a",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Producer ACK of the immutable r3 snapshot. Does not rewrite that blob. CONTRACT FROZEN. Implemented remains separate.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "freeze"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake-r3",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-admission",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d3a012d57cafc9f45733ac2e093a0b281760112c8a0ac92febc40e318b559f97"
+    },
+    {
       "id": "note-dc-115-evidence-in-a-lanes-own-checkout",
       "path": "docs/notes/dc-115-evidence-in-a-lanes-own-checkout.md",
       "title": "DC-115 — verifying a lane's evidence in the checkout it committed it in",
@@ -20705,5 +20735,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "76e5b473d26ad4527bb16f13060cbe8f8a3a86128fff168ae5681791510de45b"
+  "graphSha256": "3a175ba510d05d850016858a529686294bddeca1fc5d4d762bd19cc9cdd15ced"
 };
