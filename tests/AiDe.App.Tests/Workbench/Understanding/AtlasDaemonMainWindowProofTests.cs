@@ -27,6 +27,717 @@ public sealed class AtlasDaemonMainWindowProofTests
     private const string Git = @"C:\Program Files\Git\cmd\git.exe";
     private const string Source = "namespace ProofOwned;\npublic sealed class Widget\n{\n    public int Answer() => 42;\n}\n";
 
+    [Fact]
+    public async Task TransitionControl_Publication_NotificationDoesNotCompleteBeforeTail()
+    {
+        var receipt = ObserverReceipt();
+        await RunDispatcherAsync(async () =>
+        {
+            await using var owner = new AtlasWorkspaceOwner();
+            var port = new ObserverPort();
+            await owner.AttachAsync(() => port);
+            var host = new AtlasLoadingHost(owner);
+            AtlasInventoryPageDto? page = await port.InventoryAsync(new(1,"control",7,"control",0,64),default);
+            using var publication = new TransitionPublication(host, () => page, () => true);
+            bool? completeInsideNotification = null;
+            publication.FinalNotificationForControl = () => completeInsideNotification = publication.Ready.IsCompleted;
+            await host.ActivateAsync();
+            await publication.Ready;
+            Assert.False(completeInsideNotification);
+            Assert.Equal(1, publication.TailCount);
+            host.Deactivate();
+        }, receipt);
+    }
+
+    [Fact]
+    public async Task TransitionControl_Escrow_FailedPrehandoffDisposalRetainsCandidate()
+    {
+        var lease = new TransitionControlLease { FailDisposal = true };
+        var reader = new TransitionControlReader(lease);
+        var escrow = new TransitionEscrow(reader);
+        using var cancel = new CancellationTokenSource();
+        var admission = escrow.AdmitAsync(cancel.Token).AsTask();
+        await escrow.Held;
+        cancel.Cancel();
+        await Assert.ThrowsAsync<InvalidOperationException>(() => admission);
+        Assert.Same(lease, escrow.OwnedCandidate);
+        Assert.Equal(0, escrow.Handoffs);
+        lease.FailDisposal = false;
+        await escrow.DisposeAsync();
+        Assert.Null(escrow.OwnedCandidate);
+        Assert.Equal(2, lease.Disposals);
+        Assert.Equal(1, reader.Disposals);
+    }
+
+    private sealed class TransitionPublication : IDisposable
+    {
+        private readonly AtlasLoadingHost _host;
+        private readonly Func<AtlasInventoryPageDto?> _page;
+        private readonly Func<bool> _surface;
+        private readonly System.ComponentModel.DependencyPropertyDescriptor _content;
+        private System.ComponentModel.DependencyPropertyDescriptor? _text;
+        private AtlasReaderView? _view;
+        private readonly TaskCompletionSource _ready = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private bool _closed;
+        private bool _scheduled;
+        private Exception? _failure;
+        private readonly Receipt? _receipt;
+        private DispatcherOperation? _operation;
+        internal int Replacements { get; private set; }
+        internal int FinalNotifications { get; private set; }
+        internal int LoadedEvents { get; private set; }
+        internal int UnloadedEvents { get; private set; }
+        internal AtlasReaderView? View => _view;
+        internal Task Ready => _ready.Task;
+        internal int TailCount { get; private set; }
+        internal Action? FinalNotificationForControl { get; set; }
+        internal TransitionPublication(AtlasLoadingHost host, Func<AtlasInventoryPageDto?> page, Func<bool> surface, Receipt? receipt=null)
+        {
+            _host=host;_page=page;_surface=surface;_receipt=receipt;
+            if(host.ReaderView is not null)throw new InvalidOperationException("TRANSITION-LATE-SUBSCRIPTION");
+            _content=System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ContentControl.ContentProperty,host.GetType())!;
+            _content.AddValueChanged(host,ContentChanged);
+        }
+        private void ContentChanged(object? sender,EventArgs args)
+        {
+            if(_closed)return;
+            if(_view is not null){Fail("TRANSITION-CONTENT-CHANGED");return;}
+            if(_host.Content is not AtlasReaderView view)return;
+            Replacements++;
+            _view=view;
+            _text=System.ComponentModel.DependencyPropertyDescriptor.FromProperty(TextBlock.TextProperty,typeof(TextBlock))!;
+            _text.AddValueChanged(view.StatusControl,StatusChanged);
+            view.Loaded+=Loaded;view.Unloaded+=Unloaded;
+            Mark("content-reader");
+        }
+        private void StatusChanged(object? sender,EventArgs args)
+        {
+            if(_closed)return;
+            Mark("status-notification");
+            if(_view?.StatusText.StartsWith("ATLAS-READER-",StringComparison.Ordinal)==true)
+            {Fail("TRANSITION-INVENTORY-FAILED");return;}
+            if(_page() is not { } page || _view?.StatusText!=TransitionStatus(page))return;
+            FinalNotifications++;
+            if(_scheduled){Fail("TRANSITION-DUPLICATE-PUBLICATION");return;}
+            _scheduled=true;
+            _operation=_host.Dispatcher.BeginInvoke(DispatcherPriority.Background,new Action(Tail));
+            _operation.Aborted+=Aborted;
+            Mark("tail-scheduled");
+            FinalNotificationForControl?.Invoke();
+        }
+        private void Loaded(object sender,RoutedEventArgs args){if(_closed)return;LoadedEvents++;if(LoadedEvents>1)Fail("TRANSITION-EXTRA-LOADED");}
+        private void Unloaded(object sender,RoutedEventArgs args){if(_closed)return;UnloadedEvents++;Fail("TRANSITION-UNLOADED");}
+        private void Aborted(object? sender,EventArgs args){if(!_closed)Fail("TRANSITION-DISPATCH-ABORTED");}
+        private void Tail()
+        {
+            if(_closed)return;
+            TailCount++;Mark("tail-enter");
+            try{AssertReady();_ready.TrySetResult();Mark("publication-ready");}
+            catch(Exception error){_failure=error;_ready.TrySetException(error);Mark("publication-rejected");}
+        }
+        internal void AssertReady()
+        {
+            if(_closed)throw new InvalidOperationException("TRANSITION-CLOSED");
+            if(_failure is not null)throw _failure;
+            var page=_page()??throw new InvalidOperationException("TRANSITION-NO-PAGE");
+            var view=_view??throw new InvalidOperationException("TRANSITION-NO-VIEW");
+            var actual=Flatten(view.FileRoots).Select(n=>(n.EntryToken,n.ParentToken,n.RelativePath)).OrderBy(n=>n.EntryToken).ToArray();
+            var expected=page.Files.Select(n=>(EntryToken:(string?)n.FileToken,n.ParentToken,n.RelativePath)).OrderBy(n=>n.EntryToken).ToArray();
+            if(Replacements!=1 || FinalNotifications!=1 || TailCount!=1 || UnloadedEvents!=0
+                || !ReferenceEquals(_host.Content,view) || !ReferenceEquals(_host.ReaderView,view)
+                || !_surface() || !actual.SequenceEqual(expected) || view.StatusText!=TransitionStatus(page)
+                || view.BoundsText!=TransitionBounds(page.Bounds)
+                || view.LoadMoreButton.Visibility!=(page.NextOffset.HasValue?Visibility.Visible:Visibility.Collapsed)
+                || view.LoadMoreButton.IsEnabled!=page.NextOffset.HasValue)
+                throw new InvalidOperationException("TRANSITION-PUBLICATION-PREDICATE");
+        }
+        internal void Cancel(){if(_closed)return;Fail("TRANSITION-CANCELED");Dispose();}
+        private void Fail(string code){_failure??=new InvalidOperationException(code);_ready.TrySetException(_failure);Mark(code);}
+        private void Mark(string phase)=>_receipt?.Mark("transition.publication",new
+        {Phase=phase,Tick=Stopwatch.GetTimestamp(),Utc=DateTimeOffset.UtcNow,ThreadId=Environment.CurrentManagedThreadId,
+            Apartment=Thread.CurrentThread.GetApartmentState().ToString(),Replacements,FinalNotifications,TailCount,LoadedEvents,UnloadedEvents,
+            ContentIsReader=ReferenceEquals(_host.Content,_view),Owner="not-recorded"});
+        public void Dispose()
+        {
+            if(_closed)return;
+            _closed=true;
+            _content.RemoveValueChanged(_host,ContentChanged);
+            if(_view is not null){_text?.RemoveValueChanged(_view.StatusControl,StatusChanged);_view.Loaded-=Loaded;_view.Unloaded-=Unloaded;}
+            if(_operation is not null)_operation.Aborted-=Aborted;
+            _ready.TrySetCanceled();_view=null;_text=null;_operation=null;FinalNotificationForControl=null;
+        }
+    }
+    private static string TransitionStatus(AtlasInventoryPageDto page)=>
+        $"{page.Completion}; showing {page.Files.Length} metadata rows. {string.Join(" ",page.Disclosures)}";
+    private static string TransitionBounds(AtlasBoundsDto bounds)=>
+        $"{bounds.Dimension}; request {bounds.RequestedLimit}; effective {bounds.EffectiveLimit}; rows {bounds.ReturnedRows}; "
+        +$"content bytes {bounds.ReturnedContentBytes}; total {bounds.DenominatorState} {bounds.DenominatorValue} "
+        +$"({bounds.DenominatorReason}); omission {bounds.OmissionDimension} {bounds.OmissionReason}.";
+
+    [Theory]
+    [InlineData("cancel")] [InlineData("dispose")] [InlineData("replace")] [InlineData("duplicate")]
+    [InlineData("incomplete")] [InlineData("unload")] [InlineData("missing")] [InlineData("extra-loaded")]
+    public async Task TransitionControl_Publication_InvalidOrLateSignalsNeverProduceReadiness(string phase)
+    {
+        await RunDispatcherAsync(async () =>
+        {
+            await using var owner=new AtlasWorkspaceOwner();var port=new ObserverPort();
+            await owner.AttachAsync(()=>port);var host=new AtlasLoadingHost(owner);
+            var page=await port.InventoryAsync(new(1,"control",7,"control",0,64),default);
+            using var publication=new TransitionPublication(host,()=>phase=="missing"?null:page,()=>true);
+            publication.FinalNotificationForControl=()=>
+            {
+                publication.FinalNotificationForControl=null;
+                var view=publication.View!;
+                switch(phase)
+                {
+                    case "cancel":publication.Cancel();break;
+                    case "dispose":publication.Dispose();break;
+                    case "replace":host.Content=new Border();break;
+                    case "duplicate":view.StatusControl.Text="early";view.StatusControl.Text=TransitionStatus(page);break;
+                    case "incomplete":host.Dispatcher.BeginInvoke(DispatcherPriority.Send,new Action(()=>view.LoadMoreButton.IsEnabled=true));break;
+                    case "unload":view.RaiseEvent(new RoutedEventArgs(FrameworkElement.UnloadedEvent));break;
+                    case "extra-loaded":view.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));view.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));break;
+                }
+            };
+            await host.ActivateAsync();
+            await IdleAsync();
+            if(phase=="missing"){Assert.False(publication.Ready.IsCompleted);Assert.Equal(0,publication.TailCount);publication.Dispose();}
+            Assert.NotNull(await Record.ExceptionAsync(()=>publication.Ready));
+            Assert.InRange(publication.TailCount,0,1);
+            var tails=publication.TailCount;
+            publication.Dispose();
+            host.Content=new Border();await IdleAsync();
+            Assert.Equal(tails,publication.TailCount);
+            host.Deactivate();
+        },ObserverReceipt());
+    }
+
+    [Fact]
+    public async Task TransitionControl_Publication_UnshownObjectsCannotEstablishShownPredicate()
+    {
+        await RunDispatcherAsync(async()=>
+        {
+            await using var owner=new AtlasWorkspaceOwner();var port=new ObserverPort();
+            await owner.AttachAsync(()=>port);var host=new AtlasLoadingHost(owner);
+            var page=await port.InventoryAsync(new(1,"control",7,"control",0,64),default);
+            using var publication=new TransitionPublication(host,()=>page,()=>host.IsLoaded&&host.IsVisible);
+            await host.ActivateAsync();
+            await Assert.ThrowsAsync<InvalidOperationException>(()=>publication.Ready);
+            Assert.False(host.IsLoaded);Assert.Equal(1,publication.TailCount);
+            publication.Dispose();host.Deactivate();
+        },ObserverReceipt());
+    }
+
+    [Theory]
+    [InlineData("before-acquire")] [InlineData("held")] [InlineData("after-handoff")]
+    public async Task TransitionControl_Escrow_CancellationHasOneCustodian(string phase)
+    {
+        var lease=new TransitionControlLease();var acquired=new TaskCompletionSource<IAtlasReaderLease>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var reader=new TransitionControlReader(lease){Acquisition=phase=="before-acquire"?acquired.Task:null};
+        var escrow=new TransitionEscrow(reader);using var cancel=new CancellationTokenSource();
+        var admission=escrow.AdmitAsync(cancel.Token).AsTask();
+        if(phase=="before-acquire"){cancel.Cancel();acquired.SetResult(lease);}
+        await escrow.Held;
+        if(phase=="after-handoff")
+        {
+            escrow.Release();Assert.Same(lease,await admission);cancel.Cancel();
+            Assert.Null(escrow.OwnedCandidate);Assert.Equal(0,lease.Disposals);
+            await lease.DisposeAsync();
+        }
+        else {cancel.Cancel();escrow.Release();await Assert.ThrowsAnyAsync<OperationCanceledException>(()=>admission);}
+        await escrow.DisposeAsync();
+        Assert.Equal(1,lease.Disposals);Assert.Equal(1,reader.Disposals);
+        Assert.Equal(phase=="after-handoff"?1:0,escrow.Handoffs);
+    }
+
+    [Fact]
+    public async Task TransitionControl_Escrow_ConcurrentCloseSharesDisposalTask()
+    {
+        var release=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var lease=new TransitionControlLease{DisposalGate=release.Task};var reader=new TransitionControlReader(lease);
+        var escrow=new TransitionEscrow(reader);using var cancel=new CancellationTokenSource();
+        var admission=escrow.AdmitAsync(cancel.Token).AsTask();await escrow.Held;
+        cancel.Cancel();var first=escrow.DisposeAsync().AsTask();var second=escrow.DisposeAsync().AsTask();
+        await lease.DisposalStarted.Task;
+        Assert.Same(first,second);Assert.Equal(1,lease.Disposals);Assert.False(first.IsCompleted);
+        release.SetResult();await first;await second;
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(()=>admission);
+        Assert.Equal(1,lease.Disposals);Assert.Equal(1,reader.Disposals);
+    }
+
+    [Fact]
+    public async Task TransitionControl_Escrow_PostHandoffFailureStaysWithActualOwner()
+    {
+        await RunDispatcherAsync(async()=>
+        {
+            var owner=new AtlasWorkspaceOwner();var lease=new TransitionControlLease{FailDisposal=true};
+            var reader=new TransitionControlReader(lease);var escrow=new TransitionEscrow(reader);
+            await owner.AttachAsync(()=>escrow);
+            var admission=owner.AdmitAsync(default);await escrow.Held;escrow.Release();
+            Assert.Same(lease,await admission);Assert.Null(escrow.OwnedCandidate);
+            await Assert.ThrowsAsync<InvalidOperationException>(()=>owner.DisposeAsync().AsTask());
+            Assert.Equal(1,lease.Disposals);Assert.Equal(0,reader.Disposals);
+            lease.FailDisposal=false;await owner.DisposeAsync();
+            Assert.Equal(2,lease.Disposals);Assert.Equal(1,reader.Disposals);Assert.Equal(1,escrow.Handoffs);
+        },ObserverReceipt());
+    }
+
+    [Fact]
+    public void TransitionControl_Runtime_LoadedAssembliesHaveRecordedIdentity()
+    {
+        var identities=TransitionRuntimeIdentity();
+        Assert.All(identities,item=>Assert.True(File.Exists(item.Path)));
+        var directory=Path.Combine(Tree,"artifacts/atlas-transition-preparation");Directory.CreateDirectory(directory);
+        File.WriteAllText(Path.Combine(directory,"runtime.json"),JsonSerializer.Serialize(new
+        {Runtime=System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,Environment.Version,Assemblies=identities},new JsonSerializerOptions{WriteIndented=true}));
+        Assert.Contains(identities,item=>item.Name=="PresentationFramework");
+        Assert.Contains(identities,item=>item.Name=="WindowsBase");
+    }
+    private sealed record TransitionRuntime(string Name,string? Version,string Path,string Sha256,Guid ModuleId);
+    private static TransitionRuntime[] TransitionRuntimeIdentity()=>new[]
+    {typeof(object).Assembly,typeof(Window).Assembly,typeof(Dispatcher).Assembly,typeof(AtlasDaemonMainWindowProofTests).Assembly,
+        typeof(MainWindowViewModel).Assembly,typeof(IAtlasWorkspaceReader).Assembly}.Distinct().Select(assembly=>new TransitionRuntime(
+            assembly.GetName().Name!,assembly.GetName().Version?.ToString(),assembly.Location,Hash(File.ReadAllBytes(assembly.Location)),assembly.ManifestModule.ModuleVersionId)).ToArray();
+
+    [Fact]
+    public void TransitionControl_LoadedRegistry_IsScopedAndInertAfterDisposal()
+    {
+        Sta.Run(()=>
+        {
+            var host=new AtlasLoadingHost(null);var window=new Window{Content=host};
+            var called=0;var instanceSawClass=false;
+            host.Loaded+=(_,_)=>instanceSawClass=called==1;
+            var scope=new TransitionLoadedScope(window,_=>called++);
+            host.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
+            Assert.Equal(1,called);Assert.True(instanceSawClass);Assert.Equal(1,scope.Count);
+            scope.Dispose();host.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
+            Assert.Equal(1,called);Assert.Equal(0,TransitionLoadedScope.ActiveScopes);
+            window.Close();
+        });
+    }
+
+    private sealed class TransitionLoadedScope : IDisposable
+    {
+        private static readonly object Gate=new();
+        private static readonly Dictionary<Window,TransitionLoadedScope> Scopes=[];
+        private Window? _window;
+        private Action<AtlasLoadingHost>? _observe;
+        internal int Count {get;private set;}
+        internal static int ActiveScopes {get{lock(Gate)return Scopes.Count;}}
+        static TransitionLoadedScope()=>EventManager.RegisterClassHandler(typeof(AtlasLoadingHost),
+            FrameworkElement.LoadedEvent,new RoutedEventHandler(OnLoaded));
+        internal TransitionLoadedScope(Window window,Action<AtlasLoadingHost> observe)
+        {_window=window;_observe=observe;lock(Gate)Scopes.Add(window,this);}
+        private static void OnLoaded(object sender,RoutedEventArgs args)
+        {
+            if(sender is not AtlasLoadingHost host || Window.GetWindow(host) is not { } window)return;
+            TransitionLoadedScope? scope;lock(Gate)Scopes.TryGetValue(window,out scope);
+            if(scope?._observe is not { } observe)return;
+            scope.Count++;observe(host);
+        }
+        public void Dispose()
+        {lock(Gate){if(_window is not null)Scopes.Remove(_window);_window=null;_observe=null;}}
+    }
+
+    [Fact]
+    public async Task TransitionControl_Escrow_CancelAfterHandoffBeforeOwnerContinuationRetainsFailedRelease()
+    {
+        await RunDispatcherAsync(async()=>
+        {
+            var owner=new AtlasWorkspaceOwner();var lease=new TransitionControlLease{FailDisposal=true};
+            var reader=new TransitionControlReader(lease);var escrow=new TransitionEscrow(reader);
+            await owner.AttachAsync(()=>escrow);using var cancel=new CancellationTokenSource();
+            var queued=new TransitionControlContext();var prior=SynchronizationContext.Current;
+            Task<IAtlasReaderLease> admission;
+            try{SynchronizationContext.SetSynchronizationContext(queued);admission=owner.AdmitAsync(cancel.Token);}
+            finally{SynchronizationContext.SetSynchronizationContext(prior);}
+            await escrow.Held;escrow.Release();
+            await queued.RunOneAsync(); // Escrow release continuation; owner continuation remains queued.
+            Assert.Equal(1,escrow.Handoffs);Assert.False(admission.IsCompleted);Assert.Equal(0,lease.Disposals);
+            cancel.Cancel();
+            for(var remaining=8;!admission.IsCompleted;remaining--)
+            {Assert.True(remaining>0,"Unexpected continuation graph.");await queued.RunOneAsync();}
+            await Assert.ThrowsAsync<InvalidOperationException>(()=>admission);
+            Assert.Equal(1,lease.Disposals);Assert.Equal(0,reader.Disposals);Assert.Null(escrow.OwnedCandidate);
+            lease.FailDisposal=false;await owner.DisposeAsync();
+            Assert.Equal(2,lease.Disposals);Assert.Equal(1,reader.Disposals);
+        },ObserverReceipt());
+    }
+    private sealed class TransitionControlContext:SynchronizationContext
+    {
+        private readonly System.Threading.Channels.Channel<(SendOrPostCallback Callback,object? State)> _queue=
+            System.Threading.Channels.Channel.CreateUnbounded<(SendOrPostCallback,object?)>();
+        public override void Post(SendOrPostCallback callback,object? state)=>_queue.Writer.TryWrite((callback,state));
+        internal async Task RunOneAsync(){var item=await _queue.Reader.ReadAsync();item.Callback(item.State);}
+    }
+
+    [Fact]
+    public async Task TransitionControl_Publication_PartialCollectionAndLoadingAreNotReady()
+    {
+        await RunDispatcherAsync(async()=>
+        {
+            var empty=await new ObserverPort().InventoryAsync(new(1,"control",7,"control",0,64),default);
+            var file=new AtlasFileDto("one",AtlasDirectoryEntryKind.File,null,"one.cs",AtlasFileClassification.CSharp,
+                AtlasFileAvailability.Available,new(AtlasDenominatorState.Known,0,null),null);
+            var page=empty with {Files=[file,file with {FileToken="two",RelativePath="two.cs"}]};
+            var lease=new TransitionControlLease{Queries=new TransitionControlQueries(page)};
+            await using var owner=new AtlasWorkspaceOwner();await owner.AttachAsync(()=>new TransitionControlReader(lease));
+            var host=new AtlasLoadingHost(owner);
+            using var publication=new TransitionPublication(host,()=>page,()=>true);
+            var partial=0;var notReady=0;
+            var descriptor=System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ContentControl.ContentProperty,host.GetType())!;
+            System.Collections.Specialized.INotifyCollectionChanged? roots=null;
+            System.Collections.Specialized.NotifyCollectionChangedEventHandler changed=(_,_)=>
+            {partial++;if(!publication.Ready.IsCompleted)notReady++;};
+            EventHandler content=(_,_)=>
+            {
+                if(host.Content is not AtlasReaderView view)return;
+                roots=(System.Collections.Specialized.INotifyCollectionChanged)view.FileRoots;
+                roots.CollectionChanged+=changed;
+                view.StatusControl.Text="Loading control publication.";
+                Assert.False(publication.Ready.IsCompleted);
+            };
+            descriptor.AddValueChanged(host,content);
+            try
+            {
+                await host.ActivateAsync();await publication.Ready;
+                Assert.True(partial>=2);Assert.Equal(partial,notReady);Assert.Equal(1,publication.TailCount);
+            }
+            finally
+            {
+                descriptor.RemoveValueChanged(host,content);
+                if(roots is not null)roots.CollectionChanged-=changed;
+                publication.Dispose();host.Deactivate();
+            }
+        },ObserverReceipt());
+    }
+    private sealed class TransitionControlQueries(AtlasInventoryPageDto page):IAtlasReaderQueries
+    {
+        public ValueTask<AtlasInventoryPageDto> InventoryAsync(AtlasInventoryRequestDto request,CancellationToken token)=>ValueTask.FromResult(page);
+        public ValueTask<AtlasSelectionDto> SelectAsync(AtlasSelectRequestDto request,CancellationToken token)=>throw new NotSupportedException();
+        public ValueTask<AtlasSelectionDto> RestoreAsync(AtlasRestoreRequestDto request,CancellationToken token)=>throw new NotSupportedException();
+    }
+
+    private sealed class TransitionCapturingReader(IAtlasWorkspaceReader inner,Action<AtlasInventoryPageDto> capture):IAtlasWorkspaceReader
+    {
+        public async ValueTask<IAtlasReaderLease> AdmitAsync(CancellationToken token)=>new TransitionCapturingLease(await inner.AdmitAsync(token),capture);
+        public ValueTask DisposeAsync()=>inner.DisposeAsync();
+    }
+    private sealed class TransitionCapturingLease(IAtlasReaderLease inner,Action<AtlasInventoryPageDto> capture):IAtlasReaderLease,IAtlasReaderQueries
+    {
+        public string ScopeToken=>inner.ScopeToken;public string InitialManifestToken=>inner.InitialManifestToken;
+        public long CoreEpoch=>inner.CoreEpoch;public DateTimeOffset ExpiresAt=>inner.ExpiresAt;
+        public CancellationToken Invalidated=>inner.Invalidated;public bool IsTerminal=>inner.IsTerminal;
+        public IAtlasReaderQueries Queries=>this;
+        public async ValueTask<AtlasInventoryPageDto> InventoryAsync(AtlasInventoryRequestDto request,CancellationToken token)
+        {var page=await inner.Queries.InventoryAsync(request,token);capture(page);return page;}
+        public ValueTask<AtlasSelectionDto> SelectAsync(AtlasSelectRequestDto request,CancellationToken token)=>inner.Queries.SelectAsync(request,token);
+        public ValueTask<AtlasSelectionDto> RestoreAsync(AtlasRestoreRequestDto request,CancellationToken token)=>inner.Queries.RestoreAsync(request,token);
+        public ValueTask DisposeAsync()=>inner.DisposeAsync();
+    }
+
+    // Experiment-only: each Fact requires its own fresh process and unique ATLAS_PROOF_RUN.
+    // These Facts are outside the preparation control filter and are not canonical-suite candidates.
+    [Fact]
+    public Task NativeTransition_A_NoLoadingTraversal()=>RunTransitionArmAsync(false);
+    [Fact]
+    public Task NativeTransition_B_LoadingTraversal()=>RunTransitionArmAsync(true);
+
+    private static async Task RunTransitionArmAsync(bool loadingTraversal)
+    {
+        var run=Environment.GetEnvironmentVariable("ATLAS_PROOF_RUN")??throw new InvalidOperationException("ATLAS_PROOF_RUN required.");
+        Assert.NotEmpty(run);Assert.True(run.All(c=>char.IsAsciiLetterOrDigit(c)||c=='-'));
+        var evidence=Path.Combine(Tree,"artifacts","atlas-uia-transition",run);
+        Assert.False(Directory.Exists(evidence));Directory.CreateDirectory(evidence);
+        var receipt=new Receipt(evidence);Daemon? daemon=null;WorkspaceClient? client=null;
+        var owned=Path.Combine(evidence,"owned");var repository=Path.Combine(owned,"repository");
+        try
+        {
+            var configuration=new DirectoryInfo(AppContext.BaseDirectory).Parent!.Name;
+            var binary=Path.Combine(Tree,"src","AiDe.Daemon","bin",configuration,"net10.0-windows","AiDe.Daemon.exe");
+            Assert.True(File.Exists(binary));
+            var gitRoot=Path.GetFullPath((await CommandAsync(Git,Tree,"rev-parse","--show-toplevel")).Trim());
+            Assert.Equal(Tree,gitRoot,ignoreCase:true);
+            receipt.Mark("transition.identity",new {Arm=loadingTraversal?"B":"A",Run=run,ProcessId=Environment.ProcessId,
+                RepositoryRoot=Tree,SourceCommit=(await CommandAsync(Git,Tree,"rev-parse","HEAD")).Trim(),
+                Runtime=System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,Assemblies=TransitionRuntimeIdentity(),
+                Binary=binary,BinarySha256=Hash(File.ReadAllBytes(binary)),UiaWpfOwner="not-recorded",
+                Claim="treatment association only",Activation="natural Loaded; no explicit ActivateAsync"});
+            Directory.CreateDirectory(Path.Combine(repository,"src"));
+            File.WriteAllText(Path.Combine(repository,"src","Widget.cs"),Source,new UTF8Encoding(false));
+            await GitAsync(repository,"init","--quiet");await GitAsync(repository,"add","--","src/Widget.cs");
+            await GitAsync(repository,"commit","--quiet","-m","owned synthetic source");
+            receipt.Mark("transition.input",new {Sha256=Hash(File.ReadAllBytes(Path.Combine(repository,"src","Widget.cs"))),RelativePath="src/Widget.cs"});
+            daemon=Daemon.Start(binary,repository,receipt,"transition");
+            client=await WorkspaceClient.ConnectAsync(IpcPipeName.ForWorkspace(repository),TimeSpan.FromSeconds(10),CancellationToken.None);
+            var connected=client;
+            await RunDispatcherAsync(async()=>
+            {
+                TransitionEscrow? escrow=null;AtlasInventoryPageDto? page=null;var replies=0;
+                TransitionPublication? publication=null;AtlasLoadingHost? host=null;
+                var observed=new TaskCompletionSource<AtlasLoadingHost>(TaskCreationOptions.RunContinuationsAsynchronously);
+                using var observer=new InstanceObserver(receipt);
+                var vm=new MainWindowViewModel(connected,"transition-owned",null,commands:connected,atlasReaderFactory:()=>
+                    escrow=new TransitionEscrow(new ObservedReader(new TransitionCapturingReader(connected.CreateAtlasReader(),reply=>
+                    {if(++replies!=1)throw new InvalidOperationException("TRANSITION-EXTRA-INVENTORY");page=reply;}),receipt,"transition")));
+                await vm.RefreshAsync(CancellationToken.None);
+                var window=new AiDe.App.MainWindow(()=>Task.FromResult(vm),Path.Combine(owned,"shell-state"),Resources())
+                {Width=1280,Height=900,Left=40,Top=40,WindowStartupLocation=WindowStartupLocation.Manual,ShowInTaskbar=false};
+                TransitionLoadedScope? scope=null;
+                scope=new TransitionLoadedScope(window,loaded=>
+                {
+                    receipt.Mark("transition.host-loaded",new {Count=scope!.Count,Tick=Stopwatch.GetTimestamp(),ThreadId=Environment.CurrentManagedThreadId});
+                    if(host is not null){publication?.Cancel();return;}
+                    host=loaded;
+                    publication=new TransitionPublication(loaded,()=>page,()=>scope.Count==1&&escrow?.Admissions==1&&escrow.Handoffs==1
+                        &&loaded.IsLoaded&&loaded.IsVisible&&Window.GetWindow(loaded)==window
+                        &&publication?.LoadedEvents==1&&publication.View is {IsLoaded:true,IsVisible:true} view&&Window.GetWindow(view)==window,receipt);
+                    observed.TrySetResult(loaded);
+                });
+                try
+                {
+                    window.Shell.Execute(PerspectiveSet.Architecture.CommandId);
+                    var menu=Assert.IsType<Menu>(window.FindName("MainMenu"));
+                    var title=PerspectiveMenu.Opener(SurfaceContentFactory.Kinds.Single(kind=>kind.Kind=="code-atlas")).Title;
+                    Assert.Single(MenuItems(menu),item=>string.Equals(item.Header?.ToString(),title,StringComparison.Ordinal))
+                        .RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                    window.Show();await window.WorkspaceReady;
+                    var current=await observed.Task;
+                    Assert.NotNull(escrow);await escrow.Held;
+                    Assert.Equal(1,scope.Count);Assert.Null(current.ReaderView);
+                    var loading=Assert.IsType<TextBlock>(current.Content);Assert.Equal("Loading Code Atlas.",loading.Text);
+                    Assert.True(current.IsLoaded&&current.IsVisible);Assert.Same(window,Window.GetWindow(current));
+                    var hwnd=new WindowInteropHelper(window).Handle;
+                    receipt.Mark("transition.held",new {OwnHwnd=hwnd.ToInt64(),scope.Count,escrow.Admissions,escrow.Handoffs,
+                        ContentType=current.Content.GetType().Name,Text=loading.Text,Tick=Stopwatch.GetTimestamp()});
+                    if(loadingTraversal)await TransitionCensusAsync(hwnd,receipt,"loading-treatment");
+                    Assert.Same(loading,current.Content);Assert.Null(current.ReaderView);
+                    receipt.Mark("transition.release",new {Tick=Stopwatch.GetTimestamp(),LoadingTraversal=loadingTraversal});
+                    escrow.Release();await publication!.Ready;await IdleAsync();publication.AssertReady();
+                    observer.Retain(current,publication.View!);
+                    receipt.Mark("transition.pre-oracle",new {scope.Count,escrow.Admissions,escrow.Handoffs,publication.Replacements,
+                        publication.LoadedEvents,publication.TailCount,Replies=replies,UiaWpfOwner="not-recorded"});
+                    try{await ObserveWithInstancesAsync(window,hwnd,receipt,observer);}
+                    finally
+                    {
+                        try{await TransitionCensusAsync(hwnd,receipt,"after-original-oracle");}
+                        catch(Exception error){receipt.Failure("transition.post-oracle-observer",error);}
+                    }
+                    publication.AssertReady();
+                }
+                finally
+                {
+                    await TransitionCleanupSequenceAsync(receipt,
+                        ("transition.observer-cleanup",()=>{publication?.Dispose();scope.Dispose();escrow?.Cancel();return Task.CompletedTask;}),
+                        ("transition.window-cleanup",async()=>{window.Close();await window.CloseOperation;await IdleAsync();}),
+                        ("transition.cleanup-record",()=>{receipt.Mark("transition.cleanup",new {RegistryCount=TransitionLoadedScope.ActiveScopes,
+                            Custody=escrow?.Transitions,Handoffs=escrow?.Handoffs,Tick=Stopwatch.GetTimestamp()});return Task.CompletedTask;}));
+                }
+            },receipt);
+            await client.DisposeAsync();client=null;
+            await daemon.WaitForNormalExitAsync();receipt.Completed=true;
+        }
+        catch(Exception error){receipt.Failure("transition.primary",error);throw;}
+        finally
+        {
+            await TransitionCleanupSequenceAsync(receipt,
+                ("transition.client-cleanup",async()=>{if(client is not null)await client.DisposeAsync();}),
+                ("transition.daemon-cleanup",async()=>{if(daemon is not null)await daemon.CleanupAsync();}));
+            receipt.Save();
+        }
+        Assert.Equal(0,receipt.FailureCount);
+    }
+
+    private static async Task TransitionCleanupSequenceAsync(Receipt receipt,params (string Stage,Func<Task> Cleanup)[] actions)
+    {
+        foreach(var action in actions)
+        {
+            try{await action.Cleanup();}
+            catch(Exception error){receipt.Failure(action.Stage,error);}
+        }
+    }
+
+    [Theory]
+    [InlineData(false)] [InlineData(true)]
+    public async Task TransitionControl_Cleanup_RecordsFailuresContinuesAndPreservesPrimary(bool originalFails)
+    {
+        var receipt=ObserverReceipt();var primary=new InvalidOperationException("original-query-control");
+        var calls=new List<string>();
+        var actual=await Record.ExceptionAsync(async()=>
+        {
+            try{if(originalFails)throw primary;}
+            finally
+            {
+                await TransitionCleanupSequenceAsync(receipt,
+                    ("control.window",()=>{calls.Add("window");throw new InvalidOperationException("window-close-control");}),
+                    ("control.daemon",()=>{calls.Add("daemon");throw new InvalidOperationException("daemon-cleanup-control");}),
+                    ("control.tail",()=>{calls.Add("tail");return Task.CompletedTask;}));
+                receipt.Save();
+            }
+        });
+        if(originalFails)Assert.Same(primary,actual);else Assert.Null(actual);
+        Assert.Equal(new[]{"window","daemon","tail"},calls);Assert.Equal(2,receipt.FailureCount);
+        using var saved=JsonDocument.Parse(File.ReadAllText(Path.Combine(receipt.DirectoryPath,"receipt.json")));
+        Assert.False(saved.RootElement.GetProperty("Completed").GetBoolean());
+        Assert.Equal(2,saved.RootElement.GetProperty("FailureCount").GetInt32());
+    }
+
+    private static Task TransitionCensusAsync(nint hwnd,Receipt receipt,string phase)=>Task.Run(()=>
+    {
+        var started=Stopwatch.GetTimestamp();
+        var root=AutomationElement.FromHandle(hwnd);Assert.Equal(Environment.ProcessId,root.Current.ProcessId);
+        Assert.Equal(hwnd.ToInt64(),(long)root.Current.NativeWindowHandle);
+        var pending=new Queue<(AutomationElement Element,int Parent,int Depth)>();pending.Enqueue((root,-1,0));
+        var nodes=new List<object>();var truncated=false;
+        while(pending.Count>0)
+        {
+            if(nodes.Count>=128||Stopwatch.GetElapsedTime(started).TotalMilliseconds>=250){truncated=true;break;}
+            var (element,parent,depth)=pending.Dequeue();var ordinal=nodes.Count;
+            var current=element.Current;
+            nodes.Add(new {Ordinal=ordinal,Parent=parent,Depth=depth,current.Name,current.AutomationId,
+                ControlType=current.ControlType.ProgrammaticName,current.ProcessId,current.NativeWindowHandle,
+                RuntimeId=element.GetRuntimeId(),UiaWpfOwner="not-recorded"});
+            if(depth>=12){truncated=true;continue;}
+            for(var child=TreeWalker.RawViewWalker.GetFirstChild(element);child is not null;child=TreeWalker.RawViewWalker.GetNextSibling(child))
+            {
+                if(nodes.Count+pending.Count>=128||Stopwatch.GetElapsedTime(started).TotalMilliseconds>=250){truncated=true;break;}
+                pending.Enqueue((child,ordinal,depth+1));
+            }
+        }
+        receipt.Mark("transition.uia-census",new {Phase=phase,OwnHwnd=hwnd.ToInt64(),ExpectedProcessId=Environment.ProcessId,
+            StartTick=started,EndTick=Stopwatch.GetTimestamp(),Apartment=Thread.CurrentThread.GetApartmentState().ToString(),
+            MaxNodes=128,MaxDepth=12,SoftBudgetMilliseconds=250,Truncated=truncated,Nodes=nodes,UiaWpfOwner="not-recorded"});
+    });
+
+    private sealed class TransitionEscrow(IAtlasWorkspaceReader inner) : IAtlasWorkspaceReader
+    {
+        private readonly TaskCompletionSource _held=new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource _release=new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly object _gate=new();
+        private Task<IAtlasReaderLease>? _admission;
+        private Task? _candidateDisposal;
+        private Task? _readerDisposal;
+        private IAtlasReaderLease? _candidate;
+        private bool _cancel;
+        private bool _handedOff;
+        private bool _innerDisposed;
+        private readonly List<string> _transitions=[];
+        internal string[] Transitions {get{lock(_gate)return _transitions.ToArray();}}
+        internal Task Held=>_held.Task;
+        internal IAtlasReaderLease? OwnedCandidate {get{lock(_gate)return _handedOff?null:_candidate;}}
+        internal int Handoffs { get; private set; }
+        internal int Admissions { get; private set; }
+        public ValueTask<IAtlasReaderLease> AdmitAsync(CancellationToken token)
+        {
+            TaskCompletionSource<IAtlasReaderLease> completion;
+            lock(_gate)
+            {
+                if(_admission is not null)throw new InvalidOperationException("TRANSITION-EXTRA-ADMISSION");
+                Admissions++;_transitions.Add("acquiring");
+                completion=new(TaskCreationOptions.RunContinuationsAsynchronously);_admission=completion.Task;
+            }
+            _=CompleteAdmissionAsync(token,completion);return new(completion.Task);
+        }
+        private async Task CompleteAdmissionAsync(CancellationToken token,TaskCompletionSource<IAtlasReaderLease> completion)
+        {
+            try
+            {
+                using var registration=token.Register(Cancel);
+                var candidate=await inner.AdmitAsync(token);
+                lock(_gate){_candidate=candidate;_transitions.Add("held");}
+                _held.TrySetResult();
+                await _release.Task;
+                lock(_gate)
+                {
+                    if(!_cancel && !token.IsCancellationRequested)
+                    {
+                        _handedOff=true;Handoffs++;_transitions.Add("handoff");
+                        completion.TrySetResult(candidate);return;
+                    }
+                }
+                await DisposeCandidateAsync(false);
+                completion.TrySetCanceled(token.IsCancellationRequested?token:new CancellationToken(true));
+            }
+            catch(Exception error){_held.TrySetException(error);completion.TrySetException(error);}
+        }
+        internal void Release(){lock(_gate)_transitions.Add("release-request");_release.TrySetResult();}
+        internal void Cancel(){lock(_gate){_cancel=true;_transitions.Add("cancel-request");}_release.TrySetResult();}
+        private Task DisposeCandidateAsync(bool retry)
+        {
+            TaskCompletionSource completion;IAtlasReaderLease candidate;
+            lock(_gate)
+            {
+                if(_handedOff || _candidate is null)return Task.CompletedTask;
+                if(_candidateDisposal is not null && (!_candidateDisposal.IsCompleted || !retry))return _candidateDisposal;
+                candidate=_candidate;completion=new(TaskCreationOptions.RunContinuationsAsynchronously);
+                _candidateDisposal=completion.Task;_transitions.Add("disposing");
+            }
+            _=DisposeCandidateCoreAsync(candidate,completion);return completion.Task;
+        }
+        private async Task DisposeCandidateCoreAsync(IAtlasReaderLease candidate,TaskCompletionSource completion)
+        {
+            try
+            {
+                await candidate.DisposeAsync();
+                lock(_gate){_candidate=null;_transitions.Add("candidate-disposed");}
+                completion.TrySetResult();
+            }
+            catch(Exception error){lock(_gate)_transitions.Add("dispose-failed-retained");completion.TrySetException(error);}
+        }
+        public ValueTask DisposeAsync()
+        {
+            TaskCompletionSource completion;
+            lock(_gate)
+            {
+                if(_innerDisposed)return ValueTask.CompletedTask;
+                if(_readerDisposal is not null && !_readerDisposal.IsCompleted)return new(_readerDisposal);
+                completion=new(TaskCreationOptions.RunContinuationsAsynchronously);_readerDisposal=completion.Task;
+            }
+            _=DisposeReaderCoreAsync(completion);return new(completion.Task);
+        }
+        private async Task DisposeReaderCoreAsync(TaskCompletionSource completion)
+        {
+            try
+            {
+                Cancel();
+                if(_admission is not null)try{await _admission;}catch(Exception){/* Admission failure remains with its caller. */}
+                await DisposeCandidateAsync(true);
+                await inner.DisposeAsync();
+                lock(_gate){_innerDisposed=true;_transitions.Add("reader-disposed");}
+                completion.TrySetResult();
+            }
+            catch(Exception error){completion.TrySetException(error);}
+        }
+    }
+    private sealed class TransitionControlReader(IAtlasReaderLease lease):IAtlasWorkspaceReader
+    {
+        internal int Disposals { get; private set; }
+        internal Task<IAtlasReaderLease>? Acquisition {get;init;}
+        public ValueTask<IAtlasReaderLease> AdmitAsync(CancellationToken token)=>Acquisition is null?ValueTask.FromResult(lease):new(Acquisition);
+        public ValueTask DisposeAsync(){Disposals++;return ValueTask.CompletedTask;}
+    }
+    private sealed class TransitionControlLease:IAtlasReaderLease
+    {
+        internal bool FailDisposal { get; set; }
+        internal int Disposals { get; private set; }
+        internal Task? DisposalGate {get;init;}
+        internal TaskCompletionSource DisposalStarted {get;}=new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public string ScopeToken=>"control";public string InitialManifestToken=>"control";
+        public long CoreEpoch=>7;public DateTimeOffset ExpiresAt=>DateTimeOffset.MaxValue;
+        public IAtlasReaderQueries Queries {get;init;}=new ObserverPort();
+        public CancellationToken Invalidated=>CancellationToken.None;
+        public bool IsTerminal { get; private set; }
+        public async ValueTask DisposeAsync()
+        {
+            Disposals++;
+            DisposalStarted.TrySetResult();
+            if(DisposalGate is not null)await DisposalGate;
+            if(FailDisposal)throw new InvalidOperationException("transition-control-disposal");
+            IsTerminal=true;
+        }
+    }
+
 
     [Fact]
     public void NativeObserver_NonGui_IdentityIsReferenceBasedAndBounded()

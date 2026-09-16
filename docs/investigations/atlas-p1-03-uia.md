@@ -522,3 +522,17 @@ build, test, GUI, watcher slot or causal fix is admitted by these paragraphs.
 | Completed | Remaining | Best next action |
 | --- | --- | --- |
 | Source/API-grounded B1–B3 document completion | Independent rereview, future controls and grants; peer-held derived capture prevents current commit | Review the frozen document bytes, including class-observer lifetime and one-shot predicate |
+
+## Preparation evidence update — 2026-09-16
+
+The later document-only independent review accepted B1–B3 with conditions
+(`req-01M2NT8TTYERHMRAFEYJC3Y6TC`). Grant
+`req-01M2NWGFJG89QF0KFBA9W8YGF6` then admitted experiment-only preparation in
+`test/atlas-p1-03-uia-transition`. [The preparation proof](../proof/atlas-p1-03-uia-transition.md)
+records 43/43 selected non-GUI cases (21 original, 22 new), the two intended red
+failures, preserved canonical source and actual .NET 10.0.11 runtime identities.
+Two shown Facts are authored but unexecuted. Independent implementation review,
+binary freeze, containment and shown execution remain separate gates. The source
+branch may not be merged wholesale into canonical/main. Cause remains unknown;
+the proposed comparison supports at most treatment association, with UIA WPF
+owner identity explicitly not-recorded.

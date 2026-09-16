@@ -12902,6 +12902,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "8846eef929f694d56d99055a97a85125ddd0130ec7fb48776683c8d5f3df7cd4"
     },
     {
+      "id": "proof-atlas-p1-03-uia-transition",
+      "path": "docs/proof/atlas-p1-03-uia-transition.md",
+      "title": "Atlas P1-03 loading traversal: experimental preparation",
+      "type": "doc",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "Preparation only: 43 selected non-GUI controls passed; two fresh-process native arms are authored but unexecuted and require independent review and a separate execution grant.",
+      "tags": [
+        "atlas",
+        "proof",
+        "native",
+        "diagnostic"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-five-gates",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6921b9225e7914e627205c6d9cfb96ae27500fd46aaaf1d74e5a5a6763fdabda"
+    },
+    {
       "id": "proof-atlas-peer-review-transport",
       "path": "docs/proof/atlas-peer-review-transport.md",
       "title": "Atlas independent review receipt transport",
@@ -15188,7 +15218,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "66d3004a21133e1d97e5b5d1a4388c1bc350ab8607d732f0a4e4b25571e8142e"
+      "sourceSha256": "8844b1707794b6ece6391aeec7faaa7b699c319c7c25236ecff2adf293f6b275"
     },
     {
       "id": "investigation-code-atlas-native-repair-controls",
@@ -23318,5 +23348,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "52c637d3abca8647277ae8101e75701cd9c88e59cc1b574032ce61c67e56f1f8"
+  "graphSha256": "fd43cf8263a975964ce4b9b0fcc45efb520fb859d305dc1fccca06d0f3ecf42f"
 };

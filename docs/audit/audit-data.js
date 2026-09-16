@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T19:13:11Z",
+  "generated": "2026-09-16T20:25:39Z",
   "audit": [
     {
       "actor": null,
@@ -26260,6 +26260,55 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-09-16T19:05:57Z",
       "duration_seconds": 433.0
+    },
+    {
+      "id": "al-01M2NX5BJ9ZQ7RRD0QFH8ME816",
+      "shortname": "atlas-transition-preparation",
+      "datetime": "2026-09-16T20:05:06Z",
+      "session": "codex-atlas-p1-03-transition-author",
+      "prompt": "EXECUTION ASSIGNMENT: exact watcher preparation grant is now RESOLVED GRANTED at req-01M2NWGFJG89QF0KFBA9W8YGF6. Use NEW Conductor-provisioned tree C:/Projects/ai-de-test-atlas-p1-03-uia-transition, branch test/atlas-p1-03-uia-transition, clean base ebfe076125a1200345b806519b733104b3e06ea7, session codex-atlas-p1-03-transition-author, agent codex-astra-transition-author. Do not EnterWorktree/install. Model Astra high retained for WPF ordering/custody complexity. Budget24 tool calls/35min, checkpoint12; no fanout. Goal: implement frozen design3b6c8153018d1199e669cd519ba1c0bc65547a3d into independently reviewable diagnostic preparation. Done: committed exact source/proof, meaningful red-first controls and actual selected inventory/TRXs, preservation evidence/runtime identities, residuallimits. Inputs: your frozen investigation and actual watcher independent B1-B3 design verdict in resolvedreqNT8TTY / noticeNV3TG; implementation and runtime proof not cleared. Read exact grant and applicable instructions/workflows/TestingStrategy, mark implement start, log assignment prompt, use existing programme optimizegraph; no new policy. ALLOWLIST ONLY existing tests/AiDe.App.Tests/Workbench/Understanding/AtlasDaemonMainWindowProofTests.cs; new docs/proof/atlas-p1-03-uia-transition.md; existing investigation status/evidence updates; own official audit/change/required derived under exact short leases. No src/project/sharedSTA/runner/wiring/mocking actual diagnostic composition change. Preserve canonical method's selectors/results/assertions/waits/cleanup and all21 old observer controls. Implement exact B1 one-shot Content->Status descriptor->Background tail and lifecycle controls, B2 association only/UIA owner:not-recorded, B3 serialized custody/single handoff/failedrelease reachable/recovery. Process-scoped Loaded class callback must be noncapturing, scopedregistry cleared, no false unregister. Two new NativeTransition_ Facts MAY be authored but MUST NOT RUN; real diagnostic composition per design. Only normal same-tree Debug build and selected NON-GUI controls: quoted single filter 'FullyQualifiedName~AiDe.App.Tests.AtlasDaemonMainWindowProofTests.TransitionControl_|FullyQualifiedName~AiDe.App.Tests.AtlasDaemonMainWindowProofTests.NativeObserver_NonGui_'. Inspect --list-tests and actual TRX names/counts/outcomes; keep21oldcases and record actualnewcount. No whole class, Show/HWND/liveUIA/focus/capture/desktop inputs in any selected control. Unshown controls cannot prove visible/Loaded publication; distinguish actual adapter ordering/cancellation evidence from later shown proof. Meaningful red before minimal implementation, no unrelatedsuite or dummy failing assertions. Unsupportedruntime/designcontract returns Owner via root, no silentfix. AUTHOR'S NEW BRANCH IS EXPERIMENT-ONLY: Owner explicitly prohibits wholesale merge of these Facts/helpers into canonical/main; normalfullApp would discover them and break freshprocess/uniquelabel assumption. Root source626d16a2 stayscanonical. No skips/opt-in/filterpolicy workaround; laterOwner decides scaffoldretention. Proof/audit cantravel separately. Grant exactpaths checked beforeedits; releasepromptly. Root has released all proof/siteleases; serialize your final derivedwrite and announce release. Return commit+sourcehash+actualred/greenpaths/testinventory/runtimeids+preservation+cost/unresolvedgates. IndependentTest/SRE12calls/20min follows your frozen return. No shown arm/GUI/fullqualification/main publication is authorized. Runtimebinaryfreeze andfreshslotfollowindependentreview.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2NYAYH42BQV2BDAZSSEHP9R",
+      "shortname": "atlas-p1-03-transition-preparation",
+      "datetime": "2026-09-16T20:25:38Z",
+      "session": "codex-atlas-p1-03-transition-author",
+      "prompt": "EXECUTION ASSIGNMENT: exact watcher preparation grant is now RESOLVED GRANTED at req-01M2NWGFJG89QF0KFBA9W8YGF6. Use NEW Conductor-provisioned tree C:/Projects/ai-de-test-atlas-p1-03-uia-transition, branch test/atlas-p1-03-uia-transition, clean base ebfe076125a1200345b806519b733104b3e06ea7, session codex-atlas-p1-03-transition-author, agent codex-astra-transition-author. Do not EnterWorktree/install. Model Astra high retained for WPF ordering/custody complexity. Budget24 tool calls/35min, checkpoint12; no fanout. Goal: implement frozen design3b6c8153018d1199e669cd519ba1c0bc65547a3d into independently reviewable diagnostic preparation. Done: committed exact source/proof, meaningful red-first controls and actual selected inventory/TRXs, preservation evidence/runtime identities, residuallimits. Inputs: your frozen investigation and actual watcher independent B1-B3 design verdict in resolvedreqNT8TTY / noticeNV3TG; implementation and runtime proof not cleared. Read exact grant and applicable instructions/workflows/TestingStrategy, mark implement start, log assignment prompt, use existing programme optimizegraph; no new policy. ALLOWLIST ONLY existing tests/AiDe.App.Tests/Workbench/Understanding/AtlasDaemonMainWindowProofTests.cs; new docs/proof/atlas-p1-03-uia-transition.md; existing investigation status/evidence updates; own official audit/change/required derived under exact short leases. No src/project/sharedSTA/runner/wiring/mocking actual diagnostic composition change. Preserve canonical method's selectors/results/assertions/waits/cleanup and all21 old observer controls. Implement exact B1 one-shot Content->Status descriptor->Background tail and lifecycle controls, B2 association only/UIA owner:not-recorded, B3 serialized custody/single handoff/failedrelease reachable/recovery. Process-scoped Loaded class callback must be noncapturing, scopedregistry cleared, no false unregister. Two new NativeTransition_ Facts MAY be authored but MUST NOT RUN; real diagnostic composition per design. Only normal same-tree Debug build and selected NON-GUI controls: quoted single filter 'FullyQualifiedName~AiDe.App.Tests.AtlasDaemonMainWindowProofTests.TransitionControl_|FullyQualifiedName~AiDe.App.Tests.AtlasDaemonMainWindowProofTests.NativeObserver_NonGui_'. Inspect --list-tests and actual TRX names/counts/outcomes; keep21oldcases and record actualnewcount. No whole class, Show/HWND/liveUIA/focus/capture/desktop inputs in any selected control. Unshown controls cannot prove visible/Loaded publication; distinguish actual adapter ordering/cancellation evidence from later shown proof. Meaningful red before minimal implementation, no unrelatedsuite or dummy failing assertions. Unsupportedruntime/designcontract returns Owner via root, no silentfix. AUTHOR'S NEW BRANCH IS EXPERIMENT-ONLY: Owner explicitly prohibits wholesale merge of these Facts/helpers into canonical/main; normalfullApp would discover them and break freshprocess/uniquelabel assumption. Root source626d16a2 stayscanonical. No skips/opt-in/filterpolicy workaround; laterOwner decides scaffoldretention. Proof/audit cantravel separately. Grant exactpaths checked beforeedits; releasepromptly. Root has released all proof/siteleases; serialize your final derivedwrite and announce release. Return commit+sourcehash+actualred/greenpaths/testinventory/runtimeids+preservation+cost/unresolvedgates. IndependentTest/SRE12calls/20min follows your frozen return. No shown arm/GUI/fullqualification/main publication is authorized. Runtimebinaryfreeze andfreshslotfollowindependentreview.",
+      "summary": "Experiment-only transition preparation: 43/43 selected non-GUI cases (21 preserved, 22 new), intended two-case red captured; shown Facts authored but unexecuted. Source preservation/runtime identities recorded. Cleanup correction uses existing DC-078 controls; no cleanup red claimed. Late own liveness corrected. Administrative close refused missing shortname at call24 before regeneration/staging/commit; authorized bounded recovery is actual25/24, a budget defect signal, not compliance. Independent review and all shown/binary/containment gates remain.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-uia-transition.md",
+        "docs/investigations/atlas-p1-03-uia.md",
+        "tests/AiDe.App.Tests/Workbench/Understanding/AtlasDaemonMainWindowProofTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Prepare frozen two-arm Atlas UIA diagnostic with meaningful selected controls and exact emitted contract",
+      "done_when": "Committed exact source/proof, selected inventory/TRXs, preservation/runtime identities and limits ready for independent review; no shown execution",
+      "tier": "T2",
+      "main_calls": 25,
+      "main_budget": 24,
+      "main_over_budget": true,
+      "fan_out": 0,
+      "started_at": "2026-09-16T20:01:48Z",
+      "duration_seconds": 1430.0,
+      "git": {
+        "sha": "ebfe076125a1200345b806519b733104b3e06ea7",
+        "short": "ebfe07612",
+        "branch": "test/atlas-p1-03-uia-transition",
+        "pushed": null
+      }
     }
   ],
   "changes": [
