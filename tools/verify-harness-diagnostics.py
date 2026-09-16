@@ -73,6 +73,104 @@ WRAPS = re.compile(
 # lesson is not "write better regexes": it is that a checker's window is itself a claim, and an
 # unexamined one.
 GUARD = re.compile(r"is\s+(Xunit\.Sdk\.)?XunitException\s*\)?\s*\{?\s*throw")
+EDI_GUARD = re.compile(
+    r"if\s*\(\s*(?P<failure>\w+)\s+is\s+(?:Xunit\.Sdk\.)?XunitException\s*\)\s*\{?\s*"
+    r"(?:System\.Runtime\.ExceptionServices\.)?ExceptionDispatchInfo\.Capture\(\s*(?P=failure)\s*\)\.Throw\(\s*\)")
+
+
+def _edi_guards_wrapper(text: str, wrapper: re.Match[str]) -> bool:
+    """Admit only an adjacent same-original or foreach-of-wrapped-collection EDI guard."""
+    code = re.sub(r'//[^\n]*|/\*.*?\*/|@?"(?:""|\\.|[^"\\])*"',
+                  lambda match: " " * len(match.group()), text, flags=re.DOTALL)
+    scopes: list[tuple[int, int]] = []
+    for method in re.finditer(
+            r"\b(?:[\w.<>?\[\]]+\s+)+\w+\s*\([^;{}]*\)\s*\{", code):
+        depth, end = 1, method.end()
+        while end < len(code) and depth:
+            depth += (code[end] == "{") - (code[end] == "}")
+            end += 1
+        scopes.append((method.end(), end - 1))
+
+    def scope(position: int) -> tuple[int, int]:
+        return min((bounds for bounds in scopes if bounds[0] <= position < bounds[1]),
+                   key=lambda bounds: bounds[1] - bounds[0], default=(0, len(code)))
+
+    bounds = scope(wrapper.start())
+    for guard in EDI_GUARD.finditer(code, bounds[0], wrapper.start()):
+        if scope(guard.start()) != bounds:
+            continue
+        # No reassignment or unrelated statement may intervene. The wrapper's
+        # existing nonempty/null check and one guard/foreach closing brace may.
+        tail = code[guard.end():wrapper.start()]
+        if not re.fullmatch(r"\s*;\s*\}?\s*(?:if\s*\([^;{}]*\)\s*)?", tail):
+            continue
+        original = guard.group("failure")
+        if original == wrapper.group(1):
+            return True
+        before = code[bounds[0]:guard.start()]
+        if re.search(rf"foreach\s*\(\s*var\s+{re.escape(original)}\s+in\s+"
+                     rf"{re.escape(wrapper.group(1))}\s*\)\s*\{{?\s*$", before):
+            return True
+    return False
+
+
+def _tcs_handoffs(text: str) -> tuple[int, list[str]]:
+    """Classify bounded async STA methods, checking every exception setter separately.
+
+    This is a lexical contract, not C# semantic analysis. Unknown handoff forms stay
+    unclassified; a healthy method never excuses a bad setter in the same file.
+    """
+    code = re.sub(r'//[^\n]*|/\*.*?\*/|@?"(?:""|\\.|[^"\\])*"',
+                  lambda match: " " * len(match.group()), text, flags=re.DOTALL)
+    methods = re.finditer(
+        r"\b(?:private|internal|public)\s+(?:static\s+)?async\s+Task(?:<[^>]+>)?\s+"
+        r"(?P<name>\w+)\s*\([^;{}]*\)\s*\{", code)
+    count = 0
+    problems: list[str] = []
+    for method in methods:
+        depth, end = 1, method.end()
+        while end < len(code) and depth:
+            depth += (code[end] == "{") - (code[end] == "}")
+            end += 1
+        body = code[method.end():end - 1]
+        if "SetApartmentState(ApartmentState.STA)" not in body:
+            continue
+        setters = list(re.finditer(r"\b(\w+)\.(?:Try)?SetException\s*\(([^;]*)\)\s*;", body))
+        if not setters:
+            continue
+        declared = set(re.findall(r"\b(\w+)\s*=\s*new\s+TaskCompletionSource(?:<[^>]+>)?\s*\(", body))
+        catches = list(re.finditer(r"catch\s*\(\s*(?:System\.)?Exception\s+(\w+)\s*\)\s*\{([^{}]*)\}", body))
+        valid = True
+        for setter in setters:
+            completion, original = setter.group(1), setter.group(2).strip()
+            reason = None
+            if (completion not in declared or
+                    len(re.findall(rf"\b{re.escape(completion)}\s*=(?!=)", body)) != 1 or
+                    not re.search(rf"\bawait\s+{re.escape(completion)}\.Task\b", body)):
+                reason = "exception setter is not correlated to a declared and awaited same TCS"
+            elif not re.fullmatch(r"\w+", original):
+                reason = "exception setter wraps or replaces the original exception"
+            else:
+                direct = next((c for c in catches
+                               if c.start() <= setter.start() < c.end() and c.group(1) == original), None)
+                if direct and re.search(rf"\b{re.escape(original)}\s*=(?!=)", direct.group(2)):
+                    reason = "caught exception is reassigned before its handoff"
+            if reason is None and not direct:
+                writes = list(re.finditer(rf"\b{re.escape(original)}\s*=\s*(?!=)([^;]+);", body))
+                captured = [w for w in writes if any(
+                    c.start() <= w.start() < c.end() and w.group(1).strip() == c.group(1) and
+                    not re.search(rf"\b{re.escape(c.group(1))}\s*=(?!=)", c.group(2)) for c in catches)]
+                initializers = list(re.finditer(
+                    rf"\b(?:System\.)?Exception\?\s+{re.escape(original)}\s*=\s*null\s*;", body))
+                if not captured or any(w not in captured and not any(
+                        init.start() <= w.start() < init.end() for init in initializers) for w in writes):
+                    reason = "exception setter argument is not an unchanged caught exception"
+            if reason:
+                valid = False
+                problems.append(f"{method.group('name')}: {reason}")
+        if valid:
+            count += 1
+    return count, problems
 
 
 def repo_root() -> Path:
@@ -102,6 +200,7 @@ def check(root: Path) -> tuple[list[str], int]:
     wrapped: set[Path] = set()
     plain = 0
     other = 0
+    handed_off = 0
 
     directory = root / TESTS
 
@@ -111,15 +210,19 @@ def check(root: Path) -> tuple[list[str], int]:
     for path in sorted(directory.rglob("*.cs")):
         text = path.read_text(encoding="utf-8", errors="replace")
 
-        wraps = bool(WRAPS.search(text))
+        wrapper_matches = list(WRAPS.finditer(text))
+        wraps = bool(wrapper_matches)
 
-        if GUARD.search(text):
+        has_guard = GUARD.search(text) or EDI_GUARD.search(text)
+        if has_guard:
             guarded.add(path)
 
         threads = text.count("SetApartmentState(ApartmentState.STA)")
 
         if threads:
             sta.add(path)
+            handoffs, handoff_problems = _tcs_handoffs(text)
+            problems.extend(f"{path.relative_to(root).as_posix()} {problem}" for problem in handoff_problems)
 
             # THE UNIT OF ANALYSIS, the one error a wider pattern cannot fix. This gate reaches a
             # verdict per FILE, but the thing that can be right or wrong is the HARNESS. A file
@@ -157,6 +260,9 @@ def check(root: Path) -> tuple[list[str], int]:
             # the cheapest possible demonstration that it does something.
             if wraps:
                 pass                                     # counted as a wrap below
+            elif handoffs and not handoff_problems:
+                accounted.add(path)
+                handed_off += 1
             elif re.search(r"throw (failure|error|caught|thrown)\s*;", text):
                 # Rethrows the captured exception as itself — correct, and needing no guard.
                 accounted.add(path)
@@ -175,7 +281,7 @@ def check(root: Path) -> tuple[list[str], int]:
         accounted.add(path)
         wrapped.add(path)
 
-        if GUARD.search(text):
+        if GUARD.search(text) or all(_edi_guards_wrapper(text, wrapper) for wrapper in wrapper_matches):
             continue
 
         relative = path.relative_to(root).as_posix()
@@ -233,7 +339,8 @@ def check(root: Path) -> tuple[list[str], int]:
         return (problems, harnesses)
 
     print(f"verify-harness-diagnostics: {len(sta)} file(s) declare an STA thread = "
-          f"{harnesses} wrapping + {plain} plain rethrow(s) + {other} whose subject is an exception.")
+          f"{harnesses} wrapping + {plain} plain rethrow(s) + {handed_off} original TCS handoff(s) "
+          f"+ {other} whose subject is an exception.")
 
     return (problems, harnesses)
 
@@ -323,7 +430,98 @@ def self_test() -> int:
             'Dispatch = _ => throw new InvalidOperationException("pipe closed");\n',
             encoding="utf-8")
 
+        tcs = '''
+[Fact] public void T() { }
+private static async Task RunAsync(Func<Task> body)
+{
+    var completed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+    var thread = new Thread(() =>
+    {
+        Exception? failure = null;
+        async Task BodyAsync()
+        {
+            try { await body(); }
+            catch (Exception exception) { failure = exception; }
+        }
+        try
+        {
+            BodyAsync().GetAwaiter().GetResult();
+            if (failure is not null) completed.TrySetException(failure);
+            else completed.TrySetResult();
+        }
+        catch (Exception exception) { completed.TrySetException(exception); }
+    });
+    thread.SetApartmentState(ApartmentState.STA);
+    thread.Start();
+    await completed.Task.WaitAsync(TimeSpan.FromSeconds(30));
+}
+'''
+        tcs_cases = {
+            "HealthyTcsTests.cs": (tcs, False),
+            "WrappedTcsTests.cs": (tcs.replace("TrySetException(failure)", 'TrySetException(new InvalidOperationException("wrapped", failure))'), True),
+            "WrongAwaitTcsTests.cs": (tcs.replace("await completed.Task", "await unrelated.Task"), True),
+            "UncaughtTcsTests.cs": (tcs.replace("TrySetException(failure)", "TrySetException(unrelated)"), True),
+            "ReassignedTcsTests.cs": (tcs.replace("if (failure is not null)", 'failure = new Exception("replacement"); if (failure is not null)'), True),
+            "NullResetTcsTests.cs": (tcs.replace("if (failure is not null)", 'failure = null; if (failure is not null)'), True),
+            "ChangedCompletionTcsTests.cs": (tcs.replace("thread.Start();", "completed = unrelated; thread.Start();"), True),
+            "ChangedCatchTcsTests.cs": (tcs.replace("completed.TrySetException(exception);", 'exception = new Exception("replacement"); completed.TrySetException(exception);'), True),
+            "ChangedCapturedSourceTcsTests.cs": (tcs.replace("failure = exception;", 'exception = new Exception("replacement"); failure = exception;'), True),
+            "HealthyAndBadTcsTests.cs": (tcs + tcs.replace("RunAsync", "BadAsync").replace("TrySetException(failure)", 'TrySetException(new Exception("wrapped", failure))'), True),
+            "HealthyAndBadSetterTests.cs": (tcs.replace("else completed.TrySetResult();", 'else completed.TrySetException(new Exception("bad setter"));'), True),
+        }
+        for name, (source, _) in tcs_cases.items():
+            (place / TESTS / name).write_text(source, encoding="utf-8")
+        edi = ("foreach (var failure in failures)\nif (failure is Xunit.Sdk.XunitException) "
+               "System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(failure).Throw();\n"
+               'throw new AggregateException("retained", failures);\n')
+        (place / TESTS / "EdiGuardTests.cs").write_text(edi, encoding="utf-8")
+        (place / TESTS / "WrongEdiGuardTests.cs").write_text(
+            edi.replace("Capture(failure)", "Capture(unrelated)"), encoding="utf-8")
+        scoped_edi_cases = {
+            "ExactMixedEdiTests.cs": (
+                'private static void Healthy(Exception failure) { if (failure is Xunit.Sdk.XunitException) '
+                'System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(failure).Throw(); '
+                'throw new InvalidOperationException("retained", failure); } '
+                'private static void Broken(Exception unrelated) { '
+                'throw new InvalidOperationException("broken wrapper", unrelated); }', True),
+            "SameNameMixedEdiTests.cs": (
+                'private static void Healthy(Exception failure) { if (failure is Xunit.Sdk.XunitException) '
+                'System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(failure).Throw(); '
+                'throw new InvalidOperationException("retained", failure); } '
+                'private static void Broken(Exception failure) { '
+                'throw new InvalidOperationException("broken wrapper", failure); }', True),
+            "MixedEdiTests.cs": (
+                "void Healthy(Exception[] failures) {\n" + edi + "}\n"
+                'void Broken(Exception unrelated) { throw new InvalidOperationException("broken", unrelated); }', True),
+            "UnrelatedCollectionEdiTests.cs": (edi.replace('"retained", failures', '"retained", unrelated'), True),
+            "UnrelatedOriginalEdiTests.cs": (
+                'void Broken(Exception failure, Exception unrelated) {\n' +
+                edi[edi.index("if ("):].replace('"retained", failures', '"retained", unrelated') + "}", True),
+            "SameOriginalEdiTests.cs": (
+                'void Healthy(Exception failure) {\n' +
+                edi[edi.index("if ("):].replace('"retained", failures', '"retained", failure') + "}", False),
+            "SameCollectionEdiTests.cs": ("void Healthy(Exception[] failures) {\n" + edi + "}", False),
+        }
+        for name, (source, _) in scoped_edi_cases.items():
+            (place / TESTS / name).write_text(source, encoding="utf-8")
         problems, _ = check(place)
+
+    escaped = [name for name, (_, should_fail) in scoped_edi_cases.items()
+               if any(name in problem for problem in problems) != should_fail]
+    if escaped:
+        print(f"verify-harness-diagnostics: SELF-TEST FAILED — scoped EDI verdicts: {escaped}")
+        return 1
+    for name, (_, should_fail) in tcs_cases.items():
+        if any(name in problem for problem in problems) != should_fail:
+            matching = [problem for problem in problems if name in problem]
+            print(f"verify-harness-diagnostics: SELF-TEST FAILED — TCS correlation {name}: {matching}")
+            return 1
+    if any("EdiGuardTests.cs " in problem and "WrongEdiGuardTests.cs" not in problem for problem in problems):
+        print("verify-harness-diagnostics: SELF-TEST FAILED — same-instance EDI guard rejected")
+        return 1
+    if not any("WrongEdiGuardTests.cs" in problem for problem in problems):
+        print("verify-harness-diagnostics: SELF-TEST FAILED — unrelated EDI capture accepted")
+        return 1
 
     for problem in problems:
         print(f"  planted -> {problem.split('.')[0]}")
@@ -368,8 +566,9 @@ def self_test() -> int:
               "muted within a week.")
         return 1
 
-    print("verify-harness-diagnostics: self-test OK — unguarded fails, guarded passes, and a "
-          "literal-throwing fixture is left alone.")
+    print("verify-harness-diagnostics: self-test OK — unguarded fails, guarded passes, "
+          "11 TCS fixtures and 9 EDI fixtures retain correlation, same-file negatives fail, "
+          "and a literal-throwing fixture is left alone.")
     return 0
 
 

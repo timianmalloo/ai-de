@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Windows.Threading;
 using Xunit.Abstractions;
 using AiDe.App.ViewModels;
@@ -469,6 +470,91 @@ public sealed class AtlasSharedHostAdmissionTests(ITestOutputHelper output)
         diagnostic.ThrowIfFailed();
     }
 
+    [Fact]
+    public void StageDiagnostics_FirstRetainedDirectAssertionKeepsIdentityAndStack()
+    {
+        var diagnostic = new StageDiagnostics();
+        var infrastructure = CapturedDiagnosticFailure(new InvalidOperationException("first infrastructure"));
+        var firstAssertion = CapturedDiagnosticFailure(new Xunit.Sdk.XunitException("first retained assertion"));
+        var laterAssertion = CapturedDiagnosticFailure(new Xunit.Sdk.XunitException("later assertion"));
+        var originalStack = firstAssertion.StackTrace;
+        diagnostic.Failure("cleanup.recorded-first", infrastructure);
+        diagnostic.Failure("first.assertion", firstAssertion);
+        diagnostic.Failure("later.assertion", laterAssertion);
+        var thrown = Assert.Throws<Xunit.Sdk.XunitException>(() => diagnostic.ThrowIfFailed());
+        Assert.Same(firstAssertion, thrown);
+        Assert.Equal("first retained assertion", thrown.Message);
+        Assert.Contains(originalStack!, thrown.StackTrace!);
+    }
+
+    [Fact]
+    public void StageDiagnostics_AggregationPreservesOriginalsWithoutFlattening()
+    {
+        var diagnostic = new StageDiagnostics();
+        var nested = new AggregateException(new Xunit.Sdk.XunitException("nested is not direct"));
+        var cleanup = new IOException("cleanup");
+        diagnostic.Failure("nested", nested);
+        diagnostic.Failure("cleanup", cleanup);
+        var thrown = Assert.Throws<AggregateException>(() => diagnostic.ThrowIfFailed());
+        Assert.Equal(2, thrown.InnerExceptions.Count);
+        Assert.Same(nested, thrown.InnerExceptions[0]);
+        Assert.Same(cleanup, thrown.InnerExceptions[1]);
+    }
+
+    [Fact]
+    public void StageDiagnostics_PersistsEveryRetainedFailureBeyondStageAndDetailCaps()
+    {
+        var diagnostic = new StageDiagnostics();
+        for (var index = 0; index < 170; ++index) diagnostic.Mark("fill." + index);
+        var assertion = CapturedDiagnosticFailure(new Xunit.Sdk.XunitException(new string('a', 2000) + "ASSERTION_END"));
+        var cleanup = CapturedDiagnosticFailure(new IOException(new string('c', 2000) + "CLEANUP_END"));
+        diagnostic.Failure("first.assertion", assertion);
+        diagnostic.Failure("duplicate.capture", assertion);
+        diagnostic.Failure("retained.cleanup", cleanup);
+        var name = "stage-diagnostics-cap-" + Guid.NewGuid().ToString("N") + ".log";
+        diagnostic.Save(name, output);
+        var text = File.ReadAllText(RepositoryFile("artifacts", "atlas-mainwindow", name));
+        Assert.Contains("failureOrdinal=1 category=first.assertion", text);
+        Assert.Contains("failureOrdinal=3 category=retained.cleanup", text);
+        Assert.DoesNotContain("category=duplicate.capture", text);
+        foreach (var exception in new[] { assertion, cleanup })
+        {
+            Assert.Contains(exception.GetType().FullName!, text);
+            Assert.Contains(exception.Message, text);
+            Assert.Contains(exception.StackTrace!, text);
+        }
+        Assert.Contains("omittedStages=", text);
+    }
+
+    [Fact]
+    public async Task StageDiagnostics_OwnedDispatcherRetainsAssertionAndCleanup()
+    {
+        var diagnostic = new StageDiagnostics();
+        var assertion = new Xunit.Sdk.XunitException("owned dispatcher assertion");
+        var cleanup = new IOException("owned dispatcher cleanup");
+        await RunOwnedDispatcherAsync(async () =>
+        {
+            await Task.Yield();
+            throw assertion;
+        }, diagnostic, () => throw cleanup);
+        var name = "stage-diagnostics-owned-" + Guid.NewGuid().ToString("N") + ".log";
+        diagnostic.Save(name, output);
+        var thrown = Assert.Throws<Xunit.Sdk.XunitException>(() => diagnostic.ThrowIfFailed());
+        Assert.Same(assertion, thrown);
+        var text = File.ReadAllText(RepositoryFile("artifacts", "atlas-mainwindow", name));
+        Assert.Contains("category=owned.body.primary", text);
+        Assert.Contains("category=owned.cleanup-retained-debt", text);
+        Assert.Contains(assertion.Message, text);
+        Assert.Contains(cleanup.Message, text);
+        Assert.Contains(assertion.StackTrace!, thrown.StackTrace!);
+    }
+
+    private static Exception CapturedDiagnosticFailure(Exception exception)
+    {
+        try { throw exception; }
+        catch (Exception captured) { return captured; }
+    }
+
     private static async Task RunOwnedDispatcherAsync(Func<Task> body, StageDiagnostics diagnostic, Action cleanup)
     {
         var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -530,9 +616,12 @@ public sealed class AtlasSharedHostAdmissionTests(ITestOutputHelper output)
         private readonly long _started = Stopwatch.GetTimestamp();
         private readonly List<string> _stages = [];
         private readonly Dictionary<string, Task> _tasks = [];
-        private readonly List<Exception> _failures = [];
+        private sealed record RetainedFailure(
+            int Ordinal, string Category, Exception Exception, string Type, string Message, string? Stack);
+        private readonly List<RetainedFailure> _failures = [];
         private readonly object _gate = new();
         private int _omitted;
+        private int _failureCaptureOrdinal;
 
         internal void Mark(string stage, string detail = "")
         {
@@ -572,9 +661,15 @@ public sealed class AtlasSharedHostAdmissionTests(ITestOutputHelper output)
 
         internal void Failure(string category, Exception exception)
         {
-            Mark(category, exception.ToString());
             lock (_gate)
-                if (!_failures.Contains(exception)) _failures.Add(exception);
+            {
+                var ordinal = ++_failureCaptureOrdinal;
+                if (!_failures.Any(failure => ReferenceEquals(failure.Exception, exception)))
+                    _failures.Add(new RetainedFailure(ordinal, category, exception,
+                        exception.GetType().FullName ?? exception.GetType().Name,
+                        exception.Message, exception.StackTrace));
+            }
+            Mark(category, exception.ToString());
         }
 
         internal void Save(string name, ITestOutputHelper output)
@@ -585,7 +680,12 @@ public sealed class AtlasSharedHostAdmissionTests(ITestOutputHelper output)
                 text = string.Join(Environment.NewLine, _stages)
                     + Environment.NewLine + $"omittedStages={_omitted}"
                     + Environment.NewLine + string.Join(Environment.NewLine,
-                        _tasks.Select(pair => $"task={pair.Key} finalStatus={pair.Value.Status}"));
+                        _tasks.Select(pair => $"task={pair.Key} finalStatus={pair.Value.Status}"))
+                    + Environment.NewLine + $"retainedFailures={_failures.Count}"
+                    + Environment.NewLine + string.Join(Environment.NewLine, _failures.Select(failure =>
+                        $"failureOrdinal={failure.Ordinal} category={failure.Category} type={failure.Type}"
+                        + Environment.NewLine + $"message={failure.Message}"
+                        + Environment.NewLine + $"stack={failure.Stack ?? "not recorded"}"));
             }
             var path = RepositoryFile("artifacts", "atlas-mainwindow", name);
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
@@ -595,8 +695,13 @@ public sealed class AtlasSharedHostAdmissionTests(ITestOutputHelper output)
 
         internal void ThrowIfFailed()
         {
+            Exception[] exceptions;
             lock (_gate)
-                if (_failures.Count > 0) throw new AggregateException("Primary and cleanup failures retained separately.", _failures);
+                exceptions = _failures.Select(failure => failure.Exception).ToArray();
+            foreach (var failure in exceptions)
+                if (failure is Xunit.Sdk.XunitException) ExceptionDispatchInfo.Capture(failure).Throw();
+            if (exceptions.Length > 0)
+                throw new AggregateException("Retained failures without a direct assertion.", exceptions);
         }
     }
 
