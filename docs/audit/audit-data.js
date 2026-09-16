@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T03:39:19Z",
+  "generated": "2026-09-16T16:42:12Z",
   "audit": [
     {
       "actor": null,
@@ -24834,6 +24834,107 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2NF5K5QZQFV4C0K0Q8EFZBG",
+      "shortname": "keep going; grok says its blocked on an ack from you... whats up with th…",
+      "datetime": "2026-09-16T16:00:33Z",
+      "session": "prompt-log",
+      "prompt": "keep going; grok says its blocked on an ack from you... whats up with that?",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2NGJCFNQ972708YRRYTK8CJ",
+      "shortname": "atlas-r3-ack-native-design-preparation",
+      "datetime": "2026-09-16T16:25:01Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going; grok says its blocked on an ack from you... whats up with that?",
+      "summary": "Three stale r2 response requests explicitly resolved CHANGES REQUESTED; r3 exact17cd8317/e448383a independently CLEAR394d1ff0 and consumer ACK recorded and read back. Producer ACK not yet observed. Author observer design e41a176c, Owner A decision recorded; independent design review pending. No native code/GUI/full-run/main publication. Root phase estimated36calls/45minutes, manually reconstructed approximately38calls; exact harness totals not exposed, cap compliance not claimed. Preparation-only partial close per Owner; implementation exit not reached. Author design8/8 ~7m40s, D1 review6/6 242s. Required future review/controls remain, not skipped.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md",
+        "docs/coordination/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve the Grok response gap and prepare a minimal admitted native observer toward main qualification.",
+      "done_when": "Exact consumer response recorded and read back; observer design and independent review state captured; implementation and qualification remain explicitly pending if not reached.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-16T16:00:33Z",
+      "duration_seconds": 1468.0,
+      "git": {
+        "sha": "0f8111cb684ff2394432353ab9744fa21a3b2883",
+        "short": "0f8111cb6",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NH5E3ARN8XKYJ364RNJVCW",
+      "shortname": "atlas-preparation-summary-correction",
+      "datetime": "2026-09-16T16:35:25Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "Correct the stale preparation-close summary; preserve the original append-only record.",
+      "summary": "Previous summary prepared before close still said design-review-pending and approximately38calls. Directly opened design review973afc97 was CLEAR before closure; manual root boundary tally approximately44, not exact harness instrumentation. No cap-compliance claim. The phase was preparation-only and implementation not complete. New Owner decision cl-01M2NGMZTQHB3K6CJV5CWHS3FW settles design and allocates author18/25min and independentreview10/20min. Own record commit remains pending figure-handoff; no peer-held writes or main publication.",
+      "kind": "manual",
+      "skill": "auditlog",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Keep the preparation outcome and observed independent verdict truthful.",
+      "done_when": "Superseding record names actual review and cost uncertainty without changing the original entry.",
+      "tier": "T1",
+      "fan_out": 0,
+      "supersedes": "al-01M2NGJCFNQ972708YRRYTK8CJ",
+      "git": {
+        "sha": "0f8111cb684ff2394432353ab9744fa21a3b2883",
+        "short": "0f8111cb6",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NHHSRH0HM4GP4N52WB0Y3H",
+      "shortname": "atlas-ack-record-handoff",
+      "datetime": "2026-09-16T16:42:11Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "Finish our ACK checkpoint after the exact generated-figure handoff.",
+      "summary": "Foreground resolved req-01M2NGJCE4DRW8FDZVKFCVA2EQ HANDOFF EFFECTIVE after investigator94ec9036 and explicit releases/current path checks. Own seven exact leases acquired; no TTL assumption or force release. Grok consumer ACK independently CLEAR and recorded; producer ACK still not observed. Native author remains in admitted test/proof implementation; no GUI/full run/main publication. This entry precedes required regeneration; following tool results establish its outcome.",
+      "kind": "manual",
+      "skill": "auditlog",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md",
+        "docs/coordination/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Commit truthful coordination and Owner records without editing peer-held paths.",
+      "done_when": "Actual effective handoff checked, own exact leases acquired, official regeneration inspected and records committed.",
+      "tier": "T1",
+      "fan_out": 0,
+      "git": {
+        "sha": "0f8111cb684ff2394432353ab9744fa21a3b2883",
+        "short": "0f8111cb6",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -29301,6 +29402,52 @@ window.AUDIT_DATA = {
         "pushed": null,
         "commits": []
       }
+    },
+    {
+      "id": "cl-01M2NFPQ7KKE1RRH8NAXM09X3H",
+      "datetime": "2026-09-16T16:09:55Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Native diagnostic observes public object identity and leaves private links unobserved",
+      "prompt": "Prepare the foreground-authorized same-instance native observer without changing the decisive original UIA query.",
+      "summary": "Astra Owner selects option A: actual host/current-child/reader-view references and attachment observations; separately identify test-wrapper readers/leases. View-to-backing-lease and private producer generation remain explicitly unobserved. STA snapshots bracket the existing awaited UIA batch, with after in finally; existing post-original RuntimeId sample stays labeled after-query and correlated to the same root. No private-field reads, new dispatcher hops, waits, peer refresh/invalidation, layout/focus effects, fallback roots or product repair.",
+      "rationale": "This is sufficient to distinguish the observed WPF host/current child/view from provider loading representation at the current diagnostic boundary. If a later observation needs a private link to distinguish remaining hypotheses, return that precise gap for a separate decision. No causal fix or live-run grant is inferred.",
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "0f8111cb684ff2394432353ab9744fa21a3b2883",
+        "after": "0f8111cb684ff2394432353ab9744fa21a3b2883",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2NGMZTQHB3K6CJV5CWHS3FW",
+      "datetime": "2026-09-16T16:26:27Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "decision",
+      "skill": "execute-with-coordination",
+      "title": "Settle bounded native observer design after independent CLEAR",
+      "prompt": "Continue toward main; Owner settlement after independent design review.",
+      "summary": "Owner read973afc97 and settles e41a176c design. Author18calls/25min/checkpoint12; independent reviewer10calls/20min/checkpoint6. Exact native test and existing proof plus official audit only. Preserve original query/assertions/helper behavior. All added observation formatting/sink failures contained. Actual-adapter and actual await/finally/sink controls required. Local bounded reference/walk/packet mechanisms, no private fields or inferred generation/view-lease link. Compilation and non-GUI only; no shown run or full qualification before fresh slot.",
+      "rationale": "Independent design review found no blocking discrepancy and justified each local mechanism against the admitted same-instance observation gap. Original native runtime veto remains; source review and execution are separate gates.",
+      "artifacts": [
+        "docs/proof/atlas-p1-02-native-uia.md",
+        "docs/coordination/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "0f8111cb684ff2394432353ab9744fa21a3b2883",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M2NGJCFNQ972708YRRYTK8CJ"
     }
   ]
 };

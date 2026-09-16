@@ -12,6 +12,71 @@ summary: "Observed frozen failures, repair controls and qualification receipts; 
 ---
 
 
+# Current state: Codex r3 ACK recorded; native observer design review
+
+Verified: Grok supplied corrected boundary17cd8317442f948ca6e0846f02cc06ef9f3a9673,
+docs/notes/d1-codex-entry-point-handshake-r3.md, exact blob
+e448383a90bb1ed962c7405af70e16d8cca09fa3. Independent Astra review
+394d1ff0a2105c5cdb647d2da5151513e6e8e105, docs/proof/codex-d1-r3-consumer-review.md,
+clears all five requested corrections and resolves all four consumer pins. The Conductor
+opened the complete receipt and proposal. Native qualification is not a dependency of D1.
+
+The incoming r3 request req-01M2NFA6NQKFHN178A9P0JFE2P is now resolved CONSUMER ACK AS
+WRITTEN. Direct exact-blob ACK is req-01M2NFTQFRP41JRV68PQSC3AGD to Grok, with
+req-01M2NFTQHE06ESQT055MJNH8KC to the watcher and req-01M2NFTQK3AZMTH2YAHFJ37ZDS
+to foreground GHCP. The three older incoming requests are resolved CHANGES REQUESTED,
+not retroactively ACKed. Readback is artifacts/atlas-five-gates/d1-ack-disposition-readback.json.
+Producer same-blob ACK and watcher freeze have not yet been observed. Sending the ACK
+does not prove that its recipient consumed it. Implementation remains a separate state.
+
+Native test/proof preparation is expressly admitted by foreground resolution
+req-01M2M4FMQW8QWMJX0GFWF54A5X. Author design e41a176cf6bb38a6ff144d857808c106bca180de
+extends docs/proof/atlas-p1-02-native-uia.md only, plus official audit. Original native
+test SHA256 remains53b792e4775f76279f199ccccee485d9143cb044abfbc3ffdc4f6d34573e2613.
+Owner decision cl-01M2NFPQ7KKE1RRH8NAXM09X3H permits existing public/test references;
+private generation and view-to-lease ownership remain unobserved. Existing RuntimeId
+is explicitly after the original query; WPF brackets do not imply simultaneous UIA state.
+Independent Test Architect/SRE/Simplifier design review973afc97a8bcd981e607aa73be0c89247045a3c5,
+docs/proof/atlas-native-observer-design-review.md, is CLEAR. The complete receipt was
+opened by the Conductor; it justifies bounded local mechanisms and preserves actual-adapter
+proof as an implementation obligation. Release-start is an observed event, not an existing
+Boolean property. Source implementation and non-GUI controls await Owner settlement.
+No new GUI slot exists.
+
+| Task | Purpose | Observed status |
+| --- | --- | --- |
+| Five static repairs and D0 correction | Restore the admitted integration gates | Reviewed source assembled; prior actual gates and73/73 retained |
+| D1 boundary | Separate listing from unassigned method mapping | Codex consumer ACK; producer ACK not yet observed |
+| Native observer design | Distinguish actual WPF objects from original UIA result | Independent design CLEAR973afc97; Owner settlement next |
+| Native diagnostic and qualification | Establish runtime acceptance | P1-02 remains failed; fresh execution not granted |
+| Main publication | Bring main up to the reviewed candidate | GHCP retains publication; main last observedbcf4959b |
+| E1/E2 | Complete admitted view work | Queued behind integration priority |
+
+Planned versus actual: the root preparation phase was estimated36calls/45minutes and
+included an implementation exit that it has not reached. The manually reconstructed
+root boundary count is approximately44; exact harness call/token totals are not exposed
+here, and cap compliance is not claimed. Broad reads returned truncation and required
+narrower recovery; all load-bearing dispositions above were inspected directly. The
+Owner requires a preparation-only partial close, not a raised retrospective budget.
+Author design used8/8calls, about7m40s. D1 review used6/6calls and242measured seconds.
+Independent design review used6/6calls and247measured seconds. Its result, then Owner
+settlement, defines the next separately budgeted implementation unit. Preserve
+the original five/D0 source and P1-02 raw failure; no retry-until-green or scope expansion.
+
+Correction class/sweep/derive/prevent: a sent correction was treated as enough response
+while three incoming requests stayed open. Sweep found all three and the later r3 request.
+The actionable state is the official request disposition plus immutable contract pin,
+not the existence of an outbound notice. The existing request resolve/list mechanism
+now records and reads back all four responses, and the closing script refuses missing,
+open or wrong-blob responses. This is a bounded checkpoint control; a general automatic
+response-lifecycle gate is not claimed or introduced into the coordination framework.
+The active cross-harness messaging investigator holds the shared lessons register and
+three site figure paths. Both lease refusals caused immediate release and narrowing,
+not TTL waiting. Exact lesson incorporation and a serialized figure-regeneration handoff
+are requested. Foreground has now resolved the exact figure request HANDOFF EFFECTIVE after holder release and fresh path checks. Required own-tree regeneration and commit follow under new short exact leases.
+
+## Earlier checkpoints (historical)
+
 # Current state: P1-02 failed; source preserved, native diagnosis pending
 
 The five repairs and reviewed D0 source remain assembled at f90bdce1; qualification

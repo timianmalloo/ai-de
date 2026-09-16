@@ -13,6 +13,71 @@ summary: "Repair the five frozen Atlas integration failures before main publicat
 ---
 
 
+# Current state: Codex r3 ACK recorded; native observer design review
+
+Verified: Grok supplied corrected boundary17cd8317442f948ca6e0846f02cc06ef9f3a9673,
+docs/notes/d1-codex-entry-point-handshake-r3.md, exact blob
+e448383a90bb1ed962c7405af70e16d8cca09fa3. Independent Astra review
+394d1ff0a2105c5cdb647d2da5151513e6e8e105, docs/proof/codex-d1-r3-consumer-review.md,
+clears all five requested corrections and resolves all four consumer pins. The Conductor
+opened the complete receipt and proposal. Native qualification is not a dependency of D1.
+
+The incoming r3 request req-01M2NFA6NQKFHN178A9P0JFE2P is now resolved CONSUMER ACK AS
+WRITTEN. Direct exact-blob ACK is req-01M2NFTQFRP41JRV68PQSC3AGD to Grok, with
+req-01M2NFTQHE06ESQT055MJNH8KC to the watcher and req-01M2NFTQK3AZMTH2YAHFJ37ZDS
+to foreground GHCP. The three older incoming requests are resolved CHANGES REQUESTED,
+not retroactively ACKed. Readback is artifacts/atlas-five-gates/d1-ack-disposition-readback.json.
+Producer same-blob ACK and watcher freeze have not yet been observed. Sending the ACK
+does not prove that its recipient consumed it. Implementation remains a separate state.
+
+Native test/proof preparation is expressly admitted by foreground resolution
+req-01M2M4FMQW8QWMJX0GFWF54A5X. Author design e41a176cf6bb38a6ff144d857808c106bca180de
+extends docs/proof/atlas-p1-02-native-uia.md only, plus official audit. Original native
+test SHA256 remains53b792e4775f76279f199ccccee485d9143cb044abfbc3ffdc4f6d34573e2613.
+Owner decision cl-01M2NFPQ7KKE1RRH8NAXM09X3H permits existing public/test references;
+private generation and view-to-lease ownership remain unobserved. Existing RuntimeId
+is explicitly after the original query; WPF brackets do not imply simultaneous UIA state.
+Independent Test Architect/SRE/Simplifier design review973afc97a8bcd981e607aa73be0c89247045a3c5,
+docs/proof/atlas-native-observer-design-review.md, is CLEAR. The complete receipt was
+opened by the Conductor; it justifies bounded local mechanisms and preserves actual-adapter
+proof as an implementation obligation. Release-start is an observed event, not an existing
+Boolean property. Source implementation and non-GUI controls await Owner settlement.
+No new GUI slot exists.
+
+| Task | Purpose | Observed status |
+| --- | --- | --- |
+| Five static repairs and D0 correction | Restore the admitted integration gates | Reviewed source assembled; prior actual gates and73/73 retained |
+| D1 boundary | Separate listing from unassigned method mapping | Codex consumer ACK; producer ACK not yet observed |
+| Native observer design | Distinguish actual WPF objects from original UIA result | Independent design CLEAR973afc97; Owner settlement next |
+| Native diagnostic and qualification | Establish runtime acceptance | P1-02 remains failed; fresh execution not granted |
+| Main publication | Bring main up to the reviewed candidate | GHCP retains publication; main last observedbcf4959b |
+| E1/E2 | Complete admitted view work | Queued behind integration priority |
+
+Planned versus actual: the root preparation phase was estimated36calls/45minutes and
+included an implementation exit that it has not reached. The manually reconstructed
+root boundary count is approximately44; exact harness call/token totals are not exposed
+here, and cap compliance is not claimed. Broad reads returned truncation and required
+narrower recovery; all load-bearing dispositions above were inspected directly. The
+Owner requires a preparation-only partial close, not a raised retrospective budget.
+Author design used8/8calls, about7m40s. D1 review used6/6calls and242measured seconds.
+Independent design review used6/6calls and247measured seconds. Its result, then Owner
+settlement, defines the next separately budgeted implementation unit. Preserve
+the original five/D0 source and P1-02 raw failure; no retry-until-green or scope expansion.
+
+Correction class/sweep/derive/prevent: a sent correction was treated as enough response
+while three incoming requests stayed open. Sweep found all three and the later r3 request.
+The actionable state is the official request disposition plus immutable contract pin,
+not the existence of an outbound notice. The existing request resolve/list mechanism
+now records and reads back all four responses, and the closing script refuses missing,
+open or wrong-blob responses. This is a bounded checkpoint control; a general automatic
+response-lifecycle gate is not claimed or introduced into the coordination framework.
+The active cross-harness messaging investigator holds the shared lessons register and
+three site figure paths. Both lease refusals caused immediate release and narrowing,
+not TTL waiting. Exact lesson incorporation and a serialized figure-regeneration handoff
+are requested. Foreground has now resolved the exact figure request HANDOFF EFFECTIVE after holder release and fresh path checks. Required own-tree regeneration and commit follow under new short exact leases.
+
+## Earlier checkpoints (historical)
+
 # Current state: P1-02 failed; source preserved, native diagnosis pending
 
 The five repairs and reviewed D0 source remain assembled at f90bdce1; qualification
@@ -616,3 +681,118 @@ Any new semantic failure returns to Owner, never a retry-until-green loop. Waiti
 only on actual grant or a reported external blocker; elapsed time is not authorization.
 Next assembly/slot-request unit budget24 calls/25minutes, checkpoint16, width1 plus Owner
 on decisions; qualification is its own scheduled unit. Cost is a planning estimate.
+
+## Native observer preparation and direct-handshake recovery - 2026-09-16
+
+Goal: prepare the smallest test-only observer that distinguishes actual WPF instance
+state from the original UIA result, and close Grok's unanswered-response state.
+Done when: Owner-settled observation design, frozen test/proof delta with meaningful
+non-GUI controls and independent Test/SRE clearance; exact shown diagnostic request
+prepared. Grok gets an explicit disposition and an immediate revised-blob review.
+Not in scope: product repair, peer invalidation/refresh, sleeps/retries/fallback roots,
+extra focus/layout, GUI/full runs without a fresh grant, helper-attribution framework
+repair, new E1/E2 ownership or main publication. Tier T2; fan-out cap4 including Owner
+and Conductor. Phase estimate root36calls/45minutes, checkpoint24. Design author8calls/
+15minutes/checkpoint5; implementation budget is set only after design is settled.
+
+Foreground grant req-01M2M4FMQW8QWMJX0GFWF54A5X now explicitly admits same-test/proof
+diagnostic preparation, compilation and non-GUI controls. The paired resolution grants
+no second unit. Exact authorized code path:
+tests/AiDe.App.Tests/Workbench/Understanding/AtlasDaemonMainWindowProofTests.cs.
+Author proof: docs/proof/atlas-p1-02-native-uia.md; own official audit only otherwise.
+
+Optimize-graph material re-plan: the new observed foreground grant adds a preparation
+node before the existing slot gate. Reuse the prior native investigation and product
+spec/architecture; no product architecture/spec or UI design change. A small observer
+design appendix is needed to declare data grain, identities, bounds and failure modes.
+Surface list: existing capture boundary -> original query/result -> same-instance WPF
+host/content/reader observation -> bounded structured receipt -> non-GUI fixtures ->
+independent Test/SRE review -> fresh shown-run request. No store/wire/product-reader change.
+
+| Node | Dependency | Exit oracle | Assignment |
+| --- | --- | --- | --- |
+| A: observer design | exact foreground grant and prior failure | original query remains decisive; identity/generation/bounds and unknowns explicit | Astra author,8calls |
+| B: scope/semantics decision | A | Owner confirms bounded observation contract | Astra Owner,3calls |
+| C: observer implementation | B | frozen exact test/proof, meaningful non-GUI controls, compilation | same author, separately budgeted |
+| D: independent review | C | Test/SRE CLEAR or precise counterexample | independent available model selected at dispatch |
+| E: shown diagnostic request | D | exact pin, command, preconditions, fresh scheduler grant | Conductor |
+| H: Grok handshake recovery | existing r2/r3 records | explicit response disposition; both peers ACK same corrected blob before freeze | Conductor |
+
+H has no data or shared-exclusive-resource edge to A-D and runs while those proceed.
+A-B-C-D-E are serial; widening them would create semantic contention. One author owns
+the exact native test/proof in a separately provisioned worktree. No author self-clears.
+Variant: outstanding design/decision/implementation/review receipts, each closed only
+against its oracle; new counterexample triggers an Owner re-plan, never repetition to
+obtain green. A missing grant remains an authority dependency, not consent after a timer.
+Cost is Inferred plan; actual calls/elapsed are recorded at each close. Tool-return outputs
+must be read; truncated broad reads this turn were narrowed before any design assertion.
+
+Coord doctor actually reports registry11patterns and effective coord-regen/register
+drivers; six regeneration queue items are owed. Own-tree regenerate-derived.py after
+audit remains the reviewed mechanism; coord regen's primary-target behavior is not used.
+Codex separate-tree assignment/receipt is observed, filesystem isolation is not a sandbox;
+identity-bound leases and real commit hook are the shared floor. Historical other-harness
+capability statements in doctor are not a fresh Codex enforcement qualification.
+
+Grok r2 source at62670a0a/blob76e592a3 still assigns Core authority to Codex and promises
+an unassigned D1-to-method map. Exact r3 deltas had been sent in KSD1JQG, but incoming
+consumer requests stayed open. Three incoming requests are now explicitly resolved
+CHANGES REQUESTED, not contract ACK; direct reset req-01M2NF6PN1Q182VKC3ZA4NST29 asks
+producer acknowledgment/revised exact blob. No r3 exists in current Grok bde992b4.
+This is not yet bilateral contract acceptance. Consumer revised-blob review does not
+depend on native qualification; D1's accepted non-consuming boundary can remove that
+unnecessary implementation dependency. Actual same-blob peer acknowledgment remains.
+
+Foreground attribution correction M58WB was directly verified in DesktopHold.cs and
+SolutionTreeChordTests.cs: shared test code hard-codes Grok agent/from/session/old Claude
+recipient and is called by the suite. A suite-emitted name is not an independent peer
+identity. The native failed query precedes the later emitted START. Preserve prior alert
+as history; do not classify it as verified Grok violation or native cause. Helper repair
+is outside this phase and goes to its owning harness with this exact evidence.
+
+## Settled observer implementation dispatch - 2026-09-16
+
+Owner decision cl-01M2NGMZTQHB3K6CJV5CWHS3FW settles author design e41a176c after
+independent design CLEAR973afc97 (6/6 calls,247 seconds). The Conductor opened the full
+receipt. The original runtime failure remains, and design CLEAR is not source/runtime CLEAR.
+
+Goal: freeze the smallest admitted test-only observer with meaningful observed non-GUI
+controls. Done when author returns the exact test/proof commit and actual results, then
+independent implementation review returns CLEAR or a bounded counterexample. Not in scope:
+product repair, private-field access, GUI/full runs or publication. Tier T2, width cap4
+including Owner and Conductor. Author18calls/25minutes/checkpoint12; independent reviewer
+10calls/20minutes/checkpoint6. Existing graph A-B is complete; C author -> D review -> E
+fresh diagnostic slot remains serial. Peer acknowledgment and figure regeneration have
+no implementation data edge. No repeated optimize-graph invocation is needed.
+
+The continuing Astra author owns C:/Projects/ai-de-test-atlas-native-instance-observer,
+test/atlas-native-instance-observer, session codex-atlas-native-instance-observer. Only
+tests/AiDe.App.Tests/Workbench/Understanding/AtlasDaemonMainWindowProofTests.cs and
+docs/proof/atlas-p1-02-native-uia.md plus official own audit/liveness may change. Strong
+reasoning is warranted by reference identity, thread timing and original-failure fidelity.
+The review author remains separate and is provisioned at the frozen implementation tip.
+
+Non-GUI fixture design uses real unshown WPF objects and an actual local Atlas owner/host
+path, with no HWND/Show/UIA/focus/layout. The observer never activates those objects.
+Actual adapter rows and shared await/finally/Receipt-sink paths must be tested, not only
+synthetic rows or an isolated delegate. Release-start comes from its real emitting event;
+new observation work including formatting/sink cannot replace the original result/failure.
+Private view-to-lease and generation remain unobserved. Local finite mechanisms only.
+
+The Conductor's prior preparation plan was exceeded, including extra narrowed reads and
+two refused shared-file claims. Official partial audit al-01M2NGJCFNQ972708YRRYTK8CJ was
+prepared with stale summary text saying38calls/design-review-pending; that summary is
+superseded by the correction record accompanying this dispatch. The directly observed
+review was already CLEAR973afc97. A manual boundary tally is approximately44, not an exact
+harness measurement; cap compliance is not claimed. Current continuation root cost was
+not separately declared before work, so no retrospective budget-compliance claim is made.
+Remaining coordination/receipt unit is bounded to8calls/20minutes/checkpoint5 from this
+record. Gates stay mandatory; a cap is a planning defect, not acceptance or permission.
+
+Exact lease handoff req-01M2NGJCE4DRW8FDZVKFCVA2EQ and lesson incorporation
+req-01M2NGJCCFXF09QAV5WJWG9VQY remain pending with cross-harness-messaging-rca-b0d0.
+No peer-held path was changed or reclaimed after refusal. A routed copy of the existing
+r3 consumer ACK reached the shared request store for currently registered watcher session
+copilot-main-watch-b0d0 as req-01M2NGZFZDRKAVGRHY9JYEZPQS. Neither routing nor a request
+record establishes peer consumption. Grok's exact same-blob producer ACK is still pending.
+Remote main was freshly checked and remains bcf4959bc0e0e361736e6a179f05b69fcd0500f8.

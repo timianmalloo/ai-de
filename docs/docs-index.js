@@ -9534,7 +9534,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d376de7267c32ca0a4cd8eedf4b1d5461d5602aeb18a29d345a36133ce637f83"
+      "sourceSha256": "48538775159d11631de1dac2d6727e51aabb9ccc371353b58ba5f821dc027a50"
     },
     {
       "id": "coordination-code-atlas",
@@ -12108,7 +12108,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "3740f22083d5e0daca040985f4bc008bce6521d57c2bbcebebc9e07dbf06fa76"
+      "sourceSha256": "43b5b74f611c29f0222f46dfc07965e21dc1158a2b5fde6afc3d90782629e787"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -12739,7 +12739,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e76c1626252eeb864ce762d80ba9c43c81a7ed3365e57ab5de4b1e221c6e5203"
+      "sourceSha256": "3d8aceca299f25702ea818cf0f71c1131a38594a4916faefdd905baa712b6649"
     },
     {
       "id": "proof-code-atlas-contract-grounding",
@@ -23035,5 +23035,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "dc0655b2055a4541492872e811c92ffd19d4455403957dfc186cca09d72449cf"
+  "graphSha256": "34459a0960f8e04869ac4d6424053c20fec1e3520f72448fae6625ff692c97ad"
 };
