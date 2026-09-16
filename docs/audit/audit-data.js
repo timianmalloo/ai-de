@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T21:27:00Z",
+  "generated": "2026-09-16T21:50:36Z",
   "audit": [
     {
       "actor": null,
@@ -26454,6 +26454,53 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "88035753581dd0bab5697e975b6ba1a53543e702",
         "short": "880357535",
+        "branch": "test/atlas-p1-03-uia-pair",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2P31FBYJFT9J52N2DR781A2",
+      "shortname": "atlas-pair-execution",
+      "datetime": "2026-09-16T21:47:50Z",
+      "session": "codex-atlas-p1-03-pair-execution",
+      "prompt": "Execute exact granted pair ONCE and return observed fixture/oracle/cleanup evidence and explicit slot release. Done when frozen runner ends, actual process/TRX/native/observer/pixel state inspected and raw artifacts/Proof Pack/audit committed; unresolved states reported never accepted. Tier T2, fanout 0, Astra retained for native process/containment responsibility. Budget 8 orchestration calls / 15 minutes; checkpoint at launch/completion; grant expiry overrides clock budget. Never retry. No product/test/runner/manifest edit, rebuild, broad tests/full suite or GUI input/capture beyond fixed test. Wrapper only exact argv plus protocol/lifecycle observation, in ignored artifacts. No new execution bound or kill by name.\n\nRoot registered same-tree execution session codex-atlas-p1-03-pair-execution / codex-astra-pair-executor after correction ended. First action audit start execute-with-coordination. Publish own liveness. No tracked writes before runner ends, including prompt/audit append: reviewed HEAD and clean-tree guard remain d679e156. No EnterWorktree/install. Preserve raw outer stdout/stderr, actual process identity, native/TRX/observer/pixel evidence if emitted. Absent is not recorded.\n\nActual grant req-01M2P2GATJDFH40ZF6QNCFG1X7 resolved by copilot-main-watch-b0d0: SLOT-CODEX-UIA-PAIR-01 issued 2026-09-16T21:41:21.4037604Z, expires 2026-09-16T21:56:21.4037604+00:00. Read actual snapshot and current official grant/no new stop before launch. Independent preparation CLEAR 8e60f415cbb12e3fa15ffe6d315b3b1d5f656e71. No new approval needed. No OS/human-exclusion guarantee.\n\nExact command once: python -B docs/proof/records/atlas-p1-03-uia-transition/run_pair.py execute --manifest artifacts/atlas-pair-preparation/manifest-corrected.json --manifest-sha256 a58c5993e2a8ce0c30ca3ea38339da0f2faf5943a7d891d7b3cf6a42b51ba23c --reviewed-commit d679e1567e2d74fa2ef85f1eddae6c44b6d5b758 --slot SLOT-CODEX-UIA-PAIR-01 --expires-utc 2026-09-16T21:56:21.4037604+00:00 --label atlas-uia-pair-01-d679e156-20260916\n\nRunner SHA 26567e7b408430ef29d4a44e6c60a1792cb2ddae9b23dd01393e1cc6ea3a3daa. Full pins before/after enforced by runner, file hash alone insufficient. Fixed A then B, fresh dotnet exact Facts, Debug/no-build/no-restore, unique profiles/labels. Missing or mismatched identity/pins/evidence, expiry, uncontained process, forced daemon cleanup stops. Valid negative A reaches B only with valid fixture/cleanup. B requires actual Atlas loading ancestry. No automatic next attempt.\n\nOfficial coord request protocol to copilot-main-watch-b0d0: PRE-SPAWN grant/exact command, START actual outer PID/creation/time, END/RELEASE actual containment/run states even on failure. Notify root START/completion promptly. Runner RELEASE is not watcher slot release. Do not hold desktop through docs.\n\nAfter completion and END/RELEASE posted, allowed new docs/proof/atlas-p1-03-pair-execution.md, own official prompt/audit/derived/liveness. Ground metadata from existing proof. Exact short proof/site leases. Audit then official regen, inspect results, commit with source unchanged/both manifests retained. No source join/main/push. If budget insufficient return exact administrative remainder. No causal/historical qualification claims. Independent interpretation follows. Return commit, observed arm outcomes/validity/reasons, slot notices/raw paths/hashes, budget/duration/risks, all leases released/session ended, tree retained.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2P36G5DGKXVY94B10A7T61X",
+      "shortname": "atlas-pair-execution",
+      "datetime": "2026-09-16T21:50:35Z",
+      "session": "codex-atlas-p1-03-pair-execution",
+      "prompt": "Execute exact granted pair ONCE and return observed fixture/oracle/cleanup evidence and explicit slot release. Done when frozen runner ends, actual process/TRX/native/observer/pixel state inspected and raw artifacts/Proof Pack/audit committed; unresolved states reported never accepted. Tier T2, fanout 0, Astra retained for native process/containment responsibility. Budget 8 orchestration calls / 15 minutes; checkpoint at launch/completion; grant expiry overrides clock budget. Never retry. No product/test/runner/manifest edit, rebuild, broad tests/full suite or GUI input/capture beyond fixed test. Wrapper only exact argv plus protocol/lifecycle observation, in ignored artifacts. No new execution bound or kill by name.\n\nRoot registered same-tree execution session codex-atlas-p1-03-pair-execution / codex-astra-pair-executor after correction ended. First action audit start execute-with-coordination. Publish own liveness. No tracked writes before runner ends, including prompt/audit append: reviewed HEAD and clean-tree guard remain d679e156. No EnterWorktree/install. Preserve raw outer stdout/stderr, actual process identity, native/TRX/observer/pixel evidence if emitted. Absent is not recorded.\n\nActual grant req-01M2P2GATJDFH40ZF6QNCFG1X7 resolved by copilot-main-watch-b0d0: SLOT-CODEX-UIA-PAIR-01 issued 2026-09-16T21:41:21.4037604Z, expires 2026-09-16T21:56:21.4037604+00:00. Read actual snapshot and current official grant/no new stop before launch. Independent preparation CLEAR 8e60f415cbb12e3fa15ffe6d315b3b1d5f656e71. No new approval needed. No OS/human-exclusion guarantee.\n\nExact command once: python -B docs/proof/records/atlas-p1-03-uia-transition/run_pair.py execute --manifest artifacts/atlas-pair-preparation/manifest-corrected.json --manifest-sha256 a58c5993e2a8ce0c30ca3ea38339da0f2faf5943a7d891d7b3cf6a42b51ba23c --reviewed-commit d679e1567e2d74fa2ef85f1eddae6c44b6d5b758 --slot SLOT-CODEX-UIA-PAIR-01 --expires-utc 2026-09-16T21:56:21.4037604+00:00 --label atlas-uia-pair-01-d679e156-20260916\n\nRunner SHA 26567e7b408430ef29d4a44e6c60a1792cb2ddae9b23dd01393e1cc6ea3a3daa. Full pins before/after enforced by runner, file hash alone insufficient. Fixed A then B, fresh dotnet exact Facts, Debug/no-build/no-restore, unique profiles/labels. Missing or mismatched identity/pins/evidence, expiry, uncontained process, forced daemon cleanup stops. Valid negative A reaches B only with valid fixture/cleanup. B requires actual Atlas loading ancestry. No automatic next attempt.\n\nOfficial coord request protocol to copilot-main-watch-b0d0: PRE-SPAWN grant/exact command, START actual outer PID/creation/time, END/RELEASE actual containment/run states even on failure. Notify root START/completion promptly. Runner RELEASE is not watcher slot release. Do not hold desktop through docs.\n\nAfter completion and END/RELEASE posted, allowed new docs/proof/atlas-p1-03-pair-execution.md, own official prompt/audit/derived/liveness. Ground metadata from existing proof. Exact short proof/site leases. Audit then official regen, inspect results, commit with source unchanged/both manifests retained. No source join/main/push. If budget insufficient return exact administrative remainder. No causal/historical qualification claims. Independent interpretation follows. Return commit, observed arm outcomes/validity/reasons, slot notices/raw paths/hashes, budget/duration/risks, all leases released/session ended, tree retained.",
+      "summary": "One granted attempt stopped in A on PROCESS-IMAGE-MISSING. Job active zero and retained handles exited; identity population incomplete (7 of 8), forced containment, no TRX/native receipt/oracle; B not launched. Full pins before/after A; source and both manifests unchanged. PRE-SPAWN/START/END-RELEASE posted; watcher owns slot release. No retry/repair/rebuild. Oversized initial snapshot read corrected by exact filtering.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-pair-execution.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Execute the exact granted frozen pair once and preserve observed fixture, oracle and cleanup evidence with explicit lifecycle notices.",
+      "done_when": "Runner ended, actual raw evidence inspected and Proof Pack/audit committed; unresolved states reported without acceptance or retry.",
+      "tier": "T2",
+      "main_calls": 8,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-16T21:44:18Z",
+      "duration_seconds": 377.0,
+      "git": {
+        "sha": "d679e1567e2d74fa2ef85f1eddae6c44b6d5b758",
+        "short": "d679e1567",
         "branch": "test/atlas-p1-03-uia-pair",
         "pushed": null
       }

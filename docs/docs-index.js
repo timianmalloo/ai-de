@@ -18923,6 +18923,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "723f522740d34020017a6ff832c610d6f19e9b5bc570f5205482b6353137c876"
     },
     {
+      "id": "proof-atlas-p1-03-pair-execution",
+      "path": "docs/proof/atlas-p1-03-pair-execution.md",
+      "title": "Atlas pair 01: arm A process-identity refusal; B not started",
+      "type": "proof-pack",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "One granted attempt stopped in arm A on PROCESS-IMAGE-MISSING. Owned Job reached active zero, but identities were incomplete. No TRX/native receipt or oracle result; B did not start.",
+      "tags": [
+        "atlas",
+        "proof",
+        "execution",
+        "containment"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-p1-03-pair-preparation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-atlas-p1-03-uia-transition",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f3217d60c1f17ef1e36e87bb363bbd8481d92be96b5267b2afc889e3c6c936af"
+    },
+    {
       "id": "proof-audit-gate-plan-review",
       "path": "docs/proof/audit-gate-plan-review.md",
       "title": "Independent plan review: audit gate self-test",
@@ -23412,5 +23446,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6e2a346dc559431aff38f61a939e050aa1356b7cdee929de0332c2521f9b0a84"
+  "graphSha256": "76834dcf2f3ef56d80cb8a298d69922153b617e4ed5968e4f4b5e79d7cdd81a1"
 };
