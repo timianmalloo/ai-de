@@ -11,6 +11,33 @@ review-by: 2026-12-15
 summary: "Observed frozen failures, repair controls and qualification receipts; acceptance remains open."
 ---
 
+# D0 repair review: current BLOCK
+
+Author `97a9e200b5a5b0047e2b42cae931ffd35db02bc0`, independent reviewer
+`bbca8d6edc495b150c502999fd0fcc69fa922c72`. The reviewer ran the current normal-build
+headless suite:20 executed/20 passed/0 skipped,26 selected roots,3976 reference observations,
+58 admitted shared symbols. The Conductor inspected the committed review receipt and actual
+reflection source/output. Two independent counterexamples block the source:
+
+| Mutation | Actual result | Required result |
+|---|---|---|
+| Call new Atlas-calling `OpenKind(int)` from `RefreshSolutionTrees` | 3978 references,0 errors; same-body `FreshReviewHelper(int)` reports UNACCOUNTED | Reject the unaccounted new overload |
+| Add unused conditional Atlas helper to factory outside selected solution-tree row | 3976 references,1 CONDITIONAL error | Admit provably unrelated conditional member |
+
+Review receipt: `docs/proof/d0-atlas-independence-review.md` at the review pin. Raw files
+remain in `C:/Projects/ai-de-review-d0-atlas-independence-astra/.artifacts/d0-review/`,
+including `Program.cs`, `spike.log` and `review-baseline.trx`. The review changed no source.
+Frozen test SHA256 stayed `A5338A154CE836CE8D321F012F2C3637280293B33C304AAD12153275CDE3123E`.
+These synthetic failures establish defects in the guard, not a discovered product dependency.
+
+The original author unit consumed24/24 calls. Independent review consumed16/16,441 measured
+seconds. A preceding Sol review turn failed at model capacity before doing work; its clean
+provisioned tree was retained. Astra was selected for the replacement semantic/adversarial review.
+Owner approved one correction16 calls/20 minutes/checkpoint12 in a new tree descended from
+the BLOCK receipt. Exact source authority/signatures and bounded conditional contexts are its
+exit predicates; the original BLOCK remains until independent re-review. No qualification retry
+or acceptance follows from the existing20 green tests.
+
 # Initial red observation
 
 Base dd9b338f4670f9ce64d0c38a5e7c196664250d9a. Each command below was executed independently with Python in the new conductor tree; each returned exit 1. Results were inspected before product edits.

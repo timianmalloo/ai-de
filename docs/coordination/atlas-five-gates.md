@@ -14,6 +14,22 @@ summary: "Exact blocker transfer; isolated repairs followed by GHCP-only main pu
 
 # Layer state
 
+**Current correction checkpoint:** independent Astra review
+`bbca8d6edc495b150c502999fd0fcc69fa922c72` BLOCKS the D0 author tip
+`97a9e200b5a5b0047e2b42cae931ffd35db02bc0`. Its own normal-build run passed20/20,
+but a new Atlas-calling `OpenKind(int)` bypassed name-only port admission and an unrelated
+conditional factory member was rejected. Conductor inspected the actual mutation source and
+emitted results. Owner admitted one same-test/proof correction, 16 calls/20 minutes/checkpoint12,
+in provisioned `C:/Projects/ai-de-fix-d0-atlas-correction`, branch `fix/d0-atlas-correction`,
+session `codex-d0-atlas-correction`. The exact design and exit predicates are recorded in the
+programme plan before dispatch. No source join or qualification precedes independent clearance.
+
+Integration HEAD `703bb3ced1c79931a03b7e2b4c2b4b257cd74e83` contains the independently
+CLEAR native setup preflight; real setup and canonical qualification are still pending.
+Advertised main was reread as `bcf4959bc0e0e361736e6a179f05b69fcd0500f8`; its D0 product
+is already in the assembled source. Foreground GHCP retains final publication. Earlier
+author-working/preflight-pending records below describe their historical checkpoint.
+
 **Latest state, 2026-09-16:** canonical slot SLOT-CODEX-P1-01 ended/released at
 00:23:18.413129Z after the first completed App TRX showed1165 executed/1163 passed/2 failed/0 skipped.
 The missing `ATLAS_PROOF_RUN` label is a Conductor execution omission. The second failure is

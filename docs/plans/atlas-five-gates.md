@@ -135,6 +135,67 @@ Owner reassessment, never a retry-until-green loop. One retry only for a diagnos
 tool fault. Partial returns remain unaccepted. Main movement forces reconciliation before freeze.
 The E1/E2 handshake remains a separate read-only seam and does not delay these repairs.
 
+### D0 independent BLOCK correction, 2026-09-16
+
+Verified review `bbca8d6edc495b150c502999fd0fcc69fa922c72` blocks author
+`97a9e200b5a5b0047e2b42cae931ffd35db02bc0`: a new Atlas-calling `OpenKind(int)`
+inherits an existing port's name-only admission, while an unrelated conditional factory
+member is refused outside the selected D0 boundary. The Conductor inspected the actual
+reflection inputs and emitted results. Passing 20 tests did not establish this missing coverage.
+
+Owner admits one same-scope correction: 16 author calls / 20 minutes, checkpoint12.
+Original author24/24 and reviewer16/16 remain actual history; the hard BLOCK is retained.
+Conductor phase remains T2, cap3 including Owner, and its existing post-freeze horizon
+remains accounted separately. This is a material evidence-driven optimize-graph delta,
+not a restart of the programme or permission for broader product work.
+
+Owner subsequently admitted the next root phase24 calls/35 minutes/checkpoint16, width3:
+inspect correction, independent re-review, one barrier join, current-main/source freeze and
+fresh-slot request. Its audit marker starts prospectively at2026-09-16T01:20:13Z. Previous
+phase closed partial in al-01M2KWRZ6Q4MEXHNDZ34JE3TVB,1191 measured seconds, approximate
+26-29 calls against30 with exact count unavailable. Canonical execution and combined handoff
+remain a separate phase conditional on an actual slot. A rejected record patch used stale
+context; it changed no files. Exact-context refusal and readback prevented a misplaced edit.
+
+Freeze the correction in `fix/d0-atlas-correction`, provisioned from the BLOCK receipt.
+Only `tests/AiDe.App.Tests/SolutionTreeProbeTests.cs`, its existing proof receipt, own
+official audit/liveness and local test/spike evidence are admitted. Parent owns central
+lessons and derived union. Correct proof type to `doc` and the integrated failure path
+to `artifacts/atlas-five-gates/failed-slot-p1-01` as disclosed clerical changes.
+
+Required design: every admitted shared symbol uses project/source authority and the
+Roslyn documentation ID of OriginalDefinition, preserving parameter and generic signature.
+Type/member names never establish membership. Missing, ambiguous or unmapped identities
+refuse; constructed type arguments still receive Atlas checks. Spike installed Roslyn
+directive/disabled-text behavior before relying on it. Refuse conditional branches inside
+or enclosing selected roots and those affecting their binding (imports, aliases, relevant
+definitions/declarations), including inactive and Release-only branches. Permit provably
+unrelated conditional members outside the boundary. No whole-eight-file ban, Debug-only
+claim, general transitive analyzer, MSBuild framework, product changes or new dependency.
+
+| Node | Exit oracle | Dependency |
+|---|---|---|
+| C1 bounded correction | Both exact review examples red first; all retained20 plus root/enclosing/import-alias/Release adversaries pass with observed results | Owner decision and committed BLOCK |
+| C2 independent re-review | Test Architect and architecture/security predicates CLEAR on exact correction pin; real shared identities inspected | C1 |
+| C3 official barrier join | Review tip contains author; history conserved; source still explicitly unqualified | C2 |
+| C4 canonical qualification | Fresh allocated slot, reviewed preflight/wrapper, actual unchanged union plus Release results | C3 and exact clean HEAD |
+| C5 combined review and foreground handoff | Independent acceptance, exact main/candidate and receipts supplied to GHCP | C4 |
+
+```mermaid
+graph TD
+ C1-->C2-->C3-->C4-->C5
+```
+
+These nodes are serial data/decision dependencies. Authoring cannot overlap its review;
+parent records and peer notices may overlap the author's isolated source work. Astra is
+retained for semantic identity/conditional reasoning and adversarial review. No extra research
+agent is justified. Inferred unit-cost work/span5, execution width1, floors unchanged; no
+measured speedup claim. Variant: two explicit review predicates plus their enumerated
+adversaries become independently satisfied. Any new failure stops qualification and invokes
+diagnosis; a second non-decreasing correction or a budget cap goes to Owner, never automatic
+repetition or a dropped floor. Native setup remains independently CLEAR; no full/shown run
+is admitted by this plan. The E1/E2 handshake remains separately pending exact bilateral ACK.
+
 ### Resumed current-main assembly, 2026-09-16
 
 Actual checkpoint: R1/R2/R3 complete at sourcefe95be86; R4 checked desktop slot still pending.

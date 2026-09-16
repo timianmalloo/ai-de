@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T00:47:54Z",
+  "generated": "2026-09-16T01:21:13Z",
   "audit": [
     {
       "actor": null,
@@ -24070,6 +24070,37 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2KWRZ6Q4MEXHNDZ34JE3TVB",
+      "shortname": "atlas-d0-review-block",
+      "datetime": "2026-09-16T01:19:51Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "the conflicts are yours to resolve",
+      "summary": "Post-freeze phase stopped before source join: Sol review failed at model capacity before work; replacement independent Astra review bbca8d6e observed20/20 plus two counterexamples and BLOCKED97a9e200. Conductor inspected actual review input/output, preserved source and raw receipts, provisioned correction tree at review tip, recorded approved design before dispatch. Native preflight/wrapper remain independently CLEAR; actual full qualification and main publication pending. Root roughly26-29 boundaries across compaction against30 planned; exact count unavailable, no budget compliance claim. Reviewer16/16,441 seconds; original author24/24. No full/shown retry or new slot. Material graph delta C1-C5 preserves every gate; only records and exact own liveness changed.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": "codex-astra-gate-conductor",
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md",
+        "docs/coordination/atlas-five-gates.md",
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve bounded Atlas integration conflicts and deliver a reviewed candidate to GHCP.",
+      "done_when": "Independent correction review clears, unchanged canonical qualification and Release pass, and exact candidate/evidence are handed to foreground GHCP.",
+      "tier": "T2",
+      "fan_out": 2,
+      "started_at": "2026-09-16T01:00:00Z",
+      "duration_seconds": 1191.0,
+      "git": {
+        "sha": "703bb3ced1c79931a03b7e2b4c2b4b257cd74e83",
+        "short": "703bb3ced",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -28447,6 +28478,29 @@ window.AUDIT_DATA = {
         "commits": []
       },
       "audit_ref": "al-01M2KTQTJGZCZJPEWSZEDHD6T9"
+    },
+    {
+      "id": "cl-01M2KWRZ2TDFBQX9JTJK0B82SD",
+      "datetime": "2026-09-16T01:19:51Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "decision",
+      "skill": "optimize-graph",
+      "title": "D0 review correction uses exact symbols and bounded conditional context",
+      "prompt": "the conflicts are yours to resolve",
+      "summary": "Owner admits one16-call/20-minute correction, checkpoint12, only existing D0 test/proof. Preserve BLOCK bbca8d6e: new OpenKind(int) escape and unrelated conditional factory refusal. Require exact OriginalDefinition documentation ID plus project/source authority for every shared symbol; conditional root/enclosing/binding contexts including inactive/Release, unrelated members admitted; measured Roslyn spike; no general transitive analyzer. Independent clearance precedes join and fresh-slot qualification.",
+      "rationale": "Actual paired mutations distinguish missing dependency coverage from policy widening;20 passing baseline cases did not cover either. User conflict authority persists. Correction reuses installed Roslyn and existing proof boundary.",
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md",
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "703bb3ced1c79931a03b7e2b4c2b4b257cd74e83",
+        "after": "703bb3ced1c79931a03b7e2b4c2b4b257cd74e83",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
     }
   ]
 };

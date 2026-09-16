@@ -9534,7 +9534,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f48589dc757f599b85e4b1b4dff0a66ca8fae5564a553834201c1ea1a4b3d48c"
+      "sourceSha256": "4fa2cc99760400afdfaf5c63206bfb5a448c1779d38c2bb9fde9199369376535"
     },
     {
       "id": "coordination-code-atlas",
@@ -9722,7 +9722,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "511457375798bd7490e3e5587eb4264c87693b7255e710f45c9ffa3fab11cc25"
+      "sourceSha256": "aaea34658d6c710c530722f08aa19def4f8cd153f3355c575f2c51ab2efa4fcf"
     },
     {
       "id": "design-session-profiler",
@@ -12073,11 +12073,16 @@ window.DOCS_INDEX = {
         },
         {
           "kind": "flowchart",
+          "title": "D0 independent BLOCK correction, 2026-09-16",
+          "mermaid": "graph TD\n C1-->C2-->C3-->C4-->C5"
+        },
+        {
+          "kind": "flowchart",
           "title": "Resumed current-main assembly, 2026-09-16",
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "ecddf22c7b39ea21b4614b32330408f1b38cfb1541609be480ddf432ee5306e3"
+      "sourceSha256": "ca500e0998de13f02b6000cc00b0bb2bb54569dd2d3ad1d4278a1e9a0d5f7e00"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -12708,7 +12713,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "426469f8724442fd1e49ee37c0208bb31b3eba1e57a01e7009ea8ff10fc57d63"
+      "sourceSha256": "a7de39c05178ff4413e568ab34817d99a06eac261762f3835bee053858a0e5ae"
     },
     {
       "id": "proof-code-atlas-contract-grounding",
@@ -22804,5 +22809,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "249fcad1a89b7be89e85108873683ec46d4929e8e9ed81e3895346b5d875fbb4"
+  "graphSha256": "2cd94fbc417292690eb0c1b08befb8a08f0a618d13ba637a41136752c3af48f0"
 };

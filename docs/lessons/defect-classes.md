@@ -4950,6 +4950,18 @@ for both or split.*
 
 ### DC-118 — Transcription is a width-changing step, and nothing checks the width: a ruling becomes a clause, a clause becomes a guard, and the scope silently moves
 
+- **Recurrence (D0 guard independent review, 2026-09-16):** an exact shared-port boundary
+  became type-plus-member-name admission, accepting a new Atlas-calling `OpenKind(int)`;
+  conditional coverage became a whole-file restriction, rejecting an unrelated factory member.
+  Both were independently executed despite20 green author cases. Sweep: overload/generic and
+  source identity, selected/enclosing conditional roots, import/alias binding, inactive/Release
+  branches, unrelated conditional members. Derive: declaration identity is narrower than its
+  name family; selected members are narrower than their containing shared file. Prevent: exact
+  review counterexamples plus binding-context adversaries become permanent controls. Correction
+  and independent re-review are pending; the defects are not yet claimed controlled.
+  Evidence: `docs/proof/d0-atlas-independence-review.md` at `bbca8d6e` and
+  `docs/proof/atlas-five-gates.md`.
+
 - **Recurrence (D0/Atlas integration, 2026-09-16):** a D0 independence requirement became a
   repository/assembly-wide prohibition on Atlas. Joining independently admitted features then
   failed `ProbeAtlas_NoUnderstandingNamespaceAndNoUnderstandingFolder`. Owner interpretation:
@@ -8092,8 +8104,10 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   environment inheritance into the official runner. Executable prevention is
   `docs/proof/records/atlas-five-gates/native-preflight.py`: missing/empty/path/non-ASCII labels,
   wrong identity, an existing receipt and missing binaries refuse in isolated fixtures.
-  One valid fixture and eight refusals were observed; real setup and combined qualification
-  still require their own recorded results. No source proof is weakened or receipt overwritten.
+  Initial observation was one valid fixture and eight refusals. Independent review subsequently
+  required the post-build input check and cleared three valid cases/fourteen refusals, rerun
+  independently, plus the exact same-environment qualification wrapper. Real setup and combined
+  qualification still require their own recorded results. No source proof is weakened or receipt overwritten.
 
 - **Shape:** an agent writes a Python (or shell) program inline as `python - <<'EOF' …` in Git Bash
   on Windows; a quote, a backslash or a `$` inside the program is mangled by the shell before the
