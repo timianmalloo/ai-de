@@ -6,7 +6,7 @@ status: accepted
 owner: "@timianmalloo"
 tags: [atlas, assembly, independent-review, preservation]
 links:
-  - { to: proof-atlas-five-gates, rel: verifies }
+  - { to: proof-atlas-five-gates, rel: relates-to }
   - { to: proof-d0-atlas-capture-review, rel: depends-on }
 review-by: 2026-12-15
 summary: "CLEAR for source and append-only-history preservation at frozen candidate e6aed085; runtime qualification and main acceptance remain separate."

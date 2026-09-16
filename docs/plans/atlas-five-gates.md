@@ -12,7 +12,7 @@ review-by: 2026-12-15
 summary: "Repair the five frozen Atlas integration failures before main publication and E1/E2 continuation."
 ---
 
-# Current state: observer preparation CLEAR; fresh native diagnostic requested
+# Current state: one native diagnostic passed; canonical qualification pending
 
 Goal: resolve the current Grok consumer request and continue the admitted Atlas qualification
 preparation. Done when the exact proposal has a direct semantic response and recorded
@@ -29,8 +29,24 @@ Astra Owner and Conductor. Main publication stays with foreground GHCP.
 | D1 r4 | Separate mapper authorship from unadmitted E1 consumption | CHANGES REQUIRED sent directly; six incoming handles resolved; no r4 freeze |
 | Native shared receipt | Keep optional observation failures from poisoning original evidence | Source715523d0 independently CLEAR for FR-NO-001 at12c1f883; own21/21 and actual replay inspected |
 | Native per-view state | Complete settled loaded/visible evidence for every observed view | Source626d16a2 independently CLEARd31eab23; own21/21 and actual JSON inspected |
-| Native qualification / main | Establish combined runtime acceptance before publication | P1-02 remains failed; no fresh native slot; main last observedbcf4959b |
+| Native qualification / main | Establish combined runtime acceptance before publication | Diagnostic at7ccef6d8 passed1/1 and released; canonical qualification still pending; main observedbcf4959b |
 | E1/E2 | Continue admitted Sequence/Activity and architecture view work | Integration remains the priority |
+
+## Latest diagnostic and review handoff
+
+Verified: SLOT-CODEX-NATIVE-DIAG-01 ran once at7ccef6d8; actual1/1 passed,
+Completed=true/FailureCount0, ten original UIA queries succeeded and both daemons exited
+normally. All three screenshots and observer packets were inspected. Slot END/RELEASE
+req-01M2NP8A8SKVWC46XHM35T1NJ2 and watcher copy req-01M2NP8AAC5ZPXHX62F0GBS6WD
+were sent. The cause of historical P1-02 remains unknown. Full evidence and limits:
+[Native diagnostic Proof Pack](../proof/atlas-native-diag-01.md).
+
+Review-only carrier c7ef2da5 and preservation receipt12c1ddd0 are now officially joined;
+full parent audit fingerprints are conserved and native/product source is unchanged.
+Astra Owner approves requesting a separately granted canonical qualification slot after
+this checkpoint. No automatic native retry, full-suite start or main publication.
+The full current inbox contains no newer r5 or reply to our r4 changes-required response.
+Sending our disposition does not freeze r4.
 
 ## Exact r4 disposition
 

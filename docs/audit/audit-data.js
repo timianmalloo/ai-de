@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T18:15:12Z",
+  "generated": "2026-09-16T18:20:41Z",
   "audit": [
     {
       "actor": null,
@@ -26116,6 +26116,40 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2NQ652AYPNBYEKHQJYRANV7",
+      "shortname": "atlas-native-diag-01-close",
+      "datetime": "2026-09-16T18:20:40Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "Grok may be waiting for another ACK from you",
+      "summary": "r4 changes-required response remains open for Grok acknowledgment; no new r5 in actual complete inbox. One diagnostic1/1 passed at7ccef6d8, slot released; raw native evidence and all three pixels inspected, no remaining repo processes observed. Source and preflight hashes unchanged. Two independent review inputs joined with full-content audit conservation. Figure conflicts resolved through normalized-text equality and official regeneration; invalid preservation metadata relation corrected with unchanged body/verdict. Full qualification and main publication remain pending; no claim that prior failure cause is diagnosed.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-native-diag-01.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve the current peer request and advance the reviewed Atlas candidate toward the next authorized integration step.",
+      "done_when": "Peer disposition recorded; one-use native result inspected; reviewed evidence assembled and canonical readiness request prepared.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T18:20:40Z",
+      "duration_seconds": 0.0,
+      "git": {
+        "sha": "fdb3235f3de0561d36b8b2fe24f937620431d054",
+        "short": "fdb3235f3",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -30745,6 +30779,42 @@ window.AUDIT_DATA = {
         "audit-provenance"
       ],
       "title": "Admit exact historical audit provenance for review carrier"
+    },
+    {
+      "id": "cl-01M2NQ64YDDF4VGNE8F1M9RYJN",
+      "datetime": "2026-09-16T18:20:40Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "decision",
+      "skill": "execute-with-coordination",
+      "title": "Owner: one native pass permits canonical-slot preparation only",
+      "prompt": "Grok may be waiting for another ACK from you; continue the authorized Atlas integration programme.",
+      "summary": "Astra Owner verified the one-case native outcome and recommends canonical qualification after review assembly. P1-02 cause remains unknown; no second diagnostic or automatic qualification/publication. Routine preservation receipt relation correction changes metadata only.",
+      "rationale": "Actual one-case TRX, ten UIA finds, normal cleanup and unchanged source/binaries justify advancing the graph, while full integration gates remain unexecuted.",
+      "artifacts": [
+        "docs/proof/atlas-native-diag-01.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "7ccef6d8d394e4a3fc94545587d944b13a0a45f1",
+        "after": "fdb3235f3de0561d36b8b2fe24f937620431d054",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": [
+          "fdb3235f docs: atlas-review-join-12c1ddd0 unqualified evidence checkpoint",
+          "11e5551e merge: preserve reviewed Atlas observer evidence 12c1ddd0",
+          "0b6ed631 docs: atlas-review-join-c7ef2da5 unqualified evidence checkpoint",
+          "99cd4142 merge: preserve reviewed Atlas observer evidence c7ef2da5",
+          "c7ef2da5 docs: complete Atlas peer review transport",
+          "d023cb04 docs(proof): repair r3 review portable graph link",
+          "4dace27b docs: checkpoint Atlas review transport graph blocker",
+          "a9ce139b docs(proof): add required r3 review summary",
+          "249d6836 docs: independently clear D1 r3 consumer boundary",
+          "e7b9e0da docs(proof): correct D1 review graph metadata",
+          "2c556f37 docs(proof): review D1 r4 consumer contract boundary",
+          "12c1ddd0 docs: record identity-bound preservation checks",
+          "adb328a1 docs: independently clear Atlas assembly preservation"
+        ]
+      }
     }
   ]
 };

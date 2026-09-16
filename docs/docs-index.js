@@ -9534,7 +9534,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "68ef5a4af57a4484d3fc23f247662fbb8d7b16ac9e61016f0fd6d3cbeb1fcf62"
+      "sourceSha256": "e93b069dbd950b06d04a1603638cbb612acf25a5c5b27c3dfdd28c93dc63597d"
     },
     {
       "id": "coordination-code-atlas",
@@ -12108,7 +12108,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "18750f3f94b31a59c8dafd5f15c4e68ca79fb827f43f5477392a191bba8193a0"
+      "sourceSha256": "0faf5d26a5016b9d8b9aed265cc705e8f4749a1edf1bb90afdeb3934be850282"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -12703,7 +12703,7 @@ window.DOCS_INDEX = {
       "links": [
         {
           "to": "proof-atlas-five-gates",
-          "rel": "verifies"
+          "rel": "relates-to"
         },
         {
           "to": "proof-d0-atlas-capture-review",
@@ -12711,7 +12711,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2a69e035878b863efa676be8a5e895952dd2327e70f2df6388ce0f0efea2a505"
+      "sourceSha256": "13069d8ab2c5f98c95c64132ca3557e326447e42941ead363c30d4f8226d1392"
     },
     {
       "id": "proof-atlas-core-gate-repair",
@@ -12769,7 +12769,37 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2cef98bcb9c35a3af8cd3456649b7c5080e99bb4226e6cd126b16eaf51ba56c7"
+      "sourceSha256": "f3a76f87ec617f6ea0a96d9ff6e895ab2818887f20020a022a5ae59c5ea8aa05"
+    },
+    {
+      "id": "proof-atlas-native-diag-01",
+      "path": "docs/proof/atlas-native-diag-01.md",
+      "title": "Atlas one-case native diagnostic at 7ccef6d8",
+      "type": "doc",
+      "status": "completed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "One granted native case passed with ten successful original UIA queries and normal daemon cleanup; canonical qualification and publication remain separate.",
+      "tags": [
+        "atlas",
+        "proof",
+        "native",
+        "diagnostic"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-five-gates",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e0b27fabe5a326f4982a802e27ba79d5539757e6fc8a6dd9fe87dd1dc7f92472"
     },
     {
       "id": "proof-atlas-native-instance-observer-review",
@@ -23242,5 +23272,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "aaf549207f20b24760c8b566d5b4d38dbc09415d11dc1566f2a5329b7c0030e3"
+  "graphSha256": "44e41a19a1f9b34c605019b52eac96bc5cf775f667029d0055b92fa70540f094"
 };
