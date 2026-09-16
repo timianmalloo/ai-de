@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T17:39:58Z",
+  "generated": "2026-09-16T18:15:00Z",
   "audit": [
     {
       "actor": null,
@@ -25509,64 +25509,458 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2NMFHABA1MPRQF3R5744SW4",
-      "shortname": "atlas-observer-join-12c1f883",
-      "datetime": "2026-09-16T17:33:22Z",
-      "session": "codex-atlas-five-gates-integration",
-      "prompt": "Resolve Grok consumer request and continue the admitted Atlas observer preparation and serialized branch assembly.",
-      "summary": "Official conductor join merged exact tip12c1f88336bc6d640c1dfdd6e76929acdda6b6f2 then intentionally stopped at the reviewed pre-recount barrier, exit4/check86. No qualification, acceptance, push or Release. Original sourcee6 preserved except exact reviewed native-test626d16a2. Full-content audit/change fingerprints from both parents conserved with zero missing rows. This entry consumes this join marker; required regeneration and checkpoint commit follow, with actual outputs retained in artifacts/atlas-five-gates/observer-assembly/. Required missing summary metadata repaired under exact proof leases; historical verdict bodies and original pinned commits preserved: docs/proof/atlas-native-observer-sink-review.md. Actual repository frontmatter validator now accepts these files.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/atlas-five-gates.md"
       ],
-      "tags": [],
-      "outcome": "partial",
-      "goal": "Retain reviewed evidence and source without asserting runtime qualification.",
+      "datetime": "2026-09-16T17:33:22Z",
       "done_when": "Exact merge and audit conservation observed; derived records current; unqualified candidate committed.",
-      "tier": "T2",
+      "duration_seconds": 1.0,
       "fan_out": 0,
+      "git": {
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "sha": "99f8434f69dd32e2b7a8f4729abaa471edc56061",
+        "short": "99f8434f6"
+      },
+      "goal": "Retain reviewed evidence and source without asserting runtime qualification.",
+      "id": "al-01M2NMFHABA1MPRQF3R5744SW4",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "Resolve Grok consumer request and continue the admitted Atlas observer preparation and serialized branch assembly.",
+      "session": "codex-atlas-five-gates-integration",
+      "shortname": "atlas-observer-join-12c1f883",
       "signals": {
         "acceptance_met": false
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-09-16T17:33:21Z",
-      "duration_seconds": 1.0,
-      "git": {
-        "sha": "99f8434f69dd32e2b7a8f4729abaa471edc56061",
-        "short": "99f8434f6",
-        "branch": "integration/atlas-five-gates",
-        "pushed": null
-      }
+      "summary": "Official conductor join merged exact tip12c1f88336bc6d640c1dfdd6e76929acdda6b6f2 then intentionally stopped at the reviewed pre-recount barrier, exit4/check86. No qualification, acceptance, push or Release. Original sourcee6 preserved except exact reviewed native-test626d16a2. Full-content audit/change fingerprints from both parents conserved with zero missing rows. This entry consumes this join marker; required regeneration and checkpoint commit follow, with actual outputs retained in artifacts/atlas-five-gates/observer-assembly/. Required missing summary metadata repaired under exact proof leases; historical verdict bodies and original pinned commits preserved: docs/proof/atlas-native-observer-sink-review.md. Actual repository frontmatter validator now accepts these files.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2NMVJS38731Y4A3DXMCC0H3",
-      "shortname": "atlas-native-diagnostic-request-freeze",
-      "datetime": "2026-09-16T17:39:57Z",
-      "session": "codex-atlas-five-gates-integration",
-      "prompt": "Keep going after resolving the current Grok ACK request.",
-      "summary": "Full observer preparation CLEARd31eab23, exact source626d16a2, author red1/0/1 and final21/21/0, independent21/21/0 and actual detached-view JSON inspected. Official native-source/review joins complete with zero missing parent audit payloads, deliberate unqualified stops and no push. Whole r4 ancestry guard refused out-of-scope peer files; review-only carrier admitted separately. Four native receipt summary fields corrected with unchanged bodies using actual repository validator. Windows default decoder failure corrected by explicit UTF-8; no unseen content claimed. Root prior budgets exceeded; no retrospective cap/token-cost claim. Slot request follows commit; no native execution or main publication.",
-      "kind": "manual",
-      "skill": "auditlog",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/atlas-five-gates.md",
         "docs/proof/atlas-native-view-state-review.md"
       ],
-      "tags": [],
-      "outcome": "partial",
-      "goal": "Freeze independently cleared observer preparation and request its one admitted diagnostic execution.",
+      "datetime": "2026-09-16T17:39:57Z",
       "done_when": "Source identity and review/evidence checked, truthful current records committed, exact fresh-slot request sent; no ungranted native execution.",
-      "tier": "T2",
       "fan_out": 2,
       "git": {
-        "sha": "b2127168721bd0db88be57907b01349890c787da",
-        "short": "b21271687",
         "branch": "integration/atlas-five-gates",
-        "pushed": null
-      }
+        "pushed": null,
+        "sha": "b2127168721bd0db88be57907b01349890c787da",
+        "short": "b21271687"
+      },
+      "goal": "Freeze independently cleared observer preparation and request its one admitted diagnostic execution.",
+      "id": "al-01M2NMVJS38731Y4A3DXMCC0H3",
+      "kind": "manual",
+      "outcome": "partial",
+      "prompt": "Keep going after resolving the current Grok ACK request.",
+      "session": "codex-atlas-five-gates-integration",
+      "shortname": "atlas-native-diagnostic-request-freeze",
+      "skill": "auditlog",
+      "summary": "Full observer preparation CLEARd31eab23, exact source626d16a2, author red1/0/1 and final21/21/0, independent21/21/0 and actual detached-view JSON inspected. Official native-source/review joins complete with zero missing parent audit payloads, deliberate unqualified stops and no push. Whole r4 ancestry guard refused out-of-scope peer files; review-only carrier admitted separately. Four native receipt summary fields corrected with unchanged bodies using actual repository validator. Windows default decoder failure corrected by explicit UTF-8; no unseen content claimed. Root prior budgets exceeded; no retrospective cap/token-cost claim. Slot request follows commit; no native execution or main publication.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-owner-d1-admission.md"
+      ],
+      "datetime": "2026-09-15T22:52:52Z",
+      "git": {
+        "branch": "understanding-views-d1",
+        "pushed": null,
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc"
+      },
+      "id": "al-01M2KMBV5ZEQPEFFD7708W28HA",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "re-admit D-1 now",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "owner-d1-admission",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "summary": "Owner ruling admits D-1 Entry-points only. Substrate query still absent; UV-0 is that query. D-2..D-4 keep-deferred. Branch understanding-views-d1 from main bcf4959b.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/entry-points.md"
+      ],
+      "datetime": "2026-09-16T16:48:46Z",
+      "git": {
+        "branch": "understanding-views-d1",
+        "pushed": true,
+        "sha": "aa9e16a81ece87ce7d9086458d3178f98f99b7a0",
+        "short": "aa9e16a81"
+      },
+      "id": "al-01M2NHXVG85NWR87JK2WJW4PAQ",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "keep going / what is blocking Live Open Sequence / who has to resolve mapping-unavailable",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "specify-d1-entry-points",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "summary": "Spec-entry-points draft: listing/unclassified/select-to-graph. Open Sequence blocked by UNASSIGNED mapper — Owner must admit a separate mapping contract; Grok and Codex cannot unilaterally enable it. N4 not self-cleared.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "codex-astra-d1-r4-review",
+      "artifacts": [
+        "docs/proof/codex-d1-r4-consumer-review.md"
+      ],
+      "datetime": "2026-09-16T17:09:54Z",
+      "done_when": "Independent committed receipt names verdict, exact evidence and numbered minimal acceptance conditions.",
+      "duration_seconds": 202.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/atlas-d1-r4-boundary",
+        "pushed": null,
+        "sha": "173aa5a4ad245fda92bcc0bdadafac6ba9f0c8e4",
+        "short": "173aa5a4a"
+      },
+      "goal": "Determine whether Codex can honestly ACK exact D1 r4 blob or name smallest required deltas.",
+      "id": "al-01M2NK4JCEKXXD84ED9WWR7E1N",
+      "kind": "skill",
+      "main_budget": 5,
+      "main_calls": 6,
+      "main_over_budget": true,
+      "outcome": "success",
+      "prompt": "Independently evaluate exact docs/notes/d1-codex-entry-point-handshake-r4.md blob a8c05bc77451b0438ebea24eaad9b15db6c99601 for consumer ACK. Document boundary only; no implementation, build or GUI. Separate agreeing Grok author role from freezing unimplemented identity/API/authority/runtime activation. Test Architect, architecture-authority, No-Guessing and Simplifier lenses. One independent receipt docs/proof/codex-d1-r4-consumer-review.md plus own official audit/liveness/ignored scratch; existing contract/source read-only. Return CLEAR or CHANGES REQUIRED with exact clause/pin/evidence and smallest acceptable deltas; commit receipt, record actual cost, release exact short lease. Do not ACK peer or change ownership. Budget five calls/seven minutes, checkpoint at three.",
+      "session": "codex-atlas-d1-r4-review",
+      "shortname": "codex-d1-r4-consumer-review",
+      "skill": "forensicreview",
+      "started_at": "2026-09-16T17:06:32Z",
+      "summary": "CHANGES REQUIRED. Four numbered deltas distinguish proposed E1 from the legacy nodeId sink, remove an unadmitted durable-facts identity fallback, separate Grok proposal authorship from Core/path authority, and resolve ambiguity before runtime activation. Exact proposal/design/spike/native signatures inspected. Two read batches truncated; narrowed read established cited evidence. No production files, build, tests or GUI. Five functions batches, six underlying operations; tokens/spend not recorded. Parent receives capture artifact because AIDE contract environment absent.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": "codex-astra-d1-r4-review",
+      "artifacts": [
+        "docs/proof/codex-d1-r4-consumer-review.md"
+      ],
+      "datetime": "2026-09-16T17:27:20Z",
+      "done_when": "Repository validator returns valid metadata, body remains identical, correction committed and short lease released.",
+      "duration_seconds": 61.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/atlas-d1-r4-boundary",
+        "pushed": null,
+        "sha": "7e205f5bb8d3ef804a2dd7d30c981838cffd991b",
+        "short": "7e205f5bb"
+      },
+      "goal": "Repair receipt graph metadata without changing its independent review.",
+      "id": "al-01M2NM4FWBQE70ZKW5T0FMHY0T",
+      "kind": "skill",
+      "main_budget": 3,
+      "main_calls": 3,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Small artifact repair, unchanged review verdict. Start audit marker for document. Correct receipt frontmatter type proof to established doc; replace graph links to external r3/r4 notes with existing session-contracts and plan-atlas-five-gates relations after verifying IDs. Scope exact docs/proof/codex-d1-r4-consumer-review.md and own official audit; no verdict/body reinterpretation, peer ACK, source, index or site changes. Short lease, budget three calls/five minutes, zero agents. Run repository validator and inspect returned metadata; commit correction preserving original 7e205f5 history. Steering: use only existing session-contracts link; omit plan absent on this branch. Retain exact external r3/r4 citations in body.",
+      "session": "codex-atlas-d1-r4-review",
+      "shortname": "codex-d1-r4-metadata-repair",
+      "skill": "document",
+      "started_at": "2026-09-16T17:26:19Z",
+      "summary": "Corrected invalid proof type to doc and replaced external-note graph links with the verified existing session-contracts ID. The plan ID was absent locally and omitted per conductor steering. Repository _validate_frontmatter observed unknown type proof before and returned doc metadata with problem null after. Explicit body equality assertion passed. Defect class: authored graph metadata outside actual schema/local inventory; sweep limited to this sole authorized receipt; control validates metadata and exact target before writing. Review verdict and evidence body unchanged; no source/index/site changes. Three shell calls against three-call budget; tokens/spend not exposed.",
+      "tags": [],
+      "tier": "T0",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-16T16:10:51Z",
+      "id": "al-01M2NFRDWGJC0NRWKRTVDJHYS6",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Start FIRST same process env EVERY shell: AGENT_SESSION=codex-d1-r3-consumer-review AGENT_NAME=codex-astra-d1-consumer-review; python docs/ai-forward-pack/scripts/audit-log.py start --session codex-d1-r3-consumer-review --skill execute-with-coordination. New bounded independent DOCUMENT boundary review, Astra selected for authority/identity semantics. Already provisioned C:/Projects/ai-de-review-d1-r3-consumer-boundary branch review/d1-r3-consumer-boundary base17cd8317442f948ca6e0846f02cc06ef9f3a9673. No EnterWorktree/install. Read AGENTS/applicable workflow, source docs/notes/d1-codex-entry-point-handshake-r3.md exact blob e448383a90bb1ed962c7405af70e16d8cca09fa3. Goal: independently clear or block consumer ACK against previously Owner-approved exact non-consuming boundary, not new policy design. Done when all5corrections and consumerpins checked, concise receipt with CLEAR or precise discrepancy committed. Budget6calls/8min/checkpoint4, no delegates, no tests/build/GUI/source changes. Only NEW docs/proof/codex-d1-r3-consumer-review.md plus official own audit, own liveness/ignoredscratch; original proposal/readers unchanged. Claim exactproofbriefly releasefinally, explicit env audit/commit, outcome success/partial/failed/blocked and --shortname, UTF8 atomic/readback. No need derivedcommits except ownaudit generated mayretain; finalreceipt metadata type doc.\nOwner prior corrected boundary req-01M2KSD1JQG5WEBJVSDNYEH54J in primarysharedrequests: Core-authorized service owns observation/occurrence/projection/source-token/Restore; mapper unassigned/unavailable (no E1 ownership/type0..N/member0..1 promise); no live D1->E1crossopen, disabled mapping-unavailable; E1independentlyselects validCore methodobservations; D1listingcoverage distinctfromE1observation/pagecoverage incl validpartialE1; Source/Backdistinct/E2N/A/no sharedsignaturecapsreceiptschemafreeze. Grok now authored all5inr3 and resolved correctionrequest; user asks whyGrokblockedonourACK. Conductor has openedr3 and finds corrections present; review independent necessary before sameblobACK. Four consumer refs inr3 abbreviations must resolve exactly to E1design0bdd16d7e429f8ed00a73e7c664eb3ced520fae8:path docs/design/atlas-behavior-views.md; E1spike1ab5d9e985fd86ef75adb8d2a11c72fe05b530cc:spikes/atlas-behavior-contract/RESULT.md; E2design27642bf89b687f1e78bc33f11f977cd753baf7cf:docs/design/atlas-architecture-views.md; E2spikea9d86fc1350ac4c74d5d8ff39e9f39685b890f14:spikes/atlas-architecture-contract/RESULT.md. Check actual relevantauthority/coverageclauses narrowly. Record fullSHAexpansions inreceipt; no newrevision request for mere shortreference formatting if exactobjects resolve. No implementation or query/API/contracts source freeze, no assignment ownership policy. r3 proposedfrontmatter is historicalproposalsnapshot; later actualsameblobpeerACKgovernsfreezerecordseparately. Check forbidden r2 assumptions aren't normativeinr3, legitimatequotedwithdrawalsarenotviolations. Return exactreviewcommit/proof/blobobservations/confidence/remainingpeerACK requirement. Nativequalification/mainpublication is separate and mustnotdelay thisreview. Escalate onlyrealambiguity toConductor; no selfedits toGrokproposal.",
+      "session": "codex-d1-r3-consumer-review",
+      "shortname": "d1-r3-consumer-boundary-review",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/codex-d1-r3-consumer-review.md"
+      ],
+      "datetime": "2026-09-16T16:10:51Z",
+      "done_when": "All five corrections and four consumer pins checked; independent CLEAR receipt committed",
+      "duration_seconds": 242.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/d1-r3-consumer-boundary",
+        "pushed": null,
+        "sha": "17cd8317442f948ca6e0846f02cc06ef9f3a9673",
+        "short": "17cd83174"
+      },
+      "goal": "Independently clear or block D1 r3 consumer boundary against Owner-approved requirements",
+      "id": "al-01M2NFRE27J43Z1HFT2C8Z0VWB",
+      "kind": "manual",
+      "main_budget": 6,
+      "main_calls": 6,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Start FIRST same process env EVERY shell: AGENT_SESSION=codex-d1-r3-consumer-review AGENT_NAME=codex-astra-d1-consumer-review; python docs/ai-forward-pack/scripts/audit-log.py start --session codex-d1-r3-consumer-review --skill execute-with-coordination. New bounded independent DOCUMENT boundary review, Astra selected for authority/identity semantics. Already provisioned C:/Projects/ai-de-review-d1-r3-consumer-boundary branch review/d1-r3-consumer-boundary base17cd8317442f948ca6e0846f02cc06ef9f3a9673. No EnterWorktree/install. Read AGENTS/applicable workflow, source docs/notes/d1-codex-entry-point-handshake-r3.md exact blob e448383a90bb1ed962c7405af70e16d8cca09fa3. Goal: independently clear or block consumer ACK against previously Owner-approved exact non-consuming boundary, not new policy design. Done when all5corrections and consumerpins checked, concise receipt with CLEAR or precise discrepancy committed. Budget6calls/8min/checkpoint4, no delegates, no tests/build/GUI/source changes. Only NEW docs/proof/codex-d1-r3-consumer-review.md plus official own audit, own liveness/ignoredscratch; original proposal/readers unchanged. Claim exactproofbriefly releasefinally, explicit env audit/commit, outcome success/partial/failed/blocked and --shortname, UTF8 atomic/readback. No need derivedcommits except ownaudit generated mayretain; finalreceipt metadata type doc.\nOwner prior corrected boundary req-01M2KSD1JQG5WEBJVSDNYEH54J in primarysharedrequests: Core-authorized service owns observation/occurrence/projection/source-token/Restore; mapper unassigned/unavailable (no E1 ownership/type0..N/member0..1 promise); no live D1->E1crossopen, disabled mapping-unavailable; E1independentlyselects validCore methodobservations; D1listingcoverage distinctfromE1observation/pagecoverage incl validpartialE1; Source/Backdistinct/E2N/A/no sharedsignaturecapsreceiptschemafreeze. Grok now authored all5inr3 and resolved correctionrequest; user asks whyGrokblockedonourACK. Conductor has openedr3 and finds corrections present; review independent necessary before sameblobACK. Four consumer refs inr3 abbreviations must resolve exactly to E1design0bdd16d7e429f8ed00a73e7c664eb3ced520fae8:path docs/design/atlas-behavior-views.md; E1spike1ab5d9e985fd86ef75adb8d2a11c72fe05b530cc:spikes/atlas-behavior-contract/RESULT.md; E2design27642bf89b687f1e78bc33f11f977cd753baf7cf:docs/design/atlas-architecture-views.md; E2spikea9d86fc1350ac4c74d5d8ff39e9f39685b890f14:spikes/atlas-architecture-contract/RESULT.md. Check actual relevantauthority/coverageclauses narrowly. Record fullSHAexpansions inreceipt; no newrevision request for mere shortreference formatting if exactobjects resolve. No implementation or query/API/contracts source freeze, no assignment ownership policy. r3 proposedfrontmatter is historicalproposalsnapshot; later actualsameblobpeerACKgovernsfreezerecordseparately. Check forbidden r2 assumptions aren't normativeinr3, legitimatequotedwithdrawalsarenotviolations. Return exactreviewcommit/proof/blobobservations/confidence/remainingpeerACK requirement. Nativequalification/mainpublication is separate and mustnotdelay thisreview. Escalate onlyrealambiguity toConductor; no selfedits toGrokproposal.",
+      "session": "codex-d1-r3-consumer-review",
+      "shortname": "d1-r3-consumer-boundary-clear",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-16T16:06:49Z",
+      "summary": "Independent document boundary CLEAR: all five r3 corrections and four exact consumer pins verified; same-blob coordinator peer ACK remains. No implementation or runtime claim. Broad output truncation repaired by bounded clause readback; derived regeneration remains owed.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "codex-astra-d1-r3-metadata",
+      "artifacts": [
+        "docs/proof/codex-d1-r3-consumer-review.md"
+      ],
+      "datetime": "2026-09-16T17:37:55Z",
+      "done_when": "Actual repository metadata validation passes, body byte equality holds, correction and own audit committed, exact lease released.",
+      "duration_seconds": 60.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/d1-r3-consumer-boundary",
+        "pushed": null,
+        "sha": "394d1ff0a2105c5cdb647d2da5151513e6e8e105",
+        "short": "394d1ff0a"
+      },
+      "goal": "Repair missing r3 receipt summary without changing review semantics or retained dirt.",
+      "id": "al-01M2NMQVZRT3KN4CWSTZY19PR2",
+      "kind": "skill",
+      "main_budget": 3,
+      "main_calls": 3,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Metadata-only correction to existing Codex r3 independent receipt before byte-preserving carrier transport. Use provisioned C:/Projects/ai-de-review-d1-r3-consumer-boundary at 394d1ff0a2105c5cdb647d2da5151513e6e8e105. Preserve retained audit-data.js and .artifacts dirt. Exact allowed file docs/proof/codex-d1-r3-consumer-review.md plus own official audit. Add missing required summary consistent with existing CLEAR/non-consuming boundary; change no other field, body or verdict. Inspect before write, use exact short lease, inspect repository validator metadata after, assert body equality, commit metadata and own audit only, release. No index/site/shared registry/source/GUI/new worktree/install. Budget three calls/five minutes, zero agents. Return exact commit/blob and audit delta so carrier can pick original 394 plus correction; preserve original history.",
+      "session": "codex-d1-r3-consumer-review",
+      "shortname": "codex-d1-r3-metadata-repair",
+      "skill": "document",
+      "started_at": "2026-09-16T17:36:55Z",
+      "summary": "Added only the missing summary field to the independent CLEAR r3 non-consuming boundary receipt. Actual _validate_frontmatter returned missing required keys: summary before and problem null with complete metadata after. Byte equality established for the body and every original byte after removal of the sole added summary line. Existing verdict, fields and evidence unchanged. Defect class: missing mandatory graph metadata; bounded sweep checked this sole authorized receipt and control validates required fields before commit. Pre-existing audit-data.js bytes restored after official audit generation; .artifacts untouched. Three shell calls against three-call budget; token totals not exposed. Carrier must preserve final receipt blob byte-for-byte.",
+      "tags": [],
+      "tier": "T0",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/codex-d1-r3-consumer-review.md",
+        "docs/proof/codex-d1-r4-consumer-review.md"
+      ],
+      "datetime": "2026-09-16T17:47:40Z",
+      "done_when": "Both proofs are byte-identical, source trees match base, audit conservation contains only base plus selected rows, and the carrier is ready for regeneration.",
+      "duration_seconds": 680.0,
+      "git": {
+        "branch": "review/atlas-peer-receipts",
+        "pushed": null,
+        "sha": "a9ce139b42cc4071738515eb1d8c0b8aa64e325a",
+        "short": "a9ce139b4"
+      },
+      "goal": "Transport only approved independent r3/r4 review artifacts and selected audit deltas without product or ancestor changes.",
+      "id": "al-01M2NN9Q8M6RGG72WXGNW6RY56",
+      "kind": "skill",
+      "outcome": "blocked",
+      "prompt": "Transport the approved r4 and corrected r3 independent review commits into the isolated carrier, conserving base and selected audit payloads and stopping before regeneration if any unauthorized ancestor payload appears.",
+      "session": "codex-atlas-peer-review-carrier",
+      "shortname": "atlas-peer-review-transport-blocked",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-16T17:36:20Z",
+      "summary": "Prior transport unit stopped at audit conservation. R4 used nine shell batches against eight; the r3 extension and diagnosis used seven against four. Both final proof blobs matched and source/src/tests/tools matched base, but the installed append-only driver preserved two Grok producer ancestor rows beyond the then-authorized union. The carrier stayed clean at a9ce139b; no regeneration or closure commit ran. An earlier read-only coord check emitted a COORD-NOT-CHECKED-IDENTITY decision because its shell lacked identity; later qualified checks do not retroactively correct it. All proof leases were explicitly released.",
+      "tags": [
+        "atlas",
+        "transport"
+      ],
+      "tool": "codex-peer-review-carrier"
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-peer-review-transport.md",
+        "docs/proof/codex-d1-r3-consumer-review.md",
+        "docs/proof/codex-d1-r4-consumer-review.md"
+      ],
+      "datetime": "2026-09-16T17:52:56Z",
+      "done_when": "Authorized audit union and proof/source hashes pass, transport receipt and raw evidence exist, official regeneration and validation pass, the hooked commit is clean, and all leases are released.",
+      "duration_seconds": 316.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/atlas-peer-receipts",
+        "pushed": null,
+        "sha": "a9ce139b42cc4071738515eb1d8c0b8aa64e325a",
+        "short": "a9ce139b4"
+      },
+      "goal": "Finalize the independent r3/r4 review carrier with the exact two-row provenance exception and no product or broader ancestry changes.",
+      "id": "al-01M2NNKBHQRYJJ98139PDDSEB6",
+      "kind": "skill",
+      "main_budget": 5,
+      "main_calls": 9,
+      "main_over_budget": true,
+      "outcome": "success",
+      "prompt": "Owner resolved the carrier blocker by admitting exactly two named historical producer audit payloads. Record the exception and anonymous-check correction, preserve exact r3/r4 receipt bytes, regenerate the three site figures through official tooling, validate, commit, release leases, and return the clean carrier for later join.",
+      "session": "codex-atlas-peer-review-carrier",
+      "shortname": "atlas-peer-review-transport-finalization",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-16T17:47:40Z",
+      "summary": "Finalization inputs verified: the pre-closure union was exactly 960 base, five selected review payloads and two Owner-admitted incidental producer payloads; the separately accounted prior blocked-unit audit brought the working register to 968 with no other missing or extra payloads. R3 and r4 proof blobs and source/src/tests/tools identity were preserved. The transport receipt records exact commit mapping, hashes, authority limits, budget overruns and the anonymous read-only check; original NOT CHECKED output is retained at artifacts/atlas-peer-review-transport/not-checked.txt. The official change record captures the two-row exception. Finalization exceeded five shell batches because the CLI required explicit boolean signal values, two candidate raw-evidence roots were not ignored, and one guarded patch had not executed; the repository rule identified artifacts/ as the correct ignored root. Official regeneration, validation, hooked commit and lease release execute immediately after this audit entry in the same bounded closure.",
+      "tags": [
+        "atlas",
+        "transport"
+      ],
+      "tier": "T1",
+      "tool": "codex-peer-review-carrier"
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-peer-review-transport.md",
+        "docs/proof/codex-d1-r3-consumer-review.md"
+      ],
+      "datetime": "2026-09-16T17:55:42Z",
+      "done_when": "A truthful superseding partial audit is recorded, current derived views are regenerated, the WIP commit is created under exact leases, and leases are released.",
+      "duration_seconds": 0.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/atlas-peer-receipts",
+        "pushed": null,
+        "sha": "a9ce139b42cc4071738515eb1d8c0b8aa64e325a",
+        "short": "a9ce139b4"
+      },
+      "goal": "Checkpoint owned carrier state without discarding audit or derived changes so the admitted source metadata correction can be transported safely.",
+      "id": "al-01M2NNRDJWGZ224XGMAQQG1W0G",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "Preserve the current review-carrier receipt, audit, decision and regenerated outputs as a WIP checkpoint after the full docs graph validator found one dangling link in the byte-locked r3 receipt.",
+      "session": "codex-atlas-peer-review-carrier",
+      "shortname": "atlas-peer-review-transport-graph-blocked",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-16T17:55:42Z",
+      "summary": "Supersedes the earlier finalization audit's acceptance signal. Official regeneration completed and its built-in gates passed, but the additional full docs graph validator failed on one dangling target in the byte-locked r3 receipt: note-d1-codex-entry-point-handshake-r3. Closure was not committed and READY was not claimed. The Owner commissioned a source-side metadata-only correction; this checkpoint preserves current audit, decision, receipt, index and site-figure state without changing the r3 blob or importing the missing Grok note.",
+      "supersedes": "al-01M2NNKBHQRYJJ98139PDDSEB6",
+      "tags": [
+        "atlas",
+        "graph-gate"
+      ],
+      "tier": "T1",
+      "tool": "codex-peer-review-carrier"
+    },
+    {
+      "actor": "codex-astra-d1-r3-metadata",
+      "artifacts": [
+        "docs/proof/codex-d1-r3-consumer-review.md"
+      ],
+      "datetime": "2026-09-16T17:55:34Z",
+      "done_when": "Actual metadata and target checks pass, body byte equality holds, source-side correction and own audit committed, lease released.",
+      "duration_seconds": 47.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/d1-r3-consumer-boundary",
+        "pushed": null,
+        "sha": "b9e47af85d3c7819015b8c95ea76c2e457592e14",
+        "short": "b9e47af85"
+      },
+      "goal": "Replace only the r3 receipt dangling graph link with a verified portable target.",
+      "id": "al-01M2NNR605G854MM6NDT3AVKB8",
+      "kind": "skill",
+      "main_budget": 3,
+      "main_calls": 3,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Owner-approved final source-side r3 metadata correction at b9e47af8 in existing C:/Projects/ai-de-review-d1-r3-consumer-boundary. Carrier full docs graph validation found dangling note-d1-codex-entry-point-handshake-r3 link absent from isolated carrier. Replace only that graph link with verified session-contracts relates-to, preserving every body byte, verdict and external commit/path citation. Verify current link and target, exact short proof lease, metadata-only body-equality assertion, actual frontmatter validation, commit one proof plus own audit only and release. No global reanalysis, source, Grok proposal import, site/index or private files. Budget three calls/five minutes, no agents. Return full commit, final blob and audit row. New metadata pin supersedes b9 for transport; preserve historical review identities and leave carrier root candidate 7ccef6d8 untouched.",
+      "session": "codex-d1-r3-consumer-review",
+      "shortname": "codex-d1-r3-portable-link-repair",
+      "skill": "document",
+      "started_at": "2026-09-16T17:54:47Z",
+      "summary": "Replaced only dangling r3-note graph link with session-contracts relates-to; existing session-contracts depends-on link retained. Verified target ID from actual session-contracts frontmatter. Repository _validate_frontmatter returned complete doc metadata with problem null, and every link target matched verified session-contracts. Byte equality proved body and all bytes outside the exact one-line replacement unchanged. Earlier summary validation covered metadata shape but not carrier link resolution; defect class is incomplete graph validation at a transport boundary. Control on this bounded repair checks both schema and every resulting target. Carrier still owns full joined graph validation. Existing audit-data.js bytes restored after official audit append; .artifacts untouched. Three calls of three; no agents; tokens/spend not exposed.",
+      "tags": [],
+      "tier": "T0",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-peer-review-transport.md",
+        "docs/proof/codex-d1-r3-consumer-review.md",
+        "docs/proof/codex-d1-r4-consumer-review.md"
+      ],
+      "datetime": "2026-09-16T17:58:05Z",
+      "done_when": "The six selected payloads, two incidental rows and carrier audits are fully conserved; proof/source hashes match; official regeneration and the full graph/audit gates pass; the narrow closure commit is clean; and all leases are released.",
+      "duration_seconds": 94.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/atlas-peer-receipts",
+        "pushed": null,
+        "sha": "d023cb04eac220737d7405ebec50bae4018fb465",
+        "short": "d023cb04e"
+      },
+      "goal": "Complete the independent r3/r4 review carrier with portable graph metadata and exact audit provenance.",
+      "id": "al-01M2NNWS29FDF6CRX0Z4YZB265",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Transport the admitted portable r3 metadata correction, update the transport evidence to actual outcomes, verify the exact base plus selected plus incidental plus own audit union and proof/source hashes, rerun the failed full graph gate after the mandatory post-audit regeneration, commit the narrow manifest, release leases, and retain the clean carrier for official later join.",
+      "session": "codex-atlas-peer-review-carrier",
+      "shortname": "atlas-peer-review-transport-complete",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-16T17:56:31Z",
+      "summary": "Portable metadata transport is present as d023cb04 from source fc60fd35, producing exact r3 blob f9bac553bc0fb84dfe9a78805a9302874cbe50fa while preserving the review body and verdict. Before this entry, entry_fingerprint showed exactly 960 base, six selected, two Owner-admitted incidental and three carrier audit payloads: 971 total, no missing or extra. R4 remains exact blob f37e23be9148415e09b3b01a05c5fe5277443a35; source/src/tests/tools remain identical to base b2127168. The transport receipt records actual prior regeneration, failed graph evidence, anonymous-check provenance and retained-worktree purpose. The post-audit official regeneration, formerly failing graph gate, audit verification, manifest check, hooked commit and lease release execute immediately after this entry.",
+      "tags": [
+        "atlas",
+        "transport"
+      ],
+      "tier": "T1",
+      "tool": "codex-peer-review-carrier"
     }
   ],
   "changes": [
@@ -29922,253 +30316,280 @@ window.AUDIT_DATA = {
       "title": "N10 D-0 Solution tree PASS-WITH-CONDITIONS; design stays draft"
     },
     {
-      "id": "cl-01M2KTRQJJ91B7YEVSSTSSNB70",
-      "datetime": "2026-09-16T00:44:46Z",
-      "session": "codex-atlas-five-gates-integration",
-      "kind": "decision",
-      "skill": "investigate",
-      "title": "D0 boundary independence permits admitted Atlas coexistence",
-      "prompt": "the conflicts are yours to resolve",
-      "summary": "Separate Astra Owner clarifies D0 must not be implemented through Atlas while Atlas may coexist. Bound the replacement guard to complete D0 types and exact D0 query/client/IPC/factory/Shell members and helpers, with explicit shared ports. Reject missing roots, new unaccounted helpers and real Atlas references. Native proof unchanged; task-specific setup preflight supplies fresh label and explicit same-tree Debug daemon build.",
-      "rationale": "Actual combined App run failed the global directory/namespace absence premise. The existing D0 ADR rejects Atlas as D0 implementation; shared containers now legitimately contain both capabilities. Independent Test/architecture review clears finite direct-static scope, with no arbitrary transitive or runtime proof claim and no peer-spec rewrite.",
       "artifacts": [
         "docs/coordination/atlas-five-gates.md",
         "docs/proof/atlas-five-gates.md"
       ],
-      "tags": [],
+      "audit_ref": "al-01M2KTQTJGZCZJPEWSZEDHD6T9",
+      "datetime": "2026-09-16T00:44:46Z",
       "git": {
-        "before": "247e6b4eaefba92cea250f657159a8768e8fb91f",
         "after": "247e6b4eaefba92cea250f657159a8768e8fb91f",
+        "before": "247e6b4eaefba92cea250f657159a8768e8fb91f",
         "branch": "integration/atlas-five-gates",
-        "pushed": null,
-        "commits": []
+        "commits": [],
+        "pushed": null
       },
-      "audit_ref": "al-01M2KTQTJGZCZJPEWSZEDHD6T9"
-    },
-    {
-      "id": "cl-01M2KWRZ2TDFBQX9JTJK0B82SD",
-      "datetime": "2026-09-16T01:19:51Z",
-      "session": "codex-atlas-five-gates-integration",
+      "id": "cl-01M2KTRQJJ91B7YEVSSTSSNB70",
       "kind": "decision",
-      "skill": "optimize-graph",
-      "title": "D0 review correction uses exact symbols and bounded conditional context",
       "prompt": "the conflicts are yours to resolve",
-      "summary": "Owner admits one16-call/20-minute correction, checkpoint12, only existing D0 test/proof. Preserve BLOCK bbca8d6e: new OpenKind(int) escape and unrelated conditional factory refusal. Require exact OriginalDefinition documentation ID plus project/source authority for every shared symbol; conditional root/enclosing/binding contexts including inactive/Release, unrelated members admitted; measured Roslyn spike; no general transitive analyzer. Independent clearance precedes join and fresh-slot qualification.",
-      "rationale": "Actual paired mutations distinguish missing dependency coverage from policy widening;20 passing baseline cases did not cover either. User conflict authority persists. Correction reuses installed Roslyn and existing proof boundary.",
-      "artifacts": [
-        "docs/plans/atlas-five-gates.md",
-        "docs/proof/atlas-five-gates.md"
-      ],
-      "tags": [],
-      "git": {
-        "before": "703bb3ced1c79931a03b7e2b4c2b4b257cd74e83",
-        "after": "703bb3ced1c79931a03b7e2b4c2b4b257cd74e83",
-        "branch": "integration/atlas-five-gates",
-        "pushed": null,
-        "commits": []
-      }
-    },
-    {
-      "id": "cl-01M2KYESWQCVEGEAQY32H1F3XF",
-      "datetime": "2026-09-16T01:49:15Z",
+      "rationale": "Actual combined App run failed the global directory/namespace absence premise. The existing D0 ADR rejects Atlas as D0 implementation; shared containers now legitimately contain both capabilities. Independent Test/architecture review clears finite direct-static scope, with no arbitrary transitive or runtime proof claim and no peer-spec rewrite.",
       "session": "codex-atlas-five-gates-integration",
-      "kind": "decision",
-      "skill": "optimize-graph",
-      "title": "Spike finite Roslyn rebinding after inactive extension escape",
-      "prompt": "the conflicts are yours to resolve",
-      "summary": "Owner admits A design spike only8calls/15min/checkpoint6. FR003 verified in independent3d2aa900: inactive new extension owner changes selected D0 binding when activated. Measure exposed-declaration context across source-project dependencies, exact ReducedFrom/OriginalDefinition identity, changed/ambiguous/unresolved binding, and unrelated namespace/receiver controls; focused import/overload/project cases. Preserve root/port refusals and retained37. No handwritten lookup approximation, configuration-complete claim, general analyzer/MSBuild framework, implementation, join or qualification before measured design/Owner decision.",
-      "rationale": "Both earlier examples were corrected, but baseline-owner matching cannot cover a newly selected extension owner. Use actual compiler binding instead of extending a handwritten lookup approximation.",
-      "artifacts": [
-        "docs/plans/atlas-five-gates.md",
-        "docs/proof/atlas-five-gates.md"
-      ],
-      "tags": [],
-      "git": {
-        "before": null,
-        "after": "6034635c717b4cb90340e6fadc14036c9bf9811b",
-        "branch": "integration/atlas-five-gates",
-        "pushed": null,
-        "commits": []
-      }
-    },
-    {
-      "id": "cl-01M2KZXAG8BYSSH345PC435EKN",
-      "datetime": "2026-09-16T02:14:39Z",
-      "session": "codex-atlas-five-gates-integration",
-      "kind": "decision",
-      "skill": "design-slice",
-      "title": "Admit finite D0 conditional-binding implementation",
-      "prompt": "the conflicts are yours to resolve",
-      "summary": "\n## Owner decision: admit finite implementation after measured design\n\nAstra Owner admits option A from b76581ae38bb1344457ef161326bb5bc861400a8, subject to\nindependent review. Author budget20 calls/30 minutes/checkpoint12, exact existing test\ntests/AiDe.App.Tests/SolutionTreeProbeTests.cs, docs/proof/d0-atlas-independence.md and\nofficial audit only. Conductor provisions fix/d0-atlas-conditional-closure at that tip.\nNo product/project or central ledger edits by the author. Astra is retained because\ncompiler binding, identity and closure semantics require stronger reasoning. Review\nis assigned to the independent Astra reviewer after an inspected frozen return.\n\nAcceptance: complete (project,symbol) assignment census, maximum8, overflow refuses\nbefore sampling; Core source reference rebuilt into App per assignment; original37\ncases/exact roots/ports and conditional refusals preserved; canonical ReducedFrom /\nOriginalDefinition and specific BuiltinOperator signatures; unsupported identity\nrefuses. Coverage completion is reported separately from acceptance.\n\nFinite reviewed closure manifest is required inside the existing test: App->Core is\nthe only source-project edge, Daemon/Mcp non-linking dependencies. New source files\nunder admitted roots enter census automatically; do not pin incidental346 count.\nPin relevant build-control inputs and the four explicit generated-input contract;\nmissing inputs, imports/project edges, unsupported conditional Compile inclusion or\nchanged generator assumptions produce named closure refusal. No automatic refresh.\nFreeze source text, parse options and metadata throughout enumeration; mutation or\ninconsistent reference refuses. Generator/configuration completeness remains outside\nthe claim. An unrepresentable closure condition returns a limitation, not green.\n\nIndependent review must exercise applicable RELEASE extension, Core propagation,\nall8 masking states, unrelated positives, overflow, unsupported identities and closure\nmutations. No source join or full/native qualification until independent clearance.\nAuthor red -> fix -> minimal existing/new union -> frozen proof is the branch variant;\nreview vetoes are real exit conditions. A new material failure returns to Owner.\n\nCurrent Conductor unit:24 boundaries/40 minutes/checkpoint16, width at most3. Goal:\ninspect and independently qualify this correction, then stage only if CLEAR. Done:\nfrozen reviewed candidate or precise unresolved veto handed to Owner, plus preserved\nrecords. Scope excludes main publication and unscheduled native execution. Prior\n16-boundary design checkpoint is recorded approximate, not retroactively compliant.\n",
-      "rationale": "Measured exhaustive candidate resolves the known escape and identity drift; independent review remains mandatory.",
-      "artifacts": [
-        "docs/plans/atlas-five-gates.md"
-      ],
-      "tags": [],
-      "git": {
-        "before": null,
-        "after": "caac0666269202b66917aae7be68947c7038a875",
-        "branch": "integration/atlas-five-gates",
-        "pushed": null,
-        "commits": []
-      }
-    },
-    {
-      "id": "cl-01M2M1X65X5WECX0V5HBNCV424",
-      "datetime": "2026-09-16T02:49:32Z",
-      "session": "codex-atlas-five-gates-integration",
-      "kind": "decision",
-      "skill": "design-slice",
-      "title": "Admit one-capture D0 verification correction",
-      "prompt": "the conflicts are yours to resolve",
-      "summary": "\n## Owner admission: source-capture and refusal-observation correction\n\nIndependent reviewer reproduced a remaining capture mismatch after its own66/66 run:\nLoad's syntax trees contain source A while separately reread disk fingerprints describe B.\nThe isolated copied-corpus state accepted despite B containing a direct Atlas reference;\nmatching B syntax rejected two ATLAS references. Conductor opened exact Program.cs/spike.log.\nThis is deterministic state-seam evidence, not an observed filesystem race or frequency.\nReviewer also measured an overflow refusal with347 loaded trees and0.297008 observer seconds\nwhile the guard printed corpusTrees0/seconds0. Golden generated pins worked in the new tree.\n\nAstra Owner admits8 author calls/12minutes/checkpoint5 AFTER the BLOCK receipt freezes.\nAllowed: existing tests/AiDe.App.Tests/SolutionTreeProbeTests.cs, existing proof and official\naudit. Parse syntax and fingerprint ONE captured source value, preserving the established\nencoding/hash contract. Compare later disk/inventory against that capture; missing/added/\nchanged/unreadable inputs refuse. Bind immutable captured inputs. Do not claim atomic\nfilesystem snapshot or measured race frequency. Deterministic fixture must traverse the real\nloader seam, not timing-dependent races or an arbitrarily reflection-corrupted object.\nPreserve legitimate in-memory mutation fixtures and all66 existing cases.\n\nEvery result path reports observed corpus size and measured elapsed when available;\nunevaluated fields explicitly say not recorded, and numeric zero means observed zero.\nAdd focused capture-change and refusal-metric controls. No wider dependency, generator or\nruntime policy. Independent re-review must clear the new BLOCK. No source join, slot,\nfull/native run or publication is granted. Root continues the same review-coordination\nunit; graph adds one bounded correction/re-review branch after the frozen new veto.\n",
-      "rationale": "Actual independent disconfirmation identifies a bounded source-version seam and false default metrics; independent veto remains.",
-      "artifacts": [
-        "docs/plans/atlas-five-gates.md"
-      ],
-      "tags": [],
-      "git": {
-        "before": null,
-        "after": "5c8dd30e8f8576a74ba66930e638d2e3b1ff3eb0",
-        "branch": "integration/atlas-five-gates",
-        "pushed": null,
-        "commits": []
-      }
-    },
-    {
-      "id": "cl-01M2NFPQ7KKE1RRH8NAXM09X3H",
-      "datetime": "2026-09-16T16:09:55Z",
-      "session": "codex-atlas-five-gates-integration",
-      "kind": "design",
-      "skill": "design-slice",
-      "title": "Native diagnostic observes public object identity and leaves private links unobserved",
-      "prompt": "Prepare the foreground-authorized same-instance native observer without changing the decisive original UIA query.",
-      "summary": "Astra Owner selects option A: actual host/current-child/reader-view references and attachment observations; separately identify test-wrapper readers/leases. View-to-backing-lease and private producer generation remain explicitly unobserved. STA snapshots bracket the existing awaited UIA batch, with after in finally; existing post-original RuntimeId sample stays labeled after-query and correlated to the same root. No private-field reads, new dispatcher hops, waits, peer refresh/invalidation, layout/focus effects, fallback roots or product repair.",
-      "rationale": "This is sufficient to distinguish the observed WPF host/current child/view from provider loading representation at the current diagnostic boundary. If a later observation needs a private link to distinguish remaining hypotheses, return that precise gap for a separate decision. No causal fix or live-run grant is inferred.",
-      "artifacts": [
-        "docs/plans/atlas-five-gates.md"
-      ],
-      "tags": [],
-      "git": {
-        "before": "0f8111cb684ff2394432353ab9744fa21a3b2883",
-        "after": "0f8111cb684ff2394432353ab9744fa21a3b2883",
-        "branch": "integration/atlas-five-gates",
-        "pushed": null,
-        "commits": []
-      }
-    },
-    {
-      "id": "cl-01M2NGMZTQHB3K6CJV5CWHS3FW",
-      "datetime": "2026-09-16T16:26:27Z",
-      "session": "codex-atlas-five-gates-integration",
-      "kind": "decision",
-      "skill": "execute-with-coordination",
-      "title": "Settle bounded native observer design after independent CLEAR",
-      "prompt": "Continue toward main; Owner settlement after independent design review.",
-      "summary": "Owner read973afc97 and settles e41a176c design. Author18calls/25min/checkpoint12; independent reviewer10calls/20min/checkpoint6. Exact native test and existing proof plus official audit only. Preserve original query/assertions/helper behavior. All added observation formatting/sink failures contained. Actual-adapter and actual await/finally/sink controls required. Local bounded reference/walk/packet mechanisms, no private fields or inferred generation/view-lease link. Compilation and non-GUI only; no shown run or full qualification before fresh slot.",
-      "rationale": "Independent design review found no blocking discrepancy and justified each local mechanism against the admitted same-instance observation gap. Original native runtime veto remains; source review and execution are separate gates.",
-      "artifacts": [
-        "docs/proof/atlas-p1-02-native-uia.md",
-        "docs/coordination/atlas-five-gates.md"
-      ],
-      "tags": [],
-      "git": {
-        "before": null,
-        "after": "0f8111cb684ff2394432353ab9744fa21a3b2883",
-        "branch": "integration/atlas-five-gates",
-        "pushed": null,
-        "commits": []
-      },
-      "audit_ref": "al-01M2NGJCFNQ972708YRRYTK8CJ"
-    },
-    {
-      "id": "cl-01M2NJE8DAE8H4PBQJEP3D2YCS",
-      "datetime": "2026-09-16T16:57:43Z",
-      "session": "codex-atlas-five-gates-integration",
-      "kind": "design",
       "skill": "investigate",
-      "title": "Contain observer payload failures before shared receipt publication",
-      "prompt": "Independent shared-receipt reproduction disproves observer formatting containment.",
-      "summary": "Owner chooses A after inspecting the real reproduction: serialize all added observer packets, transitions and status with actual Receipt options BEFORE publishing any shared event; append immutable JSON value preserving shape, never original mutable payload. Preserve original Mark/Save behavior. Author8calls/12min/checkpoint5 after frozenBLOCK; independentreview6calls/12min. Required oneReceipt original.before -> realformatterfailure -> original.after succeeds and savedreadback, exact originalexception/null/success through actualawait/finally; retain17controls andreviewerreprobe. No persistent-filesystem recovery claim, GUI, product or main grant.",
-      "rationale": "The new caught formatting failure leaves an unserializable payload in the existing shared event list and later original writes fail. Prepublication serialization isolates the introduced payload without rollback or redesigning original receipt semantics.",
+      "summary": "Separate Astra Owner clarifies D0 must not be implemented through Atlas while Atlas may coexist. Bound the replacement guard to complete D0 types and exact D0 query/client/IPC/factory/Shell members and helpers, with explicit shared ports. Reject missing roots, new unaccounted helpers and real Atlas references. Native proof unchanged; task-specific setup preflight supplies fresh label and explicit same-tree Debug daemon build.",
+      "tags": [],
+      "title": "D0 boundary independence permits admitted Atlas coexistence"
+    },
+    {
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md",
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "datetime": "2026-09-16T01:19:51Z",
+      "git": {
+        "after": "703bb3ced1c79931a03b7e2b4c2b4b257cd74e83",
+        "before": "703bb3ced1c79931a03b7e2b4c2b4b257cd74e83",
+        "branch": "integration/atlas-five-gates",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2KWRZ2TDFBQX9JTJK0B82SD",
+      "kind": "decision",
+      "prompt": "the conflicts are yours to resolve",
+      "rationale": "Actual paired mutations distinguish missing dependency coverage from policy widening;20 passing baseline cases did not cover either. User conflict authority persists. Correction reuses installed Roslyn and existing proof boundary.",
+      "session": "codex-atlas-five-gates-integration",
+      "skill": "optimize-graph",
+      "summary": "Owner admits one16-call/20-minute correction, checkpoint12, only existing D0 test/proof. Preserve BLOCK bbca8d6e: new OpenKind(int) escape and unrelated conditional factory refusal. Require exact OriginalDefinition documentation ID plus project/source authority for every shared symbol; conditional root/enclosing/binding contexts including inactive/Release, unrelated members admitted; measured Roslyn spike; no general transitive analyzer. Independent clearance precedes join and fresh-slot qualification.",
+      "tags": [],
+      "title": "D0 review correction uses exact symbols and bounded conditional context"
+    },
+    {
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md",
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "datetime": "2026-09-16T01:49:15Z",
+      "git": {
+        "after": "6034635c717b4cb90340e6fadc14036c9bf9811b",
+        "before": null,
+        "branch": "integration/atlas-five-gates",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2KYESWQCVEGEAQY32H1F3XF",
+      "kind": "decision",
+      "prompt": "the conflicts are yours to resolve",
+      "rationale": "Both earlier examples were corrected, but baseline-owner matching cannot cover a newly selected extension owner. Use actual compiler binding instead of extending a handwritten lookup approximation.",
+      "session": "codex-atlas-five-gates-integration",
+      "skill": "optimize-graph",
+      "summary": "Owner admits A design spike only8calls/15min/checkpoint6. FR003 verified in independent3d2aa900: inactive new extension owner changes selected D0 binding when activated. Measure exposed-declaration context across source-project dependencies, exact ReducedFrom/OriginalDefinition identity, changed/ambiguous/unresolved binding, and unrelated namespace/receiver controls; focused import/overload/project cases. Preserve root/port refusals and retained37. No handwritten lookup approximation, configuration-complete claim, general analyzer/MSBuild framework, implementation, join or qualification before measured design/Owner decision.",
+      "tags": [],
+      "title": "Spike finite Roslyn rebinding after inactive extension escape"
+    },
+    {
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "datetime": "2026-09-16T02:14:39Z",
+      "git": {
+        "after": "caac0666269202b66917aae7be68947c7038a875",
+        "before": null,
+        "branch": "integration/atlas-five-gates",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2KZXAG8BYSSH345PC435EKN",
+      "kind": "decision",
+      "prompt": "the conflicts are yours to resolve",
+      "rationale": "Measured exhaustive candidate resolves the known escape and identity drift; independent review remains mandatory.",
+      "session": "codex-atlas-five-gates-integration",
+      "skill": "design-slice",
+      "summary": "\n## Owner decision: admit finite implementation after measured design\n\nAstra Owner admits option A from b76581ae38bb1344457ef161326bb5bc861400a8, subject to\nindependent review. Author budget20 calls/30 minutes/checkpoint12, exact existing test\ntests/AiDe.App.Tests/SolutionTreeProbeTests.cs, docs/proof/d0-atlas-independence.md and\nofficial audit only. Conductor provisions fix/d0-atlas-conditional-closure at that tip.\nNo product/project or central ledger edits by the author. Astra is retained because\ncompiler binding, identity and closure semantics require stronger reasoning. Review\nis assigned to the independent Astra reviewer after an inspected frozen return.\n\nAcceptance: complete (project,symbol) assignment census, maximum8, overflow refuses\nbefore sampling; Core source reference rebuilt into App per assignment; original37\ncases/exact roots/ports and conditional refusals preserved; canonical ReducedFrom /\nOriginalDefinition and specific BuiltinOperator signatures; unsupported identity\nrefuses. Coverage completion is reported separately from acceptance.\n\nFinite reviewed closure manifest is required inside the existing test: App->Core is\nthe only source-project edge, Daemon/Mcp non-linking dependencies. New source files\nunder admitted roots enter census automatically; do not pin incidental346 count.\nPin relevant build-control inputs and the four explicit generated-input contract;\nmissing inputs, imports/project edges, unsupported conditional Compile inclusion or\nchanged generator assumptions produce named closure refusal. No automatic refresh.\nFreeze source text, parse options and metadata throughout enumeration; mutation or\ninconsistent reference refuses. Generator/configuration completeness remains outside\nthe claim. An unrepresentable closure condition returns a limitation, not green.\n\nIndependent review must exercise applicable RELEASE extension, Core propagation,\nall8 masking states, unrelated positives, overflow, unsupported identities and closure\nmutations. No source join or full/native qualification until independent clearance.\nAuthor red -> fix -> minimal existing/new union -> frozen proof is the branch variant;\nreview vetoes are real exit conditions. A new material failure returns to Owner.\n\nCurrent Conductor unit:24 boundaries/40 minutes/checkpoint16, width at most3. Goal:\ninspect and independently qualify this correction, then stage only if CLEAR. Done:\nfrozen reviewed candidate or precise unresolved veto handed to Owner, plus preserved\nrecords. Scope excludes main publication and unscheduled native execution. Prior\n16-boundary design checkpoint is recorded approximate, not retroactively compliant.\n",
+      "tags": [],
+      "title": "Admit finite D0 conditional-binding implementation"
+    },
+    {
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "datetime": "2026-09-16T02:49:32Z",
+      "git": {
+        "after": "5c8dd30e8f8576a74ba66930e638d2e3b1ff3eb0",
+        "before": null,
+        "branch": "integration/atlas-five-gates",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2M1X65X5WECX0V5HBNCV424",
+      "kind": "decision",
+      "prompt": "the conflicts are yours to resolve",
+      "rationale": "Actual independent disconfirmation identifies a bounded source-version seam and false default metrics; independent veto remains.",
+      "session": "codex-atlas-five-gates-integration",
+      "skill": "design-slice",
+      "summary": "\n## Owner admission: source-capture and refusal-observation correction\n\nIndependent reviewer reproduced a remaining capture mismatch after its own66/66 run:\nLoad's syntax trees contain source A while separately reread disk fingerprints describe B.\nThe isolated copied-corpus state accepted despite B containing a direct Atlas reference;\nmatching B syntax rejected two ATLAS references. Conductor opened exact Program.cs/spike.log.\nThis is deterministic state-seam evidence, not an observed filesystem race or frequency.\nReviewer also measured an overflow refusal with347 loaded trees and0.297008 observer seconds\nwhile the guard printed corpusTrees0/seconds0. Golden generated pins worked in the new tree.\n\nAstra Owner admits8 author calls/12minutes/checkpoint5 AFTER the BLOCK receipt freezes.\nAllowed: existing tests/AiDe.App.Tests/SolutionTreeProbeTests.cs, existing proof and official\naudit. Parse syntax and fingerprint ONE captured source value, preserving the established\nencoding/hash contract. Compare later disk/inventory against that capture; missing/added/\nchanged/unreadable inputs refuse. Bind immutable captured inputs. Do not claim atomic\nfilesystem snapshot or measured race frequency. Deterministic fixture must traverse the real\nloader seam, not timing-dependent races or an arbitrarily reflection-corrupted object.\nPreserve legitimate in-memory mutation fixtures and all66 existing cases.\n\nEvery result path reports observed corpus size and measured elapsed when available;\nunevaluated fields explicitly say not recorded, and numeric zero means observed zero.\nAdd focused capture-change and refusal-metric controls. No wider dependency, generator or\nruntime policy. Independent re-review must clear the new BLOCK. No source join, slot,\nfull/native run or publication is granted. Root continues the same review-coordination\nunit; graph adds one bounded correction/re-review branch after the frozen new veto.\n",
+      "tags": [],
+      "title": "Admit one-capture D0 verification correction"
+    },
+    {
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "datetime": "2026-09-16T16:09:55Z",
+      "git": {
+        "after": "0f8111cb684ff2394432353ab9744fa21a3b2883",
+        "before": "0f8111cb684ff2394432353ab9744fa21a3b2883",
+        "branch": "integration/atlas-five-gates",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2NFPQ7KKE1RRH8NAXM09X3H",
+      "kind": "design",
+      "prompt": "Prepare the foreground-authorized same-instance native observer without changing the decisive original UIA query.",
+      "rationale": "This is sufficient to distinguish the observed WPF host/current child/view from provider loading representation at the current diagnostic boundary. If a later observation needs a private link to distinguish remaining hypotheses, return that precise gap for a separate decision. No causal fix or live-run grant is inferred.",
+      "session": "codex-atlas-five-gates-integration",
+      "skill": "design-slice",
+      "summary": "Astra Owner selects option A: actual host/current-child/reader-view references and attachment observations; separately identify test-wrapper readers/leases. View-to-backing-lease and private producer generation remain explicitly unobserved. STA snapshots bracket the existing awaited UIA batch, with after in finally; existing post-original RuntimeId sample stays labeled after-query and correlated to the same root. No private-field reads, new dispatcher hops, waits, peer refresh/invalidation, layout/focus effects, fallback roots or product repair.",
+      "tags": [],
+      "title": "Native diagnostic observes public object identity and leaves private links unobserved"
+    },
+    {
       "artifacts": [
         "docs/proof/atlas-p1-02-native-uia.md",
         "docs/coordination/atlas-five-gates.md"
       ],
-      "tags": [],
+      "audit_ref": "al-01M2NGJCFNQ972708YRRYTK8CJ",
+      "datetime": "2026-09-16T16:26:27Z",
       "git": {
+        "after": "0f8111cb684ff2394432353ab9744fa21a3b2883",
         "before": null,
-        "after": "7ad8723eb7a8380a268380fd5616932bd5c3a346",
         "branch": "integration/atlas-five-gates",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2NGMZTQHB3K6CJV5CWHS3FW",
+      "kind": "decision",
+      "prompt": "Continue toward main; Owner settlement after independent design review.",
+      "rationale": "Independent design review found no blocking discrepancy and justified each local mechanism against the admitted same-instance observation gap. Original native runtime veto remains; source review and execution are separate gates.",
+      "session": "codex-atlas-five-gates-integration",
+      "skill": "execute-with-coordination",
+      "summary": "Owner read973afc97 and settles e41a176c design. Author18calls/25min/checkpoint12; independent reviewer10calls/20min/checkpoint6. Exact native test and existing proof plus official audit only. Preserve original query/assertions/helper behavior. All added observation formatting/sink failures contained. Actual-adapter and actual await/finally/sink controls required. Local bounded reference/walk/packet mechanisms, no private fields or inferred generation/view-lease link. Compilation and non-GUI only; no shown run or full qualification before fresh slot.",
+      "tags": [],
+      "title": "Settle bounded native observer design after independent CLEAR"
     },
     {
-      "id": "cl-01M2NKT37RCK1KS709AS940VV1",
+      "artifacts": [
+        "docs/proof/atlas-p1-02-native-uia.md",
+        "docs/coordination/atlas-five-gates.md"
+      ],
+      "datetime": "2026-09-16T16:57:43Z",
+      "git": {
+        "after": "7ad8723eb7a8380a268380fd5616932bd5c3a346",
+        "before": null,
+        "branch": "integration/atlas-five-gates",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2NJE8DAE8H4PBQJEP3D2YCS",
+      "kind": "design",
+      "prompt": "Independent shared-receipt reproduction disproves observer formatting containment.",
+      "rationale": "The new caught formatting failure leaves an unserializable payload in the existing shared event list and later original writes fail. Prepublication serialization isolates the introduced payload without rollback or redesigning original receipt semantics.",
+      "session": "codex-atlas-five-gates-integration",
+      "skill": "investigate",
+      "summary": "Owner chooses A after inspecting the real reproduction: serialize all added observer packets, transitions and status with actual Receipt options BEFORE publishing any shared event; append immutable JSON value preserving shape, never original mutable payload. Preserve original Mark/Save behavior. Author8calls/12min/checkpoint5 after frozenBLOCK; independentreview6calls/12min. Required oneReceipt original.before -> realformatterfailure -> original.after succeeds and savedreadback, exact originalexception/null/success through actualawait/finally; retain17controls andreviewerreprobe. No persistent-filesystem recovery claim, GUI, product or main grant.",
+      "tags": [],
+      "title": "Contain observer payload failures before shared receipt publication"
+    },
+    {
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md"
+      ],
       "datetime": "2026-09-16T17:21:40Z",
-      "session": "codex-atlas-five-gates-integration",
-      "kind": "decision",
-      "skill": "execute-with-coordination",
-      "title": "Owner disposition: r4 changes required; Grok mapper authorship not contested",
-      "prompt": "Grok may be waiting for another ACK from you",
-      "summary": "Astra Owner and independent review7e205f5 require four corrections to exact r4 blob a8c05bc77451b0438ebea24eaad9b15db6c99601. Grok may author proposal under recorded operator direction; no new source grants. R3 remains frozen. Smallest r5 freezes authoring only; consumption and activation deferred.",
-      "rationale": "Proposed E1 method-observation design is not an admitted existing operation; graph assertions cannot replace Core-issued scoped identities; a nonempty mapping cannot settle ambiguity or activation.",
-      "artifacts": [
-        "docs/proof/atlas-five-gates.md"
-      ],
-      "tags": [],
       "git": {
-        "before": null,
         "after": "7ad8723eb7a8380a268380fd5616932bd5c3a346",
+        "before": null,
         "branch": "integration/atlas-five-gates",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2NKT37RCK1KS709AS940VV1",
+      "kind": "decision",
+      "prompt": "Grok may be waiting for another ACK from you",
+      "rationale": "Proposed E1 method-observation design is not an admitted existing operation; graph assertions cannot replace Core-issued scoped identities; a nonempty mapping cannot settle ambiguity or activation.",
+      "session": "codex-atlas-five-gates-integration",
+      "skill": "execute-with-coordination",
+      "summary": "Astra Owner and independent review7e205f5 require four corrections to exact r4 blob a8c05bc77451b0438ebea24eaad9b15db6c99601. Grok may author proposal under recorded operator direction; no new source grants. R3 remains frozen. Smallest r5 freezes authoring only; consumption and activation deferred.",
+      "tags": [],
+      "title": "Owner disposition: r4 changes required; Grok mapper authorship not contested"
     },
     {
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "datetime": "2026-09-16T17:39:57Z",
+      "git": {
+        "after": "b2127168721bd0db88be57907b01349890c787da",
+        "before": null,
+        "branch": "integration/atlas-five-gates",
+        "commits": [],
+        "pushed": null
+      },
       "id": "cl-01M2NMVJHFYHQX2N8Z553DACY6",
-      "datetime": "2026-09-16T17:39:57Z",
-      "session": "codex-atlas-five-gates-integration",
       "kind": "decision",
-      "skill": "execute-with-coordination",
-      "title": "Owner selects one native diagnostic before full qualification",
       "prompt": "Keep going; resolve coordination blockers and prioritize main publication.",
-      "summary": "After independent CLEARd31eab23 and exact assembly, request one existing MainWindow_RealDaemonReplacement_AcknowledgesHealthyReleaseAndPreservesBorrowedClient run under a fresh foreground slot. Same-tree Debug preflight, unchanged predicates/assertions/waits/cleanup, one actual test, unique evidence, owned processes and explicit release. No automatic retry or qualification; pass does not establish prior cause.",
       "rationale": "Keep real dependencies separate while preserving independent gates and exact ownership boundaries.",
-      "artifacts": [
-        "docs/proof/atlas-five-gates.md"
-      ],
+      "session": "codex-atlas-five-gates-integration",
+      "skill": "execute-with-coordination",
+      "summary": "After independent CLEARd31eab23 and exact assembly, request one existing MainWindow_RealDaemonReplacement_AcknowledgesHealthyReleaseAndPreservesBorrowedClient run under a fresh foreground slot. Same-tree Debug preflight, unchanged predicates/assertions/waits/cleanup, one actual test, unique evidence, owned processes and explicit release. No automatic retry or qualification; pass does not establish prior cause.",
       "tags": [],
-      "git": {
-        "before": null,
-        "after": "b2127168721bd0db88be57907b01349890c787da",
-        "branch": "integration/atlas-five-gates",
-        "pushed": null,
-        "commits": []
-      }
+      "title": "Owner selects one native diagnostic before full qualification"
     },
     {
-      "id": "cl-01M2NMVJNW9DKV780A4F6APB3P",
-      "datetime": "2026-09-16T17:39:57Z",
-      "session": "codex-atlas-five-gates-integration",
-      "kind": "decision",
-      "skill": "execute-with-coordination",
-      "title": "Owner admits review-only carrier without Grok ancestry",
-      "prompt": "Keep going; resolve coordination blockers and prioritize main publication.",
-      "summary": "Whole r4 review branch merge refused by manifest before mutation; it includes peer liveness/spec/proposal/coordination. Transport only exact independent reviewer commits and own audit additions from a fresh registered carrier; preserve final receipt bytes and original-to-carrier mapping, verify full selected payload conservation, regenerate officially and use an unqualified join. No source/main authority.",
-      "rationale": "Keep real dependencies separate while preserving independent gates and exact ownership boundaries.",
       "artifacts": [
         "docs/proof/atlas-five-gates.md"
       ],
-      "tags": [],
+      "datetime": "2026-09-16T17:39:57Z",
       "git": {
-        "before": null,
         "after": "b2127168721bd0db88be57907b01349890c787da",
+        "before": null,
         "branch": "integration/atlas-five-gates",
-        "pushed": null,
-        "commits": []
-      }
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2NMVJNW9DKV780A4F6APB3P",
+      "kind": "decision",
+      "prompt": "Keep going; resolve coordination blockers and prioritize main publication.",
+      "rationale": "Keep real dependencies separate while preserving independent gates and exact ownership boundaries.",
+      "session": "codex-atlas-five-gates-integration",
+      "skill": "execute-with-coordination",
+      "summary": "Whole r4 review branch merge refused by manifest before mutation; it includes peer liveness/spec/proposal/coordination. Transport only exact independent reviewer commits and own audit additions from a fresh registered carrier; preserve final receipt bytes and original-to-carrier mapping, verify full selected payload conservation, regenerate officially and use an unqualified join. No source/main authority.",
+      "tags": [],
+      "title": "Owner admits review-only carrier without Grok ancestry"
+    },
+    {
+      "artifacts": [
+        "docs/proof/atlas-peer-review-transport.md",
+        "docs/proof/codex-d1-r3-consumer-review.md",
+        "docs/proof/codex-d1-r4-consumer-review.md"
+      ],
+      "datetime": "2026-09-16T17:52:56Z",
+      "git": {
+        "after": "a9ce139b42cc4071738515eb1d8c0b8aa64e325a",
+        "before": "a9ce139b42cc4071738515eb1d8c0b8aa64e325a",
+        "branch": "review/atlas-peer-receipts",
+        "commits": [],
+        "pushed": null
+      },
+      "id": "cl-01M2NNKBDZXH45VEM58FG2JYVW",
+      "kind": "decision",
+      "prompt": "Resolve the carrier conservation blocker by admitting exactly the two named historical producer audit payloads, preserve them without deletion or rewriting, and finalize the byte-preserving r3/r4 review carrier.",
+      "rationale": "The installed register merge driver retained these two source-parent payloads; exact fingerprint equality was verified and preserving them is safer than ad hoc append-only ledger surgery.",
+      "session": "codex-atlas-peer-review-carrier",
+      "skill": "execute-with-coordination",
+      "summary": "Owner admits exactly al-01M2KMBV5ZEQPEFFD7708W28HA and al-01M2NHXVG85NWR87JK2WJW4PAQ as incidental historical producer provenance preserved by the installed append-only merge driver. The exception grants no broader ancestry, current admission, ownership, ACK, native, product, root-candidate, main or publication authority.",
+      "tags": [
+        "atlas",
+        "audit-provenance"
+      ],
+      "title": "Admit exact historical audit provenance for review carrier"
     }
   ]
 };

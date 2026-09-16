@@ -12842,6 +12842,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "8846eef929f694d56d99055a97a85125ddd0130ec7fb48776683c8d5f3df7cd4"
     },
     {
+      "id": "proof-atlas-peer-review-transport",
+      "path": "docs/proof/atlas-peer-review-transport.md",
+      "title": "Atlas independent review receipt transport",
+      "type": "doc",
+      "status": "completed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "Byte-preserving carrier transport of the independent D1 r3 and r4 receipts, including the Owner-approved two-row historical audit provenance exception.",
+      "tags": [
+        "proof",
+        "atlas",
+        "transport",
+        "audit"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "45322dd1909b947b35193cd98b108be3515ce2544655244dbe80b5b778be3a12"
+    },
+    {
       "id": "proof-code-atlas-contract-grounding",
       "path": "docs/proof/code-atlas-contract-grounding.md",
       "title": "Code Atlas contract grounding spike",
@@ -13063,6 +13089,57 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "1d3497dbd514f71128d169650ed149cb82769090f34638335947c1a6220827ed"
+    },
+    {
+      "id": "proof-codex-d1-r3-consumer-review",
+      "path": "docs/proof/codex-d1-r3-consumer-review.md",
+      "title": "Independent D1 r3 consumer boundary review",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "CLEAR for the exact D1 r3 non-consuming document boundary; this independent review is not a peer ACK, freeze record, or implementation admission.",
+      "tags": [],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9cc2069416a874ebbc327342fa3f33eac3fcf1844a335efabf45921ddfe9b500"
+    },
+    {
+      "id": "proof-codex-d1-r4-consumer-review",
+      "path": "docs/proof/codex-d1-r4-consumer-review.md",
+      "title": "Independent consumer boundary review of D1 mapper r4",
+      "type": "doc",
+      "status": "completed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "CHANGES REQUIRED: Grok may author the proposed mapper contract; consumer ACK cannot establish an existing E1 identity API, Core authority, or live activation.",
+      "tags": [
+        "proof",
+        "atlas",
+        "d1",
+        "contract-review"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "20269849835cf9ef8249090217efd31908ec61e944a3d9ed0fafedd42d44e6eb"
     },
     {
       "id": "proof-d0-atlas-capture-review",
@@ -23135,5 +23212,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "2d86d087455c148cc435d5d6d0228a4fd455402069e4d3ecef40810e5f799597"
+  "graphSha256": "682a2030aefb025f1554339b47f84cc0955d553b966899975ff39b52e2c25cef"
 };
