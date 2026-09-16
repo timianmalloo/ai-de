@@ -12742,6 +12742,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "6500a071134e7b750f0de77ada46689e5d08abb6b00cf3f24ce13524b66f9aa1"
     },
     {
+      "id": "proof-atlas-native-instance-observer-review",
+      "path": "docs/proof/atlas-native-instance-observer-review.md",
+      "title": "Independent Atlas observer implementation review: shared receipt failure escapes containment",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Historical receipt: Independent Atlas observer implementation review: shared receipt failure escapes containment",
+      "tags": [],
+      "links": [
+        {
+          "to": "investigation-atlas-p1-02-native-uia",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "792196387ceb8f34060f0306e3697a54def6a504c892ff3161c1bcbf09e01a87"
+    },
+    {
       "id": "proof-atlas-native-observer-design-review",
       "path": "docs/proof/atlas-native-observer-design-review.md",
       "title": "Independent review of the Atlas native observer design",
@@ -23085,5 +23110,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "000adc4f94f0596c902c9c784cb64c121f8c0ca5f104315e2624d9aa705284c4"
+  "graphSha256": "9dc2813fa3f581f685e52f25a0f746ffd562e81423ac1287e83900777ef80e32"
 };

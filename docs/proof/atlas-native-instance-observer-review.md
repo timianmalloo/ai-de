@@ -8,6 +8,7 @@ links:
   - { to: investigation-atlas-p1-02-native-uia, rel: depends-on }
   - { to: session-contracts, rel: depends-on }
 review-by: 2026-12-15
+summary: "Historical receipt: Independent Atlas observer implementation review: shared receipt failure escapes containment"
 ---
 
 # BLOCK: observer formatting failure poisons later original receipt writes
