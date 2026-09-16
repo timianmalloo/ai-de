@@ -1,0 +1,1 @@
+Agent codex-astra-d0-review; session codex-d0-atlas-capture-review; tree C:/Projects/ai-de-review-d0-atlas-capture-consistency; branch review/d0-atlas-capture-consistency; status CLEAR finite correction; committed=True; exact lease release exit=0; waiting parent canonical qualification; evidence docs/proof/d0-atlas-capture-review.md; ownership session-contracts section 2.

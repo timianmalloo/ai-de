@@ -1,0 +1,1 @@
+Agent codex-astra-native-instance-review; tree C:/Projects/ai-de-review-atlas-native-instance-observer; status BLOCK FR-NO-001 shared receipt poison; committed=True; exact lease release exit=0; evidence docs/proof/atlas-native-instance-observer-review.md; Owner correction decision required; no GUI authority.

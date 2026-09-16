@@ -1,0 +1,9 @@
+{
+  "branch": "review/atlas-harness-gate",
+  "waiting_on": "none",
+  "session": "codex-atlas-harness-review",
+  "worktree": "C:/Projects/ai-de-review-atlas-harness-gate",
+  "agent": "codex-astra-harness-review",
+  "doing": "Retained G4 review CLEAR at 301bc67; proof committed and lease released",
+  "status": "completed-clear-receipt"
+}

@@ -1,0 +1,1 @@
+Agent codex-astra-native-design-review; tree C:/Projects/ai-de-review-atlas-native-observer-design; status design CLEAR only; committed=True; exact lease release exit=0; evidence docs/proof/atlas-native-observer-design-review.md; parent freeze/dispatch and later implementation/native review remain.

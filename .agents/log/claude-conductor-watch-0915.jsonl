@@ -26,3 +26,9 @@
 {"agent": "claude-conductor", "at": 1789492402.0587316, "kind": "release", "path": "docs/investigations/INV-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins.md", "seq": 26, "session": "claude-conductor-watch-0915", "wi": "WI-0"}
 {"agent": "claude-conductor", "at": 1789495415.6954591, "kind": "claim", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 27, "session": "claude-conductor-watch-0915", "ttl": 600.0, "wi": "ruling-119"}
 {"agent": "claude-conductor", "at": 1789495416.1023698, "kind": "release", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 28, "session": "claude-conductor-watch-0915", "wi": "WI-0"}
+{"agent": "claude-conductor", "at": 1789502819.7083986, "kind": "claim", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 29, "session": "claude-conductor-watch-0915", "ttl": 600.0, "wi": "ruling-120"}
+{"agent": "claude-conductor", "at": 1789502820.0583124, "kind": "release", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 30, "session": "claude-conductor-watch-0915", "wi": "WI-0"}
+{"agent": "claude-conductor", "at": 1789503478.7869234, "kind": "claim", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 31, "session": "claude-conductor-watch-0915", "ttl": 600.0, "wi": "ruling-121"}
+{"agent": "claude-conductor", "at": 1789503479.1244397, "kind": "release", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 32, "session": "claude-conductor-watch-0915", "wi": "WI-0"}
+{"agent": "claude-conductor", "at": 1789596517.4871237, "kind": "claim", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 33, "session": "claude-conductor-watch-0915", "ttl": 900.0, "wi": "rulings-122-126"}
+{"agent": "claude-conductor", "at": 1789597148.5800056, "kind": "release", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 34, "session": "claude-conductor-watch-0915", "wi": "WI-0"}

@@ -1,0 +1,9 @@
+{"agent": "codex-astra-pair-author", "at": 1789594024.2521195, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "codex-atlas-p1-03-pair-correction", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789594024.2674465, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "codex-atlas-p1-03-pair-correction", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789594024.282992, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-atlas-p1-03-pair-correction", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789594024.2991004, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-atlas-p1-03-pair-correction", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789594024.3148763, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "codex-atlas-p1-03-pair-correction", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789594024.3299067, "code": null, "kind": "allowed", "path": "docs/proof/atlas-p1-03-pair-preparation.md", "session": "codex-atlas-p1-03-pair-correction", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789594024.3449209, "code": null, "kind": "allowed", "path": "docs/proof/records/atlas-p1-03-uia-transition/run_pair.py", "session": "codex-atlas-p1-03-pair-correction", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789594024.3614411, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-atlas-p1-03-pair-correction", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789594024.3774517, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-atlas-p1-03-pair-correction", "wi": ""}

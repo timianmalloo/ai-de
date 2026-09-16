@@ -1,0 +1,8 @@
+{"agent": "codex-astra-process-image-investigator", "at": 1789596496.5032148, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "codex-atlas-p1-03-process-image", "wi": ""}
+{"agent": "codex-astra-process-image-investigator", "at": 1789596496.5197234, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "codex-atlas-p1-03-process-image", "wi": ""}
+{"agent": "codex-astra-process-image-investigator", "at": 1789596496.5357783, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-atlas-p1-03-process-image", "wi": ""}
+{"agent": "codex-astra-process-image-investigator", "at": 1789596496.5513768, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-atlas-p1-03-process-image", "wi": ""}
+{"agent": "codex-astra-process-image-investigator", "at": 1789596496.567393, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "codex-atlas-p1-03-process-image", "wi": ""}
+{"agent": "codex-astra-process-image-investigator", "at": 1789596496.5834084, "code": null, "kind": "allowed", "path": "docs/proof/atlas-p1-03-pair-preparation.md", "session": "codex-atlas-p1-03-process-image", "wi": ""}
+{"agent": "codex-astra-process-image-investigator", "at": 1789596496.598918, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-atlas-p1-03-process-image", "wi": ""}
+{"agent": "codex-astra-process-image-investigator", "at": 1789596496.6159363, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-atlas-p1-03-process-image", "wi": ""}

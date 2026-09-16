@@ -1,0 +1,3 @@
+{"agent": "codex-astra-d0-author", "at": 1789520353.3686764, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-d0-atlas-independence", "wi": ""}
+{"agent": "codex-astra-d0-author", "at": 1789520353.381678, "code": null, "kind": "allowed", "path": "docs/proof/d0-atlas-independence.md", "session": "codex-d0-atlas-independence", "wi": ""}
+{"agent": "codex-astra-d0-author", "at": 1789520353.3941905, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/SolutionTreeProbeTests.cs", "session": "codex-d0-atlas-independence", "wi": ""}

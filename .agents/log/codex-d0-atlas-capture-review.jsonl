@@ -1,0 +1,3 @@
+{"agent": "codex-astra-gate-conductor", "at": 1789527754.8848698, "kind": "session-start", "path": "-", "seq": 1, "session": "codex-d0-atlas-capture-review", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-review-d0-atlas-capture-consistency"}
+{"agent": "codex-astra-d0-review", "at": 1789528453.7935848, "kind": "claim", "path": "docs/proof/d0-atlas-capture-review.md", "seq": 2, "session": "codex-d0-atlas-capture-review", "ttl": 300.0, "wi": "d0-atlas-capture-review"}
+{"agent": "codex-astra-d0-review", "at": 1789528454.6207666, "kind": "release", "path": "docs/proof/d0-atlas-capture-review.md", "seq": 3, "session": "codex-d0-atlas-capture-review", "wi": "WI-0"}

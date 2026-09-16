@@ -1,0 +1,14 @@
+{"agent": "codex-astra-transition-reviewer", "at": 1789590758.4566894, "code": null, "kind": "allowed", "path": "docs/proof/atlas-p1-03-transition-review.md", "session": "codex-atlas-p1-03-transition-review", "wi": ""}
+{"agent": "codex-astra-transition-reviewer", "at": 1789590758.5989726, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-atlas-p1-03-transition-review", "wi": ""}
+{"agent": "codex-astra-transition-reviewer", "at": 1789590758.7381978, "code": null, "kind": "allowed", "path": "site/model.html", "session": "codex-atlas-p1-03-transition-review", "wi": ""}
+{"agent": "codex-astra-transition-reviewer", "at": 1789590758.8792672, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-atlas-p1-03-transition-review", "wi": ""}
+{"agent": "codex-astra-transition-reviewer", "at": 1789590758.947369, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-atlas-p1-03-transition-review", "wi": ""}
+{"agent": "codex-astra-transition-reviewer", "at": 1789590763.5769808, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "codex-atlas-p1-03-transition-review", "wi": ""}
+{"agent": "codex-astra-transition-reviewer", "at": 1789590763.5919843, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "codex-atlas-p1-03-transition-review", "wi": ""}
+{"agent": "codex-astra-transition-reviewer", "at": 1789590763.6069999, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-atlas-p1-03-transition-review", "wi": ""}
+{"agent": "codex-astra-transition-reviewer", "at": 1789590763.621507, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-atlas-p1-03-transition-review", "wi": ""}
+{"agent": "codex-astra-transition-reviewer", "at": 1789590763.6360583, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "codex-atlas-p1-03-transition-review", "wi": ""}
+{"agent": "codex-astra-transition-reviewer", "at": 1789590763.6525846, "code": null, "kind": "allowed", "path": "docs/proof/atlas-p1-03-transition-review.md", "session": "codex-atlas-p1-03-transition-review", "wi": ""}
+{"agent": "codex-astra-transition-reviewer", "at": 1789590763.6685877, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-atlas-p1-03-transition-review", "wi": ""}
+{"agent": "codex-astra-transition-reviewer", "at": 1789590763.6851237, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-atlas-p1-03-transition-review", "wi": ""}
+{"agent": "codex-astra-transition-reviewer", "at": 1789590763.7006428, "code": null, "kind": "allowed", "path": "site/model.html", "session": "codex-atlas-p1-03-transition-review", "wi": ""}

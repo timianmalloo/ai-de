@@ -1,0 +1,25 @@
+{"agent": "codex-astra-gate-conductor", "at": 1789584058.8921757, "kind": "session-start", "path": "-", "seq": 1, "session": "codex-atlas-p1-03-rca", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-investigation-atlas-p1-03-uia"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789584551.9066155, "kind": "claim", "path": "docs/investigations/atlas-p1-03-uia.md", "seq": 2, "session": "codex-atlas-p1-03-rca", "ttl": 600.0, "wi": "atlas-p1-03-uia"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789584852.3794434, "kind": "claim", "path": "site/index.html", "seq": 3, "session": "codex-atlas-p1-03-rca", "ttl": 300.0, "wi": "atlas-p1-03-uia"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789584852.4511957, "kind": "claim", "path": "site/collaboration.html", "seq": 4, "session": "codex-atlas-p1-03-rca", "ttl": 300.0, "wi": "atlas-p1-03-uia"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789584852.5211911, "kind": "claim", "path": "site/model.html", "seq": 5, "session": "codex-atlas-p1-03-rca", "ttl": 300.0, "wi": "atlas-p1-03-uia"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789584933.729711, "kind": "release", "path": "docs/investigations/atlas-p1-03-uia.md", "seq": 6, "session": "codex-atlas-p1-03-rca", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789584933.7827759, "kind": "release", "path": "site/index.html", "seq": 7, "session": "codex-atlas-p1-03-rca", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789584933.8353455, "kind": "release", "path": "site/collaboration.html", "seq": 8, "session": "codex-atlas-p1-03-rca", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789584933.8883946, "kind": "release", "path": "site/model.html", "seq": 9, "session": "codex-atlas-p1-03-rca", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789585192.8146465, "kind": "claim", "path": "site/index.html", "seq": 10, "session": "codex-atlas-p1-03-rca", "ttl": 300.0, "wi": "atlas-p1-03-uia-capture-correction"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789585192.891291, "kind": "claim", "path": "site/collaboration.html", "seq": 11, "session": "codex-atlas-p1-03-rca", "ttl": 300.0, "wi": "atlas-p1-03-uia-capture-correction"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789585192.9623814, "kind": "claim", "path": "site/model.html", "seq": 12, "session": "codex-atlas-p1-03-rca", "ttl": 300.0, "wi": "atlas-p1-03-uia-capture-correction"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789585197.8169467, "kind": "release", "path": "site/model.html", "seq": 13, "session": "codex-atlas-p1-03-rca", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789585197.8735003, "kind": "release", "path": "site/collaboration.html", "seq": 14, "session": "codex-atlas-p1-03-rca", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789585197.9275613, "kind": "release", "path": "site/index.html", "seq": 15, "session": "codex-atlas-p1-03-rca", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789585557.3170528, "kind": "claim", "path": "docs/investigations/atlas-p1-03-uia.md", "seq": 16, "session": "codex-atlas-p1-03-rca", "ttl": 900.0, "wi": "atlas-p1-03-uia-b1-b3"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789585989.7434576, "kind": "claim", "path": "docs/audit/audit-data.js", "seq": 17, "session": "codex-atlas-p1-03-rca", "ttl": 300.0, "wi": "atlas-p1-03-uia-b1-b3"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789585989.812026, "kind": "claim", "path": "site/index.html", "seq": 18, "session": "codex-atlas-p1-03-rca", "ttl": 300.0, "wi": "atlas-p1-03-uia-b1-b3"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789585989.879716, "kind": "claim", "path": "site/collaboration.html", "seq": 19, "session": "codex-atlas-p1-03-rca", "ttl": 300.0, "wi": "atlas-p1-03-uia-b1-b3"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789585989.9525151, "kind": "claim", "path": "site/model.html", "seq": 20, "session": "codex-atlas-p1-03-rca", "ttl": 300.0, "wi": "atlas-p1-03-uia-b1-b3"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789585995.0131073, "kind": "release", "path": "site/model.html", "seq": 21, "session": "codex-atlas-p1-03-rca", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789585995.0654874, "kind": "release", "path": "site/collaboration.html", "seq": 22, "session": "codex-atlas-p1-03-rca", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789585995.1171684, "kind": "release", "path": "site/index.html", "seq": 23, "session": "codex-atlas-p1-03-rca", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789585995.1683164, "kind": "release", "path": "docs/audit/audit-data.js", "seq": 24, "session": "codex-atlas-p1-03-rca", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-investigator", "at": 1789585995.2193766, "kind": "release", "path": "docs/investigations/atlas-p1-03-uia.md", "seq": 25, "session": "codex-atlas-p1-03-rca", "wi": "WI-0"}

@@ -1,0 +1,5 @@
+{"agent": "codex-astra-harness-diagnostics", "at": 1789513468.8606236, "code": null, "kind": "allowed", "path": "docs/proof/atlas-harness-gate-repair.md", "session": "codex-atlas-harness-diagnostics", "wi": ""}
+{"agent": "codex-astra-harness-diagnostics", "at": 1789513468.8731444, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Understanding/AtlasSharedHostAdmissionTests.cs", "session": "codex-atlas-harness-diagnostics", "wi": ""}
+{"agent": "codex-astra-harness-diagnostics", "at": 1789513468.884162, "code": null, "kind": "allowed", "path": "tools/verify-harness-diagnostics.py", "session": "codex-atlas-harness-diagnostics", "wi": ""}
+{"agent": "codex-astra-harness-diagnostics", "at": 1789513906.2946632, "code": null, "kind": "allowed", "path": "docs/proof/atlas-harness-gate-repair.md", "session": "codex-atlas-harness-diagnostics", "wi": ""}
+{"agent": "codex-astra-harness-diagnostics", "at": 1789513906.3066685, "code": null, "kind": "allowed", "path": "tools/verify-harness-diagnostics.py", "session": "codex-atlas-harness-diagnostics", "wi": ""}

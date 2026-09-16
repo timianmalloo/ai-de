@@ -1,0 +1,1 @@
+Agent codex-astra-d0-author; session codex-d0-inactive-binding-spike; exhaustive design candidate frozen8/8; actual1assignment passes; proposed ceiling8 measured; canonical baseline0differences; source unchanged; Owner decision required before correction; proof lease released; no UI.

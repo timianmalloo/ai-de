@@ -1,0 +1,5 @@
+{"agent": "codex-astra-gate-conductor", "at": 1789578350.9745924, "kind": "session-start", "path": "-", "seq": 1, "session": "codex-atlas-d1-r4-review", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-review-atlas-d1-r4-boundary"}
+{"agent": "codex-astra-d1-r4-review", "at": 1789578461.988369, "kind": "claim", "path": "docs/proof/codex-d1-r4-consumer-review.md", "seq": 2, "session": "codex-atlas-d1-r4-review", "ttl": 300.0, "wi": "codex-d1-r4-consumer-review"}
+{"agent": "codex-astra-d1-r4-review", "at": 1789578596.0105214, "kind": "release", "path": "docs/proof/codex-d1-r4-consumer-review.md", "seq": 3, "session": "codex-atlas-d1-r4-review", "wi": "codex-d1-r4-consumer-review"}
+{"agent": "codex-astra-d1-r4-review", "at": 1789579579.3874342, "kind": "claim", "path": "docs/proof/codex-d1-r4-consumer-review.md", "seq": 4, "session": "codex-atlas-d1-r4-review", "ttl": 300.0, "wi": "codex-d1-r4-metadata-repair"}
+{"agent": "codex-astra-d1-r4-review", "at": 1789579641.3158658, "kind": "release", "path": "docs/proof/codex-d1-r4-consumer-review.md", "seq": 5, "session": "codex-atlas-d1-r4-review", "wi": "codex-d1-r4-metadata-repair"}

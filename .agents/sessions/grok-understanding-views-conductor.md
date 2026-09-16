@@ -2,9 +2,9 @@
 
 - Agent: grok-understanding-views-conductor (Grok 4.6)
 - Session: grok-understanding-views-conductor
-- Worktree: C:\Projects\ai-de-understanding-views
-- Branch: understanding-views
-- Status: active; D-0 on this branch; not main; D-1 not admitted
-- Updated: 2026-09-15T22:40Z
-- Doing: USER EXECUTE done: D0 merged onto main 901320c4 at ab7d33df. Headless N13 38/38. Not a main write.
-- Waiting on: watcher/user if R108 landing of understanding-views is wanted. Desktop unused.
+- Worktree: C:\Projects\ai-de-understanding-views-d1
+- Branch: understanding-views-d1
+- Status: D-1 admitted; handshake proposed, not frozen
+- Updated: 2026-09-16T21:20Z
+- Doing: Listing select→graph and View source (0146cdb9). r5 authorship frozen. Sequence still mapping-unavailable. No GUI (P1-03).
+- Waiting on: mapper implementation handshake (not r5) before Open Sequence.

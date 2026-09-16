@@ -1,0 +1,17 @@
+{"agent": "codex-astra-gate-conductor", "at": 1789583565.310141, "kind": "session-start", "path": "-", "seq": 1, "session": "codex-atlas-p1-03-review", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-review-atlas-p1-03"}
+{"agent": "codex-astra-p1-03-reviewer", "at": 1789584193.760736, "kind": "claim", "path": "docs/proof/atlas-p1-03-combined-review.md", "seq": 2, "session": "codex-atlas-p1-03-review", "ttl": 300.0, "wi": "atlas-p1-03-combined-review"}
+{"agent": "codex-astra-p1-03-reviewer", "at": 1789584193.9007754, "kind": "claim", "path": "site/index.html", "seq": 3, "session": "codex-atlas-p1-03-review", "ttl": 300.0, "wi": "atlas-p1-03-combined-review"}
+{"agent": "codex-astra-p1-03-reviewer", "at": 1789584194.0406709, "kind": "claim", "path": "site/model.html", "seq": 4, "session": "codex-atlas-p1-03-review", "ttl": 300.0, "wi": "atlas-p1-03-combined-review"}
+{"agent": "codex-astra-p1-03-reviewer", "at": 1789584194.1853719, "kind": "claim", "path": "site/collaboration.html", "seq": 5, "session": "codex-atlas-p1-03-review", "ttl": 300.0, "wi": "atlas-p1-03-combined-review"}
+{"agent": "codex-astra-p1-03-reviewer", "at": 1789584198.5231636, "kind": "release", "path": "site/collaboration.html", "seq": 6, "session": "codex-atlas-p1-03-review", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-reviewer", "at": 1789584198.575237, "kind": "release", "path": "site/model.html", "seq": 7, "session": "codex-atlas-p1-03-review", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-reviewer", "at": 1789584198.6262634, "kind": "release", "path": "site/index.html", "seq": 8, "session": "codex-atlas-p1-03-review", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-reviewer", "at": 1789584198.6787992, "kind": "release", "path": "docs/proof/atlas-p1-03-combined-review.md", "seq": 9, "session": "codex-atlas-p1-03-review", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-reviewer", "at": 1789584252.3327625, "kind": "claim", "path": "docs/proof/atlas-p1-03-combined-review.md", "seq": 10, "session": "codex-atlas-p1-03-review", "ttl": 300.0, "wi": "atlas-p1-03-review-finalize"}
+{"agent": "codex-astra-p1-03-reviewer", "at": 1789584252.475661, "kind": "claim", "path": "site/index.html", "seq": 11, "session": "codex-atlas-p1-03-review", "ttl": 300.0, "wi": "atlas-p1-03-review-finalize"}
+{"agent": "codex-astra-p1-03-reviewer", "at": 1789584252.6126754, "kind": "claim", "path": "site/model.html", "seq": 12, "session": "codex-atlas-p1-03-review", "ttl": 300.0, "wi": "atlas-p1-03-review-finalize"}
+{"agent": "codex-astra-p1-03-reviewer", "at": 1789584252.7513237, "kind": "claim", "path": "site/collaboration.html", "seq": 13, "session": "codex-atlas-p1-03-review", "ttl": 300.0, "wi": "atlas-p1-03-review-finalize"}
+{"agent": "codex-astra-p1-03-reviewer", "at": 1789584257.7373416, "kind": "release", "path": "site/collaboration.html", "seq": 14, "session": "codex-atlas-p1-03-review", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-reviewer", "at": 1789584257.7889104, "kind": "release", "path": "site/model.html", "seq": 15, "session": "codex-atlas-p1-03-review", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-reviewer", "at": 1789584257.8399649, "kind": "release", "path": "site/index.html", "seq": 16, "session": "codex-atlas-p1-03-review", "wi": "WI-0"}
+{"agent": "codex-astra-p1-03-reviewer", "at": 1789584257.8903778, "kind": "release", "path": "docs/proof/atlas-p1-03-combined-review.md", "seq": 17, "session": "codex-atlas-p1-03-review", "wi": "WI-0"}

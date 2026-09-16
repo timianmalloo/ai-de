@@ -1,0 +1,6 @@
+{"agent": "codex-astra-d1-consumer-review", "at": 1789575051.618113, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-d1-r3-consumer-review", "wi": ""}
+{"agent": "codex-astra-d1-consumer-review", "at": 1789575051.6306255, "code": null, "kind": "allowed", "path": "docs/proof/codex-d1-r3-consumer-review.md", "session": "codex-d1-r3-consumer-review", "wi": ""}
+{"agent": "codex-astra-d1-r3-metadata", "at": 1789580276.0653281, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-d1-r3-consumer-review", "wi": ""}
+{"agent": "codex-astra-d1-r3-metadata", "at": 1789580276.0788507, "code": null, "kind": "allowed", "path": "docs/proof/codex-d1-r3-consumer-review.md", "session": "codex-d1-r3-consumer-review", "wi": ""}
+{"agent": "codex-astra-d1-r3-metadata", "at": 1789581334.899172, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-d1-r3-consumer-review", "wi": ""}
+{"agent": "codex-astra-d1-r3-metadata", "at": 1789581334.9156787, "code": null, "kind": "allowed", "path": "docs/proof/codex-d1-r3-consumer-review.md", "session": "codex-d1-r3-consumer-review", "wi": ""}

@@ -1,0 +1,10 @@
+{"agent": "codex-astra-process-image-reviewer", "at": 1789596975.3774457, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "codex-atlas-p1-03-process-image-review", "wi": ""}
+{"agent": "codex-astra-process-image-reviewer", "at": 1789596975.3929658, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "codex-atlas-p1-03-process-image-review", "wi": ""}
+{"agent": "codex-astra-process-image-reviewer", "at": 1789596975.409685, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-atlas-p1-03-process-image-review", "wi": ""}
+{"agent": "codex-astra-process-image-reviewer", "at": 1789596975.4267316, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-atlas-p1-03-process-image-review", "wi": ""}
+{"agent": "codex-astra-process-image-reviewer", "at": 1789596975.4432564, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "codex-atlas-p1-03-process-image-review", "wi": ""}
+{"agent": "codex-astra-process-image-reviewer", "at": 1789596975.46183, "code": null, "kind": "allowed", "path": "docs/health-history.jsonl", "session": "codex-atlas-p1-03-process-image-review", "wi": ""}
+{"agent": "codex-astra-process-image-reviewer", "at": 1789596975.4779198, "code": null, "kind": "allowed", "path": "docs/proof/atlas-p1-03-process-image-review.md", "session": "codex-atlas-p1-03-process-image-review", "wi": ""}
+{"agent": "codex-astra-process-image-reviewer", "at": 1789596975.4960787, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-atlas-p1-03-process-image-review", "wi": ""}
+{"agent": "codex-astra-process-image-reviewer", "at": 1789596975.5121164, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-atlas-p1-03-process-image-review", "wi": ""}
+{"agent": "codex-astra-process-image-reviewer", "at": 1789596975.527152, "code": null, "kind": "allowed", "path": "site/model.html", "session": "codex-atlas-p1-03-process-image-review", "wi": ""}

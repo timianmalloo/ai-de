@@ -1,0 +1,3 @@
+{"agent": "codex-astra-gate-conductor", "at": 1789528949.0446315, "kind": "session-start", "path": "-", "seq": 1, "session": "codex-atlas-assembled-preservation-review", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-review-atlas-assembled-preservation"}
+{"agent": "codex-sol-assembly-review", "at": 1789529358.9450507, "kind": "claim", "path": "docs/proof/atlas-assembled-preservation-review.md", "seq": 2, "session": "codex-atlas-assembled-preservation-review", "ttl": 300.0, "wi": "atlas-assembled-preservation-review"}
+{"agent": "codex-sol-assembly-review", "at": 1789529425.7181382, "kind": "release", "path": "docs/proof/atlas-assembled-preservation-review.md", "seq": 3, "session": "codex-atlas-assembled-preservation-review", "wi": "WI-0"}

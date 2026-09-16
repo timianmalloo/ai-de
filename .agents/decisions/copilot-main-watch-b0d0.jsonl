@@ -1,0 +1,12 @@
+{"agent": "copilot-main-watch", "at": 1789505250.7378483, "code": null, "kind": "allowed", "path": ".agents/sessions/copilot-main-watch.md", "session": "copilot-main-watch-b0d0", "wi": ""}
+{"agent": "copilot-main-watch", "at": 1789505955.5599387, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "copilot-main-watch-b0d0", "wi": ""}
+{"agent": "copilot-main-watch", "at": 1789505955.6270003, "code": null, "kind": "allowed", "path": "site/index.html", "session": "copilot-main-watch-b0d0", "wi": ""}
+{"agent": "copilot-main-watch", "at": 1789507936.6373243, "code": "COORD-REFUSED", "kind": "refused", "path": "site/collaboration.html", "session": "copilot-main-watch-b0d0", "wi": "atlas-views"}
+{"agent": "copilot-main-watch", "at": 1789509170.6738315, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "copilot-main-watch-b0d0", "wi": ""}
+{"agent": "copilot-main-watch", "at": 1789509795.2294245, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "copilot-main-watch-b0d0", "wi": ""}
+{"agent": "copilot-main-watch-foreground", "at": 1789576803.1518807, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "copilot-main-watch-b0d0", "wi": ""}
+{"agent": "copilot-main-watch-foreground", "at": 1789576803.2264626, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "copilot-main-watch-b0d0", "wi": ""}
+{"agent": "copilot-main-watch-foreground", "at": 1789576803.296552, "code": null, "kind": "allowed", "path": "site/index.html", "session": "copilot-main-watch-b0d0", "wi": ""}
+{"agent": "copilot-main-watch-foreground", "at": 1789576803.3694332, "code": null, "kind": "allowed", "path": "site/model.html", "session": "copilot-main-watch-b0d0", "wi": ""}
+{"agent": "copilot-main-watch-foreground", "at": 1789585585.9004934, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "copilot-main-watch-b0d0", "wi": ""}
+{"agent": "copilot-main-watch-foreground", "at": 1789588642.716006, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/Workbench/Understanding/AtlasDaemonMainWindowProofTests.cs", "session": "copilot-main-watch-b0d0", "wi": ""}

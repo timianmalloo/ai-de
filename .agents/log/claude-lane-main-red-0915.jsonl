@@ -1,0 +1,5 @@
+{"agent": "claude-conductor", "at": 1789596593.3374825, "kind": "session-start", "path": "-", "seq": 1, "session": "claude-lane-main-red-0915", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-lane-main-red-0915"}
+{"agent": "claude-lane-main-red", "at": 1789596680.6128287, "kind": "claim", "path": "tests/AiDe.Core.Tests/AgentPlane/EngineCatalogTests.cs", "seq": 2, "session": "claude-lane-main-red-0915", "ttl": 900.0, "wi": "main-red-group1"}
+{"agent": "claude-lane-main-red", "at": 1789596680.7200687, "kind": "claim", "path": "tests/AiDe.Core.Tests/Compilation/PurgeAndTheSessionDeleteCascadeTests.cs", "seq": 3, "session": "claude-lane-main-red-0915", "ttl": 900.0, "wi": "main-red-group2"}
+{"agent": "claude-lane-main-red", "at": 1789597117.2170713, "kind": "release", "path": "tests/AiDe.Core.Tests/AgentPlane/EngineCatalogTests.cs", "seq": 4, "session": "claude-lane-main-red-0915", "wi": "WI-0"}
+{"agent": "claude-lane-main-red", "at": 1789597117.308, "kind": "release", "path": "tests/AiDe.Core.Tests/Compilation/PurgeAndTheSessionDeleteCascadeTests.cs", "seq": 5, "session": "claude-lane-main-red-0915", "wi": "WI-0"}

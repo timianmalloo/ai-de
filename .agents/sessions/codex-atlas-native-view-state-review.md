@@ -1,0 +1,1 @@
+Agent codex-astra-native-view-state-review; tree C:/Projects/ai-de-review-atlas-native-view-state; status complete admitted observer preparation CLEAR; native qualification separate; committed=True; exact lease release exit=0; evidence docs/proof/atlas-native-view-state-review.md.

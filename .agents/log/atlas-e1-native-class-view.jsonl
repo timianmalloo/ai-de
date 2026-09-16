@@ -147,3 +147,7 @@
 {"agent": "copilot-astra-native-e1-recovery", "at": 1789500207.304444, "kind": "release", "path": "docs/proof/code-atlas-e1-qualification.md", "seq": 147, "session": "atlas-e1-native-class-view", "wi": "atlas-rg10-verified-guard"}
 {"agent": "copilot-astra-native-e1-recovery", "at": 1789500207.3593547, "kind": "release", "path": "docs/audit/audit-log.jsonl", "seq": 148, "session": "atlas-e1-native-class-view", "wi": "atlas-rg10-verified-guard"}
 {"agent": "copilot-astra-native-e1-recovery", "at": 1789500207.412909, "kind": "release", "path": "docs/audit/audit-data.js", "seq": 149, "session": "atlas-e1-native-class-view", "wi": "atlas-rg10-verified-guard"}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789501678.7131765, "kind": "claim", "path": "docs/audit/audit-log.jsonl", "seq": 150, "session": "atlas-e1-native-class-view", "ttl": 300.0, "wi": "atlas-fq6-evidence"}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789501678.8452864, "kind": "claim", "path": "docs/audit/audit-data.js", "seq": 151, "session": "atlas-e1-native-class-view", "ttl": 300.0, "wi": "atlas-fq6-evidence"}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789501679.682098, "kind": "release", "path": "docs/audit/audit-log.jsonl", "seq": 152, "session": "atlas-e1-native-class-view", "wi": "atlas-fq6-evidence"}
+{"agent": "copilot-astra-native-e1-recovery", "at": 1789501679.7395744, "kind": "release", "path": "docs/audit/audit-data.js", "seq": 153, "session": "atlas-e1-native-class-view", "wi": "atlas-fq6-evidence"}
