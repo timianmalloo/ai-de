@@ -1,0 +1,299 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d95b23f1-d164-42d5-8a29-cb178743bd80" name="malla@TIMMALLSTRIX 2026-09-16 14:33:29" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-16T14:33:29.9848320-07:00" queuing="2026-09-16T14:33:29.9848321-07:00" start="2026-09-16T14:33:29.3701378-07:00" finish="2026-09-16T14:33:30.1327652-07:00" />
+  <TestSettings name="default" id="086403ea-dbec-45a2-83bf-ebc6d737b04a">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-16_14_33_29" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="a945a1f7-a3ef-4f6d-b65b-8e05bf8e1ed1" testId="f8ecdb65-d2f5-56af-c729-a4c59dbe8bea" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;\\\\server\\share&quot;, count: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0025939" startTime="2026-09-16T14:33:29.9307192-07:00" endTime="2026-09-16T14:33:29.9411183-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a945a1f7-a3ef-4f6d-b65b-8e05bf8e1ed1">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+Expected: "\\\\SERVER\\SHARE"&#xD;
+Actual:   "\\\\SERVER\\SHARE\\"&#xD;
+                            ↑ (pos 14)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(String root, Int32 count) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs:line 78&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="32d8bde6-0f15-4bd9-8879-9f5724cc1123" testId="dd207dd8-531e-0ee4-ecc0-cffa8d865644" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(separatorCount: 2, alternateSeparator: True)" computerName="TIMMALLSTRIX" duration="00:00:00.0875606" startTime="2026-09-16T14:33:29.9677292-07:00" endTime="2026-09-16T14:33:30.0299010-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="32d8bde6-0f15-4bd9-8879-9f5724cc1123">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Single() Failure: The collection contained 2 items&#xD;
+Collection: [SessionRecord { SessionId = 2b5712d2e48a4ff39f7119fd8656cfee, Generation = SessionGeneration { Value = 1 }, Binding = SessionBinding { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-1bf4672d3bc94292be826bed7f0681a3, DisplayName = ai-de }, Worktree = WorktreeIdentity { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-1bf4672d3bc94292be826bed7f0681a3, DisplayName = ai-de }, Branch = main, Path = C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\p23-native-1bf4672d3bc94292be826bed7f0681a3 }, Terminal = TerminalIdentity { TerminalId = term-1 }, Agent = AgentIdentity { AgentName = agent-1 }, Harness = , Model = , Trust = Asserted } }, SessionRecord { SessionId = e7e17985b2d7486fa3e9f7f2d9a41314, Generation = SessionGeneration { Value = 1 }, Binding = SessionBinding { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-1bf4672d3bc94292be826bed7f0681a3, DisplayName = ai-de }, Worktree = WorktreeIdentity { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-1bf4672d3bc94292be826bed7f0681a3, DisplayName = ai-de }, Branch = main, Path = C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\p23-native-1bf4672d3bc94292be826bed7f0681a3 }, Terminal = TerminalIdentity { TerminalId = term-1 }, Agent = AgentIdentity { AgentName = agent-1 }, Harness = , Model = , Trust = Asserted } }]</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(Int32 separatorCount, Boolean alternateSeparator) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs:line 38&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="905f290e-0225-4d07-bff3-f3d16b1ef731" testId="4d241a8e-f470-9e8f-96f7-cd2e1ab13bf7" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;C:\\&quot;, count: 8)" computerName="TIMMALLSTRIX" duration="00:00:00.0005063" startTime="2026-09-16T14:33:29.9498110-07:00" endTime="2026-09-16T14:33:29.9500367-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="905f290e-0225-4d07-bff3-f3d16b1ef731" />
+    <UnitTestResult executionId="1c3e9857-888c-46ae-8d51-ed82fb06bf3e" testId="6225ce93-9205-d202-d6b4-efa79d60d583" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;\\\\server\\share&quot;, count: 8)" computerName="TIMMALLSTRIX" duration="00:00:00.0002211" startTime="2026-09-16T14:33:29.9490966-07:00" endTime="2026-09-16T14:33:29.9491500-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1c3e9857-888c-46ae-8d51-ed82fb06bf3e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+Expected: "\\\\SERVER\\SHARE"&#xD;
+Actual:   "\\\\SERVER\\SHARE\\"&#xD;
+                            ↑ (pos 14)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(String root, Int32 count) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs:line 78&#xD;
+   at InvokeStub_CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6b3f6115-a0b3-49c9-8bb1-8451ebed4680" testId="f70104bf-db9b-0b3e-792e-35adffc2381d" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(separatorCount: 2, alternateSeparator: False)" computerName="TIMMALLSTRIX" duration="00:00:00.0194696" startTime="2026-09-16T14:33:30.0733624-07:00" endTime="2026-09-16T14:33:30.0926281-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6b3f6115-a0b3-49c9-8bb1-8451ebed4680">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Single() Failure: The collection contained 2 items&#xD;
+Collection: [SessionRecord { SessionId = 182bb06999cd4a9cabb5953d897d99fc, Generation = SessionGeneration { Value = 1 }, Binding = SessionBinding { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-a530774feffc495c8e29589188287574, DisplayName = ai-de }, Worktree = WorktreeIdentity { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-a530774feffc495c8e29589188287574, DisplayName = ai-de }, Branch = main, Path = C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\p23-native-a530774feffc495c8e29589188287574 }, Terminal = TerminalIdentity { TerminalId = term-1 }, Agent = AgentIdentity { AgentName = agent-1 }, Harness = , Model = , Trust = Asserted } }, SessionRecord { SessionId = 88d4f0643a6b40a6a3a9039ebe3932eb, Generation = SessionGeneration { Value = 1 }, Binding = SessionBinding { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-a530774feffc495c8e29589188287574, DisplayName = ai-de }, Worktree = WorktreeIdentity { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-a530774feffc495c8e29589188287574, DisplayName = ai-de }, Branch = main, Path = C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\p23-native-a530774feffc495c8e29589188287574 }, Terminal = TerminalIdentity { TerminalId = term-1 }, Agent = AgentIdentity { AgentName = agent-1 }, Harness = , Model = , Trust = Asserted } }]</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(Int32 separatorCount, Boolean alternateSeparator) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs:line 38&#xD;
+   at InvokeStub_CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7d5929c9-24b3-4743-a4bd-38d8f270a5d0" testId="f1225143-6483-53b6-911e-36795f3c3d55" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;\\\\server\\share\\&quot;, count: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0000303" startTime="2026-09-16T14:33:29.9505492-07:00" endTime="2026-09-16T14:33:29.9505658-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7d5929c9-24b3-4743-a4bd-38d8f270a5d0">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+Expected: "\\\\SERVER\\SHARE"&#xD;
+Actual:   "\\\\SERVER\\SHARE\\"&#xD;
+                            ↑ (pos 14)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(String root, Int32 count) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs:line 78&#xD;
+   at InvokeStub_CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="47f49a6b-517b-4fc2-a6f5-c96738685498" testId="779b105e-0b44-31d1-6b1c-53092192a3ce" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;C:\\&quot;, count: 0)" computerName="TIMMALLSTRIX" duration="00:00:00.0000077" startTime="2026-09-16T14:33:29.9504886-07:00" endTime="2026-09-16T14:33:29.9505118-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="47f49a6b-517b-4fc2-a6f5-c96738685498" />
+    <UnitTestResult executionId="6631f4e6-6f71-444a-9617-03a75422f37c" testId="bdc2a79b-362f-ac2b-98dc-ce045b5837f9" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(separatorCount: 8, alternateSeparator: False)" computerName="TIMMALLSTRIX" duration="00:00:00.0220822" startTime="2026-09-16T14:33:30.0304157-07:00" endTime="2026-09-16T14:33:30.0521017-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6631f4e6-6f71-444a-9617-03a75422f37c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Single() Failure: The collection contained 2 items&#xD;
+Collection: [SessionRecord { SessionId = 02bb947e47e842f1a366f9467afc1230, Generation = SessionGeneration { Value = 1 }, Binding = SessionBinding { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-18f47381623a48dca64e5dcf91127496, DisplayName = ai-de }, Worktree = WorktreeIdentity { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-18f47381623a48dca64e5dcf91127496, DisplayName = ai-de }, Branch = main, Path = C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\p23-native-18f47381623a48dca64e5dcf91127496 }, Terminal = TerminalIdentity { TerminalId = term-1 }, Agent = AgentIdentity { AgentName = agent-1 }, Harness = , Model = , Trust = Asserted } }, SessionRecord { SessionId = c7fac7d5a2aa427ba2ffac693aa0f07b, Generation = SessionGeneration { Value = 1 }, Binding = SessionBinding { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-18f47381623a48dca64e5dcf91127496, DisplayName = ai-de }, Worktree = WorktreeIdentity { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-18f47381623a48dca64e5dcf91127496, DisplayName = ai-de }, Branch = main, Path = C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\p23-native-18f47381623a48dca64e5dcf91127496 }, Terminal = TerminalIdentity { TerminalId = term-1 }, Agent = AgentIdentity { AgentName = agent-1 }, Harness = , Model = , Trust = Asserted } }]</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(Int32 separatorCount, Boolean alternateSeparator) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs:line 38&#xD;
+   at InvokeStub_CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="de5c7a8e-49c3-4318-89ff-8432661301b7" testId="03ddc330-a96a-d072-750b-638b5026c28b" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;\\\\server\\share\\&quot;, count: 0)" computerName="TIMMALLSTRIX" duration="00:00:00.0000132" startTime="2026-09-16T14:33:29.9508023-07:00" endTime="2026-09-16T14:33:29.9508178-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="de5c7a8e-49c3-4318-89ff-8432661301b7">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+Expected: "\\\\SERVER\\SHARE"&#xD;
+Actual:   "\\\\SERVER\\SHARE\\"&#xD;
+                            ↑ (pos 14)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(String root, Int32 count) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs:line 78&#xD;
+   at InvokeStub_CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d5fe471b-db79-4cd4-9fa6-8861e5b588a4" testId="82e4ba60-ad71-6b26-32ab-005a19fa5977" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;\\\\server\\share\\&quot;, count: 8)" computerName="TIMMALLSTRIX" duration="00:00:00.0000113" startTime="2026-09-16T14:33:29.9510005-07:00" endTime="2026-09-16T14:33:29.9510158-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d5fe471b-db79-4cd4-9fa6-8861e5b588a4">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+Expected: "\\\\SERVER\\SHARE"&#xD;
+Actual:   "\\\\SERVER\\SHARE\\"&#xD;
+                            ↑ (pos 14)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(String root, Int32 count) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs:line 78&#xD;
+   at InvokeStub_CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="463436d8-5a60-49b1-94c2-4c042ec978ff" testId="9863335e-8de4-2405-6a99-3afc3ba47bea" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;C:\\&quot;, count: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0000032" startTime="2026-09-16T14:33:29.9511647-07:00" endTime="2026-09-16T14:33:29.9511794-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="463436d8-5a60-49b1-94c2-4c042ec978ff" />
+    <UnitTestResult executionId="85ecbfac-75a9-4c57-99e8-81b1226c86e0" testId="b2234871-33ed-8584-9bba-f25117ad4241" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;\\\\server\\share&quot;, count: 0)" computerName="TIMMALLSTRIX" duration="00:00:00.0000031" startTime="2026-09-16T14:33:29.9507585-07:00" endTime="2026-09-16T14:33:29.9507752-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="85ecbfac-75a9-4c57-99e8-81b1226c86e0" />
+    <UnitTestResult executionId="c33f156f-eec8-4375-9639-2e3445652be3" testId="1c06e8a3-29e6-447c-71d0-69cb9608f77a" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(separatorCount: 1, alternateSeparator: False)" computerName="TIMMALLSTRIX" duration="00:00:00.0207993" startTime="2026-09-16T14:33:30.0524327-07:00" endTime="2026-09-16T14:33:30.0730312-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c33f156f-eec8-4375-9639-2e3445652be3">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Single() Failure: The collection contained 2 items&#xD;
+Collection: [SessionRecord { SessionId = 52c216f379084d239361453a6679b784, Generation = SessionGeneration { Value = 1 }, Binding = SessionBinding { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-a309cee7ad214e93942e8bfc761c9108, DisplayName = ai-de }, Worktree = WorktreeIdentity { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-a309cee7ad214e93942e8bfc761c9108, DisplayName = ai-de }, Branch = main, Path = C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\p23-native-a309cee7ad214e93942e8bfc761c9108 }, Terminal = TerminalIdentity { TerminalId = term-1 }, Agent = AgentIdentity { AgentName = agent-1 }, Harness = , Model = , Trust = Asserted } }, SessionRecord { SessionId = 67606879b96d4f9baa5c5a3f3461bf03, Generation = SessionGeneration { Value = 1 }, Binding = SessionBinding { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-a309cee7ad214e93942e8bfc761c9108, DisplayName = ai-de }, Worktree = WorktreeIdentity { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-a309cee7ad214e93942e8bfc761c9108, DisplayName = ai-de }, Branch = main, Path = C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\p23-native-a309cee7ad214e93942e8bfc761c9108 }, Terminal = TerminalIdentity { TerminalId = term-1 }, Agent = AgentIdentity { AgentName = agent-1 }, Harness = , Model = , Trust = Asserted } }]</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(Int32 separatorCount, Boolean alternateSeparator) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs:line 38&#xD;
+   at InvokeStub_CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(separatorCount: 8, alternateSeparator: False)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="bdc2a79b-362f-ac2b-98dc-ce045b5837f9">
+      <Execution id="6631f4e6-6f71-444a-9617-03a75422f37c" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests" name="Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;C:\\&quot;, count: 1)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="9863335e-8de4-2405-6a99-3afc3ba47bea">
+      <Execution id="463436d8-5a60-49b1-94c2-4c042ec978ff" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests" name="RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;C:\\&quot;, count: 0)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="779b105e-0b44-31d1-6b1c-53092192a3ce">
+      <Execution id="47f49a6b-517b-4fc2-a6f5-c96738685498" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests" name="RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;\\\\server\\share\\&quot;, count: 0)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="03ddc330-a96a-d072-750b-638b5026c28b">
+      <Execution id="de5c7a8e-49c3-4318-89ff-8432661301b7" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests" name="RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(separatorCount: 1, alternateSeparator: False)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="1c06e8a3-29e6-447c-71d0-69cb9608f77a">
+      <Execution id="c33f156f-eec8-4375-9639-2e3445652be3" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests" name="Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(separatorCount: 2, alternateSeparator: True)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="dd207dd8-531e-0ee4-ecc0-cffa8d865644">
+      <Execution id="32d8bde6-0f15-4bd9-8879-9f5724cc1123" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests" name="Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;\\\\server\\share&quot;, count: 1)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f8ecdb65-d2f5-56af-c729-a4c59dbe8bea">
+      <Execution id="a945a1f7-a3ef-4f6d-b65b-8e05bf8e1ed1" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests" name="RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;C:\\&quot;, count: 8)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="4d241a8e-f470-9e8f-96f7-cd2e1ab13bf7">
+      <Execution id="905f290e-0225-4d07-bff3-f3d16b1ef731" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests" name="RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;\\\\server\\share\\&quot;, count: 8)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="82e4ba60-ad71-6b26-32ab-005a19fa5977">
+      <Execution id="d5fe471b-db79-4cd4-9fa6-8861e5b588a4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests" name="RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;\\\\server\\share&quot;, count: 8)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6225ce93-9205-d202-d6b4-efa79d60d583">
+      <Execution id="1c3e9857-888c-46ae-8d51-ed82fb06bf3e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests" name="RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;\\\\server\\share&quot;, count: 0)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="b2234871-33ed-8584-9bba-f25117ad4241">
+      <Execution id="85ecbfac-75a9-4c57-99e8-81b1226c86e0" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests" name="RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: &quot;\\\\server\\share\\&quot;, count: 1)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f1225143-6483-53b6-911e-36795f3c3d55">
+      <Execution id="7d5929c9-24b3-4743-a4bd-38d8f270a5d0" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests" name="RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(separatorCount: 2, alternateSeparator: False)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f70104bf-db9b-0b3e-792e-35adffc2381d">
+      <Execution id="6b3f6115-a0b3-49c9-8bb1-8451ebed4680" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests" name="Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f8ecdb65-d2f5-56af-c729-a4c59dbe8bea" executionId="a945a1f7-a3ef-4f6d-b65b-8e05bf8e1ed1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dd207dd8-531e-0ee4-ecc0-cffa8d865644" executionId="32d8bde6-0f15-4bd9-8879-9f5724cc1123" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4d241a8e-f470-9e8f-96f7-cd2e1ab13bf7" executionId="905f290e-0225-4d07-bff3-f3d16b1ef731" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6225ce93-9205-d202-d6b4-efa79d60d583" executionId="1c3e9857-888c-46ae-8d51-ed82fb06bf3e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f70104bf-db9b-0b3e-792e-35adffc2381d" executionId="6b3f6115-a0b3-49c9-8bb1-8451ebed4680" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f1225143-6483-53b6-911e-36795f3c3d55" executionId="7d5929c9-24b3-4743-a4bd-38d8f270a5d0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="779b105e-0b44-31d1-6b1c-53092192a3ce" executionId="47f49a6b-517b-4fc2-a6f5-c96738685498" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bdc2a79b-362f-ac2b-98dc-ce045b5837f9" executionId="6631f4e6-6f71-444a-9617-03a75422f37c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="03ddc330-a96a-d072-750b-638b5026c28b" executionId="de5c7a8e-49c3-4318-89ff-8432661301b7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="82e4ba60-ad71-6b26-32ab-005a19fa5977" executionId="d5fe471b-db79-4cd4-9fa6-8861e5b588a4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9863335e-8de4-2405-6a99-3afc3ba47bea" executionId="463436d8-5a60-49b1-94c2-4c042ec978ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b2234871-33ed-8584-9bba-f25117ad4241" executionId="85ecbfac-75a9-4c57-99e8-81b1226c86e0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1c06e8a3-29e6-447c-71d0-69cb9608f77a" executionId="c33f156f-eec8-4375-9639-2e3445652be3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="13" executed="13" passed="4" failed="9" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.25]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.28]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.30]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.30]       Expected: "\\\\SERVER\\SHARE"&#xD;
+[xUnit.net 00:00:00.30]       Actual:   "\\\\SERVER\\SHARE\\"&#xD;
+[xUnit.net 00:00:00.30]                                   ↑ (pos 14)&#xD;
+[xUnit.net 00:00:00.30]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.30]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs(78,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(String root, Int32 count)&#xD;
+[xUnit.net 00:00:00.30]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.30]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.31]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.31]       Expected: "\\\\SERVER\\SHARE"&#xD;
+[xUnit.net 00:00:00.31]       Actual:   "\\\\SERVER\\SHARE\\"&#xD;
+[xUnit.net 00:00:00.31]                                   ↑ (pos 14)&#xD;
+[xUnit.net 00:00:00.31]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.31]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs(78,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(String root, Int32 count)&#xD;
+[xUnit.net 00:00:00.31]            at InvokeStub_CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.31]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.31]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.31]       Expected: "\\\\SERVER\\SHARE"&#xD;
+[xUnit.net 00:00:00.31]       Actual:   "\\\\SERVER\\SHARE\\"&#xD;
+[xUnit.net 00:00:00.31]                                   ↑ (pos 14)&#xD;
+[xUnit.net 00:00:00.31]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.31]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs(78,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(String root, Int32 count)&#xD;
+[xUnit.net 00:00:00.31]            at InvokeStub_CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.31]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.31]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.31]       Expected: "\\\\SERVER\\SHARE"&#xD;
+[xUnit.net 00:00:00.31]       Actual:   "\\\\SERVER\\SHARE\\"&#xD;
+[xUnit.net 00:00:00.31]                                   ↑ (pos 14)&#xD;
+[xUnit.net 00:00:00.31]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.31]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs(78,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(String root, Int32 count)&#xD;
+[xUnit.net 00:00:00.31]            at InvokeStub_CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.31]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.31]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.31]       Expected: "\\\\SERVER\\SHARE"&#xD;
+[xUnit.net 00:00:00.31]       Actual:   "\\\\SERVER\\SHARE\\"&#xD;
+[xUnit.net 00:00:00.31]                                   ↑ (pos 14)&#xD;
+[xUnit.net 00:00:00.31]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.31]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs(78,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(String root, Int32 count)&#xD;
+[xUnit.net 00:00:00.31]            at InvokeStub_CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.31]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.39]       Assert.Single() Failure: The collection contained 2 items&#xD;
+[xUnit.net 00:00:00.39]       Collection: [SessionRecord { SessionId = 2b5712d2e48a4ff39f7119fd8656cfee, Generation = SessionGeneration { Value = 1 }, Binding = SessionBinding { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-1bf4672d3bc94292be826bed7f0681a3, DisplayName = ai-de }, Worktree = WorktreeIdentity { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-1bf4672d3bc94292be826bed7f0681a3, DisplayName = ai-de }, Branch = main, Path = C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\p23-native-1bf4672d3bc94292be826bed7f0681a3 }, Terminal = TerminalIdentity { TerminalId = term-1 }, Agent = AgentIdentity { AgentName = agent-1 }, Harness = , Model = , Trust = Asserted } }, SessionRecord { SessionId = e7e17985b2d7486fa3e9f7f2d9a41314, Generation = SessionGeneration { Value = 1 }, Binding = SessionBinding { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-1bf4672d3bc94292be826bed7f0681a3, DisplayName = ai-de }, Worktree = WorktreeIdentity { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-1bf4672d3bc94292be826bed7f0681a3, DisplayName = ai-de }, Branch = main, Path = C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\p23-native-1bf4672d3bc94292be826bed7f0681a3 }, Terminal = TerminalIdentity { TerminalId = term-1 }, Agent = AgentIdentity { AgentName = agent-1 }, Harness = , Model = , Trust = Asserted } }]&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs(38,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(Int32 separatorCount, Boolean alternateSeparator)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.41]       Assert.Single() Failure: The collection contained 2 items&#xD;
+[xUnit.net 00:00:00.41]       Collection: [SessionRecord { SessionId = 02bb947e47e842f1a366f9467afc1230, Generation = SessionGeneration { Value = 1 }, Binding = SessionBinding { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-18f47381623a48dca64e5dcf91127496, DisplayName = ai-de }, Worktree = WorktreeIdentity { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-18f47381623a48dca64e5dcf91127496, DisplayName = ai-de }, Branch = main, Path = C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\p23-native-18f47381623a48dca64e5dcf91127496 }, Terminal = TerminalIdentity { TerminalId = term-1 }, Agent = AgentIdentity { AgentName = agent-1 }, Harness = , Model = , Trust = Asserted } }, SessionRecord { SessionId = c7fac7d5a2aa427ba2ffac693aa0f07b, Generation = SessionGeneration { Value = 1 }, Binding = SessionBinding { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-18f47381623a48dca64e5dcf91127496, DisplayName = ai-de }, Worktree = WorktreeIdentity { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-18f47381623a48dca64e5dcf91127496, DisplayName = ai-de }, Branch = main, Path = C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\p23-native-18f47381623a48dca64e5dcf91127496 }, Terminal = TerminalIdentity { TerminalId = term-1 }, Agent = AgentIdentity { AgentName = agent-1 }, Harness = , Model = , Trust = Asserted } }]&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs(38,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(Int32 separatorCount, Boolean alternateSeparator)&#xD;
+[xUnit.net 00:00:00.41]            at InvokeStub_CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.41]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.43]       Assert.Single() Failure: The collection contained 2 items&#xD;
+[xUnit.net 00:00:00.43]       Collection: [SessionRecord { SessionId = 52c216f379084d239361453a6679b784, Generation = SessionGeneration { Value = 1 }, Binding = SessionBinding { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-a309cee7ad214e93942e8bfc761c9108, DisplayName = ai-de }, Worktree = WorktreeIdentity { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-a309cee7ad214e93942e8bfc761c9108, DisplayName = ai-de }, Branch = main, Path = C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\p23-native-a309cee7ad214e93942e8bfc761c9108 }, Terminal = TerminalIdentity { TerminalId = term-1 }, Agent = AgentIdentity { AgentName = agent-1 }, Harness = , Model = , Trust = Asserted } }, SessionRecord { SessionId = 67606879b96d4f9baa5c5a3f3461bf03, Generation = SessionGeneration { Value = 1 }, Binding = SessionBinding { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-a309cee7ad214e93942e8bfc761c9108, DisplayName = ai-de }, Worktree = WorktreeIdentity { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-a309cee7ad214e93942e8bfc761c9108, DisplayName = ai-de }, Branch = main, Path = C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\p23-native-a309cee7ad214e93942e8bfc761c9108 }, Terminal = TerminalIdentity { TerminalId = term-1 }, Agent = AgentIdentity { AgentName = agent-1 }, Harness = , Model = , Trust = Asserted } }]&#xD;
+[xUnit.net 00:00:00.43]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.43]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs(38,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(Int32 separatorCount, Boolean alternateSeparator)&#xD;
+[xUnit.net 00:00:00.43]            at InvokeStub_CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.43]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.45]       Assert.Single() Failure: The collection contained 2 items&#xD;
+[xUnit.net 00:00:00.45]       Collection: [SessionRecord { SessionId = 182bb06999cd4a9cabb5953d897d99fc, Generation = SessionGeneration { Value = 1 }, Binding = SessionBinding { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-a530774feffc495c8e29589188287574, DisplayName = ai-de }, Worktree = WorktreeIdentity { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-a530774feffc495c8e29589188287574, DisplayName = ai-de }, Branch = main, Path = C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\p23-native-a530774feffc495c8e29589188287574 }, Terminal = TerminalIdentity { TerminalId = term-1 }, Agent = AgentIdentity { AgentName = agent-1 }, Harness = , Model = , Trust = Asserted } }, SessionRecord { SessionId = 88d4f0643a6b40a6a3a9039ebe3932eb, Generation = SessionGeneration { Value = 1 }, Binding = SessionBinding { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-a530774feffc495c8e29589188287574, DisplayName = ai-de }, Worktree = WorktreeIdentity { Repository = RepositoryIdentity { CanonicalPath = c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\p23-native-a530774feffc495c8e29589188287574, DisplayName = ai-de }, Branch = main, Path = C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\p23-native-a530774feffc495c8e29589188287574 }, Terminal = TerminalIdentity { TerminalId = term-1 }, Agent = AgentIdentity { AgentName = agent-1 }, Harness = , Model = , Trust = Asserted } }]&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionRuntimeTests.cs(38,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(Int32 separatorCount, Boolean alternateSeparator)&#xD;
+[xUnit.net 00:00:00.45]            at InvokeStub_CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.45]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.46]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T14:33:29.9428913-07:00">
+        <Text>[xUnit.net 00:00:00.30]     AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: "\\\\server\\share", count: 1) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T14:33:29.9494921-07:00">
+        <Text>[xUnit.net 00:00:00.31]     AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: "\\\\server\\share", count: 8) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T14:33:29.9507089-07:00">
+        <Text>[xUnit.net 00:00:00.31]     AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: "\\\\server\\share\\", count: 1) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T14:33:29.9509351-07:00">
+        <Text>[xUnit.net 00:00:00.31]     AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: "\\\\server\\share\\", count: 0) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T14:33:29.9510747-07:00">
+        <Text>[xUnit.net 00:00:00.31]     AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: "\\\\server\\share\\", count: 8) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T14:33:30.0302839-07:00">
+        <Text>[xUnit.net 00:00:00.39]     AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(separatorCount: 2, alternateSeparator: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T14:33:30.0524811-07:00">
+        <Text>[xUnit.net 00:00:00.41]     AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(separatorCount: 8, alternateSeparator: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T14:33:30.0733507-07:00">
+        <Text>[xUnit.net 00:00:00.43]     AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(separatorCount: 1, alternateSeparator: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T14:33:30.0929498-07:00">
+        <Text>[xUnit.net 00:00:00.45]     AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(separatorCount: 2, alternateSeparator: False) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

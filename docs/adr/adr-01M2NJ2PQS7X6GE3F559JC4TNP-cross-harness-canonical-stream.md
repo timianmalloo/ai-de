@@ -113,7 +113,7 @@ separately approved change. Release sequences rollout; Data and DS review correc
 ## Evidence and gate
 
 Source/read pins, concrete failure oracles and confidence labels are centralized in
-the [Proof Pack](../proofs/cross-harness-coordination-proof-pack.md).
+the [Proof Pack](../proof/cross-harness-coordination-proof-pack.md).
 This author proposes the ADR and **does not clear its independent authority, data,
 DS, Test, Security, Privacy or UX gates**.
 P0 is a corrected draft; P1 is pending implementation; P2–P5 are pending. O11–O20 real

@@ -6,6 +6,79 @@ namespace AiDe.Core.Tests.Watcher;
 
 public sealed class CoordinationProjectionRuntimeTests
 {
+    [Theory]
+    [InlineData(1, false)]
+    [InlineData(2, false)]
+    [InlineData(8, false)]
+    [InlineData(2, true)]
+    public void Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(
+        int separatorCount, bool alternateSeparator)
+    {
+        using var files = new Pipeline();
+        files.Write();
+        var bytes = File.ReadAllBytes(files.LogFile);
+        using var reader = SqliteWatcherObservationStore.Open(files.Database);
+        var (first, _, _) = files.Compose(reader);
+        first.PumpOnce();
+        var originalSession = Assert.Single(reader.AllSessions());
+        var originalMessage = Assert.Single(reader.AllBoardMessages());
+        var firstAdmission = files.Number("SELECT MIN(first_receipt_n) FROM coord_projection_event;");
+        var lastAdmission = files.Number("SELECT MAX(first_receipt_n) FROM coord_projection_event;");
+        var feedCount = files.Count("coord_projection_feed");
+        reader.Dispose();
+        using var reopened = SqliteWatcherObservationStore.Open(files.Database);
+        var (_, ingest, _) = files.Compose(reopened);
+        var separator = alternateSeparator ? Path.AltDirectorySeparatorChar : Path.DirectorySeparatorChar;
+        var equivalentRoot = files.Logs + new string(separator, separatorCount);
+        var retry = new CoordContractLogPump(equivalentRoot, ingest);
+
+        Assert.Equal(2, retry.PumpOnce());
+        Assert.Equal(2, retry.PumpOnce());
+
+        Assert.Equal(originalSession, Assert.Single(reopened.AllSessions()));
+        Assert.Equal(originalMessage, Assert.Single(reopened.AllBoardMessages()));
+        Assert.Equal(firstAdmission, files.Number("SELECT MIN(first_receipt_n) FROM coord_projection_event;"));
+        Assert.Equal(lastAdmission, files.Number("SELECT MAX(first_receipt_n) FROM coord_projection_event;"));
+        Assert.Equal(feedCount, files.Count("coord_projection_feed"));
+        Assert.Equal(2, files.Count("coord_projection_event"));
+        Assert.Equal(1, files.Count("coord_projection_checkpoint"));
+        Assert.Equal(2, retry.LastRun.Replayed);
+        Assert.Equal(bytes, File.ReadAllBytes(files.LogFile));
+        Assert.Equal(CoordinationSourceCapture.RootKey(files.Logs),
+            CoordinationSourceCapture.RootKey(equivalentRoot));
+        var capture = Assert.Single(CoordinationSourceCapture.Read(equivalentRoot, reopened, ingest.Host));
+        var replay = reopened.ProjectCoordination(capture.Pages[0], capture.Checkpoint, ingest.Host.ObservationAllocators);
+        Assert.Equal(firstAdmission, Assert.Single(replay.Results, result => result.Kind is ContractRegister).Admission);
+        var post = Assert.Single(replay.Results, result => result.Kind is ContractBoardPost);
+        Assert.Equal(lastAdmission, post.Admission);
+        Assert.Equal(originalMessage.MessageId, post.MessageId);
+    }
+
+    public static IEnumerable<object[]> FilesystemRoots()
+    {
+        var roots = OperatingSystem.IsWindows()
+            ? new[] { Path.GetPathRoot(Environment.CurrentDirectory)!, @"\\server\share", @"\\server\share\" }
+            : new[] { "/" };
+        return from root in roots
+               from count in new[] { 0, 1, 8 }
+               select new object[] { root, count };
+    }
+
+    [Theory]
+    [MemberData(nameof(FilesystemRoots))]
+    public void RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(string root, int count)
+    {
+        var expected = Path.GetPathRoot(Path.GetFullPath(root))!;
+        expected = OperatingSystem.IsWindows() ? expected.ToUpperInvariant() : expected;
+        var spelling = root + new string(Path.DirectorySeparatorChar, count);
+
+        var key = CoordinationSourceCapture.RootKey(spelling);
+
+        Assert.NotEmpty(expected);
+        Assert.Equal(expected, Encoding.UTF8.GetString(Convert.FromBase64String(key[..^1])));
+        Assert.Equal(CoordinationSourceCapture.RootKey(root), key);
+    }
+
     [Fact]
     public void Pump_BeforeCommit_RollsBackEffectsReceiptsCheckpointAndMemory()
     {

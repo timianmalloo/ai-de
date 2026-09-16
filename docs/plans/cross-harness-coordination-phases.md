@@ -133,7 +133,7 @@ not deliverable from a green schema suite.
 Base `494b2488fb869846df47d365c5407fd83f8c1556`. One supplied independent
 Test/Data/DS finding: the DEFERRED-only mutant survived 90 tests because R3 held
 B before allocator entry. No production change or wider P2 repair was admitted
-to this unit. The [new receipt](../proofs/cross-harness-coordination-proof-pack.md#p21-allocation-overlap-remediation--2026-09-16)
+to this unit. The [new receipt](../proof/cross-harness-coordination-proof-pack.md#p21-allocation-overlap-remediation--2026-09-16)
 records the installed callback contracts, exact mutated IL/binary identities,
 successful commits in both modes, and the independent re-gate still required.
 
@@ -172,7 +172,7 @@ New evidence at source base `6b0c00420609ad54bf36fc38e5025c5629bba814`:
 `CoordinationReliabilityTests` executed **7 cases, 2 PASS / 5 RED**, against temporary
 real SQLite. Exact names, assertions, source/project/test/binary SHA-256 pins and
 qualification limits are in the linked
-[P2 RED receipt](../proofs/cross-harness-coordination-proof-pack.md#p2-real-csqlite-red-receipt---2026-09-16-test-only--unshippable).
+[P2 RED receipt](../proof/cross-harness-coordination-proof-pack.md#p2-real-csqlite-red-receipt---2026-09-16-test-only--unshippable).
 The original static receipts below remain historical, not retroactively executed.
 
 | Slice | Progress, not phase completion |

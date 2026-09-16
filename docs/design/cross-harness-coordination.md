@@ -22,6 +22,9 @@ summary: >-
 
 # Canonical facts, not another approval database
 
+Current [Proof Pack](../proof/cross-harness-coordination-proof-pack.md);
+the mechanical path correction changes no design gate or approved scope.
+
 **T2 / P0 CORRECTED DRAFT. GATE P0-delta pending independent review; no self-clearance.**
 Conceptual model first: [spec Part A](../specs/cross-harness-coordination.md#2-part-a--conceptual-domain-model).
 No executable schema is chosen or applied. P2 is bounded to additive caches behind the

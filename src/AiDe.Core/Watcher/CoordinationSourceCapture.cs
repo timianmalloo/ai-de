@@ -43,8 +43,16 @@ internal static class CoordinationSourceCapture
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
 
     internal static string RootKey(string root) => Encode(Normalize(root)) + "|";
-    private static string Normalize(string path) =>
-        OperatingSystem.IsWindows() ? Path.GetFullPath(path).ToUpperInvariant() : Path.GetFullPath(path);
+    private static string Normalize(string path)
+    {
+        path = Path.GetFullPath(path);
+        var rootLength = Path.GetPathRoot(path)!.Length;
+        while (path.Length > rootLength && Path.EndsInDirectorySeparator(path))
+        {
+            path = Path.TrimEndingDirectorySeparator(path);
+        }
+        return OperatingSystem.IsWindows() ? path.ToUpperInvariant() : path;
+    }
     private static string Encode(string value) => Convert.ToBase64String(StrictUtf8.GetBytes(value));
     internal static byte[] Canonical(CoordContractEvent value) => JsonSerializer.SerializeToUtf8Bytes(value, value.GetType());
 

@@ -22,6 +22,9 @@ summary: >-
 
 # Cross-harness coordination
 
+Current [Proof Pack](../proof/cross-harness-coordination-proof-pack.md);
+historical plural-path capture receipts remain historical, not newly qualified.
+
 **P0 CORRECTED DRAFT — T2 — GATE P0-delta pending independent review.**
 Original Data & Persistence draft; Python phase-specific correction records independent F1–F6.
 The actual human approved implementation of P0–P5; this receipt executes P0 only.

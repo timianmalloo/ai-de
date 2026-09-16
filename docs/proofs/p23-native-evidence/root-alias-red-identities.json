@@ -1,0 +1,32 @@
+{
+  "At": "2026-09-16T21:33:30.2120656+00:00",
+  "Exit": 1,
+  "Base": "37923c0350583632091a9e55fd7396a108db6fa8",
+  "Pins": [
+    {
+      "Algorithm": "SHA256",
+      "Hash": "6B3087BC9FE4186165C41A40889ECE86E66E6A237CD9E0B1B5624453A00CA0FE",
+      "Path": "C:\\Projects\\ai-de-feature-xh-p2-projection\\src\\AiDe.Core\\Watcher\\CoordinationSourceCapture.cs"
+    },
+    {
+      "Algorithm": "SHA256",
+      "Hash": "B9DCF488863BF13D48048E284920F4415044292E2C0A42C67956D7A8EAF3DCF3",
+      "Path": "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionRuntimeTests.cs"
+    },
+    {
+      "Algorithm": "SHA256",
+      "Hash": "3BAB3F91864D644046ECDFB3DF98934047D95AD4CD2002D8209C63A804A02C5A",
+      "Path": "C:\\Projects\\ai-de-feature-xh-p2-projection\\src\\AiDe.Core\\bin\\Debug\\net10.0\\AiDe.Core.dll"
+    },
+    {
+      "Algorithm": "SHA256",
+      "Hash": "C57E41BDDAC1F06C71DFA7784D374B7197C64FFB9900BAF41CFC5D5831938BF7",
+      "Path": "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll"
+    },
+    {
+      "Algorithm": "SHA256",
+      "Hash": "48DD46560782582CC247BC1306B1CF283BF74338027BBF280EA6435DB8460FFC",
+      "Path": "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p23-native-evidence\\p23-root-alias-red.trx"
+    }
+  ]
+}

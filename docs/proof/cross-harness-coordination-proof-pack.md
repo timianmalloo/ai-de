@@ -20,6 +20,141 @@ summary: >-
 
 # Proof Pack — dormant P1 candidate; independent code gate pending
 
+## P2.3 R3 source-root spelling correction — 2026-09-16
+
+**Narrow author correction; independent code re-gate remains pending.** The supplied
+independent P2.3 review reports 291 existing tests green, including all seven
+original reliability tests (all four historical reds now green), plus 17 runtime
+fault cases. It also reports actual same-repository cross-source-session reply,
+invalid-UTF8 typed refusal and 129-file-limit history preservation passing.
+These are supplied independent results, not fresh author executions. That review
+left one verified blocker, **R3-SOURCE-ROOT-ALIAS**: unchanged bytes under `wire`
+and `wire\` produced two sessions, two messages and two checkpoints.
+
+### Scope, surfaces and correction class
+
+Source base: `37923c0350583632091a9e55fd7396a108db6fa8`. One production file
+changes: `CoordinationSourceCapture.cs`. Trusted source root → `Normalize` →
+`RootKey`/file scope → existing raw capture → SQLite original admission, session,
+message and checkpoint readers is the full changed path. No new persisted field,
+schema, consumed ledger, canonical alias layer, capability or input authority exists.
+The accepted raw source bytes and existing non-trailing-prefix identity remain
+unchanged. Existing Windows casing and `Path.GetFullPath` behavior remain in place.
+
+**Class:** equivalent directory spellings partition one replay history into multiple
+source scopes. **Sweep:** this capture's root-prefix and per-file scope both use
+`Normalize`; the correction belongs there, before encoding, not in a second mapping.
+**Derive:** normalize with the existing native full-path operation, then use
+`Path.TrimEndingDirectorySeparator` while above the native root length and ending
+in a directory separator. **Prevent:** retained runtime replay and pure filesystem-root
+cases below fail against the original source. Central lessons editing is explicitly
+outside this author's scope; this record supplies the conductor's class/control handoff.
+
+The loop's variant is remaining trailing-separator length, bounded below by native
+root length. Native .NET execution showed drive roots preserved and UNC share
+spellings normalized to the share root without an optional trailing separator.
+UNC checks are **pure-function only**: no network share or filesystem root was read,
+created or pumped. There is no Unix execution, symlink, junction, link-resolution,
+device-namespace or general alias-canonicalization qualification.
+
+### Retained red/green evidence
+
+All raw receipts remain under the historical plural directory
+[`../proofs/p23-native-evidence/`](../proofs/p23-native-evidence/).
+Neither historical TRX files nor historical identity manifests were rewritten.
+
+| Claim | Oracle and observation | Confidence |
+|---|---|---|
+| Reopening with one, two or eight native trailing separators, or alternate separators, preserves the original session/message/admission history and one checkpoint | `Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint`, four cases; two repeat pumps plus exact original identity, admission extrema, event/feed/checkpoint counts, unchanged bytes and replay-result admission/message assertions. All four fail on the base source. | Verified by retained red and candidate green |
+| Filesystem roots are not emptied; redundant root suffixes collapse | `RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot`, nine Windows drive/UNC cases; decoded key equals the native qualified root. Five fail on base; four already pass. | Verified pure function on Windows only |
+| No original R1/R2 test was weakened | `CoordinationReliabilityTests.cs` remains untouched; its source pin remains `F582F7B3BBBC84A481AC4459925B19449D3099F5EC014DEB995E6CB398FADA43`. | Verified source and retained candidate run |
+
+`p23-root-alias-red.trx`: **13 total, 9 failed, 4 passed, 0 skipped; exit 1**.
+`root-alias-red-identities.json` pins the original production source, new tests,
+actual Core/test binaries and raw red receipt.
+`p23-root-alias-candidate-green.trx`: **272 passed, 0 failed/skipped; exit 0**.
+This is the previous 259-case primary selector plus 13 new cases, **not** the
+entire previously reported 291-case union. `root-alias-green-identities.json`
+pins source, tests, original reliability tests, actual binaries and that receipt.
+`p23-root-alias-full-union-green.trx`: **304 passed, 0 failed/skipped; exit 0**.
+The stable TRX `testId` comparison in `root-alias-full-union-coverage.json`
+establishes **all 291 existing cases present, zero missing, 13 added**.
+`root-alias-full-union-identities.json` pins that run and its binaries.
+
+The first coverage inventory incorrectly deduplicated display names: three
+distinct existing cases share displayed names, yielding 288/301, not 291/304.
+That inventory is retained unchanged, with the stable-id correction in the
+separate coverage receipt. **Class/control:** a display label is not an identity;
+the corrected check asserts 291/304 distinct test IDs and zero missing IDs.
+The incorrect count check was observed red despite the 304-case execution green.
+The initial probe compile also sorted installed reference-pack versions as text,
+selecting 8.x for a net10 target and failing before execution. The corrected
+command filters 10.x, sorts `[version]`, and refuses a nonexistent reference
+directory. No verifier result is inferred from that failed compilation.
+
+Commands, from the assigned worktree (no piped test exits):
+
+```powershell
+dotnet test tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --no-restore --filter 'FullyQualifiedName~Pump_EquivalentRootAfterReopen|FullyQualifiedName~RootKey_FilesystemRootWithRedundantSeparators' --logger 'trx;LogFileName=p23-root-alias-red.trx' --results-directory docs\proofs\p23-native-evidence --verbosity quiet
+dotnet test tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --no-restore --filter 'FullyQualifiedName~Coordination|FullyQualifiedName~MessageBoard|FullyQualifiedName~BoardOrderingTests|FullyQualifiedName~ContractBoardPostTests|FullyQualifiedName~SqliteWatcherObservationStore|FullyQualifiedName~IngestHostTests|FullyQualifiedName~TrustedRegistrar|FullyQualifiedName~RestartDoesNotMultiplySessions|FullyQualifiedName~WatcherHostTests' --logger 'trx;LogFileName=p23-root-alias-candidate-green.trx' --results-directory docs\proofs\p23-native-evidence --verbosity quiet
+dotnet test tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --no-build --no-restore --filter 'FullyQualifiedName~Coordination|FullyQualifiedName~MessageBoard|FullyQualifiedName~BoardOrderingTests|FullyQualifiedName~ContractBoardPostTests|FullyQualifiedName~SqliteWatcherObservationStore|FullyQualifiedName~IngestHostTests|FullyQualifiedName~TrustedRegistrar|FullyQualifiedName~RestartDoesNotMultiplySessions|FullyQualifiedName~WatcherHostTests|FullyQualifiedName~BoardPublisherTests|FullyQualifiedName~DaydreamPersistenceTests|FullyQualifiedName~McpMatchesTheJsonlPathTests|FullyQualifiedName~SqliteAllocationOverlapTests' --logger 'trx;LogFileName=p23-root-alias-full-union-green.trx' --results-directory docs\proofs\p23-native-evidence --verbosity quiet
+```
+
+Candidate production source SHA-256:
+`CA2600BC46D7B0735E94E9ADC69FC24E2B3F66A222617507114CA1E8A3F1E899`.
+Runtime test SHA-256:
+`B9DCF488863BF13D48048E284920F4415044292E2C0A42C67956D7A8EAF3DCF3`.
+Core binary SHA-256:
+`7857AD44D36B4C9FC58CAE945FD73559306CC0C5F97EF69567ECE9D4C39D8C2F`.
+Test binary SHA-256:
+`C57E41BDDAC1F06C71DFA7784D374B7197C64FFB9900BAF41CFC5D5831938BF7`.
+
+`LastRun.Replayed` is read back on the normal runtime path. Existing native pump
+volume, refusal and timing instrumentation is unchanged; no new production latency,
+capacity or exported-telemetry claim is made.
+
+### Mechanical Proof Pack path correction
+
+The sole current pack now lives at **`docs/proof/cross-harness-coordination-proof-pack.md`**,
+retaining frontmatter id `proof-cross-harness-coordination`. The old plural pack
+path did **not** qualify under the C# `ProofPackVerifier.ProofDirectory =
+"docs/proof/"` rule or the `AuditLogEpisodeSource` evidence-path check. A looser
+script substring check was not evidence that historical captures qualified.
+**No historical capture is retroactively declared passing.** Audit JSONL history,
+old TRX and hash manifests, and plural raw-receipt directories remain unchanged.
+New audit declarations name only the singular pack path.
+
+Current spec/design/ADR/phase-plan references move with the pack. P1's parallel
+branch still carries the old path; consolidation belongs to the future join, not
+an edit in that branch. There is no duplicate pack and no verifier widening.
+
+Source inspection also corrects the scope of the forthcoming verifier receipt:
+`Verify` checks reachable repository, path containment, proof-directory membership
+and file presence; **it does not inspect Git commitment**. `VerifyInCheckouts`
+folds those same checks. Running them after commit plus a separately recorded
+commit establishes committed presence, not a Git check inside the verifier.
+Neither a `Verified` verdict nor a commit proves full P0–P5 acceptance.
+
+### Remaining and bounded execution
+
+Independent review was partially passing with one root blocker, not full P2
+qualification. Broad DTO/cross-file permutations and aggregate/page boundaries
+remain open, as do canonical bridge integration, retry/re-drive, 401/feed work,
+old-binary rollback and P3/P4/P5. Upstream work follows verified completion of all
+six phases; none is performed here. Next: independent code re-gate of this exact
+candidate. The mechanical path fix is user-approved and needs no new design gate.
+
+Execution is serial: source/test grounding → retained red → native correction →
+green union → mechanical move → commit → actual verifier → evidence commit.
+All edges are data dependencies; shared binaries preclude concurrent validation.
+No agents, new dependencies, UI, live database, hooks, site or external actions.
+Inferred work equals span at width one; no duration/speedup estimate is claimed.
+The 35-call author budget is a circuit breaker, never permission to omit a gate.
+Two mechanical rework passes were needed: display-name coverage counting and SDK
+reference-version selection. No additional source fix or agent was needed. Site
+and docs-index regeneration remain outside the explicit write boundary; the
+stable frontmatter id and current document links are retained for the future join.
+
 ## P2.2 supplemental failure sensitivity — 2026-09-16
 
 **23/23 previously unsubstantiated cases now have observed focal mutant failures.

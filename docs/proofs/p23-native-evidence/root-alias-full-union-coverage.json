@@ -1,0 +1,61 @@
+{
+  "Added": [
+    {
+      "InputObject": "03ddc330-a96a-d072-750b-638b5026c28b",
+      "SideIndicator": "=>"
+    },
+    {
+      "InputObject": "1c06e8a3-29e6-447c-71d0-69cb9608f77a",
+      "SideIndicator": "=>"
+    },
+    {
+      "InputObject": "4d241a8e-f470-9e8f-96f7-cd2e1ab13bf7",
+      "SideIndicator": "=>"
+    },
+    {
+      "InputObject": "6225ce93-9205-d202-d6b4-efa79d60d583",
+      "SideIndicator": "=>"
+    },
+    {
+      "InputObject": "779b105e-0b44-31d1-6b1c-53092192a3ce",
+      "SideIndicator": "=>"
+    },
+    {
+      "InputObject": "82e4ba60-ad71-6b26-32ab-005a19fa5977",
+      "SideIndicator": "=>"
+    },
+    {
+      "InputObject": "9863335e-8de4-2405-6a99-3afc3ba47bea",
+      "SideIndicator": "=>"
+    },
+    {
+      "InputObject": "b2234871-33ed-8584-9bba-f25117ad4241",
+      "SideIndicator": "=>"
+    },
+    {
+      "InputObject": "bdc2a79b-362f-ac2b-98dc-ce045b5837f9",
+      "SideIndicator": "=>"
+    },
+    {
+      "InputObject": "dd207dd8-531e-0ee4-ecc0-cffa8d865644",
+      "SideIndicator": "=>"
+    },
+    {
+      "InputObject": "f1225143-6483-53b6-911e-36795f3c3d55",
+      "SideIndicator": "=>"
+    },
+    {
+      "InputObject": "f70104bf-db9b-0b3e-792e-35adffc2381d",
+      "SideIndicator": "=>"
+    },
+    {
+      "InputObject": "f8ecdb65-d2f5-56af-c729-a4c59dbe8bea",
+      "SideIndicator": "=>"
+    }
+  ],
+  "Candidate": 304,
+  "PriorDisplayNameInventory": "root-alias-full-union-identities.json retains the insufficient display-name counts; test execution passed 304/304",
+  "Existing": 291,
+  "Key": "TRX testId, not non-unique display testName",
+  "Missing": []
+}
