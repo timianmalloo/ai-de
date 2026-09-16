@@ -92,6 +92,18 @@ public sealed class SolutionTreeProbeTests
     [InlineData("duplicate-row", "ROOT")]
     [InlineData("unresolved", "UNRESOLVED")]
     [InlineData("conditional-atlas", "CONDITIONAL")]
+    [InlineData("shared-overload", "UNACCOUNTED")]
+    [InlineData("system-source", "UNACCOUNTED")]
+    [InlineData("conditional-release", "CONDITIONAL")]
+    [InlineData("conditional-enclosing", "CONDITIONAL")]
+    [InlineData("conditional-alias", "CONDITIONAL")]
+    [InlineData("conditional-definition", "CONDITIONAL")]
+    [InlineData("conditional-hidden-root", "ROOT")]
+    [InlineData("conditional-global-alias", "CONDITIONAL")]
+    [InlineData("relocated-port", "UNRESOLVED")]
+    [InlineData("generic-atlas", "ATLAS")]
+    [InlineData("conditional-trailing-root", "CONDITIONAL")]
+    [InlineData("conditional-partial-definition", "CONDITIONAL")]
     public void ProbeAtlas_AdversarialD0Mutation_IsRejected(string mutation, string expected)
     {
         var result = D0Boundary.Baseline.Value.Mutate(mutation).Analyze();
@@ -104,6 +116,11 @@ public sealed class SolutionTreeProbeTests
     [InlineData("unrelated-atlas")]
     [InlineData("unrelated-registration")]
     [InlineData("shared-port")]
+    [InlineData("unrelated-conditional")]
+    [InlineData("unrelated-inactive-member")]
+    [InlineData("unrelated-conditional-import")]
+    [InlineData("unrelated-conditional-registration")]
+    [InlineData("unrelated-conditional-same-name")]
     public void ProbeAtlas_CoexistingCodeAndDeclaredPorts_AreAllowed(string mutation)
     {
         var result = D0Boundary.Baseline.Value.Mutate(mutation).Analyze();
@@ -139,32 +156,70 @@ public sealed class SolutionTreeProbeTests
         private const string Operations = "src/AiDe.Core/Ipc/WorkspaceOperations.cs";
         private const string Service = "src/AiDe.Core/Projections/ProjectionService.cs";
 
-        // Named shared handoffs, not whole namespaces/classes. New AiDe helper calls fail closed.
-        // The source/content and graph implementations were inspected at grounding; their arbitrary
-        // transitive callees are outside this DIRECT STATIC contract.
-        private static readonly HashSet<string> SharedMembers = new(StringComparer.Ordinal)
+        // Reviewed declaration identities: exact source authority and full original signature.
+        // This manifest is frozen source, never discovered or refreshed by the running test.
+        private static readonly HashSet<string> SharedPorts = new(StringComparer.Ordinal)
         {
-            "AiDe.Core.PathComparison.ForThisFileSystem", "AiDe.Core.Extraction.UnanalysedLanguages.Skip",
-            "AiDe.Core.Store.WorkspaceStore.BeginRead", "AiDe.Core.Store.StoreReader.FilesToSearch",
-            "AiDe.Core.Store.StoreReader.ReadNodeKind", "AiDe.Core.Store.StoreReader.AllScopeLocations", "AiDe.Core.Store.StoreReader.CurrentSourceRevision",
-            "AiDe.Core.Projections.ProjectionService.CandidateWithinWorkspace", "AiDe.Core.Projections.ProjectionService.Activity",
-            "AiDe.Core.Projections.ProjectionService.FrameBytes", "AiDe.Core.Projections.ProjectionService.MaxFramedGraphBytes", "AiDe.Core.Projections.ProjectionService.Wire",
-            "AiDe.Core.Ipc.WorkspaceClient.QueryAsync", "AiDe.Core.Ipc.WorkspaceOperations.Handle", "AiDe.Core.Ipc.WorkspaceOperations.Refusable",
-            "AiDe.Core.Ipc.DaemonEndpoint.Register", "AiDe.Core.Ipc.IpcResponse.Success",
-            "AiDe.Core.Workbench.PerspectiveSet.Architecture", "AiDe.Core.Workbench.Surface.Title",
-            "AiDe.App.Workbench.NodeViewKind.Source", "AiDe.App.Workbench.NodeViewKind.Read", "AiDe.App.Workbench.NodeViewKind.GraphNeighbourhood",
-            "AiDe.App.Workbench.RelayCommand..ctor", "AiDe.App.Workbench.SurfaceContentFactory.Instances.One",
-            "AiDe.App.Workbench.SurfaceContentFactory.SurfaceKind..ctor", "AiDe.App.Workbench.SurfaceContentFactory.SurfaceEntry.Derived..ctor",
-            "AiDe.App.Workbench.IWorkbenchAnnouncer.Announce", "AiDe.App.Workbench.WorkbenchShell.Announcer", "AiDe.App.Workbench.WorkbenchShell.Architecture",
-            "AiDe.App.Workbench.WorkbenchShell._queries", "AiDe.App.Workbench.WorkbenchShell._lastSelectedNodeId",
-            "AiDe.App.Workbench.WorkbenchShell.SurfaceContents", "AiDe.App.Workbench.WorkbenchShell.OpenKind",
-            "AiDe.App.Workbench.WorkbenchShell.OpenNodeView", "AiDe.App.Workbench.WorkbenchShell.OpenCanvas", "AiDe.App.Workbench.WorkbenchShell.CentreOnAsync",
-            "AiDe.App.Workbench.WorkbenchShell.OpenCodeViewers", "AiDe.App.Workbench.WorkbenchShell.ShowNodeInCodeViewersAsync",
-        };
-        private static readonly HashSet<string> SharedTypes = new(StringComparer.Ordinal)
-        {
-            "AiDe.App.Workbench.CanvasSurface", "AiDe.App.Workbench.CodeViewerView", "AiDe.App.Workbench.DockHost",
-            "AiDe.App.Workbench.SurfaceContentFactory.SurfaceEntry", "AiDe.Core.Workbench.Perspective", "AiDe.Core.Ipc.IpcRequest",
+            "src/AiDe.App/Workbench/CanvasSurface.cs|T:AiDe.App.Workbench.CanvasSurface",
+            "src/AiDe.App/Workbench/CodeViewerView.cs|T:AiDe.App.Workbench.CodeViewerView",
+            "src/AiDe.App/Workbench/DockHost.cs|T:AiDe.App.Workbench.DockHost",
+            "src/AiDe.App/Workbench/NodeViewMenu.cs|F:AiDe.App.Workbench.NodeViewKind.GraphNeighbourhood",
+            "src/AiDe.App/Workbench/NodeViewMenu.cs|F:AiDe.App.Workbench.NodeViewKind.Read",
+            "src/AiDe.App/Workbench/NodeViewMenu.cs|F:AiDe.App.Workbench.NodeViewKind.Source",
+            "src/AiDe.App/Workbench/NodeViewMenu.cs|T:AiDe.App.Workbench.NodeViewKind",
+            "src/AiDe.App/Workbench/RelayCommand.cs|M:AiDe.App.Workbench.RelayCommand.#ctor(System.Action)",
+            "src/AiDe.App/Workbench/RelayCommand.cs|T:AiDe.App.Workbench.RelayCommand",
+            "src/AiDe.App/Workbench/SurfaceContentFactory.cs|F:AiDe.App.Workbench.SurfaceContentFactory.Instances.One",
+            "src/AiDe.App/Workbench/SurfaceContentFactory.cs|M:AiDe.App.Workbench.SurfaceContentFactory.SurfaceEntry.Derived.#ctor(System.String)",
+            "src/AiDe.App/Workbench/SurfaceContentFactory.cs|M:AiDe.App.Workbench.SurfaceContentFactory.SurfaceKind.#ctor(System.String,System.String,System.String,System.Func{AiDe.App.Workbench.SurfaceContentFactory,AiDe.Core.Workbench.Surface,System.Windows.FrameworkElement},System.Collections.Generic.IReadOnlyList{AiDe.Core.Workbench.Perspective},AiDe.App.Workbench.SurfaceContentFactory.Instances,AiDe.App.Workbench.SurfaceContentFactory.SurfaceEntry,System.Boolean,System.Nullable{AiDe.Core.Workbench.ZoneId})",
+            "src/AiDe.App/Workbench/SurfaceContentFactory.cs|T:AiDe.App.Workbench.SurfaceContentFactory.Instances",
+            "src/AiDe.App/Workbench/SurfaceContentFactory.cs|T:AiDe.App.Workbench.SurfaceContentFactory.SurfaceEntry",
+            "src/AiDe.App/Workbench/SurfaceContentFactory.cs|T:AiDe.App.Workbench.SurfaceContentFactory.SurfaceEntry.Derived",
+            "src/AiDe.App/Workbench/SurfaceContentFactory.cs|T:AiDe.App.Workbench.SurfaceContentFactory.SurfaceKind",
+            "src/AiDe.App/Workbench/WorkbenchAnnouncer.cs|M:AiDe.App.Workbench.IWorkbenchAnnouncer.Announce(System.String)",
+            "src/AiDe.App/Workbench/WorkbenchAnnouncer.cs|T:AiDe.App.Workbench.IWorkbenchAnnouncer",
+            "src/AiDe.App/Workbench/WorkbenchShell.cs|F:AiDe.App.Workbench.WorkbenchShell._lastSelectedNodeId",
+            "src/AiDe.App/Workbench/WorkbenchShell.cs|F:AiDe.App.Workbench.WorkbenchShell._queries",
+            "src/AiDe.App/Workbench/WorkbenchShell.cs|M:AiDe.App.Workbench.WorkbenchShell.CentreOnAsync(AiDe.App.Workbench.CanvasSurface,System.String,System.String,System.Boolean)",
+            "src/AiDe.App/Workbench/WorkbenchShell.cs|M:AiDe.App.Workbench.WorkbenchShell.OpenCanvas",
+            "src/AiDe.App/Workbench/WorkbenchShell.cs|M:AiDe.App.Workbench.WorkbenchShell.OpenCodeViewers",
+            "src/AiDe.App/Workbench/WorkbenchShell.cs|M:AiDe.App.Workbench.WorkbenchShell.OpenKind(AiDe.App.Workbench.DockHost,System.String,System.Boolean)",
+            "src/AiDe.App/Workbench/WorkbenchShell.cs|M:AiDe.App.Workbench.WorkbenchShell.OpenNodeView(System.String,AiDe.App.Workbench.NodeViewKind)",
+            "src/AiDe.App/Workbench/WorkbenchShell.cs|M:AiDe.App.Workbench.WorkbenchShell.ShowNodeInCodeViewersAsync(System.String,System.Collections.Generic.IReadOnlyList{AiDe.App.Workbench.CodeViewerView},System.Boolean)",
+            "src/AiDe.App/Workbench/WorkbenchShell.cs|M:AiDe.App.Workbench.WorkbenchShell.SurfaceContents``1(System.String)",
+            "src/AiDe.App/Workbench/WorkbenchShell.cs|P:AiDe.App.Workbench.WorkbenchShell.Announcer",
+            "src/AiDe.App/Workbench/WorkbenchShell.cs|P:AiDe.App.Workbench.WorkbenchShell.Architecture",
+            "src/AiDe.Core/Extraction/UnanalysedLanguages.cs|F:AiDe.Core.Extraction.UnanalysedLanguages.Skip",
+            "src/AiDe.Core/Extraction/UnanalysedLanguages.cs|T:AiDe.Core.Extraction.UnanalysedLanguages",
+            "src/AiDe.Core/Ipc/DaemonEndpoint.cs|M:AiDe.Core.Ipc.DaemonEndpoint.Register(System.String,System.Func{AiDe.Core.Ipc.IpcRequest,AiDe.Core.Ipc.IpcPeer,AiDe.Core.Ipc.IpcResponse})",
+            "src/AiDe.Core/Ipc/DaemonEndpoint.cs|T:AiDe.Core.Ipc.DaemonEndpoint",
+            "src/AiDe.Core/Ipc/IpcContract.cs|M:AiDe.Core.Ipc.IpcResponse.Success``1(``0,System.Text.Json.JsonSerializerOptions)",
+            "src/AiDe.Core/Ipc/IpcContract.cs|T:AiDe.Core.Ipc.IpcRequest",
+            "src/AiDe.Core/Ipc/IpcContract.cs|T:AiDe.Core.Ipc.IpcResponse",
+            "src/AiDe.Core/Ipc/WorkspaceClient.cs|M:AiDe.Core.Ipc.WorkspaceClient.QueryAsync``1(System.String,System.Object,System.Threading.CancellationToken,System.String)",
+            "src/AiDe.Core/Ipc/WorkspaceOperations.cs|M:AiDe.Core.Ipc.WorkspaceOperations.Handle``1(AiDe.Core.Ipc.IpcRequest,System.Func{``0,System.Object})",
+            "src/AiDe.Core/Ipc/WorkspaceOperations.cs|M:AiDe.Core.Ipc.WorkspaceOperations.Refusable(System.Func{AiDe.Core.Ipc.IpcResponse})",
+            "src/AiDe.Core/Ipc/WorkspaceOperations.cs|T:AiDe.Core.Ipc.WorkspaceOperations",
+            "src/AiDe.Core/PathComparison.cs|P:AiDe.Core.PathComparison.ForThisFileSystem",
+            "src/AiDe.Core/PathComparison.cs|T:AiDe.Core.PathComparison",
+            "src/AiDe.Core/Projections/ProjectionService.cs|F:AiDe.Core.Projections.ProjectionService.Activity",
+            "src/AiDe.Core/Projections/ProjectionService.cs|F:AiDe.Core.Projections.ProjectionService.FrameBytes",
+            "src/AiDe.Core/Projections/ProjectionService.cs|F:AiDe.Core.Projections.ProjectionService.MaxFramedGraphBytes",
+            "src/AiDe.Core/Projections/ProjectionService.cs|F:AiDe.Core.Projections.ProjectionService.Wire",
+            "src/AiDe.Core/Projections/ProjectionService.cs|M:AiDe.Core.Projections.ProjectionService.CandidateWithinWorkspace(AiDe.Core.Store.StoreReader,System.String,System.String)",
+            "src/AiDe.Core/Projections/ProjectionService.cs|T:AiDe.Core.Projections.ProjectionService",
+            "src/AiDe.Core/Store/StoreReader.cs|M:AiDe.Core.Store.StoreReader.AllScopeLocations",
+            "src/AiDe.Core/Store/StoreReader.cs|M:AiDe.Core.Store.StoreReader.CurrentSourceRevision",
+            "src/AiDe.Core/Store/StoreReader.cs|M:AiDe.Core.Store.StoreReader.FilesToSearch",
+            "src/AiDe.Core/Store/StoreReader.cs|M:AiDe.Core.Store.StoreReader.ReadNodeKind(System.String)",
+            "src/AiDe.Core/Store/StoreReader.cs|T:AiDe.Core.Store.StoreReader",
+            "src/AiDe.Core/Store/WorkspaceStore.cs|M:AiDe.Core.Store.WorkspaceStore.BeginRead",
+            "src/AiDe.Core/Store/WorkspaceStore.cs|T:AiDe.Core.Store.WorkspaceStore",
+            "src/AiDe.Core/Workbench/LayoutModel.cs|P:AiDe.Core.Workbench.Surface.Title",
+            "src/AiDe.Core/Workbench/LayoutModel.cs|T:AiDe.Core.Workbench.Surface",
+            "src/AiDe.Core/Workbench/Perspectives.cs|P:AiDe.Core.Workbench.PerspectiveSet.Architecture",
+            "src/AiDe.Core/Workbench/Perspectives.cs|T:AiDe.Core.Workbench.Perspective",
+            "src/AiDe.Core/Workbench/Perspectives.cs|T:AiDe.Core.Workbench.PerspectiveSet",
         };
 
         internal sealed record Result(int Roots, int References, string[] Ports, string[] Errors)
@@ -268,13 +323,25 @@ public sealed class SolutionTreeProbeTests
             try { roots = SelectRoots(); }
             catch (InvalidOperationException error) { return new(0, 0, [], [error.Message]); }
             var errors = new SortedSet<string>(StringComparer.Ordinal);
-            // simplify: these eight boundary files must be unconditional until build defines are
-            // explicitly qualified. Check the files, including directives surrounding a root.
-            foreach (var tree in roots.Select(root => root.SyntaxTree).Distinct())
-                if (tree.GetRoot().DescendantTrivia(descendIntoTrivia: true).Any(trivia =>
-                    trivia.IsKind(SyntaxKind.DisabledTextTrivia) || trivia.GetStructure() is
-                        IfDirectiveTriviaSyntax or ElifDirectiveTriviaSyntax or ElseDirectiveTriviaSyntax or EndIfDirectiveTriviaSyntax))
-                    errors.Add("CONDITIONAL D0 boundary source requires qualification: " + Relative(tree));
+            var declarations = new List<SyntaxNode>();
+            var names = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var entry in SharedPorts)
+            {
+                var parts = entry.Split('|');
+                var compilation = parts[0].StartsWith("src/AiDe.Core/", StringComparison.Ordinal) ? Core : App;
+                var matches = DocumentationCommentId.GetSymbolsForDeclarationId(parts[1], compilation);
+                if (matches.Length != 1 || Identity(matches[0]) != entry)
+                    errors.Add("UNRESOLVED shared declaration " + entry);
+                else declarations.AddRange(matches[0].DeclaringSyntaxReferences.Select(reference => reference.GetSyntax()));
+            }
+            string? Identity(ISymbol symbol)
+            {
+                var paths = symbol.DeclaringSyntaxReferences.Select(reference => Relative(reference.SyntaxTree)).Distinct().ToArray();
+                var id = symbol.OriginalDefinition.GetDocumentationCommentId();
+                var project = symbol.ContainingAssembly?.Name;
+                return paths.Length == 1 && id is not null && project is "AiDe.Core" or "AiDe.App"
+                    && paths[0].StartsWith("src/" + project + "/", StringComparison.Ordinal) ? paths[0] + "|" + id : null;
+            }
             var ports = new SortedSet<string>(StringComparer.Ordinal);
             var references = 0;
             bool Rooted(ISymbol symbol) => symbol.DeclaringSyntaxReferences.Any(reference =>
@@ -286,8 +353,12 @@ public sealed class SolutionTreeProbeTests
                 if (symbol is IAliasSymbol alias) symbol = alias.Target;
                 if (symbol is null or ILocalSymbol or IParameterSymbol or ITypeParameterSymbol or IRangeVariableSymbol or IDiscardSymbol) return;
                 if (symbol is IArrayTypeSymbol array) { Inspect(array.ElementType, at); return; }
+                if (symbol is IFieldSymbol { ContainingType.IsTupleType: true } tupleField)
+                { Inspect(tupleField.ContainingType.TupleUnderlyingType, at); return; }
                 if (symbol is INamedTypeSymbol generic)
                     foreach (var argument in generic.TypeArguments.Where(argument => argument is not ITypeParameterSymbol)) Inspect(argument, at);
+                if (symbol is IMethodSymbol method)
+                    foreach (var argument in method.TypeArguments.Where(argument => argument is not ITypeParameterSymbol)) Inspect(argument, at);
                 if (symbol is IMethodSymbol { AssociatedSymbol: { } associated }) symbol = associated;
                 if (symbol.IsImplicitlyDeclared && symbol.ContainingType is not null) symbol = symbol.ContainingType;
                 symbol = symbol.OriginalDefinition;
@@ -296,9 +367,9 @@ public sealed class SolutionTreeProbeTests
                 if (symbol.ContainingAssembly?.Name == "AiDe.Core" && !symbol.Locations.Any(location => location.IsInSource)
                     && symbol.GetDocumentationCommentId() is { } id)
                 {
-                    var sourceSymbol = DocumentationCommentId.GetFirstSymbolForDeclarationId(id, Core);
-                    if (sourceSymbol is null) { errors.Add("UNRESOLVED Core source declaration " + id); return; }
-                    symbol = sourceSymbol;
+                    var sourceSymbols = DocumentationCommentId.GetSymbolsForDeclarationId(id, Core);
+                    if (sourceSymbols.Length != 1) { errors.Add("UNRESOLVED Core source declaration " + id); return; }
+                    symbol = sourceSymbols[0];
                 }
                 var ns = symbol is INamespaceSymbol space ? space.ToDisplayString() : symbol.ContainingNamespace?.ToDisplayString() ?? "";
                 if (ns == "AiDe.Core.Understanding" || ns.StartsWith("AiDe.Core.Understanding.", StringComparison.Ordinal)
@@ -307,14 +378,21 @@ public sealed class SolutionTreeProbeTests
                     errors.Add($"ATLAS {symbol.ToDisplayString()} at {Relative(at.SyntaxTree)}:{at.GetLocation().GetLineSpan().StartLinePosition.Line + 1}");
                     return;
                 }
-                if (symbol is INamespaceSymbol || ns == "System" || ns.StartsWith("System.", StringComparison.Ordinal)
-                    || ns == "Microsoft.Win32" || Rooted(symbol)) return;
+                if (symbol is INamespaceSymbol) return;
+                names.Add(BindingName(symbol));
+                declarations.AddRange(symbol.DeclaringSyntaxReferences.Select(reference => reference.GetSyntax()));
+                if (Rooted(symbol)) return;
+                // Framework namespace spelling alone is not authority: source-defined System
+                // helpers must be accounted. The metadata assembly must carry a framework key.
+                var frameworkKey = symbol.ContainingAssembly is { } assembly
+                    ? Convert.ToHexString(assembly.Identity.PublicKeyToken.ToArray()) : "";
+                if (!symbol.Locations.Any(location => location.IsInSource)
+                    && (ns == "System" || ns.StartsWith("System.", StringComparison.Ordinal) || ns == "Microsoft.Win32")
+                    && frameworkKey is "7CEC85D7BEA7798E" or "B03F5F7F11D50A3A" or "B77A5C561934E089" or "31BF3856AD364E35" or "CC7B13FFCD2DDD51") return;
                 if (symbol is INamedTypeSymbol named && RootOwner(named)) return;
-                var key = symbol is INamedTypeSymbol ? symbol.ToDisplayString() : symbol.ContainingType?.ToDisplayString() + "." + symbol.Name;
-                if (SharedMembers.Contains(key) || symbol is INamedTypeSymbol && (SharedTypes.Contains(key)
-                    || SharedMembers.Any(member => member.StartsWith(key + ".", StringComparison.Ordinal))))
-                    ports.Add(key);
-                else errors.Add("UNACCOUNTED " + symbol.Kind + " " + key + " at " + Relative(at.SyntaxTree));
+                var key = Identity(symbol);
+                if (key is not null && SharedPorts.Contains(key)) ports.Add(key);
+                else errors.Add("UNACCOUNTED " + symbol.Kind + " " + symbol.ToDisplayString() + " at " + Relative(at.SyntaxTree));
             }
             foreach (var root in roots)
             {
@@ -329,7 +407,68 @@ public sealed class SolutionTreeProbeTests
                     if (node is ExpressionSyntax expression && expression.ToString() != "nameof") Inspect(model.GetTypeInfo(expression).Type, node);
                 }
             }
+            CheckConditions(roots, declarations, names, errors);
             return new(roots.Count, references, ports.ToArray(), errors.ToArray());
+        }
+
+        private static string BindingName(ISymbol symbol) => symbol is INamedTypeSymbol
+            ? symbol.OriginalDefinition.GetDocumentationCommentId() ?? ""
+            : symbol.ContainingType?.OriginalDefinition.GetDocumentationCommentId() + "|" + symbol.Name;
+
+        private void CheckConditions(List<SyntaxNode> roots, List<SyntaxNode> declarations, HashSet<string> names, SortedSet<string> errors)
+        {
+            // Syntax-only view exposes all inactive branches at their original offsets. It is
+            // not a Debug/Release compilation. Ambiguous or binding-affecting regions refuse.
+            foreach (var tree in Trees)
+            {
+                var syntax = tree.GetRoot();
+                var directives = syntax.DescendantTrivia(descendIntoTrivia: true).Select(trivia => trivia.GetStructure())
+                    .OfType<DirectiveTriviaSyntax>().ToArray();
+                if (!directives.Any(directive => directive is IfDirectiveTriviaSyntax)) continue;
+                var text = syntax.ToFullString().ToCharArray();
+                foreach (var directive in directives)
+                    for (var i = directive.FullSpan.Start; i < directive.FullSpan.End; i++)
+                        if (text[i] is not '\r' and not '\n') text[i] = ' ';
+                var flatTree = CSharpSyntaxTree.ParseText(new string(text), (CSharpParseOptions)tree.Options, tree.FilePath);
+                var flat = flatTree.GetRoot();
+                // Declaration owners can be read even when multiple branches coexist. This model
+                // classifies names only; it never certifies the flattened program as executable.
+                var compilation = Core.SyntaxTrees.Contains(tree) ? Core : App;
+                var flatModel = compilation.ReplaceSyntaxTree(tree, flatTree).GetSemanticModel(flatTree);
+                var declared = flat.DescendantNodes().Where(node => node is BaseTypeDeclarationSyntax or MethodDeclarationSyntax
+                    or ConstructorDeclarationSyntax or PropertyDeclarationSyntax or EventDeclarationSyntax or DelegateDeclarationSyntax or VariableDeclaratorSyntax)
+                    .Select(node => (Node: node, Symbol: flatModel.GetDeclaredSymbol(node))).ToArray();
+                var stack = new Stack<int>();
+                foreach (var directive in directives)
+                {
+                    if (directive is IfDirectiveTriviaSyntax) stack.Push(directive.SpanStart);
+                    if (directive is not EndIfDirectiveTriviaSyntax) continue;
+                    if (!stack.TryPop(out var start)) { errors.Add("CONDITIONAL unmatched directive " + Relative(tree)); continue; }
+                    var span = Microsoft.CodeAnalysis.Text.TextSpan.FromBounds(start, directive.Span.End);
+                    var localRoots = roots.Where(root => root.SyntaxTree == tree).ToArray();
+                    var localDeclarations = declarations.Where(node => node.SyntaxTree == tree).ToArray();
+                    bool Touches(SyntaxNode node) => node.Span.OverlapsWith(span);
+                    var imports = flat.DescendantNodes().OfType<UsingDirectiveSyntax>().Where(Touches).ToArray();
+                    var bindings = declared.Where(item => Touches(item.Node) && item.Symbol is not null && names.Contains(BindingName(item.Symbol))).ToArray();
+                    var relevant = localRoots.Length != 0 || localDeclarations.Length != 0 || bindings.Length != 0 || imports.Any(node => node.GlobalKeyword.RawKind != 0);
+                    if (!relevant) continue;
+                    var members = flat.DescendantNodes().OfType<MemberDeclarationSyntax>().Where(Touches).ToArray();
+                    // A whole enclosing class is not a dependency on each of its unrelated bodies.
+                    bool RelevantDeclaration(SyntaxNode node) => node is not BaseTypeDeclarationSyntax && Touches(node);
+                    var blocked = Relative(tree) is Surface or Projection || localRoots.Any(Touches) || localDeclarations.Any(RelevantDeclaration)
+                        || imports.Length != 0
+                        || bindings.Any(item => span.Contains(item.Node.SpanStart))
+                        || declared.Any(item => span.Contains(item.Node.SpanStart) && item.Symbol is null);
+                    var body = flat.DescendantNodes().OfType<BlockSyntax>().Any(block => block.Span.Contains(span)
+                        && !localRoots.Any(root => root.Span.OverlapsWith(block.Span))
+                        && !localDeclarations.Any(node => node is not BaseTypeDeclarationSyntax && node.Span.OverlapsWith(block.Span)));
+                    var independentMembers = members.Where(member => span.Contains(member.Span)).ToArray();
+                    if (blocked || flat.GetDiagnostics().Any(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error && diagnostic.Location.SourceSpan.OverlapsWith(span))
+                        || !body && independentMembers.Length == 0)
+                        errors.Add("CONDITIONAL binding/root region requires qualification: " + Relative(tree) + ":" + span.Start);
+                }
+                if (stack.Count != 0) errors.Add("CONDITIONAL unmatched region " + Relative(tree));
+            }
         }
 
         internal D0Boundary Mutate(string mutation)
@@ -359,8 +498,66 @@ public sealed class SolutionTreeProbeTests
                     "namespace AiDe.Core.Projections; public static class HiddenAtlasPath { public static void Touch() {} }",
                     new CSharpParseOptions(LanguageVersion.Preview), Path.Combine(Root, "src/AiDe.Core/Understanding/HiddenAtlasPath.cs"))) };
             }
+            if (mutation == "system-source")
+            {
+                var changed = Inject(Surface, "ShowLoading", "System.ReviewEscape.Touch();");
+                return changed with { App = changed.App.AddSyntaxTrees(CSharpSyntaxTree.ParseText(
+                    "namespace System; public static class ReviewEscape { public static void Touch() { GC.KeepAlive(typeof(AiDe.Core.Understanding.SourceProjectionState)); } }",
+                    new CSharpParseOptions(LanguageVersion.Preview), Path.Combine(Root, "src/AiDe.App/ReviewEscape.cs"))) };
+            }
+            if (mutation is "conditional-global-alias" or "unrelated-conditional-import")
+                return this with { App = App.AddSyntaxTrees(CSharpSyntaxTree.ParseText(
+                    "#if RELEASE\n" + (mutation == "conditional-global-alias" ? "global " : "")
+                    + "using ConditionalAlias = AiDe.Core.Understanding.SourceProjectionState;\n#endif\nnamespace Unrelated; internal class ImportOwner {}",
+                    new CSharpParseOptions(LanguageVersion.Preview), Path.Combine(Root, "src/AiDe.App/UnrelatedImport.cs"))) };
+            if (mutation == "conditional-partial-definition")
+                return this with { App = App.AddSyntaxTrees(CSharpSyntaxTree.ParseText(
+                    "namespace AiDe.App.Workbench;\n#if RELEASE\npublic partial class WorkbenchShell { private static void OpenKind(int sentinel) {} }\n#endif\n",
+                    new CSharpParseOptions(LanguageVersion.Preview), Path.Combine(Root, "src/AiDe.App/ConditionalShell.cs"))) };
             return mutation switch
             {
+                "conditional-trailing-root" => Replace(Projection, root => CSharpSyntaxTree.ParseText(root.ToFullString()
+                    + "\n#if RELEASE\ninternal static class HiddenD0Dependency { static void Dependency() { " + atlas + " } }\n#endif\n").GetRoot()),
+                "unrelated-conditional-same-name" => Replace(Factory, root => CSharpSyntaxTree.ParseText(root.ToFullString()
+                    + "\n#if RELEASE\ninternal static class UnrelatedOwner { static void OpenKind(int sentinel) { " + atlas + " } }\n#endif\n").GetRoot()),
+                "generic-atlas" => Inject(Surface, "ShowLoading", "System.GC.KeepAlive(System.Array.Empty<AiDe.Core.Understanding.SourceProjectionState>());"),
+                "relocated-port" => this with { Core = Core.ReplaceSyntaxTree(Tree("src/AiDe.Core/PathComparison.cs"),
+                    Tree("src/AiDe.Core/PathComparison.cs").WithFilePath(Path.Combine(Root, "src/AiDe.Core/RelocatedPathComparison.cs"))) },
+                "conditional-hidden-root" => Replace(Shell, root =>
+                {
+                    var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>().Single(n => n.Identifier.ValueText == "RefreshSolutionTrees");
+                    return CSharpSyntaxTree.ParseText(root.ToFullString().Insert(method.Span.End, "\n#endif\n").Insert(method.SpanStart, "\n#if RELEASE\n")).GetRoot();
+                }),
+                "shared-overload" => Replace(Shell, root =>
+                {
+                    var owner = root.DescendantNodes().OfType<TypeDeclarationSyntax>().Single(n => n.Identifier.ValueText == "WorkbenchShell");
+                    var method = owner.Members.OfType<MethodDeclarationSyntax>().Single(n => n.Identifier.ValueText == "RefreshSolutionTrees");
+                    return root.ReplaceNode(owner, owner.WithMembers(owner.Members.Replace(method, method.WithBody(method.Body!.WithStatements(
+                        method.Body.Statements.Insert(0, SyntaxFactory.ParseStatement("OpenKind(0);"))))).Add(
+                        SyntaxFactory.ParseMemberDeclaration("private static void OpenKind(int sentinel) { " + atlas + " }")!)));
+                }),
+                "conditional-release" => Inject(Shell, "RefreshSolutionTrees", "\n#if !DEBUG\n" + atlas + "\n#endif\nSystem.GC.KeepAlive(0);"),
+                "conditional-enclosing" => Replace(Shell, root =>
+                {
+                    var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>().Single(n => n.Identifier.ValueText == "RefreshSolutionTrees");
+                    return CSharpSyntaxTree.ParseText(root.ToFullString().Insert(method.Span.End, "\n#endif\n").Insert(method.SpanStart, "\n#if true\n")).GetRoot();
+                }),
+                "conditional-alias" => Replace(Shell, root => CSharpSyntaxTree.ParseText("#if RELEASE\nusing ConditionalAlias = AiDe.Core.Understanding.SourceProjectionState;\n#endif\n" + root.ToFullString()).GetRoot()),
+                "conditional-definition" => Replace(Shell, root =>
+                {
+                    var owner = root.DescendantNodes().OfType<TypeDeclarationSyntax>().Single(n => n.Identifier.ValueText == "WorkbenchShell");
+                    return CSharpSyntaxTree.ParseText(root.ToFullString().Insert(owner.CloseBraceToken.SpanStart,
+                        "\n#if RELEASE\nprivate static void OpenKind(int sentinel) { " + atlas + " }\n#endif\n")).GetRoot();
+                }),
+                "unrelated-conditional" => Replace(Factory, root => root.ReplaceNode(root.DescendantNodes().OfType<TypeDeclarationSyntax>().Single(n => n.Identifier.ValueText == "SurfaceContentFactory"),
+                    root.DescendantNodes().OfType<TypeDeclarationSyntax>().Single(n => n.Identifier.ValueText == "SurfaceContentFactory").AddMembers(
+                        SyntaxFactory.ParseMemberDeclaration("private static void UnusedConditionalAtlas() {\n#if true\n" + atlas + "\n#endif\n}")!))),
+                "unrelated-inactive-member" => Replace(Factory, root =>
+                {
+                    var owner = root.DescendantNodes().OfType<TypeDeclarationSyntax>().Single(n => n.Identifier.ValueText == "SurfaceContentFactory");
+                    return CSharpSyntaxTree.ParseText(root.ToFullString().Insert(owner.CloseBraceToken.SpanStart,
+                        "\n#if RELEASE\nprivate static void UnusedConditionalAtlas() { " + atlas + " }\n#endif\n")).GetRoot();
+                }),
                 "direct" => Inject(Surface, "ShowLoading", atlas),
                 "conditional-atlas" => Inject(Surface, "ShowLoading", "\n#if WINDOWS\n" + atlas + "\n#endif\nSystem.GC.KeepAlive(0);"),
                 "alias" => Inject(Surface, "ShowLoading", "System.GC.KeepAlive(typeof(AtlasAlias));", alias: true),
@@ -377,12 +574,13 @@ public sealed class SolutionTreeProbeTests
                 "shared-port" => Inject(Surface, "ShowLoading", "System.GC.KeepAlive(AiDe.Core.PathComparison.ForThisFileSystem);"),
                 "unrelated-atlas" => Replace(Factory, root => root.ReplaceNode(root.DescendantNodes().OfType<TypeDeclarationSyntax>().Single(n => n.Identifier.ValueText == "SurfaceContentFactory"),
                     root.DescendantNodes().OfType<TypeDeclarationSyntax>().Single(n => n.Identifier.ValueText == "SurfaceContentFactory").AddMembers(SyntaxFactory.ParseMemberDeclaration("private static void UnusedAtlas() { " + atlas + " }")!))),
-                "unrelated-registration" => Replace(Factory, root =>
+                "unrelated-registration" or "unrelated-conditional-registration" => Replace(Factory, root =>
                 {
                     var row = root.DescendantNodes().OfType<ImplicitObjectCreationExpressionSyntax>().Single(n =>
                         n.ArgumentList.Arguments.FirstOrDefault()?.Expression is LiteralExpressionSyntax text && text.Token.ValueText == "code-atlas");
                     var builder = row.DescendantNodes().OfType<ParenthesizedLambdaExpressionSyntax>().Single();
-                    return root.ReplaceNode(builder, builder.WithBody(SyntaxFactory.Block(SyntaxFactory.ParseStatement(atlas), SyntaxFactory.ReturnStatement((ExpressionSyntax)builder.Body))));
+                    var statement = mutation == "unrelated-registration" ? atlas : "\n#if true\n" + atlas + "\n#endif\n;";
+                    return root.ReplaceNode(builder, builder.WithBody(SyntaxFactory.Block(SyntaxFactory.ParseStatement(statement), SyntaxFactory.ReturnStatement((ExpressionSyntax)builder.Body))));
                 }),
                 _ => throw new ArgumentOutOfRangeException(nameof(mutation)),
             };
