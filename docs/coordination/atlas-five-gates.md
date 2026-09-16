@@ -12,7 +12,7 @@ review-by: 2026-12-15
 summary: "Exact blocker transfer; isolated repairs followed by GHCP-only main publication."
 ---
 
-# Current state: r5 consumer ACK recorded; native design rereview pending
+# Current state: r5 frozen; native preparation boundary settled
 
 Goal: resolve the current Grok consumer request and continue the admitted Atlas qualification
 preparation. Done when the exact proposal has a direct semantic response and recorded
@@ -26,11 +26,46 @@ Astra Owner and Conductor. Main publication stays with foreground GHCP.
 | --- | --- | --- |
 | Five gates and D0 correction | Preserve accepted integration behavior | Reviewed repairs assembled; previous actual gate and 73/73 results retained |
 | D1 r3 | Freeze the non-consuming listing boundary | Same-blob producer ACK observed on req-01M2NFTQFRP41JRV68PQSC3AGD; frozen e448383a90bb1ed962c7405af70e16d8cca09fa3 |
-| D1 r5 | Freeze proposal authorship with consuming contracts deferred | Exact consumer ACK recorded after independent review; producer same-blob ACK remains separate |
+| D1 r5 | Freeze proposal authorship with consuming contracts deferred | Consumer and producer ACKs inspected; authorship-only freeze established |
 | Native shared receipt | Keep optional observation failures from poisoning original evidence | Source715523d0 independently CLEAR for FR-NO-001 at12c1f883; own21/21 and actual replay inspected |
 | Native per-view state | Complete settled loaded/visible evidence for every observed view | Source626d16a2 independently CLEARd31eab23; own21/21 and actual JSON inspected |
 | Native qualification / main | Establish combined runtime acceptance before publication | P1-03 App1257/1258; native failure; remaining canonical steps stopped and slot released; independent RCA active |
 | E1/E2 | Continue admitted Sequence/Activity and architecture view work | Integration remains the priority |
+
+## Design clearance and preparation boundary — 2026-09-16
+
+Verified: the watcher delivered independent B1-B3 document-design PASS-WITH-CONDITIONS
+on ebfe0761/blob3b6c8153018d1199e669cd519ba1c0bc65547a3d. Runtime notification,
+observer teardown, custody races and the two-arm execution remain unproved. The
+delivered verdict, exact manifest and Owner decision are preserved in
+[the design-review receipt](../proof/atlas-p1-03-transition-design-review.md).
+
+Owner confirms one Astra author24calls/35min/checkpoint12, then independent Test/SRE
+12calls/20min/checkpoint8. The official lifecycle provisioned
+C:/Projects/ai-de-test-atlas-p1-03-uia-transition at ebfe0761. Exact preparation request
+req-01M2NWGFJG89QF0KFBA9W8YGF6 admits no work until its actual grant; the request
+names one test file, the task proof, existing investigation updates and official records.
+Only selected TransitionControl_ and existing NativeObserver_NonGui_ cases may run
+under that proposed grant. Compilation/unshown controls are distinct from shown proof.
+
+Owner roster boundary, sent as req-01M2NWK8V83BCR3E4DBJ4HFGA9: the two experimental
+NativeTransition_ Facts and supporting code remain outside canonical/main. Do not join
+the experimental branch wholesale or alter canonical filters/skip policy. Canonical
+native source remains626d16a2. Later exact-manifest proof/audit transport is separate.
+
+Verified: Grok's producer ACK resolved our original full-blob requestNSZB4; its notice
+NWCK30 was read and consumed. The r5 authorship-only contract is now bilaterally frozen
+at a3cb0d63b911e85fb357e4273854ed7923f9b06a. Mapping implementation/identity/API and
+Sequence activation remain unadmitted. This closes the peer branch of the existing graph.
+
+The native serial spine is now exact preparation grant -> isolated author and observed
+red/green controls -> frozen implementation -> independent review -> new checked shown
+slot -> fixed pair -> independent interpretation. No old slot is reused. Existing spec,
+architecture and frozen design suffice; only task proof/evidence and status records are
+new. End-to-end surface list: real admission -> test custody barrier -> host publication
+observer -> original HWND query -> append-only receipt -> controls -> independent proof.
+No product store/wire/model/UI behavior change is assigned. The remaining predicate
+set, not a retry cap, defines termination; a new failure returns to Owner.
 
 ## Exact r5 ACK and diagnostic design checkpoint — 2026-09-16
 

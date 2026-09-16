@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T19:19:44Z",
+  "generated": "2026-09-16T20:00:17Z",
   "audit": [
     {
       "actor": null,
@@ -26416,6 +26416,51 @@ window.AUDIT_DATA = {
       "tags": [],
       "outcome": "partial",
       "supersedes": "al-01M2NTEJ3XYY2NPKN7RGZZ8Y22"
+    },
+    {
+      "id": "al-01M2NWWFVJX3J88HS9H4STSRD0",
+      "shortname": "atlas-continue-after-r5-ack",
+      "datetime": "2026-09-16T20:00:15Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2NWWG542PXM5ZFPCGYJSMNJ",
+      "shortname": "atlas-transition-preparation-manifest",
+      "datetime": "2026-09-16T20:00:16Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going",
+      "summary": "Actual external B1-B3 document verdict consumed; runtime proof still required. Astra Owner confirms exact author24/35min and reviewer12/20min manifest plus experimental-roster isolation. Official new tree provisioned and watcher grant requested before source authoring. Grok producer ACK read against original full-blob consumer request; r5 authorship freeze complete. No source, build/test/GUI, join or main publication. Root renewed Owner turn is now callable; earlier capacity error was not treated as permission.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md",
+        "docs/proof/codex-d1-r5-consumer-review.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Advance Atlas from reviewed diagnostic design toward qualification without widening ownership or test-roster policy.",
+      "done_when": "Actual review disposition is handled, the exact next preparation scope is recorded and requested, and peer freeze evidence is preserved.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-16T19:52:41Z",
+      "duration_seconds": 455.0,
+      "git": {
+        "sha": "19ee8f4a9d5ecc98770b8af217654c4f6b742781",
+        "short": "19ee8f4a9",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -31080,6 +31125,28 @@ window.AUDIT_DATA = {
           "12c1ddd0 docs: record identity-bound preservation checks",
           "adb328a1 docs: independently clear Atlas assembly preservation"
         ]
+      }
+    },
+    {
+      "id": "cl-01M2NWWG0XFB2YHEW5TNPE5F6X",
+      "datetime": "2026-09-16T20:00:15Z",
+      "session": null,
+      "kind": "design",
+      "skill": "execute-with-coordination",
+      "title": "Keep Atlas transition diagnostic roster isolated from canonical qualification",
+      "prompt": "keep going",
+      "summary": "Astra Owner confirms the experimental NativeTransition Facts and helpers remain in their diagnostic branch; source626d16a2 remains canonical. No wholesale join, implicit skips, opt-in behavior, new project or filter change. Proof/audit may travel separately.",
+      "rationale": "The reviewed pair requires separate fresh processes and unique receipt labels; ordinary full-App discovery would select both Facts in a shared cohort. Roster admission therefore requires a later explicit Owner disposition.",
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "19ee8f4a9d5ecc98770b8af217654c4f6b742781",
+        "after": "19ee8f4a9d5ecc98770b8af217654c4f6b742781",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
       }
     }
   ]

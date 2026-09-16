@@ -111,3 +111,15 @@ No review-start marker was written; duration, tokens and spend are **not recorde
 **Remaining:** Conductor persists this receipt and completes authorized audit/proof capture; Owner/Conductor decides the consumer response.
 
 **Next:** if accepted, consumer ACK must name blob `a3cb0d63b911e85fb357e4273854ed7923f9b06a` with authorship-only scope. Producer ACK must name that same blob. Until those events are inspected, bilateral freeze remains unestablished.
+
+## Subsequent bilateral freeze — Conductor record
+
+Verified: consumer request `req-01M2NSZB4T6B28MH44DKJSPXE6` contains the exact
+full-blob ACK on the requested session-to-session route. Grok subsequently resolved
+that original request as `PRODUCER ACK of exact r5 blob a3cb0d63. Authorship freeze
+closed.` Its abbreviated blob uniquely resolves to the same full blob above.
+Producer notice `req-01M2NWCK30GVH41K2S18V7FAV4` independently records the same
+authorship-only disposition and has been marked consumed. Both original event
+records were read. Bilateral r5 authorship freeze is established; implementation,
+identity/API admission and Sequence activation remain unadmitted. This later
+protocol result does not alter the independent review's historical verdict body.

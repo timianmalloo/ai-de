@@ -9534,7 +9534,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c8384e45565f549fc95a75e45c93e3eb0c8d39b4e223ef531a52136bdf2fa1c3"
+      "sourceSha256": "c88c6ea7cd31d8585b1a2cd99881202800f6c6e78317eb9f9580db2d2012617d"
     },
     {
       "id": "coordination-code-atlas",
@@ -12108,7 +12108,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "d0202729659383c30222db13c23c1c62ad0144e58d2572be810fee3c13eaa6eb"
+      "sourceSha256": "edd859ebeaa75d680db6476cc84961aaac02621ecfe50273fe3723d7a1178eaf"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -12967,6 +12967,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "b7fc04cfb69f530c455fb6c7efa6a7de44ad118ff81d7465ae5612eaf82c4f16"
     },
     {
+      "id": "proof-atlas-p1-03-transition-design-review",
+      "path": "docs/proof/atlas-p1-03-transition-design-review.md",
+      "title": "Atlas P1-03 transition design: delivered independent verdict and preparation boundary",
+      "type": "doc",
+      "status": "completed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "The watcher delivered independent B1-B3 document-design clearance. Runtime proof and exact preparation/execution grants remain separate; experimental Facts stay outside the canonical candidate.",
+      "tags": [
+        "proof",
+        "atlas",
+        "diagnostic-design",
+        "independent-review"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-p1-03",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-atlas-five-gates",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "09300992d41544cd5fa8715cb580c670ce80ba1841a2ee91476c0f5f679b6bd4"
+    },
+    {
       "id": "proof-atlas-peer-review-transport",
       "path": "docs/proof/atlas-peer-review-transport.md",
       "title": "Atlas independent review receipt transport",
@@ -13294,7 +13328,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "91534b37a83520404b917f78216722405745dc77f0a7d1b1ed19af45337e1351"
+      "sourceSha256": "18cc191ca9f68c05a74ddc5d4abe23ebb8972927173a17b8e7e3e2fc6fa88194"
     },
     {
       "id": "proof-d0-atlas-capture-review",
@@ -23367,5 +23401,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "5405d7429c283942768445cfd48bc2e488bd54c15371a8bbd0af917dd7a26cbc"
+  "graphSha256": "71297b4682eb646626b820345d94e9214a6f38a32d8ecbeac5ab7f2fbb0ff2bc"
 };
