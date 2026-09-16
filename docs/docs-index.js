@@ -5580,6 +5580,46 @@ window.DOCS_INDEX = {
       "sourceSha256": "3e860fbf0e6932ec762c4cf6910fd9f05e23415c9033b98228febc8544cfba3b"
     },
     {
+      "id": "note-d1-codex-entry-point-handshake-r3",
+      "path": "docs/notes/d1-codex-entry-point-handshake-r3.md",
+      "title": "D-1 ↔ Codex handshake r3 — non-consuming boundary; mapper unassigned",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Exact r3 corrections from Codex five-gates (req-01M2KSD1JQG5WEBJVSDNYEH54J). Non-consuming boundary. Mapper unassigned. No live Open Sequence from D-1. Freeze only after both peers ACK this blob SHA.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "entry-points",
+        "atlas-e1",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake-r2",
+          "rel": "supersedes"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-admission",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e9d58e3992b3d806992144fa09759060fcc31e0757216bf5c6b86fb8944baaf6"
+    },
+    {
       "id": "note-d1-n1-inventory",
       "path": "docs/notes/d1-n1-inventory.md",
       "title": "D-1 N1 inventory — existing store and queries (facts; handshake not frozen)",
@@ -20665,5 +20705,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c3d6bbd33c60d5b420651b955fdf56fa55f2dcf8ae95cb1330b4e06bad9911ab"
+  "graphSha256": "76e5b473d26ad4527bb16f13060cbe8f8a3a86128fff168ae5681791510de45b"
 };
