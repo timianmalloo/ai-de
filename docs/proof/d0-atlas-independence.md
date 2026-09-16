@@ -266,3 +266,132 @@ At the original20-call ceiling, the official audit writer rejected the closing c
 Recovery at 2026-09-16T02:37:36.295602+00:00: use the actual writer contract with `--shortname d0-conditional-closure`, preserve the original timing marker, append the own audit, commit only test/proof/audit JSONL, and release the exact two leases in finally. PRIMARY liveness now records the observed release state. No source edit or test rerun occurs during recovery. Source SHA256 remains `60fa8cccb388e396076787f023694a7c3e4eac377db1c553cb73da3a95528023`. The final66/66 TRX is `.artifacts/d0-closure/closure-green.trx`, SHA256 `4320d5a0865a9f63c0a72001afed190c29f184bcc653fe79517a5f5bd567aee8`; its actual exit remains0.
 
 Recurrence class: administrative command contract omissions and premature lifecycle claims. Sweep: inspected the required audit field, exact staged manifest, source/TRX fingerprints and own leases. Derive/prevent: the retained recovery script asserts the immutable source and counters, supplies the required shortname, stops on writer/commit failure, and releases in finally with observed liveness readback. Parent owns the central class/control union. This recovery does not enlarge implementation scope or clear independent review.
+
+
+## FR-004/FR-005 capture consistency and refusal measurement correction
+
+Goal: make the real loader's syntax and fingerprint describe the same captured text, and make every analyzer result distinguish measured values from unavailable quantities. Done when the controlled loader seam and retained cases qualify and source/proof/own audit are frozen for independent review. T2; one author; no child agents. Owner decision `cl-01M2M1X65X5WECX0V5HBNCV424` admitted this finite correction. Base independent BLOCK `5364becbdcb2f19061cbdd78464720797989eed1` and `docs/proof/d0-atlas-conditional-review.md` remain unchanged; no author clears the veto.
+
+Session `codex-d0-atlas-capture-consistency`, author `codex-astra-d0-author`, provisioned tree `C:/Projects/ai-de-fix-d0-atlas-capture-consistency`. Scope: existing test, this proof, official own audit; no product/project/dependency changes, broad/STA/shown/native tests, joins or push. Surface list: physical source capture -> decoded immutable text -> syntax/fingerprint -> later inventory/content validation -> direct-static acceptance/refusal -> measured result. The existing26 roots,60 exact port declarations,8-assignment ceiling,66 cases, UTF-8/BOM/CRLF contract and fixed four generated-input ceiling remain.
+
+### Capture invariant and test oracle
+
+The actual Load implementation captures each source path's decoded text once. Its immutable string produces both the syntax tree and FrozenSources fingerprint. Later source inventory/content checks compare against that capture. The private loader overload's optional after-syntax callback is null on the normal path; permanent tests invoke this actual seam against private copies of the real corpus and reviewed inputs under `.artifacts/d0-capture/corpus-*`. No reflection-corrupted boundary or timing race is used.
+
+The controlled A/A capture is accepted. After-capture disk replacement A/B must produce CLOSURE; reloading the same changed disk B/B must reach the existing ATLAS refusal. Additional actual-loader cases delete a captured file, add an ordinary source file, or hold an exclusive file handle after capture. All three refuse; the handle releases in finally. Fixture paths are fully resolved before de-duplication so alternate separators do not duplicate generated inputs. The copies and raw evidence remain retained. Legitimate in-memory adversarial mutations are unchanged and remain covered by the retained66 cases.
+
+This establishes immutable capture consistency, not an atomic filesystem snapshot, a measured race frequency, arbitrary generator/configuration completeness or runtime/transitive dependency proof. A file that changes while separate files are read cannot silently refresh its fingerprint to a later version. Later inventory/content mismatch refuses. An unreadable source encountered before a decoded value can be captured cannot produce an accepted result; the controlled unreadable case specifically exercises validation after capture.
+
+### Measurement contract
+
+All Analyze return paths pass through one finishing function, which records the observed captured tree count and Stopwatch elapsed time. Root/reference/census/population/expression quantities use nullable values and render `not-recorded` until evaluated. Ports have an explicit recorded flag. A refused root selection does not claim zero roots/references/ports. Overflow reports the measured symbol count/population, actual corpus, elapsed time and observed0 visited assignments; expressions remain unavailable. Populations exceeding the result integer representation are unavailable in the metric and remain exact in the refusal text, rather than being clamped to a plausible false count. Coverage completion remains separate from acceptance.
+
+### Actual red and green evidence
+
+The first new-test build failed xUnit2002 because null assertions targeted the old nonnullable integer fields. Those assertions were replaced with the requested emitted `not-recorded` contract. The next7-case run showed3 genuine telemetry failures and4 fixture failures from duplicate physical generated paths. These diagnosis runs remain raw history, not FR-004 acceptance evidence. After path normalization, `capture-valid-red.trx` ran7 cases,0 passed,7 failed, exit1. The actual changed-capture row showed A/A accepted, A/B accepted with empty errors, and B/B two ATLAS refusals. The repair script requires that observed paired counterexample before it installs the capture correction.
+
+Final normal-build filter: `FullyQualifiedName~SolutionTreeProbeTests.ProbeAtlas_`. `capture-green.trx`: **73 executed,73 passed,0 failed,0 skipped, exit0**. The original66 cases plus4 capture cases and3 refusal-metric cases passed. Test duration was1minute9seconds as emitted by dotnet; the exact TRX timestamps remain raw evidence. Enum, FileRead and FactoryBuild method bodies were compared with the base after newline normalization and remain identical; this filter did not execute them.
+
+| Evidence | SHA256 |
+|---|---|
+| `.artifacts/d0-capture/capture-valid-red.trx` | `3789bb654d78a1a98c2f54788617acabf2d9f2c02f7edabf9ddfcfd23186d646` |
+| `.artifacts/d0-capture/capture-green.trx` | `e791a66afe3b7ab2d9f31d7a2dc5007ad2f59868545c0711ddf2d2025d647789` |
+| frozen `tests/AiDe.App.Tests/SolutionTreeProbeTests.cs` bytes | `5611216eca8ebcf4f207a853938991886a9401596908730a63afe0973dd4a0de` |
+| frozen test LF bytes | `5611216eca8ebcf4f207a853938991886a9401596908730a63afe0973dd4a0de` |
+
+Selected actual result/error readback:
+
+```text
+RED AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_RealLoader_RefusesChangesAfterSyntaxCapture(change: "missing")
+Assert.Contains() Failure: Filter not matched in collection
+Collection: []
+DIRECT_STATIC roots=26 references=3976 ports=58 errors=0 corpusTrees=346 symbols=0 expressions=4551 population=1 assignments=1 coverageComplete=True accepted=True seconds=3.299200
+
+DIRECT_STATIC roots=26 references=3976 ports=58 errors=0 corpusTrees=346 symbols=0 expressions=4551 population=1 assignments=1 coverageComplete=True accepted=True seconds=2.702805
+
+RED AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_RealLoader_RefusesChangesAfterSyntaxCapture(change: "added")
+Assert.Contains() Failure: Filter not matched in collection
+Collection: []
+DIRECT_STATIC roots=26 references=3976 ports=58 errors=0 corpusTrees=346 symbols=0 expressions=4551 population=1 assignments=1 coverageComplete=True accepted=True seconds=1.143653
+
+DIRECT_STATIC roots=26 references=3976 ports=58 errors=0 corpusTrees=346 symbols=0 expressions=4551 population=1 assignments=1 coverageComplete=True accepted=True seconds=1.062637
+
+RED AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_RealLoader_RefusesChangesAfterSyntaxCapture(change: "changed")
+Assert.Contains() Failure: Filter not matched in collection
+Collection: []
+DIRECT_STATIC roots=26 references=3976 ports=58 errors=0 corpusTrees=346 symbols=0 expressions=4551 population=1 assignments=1 coverageComplete=True accepted=True seconds=1.913082
+
+DIRECT_STATIC roots=26 references=3976 ports=58 errors=0 corpusTrees=346 symbols=0 expressions=4551 population=1 assignments=1 coverageComplete=True accepted=True seconds=1.757395
+
+DIRECT_STATIC roots=26 references=3989 ports=58 errors=2 corpusTrees=346 symbols=0 expressions=4565 population=1 assignments=1 coverageComplete=True accepted=False seconds=1.400493
+ATLAS AiDe.Core.Understanding at src/AiDe.App/Workbench/SolutionTreeSurface.cs:290
+ATLAS AiDe.Core.Understanding.SourceProjectionState at src/AiDe.App/Workbench/SolutionTreeSurface.cs:290
+RED AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_Refusals_ReportObservedMetricsAndUnknowns(mutation: "inconsistent-reference")
+Assert.True() Failure
+Expected: True
+Actual:   False
+DIRECT_STATIC roots=0 references=0 ports=0 errors=1 corpusTrees=0 symbols=0 expressions=0 population=0 assignments=0 coverageComplete=False accepted=False seconds=0.000000
+CLOSURE inconsistent frozen references
+RED AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_RealLoader_RefusesChangesAfterSyntaxCapture(change: "unreadable")
+System.IO.IOException : The process cannot access the file 'C:\Projects\ai-de-fix-d0-atlas-capture-consistency\.artifacts\d0-capture\corpus-534c86db7de6455bb8e287bda3cd7e11\src\AiDe.App\Workbench\SolutionTreeSurface.cs' because it is being used by another process.
+
+RED AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_Refusals_ReportObservedMetricsAndUnknowns(mutation: "population-overflow")
+Assert.True() Failure
+Expected: True
+Actual:   False
+DIRECT_STATIC roots=26 references=3976 ports=58 errors=1 corpusTrees=0 symbols=0 expressions=0 population=16 assignments=0 coverageComplete=False accepted=False seconds=0.000000
+COVERAGE assignment-ceiling population=16
+RED AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_Refusals_ReportObservedMetricsAndUnknowns(mutation: "missing-member")
+Assert.True() Failure
+Expected: True
+Actual:   False
+DIRECT_STATIC roots=0 references=0 ports=0 errors=1 corpusTrees=0 symbols=0 expressions=0 population=0 assignments=0 coverageComplete=False accepted=False seconds=0.000000
+ROOT WorkbenchShell.OnSolutionTreeShowGraphRequested: expected 1, found 0
+GREEN AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_RealLoader_RefusesChangesAfterSyntaxCapture(change: "unreadable")
+
+DIRECT_STATIC roots=26 references=3976 ports=58 errors=0 corpusTrees=346 symbols=0 expressions=4551 population=1 assignments=1 coverageComplete=True accepted=True seconds=1.241048
+
+DIRECT_STATIC roots=not-recorded references=not-recorded ports=not-recorded errors=1 corpusTrees=346 symbols=not-recorded expressions=not-recorded population=not-recorded assignments=0 coverageComplete=False accepted=False seconds=0.025824
+CLOSURE unreadable input: The process cannot access the file 'C:\Projects\ai-de-fix-d0-atlas-capture-consistency\.artifacts\d0-capture\corpus-6fabad7733ac4a1880e4810c070ce80e\src\AiDe.App\Workbench\SolutionTreeSurface.cs' because it is being used by another process.
+GREEN AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_Refusals_ReportObservedMetricsAndUnknowns(mutation: "population-overflow")
+
+DIRECT_STATIC roots=26 references=3976 ports=58 errors=1 corpusTrees=347 symbols=4 expressions=not-recorded population=16 assignments=0 coverageComplete=False accepted=False seconds=0.274497
+COVERAGE assignment-ceiling population=16
+GREEN AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_RealLoader_RefusesChangesAfterSyntaxCapture(change: "missing")
+
+DIRECT_STATIC roots=26 references=3976 ports=58 errors=0 corpusTrees=346 symbols=0 expressions=4551 population=1 assignments=1 coverageComplete=True accepted=True seconds=1.227200
+
+DIRECT_STATIC roots=not-recorded references=not-recorded ports=not-recorded errors=1 corpusTrees=346 symbols=not-recorded expressions=not-recorded population=not-recorded assignments=0 coverageComplete=False accepted=False seconds=0.003327
+CLOSURE source inputs mutated after capture
+GREEN AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_Refusals_ReportObservedMetricsAndUnknowns(mutation: "inconsistent-reference")
+
+DIRECT_STATIC roots=not-recorded references=not-recorded ports=not-recorded errors=1 corpusTrees=346 symbols=not-recorded expressions=not-recorded population=not-recorded assignments=0 coverageComplete=False accepted=False seconds=0.025516
+CLOSURE inconsistent frozen references
+GREEN AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_Refusals_ReportObservedMetricsAndUnknowns(mutation: "missing-member")
+
+DIRECT_STATIC roots=not-recorded references=not-recorded ports=not-recorded errors=1 corpusTrees=346 symbols=not-recorded expressions=not-recorded population=not-recorded assignments=0 coverageComplete=False accepted=False seconds=0.031907
+ROOT WorkbenchShell.OnSolutionTreeShowGraphRequested: expected 1, found 0
+GREEN AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_RealLoader_RefusesChangesAfterSyntaxCapture(change: "added")
+
+DIRECT_STATIC roots=26 references=3976 ports=58 errors=0 corpusTrees=346 symbols=0 expressions=4551 population=1 assignments=1 coverageComplete=True accepted=True seconds=1.140146
+
+DIRECT_STATIC roots=not-recorded references=not-recorded ports=not-recorded errors=1 corpusTrees=346 symbols=not-recorded expressions=not-recorded population=not-recorded assignments=0 coverageComplete=False accepted=False seconds=0.003322
+CLOSURE source inputs mutated after capture
+GREEN AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_RealLoader_RefusesChangesAfterSyntaxCapture(change: "changed")
+
+DIRECT_STATIC roots=26 references=3976 ports=58 errors=0 corpusTrees=346 symbols=0 expressions=4551 population=1 assignments=1 coverageComplete=True accepted=True seconds=1.097876
+
+DIRECT_STATIC roots=not-recorded references=not-recorded ports=not-recorded errors=1 corpusTrees=346 symbols=not-recorded expressions=not-recorded population=not-recorded assignments=0 coverageComplete=False accepted=False seconds=0.028456
+CLOSURE source inputs mutated after capture
+DIRECT_STATIC roots=26 references=3989 ports=58 errors=2 corpusTrees=346 symbols=0 expressions=4565 population=1 assignments=1 coverageComplete=True accepted=False seconds=1.187947
+ATLAS AiDe.Core.Understanding at src/AiDe.App/Workbench/SolutionTreeSurface.cs:290
+ATLAS AiDe.Core.Understanding.SourceProjectionState at src/AiDe.App/Workbench/SolutionTreeSurface.cs:290
+```
+
+### Graph, recurrence and administrative closure
+
+Graph: read independent BLOCK -> add real-loader/measurement discriminators -> observe valid red -> single-capture/nullable-result repair ->73-case qualification -> proof/audit/commit/release -> independent review. Planned8 calls/12minutes; checkpoint5. Actual **9/8 calls (overrun)**, including one Conductor-authorized administrative-only closure. Marker started2026-09-16T02:52:38Z; closure evidence readback at 2026-09-16T03:00:55.079012+00:00; official audit consumes the original timing marker. Fixture repairs and an asynchronous wait boundary consumed the planned closure reserve. The cap is recorded as a planning/cost defect, not compliance or a reason to weaken qualification. Recovery changes no source and reruns no tests.
+
+Class -> sweep -> derive -> prevent: parent-recorded DC118 capture/proof width drift and unmeasured-default telemetry. Sweep: actual-loader A/A,A/B,B/B and missing/added/unreadable captures; closure/root/overflow exits; all66 prior controls. Derive: syntax and fingerprint share one captured value, and unavailable observations cannot become numeric zero. Prevent: seven permanent discriminators plus common result finishing. Administrative recurrence: fixture contract checks and asynchronous polling exhausted the reserved closure calls; recovery preflights required audit `--shortname` and identity before writes, asserts frozen source/results, stages exactly3 authorized paths and releases exact leases in finally. Parent owns the central lesson/control union.
+
+Proof is explicit UTF-8 with verified temporary bytes and atomic replacement. Source hash is checked before and after closure. PRIMARY liveness is written only from observed lease-release outcomes. Prior BLOCK and raw/generated dirt are preserved. AIDE contract environment availability is checked at closure; absent destinations are not invented. No independent CLEAR is claimed.

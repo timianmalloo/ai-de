@@ -178,6 +178,44 @@ public sealed class SolutionTreeProbeTests
         Assert.Contains("M:OperatorFixture.Number.op_Equality",identities[5],StringComparison.Ordinal);
     }
 
+    [Theory]
+    [InlineData("changed")] [InlineData("missing")] [InlineData("added")] [InlineData("unreadable")]
+    public void ProbeAtlas_RealLoader_RefusesChangesAfterSyntaxCapture(string change)
+    {
+        var results=D0Boundary.CaptureChange(change);
+        foreach (var result in results) _output.WriteLine(result.ToString());
+        Assert.True(results[0].CoverageComplete);
+        Assert.Empty(results[0].Errors);
+        Assert.Contains(results[1].Errors,error=>error.StartsWith("CLOSURE",StringComparison.Ordinal));
+        Assert.False(results[1].CoverageComplete);
+        if (change=="changed") Assert.Contains(results[2].Errors,error=>error.StartsWith("ATLAS",StringComparison.Ordinal));
+    }
+
+    [Theory]
+    [InlineData("inconsistent-reference")] [InlineData("missing-member")] [InlineData("population-overflow")]
+    public void ProbeAtlas_Refusals_ReportObservedMetricsAndUnknowns(string mutation)
+    {
+        var result=D0Boundary.Baseline.Value.Mutate(mutation).Analyze();
+        _output.WriteLine(result.ToString());
+        Assert.True(result.CorpusTrees > 0);
+        Assert.True(result.Seconds > 0);
+        Assert.Equal(0,result.Assignments);
+        Assert.Contains("expressions=not-recorded",result.ToString(),StringComparison.Ordinal);
+        if (mutation=="population-overflow")
+        {
+            Assert.Equal(4,result.ConditionalSymbols);
+            Assert.Equal(16,result.Population);
+        }
+        else
+        {
+            Assert.Contains("symbols=not-recorded",result.ToString(),StringComparison.Ordinal);
+            Assert.Contains("population=not-recorded",result.ToString(),StringComparison.Ordinal);
+            Assert.Contains("roots=not-recorded",result.ToString(),StringComparison.Ordinal);
+            Assert.Contains("references=not-recorded",result.ToString(),StringComparison.Ordinal);
+            Assert.Contains("ports=not-recorded",result.ToString(),StringComparison.Ordinal);
+        }
+    }
+
     [Fact]
     public void ProbeAtlas_ExhaustiveCoverage_VisitsTheCompletePopulation()
     {
@@ -305,11 +343,12 @@ public sealed class SolutionTreeProbeTests
             "src/AiDe.Core/Workbench/Perspectives.cs|T:AiDe.Core.Workbench.PerspectiveSet",
         };
 
-        internal sealed record Result(int Roots, int References, string[] Ports, string[] Errors,
-            int Population = 0, int Assignments = 0, bool CoverageComplete = false, double Seconds = 0,
-            int CorpusTrees = 0, int ConditionalSymbols = 0, int Expressions = 0)
+        internal sealed record Result(int? Roots, int? References, string[] Ports, string[] Errors,
+            int? Population = null, int Assignments = 0, bool CoverageComplete = false, double? Seconds = null,
+            int? CorpusTrees = null, int? ConditionalSymbols = null, int? Expressions = null, bool PortsRecorded = true)
         {
-            public override string ToString() => $"DIRECT_STATIC roots={Roots} references={References} ports={Ports.Length} errors={Errors.Length} corpusTrees={CorpusTrees} symbols={ConditionalSymbols} expressions={Expressions} population={Population} assignments={Assignments} coverageComplete={CoverageComplete} accepted={CoverageComplete && Errors.Length == 0} seconds={Seconds:F6}\n"
+            private static string Observed(int? value) => value?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "not-recorded";
+            public override string ToString() => $"DIRECT_STATIC roots={Observed(Roots)} references={Observed(References)} ports={(PortsRecorded ? Observed(Ports.Length) : "not-recorded")} errors={Errors.Length} corpusTrees={Observed(CorpusTrees)} symbols={Observed(ConditionalSymbols)} expressions={Observed(Expressions)} population={Observed(Population)} assignments={Assignments} coverageComplete={CoverageComplete} accepted={CoverageComplete && Errors.Length == 0} seconds={Seconds?.ToString("F6",System.Globalization.CultureInfo.InvariantCulture) ?? "not-recorded"}\n"
                 + string.Join("\n", Errors) + "\nPORTS " + string.Join("; ", Ports);
         }
 
@@ -324,9 +363,10 @@ public sealed class SolutionTreeProbeTests
             return found[0];
         }
 
-        private static D0Boundary Load()
+        private static D0Boundary Load() => Load(RepoRoot(), null);
+
+        private static D0Boundary Load(string root, Action? afterSyntaxCapture)
         {
-            var root = RepoRoot();
             var configuration = new DirectoryInfo(AppContext.BaseDirectory).Parent!.Name;
             var paths = new[] { "AiDe.Core", "AiDe.App" }.SelectMany(project =>
                 Directory.EnumerateFiles(Path.Combine(root, "src", project), "*.cs", SearchOption.AllDirectories)
@@ -336,7 +376,11 @@ public sealed class SolutionTreeProbeTests
                 .Concat(new[] { "App.g.cs", "MainWindow.g.cs" }.Select(name => Path.Combine(root, "src", "AiDe.App", "obj", configuration, "net10.0-windows", name)))
                 .ToArray();
             Assert.NotEmpty(paths);
-            var trees = paths.Select(path => CSharpSyntaxTree.ParseText(File.Exists(path) ? File.ReadAllText(path) : "", new CSharpParseOptions(LanguageVersion.Preview), path)).ToArray();
+            // Syntax and validation identity come from this same decoded text value.
+            // This is an immutable capture, not an atomic filesystem snapshot.
+            var captured = paths.Select(path => (Path: path, Text: File.Exists(path) ? File.ReadAllText(path) : "")).ToArray();
+            var trees = captured.Select(input => CSharpSyntaxTree.ParseText(input.Text, new CSharpParseOptions(LanguageVersion.Preview), input.Path)).ToArray();
+            afterSyntaxCapture?.Invoke();
             var references = new Dictionary<string, MetadataReference>(StringComparer.OrdinalIgnoreCase);
             var trusted = Assert.IsType<string>(AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES"));
             foreach (var path in trusted.Split(Path.PathSeparator).Concat(Directory.GetFiles(AppContext.BaseDirectory, "*.dll")))
@@ -357,7 +401,8 @@ public sealed class SolutionTreeProbeTests
                     references.Where(pair => pair.Key != "AiDe.Core").Select(pair => pair.Value), options),
                 CSharpCompilation.Create("AiDe.App", trees.Where(t => InProject(root, t.FilePath, "AiDe.App")), references.Values, options), root);
             return boundary with { FrozenCoreReferences=boundary.Core.References.ToArray(), FrozenAppReferences=boundary.App.References.ToArray(),
-                FrozenSources=boundary.SourcePaths().ToDictionary(path=>path,path=>Fingerprint(File.ReadAllText(path)),StringComparer.Ordinal) };
+                FrozenSources=captured.Where(input => !Path.GetRelativePath(root,input.Path).Split(Path.DirectorySeparatorChar).Any(part => part is "bin" or "obj"))
+                    .ToDictionary(input=>input.Path,input=>Fingerprint(input.Text),StringComparer.Ordinal) };
         }
 
         private List<SyntaxNode> SelectRoots()
@@ -493,15 +538,16 @@ public sealed class SolutionTreeProbeTests
         internal Result Analyze()
         {
             var timer = System.Diagnostics.Stopwatch.StartNew();
+            Result Finish(Result result) => result with { CorpusTrees=Trees.Count(), Seconds=timer.Elapsed.TotalSeconds };
             var closure = ClosureErrors();
-            if (closure.Length != 0) return new(0,0,[],closure);
+            if (closure.Length != 0) return Finish(new(null,null,[],closure,PortsRecorded:false));
             var direct = AnalyzeDirect();
-            if (direct.Roots != 26) return direct;
+            if (direct.Roots != 26) return Finish(direct);
             var symbols = Census(Core,App);
             var population = System.Numerics.BigInteger.One << symbols.Length;
-            if (population > 8) return direct with { Errors = ["COVERAGE assignment-ceiling population=" + population], Population = population <= int.MaxValue ? (int)population : int.MaxValue };
+            if (population > 8) return Finish(direct with { Errors = ["COVERAGE assignment-ceiling population=" + population], Population = population <= int.MaxValue ? (int)population : null, ConditionalSymbols=symbols.Length });
             var errors = new SortedSet<string>(direct.Errors,StringComparer.Ordinal);
-            var attempted=0; var complete=true; var expressions=0;
+            var attempted=0; var complete=true; int? expressions=null;
             try
             {
                 var expected = Snapshot(Core,App,out var baselineErrors,out _);
@@ -523,9 +569,9 @@ public sealed class SolutionTreeProbeTests
             }
             catch (InvalidOperationException exception) { errors.Add("COVERAGE incomplete: "+exception.Message); complete=false; }
             foreach (var error in ClosureErrors()) { errors.Add(error); complete=false; }
-            return direct with { Errors=errors.ToArray(), Population=(int)population, Assignments=attempted,
+            return Finish(direct with { Errors=errors.ToArray(), Population=(int)population, Assignments=attempted,
                 CoverageComplete=complete && attempted==(int)population, Seconds=timer.Elapsed.TotalSeconds,
-                CorpusTrees=Trees.Count(), ConditionalSymbols=symbols.Length, Expressions=expressions };
+                ConditionalSymbols=symbols.Length, Expressions=expressions });
         }
 
         private static CSharpCompilation Propagate(CSharpCompilation c, CSharpCompilation a)
@@ -617,7 +663,7 @@ public sealed class SolutionTreeProbeTests
         {
             List<SyntaxNode> roots;
             try { roots = SelectRoots(); }
-            catch (InvalidOperationException error) { return new(0, 0, [], [error.Message]); }
+            catch (InvalidOperationException error) { return new(null, null, [], [error.Message], PortsRecorded:false); }
             var errors = new SortedSet<string>(StringComparer.Ordinal);
             var declarations = new List<SyntaxNode>();
             var names = new HashSet<string>(StringComparer.Ordinal);
@@ -796,6 +842,43 @@ public sealed class SolutionTreeProbeTests
             var user=CSharpSyntaxTree.ParseText("namespace OperatorFixture; public struct Number { public static bool operator ==(Number a,Number b)=>true; public static bool operator !=(Number a,Number b)=>false; public static bool Run(Number a,Number b)=>a==b; }",path:Path.Combine(boundary.Root,"src/AiDe.App/User.cs"));
             var userCompilation=CSharpCompilation.Create("OperatorFixture",[user],boundary.Core.References,new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
             results.Add(boundary.CanonicalIdentity(userCompilation.GetSemanticModel(user).GetSymbolInfo(user.GetRoot().DescendantNodes().OfType<BinaryExpressionSyntax>().Single()).Symbol,boundary.Core));
+            return results.ToArray();
+        }
+
+        internal static Result[] CaptureChange(string change)
+        {
+            var baseline=Baseline.Value;
+            var root=Path.Combine(baseline.Root,".artifacts/d0-capture/corpus-"+Guid.NewGuid().ToString("N"));
+            var configuration=new DirectoryInfo(AppContext.BaseDirectory).Parent!.Name;
+            var paths=baseline.Trees.Select(tree=>tree.FilePath).Concat(ClosurePins.Keys.Select(pattern=>
+                Path.Combine(baseline.Root,pattern.Replace("{configuration}",configuration,StringComparison.Ordinal)))).Select(Path.GetFullPath).Distinct(StringComparer.OrdinalIgnoreCase);
+            foreach (var path in paths.Where(File.Exists))
+            {
+                var destination=Path.Combine(root,Path.GetRelativePath(baseline.Root,path));
+                Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
+                File.Copy(path,destination);
+            }
+            var results=new List<Result> { Load(root,null).Analyze() };
+            var target=Path.Combine(root,Surface);
+            FileStream? held=null;
+            try
+            {
+                var captured=Load(root,()=>
+                {
+                    if (change=="missing") File.Delete(target);
+                    else if (change=="added") File.WriteAllText(Path.Combine(root,"src/AiDe.App/Added.cs"),"namespace Unrelated; internal class Added {} ");
+                    else if (change=="unreadable") held=new FileStream(target,FileMode.Open,FileAccess.ReadWrite,FileShare.None);
+                    else
+                    {
+                        var text=File.ReadAllText(target);
+                        var method=CSharpSyntaxTree.ParseText(text).GetRoot().DescendantNodes().OfType<MethodDeclarationSyntax>().Single(node=>node.Identifier.ValueText=="ShowLoading");
+                        File.WriteAllText(target,text.Insert(method.Body!.OpenBraceToken.Span.End,"System.GC.KeepAlive(typeof(AiDe.Core.Understanding.SourceProjectionState));"));
+                    }
+                });
+                results.Add(captured.Analyze());
+            }
+            finally { held?.Dispose(); }
+            if (change=="changed") results.Add(Load(root,null).Analyze());
             return results.ToArray();
         }
 
