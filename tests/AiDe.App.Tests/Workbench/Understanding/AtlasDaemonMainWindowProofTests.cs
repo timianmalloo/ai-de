@@ -46,6 +46,7 @@ public sealed class AtlasDaemonMainWindowProofTests
     public async Task NativeObserver_NonGui_ActualAdapterDistinguishesHostsChildrenAndRetainedViews()
     {
         var receipt=ObserverReceipt();
+        int? retainedViewId=null;
         await RunDispatcherAsync(async () =>
         {
             using var observer=new InstanceObserver(receipt);
@@ -74,6 +75,7 @@ public sealed class AtlasDaemonMainWindowProofTests
             Assert.True(row.ContentIsReaderView);
             Assert.Equal("owned-window",row.Attachment);
             var view=Assert.Single(before.Views,v=>v.Id==observer.Identity(old));
+            retainedViewId=view.Id;
             Assert.Equal(observer.Identity(old.FilesControl),view.FilesControlId);
             Assert.Equal(observer.Identity(old.SourceControl.Document),view.DocumentId);
             Assert.Equal(0,view.FileRoots);
@@ -104,6 +106,15 @@ public sealed class AtlasDaemonMainWindowProofTests
         },receipt);
         var json=File.ReadAllText(receipt.DirectoryPath+"/receipt.json");
         Assert.DoesNotContain("DO-NOT-EMIT",json,StringComparison.Ordinal);
+        using(var saved=JsonDocument.Parse(json))
+        {
+            var packet=Assert.Single(saved.RootElement.GetProperty("Events").EnumerateArray(),item=>
+                item.GetProperty("Stage").GetString()=="observer.wpf" && item.GetProperty("Attributes").GetProperty("Boundary").GetString()=="before");
+            var savedView=Assert.Single(packet.GetProperty("Attributes").GetProperty("Views").EnumerateArray(),item=>
+                item.GetProperty("Id").GetInt32()==retainedViewId);
+            Assert.False(savedView.GetProperty("IsLoaded").GetBoolean());
+            Assert.False(savedView.GetProperty("IsVisible").GetBoolean());
+        }
         Assert.Equal(0,receipt.FailureCount);
     }
 
@@ -365,7 +376,8 @@ public sealed class AtlasDaemonMainWindowProofTests
         string State,string Attachment,int? ParentId,bool CensusMember,bool TestRetained,bool? IsLoaded,bool? IsVisible,string ContentKind,bool ObserverRetained=true);
     private sealed record ViewObservation(int? Id,int? FilesControlId,int? OutlineControlId,int? SourceControlId,int? DocumentId,
         int? FileRoots,int? OutlineRows,int? Highlights,bool? ReadOnly,bool? CanGoBack,bool? CanLoadMore,
-        string Attachment,int? ParentId,bool CensusMember,bool TestRetained,string BackingLeaseRelation="not-observed",bool ObserverRetained=true);
+        string Attachment,int? ParentId,bool CensusMember,bool TestRetained,bool? IsLoaded,bool? IsVisible,
+        string BackingLeaseRelation="not-observed",bool ObserverRetained=true);
     private sealed record ReaderObservation(int? WrapperId,int? InnerReaderId,int? LeaseId,bool? Disposed,
         bool? Terminal,bool? Invalidated,long? ReleaseStartEvent,bool? ReleaseCompleted);
     private sealed record WpfObservation(long Sequence,long BatchId,string Boundary,DateTimeOffset StartedUtc,DateTimeOffset EndedUtc,
@@ -521,12 +533,17 @@ public sealed class AtlasDaemonMainWindowProofTests
                 foreach(var view in candidates.OfType<AtlasReaderView>().Take(33))
                 {
                     if(views.Count>=32 || Budget()){Limited(views.Count>=32?"view-limit":"time-budget");break;}
+                    bool? isLoaded=null,isVisible=null;
+                    try { isLoaded=view.IsLoaded; }
+                    catch(Exception error) when(error is not OutOfMemoryException){Limited("view-loaded:"+error.GetType().Name);}
+                    try { isVisible=view.IsVisible; }
+                    catch(Exception error) when(error is not OutOfMemoryException){Limited("view-visible:"+error.GetType().Name);}
                     try
                     {
                         var connection=Connection(view);
                         views.Add(new(Identity(view),Identity(view.FilesControl),Identity(view.OutlineControl),Identity(view.SourceControl),
                             Identity(view.SourceControl.Document),view.FileRoots.Count,view.OutlineRows.Count,view.CurrentHighlights.Count,
-                            view.IsSourceReadOnly,view.CanGoBack,view.CanLoadMore,connection.State,connection.Parent,Seen(view),Held(view)));
+                            view.IsSourceReadOnly,view.CanGoBack,view.CanLoadMore,connection.State,connection.Parent,Seen(view),Held(view),isLoaded,isVisible));
                     }
                     catch(Exception error) when(error is not OutOfMemoryException){Limited("view:"+error.GetType().Name);}
                 }
