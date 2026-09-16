@@ -12684,6 +12684,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "2c0e0bbdcecc72079f6b8a801b7777b95b6c28834d8623bbe6aa2998ecb44925"
     },
     {
+      "id": "proof-atlas-assembled-preservation-review",
+      "path": "docs/proof/atlas-assembled-preservation-review.md",
+      "title": "Independent preservation review of the assembled Atlas candidate",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "CLEAR for source and append-only-history preservation at frozen candidate e6aed085; runtime qualification and main acceptance remain separate.",
+      "tags": [
+        "atlas",
+        "assembly",
+        "independent-review",
+        "preservation"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-five-gates",
+          "rel": "verifies"
+        },
+        {
+          "to": "proof-d0-atlas-capture-review",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2a69e035878b863efa676be8a5e895952dd2327e70f2df6388ce0f0efea2a505"
+    },
+    {
       "id": "proof-atlas-core-gate-repair",
       "path": "docs/proof/atlas-core-gate-repair.md",
       "title": "Atlas byte-bound and containment gate repair",
@@ -23212,5 +23242,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "682a2030aefb025f1554339b47f84cc0955d553b966899975ff39b52e2c25cef"
+  "graphSha256": "aaf549207f20b24760c8b566d5b4d38dbc09415d11dc1566f2a5329b7c0030e3"
 };
