@@ -82,6 +82,59 @@ Loop variant: unresolved enumerated repair/review predicates decreases toward ze
 
 ## Planned versus actual
 
+### Qualification failure reconciliation, 2026-09-16
+
+The first canonical run reached App results of **1165 executed, 1163 passed, 2 failed,
+0 skipped**. It was stopped on that observed failure and SLOT-CODEX-P1-01 released. No
+Core result, final gate union, Release build or acceptance is claimed. Raw receipts are
+preserved in `artifacts/atlas-five-gates/failed-slot-p1-01/`; hashes are in the Proof Pack.
+
+Goal: resolve these two bounded integration failures and qualify the combined candidate.
+Done when: reviewed D0 boundary repair and native setup preflight precede a fresh checked
+slot, unchanged canonical qualification and independent combined clearance. Not in scope:
+product behavior, D1/E1/E2 implementation, new ownership policy or Codex main publication.
+Tier **T2** remains the integrated programme tier; the resumed conversational T1 label was
+incorrect. Fan-out cap4 including Conductor/Owner; at most two workers. New execution
+horizon40 Conductor tool boundaries, checkpoint24; exact earlier diagnostic spend is not
+claimed. The graph marker starts at00:32:51Z after diagnostic grounding, not before it.
+
+This is a material `/optimize-graph` reassessment of R5, not a repeat of completed assembly.
+`investigate` isolated missing process setup and an obsolete global test premise. Existing
+D0 specification/ADR0038 and Atlas architecture remain inputs. New artifacts are a bounded
+Owner interpretation, exact guard manifest/design and proof; no new feature spec or architecture.
+
+| Node | Exit condition and failure oracle | Dependencies |
+|---|---|---|
+| F1 preserve and diagnose | Failed TRX retained; both exact failures read; prior slot released | Failed R5 |
+| F2 boundary decision/review | Owner and independent Test/architecture agree finite roots and shared ports; no global/transitive overclaim | F1 |
+| F3 D0 guard author | Exact source manifest; current coexistence passes; Atlas dependency, missing root and unaccounted helper mutants fail | F2 |
+| F4 execution preflight | Missing/invalid/reused label and missing binary refuse; explicit same-tree Debug build; unchanged native proof | F1 |
+| F5 independent repair review | Different reviewer reads implementation, roots, raw outcomes and handoffs; all triggered vetoes clear | F3,F4 |
+| F6 official join and fresh slot | Reviewed component joined by existing barrier mechanism; exact combined pin and allocated slot | F5 |
+| F7 canonical qualification | Full recount/TRXs, all gates and Release inspected; stop/release on any new failure | F6 |
+| F8 final review and handoff | Combined review clears; exact candidate/receipts submitted to GHCP publisher | F7 |
+
+```mermaid
+graph TD
+ F1-->F2-->F3-->F5-->F6-->F7-->F8
+ F1-->F4-->F5
+```
+
+Naive plan serializes F4 after F3. The optimized graph permits independent execution setup
+and test authoring; no shared source/index/generated output and no concurrent desktop use.
+Eight unit-cost nodes, serial span8 versus dependency span7; this is an **Inferred** model,
+not a time saving measurement. Full qualification is an observed serialized operation.
+The Test Architect/architecture reviewer cleared finite direct-static scope; Owner confirmed
+the user's conflict grant. Simplifier: no generic call-graph framework or new dependency.
+SRE: fresh slot, measured PID/start/end, no overlapping full/shown runs. Orchestrator: separate
+author tree and independent review, official join, no author self-clear.
+
+Variant: enumerated unresolved failure/review predicates decreases to zero. A newly observed
+failure stops qualification and requires diagnosis; two non-decreasing repair passes trigger
+Owner reassessment, never a retry-until-green loop. One retry only for a diagnosed transient
+tool fault. Partial returns remain unaccepted. Main movement forces reconciliation before freeze.
+The E1/E2 handshake remains a separate read-only seam and does not delay these repairs.
+
 ### Resumed current-main assembly, 2026-09-16
 
 Actual checkpoint: R1/R2/R3 complete at sourcefe95be86; R4 checked desktop slot still pending.

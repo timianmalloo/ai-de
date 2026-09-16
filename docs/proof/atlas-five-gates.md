@@ -27,7 +27,76 @@ Historical raw integrated results remain read-only under C:/Projects/ai-de-atlas
 
 ## Current verdict
 
+### Canonical qualification failure and preserved evidence
+
+SLOT-CODEX-P1-01 runner8556 started2026-09-16T00:17:58.474224Z on HEAD247e6b4e,
+sourcefe95be86/basebcf4959b. First completed App TRX contains1165 result elements:
+1165 executed,1163 passed,2 failed,0 skipped. Failures:
+
+- `AtlasDaemonMainWindowProofTests.MainWindow_RealDaemonReplacement_AcknowledgesHealthyReleaseAndPreservesBorrowedClient`:
+  required `ATLAS_PROOF_RUN` absent. Execution omission, not a product defect. Actual test source
+  is tests/AiDe.App.Tests/Workbench/Understanding/AtlasDaemonMainWindowProofTests.cs.
+- `SolutionTreeProbeTests.ProbeAtlas_NoUnderstandingNamespaceAndNoUnderstandingFolder`:
+  `src/AiDe.Core/Understanding must not exist for D-0`. This global premise conflicts with
+  admitted Atlas coexistence; Owner interpretation and bounded repair are in the coordination record.
+
+The recorded owned process tree was deliberately stopped after reading the completed failed TRX;
+runner start identity was checked before termination. End00:23:18.413129Z, exit4294967295 is
+termination, not a native gate result. Post-stop process census matching this integration tree was
+empty. Explicit END/RELEASE requests: req-01M2KSJ3CYXTF9KYRM78JEC5KE (watcher),
+req-01M2KSJ3EPH4N6P5DHSWYD43Y6 (foreground), req-01M2KSJ3GGQ6YXD58J6XSAQVDX (Grok).
+No Core TRX was available in the observed results directory; no Core acceptance, final gates,
+Release build or main publication follows from this run. No step5 accepted-audit was emitted.
+
+Preserved copies under `artifacts/atlas-five-gates/failed-slot-p1-01/` before any rerun:
+
+| File | Bytes | SHA256 |
+|---|---:|---|
+| AiDe.App.Tests.trx |1819879|2a1ad107c578f924046a8aa448e6da5ed45a6827633f92002ff3caf570ed4e71|
+| canonical-qualification.log |1617|5cd4b23ff5c4b5ff56cde186e6d60eaef9fb150d5e4f974da2adce03e9e9dbcf|
+| observed-trx-results.json |1283|137bc3648153306a3d748b1f2a46f1844392ce2f99a30499b5c08a2d433d6f9d|
+| qualification-state.json |1295|2c04743351ca6efce01b31b33bb563ccfba2a7bf2d44518767c7d3d5e850e5f0|
+
+Flagged scheduling evidence: Grok reported PID27416 between00:18:35.3395464Z and
+00:18:56.1441733Z, overlapping the allocation. Exact command/GUI use was requested through
+req-01M2KSD1MJBSTMM2WRKEVMDDHN and req-01M2KSD1PCSM3AT67NZXEC5J6S. No causal claim is made.
+The observed two failures already name a setup omission and an incompatible global assertion.
+
+Class → sweep → derive → prevent: reuse DC-118 for a guard whose scope grew beyond its
+integration contract, and DC-207 for process-local setup omitted at a new shell boundary.
+Sweep covers D0 producer/client/dispatch/UI roots and native proof label/build/root requirements.
+The replacement must reject real dependency mutations and missing coverage; execution preflight
+must refuse missing/reused setup before launching the expensive run. Controls are pending until
+their actual results are recorded; prose alone is not closure.
+
 ### Current-main assembly observed, 2026-09-16
+
+**Later native execution-control review:** independent review blocked the initial preflight's
+missing post-build dirty-input check. The corrected script repeats the identical input check
+before/after build and records both. Three valid cases and fourteen refusals passed, independently
+rerun by the reviewer. Preflight SHA256
+`a896d129bc167f5792b9ec6927315c365a0d29709154c0109e07fb08b1a9bcfc` is CLEAR.
+
+The external execution wrapper,
+`C:/Users/malla/AppData/Local/Temp/atlas-five-gates-assembly/run_qualification_v2.py`, SHA256
+`dcdb84dc39abd8d2c5647a887e3e0365989ab08f167a7a94c3af0c138d96f74f`, received independent
+Test/SRE CLEAR after adding the reviewed-preflight pin and exact required main base. One explicit
+environment reaches preflight and the unchanged canonical join. The wrapper validates the
+preflight receipt and binary hashes, preserves new TRXs, stops its owned live process tree on a
+failed/skipped/empty suite, records PID/start/end and renews/releases exact short leases. No
+review executes a build or grants a slot. Fresh slot and reviewed combined HEAD remain mandatory.
+
+Subsequent record-only correction: `docs/proof/atlas-core-gate-repair.md` used unsupported
+frontmatter `type: proof`, the single finding from the actual graph inventory. Owner approved
+`type: doc`; evidence body and source/test blobs are unchanged. Its document blob changes and
+must not be included in a later claim that all14 original blobs still match byte-for-byte.
+
+Initial native setup prevention: `docs/proof/records/atlas-five-gates/native-preflight.py --self-test`
+observed one valid fixture and eight refused cases: missing, empty, absolute-path and non-ASCII
+labels; missing session and wrong agent; existing native receipt; missing binary. No GUI/build
+was run by these fixtures. The script validates registered identity/root and reviewed HEAD,
+builds the same-tree Debug daemon explicitly, writes an independent receipt outside the native
+proof directory and records hashes. Independent script review and real build remain pending.
 
 Assembled source checkpoint `fe95be86b08c34f90dd8236819e4216dd8316e9b` on
 `integration/atlas-five-gates`, C:/Projects/ai-de-integration-atlas-five-gates, contains all eight

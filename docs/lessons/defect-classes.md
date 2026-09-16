@@ -4950,6 +4950,16 @@ for both or split.*
 
 ### DC-118 — Transcription is a width-changing step, and nothing checks the width: a ruling becomes a clause, a clause becomes a guard, and the scope silently moves
 
+- **Recurrence (D0/Atlas integration, 2026-09-16):** a D0 independence requirement became a
+  repository/assembly-wide prohibition on Atlas. Joining independently admitted features then
+  failed `ProbeAtlas_NoUnderstandingNamespaceAndNoUnderstandingFolder`. Owner interpretation:
+  D0 must not use Atlas as its implementation; Atlas may coexist. Sweep: complete D0 types,
+  query/client/IPC/factory/Shell members and D0 helpers, with explicit shared-port exits.
+  Derive: a guard must state the boundary it proves and refuse missing coverage. Prevent:
+  bounded semantic dependency probe and adversarial Atlas/helper/root fixtures, pending
+  implementation and independent clearance. Existing enum/Source/factory controls remain.
+  Evidence: `docs/proof/atlas-five-gates.md`; this pending recurrence is not claimed controlled.
+
 - **Recurrence (Atlas five-gate repair, 2026-09-15):** a detector's whole-file substring match
   accepted a correct-looking decoy beside an unbounded live call. Independent review blocked it.
   Sweep: real caller/class, nested helper/class, forwarded variable, clamp order, comments/literals
@@ -8075,6 +8085,15 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   was replayed. Initialize PYTHONIOENCODING=utf-8 alongside identity in the launching process.
   Normal-path output and explicit status inspection are the control; a print failure is not proof
   that its preceding mutation failed. See docs/proof/atlas-five-gates.md assembly evidence.
+
+  A later qualification omitted the native proof's required ATLAS_PROOF_RUN environment label,
+  although the prerequisite was already recorded in code-atlas coordination. The unchanged test
+  failed. Sweep: label, identity, same-tree/configuration build, fresh receipt ownership, and
+  environment inheritance into the official runner. Executable prevention is
+  `docs/proof/records/atlas-five-gates/native-preflight.py`: missing/empty/path/non-ASCII labels,
+  wrong identity, an existing receipt and missing binaries refuse in isolated fixtures.
+  One valid fixture and eight refusals were observed; real setup and combined qualification
+  still require their own recorded results. No source proof is weakened or receipt overwritten.
 
 - **Shape:** an agent writes a Python (or shell) program inline as `python - <<'EOF' …` in Git Bash
   on Windows; a quote, a backslash or a `$` inside the program is mangled by the shell before the

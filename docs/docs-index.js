@@ -9534,7 +9534,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4e5a2aab8ea2e8fcc0818515e50ebf9401299629fcca89adb4c842167fcad525"
+      "sourceSha256": "f48589dc757f599b85e4b1b4dff0a66ca8fae5564a553834201c1ea1a4b3d48c"
     },
     {
       "id": "coordination-code-atlas",
@@ -9722,7 +9722,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "be188b7b2dd54de027a7c8129cc8e3324935edc8f4981eeb2f5238f3dae35b9a"
+      "sourceSha256": "511457375798bd7490e3e5587eb4264c87693b7255e710f45c9ffa3fab11cc25"
     },
     {
       "id": "design-session-profiler",
@@ -12068,11 +12068,16 @@ window.DOCS_INDEX = {
         },
         {
           "kind": "flowchart",
+          "title": "Qualification failure reconciliation, 2026-09-16",
+          "mermaid": "graph TD\n F1-->F2-->F3-->F5-->F6-->F7-->F8\n F1-->F4-->F5"
+        },
+        {
+          "kind": "flowchart",
           "title": "Resumed current-main assembly, 2026-09-16",
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "ef90430003af9d3269639d9b462c88573ed28210e45cb2da9fcc2af329d519f1"
+      "sourceSha256": "ecddf22c7b39ea21b4614b32330408f1b38cfb1541609be480ddf432ee5306e3"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -12648,6 +12653,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "2c0e0bbdcecc72079f6b8a801b7777b95b6c28834d8623bbe6aa2998ecb44925"
     },
     {
+      "id": "proof-atlas-core-gate-repair",
+      "path": "docs/proof/atlas-core-gate-repair.md",
+      "title": "Atlas byte-bound and containment gate repair",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Production index boundary proof, two killed mutations, and filesystem comparison reuse; independent review pending.",
+      "tags": [
+        "atlas",
+        "bounds",
+        "containment",
+        "regression"
+      ],
+      "links": [
+        {
+          "to": "plan-atlas-five-gates",
+          "rel": "depends-on"
+        },
+        {
+          "to": "coordination-atlas-five-gates",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d42814704484fb485ed0e3f29d0f49e7629cc7c26bc873e51fcc0b1cb4c58b8f"
+    },
+    {
       "id": "proof-atlas-five-gates",
       "path": "docs/proof/atlas-five-gates.md",
       "title": "Atlas five-gate repair evidence",
@@ -12669,7 +12708,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4d595aabeed7aaaa2085cdcc5aba45c45a5ea1b4a94867acfe56865350768bd3"
+      "sourceSha256": "426469f8724442fd1e49ee37c0208bb31b3eba1e57a01e7009ea8ff10fc57d63"
     },
     {
       "id": "proof-code-atlas-contract-grounding",
@@ -22765,5 +22804,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "b947526e30ce8edd8f4b8fd099d803d7dbbf2dc8c27398cc1a5eda6df990b302"
+  "graphSha256": "249fcad1a89b7be89e85108873683ec46d4929e8e9ed81e3895346b5d875fbb4"
 };

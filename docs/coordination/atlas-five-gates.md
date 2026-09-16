@@ -14,6 +14,37 @@ summary: "Exact blocker transfer; isolated repairs followed by GHCP-only main pu
 
 # Layer state
 
+**Latest state, 2026-09-16:** canonical slot SLOT-CODEX-P1-01 ended/released at
+00:23:18.413129Z after the first completed App TRX showed1165 executed/1163 passed/2 failed/0 skipped.
+The missing `ATLAS_PROOF_RUN` label is a Conductor execution omission. The second failure is
+D0's global Atlas-absence assertion. No full qualification, Release or publication is claimed.
+Earlier slot-pending statements below are historical. Integration HEAD247e6b4e retains sourcefe95be86.
+
+**Owner decision:** the user's “the conflicts are yours to resolve” covers this reconciliation.
+D0 must not use Atlas as its implementation; admitted Atlas may coexist. Do not rewrite the
+peer spec. Prove **direct static D0 boundary independence** over complete D0 types and exact
+query/client/IPC/factory/Shell members plus D0 helpers, with explicit shared-port exits. Missing
+roots, unaccounted helpers and actual Atlas references must fail. This does not claim arbitrary
+transitive/runtime independence; any actual indirect Atlas use discovered remains a blocker.
+Independent Test/architecture review cleared this bounded plan before authoring.
+
+New author: codex-d0-atlas-independence / codex-astra-d0-author, Astra, registered tree
+C:/Projects/ai-de-fix-d0-atlas-independence, branch fix/d0-atlas-independence, base247e6b4e.
+Exact source path: tests/AiDe.App.Tests/SolutionTreeProbeTests.cs; task proof:
+docs/proof/d0-atlas-independence.md. No product/project/baseline or shared ledger authoring.
+24-call author budget/checkpoint8; semantic spike before reliance on Roslyn binding.
+Conductor maintains execution setup and task records; reviewer remains independent.
+Peer notices req-01M2KSZRE05WHWP6K08M93KGE5 (foreground) and
+req-01M2KSZRFQJ8ZA43YN7S4N7VNN (Grok) record the precise test conflict.
+
+**Current handshake:** r2 at62670a0af06ac283fff666b7801a0e0d446a3981,
+docs/notes/d1-codex-entry-point-handshake-r2.md,
+blob76e592a32f38b5cf51c48c9a6fdd964e177f3cfc was inspected and NOT accepted.
+Correction request req-01M2KSD1JQG5WEBJVSDNYEH54J seeks a non-consuming boundary:
+Core retains identity/token/Restore authority, mapper unassigned/unavailable, no live cross-open,
+separate D1 listing and E1 observation coverage, E2 N/A. Exact corrected blob plus both peer ACKs
+is required before freeze. Notice/proposal received is not contract acceptance.
+
 **Current continuation:** foreground explicitly acknowledged Codex as current-main assembly and
 qualification executor (resolved req-01M2KNK3JNSKNTS80YHQAXYPGX; req-01M2KR6F0G883DPGFPBJXZTZKK).
 Own new integration tree C:/Projects/ai-de-integration-atlas-five-gates, branch
@@ -39,7 +70,7 @@ Primary product/index work is untouched; only supported shared coordination and 
 |---|---|---|---|
 | Exact repair source/tests/tools and task proof/plan | authored | Isolated tree, user transfer, exact short lease | Yes |
 | docs/audit/*.jsonl | register | Official append writer and content-union merge | No lease |
-| docs/lessons/defect-classes.md | register | Existing class reuse and mandated register merge | Serialized writer |
+| docs/lessons/defect-classes.md | authored (actual coord classification) | Existing class reuse; preserve all recurrence text at joins | Exact lease; serialized writer |
 | docs/docs-index.js, docs/audit/audit-data.js, docs/_meta.json, docs/_site/index.html | derived | Official regeneration after final audit | No hand merge |
 | Site HTML wrappers listed by verify-site-figures | authored | Claim exact stale wrappers before generator | Yes |
 

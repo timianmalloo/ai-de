@@ -1,7 +1,7 @@
 ---
 id: proof-atlas-core-gate-repair
 title: "Atlas byte-bound and containment gate repair"
-type: proof
+type: doc
 status: proposed
 owner: "@timianmalloo"
 tags: [atlas, bounds, containment, regression]

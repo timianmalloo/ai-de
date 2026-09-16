@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T00:16:29Z",
+  "generated": "2026-09-16T00:47:54Z",
   "audit": [
     {
       "actor": null,
@@ -23969,6 +23969,107 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-16T00:10:02Z",
       "duration_seconds": 386.0
+    },
+    {
+      "id": "al-01M2KTQTJGZCZJPEWSZEDHD6T9",
+      "shortname": "atlas-qualification-failures",
+      "datetime": "2026-09-16T00:44:16Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "the conflicts are yours to resolve",
+      "summary": "Observed first canonical App TRX: 1165 executed, 1163 passed, 2 failed, 0 skipped. Preserved receipts and released slot. Diagnosed missing native run-label setup and obsolete D0 global Atlas-absence assertion. Owner and independent review authorize finite direct-static D0 boundary repair; native proof unchanged. No Core/full-gate/Release acceptance.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve the two observed combined qualification failures within the user conflict grant.",
+      "done_when": "Failures have evidence-backed causes, bounded repair design, preserved red receipts and executable preventive controls.",
+      "tier": "T2",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T00:24:04Z",
+      "duration_seconds": 1212.0,
+      "git": {
+        "sha": "247e6b4eaefba92cea250f657159a8768e8fb91f",
+        "short": "247e6b4ea",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KTQTQ613Q5BKRD2KQWH45F",
+      "shortname": "atlas-qualification-replan",
+      "datetime": "2026-09-16T00:44:16Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "the conflicts are yours to resolve",
+      "summary": "Material R5 failure replan: preserve/diagnose, Owner and independent finite-boundary decision, isolated D0 author parallel with execution preflight, independent repair review, official join/fresh slot, unchanged qualification, final review/GHCP handoff. Existing assembly retained. Width4 total; source semantics settled before authoring. No runtime savings claim; original graph marker starts after diagnostic grounding.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md",
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Qualify the combined Atlas and current-main D0 change through a bounded failure-driven graph.",
+      "done_when": "All qualification predicates and independent review clear before GHCP publication.",
+      "tier": "T2",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T00:32:51Z",
+      "duration_seconds": 685.0,
+      "git": {
+        "sha": "247e6b4eaefba92cea250f657159a8768e8fb91f",
+        "short": "247e6b4ea",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KTWPNBB5R3W6HTWDPRHDCJ",
+      "shortname": "atlas-native-setup-control",
+      "datetime": "2026-09-16T00:46:56Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "the conflicts are yours to resolve",
+      "summary": "Task-specific native setup preflight observed 3 valid fixtures and 14 fail-closed negatives. Independent Test/SRE reviewer blocked missing post-build dirty-input check; corrected and rechecked. Wrapper then pinned exact preflight and main base; final independent CLEAR at dcdb84dc39abd8d2c5647a887e3e0365989ab08f167a7a94c3af0c138d96f74f. No real build or GUI/full qualification yet.",
+      "kind": "script",
+      "skill": null,
+      "tool": "native-preflight",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Prevent the observed native setup omission before the unchanged canonical qualification.",
+      "done_when": "Reviewed preflight validates exact identity, fresh label, committed inputs, same-tree build and receipt before qualification.",
+      "tier": "T2",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "git": {
+        "sha": "247e6b4eaefba92cea250f657159a8768e8fb91f",
+        "short": "247e6b4ea",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -28322,6 +28423,30 @@ window.AUDIT_DATA = {
       "summary": "PASS-WITH-CONDITIONS. Six N9 closes held. Design docs/design/solution-tree.md stays draft. Conditions: T5a/b visual-tree, FieldsSurvive pair, US-T8 error+Retry, US-T13, Ctrl+Enter Flagged, Zone-prose reconcile. Patterns/SRE unsat.",
       "tags": [],
       "title": "N10 D-0 Solution tree PASS-WITH-CONDITIONS; design stays draft"
+    },
+    {
+      "id": "cl-01M2KTRQJJ91B7YEVSSTSSNB70",
+      "datetime": "2026-09-16T00:44:46Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "decision",
+      "skill": "investigate",
+      "title": "D0 boundary independence permits admitted Atlas coexistence",
+      "prompt": "the conflicts are yours to resolve",
+      "summary": "Separate Astra Owner clarifies D0 must not be implemented through Atlas while Atlas may coexist. Bound the replacement guard to complete D0 types and exact D0 query/client/IPC/factory/Shell members and helpers, with explicit shared ports. Reject missing roots, new unaccounted helpers and real Atlas references. Native proof unchanged; task-specific setup preflight supplies fresh label and explicit same-tree Debug daemon build.",
+      "rationale": "Actual combined App run failed the global directory/namespace absence premise. The existing D0 ADR rejects Atlas as D0 implementation; shared containers now legitimately contain both capabilities. Independent Test/architecture review clears finite direct-static scope, with no arbitrary transitive or runtime proof claim and no peer-spec rewrite.",
+      "artifacts": [
+        "docs/coordination/atlas-five-gates.md",
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "247e6b4eaefba92cea250f657159a8768e8fb91f",
+        "after": "247e6b4eaefba92cea250f657159a8768e8fb91f",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      },
+      "audit_ref": "al-01M2KTQTJGZCZJPEWSZEDHD6T9"
     }
   ]
 };
