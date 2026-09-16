@@ -176,6 +176,69 @@ public sealed class AtlasDaemonMainWindowProofTests
     }
 
 
+    [Theory]
+    [InlineData("original")] [InlineData("null")] [InlineData("success")]
+    public async Task NativeObserver_NonGui_SharedFormatterFailurePreservesLaterOriginalWrites(string outcome)
+    {
+        var directory=ObserverReceipt().DirectoryPath;
+        var receipt=new Receipt(directory,new ThrowingPacketConverter());
+        receipt.Mark("original.before",new { Original=true });
+        await RunDispatcherAsync(async()=>
+        {
+            var window=new ObserverControlWindow(new Border());
+            using var observer=new InstanceObserver(receipt);
+            var sentinel=new InvalidOperationException("original-sentinel");
+            var calls=0;
+            var failure=await Record.ExceptionAsync(()=>ObserveWithInstancesAsync(window,nint.Zero,receipt,observer,async()=>
+            {
+                calls++;await Task.Yield();
+                if(outcome=="original")throw sentinel;
+                if(outcome=="null")Assert.NotNull((object?)null);
+            }));
+            Assert.Equal(1,calls);
+            if(outcome=="original")Assert.Same(sentinel,failure);
+            else if(outcome=="null")Assert.IsType<Xunit.Sdk.NotNullException>(failure);
+            else Assert.Null(failure);
+            Assert.True(observer.SinkUnavailable);
+            receipt.Mark("original.after",new { Original=true });
+            using var saved=JsonDocument.Parse(File.ReadAllText(Path.Combine(directory,"receipt.json")));
+            var stages=saved.RootElement.GetProperty("Events").EnumerateArray().Select(e=>e.GetProperty("Stage").GetString()).ToArray();
+            Assert.Equal(new[]{"original.before","original.after"},stages);
+            Assert.Equal(0,receipt.FailureCount);
+            Assert.False(receipt.Completed);
+            Assert.Equal(nint.Zero,new WindowInteropHelper(window).Handle);
+            window.Close();
+        },receipt);
+    }
+
+    [Fact]
+    public void NativeObserver_NonGui_ObserverPublishesSerializedSnapshotOnce()
+    {
+        var converter=new SingleWritePacketConverter();
+        var receipt=new Receipt(ObserverReceipt().DirectoryPath,converter);
+        receipt.Mark("original.before",new { Original=true });
+        using var observer=new InstanceObserver(receipt);
+        observer.Sample(null!,"unavailable-control",0);
+        observer.Flush();
+        Assert.False(observer.SinkUnavailable);
+        receipt.Mark("original.after",new { Original=true });
+        Assert.Equal(1,converter.Writes);
+        using var saved=JsonDocument.Parse(File.ReadAllText(Path.Combine(receipt.DirectoryPath,"receipt.json")));
+        var packet=Assert.Single(saved.RootElement.GetProperty("Events").EnumerateArray(),e=>e.GetProperty("Stage").GetString()=="observer.wpf");
+        Assert.Equal("frozen-packet",packet.GetProperty("Attributes").GetProperty("Snapshot").GetString());
+    }
+
+    private sealed class SingleWritePacketConverter : System.Text.Json.Serialization.JsonConverter<WpfObservation>
+    {
+        internal int Writes { get; private set; }
+        public override WpfObservation Read(ref Utf8JsonReader reader,Type type,JsonSerializerOptions options)=>throw new NotSupportedException();
+        public override void Write(Utf8JsonWriter writer,WpfObservation value,JsonSerializerOptions options)
+        {
+            if(++Writes!=1)throw new InvalidOperationException("packet-serialized-again");
+            writer.WriteStartObject();writer.WriteString("Snapshot","frozen-packet");writer.WriteEndObject();
+        }
+    }
+
     [Fact]
     public async Task NativeObserver_NonGui_ReleaseIdentityComesFromActualEvent()
     {
@@ -500,11 +563,11 @@ public sealed class AtlasDaemonMainWindowProofTests
                     while(_flushed<_packets.Count)
                     {
                         var packet=_packets[_flushed++];
-                        _receipt.Mark("observer.wpf",packet);
+                        _receipt.MarkObservation("observer.wpf",packet);
                     }
                     while(_flushedTransitions<_transitions.Count)
-                        _receipt.Mark("observer.lease-transition",_transitions[_flushedTransitions++]);
-                    _receipt.Mark("observer.status",new { Truncated,SinkUnavailable,Packets=_packets.Count,References=_references.Count,
+                        _receipt.MarkObservation("observer.lease-transition",_transitions[_flushedTransitions++]);
+                    _receipt.MarkObservation("observer.status",new { Truncated,SinkUnavailable,Packets=_packets.Count,References=_references.Count,
                         MaxNodes=_maxNodes,MaxDepth=_maxDepth,MaxReferences=_maxReferences,MaxPackets=_maxPackets,
                         MaxQueue=512,MaxHosts=16,MaxViews=32,MaxReaders=32,BetweenOperationsMilliseconds=25,
                         ObserverRetainsReferences=true,PrivateGeneration="not-observed",ViewBackingLease="not-observed" });
@@ -1640,6 +1703,12 @@ public sealed class AtlasDaemonMainWindowProofTests
                 _events.Add(new { Stage = stage, ElapsedMilliseconds = Stopwatch.GetElapsedTime(_started).TotalMilliseconds, Attributes = attributes });
                 Save();
             }
+        }
+        internal void MarkObservation(string stage,object attributes)
+        {
+            // Freeze observer data before shared event mutation; later saves never revisit its formatter.
+            var snapshot=JsonSerializer.SerializeToElement(attributes,SerializationOptions());
+            Mark(stage,snapshot);
         }
         internal void Failure(string stage, Exception exception)
         {
