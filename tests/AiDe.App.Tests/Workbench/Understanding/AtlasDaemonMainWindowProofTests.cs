@@ -27,6 +27,590 @@ public sealed class AtlasDaemonMainWindowProofTests
     private const string Git = @"C:\Program Files\Git\cmd\git.exe";
     private const string Source = "namespace ProofOwned;\npublic sealed class Widget\n{\n    public int Answer() => 42;\n}\n";
 
+
+    [Fact]
+    public void NativeObserver_NonGui_IdentityIsReferenceBasedAndBounded()
+    {
+        var receipt=ObserverReceipt();
+        using var observer=new InstanceObserver(receipt,maxReferences:2);
+        var first=new EqualObservationObject(); var second=new EqualObservationObject();
+        var id=observer.Identity(first);
+        Assert.NotNull(id);
+        Assert.Equal(id,observer.Identity(first));
+        Assert.NotEqual(id,observer.Identity(second));
+        Assert.Null(observer.Identity(new EqualObservationObject()));
+        Assert.Equal(id,observer.Identity(first));
+    }
+
+    [Fact]
+    public async Task NativeObserver_NonGui_ActualAdapterDistinguishesHostsChildrenAndRetainedViews()
+    {
+        var receipt=ObserverReceipt();
+        int? retainedViewId=null;
+        await RunDispatcherAsync(async () =>
+        {
+            using var observer=new InstanceObserver(receipt);
+            await using var owner=new AtlasWorkspaceOwner();
+            var port=new ObserverPort();
+            var reader=new ObservedReader(port,receipt,"observer-control");
+            await owner.AttachAsync(()=>reader);
+            var first=new AtlasLoadingHost(owner); var second=new AtlasLoadingHost(null);
+            var panel=new StackPanel(); panel.Children.Add(first); panel.Children.Add(second);
+            var window=new ObserverControlWindow(panel);
+            Assert.Equal(nint.Zero,new WindowInteropHelper(window).Handle);
+            await first.ActivateAsync();
+            var old=Assert.IsType<AtlasReaderView>(first.ReaderView);
+            observer.Retain(first,second,old,reader);
+            observer.Sample(window,"before",1);
+            var before=Assert.Single(observer.Packets);
+            Assert.Equal(2,before.Hosts.Length);
+            using(var metadata=JsonDocument.Parse(JsonSerializer.Serialize(before)))
+            {
+                Assert.Equal(JsonValueKind.False,metadata.RootElement.GetProperty("WindowLoaded").ValueKind);
+                Assert.Contains(metadata.RootElement.GetProperty("Hosts").EnumerateArray(),row=>row.GetProperty("ContentKind").GetString()=="AtlasReaderView");
+            }
+            var row=Assert.Single(before.Hosts,h=>h.Id==observer.Identity(first));
+            Assert.Equal(observer.Identity(old),row.ContentId);
+            Assert.Equal(row.ContentId,row.ReaderViewId);
+            Assert.True(row.ContentIsReaderView);
+            Assert.Equal("owned-window",row.Attachment);
+            var view=Assert.Single(before.Views,v=>v.Id==observer.Identity(old));
+            retainedViewId=view.Id;
+            Assert.Equal(observer.Identity(old.FilesControl),view.FilesControlId);
+            Assert.Equal(observer.Identity(old.SourceControl.Document),view.DocumentId);
+            Assert.Equal(0,view.FileRoots);
+            var observedReader=Assert.Single(before.Readers);
+            Assert.Equal(observer.Identity(port),observedReader.InnerReaderId);
+            Assert.Equal(observer.Identity(reader.Lease),observedReader.LeaseId);
+            Assert.Equal("not-observed",view.BackingLeaseRelation);
+            var replacementChild=new Border();first.Content=replacementChild;
+            observer.Sample(window,"child-replaced",1);
+            var changed=Assert.Single(observer.Packets.Last().Hosts,h=>h.Id==row.Id);
+            Assert.Equal(observer.Identity(replacementChild),changed.ContentId);
+            Assert.Equal(observer.Identity(old),changed.ReaderViewId);
+            Assert.False(changed.ContentIsReaderView);
+            first.Deactivate(); panel.Children.Remove(first);
+            observer.Sample(window,"after",1);
+            var after=observer.Packets.Last();
+            var detached=Assert.Single(after.Hosts,h=>h.Id==row.Id);
+            Assert.Equal("detached",detached.Attachment);
+            Assert.False(detached.CensusMember);
+            Assert.Null(detached.ReaderViewId);
+            Assert.NotEqual(row.ContentId,detached.ContentId);
+            Assert.Equal(observer.Identity(first.Content),detached.ContentId);
+            Assert.Equal("TextBlock",detached.ContentKind);
+            Assert.Contains(after.Views,v=>v.Id==view.Id && v.TestRetained);
+            observer.Flush();
+            Assert.Equal(nint.Zero,new WindowInteropHelper(window).Handle);
+            window.Close();
+        },receipt);
+        var json=File.ReadAllText(receipt.DirectoryPath+"/receipt.json");
+        Assert.DoesNotContain("DO-NOT-EMIT",json,StringComparison.Ordinal);
+        using(var saved=JsonDocument.Parse(json))
+        {
+            var packet=Assert.Single(saved.RootElement.GetProperty("Events").EnumerateArray(),item=>
+                item.GetProperty("Stage").GetString()=="observer.wpf" && item.GetProperty("Attributes").GetProperty("Boundary").GetString()=="before");
+            var savedView=Assert.Single(packet.GetProperty("Attributes").GetProperty("Views").EnumerateArray(),item=>
+                item.GetProperty("Id").GetInt32()==retainedViewId);
+            Assert.False(savedView.GetProperty("IsLoaded").GetBoolean());
+            Assert.False(savedView.GetProperty("IsVisible").GetBoolean());
+        }
+        Assert.Equal(0,receipt.FailureCount);
+    }
+
+    [Theory]
+    [InlineData("nodes")] [InlineData("depth")] [InlineData("references")] [InlineData("packets")]
+    public void NativeObserver_NonGui_ActualAdapterReportsBounds(string limit)
+    {
+        Sta.Run(()=>
+        {
+            var receipt=ObserverReceipt();
+            using var observer=new InstanceObserver(receipt,maxNodes:limit=="nodes"?1:512,
+                maxDepth:limit=="depth"?0:48,maxReferences:limit=="references"?1:256,maxPackets:limit=="packets"?1:16);
+            var panel=new StackPanel();panel.Children.Add(new AtlasLoadingHost(null));
+            var window=new ObserverControlWindow(panel);
+            observer.Sample(window,"first",1);
+            if(limit=="packets")observer.Sample(window,"second",1);
+            Assert.True(observer.Truncated);
+            Assert.NotEmpty(observer.Packets);
+            Assert.InRange(observer.Packets.Count,1,16);
+            observer.Flush();
+            Assert.Equal(nint.Zero,new WindowInteropHelper(window).Handle);
+            window.Close();
+        });
+    }
+
+    [Fact]
+    public void NativeObserver_NonGui_WrongDispatcherIsUnavailable()
+    {
+        var window=Sta.Run(()=>new Window());
+        using var observer=new InstanceObserver(ObserverReceipt());
+        observer.Sample(window,"wrong-thread",1);
+        Assert.Contains("wrong-dispatcher",Assert.Single(observer.Packets).Unavailable);
+    }
+
+    [Theory]
+    [InlineData("original")] [InlineData("sample")] [InlineData("sink")] [InlineData("null")] [InlineData("success")] [InlineData("format")]
+    public async Task NativeObserver_NonGui_RealAwaitFinallyAndSinkPreserveOriginal(string fault)
+    {
+        var receipt=ObserverReceipt();
+        await RunDispatcherAsync(async ()=>
+        {
+            var window=new ObserverControlWindow(new Border());
+            var observerReceipt=fault=="sink"?new Receipt(Path.Combine(receipt.DirectoryPath,"absent"))
+                :fault=="format"?new Receipt(receipt.DirectoryPath,new ThrowingPacketConverter()):receipt;
+            using var observer=new InstanceObserver(observerReceipt);
+            if(fault=="sample")observer.BeforeSampleForControl=()=>throw new InvalidOperationException("DO-NOT-EMIT-SAMPLE");
+            var sentinel=new InvalidOperationException("DO-NOT-EMIT-ORIGINAL");var calls=0;
+            var failure=await Record.ExceptionAsync(()=>ObserveWithInstancesAsync(window,nint.Zero,receipt,observer,async()=>
+            {
+                calls++;
+                await Task.Yield();
+                if(fault=="success")return;
+                if(fault=="null")Assert.NotNull((object?)null);
+                throw sentinel;
+            }));
+            Assert.Equal(1,calls);
+            if(fault=="success")Assert.Null(failure);
+            else if(fault=="null")Assert.IsType<Xunit.Sdk.NotNullException>(failure);
+            else Assert.Same(sentinel,failure);
+            Assert.Equal(new[]{"before-query-batch","after-query-batch"},observer.Packets.Select(p=>p.Boundary));
+            Assert.All(observer.Packets,p=>Assert.Equal("STA",p.Apartment));
+            Assert.True(observer.Packets[0].EndTick<=observer.Packets[1].StartTick);
+            Assert.Equal(observer.Packets[0].BatchId,observer.Packets[1].BatchId);
+            Assert.Equal(0,observerReceipt.FailureCount);
+            if(fault is "sink" or "format")Assert.True(observer.SinkUnavailable);
+            if(fault=="sample")Assert.All(observer.Packets,p=>Assert.Contains("InvalidOperationException",p.Unavailable));
+            Assert.Equal(nint.Zero,new WindowInteropHelper(window).Handle);
+            window.Close();
+        },receipt);
+    }
+
+
+    [Theory]
+    [InlineData("original")] [InlineData("null")] [InlineData("success")]
+    public async Task NativeObserver_NonGui_SharedFormatterFailurePreservesLaterOriginalWrites(string outcome)
+    {
+        var directory=ObserverReceipt().DirectoryPath;
+        var receipt=new Receipt(directory,new ThrowingPacketConverter());
+        receipt.Mark("original.before",new { Original=true });
+        await RunDispatcherAsync(async()=>
+        {
+            var window=new ObserverControlWindow(new Border());
+            using var observer=new InstanceObserver(receipt);
+            var sentinel=new InvalidOperationException("original-sentinel");
+            var calls=0;
+            var failure=await Record.ExceptionAsync(()=>ObserveWithInstancesAsync(window,nint.Zero,receipt,observer,async()=>
+            {
+                calls++;await Task.Yield();
+                if(outcome=="original")throw sentinel;
+                if(outcome=="null")Assert.NotNull((object?)null);
+            }));
+            Assert.Equal(1,calls);
+            if(outcome=="original")Assert.Same(sentinel,failure);
+            else if(outcome=="null")Assert.IsType<Xunit.Sdk.NotNullException>(failure);
+            else Assert.Null(failure);
+            Assert.True(observer.SinkUnavailable);
+            receipt.Mark("original.after",new { Original=true });
+            using var saved=JsonDocument.Parse(File.ReadAllText(Path.Combine(directory,"receipt.json")));
+            var stages=saved.RootElement.GetProperty("Events").EnumerateArray().Select(e=>e.GetProperty("Stage").GetString()).ToArray();
+            Assert.Equal(new[]{"original.before","original.after"},stages);
+            Assert.Equal(0,receipt.FailureCount);
+            Assert.False(receipt.Completed);
+            Assert.Equal(nint.Zero,new WindowInteropHelper(window).Handle);
+            window.Close();
+        },receipt);
+    }
+
+    [Fact]
+    public void NativeObserver_NonGui_ObserverPublishesSerializedSnapshotOnce()
+    {
+        var converter=new SingleWritePacketConverter();
+        var receipt=new Receipt(ObserverReceipt().DirectoryPath,converter);
+        receipt.Mark("original.before",new { Original=true });
+        using var observer=new InstanceObserver(receipt);
+        observer.Sample(null!,"unavailable-control",0);
+        observer.Flush();
+        Assert.False(observer.SinkUnavailable);
+        receipt.Mark("original.after",new { Original=true });
+        Assert.Equal(1,converter.Writes);
+        using var saved=JsonDocument.Parse(File.ReadAllText(Path.Combine(receipt.DirectoryPath,"receipt.json")));
+        var packet=Assert.Single(saved.RootElement.GetProperty("Events").EnumerateArray(),e=>e.GetProperty("Stage").GetString()=="observer.wpf");
+        Assert.Equal("frozen-packet",packet.GetProperty("Attributes").GetProperty("Snapshot").GetString());
+    }
+
+    private sealed class SingleWritePacketConverter : System.Text.Json.Serialization.JsonConverter<WpfObservation>
+    {
+        internal int Writes { get; private set; }
+        public override WpfObservation Read(ref Utf8JsonReader reader,Type type,JsonSerializerOptions options)=>throw new NotSupportedException();
+        public override void Write(Utf8JsonWriter writer,WpfObservation value,JsonSerializerOptions options)
+        {
+            if(++Writes!=1)throw new InvalidOperationException("packet-serialized-again");
+            writer.WriteStartObject();writer.WriteString("Snapshot","frozen-packet");writer.WriteEndObject();
+        }
+    }
+
+    [Fact]
+    public async Task NativeObserver_NonGui_ReleaseIdentityComesFromActualEvent()
+    {
+        var receipt=ObserverReceipt();
+        await RunDispatcherAsync(async()=>
+        {
+            using var observer=new InstanceObserver(receipt);
+            var first=observer.TrackReader(new ObservedReader(new ObserverPort(),receipt,"same-role",observer));
+            var second=observer.TrackReader(new ObservedReader(new ObserverPort(),receipt,"same-role",observer));
+            var lease=await first.AdmitAsync(CancellationToken.None);await second.AdmitAsync(CancellationToken.None);
+            var window=new ObserverControlWindow(new Border());
+            observer.Sample(window,"before-release",0);
+            Assert.Equal(2,observer.Packets.Last().Readers.Length);
+            Assert.All(observer.Packets.Last().Readers,row=>Assert.Null(row.ReleaseStartEvent));
+            await lease.DisposeAsync();
+            observer.Sample(window,"after-release",0);observer.Flush();
+            var released=Assert.Single(observer.Packets.Last().Readers,row=>row.WrapperId==observer.Identity(first));
+            Assert.NotNull(released.ReleaseStartEvent);Assert.True(released.ReleaseCompleted);
+            Assert.NotEqual(released.WrapperId,Assert.Single(observer.Packets.Last().Readers,row=>row.WrapperId==observer.Identity(second)).WrapperId);
+            using var document=JsonDocument.Parse(File.ReadAllText(receipt.DirectoryPath+"/receipt.json"));
+            var transition=Assert.Single(document.RootElement.GetProperty("Events").EnumerateArray(),row=>row.GetProperty("Stage").GetString()=="observer.lease-transition");
+            Assert.Equal(released.ReleaseStartEvent,transition.GetProperty("Attributes").GetProperty("Sequence").GetInt64());
+            Assert.Equal(observer.Identity(lease),transition.GetProperty("Attributes").GetProperty("LeaseId").GetInt32());
+            Assert.Equal("release-start",transition.GetProperty("Attributes").GetProperty("Phase").GetString());
+            window.Close();
+        },receipt);
+    }
+
+    [Fact]
+    public void NativeObserver_NonGui_ActualNativeSitesPreserveTheOriginalQueryContract()
+    {
+        var source=File.ReadAllText(Path.Combine(Tree,"tests/AiDe.App.Tests/Workbench/Understanding/AtlasDaemonMainWindowProofTests.cs"));
+        var syntax=Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(source).GetRoot();
+        Microsoft.CodeAnalysis.CSharp.Syntax.MethodDeclarationSyntax Method(string name)=>syntax.DescendantNodes()
+            .OfType<Microsoft.CodeAnalysis.CSharp.Syntax.MethodDeclarationSyntax>().Single(node=>node.Identifier.ValueText==name);
+        var original=Method("ObserveAutomationAsync");
+        var calls=original.DescendantNodes().OfType<Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax>().ToArray();
+        Assert.Single(calls,call=>call.Expression.ToString()=="AutomationElement.FromHandle");
+        var find=Assert.Single(calls,call=>call.Expression.ToString()=="root.FindFirst");
+        Assert.Equal("TreeScope.Descendants",find.ArgumentList.Arguments[0].Expression.ToString());
+        Assert.Equal("new PropertyCondition(AutomationElement.NameProperty, name)",find.ArgumentList.Arguments[1].Expression.ToString());
+        Assert.Contains(calls,call=>call.ToString()=="Assert.NotNull(element)");
+        Assert.Contains(calls,call=>call.ToString()=="Assert.Equal(Environment.ProcessId, root.Current.ProcessId)");
+        Assert.Contains(calls,call=>call.Expression.ToString()=="Assert.False" && call.ArgumentList.Arguments[0].ToString()=="element.Current.IsOffscreen");
+        Assert.Equal(new[]{"Atlas files","Atlas member outline","Atlas source page read-only","Atlas pagination and bounds","Back to restored Atlas receipt"},
+            original.DescendantNodes().OfType<Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitArrayCreationExpressionSyntax>().Single().Initializer!.Expressions
+                .Cast<Microsoft.CodeAnalysis.CSharp.Syntax.LiteralExpressionSyntax>().Select(node=>node.Token.ValueText));
+        var journey=Method("MainWindow_RealDaemonReplacement_AcknowledgesHealthyReleaseAndPreservesBorrowedClient");
+        Assert.Equal(2,journey.DescendantNodes().OfType<Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax>().Count(call=>call.Expression.ToString()=="ObserveWithInstancesAsync"));
+        Assert.Contains("WaitAsync(TimeSpan.FromSeconds(30))",Method("RunDispatcherAsync").ToString(),StringComparison.Ordinal);
+        var observer=syntax.DescendantNodes().OfType<Microsoft.CodeAnalysis.CSharp.Syntax.ClassDeclarationSyntax>().Single(node=>node.Identifier.ValueText=="InstanceObserver");
+        foreach(var banned in new[]{"ActivateAsync(","UpdateLayout(",".Focus(",".Show(","AutomationPeer","FromHandle(","GetRuntimeId(","InvokeAsync(","Task.Delay(","_generation","._lease"})
+            Assert.DoesNotContain(banned,observer.ToString(),StringComparison.Ordinal);
+        Assert.Single(Method("Capture").DescendantNodes().OfType<Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax>(),call=>call.Expression.ToString()=="bitmap.Render");
+    }
+
+
+    [Fact]
+    public void NativeObserver_NonGui_NullContentIsNotAReaderInstance()
+    {
+        Sta.Run(()=>
+        {
+            using var observer=new InstanceObserver(ObserverReceipt());
+            var host=new AtlasLoadingHost(null) { Content=null };
+            var window=new ObserverControlWindow(host);observer.Sample(window,"null-content",0);
+            var row=Assert.Single(Assert.Single(observer.Packets).Hosts);
+            Assert.Null(row.ContentId);Assert.Null(row.ReaderViewId);Assert.False(row.ContentIsReaderView);
+            window.Close();
+        });
+    }
+    private sealed class ThrowingPacketConverter : System.Text.Json.Serialization.JsonConverter<WpfObservation>
+    {
+        public override WpfObservation Read(ref Utf8JsonReader reader,Type typeToConvert,JsonSerializerOptions options)=>throw new NotSupportedException();
+        public override void Write(Utf8JsonWriter writer,WpfObservation value,JsonSerializerOptions options)=>throw new InvalidOperationException("DO-NOT-EMIT-FORMAT");
+    }
+
+    [Fact]
+    public void NativeObserver_NonGui_PostQueryRuntimeIdentityIsBoundedWithoutMutatingInput()
+    {
+        var original=Enumerable.Range(0,40).ToArray();
+        var bounded=BoundedRuntimeId(original,out var truncated);
+        Assert.True(truncated);Assert.Equal(Enumerable.Range(0,32),bounded);Assert.Equal(40,original.Length);
+        Assert.Null(BoundedRuntimeId(null,out var nullTruncated));Assert.False(nullTruncated);
+    }
+
+    private static Receipt ObserverReceipt()
+    {
+        var directory=Path.Combine(Tree,".artifacts/atlas-observer-controls",Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);return new Receipt(directory);
+    }
+    private sealed class EqualObservationObject
+    {
+        public override bool Equals(object? other)=>other is EqualObservationObject;
+        public override int GetHashCode()=>1;
+    }
+    // An unshown WPF visual root: real AddVisualChild/parent relationships, no HWND/layout/peer.
+    private sealed class ObserverControlWindow : Window
+    {
+        private readonly UIElement _child;
+        internal ObserverControlWindow(UIElement child) { _child=child;AddVisualChild(child); }
+        protected override int VisualChildrenCount=>1;
+        protected override Visual GetVisualChild(int index)=>index==0?_child:throw new ArgumentOutOfRangeException(nameof(index));
+    }
+    private sealed class ObserverPort : IAtlasWorkspaceReader,IAtlasReaderQueries
+    {
+        public ValueTask<IAtlasReaderLease> AdmitAsync(CancellationToken cancellationToken)=>ValueTask.FromResult<IAtlasReaderLease>(new Lease(this));
+        public ValueTask DisposeAsync()=>ValueTask.CompletedTask;
+        public ValueTask<AtlasInventoryPageDto> InventoryAsync(AtlasInventoryRequestDto request,CancellationToken cancellationToken)=>
+            ValueTask.FromResult(new AtlasInventoryPageDto(1,"DO-NOT-EMIT-SCOPE",7,"DO-NOT-EMIT-MANIFEST",AtlasCompletionState.Complete,[],
+                new(AtlasBoundsDimension.InventoryRows,64,64,0,0,AtlasDenominatorState.Known,0,null,null,null),null,[]));
+        public ValueTask<AtlasSelectionDto> SelectAsync(AtlasSelectRequestDto request,CancellationToken cancellationToken)=>throw new NotSupportedException();
+        public ValueTask<AtlasSelectionDto> RestoreAsync(AtlasRestoreRequestDto request,CancellationToken cancellationToken)=>throw new NotSupportedException();
+        private sealed class Lease(ObserverPort owner):IAtlasReaderLease
+        {
+            public string ScopeToken=>"DO-NOT-EMIT-SCOPE"; public string InitialManifestToken=>"DO-NOT-EMIT-MANIFEST";
+            public long CoreEpoch=>7; public DateTimeOffset ExpiresAt=>DateTimeOffset.MaxValue;
+            public IAtlasReaderQueries Queries=>owner; public CancellationToken Invalidated=>CancellationToken.None;
+            public bool IsTerminal { get; private set; }
+            public ValueTask DisposeAsync(){IsTerminal=true;return ValueTask.CompletedTask;}
+        }
+    }
+
+    private sealed record HostObservation(int? Id,int? ContentId,int? ReaderViewId,bool? ContentIsReaderView,
+        string State,string Attachment,int? ParentId,bool CensusMember,bool TestRetained,bool? IsLoaded,bool? IsVisible,string ContentKind,bool ObserverRetained=true);
+    private sealed record ViewObservation(int? Id,int? FilesControlId,int? OutlineControlId,int? SourceControlId,int? DocumentId,
+        int? FileRoots,int? OutlineRows,int? Highlights,bool? ReadOnly,bool? CanGoBack,bool? CanLoadMore,
+        string Attachment,int? ParentId,bool CensusMember,bool TestRetained,bool? IsLoaded,bool? IsVisible,
+        string BackingLeaseRelation="not-observed",bool ObserverRetained=true);
+    private sealed record ReaderObservation(int? WrapperId,int? InnerReaderId,int? LeaseId,bool? Disposed,
+        bool? Terminal,bool? Invalidated,long? ReleaseStartEvent,bool? ReleaseCompleted);
+    private sealed record WpfObservation(long Sequence,long BatchId,string Boundary,DateTimeOffset StartedUtc,DateTimeOffset EndedUtc,
+        long StartTick,long EndTick,int ThreadId,string Apartment,int? WindowId,int? VisitedNodes,int? QueuedNotVisited,
+        bool Truncated,string[] Unavailable,HostObservation[] Hosts,ViewObservation[] Views,ReaderObservation[] Readers,
+        bool? WindowLoaded,bool? WindowVisible,double? WindowWidth,double? WindowHeight);
+    private sealed record LeaseTransition(long Sequence,int? LeaseId,string Phase,DateTimeOffset ObservedUtc,long Tick,
+        int ThreadId,string Apartment,string SourceEvent);
+
+    // Fixed test-local limits; this observer owns no product actions or automation peers.
+    private sealed class InstanceObserver : IDisposable
+    {
+        private readonly Receipt _receipt;
+        private readonly object _gate=new();
+        private readonly List<object> _references=[];
+        private readonly List<object> _held=[];
+        private readonly List<WpfObservation> _packets=[];
+        private readonly List<(ObservedLease Lease,long Sequence)> _releaseStarts=[];
+        private readonly List<LeaseTransition> _transitions=[];
+        private readonly int _maxNodes,_maxDepth,_maxReferences,_maxPackets;
+        private long _sequence,_batch,_query;
+        private int _flushed,_flushedTransitions;
+        internal InstanceObserver(Receipt receipt,int maxNodes=512,int maxDepth=48,int maxReferences=256,int maxPackets=16)
+        {
+            _receipt=receipt;_maxNodes=Math.Clamp(maxNodes,1,512);_maxDepth=Math.Clamp(maxDepth,0,48);
+            _maxReferences=Math.Clamp(maxReferences,1,256);_maxPackets=Math.Clamp(maxPackets,1,16);
+        }
+        internal Action? BeforeSampleForControl { get; set; }
+        internal IReadOnlyList<WpfObservation> Packets=>_packets;
+        internal bool Truncated { get; private set; }
+        internal bool SinkUnavailable { get; private set; }
+        internal int? Identity(object? value)
+        {
+            if(value is null)return null;
+            lock(_gate)
+            {
+                for(var i=0;i<_references.Count;i++)if(ReferenceEquals(value,_references[i]))return i+1;
+                if(_references.Count>=_maxReferences){Truncated=true;return null;}
+                _references.Add(value);return _references.Count;
+            }
+        }
+        internal long NextBatch(){lock(_gate)return ++_batch;}
+        internal long NextQuery(){lock(_gate)return ++_query;}
+        internal ObservedReader TrackReader(ObservedReader reader){Retain(reader);return reader;}
+        internal void Retain(params object?[] values)
+        {
+            try
+            {
+                lock(_gate)foreach(var value in values)
+                {
+                    if(value is null || _held.Any(item=>ReferenceEquals(item,value)))continue;
+                    if(_held.Count>=256){Truncated=true;break;}
+                    if(Identity(value) is not null)_held.Add(value);
+                }
+            }
+            catch(Exception error) when(error is not OutOfMemoryException){Truncated=true;}
+        }
+        internal void ReleaseStarted(ObservedLease lease)
+        {
+            try
+            {
+                lock(_gate)
+                {
+                    if(_releaseStarts.Count>=32){Truncated=true;return;}
+                    var sequence=++_sequence;
+                    _releaseStarts.Add((lease,sequence));
+                    _transitions.Add(new(sequence,Identity(lease),"release-start",DateTimeOffset.UtcNow,Stopwatch.GetTimestamp(),
+                        Environment.CurrentManagedThreadId,Thread.CurrentThread.GetApartmentState().ToString(),"ObservedLease.lease-release-start returned"));
+                }
+            }
+            catch(Exception error) when(error is not OutOfMemoryException){Truncated=true;}
+        }
+        internal void Sample(Window window,string boundary,long batch)
+        {
+            // Include formatting and field access in the added diagnostic failure boundary.
+            try { lock(_gate) SampleCore(window,boundary,batch); }
+            catch(Exception error) when(error is not OutOfMemoryException){Truncated=true;}
+        }
+        private void SampleCore(Window window,string boundary,long batch)
+        {
+            if(_packets.Count>=_maxPackets){Truncated=true;return;}
+            var started=Stopwatch.GetTimestamp();var utc=DateTimeOffset.UtcNow;
+            var unavailable=new List<string>();var hosts=new List<HostObservation>();var views=new List<ViewObservation>();
+            var readers=new List<ReaderObservation>();var seen=new List<DependencyObject>();
+            var queue=new Queue<(DependencyObject Node,int Depth)>();int? visited=null,queued=null,windowId=null;
+            bool? windowLoaded=null,windowVisible=null;double? windowWidth=null,windowHeight=null;
+            bool Budget()=>Stopwatch.GetElapsedTime(started).TotalMilliseconds>=25;
+            void Limited(string reason){Truncated=true;if(unavailable.Count<32 && !unavailable.Contains(reason))unavailable.Add(reason);}
+            bool Held(object value)=>_held.Any(item=>ReferenceEquals(item,value));
+            bool Seen(object value)=>seen.Any(item=>ReferenceEquals(item,value));
+            (string State,int? Parent) Connection(DependencyObject node)
+            {
+                DependencyObject? current=node;int? parentId=null;
+                for(var depth=0;depth<=48;depth++)
+                {
+                    if(Budget()){Limited("time-budget");return ("unavailable",parentId);}
+                    if(ReferenceEquals(current,window))return ("owned-window",parentId);
+                    var parent=VisualTreeHelper.GetParent(current!);
+                    if(depth==0)parentId=Identity(parent);
+                    if(parent is null)return ("detached",parentId);
+                    current=parent;
+                }
+                Limited("parent-depth");return ("unavailable",parentId);
+            }
+            try
+            {
+                if(!window.Dispatcher.CheckAccess()){unavailable.Add("wrong-dispatcher");return;}
+                BeforeSampleForControl?.Invoke();
+                windowId=Identity(window);windowLoaded=window.IsLoaded;windowVisible=window.IsVisible;
+                windowWidth=double.IsFinite(window.ActualWidth)?window.ActualWidth:null;
+                windowHeight=double.IsFinite(window.ActualHeight)?window.ActualHeight:null;
+                queue.Enqueue((window,0));visited=0;
+                while(queue.Count!=0)
+                {
+                    if(seen.Count>=_maxNodes || Budget()){Limited(seen.Count>=_maxNodes?"node-limit":"time-budget");break;}
+                    var (node,depth)=queue.Dequeue();seen.Add(node);visited=seen.Count;
+                    var count=VisualTreeHelper.GetChildrenCount(node);
+                    if(depth>=_maxDepth && count!=0){Limited("depth-limit");continue;}
+                    for(var index=0;index<count;index++)
+                    {
+                        if(queue.Count>=512 || Budget()){Limited(queue.Count>=512?"queue-limit":"time-budget");break;}
+                        queue.Enqueue((VisualTreeHelper.GetChild(node,index),depth+1));
+                    }
+                }
+                queued=queue.Count;
+                var candidates=new List<object>();
+                foreach(var item in seen.Cast<object>().Concat(_held).Concat(_references.ToArray()))
+                    if(!candidates.Any(value=>ReferenceEquals(value,item)))candidates.Add(item);
+                foreach(var host in candidates.OfType<AtlasLoadingHost>().Take(17).ToArray())
+                {
+                    if(hosts.Count>=16 || Budget()){Limited(hosts.Count>=16?"host-limit":"time-budget");break;}
+                    try
+                    {
+                        var child=host.Content;var view=host.ReaderView;
+                        if(child is AtlasReaderView childView && !candidates.Any(value=>ReferenceEquals(value,childView)))candidates.Add(childView);
+                        if(view is not null && !candidates.Any(value=>ReferenceEquals(value,view)))candidates.Add(view);
+                        var connection=Connection(host);
+                        var state=host.StatusText switch
+                        {
+                            "Loading Code Atlas."=>"loading",
+                            "ATLAS-HOST-NO-WORKSPACE: open a workspace."=>"no-workspace",
+                            "ATLAS-HOST-INACTIVE: source cleared."=>"inactive",
+                            "ATLAS-HOST-CANCELED: activation canceled."=>"canceled",
+                            "ATLAS-HOST-UNAVAILABLE: admission unavailable."=>"unavailable",
+                            _=>"other",
+                        };
+                        hosts.Add(new(Identity(host),Identity(child),Identity(view),view is not null && ReferenceEquals(child,view),state,
+                            connection.State,connection.Parent,Seen(host),Held(host),host.IsLoaded,host.IsVisible,
+                            child switch { AtlasReaderView=>"AtlasReaderView",TextBlock=>"TextBlock",null=>"null",_=>"other" }));
+                    }
+                    catch(Exception error) when(error is not OutOfMemoryException){Limited("host:"+error.GetType().Name);}
+                }
+                foreach(var view in candidates.OfType<AtlasReaderView>().Take(33))
+                {
+                    if(views.Count>=32 || Budget()){Limited(views.Count>=32?"view-limit":"time-budget");break;}
+                    bool? isLoaded=null,isVisible=null;
+                    try { isLoaded=view.IsLoaded; }
+                    catch(Exception error) when(error is not OutOfMemoryException){Limited("view-loaded:"+error.GetType().Name);}
+                    try { isVisible=view.IsVisible; }
+                    catch(Exception error) when(error is not OutOfMemoryException){Limited("view-visible:"+error.GetType().Name);}
+                    try
+                    {
+                        var connection=Connection(view);
+                        views.Add(new(Identity(view),Identity(view.FilesControl),Identity(view.OutlineControl),Identity(view.SourceControl),
+                            Identity(view.SourceControl.Document),view.FileRoots.Count,view.OutlineRows.Count,view.CurrentHighlights.Count,
+                            view.IsSourceReadOnly,view.CanGoBack,view.CanLoadMore,connection.State,connection.Parent,Seen(view),Held(view),isLoaded,isVisible));
+                    }
+                    catch(Exception error) when(error is not OutOfMemoryException){Limited("view:"+error.GetType().Name);}
+                }
+                foreach(var reader in _held.OfType<ObservedReader>().Take(33))
+                {
+                    if(readers.Count>=32 || Budget()){Limited(readers.Count>=32?"reader-limit":"time-budget");break;}
+                    try
+                    {
+                        var lease=reader.Lease;
+                        var release=_releaseStarts.LastOrDefault(item=>ReferenceEquals(item.Lease,lease));
+                        readers.Add(new(Identity(reader),Identity(reader.InnerForObservation),Identity(lease),reader.Disposed,
+                            lease?.IsTerminal,lease?.Invalidated.IsCancellationRequested,
+                            release.Lease is null?null:release.Sequence,lease?.ReleaseCompleted));
+                    }
+                    catch(Exception error) when(error is not OutOfMemoryException){Limited("reader:"+error.GetType().Name);}
+                }
+                if(Truncated && unavailable.Count==0)unavailable.Add("reference-or-retention-limit");
+            }
+            catch(Exception error) when(error is not OutOfMemoryException){Limited(error.GetType().Name);}
+            finally
+            {
+                _packets.Add(new(++_sequence,batch,boundary[..Math.Min(boundary.Length,128)],utc,DateTimeOffset.UtcNow,
+                    started,Stopwatch.GetTimestamp(),Environment.CurrentManagedThreadId,Thread.CurrentThread.GetApartmentState().ToString(),
+                    windowId,visited,queued,Truncated,unavailable.ToArray(),hosts.ToArray(),views.ToArray(),readers.ToArray(),
+                    windowLoaded,windowVisible,windowWidth,windowHeight));
+            }
+        }
+        internal void Flush()
+        {
+            try
+            {
+                lock(_gate)
+                {
+                    while(_flushed<_packets.Count)
+                    {
+                        var packet=_packets[_flushed++];
+                        _receipt.MarkObservation("observer.wpf",packet);
+                    }
+                    while(_flushedTransitions<_transitions.Count)
+                        _receipt.MarkObservation("observer.lease-transition",_transitions[_flushedTransitions++]);
+                    _receipt.MarkObservation("observer.status",new { Truncated,SinkUnavailable,Packets=_packets.Count,References=_references.Count,
+                        MaxNodes=_maxNodes,MaxDepth=_maxDepth,MaxReferences=_maxReferences,MaxPackets=_maxPackets,
+                        MaxQueue=512,MaxHosts=16,MaxViews=32,MaxReaders=32,BetweenOperationsMilliseconds=25,
+                        ObserverRetainsReferences=true,PrivateGeneration="not-observed",ViewBackingLease="not-observed" });
+                }
+            }
+            catch(Exception error) when(error is not OutOfMemoryException){SinkUnavailable=true;}
+        }
+        public void Dispose(){Flush();lock(_gate){_references.Clear();_held.Clear();_releaseStarts.Clear();_transitions.Clear();}}
+    }
+    private static async Task ObserveWithInstancesAsync(Window window,nint hwnd,Receipt receipt,InstanceObserver observer,Func<Task>? originalForControl=null)
+    {
+        var batch=observer.NextBatch();
+        observer.Sample(window,"before-query-batch",batch);
+        try
+        {
+            if(originalForControl is not null)await originalForControl();
+            else await ObserveAutomationAsync(hwnd,receipt,observer,batch);
+        }
+        finally
+        {
+            observer.Sample(window,"after-query-batch",batch);
+            observer.Flush();
+        }
+    }
+
+
     [Fact]
     public async Task OwnedBlankWindowPreservesOriginalMissingNameFailureAndDiagnostics()
     {
@@ -159,14 +743,15 @@ public sealed class AtlasDaemonMainWindowProofTests
 
             await RunDispatcherAsync(async () =>
             {
+                using var observer=new InstanceObserver(receipt);
                 ObservedReader? firstReader = null;
                 ObservedReader? replacementReader = null;
                 var first = new MainWindowViewModel(clients[0], "display-first-not-pipe-authority", null,
                     commands: clients[0], atlasReaderFactory: () =>
-                        firstReader = new ObservedReader(clients[0].CreateAtlasReader(), receipt, "first"));
+                        observer.TrackReader(firstReader = new ObservedReader(clients[0].CreateAtlasReader(), receipt, "first", observer)));
                 var replacement = new MainWindowViewModel(clients[1], "display-replacement-not-pipe-authority", null,
                     commands: clients[1], atlasReaderFactory: () =>
-                        replacementReader = new ObservedReader(clients[1].CreateAtlasReader(), receipt, "replacement"));
+                        observer.TrackReader(replacementReader = new ObservedReader(clients[1].CreateAtlasReader(), receipt, "replacement", observer)));
                 receipt.Mark("remote-vms.before-refresh", new
                 {
                     FirstStatus = first.StatusMessage, ReplacementStatus = replacement.StatusMessage,
@@ -204,6 +789,7 @@ public sealed class AtlasDaemonMainWindowProofTests
                     var host = Assert.Single(Visuals<AtlasLoadingHost>(window));
                     await host.ActivateAsync();
                     var view = Assert.IsType<AtlasReaderView>(host.ReaderView);
+                    observer.Retain(host,view);
                     var file = await FindOwnedFileAsync(view);
                     await view.SelectFileAsync(file);
                     var firstLease = Assert.IsType<ObservedLease>(firstReader?.Lease);
@@ -259,12 +845,12 @@ public sealed class AtlasDaemonMainWindowProofTests
                             receipt, "normal-default-observed", requireReadable: false);
                         VerifyFooter(window, first, receipt, "first");
                     }
-                    finally { Capture(window, evidence, receipt, "mainwindow-member-normal-default.png"); }
+                    finally { Capture(window, evidence, receipt, "mainwindow-member-normal-default.png",observer); }
                     Assert.True(canonicalZone == ZoneId.Center, "The real normal opener must place a new Atlas in canonical Center.");
                     Assert.True(view.IsVisible && view.IsKeyboardFocusWithin);
                     _ = MeasureReading(window, view, actualSource, memberSelection.Source.Highlights,
                         receipt, "normal-default-verified", requireReadable: true);
-                    await ObserveAutomationAsync(new WindowInteropHelper(window).Handle, receipt);
+                    await ObserveWithInstancesAsync(window,new WindowInteropHelper(window).Handle,receipt,observer);
                     Assert.True(view.CanGoBack);
                     await view.GoBackAsync();
                     var restored = Assert.IsType<AtlasSelectionDto>(firstLease.LastSelection);
@@ -276,8 +862,8 @@ public sealed class AtlasDaemonMainWindowProofTests
                     window.UpdateLayout();
                     await IdleAsync();
                     var hwnd = new WindowInteropHelper(window).Handle;
-                    await ObserveAutomationAsync(hwnd, receipt);
-                    Capture(window, evidence, receipt);
+                    await ObserveWithInstancesAsync(window,hwnd,receipt,observer);
+                    Capture(window, evidence, receipt,observer:observer);
 
                     Assert.False(firstLease.IsTerminal, "Replacement must start from a healthy lease, not a terminal disposal shortcut.");
                     var apply = window.ApplyWorkspaceAsync(replacement);
@@ -305,13 +891,14 @@ public sealed class AtlasDaemonMainWindowProofTests
                     var nextHost = Assert.Single(Visuals<AtlasLoadingHost>(window));
                     await nextHost.ActivateAsync();
                     var nextView = Assert.IsType<AtlasReaderView>(nextHost.ReaderView);
+                    observer.Retain(nextHost,nextView);
                     Assert.NotSame(view, nextView);
                     await nextView.SelectFileAsync(await FindOwnedFileAsync(nextView));
                     var nextLease = Assert.IsType<ObservedLease>(replacementReader?.Lease);
                     Assert.True(nextLease.ScopeToken != firstLease.ScopeToken, "Replacement must own a distinct actual scope.");
                     VerifySource(nextView, Assert.IsType<AtlasSelectionDto>(nextLease.LastSelection), receipt, "replacement", replacementSourcePath);
                     try { VerifyFooter(window, replacement, receipt, "replacement"); }
-                    finally { Capture(window, evidence, receipt, "mainwindow-replacement-footer.png"); }
+                    finally { Capture(window, evidence, receipt, "mainwindow-replacement-footer.png",observer); }
                     var receiptFailure = await Record.ExceptionAsync(async () =>
                         await nextLease.Queries.RestoreAsync(new AtlasRestoreRequestDto(
                             1, nextLease.ScopeToken, nextLease.CoreEpoch, fileSelection.ReceiptToken!), CancellationToken.None));
@@ -463,7 +1050,7 @@ public sealed class AtlasDaemonMainWindowProofTests
     private static Task IdleAsync() => Dispatcher.CurrentDispatcher.InvokeAsync(
         () => { }, DispatcherPriority.ApplicationIdle).Task;
 
-    private static Task ObserveAutomationAsync(nint hwnd, Receipt receipt) => Task.Run(() =>
+    private static Task ObserveAutomationAsync(nint hwnd, Receipt receipt,InstanceObserver? observer=null,long batchId=0) => Task.Run(() =>
     {
         Assert.Equal(ApartmentState.MTA, Thread.CurrentThread.GetApartmentState());
         var root = AutomationElement.FromHandle(hwnd);
@@ -475,17 +1062,23 @@ public sealed class AtlasDaemonMainWindowProofTests
         };
         foreach (var name in names)
         {
+            var queryId=observer?.NextQuery();
+            var queryStartedUtc=DateTimeOffset.UtcNow;
             var queryStarted = Stopwatch.GetTimestamp();
             var element = root.FindFirst(TreeScope.Descendants,
                 new PropertyCondition(AutomationElement.NameProperty, name));
+            var queryEnded=Stopwatch.GetTimestamp();
+            var queryEndedUtc=DateTimeOffset.UtcNow;
             receipt.Mark("uia.find-first.original", new
             {
                 ExpectedName = name, OwnHwnd = hwnd.ToInt64(), ExpectedProcessId = Environment.ProcessId,
                 OriginalFound = element is not null, ObservedUtc = DateTimeOffset.UtcNow,
+                QueryId=queryId,BatchId=batchId,QueryStartedUtc=queryStartedUtc,QueryEndedUtc=queryEndedUtc,
+                QueryStartTick=queryStarted,QueryEndTick=queryEnded,
                 QueryMilliseconds = Stopwatch.GetElapsedTime(queryStarted).TotalMilliseconds,
                 RootBinding = "original AutomationElement.FromHandle; original process assertion passed",
             });
-            ObserveOwnedAutomationAfterOriginal(root, hwnd, name, element is not null, receipt);
+            ObserveOwnedAutomationAfterOriginal(root, hwnd, name, element is not null, receipt,queryId,batchId);
             Assert.NotNull(element);
             Assert.False(element.Current.IsOffscreen, "Named Atlas control must be visible in the proof-owned HWND.");
         }
@@ -493,7 +1086,7 @@ public sealed class AtlasDaemonMainWindowProofTests
     });
 
     private static void ObserveOwnedAutomationAfterOriginal(
-        AutomationElement root, nint hwnd, string expectedName, bool originalFound, Receipt receipt)
+        AutomationElement root, nint hwnd, string expectedName, bool originalFound, Receipt receipt,long? queryId=null,long batchId=0)
     {
         try
         {
@@ -503,6 +1096,7 @@ public sealed class AtlasDaemonMainWindowProofTests
             {
                 ExpectedName = expectedName, OwnHwnd = hwnd.ToInt64(), ExpectedProcessId = Environment.ProcessId,
                 OriginalFound = originalFound, WindowPatternRecorded = hasWindowPattern, WindowState = windowState,
+                QueryId=queryId,BatchId=batchId,RuntimeIdTiming="after-original-query; same root reference",
                 Root = AutomationDiagnosticNode(root, 0, 0, -1), ObservedUtc = DateTimeOffset.UtcNow,
             });
             if (!originalFound) ObserveBoundedOwnedAutomation(root, hwnd, expectedName, receipt);
@@ -517,6 +1111,12 @@ public sealed class AtlasDaemonMainWindowProofTests
                 OriginalFound = originalFound, OriginalAssertionStillApplies = true,
             });
         }
+    }
+
+    private static int[]? BoundedRuntimeId(int[]? runtimeId,out bool truncated)
+    {
+        truncated=runtimeId is { Length: >32 };
+        return runtimeId is null?null:runtimeId[..Math.Min(runtimeId.Length,32)];
     }
 
     private static object AutomationDiagnosticNode(AutomationElement element, int ordinal, int depth, int parent)
@@ -536,7 +1136,8 @@ public sealed class AtlasDaemonMainWindowProofTests
             AutomationId = automationId[..Math.Min(automationId.Length, maxNameCharacters)],
             AutomationIdTruncated = automationId.Length > maxNameCharacters,
             current.ProcessId, current.NativeWindowHandle, current.IsOffscreen, current.IsEnabled,
-            ControlType = current.ControlType?.ProgrammaticName, RuntimeId = element.GetRuntimeId(),
+            ControlType = current.ControlType?.ProgrammaticName, RuntimeId = BoundedRuntimeId(element.GetRuntimeId(),out var runtimeIdTruncated),
+            RuntimeIdTruncated=runtimeIdTruncated,
             BoundsRecorded = boundsRecorded,
             Bounds = boundsRecorded ? new[] { rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height } : null,
         };
@@ -751,13 +1352,15 @@ public sealed class AtlasDaemonMainWindowProofTests
         Width = value.IsEmpty ? 0 : value.Width, Height = value.IsEmpty ? 0 : value.Height,
     };
 
-    private static void Capture(Window window, string evidence, Receipt receipt, string name = "mainwindow.png")
+    private static void Capture(Window window, string evidence, Receipt receipt, string name = "mainwindow.png",InstanceObserver? observer=null)
     {
         var width = (int)Math.Ceiling(window.ActualWidth);
         var height = (int)Math.Ceiling(window.ActualHeight);
         Assert.True(width > 0 && height > 0 && window.IsVisible);
         var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
-        bitmap.Render(window);
+        observer?.Sample(window,"capture-before:"+name,0);
+        try { bitmap.Render(window); }
+        finally { observer?.Sample(window,"capture-after:"+name,0); }
         var pixels = new byte[width * height * 4];
         bitmap.CopyPixels(pixels, width * 4, 0);
         Assert.True(pixels.Where((_, index) => index % 4 == 3).Any(alpha => alpha != 0),
@@ -767,6 +1370,7 @@ public sealed class AtlasDaemonMainWindowProofTests
         var path = Path.Combine(evidence, name);
         using (var file = File.Create(path)) encoder.Save(file);
         receipt.Mark("capture.window-only", new { Path = path, Width = width, Height = height, Sha256 = Hash(File.ReadAllBytes(path)) });
+        observer?.Flush();
     }
 
     private static ResourceDictionary Resources()
@@ -983,14 +1587,16 @@ public sealed class AtlasDaemonMainWindowProofTests
         return await stdout;
     }
 
-    private sealed class ObservedReader(IAtlasWorkspaceReader inner, Receipt receipt, string name) : IAtlasWorkspaceReader
+    private sealed class ObservedReader(IAtlasWorkspaceReader inner, Receipt receipt, string name, InstanceObserver? observer=null) : IAtlasWorkspaceReader
     {
+        internal IAtlasWorkspaceReader InnerForObservation => inner;
         internal ObservedLease? Lease { get; private set; }
         internal bool Disposed { get; private set; }
         public async ValueTask<IAtlasReaderLease> AdmitAsync(CancellationToken cancellationToken)
         {
             var actual = await inner.AdmitAsync(cancellationToken);
-            Lease = new ObservedLease(actual, receipt, name);
+            Lease = new ObservedLease(actual, receipt, name, observer);
+            observer?.Retain(this,Lease);
             receipt.Mark(name + ".real-admit", new { actual.CoreEpoch, actual.IsTerminal });
             return Lease;
         }
@@ -1002,7 +1608,7 @@ public sealed class AtlasDaemonMainWindowProofTests
         }
     }
 
-    private sealed class ObservedLease(IAtlasReaderLease inner, Receipt receipt, string name) : IAtlasReaderLease, IAtlasReaderQueries
+    private sealed class ObservedLease(IAtlasReaderLease inner, Receipt receipt, string name, InstanceObserver? observer=null) : IAtlasReaderLease, IAtlasReaderQueries
     {
         public string ScopeToken => inner.ScopeToken;
         public string InitialManifestToken => inner.InitialManifestToken;
@@ -1032,6 +1638,7 @@ public sealed class AtlasDaemonMainWindowProofTests
         {
             HealthyAtRelease = !inner.IsTerminal && !inner.Invalidated.IsCancellationRequested;
             receipt.Mark(name + ".lease-release-start", new { HealthyAtRelease });
+            observer?.ReleaseStarted(this);
             await inner.DisposeAsync();
             ReleaseCompleted = true;
             receipt.Mark(name + ".lease-release-returned", new { HealthyAtRelease, NormalReturn = true, inner.IsTerminal });
@@ -1098,8 +1705,9 @@ public sealed class AtlasDaemonMainWindowProofTests
         }
     }
 
-    private sealed class Receipt(string directory)
+    private sealed class Receipt(string directory,System.Text.Json.Serialization.JsonConverter? observerConverterForControl=null)
     {
+        internal string DirectoryPath => directory;
         private readonly List<object> _events = [];
         private readonly object _gate = new();
         private readonly long _started = Stopwatch.GetTimestamp();
@@ -1113,6 +1721,12 @@ public sealed class AtlasDaemonMainWindowProofTests
                 Save();
             }
         }
+        internal void MarkObservation(string stage,object attributes)
+        {
+            // Freeze observer data before shared event mutation; later saves never revisit its formatter.
+            var snapshot=JsonSerializer.SerializeToElement(attributes,SerializationOptions());
+            Mark(stage,snapshot);
+        }
         internal void Failure(string stage, Exception exception)
         {
             lock (_gate)
@@ -1121,6 +1735,12 @@ public sealed class AtlasDaemonMainWindowProofTests
                 Mark(stage, new { ExceptionType = exception.GetType().FullName, exception.StackTrace,
                     MessageSha256 = Hash(Encoding.UTF8.GetBytes(exception.Message)) });
             }
+        }
+        private JsonSerializerOptions SerializationOptions()
+        {
+            var options=new JsonSerializerOptions { WriteIndented=true };
+            if(observerConverterForControl is not null)options.Converters.Add(observerConverterForControl);
+            return options;
         }
         internal void Save()
         {
@@ -1132,7 +1752,7 @@ public sealed class AtlasDaemonMainWindowProofTests
                     DeliberatelyHeldLatePublicationRace = "NOT EXERCISED; drained replacement and persistent clearing asserted",
                     DefaultPlacement = "Reviewed normal Center placement; actual pixel acceptance belongs to parent",
                     Events = _events,
-                }, new JsonSerializerOptions { WriteIndented = true }));
+                }, SerializationOptions()));
         }
     }
 }
