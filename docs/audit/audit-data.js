@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T17:33:23Z",
+  "generated": "2026-09-16T17:55:43Z",
   "audit": [
     {
       "actor": null,
@@ -25509,34 +25509,357 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2NMFHABA1MPRQF3R5744SW4",
-      "shortname": "atlas-observer-join-12c1f883",
-      "datetime": "2026-09-16T17:33:22Z",
-      "session": "codex-atlas-five-gates-integration",
-      "prompt": "Resolve Grok consumer request and continue the admitted Atlas observer preparation and serialized branch assembly.",
-      "summary": "Official conductor join merged exact tip12c1f88336bc6d640c1dfdd6e76929acdda6b6f2 then intentionally stopped at the reviewed pre-recount barrier, exit4/check86. No qualification, acceptance, push or Release. Original sourcee6 preserved except exact reviewed native-test626d16a2. Full-content audit/change fingerprints from both parents conserved with zero missing rows. This entry consumes this join marker; required regeneration and checkpoint commit follow, with actual outputs retained in artifacts/atlas-five-gates/observer-assembly/. Required missing summary metadata repaired under exact proof leases; historical verdict bodies and original pinned commits preserved: docs/proof/atlas-native-observer-sink-review.md. Actual repository frontmatter validator now accepts these files.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/atlas-five-gates.md"
       ],
-      "tags": [],
-      "outcome": "partial",
-      "goal": "Retain reviewed evidence and source without asserting runtime qualification.",
+      "datetime": "2026-09-16T17:33:22Z",
       "done_when": "Exact merge and audit conservation observed; derived records current; unqualified candidate committed.",
-      "tier": "T2",
+      "duration_seconds": 1.0,
       "fan_out": 0,
+      "git": {
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "sha": "99f8434f69dd32e2b7a8f4729abaa471edc56061",
+        "short": "99f8434f6"
+      },
+      "goal": "Retain reviewed evidence and source without asserting runtime qualification.",
+      "id": "al-01M2NMFHABA1MPRQF3R5744SW4",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "Resolve Grok consumer request and continue the admitted Atlas observer preparation and serialized branch assembly.",
+      "session": "codex-atlas-five-gates-integration",
+      "shortname": "atlas-observer-join-12c1f883",
       "signals": {
         "acceptance_met": false
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-09-16T17:33:21Z",
-      "duration_seconds": 1.0,
+      "summary": "Official conductor join merged exact tip12c1f88336bc6d640c1dfdd6e76929acdda6b6f2 then intentionally stopped at the reviewed pre-recount barrier, exit4/check86. No qualification, acceptance, push or Release. Original sourcee6 preserved except exact reviewed native-test626d16a2. Full-content audit/change fingerprints from both parents conserved with zero missing rows. This entry consumes this join marker; required regeneration and checkpoint commit follow, with actual outputs retained in artifacts/atlas-five-gates/observer-assembly/. Required missing summary metadata repaired under exact proof leases; historical verdict bodies and original pinned commits preserved: docs/proof/atlas-native-observer-sink-review.md. Actual repository frontmatter validator now accepts these files.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-owner-d1-admission.md"
+      ],
+      "datetime": "2026-09-15T22:52:52Z",
       "git": {
-        "sha": "99f8434f69dd32e2b7a8f4729abaa471edc56061",
-        "short": "99f8434f6",
-        "branch": "integration/atlas-five-gates",
+        "branch": "understanding-views-d1",
+        "pushed": null,
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc"
+      },
+      "id": "al-01M2KMBV5ZEQPEFFD7708W28HA",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "re-admit D-1 now",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "owner-d1-admission",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "summary": "Owner ruling admits D-1 Entry-points only. Substrate query still absent; UV-0 is that query. D-2..D-4 keep-deferred. Branch understanding-views-d1 from main bcf4959b.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/entry-points.md"
+      ],
+      "datetime": "2026-09-16T16:48:46Z",
+      "git": {
+        "branch": "understanding-views-d1",
+        "pushed": true,
+        "sha": "aa9e16a81ece87ce7d9086458d3178f98f99b7a0",
+        "short": "aa9e16a81"
+      },
+      "id": "al-01M2NHXVG85NWR87JK2WJW4PAQ",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "keep going / what is blocking Live Open Sequence / who has to resolve mapping-unavailable",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "specify-d1-entry-points",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "summary": "Spec-entry-points draft: listing/unclassified/select-to-graph. Open Sequence blocked by UNASSIGNED mapper — Owner must admit a separate mapping contract; Grok and Codex cannot unilaterally enable it. N4 not self-cleared.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "codex-astra-d1-r4-review",
+      "artifacts": [
+        "docs/proof/codex-d1-r4-consumer-review.md"
+      ],
+      "datetime": "2026-09-16T17:09:54Z",
+      "done_when": "Independent committed receipt names verdict, exact evidence and numbered minimal acceptance conditions.",
+      "duration_seconds": 202.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/atlas-d1-r4-boundary",
+        "pushed": null,
+        "sha": "173aa5a4ad245fda92bcc0bdadafac6ba9f0c8e4",
+        "short": "173aa5a4a"
+      },
+      "goal": "Determine whether Codex can honestly ACK exact D1 r4 blob or name smallest required deltas.",
+      "id": "al-01M2NK4JCEKXXD84ED9WWR7E1N",
+      "kind": "skill",
+      "main_budget": 5,
+      "main_calls": 6,
+      "main_over_budget": true,
+      "outcome": "success",
+      "prompt": "Independently evaluate exact docs/notes/d1-codex-entry-point-handshake-r4.md blob a8c05bc77451b0438ebea24eaad9b15db6c99601 for consumer ACK. Document boundary only; no implementation, build or GUI. Separate agreeing Grok author role from freezing unimplemented identity/API/authority/runtime activation. Test Architect, architecture-authority, No-Guessing and Simplifier lenses. One independent receipt docs/proof/codex-d1-r4-consumer-review.md plus own official audit/liveness/ignored scratch; existing contract/source read-only. Return CLEAR or CHANGES REQUIRED with exact clause/pin/evidence and smallest acceptable deltas; commit receipt, record actual cost, release exact short lease. Do not ACK peer or change ownership. Budget five calls/seven minutes, checkpoint at three.",
+      "session": "codex-atlas-d1-r4-review",
+      "shortname": "codex-d1-r4-consumer-review",
+      "skill": "forensicreview",
+      "started_at": "2026-09-16T17:06:32Z",
+      "summary": "CHANGES REQUIRED. Four numbered deltas distinguish proposed E1 from the legacy nodeId sink, remove an unadmitted durable-facts identity fallback, separate Grok proposal authorship from Core/path authority, and resolve ambiguity before runtime activation. Exact proposal/design/spike/native signatures inspected. Two read batches truncated; narrowed read established cited evidence. No production files, build, tests or GUI. Five functions batches, six underlying operations; tokens/spend not recorded. Parent receives capture artifact because AIDE contract environment absent.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": "codex-astra-d1-r4-review",
+      "artifacts": [
+        "docs/proof/codex-d1-r4-consumer-review.md"
+      ],
+      "datetime": "2026-09-16T17:27:20Z",
+      "done_when": "Repository validator returns valid metadata, body remains identical, correction committed and short lease released.",
+      "duration_seconds": 61.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/atlas-d1-r4-boundary",
+        "pushed": null,
+        "sha": "7e205f5bb8d3ef804a2dd7d30c981838cffd991b",
+        "short": "7e205f5bb"
+      },
+      "goal": "Repair receipt graph metadata without changing its independent review.",
+      "id": "al-01M2NM4FWBQE70ZKW5T0FMHY0T",
+      "kind": "skill",
+      "main_budget": 3,
+      "main_calls": 3,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Small artifact repair, unchanged review verdict. Start audit marker for document. Correct receipt frontmatter type proof to established doc; replace graph links to external r3/r4 notes with existing session-contracts and plan-atlas-five-gates relations after verifying IDs. Scope exact docs/proof/codex-d1-r4-consumer-review.md and own official audit; no verdict/body reinterpretation, peer ACK, source, index or site changes. Short lease, budget three calls/five minutes, zero agents. Run repository validator and inspect returned metadata; commit correction preserving original 7e205f5 history. Steering: use only existing session-contracts link; omit plan absent on this branch. Retain exact external r3/r4 citations in body.",
+      "session": "codex-atlas-d1-r4-review",
+      "shortname": "codex-d1-r4-metadata-repair",
+      "skill": "document",
+      "started_at": "2026-09-16T17:26:19Z",
+      "summary": "Corrected invalid proof type to doc and replaced external-note graph links with the verified existing session-contracts ID. The plan ID was absent locally and omitted per conductor steering. Repository _validate_frontmatter observed unknown type proof before and returned doc metadata with problem null after. Explicit body equality assertion passed. Defect class: authored graph metadata outside actual schema/local inventory; sweep limited to this sole authorized receipt; control validates metadata and exact target before writing. Review verdict and evidence body unchanged; no source/index/site changes. Three shell calls against three-call budget; tokens/spend not exposed.",
+      "tags": [],
+      "tier": "T0",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-16T16:10:51Z",
+      "id": "al-01M2NFRDWGJC0NRWKRTVDJHYS6",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "Start FIRST same process env EVERY shell: AGENT_SESSION=codex-d1-r3-consumer-review AGENT_NAME=codex-astra-d1-consumer-review; python docs/ai-forward-pack/scripts/audit-log.py start --session codex-d1-r3-consumer-review --skill execute-with-coordination. New bounded independent DOCUMENT boundary review, Astra selected for authority/identity semantics. Already provisioned C:/Projects/ai-de-review-d1-r3-consumer-boundary branch review/d1-r3-consumer-boundary base17cd8317442f948ca6e0846f02cc06ef9f3a9673. No EnterWorktree/install. Read AGENTS/applicable workflow, source docs/notes/d1-codex-entry-point-handshake-r3.md exact blob e448383a90bb1ed962c7405af70e16d8cca09fa3. Goal: independently clear or block consumer ACK against previously Owner-approved exact non-consuming boundary, not new policy design. Done when all5corrections and consumerpins checked, concise receipt with CLEAR or precise discrepancy committed. Budget6calls/8min/checkpoint4, no delegates, no tests/build/GUI/source changes. Only NEW docs/proof/codex-d1-r3-consumer-review.md plus official own audit, own liveness/ignoredscratch; original proposal/readers unchanged. Claim exactproofbriefly releasefinally, explicit env audit/commit, outcome success/partial/failed/blocked and --shortname, UTF8 atomic/readback. No need derivedcommits except ownaudit generated mayretain; finalreceipt metadata type doc.\nOwner prior corrected boundary req-01M2KSD1JQG5WEBJVSDNYEH54J in primarysharedrequests: Core-authorized service owns observation/occurrence/projection/source-token/Restore; mapper unassigned/unavailable (no E1 ownership/type0..N/member0..1 promise); no live D1->E1crossopen, disabled mapping-unavailable; E1independentlyselects validCore methodobservations; D1listingcoverage distinctfromE1observation/pagecoverage incl validpartialE1; Source/Backdistinct/E2N/A/no sharedsignaturecapsreceiptschemafreeze. Grok now authored all5inr3 and resolved correctionrequest; user asks whyGrokblockedonourACK. Conductor has openedr3 and finds corrections present; review independent necessary before sameblobACK. Four consumer refs inr3 abbreviations must resolve exactly to E1design0bdd16d7e429f8ed00a73e7c664eb3ced520fae8:path docs/design/atlas-behavior-views.md; E1spike1ab5d9e985fd86ef75adb8d2a11c72fe05b530cc:spikes/atlas-behavior-contract/RESULT.md; E2design27642bf89b687f1e78bc33f11f977cd753baf7cf:docs/design/atlas-architecture-views.md; E2spikea9d86fc1350ac4c74d5d8ff39e9f39685b890f14:spikes/atlas-architecture-contract/RESULT.md. Check actual relevantauthority/coverageclauses narrowly. Record fullSHAexpansions inreceipt; no newrevision request for mere shortreference formatting if exactobjects resolve. No implementation or query/API/contracts source freeze, no assignment ownership policy. r3 proposedfrontmatter is historicalproposalsnapshot; later actualsameblobpeerACKgovernsfreezerecordseparately. Check forbidden r2 assumptions aren't normativeinr3, legitimatequotedwithdrawalsarenotviolations. Return exactreviewcommit/proof/blobobservations/confidence/remainingpeerACK requirement. Nativequalification/mainpublication is separate and mustnotdelay thisreview. Escalate onlyrealambiguity toConductor; no selfedits toGrokproposal.",
+      "session": "codex-d1-r3-consumer-review",
+      "shortname": "d1-r3-consumer-boundary-review",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/codex-d1-r3-consumer-review.md"
+      ],
+      "datetime": "2026-09-16T16:10:51Z",
+      "done_when": "All five corrections and four consumer pins checked; independent CLEAR receipt committed",
+      "duration_seconds": 242.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/d1-r3-consumer-boundary",
+        "pushed": null,
+        "sha": "17cd8317442f948ca6e0846f02cc06ef9f3a9673",
+        "short": "17cd83174"
+      },
+      "goal": "Independently clear or block D1 r3 consumer boundary against Owner-approved requirements",
+      "id": "al-01M2NFRE27J43Z1HFT2C8Z0VWB",
+      "kind": "manual",
+      "main_budget": 6,
+      "main_calls": 6,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Start FIRST same process env EVERY shell: AGENT_SESSION=codex-d1-r3-consumer-review AGENT_NAME=codex-astra-d1-consumer-review; python docs/ai-forward-pack/scripts/audit-log.py start --session codex-d1-r3-consumer-review --skill execute-with-coordination. New bounded independent DOCUMENT boundary review, Astra selected for authority/identity semantics. Already provisioned C:/Projects/ai-de-review-d1-r3-consumer-boundary branch review/d1-r3-consumer-boundary base17cd8317442f948ca6e0846f02cc06ef9f3a9673. No EnterWorktree/install. Read AGENTS/applicable workflow, source docs/notes/d1-codex-entry-point-handshake-r3.md exact blob e448383a90bb1ed962c7405af70e16d8cca09fa3. Goal: independently clear or block consumer ACK against previously Owner-approved exact non-consuming boundary, not new policy design. Done when all5corrections and consumerpins checked, concise receipt with CLEAR or precise discrepancy committed. Budget6calls/8min/checkpoint4, no delegates, no tests/build/GUI/source changes. Only NEW docs/proof/codex-d1-r3-consumer-review.md plus official own audit, own liveness/ignoredscratch; original proposal/readers unchanged. Claim exactproofbriefly releasefinally, explicit env audit/commit, outcome success/partial/failed/blocked and --shortname, UTF8 atomic/readback. No need derivedcommits except ownaudit generated mayretain; finalreceipt metadata type doc.\nOwner prior corrected boundary req-01M2KSD1JQG5WEBJVSDNYEH54J in primarysharedrequests: Core-authorized service owns observation/occurrence/projection/source-token/Restore; mapper unassigned/unavailable (no E1 ownership/type0..N/member0..1 promise); no live D1->E1crossopen, disabled mapping-unavailable; E1independentlyselects validCore methodobservations; D1listingcoverage distinctfromE1observation/pagecoverage incl validpartialE1; Source/Backdistinct/E2N/A/no sharedsignaturecapsreceiptschemafreeze. Grok now authored all5inr3 and resolved correctionrequest; user asks whyGrokblockedonourACK. Conductor has openedr3 and finds corrections present; review independent necessary before sameblobACK. Four consumer refs inr3 abbreviations must resolve exactly to E1design0bdd16d7e429f8ed00a73e7c664eb3ced520fae8:path docs/design/atlas-behavior-views.md; E1spike1ab5d9e985fd86ef75adb8d2a11c72fe05b530cc:spikes/atlas-behavior-contract/RESULT.md; E2design27642bf89b687f1e78bc33f11f977cd753baf7cf:docs/design/atlas-architecture-views.md; E2spikea9d86fc1350ac4c74d5d8ff39e9f39685b890f14:spikes/atlas-architecture-contract/RESULT.md. Check actual relevantauthority/coverageclauses narrowly. Record fullSHAexpansions inreceipt; no newrevision request for mere shortreference formatting if exactobjects resolve. No implementation or query/API/contracts source freeze, no assignment ownership policy. r3 proposedfrontmatter is historicalproposalsnapshot; later actualsameblobpeerACKgovernsfreezerecordseparately. Check forbidden r2 assumptions aren't normativeinr3, legitimatequotedwithdrawalsarenotviolations. Return exactreviewcommit/proof/blobobservations/confidence/remainingpeerACK requirement. Nativequalification/mainpublication is separate and mustnotdelay thisreview. Escalate onlyrealambiguity toConductor; no selfedits toGrokproposal.",
+      "session": "codex-d1-r3-consumer-review",
+      "shortname": "d1-r3-consumer-boundary-clear",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-16T16:06:49Z",
+      "summary": "Independent document boundary CLEAR: all five r3 corrections and four exact consumer pins verified; same-blob coordinator peer ACK remains. No implementation or runtime claim. Broad output truncation repaired by bounded clause readback; derived regeneration remains owed.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "codex-astra-d1-r3-metadata",
+      "artifacts": [
+        "docs/proof/codex-d1-r3-consumer-review.md"
+      ],
+      "datetime": "2026-09-16T17:37:55Z",
+      "done_when": "Actual repository metadata validation passes, body byte equality holds, correction and own audit committed, exact lease released.",
+      "duration_seconds": 60.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/d1-r3-consumer-boundary",
+        "pushed": null,
+        "sha": "394d1ff0a2105c5cdb647d2da5151513e6e8e105",
+        "short": "394d1ff0a"
+      },
+      "goal": "Repair missing r3 receipt summary without changing review semantics or retained dirt.",
+      "id": "al-01M2NMQVZRT3KN4CWSTZY19PR2",
+      "kind": "skill",
+      "main_budget": 3,
+      "main_calls": 3,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Metadata-only correction to existing Codex r3 independent receipt before byte-preserving carrier transport. Use provisioned C:/Projects/ai-de-review-d1-r3-consumer-boundary at 394d1ff0a2105c5cdb647d2da5151513e6e8e105. Preserve retained audit-data.js and .artifacts dirt. Exact allowed file docs/proof/codex-d1-r3-consumer-review.md plus own official audit. Add missing required summary consistent with existing CLEAR/non-consuming boundary; change no other field, body or verdict. Inspect before write, use exact short lease, inspect repository validator metadata after, assert body equality, commit metadata and own audit only, release. No index/site/shared registry/source/GUI/new worktree/install. Budget three calls/five minutes, zero agents. Return exact commit/blob and audit delta so carrier can pick original 394 plus correction; preserve original history.",
+      "session": "codex-d1-r3-consumer-review",
+      "shortname": "codex-d1-r3-metadata-repair",
+      "skill": "document",
+      "started_at": "2026-09-16T17:36:55Z",
+      "summary": "Added only the missing summary field to the independent CLEAR r3 non-consuming boundary receipt. Actual _validate_frontmatter returned missing required keys: summary before and problem null with complete metadata after. Byte equality established for the body and every original byte after removal of the sole added summary line. Existing verdict, fields and evidence unchanged. Defect class: missing mandatory graph metadata; bounded sweep checked this sole authorized receipt and control validates required fields before commit. Pre-existing audit-data.js bytes restored after official audit generation; .artifacts untouched. Three shell calls against three-call budget; token totals not exposed. Carrier must preserve final receipt blob byte-for-byte.",
+      "tags": [],
+      "tier": "T0",
+      "tool": null
+    },
+    {
+      "id": "al-01M2NN9Q8M6RGG72WXGNW6RY56",
+      "shortname": "atlas-peer-review-transport-blocked",
+      "datetime": "2026-09-16T17:47:40Z",
+      "session": "codex-atlas-peer-review-carrier",
+      "prompt": "Transport the approved r4 and corrected r3 independent review commits into the isolated carrier, conserving base and selected audit payloads and stopping before regeneration if any unauthorized ancestor payload appears.",
+      "summary": "Prior transport unit stopped at audit conservation. R4 used nine shell batches against eight; the r3 extension and diagnosis used seven against four. Both final proof blobs matched and source/src/tests/tools matched base, but the installed append-only driver preserved two Grok producer ancestor rows beyond the then-authorized union. The carrier stayed clean at a9ce139b; no regeneration or closure commit ran. An earlier read-only coord check emitted a COORD-NOT-CHECKED-IDENTITY decision because its shell lacked identity; later qualified checks do not retroactively correct it. All proof leases were explicitly released.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": "codex-peer-review-carrier",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/codex-d1-r3-consumer-review.md",
+        "docs/proof/codex-d1-r4-consumer-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "transport"
+      ],
+      "outcome": "blocked",
+      "goal": "Transport only approved independent r3/r4 review artifacts and selected audit deltas without product or ancestor changes.",
+      "done_when": "Both proofs are byte-identical, source trees match base, audit conservation contains only base plus selected rows, and the carrier is ready for regeneration.",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T17:36:20Z",
+      "duration_seconds": 680.0,
+      "git": {
+        "sha": "a9ce139b42cc4071738515eb1d8c0b8aa64e325a",
+        "short": "a9ce139b4",
+        "branch": "review/atlas-peer-receipts",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NNKBHQRYJJ98139PDDSEB6",
+      "shortname": "atlas-peer-review-transport-finalization",
+      "datetime": "2026-09-16T17:52:56Z",
+      "session": "codex-atlas-peer-review-carrier",
+      "prompt": "Owner resolved the carrier blocker by admitting exactly two named historical producer audit payloads. Record the exception and anonymous-check correction, preserve exact r3/r4 receipt bytes, regenerate the three site figures through official tooling, validate, commit, release leases, and return the clean carrier for later join.",
+      "summary": "Finalization inputs verified: the pre-closure union was exactly 960 base, five selected review payloads and two Owner-admitted incidental producer payloads; the separately accounted prior blocked-unit audit brought the working register to 968 with no other missing or extra payloads. R3 and r4 proof blobs and source/src/tests/tools identity were preserved. The transport receipt records exact commit mapping, hashes, authority limits, budget overruns and the anonymous read-only check; original NOT CHECKED output is retained at artifacts/atlas-peer-review-transport/not-checked.txt. The official change record captures the two-row exception. Finalization exceeded five shell batches because the CLI required explicit boolean signal values, two candidate raw-evidence roots were not ignored, and one guarded patch had not executed; the repository rule identified artifacts/ as the correct ignored root. Official regeneration, validation, hooked commit and lease release execute immediately after this audit entry in the same bounded closure.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": "codex-peer-review-carrier",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-peer-review-transport.md",
+        "docs/proof/codex-d1-r3-consumer-review.md",
+        "docs/proof/codex-d1-r4-consumer-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "transport"
+      ],
+      "outcome": "success",
+      "goal": "Finalize the independent r3/r4 review carrier with the exact two-row provenance exception and no product or broader ancestry changes.",
+      "done_when": "Authorized audit union and proof/source hashes pass, transport receipt and raw evidence exist, official regeneration and validation pass, the hooked commit is clean, and all leases are released.",
+      "tier": "T1",
+      "main_calls": 9,
+      "main_budget": 5,
+      "main_over_budget": true,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-16T17:47:40Z",
+      "duration_seconds": 316.0,
+      "git": {
+        "sha": "a9ce139b42cc4071738515eb1d8c0b8aa64e325a",
+        "short": "a9ce139b4",
+        "branch": "review/atlas-peer-receipts",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NNRDJWGZ224XGMAQQG1W0G",
+      "shortname": "atlas-peer-review-transport-graph-blocked",
+      "datetime": "2026-09-16T17:55:42Z",
+      "session": "codex-atlas-peer-review-carrier",
+      "prompt": "Preserve the current review-carrier receipt, audit, decision and regenerated outputs as a WIP checkpoint after the full docs graph validator found one dangling link in the byte-locked r3 receipt.",
+      "summary": "Supersedes the earlier finalization audit's acceptance signal. Official regeneration completed and its built-in gates passed, but the additional full docs graph validator failed on one dangling target in the byte-locked r3 receipt: note-d1-codex-entry-point-handshake-r3. Closure was not committed and READY was not claimed. The Owner commissioned a source-side metadata-only correction; this checkpoint preserves current audit, decision, receipt, index and site-figure state without changing the r3 blob or importing the missing Grok note.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": "codex-peer-review-carrier",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-peer-review-transport.md",
+        "docs/proof/codex-d1-r3-consumer-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "graph-gate"
+      ],
+      "outcome": "partial",
+      "goal": "Checkpoint owned carrier state without discarding audit or derived changes so the admitted source metadata correction can be transported safely.",
+      "done_when": "A truthful superseding partial audit is recorded, current derived views are regenerated, the WIP commit is created under exact leases, and leases are released.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T17:55:42Z",
+      "duration_seconds": 0.0,
+      "supersedes": "al-01M2NNKBHQRYJJ98139PDDSEB6",
+      "git": {
+        "sha": "a9ce139b42cc4071738515eb1d8c0b8aa64e325a",
+        "short": "a9ce139b4",
+        "branch": "review/atlas-peer-receipts",
         "pushed": null
       }
     }
@@ -30094,6 +30417,33 @@ window.AUDIT_DATA = {
         "before": null,
         "after": "7ad8723eb7a8380a268380fd5616932bd5c3a346",
         "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2NNKBDZXH45VEM58FG2JYVW",
+      "datetime": "2026-09-16T17:52:56Z",
+      "session": "codex-atlas-peer-review-carrier",
+      "kind": "decision",
+      "skill": "execute-with-coordination",
+      "title": "Admit exact historical audit provenance for review carrier",
+      "prompt": "Resolve the carrier conservation blocker by admitting exactly the two named historical producer audit payloads, preserve them without deletion or rewriting, and finalize the byte-preserving r3/r4 review carrier.",
+      "summary": "Owner admits exactly al-01M2KMBV5ZEQPEFFD7708W28HA and al-01M2NHXVG85NWR87JK2WJW4PAQ as incidental historical producer provenance preserved by the installed append-only merge driver. The exception grants no broader ancestry, current admission, ownership, ACK, native, product, root-candidate, main or publication authority.",
+      "rationale": "The installed register merge driver retained these two source-parent payloads; exact fingerprint equality was verified and preserving them is safer than ad hoc append-only ledger surgery.",
+      "artifacts": [
+        "docs/proof/atlas-peer-review-transport.md",
+        "docs/proof/codex-d1-r3-consumer-review.md",
+        "docs/proof/codex-d1-r4-consumer-review.md"
+      ],
+      "tags": [
+        "atlas",
+        "audit-provenance"
+      ],
+      "git": {
+        "before": "a9ce139b42cc4071738515eb1d8c0b8aa64e325a",
+        "after": "a9ce139b42cc4071738515eb1d8c0b8aa64e325a",
+        "branch": "review/atlas-peer-receipts",
         "pushed": null,
         "commits": []
       }
