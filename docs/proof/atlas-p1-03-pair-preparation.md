@@ -10,10 +10,113 @@ links:
   - { to: proof-atlas-p1-03-uia-transition, rel: relates-to }
   - { to: session-contracts, rel: relates-to }
 review-by: 2026-12-16
-summary: "Preparation only: ten harmless runner controls pass, both required Debug builds succeeded and an 11,625-file post-build manifest verifies; independent runner/SRE review and an execution slot remain required."
+summary: "Corrected preparation candidate: 16 harmless controls pass; successor freeze retains all 11,624 old non-runner inputs and adds five measured Git binaries. Independent rereview and an execution slot remain required."
 ---
 
-# Preparation result
+# Corrected preparation candidate
+
+**Verified correction evidence; independent veto remains open.** The independent
+BLOCK at `2ab2f0b2bb2ae17ddb9bed5da1da935742bc9873` identified CIM precision loss,
+identity-parse cleanup bypass, and an unpinned Git implementation. The Owner also
+required a strict negative-oracle parser. This correction runs no build, dotnet
+test, native Fact, GUI or browser probe. It preserves the original build source.
+
+Owner request `req-01M2P0VQ6APR7BAG5CBH4ECK2X` was consumed and ACKed. Session
+`codex-atlas-p1-03-pair-correction` owns only this proof, the runner and required
+records. Goal: correct the four findings without changing compiled inputs. Done
+when a preserved successor freeze and meaningful controls are reviewable. Tier T2,
+fan-out zero, Astra; 16-call / 25-minute limit. Existing programme graph retains
+the review-feedback edge; author evidence does not clear the independent veto.
+
+## Correction evidence and successor identity
+
+All paths below are local to `artifacts/atlas-pair-preparation/` in the named tree.
+The old `manifest.json` is retained unchanged. `correction-preedit-verify.log`
+records its complete **PINS-MATCH before the first runner edit**.
+
+| Evidence | Actual result |
+| --- | --- |
+| `correction-red.json` | 13 run: original ten passed; two failures and one error reproduced cleanup, precision and provider-parser findings |
+| `correction-green-1.json` | 16 run, zero failures/errors; case names recorded |
+| `controls/cim-correlation-*/actual.json` | Real harmless Python process, same retained Job-owned handle around actual CIM query; raw and CIM times retained |
+| `controls/malformed-identity-*/observation.json` | Actual decoder fault; final green preserves process.json, contains process tree and closes Job plus retained process handles |
+| `controls/identity-read-*/run/process.json` | Missing/unreadable record controls retain refusal and containment |
+| `controls/primary-secondary-*/run/process.json` | Deadline remains primary; identity-read and observer-drain errors are separate secondary errors |
+| `correction-git/git-dependencies.json` | Actual cmd shim and mingw64 Git process images/modules, hashes and owned containment |
+| `manifest-corrected.json` | Explicit successor: 11,630 files / 1,030 roots; all 11,624 old non-runner inputs identical; five measured Git additions |
+
+Current runner SHA256:
+`26567e7b408430ef29d4a44e6c60a1792cb2ddae9b23dd01393e1cc6ea3a3daa`.
+Current successor manifest SHA256:
+`a58c5993e2a8ce0c30ca3ea38339da0f2faf5943a7d891d7b3cf6a42b51ba23c`.
+Git evidence SHA256:
+`ccb11ed9ab8bfefdef011e23b2e6ae039500b087fa23ddc20e87152e30b75ed5`.
+The predecessor hash remains `ed4f937ba886f57b186ea02b0fa9cf74135bbb7137d5938cf99942d210360314`.
+Successor creation compares the complete old population and every old hash, allowing
+only the runner hash to differ, then adds measured Git files. It does not invoke
+`prepare`, restore or build. Source/test diff against the build base is empty.
+
+### Actual correction controls
+
+- `test_cim_precision_diagnostic_with_retained_handle_evidence`: unequal CIM time
+  is accepted only with exact raw handle correlation. This row is synthetic.
+- `test_actual_cim_handle_and_negative_identity_controls`: real harmless CIM query;
+  the same live, Job-owned handle verifies PID, raw creation identity and image
+  before and after. Wrong PID/birth/image, wrong CIM PID/image, exit during query,
+  exited process and unavailable handle refuse. A four-tick CIM mutation is
+  deliberately diagnostic only; no rounding enters the safety decision.
+- `test_malformed_identity_still_closes_and_records`: actual JSON decoder fault.
+- `test_missing_unreadable_identity_and_primary_error_preserved`: real finalization
+  with missing/permission errors and an injected drain-record failure.
+- `test_provider_failure_is_not_missing_name`: provider exception cannot become
+  a negative original oracle even with the original stack substring.
+- `test_receipt_schema_positive_negative_and_mutations`: emitted-schema A/B,
+  pass/negative fixtures; duplicate packet, event-order, found-state, batch, timing,
+  offscreen assertion, observer failure and forced-daemon-cleanup mutations refuse.
+
+The exact negative assertion type is `Xunit.Sdk.NotNullException`, observed in the
+historical P1-03 raw receipt and grounded in the unchanged source's `Assert.NotNull`.
+It must accompany the last failed original query, the expected name prefix, unique
+query IDs, one correlated batch and temporally enclosing WPF packets. Earlier
+queries must have succeeded. An offscreen assertion, provider error or observer
+failure is not a valid negative. Receipt counters, original owned HWND/process,
+publication/cleanup ordering and TRX population must agree. Fixtures are synthetic;
+they do not prove a shown arm's schema or its runtime validity.
+
+Git probe: shim PID 5812 / birth 134340673561013339; actual implementation PID 3472 /
+birth 134340673561106282. The four-process owned tree reached active zero and all
+retained handles exited. The measured additions are `mingw64/bin/git.exe`,
+`libiconv-2.dll`, `libintl-8.dll`, `libpcre2-8-0.dll`, `zlib1.dll`. Git reports
+2.55.0.windows.2. The harmless command is `hash-object --stdin`, held under the
+existing stdin gate and terminated by its bounded Job Object. OS modules were
+recorded but are not newly frozen. This is measured module coverage for this command,
+not a claim that all optional Git commands/plugins/configuration were exercised.
+
+API grounding: Microsoft documents [module enumeration](https://learn.microsoft.com/en-us/windows/win32/api/psapi/nf-psapi-enumprocessmodulesex),
+[module paths](https://learn.microsoft.com/en-us/windows/win32/api/psapi/nf-psapi-getmodulefilenameexw)
+and [handle-derived PID](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessid).
+The probe verifies identity on retained Job-owned handles and closes only process
+handles; returned module handles are not owned handles to close.
+
+Class → sweep → derive → prevent: DC-211 candidate covers representation differences
+being promoted into identity differences; sweep CIM/native comparisons, derive raw
+handle authority, retain precision and identity-negative controls. DC-078 covers
+evidence parsing replacing the primary failure or skipping cleanup; sweep direct
+record reads/finalization, separate primary/secondary records, retain actual-path
+fault controls. Parser evidence-shape and dependency-closure findings are captured
+here for Conductor's classification; no central register was edited. Unsupported
+`git var GIT_TEMPLATE_DIR`, guessed `coord.py`, and nonexistent `coord status`
+lookups failed during grounding; their results are not claimed as verification.
+
+Residual review gates: review the retained-handle observer lifetime, cleanup faults,
+actual Git dependency boundary and strict parser against source. Actual browser/UDF
+consumption, visible publication, provider census and arm outcomes remain unexecuted.
+No canonical reproduction or retention-cause inference follows. No whole-branch
+canonical merge is admitted. Token/spend telemetry is not recorded; audit duration
+and the final call count are the measured cost fields. Administrative close checks
+and commit identity are reported in the final handoff.
+
+# Original preparation evidence (historical)
 
 **Verified:** two required Debug builds succeeded with zero warnings/errors; the
 post-build manifest contains 11,625 files across 1,025 roots and a subsequent full
@@ -95,11 +198,9 @@ installed runtime catalog are in the manifest. Selected executable identities:
 | Daemon output `AiDe.Daemon.dll` | `a3e3fa8b97a86c7b401841a269545a882fb4c33f1b3f9d5090a8c8f1feca4b35` |
 | Daemon executable | `89708cc9ed51895c56050e605368dae7351d2661077b2e45fdd0840198fca763` |
 
-The manifest records declared runtime/dependency roots, not a claim to freeze the
-entire operating system. Git's command executable is pinned; its complete installed
-transitive binary tree is not enumerated. OS services and machine policy are not
-claimed immutable. Independent review must assess this external-dependency boundary
-before accepting the freeze for execution; do not infer closure from file count.
+The predecessor pinned only Git's command shim. The successor above adds the
+observed implementation and modules. Neither manifest claims the whole operating
+system, OS services or machine policy immutable. Do not infer closure from file count.
 
 ## WebView profile amendment
 
@@ -132,9 +233,10 @@ Future arms must produce Job Object-correlated browser identities plus CIM
 ExecutablePath, CommandLine and CreationFileTime observations. The parser requires
 the selected binary and actual `--user-data-dir` path; absent consumption evidence
 refuses. The harmless child control proves environment delivery only. CIM browser
-correlation, including cross-API creation-time precision, has not been exercised
-against a browser or a harmless CIM surrogate in this unit and is a specific
-independent-review gap. No environment variable is promoted into consumption proof.
+correlation is now exercised against a harmless CIM surrogate in the correction
+above; actual browser consumption remains unexecuted. CIM time is diagnostic only;
+the same retained native handle is authoritative. No environment variable is
+promoted into consumption proof.
 
 ## Process custody and controls
 
@@ -194,7 +296,7 @@ starts. The execution identity is `codex-atlas-p1-03-pair-execution` /
 `codex-astra-pair-executor`.
 
 ```powershell
-python -B docs/proof/records/atlas-p1-03-uia-transition/run_pair.py execute --manifest artifacts/atlas-pair-preparation/manifest.json --manifest-sha256 ed4f937ba886f57b186ea02b0fa9cf74135bbb7137d5938cf99942d210360314 --reviewed-commit <INDEPENDENTLY_REVIEWED_RUNNER_COMMIT> --slot <WATCHER_SLOT_ID> --expires-utc <WATCHER_EXPIRY_UTC> --label <UNIQUE_PAIR_LABEL>
+python -B docs/proof/records/atlas-p1-03-uia-transition/run_pair.py execute --manifest artifacts/atlas-pair-preparation/manifest-corrected.json --manifest-sha256 a58c5993e2a8ce0c30ca3ea38339da0f2faf5943a7d891d7b3cf6a42b51ba23c --reviewed-commit <INDEPENDENTLY_REVIEWED_RUNNER_COMMIT> --slot <WATCHER_SLOT_ID> --expires-utc <WATCHER_EXPIRY_UTC> --label <UNIQUE_PAIR_LABEL>
 ```
 
 Slot ID is recorded input, not a cryptographic or connector-backed grant verifier;
@@ -221,6 +323,7 @@ The reader separates `fixture_valid`, `original_oracle` and `cleanup_valid`:
   Census-called or unrelated text cannot pass. A has no loading census.
 - Oracle: actual one-case TRX and unchanged original UIA query events. Passing
   requires all five names, receipt Completed and zero failures. A negative requires
+  the exact NotNull assertion type, a correlated missing-name original query,
   the original automation stack and exactly one primary failure. Exit code must
   agree; process exit alone is never accepted.
 - Cleanup: registry zero, reader-disposed custody, healthy lease release, recorded
@@ -241,10 +344,10 @@ ended; the watcher must independently verify containment and release its own slo
 
 ## Review boundary and remaining work
 
-The ten controls do not cover every receipt-parser mutation or establish native
-schema fidelity by execution. Browser CIM consumption and its timestamp matching,
-short-lived descendant identity capture, external Git/OS dependency scope and
-failure-path record persistence require independent SRE scrutiny. Strict missing
+The sixteen corrected controls cover the named parser mutations but do not establish
+native schema fidelity by execution. Actual browser CIM consumption, retained-handle
+lifetime, short-lived descendant capture, Git/OS dependency scope and failure-path
+record persistence require independent SRE scrutiny. Strict missing
 identity or truncated-census refusal may make a shown pair inconclusive; it is not
 permission to weaken those gates. The source stays frozen while reviewed.
 

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T21:01:15Z",
+  "generated": "2026-09-16T21:27:00Z",
   "audit": [
     {
       "actor": null,
@@ -26406,6 +26406,54 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "1d46d651cd5b6356e05545115757ba7eb7ffbf45",
         "short": "1d46d651c",
+        "branch": "test/atlas-p1-03-uia-pair",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2P1NSKMT1EY0MXBED53BZTC",
+      "shortname": "atlas-pair-correction",
+      "datetime": "2026-09-16T21:23:59Z",
+      "session": "codex-atlas-p1-03-pair-correction",
+      "prompt": "Goal: correct independent runner BLOCK with smallest complete proof, preserving compiled inputs. Done when exact findings have meaningful red/green controls, successor freeze proves old compiled/runtime bytes unchanged, candidate committed for independent rereview. T2; fanout 0; Astra retained for identity/process/parser semantics. Owner admits 16 orchestration calls / 25 minutes / checkpoint 10; later independent 8/15 minutes. Original 17/18 preparation budget not retroactively changed. Cap fires => specific remaining work, not floor cut/timeout approval.\n\nSession codex-atlas-p1-03-pair-correction, agent codex-astra-pair-author, existing Conductor-authorized tree C:/Projects/ai-de-test-atlas-p1-03-uia-pair. FIRST action audit-log.py start --session codex-atlas-p1-03-pair-correction --skill implement. Publish own new primary liveness before editing. No EnterWorktree/install. Allowed same two paths run_pair.py and docs/proof/atlas-p1-03-pair-preparation.md plus own official audit/required derived/own liveness. No product/test/tools/shared runner edits, builds or dotnet test, native/GUI/browser probe, main/canonical join or push.\n\nRead independent final BLOCK in C:/Projects/ai-de-review-atlas-p1-03-uia-pair/docs/proof/atlas-p1-03-pair-review.md and actual raw artifacts/atlas-pair-review/{initial-creation-probe.json,probe.json,probe.py,controls.json}. Review frozen 2ab2f0b2bb2ae17ddb9bed5da1da935742bc9873. FR001 raw 134340662446557014 versus CIM ..7010, later zero difference. FR002 injected direct identity JSON decode skipped process.json and left Job plus two handles open (reviewer closed). FR003 Git cmd shim pinned but installed mingw64/bin/git.exe absent; actual runtime use not yet measured. Additional parser negative gap: stack substring can admit provider/visibility/observer failure instead of actual missing-name assertion.\n\nOwner disposition req-01M2P0VQ6APR7BAG5CBH4ECK2X addressed new session: consume/ACK through protocol. Correction without rebuild: VERIFY OLD ED4F937B manifest BEFORE EDITING, preserve old manifest/raw evidence, explicit successor changes runner pin plus justified dependency additions only, prove every old compiled/runtime input identical. Do not silently overwrite manifest; unexpected changed input STOP/escalate. Build source 1d46d651 stays; old candidate 88035753581dd0bab5697e975b6ba1a53543e702. Existing verify depends on runner hash so preserve old pre-edit verification report.\n\nRequired: (1) malformed/missing/unreadable identity never bypasses Job/process-handle closure, observer drain, containment, retained failure record; separate primary and secondary errors; actual-path fault controls. (2) SAME retained Job-owned handle raw GetProcessTimes identity and nonsignaled before/after CIM query, matching PID and actual executable; exit/unavailable/mismatch refuses. CIM timestamp diagnostic only, no rounded safety comparison. Harmless process probe, precision mismatch, wrong identity/exit negatives; no invented Windows API. (3) Measure harmless Git actual image/modules/dependencies; pin justified mutable installation inputs, no whole-OS speculation. (4) Exact supported assertion type and correlated failed original name query for negative. Emit-schema fixtures from actual test source, validate order/duplicates/correlation/cleanup/provider/offscreen/observer failures. No source repair; fixed-source contradictions return Owner.\n\nGraph F/C/P/M -> R(BLOCK) -> bounded correction/controls -> independent R -> fresh watcher S -> fixed A then B -> I. Fresh WebView profiles/full pins/180+30 bounds/fixed two arms stay. No execution admitted or extra preparation approval. Independent reviewers clear their own veto. Conductor handles central class register from class/sweep/derive/prevent notes. Exact short site leases at close. Return fixed commit, actual red/green tests, successor manifest/runner hash, unchanged compiled proof, exact audit, clean/release, model/cost/limits.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2P1V9QXYWMGKAGRYNSS1XP5",
+      "shortname": "atlas-pair-correction",
+      "datetime": "2026-09-16T21:26:59Z",
+      "session": "codex-atlas-p1-03-pair-correction",
+      "prompt": "Goal: correct independent runner BLOCK with smallest complete proof, preserving compiled inputs. Done when exact findings have meaningful red/green controls, successor freeze proves old compiled/runtime bytes unchanged, candidate committed for independent rereview. T2; fanout 0; Astra retained for identity/process/parser semantics. Owner admits 16 orchestration calls / 25 minutes / checkpoint 10; later independent 8/15 minutes. Original 17/18 preparation budget not retroactively changed. Cap fires => specific remaining work, not floor cut/timeout approval.\n\nSession codex-atlas-p1-03-pair-correction, agent codex-astra-pair-author, existing Conductor-authorized tree C:/Projects/ai-de-test-atlas-p1-03-uia-pair. FIRST action audit-log.py start --session codex-atlas-p1-03-pair-correction --skill implement. Publish own new primary liveness before editing. No EnterWorktree/install. Allowed same two paths run_pair.py and docs/proof/atlas-p1-03-pair-preparation.md plus own official audit/required derived/own liveness. No product/test/tools/shared runner edits, builds or dotnet test, native/GUI/browser probe, main/canonical join or push.\n\nRead independent final BLOCK in C:/Projects/ai-de-review-atlas-p1-03-uia-pair/docs/proof/atlas-p1-03-pair-review.md and actual raw artifacts/atlas-pair-review/{initial-creation-probe.json,probe.json,probe.py,controls.json}. Review frozen 2ab2f0b2bb2ae17ddb9bed5da1da935742bc9873. FR001 raw 134340662446557014 versus CIM ..7010, later zero difference. FR002 injected direct identity JSON decode skipped process.json and left Job plus two handles open (reviewer closed). FR003 Git cmd shim pinned but installed mingw64/bin/git.exe absent; actual runtime use not yet measured. Additional parser negative gap: stack substring can admit provider/visibility/observer failure instead of actual missing-name assertion.\n\nOwner disposition req-01M2P0VQ6APR7BAG5CBH4ECK2X addressed new session: consume/ACK through protocol. Correction without rebuild: VERIFY OLD ED4F937B manifest BEFORE EDITING, preserve old manifest/raw evidence, explicit successor changes runner pin plus justified dependency additions only, prove every old compiled/runtime input identical. Do not silently overwrite manifest; unexpected changed input STOP/escalate. Build source 1d46d651 stays; old candidate 88035753581dd0bab5697e975b6ba1a53543e702. Existing verify depends on runner hash so preserve old pre-edit verification report.\n\nRequired: (1) malformed/missing/unreadable identity never bypasses Job/process-handle closure, observer drain, containment, retained failure record; separate primary and secondary errors; actual-path fault controls. (2) SAME retained Job-owned handle raw GetProcessTimes identity and nonsignaled before/after CIM query, matching PID and actual executable; exit/unavailable/mismatch refuses. CIM timestamp diagnostic only, no rounded safety comparison. Harmless process probe, precision mismatch, wrong identity/exit negatives; no invented Windows API. (3) Measure harmless Git actual image/modules/dependencies; pin justified mutable installation inputs, no whole-OS speculation. (4) Exact supported assertion type and correlated failed original name query for negative. Emit-schema fixtures from actual test source, validate order/duplicates/correlation/cleanup/provider/offscreen/observer failures. No source repair; fixed-source contradictions return Owner.\n\nGraph F/C/P/M -> R(BLOCK) -> bounded correction/controls -> independent R -> fresh watcher S -> fixed A then B -> I. Fresh WebView profiles/full pins/180+30 bounds/fixed two arms stay. No execution admitted or extra preparation approval. Independent reviewers clear their own veto. Conductor handles central class register from class/sweep/derive/prevent notes. Exact short site leases at close. Return fixed commit, actual red/green tests, successor manifest/runner hash, unchanged compiled proof, exact audit, clean/release, model/cost/limits.",
+      "summary": "Corrected CIM retained-handle identity, identity-read finalization, Git implementation pins and exact missing-name parser. Red 13: ten pass, two fail, one error; green 16/16. Successor preserves 11624 old non-runner inputs and adds five measured Git binaries. No rebuild/native execution; independent veto remains open. Failed unsupported Git/coord lookups retained.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-pair-preparation.md",
+        "docs/proof/records/atlas-p1-03-uia-transition/run_pair.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Correct independent runner BLOCK without rebuilding or changing compiled inputs.",
+      "done_when": "Corrected runner and proof committed with meaningful red/green controls and explicit unchanged-input successor freeze for independent rereview.",
+      "tier": "T2",
+      "main_calls": 16,
+      "main_budget": 16,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-16T21:10:35Z",
+      "duration_seconds": 984.0,
+      "git": {
+        "sha": "88035753581dd0bab5697e975b6ba1a53543e702",
+        "short": "880357535",
         "branch": "test/atlas-p1-03-uia-pair",
         "pushed": null
       }
