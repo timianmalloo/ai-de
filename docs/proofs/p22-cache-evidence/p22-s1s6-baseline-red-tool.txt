@@ -1,0 +1,34 @@
+
+  AiDe.Core -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Daemon -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Mcp -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Feed_ExplicitBackdateBehindGlobalCursor_Rejects(transition: False) [FAIL]
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Feed_ExplicitBackdateBehindGlobalCursor_Rejects(transition: True) [FAIL]
+[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_checkpoint", assignments: "accepted_offset=1.5") [FAIL]
+[xUnit.net 00:00:00.38]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_feed", assignments: "session_id='session',session_generation='nonsense'") [FAIL]
+[xUnit.net 00:00:00.41]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_event", assignments: "source_offset='nonsense',source_end='zzzz',raw_byt"···) [FAIL]
+[xUnit.net 00:00:00.43]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_event", assignments: "source_end=1.5,raw_bytes=NULL") [FAIL]
+[xUnit.net 00:00:00.44]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_event", assignments: "first_receipt_n=1.5,current_receipt_n=1.5") [FAIL]
+[xUnit.net 00:00:00.45]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_event", assignments: "source_offset=1.5,source_end=2.5,raw_bytes=NULL") [FAIL]
+[xUnit.net 00:00:00.50]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_event", assignments: "source_end='oops',raw_bytes=X''") [FAIL]
+[xUnit.net 00:00:00.52]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_event", assignments: "current_receipt_n='nonsense'") [FAIL]
+[xUnit.net 00:00:00.54]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_feed", assignments: "n=1.5") [FAIL]
+[xUnit.net 00:00:00.55]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_event", assignments: "first_receipt_n='nonsense',current_receipt_n='nons"···) [FAIL]
+[xUnit.net 00:00:00.57]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_event", assignments: "current_receipt_n=1.5") [FAIL]
+[xUnit.net 00:00:00.64]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_feed", assignments: "session_id='session',session_generation=1.5") [FAIL]
+[xUnit.net 00:00:00.65]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_checkpoint", assignments: "accepted_offset='nonsense'") [FAIL]
+[xUnit.net 00:00:00.74]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Checkpoint_StaleButPreviouslyAccountedEndpoint_Rejects [FAIL]
+[xUnit.net 00:00:00.77]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Endpoint_OneHundredfoldHistory_UsesIndexedBoundedLookup [FAIL]
+[xUnit.net 00:00:00.83]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(column: "epoch", ceiling: 128) [FAIL]
+[xUnit.net 00:00:00.84]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(column: "event_key", ceiling: 512) [FAIL]
+[xUnit.net 00:00:00.85]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(column: "scope", ceiling: 4096) [FAIL]
+[xUnit.net 00:00:00.88]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Migration_VersionRecordAbort_RollsBackDdlAndPreservesV7History [FAIL]
+[xUnit.net 00:00:00.89]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_DuplicateThenReplayThenNewAdmission_AccountsWithoutSemanticEffect [FAIL]
+
+Failed!  - Failed:    22, Passed:    28, Skipped:     0, Total:    50, Duration: 617 ms - AiDe.Core.Tests.dll (net10.0)
+Results File: C:\Projects\ai-de-feature-xh-p2-projection\docs\proofs\p22-cache-evidence\p22-s1s6-baseline-red.trx

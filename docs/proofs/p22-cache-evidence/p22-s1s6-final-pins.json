@@ -1,0 +1,46 @@
+[
+  {
+    "path": "src\\AiDe.Core\\Watcher\\SqliteWatcherObservationStore.Coordination.cs",
+    "sha256": "40442BFEB7DC311B1972EB51D511ACC4BD7D8DFF79272D31422F9082077D0C31"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\SqliteWatcherObservationStore.cs",
+    "sha256": "A6CE3842B19FDADD7CEFE8720A3AF7E670E90392E821461357A5515EFDE0F2A6"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionBoundaryTests.cs",
+    "sha256": "CEE797E3A7D4D44DCB3E1A77C6217FF452260538E5CA49FA4634FF7AFDFD38C6"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionTests.cs",
+    "sha256": "F63FACD9F50232173FADE4C0110D13B4C82D0098988B1402D9361D7B01FB4F79"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationReliabilityTests.cs",
+    "sha256": "F582F7B3BBBC84A481AC4459925B19449D3099F5EC014DEB995E6CB398FADA43"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "sha256": "FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D"
+  },
+  {
+    "path": "src\\AiDe.Core\\AiDe.Core.csproj",
+    "sha256": "B63C41B97201DC3E1016B72B404A32411AC31E477231B281219DDA64D0AD584A"
+  },
+  {
+    "path": "Directory.Packages.props",
+    "sha256": "A57D2EE58BD9787119F5D71C07B956A72F986FEF30287647AABCA25212E95F64"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll",
+    "sha256": "FF39ED43873182CC33876462F2F4331282EEEEDF9A1C98591393488BFC872DE6"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.dll",
+    "sha256": "644070C59AF540DA7DFA315C3826211C65FBABA61844F95513502485878FA131"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\Microsoft.Data.Sqlite.dll",
+    "sha256": "4ABD9C2A61E580EB853E93CA8953A3CEF2C05714AE28D2D1859D4DBC5E5700BC"
+  }
+]

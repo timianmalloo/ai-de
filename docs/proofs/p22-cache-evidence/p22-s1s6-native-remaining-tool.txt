@@ -1,0 +1,10 @@
+
+Test run for C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.37]     AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_UnchangedLogTwice_PreservesOneOriginalMessage [FAIL]
+[xUnit.net 00:00:00.41]     AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle(ended: False) [FAIL]
+[xUnit.net 00:00:00.43]     AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle(ended: True) [FAIL]
+[xUnit.net 00:00:00.44]     AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.Apply_ReplayedRegisterOfEndedSession_PreservesEndedGenerationAndHeartbeat [FAIL]
+
+Failed!  - Failed:     4, Passed:     3, Skipped:     0, Total:     7, Duration: 187 ms - AiDe.Core.Tests.dll (net10.0)
+Results File: C:\Projects\ai-de-feature-xh-p2-projection\docs\proofs\p22-cache-evidence\p22-s1s6-native-remaining.trx

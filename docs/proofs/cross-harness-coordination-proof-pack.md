@@ -20,6 +20,113 @@ summary: >-
 
 # Proof Pack — dormant P1 candidate; independent code gate pending
 
+## P2.2 S1–S6 repair evidence — 2026-09-16
+
+**Author repair complete; independent Data/Test re-gate PENDING. Full P2 remains
+incomplete. No activation is authorized.** Baseline DDL:
+`584975f99547f67c2245ac879a47fd44f3f8fcf2`. The design/ADR correction was written
+before production DDL edits. Exactly the existing three caches remain. Fresh
+unreleased v8 was amended; existing prerelease v8 fixtures are NOT upgraded.
+Released v7→fresh v8 stays additive; no production database was opened or migrated.
+
+### Evidence, scope and oracles
+
+New cases: `tests/AiDe.Core.Tests/Watcher/CoordinationProjectionBoundaryTests.cs`.
+Existing `CoordinationProjectionTests.cs` and native reliability tests are unchanged.
+
+| Finding / claim | Oracle and observed evidence | Confidence / limit |
+|---|---|---|
+| S1 global committed order | Both explicit n=5 initial and tombstone inserts behind committed n=1,10 succeeded on baseline; repaired tests reject with `COORD_FEED_ORDER`, preserve current=1/high-water=10, then automatically allocate 11 | Verified SQL behavior; holes allowed; no old ID/Seq rewrite |
+| S2 integer storage | Baseline admits nonintegral and text offsets/endpoints/pointers/generation/checkpoint. Storage-isolation tests disable only update immutability/FKs and test real CHECK/NOT NULL definitions. NULL, zero, negative, text, REAL, positive-generation controls run | Verified for present numeric columns. INTEGER PRIMARY KEY datatype mismatch is SQLite code 20, not CHECK code 19. No due/retries columns exist here |
+| S3 key representation | Exact TEXT on all scope/epoch/event-key columns; BLOB, embedded NUL, empty and UTF-8 limit+1 rejected; legal multibyte exact limits accepted | Verified; byte ceilings 4096/128/512. No normalization. Historical/native IDs are not rewritten |
+| S4 accounting | K[0,1): one event/admission. Equal-identity accounting diagnostic [1,2) plus checkpoint=2 in one transaction: original/current admission=1 unchanged. Replay INSERT rejected with no growth. L[2,3) advances checkpoint=3. Wrong scope/epoch/key/admission, gaps/overlap, diagnostic-as-current and semantic mappings on diagnostics reject | Verified SQL accounting/reference facts only. This fixture assumes duplicate classification; it does NOT compare captured canonical bytes or implement a production replay API/native effect |
+| S4 diagnostic shape | 21 negative cases require integer/ranged non-NULL intervals, original admission, nonempty TEXT digest and NULL application/session/message/parent state. Positive semantic receipts retain NULL interval metadata; positive diagnostics have NULL semantic state | Verified. Digest is not equality evidence; it is reference metadata |
+| S5 ordered lookup | Actual event-insertion trigger queries extracted and explained: five SEARCH plans, no SCAN or temporary sort. Event and diagnostic histories measured separately at 10 and 1000 rows. Both endpoint probes visit one matching row at each size | Verified narrow lookup paths on SQLite 3.53.3/provider 10.0.11.0. Instrumented predicate visits are not total VM steps or whole-pump runtime. No runtime/canonical-bridge guarantee |
+| S6 payload guard isolation | Stage valid pending→applied receipt with only automatic transition trigger removed. Changed raw/canonical bytes or single-sided NULL with valid next pointer rejects specifically `COORD_PAYLOAD_IMMUTABLE`/1811. Remove ONLY payload clause: the SAME `Assert.Throws<SqliteException>` fails, mutant mutation persists pointer=2 | Four executed clause mutants; verified guard isolation. Existing positive legal transition/tombstone tests and new mapped tombstone control pass |
+| Migration fault | Real Open with v7 fixture and abort-on-version-8 trigger rolls all coordination DDL back: max version=7, zero coord tables, old-a/old-b retain Seq=7 after successful retry. Baseline failed Open leaked connection and fixture deletion failed; Open now disposes failed initialization | Verified injected deployment failure and cleanup; NOT an old-binary rollback test |
+| Prior compatibility | Original 32 schema + 91 ordering/compatibility + 6 migration cases all retained | Verified 129 passing, unchanged tests |
+| Native R1/R2 | Entire unchanged reliability class still 3 pass / 4 fail; names in native TRX | Verified remaining defects, intentionally not repaired here |
+
+The old `p22-cache-red.trx` remains **21 missing-table failures plus one version
+assertion**, not 22 semantic REDs. This repair's new baseline is different:
+50 executed, 28 PASS / 22 FAIL = **20 schema-semantic REDs**, **one incorrect test
+expectation** (SQLite INTEGER PRIMARY KEY mismatch returns 20), and **one real
+failed-constructor resource leak**. No missing-table/column failure is counted.
+The baseline duplicate helper used the existing feed shape to expose semantic
+`COORD_TRANSITION_REFUSED`, not a missing new diagnostic column.
+
+### Immutable receipts and exact execution
+
+All receipts below are new; original seven receipts remain unchanged. Shell identity
+was `xh-p2-projection-b0d0` / `copilot-p22-schema`, UTF-8 enabled each call; official
+session reopened, exact edit leases released before tests.
+
+Common: `dotnet test tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --no-restore
+--filter <selector> --logger "console;verbosity=quiet"
+--logger "trx;LogFileName=<name>.trx"
+--results-directory docs\proofs\p22-cache-evidence`.
+
+| New receipt stem (same directory) | Selector / state | Logical exit / shell |
+|---|---|---|
+| `p22-s1s6-baseline-red` | `FullyQualifiedName~CoordinationProjectionBoundaryTests`, unchanged baseline DDL, first 50 cases | **1** / 1030 |
+| `p22-s1s6-first-green` | Prior 129-case union below plus `CoordinationProjectionBoundaryTests` (73): **202 PASS, 0 failed/skipped** | **0** / 1035 |
+| `p22-s1s6-native-remaining` | `FullyQualifiedName~CoordinationReliabilityTests`, with `--no-build`: **3 PASS / 4 FAIL**, total 7 | **1** / 1037 |
+
+Each stem has the full `-tool.txt` command output plus TRX with assertions, durations,
+plans, provider version and mutant observations. Prior union: `CoordinationProjectionTests`,
+`BoardOrderingTests`, `CoordinationReliabilityTests.Post_`, `MessageBoardTests`,
+`SqliteWatcherObservationStoreTests`, `McpMatchesTheJsonlPathTests`, `ContractBoardPostTests`,
+`BoardPublisherTests`, `SqliteAllocationOverlapTests`, `DaydreamPersistenceTests`;
+each clause uses `FullyQualifiedName~`, joined with `|`. No zero-selection PASS.
+
+`p22-s1s6-final-pins.json` records SHA-256 for both changed production sources, both
+schema test files, unchanged reliability source, Core/test projects, package manifest,
+and tested Core/test/provider binaries. Baseline production is pinned by commit;
+the first test revision and baseline binary were not separately hashed before overwrite:
+that reproducibility limit is explicit, not reconstructed as a measured hash.
+
+### Class → sweep → derive → prevent; scope-limited handoff
+
+* **Class:** local order is mistaken for global cursor order; affinity is mistaken for
+  stored type; physical occurrences are mistaken for logical admissions; pointer guards
+  mask payload guards; constructor failure loses ownership of a native handle.
+* **Sweep:** all numeric/key columns and all endpoint/epoch queries in the three-cache
+  DDL, both checkpoint guards, both feed insert/transition paths and event current
+  validation were reviewed. No due/retry fields exist. Failed initialization was traced
+  to Open before ownership reaches the store; read-only Open performs no migration.
+* **Derive:** endpoint from immutable event-first and diagnostic histories, never another
+  stored counter. Keep original admission and separate current state. Connection disposal
+  stays at the existing Open ownership seam.
+* **Prevent:** named boundary tests above; 20 semantic baseline failures, four isolated
+  payload mutants, actual migration-version fault and explicit fixture deletion.
+  The incorrect code-19-only assertion was calibrated to 19/20, not production-swallowed.
+  Updating the global lesson register is outside this author's granted paths; this
+  durable class record is handed to the coordinator for promotion.
+
+Normal SQL errors emit stable refusal codes, and diagnostic counts/endpoints can be
+queried on the normal data path. There is no production diagnostic writer yet.
+Pump latency/spend/volume/failure instrumentation, whole-loop bounds, full canonical
+byte equality, trusted native effects/capture, old-binary rollback and P3–P5 remain
+unmet integration floors. The repaired schema cannot self-certify them. All six
+upstream actions remain AFTER VERIFIED. No author-cleared Data/Test/DS gate is asserted.
+
+### Author close / handoff
+
+Contract amendment commit: `d85c8a9e2321fcb15a090f6a2b8d6ca1f4d7922c`.
+The implementation audit measured **741 seconds** from its explicit start marker.
+The optimizer has no separate measured start/duration; no elapsed estimate is presented
+as measurement. Audit selfcheck exposed one new prompt-entry metadata gap: its full
+prompt is stored but its goal/budget were omitted; the implementation/optimizer entries
+carry them. This is reported, not retroactively rewritten.
+
+`AIDE_SESSION` and `AIDE_CONTRACT_LOG` are absent; no watcher episode close was emitted.
+Evidence lives at the user-assigned `docs/proofs/` paths, not an invented `docs/proof/`
+capture path. No shared site/index regeneration or global lesson edit is authorized
+in this finite ownership grant; the coordinator must regenerate derived surfaces at
+the join. The audit renderer's own `docs/audit/audit-data.js` is included with the
+append-only audit. Independent re-gate, join-time regeneration and whole-P2 acceptance
+are explicitly not author-cleared.
+
 ## P2.2 additive cache checkpoint — 2026-09-16
 
 **PARTIAL; R1/R2 NOT FIXED; P2 NOT COMPLETE.** Source baseline:
@@ -44,9 +151,10 @@ tables are created. Old board IDs, sequence ties and legacy writes are preserved
 The partial has no second connection, database, generic transaction abstraction,
 public authority surface or producer callback.
 
-The event grain is a captured occurrence at a scoped epoch/offset; the feed grain
-is an immutable initial/transition receipt; the checkpoint grain is one accounted
-prefix per stream/epoch. Initial/current receipt composite FKs are deferred and
+Historical checkpoint wording (superseded by the S1–S6 amendment above): the event
+was described as a captured occurrence. The corrected event grain is one logical
+admission with its first occurrence, the feed adds distinct immutable occurrence
+diagnostics, and the checkpoint is the accounted prefix. Initial/current receipt composite FKs are deferred and
 bidirectional; only one initial receipt is allowed. An actual constrained
 `parent_application_state` column enforces applied-parent eligibility. A feed
 transition moves the current pointer and pairs payload clearing with a tombstone.

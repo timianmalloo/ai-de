@@ -1,0 +1,785 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="dc948e11-36bd-4acb-84a9-b8461fcd7197" name="malla@TIMMALLSTRIX 2026-09-16 13:30:47" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-16T13:30:47.2762574-07:00" queuing="2026-09-16T13:30:47.2762575-07:00" start="2026-09-16T13:30:46.5544648-07:00" finish="2026-09-16T13:30:47.7699655-07:00" />
+  <TestSettings name="default" id="5a034aed-d2a9-418a-aded-c2e0c9337d6e">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-16_13_30_47" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="8fa66f95-5265-409b-a568-1fab965eb8e5" testId="f34acc60-614e-0383-e10e-1c3c84663a13" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;source_offset=1.5,source_end=2.5,raw_bytes=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0104704" startTime="2026-09-16T13:30:47.2761984-07:00" endTime="2026-09-16T13:30:47.2865343-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8fa66f95-5265-409b-a568-1fab965eb8e5">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 97&#xD;
+   at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5ab75c2e-6e1d-434d-b242-084307970f2b" testId="86f828ba-dd63-e463-c75f-f9b38e99a06c" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Feed_ExplicitBackdateBehindGlobalCursor_Rejects(transition: True)" computerName="TIMMALLSTRIX" duration="00:00:00.0121411" startTime="2026-09-16T13:30:47.1591510-07:00" endTime="2026-09-16T13:30:47.1634177-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5ab75c2e-6e1d-434d-b242-084307970f2b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Feed_ExplicitBackdateBehindGlobalCursor_Rejects(Boolean transition) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 31&#xD;
+   at InvokeStub_CoordinationProjectionBoundaryTests.Feed_ExplicitBackdateBehindGlobalCursor_Rejects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="797a289e-80ea-41b9-89b1-f3625035894c" testId="fcc2df23-43e1-59f0-9e62-f3a4d893bdfe" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_feed&quot;, assignments: &quot;is_initial=1.5&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0105073" startTime="2026-09-16T13:30:47.4467992-07:00" endTime="2026-09-16T13:30:47.4573761-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="797a289e-80ea-41b9-89b1-f3625035894c" />
+    <UnitTestResult executionId="42425444-88ba-41f7-bf07-135e2ffa3f9b" testId="2a0e4b02-f82d-3e16-3415-520970054086" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Checkpoint_StaleButPreviouslyAccountedEndpoint_Rejects" computerName="TIMMALLSTRIX" duration="00:00:00.0112664" startTime="2026-09-16T13:30:47.5611630-07:00" endTime="2026-09-16T13:30:47.5724917-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="42425444-88ba-41f7-bf07-135e2ffa3f9b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Checkpoint_StaleButPreviouslyAccountedEndpoint_Rejects() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 194&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9f67859b-cdd1-40f4-85b5-4f25c77b5bb9" testId="990da91f-4fee-c50a-5ceb-bdfb0d35fa07" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Endpoint_OneHundredfoldHistory_UsesIndexedBoundedLookup" computerName="TIMMALLSTRIX" duration="00:00:00.0258062" startTime="2026-09-16T13:30:47.5729321-07:00" endTime="2026-09-16T13:30:47.5985667-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9f67859b-cdd1-40f4-85b5-4f25c77b5bb9">
+      <Output>
+        <StdOut>rows=10 plan=SEARCH coord_projection_event USING INDEX sqlite_autoindex_coord_projection_event_4 (scope=? AND epoch=?)
+USE TEMP B-TREE FOR ORDER BY</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Sub-string not found&#xD;
+String:    "SEARCH coord_projection_event USING INDEX"···&#xD;
+Not found: "ix_coord_projection_event_end"</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Endpoint_OneHundredfoldHistory_UsesIndexedBoundedLookup() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 289&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="afa0eb4c-41e9-4a53-b386-a2dff2bfa25b" testId="7709cfb5-983b-7f9f-60a9-7e208ebdef07" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(column: &quot;epoch&quot;, ceiling: 128)" computerName="TIMMALLSTRIX" duration="00:00:00.0122947" startTime="2026-09-16T13:30:47.6499622-07:00" endTime="2026-09-16T13:30:47.6613286-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="afa0eb4c-41e9-4a53-b386-a2dff2bfa25b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(String column, Int32 ceiling) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 132&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="07c8ccfe-7d2a-42e1-af8c-db0ce8ffc559" testId="0aeace12-81df-2503-9c4e-d98fbcf251f1" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_InvalidBoundaryOrAdmission_Rejects(start: 2, end: 3, scope: &quot;scope&quot;, epoch: &quot;epoch&quot;, key: &quot;K&quot;, admission: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0087822" startTime="2026-09-16T13:30:47.5240316-07:00" endTime="2026-09-16T13:30:47.5328215-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="07c8ccfe-7d2a-42e1-af8c-db0ce8ffc559" />
+    <UnitTestResult executionId="220dfc77-2c46-4c39-8430-ab6ba83102a4" testId="db28e2d0-b065-de50-4af9-e28050f8bdd1" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;source_offset=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0100779" startTime="2026-09-16T13:30:47.4157713-07:00" endTime="2026-09-16T13:30:47.4258480-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="220dfc77-2c46-4c39-8430-ab6ba83102a4" />
+    <UnitTestResult executionId="47549e5d-e080-44b8-851f-80fc25af45f4" testId="a22e4c09-6d5e-360d-d08d-61f3164932e5" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;current_receipt_n=1.5&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0109371" startTime="2026-09-16T13:30:47.3939598-07:00" endTime="2026-09-16T13:30:47.4049367-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="47549e5d-e080-44b8-851f-80fc25af45f4">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 97&#xD;
+   at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="750b81f3-386b-410c-8ddc-de9aa33720c4" testId="4fb70c21-4e40-3119-fa4a-2d2390273886" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;first_receipt_n=1.5,current_receipt_n=1.5&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0113674" startTime="2026-09-16T13:30:47.2644662-07:00" endTime="2026-09-16T13:30:47.2759161-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="750b81f3-386b-410c-8ddc-de9aa33720c4">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 97&#xD;
+   at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8636fe45-f786-459e-b9bb-024189b058eb" testId="3597d121-37ef-737f-8b03-aacc8b22683d" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_feed&quot;, assignments: &quot;session_id='session',session_generation=0&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0102837" startTime="2026-09-16T13:30:47.3837837-07:00" endTime="2026-09-16T13:30:47.3938909-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8636fe45-f786-459e-b9bb-024189b058eb" />
+    <UnitTestResult executionId="3a6150dd-6042-4e9c-801f-2ac310b8c35d" testId="ec0257bb-317d-e986-d7c2-ae4d2880817d" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_feed&quot;, assignments: &quot;session_id='session',session_generation=-1&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0105091" startTime="2026-09-16T13:30:47.2968229-07:00" endTime="2026-09-16T13:30:47.3073323-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3a6150dd-6042-4e9c-801f-2ac310b8c35d" />
+    <UnitTestResult executionId="6059ceec-f3c8-466e-9495-2555985682c8" testId="b9a1308f-3e69-ad9c-f869-3a01ce456675" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Migration_VersionRecordAbort_RollsBackDdlAndPreservesV7History" computerName="TIMMALLSTRIX" duration="00:00:00.0291808" startTime="2026-09-16T13:30:47.6854474-07:00" endTime="2026-09-16T13:30:47.7149411-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6059ceec-f3c8-466e-9495-2555985682c8">
+      <Output>
+        <ErrorInfo>
+          <Message>System.IO.IOException : The process cannot access the file 'watcher.db' because it is being used by another process.</Message>
+          <StackTrace>   at System.IO.FileSystem.RemoveDirectoryRecursive(String fullPath, WIN32_FIND_DATA&amp; findData, Boolean topLevel)&#xD;
+   at System.IO.FileSystem.RemoveDirectory(String fullPath, Boolean recursive)&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Dispose() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 384&#xD;
+   at ReflectionAbstractionExtensions.DisposeTestClass(ITest test, Object testClass, IMessageBus messageBus, ExecutionTimer timer, CancellationTokenSource cancellationTokenSource) in /_/src/xunit.execution/Extensions/ReflectionAbstractionExtensions.cs:line 79</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ad8aa0fe-a6a0-4877-96db-59c6dfb578b4" testId="99be257e-db88-a024-2e96-b523cbbc9762" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_feed&quot;, assignments: &quot;session_id='session',session_generation=1.5&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0105583" startTime="2026-09-16T13:30:47.4574699-07:00" endTime="2026-09-16T13:30:47.4680322-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ad8aa0fe-a6a0-4877-96db-59c6dfb578b4">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 97&#xD;
+   at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e6fb70e3-3da3-406e-a50c-5946075800af" testId="a797eb85-9275-45b2-5ac9-627ce3d7535c" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Payload_ValidNextReceipt_IsolatesGuardAndAdmitsOnlyClauseMutant(change: &quot;canonical_bytes=X'02'&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0132007" startTime="2026-09-16T13:30:47.5992636-07:00" endTime="2026-09-16T13:30:47.6118843-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e6fb70e3-3da3-406e-a50c-5946075800af">
+      <Output>
+        <StdOut>Isolated payload clause mutant admitted: canonical_bytes=X'02'; intact=1811</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bcc7ec49-a7e6-4fb1-b2f4-a8fe7ccb307d" testId="66f61083-2312-1a09-09cc-c36ab2b95a96" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_checkpoint&quot;, assignments: &quot;accepted_offset=0&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0109356" startTime="2026-09-16T13:30:47.2579075-07:00" endTime="2026-09-16T13:30:47.2643979-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bcc7ec49-a7e6-4fb1-b2f4-a8fe7ccb307d" />
+    <UnitTestResult executionId="2ebb9a81-95dd-447e-8b40-e9311c8f2976" testId="b2350592-8872-86fa-ff9f-ca8e9996da8d" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;source_end=0&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0100983" startTime="2026-09-16T13:30:47.2092504-07:00" endTime="2026-09-16T13:30:47.2191912-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2ebb9a81-95dd-447e-8b40-e9311c8f2976" />
+    <UnitTestResult executionId="c74b82a9-0fd0-45c1-8eee-98784323406d" testId="f6e5fae7-94c2-6076-f6bb-d1fc8c4e98fa" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;current_receipt_n=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0102355" startTime="2026-09-16T13:30:47.3510491-07:00" endTime="2026-09-16T13:30:47.3610371-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c74b82a9-0fd0-45c1-8eee-98784323406d" />
+    <UnitTestResult executionId="5fadec48-c2ff-4284-b854-5ae2d1e6f251" testId="55a5c134-fca5-3e55-2afb-d9d9ea953cab" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_InvalidBoundaryOrAdmission_Rejects(start: 0, end: 1, scope: &quot;other&quot;, epoch: &quot;epoch&quot;, key: &quot;K&quot;, admission: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0092416" startTime="2026-09-16T13:30:47.5334940-07:00" endTime="2026-09-16T13:30:47.5421341-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5fadec48-c2ff-4284-b854-5ae2d1e6f251" />
+    <UnitTestResult executionId="a581b1a2-fb3b-4093-83d1-3f47e93b25c5" testId="e7a6c6e3-7dbf-8894-fd78-91c88966505b" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_DuplicateThenReplayThenNewAdmission_AccountsWithoutSemanticEffect" computerName="TIMMALLSTRIX" duration="00:00:00.0108684" startTime="2026-09-16T13:30:47.7153516-07:00" endTime="2026-09-16T13:30:47.7261823-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a581b1a2-fb3b-4093-83d1-3f47e93b25c5">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_TRANSITION_REFUSED'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 369&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Diagnostic(SqliteConnection connection, String key, Int64 admission, Int64 start, Int64 end, SqliteTransaction transaction, String scope, String epoch) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 343&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_DuplicateThenReplayThenNewAdmission_AccountsWithoutSemanticEffect() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 146&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b651529c-77b6-4933-821e-9b442d59d4af" testId="72499949-41f2-723c-3db5-3773497d9c49" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Payload_ValidNextReceipt_IsolatesGuardAndAdmitsOnlyClauseMutant(change: &quot;raw_bytes=X'02'&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0120601" startTime="2026-09-16T13:30:47.6120263-07:00" endTime="2026-09-16T13:30:47.6240523-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b651529c-77b6-4933-821e-9b442d59d4af">
+      <Output>
+        <StdOut>Isolated payload clause mutant admitted: raw_bytes=X'02'; intact=1811</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ba406e85-9d0c-4de4-ad25-ac62822e10e8" testId="71b92f29-439f-73d4-ceec-f57f14bf9b1d" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_feed&quot;, assignments: &quot;session_id='session',session_generation='nonsense'&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0105687" startTime="2026-09-16T13:30:47.1983866-07:00" endTime="2026-09-16T13:30:47.2090086-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ba406e85-9d0c-4de4-ad25-ac62822e10e8">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 97&#xD;
+   at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2c34e4ad-eb21-4fc6-b4b2-0d5f01e23c46" testId="18692de8-9a2e-4f87-139c-58d239628ea5" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Payload_ValidNextReceipt_IsolatesGuardAndAdmitsOnlyClauseMutant(change: &quot;raw_bytes=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0125362" startTime="2026-09-16T13:30:47.6241908-07:00" endTime="2026-09-16T13:30:47.6366922-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2c34e4ad-eb21-4fc6-b4b2-0d5f01e23c46">
+      <Output>
+        <StdOut>Isolated payload clause mutant admitted: raw_bytes=NULL; intact=1811</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b8cd4275-d9b2-435d-8b0a-04e15f3c0b11" testId="f1edc28f-7c2c-67cf-f26a-ee68e82072f9" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_InvalidBoundaryOrAdmission_Rejects(start: 0, end: 1, scope: &quot;scope&quot;, epoch: &quot;epoch&quot;, key: &quot;K&quot;, admission: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0091206" startTime="2026-09-16T13:30:47.5518874-07:00" endTime="2026-09-16T13:30:47.5609841-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b8cd4275-d9b2-435d-8b0a-04e15f3c0b11" />
+    <UnitTestResult executionId="2b08a5a8-a59c-4bcc-9c5a-1f027991f613" testId="f1a15e3f-b018-1869-5381-04d52b69b012" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;source_end=1.5,raw_bytes=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0123520" startTime="2026-09-16T13:30:47.2575514-07:00" endTime="2026-09-16T13:30:47.2576138-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2b08a5a8-a59c-4bcc-9c5a-1f027991f613">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 97&#xD;
+   at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1f8eea2b-8bd8-4479-a44d-b867e420866f" testId="787651f1-873c-6e47-0cfb-eeebe21e4287" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_checkpoint&quot;, assignments: &quot;accepted_offset='nonsense'&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0109108" startTime="2026-09-16T13:30:47.4683126-07:00" endTime="2026-09-16T13:30:47.4790168-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1f8eea2b-8bd8-4479-a44d-b867e420866f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 97&#xD;
+   at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7d4603bc-3d0b-475f-a129-d1c0d51b14dd" testId="e19982cf-1630-3384-e773-1844f857b8ab" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;first_receipt_n=0&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0108909" startTime="2026-09-16T13:30:47.4363746-07:00" endTime="2026-09-16T13:30:47.4467200-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7d4603bc-3d0b-475f-a129-d1c0d51b14dd" />
+    <UnitTestResult executionId="c32e79bc-920e-463a-bc05-f69301b27d2c" testId="44b5c5a9-a33e-2d8a-f8c2-f739cf10ef0b" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_InvalidBoundaryOrAdmission_Rejects(start: 1, end: 2, scope: &quot;scope&quot;, epoch: &quot;epoch&quot;, key: &quot;K&quot;, admission: 99)" computerName="TIMMALLSTRIX" duration="00:00:00.0110731" startTime="2026-09-16T13:30:47.5034443-07:00" endTime="2026-09-16T13:30:47.5145491-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c32e79bc-920e-463a-bc05-f69301b27d2c" />
+    <UnitTestResult executionId="2bfdbd7a-5f8c-4c21-afff-cc0a4b877650" testId="363621b2-ba77-1c44-1edc-1852f068c26a" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_feed&quot;, assignments: &quot;n=1.5&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0107025" startTime="2026-09-16T13:30:47.3611085-07:00" endTime="2026-09-16T13:30:47.3719122-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2bfdbd7a-5f8c-4c21-afff-cc0a4b877650">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 19&#xD;
+Actual:   20</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 98&#xD;
+   at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="01b8562e-9f61-4bf0-bb76-131b1e646803" testId="5f0c6fe5-2807-63be-0fba-30413ea126f8" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;first_receipt_n=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0105191" startTime="2026-09-16T13:30:47.2192646-07:00" endTime="2026-09-16T13:30:47.2297458-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="01b8562e-9f61-4bf0-bb76-131b1e646803" />
+    <UnitTestResult executionId="c5a662fe-34a5-4d5f-929d-5e46a921c3b4" testId="314e1543-03e2-5c2a-4eaf-6bf8baddcfff" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;source_offset='nonsense',source_end='zzzz',raw_byt&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0110336" startTime="2026-09-16T13:30:47.2298135-07:00" endTime="2026-09-16T13:30:47.2409142-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c5a662fe-34a5-4d5f-929d-5e46a921c3b4">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 97&#xD;
+   at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="30a62250-873d-493d-b714-b9197d0b8410" testId="2e52d332-c5db-a5f7-f1fb-b5f1245602e8" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Payload_ValidNextReceipt_IsolatesGuardAndAdmitsOnlyClauseMutant(change: &quot;canonical_bytes=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0120115" startTime="2026-09-16T13:30:47.6368296-07:00" endTime="2026-09-16T13:30:47.6488450-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="30a62250-873d-493d-b714-b9197d0b8410">
+      <Output>
+        <StdOut>Isolated payload clause mutant admitted: canonical_bytes=NULL; intact=1811</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7633b210-cd4d-4c10-a313-591941ffbeef" testId="238b4b03-fb2f-14f3-91b5-61e1990e5a03" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;current_receipt_n=0&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0133252" startTime="2026-09-16T13:30:47.4792476-07:00" endTime="2026-09-16T13:30:47.4924327-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7633b210-cd4d-4c10-a313-591941ffbeef" />
+    <UnitTestResult executionId="a1432318-dfb6-49e2-b39a-9425dd244fdc" testId="d2847495-449e-2054-3637-b00626789051" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_feed&quot;, assignments: &quot;session_id='session',session_generation=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0100821" startTime="2026-09-16T13:30:47.3074143-07:00" endTime="2026-09-16T13:30:47.3175024-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a1432318-dfb6-49e2-b39a-9425dd244fdc" />
+    <UnitTestResult executionId="087d9a3d-1595-493c-b44f-7f121ccc8b09" testId="9b1bbf88-60f3-cf83-7971-905896d5398b" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(column: &quot;event_key&quot;, ceiling: 512)" computerName="TIMMALLSTRIX" duration="00:00:00.0120541" startTime="2026-09-16T13:30:47.6617171-07:00" endTime="2026-09-16T13:30:47.6735778-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="087d9a3d-1595-493c-b44f-7f121ccc8b09">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(String column, Int32 ceiling) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 132&#xD;
+   at InvokeStub_CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fd7708a7-dabf-4f5c-be1a-b6acbffa2dbc" testId="9dd85887-3c00-3924-7bf6-4b8255d20ac5" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(column: &quot;scope&quot;, ceiling: 4096)" computerName="TIMMALLSTRIX" duration="00:00:00.0113754" startTime="2026-09-16T13:30:47.6739354-07:00" endTime="2026-09-16T13:30:47.6851085-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fd7708a7-dabf-4f5c-be1a-b6acbffa2dbc">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(String column, Int32 ceiling) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 132&#xD;
+   at InvokeStub_CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9bfa0ba2-d745-41a7-9ea1-ac36e237d810" testId="09b10fb5-f29e-5e6b-84f3-28b04a9ab275" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;source_end=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0101701" startTime="2026-09-16T13:30:47.1888941-07:00" endTime="2026-09-16T13:30:47.1983247-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9bfa0ba2-d745-41a7-9ea1-ac36e237d810" />
+    <UnitTestResult executionId="3a285df7-f0b0-4baf-8163-303d7efb4aec" testId="d83e8bd8-9bf0-cac5-5026-9461aee3832a" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_InvalidBoundaryOrAdmission_Rejects(start: 0, end: 1, scope: &quot;scope&quot;, epoch: &quot;other&quot;, key: &quot;K&quot;, admission: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0093979" startTime="2026-09-16T13:30:47.5146536-07:00" endTime="2026-09-16T13:30:47.5239416-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3a285df7-f0b0-4baf-8163-303d7efb4aec" />
+    <UnitTestResult executionId="7193ad16-f055-49b3-aeb2-2a6e6fb93419" testId="1193feb0-9aa4-35e1-b709-83aff25ec3ee" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;source_end='oops',raw_bytes=X''&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0107765" startTime="2026-09-16T13:30:47.3175640-07:00" endTime="2026-09-16T13:30:47.3283759-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7193ad16-f055-49b3-aeb2-2a6e6fb93419">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 97&#xD;
+   at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cb5d0c3e-71b7-41e3-908a-a0e663d2f592" testId="8caeb059-b499-8353-6721-6332ae7b919e" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_InvalidBoundaryOrAdmission_Rejects(start: 1, end: 2, scope: &quot;scope&quot;, epoch: &quot;epoch&quot;, key: &quot;other&quot;, admission: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0095249" startTime="2026-09-16T13:30:47.5422445-07:00" endTime="2026-09-16T13:30:47.5517702-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cb5d0c3e-71b7-41e3-908a-a0e663d2f592" />
+    <UnitTestResult executionId="af4ef3c0-047b-4964-8972-ee643d1f68a5" testId="185496d0-d25c-beee-e8b2-c016dfc2ebb2" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;first_kind=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0107541" startTime="2026-09-16T13:30:47.4925413-07:00" endTime="2026-09-16T13:30:47.5032751-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="af4ef3c0-047b-4964-8972-ee643d1f68a5" />
+    <UnitTestResult executionId="4071e5c1-5372-457f-8b25-5a0b540f70cb" testId="e3204078-fa00-03e6-6bb5-73d46843bb75" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Feed_ExplicitBackdateBehindGlobalCursor_Rejects(transition: False)" computerName="TIMMALLSTRIX" duration="00:00:00.0341935" startTime="2026-09-16T13:30:47.1087614-07:00" endTime="2026-09-16T13:30:47.1513036-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4071e5c1-5372-457f-8b25-5a0b540f70cb">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Feed_ExplicitBackdateBehindGlobalCursor_Rejects(Boolean transition) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 31&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b6cdb2fb-c7b0-41f8-be8e-f5bebf47d93d" testId="6ab4c787-180f-bb4a-a172-9af92e419d77" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_checkpoint&quot;, assignments: &quot;accepted_offset=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0106971" startTime="2026-09-16T13:30:47.4051908-07:00" endTime="2026-09-16T13:30:47.4156946-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b6cdb2fb-c7b0-41f8-be8e-f5bebf47d93d" />
+    <UnitTestResult executionId="7becdb1b-3b00-410c-b3c2-ab96fe697d2c" testId="2a396183-8f7c-4859-fccd-3beb139f43f1" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_feed&quot;, assignments: &quot;is_initial=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0131633" startTime="2026-09-16T13:30:47.1750352-07:00" endTime="2026-09-16T13:30:47.1883125-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7becdb1b-3b00-410c-b3c2-ab96fe697d2c" />
+    <UnitTestResult executionId="32b2cbfe-9bf4-4965-82c3-e768f51c7821" testId="f776566a-8201-c8fa-e1ad-b3021c09ac54" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_checkpoint&quot;, assignments: &quot;accepted_offset=1.5&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0111255" startTime="2026-09-16T13:30:47.1643729-07:00" endTime="2026-09-16T13:30:47.1748029-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="32b2cbfe-9bf4-4965-82c3-e768f51c7821">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 97&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2fa09bba-35fc-4f9e-9c11-33a0251cb6ec" testId="b94218ad-948c-7b57-efd6-ea1d7ce7ad5b" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;source_offset=-1&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0098761" startTime="2026-09-16T13:30:47.4259026-07:00" endTime="2026-09-16T13:30:47.4358464-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2fa09bba-35fc-4f9e-9c11-33a0251cb6ec" />
+    <UnitTestResult executionId="f561ba7a-9902-493e-9537-b7ca8ce996d8" testId="3a902397-e894-1f28-5c53-aa7f8d7ade9c" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;first_receipt_n='nonsense',current_receipt_n='nons&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0114845" startTime="2026-09-16T13:30:47.3721818-07:00" endTime="2026-09-16T13:30:47.3835187-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f561ba7a-9902-493e-9537-b7ca8ce996d8">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 97&#xD;
+   at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="12747c01-a9d8-432c-9a6a-ce441b3b3045" testId="302f39d1-3987-83a6-6542-5f2a585e975e" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;current_receipt_n='nonsense'&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0114150" startTime="2026-09-16T13:30:47.3403943-07:00" endTime="2026-09-16T13:30:47.3507344-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="12747c01-a9d8-432c-9a6a-ce441b3b3045">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs:line 97&#xD;
+   at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="11048ba8-4c1c-4ba3-ae45-d009f0cdf99a" testId="1809837c-e780-4410-5956-0b0f414f3527" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_checkpoint&quot;, assignments: &quot;accepted_offset=-1&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0107436" startTime="2026-09-16T13:30:47.3286525-07:00" endTime="2026-09-16T13:30:47.3391828-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="11048ba8-4c1c-4ba3-ae45-d009f0cdf99a" />
+    <UnitTestResult executionId="c08a4548-3e2f-4479-916c-a352374a6fb1" testId="573e9554-c771-dd42-ec2f-318a1ea3248b" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;first_kind=1.5&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0101856" startTime="2026-09-16T13:30:47.2867948-07:00" endTime="2026-09-16T13:30:47.2967586-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c08a4548-3e2f-4479-916c-a352374a6fb1" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;first_receipt_n=0&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="e19982cf-1630-3384-e773-1844f857b8ab">
+      <Execution id="7d4603bc-3d0b-475f-a129-d1c0d51b14dd" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Payload_ValidNextReceipt_IsolatesGuardAndAdmitsOnlyClauseMutant(change: &quot;canonical_bytes=X'02'&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a797eb85-9275-45b2-5ac9-627ce3d7535c">
+      <Execution id="e6fb70e3-3da3-406e-a50c-5946075800af" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Payload_ValidNextReceipt_IsolatesGuardAndAdmitsOnlyClauseMutant" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;first_kind=1.5&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="573e9554-c771-dd42-ec2f-318a1ea3248b">
+      <Execution id="c08a4548-3e2f-4479-916c-a352374a6fb1" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;source_end='oops',raw_bytes=X''&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="1193feb0-9aa4-35e1-b709-83aff25ec3ee">
+      <Execution id="7193ad16-f055-49b3-aeb2-2a6e6fb93419" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_InvalidBoundaryOrAdmission_Rejects(start: 0, end: 1, scope: &quot;scope&quot;, epoch: &quot;epoch&quot;, key: &quot;K&quot;, admission: 1)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f1edc28f-7c2c-67cf-f26a-ee68e82072f9">
+      <Execution id="b8cd4275-d9b2-435d-8b0a-04e15f3c0b11" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Occurrence_InvalidBoundaryOrAdmission_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_InvalidBoundaryOrAdmission_Rejects(start: 1, end: 2, scope: &quot;scope&quot;, epoch: &quot;epoch&quot;, key: &quot;other&quot;, admission: 1)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="8caeb059-b499-8353-6721-6332ae7b919e">
+      <Execution id="cb5d0c3e-71b7-41e3-908a-a0e663d2f592" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Occurrence_InvalidBoundaryOrAdmission_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_InvalidBoundaryOrAdmission_Rejects(start: 2, end: 3, scope: &quot;scope&quot;, epoch: &quot;epoch&quot;, key: &quot;K&quot;, admission: 1)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0aeace12-81df-2503-9c4e-d98fbcf251f1">
+      <Execution id="07c8ccfe-7d2a-42e1-af8c-db0ce8ffc559" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Occurrence_InvalidBoundaryOrAdmission_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;first_receipt_n=1.5,current_receipt_n=1.5&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="4fb70c21-4e40-3119-fa4a-2d2390273886">
+      <Execution id="750b81f3-386b-410c-8ddc-de9aa33720c4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Payload_ValidNextReceipt_IsolatesGuardAndAdmitsOnlyClauseMutant(change: &quot;canonical_bytes=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="2e52d332-c5db-a5f7-f1fb-b5f1245602e8">
+      <Execution id="30a62250-873d-493d-b714-b9197d0b8410" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Payload_ValidNextReceipt_IsolatesGuardAndAdmitsOnlyClauseMutant" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;source_end=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="09b10fb5-f29e-5e6b-84f3-28b04a9ab275">
+      <Execution id="9bfa0ba2-d745-41a7-9ea1-ac36e237d810" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_checkpoint&quot;, assignments: &quot;accepted_offset=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6ab4c787-180f-bb4a-a172-9af92e419d77">
+      <Execution id="b6cdb2fb-c7b0-41f8-be8e-f5bebf47d93d" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(column: &quot;epoch&quot;, ceiling: 128)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="7709cfb5-983b-7f9f-60a9-7e208ebdef07">
+      <Execution id="afa0eb4c-41e9-4a53-b386-a2dff2bfa25b" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_Keys_RequireExactTextAndUtf8ByteCeiling" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_feed&quot;, assignments: &quot;is_initial=1.5&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="fcc2df23-43e1-59f0-9e62-f3a4d893bdfe">
+      <Execution id="797a289e-80ea-41b9-89b1-f3625035894c" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_feed&quot;, assignments: &quot;session_id='session',session_generation=0&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="3597d121-37ef-737f-8b03-aacc8b22683d">
+      <Execution id="8636fe45-f786-459e-b9bb-024189b058eb" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_InvalidBoundaryOrAdmission_Rejects(start: 1, end: 2, scope: &quot;scope&quot;, epoch: &quot;epoch&quot;, key: &quot;K&quot;, admission: 99)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="44b5c5a9-a33e-2d8a-f8c2-f739cf10ef0b">
+      <Execution id="c32e79bc-920e-463a-bc05-f69301b27d2c" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Occurrence_InvalidBoundaryOrAdmission_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(column: &quot;event_key&quot;, ceiling: 512)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="9b1bbf88-60f3-cf83-7971-905896d5398b">
+      <Execution id="087d9a3d-1595-493c-b44f-7f121ccc8b09" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_Keys_RequireExactTextAndUtf8ByteCeiling" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;source_offset=1.5,source_end=2.5,raw_bytes=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f34acc60-614e-0383-e10e-1c3c84663a13">
+      <Execution id="8fa66f95-5265-409b-a568-1fab965eb8e5" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Migration_VersionRecordAbort_RollsBackDdlAndPreservesV7History" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="b9a1308f-3e69-ad9c-f869-3a01ce456675">
+      <Execution id="6059ceec-f3c8-466e-9495-2555985682c8" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Migration_VersionRecordAbort_RollsBackDdlAndPreservesV7History" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;first_receipt_n=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="5f0c6fe5-2807-63be-0fba-30413ea126f8">
+      <Execution id="01b8562e-9f61-4bf0-bb76-131b1e646803" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Feed_ExplicitBackdateBehindGlobalCursor_Rejects(transition: False)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="e3204078-fa00-03e6-6bb5-73d46843bb75">
+      <Execution id="4071e5c1-5372-457f-8b25-5a0b540f70cb" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Feed_ExplicitBackdateBehindGlobalCursor_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_feed&quot;, assignments: &quot;is_initial=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="2a396183-8f7c-4859-fccd-3beb139f43f1">
+      <Execution id="7becdb1b-3b00-410c-b3c2-ab96fe697d2c" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_InvalidBoundaryOrAdmission_Rejects(start: 0, end: 1, scope: &quot;scope&quot;, epoch: &quot;other&quot;, key: &quot;K&quot;, admission: 1)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d83e8bd8-9bf0-cac5-5026-9461aee3832a">
+      <Execution id="3a285df7-f0b0-4baf-8163-303d7efb4aec" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Occurrence_InvalidBoundaryOrAdmission_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_feed&quot;, assignments: &quot;n=1.5&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="363621b2-ba77-1c44-1edc-1852f068c26a">
+      <Execution id="2bfdbd7a-5f8c-4c21-afff-cc0a4b877650" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Payload_ValidNextReceipt_IsolatesGuardAndAdmitsOnlyClauseMutant(change: &quot;raw_bytes=X'02'&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="72499949-41f2-723c-3db5-3773497d9c49">
+      <Execution id="b651529c-77b6-4933-821e-9b442d59d4af" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Payload_ValidNextReceipt_IsolatesGuardAndAdmitsOnlyClauseMutant" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;source_offset='nonsense',source_end='zzzz',raw_byt&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="314e1543-03e2-5c2a-4eaf-6bf8baddcfff">
+      <Execution id="c5a662fe-34a5-4d5f-929d-5e46a921c3b4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;current_receipt_n='nonsense'&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="302f39d1-3987-83a6-6542-5f2a585e975e">
+      <Execution id="12747c01-a9d8-432c-9a6a-ce441b3b3045" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_checkpoint&quot;, assignments: &quot;accepted_offset=-1&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="1809837c-e780-4410-5956-0b0f414f3527">
+      <Execution id="11048ba8-4c1c-4ba3-ae45-d009f0cdf99a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_feed&quot;, assignments: &quot;session_id='session',session_generation='nonsense'&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="71b92f29-439f-73d4-ceec-f57f14bf9b1d">
+      <Execution id="ba406e85-9d0c-4de4-ad25-ac62822e10e8" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Payload_ValidNextReceipt_IsolatesGuardAndAdmitsOnlyClauseMutant(change: &quot;raw_bytes=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="18692de8-9a2e-4f87-139c-58d239628ea5">
+      <Execution id="2c34e4ad-eb21-4fc6-b4b2-0d5f01e23c46" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Payload_ValidNextReceipt_IsolatesGuardAndAdmitsOnlyClauseMutant" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;source_offset=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="db28e2d0-b065-de50-4af9-e28050f8bdd1">
+      <Execution id="220dfc77-2c46-4c39-8430-ab6ba83102a4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(column: &quot;scope&quot;, ceiling: 4096)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="9dd85887-3c00-3924-7bf6-4b8255d20ac5">
+      <Execution id="fd7708a7-dabf-4f5c-be1a-b6acbffa2dbc" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_Keys_RequireExactTextAndUtf8ByteCeiling" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;current_receipt_n=1.5&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a22e4c09-6d5e-360d-d08d-61f3164932e5">
+      <Execution id="47549e5d-e080-44b8-851f-80fc25af45f4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_InvalidBoundaryOrAdmission_Rejects(start: 0, end: 1, scope: &quot;other&quot;, epoch: &quot;epoch&quot;, key: &quot;K&quot;, admission: 1)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="55a5c134-fca5-3e55-2afb-d9d9ea953cab">
+      <Execution id="5fadec48-c2ff-4284-b854-5ae2d1e6f251" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Occurrence_InvalidBoundaryOrAdmission_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Checkpoint_StaleButPreviouslyAccountedEndpoint_Rejects" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="2a0e4b02-f82d-3e16-3415-520970054086">
+      <Execution id="42425444-88ba-41f7-bf07-135e2ffa3f9b" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Checkpoint_StaleButPreviouslyAccountedEndpoint_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_checkpoint&quot;, assignments: &quot;accepted_offset='nonsense'&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="787651f1-873c-6e47-0cfb-eeebe21e4287">
+      <Execution id="1f8eea2b-8bd8-4479-a44d-b867e420866f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;current_receipt_n=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f6e5fae7-94c2-6076-f6bb-d1fc8c4e98fa">
+      <Execution id="c74b82a9-0fd0-45c1-8eee-98784323406d" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Feed_ExplicitBackdateBehindGlobalCursor_Rejects(transition: True)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="86f828ba-dd63-e463-c75f-f9b38e99a06c">
+      <Execution id="5ab75c2e-6e1d-434d-b242-084307970f2b" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Feed_ExplicitBackdateBehindGlobalCursor_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Endpoint_OneHundredfoldHistory_UsesIndexedBoundedLookup" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="990da91f-4fee-c50a-5ceb-bdfb0d35fa07">
+      <Execution id="9f67859b-cdd1-40f4-85b5-4f25c77b5bb9" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Endpoint_OneHundredfoldHistory_UsesIndexedBoundedLookup" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;first_kind=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="185496d0-d25c-beee-e8b2-c016dfc2ebb2">
+      <Execution id="af4ef3c0-047b-4964-8972-ee643d1f68a5" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_checkpoint&quot;, assignments: &quot;accepted_offset=0&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="66f61083-2312-1a09-09cc-c36ab2b95a96">
+      <Execution id="bcc7ec49-a7e6-4fb1-b2f4-a8fe7ccb307d" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_DuplicateThenReplayThenNewAdmission_AccountsWithoutSemanticEffect" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="e7a6c6e3-7dbf-8894-fd78-91c88966505b">
+      <Execution id="a581b1a2-fb3b-4093-83d1-3f47e93b25c5" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Occurrence_DuplicateThenReplayThenNewAdmission_AccountsWithoutSemanticEffect" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_checkpoint&quot;, assignments: &quot;accepted_offset=1.5&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f776566a-8201-c8fa-e1ad-b3021c09ac54">
+      <Execution id="32b2cbfe-9bf4-4965-82c3-e768f51c7821" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;source_offset=-1&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="b94218ad-948c-7b57-efd6-ea1d7ce7ad5b">
+      <Execution id="2fa09bba-35fc-4f9e-9c11-33a0251cb6ec" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_feed&quot;, assignments: &quot;session_id='session',session_generation=1.5&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="99be257e-db88-a024-2e96-b523cbbc9762">
+      <Execution id="ad8aa0fe-a6a0-4877-96db-59c6dfb578b4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;source_end=1.5,raw_bytes=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f1a15e3f-b018-1869-5381-04d52b69b012">
+      <Execution id="2b08a5a8-a59c-4bcc-9c5a-1f027991f613" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;current_receipt_n=0&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="238b4b03-fb2f-14f3-91b5-61e1990e5a03">
+      <Execution id="7633b210-cd4d-4c10-a313-591941ffbeef" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_feed&quot;, assignments: &quot;session_id='session',session_generation=-1&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="ec0257bb-317d-e986-d7c2-ae4d2880817d">
+      <Execution id="3a6150dd-6042-4e9c-801f-2ac310b8c35d" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_feed&quot;, assignments: &quot;session_id='session',session_generation=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d2847495-449e-2054-3637-b00626789051">
+      <Execution id="a1432318-dfb6-49e2-b39a-9425dd244fdc" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;source_end=0&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="b2350592-8872-86fa-ff9f-ca8e9996da8d">
+      <Execution id="2ebb9a81-95dd-447e-8b40-e9311c8f2976" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: &quot;coord_projection_event&quot;, assignments: &quot;first_receipt_n='nonsense',current_receipt_n='nons&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="3a902397-e894-1f28-5c53-aa7f8d7ade9c">
+      <Execution id="f561ba7a-9902-493e-9537-b7ca8ce996d8" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests" name="Storage_InvalidNumericDomain_Rejects" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f34acc60-614e-0383-e10e-1c3c84663a13" executionId="8fa66f95-5265-409b-a568-1fab965eb8e5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="86f828ba-dd63-e463-c75f-f9b38e99a06c" executionId="5ab75c2e-6e1d-434d-b242-084307970f2b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fcc2df23-43e1-59f0-9e62-f3a4d893bdfe" executionId="797a289e-80ea-41b9-89b1-f3625035894c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2a0e4b02-f82d-3e16-3415-520970054086" executionId="42425444-88ba-41f7-bf07-135e2ffa3f9b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="990da91f-4fee-c50a-5ceb-bdfb0d35fa07" executionId="9f67859b-cdd1-40f4-85b5-4f25c77b5bb9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7709cfb5-983b-7f9f-60a9-7e208ebdef07" executionId="afa0eb4c-41e9-4a53-b386-a2dff2bfa25b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0aeace12-81df-2503-9c4e-d98fbcf251f1" executionId="07c8ccfe-7d2a-42e1-af8c-db0ce8ffc559" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="db28e2d0-b065-de50-4af9-e28050f8bdd1" executionId="220dfc77-2c46-4c39-8430-ab6ba83102a4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a22e4c09-6d5e-360d-d08d-61f3164932e5" executionId="47549e5d-e080-44b8-851f-80fc25af45f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4fb70c21-4e40-3119-fa4a-2d2390273886" executionId="750b81f3-386b-410c-8ddc-de9aa33720c4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3597d121-37ef-737f-8b03-aacc8b22683d" executionId="8636fe45-f786-459e-b9bb-024189b058eb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ec0257bb-317d-e986-d7c2-ae4d2880817d" executionId="3a6150dd-6042-4e9c-801f-2ac310b8c35d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b9a1308f-3e69-ad9c-f869-3a01ce456675" executionId="6059ceec-f3c8-466e-9495-2555985682c8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="99be257e-db88-a024-2e96-b523cbbc9762" executionId="ad8aa0fe-a6a0-4877-96db-59c6dfb578b4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a797eb85-9275-45b2-5ac9-627ce3d7535c" executionId="e6fb70e3-3da3-406e-a50c-5946075800af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="66f61083-2312-1a09-09cc-c36ab2b95a96" executionId="bcc7ec49-a7e6-4fb1-b2f4-a8fe7ccb307d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b2350592-8872-86fa-ff9f-ca8e9996da8d" executionId="2ebb9a81-95dd-447e-8b40-e9311c8f2976" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f6e5fae7-94c2-6076-f6bb-d1fc8c4e98fa" executionId="c74b82a9-0fd0-45c1-8eee-98784323406d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="55a5c134-fca5-3e55-2afb-d9d9ea953cab" executionId="5fadec48-c2ff-4284-b854-5ae2d1e6f251" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e7a6c6e3-7dbf-8894-fd78-91c88966505b" executionId="a581b1a2-fb3b-4093-83d1-3f47e93b25c5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="72499949-41f2-723c-3db5-3773497d9c49" executionId="b651529c-77b6-4933-821e-9b442d59d4af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="71b92f29-439f-73d4-ceec-f57f14bf9b1d" executionId="ba406e85-9d0c-4de4-ad25-ac62822e10e8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="18692de8-9a2e-4f87-139c-58d239628ea5" executionId="2c34e4ad-eb21-4fc6-b4b2-0d5f01e23c46" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f1edc28f-7c2c-67cf-f26a-ee68e82072f9" executionId="b8cd4275-d9b2-435d-8b0a-04e15f3c0b11" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f1a15e3f-b018-1869-5381-04d52b69b012" executionId="2b08a5a8-a59c-4bcc-9c5a-1f027991f613" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="787651f1-873c-6e47-0cfb-eeebe21e4287" executionId="1f8eea2b-8bd8-4479-a44d-b867e420866f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e19982cf-1630-3384-e773-1844f857b8ab" executionId="7d4603bc-3d0b-475f-a129-d1c0d51b14dd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="44b5c5a9-a33e-2d8a-f8c2-f739cf10ef0b" executionId="c32e79bc-920e-463a-bc05-f69301b27d2c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="363621b2-ba77-1c44-1edc-1852f068c26a" executionId="2bfdbd7a-5f8c-4c21-afff-cc0a4b877650" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5f0c6fe5-2807-63be-0fba-30413ea126f8" executionId="01b8562e-9f61-4bf0-bb76-131b1e646803" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="314e1543-03e2-5c2a-4eaf-6bf8baddcfff" executionId="c5a662fe-34a5-4d5f-929d-5e46a921c3b4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2e52d332-c5db-a5f7-f1fb-b5f1245602e8" executionId="30a62250-873d-493d-b714-b9197d0b8410" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="238b4b03-fb2f-14f3-91b5-61e1990e5a03" executionId="7633b210-cd4d-4c10-a313-591941ffbeef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d2847495-449e-2054-3637-b00626789051" executionId="a1432318-dfb6-49e2-b39a-9425dd244fdc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9b1bbf88-60f3-cf83-7971-905896d5398b" executionId="087d9a3d-1595-493c-b44f-7f121ccc8b09" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9dd85887-3c00-3924-7bf6-4b8255d20ac5" executionId="fd7708a7-dabf-4f5c-be1a-b6acbffa2dbc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="09b10fb5-f29e-5e6b-84f3-28b04a9ab275" executionId="9bfa0ba2-d745-41a7-9ea1-ac36e237d810" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d83e8bd8-9bf0-cac5-5026-9461aee3832a" executionId="3a285df7-f0b0-4baf-8163-303d7efb4aec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1193feb0-9aa4-35e1-b709-83aff25ec3ee" executionId="7193ad16-f055-49b3-aeb2-2a6e6fb93419" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8caeb059-b499-8353-6721-6332ae7b919e" executionId="cb5d0c3e-71b7-41e3-908a-a0e663d2f592" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="185496d0-d25c-beee-e8b2-c016dfc2ebb2" executionId="af4ef3c0-047b-4964-8972-ee643d1f68a5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e3204078-fa00-03e6-6bb5-73d46843bb75" executionId="4071e5c1-5372-457f-8b25-5a0b540f70cb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6ab4c787-180f-bb4a-a172-9af92e419d77" executionId="b6cdb2fb-c7b0-41f8-be8e-f5bebf47d93d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2a396183-8f7c-4859-fccd-3beb139f43f1" executionId="7becdb1b-3b00-410c-b3c2-ab96fe697d2c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f776566a-8201-c8fa-e1ad-b3021c09ac54" executionId="32b2cbfe-9bf4-4965-82c3-e768f51c7821" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b94218ad-948c-7b57-efd6-ea1d7ce7ad5b" executionId="2fa09bba-35fc-4f9e-9c11-33a0251cb6ec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a902397-e894-1f28-5c53-aa7f8d7ade9c" executionId="f561ba7a-9902-493e-9537-b7ca8ce996d8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="302f39d1-3987-83a6-6542-5f2a585e975e" executionId="12747c01-a9d8-432c-9a6a-ce441b3b3045" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1809837c-e780-4410-5956-0b0f414f3527" executionId="11048ba8-4c1c-4ba3-ae45-d009f0cdf99a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="573e9554-c771-dd42-ec2f-318a1ea3248b" executionId="c08a4548-3e2f-4479-916c-a352374a6fb1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="50" executed="50" passed="28" failed="22" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.23]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.32]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.32]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(31,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Feed_ExplicitBackdateBehindGlobalCursor_Rejects(Boolean transition)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.33]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.33]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.33]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.33]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(31,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Feed_ExplicitBackdateBehindGlobalCursor_Rejects(Boolean transition)&#xD;
+[xUnit.net 00:00:00.33]            at InvokeStub_CoordinationProjectionBoundaryTests.Feed_ExplicitBackdateBehindGlobalCursor_Rejects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.33]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.34]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.34]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.34]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(97,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments)&#xD;
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.38]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.38]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(97,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments)&#xD;
+[xUnit.net 00:00:00.38]            at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.41]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.41]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(97,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments)&#xD;
+[xUnit.net 00:00:00.41]            at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.41]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.43]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.43]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.43]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.43]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(97,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments)&#xD;
+[xUnit.net 00:00:00.43]            at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.43]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.44]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.44]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(97,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments)&#xD;
+[xUnit.net 00:00:00.44]            at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.45]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.45]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(97,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments)&#xD;
+[xUnit.net 00:00:00.45]            at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.45]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.50]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.50]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.50]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.50]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(97,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments)&#xD;
+[xUnit.net 00:00:00.50]            at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.50]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.52]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.52]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.52]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.52]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(97,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments)&#xD;
+[xUnit.net 00:00:00.52]            at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.52]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.54]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.54]       Expected: 19&#xD;
+[xUnit.net 00:00:00.54]       Actual:   20&#xD;
+[xUnit.net 00:00:00.54]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.54]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(98,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments)&#xD;
+[xUnit.net 00:00:00.54]            at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.54]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.55]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.55]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.55]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.55]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(97,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments)&#xD;
+[xUnit.net 00:00:00.55]            at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.55]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.57]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.57]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.57]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.57]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(97,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments)&#xD;
+[xUnit.net 00:00:00.57]            at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.57]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.64]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.64]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.64]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.64]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(97,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments)&#xD;
+[xUnit.net 00:00:00.64]            at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.64]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.65]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.65]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.65]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.65]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(97,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(String table, String assignments)&#xD;
+[xUnit.net 00:00:00.65]            at InvokeStub_CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.65]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.74]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.74]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.74]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.74]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(194,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Checkpoint_StaleButPreviouslyAccountedEndpoint_Rejects()&#xD;
+[xUnit.net 00:00:00.74]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.74]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.77]       Assert.Contains() Failure: Sub-string not found&#xD;
+[xUnit.net 00:00:00.77]       String:    "SEARCH coord_projection_event USING INDEX"···&#xD;
+[xUnit.net 00:00:00.77]       Not found: "ix_coord_projection_event_end"&#xD;
+[xUnit.net 00:00:00.77]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.77]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(289,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Endpoint_OneHundredfoldHistory_UsesIndexedBoundedLookup()&#xD;
+[xUnit.net 00:00:00.77]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.77]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.77]       Output:&#xD;
+[xUnit.net 00:00:00.77]         rows=10 plan=SEARCH coord_projection_event USING INDEX sqlite_autoindex_coord_projection_event_4 (scope=? AND epoch=?)
+USE TEMP B-TREE FOR ORDER BY&#xD;
+[xUnit.net 00:00:00.83]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.83]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.83]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.83]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(132,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(String column, Int32 ceiling)&#xD;
+[xUnit.net 00:00:00.83]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.83]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.84]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.84]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.84]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.84]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(132,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(String column, Int32 ceiling)&#xD;
+[xUnit.net 00:00:00.84]            at InvokeStub_CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.84]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.85]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.85]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.85]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.85]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(132,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(String column, Int32 ceiling)&#xD;
+[xUnit.net 00:00:00.85]            at InvokeStub_CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.85]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.88]       System.IO.IOException : The process cannot access the file 'watcher.db' because it is being used by another process.&#xD;
+[xUnit.net 00:00:00.88]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.88]            at System.IO.FileSystem.RemoveDirectoryRecursive(String fullPath, WIN32_FIND_DATA&amp; findData, Boolean topLevel)&#xD;
+[xUnit.net 00:00:00.88]            at System.IO.FileSystem.RemoveDirectory(String fullPath, Boolean recursive)&#xD;
+[xUnit.net 00:00:00.88]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(384,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Dispose()&#xD;
+[xUnit.net 00:00:00.88]         /_/src/xunit.execution/Extensions/ReflectionAbstractionExtensions.cs(79,0): at ReflectionAbstractionExtensions.DisposeTestClass(ITest test, Object testClass, IMessageBus messageBus, ExecutionTimer timer, CancellationTokenSource cancellationTokenSource)&#xD;
+[xUnit.net 00:00:00.89]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_TRANSITION_REFUSED'.&#xD;
+[xUnit.net 00:00:00.89]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.89]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.89]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.89]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.89]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.89]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.89]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(369,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.89]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(343,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Diagnostic(SqliteConnection connection, String key, Int64 admission, Int64 start, Int64 end, SqliteTransaction transaction, String scope, String epoch)&#xD;
+[xUnit.net 00:00:00.89]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionBoundaryTests.cs(146,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_DuplicateThenReplayThenNewAdmission_AccountsWithoutSemanticEffect()&#xD;
+[xUnit.net 00:00:00.89]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.89]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.90]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.1534342-07:00">
+        <Text>[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Feed_ExplicitBackdateBehindGlobalCursor_Rejects(transition: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.1638266-07:00">
+        <Text>[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Feed_ExplicitBackdateBehindGlobalCursor_Rejects(transition: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.1750539-07:00">
+        <Text>[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_checkpoint", assignments: "accepted_offset=1.5") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.2093331-07:00">
+        <Text>[xUnit.net 00:00:00.38]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_feed", assignments: "session_id='session',session_generation='nonsense'") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.2412990-07:00">
+        <Text>[xUnit.net 00:00:00.41]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_event", assignments: "source_offset='nonsense',source_end='zzzz',raw_byt"···) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.2795824-07:00">
+        <Text>[xUnit.net 00:00:00.43]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_event", assignments: "source_end=1.5,raw_bytes=NULL") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.2795991-07:00">
+        <Text>[xUnit.net 00:00:00.44]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_event", assignments: "first_receipt_n=1.5,current_receipt_n=1.5") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.2868510-07:00">
+        <Text>[xUnit.net 00:00:00.45]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_event", assignments: "source_offset=1.5,source_end=2.5,raw_bytes=NULL") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.3287419-07:00">
+        <Text>[xUnit.net 00:00:00.50]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_event", assignments: "source_end='oops',raw_bytes=X''") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.3510461-07:00">
+        <Text>[xUnit.net 00:00:00.52]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_event", assignments: "current_receipt_n='nonsense'") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.3722092-07:00">
+        <Text>[xUnit.net 00:00:00.54]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_feed", assignments: "n=1.5") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.3839091-07:00">
+        <Text>[xUnit.net 00:00:00.55]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_event", assignments: "first_receipt_n='nonsense',current_receipt_n='nons"···) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.4052706-07:00">
+        <Text>[xUnit.net 00:00:00.57]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_event", assignments: "current_receipt_n=1.5") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.4684101-07:00">
+        <Text>[xUnit.net 00:00:00.64]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_feed", assignments: "session_id='session',session_generation=1.5") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.4792907-07:00">
+        <Text>[xUnit.net 00:00:00.65]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_InvalidNumericDomain_Rejects(table: "coord_projection_checkpoint", assignments: "accepted_offset='nonsense'") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.5728851-07:00">
+        <Text>[xUnit.net 00:00:00.74]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Checkpoint_StaleButPreviouslyAccountedEndpoint_Rejects [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.5989438-07:00">
+        <Text>[xUnit.net 00:00:00.77]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Endpoint_OneHundredfoldHistory_UsesIndexedBoundedLookup [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.6616703-07:00">
+        <Text>[xUnit.net 00:00:00.83]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(column: "epoch", ceiling: 128) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.6738797-07:00">
+        <Text>[xUnit.net 00:00:00.84]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(column: "event_key", ceiling: 512) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.6853611-07:00">
+        <Text>[xUnit.net 00:00:00.85]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Storage_Keys_RequireExactTextAndUtf8ByteCeiling(column: "scope", ceiling: 4096) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.7152993-07:00">
+        <Text>[xUnit.net 00:00:00.88]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Migration_VersionRecordAbort_RollsBackDdlAndPreservesV7History [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:30:47.7265420-07:00">
+        <Text>[xUnit.net 00:00:00.89]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Occurrence_DuplicateThenReplayThenNewAdmission_AccountsWithoutSemanticEffect [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

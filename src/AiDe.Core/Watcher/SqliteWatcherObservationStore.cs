@@ -41,14 +41,21 @@ public sealed partial class SqliteWatcherObservationStore : IWatcherObservationS
         }.ToString();
 
         var connection = new SqliteConnection(connectionString);
-        connection.Open();
-        Execute(connection, "PRAGMA journal_mode=WAL;");
-        Execute(connection, "PRAGMA foreign_keys=ON;");
-        // recursive_triggers=ON so an INSERT path cannot slip past the append-only triggers (ADR-0002 S4).
-        Execute(connection, "PRAGMA recursive_triggers=ON;");
-        EnsureSchema(connection);
-
-        return new SqliteWatcherObservationStore(connection, databasePath);
+        try
+        {
+            connection.Open();
+            Execute(connection, "PRAGMA journal_mode=WAL;");
+            Execute(connection, "PRAGMA foreign_keys=ON;");
+            // recursive_triggers=ON so INSERT OR REPLACE cannot bypass append-only triggers.
+            Execute(connection, "PRAGMA recursive_triggers=ON;");
+            EnsureSchema(connection);
+            return new SqliteWatcherObservationStore(connection, databasePath);
+        }
+        catch
+        {
+            connection.Dispose();
+            throw;
+        }
     }
 
     /// <summary>
