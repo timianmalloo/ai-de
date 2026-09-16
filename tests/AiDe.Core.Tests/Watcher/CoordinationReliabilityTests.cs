@@ -189,7 +189,8 @@ public sealed class CoordinationReliabilityTests(ITestOutputHelper output)
         }
         var second = await pendingB;
 
-        Assert.Equal(reservedB, second);
+        // The proposal has no allocated Seq on the fixed path; identity must still survive.
+        Assert.Equal(reservedB.MessageId, second.MessageId);
         Assert.Equal(second, reader.FindBoardMessage(second.MessageId));
         Assert.Equal(2, reader.BoardMessages(repository).Count);
         var next = reader.BoardMessages(repository).Where(message => message.Seq > cursor).ToArray();
@@ -222,7 +223,8 @@ public sealed class CoordinationReliabilityTests(ITestOutputHelper output)
 
     private sealed class TemporaryPipeline : IDisposable
     {
-        private readonly DirectoryInfo _directory = Directory.CreateTempSubdirectory("aide-p2-red-");
+        private readonly DirectoryInfo _directory = Directory.CreateDirectory(
+            Path.Combine(Environment.CurrentDirectory, "aide-p2-red-" + Guid.NewGuid().ToString("N")));
         public string Root => _directory.FullName;
         public string DatabasePath => Path.Combine(Root, "watcher.db");
         public string LogPath => Path.Combine(Root, "wire");
@@ -248,7 +250,7 @@ public sealed class CoordinationReliabilityTests(ITestOutputHelper output)
     }
 
     /// <summary>
-    /// Test-only scheduling decorator: holds B after allocation, before its real SQLite INSERT.
+    /// Test-only scheduling decorator: holds B before its store append (and, on the fixed path, allocation).
     /// All reads and writes forward unchanged. The serial test above is its persistence fidelity pair.
     /// </summary>
     public class BeforeBoardInsertStore : DispatchProxy
@@ -269,7 +271,7 @@ public sealed class CoordinationReliabilityTests(ITestOutputHelper output)
         {
             ArgumentNullException.ThrowIfNull(targetMethod);
             var inner = _inner ?? throw new InvalidOperationException("P2 scheduling store was not initialized.");
-            if (nameof(IWatcherObservationStore.AppendBoardMessage) == targetMethod.Name
+            if (targetMethod.Name is nameof(IWatcherObservationStore.AppendBoardMessage) or "AppendBoardMessageAllocated"
                 && args is [BoardMessage message])
             {
                 (_beforeInsert ?? throw new InvalidOperationException("P2 scheduling callback is missing."))(message);

@@ -548,7 +548,44 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         ArgumentNullException.ThrowIfNull(message);
         lock (_gate)
         {
-            ExecuteNonQuery(
+            InsertBoardMessage(message, transaction: null);
+        }
+    }
+
+    public BoardMessage AppendBoardMessageAllocated(BoardMessage message)
+    {
+        ArgumentNullException.ThrowIfNull(message);
+        lock (_gate)
+        {
+            // Acquire the SQLite writer before reading MAX: instance locks cannot order two stores.
+            using var transaction = _connection.BeginTransaction(deferred: false);
+            using var command = _connection.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandText = "SELECT COALESCE(MAX(seq), 0) FROM board_message_fact WHERE repository_key = $repo;";
+            command.Parameters.AddWithValue("$repo", message.RepositoryKey);
+            var maximum = (long)command.ExecuteScalar()!;
+            var allocated = message with { Seq = checked((int)checked(maximum + 1)) };
+            InsertBoardMessage(allocated, transaction);
+
+            command.CommandText = BoardSelect + " WHERE message_id = $id;";
+            command.Parameters.Clear();
+            command.Parameters.AddWithValue("$id", allocated.MessageId);
+            BoardMessage persisted;
+            using (var reader = command.ExecuteReader())
+            {
+                if (!reader.Read())
+                {
+                    throw new InvalidOperationException("The inserted board message was not readable.");
+                }
+                persisted = ReadBoardMessage(reader);
+            }
+            transaction.Commit();
+            return persisted;
+        }
+    }
+
+    private void InsertBoardMessage(BoardMessage message, SqliteTransaction? transaction) =>
+        ExecuteNonQuery(
                 _connection,
                 """
                 INSERT INTO board_message_fact
@@ -556,6 +593,7 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
                      content, quarantined, injection_flagged, tombstoned, recorded_at, seq)
                 VALUES ($id, $repo, $kind, $author, $trust, $parent, $content, $quar, $inj, $tomb, $recorded, $seq);
                 """,
+                transaction,
                 ("$id", message.MessageId),
                 ("$repo", message.RepositoryKey),
                 ("$kind", message.Kind.ToString()),
@@ -568,8 +606,6 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
                 ("$tomb", message.Tombstoned ? 1 : 0),
                 ("$recorded", message.RecordedAt.ToUniversalTime().ToString("O")),
                 ("$seq", message.Seq));
-        }
-    }
 
     public IReadOnlyList<BoardMessage> BoardMessages(string repositoryKey)
     {

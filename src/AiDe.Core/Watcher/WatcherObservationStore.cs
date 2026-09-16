@@ -53,6 +53,14 @@ public interface IWatcherObservationStore
     /// <summary>Appends a board message. The envelope/order/thread are append-only (slice 6).</summary>
     void AppendBoardMessage(BoardMessage message);
 
+    /// <summary>
+    /// Allocates checked per-repository MAX(seq)+1 and inserts atomically, returning the committed
+    /// message. Legacy caller-sequenced imports use <see cref="AppendBoardMessage"/> instead.
+    /// Unsupported stores fail closed; allocation outside the store is not a fallback.
+    /// </summary>
+    BoardMessage AppendBoardMessageAllocated(BoardMessage message) =>
+        throw new NotSupportedException("This store does not support atomic board sequence allocation.");
+
     /// <summary>A repository's board messages in append (seq) order - repository-scoped (US-4).</summary>
     IReadOnlyList<BoardMessage> BoardMessages(string repositoryKey);
 
@@ -353,6 +361,20 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
         lock (_gate)
         {
             _boardMessages[message.MessageId] = message;
+        }
+    }
+
+    public BoardMessage AppendBoardMessageAllocated(BoardMessage message)
+    {
+        ArgumentNullException.ThrowIfNull(message);
+        lock (_gate)
+        {
+            var maximum = _boardMessages.Values
+                .Where(m => string.Equals(m.RepositoryKey, message.RepositoryKey, StringComparison.Ordinal))
+                .Select(m => m.Seq).DefaultIfEmpty(0).Max();
+            var allocated = message with { Seq = checked(maximum + 1) };
+            _boardMessages.Add(allocated.MessageId, allocated);
+            return allocated;
         }
     }
 

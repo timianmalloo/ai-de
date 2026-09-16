@@ -378,3 +378,20 @@ review follows this author handoff; author does not clear those gates.
 The design §11 supersedes earlier P2 admission statements only for this narrow unit.
 Unmodified seven-case baseline is 2 PASS/5 RED. R1/R2 and full-P2 floors remain required
 and nonshippable. Conductor still owns derived index/backlink/rollup regeneration.
+
+### P2.1 actual execution
+
+N1 completed in `36e560f54b55306575dd3a5e2c57ab679feef2a1` before solution code.
+N2 observed 12 failures/3 passes against unchanged source; N3 added the allocated
+store seam, both stores, service return and cursor-aware paging; N4 observed 15/15
+targeted passes and 75/75 compatibility passes. Whole reliability is 3 PASS/4 RED:
+R3 fixed, R1/R2 remain. Exact tests, SHA-256 identities, commands and residuals are
+in the existing linked Proof Pack's P2.1 receipt.
+
+Actual graph stayed four serial nodes, zero delegates. One RED receipt rerun corrected
+oversized console output; no source repair loop was needed after first implementation.
+Tool output truncation also caused grounding rereads: an execution-cost finding,
+not omitted evidence promoted to Verified. Overall tool-count reconciliation is the
+audit's declared count; no token/cost or production latency measurement is inferred.
+Full-P2 correctness, review and instrumentation floors remain open. Independent
+C#/Data/DS gate is the next action, not a renewed human scope approval.

@@ -70,8 +70,9 @@ public static class BoardTools
     /// that another agent reads it and believes it. A read parameter would hand that over for
     /// free.</para>
     ///
-    /// <para>Newest last, so an agent appending to its context reads the board in the order it was
-    /// written — the order a person reads a thread in.</para>
+    /// <para>With a cursor, return the earliest qualifying page ascending; its last Seq is the
+    /// next cursor. Without a cursor, return the most recent page, also ascending. Historical
+    /// sequence ties and later native tombstones are not a complete change feed.</para>
     /// </remarks>
     public static BoardRead Read(
         IWatcherObservationStore store, SessionRecord session, int? limit = null, int? sinceSeq = null)
@@ -101,10 +102,8 @@ public static class BoardTools
             .OrderBy(m => m.Seq)
             .ToList();
 
-        // Take the LAST n, then keep ascending order: an agent asking for 50 wants the most recent
-        // 50, read oldest-first. Taking the first 50 would pin it to the beginning of history and
-        // silently hide everything said since.
-        var page = visible.Count <= take ? visible : visible[^take..];
+        var page = visible.Count <= take ? visible
+            : sinceSeq is not null ? visible[..take] : visible[^take..];
 
         return new BoardRead(
             [.. page.Select(ToEntry)],

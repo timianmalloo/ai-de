@@ -142,9 +142,8 @@ public sealed class MessageBoardService : IMessageBoard
                 InjectionFlagged: GraderInjectionScanner.LooksLikeInjection(content),
                 Tombstoned: false,
                 _time.GetUtcNow(),
-                Seq: _store.BoardMessages(repositoryKey).Count + 1);
-            _store.AppendBoardMessage(message);
-            return message;
+                Seq: 0);
+            return _store.AppendBoardMessageAllocated(message);
         }
     }
 

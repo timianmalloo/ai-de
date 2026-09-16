@@ -791,3 +791,158 @@ PASS belongs solely to the supplied independent isolated diagnostic.
 
 **Next: independent delta reviewer on the exact correction commit, then conductor-admitted
 Python P1 author. No self-clearance; no renewed human approval of the already approved phases.**
+
+## P2.1 native ordering/paging implementation receipt — 2026-09-16
+
+**Narrow implementation evidence, NOT full-P2 or activation PASS.** The design gate
+was committed first at `36e560f54b55306575dd3a5e2c57ab679feef2a1`, based on unchanged
+source `3d13270683655156f79dfe9d698cc0b410f2a32b`. Design §11 records the exact
+accepted Data/DS amendments and the compatibility exception. The independent DS
+verdict was DESIGN PASS-WITH-CONDITIONS, not an implementation review. No independent
+C#/Data/DS implementation verdict has yet been issued for this candidate.
+
+### Change reach and compatibility
+
+| Surface | Writer → reader / result |
+|---|---|
+| IWatcherObservationStore | New returning `AppendBoardMessageAllocated`; unsupported default throws NotSupportedException without fallback |
+| SQLite store | IMMEDIATE writer transaction before MAX and insertion; existing repository index; checked Int64 addition and Int32 conversion; read inserted row in transaction, commit, return |
+| In-memory store | One store-wide lock covers MAX, checked increment and dictionary Add; duplicate identity cannot overwrite through the allocated path |
+| MessageBoardService | Existing Post/Reply/Acknowledge signatures and capability checks unchanged; returns the allocated row, not Seq=0 proposal |
+| Native BoardMessage / MCP BoardEntry | Seq stays Int32, no wire/schema widening or uniqueness retrofit |
+| MCP read | sinceSeq selects earliest qualifying N ascending; cursor is last returned Seq; no-cursor retains recent-N |
+| Existing publisher / GUI | No source changes; 12 publisher tests in compatibility batch pass, but no complete change-feed or GUI proof is claimed |
+
+Legacy void append remains caller-sequenced insertion, including historical gaps and
+duplicate sequences. It deliberately does not delegate to allocation: that would
+rewrite seed/import semantics. Such legacy writes are outside the reliable future
+cursor guarantee. Native tombstones and historical sequence ties are likewise not a
+complete change feed. Schema version remains 7; no migration, index, dependencies,
+configuration, hook, authority or P1 source changes.
+
+Provider contract was read from installed Microsoft.Data.Sqlite.Core **10.0.11** XML,
+`SqliteConnection.BeginTransaction(Boolean)`: `deferred:true` defers creation and
+allows read-to-write upgrades. The candidate explicitly selects `deferred:false`.
+Source contains existing `ix_board_message_repo(repository_key)`. Reusing it is not
+a constant-time MAX or production latency claim.
+
+### Executed commands and receipts
+
+All commands ran in `C:\Projects\ai-de-feature-xh-p2-projection`, with edit leases
+released. No gate exit was piped or redirected. Standard VSTest TRX files were written
+under `.agents\p2-ordering-evidence`, read back and hashed, then removed at close to
+leave a clean tree. They are not claimed committed artifacts. Full console results
+remain in tool receipts; the durable result tables and receipt hashes are below.
+
+* Core and MCP: `dotnet build <project.csproj> --no-restore
+  -p:BuildProjectReferences=false -v:quiet`: each exit **0**, zero warnings/errors.
+  Observed elapsed output: Core 3.04 s, MCP 0.53 s; these are build measurements only.
+* Tests: `dotnet test tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --no-restore
+  -p:BuildProjectReferences=false --filter <selector> --logger
+  "console;verbosity=quiet" --logger "trx;LogFileName=<receipt>.trx"
+  --results-directory .agents\p2-ordering-evidence`.
+  RED receipt and compatibility/reliability reruns use `--no-build`; GREEN compiles
+  tests against the separately rebuilt Core/MCP. No App/native/Atlas/UIA tests ran.
+* RED source check `git diff --exit-code -- src`: **0** before solution changes.
+  First RED execution's verbose output exceeded tool display size; the subsequent
+  same-binary RED rerun persisted TRX and printed every test result without truncation.
+* Existing compatibility fixtures used a process-local TEMP/TMP rooted in this
+  worktree's `.agents\p2-ordering-data`, removed after execution. New fixtures create
+  their own directories below the test working directory and dispose them.
+
+| Batch / exact selector | Executed result / exit | Receipt SHA-256 |
+|---|---|---|
+| `FullyQualifiedName~BoardOrderingTests\|FullyQualifiedName~CoordinationReliabilityTests.Post_` before fix | 15 total, **12 failed, 3 passed**, 0 skipped; exit **1**; 240 ms reported | `B3CB060ED73099CE33574ADC38918F48D2CDD32BC6FCDD24344DE653B26E0CFE` (`ordering-red.trx`) |
+| Same selector after fix | **15 passed**, 0 failed/skipped; exit **0**; 253 ms reported | `8176696A6CA3A7694C02C1455CFAD79B025266C18A89B072DB9223EBB4A918B1` (`ordering-green.trx`) |
+| `FullyQualifiedName~MessageBoardTests\|FullyQualifiedName~SqliteWatcherObservationStoreTests\|FullyQualifiedName~McpMatchesTheJsonlPathTests\|FullyQualifiedName~ContractBoardPostTests\|FullyQualifiedName~BoardPublisherTests` | **75 passed**, 0 failed/skipped; exit **0**; 233 ms reported | `1B90130328EDEE69860E884BF974030FA6C17BD970094C65AD2D08F2C9DB248A` (`ordering-compatibility.trx`) |
+| `FullyQualifiedName~CoordinationReliabilityTests` | 7 total, **3 passed, 4 failed**, 0 skipped; exit **1**; 188 ms reported | `12C3968FEFB07E93284583CFC4E8FA0CC2B7D433F3B3D9061AB25D1D5128B229` (`reliability-remaining.trx`) |
+
+The final shell printed `COMPATIBILITY_EXIT=0 RELIABILITY_EXIT=1` and returned **1**.
+That red is intentional evidence of the remaining programme defects, not a green
+aggregate or a shippable suite.
+
+### Per-oracle proof
+
+Test names below are in `tests\AiDe.Core.Tests\Watcher\BoardOrderingTests.cs`,
+except the two explicitly identified CoordinationReliabilityTests cases.
+
+| Test / claim | Oracle and observed RED | GREEN / confidence |
+|---|---|---|
+| `Post_SequenceHolesAndHistoricalTies_ReturnsMaximumPlusOne` (memory/SQLite) | Two historical Seq=7 rows, one tombstoned, another repository at 500; old result **3**, expected **8** | Both pass; committed returned row, unchanged tied identity, tombstone and `[7,7,8]` verified |
+| `Post_MaximumSequence_RefusesWithoutWriting` (memory/SQLite) | Int32.MaxValue seed; old code threw no exception | Both throw OverflowException, no inserted overflow row; Verified |
+| `Post_SqliteInt64Maximum_RefusesWithoutWrappingOrWriting` | Raw SQL sets Seq=Int64.MaxValue; old code threw no exception | OverflowException; SQL row count remains 1 and max remains Int64.MaxValue; Verified |
+| `Post_DuplicateIdentity_DoesNotReplaceCommittedFact` (memory/SQLite) | Memory overwrote existing identity with no exception; SQLite already refused | Both refuse; original exact row survives; next Seq=2. Memory red→green Verified; SQLite baseline preservation only |
+| `Post_TwoServicesSharingMemory_CursorSeesLaterCommittedFact` | B held at store seam, A commits, reader obtains cursor, then B released; old B Seq=1 instead of 2 | Seq=2 and exact later committed row visible beyond cursor; Verified |
+| `Read_MoreThanTwoHundredCommittedMessages_ConsumesEarliestPagesWithoutLoss` | 205 real SQLite rows, independent read-only reader; newest-200 exhausted stream before second page and the next cursor access failed | Pages 200+5+0, exact IDs and sequences 1–205; Verified |
+| `Read_CursorLimitBoundary_ClampsEarliestPage` (0→1, -1→1, 201→200) | Old one-row pages returned 205; old 200-row page started 6, expected 1 | All three earliest/clamped ranges pass; Verified |
+| `Read_WithoutCursor_PreservesRecentPage` | Baseline control already passed: 55 rows → Seq 6–55 | Still passes; preservation Verified, not a red→green control |
+| `CoordinationReliabilityTests.Post_TwoServicesAllocateBeforeCommit_CursorSeesLaterCommittedMessage` | R3, two real SQLite connections/services and third reader: old later committed B not visible above cursor; expected message-b, actual empty | Later B persisted with higher sequence and exact ID, visible above reader cursor; Verified |
+| `CoordinationReliabilityTests.Post_TwoServicesSerially_CursorSeesSecondCommittedMessage` | Baseline fidelity control already passed | A=1, cursor=1, B=2 and exact committed B visible; Verified preservation |
+
+R3's old precondition compared the preinsert proposal with the returned committed
+row. Removed only Seq equality: after this fix the proposal is deliberately unallocated.
+MessageId equality, exact returned-versus-durable row, total count and the **actual
+reader-between-commits** oracle remain. The decorator intercepts both legacy and
+new allocated method names and forwards all operations to the real store. B's barrier
+is now before transactional allocation, not a callback inside the transaction.
+The 15-second waits detect deadlocks; they are not sleeps or ordering assumptions.
+
+### SHA-256 identity ledger
+
+Paths below are relative to this worktree. Test source hashes are identical between
+RED and GREEN. The solution source is pinned to the baseline before the first RED.
+
+| File | Before | Tested candidate |
+|---|---|---|
+| `src\AiDe.Core\Watcher\WatcherObservationStore.cs` | `725EDFAD68B9DE35489889F7FDC9F5A024A3457D0827FAC82E0B22B433160D89` | `F02EE62A87D088C8A1828CD85D19E4249A5FC57C3783AB501CA7D2E313326E0B` |
+| `src\AiDe.Core\Watcher\SqliteWatcherObservationStore.cs` | `462188EC8116302E1B5A0FBDB1BAF01BAAB35FBC2A7449021EF3988D2E7E0816` | `52492D886EADA2EA22FB27F82C05EC4DA79F49D90B4F5CE0005822E92DE5F784` |
+| `src\AiDe.Core\Watcher\MessageBoard.cs` | `B9843DFD7E1DF08DEFD24E958E2D9D58B61FC76465A570DF2D48C46F1E33E005` | `6BF539E99D92FCC4057E727BDCF61BE9EE8A7D2245B5CA277DADEAEFE45B97B8` |
+| `src\AiDe.Mcp\BoardTools.cs` | `FFED802495DA9C1A0A8233CFF54B0A0EBAC519FC84730EADD1E4FD4EA2754787` | `96B2D17FB5B1A330A6E61A9A7B4D7A4105F7632AEAECD524CB606C89368234F0` |
+| `tests\AiDe.Core.Tests\Watcher\BoardOrderingTests.cs` | New RED test | `DB93C6E0BA1DF2268FB0203FC058E1CC64F75E9EC686378B4DFACE5CE6E197FC` |
+| `tests\AiDe.Core.Tests\Watcher\CoordinationReliabilityTests.cs` | Adapted before RED | `F582F7B3BBBC84A481AC4459925B19449D3099F5EC014DEB995E6CB398FADA43` |
+| `tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj` | Unchanged | `FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D` |
+| `src\AiDe.Core\AiDe.Core.csproj` | Unchanged | `B63C41B97201DC3E1016B72B404A32411AC31E477231B281219DDA64D0AD584A` |
+| `src\AiDe.Mcp\AiDe.Mcp.csproj` | Unchanged | `C7C0B953C60DD8CF638E8725FB10FFC9B709F0B76AD52267553BFFC70AA68AB0` |
+
+All three loaded binaries are under `tests\AiDe.Core.Tests\bin\Debug\net10.0`:
+
+| Binary | RED | GREEN/compatibility/reliability |
+|---|---|---|
+| `AiDe.Core.Tests.dll` | `361E3A25E21EEDEA986BD40A646F8D352FDCBB4E806CA74B12456E6941CF2C60` | `5F7CF90CFDFF468344124C640EB7BB78C81A8AB6C8895664A43902568F39A1FC` |
+| `AiDe.Core.dll` | `CD037D365519BF085611C03024474EDD50717095EFD05C0D8E8085898AAB304D` | `60E9A5D40F102E4128F5D75D06A27D2898545EFB59035AF6966D09FB7F4D6E62` |
+| `AiDe.Mcp.dll` | `67BC41EC06F56F8157F0471B4D91A2CF57F6DC86CE6C7C3B5D0BBF3AADB3E90A` | `0DF0D0F7F19BC6F070A1FC6715708A7E66F7FB4C7B55A7104270AF678023B55C` |
+
+Hashes identify observed local bytes; no deterministic cross-machine binary claim.
+Git may normalize the pre-existing CRLF reliability file on staging; the hash above
+deliberately identifies **executed working bytes**, not an asserted Git blob hash.
+
+### Finite remaining findings / DoD qualification
+
+1. **R1 remains RED:** `PumpOnce_UnchangedLogTwice_PreservesOneOriginalMessage`.
+2. **R2 remains RED:** `PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle`
+   for ended=false/true, and
+   `Apply_ReplayedRegisterOfEndedSession_PreservesEndedGenerationAndHeartbeat`.
+3. **Later P2:** three-cache constraints, capture validation/source-gap semantics,
+   observation-only replay, receipt/effect/checkpoint atomicity, pending/thread/
+   tombstone/rebuild tests, migration deployment and rollback, capacity/query-plan/
+   scale evidence. The reduced Data spike does not clear these.
+4. **Independent C#/Data/DS/Test/SRE review is outstanding.** No self-issued PASS.
+   No binary-compatibility, historical-tie completeness, GUI, property/fuzz campaign
+   or production performance claim. D0/D1/D4/D5-provider/D6/D7/A2 apply; native
+   tests prove these selected boundaries, not full MCP transport qualification.
+5. **Instrumentation gap:** durable Seq/identity and explicit exception expose
+   allocated order/refusal on the normal path; no new unconditional latency,
+   throughput or failure-rate SLI was added. Those measurements remain not recorded.
+   No log payloads or identifiers were exported. AIDE_SESSION/AIDE_CONTRACT_LOG are
+   absent, so no episode evidence event can be emitted here. The existing proof is
+   under `docs/proofs`, not the scorer's `docs/proof` accepted namespace.
+6. **Conductor-owned artifacts:** derived index/backlinks/rollups and central
+   defect-register integration remain unedited by this narrow author. Class → sweep
+   → derive → prevent is recorded in design §11 E and the oracles above; no claim
+   that the central register has been updated. Audit rendering incidentally produced
+   `audit-data.js`; only that derived local byproduct is reverted, never audit JSONL.
+   Tool-output overflow cost repeated reads; the corrective control was quiet
+   console + standard TRX + explicit exit/result readback, not a piped gate.
+
+**Next:** independent C#/Data/DS review of the second commit and this exact proof.
+Keep the tree for that review; no merge/push, P1 integration or activation.
