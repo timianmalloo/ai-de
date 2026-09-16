@@ -12936,6 +12936,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "26d41fbd5e6f522825e07a0bdebea09f1744b254ffbaf8f450ab8c7b23ecdb3f"
     },
     {
+      "id": "proof-atlas-p1-03-pair-rereview",
+      "path": "docs/proof/atlas-p1-03-pair-rereview.md",
+      "title": "Independent corrected Atlas runner review: preparation clear",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "Independent preparation CLEAR: FR-PAIR-001/002/003 and the bounded negative-parser gap are resolved by exact retained-handle correlation, robust finalization, measured Git pins and independently executed controls. A separate fresh execution grant remains required.",
+      "tags": [
+        "atlas",
+        "proof",
+        "review",
+        "containment"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-p1-03-pair-preparation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-atlas-p1-03-transition-review",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6ff0bffd9a862562fb4665f313ea1bba0e75cae5c7a6026d5e14f7790eb62f68"
+    },
+    {
       "id": "proof-atlas-p1-03-transition-review",
       "path": "docs/proof/atlas-p1-03-transition-review.md",
       "title": "Independent Atlas transition diagnostic preparation review",
@@ -23412,5 +23446,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6e2a346dc559431aff38f61a939e050aa1356b7cdee929de0332c2521f9b0a84"
+  "graphSha256": "9479cd7d830ceb3e12a50088c25046aa369ac35ac4996d448528d851a96208b1"
 };

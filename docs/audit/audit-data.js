@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T21:27:00Z",
+  "generated": "2026-09-16T21:34:45Z",
   "audit": [
     {
       "actor": null,
@@ -26455,6 +26455,53 @@ window.AUDIT_DATA = {
         "sha": "88035753581dd0bab5697e975b6ba1a53543e702",
         "short": "880357535",
         "branch": "test/atlas-p1-03-uia-pair",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2P29FBZXSBN746KNSRK1N0G",
+      "shortname": "atlas-p1-03-independent-pair-rereview",
+      "datetime": "2026-09-16T21:34:44Z",
+      "session": "codex-atlas-p1-03-pair-rereview",
+      "prompt": "FIRST action in NEW absolute tree C:/Projects/ai-de-review-atlas-p1-03-pair-correction: set AGENT_SESSION=codex-atlas-p1-03-pair-rereview, AGENT_NAME=codex-astra-pair-reviewer, PYTHONIOENCODING=utf-8; python docs/ai-forward-pack/scripts/audit-log.py start --session codex-atlas-p1-03-pair-rereview --skill forensicreview. Publish ownnewliveness immediately. Conductor provisioned branchreview/atlas-p1-03-pair-correction atd679e1567e2d74fa2ef85f1eddae6c44b6d5b758. Priorreviewtreeuntouched. NoEnterWorktree/install.\nGoal: independently rereview your exact FR-PAIR001/002/003 and parsercoverage gap against fixed candidate, before an execution request. Done when specific veto has CLEAR or BLOCK with actual evidence, committed receipt and closedrecords. T2; fanout0; Astra retained for adversarial ownership/parser semantics. Ownerbudget8orchestrationcalls/15min/checkpoint4. Batchindependentreads bounded, reserveclosewithinbudget; capdefectnotfloorcut, no automaticrecovery. Context400kceiling. Allowednew authoredpath docs/proof/atlas-p1-03-pair-rereview.md, officialownaudit/requiredderived/ownliveness only. Noauthor/sourcefixes, builds/dotnettest/native/GUI/browserlaunch; harmlessownedprocess probesallowed inYOURtree only. Claimproofandrequiredsite/index.html,site/collaboration.html,site/model.html forminutes; allauthorleasesreleased. Do notwriteauthorraworoverwriterunner; in-memory relocationforcontrols supportedpattern frompriorreview. Nojoin/push.\nInputs: candidate runner SHA26567e7b408430ef29d4a44e6c60a1792cb2ddae9b23dd01393e1cc6ea3a3daa, updatedproof docs/proof/atlas-p1-03-pair-preparation.md. OldBLOCK2ab2f0b2bb2ae17ddb9bed5da1da935742bc9873:docs/proof/atlas-p1-03-pair-review.md available gitshow/oldtree. Ownerexactdecision root9ce2cef8:docs/proof/atlas-p1-03-transition-design-review.md lastsection; durable authorreq-01M2P0VQ6APR7BAG5CBH4ECK2X. No vetooverride. Owner16/25correction used16calls,984secaudit, clean/all5leasesreleased/sessionended. Samecompiledbuildsource1d46d651. Authorfrozenraw C:/Projects/ai-de-test-atlas-p1-03-uia-pair/artifacts/atlas-pair-preparation/{correction-red.json,correction-green-1.json,correction-git/git-dependencies.json,manifest-corrected.json,correction-audit-readback.json}. ManifestSHAa58c5993e2a8ce0c30ca3ea38339da0f2faf5943a7d891d7b3cf6a42b51ba23c; predecessorED4F937Bpreserved. Rootpersonallyreadnewred13cases10pass2fail1error,green16/16 and independentlyran correctedfullverifyPINS-MATCH. Authorclaims11624oldnonrunnerinputsunchanged+5measuredGitadditions; independentlycomparemaps. Gitprobeobservedrealmingw64/bin/git.exe pluslibiconv/libintl/libpcre2/zlib; Git2.55.0, fourownedprocesses/accountingactive0/handlesexited; OSmodulesrecordednotpinned. Source/tests/toolsdiff emptyagainstbuildbase.\nClearance requirements fromOwner: (1) malformed/missing/unreadableidentity records don'tbypassJob/handleclosure, observerdrain, containment, failureevidence; preserveprimaryandsecondaryerrors. (2) SAMEretainedjob-ownedhandle rawcreation+nonsignaled before/afterCIM, matchingPID+executable; CIMlossyprecisiondiagnosticnotauthority, exit/mismatch/missingrefuse; actualharmlessCIMcontrol andwrongidentity/exitnegatives. (3) justifyconsumedmutableGitbinary/moduleinputsfromactualmeasurement, no demandwholeOSunless specificload-bearinggap. (4) exactsupportedassertiontype+correlated failedoriginalname-query required; provider/offscreen/observerfaultnotnegative; emitted-schemapositive/negative/order/duplicate/correlation/cleanupcontrols matchactualnativeemission. Inspectsourceproducer andreader, no self-referential green. Existingtrueoracleneverreplaced. Successorfrozenoldcompiledruntimebytesunchanged; norefresh/rebuild.\nRetainfixedAthenBfreshprocesses,180+30bounds, freshprofilebeforechildlaunch, fullpinsandactualbrowserconsumptiongate. Unexecutednativebrowserlimitsremainexplicit, not automaticblockwhenadequatecontrolsgroundcontract. Reviewowneramendmentonly, no new productproposal. Existinggraphvalid; feedbackR->correction->R->Sfreshwatcherslot->A/B->I; no repeatedwholeoptimizeunlessnewmaterialdependency. FreshwatcherexecutionmandatoryafterCLEAR, no additionalpreparationapproval. Returncommit,actualcontrol/proberesults, exactvetoresolution/residuals, actualbudget/duration/audit/leaseclear. Treatfindingsasboundeddecisionstoconductor, no ad-hocnewauthorwork. Rootavailableinspectactualevidence. No AIDE_CONTRACT_LOG=>noinventedevent.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2P29FFDX9XHBFK7KEYGKATP",
+      "shortname": "atlas-p1-03-pair-rereview",
+      "datetime": "2026-09-16T21:34:44Z",
+      "session": "codex-atlas-p1-03-pair-rereview",
+      "prompt": "FIRST action in NEW absolute tree C:/Projects/ai-de-review-atlas-p1-03-pair-correction: set AGENT_SESSION=codex-atlas-p1-03-pair-rereview, AGENT_NAME=codex-astra-pair-reviewer, PYTHONIOENCODING=utf-8; python docs/ai-forward-pack/scripts/audit-log.py start --session codex-atlas-p1-03-pair-rereview --skill forensicreview. Publish ownnewliveness immediately. Conductor provisioned branchreview/atlas-p1-03-pair-correction atd679e1567e2d74fa2ef85f1eddae6c44b6d5b758. Priorreviewtreeuntouched. NoEnterWorktree/install.\nGoal: independently rereview your exact FR-PAIR001/002/003 and parsercoverage gap against fixed candidate, before an execution request. Done when specific veto has CLEAR or BLOCK with actual evidence, committed receipt and closedrecords. T2; fanout0; Astra retained for adversarial ownership/parser semantics. Ownerbudget8orchestrationcalls/15min/checkpoint4. Batchindependentreads bounded, reserveclosewithinbudget; capdefectnotfloorcut, no automaticrecovery. Context400kceiling. Allowednew authoredpath docs/proof/atlas-p1-03-pair-rereview.md, officialownaudit/requiredderived/ownliveness only. Noauthor/sourcefixes, builds/dotnettest/native/GUI/browserlaunch; harmlessownedprocess probesallowed inYOURtree only. Claimproofandrequiredsite/index.html,site/collaboration.html,site/model.html forminutes; allauthorleasesreleased. Do notwriteauthorraworoverwriterunner; in-memory relocationforcontrols supportedpattern frompriorreview. Nojoin/push.\nInputs: candidate runner SHA26567e7b408430ef29d4a44e6c60a1792cb2ddae9b23dd01393e1cc6ea3a3daa, updatedproof docs/proof/atlas-p1-03-pair-preparation.md. OldBLOCK2ab2f0b2bb2ae17ddb9bed5da1da935742bc9873:docs/proof/atlas-p1-03-pair-review.md available gitshow/oldtree. Ownerexactdecision root9ce2cef8:docs/proof/atlas-p1-03-transition-design-review.md lastsection; durable authorreq-01M2P0VQ6APR7BAG5CBH4ECK2X. No vetooverride. Owner16/25correction used16calls,984secaudit, clean/all5leasesreleased/sessionended. Samecompiledbuildsource1d46d651. Authorfrozenraw C:/Projects/ai-de-test-atlas-p1-03-uia-pair/artifacts/atlas-pair-preparation/{correction-red.json,correction-green-1.json,correction-git/git-dependencies.json,manifest-corrected.json,correction-audit-readback.json}. ManifestSHAa58c5993e2a8ce0c30ca3ea38339da0f2faf5943a7d891d7b3cf6a42b51ba23c; predecessorED4F937Bpreserved. Rootpersonallyreadnewred13cases10pass2fail1error,green16/16 and independentlyran correctedfullverifyPINS-MATCH. Authorclaims11624oldnonrunnerinputsunchanged+5measuredGitadditions; independentlycomparemaps. Gitprobeobservedrealmingw64/bin/git.exe pluslibiconv/libintl/libpcre2/zlib; Git2.55.0, fourownedprocesses/accountingactive0/handlesexited; OSmodulesrecordednotpinned. Source/tests/toolsdiff emptyagainstbuildbase.\nClearance requirements fromOwner: (1) malformed/missing/unreadableidentity records don'tbypassJob/handleclosure, observerdrain, containment, failureevidence; preserveprimaryandsecondaryerrors. (2) SAMEretainedjob-ownedhandle rawcreation+nonsignaled before/afterCIM, matchingPID+executable; CIMlossyprecisiondiagnosticnotauthority, exit/mismatch/missingrefuse; actualharmlessCIMcontrol andwrongidentity/exitnegatives. (3) justifyconsumedmutableGitbinary/moduleinputsfromactualmeasurement, no demandwholeOSunless specificload-bearinggap. (4) exactsupportedassertiontype+correlated failedoriginalname-query required; provider/offscreen/observerfaultnotnegative; emitted-schemapositive/negative/order/duplicate/correlation/cleanupcontrols matchactualnativeemission. Inspectsourceproducer andreader, no self-referential green. Existingtrueoracleneverreplaced. Successorfrozenoldcompiledruntimebytesunchanged; norefresh/rebuild.\nRetainfixedAthenBfreshprocesses,180+30bounds, freshprofilebeforechildlaunch, fullpinsandactualbrowserconsumptiongate. Unexecutednativebrowserlimitsremainexplicit, not automaticblockwhenadequatecontrolsgroundcontract. Reviewowneramendmentonly, no new productproposal. Existinggraphvalid; feedbackR->correction->R->Sfreshwatcherslot->A/B->I; no repeatedwholeoptimizeunlessnewmaterialdependency. FreshwatcherexecutionmandatoryafterCLEAR, no additionalpreparationapproval. Returncommit,actualcontrol/proberesults, exactvetoresolution/residuals, actualbudget/duration/audit/leaseclear. Treatfindingsasboundeddecisionstoconductor, no ad-hocnewauthorwork. Rootavailableinspectactualevidence. No AIDE_CONTRACT_LOG=>noinventedevent.",
+      "summary": "Independent corrected preparation CLEAR: own16/16 controls, nine extra reader mutations refused; actual CIM raw134340678137956436 versus lossy134340678137956430 accepted through same live owned handle. Malformed/read failures persist evidence and close handles; deadline primary and secondary failures retained. Manifest maps preserve11624 old nonrunner inputs and add5 measured Git files whose current hashes match. Source/tests/tools unchanged. No GUI/build/native/browser execution. Fresh watcher execution grant remains mandatory. Eight orchestration batches including final readback within original8; no recovery.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-pair-rereview.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Independently re-review exact Atlas runner corrections before execution request",
+      "done_when": "Exact veto disposition has actual evidence, committed receipt, official audit/regeneration and released leases",
+      "tier": "T2",
+      "main_calls": 8,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-16T21:28:58Z",
+      "duration_seconds": 346.0,
+      "git": {
+        "sha": "d679e1567e2d74fa2ef85f1eddae6c44b6d5b758",
+        "short": "d679e1567",
+        "branch": "review/atlas-p1-03-pair-correction",
         "pushed": null
       }
     }
