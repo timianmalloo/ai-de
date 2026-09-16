@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T18:15:00Z",
+  "generated": "2026-09-16T18:15:05Z",
   "audit": [
     {
       "actor": null,
@@ -25961,6 +25961,38 @@ window.AUDIT_DATA = {
       ],
       "tier": "T1",
       "tool": "codex-peer-review-carrier"
+    },
+    {
+      "id": "al-01M2NPVX35H2TGSRSGJB9AND15",
+      "shortname": "atlas-review-join-c7ef2da5",
+      "datetime": "2026-09-16T18:15:05Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "Resolve Grok consumer request and continue the admitted Atlas observer preparation and serialized branch assembly.",
+      "summary": "Official conductor join merged exact review-only tip c7ef2da56070f0d7bc6348ac62d8a4400a5a491e then intentionally stopped at the reviewed pre-recount barrier, exit4/check86. No qualification, acceptance, push or Release. Original source e6 preserved except exact reviewed native-test626d16a2. Full-content audit/change fingerprints from both parents conserved with zero missing rows. The carrier includes only its inspected proof/metadata and audit/derived manifest, including the two specifically Owner-admitted historical producer audit payloads. This entry consumes this join marker; required regeneration and checkpoint commit follow, with actual outputs retained in artifacts/atlas-five-gates/final-review-assembly/. One native diagnostic passed separately at historical7ccef6d8; slot ended/released; no new test execution during these joins.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Retain reviewed evidence and source without asserting runtime qualification.",
+      "done_when": "Exact merge and audit conservation observed; derived records current; unqualified candidate committed.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T18:15:03Z",
+      "duration_seconds": 2.0,
+      "git": {
+        "sha": "99cd4142bda520b22ea0545a6129c69f023b5585",
+        "short": "99cd4142b",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
