@@ -84,6 +84,15 @@ Loop variant: unresolved enumerated repair/review predicates decreases toward ze
 
 ### Resumed current-main assembly, 2026-09-16
 
+Actual checkpoint: R1/R2/R3 complete at sourcefe95be86; R4 checked desktop slot still pending.
+Owner and independent Test Architect/Simplifier/SRE/Orchestrator cleared exact barrier artifacts.
+Seven official merges (main plus six author/review tips) each stopped at the unconditional
+pre-recount barrier. Actual main join had five conflicts; the user's explicit conflict authority
+enabled the exact union without another permission wait. All14 reviewed blobs unchanged, all8
+required ancestors present, zero ledger payload loss, five focused combined gates passed. R5/R6
+remain open. Assembly wrapper stdout needed explicit UTF-8; saved first-stage output proved the
+intended stop, so no stage was replayed. These are measured results, not integrated acceptance.
+
 Goal: assemble the reviewed five repairs with current main and deliver the fully qualified
 candidate to foreground GHCP. Done when: the unchanged qualification union, independent combined
 review and prepublication Release have observed passing results, with exact candidate/base and

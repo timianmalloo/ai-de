@@ -9534,7 +9534,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f151e7afe0843fbfde8cd66805b26725c8d7938c4c46df3d8a2912d5dad53d07"
+      "sourceSha256": "4e5a2aab8ea2e8fcc0818515e50ebf9401299629fcca89adb4c842167fcad525"
     },
     {
       "id": "coordination-code-atlas",
@@ -9722,7 +9722,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7bfd5291b07ea9eb3a2056ef059b2e22b5154eb4a8d0371dc92433f83c1e4596"
+      "sourceSha256": "be188b7b2dd54de027a7c8129cc8e3324935edc8f4981eeb2f5238f3dae35b9a"
     },
     {
       "id": "design-session-profiler",
@@ -12072,7 +12072,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "ea001ac1409d890be3a879494ea2e58c4c4c25aed278d7a3944f11fd26f9e650"
+      "sourceSha256": "ef90430003af9d3269639d9b462c88573ed28210e45cb2da9fcc2af329d519f1"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -12669,7 +12669,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0ea7d7e1e7c67109d5e54399d75230d2fba6c0addda326546244fda0c9806f8a"
+      "sourceSha256": "4d595aabeed7aaaa2085cdcc5aba45c45a5ea1b4a94867acfe56865350768bd3"
     },
     {
       "id": "proof-code-atlas-contract-grounding",
@@ -18133,6 +18133,149 @@ window.DOCS_INDEX = {
       "sourceSha256": "56dcbfeec074ea753ff0b3a0cc893aa0d3623122c7ac156afdce54071768f6fa"
     },
     {
+      "id": "proof-atlas-audit-capture-repair",
+      "path": "docs/proof/atlas-audit-capture-repair.md",
+      "title": "Atlas audit capture repair evidence",
+      "type": "proof-pack",
+      "status": "complete",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Append-only, truthful capture corrections for the 18 current Atlas audit gate failures.",
+      "tags": [
+        "atlas",
+        "proof",
+        "audit"
+      ],
+      "links": [
+        {
+          "to": "plan-atlas-five-gates",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "019fbb7509751c8c7c79daffa95629a8521250349031edadf2cb6c927c0811c6"
+    },
+    {
+      "id": "proof-atlas-five-gates-review",
+      "path": "docs/proof/atlas-five-gates-review.md",
+      "title": "Atlas five-gate repairs: independent implementation review",
+      "type": "proof-pack",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Independent G1/G2/G3/G5 implementation clearance, including the reviewed-source pin that supersedes two rejected G2 flow approximations.",
+      "tags": [
+        "atlas",
+        "review",
+        "testing",
+        "security",
+        "data-integrity"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-five-gates",
+          "rel": "depends-on"
+        },
+        {
+          "to": "plan-atlas-five-gates",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "464ee80b80fc5e23f11e5496639e3af06c2f074690a006c8fcbaa7b9c112fc07"
+    },
+    {
+      "id": "proof-atlas-harness-gate-repair",
+      "path": "docs/proof/atlas-harness-gate-repair.md",
+      "title": "Atlas harness diagnostics: original assertions and complete failure records",
+      "type": "proof-pack",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Executed author red/green and five real-helper mutation controls for assertion identity, original stack and uncapped diagnostics; correlated TCS scanner fixtures and the actual STA census. Independent review remains open.",
+      "tags": [
+        "proof",
+        "atlas",
+        "testing",
+        "diagnostics",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "15a685a3eade8847a5d4885a4374aeccf0dfaf5975295d817494a9c93be55383"
+    },
+    {
+      "id": "proof-atlas-harness-gate-review",
+      "path": "docs/proof/atlas-harness-gate-review.md",
+      "title": "G4 independent review: correlated EDI correction cleared",
+      "type": "proof-pack",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Independent retained review clears G4 at 301bc67 after the original mixed-method masking probe is rejected, all scanner controls pass, and unchanged helper evidence is retained. The original BLOCK is preserved below.",
+      "tags": [
+        "atlas",
+        "testing",
+        "diagnostics",
+        "independent-review"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-atlas-harness-gate-repair",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "dedc9eadaea77e5f86f4c7571f9797f02cca7d3a196316f95a5828c8f62b89b8"
+    },
+    {
+      "id": "proof-atlas-ownership-table-repair",
+      "path": "docs/proof/atlas-ownership-table-repair.md",
+      "title": "Atlas ownership gate: historical table boundary repair",
+      "type": "proof-pack",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Red-first author evidence for historical non-Path allocation tables, preserved malformed-owner diagnostics, eight retained mutants and an independently reconciled recursive census.",
+      "tags": [
+        "proof",
+        "atlas",
+        "ownership",
+        "tooling"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-recursive-surface-ownership",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "723f522740d34020017a6ff832c610d6f19e9b5bc570f5205482b6353137c876"
+    },
+    {
       "id": "proof-audit-gate-plan-review",
       "path": "docs/proof/audit-gate-plan-review.md",
       "title": "Independent plan review: audit gate self-test",
@@ -22622,5 +22765,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "b966b84eebde5ad8032df75475401476fb155e094a7726eacc8db1868e14b207"
+  "graphSha256": "b947526e30ce8edd8f4b8fd099d803d7dbbf2dc8c27398cc1a5eda6df990b302"
 };

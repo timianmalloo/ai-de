@@ -23,6 +23,14 @@ Foreground copilot-atlas-recovery-b0d0 retains exact outside-manifest conflict d
 publication. The older executor-pending rows below are historical; combined qualification and
 peer contract acceptance still remain pending.
 
+**Assembly update:** source checkpointfe95be86 contains current main and all reviewed components;
+eight required ancestors and14 unchanged reviewed blobs verified. The user explicitly assigned
+the five actual merge conflicts to Codex; resolved22dc5b12 preserves both Atlas/D0 menu entries,
+retains the higher existing test floor pending recount, and regenerates figure-only conflicts.
+All five focused static gates now pass on the combined tree (ownership19/19/0). No runtime
+qualification or publication is claimed. Independent assembly review is underway. Checked slot
+request req-01M2KRV3S1EPSNG3V2VGN4V83B remains open; exact canonical full qualification is next.
+
 Primary product/index work is untouched; only supported shared coordination and our own liveness are written there. Tree C:/Projects/ai-de-conductor-atlas-five-gates, branch conductor/atlas-five-gates, session codex-atlas-five-gates, agent codex-astra-gate-conductor; created by coord worktree new from dd9b338f. Coordination doctor confirmed registered drivers,11 patterns and regeneration debts subsequently checked. Short exact claims protect authored records. Liveness and requests are primary-shared, never an alternate ownership map.
 
 ## Artifact classes

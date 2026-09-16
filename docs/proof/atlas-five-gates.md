@@ -27,6 +27,70 @@ Historical raw integrated results remain read-only under C:/Projects/ai-de-atlas
 
 ## Current verdict
 
+### Current-main assembly observed, 2026-09-16
+
+Assembled source checkpoint `fe95be86b08c34f90dd8236819e4216dd8316e9b` on
+`integration/atlas-five-gates`, C:/Projects/ai-de-integration-atlas-five-gates, contains all eight
+required exact ancestors: conductor b0625686, main bcf4959b, author23151302/47f5f54c/a72eb357/
+301bc67a and reviews622ed908/9bd65703. Read-only manifest verification compared14 source/test/proof
+Git blobs byte-for-byte with their reviewed revisions; all matched. Actual manifest is retained at
+C:/Users/malla/AppData/Local/Temp/atlas-five-gates-assembly/verified-manifest.json. Canonical
+join.json still hashes16a55a15c9d56ae365c6a2c9d5729f382a678d00aa9786be23269c508b6b085c.
+
+The official current-main join initially stopped at five conflicts. The user expressly directed
+“the conflicts are yours to resolve”, logged as al-01M2KRN5Z67AZVG212ZHDD3GWR. Resolution22dc5b12:
+
+- PerspectiveMenuTests keeps both Show code Atlas and Show solution tree in the actual merged
+  SurfaceContentFactory.Kinds order. Neither product entry is removed.
+- expected-test-counts retains the unchanged higher Atlas floor1134/3161/2817/344; main's
+  1051/2746/2571/175 remains in its parent. No new combined count is guessed; canonical full
+  recount must regenerate it and inspect every outcome.
+- Full parent texts of site/collaboration.html, site/index.html and site/model.html were proved
+  identical outside data-figure values. Official regeneration retained prose and rebuilt figures.
+
+Official staged merges then produced d12bd4d9 (audit), e815d3a9 (ownership), eaa5e3ea (Core),
+cbb7c5a3 (harness),1c7206ef (review),fe95be86 (harness review). Owner and independent Test Architect,
+Simplifier, SRE and Orchestrator cleared the exact temporary unconditional staging barrier.
+Every stage stopped at step4/check exit86 with ATLAS-ASSEMBLY-INCOMPLETE, before recount or
+accepted-audit emission. Six logs are retained at the external assembly directory as
+stage-{audit,ownership,core,harness,review,harness-review}.log. A Windows stdout encoding failure
+interrupted the audit-stage wrapper display after the official run; the saved log was inspected
+and proved the intended barrier. Explicit PYTHONIOENCODING=utf-8 corrected subsequent display;
+the already-joined audit commit was not replayed. The defect-register check's CRLF-only stat change
+had an empty Git content diff and was normalized by staging, not reset/discarded.
+
+Final register sweep used the existing coord-core.entry_fingerprint function against ALL eight
+input pins: merged904 audit rows and172 change rows, ZERO missing semantic payloads from any pin.
+This preserves both original false-acceptance rows and their truthful superseders. Initial main
+merge separately conserved836/761 audit input rows and165/155 change input rows into885/172.
+
+| Focused gate executed on fe95be86 source | Actual result |
+|---|---|
+| verify-audit-capture.py | PASS318 checked,431 frozen |
+| verify-bounds-are-enforced.py | PASS30 constants; reviewed indirect implementation unchanged |
+| verify-containment-comparisons.py | PASSall checked comparisons use PathComparison.ForThisFileSystem |
+| verify-harness-diagnostics.py | PASS4 STA-bearing files:2 wrapping,1 original TCS,1 exception subject |
+| verify-surface-ownership.py | PASS19 discovered,19 assigned,0 awaiting joint decision |
+
+These results clear the original five STATIC failures on the assembled tree; they do not qualify
+runtime integration. No full .NET/App/native test or Release build has started in this tree.
+Watcher allocation requests req-01M2KR9M0180MSWTCYZ2DW77SM and req-01M2KRV3S1EPSNG3V2VGN4V83B
+await an actual checked slot. Final canonical --continue --no-push must execute the unchanged
+full/portable/nonportable/no-run/gates/Release union. Independent combined qualification review
+and foreground acceptance/publication remain outstanding.
+
+Independent Test Architect/Simplifier/SRE/Orchestrator prequalification review subsequently
+returned CLEAR to qualification, explicitly not combined acceptance. It read the assembled
+factory/menu union, unchanged D0 dedicated files, reviewed component blobs, six barrier logs and
+canonical contract. Root's eight-ancestor and zero-loss conservation checks satisfy its two
+remaining readback conditions; the actual watcher slot and runtime evidence remain pending.
+
+The conductor's one prompt-only supplement was preserved in clean branch commitbe1c6711, then its
+audit payload was consumed through the supported coord merge-register driver with baseb0625686.
+Conservation checked against assembledfe95be86 andbe1c6711:905 audit/172 change rows, zero missing
+payloads. This is artifact-register consumption, not a claim thatbe1c6711 is a Git ancestor. The
+required eight assembly ancestors remain unchanged, and this supplement changes no source/tests.
+
 Records milestone78d61c04 and shared manifest req-01M2KPD0GV75KDESDM00F6RHGK name all reviewed
 components. Official regeneration observed833 audit+165 change entries,555 indexed artifacts,
 14 correct site figures,225 valid defect classes,4 matching derived views and no conflict markers.

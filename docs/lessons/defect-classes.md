@@ -8069,6 +8069,13 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   commit; fail on the check's nonzero result. Do not call later checking retrospective proof of
   the earlier commit boundary. This uses the existing executable precommit control, not a new hook.
 
+  The staged-assembly wrapper later reached the same process-boundary shape through output
+  encoding: its UTF-8 child output was printed by a cp1252 parent and display failed after the
+  official stage had already stopped correctly. The saved child log proved the state; no join
+  was replayed. Initialize PYTHONIOENCODING=utf-8 alongside identity in the launching process.
+  Normal-path output and explicit status inspection are the control; a print failure is not proof
+  that its preceding mutation failed. See docs/proof/atlas-five-gates.md assembly evidence.
+
 - **Shape:** an agent writes a Python (or shell) program inline as `python - <<'EOF' …` in Git Bash
   on Windows; a quote, a backslash or a `$` inside the program is mangled by the shell before the
   interpreter sees it; the tool result is `unexpected EOF` / `SyntaxError` / `IndentationError`, and
