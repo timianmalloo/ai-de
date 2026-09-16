@@ -8,6 +8,7 @@ links:
   - { to: investigation-atlas-p1-02-native-uia, rel: depends-on }
   - { to: session-contracts, rel: depends-on }
 review-by: 2026-12-15
+summary: "Historical receipt: Independent review of the Atlas native observer design"
 ---
 
 # CLEAR: bounded native observer design

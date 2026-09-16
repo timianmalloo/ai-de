@@ -12742,6 +12742,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "6500a071134e7b750f0de77ada46689e5d08abb6b00cf3f24ce13524b66f9aa1"
     },
     {
+      "id": "proof-atlas-native-observer-design-review",
+      "path": "docs/proof/atlas-native-observer-design-review.md",
+      "title": "Independent review of the Atlas native observer design",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Historical receipt: Independent review of the Atlas native observer design",
+      "tags": [],
+      "links": [
+        {
+          "to": "investigation-atlas-p1-02-native-uia",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "723db63d8dccd0f95ef26e93b4df9f78a33c4918c5be6b1666112ecd350a1f05"
+    },
+    {
       "id": "proof-atlas-native-view-state-review",
       "path": "docs/proof/atlas-native-view-state-review.md",
       "title": "Independent clearance of complete admitted Atlas observer preparation",
@@ -23060,5 +23085,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "fc54ce7b9f398b56492d91db3b93513dc5edaff631425e83b44d7c4ffc328eec"
+  "graphSha256": "000adc4f94f0596c902c9c784cb64c121f8c0ca5f104315e2624d9aa705284c4"
 };
