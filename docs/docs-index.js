@@ -18957,6 +18957,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "f3217d60c1f17ef1e36e87bb363bbd8481d92be96b5267b2afc889e3c6c936af"
     },
     {
+      "id": "proof-atlas-p1-03-process-image-review",
+      "path": "docs/proof/atlas-p1-03-process-image-review.md",
+      "title": "Independent review of process-image diagnostic-loss investigation",
+      "type": "proof-pack",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "CLEAR for investigation interpretation and diagnostic-only proposal suitability. Four raw fixtures distinguish lost evidence; historical cause and any maintained repair remain unproved.",
+      "tags": [
+        "atlas",
+        "proof",
+        "forensicreview",
+        "process-identity"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-p1-03-pair-preparation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "aca3ad92bc464f965cdc8c9d3a43fdfc8d16c1b3341481b9eead7123c2404e11"
+    },
+    {
       "id": "proof-audit-gate-plan-review",
       "path": "docs/proof/audit-gate-plan-review.md",
       "title": "Independent plan review: audit gate self-test",
@@ -23446,5 +23476,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d1da0ddb451f84d5816c926846cfdbb7b9201534efe0a3181346bcad401f5cb1"
+  "graphSha256": "815cc3264a9f21821b9536e490d913140197400881602bc4015ab91a3033602e"
 };
