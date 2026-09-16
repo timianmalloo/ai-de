@@ -5,7 +5,7 @@ type: doc
 status: accepted
 owner: "@timianmalloo"
 links:
-  - { to: note-d1-codex-entry-point-handshake-r3, rel: depends-on }
+  - { to: session-contracts, rel: relates-to }
   - { to: session-contracts, rel: depends-on }
 review-by: 2026-12-15
 summary: "CLEAR for the exact D1 r3 non-consuming document boundary; this independent review is not a peer ACK, freeze record, or implementation admission."
