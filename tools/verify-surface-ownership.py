@@ -184,6 +184,7 @@ def _parse_owners(root: Path, present: list[str]) -> tuple[dict[str, list[str]],
     owner: str | None = None
     path_column: int | None = None
     table_started = False
+    non_path_table = False
 
     for offset, line in enumerate(lines[start + 1:end], start=start + 2):
         heading = OWNER_TABLE.fullmatch(line.strip())
@@ -191,19 +192,23 @@ def _parse_owners(root: Path, present: list[str]) -> tuple[dict[str, list[str]],
             owner = heading.group(1).strip()
             path_column = None
             table_started = False
+            non_path_table = False
             continue
         if MARKDOWN_HEADING.match(line.strip()):
             owner = None
             path_column = None
             table_started = False
+            non_path_table = False
             continue
 
         cells = _table_cells(line)
         if cells is not None and "Path" in cells:
             path_column = cells.index("Path")
             table_started = True
+            non_path_table = False
             continue
         if cells is None:
+            non_path_table = False
             stripped = line.strip()
             row_without_pipes = stripped.startswith("`") and _surface_relevant(stripped)
             if table_started and stripped and _surface_relevant(line) and (
@@ -215,6 +220,17 @@ def _parse_owners(root: Path, present: list[str]) -> tuple[dict[str, list[str]],
                 table_started = False
             continue
         if path_column is None:
+            # Historical allocation tables are not declarations. Require their actual
+            # header/separator shape outside owner context; a mangled owner header
+            # must still expose its surface rows instead of becoming an exemption.
+            separator = _table_cells(lines[offset]) if offset < end else None
+            if (owner is None and len(cells) >= 2 and all(cells) and
+                    not _surface_relevant(line) and separator is not None and
+                    len(separator) == len(cells) and
+                    all(TABLE_SEPARATOR.fullmatch(cell) for cell in separator)):
+                non_path_table = True
+            if non_path_table:
+                continue
             if _surface_relevant(line):
                 problems.append(
                     f"line {offset} has a malformed surface Path-table row before a Path header: "
@@ -569,6 +585,61 @@ def self_test() -> int:
             check(nested_heading, unassigned={}), f"{SURFACES}/HiddenView.cs", "outside", "owner"),
             f"got {check(nested_heading, unassigned={})!r}")
 
+        historical_tables = {
+            "branch allocation": (
+                "| Writer / branch | Exact new authored files | Limit |\n|---|---|---|\n"
+                f"| `atlas-writer` / `atlas/branch` | `{SURFACES}/AtlasReaderView.cs`; "
+                "`tests/AiDe.App.Tests/AtlasReaderViewTests.cs` | bounded history |\n"),
+            "track assignment": (
+                "| Existing/new | Exact authored path |\n|---|---|\n"
+                f"| Existing | `{SURFACES}/AtlasReaderView.cs` |\n"),
+        }
+        for index, (name, table) in enumerate(historical_tables.items()):
+            historical = base / f"historical-{index}"
+            fixture(
+                historical,
+                [f"{SURFACES}/AtlasReaderView.cs"],
+                "### Core owns\n\n| Path | Why |\n|---|---|\n"
+                f"| `{SURFACES}/AtlasReaderView.cs` | canonical owner |\n\n"
+                "### Historical allocation, not an owner\n\n" + table)
+            require(f"historical non-Path {name} is not a malformed declaration",
+                    check(historical, unassigned={}) == [],
+                    f"got {check(historical, unassigned={})!r}")
+            require(f"historical non-Path {name} contributes no owner",
+                    owners(historical) == {f"{SURFACES}/AtlasReaderView.cs": ["Core"]},
+                    f"got {owners(historical)!r}")
+            contract = historical / CONTRACT
+            contract.write_text(contract.read_text(encoding="utf-8").replace(
+                f"| `{SURFACES}/AtlasReaderView.cs` | canonical owner |\n", ""),
+                encoding="utf-8")
+            require(f"historical non-Path {name} cannot fill an ownership gap", has(
+                check(historical, unassigned={}), "AtlasReaderView.cs", "has no owner"),
+                f"got {check(historical, unassigned={})!r}")
+
+        header_boundaries = {
+            "owner mangled Path": "### Design owns\n\n| Pth | Why |\n|---|---|\n",
+            "owner renamed Path": "### Design owns\n\n| Exact authored path | Why |\n|---|---|\n",
+            "owner missing Path": "### Design owns\n\n",
+            "ownerless missing Path": "### Notes\n\n",
+            "non-Path header without separator": "### Notes\n\n| Existing/new | Exact authored path |\n",
+            "non-Path header mismatched separator": "### Notes\n\n| Existing/new | Exact authored path |\n|---|\n",
+            "non-Path table ended by blank": "### Notes\n\n" + historical_tables["track assignment"] + "\n",
+            "non-Path table ended by prose": "### Notes\n\n" + historical_tables["track assignment"] + "End of history.\n",
+            "non-Path table ended by owner heading": "### Notes\n\n" + historical_tables["track assignment"] + "### Design owns\n",
+            "non-Path table followed by ownerless Path table": "### Notes\n\n" + historical_tables["track assignment"] + "| Path | Why |\n|---|---|\n",
+        }
+        for index, (name, prefix) in enumerate(header_boundaries.items()):
+            boundary = base / f"header-boundary-{index}"
+            fixture(
+                boundary,
+                [f"{SURFACES}/HiddenView.cs", f"{SURFACES}/AtlasReaderView.cs"],
+                "### Core owns\n\n| Path | Why |\n|---|---|\n"
+                f"| `{SURFACES}/**` | broad owner must not mask malformed rows |\n\n" +
+                prefix + f"| `{SURFACES}/HiddenView.cs` | malformed declaration |\n")
+            require(f"{name} retains malformed surface evidence", has(
+                check(boundary, unassigned={}), "HiddenView.cs", "malformed"),
+                f"got {check(boundary, unassigned={})!r}")
+
         missing_path_header = base / "missing-path-header"
         fixture(
             missing_path_header,
@@ -780,7 +851,8 @@ def self_test() -> int:
         return 1
 
     print("verify-surface-ownership: self-test OK — eight injected mutants plus recursive "
-          "identities, §2 Path cells, patterns, exceptions, deterministic diagnostics, and "
+          "identities, §2 Path cells, historical non-Path tables, malformed headers, "
+          "patterns, exceptions, deterministic diagnostics, and "
           "CLI exits are proven.")
     return 0
 
