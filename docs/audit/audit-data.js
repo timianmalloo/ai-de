@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T20:32:39Z",
+  "generated": "2026-09-16T21:01:15Z",
   "audit": [
     {
       "actor": null,
@@ -26344,6 +26344,69 @@ window.AUDIT_DATA = {
         "sha": "c192a7eddab0d794712cd505994ce7858eea86d4",
         "short": "c192a7edd",
         "branch": "review/atlas-p1-03-uia-transition",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NZF7FQB5WKAQ9XC9SWTH77",
+      "shortname": "atlas-pair-preparation",
+      "datetime": "2026-09-16T20:45:26Z",
+      "session": "codex-atlas-p1-03-pair-preparation",
+      "prompt": "FIRST action in NEW tree: python docs/ai-forward-pack/scripts/audit-log.py start --session codex-atlas-p1-03-pair-preparation --skill implement (set AGENT_SESSION that session; AGENT_NAME codex-astra-pair-author). Publish OWN primary liveness immediately before source work; use official audit/coord checks/short leases. Do not EnterWorktree/install. Absolute tree C:/Projects/ai-de-test-atlas-p1-03-uia-pair; branch test/atlas-p1-03-uia-pair; base1d46d651cd5b6356e05545115757ba7eb7ffbf45, Conductor provisioned.\nGoal: concrete independently reviewable runner/full-binary freeze for EXACT two-arm diagnostic. Done when one task-local runner and Proof Pack are frozen, meaningful harmless controls inspect actual refusal/containment, complete post-build manifest exists, and exact future execution contract is ready for independent runner/SRE review. T2; fanout0; Astra selected for process ownership/containment and evidence semantics. Budget18toolcalls/25min/checkpoint10, context400k ceiling; cap firing defectsignal, not permission/floorcut. Return bounded checkpoint if failed assumption needs Owner. Do not become coordinator or author neighboring work.\nAUTHORITY: independent Test/SRE/Simplifier preparation CLEAR at1d46d651 on your sourcec192a7ed/SHA914a755d. Root inspected whole receipt and independent43/43. Owner explicitly admits this next preparation; root193b940dccac0f42ceaf710b0dd2ba23875c0c45 records correction withdrawing extra watcher-preparation approval wait. Official req-01M2NYTSRKJZ22SS0KR0PBKAS6 resolved as status notice by Conductor, NOT watcher grant. User-delegated programme + Owner actual decision supply preparation authority. Fresh watcher EXECUTION SLOT remains mandatory later. No human reply awaited.\nALLOWLIST: docs/proof/records/atlas-p1-03-uia-transition/run_pair.py; docs/proof/atlas-p1-03-pair-preparation.md; own official audit/change/required derived and own liveness only. No test/product/tools/sharedrunner/STA/canonicalpreflight changes. Existing new test Facts remain unmodified and experiment-only. No wholebranch canonical/mainjoin, push, cleanup of peers. Reuse stdlib/existing code after reading APIs; no dependencies or framework refactor.\nOwner contract: normal same-tree Debug build of tests/AiDe.App.Tests/AiDe.App.Tests.csproj AND src/AiDe.Daemon/AiDe.Daemon.csproj in ONE preparation phase; freeze AFTER BOTH. Do NOT run dotnet test or any NativeTransition Fact in this unit. No Show/HWND/liveUIA/focus/capture/desktopinput; harmless subprocess controls ONLY. Freeze complete consumed test/App/Daemon output trees plus dependency/runtimeconfig, resolved SDK/testhost and installed runtime identities. Detect added/missing/changed inputs before each arm and after; no rebuild between arms. Existing native-preflight hardpins canonicaltree/session and only3daemonfiles: do not reuse/monkeypatch it.\nFuture execution EXACT names AiDe.App.Tests.AtlasDaemonMainWindowProofTests.NativeTransition_A_NoLoadingTraversal then ...NativeTransition_B_LoadingTraversal, one Fact per separate fresh dotnet process, unique ATLAS_PROOF_RUN/TRXdir, --configuration Debug --no-build --no-restore. No execution now. Actual emitted receipt contract is in docs/proof/atlas-p1-03-uia-transition.md and source; OPEN it, no invented fields. Independent review receipt docs/proof/atlas-p1-03-transition-review.md has5 mandatory future gates, especially actual B Atlas loading-branch/placeholder ancestry rather than census-called. Distinguish fixture validity, original-oracle outcome and cleanup validity; green exitalone nevervalidity. Preserve streamed stdout/stderr and raw TRX/receipts, before/afterpins, PID+creationtime identity, actual daemonIDs and END/RELEASE. Original oracle assertions untouched.\nCONTAINMENT Owner chose NEW external180sec per arm, then at most30sec to contain and verify ownedprocess exit. Experimental circuitbreaker, not producttimeout. Track runner/descendant creation identities and recorded daemonPIDs; neverkillbyname. Missing identity/pins/unresolvedcleanup/uncontainedprovider/expiry STOPS pair, no retry. A normallycompleted negativeoracle can proceed plannedB only with valid fixture and PROVEN ownedcleanup; forceddaemoncleanup invalidates. Investigate existing Windows/bounded_process patterns rather than inventing unsafe PID-only kills. Demonstrate harmless subprocess controls for refusal/containment before review, red-first where meaningful. A sentinel process outside ownership must remain untouched if your control needs to distinguish ownership. Do not run live arms to debug runner.\nExit: commit/script SHA/manifest+source pin/runtime/build receipts, actual control cases/results and residuals, model/cost/budget, named proof/audit fields read back, allleasesreleased. Reviewer must independently clear runner; author cannotselfclear. The actual frozen binaries live in THIS tree for later use—do not silently build/reconfigure them after manifest. Report stale/missingdependency instead of guessing. Multilineprogram=filethenrun; no gatepipeline. Watch sharedsite exact leases at close and maintain generated order after audit. Central lessons handled by Conductor from class→sweep→derive→prevent notes. Ground existing active graph; no repeat wholeprogramme optimize-graph unless new evidence changes it.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2P0C46NRPGSCHDW2AM4P2GQ",
+      "shortname": "atlas-pair-profile-amendment",
+      "datetime": "2026-09-16T21:01:13Z",
+      "session": "codex-atlas-p1-03-pair-preparation",
+      "prompt": "Owner decision B now delivered: installed SDK1.0.3485.44 explicitly supports WEBVIEW2_USER_DATA_FOLDER; host uses defaultEnsureCoreWebView2Async. Microsoft https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/user-data-folder explains sharedUDFsharesWebViewsessions. Admit runner-only symmetric amendment: set override in EACH child environment beforelaunch; distinct fresh owned absoluteUDFpaths OUTSIDE every immutableoutputroot, sameempty-startpolicy; refuse reusedpaths/overlap/conflictinginheritedWebViewconfig. No machine-setting change/profiledeletion/.WebView2manifestexclusion. Retainfulloutputmanifest+addedfile refusal. Add nonGUI childenvdelivery/distinctness/freshness/containmentrefusal controls. Include selectedWebViewruntimepath/version/immutablebinaryidentity checkedacrossarms; later authorizedexecution mustcapture ACTUALbrowserruntime/profileuse (envdeliveryalone≠consumption). Missingevidenceremainsunverified/refusal, no guess. No GUIprobe now. This further limits canonicalcomparison; product/testsourceunchanged. Independent runner review mustcoveramendment andfreshwatcherslotmandatory. Retainoriginal18callbudget; ifexceededreturnprecisespecificremainingwork. Rootrecords material optimize-graphreplan for this observed immutable/mutable conflict; youneednotreinvoke wholeprogrammeworkflow. Continue.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2P0C59N1VXBZC02CE1DM4QX",
+      "shortname": "atlas-p1-03-pair-preparation",
+      "datetime": "2026-09-16T21:01:14Z",
+      "session": "codex-atlas-p1-03-pair-preparation",
+      "prompt": "FIRST action in NEW tree: python docs/ai-forward-pack/scripts/audit-log.py start --session codex-atlas-p1-03-pair-preparation --skill implement (set AGENT_SESSION that session; AGENT_NAME codex-astra-pair-author). Publish OWN primary liveness immediately before source work; use official audit/coord checks/short leases. Do not EnterWorktree/install. Absolute tree C:/Projects/ai-de-test-atlas-p1-03-uia-pair; branch test/atlas-p1-03-uia-pair; base1d46d651cd5b6356e05545115757ba7eb7ffbf45, Conductor provisioned.\nGoal: concrete independently reviewable runner/full-binary freeze for EXACT two-arm diagnostic. Done when one task-local runner and Proof Pack are frozen, meaningful harmless controls inspect actual refusal/containment, complete post-build manifest exists, and exact future execution contract is ready for independent runner/SRE review. T2; fanout0; Astra selected for process ownership/containment and evidence semantics. Budget18toolcalls/25min/checkpoint10, context400k ceiling; cap firing defectsignal, not permission/floorcut. Return bounded checkpoint if failed assumption needs Owner. Do not become coordinator or author neighboring work.\nAUTHORITY: independent Test/SRE/Simplifier preparation CLEAR at1d46d651 on your sourcec192a7ed/SHA914a755d. Root inspected whole receipt and independent43/43. Owner explicitly admits this next preparation; root193b940dccac0f42ceaf710b0dd2ba23875c0c45 records correction withdrawing extra watcher-preparation approval wait. Official req-01M2NYTSRKJZ22SS0KR0PBKAS6 resolved as status notice by Conductor, NOT watcher grant. User-delegated programme + Owner actual decision supply preparation authority. Fresh watcher EXECUTION SLOT remains mandatory later. No human reply awaited.\nALLOWLIST: docs/proof/records/atlas-p1-03-uia-transition/run_pair.py; docs/proof/atlas-p1-03-pair-preparation.md; own official audit/change/required derived and own liveness only. No test/product/tools/sharedrunner/STA/canonicalpreflight changes. Existing new test Facts remain unmodified and experiment-only. No wholebranch canonical/mainjoin, push, cleanup of peers. Reuse stdlib/existing code after reading APIs; no dependencies or framework refactor.\nOwner contract: normal same-tree Debug build of tests/AiDe.App.Tests/AiDe.App.Tests.csproj AND src/AiDe.Daemon/AiDe.Daemon.csproj in ONE preparation phase; freeze AFTER BOTH. Do NOT run dotnet test or any NativeTransition Fact in this unit. No Show/HWND/liveUIA/focus/capture/desktopinput; harmless subprocess controls ONLY. Freeze complete consumed test/App/Daemon output trees plus dependency/runtimeconfig, resolved SDK/testhost and installed runtime identities. Detect added/missing/changed inputs before each arm and after; no rebuild between arms. Existing native-preflight hardpins canonicaltree/session and only3daemonfiles: do not reuse/monkeypatch it.\nFuture execution EXACT names AiDe.App.Tests.AtlasDaemonMainWindowProofTests.NativeTransition_A_NoLoadingTraversal then ...NativeTransition_B_LoadingTraversal, one Fact per separate fresh dotnet process, unique ATLAS_PROOF_RUN/TRXdir, --configuration Debug --no-build --no-restore. No execution now. Actual emitted receipt contract is in docs/proof/atlas-p1-03-uia-transition.md and source; OPEN it, no invented fields. Independent review receipt docs/proof/atlas-p1-03-transition-review.md has5 mandatory future gates, especially actual B Atlas loading-branch/placeholder ancestry rather than census-called. Distinguish fixture validity, original-oracle outcome and cleanup validity; green exitalone nevervalidity. Preserve streamed stdout/stderr and raw TRX/receipts, before/afterpins, PID+creationtime identity, actual daemonIDs and END/RELEASE. Original oracle assertions untouched.\nCONTAINMENT Owner chose NEW external180sec per arm, then at most30sec to contain and verify ownedprocess exit. Experimental circuitbreaker, not producttimeout. Track runner/descendant creation identities and recorded daemonPIDs; neverkillbyname. Missing identity/pins/unresolvedcleanup/uncontainedprovider/expiry STOPS pair, no retry. A normallycompleted negativeoracle can proceed plannedB only with valid fixture and PROVEN ownedcleanup; forceddaemoncleanup invalidates. Investigate existing Windows/bounded_process patterns rather than inventing unsafe PID-only kills. Demonstrate harmless subprocess controls for refusal/containment before review, red-first where meaningful. A sentinel process outside ownership must remain untouched if your control needs to distinguish ownership. Do not run live arms to debug runner.\nExit: commit/script SHA/manifest+source pin/runtime/build receipts, actual control cases/results and residuals, model/cost/budget, named proof/audit fields read back, allleasesreleased. Reviewer must independently clear runner; author cannotselfclear. The actual frozen binaries live in THIS tree for later use—do not silently build/reconfigure them after manifest. Report stale/missingdependency instead of guessing. Multilineprogram=filethenrun; no gatepipeline. Watch sharedsite exact leases at close and maintain generated order after audit. Central lessons handled by Conductor from class→sweep→derive→prevent notes. Ground existing active graph; no repeat wholeprogramme optimize-graph unless new evidence changes it.",
+      "summary": "Prepared experiment-only task-local pair runner. Two intended red refusals observed; actual handle-exit race corrected and ten harmless controls pass. Both exact Debug builds succeeded; post-build11625-file manifest verifies. Owner symmetric fresh WebView UDF amendment applied; actual runtime/profile consumption and independent runner/SRE review remain unexecuted gates. No dotnet test, native Fact, GUI or product/test edit. External Git/OS closure and CIM timestamp correlation gaps explicitly disclosed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/records/atlas-p1-03-uia-transition/run_pair.py",
+        "docs/proof/atlas-p1-03-pair-preparation.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Freeze a reviewable two-arm runner and complete declared binary/dependency manifest",
+      "done_when": "Runner/proof committed, harmless refusal/containment controls inspected, both required builds and post-build manifest retained for independent review",
+      "tier": "T2",
+      "main_calls": 17,
+      "main_budget": 18,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-16T20:42:28Z",
+      "duration_seconds": 1126.0,
+      "git": {
+        "sha": "1d46d651cd5b6356e05545115757ba7eb7ffbf45",
+        "short": "1d46d651c",
+        "branch": "test/atlas-p1-03-uia-pair",
         "pushed": null
       }
     }

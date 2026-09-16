@@ -12902,6 +12902,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "8846eef929f694d56d99055a97a85125ddd0130ec7fb48776683c8d5f3df7cd4"
     },
     {
+      "id": "proof-atlas-p1-03-pair-preparation",
+      "path": "docs/proof/atlas-p1-03-pair-preparation.md",
+      "title": "Atlas two-arm runner and post-build freeze preparation",
+      "type": "doc",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "Preparation only: ten harmless runner controls pass, both required Debug builds succeeded and an 11,625-file post-build manifest verifies; independent runner/SRE review and an execution slot remain required.",
+      "tags": [
+        "atlas",
+        "proof",
+        "runner",
+        "containment"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-p1-03-transition-review",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-atlas-p1-03-uia-transition",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "467e89734ee76058acb26eb8a26765434e6f1aea967444da93d34204c6b3c742"
+    },
+    {
       "id": "proof-atlas-p1-03-transition-review",
       "path": "docs/proof/atlas-p1-03-transition-review.md",
       "title": "Independent Atlas transition diagnostic preparation review",
@@ -23378,5 +23412,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "dfd94bbd28d07166ddb8ac25d65491155ee36f3f573286638a7845e4e358dd1f"
+  "graphSha256": "c03a75e52015f3b20ac461c607927d10abcd39641e3cce6b7a7bb30606201d21"
 };
