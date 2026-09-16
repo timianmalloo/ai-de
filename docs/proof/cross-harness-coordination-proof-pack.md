@@ -20,6 +20,125 @@ summary: >-
 
 # Proof Pack — dormant P1 candidate; independent code gate pending
 
+## P2 finite F1/F2 repair — 2026-09-16
+
+**Author implementation complete; independent Test/Security/Data re-gate pending.**
+Baseline: `50aab8c1711d745c8cce937556ac5ff95dffbcea`. This closes only the two supplied
+author blockers, not full P2, canonical-producer integration, recovery or activation.
+All P0–P5 approvals remain in force. No new permission is requested.
+
+### Surface and contract
+
+F1 follows the real native path: bound JSONL source → capture → IMMEDIATE SQLite
+projection transaction → resolved persisted session → native board/update/heartbeat/end
+effect → receipt/checkpoint → public metadata reader. `ApplyObservation` now compares
+the actual resolved session repository with the immutable checkpoint binding, inside
+that transaction and before any native effect. A contradiction raises
+`COORD_SOURCE_BINDING_MISMATCH`; transaction disposal rolls back initial receipt,
+event and checkpoint changes. The already-persisted foreign session is retained, not
+rewritten to manufacture agreement. No schema or `RecordSession` change was made.
+
+The counterexample is **mutable native state**, not a caller-controlled MCP exploit.
+Prepared registration attributes cannot establish the current persisted repository.
+Generation is not a substitute for repository identity: foreign generations 1 and 2
+are refused; same-repository generation 2 still applies through all four event kinds.
+Legacy unbound projection remains compatible, but its public reader is Unavailable.
+An origin string without a binding does not establish authority.
+
+F2 follows actual `Tools.Call` and the real private `Program.Handle` request router,
+invoked by reflection in tests, through its JSON-RPC response builder. Scalar, array
+and string argument containers now reach the coordination reader's existing typed
+InvalidRequest boundary rather than throwing before it. Missing/null/non-string
+tool names return that typed result. A non-object `params` container returns the
+existing JSON-RPC error envelope with code **-32602** and the original request ID.
+The tests assert `"jsonrpc":"2.0"` and `"id":"request-17"`, not merely a non-null reply.
+No raw synthetic marker appears in the negative response.
+
+The necessary general-envelope change is limited to invalid tool names and non-object
+tool parameters. Existing valid dispatches and other tools' argument handling remain
+unchanged. No broad catch, empty-result fallback, transport rewrite, helper-only
+response test, endpoint or external process was introduced. Full malformed JSON-RPC
+framing outside these tool envelopes remains outside this finite repair.
+
+### Executed evidence and failure sensitivity
+
+All new receipts are in `docs/proofs/p24-feed-evidence/`.
+
+| Receipt / claim | Observed evidence | Oracle and confidence |
+|---|---|---|
+| `p24-two-blockers-red.trx` | **22 executed: 21 failed, 1 passed; exit 1.** Eight foreign-repository cases failed because no exception was thrown. Thirteen direct/outer MCP cases failed on invalid node conversion or parsing the former non-typed reply. Legacy compatibility passed. | Verified baseline RED against unchanged production at `50aab8c…`; not missing-API or compilation RED. |
+| `p24-two-blockers-first-green.trx` | **54 executed: 46 passed, 8 failed; exit 1.** The repaired guard fired. The eight failures were a test expectation comparing a pre-persistence worktree repository with SQLite's reconstructed value. | A fixture error, not eight remaining production failures. Preserved unchanged as historical evidence. |
+| `p24-two-blockers-green.trx` | **26/26 passed; exit 0.** Eight foreign repository/generation refusals, four same-repository generation-2 controls, one legacy control, three direct malformed argument cases, seven outer tool-envelope cases, three outer parameter-container cases. | Verified real-store and real-router behavior. Final outer tests split RPC errors from typed tool errors to avoid conditional assertions. |
+| `p24-resolved-repository-mutant-red.trx` | **12/12 failed; exit 1.** Invert only `repository != known.Binding.Repository.CanonicalPath` to `==`. Eight foreign cases lost refusal; four same-repository cases falsely raised binding mismatch. | Verified meaningful mutation kill in both directions and across generations. Restored operator before final build. |
+| `p24-two-blockers-restored-union-green.trx` | **471 executed, 471 passed, 0 failed/skipped; exit 0; 465 distinct displayed names.** Derived union of 29 classes from the prior regression and MCP receipts, including **58 reader cases**. | Verified selected regression union, not the entire repository suite. Class filters intentionally include their existing related cases; counts are measured, not summed from overlapping selections. |
+| `p24-two-blockers-recovery-still-red.trx` | **5 executed: 3 passed, 2 failed; exit 1.** Same late-parent admission-3 failure and 1,025-active-pending bound failure, retained bytes 323,572. | Verified unchanged recovery counterexamples. Not part of a green/full-P2 claim. |
+
+The restored union preserves the original **304 executed / 301 distinct displayed
+names**, the prior reader selection's **334 / 331**, and MCP's **72 / 71**. Each
+baseline's displayed-name **multiset** has zero missing occurrences, including names
+shared by multiple executions. These selections overlap. Historical TRX files were
+not edited.
+
+The guard tests read the persisted session before and after refusal and assert exact
+equality; unchanged heartbeat, no end marker, no board effect, one original event,
+unchanged accepted offset and only the two original registration receipts. Thus no
+new applied receipt is allowed to advertise a refused effect. Positive controls
+assert each event's actual applied reason and generation. The MCP controls assert
+typed status/code and outer correlation, not a fabricated response helper.
+
+`p24-two-blockers-receipt.json` contains the exact final class selector, logical exits,
+TRX counters, membership and SHA-256 pins for production source, test source, project
+files, package pins and built Core/MCP/test assemblies. Baseline source SHA-256:
+
+| Path / assembly | Baseline SHA-256 |
+|---|---|
+| `CoordinationProjection.cs` | `E63B83AE5AB1B0C56C931EA3B7223C37ECE2279199F92EF36EE9D86E28001627` |
+| `Tools.cs` | `060D02B307A5A6FE1C710BD5345459A9577CFE41F608F3893B8F023A3FCFC2E9` |
+| `Program.cs` | `79612C9F5814B0942A7542D91C1AE7C03281DAF96328A4DD769BB15C6B20182D` |
+| Initial test source | `7D37D042EBF89D7CD0C8EA9F163F0F1EAFDE4A59808FD3BBB4ED99DBB17B3BA6` |
+| Core DLL in baseline test output | `52FD670F01A52598BAA652EE59FD59C1F8234DB8C9318AE2A6C905A2EAA2EF70` |
+| MCP DLL in baseline test output | `23E830C3708C68CDBD7445B821161717EDA63F96ACFD764AC7D7DEA82571998D` |
+| Baseline test DLL | `5D7BF29016113C14BDF0B758916A70179E37F9309DB52987B42F8B7C91549D9E` |
+
+The inverted-guard source SHA-256 is
+`F6DA8BC9CB85CDF99147F9A0A5E0468957D57D827D796C763FC8127659697E41`;
+its Core DLL is `197E2188C7F822997EDBAD87629D8A3B3B128F10629CD51BB89AF1370959857F`.
+The mutant and restored runs used the identical test DLL,
+`A10F7F2EFBF2ED3155B1E68655973FBAAC9A8E72724A01AF0EB348333F7874D4`.
+Reproduce the mutant by changing that single comparison, rebuilding the existing
+test project with `--no-restore`, and filtering
+`FullyQualifiedName~Pump_ResolvedSessionRepositoryDrifts|FullyQualifiedName~Pump_ResolvedSameRepositoryNewGeneration`;
+restore `!=` and run the receipt's final selector. No package or clock authority is needed.
+
+### Class sweep, instrumentation and limits
+
+**Class → sweep → derive → prevent:** F1 is validation of captured metadata instead of
+the state actually consumed. The sweep covers register and all four native effect
+branches in `ApplyObservation`; one resolved-row guard supplies their shared
+repository rule. F2 is JSON conversion before an established typed failure boundary;
+the sweep covers tool name, outer parameters, argument container, then existing
+cursor/limit validation. Conversion now belongs to the existing reader boundary;
+actual dispatch and outer-router tests catch recurrence. The fixture correction is
+the related class “expecting the input object to equal the persisted representation”;
+the control is exact persisted before/after comparison with explicit repository and
+generation assertions. The shared defect-class register is outside this author lane;
+these class/control details are handed to its owner rather than edited without ownership.
+
+Operators observe repository refusal through its stable binding error, reader availability,
+entry count and elapsed time through the existing `coordination.cache.read` activity,
+and malformed tool calls through typed status/code or correlated JSON-RPC error.
+The restored union executes the existing safe-span tests. No new runtime latency,
+transport reliability, recovery schedule, human-channel qualification or performance
+SLO is claimed. Source binding is structural qualification only.
+
+No P1 source, canonical bridge, recovery B implementation, GUI, live database, endpoint,
+configuration, hook, dependency, main branch or remote was changed. Authority stays
+DENY and all grant/activation flags remain false. Independent re-gate, producer/bridge
+old-binary integration, recovery and remaining P2 work, and P3–P5 remain open.
+As in the prior restricted author lane, shared derived-site regeneration is not run;
+integration owns it. The historical constructor/schema and frozen-H rows below keep
+their original RED qualifications; this section does not relabel every old promise RED.
+
 ## P2.4 recovery counterexamples — 2026-09-16
 
 **Intentionally RED, unshippable checkpoint. No join or full-P2 clearance.**
@@ -2002,7 +2121,7 @@ remains the canonical evidence narrative.
 | `p24-frozen-high-mutant-red.trx` | 0 passed / 1 expected mutation failure |
 | `p24-boundary-red.trx` | 0 passed / 2 expected pre-fix boundary failures |
 | `p24-final-feed-green.trx` | **32 passed / 0 failed / 0 skipped** |
-| `p24-prior-304-green.trx` | **334 passed / 0 failed** in the original class selection. Set comparison against the old 304 test names: **304 present, zero missing**. Filename names the baseline selection, not the current count. |
+| `p24-prior-304-green.trx` | **334 executed / 334 passed / 0 failed; 331 distinct displayed names** in the original class selection. The old baseline has **304 executed results / 301 distinct displayed names**; multiset comparison preserves all 304 occurrences, zero missing. Filename names the baseline selection, not the current count. |
 | `p24-mcp-green.trx` | **72 passed / 0 failed**; overlaps other selections, so do not sum counts as unique tests |
 | `p24-recovery-still-red.trx` | **3 passed / 2 intentional existing failures**; separate from all green claims |
 

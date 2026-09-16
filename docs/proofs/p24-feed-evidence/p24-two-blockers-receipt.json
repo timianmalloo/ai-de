@@ -1,0 +1,90 @@
+{
+  "feed_results": 58,
+  "recovery_counters": [],
+  "restored_counters": [],
+  "final_pins": [
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationProjection.cs",
+      "sha256": "F88377B894DF86110690ABB64F4EB3C4337F45DCA65645DA7922683935316D66"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\SqliteWatcherObservationStore.cs",
+      "sha256": "CDA7A302CEA06D570AF4DD17B41A081E1FEC5208C751D923D525A3D72AA58C64"
+    },
+    {
+      "path": "src\\AiDe.Mcp\\Tools.cs",
+      "sha256": "DF5A6844C7231E085578B3A76507201DC9C9C2FEED0E1BF3617342439D6D3EB9"
+    },
+    {
+      "path": "src\\AiDe.Mcp\\Program.cs",
+      "sha256": "5A9EF9FFD848BA3E1EC9BFB99C76B5C891636B0D222A7BA057DA178514E6D41C"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationFeedTests.cs",
+      "sha256": "36D10068C772EA7666EEE8BAF7C4191CE6454CD08E4AFE0093E9B7B38F925A28"
+    },
+    {
+      "path": "src\\AiDe.Core\\AiDe.Core.csproj",
+      "sha256": "B63C41B97201DC3E1016B72B404A32411AC31E477231B281219DDA64D0AD584A"
+    },
+    {
+      "path": "src\\AiDe.Mcp\\AiDe.Mcp.csproj",
+      "sha256": "C7C0B953C60DD8CF638E8725FB10FFC9B709F0B76AD52267553BFFC70AA68AB0"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "sha256": "FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D"
+    },
+    {
+      "path": "Directory.Packages.props",
+      "sha256": "A57D2EE58BD9787119F5D71C07B956A72F986FEF30287647AABCA25212E95F64"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.dll",
+      "sha256": "C647DC389F2FDD348C3D71298C41F237D47C3C13059F0C4251F6DAFD4793BFD3"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Mcp.dll",
+      "sha256": "705F8C3669BF9256A64EB44FA7CC179B19BB3BAB4AD4C244A6EBEA9AB527A780"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll",
+      "sha256": "A10F7F2EFBF2ED3155B1E68655973FBAAC9A8E72724A01AF0EB348333F7874D4"
+    }
+  ],
+  "membership": [
+    {
+      "distinct_names": 301,
+      "missing_multiset": 0,
+      "executed": 304,
+      "label": "original304"
+    },
+    {
+      "distinct_names": 331,
+      "missing_multiset": 0,
+      "executed": 334,
+      "label": "prior334"
+    },
+    {
+      "distinct_names": 71,
+      "missing_multiset": 0,
+      "executed": 72,
+      "label": "mcp72"
+    }
+  ],
+  "baseline": "50aab8c1711d745c8cce937556ac5ff95dffbcea",
+  "recovery_exit": 1,
+  "recovery_failures": [
+    {
+      "testName": "AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_LateSameRepositoryParent_AppliesChildOnceWithOriginalAdmission",
+      "message": "Late parent committed, but child remains pending at admission 3."
+    },
+    {
+      "testName": "AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PendingLimitPlusOne_AccountsForParentWithoutExceedingActiveBoundsOrLosingChildren",
+      "message": "Active pending count 1025 exceeds 1024; retained bytes=323572."
+    }
+  ],
+  "current_distinct_names": 465,
+  "restored_exit": 0,
+  "filter": "FullyQualifiedName~AiDe.Core.Tests.AgentPlane.TheCompileSessionIsPinnedTests|FullyQualifiedName~AiDe.Core.Tests.McpToolNamesAreDerivedTests|FullyQualifiedName~AiDe.Core.Tests.TelemetryTests|FullyQualifiedName~AiDe.Core.Tests.WalkingSkeletonTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.BoardOrderingTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.BoardPublisherTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.ContractBoardPostTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationContractLogTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationContractTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationFeedTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationProjectionTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationReliabilityTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.DaydreamPersistenceTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.IngestHostTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.McpConfigWriterTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.McpMatchesTheJsonlPathTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.McpSessionIdentityTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.MessageBoardTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.RestartDoesNotMultiplySessionsTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.SqliteAllocationOverlapTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.SqliteWatcherObservationStoreTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.TrustedRegistrarTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.WatcherHostTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.WeaveScorerTests|FullyQualifiedName~AiDe.Core.Tests.Workbench.PerspectiveSetTests|FullyQualifiedName~AiDe.Core.Tests.WorkspaceDiagnosticsTests"
+}

@@ -1,0 +1,629 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="0a7a8f9a-f9a3-4664-9890-6064bc51cef1" name="malla@TIMMALLSTRIX 2026-09-16 15:53:30" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-16T15:53:30.9680553-07:00" queuing="2026-09-16T15:53:30.9680566-07:00" start="2026-09-16T15:53:30.3174691-07:00" finish="2026-09-16T15:53:31.1987770-07:00" />
+  <TestSettings name="default" id="94671e4e-bd25-43eb-97c1-0137d539aab7">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-16_15_53_30" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="474dade3-fd68-40bb-ba1b-6f7f73ed76d7" testId="f9edeccb-deac-423f-7c1f-279bb0cb4aba" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;update&quot;, generation: 2)" computerName="TIMMALLSTRIX" duration="00:00:00.0161069" startTime="2026-09-16T15:53:31.1214134-07:00" endTime="2026-09-16T15:53:31.1372976-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="474dade3-fd68-40bb-ba1b-6f7f73ed76d7">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 37&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9c32d698-6679-49a1-a7ad-34c20739e6c6" testId="c02f464d-856d-2645-cdd8-d776293f956e" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;{\&quot;arguments\&quot;:{}}&quot;, expected: &quot;InvalidRequest&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0014716" startTime="2026-09-16T15:53:30.9339411-07:00" endTime="2026-09-16T15:53:30.9339562-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9c32d698-6679-49a1-a7ad-34c20739e6c6">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Text.Json.JsonReaderException : 'T' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)&#xD;
+   at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)&#xD;
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+   at System.Text.Json.Utf8JsonReader.Read()&#xD;
+   at System.Text.Json.JsonDocument.Parse(ReadOnlySpan`1 utf8JsonSpan, JsonReaderOptions readerOptions, MetadataDb&amp; database, StackRowStack&amp; stack)&#xD;
+   at System.Text.Json.JsonDocument.ParseUnrented(ReadOnlyMemory`1 utf8Json, JsonReaderOptions readerOptions, JsonTokenType tokenType, Boolean allowDuplicateProperties)&#xD;
+   at System.Text.Json.JsonDocument.ParseValue(ReadOnlySpan`1 json, JsonDocumentOptions options)&#xD;
+   at System.Text.Json.Nodes.JsonNode.Parse(String json, Nullable`1 nodeOptions, JsonDocumentOptions documentOptions)&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(String parameters, String expected) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 126&#xD;
+   at InvokeStub_CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3b61d0b6-d988-44a2-8405-ceb02e7cda12" testId="0c4cd05f-ddce-6a81-bc01-36fba99907cc" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;update&quot;, generation: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0168908" startTime="2026-09-16T15:53:31.1043531-07:00" endTime="2026-09-16T15:53:31.1210518-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3b61d0b6-d988-44a2-8405-ceb02e7cda12">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 37&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d566a6a0-7d61-4ae4-839e-9baf5ffeb6b4" testId="be7f5e14-3f14-ac85-e5df-5d4f6e94b32d" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(arguments: &quot;\&quot;private-marker\&quot;&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0000301" startTime="2026-09-16T15:53:30.9328572-07:00" endTime="2026-09-16T15:53:30.9328794-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d566a6a0-7d61-4ae4-839e-9baf5ffeb6b4">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : The node must be of type 'JsonObject'.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+   at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+   at AiDe.Mcp.Tools.Call(JsonObject parameters, ServerContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Tools.cs:line 178&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(String arguments) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 78&#xD;
+   at InvokeStub_CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="833c09df-7ec2-4894-b0f4-d9af4a04d408" testId="4daf2d1d-eb30-df48-66fd-ffed846b8c10" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;{\&quot;name\&quot;:\&quot;aide_coordination_read\&quot;,\&quot;arguments\&quot;&quot;···, expected: &quot;InvalidRequest&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0000310" startTime="2026-09-16T15:53:30.9508267-07:00" endTime="2026-09-16T15:53:30.9508657-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="833c09df-7ec2-4894-b0f4-d9af4a04d408">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : The node must be of type 'JsonObject'.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+   at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+   at AiDe.Mcp.Tools.Call(JsonObject parameters, ServerContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Tools.cs:line 178&#xD;
+   at AiDe.Mcp.Program.Handle(String line, ServerContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Program.cs:line 116&#xD;
+   at InvokeStub_Program.Handle(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="287e896f-f35b-4244-98ec-7dee8d63c8e3" testId="40bbd99b-4fc4-2bcc-206e-0fcc051da438" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;{\&quot;name\&quot;:\&quot;aide_coordination_read\&quot;,\&quot;arguments\&quot;&quot;···, expected: &quot;InvalidRequest&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0000208" startTime="2026-09-16T15:53:30.9512032-07:00" endTime="2026-09-16T15:53:30.9512215-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="287e896f-f35b-4244-98ec-7dee8d63c8e3">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : The node must be of type 'JsonObject'.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+   at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+   at AiDe.Mcp.Tools.Call(JsonObject parameters, ServerContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Tools.cs:line 178&#xD;
+   at AiDe.Mcp.Program.Handle(String line, ServerContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Program.cs:line 116&#xD;
+   at InvokeStub_Program.Handle(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c746bcf0-d21c-418e-9dd8-ce3422069f37" testId="cb72b43c-727b-d47d-0574-848c8bae2ddd" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;session-end&quot;, generation: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0832499" startTime="2026-09-16T15:53:30.9517554-07:00" endTime="2026-09-16T15:53:31.0156521-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c746bcf0-d21c-418e-9dd8-ce3422069f37">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 37&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7d728dd5-3f8b-49bd-8eb3-87a2cc1ac53e" testId="6a71611f-f630-f3e9-a7ae-3ebb81581ecc" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;7&quot;, expected: &quot;InvalidParams&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0000194" startTime="2026-09-16T15:53:30.9514205-07:00" endTime="2026-09-16T15:53:30.9514367-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7d728dd5-3f8b-49bd-8eb3-87a2cc1ac53e">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : The node must be of type 'JsonObject'.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+   at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+   at AiDe.Mcp.Program.Handle(String line, ServerContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Program.cs:line 116&#xD;
+   at InvokeStub_Program.Handle(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="61ab721d-7ef8-4475-9ce4-4c5c872bce4e" testId="ceacb8da-0262-6618-3244-725b7a22629f" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(arguments: &quot;[]&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0002529" startTime="2026-09-16T15:53:30.9321505-07:00" endTime="2026-09-16T15:53:30.9322004-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="61ab721d-7ef8-4475-9ce4-4c5c872bce4e">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : The node must be of type 'JsonObject'.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+   at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+   at AiDe.Mcp.Tools.Call(JsonObject parameters, ServerContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Tools.cs:line 178&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(String arguments) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 78&#xD;
+   at InvokeStub_CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="990bdf17-5cc6-4a39-9e08-bdbe5bba869e" testId="f32dd8de-12c6-dc9f-ca6e-da195e217153" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;board-post&quot;, generation: 2)" computerName="TIMMALLSTRIX" duration="00:00:00.0168187" startTime="2026-09-16T15:53:31.0885863-07:00" endTime="2026-09-16T15:53:31.1039975-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="990bdf17-5cc6-4a39-9e08-bdbe5bba869e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 37&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9f040d87-0a2e-4687-8eb0-5ae34092aad2" testId="f680d5bb-ba17-b5c4-9061-b1544ffb3377" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;{\&quot;name\&quot;:null,\&quot;arguments\&quot;:{}}&quot;, expected: &quot;InvalidRequest&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0000792" startTime="2026-09-16T15:53:30.9341705-07:00" endTime="2026-09-16T15:53:30.9341848-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9f040d87-0a2e-4687-8eb0-5ae34092aad2">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Text.Json.JsonReaderException : 'T' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)&#xD;
+   at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)&#xD;
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+   at System.Text.Json.Utf8JsonReader.Read()&#xD;
+   at System.Text.Json.JsonDocument.Parse(ReadOnlySpan`1 utf8JsonSpan, JsonReaderOptions readerOptions, MetadataDb&amp; database, StackRowStack&amp; stack)&#xD;
+   at System.Text.Json.JsonDocument.ParseUnrented(ReadOnlyMemory`1 utf8Json, JsonReaderOptions readerOptions, JsonTokenType tokenType, Boolean allowDuplicateProperties)&#xD;
+   at System.Text.Json.JsonDocument.ParseValue(ReadOnlySpan`1 json, JsonDocumentOptions options)&#xD;
+   at System.Text.Json.Nodes.JsonNode.Parse(String json, Nullable`1 nodeOptions, JsonDocumentOptions documentOptions)&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(String parameters, String expected) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 126&#xD;
+   at InvokeStub_CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="64e16196-fa79-433f-b1c7-b299478057bd" testId="8896be06-8326-db87-fce0-2347f711184d" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;\&quot;private-marker\&quot;&quot;, expected: &quot;InvalidParams&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0000256" startTime="2026-09-16T15:53:30.9343928-07:00" endTime="2026-09-16T15:53:30.9344068-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="64e16196-fa79-433f-b1c7-b299478057bd">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : The node must be of type 'JsonObject'.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+   at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+   at AiDe.Mcp.Program.Handle(String line, ServerContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Program.cs:line 116&#xD;
+   at InvokeStub_Program.Handle(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="19853f05-7f89-4504-8f30-ff5b5e4293f9" testId="b9023b40-9626-ee78-6ded-f374de48bfc9" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;{\&quot;name\&quot;:7,\&quot;arguments\&quot;:{}}&quot;, expected: &quot;InvalidRequest&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0002156" startTime="2026-09-16T15:53:30.9515667-07:00" endTime="2026-09-16T15:53:30.9515816-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="19853f05-7f89-4504-8f30-ff5b5e4293f9">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : An element of type 'Number' cannot be converted to a 'System.String'.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeUnableToConvertElement(JsonValueKind valueKind, Type destinationType)&#xD;
+   at System.Text.Json.Nodes.JsonValueOfElement.GetValue[TypeToConvert]()&#xD;
+   at AiDe.Mcp.Tools.Call(JsonObject parameters, ServerContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Tools.cs:line 177&#xD;
+   at AiDe.Mcp.Program.Handle(String line, ServerContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Program.cs:line 116&#xD;
+   at InvokeStub_Program.Handle(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fa052391-e45f-4a7b-a6ef-4071ee24703e" testId="c3a67980-bff4-691d-eaa1-0f67c2a70dc2" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;board-post&quot;, generation: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0188768" startTime="2026-09-16T15:53:31.0511679-07:00" endTime="2026-09-16T15:53:31.0698094-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fa052391-e45f-4a7b-a6ef-4071ee24703e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 37&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9f8dcaaa-28ab-4fd0-9aed-c9051b653b77" testId="34a2f40f-fc2f-e176-dd6f-c60638473a23" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_LegacyUnboundResolvedSession_RemainsCompatibleButNotPubliclyReadable" computerName="TIMMALLSTRIX" duration="00:00:00.0200419" startTime="2026-09-16T15:53:31.1376559-07:00" endTime="2026-09-16T15:53:31.1576835-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9f8dcaaa-28ab-4fd0-9aed-c9051b653b77" />
+    <UnitTestResult executionId="730fb0b6-9613-4b9b-b0da-45d4a0d34067" testId="0016a6b5-f284-bf49-1cb4-4407b8d837b2" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;session-end&quot;, generation: 2)" computerName="TIMMALLSTRIX" duration="00:00:00.0172142" startTime="2026-09-16T15:53:31.0160339-07:00" endTime="2026-09-16T15:53:31.0330466-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="730fb0b6-9613-4b9b-b0da-45d4a0d34067">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 37&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="022daffe-5430-4ef4-820e-1349ba2782b4" testId="6fa93fd9-a6d4-e1d9-ecd9-867cd89516d1" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(arguments: &quot;7&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0032987" startTime="2026-09-16T15:53:30.9138636-07:00" endTime="2026-09-16T15:53:30.9239840-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="022daffe-5430-4ef4-820e-1349ba2782b4">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : The node must be of type 'JsonObject'.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+   at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+   at AiDe.Mcp.Tools.Call(JsonObject parameters, ServerContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Tools.cs:line 178&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(String arguments) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 78&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="76e85f3c-6597-4d71-a09e-04061dd97abc" testId="19052e42-d1a9-3ad9-0a23-e3105c859fa3" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;[]&quot;, expected: &quot;InvalidParams&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0003471" startTime="2026-09-16T15:53:30.9338055-07:00" endTime="2026-09-16T15:53:30.9338213-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="76e85f3c-6597-4d71-a09e-04061dd97abc">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : The node must be of type 'JsonObject'.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+   at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+   at AiDe.Mcp.Program.Handle(String line, ServerContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Program.cs:line 116&#xD;
+   at InvokeStub_Program.Handle(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="726ab686-0e2f-4eab-916f-d6c96b14bfc3" testId="02f6c73e-2c1d-09c4-2cbb-68179440942a" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;heartbeat&quot;, generation: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0176260" startTime="2026-09-16T15:53:31.0334185-07:00" endTime="2026-09-16T15:53:31.0507977-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="726ab686-0e2f-4eab-916f-d6c96b14bfc3">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 37&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7ad64668-fa45-4685-8d1f-6143fb15c083" testId="1528e08f-0c19-e75a-38b8-704a6203348d" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;{\&quot;name\&quot;:\&quot;aide_coordination_read\&quot;,\&quot;arguments\&quot;&quot;···, expected: &quot;InvalidRequest&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0000231" startTime="2026-09-16T15:53:30.9345224-07:00" endTime="2026-09-16T15:53:30.9345380-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7ad64668-fa45-4685-8d1f-6143fb15c083">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : The node must be of type 'JsonObject'.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+   at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+   at AiDe.Mcp.Tools.Call(JsonObject parameters, ServerContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Tools.cs:line 178&#xD;
+   at AiDe.Mcp.Program.Handle(String line, ServerContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Program.cs:line 116&#xD;
+   at InvokeStub_Program.Handle(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3570c1a8-573c-4992-888a-2f13bc9ca97a" testId="d837e2d0-d764-57e1-b641-46e4e63322c7" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;{\&quot;name\&quot;:[],\&quot;arguments\&quot;:{}}&quot;, expected: &quot;InvalidRequest&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0035916" startTime="2026-09-16T15:53:30.9336111-07:00" endTime="2026-09-16T15:53:30.9336316-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3570c1a8-573c-4992-888a-2f13bc9ca97a">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : The node must be of type 'JsonValue'.</Message>
+          <StackTrace>   at System.Text.Json.Nodes.JsonNode.GetValue[T]()&#xD;
+   at AiDe.Mcp.Tools.Call(JsonObject parameters, ServerContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Tools.cs:line 177&#xD;
+   at AiDe.Mcp.Program.Handle(String line, ServerContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Program.cs:line 116&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ebde85d6-3738-4e26-b91f-2a417cae5b43" testId="34ede12b-c92a-3f64-2aa0-19e8b92f261b" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;heartbeat&quot;, generation: 2)" computerName="TIMMALLSTRIX" duration="00:00:00.0170573" startTime="2026-09-16T15:53:31.0701572-07:00" endTime="2026-09-16T15:53:31.0870174-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ebde85d6-3738-4e26-b91f-2a417cae5b43">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 37&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;update&quot;, generation: 2)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f9edeccb-deac-423f-7c1f-279bb0cb4aba">
+      <Execution id="474dade3-fd68-40bb-ba1b-6f7f73ed76d7" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;{\&quot;name\&quot;:\&quot;aide_coordination_read\&quot;,\&quot;arguments\&quot;&quot;···, expected: &quot;InvalidRequest&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="4daf2d1d-eb30-df48-66fd-ffed846b8c10">
+      <Execution id="833c09df-7ec2-4894-b0f4-d9af4a04d408" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;{\&quot;name\&quot;:[],\&quot;arguments\&quot;:{}}&quot;, expected: &quot;InvalidRequest&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d837e2d0-d764-57e1-b641-46e4e63322c7">
+      <Execution id="3570c1a8-573c-4992-888a-2f13bc9ca97a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;{\&quot;name\&quot;:\&quot;aide_coordination_read\&quot;,\&quot;arguments\&quot;&quot;···, expected: &quot;InvalidRequest&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="40bbd99b-4fc4-2bcc-206e-0fcc051da438">
+      <Execution id="287e896f-f35b-4244-98ec-7dee8d63c8e3" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(arguments: &quot;7&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6fa93fd9-a6d4-e1d9-ecd9-867cd89516d1">
+      <Execution id="022daffe-5430-4ef4-820e-1349ba2782b4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_LegacyUnboundResolvedSession_RemainsCompatibleButNotPubliclyReadable" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="34a2f40f-fc2f-e176-dd6f-c60638473a23">
+      <Execution id="9f8dcaaa-28ab-4fd0-9aed-c9051b653b77" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_LegacyUnboundResolvedSession_RemainsCompatibleButNotPubliclyReadable" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;{\&quot;name\&quot;:null,\&quot;arguments\&quot;:{}}&quot;, expected: &quot;InvalidRequest&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f680d5bb-ba17-b5c4-9061-b1544ffb3377">
+      <Execution id="9f040d87-0a2e-4687-8eb0-5ae34092aad2" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;board-post&quot;, generation: 2)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f32dd8de-12c6-dc9f-ca6e-da195e217153">
+      <Execution id="990bdf17-5cc6-4a39-9e08-bdbe5bba869e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;7&quot;, expected: &quot;InvalidParams&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6a71611f-f630-f3e9-a7ae-3ebb81581ecc">
+      <Execution id="7d728dd5-3f8b-49bd-8eb3-87a2cc1ac53e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;{\&quot;name\&quot;:7,\&quot;arguments\&quot;:{}}&quot;, expected: &quot;InvalidRequest&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="b9023b40-9626-ee78-6ded-f374de48bfc9">
+      <Execution id="19853f05-7f89-4504-8f30-ff5b5e4293f9" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(arguments: &quot;\&quot;private-marker\&quot;&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="be7f5e14-3f14-ac85-e5df-5d4f6e94b32d">
+      <Execution id="d566a6a0-7d61-4ae4-839e-9baf5ffeb6b4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;heartbeat&quot;, generation: 1)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="02f6c73e-2c1d-09c4-2cbb-68179440942a">
+      <Execution id="726ab686-0e2f-4eab-916f-d6c96b14bfc3" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;session-end&quot;, generation: 1)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="cb72b43c-727b-d47d-0574-848c8bae2ddd">
+      <Execution id="c746bcf0-d21c-418e-9dd8-ce3422069f37" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;update&quot;, generation: 1)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0c4cd05f-ddce-6a81-bc01-36fba99907cc">
+      <Execution id="3b61d0b6-d988-44a2-8405-ceb02e7cda12" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;heartbeat&quot;, generation: 2)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="34ede12b-c92a-3f64-2aa0-19e8b92f261b">
+      <Execution id="ebde85d6-3738-4e26-b91f-2a417cae5b43" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;[]&quot;, expected: &quot;InvalidParams&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="19052e42-d1a9-3ad9-0a23-e3105c859fa3">
+      <Execution id="76e85f3c-6597-4d71-a09e-04061dd97abc" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(arguments: &quot;[]&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="ceacb8da-0262-6618-3244-725b7a22629f">
+      <Execution id="61ab721d-7ef8-4475-9ce4-4c5c872bce4e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;{\&quot;arguments\&quot;:{}}&quot;, expected: &quot;InvalidRequest&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="c02f464d-856d-2645-cdd8-d776293f956e">
+      <Execution id="9c32d698-6679-49a1-a7ad-34c20739e6c6" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;session-end&quot;, generation: 2)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0016a6b5-f284-bf49-1cb4-4407b8d837b2">
+      <Execution id="730fb0b6-9613-4b9b-b0da-45d4a0d34067" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;\&quot;private-marker\&quot;&quot;, expected: &quot;InvalidParams&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="8896be06-8326-db87-fce0-2347f711184d">
+      <Execution id="64e16196-fa79-433f-b1c7-b299478057bd" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: &quot;{\&quot;name\&quot;:\&quot;aide_coordination_read\&quot;,\&quot;arguments\&quot;&quot;···, expected: &quot;InvalidRequest&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="1528e08f-0c19-e75a-38b8-704a6203348d">
+      <Execution id="7ad64668-fa45-4685-8d1f-6143fb15c083" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;board-post&quot;, generation: 1)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="c3a67980-bff4-691d-eaa1-0f67c2a70dc2">
+      <Execution id="fa052391-e45f-4a7b-a6ef-4071ee24703e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f9edeccb-deac-423f-7c1f-279bb0cb4aba" executionId="474dade3-fd68-40bb-ba1b-6f7f73ed76d7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c02f464d-856d-2645-cdd8-d776293f956e" executionId="9c32d698-6679-49a1-a7ad-34c20739e6c6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c4cd05f-ddce-6a81-bc01-36fba99907cc" executionId="3b61d0b6-d988-44a2-8405-ceb02e7cda12" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="be7f5e14-3f14-ac85-e5df-5d4f6e94b32d" executionId="d566a6a0-7d61-4ae4-839e-9baf5ffeb6b4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4daf2d1d-eb30-df48-66fd-ffed846b8c10" executionId="833c09df-7ec2-4894-b0f4-d9af4a04d408" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="40bbd99b-4fc4-2bcc-206e-0fcc051da438" executionId="287e896f-f35b-4244-98ec-7dee8d63c8e3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cb72b43c-727b-d47d-0574-848c8bae2ddd" executionId="c746bcf0-d21c-418e-9dd8-ce3422069f37" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6a71611f-f630-f3e9-a7ae-3ebb81581ecc" executionId="7d728dd5-3f8b-49bd-8eb3-87a2cc1ac53e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ceacb8da-0262-6618-3244-725b7a22629f" executionId="61ab721d-7ef8-4475-9ce4-4c5c872bce4e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f32dd8de-12c6-dc9f-ca6e-da195e217153" executionId="990bdf17-5cc6-4a39-9e08-bdbe5bba869e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f680d5bb-ba17-b5c4-9061-b1544ffb3377" executionId="9f040d87-0a2e-4687-8eb0-5ae34092aad2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8896be06-8326-db87-fce0-2347f711184d" executionId="64e16196-fa79-433f-b1c7-b299478057bd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b9023b40-9626-ee78-6ded-f374de48bfc9" executionId="19853f05-7f89-4504-8f30-ff5b5e4293f9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c3a67980-bff4-691d-eaa1-0f67c2a70dc2" executionId="fa052391-e45f-4a7b-a6ef-4071ee24703e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="34a2f40f-fc2f-e176-dd6f-c60638473a23" executionId="9f8dcaaa-28ab-4fd0-9aed-c9051b653b77" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0016a6b5-f284-bf49-1cb4-4407b8d837b2" executionId="730fb0b6-9613-4b9b-b0da-45d4a0d34067" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6fa93fd9-a6d4-e1d9-ecd9-867cd89516d1" executionId="022daffe-5430-4ef4-820e-1349ba2782b4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="19052e42-d1a9-3ad9-0a23-e3105c859fa3" executionId="76e85f3c-6597-4d71-a09e-04061dd97abc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="02f6c73e-2c1d-09c4-2cbb-68179440942a" executionId="726ab686-0e2f-4eab-916f-d6c96b14bfc3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1528e08f-0c19-e75a-38b8-704a6203348d" executionId="7ad64668-fa45-4685-8d1f-6143fb15c083" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d837e2d0-d764-57e1-b641-46e4e63322c7" executionId="3570c1a8-573c-4992-888a-2f13bc9ca97a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="34ede12b-c92a-3f64-2aa0-19e8b92f261b" executionId="ebde85d6-3738-4e26-b91f-2a417cae5b43" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="22" executed="22" passed="1" failed="21" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.27]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.29]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.32]       System.InvalidOperationException : The node must be of type 'JsonObject'.&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Tools.cs(178,0): at AiDe.Mcp.Tools.Call(JsonObject parameters, ServerContext context)&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(78,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(String arguments)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.32]       System.InvalidOperationException : The node must be of type 'JsonObject'.&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Tools.cs(178,0): at AiDe.Mcp.Tools.Call(JsonObject parameters, ServerContext context)&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(78,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(String arguments)&#xD;
+[xUnit.net 00:00:00.32]            at InvokeStub_CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.32]       System.InvalidOperationException : The node must be of type 'JsonObject'.&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Tools.cs(178,0): at AiDe.Mcp.Tools.Call(JsonObject parameters, ServerContext context)&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(78,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(String arguments)&#xD;
+[xUnit.net 00:00:00.32]            at InvokeStub_CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.32]       System.InvalidOperationException : The node must be of type 'JsonValue'.&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Nodes.JsonNode.GetValue[T]()&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Tools.cs(177,0): at AiDe.Mcp.Tools.Call(JsonObject parameters, ServerContext context)&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Program.cs(116,0): at AiDe.Mcp.Program.Handle(String line, ServerContext context)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.32]       System.InvalidOperationException : The node must be of type 'JsonObject'.&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Program.cs(116,0): at AiDe.Mcp.Program.Handle(String line, ServerContext context)&#xD;
+[xUnit.net 00:00:00.32]            at InvokeStub_Program.Handle(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.32]       System.Text.Json.JsonReaderException : 'T' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Utf8JsonReader.Read()&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.JsonDocument.Parse(ReadOnlySpan`1 utf8JsonSpan, JsonReaderOptions readerOptions, MetadataDb&amp; database, StackRowStack&amp; stack)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.JsonDocument.ParseUnrented(ReadOnlyMemory`1 utf8Json, JsonReaderOptions readerOptions, JsonTokenType tokenType, Boolean allowDuplicateProperties)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.JsonDocument.ParseValue(ReadOnlySpan`1 json, JsonDocumentOptions options)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Nodes.JsonNode.Parse(String json, Nullable`1 nodeOptions, JsonDocumentOptions documentOptions)&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(126,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(String parameters, String expected)&#xD;
+[xUnit.net 00:00:00.32]            at InvokeStub_CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.32]       System.Text.Json.JsonReaderException : 'T' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader&amp; json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Utf8JsonReader.ReadSingleSegment()&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Utf8JsonReader.Read()&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.JsonDocument.Parse(ReadOnlySpan`1 utf8JsonSpan, JsonReaderOptions readerOptions, MetadataDb&amp; database, StackRowStack&amp; stack)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.JsonDocument.ParseUnrented(ReadOnlyMemory`1 utf8Json, JsonReaderOptions readerOptions, JsonTokenType tokenType, Boolean allowDuplicateProperties)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.JsonDocument.ParseValue(ReadOnlySpan`1 json, JsonDocumentOptions options)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Nodes.JsonNode.Parse(String json, Nullable`1 nodeOptions, JsonDocumentOptions documentOptions)&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(126,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(String parameters, String expected)&#xD;
+[xUnit.net 00:00:00.32]            at InvokeStub_CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.32]       System.InvalidOperationException : The node must be of type 'JsonObject'.&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Program.cs(116,0): at AiDe.Mcp.Program.Handle(String line, ServerContext context)&#xD;
+[xUnit.net 00:00:00.32]            at InvokeStub_Program.Handle(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.32]       System.InvalidOperationException : The node must be of type 'JsonObject'.&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+[xUnit.net 00:00:00.32]            at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Tools.cs(178,0): at AiDe.Mcp.Tools.Call(JsonObject parameters, ServerContext context)&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Program.cs(116,0): at AiDe.Mcp.Program.Handle(String line, ServerContext context)&#xD;
+[xUnit.net 00:00:00.32]            at InvokeStub_Program.Handle(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.34]       System.InvalidOperationException : The node must be of type 'JsonObject'.&#xD;
+[xUnit.net 00:00:00.34]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.34]            at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+[xUnit.net 00:00:00.34]            at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Tools.cs(178,0): at AiDe.Mcp.Tools.Call(JsonObject parameters, ServerContext context)&#xD;
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Program.cs(116,0): at AiDe.Mcp.Program.Handle(String line, ServerContext context)&#xD;
+[xUnit.net 00:00:00.34]            at InvokeStub_Program.Handle(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.34]       System.InvalidOperationException : The node must be of type 'JsonObject'.&#xD;
+[xUnit.net 00:00:00.34]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.34]            at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+[xUnit.net 00:00:00.34]            at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Tools.cs(178,0): at AiDe.Mcp.Tools.Call(JsonObject parameters, ServerContext context)&#xD;
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Program.cs(116,0): at AiDe.Mcp.Program.Handle(String line, ServerContext context)&#xD;
+[xUnit.net 00:00:00.34]            at InvokeStub_Program.Handle(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.34]       System.InvalidOperationException : The node must be of type 'JsonObject'.&#xD;
+[xUnit.net 00:00:00.34]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.34]            at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeWrongType(ReadOnlySpan`1 supportedTypeNames)&#xD;
+[xUnit.net 00:00:00.34]            at System.Text.Json.Nodes.JsonNode.AsObject()&#xD;
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Program.cs(116,0): at AiDe.Mcp.Program.Handle(String line, ServerContext context)&#xD;
+[xUnit.net 00:00:00.34]            at InvokeStub_Program.Handle(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.34]       System.InvalidOperationException : An element of type 'Number' cannot be converted to a 'System.String'.&#xD;
+[xUnit.net 00:00:00.34]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.34]            at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeUnableToConvertElement(JsonValueKind valueKind, Type destinationType)&#xD;
+[xUnit.net 00:00:00.34]            at System.Text.Json.Nodes.JsonValueOfElement.GetValue[TypeToConvert]()&#xD;
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Tools.cs(177,0): at AiDe.Mcp.Tools.Call(JsonObject parameters, ServerContext context)&#xD;
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\Program.cs(116,0): at AiDe.Mcp.Program.Handle(String line, ServerContext context)&#xD;
+[xUnit.net 00:00:00.34]            at InvokeStub_Program.Handle(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.41]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.41]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(37,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation)&#xD;
+[xUnit.net 00:00:00.41]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.41]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.42]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.42]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(37,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation)&#xD;
+[xUnit.net 00:00:00.42]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.44]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.44]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(37,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation)&#xD;
+[xUnit.net 00:00:00.44]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.46]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.46]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.46]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(37,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation)&#xD;
+[xUnit.net 00:00:00.46]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.46]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.48]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.48]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.48]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(37,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation)&#xD;
+[xUnit.net 00:00:00.48]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.48]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.49]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.49]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.49]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.49]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(37,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation)&#xD;
+[xUnit.net 00:00:00.49]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.49]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.51]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.51]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.51]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.51]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(37,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation)&#xD;
+[xUnit.net 00:00:00.51]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.51]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.53]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.53]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.53]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.53]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(37,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation)&#xD;
+[xUnit.net 00:00:00.53]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.53]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.55]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:30.9257207-07:00">
+        <Text>[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(arguments: "7") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:30.9325563-07:00">
+        <Text>[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(arguments: "[]") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:30.9330855-07:00">
+        <Text>[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(arguments: "\"private-marker\"") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:30.9338056-07:00">
+        <Text>[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: "{\"name\":[],\"arguments\":{}}", expected: "InvalidRequest") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:30.9338715-07:00">
+        <Text>[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: "[]", expected: "InvalidParams") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:30.9340937-07:00">
+        <Text>[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: "{\"arguments\":{}}", expected: "InvalidRequest") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:30.9342253-07:00">
+        <Text>[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: "{\"name\":null,\"arguments\":{}}", expected: "InvalidRequest") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:30.9344725-07:00">
+        <Text>[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: "\"private-marker\"", expected: "InvalidParams") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:30.9345805-07:00">
+        <Text>[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: "{\"name\":\"aide_coordination_read\",\"arguments\""···, expected: "InvalidRequest") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:30.9718791-07:00">
+        <Text>[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: "{\"name\":\"aide_coordination_read\",\"arguments\""···, expected: "InvalidRequest") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:30.9719772-07:00">
+        <Text>[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: "{\"name\":\"aide_coordination_read\",\"arguments\""···, expected: "InvalidRequest") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:30.9719925-07:00">
+        <Text>[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: "7", expected: "InvalidParams") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:30.9720061-07:00">
+        <Text>[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(parameters: "{\"name\":7,\"arguments\":{}}", expected: "InvalidRequest") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:31.0160482-07:00">
+        <Text>[xUnit.net 00:00:00.41]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: "session-end", generation: 1) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:31.0334345-07:00">
+        <Text>[xUnit.net 00:00:00.42]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: "session-end", generation: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:31.0512256-07:00">
+        <Text>[xUnit.net 00:00:00.44]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: "heartbeat", generation: 1) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:31.0701562-07:00">
+        <Text>[xUnit.net 00:00:00.46]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: "board-post", generation: 1) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:31.0874216-07:00">
+        <Text>[xUnit.net 00:00:00.48]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: "heartbeat", generation: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:31.1043544-07:00">
+        <Text>[xUnit.net 00:00:00.49]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: "board-post", generation: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:31.1214226-07:00">
+        <Text>[xUnit.net 00:00:00.51]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: "update", generation: 1) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:53:31.1376465-07:00">
+        <Text>[xUnit.net 00:00:00.53]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: "update", generation: 2) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

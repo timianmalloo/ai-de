@@ -20,6 +20,41 @@ summary: >-
 
 # Durable phase graph
 
+## Finite resolved-session / MCP-container repair — 2026-09-16
+
+Goal: repair only F1 actual-session repository drift and F2 pre-handler JSON conversion.
+Done when: baseline RED, repaired GREEN, meaningful guard mutation, correlated outer
+responses and preserved prior cases are committed for independent re-gate.
+Not in scope: P1, canonical bridge or recovery B changes, activation, live data,
+endpoints, GUI, configuration/dependencies, main/push or P3–P5.
+Tier: T2. Fan-out cap: 0. Main-line budget: 30 tool calls. Context ceiling: 150k.
+Assigned worktree/session `xh-p2-projection-b0d0` reopened through the official tool.
+
+| Node | Capability | Dependency → finite exit | Actual |
+|---|---|---|---|
+| F0 | Reasoning | Supplied independent blockers + fresh source/spec/test contracts → fixed two-item surface list | Native resolved row and real MCP outer router read |
+| F1 | Deterministic mechanics | F0 → semantic baseline RED | 21 failures, one legacy control passes |
+| F2 | Reasoning | F1 → transaction guard and dispatch-boundary guard | Three production files; no model/schema change |
+| F3 | Deterministic mechanics | F2 → restored union, foreign/same-repository mutant, unchanged recovery counterexamples | 26 finite passes; 12 mutant failures; 471 restored passes; separate recovery 3 pass / 2 fail |
+| F4 | Deterministic mechanics | F3 → owned proof/phase/audit and pinned evidence commit | Proof and receipt carry counts, exact selector and hashes |
+| Gate | Independent review | F4 → Test/Security/Data ruling on these two repairs only | Pending; not author-cleared |
+
+All edges are data or decision dependencies. Shared test/build output couples the
+author nodes, so no agents or concurrent writers are added. Normalized equal-node
+author work/span is 5/5, speedup ceiling 1× (**Inferred model**, not timing). The
+two production blockers decrease to zero at the author checkpoint. The external
+gate remains distinct. One fixture-only correction compared persisted state rather
+than the pre-write object's reconstructed worktree repository. Oversized grounding
+output required bounded reads; this is recorded rework, not hidden elapsed-time proof.
+Actual test durations and counts are in unchanged TRX; token totals are not recorded.
+
+Tests apply D0, D1/D2, real SQLite D4, provider/schema D5/D6 and MCP A2. Negative
+cases assert refused effects/receipts or correlated typed errors; positive controls
+prevent an over-broad generation gate. The comparison mutant fails in both directions.
+The failure dispositions and scope qualifications are in the existing Proof Pack.
+No more review floors or product permissions were added. Next is independent re-gate;
+producer/bridge old-binary evidence, recovery, remaining P2 and P3–P5 remain pending.
+
 ## P2.2 finite evidence blocker — 2026-09-16
 
 Goal: provide failure sensitivity for the 23 specified green-only cases.

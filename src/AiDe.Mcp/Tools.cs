@@ -174,12 +174,19 @@ public static class Tools
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        var name = parameters?["name"]?.GetValue<string>();
-        var arguments = parameters?["arguments"]?.AsObject();
+        if (parameters?["name"] is not JsonValue toolName || !toolName.TryGetValue<string>(out var name)
+            || string.IsNullOrWhiteSpace(name))
+        {
+            return Text(JsonSerializer.Serialize(CoordinationReadResult.Failure(CoordinationReadStatus.InvalidRequest)));
+        }
+        if (name == "aide_coordination_read")
+        {
+            return Text(CoordinationRead(parameters["arguments"], context));
+        }
+        var arguments = parameters["arguments"]?.AsObject();
 
         return name switch
         {
-            "aide_coordination_read" => Text(CoordinationRead(arguments, context)),
             "aide_whoami" => Text(WhoAmI(context)),
             "aide_board_read" => Text(BoardRead(arguments, context)),
             "aide_board_post" => Text(BoardPost(arguments, context)),
@@ -190,11 +197,12 @@ public static class Tools
         };
     }
 
-    private static string CoordinationRead(JsonObject? arguments, ServerContext context)
+    private static string CoordinationRead(JsonNode? argumentsNode, ServerContext context)
     {
         var result = CoordinationReadResult.Failure(CoordinationReadStatus.Unavailable);
         try
         {
+            var arguments = argumentsNode?.AsObject();
             if (arguments is null || arguments.Any(p => p.Key is not ("source_id" or "cursor" or "limit"))
                 || arguments["source_id"] is null
                 || arguments.ContainsKey("cursor") && arguments["cursor"] is null

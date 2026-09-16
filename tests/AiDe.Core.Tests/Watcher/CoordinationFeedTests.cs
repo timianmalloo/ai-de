@@ -9,6 +9,172 @@ namespace AiDe.Core.Tests.Watcher;
 
 public sealed class CoordinationFeedTests
 {
+    [Theory]
+    [InlineData("board-post", 1)]
+    [InlineData("board-post", 2)]
+    [InlineData("update", 1)]
+    [InlineData("update", 2)]
+    [InlineData("heartbeat", 1)]
+    [InlineData("heartbeat", 2)]
+    [InlineData("session-end", 1)]
+    [InlineData("session-end", 2)]
+    public void Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(string kind, int generation)
+    {
+        using var fixture = new FeedFixture();
+        fixture.Register();
+        fixture.Pump();
+        var registered = Assert.Single(fixture.Store.AllSessions());
+        var foreign = registered with
+        {
+            Generation = new SessionGeneration(generation),
+            Binding = registered.Binding with { Repository = new RepositoryIdentity("foreign-repository", "foreign") },
+        };
+        fixture.Store.RecordSession(foreign);
+        var persisted = Assert.Single(fixture.Store.AllSessions());
+        Assert.Equal(foreign.Binding.Repository, persisted.Binding.Repository);
+        Assert.Equal(foreign.Generation, persisted.Generation);
+        var heartbeat = fixture.Number("SELECT monotonic_ticks FROM session_heartbeat;");
+        var offset = fixture.Number("SELECT accepted_offset FROM coord_projection_checkpoint;");
+        AppendObservation(fixture, kind);
+
+        var error = Assert.Throws<CoordinationSourceException>(() => fixture.Pump());
+
+        Assert.Equal(CoordinationBindingErrors.Mismatch, error.Message);
+        Assert.Equal(persisted, Assert.Single(fixture.Store.AllSessions()));
+        Assert.Equal(heartbeat, fixture.Number("SELECT monotonic_ticks FROM session_heartbeat;"));
+        Assert.Equal(0, fixture.Number("SELECT COUNT(*) FROM session_ended;"));
+        Assert.Equal(0, fixture.Number("SELECT COUNT(*) FROM board_message_fact;"));
+        Assert.Equal(1, fixture.Number("SELECT COUNT(*) FROM coord_projection_event;"));
+        Assert.Equal(offset, fixture.Number("SELECT accepted_offset FROM coord_projection_checkpoint;"));
+        var feed = fixture.Read();
+        Assert.Equal(CoordinationReadStatus.Available, feed.Status);
+        Assert.Equal(new[] { "pending", "applied" }, feed.Entries.Select(entry => entry.Outcome));
+        Assert.Equal("OBSERVED_REGISTER", feed.Entries[1].ReasonCode);
+        Assert.Equal(1, feed.Entries[1].SessionGeneration);
+    }
+
+    [Theory]
+    [InlineData("board-post", "OBSERVED_BOARD")]
+    [InlineData("update", "OBSERVED_UPDATE")]
+    [InlineData("heartbeat", "OBSERVED_HEARTBEAT")]
+    [InlineData("session-end", "OBSERVED_END")]
+    public void Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(string kind, string reason)
+    {
+        using var fixture = new FeedFixture();
+        fixture.Register();
+        fixture.Pump();
+        var registered = Assert.Single(fixture.Store.AllSessions());
+        fixture.Store.RecordSession(registered with { Generation = new SessionGeneration(2) });
+        AppendObservation(fixture, kind);
+
+        fixture.Pump();
+
+        var applied = fixture.Read().Entries.Last();
+        Assert.Equal("applied", applied.Outcome);
+        Assert.Equal(reason, applied.ReasonCode);
+        Assert.Equal(2, applied.SessionGeneration);
+        Assert.Equal(registered.Binding.Repository, Assert.Single(fixture.Store.AllSessions()).Binding.Repository);
+    }
+
+    [Fact]
+    public void Pump_LegacyUnboundResolvedSession_RemainsCompatibleButNotPubliclyReadable()
+    {
+        using var fixture = new FeedFixture();
+        fixture.Register();
+        new CoordContractLogPump(fixture.Logs, fixture.Ingest).PumpOnce();
+        var registered = Assert.Single(fixture.Store.AllSessions());
+        fixture.Store.RecordSession(registered with
+        {
+            Binding = registered.Binding with { Repository = new RepositoryIdentity("foreign-repository", "foreign") },
+        });
+        AppendObservation(fixture, "board-post");
+
+        new CoordContractLogPump(fixture.Logs, fixture.Ingest).PumpOnce();
+
+        Assert.Equal(1, fixture.Number("SELECT COUNT(*) FROM board_message_fact WHERE repository_key='foreign-repository';"));
+        Assert.Equal(CoordinationReadStatus.Unavailable, fixture.Read().Status);
+    }
+
+    [Theory]
+    [InlineData("7")]
+    [InlineData("[]")]
+    [InlineData("\"private-marker\"")]
+    public void Mcp_MalformedArgumentsContainer_ReturnsTypedInvalidRequest(string arguments)
+    {
+        var response = Tools.Call(new()
+        {
+            ["name"] = "aide_coordination_read",
+            ["arguments"] = JsonNode.Parse(arguments),
+        }, ServerContext.None("synthetic fixture"));
+
+        var body = JsonNode.Parse(response["content"]![0]!["text"]!.GetValue<string>())!;
+        Assert.Equal("InvalidRequest", body["Status"]!.GetValue<string>());
+        Assert.Equal("COORD_READ_InvalidRequest", body["Code"]!.GetValue<string>());
+        Assert.DoesNotContain("private-marker", response.ToJsonString());
+    }
+
+    [Theory]
+    [InlineData("""{"name":"aide_coordination_read","arguments":7}""")]
+    [InlineData("""{"name":"aide_coordination_read","arguments":[]}""")]
+    [InlineData("""{"name":"aide_coordination_read","arguments":"private-marker"}""")]
+    [InlineData("""{"name":7,"arguments":{}}""")]
+    [InlineData("""{"name":[],"arguments":{}}""")]
+    [InlineData("""{"name":null,"arguments":{}}""")]
+    [InlineData("""{"arguments":{}}""")]
+    public void Mcp_OuterRequestMalformedToolEnvelope_ReturnsCorrelatedNegativeResponse(string parameters)
+    {
+        var envelope = RouteRequest(parameters);
+
+        var body = JsonNode.Parse(envelope["result"]!["content"]![0]!["text"]!.GetValue<string>())!;
+        Assert.Equal("InvalidRequest", body["Status"]!.GetValue<string>());
+        Assert.Equal("COORD_READ_InvalidRequest", body["Code"]!.GetValue<string>());
+    }
+
+    [Theory]
+    [InlineData("7")]
+    [InlineData("[]")]
+    [InlineData("\"private-marker\"")]
+    public void Mcp_OuterRequestMalformedParameters_ReturnsCorrelatedRpcError(string parameters)
+    {
+        var envelope = RouteRequest(parameters);
+
+        Assert.Equal(-32602, envelope["error"]!["code"]!.GetValue<int>());
+        Assert.Null(envelope["result"]);
+    }
+
+    private static JsonNode RouteRequest(string parameters)
+    {
+        // Exercise the real outer request router, not a second test-only envelope builder.
+        var handle = typeof(AiDe.Mcp.Program).GetMethod("Handle",
+            System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!;
+        var request = new JsonObject
+        {
+            ["jsonrpc"] = "2.0", ["id"] = "request-17", ["method"] = "tools/call",
+            ["params"] = JsonNode.Parse(parameters),
+        };
+
+        var response = Assert.IsType<string>(handle.Invoke(null,
+            [request.ToJsonString(), ServerContext.None("synthetic fixture")]));
+
+        var envelope = JsonNode.Parse(response)!;
+        Assert.Equal("2.0", envelope["jsonrpc"]!.GetValue<string>());
+        Assert.Equal("request-17", envelope["id"]!.GetValue<string>());
+        Assert.DoesNotContain("private-marker", response);
+        return envelope;
+    }
+
+    private static void AppendObservation(FeedFixture fixture, string kind) =>
+        File.AppendAllText(fixture.FilePath, JsonSerializer.Serialize(new
+        {
+            kind, contract = CoordContract.Version, session = "session", at = 0, seq = 900,
+            attrs = new Dictionary<string, string>
+            {
+                [CoordContract.BoardAttributes.Kind] = "question",
+                [CoordContract.BoardAttributes.Content] = "private-marker",
+                [OtelAttributes.GenAiModel] = "changed-model",
+            },
+        }) + "\n");
+
     [Fact]
     public void Read_Interleaved401Receipts_Freezes2002001ThenResumesNewTombstone()
     {

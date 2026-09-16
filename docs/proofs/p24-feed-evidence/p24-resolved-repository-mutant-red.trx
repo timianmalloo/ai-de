@@ -1,0 +1,362 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="6ab22005-c6d1-4d9e-a583-90c19a6167d2" name="malla@TIMMALLSTRIX 2026-09-16 15:57:08" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-16T15:57:08.5909390-07:00" queuing="2026-09-16T15:57:08.5909399-07:00" start="2026-09-16T15:57:07.7835713-07:00" finish="2026-09-16T15:57:08.6456529-07:00" />
+  <TestSettings name="default" id="07cea8c2-fc15-4434-bbe9-392f8f03ab52">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-16_15_57_08" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b61dd512-184b-468c-9f60-6b7b69be7a67" testId="e7aa839b-cff8-33c5-a2be-0dcb89f85cf9" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(kind: &quot;heartbeat&quot;, reason: &quot;OBSERVED_HEARTBEAT&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0162969" startTime="2026-09-16T15:57:08.4329737-07:00" endTime="2026-09-16T15:57:08.4419873-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b61dd512-184b-468c-9f60-6b7b69be7a67">
+      <Output>
+        <ErrorInfo>
+          <Message>AiDe.Core.Watcher.CoordinationSourceException : COORD_SOURCE_BINDING_MISMATCH</Message>
+          <StackTrace>   at AiDe.Core.Watcher.SqliteWatcherObservationStore.ApplyObservation(String scope, CoordinationRecord record, CoordinationAllocators allocators, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs:line 391&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.ProjectRecord(String scope, CoordinationRecord record, CoordinationAllocators allocators, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs:line 363&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.ProjectCoordination(CoordinationPage page, CoordinationCheckpoint expected, CoordinationAllocators allocators) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs:line 275&#xD;
+   at AiDe.Core.Watcher.CoordContractLogPump.PumpOnce() in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationContractLog.cs:line 309&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.FeedFixture.Pump() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 622&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(String kind, String reason) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 70&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a5664fdc-75a2-48d9-b72e-41cae437c6fc" testId="58f9989e-81e5-5aa3-580c-553396de8b8f" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(kind: &quot;session-end&quot;, reason: &quot;OBSERVED_END&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0141433" startTime="2026-09-16T15:57:08.4573585-07:00" endTime="2026-09-16T15:57:08.4712136-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a5664fdc-75a2-48d9-b72e-41cae437c6fc">
+      <Output>
+        <ErrorInfo>
+          <Message>AiDe.Core.Watcher.CoordinationSourceException : COORD_SOURCE_BINDING_MISMATCH</Message>
+          <StackTrace>   at AiDe.Core.Watcher.SqliteWatcherObservationStore.ApplyObservation(String scope, CoordinationRecord record, CoordinationAllocators allocators, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs:line 391&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.ProjectRecord(String scope, CoordinationRecord record, CoordinationAllocators allocators, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs:line 363&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.ProjectCoordination(CoordinationPage page, CoordinationCheckpoint expected, CoordinationAllocators allocators) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs:line 275&#xD;
+   at AiDe.Core.Watcher.CoordContractLogPump.PumpOnce() in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationContractLog.cs:line 309&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.FeedFixture.Pump() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 622&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(String kind, String reason) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 70&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="96e3f4d0-2d65-4d97-ac36-92a4136ace26" testId="cb72b43c-727b-d47d-0574-848c8bae2ddd" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;session-end&quot;, generation: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0206074" startTime="2026-09-16T15:57:08.4720665-07:00" endTime="2026-09-16T15:57:08.4934750-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="96e3f4d0-2d65-4d97-ac36-92a4136ace26">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 40&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5e758d1c-13c9-49bc-9272-a690cc30659d" testId="0c4cd05f-ddce-6a81-bc01-36fba99907cc" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;update&quot;, generation: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0161015" startTime="2026-09-16T15:57:08.5741090-07:00" endTime="2026-09-16T15:57:08.5889693-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5e758d1c-13c9-49bc-9272-a690cc30659d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 40&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="01839e6b-4fd8-4ab0-a885-5c5d9b811098" testId="02f6c73e-2c1d-09c4-2cbb-68179440942a" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;heartbeat&quot;, generation: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0155684" startTime="2026-09-16T15:57:08.5106510-07:00" endTime="2026-09-16T15:57:08.5260838-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="01839e6b-4fd8-4ab0-a885-5c5d9b811098">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 40&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0ee09368-4f3c-4bfe-a636-b2c71f001249" testId="1334833d-2534-4290-32c5-01d1c8217e08" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(kind: &quot;board-post&quot;, reason: &quot;OBSERVED_BOARD&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0148895" startTime="2026-09-16T15:57:08.4426213-07:00" endTime="2026-09-16T15:57:08.4569748-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0ee09368-4f3c-4bfe-a636-b2c71f001249">
+      <Output>
+        <ErrorInfo>
+          <Message>AiDe.Core.Watcher.CoordinationSourceException : COORD_SOURCE_BINDING_MISMATCH</Message>
+          <StackTrace>   at AiDe.Core.Watcher.SqliteWatcherObservationStore.ApplyObservation(String scope, CoordinationRecord record, CoordinationAllocators allocators, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs:line 391&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.ProjectRecord(String scope, CoordinationRecord record, CoordinationAllocators allocators, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs:line 363&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.ProjectCoordination(CoordinationPage page, CoordinationCheckpoint expected, CoordinationAllocators allocators) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs:line 275&#xD;
+   at AiDe.Core.Watcher.CoordContractLogPump.PumpOnce() in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationContractLog.cs:line 309&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.FeedFixture.Pump() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 622&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(String kind, String reason) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 70&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="08243859-ad91-4359-a6fe-f8030963442e" testId="f9edeccb-deac-423f-7c1f-279bb0cb4aba" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;update&quot;, generation: 2)" computerName="TIMMALLSTRIX" duration="00:00:00.0151268" startTime="2026-09-16T15:57:08.5892843-07:00" endTime="2026-09-16T15:57:08.6042460-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="08243859-ad91-4359-a6fe-f8030963442e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 40&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3abb3317-4834-4a66-92a5-099ccdedbce4" testId="0016a6b5-f284-bf49-1cb4-4407b8d837b2" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;session-end&quot;, generation: 2)" computerName="TIMMALLSTRIX" duration="00:00:00.0167793" startTime="2026-09-16T15:57:08.4937929-07:00" endTime="2026-09-16T15:57:08.5103806-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3abb3317-4834-4a66-92a5-099ccdedbce4">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 40&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fef1bb5b-c220-4915-bd52-0d3adf2a65d4" testId="34ede12b-c92a-3f64-2aa0-19e8b92f261b" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;heartbeat&quot;, generation: 2)" computerName="TIMMALLSTRIX" duration="00:00:00.0147018" startTime="2026-09-16T15:57:08.5429129-07:00" endTime="2026-09-16T15:57:08.5574738-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fef1bb5b-c220-4915-bd52-0d3adf2a65d4">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 40&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b3395ff0-671f-4612-a769-c9d17b7d4d73" testId="c3a67980-bff4-691d-eaa1-0f67c2a70dc2" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;board-post&quot;, generation: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0164051" startTime="2026-09-16T15:57:08.5264140-07:00" endTime="2026-09-16T15:57:08.5426198-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b3395ff0-671f-4612-a769-c9d17b7d4d73">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 40&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cec287d7-8e66-4d7c-94ae-56e78ecc559c" testId="f32dd8de-12c6-dc9f-ca6e-da195e217153" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;board-post&quot;, generation: 2)" computerName="TIMMALLSTRIX" duration="00:00:00.0151940" startTime="2026-09-16T15:57:08.5737657-07:00" endTime="2026-09-16T15:57:08.5738050-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cec287d7-8e66-4d7c-94ae-56e78ecc559c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 40&#xD;
+   at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e7459e61-0b46-48ce-8ee6-15acde5ee4bb" testId="585dadd6-ebc0-3c3f-765e-7d7b23046bfc" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(kind: &quot;update&quot;, reason: &quot;OBSERVED_UPDATE&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0775818" startTime="2026-09-16T15:57:08.3408805-07:00" endTime="2026-09-16T15:57:08.4256263-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e7459e61-0b46-48ce-8ee6-15acde5ee4bb">
+      <Output>
+        <ErrorInfo>
+          <Message>AiDe.Core.Watcher.CoordinationSourceException : COORD_SOURCE_BINDING_MISMATCH</Message>
+          <StackTrace>   at AiDe.Core.Watcher.SqliteWatcherObservationStore.ApplyObservation(String scope, CoordinationRecord record, CoordinationAllocators allocators, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs:line 391&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.ProjectRecord(String scope, CoordinationRecord record, CoordinationAllocators allocators, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs:line 363&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.ProjectCoordination(CoordinationPage page, CoordinationCheckpoint expected, CoordinationAllocators allocators) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs:line 275&#xD;
+   at AiDe.Core.Watcher.CoordContractLogPump.PumpOnce() in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationContractLog.cs:line 309&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.FeedFixture.Pump() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 622&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(String kind, String reason) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 70&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;update&quot;, generation: 2)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f9edeccb-deac-423f-7c1f-279bb0cb4aba">
+      <Execution id="08243859-ad91-4359-a6fe-f8030963442e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(kind: &quot;update&quot;, reason: &quot;OBSERVED_UPDATE&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="585dadd6-ebc0-3c3f-765e-7d7b23046bfc">
+      <Execution id="e7459e61-0b46-48ce-8ee6-15acde5ee4bb" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(kind: &quot;board-post&quot;, reason: &quot;OBSERVED_BOARD&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="1334833d-2534-4290-32c5-01d1c8217e08">
+      <Execution id="0ee09368-4f3c-4bfe-a636-b2c71f001249" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;board-post&quot;, generation: 2)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f32dd8de-12c6-dc9f-ca6e-da195e217153">
+      <Execution id="cec287d7-8e66-4d7c-94ae-56e78ecc559c" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(kind: &quot;heartbeat&quot;, reason: &quot;OBSERVED_HEARTBEAT&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="e7aa839b-cff8-33c5-a2be-0dcb89f85cf9">
+      <Execution id="b61dd512-184b-468c-9f60-6b7b69be7a67" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;heartbeat&quot;, generation: 1)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="02f6c73e-2c1d-09c4-2cbb-68179440942a">
+      <Execution id="01839e6b-4fd8-4ab0-a885-5c5d9b811098" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;session-end&quot;, generation: 1)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="cb72b43c-727b-d47d-0574-848c8bae2ddd">
+      <Execution id="96e3f4d0-2d65-4d97-ac36-92a4136ace26" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;update&quot;, generation: 1)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0c4cd05f-ddce-6a81-bc01-36fba99907cc">
+      <Execution id="5e758d1c-13c9-49bc-9272-a690cc30659d" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;heartbeat&quot;, generation: 2)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="34ede12b-c92a-3f64-2aa0-19e8b92f261b">
+      <Execution id="fef1bb5b-c220-4915-bd52-0d3adf2a65d4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;session-end&quot;, generation: 2)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0016a6b5-f284-bf49-1cb4-4407b8d837b2">
+      <Execution id="3abb3317-4834-4a66-92a5-099ccdedbce4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(kind: &quot;session-end&quot;, reason: &quot;OBSERVED_END&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="58f9989e-81e5-5aa3-580c-553396de8b8f">
+      <Execution id="a5664fdc-75a2-48d9-b72e-41cae437c6fc" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: &quot;board-post&quot;, generation: 1)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="c3a67980-bff4-691d-eaa1-0f67c2a70dc2">
+      <Execution id="b3395ff0-671f-4612-a769-c9d17b7d4d73" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="e7aa839b-cff8-33c5-a2be-0dcb89f85cf9" executionId="b61dd512-184b-468c-9f60-6b7b69be7a67" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="58f9989e-81e5-5aa3-580c-553396de8b8f" executionId="a5664fdc-75a2-48d9-b72e-41cae437c6fc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cb72b43c-727b-d47d-0574-848c8bae2ddd" executionId="96e3f4d0-2d65-4d97-ac36-92a4136ace26" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c4cd05f-ddce-6a81-bc01-36fba99907cc" executionId="5e758d1c-13c9-49bc-9272-a690cc30659d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="02f6c73e-2c1d-09c4-2cbb-68179440942a" executionId="01839e6b-4fd8-4ab0-a885-5c5d9b811098" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1334833d-2534-4290-32c5-01d1c8217e08" executionId="0ee09368-4f3c-4bfe-a636-b2c71f001249" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f9edeccb-deac-423f-7c1f-279bb0cb4aba" executionId="08243859-ad91-4359-a6fe-f8030963442e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0016a6b5-f284-bf49-1cb4-4407b8d837b2" executionId="3abb3317-4834-4a66-92a5-099ccdedbce4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="34ede12b-c92a-3f64-2aa0-19e8b92f261b" executionId="fef1bb5b-c220-4915-bd52-0d3adf2a65d4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c3a67980-bff4-691d-eaa1-0f67c2a70dc2" executionId="b3395ff0-671f-4612-a769-c9d17b7d4d73" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f32dd8de-12c6-dc9f-ca6e-da195e217153" executionId="cec287d7-8e66-4d7c-94ae-56e78ecc559c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="585dadd6-ebc0-3c3f-765e-7d7b23046bfc" executionId="e7459e61-0b46-48ce-8ee6-15acde5ee4bb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="12" executed="12" passed="0" failed="12" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.28]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.38]       AiDe.Core.Watcher.CoordinationSourceException : COORD_SOURCE_BINDING_MISMATCH&#xD;
+[xUnit.net 00:00:00.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs(391,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.ApplyObservation(String scope, CoordinationRecord record, CoordinationAllocators allocators, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs(363,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.ProjectRecord(String scope, CoordinationRecord record, CoordinationAllocators allocators, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs(275,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.ProjectCoordination(CoordinationPage page, CoordinationCheckpoint expected, CoordinationAllocators allocators)&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationContractLog.cs(309,0): at AiDe.Core.Watcher.CoordContractLogPump.PumpOnce()&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(622,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.FeedFixture.Pump()&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(70,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(String kind, String reason)&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.39]       AiDe.Core.Watcher.CoordinationSourceException : COORD_SOURCE_BINDING_MISMATCH&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs(391,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.ApplyObservation(String scope, CoordinationRecord record, CoordinationAllocators allocators, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.39]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs(363,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.ProjectRecord(String scope, CoordinationRecord record, CoordinationAllocators allocators, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.39]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs(275,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.ProjectCoordination(CoordinationPage page, CoordinationCheckpoint expected, CoordinationAllocators allocators)&#xD;
+[xUnit.net 00:00:00.39]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationContractLog.cs(309,0): at AiDe.Core.Watcher.CoordContractLogPump.PumpOnce()&#xD;
+[xUnit.net 00:00:00.39]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(622,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.FeedFixture.Pump()&#xD;
+[xUnit.net 00:00:00.39]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(70,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(String kind, String reason)&#xD;
+[xUnit.net 00:00:00.39]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.41]       AiDe.Core.Watcher.CoordinationSourceException : COORD_SOURCE_BINDING_MISMATCH&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs(391,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.ApplyObservation(String scope, CoordinationRecord record, CoordinationAllocators allocators, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.41]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs(363,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.ProjectRecord(String scope, CoordinationRecord record, CoordinationAllocators allocators, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.41]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs(275,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.ProjectCoordination(CoordinationPage page, CoordinationCheckpoint expected, CoordinationAllocators allocators)&#xD;
+[xUnit.net 00:00:00.41]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationContractLog.cs(309,0): at AiDe.Core.Watcher.CoordContractLogPump.PumpOnce()&#xD;
+[xUnit.net 00:00:00.41]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(622,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.FeedFixture.Pump()&#xD;
+[xUnit.net 00:00:00.41]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(70,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(String kind, String reason)&#xD;
+[xUnit.net 00:00:00.41]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.41]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.42]       AiDe.Core.Watcher.CoordinationSourceException : COORD_SOURCE_BINDING_MISMATCH&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs(391,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.ApplyObservation(String scope, CoordinationRecord record, CoordinationAllocators allocators, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs(363,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.ProjectRecord(String scope, CoordinationRecord record, CoordinationAllocators allocators, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationProjection.cs(275,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.ProjectCoordination(CoordinationPage page, CoordinationCheckpoint expected, CoordinationAllocators allocators)&#xD;
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationContractLog.cs(309,0): at AiDe.Core.Watcher.CoordContractLogPump.PumpOnce()&#xD;
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(622,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.FeedFixture.Pump()&#xD;
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(70,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(String kind, String reason)&#xD;
+[xUnit.net 00:00:00.42]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.45]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.45]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(40,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation)&#xD;
+[xUnit.net 00:00:00.45]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.45]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.46]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.46]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.46]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(40,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation)&#xD;
+[xUnit.net 00:00:00.46]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.46]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.48]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.48]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.48]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(40,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation)&#xD;
+[xUnit.net 00:00:00.48]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.48]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.50]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.50]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.50]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.50]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(40,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation)&#xD;
+[xUnit.net 00:00:00.50]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.50]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.51]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.51]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.51]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.51]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(40,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation)&#xD;
+[xUnit.net 00:00:00.51]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.51]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.53]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.53]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.53]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.53]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(40,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation)&#xD;
+[xUnit.net 00:00:00.53]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.53]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.54]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.54]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.54]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.54]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(40,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation)&#xD;
+[xUnit.net 00:00:00.54]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.54]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.56]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.56]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.56]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.56]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(40,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(String kind, Int32 generation)&#xD;
+[xUnit.net 00:00:00.56]            at InvokeStub_CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.56]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.56]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:57:08.4272129-07:00">
+        <Text>[xUnit.net 00:00:00.38]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(kind: "update", reason: "OBSERVED_UPDATE") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:57:08.4423199-07:00">
+        <Text>[xUnit.net 00:00:00.39]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(kind: "heartbeat", reason: "OBSERVED_HEARTBEAT") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:57:08.4572509-07:00">
+        <Text>[xUnit.net 00:00:00.41]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(kind: "board-post", reason: "OBSERVED_BOARD") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:57:08.4714848-07:00">
+        <Text>[xUnit.net 00:00:00.42]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSameRepositoryNewGeneration_AppliesWithoutInventingGenerationAuthority(kind: "session-end", reason: "OBSERVED_END") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:57:08.4938375-07:00">
+        <Text>[xUnit.net 00:00:00.45]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: "session-end", generation: 1) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:57:08.5106887-07:00">
+        <Text>[xUnit.net 00:00:00.46]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: "session-end", generation: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:57:08.5264213-07:00">
+        <Text>[xUnit.net 00:00:00.48]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: "heartbeat", generation: 1) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:57:08.5429453-07:00">
+        <Text>[xUnit.net 00:00:00.49]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: "board-post", generation: 1) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:57:08.5577121-07:00">
+        <Text>[xUnit.net 00:00:00.51]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: "heartbeat", generation: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:57:08.5941560-07:00">
+        <Text>[xUnit.net 00:00:00.53]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: "board-post", generation: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:57:08.5942058-07:00">
+        <Text>[xUnit.net 00:00:00.54]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: "update", generation: 1) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:57:08.6045720-07:00">
+        <Text>[xUnit.net 00:00:00.56]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Pump_ResolvedSessionRepositoryDrifts_RefusesWithoutNativeEffects(kind: "update", generation: 2) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

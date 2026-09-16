@@ -113,6 +113,9 @@ public static class Program
 
             "tools/list" => Result(id, new JsonObject { ["tools"] = Tools.Schema() }),
 
+            "tools/call" when request["params"] is not (null or JsonObject) =>
+                Error(id, -32602, "Invalid tool parameters."),
+
             "tools/call" => Result(id, Tools.Call(request["params"]?.AsObject(), context)),
 
             // Unknown methods are answered as unknown rather than ignored: silence looks like a hung

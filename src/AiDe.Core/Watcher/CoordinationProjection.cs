@@ -378,6 +378,19 @@ public sealed partial class SqliteWatcherObservationStore
             return new("refused", record.Refusal);
         }
         var known = FindObservation(scope, record.Event!.ExternalSessionId, transaction);
+        if (known is not null)
+        {
+            // Session metadata can change after capture. Compare the resolved row with the
+            // immutable source binding under the same IMMEDIATE transaction as every effect.
+            using var binding = CoordinationCommand(transaction,
+                "SELECT bound_repository_key FROM coord_projection_checkpoint WHERE scope=$scope;",
+                ("$scope", scope));
+            if (binding.ExecuteScalar() is string repository
+                && repository != known.Binding.Repository.CanonicalPath)
+            {
+                throw new CoordinationSourceException(CoordinationBindingErrors.Mismatch);
+            }
+        }
         if (record.Event is ContractRegister)
         {
             if (known is null)
