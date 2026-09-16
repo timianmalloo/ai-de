@@ -169,6 +169,23 @@ C# watcher/store/WPF implementation by assumption.
 
 ## Accepted P2 amendment — 2026-09-16
 
+### S1–S6 pre-release correction, 2026-09-16
+
+Before changing DDL, adopt design §P2.2 S1–S6: global feed high-water insertion
+guard; explicit integer stored types and exact TEXT/UTF-8-byte/NUL key constraints;
+immutable duplicate-occurrence diagnostics, separate from admissions and current
+state; contiguous boundary history derived from two indexed interval sources;
+isolated payload-guard mutation and actual constructor migration-fault tests.
+The three caches are retained. The event grain is one logical admission, not every
+physical duplicate. Full-byte duplicate classification belongs to the future trusted
+writer and is not established by raw SQL tests.
+
+This amends fresh unreleased v8 only. Existing unreleased v8 fixtures are unsupported
+upgrade inputs; released v7 migration stays additive. Ordinary tables plus explicit
+storage checks avoid adopting STRICT without an established old-binary floor.
+No production migration, activation, native R1/R2 repair or old-binary rollback is
+claimed. Independent Data/Test re-gate remains required; author evidence cannot clear it.
+
 The decision is amended by design `cross-harness-coordination.md` §11 A–E.
 That section is the authoritative full transcription of the three accepted Data
 amendments: deferred initial/current receipt constraints on the same three caches,

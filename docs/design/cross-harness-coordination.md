@@ -396,9 +396,62 @@ The first feed row (`MIN(n)` for the source key in scope) is the immutable **ADM
 receipt; later feed rows are transition receipts. Duplicate same enhanced key and equal
 full canonical bytes returns that original admission receipt/mapping plus separately
 labelled **CURRENT** state/mapping. Digests are an index aid, never equality alone.
-New-offset duplicates need no new event or receipt; their accounted prefix advances
-atomically. UNIQUE first source position plus the full accepted-prefix check detects
-changed bytes; the latter also covers subsequent duplicate positions not copied as rows.
+New-offset duplicates need no new event, admission or state-transition receipt.
+They append one immutable `duplicate-occurrence-accounted` diagnostic and advance the
+checkpoint atomically. Reprocessing an accounted occurrence appends nothing. The
+diagnostic is not a semantic retry, native effect, capability refresh or current state.
+The trusted writer must compare FULL versioned canonical bytes, not hashes alone,
+before classifying a duplicate; SQL cannot validate unavailable captured bytes.
+
+### P2.2 S1–S6 correction contract — recorded before DDL, 2026-09-16
+
+This supersedes the earlier occurrence-grain wording for the three cache tables.
+One event is exactly one logical admission, with immutable first occurrence and original
+admission receipt. One feed row is an admission, semantic transition, or explicitly
+separate occurrence-accounting diagnostic. One checkpoint is the contiguous accounted
+prefix of boundary `(scope, epoch)`; scope encodes repository/stream/projection incarnation,
+never a bare event ID. Counts are additive within a category, not across these categories.
+Current pointers/checkpoints are derived Type-1 caches; receipt and occurrence history
+is immutable. No fourth counter/table or independently maintained boundary authority.
+
+S1: every committed feed insertion must exceed the existing GLOBAL high-water mark.
+Explicit holes are allowed. Validate the actual assigned `n` AFTER INSERT so SQLite's
+BEFORE INSERT default rowid sentinel cannot bypass the rule; automatic allocation remains
+valid. No legacy ID, sequence or history rewrite.
+
+S2/S3: constrain integer stored types plus numeric ranges, including nullable generation
+and diagnostic offsets. No due/retry columns exist in this foundation; future additions
+must apply the same rule. Keys remain exact TEXT, no implicit normalization; reject BLOB,
+embedded NUL and UTF-8 byte-length overflow (scope 4096, epoch 128, event key 512).
+Explicit `typeof` checks preserve ordinary-table format. STRICT was considered: installed
+Microsoft.Data.Sqlite is 10.0.11, but old-binary compatibility is not established, so no
+new schema-format floor is adopted on an inferred compatibility claim.
+
+S4: the diagnostic has `is_initial=0`, original `admission_n`, database-allocated `n`,
+and nullable feed `source_offset`, `source_end`, `raw_digest`, required ONLY for this
+outcome. Application state, session/message/parent mapping are NULL. A full
+`(scope,epoch,event_key,admission_n)` FK anchors it. It never updates current state and
+cannot be used as the current pointer. Event first intervals UNION diagnostic intervals
+form history. Each new interval starts at the latest endpoint in its boundary (initial
+zero); a checkpoint must end at that same endpoint and advance monotonically.
+The writer returns original ADMISSION mapping plus separate CURRENT state. SQL fixtures
+prove accounting/reference facts only; real capture, full-byte classification and the
+atomic writer remain mandatory unmet integration floors.
+
+S5: ordered endpoint indexes on both histories and indexed scope/epoch range predicates
+replace unbounded epoch-conflict and offset-only endpoint scans. Query plans and bounded
+predicate-visit fixtures establish only those lookup paths, not whole-pump runtime.
+
+S6: payload tests stage a valid next receipt without automatic pointer movement, then
+attempt changed canonical bytes with the valid pointer. Intact payload rejection must
+be `COORD_PAYLOAD_IMMUTABLE`; removing ONLY that clause must admit the mutation.
+Keep positive ordinary-transition and paired tombstone clearing controls.
+
+Version policy: amend only the fresh UNRELEASED v8 candidate before activation.
+Released v7→fresh v8 remains additive. Existing unreleased v8 fixtures are NOT upgraded
+by this change; no DROP, downgrade or history deletion is a repair path. Old-binary
+rollback remains unexecuted. Supplied Data/Test findings authorize this bounded author
+repair, not self-clearance: independent Data/Test re-gate follows all six corrections.
 
 Conflicting canonical bytes do not mutate the original event or its state. Persist one
 refusal application keyed by `K("conflict", originalKey, offendingOccurrenceKey,

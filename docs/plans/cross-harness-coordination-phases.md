@@ -20,6 +20,37 @@ summary: >-
 
 # Durable phase graph
 
+## Finite S1–S6 schema repair — 2026-09-16
+
+Goal: repair the six supplied Data/Test schema findings against baseline
+`584975f99547f67c2245ac879a47fd44f3f8fcf2`.
+Done when: semantic baseline REDs, repaired schema GREENs, isolated payload mutants,
+indexed lookup evidence and immutable receipts are committed for independent re-gate.
+Not in scope: native R1/R2, activation, live data, canonical writer/capture or P3–P5.
+Tier T2; fan-out 0; main-line budget 38 calls; context ceiling 150k.
+
+| Node | Capability | Dependency / exit evidence | Actual |
+|---|---|---|---|
+| S0 | Reasoning | Supplied Data/Test findings → design/ADR correction before DDL edits | Recorded |
+| S1 | Deterministic mechanics | S0 → real baseline semantic failures, not missing tables | 50 cases: 28 pass, 22 fail; classified in Proof Pack |
+| S2 | Reasoning | S1 → global order, storage types, key bytes, accounting, index and guard repairs | Two production files; no dependencies |
+| S3 | Deterministic mechanics | S2 → prior 129 + new boundaries; clause mutants; native RED preservation | 202 pass; separate native 3 pass / 4 fail |
+| S4 | Deterministic mechanics | S3 → source/test/project/binary pins, audit and committed evidence | See Proof Pack and receipts |
+| G | Independent review | S4 → Data/Test re-gate of all six repairs | PENDING; not author-cleared |
+
+Edges are data/decision dependencies. The same DDL and database build outputs couple the
+implementation/test nodes; no parallel authoring or agent fan-out. Estimated normalized
+work and span both equal five author nodes (`T1=T∞=5`, Inferred equal-node model, not time);
+parallel speedup ceiling is 1. Rework terminates when the finite failing-case set is empty;
+the 38-call cap is an estimate-failure signal, never a waiver. Two baseline findings
+required corrections: test error-code calibration and failed-constructor disposal.
+Actual test wall time/counts are in TRX; token cost is not recorded.
+
+This narrower schema goal supersedes only the old author's immediate checkpoint below,
+not the already approved P0–P5 programme. All native/capture/recovery/rollback gates and
+all six upstream actions AFTER VERIFIED remain unchanged. Fresh unreleased v8 only;
+upgrading already-created prerelease v8 databases remains unsupported.
+
 ## P2.2 author checkpoint — partial, native replay still blocked
 
 Goal: implement durable native replay and close R1/R2.
