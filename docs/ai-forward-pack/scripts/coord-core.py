@@ -526,7 +526,7 @@ def _request_event(event: object, seen: dict) -> dict:
         raise ValueError("XH.INVALID_ID")
     if _is_enhanced_record(event):
         canonical = validate_response(event)
-        key = (event["repositoryId"], event["streamId"], event["eventId"])
+        key = _protocol().source_key(event)
         if key in seen and seen[key] != canonical:
             raise CoordError("XH.EVENT_CONFLICT", "source key has unequal semantic bytes")
         seen[key] = canonical
@@ -572,7 +572,7 @@ def fold_requests(events, *, enhanced=False, generations=None, trusted_context=N
     for event in events:
         _request_event(event, seen)
         if _is_enhanced_record(event):
-            replies.setdefault((event["repositoryId"], event["streamId"], event["eventId"]), event)
+            replies.setdefault(_protocol().source_key(event), event)
             continue
         rid = event.get("id")
         if not rid:
@@ -586,14 +586,16 @@ def fold_requests(events, *, enhanced=False, generations=None, trusted_context=N
         elif event.get("kind") == "request-resolve":
             resolutions.setdefault(rid, []).append(event)
     if enhanced:
-        for event in sorted(replies.values(), key=lambda e: e["eventId"]):
+        for event in sorted(replies.values(), key=_protocol().source_key):
             if event["eventType"] == "obligation-created":
-                rid = event["threadId"]
-                requests.setdefault(rid, {
+                rid = event["inReplyTo"]
+                if rid in requests:
+                    continue
+                key = (event["repositoryId"], event["streamId"], rid)
+                # Namespace a display placeholder; only verified publications supply anchors.
+                requests.setdefault(key, {
                     "id": rid, "repositoryId": event["repositoryId"],
-                    "streamId": event["streamId"], "sender": event["sender"],
-                    "recipient": event["recipient"], "proposal": event["proposal"],
-                    "at": event["producerAt"], "to": event["recipient"]["session"],
+                    "streamId": event["streamId"],
                     "contract": "proposal revision"})
     for rid, row in requests.items():
         row["status"] = "open"
@@ -605,18 +607,23 @@ def fold_requests(events, *, enhanced=False, generations=None, trusted_context=N
         if enhanced:
             protocol = _protocol()
             all_replies = list(replies.values())
-            _fold_responses(row, [e for e in all_replies if e["eventType"] == "response-recorded"],
-                            generations or {})
+            if isinstance(rid, tuple):
+                all_replies = [e for e in all_replies if
+                               (e["repositoryId"], e["streamId"], e["inReplyTo"]) == rid]
             protocol.fold_protocol(row, [e for e in all_replies if e["eventType"] in protocol.FACT_TYPES],
                                    all_replies, trusted_context)
-    return sorted(requests.values(), key=lambda r: (r.get("at", 0.0), r["id"]))
+            _fold_responses(row, [e for e in all_replies if e["eventType"] == "response-recorded"],
+                            generations or {})
+    return sorted(requests.values(), key=lambda r: (
+        r.get("current_proposal") is None, r.get("at", 0.0), r["id"],
+        r.get("repositoryId", ""), r.get("streamId", "")))
 
 
 def _fold_responses(row: dict, replies: list, generations: dict) -> None:
     related = sorted((r for r in replies if r["inReplyTo"] == row["id"]),
                      key=lambda r: (r["producerSeq"], r["eventId"]))
     row.update(responses=related, response_errors=[], unanswered=True, remaining=True,
-               accepted=False, execution_eligible=False, latest_disposition=None, next=None)
+               latest_disposition=None, next=None)
     valid = {}
     for response in related:
         code = None

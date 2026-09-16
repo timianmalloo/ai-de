@@ -215,31 +215,38 @@ def _key(proposal: dict) -> str:
     return json.dumps(proposal, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
 
+def source_key(event: dict) -> tuple[str, str, str]:
+    return event["repositoryId"], event["streamId"], event["eventId"]
+
+
 def fold_protocol(row: dict, facts: list[dict], all_events: list[dict],
                   context: TrustedContext | None) -> None:
     """Append-only facts -> fail-closed view. Order and receipt timestamps grant nothing."""
     related = sorted((e for e in facts if e["inReplyTo"] == row["id"]),
-                     key=lambda e: e["eventId"])
+                     key=source_key)
     row.update(protocol_facts=copy.deepcopy(related), protocol_errors=[], verification=[],
                current_proposal=None, acceptances=[], consumptions=[], accepted=False,
                execution_eligible=False, ownership_granted=False, run_granted=False,
                transfer_granted=False, start_granted=False)
-    checked: dict[str, Verification] = {}
+    checked: dict[tuple[str, str, str], Verification] = {}
     integrity_cache: set[str] = set()
 
     def error(event: dict, code: str) -> None:
-        row["protocol_errors"].append({"eventId": event["eventId"], "code": code})
+        row["protocol_errors"].append({k: event[k] for k in
+                                       ("repositoryId", "streamId", "eventId")} | {"code": code})
 
     for event in related:
-        result = {"eventId": event["eventId"], "integrity": "not-checked",
+        result = {"eventId": event["eventId"], "repositoryId": event["repositoryId"],
+                  "streamId": event["streamId"], "integrity": "not-checked",
                   "issuer": "unverified", "authorization": "denied"}
         row["verification"].append(result)
         try:
+            require(all(event[k] == row["id"] for k in
+                        ("inReplyTo", "threadId", "obligationId", "causationId")),
+                    "XH.CORRELATION_MISMATCH")
             require(context is not None, "XH.AUTHORITY_UNVERIFIED")
             require(event["repositoryId"] == row.get("repositoryId") == context.repository_id
-                    and event["streamId"] == row.get("streamId")
-                    and all(event[k] == row["id"] for k in
-                            ("threadId", "obligationId", "causationId")),
+                    and event["streamId"] == row.get("streamId"),
                     "XH.CORRELATION_MISMATCH")
             generations = dict(context.generations)
             require(len(generations) == len(context.generations), "XH.GENERATION_UNKNOWN")
@@ -270,15 +277,16 @@ def fold_protocol(row: dict, facts: list[dict], all_events: list[dict],
             require(len(set(v.required_peers)) == len(v.required_peers),
                     "XH.PROPOSAL_CONTRACT_MISMATCH")
             result["authorization"] = "verified"
-            checked[event["eventId"]] = v
+            checked[source_key(event)] = v
         except (ProtocolError, OSError, ValueError, TypeError, UnicodeError) as exc:
             error(event, exc.code if isinstance(exc, ProtocolError) else "XH.AUTHORITY_UNVERIFIED")
 
     proposals: dict[str, dict] = {}
+    publications: dict[str, dict] = {}
     peers: dict[str, tuple[Endpoint, ...]] = {}
     ambiguous = False
     for event in related:
-        v = checked.get(event["eventId"])
+        v = checked.get(source_key(event))
         if v is None or event["eventType"] != "obligation-created":
             continue
         key = _key(event["proposal"])
@@ -289,10 +297,11 @@ def fold_protocol(row: dict, facts: list[dict], all_events: list[dict],
         if key in peers and set(peers[key]) != set(v.required_peers):
             ambiguous = True
         proposals[key], peers[key] = event["proposal"], v.required_peers
+        publications.setdefault(key, event)
     successors: dict[str, set[str]] = {}
     predecessors: dict[str, set[str]] = {}
     for event in related:
-        if event["eventId"] not in checked or event["eventType"] != "proposal-superseded":
+        if source_key(event) not in checked or event["eventType"] != "proposal-superseded":
             continue
         old, new = _key(event["supersedes"]), _key(event["proposal"])
         if old not in proposals or new not in proposals:
@@ -319,12 +328,18 @@ def fold_protocol(row: dict, facts: list[dict], all_events: list[dict],
         row["protocol_errors"].append({"code": "XH.REVISION_AMBIGUOUS"})
         current = None
     row["current_proposal"] = copy.deepcopy(proposals.get(current))
+    if current is not None and "sender" not in row:
+        publication = publications[current]
+        row.update(sender=copy.deepcopy(publication["sender"]),
+                   recipient=copy.deepcopy(publication["recipient"]),
+                   proposal=copy.deepcopy(publication["proposal"]),
+                   at=publication["producerAt"], to=publication["recipient"]["session"])
 
     accepted: set[tuple[str, Endpoint]] = set()
-    targets = {(e["repositoryId"], e["streamId"], e["eventId"]): e for e in all_events}
-    consumed: set[tuple[str, str, Endpoint, str]] = set()
+    targets = {source_key(e): e for e in all_events}
+    consumed: set[tuple[tuple[str, str, str], str, Endpoint, str]] = set()
     for event in related:
-        v = checked.get(event["eventId"])
+        v = checked.get(source_key(event))
         if v is None:
             continue
         kind, key = event["eventType"], _key(event["proposal"])
@@ -341,7 +356,7 @@ def fold_protocol(row: dict, facts: list[dict], all_events: list[dict],
         elif kind == "recipient-consumed":
             payload = event["payload"]
             target = targets.get((event["repositoryId"], event["streamId"], payload["eventId"]))
-            if (target is None or target["eventId"] == event["eventId"]
+            if (target is None or source_key(target) == source_key(event)
                     or target["payloadDigest"] != payload["eventDigest"]
                     or target["threadId"] != event["threadId"]
                     or target["obligationId"] != event["obligationId"]
@@ -349,7 +364,7 @@ def fold_protocol(row: dict, facts: list[dict], all_events: list[dict],
                     or target["proposal"] != event["proposal"]):
                 error(event, "XH.CONSUMPTION_MISMATCH")
                 continue
-            stamp = (target["eventId"], target["payloadDigest"], endpoint(event["sender"]),
+            stamp = (source_key(target), target["payloadDigest"], endpoint(event["sender"]),
                      payload["checkpoint"])
             if stamp not in consumed:
                 consumed.add(stamp)

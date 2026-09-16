@@ -379,6 +379,131 @@ class ProtocolTests(unittest.TestCase):
                 self.assertFalse(row["accepted"])
                 self.assertIn("XH.AUTHORITY_UNVERIFIED", str(row["protocol_errors"]))
 
+    def test_Fold_SourceKeyCollisions_AllFactConsumersDenied(self):
+        new = dict(self.ref, revision="next")
+        for field, kind, reverse in itertools.product(
+                ("repositoryId", "streamId"),
+                ("obligation-created", "proposal-superseded",
+                 "proposal-accepted", "recipient-consumed"), (False, True)):
+            with self.subTest(field=field, kind=kind, reverse=reverse):
+                published = self.event()
+                base = [published]
+                if kind == "obligation-created":
+                    valid = self.event(eid="shared")
+                    forged = self.event(eid="shared", proposal=new)
+                elif kind == "proposal-superseded":
+                    base.append(self.event(eid="next", proposal=new))
+                    valid = self.event(kind, "shared", new, supersedes=self.ref, payload={})
+                    forged = self.event(kind, "shared", self.ref, supersedes=new, payload={})
+                elif kind == "proposal-accepted":
+                    valid = self.acceptance("peer-a", eid="shared")
+                    forged = self.acceptance("peer-b", eid="shared")
+                else:
+                    target = response(proposal=self.ref)
+                    foreign_target = response(proposal=self.ref, **{field: "foreign"})
+                    base.extend((target, foreign_target))
+                    valid = self.consumed(target, eventId="shared")
+                    forged = self.consumed(foreign_target, eventId="shared")
+                forged[field] = "foreign"
+                forged["payloadDigest"] = digest(forged)
+                facts = [*base, valid, forged]
+                original = copy.deepcopy(facts)
+                row = self.folded(list(reversed(facts)) if reverse else facts)
+                self.assertEqual(new if kind == "proposal-superseded" else self.ref,
+                                 row["current_proposal"])
+                self.assertEqual([valid] if kind == "proposal-accepted" else [],
+                                 row["acceptances"])
+                self.assertEqual([valid] if kind == "recipient-consumed" else [],
+                                 row["consumptions"])
+                self.assertFalse(row["accepted"])
+                self.assertEqual(original, facts)
+                matching = [v for v in row["verification"] if v["eventId"] == "shared"
+                            and v.get(field) == "foreign"]
+                self.assertEqual(1, len(matching))
+                self.assertEqual("denied", matching[0]["authorization"])
+
+    def test_Fold_StandalonePoison_IsInertAndCannotReplaceTrustedAnchor(self):
+        facts = [self.event(), self.acceptance("peer-a"), self.acceptance("peer-b")]
+        for change, reverse in itertools.product(
+                ({"repositoryId": "foreign"}, {"streamId": "foreign"},
+                 {"sender": {"session": "peer-a", "generation": "g1"}},
+                 {"payload": {"requiredPeers": [{"session": "peer-a", "generation": "g1"}]}}),
+                (False, True)):
+            with self.subTest(change=change, reverse=reverse):
+                self.denied = {"000-foreign"} if "streamId" in change else set()
+                poison = self.event(eid="000-foreign", proposal=dict(self.ref, revision="poison"),
+                                    **change)
+                events = [poison, *facts]
+                rows = coord.fold_requests(list(reversed(events)) if reverse else events,
+                                           enhanced=True, trusted_context=self.context())
+                self.assertTrue(rows[0]["accepted"])
+                self.assertEqual(self.ref, rows[0]["current_proposal"])
+                self.assertEqual(self.ref, rows[0]["proposal"])
+                self.assertEqual(self.q["sender"], rows[0]["sender"])
+                self.assertEqual(4, sum(len(r["protocol_facts"]) for r in rows))
+                self.assertTrue(any(r["protocol_errors"] for r in rows))
+        rows = coord.fold_requests([self.event()], enhanced=True)
+        self.assertEqual(1, len(rows[0]["protocol_facts"]))
+        for field in ("sender", "recipient", "proposal", "at"):
+            self.assertNotIn(field, rows[0])
+
+    def test_Fold_StandaloneNamespaces_DoNotPoolPeersOrProposals(self):
+        other = [self.event(), self.acceptance("peer-b")]
+        for e in other:
+            e["streamId"] = "second"
+            e["payloadDigest"] = digest(e)
+        facts = [self.event(), self.acceptance("peer-a"), *other]
+        for order in (facts, list(reversed(facts))):
+            rows = coord.fold_requests(order, enhanced=True, trusted_context=self.context())
+            self.assertEqual(2, len(rows))
+            self.assertFalse(any(r["accepted"] for r in rows))
+            self.assertEqual({("repo", "stream", "q"), ("repo", "second", "q")},
+                             {(r["repositoryId"], r["streamId"], r["id"]) for r in rows})
+            self.assertEqual([2, 2], sorted(len(r["protocol_facts"]) for r in rows))
+        other_vote = self.acceptance("peer-a")
+        other_vote["streamId"] = "second"
+        other_vote["payloadDigest"] = digest(other_vote)
+        rows = coord.fold_requests([*facts, self.acceptance("peer-b"), other_vote],
+                                   enhanced=True, trusted_context=self.context())
+        self.assertTrue(all(r["accepted"] for r in rows))
+
+    def test_Fold_StandaloneTrustedAnchor_PreservesResponseConsumption(self):
+        target = response(proposal=self.ref, disposition="answer")
+        rows = coord.fold_requests([self.event(), target, self.consumed(target)],
+                                   enhanced=True, generations=self.generations,
+                                   trusted_context=self.context())
+        self.assertFalse(rows[0]["unanswered"])
+        self.assertEqual(1, len(rows[0]["consumptions"]))
+        self.assertFalse(rows[0]["accepted"])
+
+    def test_Cli_MismatchedPublication_VisibleNegativeWithOrWithoutLegacy(self):
+        for field, legacy in itertools.product(
+                ("threadId", "obligationId", "causationId"), (False, True)):
+            with self.subTest(field=field, legacy=legacy):
+                fact = self.event(**{field: "other"})
+                facts = [self.q, fact] if legacy else [fact]
+                raw = b"".join(json.dumps(e).encode() + b"\n" for e in facts)
+                parsed, errors = self.read(raw)
+                self.assertEqual(facts, parsed)
+                self.assertEqual([], errors)
+                env = dict(self.env, COORD_ROOT=str(self.root), AGENT_SESSION="synthetic",
+                           AGENT_NAME="synthetic", PYTHONIOENCODING="utf-8",
+                           PYTHONDONTWRITEBYTECODE="1")
+                proc = subprocess.run(
+                    [sys.executable, "-B", str(SCRIPTS / "coord-core.py"),
+                     "request", "list", "--status", "all", "--actionable", "--json"],
+                    cwd=self.root, env=env, capture_output=True, text=True, timeout=30)
+                self.assertEqual(0, proc.returncode, proc.stderr)
+                payload = json.loads(proc.stdout)
+                self.assertEqual("disabled", payload["enhanced_writer"])
+                self.assertEqual(1, sum(len(r["protocol_facts"]) for r in payload["requests"]))
+                row = payload["requests"][0]
+                self.assertIn("XH.CORRELATION_MISMATCH", str(row["protocol_errors"]))
+                self.assertEqual(1, len(row["verification"]))
+                self.assertFalse(row["accepted"])
+                self.assertIsNone(row["current_proposal"])
+                self.assertEqual(raw, (self.root / "requests.jsonl").read_bytes())
+
     def test_Digest_GoldenBytes_PreservesTypesNullAndUnicode(self):
         value = {"z": None, "a": [True, 1, 1.0, "é"], "recordedAt": 42, "payloadDigest": "inert"}
         self.assertEqual(b'{"a":[true,1,1.0,"\xc3\xa9"],"z":null}', coord._response_bytes(value))
@@ -418,6 +543,57 @@ def mutation_receipt() -> int:
             exec(compile(source.replace(old, new, 1), str(SCRIPTS / "coord_protocol.py"),
                          "exec"), module.__dict__)
             result = unittest.TextTestRunner(stream=io.StringIO()).run(ProtocolTests(test))
+        results.append({"mutant": name, "tests": result.testsRun, "failures": len(result.failures),
+                        "errors": len(result.errors),
+                        "killed": bool(result.failures) and not result.errors})
+    repairs = (
+        ("checked-source-key", "protocol",
+         (("checked[source_key(event)]", 'checked[event["eventId"]]'),
+          ("checked.get(source_key(event))", 'checked.get(event["eventId"])'),
+          ("source_key(event) not in checked", 'event["eventId"] not in checked')),
+         "test_Fold_SourceKeyCollisions_AllFactConsumersDenied"),
+        ("standalone-namespace", "core",
+         (('key = (event["repositoryId"], event["streamId"], rid)', 'key = rid'),),
+         "test_Fold_StandaloneNamespaces_DoNotPoolPeersOrProposals"),
+        ("untrusted-anchor", "core",
+         (('"contract": "proposal revision"})',
+           '"contract": "proposal revision", "sender": event["sender"], '
+           '"recipient": event["recipient"], "proposal": event["proposal"], '
+           '"at": event["producerAt"]})'),),
+         "test_Fold_StandalonePoison_IsInertAndCannotReplaceTrustedAnchor"),
+        ("publication-bucket", "core",
+         (('rid = event["inReplyTo"]', 'rid = event["threadId"]'),),
+         "test_Cli_MismatchedPublication_VisibleNegativeWithOrWithoutLegacy"),
+    )
+    for name, owner, replacements, test in repairs:
+        path = SCRIPTS / ("coord_protocol.py" if owner == "protocol" else "coord-core.py")
+        mutated = path.read_text(encoding="utf-8")
+        for old, new in replacements:
+            if old not in mutated:
+                raise AssertionError("missing repair mutation anchor: " + name)
+            mutated = mutated.replace(old, new)
+        if owner == "protocol":
+            module = types.ModuleType("coord_protocol")
+            with patch.dict(sys.modules, {"coord_protocol": module}):
+                exec(compile(mutated, str(path), "exec"), module.__dict__)
+                result = unittest.TextTestRunner(stream=io.StringIO()).run(ProtocolTests(test))
+        else:
+            module = types.ModuleType("coord_repair_mutant")
+            module.__file__ = str(path)
+            exec(compile(mutated, str(path), "exec"), module.__dict__)
+            # CLI subprocesses must run the mutated official script in an isolated fixture.
+            fixture = ProtocolTests()
+            fixture.setUp()
+            try:
+                scripts = fixture.root / "scripts"
+                scripts.mkdir()
+                for helper in ("coord_ids.py", "repo_identity.py", "coord_protocol.py"):
+                    (scripts / helper).write_bytes((SCRIPTS / helper).read_bytes())
+                (scripts / "coord-core.py").write_text(mutated, encoding="utf-8")
+                with patch.dict(globals(), coord=module, SCRIPTS=scripts):
+                    result = unittest.TextTestRunner(stream=io.StringIO()).run(ProtocolTests(test))
+            finally:
+                fixture.doCleanups()
         results.append({"mutant": name, "tests": result.testsRun, "failures": len(result.failures),
                         "errors": len(result.errors),
                         "killed": bool(result.failures) and not result.errors})
