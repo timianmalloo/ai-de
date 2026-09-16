@@ -345,6 +345,7 @@ public sealed class CoordinationProjectionBoundaryTests : IDisposable
         Admit(connection, "K", 0);
         Diagnostic(connection, "K", 1, 1, 2);
         Execute(connection, "PRAGMA foreign_keys=OFF; DROP TRIGGER coord_feed_update;");
+        CoordinationProjectionEvidence.Apply(connection, assignments, _output);
         Assert.Throws<SqliteException>(() => Execute(connection,
             $"UPDATE coord_projection_feed SET {assignments} WHERE outcome='duplicate-occurrence-accounted';"));
     }
@@ -355,6 +356,7 @@ public sealed class CoordinationProjectionBoundaryTests : IDisposable
         using var store = SqliteWatcherObservationStore.Open(DatabasePath);
         using var connection = Connect();
         Admit(connection, "K", 0);
+        CoordinationProjectionEvidence.Apply(connection, "insertion-lookup-scan", _output);
         var probes = 0;
         connection.CreateFunction<long, bool>("visit", _ => { probes++; return true; });
         var next = 1;
@@ -396,6 +398,7 @@ public sealed class CoordinationProjectionBoundaryTests : IDisposable
         using var store = SqliteWatcherObservationStore.Open(DatabasePath);
         using var connection = Connect();
         Admit(connection, "K", 0, state: "pending");
+        CoordinationProjectionEvidence.Apply(connection, "semantic-generation-overstrict", _output);
         Execute(connection, """
             INSERT INTO coord_projection_feed(scope,epoch,event_key,is_initial,admission_n,outcome,application_state,session_id,session_generation)
             VALUES('scope','epoch','K',0,1,'applied','applied','S',1);

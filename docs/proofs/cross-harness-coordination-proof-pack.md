@@ -20,6 +20,133 @@ summary: >-
 
 # Proof Pack — dormant P1 candidate; independent code gate pending
 
+## P2.2 supplemental failure sensitivity — 2026-09-16
+
+**23/23 previously unsubstantiated cases now have observed focal mutant failures.
+Independent Test re-gate remains PENDING; this author does not clear it.** The supplied
+review reports independent Data PASS (S1–S6, zero static residual) and Test 202/202 plus
+27 real-SQL groups/314 assertions PASS, but blocks on these 23 missing sensitivity
+receipts. Those review results are supplied context, not rerun or self-certified here.
+
+Source base: `85a3f9b19d739f28f2cf605378024342ce23411e`. No production source, project,
+package, configuration, schema version, or installed binary was patched. Three hooks
+were added to the existing boundary tests; all existing assertions and the 21
+`InlineData` values remain unchanged. **No new test cases were added.** Tests still
+invoke `SqliteWatcherObservationStore.Open` from the actual Core assembly and real
+Microsoft.Data.Sqlite. No Python schema implementation or substitute constructor exists.
+
+The committed runner is `tests\AiDe.Core.Tests\Watcher\Run-P22Evidence.ps1`; the bounded
+mutation definitions are `CoordinationProjectionEvidence.cs` beside it. Reproduce from
+this tree with:
+
+```powershell
+& tests\AiDe.Core.Tests\Watcher\Run-P22Evidence.ps1 -Run p22-failure-sensitivity-review
+```
+
+The runner refuses an existing run directory. It builds once, then uses the same test,
+Core and provider binaries (`--no-build`) for faults, restoration and the 202-case
+candidate. It requires matching test names across the three 23-case passes, checks each
+focal failure message rather than counting arbitrary failures, and records every logical
+exit separately. Any missing TRX, unexpected exception, survived mutant, count mismatch
+or wrong oracle fails the runner. No gate exit is taken from a formatter.
+
+### Isolation and specificity
+
+`Open` first creates a fresh, disposable `p22-boundary-*` database beneath the test
+working directory. Mutation runs are restricted to that path. For each theory case,
+the original valid K admission and diagnostic exist **before** injection. The existing
+test then disables FKs and removes only the update-immutability trigger to isolate
+storage/semantic CHECKs. This pre-existing isolation is unchanged.
+
+The helper edits only the named table's SQL definition in that disposable database,
+increments its schema cookie, closes/reopens the test connection, restores connection
+PRAGMAs and verifies schema readback. `writable_schema` is disabled in `finally`.
+It never enables `ignore_check_constraints`. Constraints unrelated to the explicit
+replacement remain active. Every fault emits exact before/after SQL, the replacement
+list, any index change, SHA-256 identities and SQLite/provider versions into its TRX.
+The test fixture deletes the database on both failure and success. No live DB is opened.
+
+| Mutant identity / unchanged bad input | Exact weakened boundary | Observed focal result |
+|---|---|---|
+| `source_offset=NULL` | Diagnostic offset non-NULL conjunct | No exception; original `Assert.Throws` FAIL |
+| `source_end=NULL` | Diagnostic end non-NULL conjunct | Same |
+| `source_offset='oops'` | **Joint:** offset storage type plus independent end/offset comparison for text offsets | Same |
+| `source_end='oops'` | End storage type admits TEXT | Same |
+| `source_offset=1.5` | Offset storage type admits REAL | Same |
+| `source_end=2.5` | End storage type admits REAL | Same |
+| `source_offset=-1` | Offset lower bound 0 → -1 | Same |
+| `source_end=1` | End strictly greater → greater-or-equal to offset | Same |
+| `raw_digest=NULL` | TEXT discriminator admits NULL; SQL's nullable length CHECK then allows NULL | Same |
+| `raw_digest=''` | Digest length >0 → >=0 | Same |
+| `raw_digest=X'01'` | Digest storage type admits BLOB | Same |
+| `admission_n=NULL` | Noninitial admission non-NULL conjunct | Same |
+| `admission_n=0` | Admission lower bound >0 → >=0 | Same |
+| `admission_n=1.5` | Admission storage type admits REAL | Same |
+| `admission_n='oops'` | **Joint:** admission storage type plus independent n/admission order comparison for TEXT | Same |
+| `application_state='applied'` | Diagnostic application-state nullability allows applied | Same |
+| `session_id='S',session_generation=1` | Diagnostic session pair allows S/1; independent pair consistency and positive generation remain | Same |
+| `message_id='M'` | Diagnostic message nullability allows M | Same |
+| `parent_event_key='P'` | Diagnostic parent nullability allows P | Same |
+| `parent_application_state='applied'` | Diagnostic parent-state nullability allows applied | Same |
+| `is_initial=1` | **Joint:** diagnostic initial-kind clause, noninitial admission-shape clause, and initial unique index narrowed to semantic rows only | Same |
+| `insertion-lookup-scan` | Actual event-insertion epoch lookup changes `scope` to unary `+scope`, preventing indexed scope search without changing returned meaning | Original `Assert.Contains("SEARCH", plan)` FAIL: `SCAN coord_projection_event USING COVERING INDEX ix_coord_projection_event_end` |
+| `semantic-generation-overstrict` | Feed generation >0 → >1, after valid pending admission | Original legal S/1 semantic INSERT fails with `SqliteException`, SQLite **19**, CHECK on `session_generation > 1` |
+
+These are **23 bounded mutant/case pairs**, not 23 individually sufficient guard
+claims. In particular, the three joint mutants do not show that deleting any single
+constituent defeats the observable contract. The `is_initial` mutant preserves the
+initial unique index for semantic rows and excludes diagnostics only, so the already
+valid K admission is not an unrelated unique-key failure. The text mutants deliberately
+address the second comparison that would otherwise keep rejecting the bad state.
+
+The index mutant preserves the original **10 and 1000 populated diagnostic rows**:
+both stages still report one predicate visit and SEARCH on
+`ix_coord_projection_diagnostic_end`. All five actual insertion queries are extracted;
+the first mutated query fails the original SEARCH assertion. It does not fail on
+zero fixtures, an altered query count, a missing table, or an unsupported outcome enum.
+The legal-row mutant fails on the focal semantic INSERT, not constructor/setup.
+
+### Receipts and limits
+
+New immutable run directories under `docs\proofs\p22-cache-evidence`:
+`p22-failure-sensitivity-01` (first complete execution) and
+`p22-failure-sensitivity-02` (runner hardening: name-set equality and fail-closed
+exception recording). Each contains full `positive-control.trx`,
+`targeted-faults.trx`, `restored-green.trx`, `candidate-202.trx` and `receipt.json`.
+The JSON includes exact command arguments, elapsed seconds, per-case outcomes,
+messages/stacks/stdout, logical exits, and source/project/package/binary SHA-256 pins.
+
+| Pass | Required observed state | Logical exit |
+|---|---|---|
+| Unmutated positive controls | 23 PASS, 0 FAIL/SKIP | 0 |
+| Targeted faulty schema/query compositions | 23 focal FAIL, 0 PASS/SKIP | 1 |
+| Restored unmutated composition | 23 PASS, 0 FAIL/SKIP | 0 |
+| Same method union as retained 202-case candidate | 202 PASS, 0 FAIL/SKIP | 0 |
+
+This is **mutation-based failure sensitivity**, not reconstructed chronological TDD.
+The original 22-failure baseline remains 20 schema-semantic failures, one fixture
+error-code expectation and one constructor handle leak. Its missing first-test-revision
+and baseline-binary hashes remain disclosed; these later receipts do not repair that
+historical gap. New pins identify executed local bytes, not cross-machine deterministic
+binaries or Git's line-ending-normalized blobs.
+
+**Class → sweep → derive → prevent:** green-only additions lack a demonstrated
+failure oracle; all 23 supplied missing cases were enumerated and matched to the
+same committed assertions; mutation definitions derive from the constructor's actual
+SQLite schema instead of duplicating the DDL; the committed runner rejects any
+surviving or nonfocal result and retains exact faults for independent replay. The
+central defect register remains coordinator-owned; this supplements its recorded
+unreproducible-mutation-manifest shape without claiming fleet-wide closure.
+
+**Remaining:** independent Test re-gate, then the authorized native-pump author.
+Native R1/R2's four retained REDs are unchanged and not rerun in this evidence-only
+unit. No new schema defect was found. Fresh unreleased v8 scope remains unchanged:
+no pre-release-v8 migration, live activation, endpoint, slots, GUI or upstream handoff.
+All six approved implementation tasks remain pending; evidence does not execute them.
+Derived graph/backlinks and central-register promotion stay with the conductor under
+the existing ownership boundary. The existing proof remains in `docs/proofs`, outside
+the episode scorer's `docs/proof` namespace; no score or self-approved gate is claimed.
+
 ## P2.2 S1–S6 repair evidence — 2026-09-16
 
 **Author repair complete; independent Data/Test re-gate PENDING. Full P2 remains

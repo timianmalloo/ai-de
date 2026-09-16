@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T20:37:23Z",
+  "generated": "2026-09-16T20:54:52Z",
   "audit": [
     {
       "actor": null,
@@ -20405,6 +20405,75 @@ window.AUDIT_DATA = {
       "main_calls": 33,
       "main_budget": 38,
       "main_over_budget": false,
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M2P00FAMSJGPH6B4FXDXM4R2",
+      "shortname": "p22-failure-sensitivity-prompt",
+      "datetime": "2026-09-16T20:54:51Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "WRITE-CAPABLE C# TEST/EVIDENCE author finiteONEverificationblocker, <=30tools150k noagents. OwnregisteredP2tree C:\\Projects\\ai-de-feature-xh-p2-projection HEAD85a3f9b19d739f28f2cf605378024342ce23411e sessionxh-p2-projection-b0d0 ended officialreopen. No productioncodechanges (schemaDataPASS), nootherworktrees/config/hooks/install/main/push/force/amend/newdeps/GUI/App/slots/liveDB/endpoints/upstreamresearch. ExactclaimsTTL300editminutesreleasebeforetests envsession/name/utf8eachshell apply_patchnoheredoc/outputredirect/pipedgates. All6approvednativepumpawaitschemaTestgate finiteevidenceonly.\nIndependentDataPASS S1S6static0residual. IndependentTest202/202PASS,27realSQLgroups314assertionsPASS, no new schema defect, BUT BLOCKmissingfailure-sensitivity23addedGREENcases absentoriginalbaseline receipts: 21 Diagnostic_InvalidStorageOrSemanticShape_Rejects theorycases; Diagnostic_OneHundredfoldHistory_IndexesActualInsertionLookups; Receipt_NullDiagnosticsAndPositiveGeneration_AreLegalOnlyOnSemanticRows. FourpayloadmutantsDONOTcoverthese. Need SAMEcommittedassertions observedFAIL againstTARGETEDisolatedfaultyschema/query mutants thenrestoredGREEN; do NOTfabricate chronologicalRED. IforiginalretainedpinnedRED genuinelyexists attachnotinvent; likelyusemutations. Original22baselineclass20semantic+1fixtureerrorcode+1handleleakstillhonest. Source/testbaselinehashmissingdisclosed.\nReadexistingCoordinationProjectionBoundaryTests andDDL actualcases. Buildsmallbounded reproducible mutationharness usingexistingtests/realSQLiteactualconstructorassembly notPythonreimplementation; mutateonlyrelevantconstraints orindexlookupquery inISOLATEDtestcomposition/tempbinary, preserveexactmutantdefinition/identity testnames meaningfulfailinput andpositivecontrol. Don't settleforfailureinunrelatedfixture/import orenumunsupported; assertionsmustbefocal anderrorstypeunderstood. Forinvalidshapeevery21case must havefailuresensitivity evidence; whereindependentconstraintredundancy stillrejects badvalue, isolatevalidnextadmission/indexscope soassertiontestsclaimedguard or documentthemutantdoesnotweakenobservablecontract insteadofwrong'killed'claim. Prefersemanticbadstate admittedthenexpectedrefusalassertionfails; notarbitraryexceptionerrorcodechangeonly. Positivelegalrowtest mutateoverstrictvalidshape refuseslegalrow; indexoracle deliberatelydrop/avoidrelevantindex soactualSEARCH/visit assertionfails WITHOUT0fixtures. RetainGREENproperdata +1000/10originaltest assertions. FaultsQLchecks must notgloballybypassallconstraints andclaimoneguard ifmultiple; recordboundedmutationmatrix specificity. No newdependency. Numeric/storagefieldsforeachcases sourcevaluesknownreadnotguess.\nTestArchitect probeifneeded readonly %TEMP%\\p22-independent-85a3f9b-S1S6 controls source receipts; do notedit. Dataoriginalscope freshunreleasedv8only no pre-releasev8migration/newliveactivation. NativeR1R2still4RED unchanged don'tfixinthisunit. EvidenceallowsnextC#nativepumpauthor onlyafterindependentre-gate notselfclear.\nOWN test file tests/AiDe.Core.Tests/Watcher/CoordinationProjectionBoundaryTests.cs and optionalnewCoordinationProjectionEvidenceTests.cs/mutationharness under tests only; existingProofPack/phaseplan+ownaudit; appendnamednewTRX docs/proofs/p22-cache-evidence nooverwritehistory. ProductionSqlite*.cs unchangedverifydiff. Run202candidateplusnewselected whatevercounts clearly, new23tests/faultcontrolsREDGREENactuallogicalexits source/project/binarypins fullreceipts. CommitCopilottrailercleanreleasedended <=1200words exactcommitcoverage23/23orconcreteblockedones, mutationnames/outcomes noexpandedphases. Userupstreamafterverifiedall6taskremainpending.",
+      "summary": "Finite evidence-only request; 23 missing failure-sensitivity cases; no production or native implementation authorized.",
+      "kind": "prompt",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Supply focal failure sensitivity for 23 named cases",
+      "done_when": "23 focal mutant failures, restored GREEN, 202 candidate PASS, immutable evidence committed",
+      "tier": "T2",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M2P00FDVVNM98692N1R6XEGJ",
+      "shortname": "p22-failure-sensitivity",
+      "datetime": "2026-09-16T20:54:52Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "WRITE-CAPABLE C# TEST/EVIDENCE author finiteONEverificationblocker, <=30tools150k noagents. OwnregisteredP2tree C:\\Projects\\ai-de-feature-xh-p2-projection HEAD85a3f9b19d739f28f2cf605378024342ce23411e sessionxh-p2-projection-b0d0 ended officialreopen. No productioncodechanges (schemaDataPASS), nootherworktrees/config/hooks/install/main/push/force/amend/newdeps/GUI/App/slots/liveDB/endpoints/upstreamresearch. ExactclaimsTTL300editminutesreleasebeforetests envsession/name/utf8eachshell apply_patchnoheredoc/outputredirect/pipedgates. All6approvednativepumpawaitschemaTestgate finiteevidenceonly.\nIndependentDataPASS S1S6static0residual. IndependentTest202/202PASS,27realSQLgroups314assertionsPASS, no new schema defect, BUT BLOCKmissingfailure-sensitivity23addedGREENcases absentoriginalbaseline receipts: 21 Diagnostic_InvalidStorageOrSemanticShape_Rejects theorycases; Diagnostic_OneHundredfoldHistory_IndexesActualInsertionLookups; Receipt_NullDiagnosticsAndPositiveGeneration_AreLegalOnlyOnSemanticRows. FourpayloadmutantsDONOTcoverthese. Need SAMEcommittedassertions observedFAIL againstTARGETEDisolatedfaultyschema/query mutants thenrestoredGREEN; do NOTfabricate chronologicalRED. IforiginalretainedpinnedRED genuinelyexists attachnotinvent; likelyusemutations. Original22baselineclass20semantic+1fixtureerrorcode+1handleleakstillhonest. Source/testbaselinehashmissingdisclosed.\nReadexistingCoordinationProjectionBoundaryTests andDDL actualcases. Buildsmallbounded reproducible mutationharness usingexistingtests/realSQLiteactualconstructorassembly notPythonreimplementation; mutateonlyrelevantconstraints orindexlookupquery inISOLATEDtestcomposition/tempbinary, preserveexactmutantdefinition/identity testnames meaningfulfailinput andpositivecontrol. Don't settleforfailureinunrelatedfixture/import orenumunsupported; assertionsmustbefocal anderrorstypeunderstood. Forinvalidshapeevery21case must havefailuresensitivity evidence; whereindependentconstraintredundancy stillrejects badvalue, isolatevalidnextadmission/indexscope soassertiontestsclaimedguard or documentthemutantdoesnotweakenobservablecontract insteadofwrong'killed'claim. Prefersemanticbadstate admittedthenexpectedrefusalassertionfails; notarbitraryexceptionerrorcodechangeonly. Positivelegalrowtest mutateoverstrictvalidshape refuseslegalrow; indexoracle deliberatelydrop/avoidrelevantindex soactualSEARCH/visit assertionfails WITHOUT0fixtures. RetainGREENproperdata +1000/10originaltest assertions. FaultsQLchecks must notgloballybypassallconstraints andclaimoneguard ifmultiple; recordboundedmutationmatrix specificity. No newdependency. Numeric/storagefieldsforeachcases sourcevaluesknownreadnotguess.\nTestArchitect probeifneeded readonly %TEMP%\\p22-independent-85a3f9b-S1S6 controls source receipts; do notedit. Dataoriginalscope freshunreleasedv8only no pre-releasev8migration/newliveactivation. NativeR1R2still4RED unchanged don'tfixinthisunit. EvidenceallowsnextC#nativepumpauthor onlyafterindependentre-gate notselfclear.\nOWN test file tests/AiDe.Core.Tests/Watcher/CoordinationProjectionBoundaryTests.cs and optionalnewCoordinationProjectionEvidenceTests.cs/mutationharness under tests only; existingProofPack/phaseplan+ownaudit; appendnamednewTRX docs/proofs/p22-cache-evidence nooverwritehistory. ProductionSqlite*.cs unchangedverifydiff. Run202candidateplusnewselected whatevercounts clearly, new23tests/faultcontrolsREDGREENactuallogicalexits source/project/binarypins fullreceipts. CommitCopilottrailercleanreleasedended <=1200words exactcommitcoverage23/23orconcreteblockedones, mutationnames/outcomes noexpandedphases. Userupstreamafterverifiedall6taskremainpending.",
+      "summary": "Observed 23/23 focal mutant failures, positive23/restored23/candidate202 PASS in two immutable runs. Same assertions; real constructor SQLite; three joint guard/index mutants explicit. Production SHA unchanged; original missing baseline hashes retained. Independent Test re-gate pending; native4RED and all6 tasks untouched.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proofs/cross-harness-coordination-proof-pack.md",
+        "docs/proofs/p22-cache-evidence/p22-failure-sensitivity-02/receipt.json",
+        "tests/AiDe.Core.Tests/Watcher/CoordinationProjectionEvidence.cs",
+        "tests/AiDe.Core.Tests/Watcher/Run-P22Evidence.ps1"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Supply focal failure sensitivity for 23 named cases",
+      "done_when": "23 focal mutant failures, restored GREEN, 202 candidate PASS, immutable evidence committed",
+      "tier": "T2",
+      "main_calls": 27,
+      "main_budget": 30,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-16T20:48:24Z",
+      "duration_seconds": 388.0
+    },
+    {
+      "id": "al-01M2P00FH38EKXP4P0HCZFCNR7",
+      "shortname": "optimize-p22-failure-sensitivity",
+      "datetime": "2026-09-16T20:54:52Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "WRITE-CAPABLE C# TEST/EVIDENCE author finiteONEverificationblocker, <=30tools150k noagents. OwnregisteredP2tree C:\\Projects\\ai-de-feature-xh-p2-projection HEAD85a3f9b19d739f28f2cf605378024342ce23411e sessionxh-p2-projection-b0d0 ended officialreopen. No productioncodechanges (schemaDataPASS), nootherworktrees/config/hooks/install/main/push/force/amend/newdeps/GUI/App/slots/liveDB/endpoints/upstreamresearch. ExactclaimsTTL300editminutesreleasebeforetests envsession/name/utf8eachshell apply_patchnoheredoc/outputredirect/pipedgates. All6approvednativepumpawaitschemaTestgate finiteevidenceonly.\nIndependentDataPASS S1S6static0residual. IndependentTest202/202PASS,27realSQLgroups314assertionsPASS, no new schema defect, BUT BLOCKmissingfailure-sensitivity23addedGREENcases absentoriginalbaseline receipts: 21 Diagnostic_InvalidStorageOrSemanticShape_Rejects theorycases; Diagnostic_OneHundredfoldHistory_IndexesActualInsertionLookups; Receipt_NullDiagnosticsAndPositiveGeneration_AreLegalOnlyOnSemanticRows. FourpayloadmutantsDONOTcoverthese. Need SAMEcommittedassertions observedFAIL againstTARGETEDisolatedfaultyschema/query mutants thenrestoredGREEN; do NOTfabricate chronologicalRED. IforiginalretainedpinnedRED genuinelyexists attachnotinvent; likelyusemutations. Original22baselineclass20semantic+1fixtureerrorcode+1handleleakstillhonest. Source/testbaselinehashmissingdisclosed.\nReadexistingCoordinationProjectionBoundaryTests andDDL actualcases. Buildsmallbounded reproducible mutationharness usingexistingtests/realSQLiteactualconstructorassembly notPythonreimplementation; mutateonlyrelevantconstraints orindexlookupquery inISOLATEDtestcomposition/tempbinary, preserveexactmutantdefinition/identity testnames meaningfulfailinput andpositivecontrol. Don't settleforfailureinunrelatedfixture/import orenumunsupported; assertionsmustbefocal anderrorstypeunderstood. Forinvalidshapeevery21case must havefailuresensitivity evidence; whereindependentconstraintredundancy stillrejects badvalue, isolatevalidnextadmission/indexscope soassertiontestsclaimedguard or documentthemutantdoesnotweakenobservablecontract insteadofwrong'killed'claim. Prefersemanticbadstate admittedthenexpectedrefusalassertionfails; notarbitraryexceptionerrorcodechangeonly. Positivelegalrowtest mutateoverstrictvalidshape refuseslegalrow; indexoracle deliberatelydrop/avoidrelevantindex soactualSEARCH/visit assertionfails WITHOUT0fixtures. RetainGREENproperdata +1000/10originaltest assertions. FaultsQLchecks must notgloballybypassallconstraints andclaimoneguard ifmultiple; recordboundedmutationmatrix specificity. No newdependency. Numeric/storagefieldsforeachcases sourcevaluesknownreadnotguess.\nTestArchitect probeifneeded readonly %TEMP%\\p22-independent-85a3f9b-S1S6 controls source receipts; do notedit. Dataoriginalscope freshunreleasedv8only no pre-releasev8migration/newliveactivation. NativeR1R2still4RED unchanged don'tfixinthisunit. EvidenceallowsnextC#nativepumpauthor onlyafterindependentre-gate notselfclear.\nOWN test file tests/AiDe.Core.Tests/Watcher/CoordinationProjectionBoundaryTests.cs and optionalnewCoordinationProjectionEvidenceTests.cs/mutationharness under tests only; existingProofPack/phaseplan+ownaudit; appendnamednewTRX docs/proofs/p22-cache-evidence nooverwritehistory. ProductionSqlite*.cs unchangedverifydiff. Run202candidateplusnewselected whatevercounts clearly, new23tests/faultcontrolsREDGREENactuallogicalexits source/project/binarypins fullreceipts. CommitCopilottrailercleanreleasedended <=1200words exactcommitcoverage23/23orconcreteblockedones, mutationnames/outcomes noexpandedphases. Userupstreamafterverifiedall6taskremainpending.",
+      "summary": "Five serial coupled nodes, no agents; inferred equal-node work/span5/5. 23-pair finite matrix discharged. Second run hardened runner name-set/fail-closed receipts; all four original outcomes retained. Output overflow caused bounded grounding rereads. Timing recorded per runner invocation; no token/cost inference. External Test gate remains pending.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/cross-harness-coordination-phases.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Bound evidence-only verification work",
+      "done_when": "Finite reproducible proof handed to independent Test reviewer without implementation expansion",
+      "tier": "T2",
       "fan_out": 0
     }
   ],

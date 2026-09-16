@@ -20,6 +20,42 @@ summary: >-
 
 # Durable phase graph
 
+## P2.2 finite evidence blocker — 2026-09-16
+
+Goal: provide failure sensitivity for the 23 specified green-only cases.
+Done when: unchanged assertions fail focally against isolated targeted faults, restored
+compositions and the 202-case candidate pass, and reproducible receipts are committed.
+Not in scope: production edits, native R1/R2, schema activation/migration, endpoints,
+GUI, slots, upstream research or any of the six approved implementation tasks.
+Tier T2; fan-out cap 0; main-line budget 30 tool calls; context ceiling 150k.
+
+| Node | Capability | Data/decision dependency → finite exit |
+|---|---|---|
+| E1 | Reasoning | Supplied Data/Test findings + pinned test/DDL → enumerate exactly 23 missing oracles |
+| E2 | Reasoning | E1 → explicit per-case targeted mutation definitions; preserve assertions |
+| E3 | Deterministic mechanics | E2 → release leases, positive/fault/restored TRX and 202-case candidate |
+| E4 | Reasoning | E3 → inspect each focal failure, redundancy, counts, pins and residuals |
+| E5 | Deterministic mechanics | E4 → commit existing proof/plan and own audit; release/end session |
+
+Serial by schema/fixture and build-output coupling. Equal-node work/span 5/5,
+parallel ceiling 1× (**Inferred planning model**, not measured latency). The finite
+variant is 23 unclassified mutant/case pairs, floor zero; wrong-oracle results are
+blockers, never counted as kills. No delegates, dependency installs, production patches
+or extra worktrees. Independent Test re-gate is an external hard gate after E5, not
+self-certified here.
+
+First execution observed positive 23/23, focal faults 23/23, restored 23/23 and candidate
+202/202. The runner was then tightened to compare exact test-name sets and mark
+exception-interrupted receipts incomplete; the second execution retains separate
+receipts. The existing Proof Pack's supplemental matrix identifies every fault and
+records the three joint guard/index cases honestly. No chronological baseline RED
+is invented. Tool-output overflow caused grounding rereads; bounded output/TRX
+readback replaced that shape. Cost/token totals are not recorded.
+
+**All six approved implementation tasks remain pending.** Next: independent Test
+re-gate of this evidence commit, then only the admitted native-pump implementation.
+The author cannot convert this evidence handoff into activation or a wider phase.
+
 ## Finite S1–S6 schema repair — 2026-09-16
 
 Goal: repair the six supplied Data/Test schema findings against baseline
