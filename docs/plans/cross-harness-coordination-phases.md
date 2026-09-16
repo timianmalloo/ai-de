@@ -20,6 +20,49 @@ summary: >-
 
 # Durable phase graph
 
+## P2 test-only RED checkpoint - 2026-09-16
+
+New evidence at source base `6b0c00420609ad54bf36fc38e5025c5629bba814`:
+`CoordinationReliabilityTests` executed **7 cases, 2 PASS / 5 RED**, against temporary
+real SQLite. Exact names, assertions, source/project/test/binary SHA-256 pins and
+qualification limits are in the linked
+[P2 RED receipt](../proofs/cross-harness-coordination-proof-pack.md#p2-real-csqlite-red-receipt---2026-09-16-test-only--unshippable).
+The original static receipts below remain historical, not retroactively executed.
+
+| Slice | Progress, not phase completion |
+|---|---|
+| R1 / partial O11 | One-pump positive control PASS; unchanged-log second pump RED, one original message becomes two |
+| R2 / partial O11/O19 | Fresh process composition over same DB/log RED for live and ended sessions: observation duplication, generation and heartbeat refresh. Separate registration-phase RED exposes ended clear; full ended-log replay ends true again. No OS kill or authorization proof |
+| R3 / native O14 precursor | Two services/connections plus independent reader, TCS/manual-event interleaving: both allocate Seq 1; after A/read/B commit, B is invisible to `Seq > cursor`. RED. Serial two-service/proxy-fidelity control PASS |
+| Data/DS schema and transaction approval | **Still BLOCKED/pending**; prior contradictions and initial-receipt/state-feed enforcement, snapshot and lifecycle seam issues unchanged |
+| Remaining P2 implementation/proof | **UNADMITTED/PENDING**, including all O09/O11-O20 refinements, crash atomicity, raw SQL invariants, overflow-before-parent, limit+1/outage, source gaps, paging, tombstones/version, rebuild, query plans/100x and actual rollback |
+
+This is an intentionally **unshippable RED-test commit**, not a full-CI candidate. Do not
+join it as a repair. No production/schema/dependency/configuration changes; P1 parallel
+work is untouched. All six user-approved phases and every floor remain in scope for
+their admitted authors. Next is Data/DS schema approval, then implementation of all P2
+floors, not a reduction of P2 to these three reproductions.
+
+### Bounded execution record
+
+| Node | Capability | Input -> exit | Dependency |
+|---|---|---|---|
+| R-A | Reasoning | Assigned base + scoped contracts/fixtures -> explicit actual-pipeline oracles and test-only boundary | None |
+| R-B | Reasoning | Oracles -> one new C# test file under exact TTL300 lease | R-A decision |
+| R-C | Deterministic mechanics | Released leases + existing test project -> nonzero selected run with actual assertions and binary pins | R-B data |
+| R-D | Deterministic mechanics | Results -> linked receipt/progress, own audit, unshippable checkpoint commit and ended session | R-C data |
+| G-P2 | Independent review | Exact RED checkpoint + corrected proposal -> Data/DS approval, then separately admitted implementation | R-D data; future, not self-cleared |
+
+No agents; global width is not increased beyond this reopened author. The author chain
+is serial because tests consume contracts and receipts consume observed results.
+Inferred normalized work/span: 4/4 author nodes, width 1, speedup ceiling 1; no
+measured speedup claim. Budget <=35 tools, 150k context. One analyzer correction was
+needed; two no-assets zero-test invocations are explicitly non-evidence. Offline cached
+asset materialization preceded the real build; no dependency install/download. Every
+interleaving wait fails after 15 seconds, not a sleep or success fallback. The finite
+worklist is seven test cases; stop at recorded execution, not green-by-repair.
+Independent review and production acceptance are pending, not waived by the budget.
+
 ## P2 checkpoint — corrected Data/DS proposal, not code admission
 
 **2026-09-16:** docs-only scribe in separately registered `feature/xh-p2-projection`,

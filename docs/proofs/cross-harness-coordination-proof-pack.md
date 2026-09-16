@@ -20,6 +20,130 @@ summary: >-
 
 # Proof Pack — dormant P1 candidate; independent code gate pending
 
+## P2 real C#/SQLite RED receipt - 2026-09-16, TEST ONLY / UNSHIPPABLE
+
+This is new executed evidence, not a retrospective promotion of the static reports below.
+Source base: `6b0c00420609ad54bf36fc38e5025c5629bba814`, branch
+`feature/xh-p2-projection`, officially reopened session `xh-p2-projection-b0d0`.
+Production code, DDL, dependencies and configuration are unchanged. No P1 work is included.
+The checkpoint deliberately commits failing regression tests: **do not join or ship it;
+the ordinary full CI selection would include these RED cases**.
+
+### Selected execution and actual assertions
+
+Test class: `AiDe.Core.Tests.Watcher.CoordinationReliabilityTests`, file
+`tests\AiDe.Core.Tests\Watcher\CoordinationReliabilityTests.cs`.
+SDK `10.0.303`; runtime `.NET 10.0.11`; xUnit `2.9.3`, adapter `3.1.4`;
+Microsoft.Data.Sqlite `10.0.11`. All persistence below is a temporary real SQLite file.
+
+| Exact method / case | Outcome | Observed oracle and scope |
+|---|---|---|
+| `PumpOnce_RegisterAndPost_PersistsOneOriginalMessage` | **PASS** | Real writer -> parser/pump -> ingest/registrar/board -> SQLite: 2 events, 1 session, 1 post, ID `first-message-1`, Seq 1, exact content and author checked |
+| `PumpOnce_UnchangedLogTwice_PreservesOneOriginalMessage` | **RED R1**, line 56 | Expected IDs `[first-message-1]`; actual `[first-message-1, first-message-2]`. Original row equality passed; adapter reported 2 board posts and 1 duplicate register. Same unchanged log, same pump |
+| `PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle(ended: false)` | **RED R2**, line 91 | Snapshot equality before replay passed after reopening. Replay kept one session ID but changed generation 1 -> 2, heartbeat 1000000 -> 1001000, message count 1 -> 2; IDs became `[first-message-1, restarted-message-1]`. Ended stayed false |
+| `PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle(ended: true)` | **RED R2**, line 91 | Same generation, heartbeat and duplicate-message changes. Ended was true before and after the full replay: replayed session-end masks the intermediate clear |
+| `Apply_ReplayedRegisterOfEndedSession_PreservesEndedGenerationAndHeartbeat` | **RED R2 phase**, line 120 | After real writer/pump registration+end and a DB reopen, replay only the parsed register into fresh ingest: same session ID, generation 1 -> 2, heartbeat 1000000 -> 1001000, ended true -> false. Zero board messages on both sides |
+| `Post_TwoServicesSerially_CursorSeesSecondCommittedMessage` | **PASS** | Separate service/store instances, independent SQLite reader: A Seq 1, cursor 1, B Seq 2, 2 durable rows; next read contains exactly B. Scheduling proxy forwards real persistence and returned message equals reader result |
+| `Post_TwoServicesAllocateBeforeCommit_CursorSeesLaterCommittedMessage` | **RED R3**, line 198 | B allocated Seq 1, held before INSERT; A allocated and committed Seq 1; reader saw only A and advanced cursor to 1; B then committed Seq 1. Independent reader found both durable rows by ID/count, but `Seq > 1` returned `[]`, expected `[message-b]` |
+
+Executed selection: **7 total, 2 PASS, 5 RED, zero skipped**, test-run time
+**0.8732 seconds** (runner measurement, not build or end-to-end elapsed time), exit **1**.
+Each RED reached the stated assertion, not a timeout, parse refusal or dependency failure.
+Full console receipts remain in this Copilot turn (PowerShell execution **829**); the
+table records the durable, path-independent result rather than committing local temp paths.
+
+```powershell
+dotnet test tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --no-restore --filter 'FullyQualifiedName~CoordinationReliabilityTests' --logger 'console;verbosity=detailed' --verbosity minimal
+```
+
+Prerequisite history is explicit: two initial `--no-restore` invocations returned zero
+without creating assets/binary or executing tests; neither counts as evidence. An offline
+restore using only the existing local NuGet package cache materialized assets. No packages
+were downloaded or dependencies added. The first real build then failed existing analyzer
+`xUnit2031`; the serial control was corrected to use `Assert.Single(collection, predicate)`.
+The subsequent build and seven-case run produced the results above. Existing build-order
+references also built Core/MCP/Daemon and test helpers; **no daemon/helper process, App,
+native/UI test, GUI, endpoint, live queue or full suite was run**.
+
+### Fidelity, bounds and claim limits
+
+R1/R2 use the real `CoordContractWriter`, `CoordContractLogPump`, `InjectedContractIngest`,
+`IngestHost`, `TrustedRegistrar`, `MessageBoardService` and `SqliteWatcherObservationStore`.
+Only existing clock/capability fixtures and deterministic ID factories are supplied.
+Every fixture owns a unique temp directory and disposes connections before deleting it;
+cleanup errors are not swallowed. Fixed wall time and explicit monotonic-clock advance
+make lifecycle changes observable without sleeps.
+
+R2 is a **process-composition restart**, not an OS process kill: the first store is
+disposed and new store, registrar, board, host, ingest and pump open the same DB and wire
+log. Exact snapshots compare persisted session IDs/count, generation, heartbeat, ended
+state and full board observations/IDs. The separately named registration-phase case
+does not pretend that the full replay leaves ended false. Neither case proves
+authorization rejection, capability non-minting, crash atomicity or a repaired lifecycle.
+
+R3 uses two real SQLite store connections and a third independent reader. A test-only
+`DispatchProxy` forwards every store call unchanged and holds **only B**, after its
+`BoardMessage` allocation and before the real `AppendBoardMessage` INSERT. B signals
+allocation through a TCS; the reader first asserts no commit, then A commits while B
+is held. A manual event releases B only after the reader advances. Both waits have
+explicit **15-second deadlock timeouts**, and `finally` releases and awaits B even on
+assertion failure. The serial positive case is the proxy's persistence-fidelity pair.
+No persistence is mocked, no production source is patched to manufacture interleaving.
+The cursor predicate is tested over the real store's committed rows; this is **not**
+execution of MCP/UI pagination or the future coordination-feed cursor API.
+
+Class -> sweep -> derive -> prevent: R1/R2 expose durable replay routed through
+non-durable ingest identity; the scoped source sweep also found the register adoption/
+generation/heartbeat/end chain. R3 exposes instance-local allocation of a shared
+committed sequence; both service instances reach the same ordinary INSERT seam.
+Future controls must derive identity from canonical source receipts and allocate native
+Seq inside the store writer transaction, not synchronize multiple service counters.
+These named tests are now observed RED controls, **not fixes**. Wider sibling sweep,
+lesson-register incorporation and all production prevention remain with the admitted
+implementation/conductor. The local xUnit assertion-shape correction is controlled by
+the existing failing `xUnit2031` build rule, not a new analyzer or suppression.
+
+### Immutable execution identities
+
+SHA-256 hashes below were read after execution. Source/project files are unchanged from
+the source base above; the test hash identifies the new test content. Binary hashes
+identify this local Debug build, not a claim of cross-machine reproducibility.
+
+| File | SHA-256 |
+|---|---|
+| `src\AiDe.Core\Watcher\CoordinationContractLog.cs` | `C9FDB639D1F2DED724D08AAA8FFEAA25DE4010E89FE4D28E900E5EDC2E5F2F2F` |
+| `src\AiDe.Core\Watcher\CoordinationContract.cs` | `5198CD119D5079E91FD130774981593BD09E8D8D03D530EC3A50F4BD959CFBAA` |
+| `src\AiDe.Core\Watcher\MessageBoard.cs` | `B9843DFD7E1DF08DEFD24E958E2D9D58B61FC76465A570DF2D48C46F1E33E005` |
+| `src\AiDe.Core\Watcher\WatcherObservationStore.cs` | `725EDFAD68B9DE35489889F7FDC9F5A024A3457D0827FAC82E0B22B433160D89` |
+| `src\AiDe.Core\Watcher\SqliteWatcherObservationStore.cs` | `462188EC8116302E1B5A0FBDB1BAF01BAAB35FBC2A7449021EF3988D2E7E0816` |
+| `src\AiDe.Core\Watcher\IngestHost.cs` | `EADC24CB644BC8C2155A9182962DA9B4462D2B7340297B48DFF2EE987B5BFFB8` |
+| `src\AiDe.Core\Watcher\TrustedRegistrar.cs` | `AE8B3BAAC979A87512DA8DD2492F28ADC9510D9A2C71682936B166971BD114DC` |
+| `tests\AiDe.Core.Tests\Watcher\WatcherTestDoubles.cs` | `449C16CAA5D03B8A034E5DA92B4E6161FC1D1A17DC1B28963A66578951F353E0` |
+| `tests\AiDe.Core.Tests\Watcher\CoordinationReliabilityTests.cs` | `780883C180E4B24BA5037A143DA298CDD4D51C52CE91E6B58096701AD33E48A4` |
+| `tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj` | `FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D` |
+| `src\AiDe.Core\AiDe.Core.csproj` | `B63C41B97201DC3E1016B72B404A32411AC31E477231B281219DDA64D0AD584A` |
+| `Directory.Packages.props` | `A57D2EE58BD9787119F5D71C07B956A72F986FEF30287647AABCA25212E95F64` |
+| `tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll` | `5D04FC1BECC273CDF5E0485711B637A57BF0819D52386073FCB2882B751EE0CE` |
+| `tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.dll` | `CD037D365519BF085611C03024474EDD50717095EFD05C0D8E8085898AAB304D` |
+| `tests\AiDe.Core.Tests\bin\Debug\net10.0\Microsoft.Data.Sqlite.dll` | `4ABD9C2A61E580EB853E93CA8953A3CEF2C05714AE28D2D1859D4DBC5E5700BC` |
+
+**Verified:** the seven outcomes and the stated SQLite observations. **Inferred/static:**
+original reports remain historical; other mechanisms are not promoted by these runs.
+**Flagged:** all remaining P2 floors, independent design/schema approval and solution
+admission. Existing `watcher.db`, three additive cache tables, canonical `.agents`
+requests as sole truth, future indexed native MAX+1 **inside** the writer transaction
+without historical dedup, raw source keys and atomic effect/receipt/checkpoint,
+overflow-before-parent/accounted quarantine/cursor are still future contracts.
+No schema, transaction, crash, forbidden-mutation, rollback, rebuild, source-gap,
+100x query-plan, 401-row paging, limit+1/outage, tombstone/version or endpoint floor is
+cleared here. O11/O19 and native O14 have **partial RED evidence**, not full completion.
+Prior Data/DS BLOCK findings stand. Next: independent Data/DS schema/transaction
+approval, then admitted implementation with **all** P2 floors; no reapproval of P0-P5.
+
+Derived views and lesson incorporation remain conductor-owned under the existing
+checkpoint protocol. This author does not claim a clean site/index gate. No AIDE
+contract-log/session environment was supplied, so no live episode/board event was sent.
+
 ## P2 design correction receipt — 2026-09-16, independent gates NOT cleared
 
 **Docs-only Data/DS scribe.** Officially registered session `xh-p2-projection-b0d0`,
