@@ -18923,6 +18923,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "723f522740d34020017a6ff832c610d6f19e9b5bc570f5205482b6353137c876"
     },
     {
+      "id": "proof-atlas-p1-03-image-diagnostics-review",
+      "path": "docs/proof/atlas-p1-03-image-diagnostics-review.md",
+      "title": "Independent review of image-query diagnostic candidate",
+      "type": "proof-pack",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "CLEAR for exact diagnostic-only runner and candidate input delta: independent 19/19 controls, persisted primary/secondary evidence, and full input comparison. Promotion and native execution remain separate.",
+      "tags": [
+        "atlas",
+        "proof",
+        "forensicreview",
+        "diagnostics"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-p1-03-pair-preparation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "36efe626cff327ab88642b0486792d57e5b87c08d3a59dbc1810621a3f473fe8"
+    },
+    {
       "id": "proof-atlas-p1-03-pair-execution",
       "path": "docs/proof/atlas-p1-03-pair-execution.md",
       "title": "Atlas pair 01: arm A process-identity refusal; B not started",
@@ -23446,5 +23476,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a09b3071906b70ba3c1d40eaa3a804eaae5328d4ff2943f46ef446cf237af98a"
+  "graphSha256": "0e3db088da1b8cc59bfbb1b4c8c280ecbb6512791f875402c140f476f192b76b"
 };

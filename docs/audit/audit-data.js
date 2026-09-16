@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T22:30:32Z",
+  "generated": "2026-09-16T22:40:05Z",
   "audit": [
     {
       "actor": null,
@@ -26550,6 +26550,53 @@ window.AUDIT_DATA = {
         "sha": "f8ad3323c1989855916115b3b343c4fee99566b8",
         "short": "f8ad3323c",
         "branch": "test/atlas-p1-03-uia-pair",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2P6145ZDJ45Y6JJXHH7ZN06",
+      "shortname": "atlas-image-diagnostics-review-request",
+      "datetime": "2026-09-16T22:40:04Z",
+      "session": "codex-atlas-p1-03-image-diagnostics-review",
+      "prompt": "FIRST: set AGENT_SESSION=codex-atlas-p1-03-image-diagnostics-review and AGENT_NAME=codex-astra-image-diagnostics-reviewer, then audit-log.py start --session codex-atlas-p1-03-image-diagnostics-review --skill forensicreview. New Conductor-provisioned tree C:/Projects/ai-de-review-atlas-p1-03-image-diagnostics, branch review/atlas-p1-03-image-diagnostics at41421c8e844942e0e23ad26e757d95da8ebf29d6. Goal: independent exact diagnostic-only runner/manifest review. Done when Test/SRE/Simplifier clear or return a concrete veto with observed controls and source preservation. Tier T2; fan-out0; budget6 calls/10min checkpoint4; Astra; contextcap400k. Reuse grounded guidance, check changed instructions, publish liveness first. Read top proof and exact delta from f8ad3323. Allowed new docs/proof/atlas-p1-03-image-diagnostics-review.md, own official audit/required derivatives, ignored review controls only. No maintained runner/source fixes. May run the 19 harmless selftests independently; NO native Facts, GUI/browser launch, build, or execution slot/request. Command contract in runner CLI: selftest --output <own ignored JSON>. Read it before use. Inspect actual results and persisted new control JSON, not only summary. Require red evidence16pass+3missing-field errors, green19; both Job.sample and owned_snapshot direct paths; immediate native error before any later call, pending identity distinct from accepted identities, later timing, secondary wait error6 cannot replace122, clobber9876 controls restore boundary. Actually exercised process/browser refusal gates, not source inference. Verify old acceptance/containment/no-retry logic remains. Source-author raw C:/Projects/ai-de-test-atlas-p1-03-uia-pair/artifacts/atlas-image-diagnostics/{red,green-1,candidate-comparison,audit-readback}.json. Proposed manifest there at artifacts/atlas-pair-preparation/manifest-image-diagnostics-candidate.json SHA66ccb1a395d44e34818f21c24c2f0608605f539484452c42890e2c0abcd1ff3e; runnerSHA9615a47ac9b5acb7ce8c4fb09e23bdb0e99d4ebd62aedf804a97944ded86af2b. Compare actual old manifest-corrected and predecessor: only runner changed,11629 other inputs unchanged including5Git files; no adds/removals/rebuild. Candidate remains unpromoted pending your review. No historic cause or readiness claim, no automatic native request even CLEAR. Root read proof/red/green/comparison fields already; your independent read and actual selftests are required. Exact short proof/site leases; root sites released. Capture-proof agent may need site later, signal before derived close; no waiting out refusal. Gate all nested tool exit codes; preserve full exec result/session IDs. Keep graph unchanged: repair->your review->separate Owner disposition. Audit/regen/graph/source check/clean commit, release/end/retain, return exact commit/verdict/raw evidence/calls/duration. No source joining or main publication.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2P6149GSHYHSVND34C3RV14",
+      "shortname": "atlas-image-diagnostics-independent-review",
+      "datetime": "2026-09-16T22:40:04Z",
+      "session": "codex-atlas-p1-03-image-diagnostics-review",
+      "prompt": "FIRST: set AGENT_SESSION=codex-atlas-p1-03-image-diagnostics-review and AGENT_NAME=codex-astra-image-diagnostics-reviewer, then audit-log.py start --session codex-atlas-p1-03-image-diagnostics-review --skill forensicreview. New Conductor-provisioned tree C:/Projects/ai-de-review-atlas-p1-03-image-diagnostics, branch review/atlas-p1-03-image-diagnostics at41421c8e844942e0e23ad26e757d95da8ebf29d6. Goal: independent exact diagnostic-only runner/manifest review. Done when Test/SRE/Simplifier clear or return a concrete veto with observed controls and source preservation. Tier T2; fan-out0; budget6 calls/10min checkpoint4; Astra; contextcap400k. Reuse grounded guidance, check changed instructions, publish liveness first. Read top proof and exact delta from f8ad3323. Allowed new docs/proof/atlas-p1-03-image-diagnostics-review.md, own official audit/required derivatives, ignored review controls only. No maintained runner/source fixes. May run the 19 harmless selftests independently; NO native Facts, GUI/browser launch, build, or execution slot/request. Command contract in runner CLI: selftest --output <own ignored JSON>. Read it before use. Inspect actual results and persisted new control JSON, not only summary. Require red evidence16pass+3missing-field errors, green19; both Job.sample and owned_snapshot direct paths; immediate native error before any later call, pending identity distinct from accepted identities, later timing, secondary wait error6 cannot replace122, clobber9876 controls restore boundary. Actually exercised process/browser refusal gates, not source inference. Verify old acceptance/containment/no-retry logic remains. Source-author raw C:/Projects/ai-de-test-atlas-p1-03-uia-pair/artifacts/atlas-image-diagnostics/{red,green-1,candidate-comparison,audit-readback}.json. Proposed manifest there at artifacts/atlas-pair-preparation/manifest-image-diagnostics-candidate.json SHA66ccb1a395d44e34818f21c24c2f0608605f539484452c42890e2c0abcd1ff3e; runnerSHA9615a47ac9b5acb7ce8c4fb09e23bdb0e99d4ebd62aedf804a97944ded86af2b. Compare actual old manifest-corrected and predecessor: only runner changed,11629 other inputs unchanged including5Git files; no adds/removals/rebuild. Candidate remains unpromoted pending your review. No historic cause or readiness claim, no automatic native request even CLEAR. Root read proof/red/green/comparison fields already; your independent read and actual selftests are required. Exact short proof/site leases; root sites released. Capture-proof agent may need site later, signal before derived close; no waiting out refusal. Gate all nested tool exit codes; preserve full exec result/session IDs. Keep graph unchanged: repair->your review->separate Owner disposition. Audit/regen/graph/source check/clean commit, release/end/retain, return exact commit/verdict/raw evidence/calls/duration. No source joining or main publication.",
+      "summary": "CLEAR exact diagnostic-only runner and proposed input delta. Independent19/19 in2.430s; author red16pass3missing-field errors read. New actual Job/sibling persisted records prove122 retained despite clobber9876/laterwait6; actual refusal predicates executed. Full11630file1030root inventory matches; only runner changed,11629other inputs unchanged,11624original plus5Git. Prior16control AST and named policy AST unchanged. Reviewer missed hardcoded output ROOT: UUID raw controls in original prepared tree; shared ignored containment-control.json overwritten; own inspector corrected without test rerun. Author3UUID image records and prior manifests directly preserved. FR-IDR-001 disclosed and central follow-up delegated. Six batches, no extension consumed; no native/build/promotion/slot/sourcejoin.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-astra-image-diagnostics-reviewer",
+      "artifacts": [
+        "docs/proof/atlas-p1-03-image-diagnostics-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Independently review exact diagnostic-only runner and candidate manifest.",
+      "done_when": "Test/SRE/Simplifier verdict with observed controls, exact population preservation and committed receipt.",
+      "tier": "T2",
+      "main_calls": 6,
+      "main_budget": 6,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-16T22:33:41Z",
+      "duration_seconds": 383.0,
+      "git": {
+        "sha": "41421c8e844942e0e23ad26e757d95da8ebf29d6",
+        "short": "41421c8e8",
+        "branch": "review/atlas-p1-03-image-diagnostics",
         "pushed": null
       }
     }
