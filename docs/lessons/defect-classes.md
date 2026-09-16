@@ -2873,6 +2873,17 @@ for both or split.*
   guarded and literal-throwing fixture left alone) and on the repository itself before the sweep.
 - **Status:** `controlled`
 
+- **Recurrence (2026-09-16, Atlas diagnostic cleanup):** a throwing window/daemon
+  cleanup in a finally can replace the original query assertion and skip later
+  cleanup/evidence. **Class -> sweep -> derive -> prevent:** reuse DC-078's lost
+  diagnostic-reason shape; sweep both new arm finally paths; use one failure-recording
+  cleanup sequence; execute TransitionControl_Cleanup_RecordsFailuresContinuesAndPreservesPrimary
+  for primary-success/failure cases. Both pass at c192a7ed and prove same primary
+  exception identity, later cleanup and saved failure evidence. The controls were
+  added after the finding; no cleanup red run is claimed. This is a bounded
+  experimental path control, not a claim about every cleanup site. Evidence:
+  docs/proof/atlas-p1-03-transition-design-review.md and the pinned author Proof Pack.
+
 ### DC-079 — Two conventions for one job coexist with nothing marking which is correct, so copying is a coin flip
 
 - **Shape:** the same helper is written by hand in many files. Over time the copies diverge, and one
@@ -8432,6 +8443,15 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Sweep:** the App tests' `Until` helpers (`grep -rn "Until(" tests/AiDe.App.Tests`); the pattern is the test idiom, not `src/`.
 - **Control:** the helper pumps after the condition holds (`UntilAsync`); an oracle over a derived row asserts after a pump, never directly after the source condition.
 - **Status:** `controlled` — a test-idiom class.
+
+- **Recurrence (2026-09-16, Atlas asynchronous custody control):** an assertion
+  inspected disposal entry before its asynchronous continuation ran. **Class ->
+  sweep -> derive -> prevent:** reuse DC-222's source-before-derived observation;
+  sweep new asynchronous assertions; await the explicit DisposalStarted signal;
+  retain TransitionControl_Escrow_ConcurrentCloseSharesDisposalTask. The earlier
+  selected run recorded37/38; final43/43 is observed, including this case.
+  Evidence: c192a7ed:docs/proof/atlas-p1-03-uia-transition.md and the Conductor's
+  transition-source-handoff snapshot. No product/runtime-cause inference follows.
 
 ### DC-223 — A launch resolver that composes a path without probing it lets "installed" be asserted by each caller's own probe, and one caller reads the wrong argument as the file
 

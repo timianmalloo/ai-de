@@ -12,7 +12,7 @@ review-by: 2026-12-15
 summary: "Exact blocker transfer; isolated repairs followed by GHCP-only main publication."
 ---
 
-# Current state: r5 frozen; native preparation boundary settled
+# Current state: r5 frozen; transition preparation in independent review
 
 Goal: resolve the current Grok consumer request and continue the admitted Atlas qualification
 preparation. Done when the exact proposal has a direct semantic response and recorded
@@ -30,7 +30,64 @@ Astra Owner and Conductor. Main publication stays with foreground GHCP.
 | Native shared receipt | Keep optional observation failures from poisoning original evidence | Source715523d0 independently CLEAR for FR-NO-001 at12c1f883; own21/21 and actual replay inspected |
 | Native per-view state | Complete settled loaded/visible evidence for every observed view | Source626d16a2 independently CLEARd31eab23; own21/21 and actual JSON inspected |
 | Native qualification / main | Establish combined runtime acceptance before publication | P1-03 App1257/1258; native failure; remaining canonical steps stopped and slot released; independent RCA active |
+| Transition experiment | Distinguish loading-time traversal association | c192a7ed preparation43/43 inspected; independent review active; shown execution ungranted |
 | E1/E2 | Continue admitted Sequence/Activity and architecture view work | Integration remains the priority |
+
+## Frozen transition preparation and independent review dispatch — 2026-09-16
+
+Verified: watcher preparation request req-01M2NWGFJG89QF0KFBA9W8YGF6 is GRANTED;
+the roster-isolation addendum req-01M2NWK8V83BCR3E4DBJ4HFGA9 is acknowledged.
+Author c192a7eddab0d794712cd505994ce7858eea86d4 is committed in
+C:/Projects/ai-de-test-atlas-p1-03-uia-transition. Conductor inspected the actual
+Proof Pack, source, red/final TRXs and discovery inventory. Red:23executed/21pass/
+2intended failures; final:43executed/43pass/0skip, exactly21old and22new controls.
+The final discovered names equal the TRX population; no shown Facts are included.
+Source SHA256914a755d84f82d381fc0c516ac4e0b2257c61cb256545a904e32da35052099bc.
+Original methods through EOF compare unchanged after newline normalization.
+The red source snapshot was not pinned; its actual failure results are preserved.
+
+Root evidence snapshot: artifacts/atlas-five-gates/transition-source-handoff/,
+including conductor-verification.json, red.trx, green-freeze.trx, list-tests.txt,
+runtime.json, verification.json, frozen-source.cs and executable verify-handoff.py.
+These are retained local artifacts, not implied committed payloads. Author proof:
+c192a7ed:docs/proof/atlas-p1-03-uia-transition.md. Installed runtime was10.0.11;
+the recorded loaded App/Test/WindowsDesktop identities were read. These identities
+are not yet the complete future pair binary manifest.
+
+Conductor caught an original-error masking risk in direct cleanup finally blocks.
+The author used a shared failure-recording sequence and two executed controls;
+their green results and primary exception identity assertions were inspected.
+No cleanup red-first execution is claimed. DC-078 recurrence and DC-222 async
+observation recurrence are recorded with those executable controls. Audit close
+initially refused missing shortname and stopped; bounded administrative recovery
+preserved source/runs. Actual author25/24calls and1430seconds, not budget compliance.
+The missing own liveness record was created late and labelled as late; the handoff
+validator now refuses missing liveness or missing required persisted audit fields.
+
+Independent Astra review is dispatched in separately provisioned
+C:/Projects/ai-de-review-atlas-p1-03-uia-transition, branch
+review/atlas-p1-03-uia-transition, session codex-atlas-p1-03-transition-review,
+basec192a7ed. Budget12calls/20minutes/checkpoint8, fanout0. Astra is right-sized for
+WPF temporal semantics, lease custody races and error fidelity. Allowed receipt:
+docs/proof/atlas-p1-03-transition-review.md plus own official records. Same selected
+non-GUI filter only; no source repair, full-class selection, shown tests or live UIA.
+Reviewer assesses B1-B3 implementation, testing-strategy union, original code,
+emitted contract, arm symmetry and containment limits. Its verdict is pending.
+
+The original graph's grant and author nodes are complete. Review -> exact runner/
+binary manifest/containment -> fresh watcher slot -> two single fresh-process arms
+-> independent interpretation remain serial. No new graph invocation is needed.
+The exit oracle is satisfied evidence predicates, not repeated runs or elapsed time.
+Root parsing is evidence inspection, not independent gate clearance. Root costs
+were not separately bounded at this continuation; no retrospective cost-compliance
+claim is made. Oversized read output was narrowed before relying on hidden fields.
+
+Canonical source remains626d16a2; src/tests/tools are unchanged from5406ea69.
+No experimental-source join, shown execution or publication happened. Main was
+freshly checked atbcf4959bc0e0e361736e6a179f05b69fcd0500f8. P1-03 qualification
+still fails; the five component repairs do not establish combined acceptance.
+Grok r5 freeze is complete and has no remaining Codex ACK dependency. E1/E2 follow
+the existing integration priority. Trees/raw evidence remain retained for review.
 
 ## Design clearance and preparation boundary — 2026-09-16
 

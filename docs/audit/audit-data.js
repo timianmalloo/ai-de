@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T20:00:17Z",
+  "generated": "2026-09-16T20:30:10Z",
   "audit": [
     {
       "actor": null,
@@ -26458,6 +26458,37 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "19ee8f4a9d5ecc98770b8af217654c4f6b742781",
         "short": "19ee8f4a9",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NYK7YFYJXKBPV7A9WJJHP6",
+      "shortname": "atlas-transition-source-handoff",
+      "datetime": "2026-09-16T20:30:09Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going",
+      "summary": "Inspected frozen author c192a7ed: red23/21/2, final43/43, exact discovery, canonical method preservation and actual audit fields. Found cleanup masking risk; author corrected with two executed controls. Author25/24 and1430seconds; late liveness and audit refusal retained. Provisioned independent Astra review at exact commit. No source join, shown execution or publication. Grok r5 remains frozen.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md",
+        "docs/plans/atlas-five-gates.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Finish bounded diagnostic preparation for the Atlas qualification blocker.",
+      "done_when": "Frozen preparation and actual evidence are independently reviewed and the next experiment is ready for coordination.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-16T20:04:38Z",
+      "duration_seconds": 1531.0,
+      "git": {
+        "sha": "410c970ff66e47cf6fbfb0aa0a792123927e87e2",
+        "short": "410c970ff",
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
