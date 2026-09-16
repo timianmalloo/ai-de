@@ -9534,7 +9534,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d16ea8921acd2792a2df7690eed9606dc6452623ae8ef74986f20fef420eea05"
+      "sourceSha256": "02a80d08c27d58b19c6371afcf6c0eb8dbd2d4998895064f0f08167de3f38955"
     },
     {
       "id": "coordination-code-atlas",
@@ -12113,7 +12113,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "81faf658a2aa1b1a2b1b4b7c77e20c9d3f300b6e820fd63afc8988306581286e"
+      "sourceSha256": "bbc2a40e02f48521c1e0e5803d2a41301f98099a18daf82a160c7eaff0135d53"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -13002,8 +13002,14 @@ window.DOCS_INDEX = {
           "rel": "depends-on"
         }
       ],
-      "diagrams": [],
-      "sourceSha256": "7c95a8ba3e6b74f8491573f51e21e983eb7b805fabb2ee0e2e7463dc37b2baaf"
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Observed pair refusal and investigation decision — 2026-09-16",
+          "mermaid": "flowchart LR\n  A[Invalid A; B unexecuted] --> I[Independent interpretation]\n  I --> D[Owner admission]\n  D --> N[Four harmless fixtures]\n  N --> J[Independent findings review]\n  J --> O[Owner disposition]"
+        }
+      ],
+      "sourceSha256": "4cb9707ad446749069690361e3bc6d11797e5e05c7d8ca7eae1c6c149f194c68"
     },
     {
       "id": "proof-atlas-peer-review-transport",
@@ -23406,5 +23412,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ff3a52486859f1d0205afca1059adbe5bdcfd3b20cf9fcc7bdbd2df850a36e3d"
+  "graphSha256": "ae36a0c03186bc9bbfe747d6fd6eb72ae0cf6e885cd84174270b36a9b25e4a3a"
 };

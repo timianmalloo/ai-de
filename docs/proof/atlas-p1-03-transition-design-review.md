@@ -411,3 +411,84 @@ Watcher attribution request req-01M2P0PZJWAFSG343QCD8TH127 was resolved from thi
 Conductor's actual check-only transcript, preserved in pair-handoff/identity-check-only.json.
 Anonymous decision history remains anonymous; the later ALLOW is not retroactive
 validation. This was no authored-file mutation or new defect-ID allocation.
+
+## Observed pair refusal and investigation decision — 2026-09-16
+
+Verified: SLOT-CODEX-UIA-PAIR-01 executed once at d679e156. Executor receipt
+f8ad3323c1989855916115b3b343c4fee99566b8:docs/proof/atlas-p1-03-pair-execution.md
+and the actual wrapper, state, A process and stream records were read by Conductor.
+A stopped after 1.063 seconds: Refused/PROCESS-IMAGE-MISSING, forced=true,
+timed_out=false, Job total8/active0, seven recorded creation identities, retained
+handles exited. B never launched. No TRX, native receipt, browser observation,
+pixels or original-oracle result exists. Exit124 is not a timeout result here.
+The failing PID and native error are absent; no Git/provider attribution is made.
+Full pins passed before and after A; frozen source/runner/manifests did not change.
+Outer PID21960, creation134340687798593356, ran21:46:19.862256–21:46:29.529898Z,
+exit2. Root separately observed all eight recorded outer/sampled PIDs absent.
+
+Actual watcher RELEASE on req-01M2P2Z0AC7Q6W7B06J21HTNM0 closes the consumed slot.
+Root duplicate release request and incoming ACTION req-01M2P37ENMETGXD5QP46PQFP5W
+were resolved against that disposition. No retry or new slot is granted.
+Independent interpretation: 0d8da79160ec8ce3c18b7e857f5b6f3dda8d7f56:docs/proof/atlas-p1-03-pair-outcome-review.md.
+The complete receipt is separately inspected before this record is committed;
+its verdict is documentary, never native readiness or canonical qualification.
+Git-byte SHA256: 1ff15a255ff59df983561ebd9750b67c7004a86c1410eab57101038272289952.
+Raw local snapshots: artifacts/atlas-five-gates/pair-handoff/execution-result.json,
+execution-state.json, execution-A-process.json and independent-pair-outcome-review.md.
+These local raw snapshots are retained, not falsely described as committed payloads.
+
+Astra Owner admits a separate non-GUI investigation after interpretation: eight
+calls/fifteen minutes, checkpoint five, at most four planned harmless fixture cases.
+Live image success; synchronized exit at the image boundary; injected query failure
+showing diagnostic loss; failure containment/handle closure. Capture native error
+immediately, retained PID/creation/Job membership, query result and separately timed
+exit state. Reviewed runner, manifests, compiled outputs and product/test source
+remain unchanged. No native execution, rebuild, identity waiver or repair is admitted.
+An exit-race fixture cannot establish the historical missing process or cause.
+Return observed distinctions, reproduction status and smallest supported correction;
+if inconclusive, state the missing evidence and stop that unit. Owner decides next.
+User's standing direction delegates routine phase decisions to Owner and watcher;
+the investigate workflow does not create a renewed human-approval dependency.
+
+Optimize-graph material re-plan: observed observer refusal adds investigation rather
+than continuing the invalid A to B. Existing specification/architecture and identity
+invariants remain authoritative. This is the investigate stage; no new product spec,
+architecture or implementation is admitted. Surface list: owned child -> retained
+process handle -> image query -> immediate error/exit observations -> finalization
+-> raw fixture evidence -> independent interpretation -> Owner decision.
+
+| Node | Input/dependency | Exit oracle | Budget |
+| --- | --- | --- | --- |
+| I: outcome review | Actual failed pair and frozen runner | Evidence limits and containment independently assessed | 8 calls/12 min |
+| D: Owner decision | I and actual source/error | Exact bounded investigation admitted | 4 read batches/8 min |
+| N: scratch investigation | I+D, frozen source | Four case dispositions and actual raw records, no maintained edits | 8 calls/15 min |
+| J: independent findings review | N | Claims supported; no historical cause inferred from synthetic fixture | 6 calls/10 min |
+| O: next Owner decision | J | Repair, alternative or park explicitly chosen | 3 read batches/6 min |
+
+```mermaid
+flowchart LR
+  A[Invalid A; B unexecuted] --> I[Independent interpretation]
+  I --> D[Owner admission]
+  D --> N[Four harmless fixtures]
+  N --> J[Independent findings review]
+  J --> O[Owner disposition]
+```
+
+Decision/data edges are serial. Width stays one executing branch plus Conductor/Owner,
+cap4; no parallel authors of the sampler. Inferred budget ceiling T1=Tinf=51minutes
+for this five-node chain, not a predicted runtime; parallel ceiling0, so no additional
+fan-out pays. Existing review was already active when Owner supplied conditional D.
+Variant: unclassified cases (maximum4), then unreturned review/decision receipts;
+each requires its oracle, no repeated sampling until green. A cap is a defect signal,
+not acceptance. No automatic retry on failure; partial evidence joins only as a
+finding. Independent Test Architect/SRE/Simplifier remain required; preservation,
+audit and actual-result inspection floors are retained. Source transport stays
+separate: do not join the experimental branch wholesale into canonical/main.
+
+Actual executor cost:8/8 calls,377 seconds, audit al-01M2P36G5DGKXVY94B10A7T61X.
+Conductor marker21:39:32 excludes earlier request preparation; duration comes from
+the official close. Token/spend counts unavailable. A continued oversized help/read
+batch was truncated; relied-on decision/source fields remained visible, unseen help
+text supplied no claim. Missing not-yet-published reviewer liveness was reported to
+the reviewer; it was not treated as proof of inactivity. No retrospective budget
+compliance is asserted for Conductor. Main remains bcf4959b; P1-03 remains failed.

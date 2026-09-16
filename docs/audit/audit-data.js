@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T21:35:57Z",
+  "generated": "2026-09-16T22:01:13Z",
   "audit": [
     {
       "actor": null,
@@ -26700,6 +26700,36 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2P3SYQD8DSPQMZJ5ZCGPA57",
+      "shortname": "atlas-pair-outcome-investigation-admission",
+      "datetime": "2026-09-16T22:01:12Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going",
+      "summary": "Directly inspected actual invalid A, absent B/oracle, contained Job and identity gap; consumed explicit watcher release. Independent outcome receipt read. Owner admits four harmless scratch fixtures, no source/runner/manifests/native changes; material graph replan recorded.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md",
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve the stopped diagnostic run and select the next bounded action toward Atlas integration.",
+      "done_when": "Actual execution evidence is independently interpreted and Owner admission is recorded for the next bounded diagnostic unit.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-16T21:39:32Z",
+      "duration_seconds": 1300.0,
+      "git": {
+        "sha": "5f75b7cb32afc2c387edf1f81e436aeb1caead4b",
+        "short": "5f75b7cb3",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -31471,6 +31501,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "63795c24d409b340c34400013ac11ffbee601aa2",
         "after": "63795c24d409b340c34400013ac11ffbee601aa2",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2P3SYKPJKA15G56Y1V6DHCP",
+      "datetime": "2026-09-16T22:01:12Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "decision",
+      "skill": "optimize-graph",
+      "title": "Investigate the failed process observer without retrying native A",
+      "prompt": "keep going",
+      "summary": "Astra Owner admits four harmless non-GUI fixture cases after independent interpretation. Runner/manifests/source frozen; no native retry or identity waiver. Actual A invalid/B unexecuted and watcher release inspected.",
+      "rationale": "PROCESS-IMAGE-MISSING omitted PID/native error, so the historical cause cannot be diagnosed from the current record. New observed failure requires bounded investigation and independent review.",
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "5f75b7cb32afc2c387edf1f81e436aeb1caead4b",
+        "after": "5f75b7cb32afc2c387edf1f81e436aeb1caead4b",
         "branch": "integration/atlas-five-gates",
         "pushed": null,
         "commits": []

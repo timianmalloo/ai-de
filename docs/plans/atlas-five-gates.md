@@ -12,15 +12,14 @@ review-by: 2026-12-15
 summary: "Repair the five frozen Atlas integration failures before main publication and E1/E2 continuation."
 ---
 
-# Current state: corrected runner CLEAR; fresh execution slot next
+# Current state: A invalid, slot released; bounded observer investigation
 
-Goal: resolve the current Grok consumer request and continue the admitted Atlas qualification
-preparation. Done when the exact proposal has a direct semantic response and recorded
-disposition, and the bounded native observer correction has independent clearance before
-any execution-slot request. Not in scope: new ownership/API policy, product changes,
-ungranted native execution, main publication or coordination-framework repair. The peer
-response is T1; the existing native programme remains T2. Maximum width is four including
-Astra Owner and Conductor. Main publication stays with foreground GHCP.
+Goal: diagnose the process-observer refusal without changing the frozen native experiment.
+Done when four bounded harmless fixture cases distinguish observable failure states,
+independent review assesses the evidence, and Owner selects the next action.
+Not in scope: maintained runner/source edits, native retry, rebuild, manifest refresh,
+identity waiver or main publication. Tier T2; fan-out cap4 including Astra Owner
+and Conductor. One executing investigation branch; GHCP retains publication.
 
 | Task | Purpose | Verified status |
 | --- | --- | --- |
@@ -30,8 +29,16 @@ Astra Owner and Conductor. Main publication stays with foreground GHCP.
 | Native shared receipt | Keep optional observation failures from poisoning original evidence | Source715523d0 independently CLEAR for FR-NO-001 at12c1f883; own21/21 and actual replay inspected |
 | Native per-view state | Complete settled loaded/visible evidence for every observed view | Source626d16a2 independently CLEARd31eab23; own21/21 and actual JSON inspected |
 | Native qualification / main | Establish combined runtime acceptance before publication | P1-03 App1257/1258; native failure; remaining canonical steps stopped and slot released; independent RCA active |
-| Transition experiment | Distinguish loading-time traversal association | Correctedd679e156 independently CLEAR8e60f415;16/16 + nine refused mutations inspected; fresh slot next |
+| Transition experiment | Distinguish loading-time traversal association | One granted attempt stopped A on PROCESS-IMAGE-MISSING; B not run; watcher released; outcome review frozen |
 | E1/E2 | Continue admitted Sequence/Activity and architecture view work | Integration remains the priority |
+
+## Current diagnostic outcome
+
+A invalid; B unexecuted. Watcher released the consumed slot. Execution receipt
+f8ad3323 and independent outcome receipt 0d8da79160ec8ce3c18b7e857f5b6f3dda8d7f56 are retained.
+No native oracle result exists. Owner admits four harmless non-GUI fixture cases
+with frozen runner/source/manifests and no retry. The programme Proof Pack records
+the material graph re-plan, exact budgets and evidence boundaries.
 
 ## Corrected runner clearance
 
