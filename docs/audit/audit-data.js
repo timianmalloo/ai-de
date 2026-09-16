@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T22:30:16Z",
+  "generated": "2026-09-16T22:18:55Z",
   "audit": [
     {
       "actor": null,
@@ -19844,6 +19844,41 @@ window.AUDIT_DATA = {
       "summary": "Verified code/proof publication; identified twelve original Owner/reviewer audit rows still local and requested an audit-only serialized Core handoff.",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M2P4TBCWP84Q6SGXHD7QBD5K",
+      "shortname": "rulings-122-126",
+      "datetime": "2026-09-16T22:18:54Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "continue with the owed-by-this-seat and unassigned pieces, proactively coordinating with others",
+      "summary": "Five rulings filed: 122 (DeclaredDeploymentContext admitted as a specified read-only seam, filed a day late unchanged with a dated rider), 123 (the archetype grammar's duplicate Type keyword is a verified defect - the Color conflict is NOT, no signature in the repo writes it - Codex's x- facets admitted for serialization only, source fix is a Claude knowledge lane), 124 (Ruling 121's spike conditions met; manual Linux builds accepted because the coverage gate is Windows-only in CI; combined coverage run and a proof-doc frontmatter check required; the Atlas ordering LIFTED), 125 (four of the five dropped controls admitted as one Claude lane, Linux coverage deferred to a measurement), 126 (main-red lane opens now for groups 1-2 with groups 3-4 held to a dated 48h variant). Measured before acting: NEITHER Atlas candidate modifies any of the three red-test files (git diff --numstat 0 0 against each merge-base), so the collision I warned about was not real; notices sent to both Atlas programmes and the watcher.",
+      "kind": "skill",
+      "skill": "conductor-watch",
+      "tool": null,
+      "actor": "claude-conductor",
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "tags": [
+        "coordination",
+        "main-red"
+      ],
+      "outcome": "success",
+      "goal": "Clear the Claude Owner seat's backlog (122, 123, 124) and take the unassigned work (the dropped controls, the main-red repair lane), coordinating each with the watcher and the affected programme before acting",
+      "done_when": "122-126 filed on main and their requests resolved; lane/main-red-0915 open with the Atlas seam measured and notified; the dropped controls admitted as a lane",
+      "tier": "T1",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc",
+        "branch": "conductor/watch-0915",
+        "pushed": null
+      }
     }
   ],
   "changes": [

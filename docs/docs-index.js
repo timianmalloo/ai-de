@@ -10296,7 +10296,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "17f6a4711f1f31fb5b5f4ddd36f68bcb5497ad06fecb5316806f4361bd034ec5"
+      "sourceSha256": "7daf60ac6f255937a8ee823492a46e3a9f7bced92ba0874046b86a2e14061f8d"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -20478,5 +20478,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d835155d07f75e4983887e0f6cd3d7b7716282d981e68c8c5d55b097de52f2cb"
+  "graphSha256": "6f87a2918a7c01257f52360ef1d6452943a545ed52b9c84e00fd3b01feedd503"
 };
