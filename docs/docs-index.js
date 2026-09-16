@@ -5620,6 +5620,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "e9d58e3992b3d806992144fa09759060fcc31e0757216bf5c6b86fb8944baaf6"
     },
     {
+      "id": "note-d1-codex-entry-point-handshake-r4",
+      "path": "docs/notes/d1-codex-entry-point-handshake-r4.md",
+      "title": "D-1 mapper contract r4 — Grok produces D-1-row → Core observation; Open Sequence after freeze",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "Proposed mapping contract. Does not rewrite r3 blob e448383a. Grok owns the mapper. Output is Core method-observation identity E1 already selects — not a D-1 listing row. Freeze after Codex same-blob ACK. Until then Open Sequence stays dark.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "mapper"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake-r3",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-mapper",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-entry-points",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "402c3dc5757dfb7516205cab2e78c73597c56feb5a0fce45e0042593291492c5"
+    },
+    {
       "id": "note-d1-n1-inventory",
       "path": "docs/notes/d1-n1-inventory.md",
       "title": "D-1 N1 inventory — existing store and queries (facts; handshake not frozen)",
@@ -6958,6 +6992,44 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "69a9635958af3ebb9abff1c875b5b7792850ad017ab70362f8b76badc6dc870d"
+    },
+    {
+      "id": "note-understanding-views-owner-d1-mapper",
+      "path": "docs/notes/understanding-views-owner-d1-mapper.md",
+      "title": "Admit D-1 mapper to Grok; Codex E1 does not own D-1→observation mapping",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2027-03-16",
+      "reviewSuggested": [],
+      "summary": "Operator: claim the mapper unless Codex E1 already does it. E1 does not: r3 freeze forbids E1 consuming D-1 rows. Grok is producer of the mapping contract. Live Open Sequence stays dark until that contract is peer-ACK frozen (r4).",
+      "tags": [
+        "decision-note",
+        "owner",
+        "D-1",
+        "mapper"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-d1-admission",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r3",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-d1-r3-producer-ack",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-entry-points",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3af30f9d2841323f18356bc5ad0c2dc4e4640593a923448245ebcb6c3c9ac246"
     },
     {
       "id": "note-understanding-views-owner-n1-disposition",
@@ -20800,5 +20872,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "43e9737bf32b637f36246071fcf04ec4c33760321ad37d8d6bf684e0d0510cbe"
+  "graphSha256": "ba7746046f990aabdb2ffb4ce55a9f8ce50bc69a464e2aaea4998c2ba3909c5a"
 };
