@@ -9534,7 +9534,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "250b0875f8e8da0a0c6d36d187b918929da985766d718e41a2c866ba3fdbd547"
+      "sourceSha256": "9a4f6d3e72816ead1e9bea15c4e1ffc732e3e16a481975f13b9fe33e32b5c417"
     },
     {
       "id": "coordination-code-atlas",
@@ -12089,6 +12089,11 @@ window.DOCS_INDEX = {
       "diagrams": [
         {
           "kind": "flowchart",
+          "title": "Material replan: mutable WebView state versus frozen inputs",
+          "mermaid": "graph TD\n  F[Cleared diagnostic source] --> C[Containment and refusal controls]\n  F --> M[Two builds and complete freeze]\n  P[Owner profile contract and controls] --> M\n  P --> R[Independent runner and graph review]\n  C --> R\n  M --> R\n  R --> S[Fresh checked execution slot]\n  S --> A[Arm A]\n  A -->|Valid fixture and owned cleanup| B[Arm B]\n  B --> I[Independent interpretation and Owner disposition]"
+        },
+        {
+          "kind": "flowchart",
           "title": "Exact repair ledger (dispatch contract)",
           "mermaid": "graph TD\n A-->B-->C\n C-->D\n C-->E\n C-->F\n C-->G\n D-->H\n E-->H\n F-->H\n G-->H\n H-->I-->J"
         },
@@ -12108,7 +12113,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "83681f7236bc43f20ae0caa4d98487cbf37edb088734ad415d90b77750749fec"
+      "sourceSha256": "6076697a5751269824ed5df76f2d10f0e508b9cf14b59f6f1eb022fe02beae38"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -12998,7 +13003,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "32c091f7c399de5b50a165b149a5141a9b30365884f1dc047b2017110b54599e"
+      "sourceSha256": "476791a97a564511dc8a454512c53a2e6594b4d94a8618c32b7c4aadae3192fe"
     },
     {
       "id": "proof-atlas-peer-review-transport",
@@ -23401,5 +23406,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "378d2679e4df4a0a93e8ca78d0218e01cfb11fe13fe8ffeea9ee801ecc75fb1e"
+  "graphSha256": "377f13974ed34dee1342c0fe1bb7d8cc91601ecd86f10be3788ebc45b0a301f7"
 };

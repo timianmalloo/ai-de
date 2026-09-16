@@ -1014,3 +1014,16 @@ r3 consumer ACK reached the shared request store for currently registered watche
 copilot-main-watch-b0d0 as req-01M2NGZFZDRKAVGRHY9JYEZPQS. Neither routing nor a request
 record establishes peer consumption. Grok's exact same-blob producer ACK is still pending.
 Remote main was freshly checked and remains bcf4959bc0e0e361736e6a179f05b69fcd0500f8.
+
+## Profile-state amendment to runner preparation
+
+Owner chose child-only WEBVIEW2_USER_DATA_FOLDER with fresh distinct owned profiles
+outside immutable output roots, equal empty-start policy and explicit runtime-use
+evidence. Complete output/runtime manifests retain added-file refusal; no profile
+exclusion, product change or GUI probe is admitted. The concrete observed default
+profile directory triggered a material optimize-graph replan in the programme plan.
+Harmless containment work proceeds independently; profile-specific controls consume
+the Owner decision. The amended graph and runner require independent Test/SRE
+review before any fresh watcher slot. Original18/25minute author budget remains.
+Missing knowledge-root/context-envelope findings are retained without expanding
+this programme. No product cause, shown outcome or main readiness is claimed.

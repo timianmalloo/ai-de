@@ -250,3 +250,16 @@ Exact paths,18/25minute author and8/15minute reviewer budgets, isolation and lea
 remain. No shown arms/product/test/shared-runner/canonical/main action is admitted.
 Independent runner review and a fresh checked watcher EXECUTION slot still gate
 every experimental arm. No human response or extra preparation ACK is awaited.
+
+## Profile-state amendment to runner preparation
+
+Owner chose child-only WEBVIEW2_USER_DATA_FOLDER with fresh distinct owned profiles
+outside immutable output roots, equal empty-start policy and explicit runtime-use
+evidence. Complete output/runtime manifests retain added-file refusal; no profile
+exclusion, product change or GUI probe is admitted. The concrete observed default
+profile directory triggered a material optimize-graph replan in the programme plan.
+Harmless containment work proceeds independently; profile-specific controls consume
+the Owner decision. The amended graph and runner require independent Test/SRE
+review before any fresh watcher slot. Original18/25minute author budget remains.
+Missing knowledge-root/context-envelope findings are retained without expanding
+this programme. No product cause, shown outcome or main readiness is claimed.

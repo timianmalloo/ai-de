@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T20:41:20Z",
+  "generated": "2026-09-16T20:53:46Z",
   "audit": [
     {
       "actor": null,
@@ -26552,6 +26552,64 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2NZWRQGN4QNE5BGT2YD2G43",
+      "shortname": "atlas-profile-material-replan",
+      "datetime": "2026-09-16T20:52:50Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going",
+      "summary": "Material observed mutable/immutable input conflict adds explicit profile-decision/control dependency; retained independent containment work and all floors. Owner settled child-only fresh profiles; independent amended-graph/runner review pending. Source/SDK/primary documentation and bounded programme graph grounded; named knowledge root absent, context envelope recovery and late marker reported.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md",
+        "docs/proof/atlas-p1-03-transition-design-review.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Make complete immutable input verification compatible with equivalent fresh per-arm browser state.",
+      "done_when": "Owner-settled amended execution graph names all data/decision edges, controls and independent gates without widening product or execution scope.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-16T20:51:02Z",
+      "duration_seconds": 108.0,
+      "git": {
+        "sha": "193b940dccac0f42ceaf710b0dd2ba23875c0c45",
+        "short": "193b940dc",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NZYE5E79CERCRTAMCZKZN3",
+      "shortname": "atlas-profile-replan-format-recovery",
+      "datetime": "2026-09-16T20:53:45Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going",
+      "summary": "Profile replan capture stopped before staging/commit on two trailing blank lines. Normalized EOF only under exact leases; existing design/audit rows retained, not rerun. Explicit single-newline checks prevent this local writer shape. No source or execution change.",
+      "kind": "command",
+      "skill": null,
+      "tool": "git diff --check",
+      "actor": null,
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md",
+        "docs/proof/atlas-p1-03-transition-design-review.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Commit the already recorded material replan with clean formatting and current derived records.",
+      "done_when": "Whitespace check, exact manifest and required regeneration pass before commit.",
+      "tier": "T1",
+      "fan_out": 0,
+      "git": {
+        "sha": "193b940dccac0f42ceaf710b0dd2ba23875c0c45",
+        "short": "193b940dc",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -31279,6 +31337,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "b52c890d36f6fa7816e37f645fa0d844bace6a41",
         "after": "b52c890d36f6fa7816e37f645fa0d844bace6a41",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2NZWRKS3MVTSE6ZBWM6DB3E",
+      "datetime": "2026-09-16T20:52:50Z",
+      "session": null,
+      "kind": "design",
+      "skill": "optimize-graph",
+      "title": "Isolate mutable WebView state from frozen diagnostic inputs",
+      "prompt": "keep going",
+      "summary": "Owner chooses symmetric fresh per-arm child-only user-data directories outside immutable manifests, installed/runtime provenance and refusal controls; no output exclusions, product edits or GUI probe.",
+      "rationale": "Observed canonical output contains testhost.exe.WebView2; freezing complete outputs and writing default browser profile there conflict, and a shared profile introduces unequal prior state.",
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "193b940dccac0f42ceaf710b0dd2ba23875c0c45",
+        "after": "193b940dccac0f42ceaf710b0dd2ba23875c0c45",
         "branch": "integration/atlas-five-gates",
         "pushed": null,
         "commits": []

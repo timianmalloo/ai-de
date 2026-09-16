@@ -30,8 +30,109 @@ Astra Owner and Conductor. Main publication stays with foreground GHCP.
 | Native shared receipt | Keep optional observation failures from poisoning original evidence | Source715523d0 independently CLEAR for FR-NO-001 at12c1f883; own21/21 and actual replay inspected |
 | Native per-view state | Complete settled loaded/visible evidence for every observed view | Source626d16a2 independently CLEARd31eab23; own21/21 and actual JSON inspected |
 | Native qualification / main | Establish combined runtime acceptance before publication | P1-03 App1257/1258; native failure; remaining canonical steps stopped and slot released; independent RCA active |
-| Transition experiment | Distinguish loading-time traversal association | c192a7ed preparation CLEAR1d46d651; independent43/43 inspected; runner preparation requested |
+| Transition experiment | Distinguish loading-time traversal association | c192a7ed preparation CLEAR1d46d651; independent43/43 inspected; Owner-admitted runner preparation active |
 | E1/E2 | Continue admitted Sequence/Activity and architecture view work | Integration remains the priority |
+
+## Material replan: mutable WebView state versus frozen inputs
+
+Goal: preserve complete immutable inputs and equivalent fresh runtime state for
+the two diagnostic arms. Done when the amended runner and its controls receive
+independent review; the eventual pair still requires a fresh execution grant.
+Not in scope: product/test/shared-runner changes, profile deletion, machine settings,
+canonical reproduction or main integration. Tier T2, programme width cap4.
+
+Verified trigger: WebSurfaceHost.cs50-51 uses default WebView2 construction and
+EnsureCoreWebView2Async. The prior canonical test output actually contains
+testhost.exe.WebView2. A complete immutable-output scan and mutable browser data
+there are jointly unsatisfiable during execution. Root read the installed SDK
+1.0.3485.44 XML environment-override contract; Microsoft documents both the
+executable-adjacent default folder and session sharing for a shared folder:
+[user-data-folder contract](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/user-data-folder).
+
+Owner chooses fresh distinct owned absolute profiles outside all immutable roots,
+using child-only WEBVIEW2_USER_DATA_FOLDER before launch. Both arms use the same
+empty-start policy. Refuse reused paths, overlap and conflicting inherited WebView
+configuration. Preserve complete output manifests and added-file refusal; no
+.WebView2 exclusion, machine setting or existing-profile deletion. Include selected
+WebView runtime path/version/binary identity beside .NET and check across arms.
+Actual browser runtime/profile consumption is still a shown-execution obligation;
+environment delivery alone cannot prove it. This symmetric setup further limits
+canonical comparison and grants no GUI probe. Author retains18calls/25minutes;
+any exceeded budget returns precise remaining work, never dropped controls.
+
+Grounding: optimize-graph prompt and GO1-GO7 doctrine read; prior author measured
+1430seconds/25of24calls and review about362seconds/12of12calls. New profile/control
+durations and token costs are not measured. Named kb-graph-and-loop-engineering
+is absent (official context ROOT_NOT_FOUND; file discovery also absent), a flagged
+pack gap outside this programme. Official fallback context records the actual edge
+plan-atlas-five-gates -> depends-on -> session-contracts. Its bounded packet has
+14573bytes,3chunks,141omitted; no complete-history claim. The initial6000byte packet
+could not fit the mandatory6268byte envelope;18000bytes admitted the bounded packet.
+The optimize-graph marker was started after grounding reads, so its duration omits
+those reads; no full-replan timing claim follows.
+
+The naive response stops all preparation for the new profile decision. The optimized
+response lets existing harmless Job Object/manifest controls continue: they share
+no data, decision or write surface with Owner's read-only profile choice. Profile
+environment and runtime-provenance controls wait for that decision. No extra writer
+or exploratory agent is added. Every later execution and independent gate remains.
+
+| Node | Inputs and real dependency | Exit oracle | Tier / owner |
+| --- | --- | --- | --- |
+| F: frozen diagnostic source | cleared c192a7ed/1d46d651 | source pin and43/43 actual independent results | T2 / complete |
+| C: containment and input refusal | F | harmless red/green controls; owned-process bound and unrelated-process survival | T2 / Astra author |
+| P: profile contract | observed mutable path, installed SDK | explicit Owner decision; child env/freshness/overlap controls and runtime-provenance contract | T2 / Owner + same author |
+| M: both builds and freeze | F; final manifest policy consumes P | exact Debug App.Tests and Daemon builds; complete recursive output/runtime/dependency manifest with no exclusions | T2 / same author |
+| R: independent runner review | C,P,M and proof/audit | Test/SRE/Simplifier CLEAR, including graph completeness and actual refusal controls | T2 / independent Astra |
+| S: fresh checked slot | R, final script/source/binary pins | actual watcher execution grant | T2 / Conductor + watcher |
+| A: untreated arm | S | one fresh process, exact original outcome plus fixture/cleanup validity | T2 / future executor |
+| B: loading traversal arm | A with proven cleanup | one fresh process; actual Atlas loading ancestry and all pins/validity | T2 / future executor |
+| I: interpretation and disposition | both raw outcomes and validity | independent scoped association verdict; Owner scaffold disposition | T2 / reviewer + Owner |
+
+```mermaid
+graph TD
+  F[Cleared diagnostic source] --> C[Containment and refusal controls]
+  F --> M[Two builds and complete freeze]
+  P[Owner profile contract and controls] --> M
+  P --> R[Independent runner and graph review]
+  C --> R
+  M --> R
+  R --> S[Fresh checked execution slot]
+  S --> A[Arm A]
+  A -->|Valid fixture and owned cleanup| B[Arm B]
+  B --> I[Independent interpretation and Owner disposition]
+```
+
+Before: existing seven aggregate stages hid the profile-state conflict. After:
+nine explicit nodes; one new state boundary is promoted, no floor removed. Maximum
+active width remains4 including Conductor/Owner; actual current working roles are
+Conductor, one author and Owner as needed, with review serial after freeze.
+Build work may precede P, but final freeze waits for its manifest policy; the diagram
+collapses that unverified boundary rather than pretending builds depend on a UI flag.
+Inferred symbolic work T1 is the sum of node durations; span Tinf is the longest
+dependency path. The only proposed overlap saves at most min(C,P), not a measured
+speedup. Tp >= Tinf and ideal bound Tp <= (T1-Tinf)/p+Tinf are models, not timings.
+No extra fanout is justified by unmeasured overhead; no reduced verification trades
+for speed. Deterministic nodes are C and M; P/R/S/I remain judgment or authority.
+
+Floors: E7 trace source/environment -> immutable manifests + mutable profiles ->
+child/job identities -> existing oracle/receipts -> validity classification ->
+independent interpretation. Testing-strategy union, red-first controls, refusal
+measurement, independent hard veto, audit/change and graph capture remain. Test/SRE
+must independently disconfirm this amended graph at R; neither author nor Owner
+can self-clear that gate. Scan roots are exact recursively frozen output/runtime
+trees, all files, with no wildcard runtime-data exception; mutable profiles are
+distinct owned siblings outside those roots. Missing, extra or changed inputs refuse.
+
+Finite control-case count and unreturned node receipts are the decreasing variants.
+Arm count is fixed2, each attempted once. A valid negative oracle may lead to B only
+after proven owned cleanup. Missing evidence, changed pins, forced cleanup or
+180second arm/30second containment expiry invalidate and stop; caps never establish
+success. No retry-until-green, automatic dependency install or scope expansion.
+Partial outcomes preserve evidence and return precise remaining predicates to Owner.
+Transient tool transport may be reported/recovered without replaying an arm.
+Replan again only on a concrete incompatible runtime/policy/containment finding.
+Actual later timings, cases and budget use are recorded at the author/reviewer join.
 
 ## Owner correction: preparation admission is already sufficient
 
