@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T21:50:36Z",
+  "generated": "2026-09-16T22:30:32Z",
   "audit": [
     {
       "actor": null,
@@ -26501,6 +26501,54 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "d679e1567e2d74fa2ef85f1eddae6c44b6d5b758",
         "short": "d679e1567",
+        "branch": "test/atlas-p1-03-uia-pair",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2P501D8FBBJRGKV68ACKVJB",
+      "shortname": "atlas-image-diagnostics",
+      "datetime": "2026-09-16T22:22:00Z",
+      "session": "codex-atlas-p1-03-image-diagnostics",
+      "prompt": "FIRST action audit start --session codex-atlas-p1-03-image-diagnostics --skill implement, agent codex-astra-image-diagnostics-author. Conductor registered new WT1a session in original PREPARED tree C:/Projects/ai-de-test-atlas-p1-03-uia-pair, branch test/atlas-p1-03-uia-pair, HEAD f8ad3323. Goal/done: independently reviewable diagnostic-only correction at BOTH image-query sites, with meaningful red-first maintained-output controls and unchanged failure/identity/containment policies. Tier T2, fanout zero, 12 orchestration calls / 18 minutes, checkpoint eight, context cap 400k. Astra for native-error/identity/finalization semantics.\n\nRead/ACK exact official Owner contract req-01M2P4X7X5184R9DN4C28X64W4 before edits. Read independent findings CLEAR13c8070dfcb482d24b6fe147a33192bbf5ae8223:docs/proof/atlas-p1-03-process-image-review.md, especially FR-PI-001/002. Both Job.sample and owned_snapshot need direct controls, not a fifth case claimed from prior investigation. Capture get_last_error immediately after failing real call; preserve pending PID/raw birth/observed membership distinct from accepted identities; later exit state has own timestamp; secondary observation errors do not replace primary. Controls inspect maintained serialized failure fields, deliberate later error clobber, direct sibling path, failed secondary diagnostic, and ACTUALLY call verify_process_result to affirm refusal. Existing population/containment/cleanup/no-retry unchanged. Image-less diagnostic NEVER becomes complete identity.\n\nAllowlist only docs/proof/records/atlas-p1-03-uia-transition/run_pair.py, existing docs/proof/atlas-p1-03-pair-preparation.md, own official audit/required derived and ignored controls. No product/tests/tools edits, builds, native GUI/Fact/rerun/slot, main/source join. Verify old full manifest BEFORE edit. Preserve both old manifests, 11624 old non-runner inputs and five measured Git additions. May produce explicitly PROPOSED manifest-image-diagnostics-candidate.json whose only changed existing pin is runner; no overwrite/promotion of active manifest. Independent review approves exact delta/input comparison before promotion. Stop at candidate; no automatic native request after CLEAR.\n\nRead implement/change guidance only as needed; reuse existing investigation/spec/architecture; no broad grounding. Publish own liveness immediately; exact short leases. Root owns central recurrence. Sol R124 recovery may need site paths: signal root before derived closure, serialize, never wait TTL. Reviewer finished and released leases. Report cap defect before cap instead of dropping floors. Return commit, actual red/green raw names, proposed manifest delta, source preservation, risks, audit duration/calls. Release/end/retain. No EnterWorktree or peer cleanup.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2P5FMPHSR0QWY4PJR649RTJ",
+      "shortname": "atlas-image-diagnostics",
+      "datetime": "2026-09-16T22:30:31Z",
+      "session": "codex-atlas-p1-03-image-diagnostics",
+      "prompt": "FIRST action audit start --session codex-atlas-p1-03-image-diagnostics --skill implement, agent codex-astra-image-diagnostics-author. Conductor registered new WT1a session in original PREPARED tree C:/Projects/ai-de-test-atlas-p1-03-uia-pair, branch test/atlas-p1-03-uia-pair, HEAD f8ad3323. Goal/done: independently reviewable diagnostic-only correction at BOTH image-query sites, with meaningful red-first maintained-output controls and unchanged failure/identity/containment policies. Tier T2, fanout zero, 12 orchestration calls / 18 minutes, checkpoint eight, context cap 400k. Astra for native-error/identity/finalization semantics.\n\nRead/ACK exact official Owner contract req-01M2P4X7X5184R9DN4C28X64W4 before edits. Read independent findings CLEAR13c8070dfcb482d24b6fe147a33192bbf5ae8223:docs/proof/atlas-p1-03-process-image-review.md, especially FR-PI-001/002. Both Job.sample and owned_snapshot need direct controls, not a fifth case claimed from prior investigation. Capture get_last_error immediately after failing real call; preserve pending PID/raw birth/observed membership distinct from accepted identities; later exit state has own timestamp; secondary observation errors do not replace primary. Controls inspect maintained serialized failure fields, deliberate later error clobber, direct sibling path, failed secondary diagnostic, and ACTUALLY call verify_process_result to affirm refusal. Existing population/containment/cleanup/no-retry unchanged. Image-less diagnostic NEVER becomes complete identity.\n\nAllowlist only docs/proof/records/atlas-p1-03-uia-transition/run_pair.py, existing docs/proof/atlas-p1-03-pair-preparation.md, own official audit/required derived and ignored controls. No product/tests/tools edits, builds, native GUI/Fact/rerun/slot, main/source join. Verify old full manifest BEFORE edit. Preserve both old manifests, 11624 old non-runner inputs and five measured Git additions. May produce explicitly PROPOSED manifest-image-diagnostics-candidate.json whose only changed existing pin is runner; no overwrite/promotion of active manifest. Independent review approves exact delta/input comparison before promotion. Stop at candidate; no automatic native request after CLEAR.\n\nRead implement/change guidance only as needed; reuse existing investigation/spec/architecture; no broad grounding. Publish own liveness immediately; exact short leases. Root owns central recurrence. Sol R124 recovery may need site paths: signal root before derived closure, serialize, never wait TTL. Reviewer finished and released leases. Report cap defect before cap instead of dropping floors. Return commit, actual red/green raw names, proposed manifest delta, source preservation, risks, audit duration/calls. Release/end/retain. No EnterWorktree or peer cleanup.",
+      "summary": "Both image-query sites retain pending identity, immediate native error and separately timed exit diagnostics. Red19:16pass/3missing-field errors; green19/19. Actual process and browser refusal predicates executed. Later clobber9876 and failed wait6 preserve original122. Proposed manifest only runner pin changed;11629 other inputs unchanged, old manifests preserved. No build/native/slot; independent review/promotion pending.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-pair-preparation.md",
+        "docs/proof/records/atlas-p1-03-uia-transition/run_pair.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Produce an independently reviewable diagnostic-only correction at both image-query sites with red-first serialized-output controls and unchanged failure/identity/containment policies.",
+      "done_when": "Both maintained outputs retain immediate native failure diagnostics; controls and proposed runner-only manifest delta are committed for independent review without promotion or native execution.",
+      "tier": "T2",
+      "main_calls": 8,
+      "main_budget": 12,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-16T22:21:06Z",
+      "duration_seconds": 565.0,
+      "git": {
+        "sha": "f8ad3323c1989855916115b3b343c4fee99566b8",
+        "short": "f8ad3323c",
         "branch": "test/atlas-p1-03-uia-pair",
         "pushed": null
       }

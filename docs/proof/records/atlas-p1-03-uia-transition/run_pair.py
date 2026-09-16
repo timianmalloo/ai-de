@@ -30,7 +30,14 @@ FACTS = ('AiDe.App.Tests.AtlasDaemonMainWindowProofTests.NativeTransition_A_NoLo
          'AiDe.App.Tests.AtlasDaemonMainWindowProofTests.NativeTransition_B_LoadingTraversal')
 
 class Refused(RuntimeError):
-    pass
+    def __init__(self,message,native_diagnostic=None):
+        super().__init__(message);self.native_diagnostic=native_diagnostic
+
+def failure_record(error):
+    record={'type':type(error).__name__,'message':str(error)}
+    diagnostic=getattr(error,'native_diagnostic',None)
+    if diagnostic is not None:record['native_diagnostic']=diagnostic
+    return record
 
 def digest(path):
     with Path(path).open('rb') as stream:
@@ -132,6 +139,28 @@ def creation(handle):
         raise Refused('PROCESS-TIMES:' + str(C.get_last_error()))
     return (values[0].dwHighDateTime << 32) | values[0].dwLowDateTime
 
+def query_process_image(api,handle,pid,birth,membership,site,code):
+    """A failed query is diagnostic evidence, never an accepted process identity."""
+    image=C.create_unicode_buffer(32768);length=W.DWORD(len(image));started=time.perf_counter_ns()
+    success=api.QueryFullProcessImageNameW(handle,0,image,C.byref(length))
+    native_error=C.get_last_error() if not success else None
+    if success:return image.value
+    diagnostic={'operation':'QueryFullProcessImageNameW','site':site,
+        'pending_identity':{'pid':pid,'creation_filetime':birth,'membership':membership},
+        'query':{'flags':0,'capacity':32768,'success':False,'native_error':native_error,
+                 'started_tick':started,'ended_tick':None},'later_exit':{},'secondary_errors':[]}
+    try:diagnostic['query']['ended_tick']=time.perf_counter_ns()
+    except Exception as error:diagnostic['secondary_errors'].append({'stage':'query-end-clock',**failure_record(error)})
+    try:
+        diagnostic['later_exit']['started_tick']=time.perf_counter_ns()
+        wait=api.WaitForSingleObject(handle,0)
+        wait_error=C.get_last_error() if wait==0xffffffff else None
+        diagnostic['later_exit'].update(wait_result=wait,native_error=wait_error,ended_tick=time.perf_counter_ns())
+        if wait==0xffffffff:diagnostic['secondary_errors'].append({'stage':'later-exit-observation','native_error':wait_error})
+    except Exception as error:
+        diagnostic['secondary_errors'].append({'stage':'later-exit-observation',**failure_record(error)})
+    raise Refused(code,native_diagnostic=diagnostic)
+
 class Job:
     def __init__(self, process):
         self.api=kernel(); self.handle=self.api.CreateJobObjectW(None,None); self.handles={}; self.identities={};self.on_process=None
@@ -155,12 +184,12 @@ class Job:
                 member=W.BOOL()
                 if not self.api.IsProcessInJob(handle,self.handle,C.byref(member)) or not member.value:
                     raise Refused('PROCESS-NOT-OWNED:' + str(pid))
+                membership={'member':True,'observed_tick':time.perf_counter_ns()}
                 birth=creation(handle); key=(pid,birth)
                 if key not in self.handles:
-                    image=C.create_unicode_buffer(32768);length=W.DWORD(len(image))
-                    if not self.api.QueryFullProcessImageNameW(handle,0,image,C.byref(length)):raise Refused('PROCESS-IMAGE-MISSING')
+                    image=query_process_image(self.api,handle,pid,birth,membership,'Job.sample','PROCESS-IMAGE-MISSING')
                     self.handles[key]=handle; handle=None
-                    self.identities[key]={'pid':pid,'creation_filetime':birth,'image':image.value,'observed_at':stamp(),'authority':'owned Job Object membership'}
+                    self.identities[key]={'pid':pid,'creation_filetime':birth,'image':image,'observed_at':stamp(),'authority':'owned Job Object membership'}
                     if self.on_process:self.on_process(self.identities[key],self.handles[key],self.handle)
             finally:
                 if handle:self.api.CloseHandle(handle)
@@ -186,7 +215,7 @@ def run_owned(command, directory, environment, *, seconds=180, cleanup_seconds=3
         'timed_out':False,'forced':False,'contained':False,'identities_complete':False,'errors':[],
         'primary_error':None,'secondary_errors':[]}
     def failure(error,stage):
-        record={'stage':stage,'type':type(error).__name__,'message':str(error)}
+        record={'stage':stage,**failure_record(error)}
         result['errors'].append(stage+':'+str(error))
         if result['primary_error'] is None:result['primary_error']=record
         else:result['secondary_errors'].append(record)
@@ -265,14 +294,15 @@ def read_direct_identity(path):
     return json.loads(Path(path).read_text())
 
 def owned_snapshot(row,handle,job_handle):
-    api=kernel();member=W.BOOL();image=C.create_unicode_buffer(32768);length=W.DWORD(len(image))
+    api=kernel();member=W.BOOL()
     if not handle or api.GetProcessId(handle)!=row['pid'] or creation(handle)!=row['creation_filetime']:
         raise Refused('CORRELATION-HANDLE-IDENTITY')
     if api.WaitForSingleObject(handle,0)!=258:raise Refused('CORRELATION-PROCESS-NOT-LIVE')
     if not api.IsProcessInJob(handle,job_handle,C.byref(member)) or not member.value:raise Refused('CORRELATION-NOT-OWNED')
-    if not api.QueryFullProcessImageNameW(handle,0,image,C.byref(length)):raise Refused('CORRELATION-IMAGE-UNAVAILABLE')
-    if Path(image.value).resolve()!=Path(row['image']).resolve():raise Refused('CORRELATION-IMAGE-MISMATCH')
-    return {'raw':creation(handle),'alive':True,'member':True,'image':image.value}
+    membership={'member':True,'observed_tick':time.perf_counter_ns()}
+    image=query_process_image(api,handle,row['pid'],row['creation_filetime'],membership,'owned_snapshot','CORRELATION-IMAGE-UNAVAILABLE')
+    if Path(image).resolve()!=Path(row['image']).resolve():raise Refused('CORRELATION-IMAGE-MISMATCH')
+    return {'raw':creation(handle),'alive':True,'member':True,'image':image}
 
 def query_cim(row):
     command=['powershell','-NoProfile','-NonInteractive','-Command',
@@ -304,7 +334,7 @@ class BrowserObserver:
             try:
                 if self.stopping.is_set():raise Refused('CIM-CANCELED-BEFORE-QUERY')
                 item=correlated_cim(row,handle,job_handle)
-            except Exception as error:item={'identity':row,'error':str(error)}
+            except Exception as error:item={'identity':row,'error':str(error),'failure':failure_record(error)}
             self.rows.append(item)
             try:write_json(self.directory/'browser-observations.json',self.rows)
             except Exception as error:self.errors.append('CIM-RECORD:'+str(error))
@@ -612,7 +642,102 @@ def execute(args):
         state['events'].append({'event':'RELEASE','at':stamp(),'meaning':'runner ended; watcher must independently release its slot'})
         write_json(destination/'state.json',state)
 
+class ImageDiagnosticFault:
+    """Control-only real zero-capacity query; preserve native error at boundary."""
+    def __init__(self,target=1,secondary_failure=False):
+        self.original=kernel;self.api=kernel();self.target=target;self.secondary_failure=secondary_failure
+        self.calls=0;self.failed=None;self.pending_later=False;self.later=[];self.reached=threading.Event()
+    def __enter__(self):globals()['kernel']=lambda:self;return self
+    def __exit__(self,*args):globals()['kernel']=self.original
+    def __getattr__(self,name):return getattr(self.api,name)
+    def QueryFullProcessImageNameW(self,handle,flags,image,size):
+        self.calls+=1
+        if self.calls!=self.target:return self.api.QueryFullProcessImageNameW(handle,flags,image,size)
+        pid=self.api.GetProcessId(handle);birth=creation(handle);zero=W.DWORD(0)
+        result=self.api.QueryFullProcessImageNameW(handle,flags,image,C.byref(zero))
+        error=C.get_last_error() if not result else None
+        self.failed={'pid':pid,'creation_filetime':birth,'native_error':error};self.pending_later=True;self.reached.set()
+        # The injection boundary must deliver the failed real call's saved error,
+        # despite any control bookkeeping. Later observations deliberately clobber it.
+        C.set_last_error(error or 0)
+        return result
+    def WaitForSingleObject(self,handle,milliseconds):
+        if self.pending_later:
+            self.pending_later=False
+            if self.secondary_failure:
+                result=self.api.WaitForSingleObject(None,0);error=C.get_last_error()
+                self.later.append({'result':result,'native_error':error});C.set_last_error(error);return result
+            result=self.api.WaitForSingleObject(handle,milliseconds)
+            self.later.append({'result':result,'clobbered_native_error':9876});C.set_last_error(9876);return result
+        return self.api.WaitForSingleObject(handle,milliseconds)
+
 class Controls(unittest.TestCase):
+    def assert_image_diagnostic(self,diagnostic,fault,site):
+        self.assertEqual(diagnostic['operation'],'QueryFullProcessImageNameW');self.assertEqual(diagnostic['site'],site)
+        self.assertEqual(diagnostic['pending_identity']['pid'],fault.failed['pid'])
+        self.assertEqual(diagnostic['pending_identity']['creation_filetime'],fault.failed['creation_filetime'])
+        self.assertTrue(diagnostic['pending_identity']['membership']['member'])
+        self.assertFalse(diagnostic['query']['success']);self.assertEqual(diagnostic['query']['native_error'],122)
+        self.assertEqual(diagnostic['query']['capacity'],32768);self.assertEqual(diagnostic['query']['flags'],0)
+        self.assertLessEqual(diagnostic['pending_identity']['membership']['observed_tick'],diagnostic['query']['started_tick'])
+        self.assertLessEqual(diagnostic['query']['started_tick'],diagnostic['query']['ended_tick'])
+        self.assertLessEqual(diagnostic['query']['ended_tick'],diagnostic['later_exit']['started_tick'])
+        self.assertLessEqual(diagnostic['later_exit']['started_tick'],diagnostic['later_exit']['ended_tick'])
+        self.assertTrue(fault.later)
+
+    def image_job_control(self,secondary_failure):
+        with retained_control('image-job-secondary' if secondary_failure else 'image-job-clobber') as folder:
+            with ImageDiagnosticFault(target=2,secondary_failure=secondary_failure) as fault:
+                result=run_owned([sys.executable,'-B',str(HERE),'_harmless','block'],folder/'run',environment(),seconds=5,cleanup_seconds=3)
+            serialized=json.loads((folder/'run/process.json').read_text())
+            write_json(folder/'control.json',{'failed_call':fault.failed,'later_control_calls':fault.later})
+            # This is an executed acceptance predicate, not an inference from source.
+            with self.assertRaises(Refused):verify_process_result(serialized)
+            self.assertEqual(serialized['primary_error']['message'],'PROCESS-IMAGE-MISSING')
+            self.assert_image_diagnostic(serialized['primary_error']['native_diagnostic'],fault,'Job.sample')
+            diagnostic=serialized['primary_error']['native_diagnostic']
+            if secondary_failure:
+                self.assertEqual(diagnostic['later_exit']['wait_result'],0xffffffff)
+                self.assertEqual(diagnostic['secondary_errors'][0]['native_error'],6)
+            else:
+                self.assertEqual(fault.later[0]['clobbered_native_error'],9876)
+                self.assertEqual(diagnostic['secondary_errors'],[])
+            self.assertTrue(result['forced']);self.assertTrue(result['contained']);self.assertTrue(result['sampled_handles_exited'])
+            # The existing trusted direct-child record may reconcile this PID.
+            # The failed sample must never manufacture a completed image identity.
+            matching=[row for row in serialized['processes'] if row['pid']==fault.failed['pid']]
+            self.assertTrue(all('image' not in row and row['authority']=='direct Popen handle in assigned non-breakaway gate' for row in matching))
+            self.assertTrue(all('native_diagnostic' not in row for row in serialized['processes']))
+
+    def test_image_job_serialized_error_survives_later_clobber(self):
+        self.image_job_control(False)
+
+    def test_image_job_secondary_observation_does_not_replace_primary(self):
+        self.image_job_control(True)
+
+    def test_image_owned_snapshot_serialized_browser_failure_and_refusal(self):
+        process=subprocess.Popen([sys.executable,'-B',str(HERE),'_harmless','block'],stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+        job=Job(process);observer=None
+        try:
+            row=next(iter(job.identities.values()));handle=next(iter(job.handles.values()))
+            with retained_control('image-owned-snapshot') as folder:
+                with ImageDiagnosticFault() as fault:
+                    observer=BrowserObserver(folder)
+                    # Harmless Python identity enters the actual consumer queue;
+                    # image failure occurs before CIM. No browser is launched.
+                    observer.pending.put((row,handle,job.handle))
+                    self.assertTrue(fault.reached.wait(timeout=3))
+                    self.assertTrue(observer.close(3));observer=None
+                rows=json.loads((folder/'browser-observations.json').read_text())
+                write_json(folder/'control.json',{'failed_call':fault.failed,'later_control_calls':fault.later})
+                self.assertEqual(len(rows),1);self.assertEqual(rows[0]['error'],'CORRELATION-IMAGE-UNAVAILABLE')
+                self.assert_image_diagnostic(rows[0]['failure']['native_diagnostic'],fault,'owned_snapshot')
+                with self.assertRaises(Refused):verify_browser_use(rows,folder,{'binary':sys.executable})
+        finally:
+            if observer is not None:observer.close(3)
+            if process.poll() is None:job.terminate();process.wait(timeout=3)
+            job.close()
+
     def test_actual_cim_handle_and_negative_identity_controls(self):
         process=subprocess.Popen([sys.executable,'-B',str(HERE),'_harmless','block']);job=Job(process)
         try:

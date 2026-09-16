@@ -10,10 +10,188 @@ links:
   - { to: proof-atlas-p1-03-uia-transition, rel: relates-to }
   - { to: session-contracts, rel: relates-to }
 review-by: 2026-12-16
-summary: "Corrected preparation candidate: 16 harmless controls pass; successor freeze retains all 11,624 old non-runner inputs and adds five measured Git binaries. Independent rereview and an execution slot remain required."
+summary: "Proposed diagnostic-only runner candidate: 19 harmless controls pass after three observed red missing-field failures; both image-query sites retain native error and pending identity. Only runner pin changed; independent review and manifest promotion remain pending."
 ---
 
-# Corrected preparation candidate
+# Image-query diagnostic candidate — not promoted
+
+**Verified author evidence:** both image-query sites now retain immediate native
+failure evidence in their maintained serialized output. Nineteen harmless controls
+pass; the three new controls first failed on missing diagnostic fields while all
+sixteen prior controls passed. No native Fact, GUI/browser process, build or slot
+request ran in this unit. Independent review has not cleared this implementation
+or its proposed manifest. No historical process identity or cause is inferred.
+
+Goal/done: an independently reviewable diagnostic-only correction at `Job.sample`
+and `owned_snapshot`, with red-first serialized-output controls and unchanged
+failure, identity and containment policies. Tier T2, fan-out zero, Astra;
+twelve-call / eighteen-minute ceiling, checkpoint eight. Session/agent:
+`codex-atlas-p1-03-image-diagnostics` / `codex-astra-image-diagnostics-author`.
+Conductor registered this new session in the ended prepared tree at `f8ad3323`.
+Own primary liveness preceded edits. Owner contract
+`req-01M2P4X7X5184R9DN4C28X64W4` was read and ACKed before authoring.
+
+Independent findings receipt
+`13c8070dfcb482d24b6fe147a33192bbf5ae8223:docs/proof/atlas-p1-03-process-image-review.md`
+was read directly. Its FR-PI-001 requires actual invocation of the acceptance
+predicate; FR-PI-002 requires maintained-output assertions with deliberate later
+error clobber. The prior four-fixture investigation did not execute the sibling
+site; this unit's sibling control is new evidence, not a retroactive fifth fixture.
+Existing programme/spec/architecture boundaries remain; no new native execution
+node is admitted by this candidate.
+
+## What changed and how the diagnostic is consumed
+
+Surface trace: actual Win32 image query -> `query_process_image` failure fact ->
+`Refused.native_diagnostic` -> shared `failure_record` -> either
+`process.json.primary_error`/`secondary_errors`, or
+`browser-observations.json[*].failure` -> control/read-only reviewer. The existing
+acceptance predicates still consume the original error/containment/identity fields.
+No product/domain/UI schema changed. One native diagnostic is exactly one failed
+image query, with separately timed later observations; it is not an accepted
+process identity and is never added to the Job identity population.
+
+`query_process_image` uses the same query rights, flags zero and 32,768-character
+buffer. After a failed call, its first action captures `ctypes.get_last_error()`.
+Only afterward does it record query-end time and perform the additional zero-time
+same-handle exit observation. It preserves:
+
+- `operation`, `site`, and `pending_identity.pid`, raw `creation_filetime`, plus
+  already-observed membership and its tick.
+- `query.flags`, requested `capacity`, Boolean result, immediate `native_error`,
+  start/end ticks.
+- `later_exit` with independent start/end ticks, raw wait result and native error
+  if that observation fails.
+- Nested `secondary_errors` for failed diagnostic observations. They cannot replace
+  the original image failure or its captured native error.
+
+The original `Refused` type and messages remain. `Job.sample` retains an image
+identity only after successful query return. `owned_snapshot` preserves its original
+PID/birth/live/membership checks and image comparison. Browser failure rows retain
+their existing `error` field and add the structured `failure`; no consumer is made
+more permissive. Secondary diagnostic errors are nested in that primary diagnostic,
+distinct from `run_owned`'s separate cleanup-error list.
+
+The immediate-capture contract follows
+[Python 3.12 ctypes](https://docs.python.org/3.12/library/ctypes.html#ctypes.get_last_error)
+and [Microsoft GetLastError](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror).
+[QueryFullProcessImageNameW](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-queryfullprocessimagenamew)
+defines failure retrieval and buffer capacity;
+[WaitForSingleObject](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)
+defines the later zero-time state. Later state is not backdated into an assertion
+about the exact failure instant.
+
+## Actual red/green controls
+
+Command: `python -B docs/proof/records/atlas-p1-03-uia-transition/run_pair.py selftest
+--output artifacts/atlas-image-diagnostics/<red|green-1>.json`.
+
+| Control | Observed red | Observed green |
+| --- | --- | --- |
+| `test_image_job_serialized_error_survives_later_clobber` | `native_diagnostic` missing from saved process primary error | Real zero-capacity native failure 122 survives a later deliberate saved-error value 9876 in maintained JSON; actual `verify_process_result` refuses |
+| `test_image_job_secondary_observation_does_not_replace_primary` | `native_diagnostic` missing | Original error 122 retained; deliberately failed later wait records 6 as secondary, without replacing primary; actual process verifier refuses |
+| `test_image_owned_snapshot_serialized_browser_failure_and_refusal` | `failure` missing from saved browser row | Direct sibling path retains error 122 through clobber 9876; maintained browser JSON is read; browser-consumption verifier refuses the error row |
+
+Actual population: red **19 run / 16 passed / 3 errors**, all three at the missing
+maintained fields; green **19 run / 19 passed / 0 failures or errors**. The original
+sixteen control bodies are unchanged and passed. No dummy failure or acceptance
+inferred solely from source is used. The two Job controls invoke
+`verify_process_result` against parsed `process.json` and observe `Refused`.
+
+The injection uses a real zero-capacity native call, captures its actual error,
+then explicitly restores that error immediately before returning to the maintained
+caller. This avoids FR-PI-002's proxy-boundary ambiguity. The later wait deliberately
+changes the saved error to 9876, or executes an invalid-handle wait yielding error 6.
+The assertions inspect maintained fields, not merely the proxy log. Normal successes
+remain covered by existing actual Job/CIM controls.
+
+The sibling fixture feeds a real harmless Python identity directly into the actual
+observer queue; failure occurs in `owned_snapshot` before a CIM query. This bypasses
+only the browser-image queue filter for the test and launches no browser. It proves
+the sibling failure serialization path, not browser runtime consumption.
+
+Both Job fault cases had `forced=true`, `contained=true`, active zero, retained
+handles exited and `identities_complete=true`. The existing trusted direct-child
+record reconciles these two-process fixtures. The failed sample creates no image
+identity; the diagnostic is not a new population row. This is distinct from the
+historical seven-of-eight gap and does not relax it. The exact lifecycle/cleanup
+implementation remains unchanged outside failure-record serialization.
+
+Raw control directories under `artifacts/atlas-pair-preparation/controls/`:
+
+| Directory | Maintained output SHA256 |
+| --- | --- |
+| `image-job-secondary-84a4e67df6e54dd48fc5e567bd28705e/run/process.json` | `a7918397429e4080c321f1f6f063fc6053066c240e42cdbaa662268288e4415c` |
+| `image-job-clobber-39f41ca2636f4727984bfa082b8bf70f/run/process.json` | `c87e4a4b9bb49fbe22860dcc3de2e5000dd8cea581f501127a170ab4467621c0` |
+| `image-owned-snapshot-1afffed88b284fd19c8f07cabc571af3/browser-observations.json` | `5ca90510d6bd385754f9dfb6616517bf7fe2247a5cd47b39ad0e350f2e4bf2a4` |
+
+Each directory also retains `control.json` with the actual injected call and later
+clobber/failure. `artifacts/atlas-image-diagnostics/candidate-comparison.json`
+records their exact paths, parsed contents and hashes. All raw artifacts are local
+to this retained prepared tree; they do not travel with the Markdown commit.
+
+## Proposed freeze and preservation
+
+Before the first runner edit, `preedit-pins.log` recorded full `PINS-MATCH` against
+the active corrected manifest. Both predecessor manifests remain byte-identical:
+
+- Original `manifest.json`: `ed4f937ba886f57b186ea02b0fa9cf74135bbb7137d5938cf99942d210360314`.
+- Existing `manifest-corrected.json`: `a58c5993e2a8ce0c30ca3ea38339da0f2faf5943a7d891d7b3cf6a42b51ba23c`.
+
+**PROPOSED ONLY:**
+`artifacts/atlas-pair-preparation/manifest-image-diagnostics-candidate.json`, SHA256
+`66ccb1a395d44e34818f21c24c2f0608605f539484452c42890e2c0abcd1ff3e`.
+Candidate runner SHA256:
+`9615a47ac9b5acb7ce8c4fb09e23bdb0e99d4ebd62aedf804a97944ded86af2b`.
+Its `status` is `proposed-not-promoted`; explicit predecessor and delta metadata
+require independent review before any promotion. No active manifest was overwritten,
+and no execution command or slot is granted by this file.
+
+Full comparison found **11,630 files / 1,030 roots**, no added/missing inputs, and
+exactly one changed existing input: the runner. All **11,629** other current inputs
+match, comprising the **11,624** original non-runner inputs and all five measured
+Git additions. Tool identities match; build source remains `1d46d651`. No compiled
+output was rebuilt or changed.
+
+The recorded AST comparison found unchanged `kernel`, `creation`, `gate`, `execute`,
+`verify_process_result`, `verify_browser_use`, `profile_environment`,
+`validate_receipt`, all sixteen prior control bodies, and `run_owned` apart from its
+nested failure serializer. Product/test/tools source diff against `f8ad3323` is
+empty. These checks establish preservation within their named boundaries, not native
+operability or a complete real-browser outcome.
+
+## Failure analysis, review and close
+
+Class -> sweep -> derive -> prevent: loss of immediate native context was observed
+at both image sites; shared capture and serialization now retain it; the three
+red-first controls require durable fields and unchanged refusals. Conductor owns
+central recurrence classification. No central lesson register was edited.
+
+New failure modes: a later wait can fail or throw, and a later diagnostic clock can
+fail. Capture keeps the original error and records secondary evidence separately.
+The native later-wait failure is exercised; exceptional Python clock/API-wrapper
+throws remain guarded source paths, not separately executed controls. No new retry,
+permission, executable dependency or external service was added. Raw process IDs
+and image diagnostics remain in the existing local evidence boundary.
+
+**Language-developer peer:** one capture helper and one serializer reach both
+maintained consumers. **Test-author adversarial check:** red failures target missing
+serialized fields; clobber and failed secondary observation cannot change the saved
+122. **SRE peer:** diagnostics remain observations and do not grant identity or
+cleanup validity. Independent Test/SRE review is still required; author controls do
+not clear its veto or promote the candidate manifest.
+
+No historical UIA-cause, qualification, publication or renewed-slot claim follows.
+Even an independent CLEAR does not automatically request another native run.
+Budget and measured duration are in the own audit record; token/spend are not
+recorded. Official regeneration, graph, source preservation, final clean state and
+lease/session release are reported with actual results in the final handoff.
+
+| Completed | Remaining | Best next action |
+| --- | --- | --- |
+| Both diagnostic sites, maintained red/green controls, proposed runner-only delta | Independent implementation/input comparison review; promotion decision | Review this frozen candidate without native execution or automatic retry |
+
+# Corrected preparation candidate (preceding evidence)
 
 **Verified correction evidence; independent veto remains open.** The independent
 BLOCK at `2ab2f0b2bb2ae17ddb9bed5da1da935742bc9873` identified CIM precision loss,

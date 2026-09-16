@@ -12911,7 +12911,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2026-12-16",
       "reviewSuggested": [],
-      "summary": "Corrected preparation candidate: 16 harmless controls pass; successor freeze retains all 11,624 old non-runner inputs and adds five measured Git binaries. Independent rereview and an execution slot remain required.",
+      "summary": "Proposed diagnostic-only runner candidate: 19 harmless controls pass after three observed red missing-field failures; both image-query sites retain native error and pending identity. Only runner pin changed; independent review and manifest promotion remain pending.",
       "tags": [
         "atlas",
         "proof",
@@ -12933,7 +12933,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "26d41fbd5e6f522825e07a0bdebea09f1744b254ffbaf8f450ab8c7b23ecdb3f"
+      "sourceSha256": "58ede890ff5e796a24432c92cbbfa4beaf7f186b25ccb692bfed2fe23789e3ad"
     },
     {
       "id": "proof-atlas-p1-03-transition-review",
@@ -23446,5 +23446,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "76834dcf2f3ef56d80cb8a298d69922153b617e4ed5968e4f4b5e79d7cdd81a1"
+  "graphSha256": "a09b3071906b70ba3c1d40eaa3a804eaae5328d4ff2943f46ef446cf237af98a"
 };
