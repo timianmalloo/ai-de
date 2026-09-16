@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T18:20:41Z",
+  "generated": "2026-09-16T18:44:13Z",
   "audit": [
     {
       "actor": null,
@@ -26148,6 +26148,78 @@ window.AUDIT_DATA = {
         "sha": "fdb3235f3de0561d36b8b2fe24f937620431d054",
         "short": "fdb3235f3",
         "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NRFEV4WTA3EJD0TXBTWYZ1",
+      "shortname": "atlas-p1-03-combined-review",
+      "datetime": "2026-09-16T18:43:14Z",
+      "session": "codex-atlas-p1-03-review",
+      "prompt": "Independently CLEAR or BLOCK the complete single watcher-granted canonical P1-03 result at its exact final candidate. Terminal handoff: STOPPED ON FAILURE; inspect actual failed results and write independent BLOCK receipt without rerun or cause guessing.",
+      "summary": "Independent BLOCK at5406ea69: actual copied App TRX1258 executed/1257 passed/1 failed/0 skipped; native Atlas files original query returned null, Completedfalse/FailureCount4. Owned runner stopped on failed TRX; actual grant and END/RELEASE rows read. Core completion, final gates and Release unestablished. Exact native and D0 source hashes retained. No rerun or source change. Original marker retained across terminal wait; broad-read truncation and corrected missing paths recorded; final success-only preservation checks not claimed.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-combined-review.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Independently determine the exact P1-03 qualification disposition.",
+      "done_when": "Actual terminal evidence supports a committed independent CLEAR or BLOCK receipt with explicit remaining obligations.",
+      "tier": "T2",
+      "main_calls": 11,
+      "main_budget": 12,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T18:33:36Z",
+      "duration_seconds": 578.0,
+      "git": {
+        "sha": "5406ea69fc21f2cc765a329b4a99be28fc3583fb",
+        "short": "5406ea69f",
+        "branch": "review/atlas-p1-03",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NRH80VB19VTYX5TZKW7R1H",
+      "shortname": "atlas-p1-03-review-commit-correction",
+      "datetime": "2026-09-16T18:44:12Z",
+      "session": "codex-atlas-p1-03-review",
+      "prompt": "Finish the independent P1-03 BLOCK receipt after its exact staging guard refused existing generated docs/_meta.json.",
+      "summary": "Previous official audit consumed the original marker and regeneration passed. Exact staging refused docs/_meta.json, which is emitted by the already invoked documentation bundle. No commit then; all leases released. Finalization explicitly admits that generated path, records the class/sweep/control in the receipt, regenerates and commits. Actual review12/12 boundaries. Native qualification remains BLOCKED; no source change or rerun.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-combined-review.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Commit the independently established P1-03 BLOCK with correct derived outputs.",
+      "done_when": "Exact allowed receipt/audit/derived diff commits and leases release.",
+      "tier": "T2",
+      "main_calls": 12,
+      "main_budget": 12,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "git": {
+        "sha": "5406ea69fc21f2cc765a329b4a99be28fc3583fb",
+        "short": "5406ea69f",
+        "branch": "review/atlas-p1-03",
         "pushed": null
       }
     }
