@@ -156,6 +156,9 @@ public static class WorkspaceOperations
 
     /// <summary>Census join of disk-now folders and indexed file-artifacts (ADR-0038).</summary>
     public const string SolutionTree = "solution-tree";
+
+    /// <summary>D-1 entry-point listing (unclassified until classifier exists).</summary>
+    public const string EntryPoints = "entry-points";
     public const string DispatchBegin = "dispatch.begin";
     public const string DispatchFinalize = "dispatch.finalize";
     public const string IndexSolution = "index.solution";
@@ -239,6 +242,10 @@ public static class WorkspaceOperations
         endpoint.Register(SolutionTree, (request, _) =>
             Refusable(() => Handle<SolutionTreeQuery>(request, body =>
                 projections.SolutionTree(body))));
+
+        endpoint.Register(EntryPoints, (request, _) =>
+            Refusable(() => Handle<EntryPointsQuery>(request, body =>
+                projections.EntryPoints(body))));
     }
 
     /// <summary>

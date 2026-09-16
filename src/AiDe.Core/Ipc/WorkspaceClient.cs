@@ -189,6 +189,14 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
             WorkspaceOperations.SolutionTree, query, cancellationToken);
     }
 
+    public Task<EntryPointsResult> EntryPointsAsync(
+        EntryPointsQuery query, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+        return QueryAsync<EntryPointsResult>(
+            WorkspaceOperations.EntryPoints, query, cancellationToken);
+    }
+
     /// <summary>
     /// Asks the daemon to re-index a scope, and waits for it to finish.
     /// </summary>

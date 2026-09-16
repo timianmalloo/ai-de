@@ -681,6 +681,35 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
     public SolutionTreeResult SolutionTree(SolutionTreeQuery query) =>
         SolutionTree(query, omitRelativePaths: null, censusChildren: null, CancellationToken.None);
 
+    /// <summary>D-1 UV-0 listing. Classification pending; all rows unclassified. No Open Sequence.</summary>
+    public EntryPointsResult EntryPoints(EntryPointsQuery query) =>
+        EntryPoints(query, CancellationToken.None);
+
+    public EntryPointsResult EntryPoints(EntryPointsQuery query, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+        using var activity = Activity.StartActivity("aide.projection.query");
+        activity?.SetTag("projection", "entry-points");
+        cancellationToken.ThrowIfCancellationRequested();
+        try
+        {
+            using var reader = store.BeginRead();
+            var candidates = reader.SourceHasTypeNodes();
+            var result = EntryPointsListing.FromHasType(
+                candidates, query.MaxRows, reader.CurrentSourceRevision());
+            activity?.SetTag("returned.rows", result.Rows.Count);
+            activity?.SetTag("omitted.by_cap", result.OmittedByCap);
+            activity?.SetTag("outcome", "ok");
+            return result;
+        }
+        catch (OperationCanceledException)
+        {
+            activity?.SetTag("outcome", "canceled");
+            throw;
+        }
+    }
+
+
     public SolutionTreeResult SolutionTree(SolutionTreeQuery query, CancellationToken cancellationToken) =>
         SolutionTree(query, omitRelativePaths: null, censusChildren: null, cancellationToken);
 

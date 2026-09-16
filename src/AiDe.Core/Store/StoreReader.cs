@@ -365,6 +365,33 @@ public sealed class StoreReader : IDisposable
         return (all.Count > limit ? all[..limit] : all, all.Count);
     }
 
+    /// <summary>
+    /// Latest-generation source <c>has_type</c> nodes (not knowledge). D-1 UV-0 listing input.
+    /// Unbounded in SQL; the projection applies the listing cap so omitted count is honest.
+    /// </summary>
+    public IReadOnlyList<(string NodeId, string TypeKind)> SourceHasTypeNodes()
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT a.subject, a.object AS declared_type
+            FROM evidence_assertion_fact a
+            JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+            LEFT JOIN node_dim n ON n.node_id = a.subject AND n.valid_to_seq IS NULL
+            WHERE a.predicate = 'has_type'
+              AND (n.node_kind IS NULL OR n.node_kind <> 'knowledge')
+            GROUP BY a.subject
+            ORDER BY a.subject;
+            """);
+        using var reader = command.ExecuteReader();
+        var all = new List<(string, string)>();
+        while (reader.Read())
+        {
+            all.Add((reader.GetString(0), reader.GetString(1)));
+        }
+
+        return all;
+    }
+
     public IReadOnlySet<string> KnowledgeNodeIds(int limit)
     {
         using var command = Command(
