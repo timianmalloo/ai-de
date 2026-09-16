@@ -181,6 +181,11 @@ public sealed class SurfaceContentFactory(
             static (_, s) => new SolutionTreeSurface(s.Title),
             Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
 
+        new("entry-points", "Entry-points",
+            "Indexed API, UX and CLI entry points, plus unclassified. Open Sequence is disabled until the mapper is frozen.",
+            static (_, s) => new EntryPointsSurface(s.Title),
+            Perspectives: [PerspectiveSet.Architecture], Instances.One, new SurfaceEntry.Derived("_View")),
+
         // ── Coding: the agentic host (UC1) ────────────────────────────────────────────────────
 
         // Opened by the entry verb `terminal.new` (File, every perspective — US-C11), never by a

@@ -134,6 +134,7 @@ and a finding was mis-routed exactly once today for want of it (§4y).
 | `src/AiDe.App/Workbench/CommandPalette.cs`, `PromptBar.cs`, `MainMenuBuilder.cs` | Interactive chrome; the menus are derived from the kind rows (ADR-0030) |
 | `src/AiDe.App/Workbench/ClassDiagramSurface.cs` | A design surface (ADR-0026 class-diagram-architecture) |
 | `src/AiDe.App/Workbench/SolutionTreeSurface.cs` | D-0 Solution tree (ADR-0038); Architecture pane over `SolutionTreeAsync` |
+| `src/AiDe.App/Workbench/EntryPointsSurface.cs` | D-1 Entry-points listing over `EntryPointsAsync`; Open Sequence disabled until mapper r4 |
 | `src/AiDe.App/Workbench/ExplorerSurface.cs` | The full-window Explorer body (ADR-0017 as amended) |
 | `src/AiDe.Core/Workbench/Perspectives.cs`, `src/AiDe.App/Workbench/PerspectiveShell.cs`, `DockHost.cs`, `PerspectiveRail.cs`, `PerspectiveMenu.cs`, `CenterEmptyState.cs` | The Perspective registry, the presenter over three docking hosts and the Explorer body, the rail, the derived menu, the Center's copies (Addendum C; ADR-0030/31/32; Rulings 83/84/88) |
 | `src/AiDe.Core/Compilation/**`, `src/AiDe.App/Conductor/CompileCallHost.cs`, `src/AiDe.App/Cli/**`, `tools/compile-eval/**` | The Prompt Compilation bounded context, the compile call, its CLI verbs and eval harness (Addendum D; ADR-0033–0036) |
