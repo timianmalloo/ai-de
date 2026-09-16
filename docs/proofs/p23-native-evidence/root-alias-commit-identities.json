@@ -1,0 +1,11 @@
+{
+  "commit": "dbd963a895676ef6c21d6f4b1caed4d1ea1aa1ab",
+  "note": "Committed Git blob SHA256; run manifests separately pin original working-tree bytes, which Git normalizes from CRLF to LF.",
+  "pins": {
+    "src/AiDe.Core/Watcher/CoordinationSourceCapture.cs": "f8f21d5c65765d06b857c28658a5738c42378c85576d9363bd5d9f07c9b713af",
+    "tests/AiDe.Core.Tests/Watcher/CoordinationProjectionRuntimeTests.cs": "ffcbf7ddddbe399be743f39cf6056f4bbb8557e688f287c1359457b3db3eee97",
+    "docs/proof/cross-harness-coordination-proof-pack.md": "65c597d0ce26e1cc8ea448d4959fc95441da6e9fdd522b9caaed16c5475cdb08",
+    "docs/proofs/p23-native-evidence/p23-root-alias-red.trx": "9645fd7058773290ebcd2787ee0aa241fba793daaf14228bcca1cb8a0fe02b33",
+    "docs/proofs/p23-native-evidence/p23-root-alias-full-union-green.trx": "ab1b1241069a96ec7095dbaf7d8211616390db8cd8f2b63a8b08b9fdd4c27cb3"
+  }
+}

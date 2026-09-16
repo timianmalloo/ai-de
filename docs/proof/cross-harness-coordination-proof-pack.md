@@ -56,6 +56,10 @@ spellings normalized to the share root without an optional trailing separator.
 UNC checks are **pure-function only**: no network share or filesystem root was read,
 created or pumped. There is no Unix execution, symlink, junction, link-resolution,
 device-namespace or general alias-canonicalization qualification.
+This change does not merge or rekey historical scopes already stored under a
+trailing-separator alias, nor repair histories previously duplicated by that
+alias. Such stores need separate qualification; the retained replay proof begins
+with the existing bare-directory scope and preserves its original identities.
 
 ### Retained red/green evidence
 
@@ -134,6 +138,35 @@ and file presence; **it does not inspect Git commitment**. `VerifyInCheckouts`
 folds those same checks. Running them after commit plus a separately recorded
 commit establishes committed presence, not a Git check inside the verifier.
 Neither a `Verified` verdict nor a commit proves full P0–P5 acceptance.
+
+**Post-commit execution, observed:** at
+`dbd963a895676ef6c21d6f4b1caed4d1ea1aa1ab`, a temporary dependency-free C# probe
+called the actual compiled Core's `ProofPackVerifier.Verify` and
+`VerifyInCheckouts([assignedWorktree], path)` for both paths. It returned exit 0:
+
+| Declared path | `Verify` | `VerifyInCheckouts` |
+|---|---|---|
+| `docs/proof/cross-harness-coordination-proof-pack.md` | **Verified** | **Verified** |
+| `docs/proofs/cross-harness-coordination-proof-pack.md` | **NotFound** | **NotFound** |
+
+Raw receipt: [`root-alias-committed-pack-verifier.txt`](../proofs/p23-native-evidence/root-alias-committed-pack-verifier.txt).
+The probe used SDK **10.0.303**, native reference pack **10.0.11**, and a byte-identical
+copy of the pinned Core binary (`7857AD44…C2F`). No dependency was added. The probe
+source and generated executable are removed after execution, not shipped as tooling.
+Actual execution command:
+
+```powershell
+dotnet .agents\root-alias-probe\probe.dll C:\Projects\ai-de-feature-xh-p2-projection docs\proofs\p23-native-evidence\root-alias-committed-pack-verifier.txt dbd963a895676ef6c21d6f4b1caed4d1ea1aa1ab
+```
+
+`root-alias-commit-identities.json` separately pins the **committed Git blobs**.
+Git normalized the working-tree CRLF bytes to LF on staging. Historical manifests
+and the new execution manifests retain their original run-byte hashes, not silently
+rewritten commit hashes. Committed source SHA-256 is
+`f8f21d5c65765d06b857c28658a5738c42378c85576d9363bd5d9f07c9b713af`;
+committed runtime test SHA-256 is
+`ffcbf7ddddbe399be743f39cf6056f4bbb8557e688f287c1359457b3db3eee97`.
+The later evidence-only commit does not change the production/test candidate.
 
 ### Remaining and bounded execution
 

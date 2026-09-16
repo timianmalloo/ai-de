@@ -1,0 +1,6 @@
+Commit=dbd963a895676ef6c21d6f4b1caed4d1ea1aa1ab
+Core=C:\Projects\ai-de-feature-xh-p2-projection\.agents\root-alias-probe\AiDe.Core.dll
+Verify(new)=Verified
+VerifyInCheckouts(new)=Verified
+Verify(old)=NotFound
+VerifyInCheckouts(old)=NotFound
