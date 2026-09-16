@@ -12936,6 +12936,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "467e89734ee76058acb26eb8a26765434e6f1aea967444da93d34204c6b3c742"
     },
     {
+      "id": "proof-atlas-p1-03-pair-review",
+      "path": "docs/proof/atlas-p1-03-pair-review.md",
+      "title": "Independent Atlas pair runner review: blocked",
+      "type": "doc",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "Independent BLOCK: exact CIM creation-time correlation loses precision and an injected identity decode failure skips handle closure and process evidence persistence. Ten existing controls pass independently.",
+      "tags": [
+        "atlas",
+        "proof",
+        "review",
+        "containment"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-p1-03-pair-preparation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-atlas-p1-03-transition-review",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c7db15d872ffe87590f4f99c405a5afe983bbee48cc3b567b2baa78ffcf572a2"
+    },
+    {
       "id": "proof-atlas-p1-03-transition-review",
       "path": "docs/proof/atlas-p1-03-transition-review.md",
       "title": "Independent Atlas transition diagnostic preparation review",
@@ -23412,5 +23446,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c03a75e52015f3b20ac461c607927d10abcd39641e3cce6b7a7bb30606201d21"
+  "graphSha256": "fe1e7715018f103c8667d7a8bde4be64bf91de44688281fe0062b3bcba1cbef7"
 };
