@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T22:18:55Z",
+  "generated": "2026-09-16T22:19:23Z",
   "audit": [
     {
       "actor": null,
@@ -19879,6 +19879,34 @@ window.AUDIT_DATA = {
         "branch": "conductor/watch-0915",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2P4V7C545S1VWKHA2TJAMP5",
+      "shortname": "join-rulings-122-126",
+      "datetime": "2026-09-16T22:19:22Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "the join of conductor/watch-0915 into main",
+      "summary": "Docs-only join: Rulings 122-126 filed after the Claude session's usage cap, with the three requests they answer resolved on the ledger (E2 seam, G6 grammar finding, Ruling 121 spike checkpoint). Measured before acting on 126: neither Atlas candidate modifies any of the three main-red test files. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land the Owner seat's backlog so Codex, Atlas and the watcher are not waiting on decisions",
+      "done_when": "main carries 122-126; gates 38 green; pushed",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-16T22:19:22Z",
+      "duration_seconds": 0.0
     }
   ],
   "changes": [
