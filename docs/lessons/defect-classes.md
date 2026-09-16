@@ -4950,6 +4950,15 @@ for both or split.*
 
 ### DC-118 — Transcription is a width-changing step, and nothing checks the width: a ruling becomes a clause, a clause becomes a guard, and the scope silently moves
 
+- **Recurrence (inactive extension binding, 2026-09-16):** classifying possible declarations
+  only by the owners bound today misses a new conditional extension owner. The inactive guard
+  passed while activation changed selected D0 ToList calls; the unimported namespace control did
+  not. Sweep: applicable versus unrelated extensions, source-project context, imports, overloads,
+  ambiguity and unresolved bindings. Derive: present binding identity is not the population of
+  possible binding candidates. Prevent: executable semantic-rebinding discriminators are required;
+  only their bounded design spike is admitted, so this control remains pending. Evidence:
+  `docs/proof/d0-atlas-independence-rereview.md` at3d2aa900; `docs/proof/atlas-five-gates.md`.
+
 - **Recurrence (D0 guard independent review, 2026-09-16):** an exact shared-port boundary
   became type-plus-member-name admission, accepting a new Atlas-calling `OpenKind(int)`;
   conditional coverage became a whole-file restriction, rejecting an unrelated factory member.

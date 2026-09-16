@@ -13,6 +13,31 @@ summary: "Observed frozen failures, repair controls and qualification receipts; 
 
 # D0 repair review: current BLOCK
 
+**Later correction and re-review:** author921cc229 preserves exact source/proof/audit only.
+The Conductor read its final37 executed/37 passed/0 skipped receipt, source and proof hashes.
+Seventeen raw evidence files,1200048 bytes, were copied and byte-compared under
+`artifacts/atlas-five-gates/d0-correction-921cc229/`; `manifest.json` records every SHA256.
+Final author TRX hash92f2168ef678e7b99d4e443406e7d4a199fdc5ea2052cc15825929d4f4bef3b3.
+Author source CRLF bytes hash0fbc79cdaf1944674a10b3488c32c5420185522382f01db9d7a3b9cf495d9ae4;
+review checkout LF bytes hash4730db0143d47e56c51464ccb2f69cea8e9611955cec4c5fa2303bae92e49766.
+They are distinguished, not described as identical physical bytes. ProofF7AACE09C6360C3EAE516392FC07B1E1E3F7935F2768732A52A155F329BF2883
+was recovered from the committed parent after a default-cp1252 writer truncated its own file;
+explicit UTF-8, verified temporary bytes and atomic replacement preserved the source and all
+historical evidence. Original correction16-call cap and separate2-call closure are recorded.
+
+Independent re-review `3d2aa9001fe2afc9dd05c84dc698287acbdb00d0` observes its own37/37,
+clears the two original examples and reads all non-type shared handoff declarations. It retains
+Test Architect/architecture-security BLOCK for FR-003: a RELEASE-conditional extension in a new
+source owner gives0 errors while inactive, but activation switches selected ToList binding from
+System.Linq.Enumerable to ReviewConditionalExtensions and yields3 errors. Same extension in
+unimported Review.Unrelated preserves framework binding and passes both states. Conductor opened
+the executed source/log and final receipt. This artificial symbol is a controlled parse input,
+not an assertion about MSBuild defaults. Evidence resides in the review tree's
+`.artifacts/d0-rereview/` and committed `docs/proof/d0-atlas-independence-rereview.md`.
+Review cost18/20 boundaries,579 measured seconds. No current product Atlas dependency is claimed.
+Only a bounded design spike is admitted next; source join and qualification remain prohibited
+until the binding predicate is independently cleared.
+
 Author `97a9e200b5a5b0047e2b42cae931ffd35db02bc0`, independent reviewer
 `bbca8d6edc495b150c502999fd0fcc69fa922c72`. The reviewer ran the current normal-build
 headless suite:20 executed/20 passed/0 skipped,26 selected roots,3976 reference observations,

@@ -137,6 +137,35 @@ The E1/E2 handshake remains a separate read-only seam and does not delay these r
 
 ### D0 independent BLOCK correction, 2026-09-16
 
+**Latest material replan:** independent re-review `3d2aa9001fe2afc9dd05c84dc698287acbdb00d0`
+of correction `921cc2291f291d2cb6f99de9297dba60b90f0d54` observes37/37 and clears the
+original overload and unrelated-member examples. FR-003 remains BLOCK: an inactive
+RELEASE-conditional extension in a new owner changes selected D0 ToList binding when activated,
+but baseline-owner classification misses it. Conductor opened the executed source/log; an
+identical unimported-namespace control is recorded in the frozen review receipt. The reviewer
+also read all non-type shared handoffs. No source join or qualification has occurred.
+
+Owner admits A as a design spike ONLY:8 author calls/15 minutes/checkpoint6, cap3 including
+Owner/Conductor. Own provisioned tree `spike/d0-inactive-binding` descends from the new BLOCK.
+No correction is authored until executable spike evidence supports the exact implementation
+contract and Owner decides. Spike oracle: installed Roslyn must expose inactive declarations
+and binding context across relevant source-project dependencies, rebind selected D0 roots,
+compare exact ReducedFrom/OriginalDefinition identities with source/metadata authority, and
+detect changed/ambiguous/unresolved binding without rejecting unrelated conditional code.
+Retain existing root/port refusals. Discriminators: actual extension counterexample, unrelated
+namespace and incompatible receiver positives, focused import/overload/referenced-project cases.
+Retained37 form the later correction floor. An exposed-declaration view is not claimed
+configuration-complete; unexamined combinations and finite coverage limits must be explicit.
+Handwritten extension-lookup approximation is rejected. No transitive analyzer or MSBuild
+framework is admitted. Source-project rebinding APIs require measured spike evidence first.
+
+Revised dependency chain: exact BLOCK → executable design spike → Owner contract decision →
+bounded correction/red-first controls → independent re-review → C3/C4/C5 below. This is a
+semantic data/decision chain; extra author width cannot shorten it. Variant is the enumerated
+unresolved binding/coverage predicates. A spike limitation returns to solution selection,
+not silent policy widening or repetition. Previous author16-call correction cap and separate
+two-call UTF-8 atomic proof recovery remain recorded, with no budget-compliant-completion claim.
+
 Verified review `bbca8d6edc495b150c502999fd0fcc69fa922c72` blocks author
 `97a9e200b5a5b0047e2b42cae931ffd35db02bc0`: a new Atlas-calling `OpenKind(int)`
 inherits an existing port's name-only admission, while an unrelated conditional factory

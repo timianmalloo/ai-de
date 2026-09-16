@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T01:32:05Z",
+  "generated": "2026-09-16T01:49:16Z",
   "audit": [
     {
       "actor": null,
@@ -24134,6 +24134,40 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2KYESZS0SZK7S3WJD32VXXW",
+      "shortname": "atlas-d0-binding-veto",
+      "datetime": "2026-09-16T01:49:15Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "the conflicts are yours to resolve",
+      "summary": "Partial: correction921cc229 and recovered proof inspected;37green/red evidence read,17rawfiles copied with byte verification. Independent18/20,579s review3d2aa900 fixes original examples but retains FR003 inactive-extension binding veto. Actual scratch source/log and final receipt opened; direct shared handoffs inspected by independent reviewer. Root18 tool boundaries including monitoring/messages against16 initial cap; Owner permitted four final receipt/spike-dispatch/closure boundaries after the new finding, not retrospective budget compliance. Provisioned spike/d0-inactive-binding from retainedBLOCK and dispatched8-call design-only unit after recording plan. No source join, full/shown retry, slot grant or publication. Currentmainbcf, previous integration6034635c. All preceding vetoes, failed runs, author16+2 recovery and raw evidence preserved.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": "codex-astra-gate-conductor",
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md",
+        "docs/coordination/atlas-five-gates.md",
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve the remaining finite D0 binding verification gap before Atlas integration.",
+      "done_when": "Executable design evidence supports a bounded correction, independently cleared source joins once, and exact candidate reaches fresh-slot qualification.",
+      "tier": "T2",
+      "main_calls": 18,
+      "main_budget": 16,
+      "main_over_budget": true,
+      "fan_out": 2,
+      "started_at": "2026-09-16T01:32:09Z",
+      "duration_seconds": 1026.0,
+      "git": {
+        "sha": "6034635c717b4cb90340e6fadc14036c9bf9811b",
+        "short": "6034635c7",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -28530,6 +28564,29 @@ window.AUDIT_DATA = {
       "git": {
         "before": "703bb3ced1c79931a03b7e2b4c2b4b257cd74e83",
         "after": "703bb3ced1c79931a03b7e2b4c2b4b257cd74e83",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2KYESWQCVEGEAQY32H1F3XF",
+      "datetime": "2026-09-16T01:49:15Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "decision",
+      "skill": "optimize-graph",
+      "title": "Spike finite Roslyn rebinding after inactive extension escape",
+      "prompt": "the conflicts are yours to resolve",
+      "summary": "Owner admits A design spike only8calls/15min/checkpoint6. FR003 verified in independent3d2aa900: inactive new extension owner changes selected D0 binding when activated. Measure exposed-declaration context across source-project dependencies, exact ReducedFrom/OriginalDefinition identity, changed/ambiguous/unresolved binding, and unrelated namespace/receiver controls; focused import/overload/project cases. Preserve root/port refusals and retained37. No handwritten lookup approximation, configuration-complete claim, general analyzer/MSBuild framework, implementation, join or qualification before measured design/Owner decision.",
+      "rationale": "Both earlier examples were corrected, but baseline-owner matching cannot cover a newly selected extension owner. Use actual compiler binding instead of extending a handwritten lookup approximation.",
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md",
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "6034635c717b4cb90340e6fadc14036c9bf9811b",
         "branch": "integration/atlas-five-gates",
         "pushed": null,
         "commits": []

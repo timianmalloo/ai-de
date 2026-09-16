@@ -9534,7 +9534,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4fa2cc99760400afdfaf5c63206bfb5a448c1779d38c2bb9fde9199369376535"
+      "sourceSha256": "f5e22096377c5a905776b0382da0448f1162313c0b1345c9780c9a45a215c7c9"
     },
     {
       "id": "coordination-code-atlas",
@@ -9722,7 +9722,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "aaea34658d6c710c530722f08aa19def4f8cd153f3355c575f2c51ab2efa4fcf"
+      "sourceSha256": "0b85058b63562652760c9e8d2e77951dba0b866612f384b6637ef53400f4000d"
     },
     {
       "id": "design-session-profiler",
@@ -12082,7 +12082,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "ca500e0998de13f02b6000cc00b0bb2bb54569dd2d3ad1d4278a1e9a0d5f7e00"
+      "sourceSha256": "e43f4051d7fa2156a4357b45d24acf92c9e2e8755ba03d298025889e276e2c28"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -12713,7 +12713,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a7de39c05178ff4413e568ab34817d99a06eac261762f3835bee053858a0e5ae"
+      "sourceSha256": "4a5b5a0f1aad40d5906b8e46e54fc0ac111140783c458a9a8f13cae13a3de605"
     },
     {
       "id": "proof-code-atlas-contract-grounding",
@@ -22809,5 +22809,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "2cd94fbc417292690eb0c1b08befb8a08f0a618d13ba637a41136752c3af48f0"
+  "graphSha256": "d08170ff5bfaae179f986312fff9b7a584731839367046e2c2607a870a6b03ea"
 };

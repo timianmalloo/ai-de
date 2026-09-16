@@ -14,6 +14,17 @@ summary: "Exact blocker transfer; isolated repairs followed by GHCP-only main pu
 
 # Layer state
 
+**Latest binding checkpoint:** correction921cc229 passes37/37 in both author and independent
+normal-build runs. Re-review `3d2aa9001fe2afc9dd05c84dc698287acbdb00d0` clears the original
+overload and unrelated conditional examples, but retains BLOCK for FR-003: an inactive new
+extension owner can replace selected D0 method binding. Exact source/logs and the committed
+receipt were opened by Conductor. An unimported namespace control preserves framework binding.
+Owner admitted only an8-call/15-minute Roslyn rebinding spike in provisioned
+`C:/Projects/ai-de-spike-d0-inactive-binding`, branch `spike/d0-inactive-binding`,
+session `codex-d0-inactive-binding-spike`, base3d2aa900. No correction implementation precedes
+the executable spike and Owner contract decision. No D0 correction source is joined into the
+integration branch; no new slot/full/shown run/publication. Earlier checkpoints remain history.
+
 **Current correction checkpoint:** independent Astra review
 `bbca8d6edc495b150c502999fd0fcc69fa922c72` BLOCKS the D0 author tip
 `97a9e200b5a5b0047e2b42cae931ffd35db02bc0`. Its own normal-build run passed20/20,
