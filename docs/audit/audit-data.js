@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T22:32:48Z",
+  "generated": "2026-09-16T22:44:56Z",
   "audit": [
     {
       "actor": null,
@@ -19935,6 +19935,35 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-16T22:32:46Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2P6A06BF6W87739HN2VSXT3",
+      "shortname": "join-main-red-groups-1-2",
+      "datetime": "2026-09-16T22:44:55Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "the join of lane/main-red-0915 into main",
+      "summary": "The first repair of the tests that have kept main red since 2026-09-12. Method-level Platform=Windows traits on the four EngineCatalogTests locator tests and the purge test (class-level would have stripped Linux coverage from 16 passing tests), plus a new portable characterisation test pinning the Linux behaviour with its residual and trigger, proven able to fail by a swapped-arms mutant. Counts: 2567 portable + 180 nonportable = 2747 whole - nothing deleted or skipped. Neither Atlas candidate modifies these files (measured 0 0 against both merge-bases). Groups 3-4 remain held until the Atlas integration lands or 2026-09-18 21:00Z. recount_seconds=544 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/AgentPlane/TheLocatorTellsShimFromExecutableOnlyByWindowsSuffixTests.cs",
+        "docs/investigations/INV-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Remove the five Linux-only Core failures from main's red set without losing a test, and make the Linux behaviour a control instead of a memoir",
+      "done_when": "main carries 7cd82133; recount and gates green in the primary; pushed; the closing entry carries the landed SHA's Build run id and result (Rulings 112 (iii)/117 (i))",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-16T22:35:50Z",
+      "duration_seconds": 545.0
     }
   ],
   "changes": [
