@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T18:47:23Z",
+  "generated": "2026-09-16T18:49:57Z",
   "audit": [
     {
       "actor": null,
@@ -26086,153 +26086,225 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2NPW3D3TMMYQ3RY7BVR0NW9",
-      "shortname": "atlas-review-join-12c1ddd0",
-      "datetime": "2026-09-16T18:15:11Z",
-      "session": "codex-atlas-five-gates-integration",
-      "prompt": "Resolve Grok consumer request and continue the admitted Atlas observer preparation and serialized branch assembly.",
-      "summary": "Official conductor join merged exact review-only tip 12c1ddd08202c9b29688dd1acb425300844fa553 then intentionally stopped at the reviewed pre-recount barrier, exit4/check86. No qualification, acceptance, push or Release. Original source e6 preserved except exact reviewed native-test626d16a2. Full-content audit/change fingerprints from both parents conserved with zero missing rows. The carrier includes only its inspected proof/metadata and audit/derived manifest, including the two specifically Owner-admitted historical producer audit payloads. This entry consumes this join marker; required regeneration and checkpoint commit follow, with actual outputs retained in artifacts/atlas-five-gates/final-review-assembly/. One native diagnostic passed separately at historical7ccef6d8; slot ended/released; no new test execution during these joins.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/atlas-five-gates.md"
       ],
-      "tags": [],
-      "outcome": "partial",
-      "goal": "Retain reviewed evidence and source without asserting runtime qualification.",
+      "datetime": "2026-09-16T18:15:11Z",
       "done_when": "Exact merge and audit conservation observed; derived records current; unqualified candidate committed.",
-      "tier": "T2",
+      "duration_seconds": 1.0,
       "fan_out": 0,
+      "git": {
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "sha": "11e5551e19e3a6018eb6795cc1fa0ebda2397705",
+        "short": "11e5551e1"
+      },
+      "goal": "Retain reviewed evidence and source without asserting runtime qualification.",
+      "id": "al-01M2NPW3D3TMMYQ3RY7BVR0NW9",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "Resolve Grok consumer request and continue the admitted Atlas observer preparation and serialized branch assembly.",
+      "session": "codex-atlas-five-gates-integration",
+      "shortname": "atlas-review-join-12c1ddd0",
       "signals": {
         "acceptance_met": false
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-09-16T18:15:10Z",
-      "duration_seconds": 1.0,
-      "git": {
-        "sha": "11e5551e19e3a6018eb6795cc1fa0ebda2397705",
-        "short": "11e5551e1",
-        "branch": "integration/atlas-five-gates",
-        "pushed": null
-      }
+      "summary": "Official conductor join merged exact review-only tip 12c1ddd08202c9b29688dd1acb425300844fa553 then intentionally stopped at the reviewed pre-recount barrier, exit4/check86. No qualification, acceptance, push or Release. Original source e6 preserved except exact reviewed native-test626d16a2. Full-content audit/change fingerprints from both parents conserved with zero missing rows. The carrier includes only its inspected proof/metadata and audit/derived manifest, including the two specifically Owner-admitted historical producer audit payloads. This entry consumes this join marker; required regeneration and checkpoint commit follow, with actual outputs retained in artifacts/atlas-five-gates/final-review-assembly/. One native diagnostic passed separately at historical7ccef6d8; slot ended/released; no new test execution during these joins.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2NQ652AYPNBYEKHQJYRANV7",
-      "shortname": "atlas-native-diag-01-close",
-      "datetime": "2026-09-16T18:20:40Z",
-      "session": "codex-atlas-five-gates-integration",
-      "prompt": "Grok may be waiting for another ACK from you",
-      "summary": "r4 changes-required response remains open for Grok acknowledgment; no new r5 in actual complete inbox. One diagnostic1/1 passed at7ccef6d8, slot released; raw native evidence and all three pixels inspected, no remaining repo processes observed. Source and preflight hashes unchanged. Two independent review inputs joined with full-content audit conservation. Figure conflicts resolved through normalized-text equality and official regeneration; invalid preservation metadata relation corrected with unchanged body/verdict. Full qualification and main publication remain pending; no claim that prior failure cause is diagnosed.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/atlas-native-diag-01.md"
       ],
-      "tags": [],
-      "outcome": "partial",
-      "goal": "Resolve the current peer request and advance the reviewed Atlas candidate toward the next authorized integration step.",
+      "datetime": "2026-09-16T18:20:40Z",
       "done_when": "Peer disposition recorded; one-use native result inspected; reviewed evidence assembled and canonical readiness request prepared.",
-      "tier": "T2",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": false
-      },
-      "started_at": "2026-09-16T18:20:40Z",
       "duration_seconds": 0.0,
+      "fan_out": 0,
       "git": {
-        "sha": "fdb3235f3de0561d36b8b2fe24f937620431d054",
-        "short": "fdb3235f3",
         "branch": "integration/atlas-five-gates",
-        "pushed": null
-      }
+        "pushed": null,
+        "sha": "fdb3235f3de0561d36b8b2fe24f937620431d054",
+        "short": "fdb3235f3"
+      },
+      "goal": "Resolve the current peer request and advance the reviewed Atlas candidate toward the next authorized integration step.",
+      "id": "al-01M2NQ652AYPNBYEKHQJYRANV7",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "Grok may be waiting for another ACK from you",
+      "session": "codex-atlas-five-gates-integration",
+      "shortname": "atlas-native-diag-01-close",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-16T18:20:40Z",
+      "summary": "r4 changes-required response remains open for Grok acknowledgment; no new r5 in actual complete inbox. One diagnostic1/1 passed at7ccef6d8, slot released; raw native evidence and all three pixels inspected, no remaining repo processes observed. Source and preflight hashes unchanged. Two independent review inputs joined with full-content audit conservation. Figure conflicts resolved through normalized-text equality and official regeneration; invalid preservation metadata relation corrected with unchanged body/verdict. Full qualification and main publication remain pending; no claim that prior failure cause is diagnosed.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2NRQ16RXSTKEWFTHGR549PC",
-      "shortname": "keep going - dont block on me use the owner and the watcher to decide an…",
-      "datetime": "2026-09-16T18:47:22Z",
-      "session": "prompt-log",
-      "prompt": "keep going - dont block on me use the owner and the watcher to decide and coordinate aso we can make progress",
-      "summary": "prompt logged for reuse",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
       "actor": null,
       "artifacts": [],
+      "datetime": "2026-09-16T18:47:22Z",
+      "id": "al-01M2NRQ16RXSTKEWFTHGR549PC",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "keep going - dont block on me use the owner and the watcher to decide and coordinate aso we can make progress",
+      "session": "prompt-log",
+      "shortname": "keep going - dont block on me use the owner and the watcher to decide an…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
       "tags": [],
-      "outcome": "success"
+      "tool": null
     },
     {
-      "id": "al-01M2NRQ1A4FF9727XGV4ZQ0N36",
-      "shortname": "atlas-p1-03-failed",
-      "datetime": "2026-09-16T18:47:22Z",
-      "session": "codex-atlas-five-gates-integration",
-      "prompt": "keep going - dont block on me use the owner and the watcher to decide and coordinate aso we can make progress",
-      "summary": "One granted unchanged P1-03 canonical attempt: App1258 executed/1257passed/1nativefailure/0skipped. RawTRX/native/query/observer/pixels inspected; V3 stopped owned process tree on actualfailedTRX and released18:37:45Z. Core/gates/Release incomplete, sourceHEADunchanged. Prompt capture deferred until frozen execution ended; now verbatim. No retry/main publication.",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/atlas-p1-03.md"
       ],
-      "tags": [],
-      "outcome": "failed",
-      "goal": "Advance the frozen Atlas candidate using Owner and watcher decisions.",
+      "datetime": "2026-09-16T18:47:22Z",
       "done_when": "Required qualification and independent review support handoff, or actual failure has an Owner-approved resolution path.",
-      "tier": "T2",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": false
-      },
-      "started_at": "2026-09-16T18:31:35Z",
       "duration_seconds": 947.0,
+      "fan_out": 0,
       "git": {
-        "sha": "5406ea69fc21f2cc765a329b4a99be28fc3583fb",
-        "short": "5406ea69f",
         "branch": "integration/atlas-five-gates",
-        "pushed": null
-      }
+        "pushed": null,
+        "sha": "5406ea69fc21f2cc765a329b4a99be28fc3583fb",
+        "short": "5406ea69f"
+      },
+      "goal": "Advance the frozen Atlas candidate using Owner and watcher decisions.",
+      "id": "al-01M2NRQ1A4FF9727XGV4ZQ0N36",
+      "kind": "skill",
+      "outcome": "failed",
+      "prompt": "keep going - dont block on me use the owner and the watcher to decide and coordinate aso we can make progress",
+      "session": "codex-atlas-five-gates-integration",
+      "shortname": "atlas-p1-03-failed",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-16T18:31:35Z",
+      "summary": "One granted unchanged P1-03 canonical attempt: App1258 executed/1257passed/1nativefailure/0skipped. RawTRX/native/query/observer/pixels inspected; V3 stopped owned process tree on actualfailedTRX and released18:37:45Z. Core/gates/Release incomplete, sourceHEADunchanged. Prompt capture deferred until frozen execution ended; now verbatim. No retry/main publication.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2NRQ1EW2NNKA12PSW7RANPY",
-      "shortname": "atlas-p1-03-rca-dispatch",
-      "datetime": "2026-09-16T18:47:22Z",
-      "session": "codex-atlas-five-gates-integration",
-      "prompt": "keep going - dont block on me use the owner and the watcher to decide and coordinate aso we can make progress",
-      "summary": "Owner-approved read-only RCA dispatched after actualnativefailure. Matching pass/fail pixels and attached visible WPFreader contrast with boundedUIAloading-text observation; causal mechanism remainsunknown. Resource-window firstsample occurredafterfailedTRXstop; noresourceintervention. Consoleprojectiondefect corrected byreadingpersistedJSON. No sourcepatch/attachment/rerun; independentRCA andBLOCKreview proceed in distincttrees.",
-      "kind": "skill",
-      "skill": "investigate",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/proof/atlas-p1-03.md"
       ],
-      "tags": [],
-      "outcome": "partial",
-      "goal": "Advance the frozen Atlas candidate using Owner and watcher decisions.",
+      "datetime": "2026-09-16T18:47:22Z",
       "done_when": "Required qualification and independent review support handoff, or actual failure has an Owner-approved resolution path.",
-      "tier": "T2",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": false
-      },
-      "started_at": "2026-09-16T18:36:58Z",
       "duration_seconds": 624.0,
+      "fan_out": 0,
       "git": {
-        "sha": "5406ea69fc21f2cc765a329b4a99be28fc3583fb",
-        "short": "5406ea69f",
         "branch": "integration/atlas-five-gates",
-        "pushed": null
-      }
+        "pushed": null,
+        "sha": "5406ea69fc21f2cc765a329b4a99be28fc3583fb",
+        "short": "5406ea69f"
+      },
+      "goal": "Advance the frozen Atlas candidate using Owner and watcher decisions.",
+      "id": "al-01M2NRQ1EW2NNKA12PSW7RANPY",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "keep going - dont block on me use the owner and the watcher to decide and coordinate aso we can make progress",
+      "session": "codex-atlas-five-gates-integration",
+      "shortname": "atlas-p1-03-rca-dispatch",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "started_at": "2026-09-16T18:36:58Z",
+      "summary": "Owner-approved read-only RCA dispatched after actualnativefailure. Matching pass/fail pixels and attached visible WPFreader contrast with boundedUIAloading-text observation; causal mechanism remainsunknown. Resource-window firstsample occurredafterfailedTRXstop; noresourceintervention. Consoleprojectiondefect corrected byreadingpersistedJSON. No sourcepatch/attachment/rerun; independentRCA andBLOCKreview proceed in distincttrees.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-combined-review.md"
+      ],
+      "datetime": "2026-09-16T18:43:14Z",
+      "done_when": "Actual terminal evidence supports a committed independent CLEAR or BLOCK receipt with explicit remaining obligations.",
+      "duration_seconds": 578.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "review/atlas-p1-03",
+        "pushed": null,
+        "sha": "5406ea69fc21f2cc765a329b4a99be28fc3583fb",
+        "short": "5406ea69f"
+      },
+      "goal": "Independently determine the exact P1-03 qualification disposition.",
+      "id": "al-01M2NRFEV4WTA3EJD0TXBTWYZ1",
+      "kind": "skill",
+      "main_budget": 12,
+      "main_calls": 11,
+      "main_over_budget": false,
+      "outcome": "blocked",
+      "prompt": "Independently CLEAR or BLOCK the complete single watcher-granted canonical P1-03 result at its exact final candidate. Terminal handoff: STOPPED ON FAILURE; inspect actual failed results and write independent BLOCK receipt without rerun or cause guessing.",
+      "session": "codex-atlas-p1-03-review",
+      "shortname": "atlas-p1-03-combined-review",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-16T18:33:36Z",
+      "summary": "Independent BLOCK at5406ea69: actual copied App TRX1258 executed/1257 passed/1 failed/0 skipped; native Atlas files original query returned null, Completedfalse/FailureCount4. Owned runner stopped on failed TRX; actual grant and END/RELEASE rows read. Core completion, final gates and Release unestablished. Exact native and D0 source hashes retained. No rerun or source change. Original marker retained across terminal wait; broad-read truncation and corrected missing paths recorded; final success-only preservation checks not claimed.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-combined-review.md"
+      ],
+      "datetime": "2026-09-16T18:44:12Z",
+      "done_when": "Exact allowed receipt/audit/derived diff commits and leases release.",
+      "fan_out": 0,
+      "git": {
+        "branch": "review/atlas-p1-03",
+        "pushed": null,
+        "sha": "5406ea69fc21f2cc765a329b4a99be28fc3583fb",
+        "short": "5406ea69f"
+      },
+      "goal": "Commit the independently established P1-03 BLOCK with correct derived outputs.",
+      "id": "al-01M2NRH80VB19VTYX5TZKW7R1H",
+      "kind": "manual",
+      "main_budget": 12,
+      "main_calls": 12,
+      "main_over_budget": false,
+      "outcome": "blocked",
+      "prompt": "Finish the independent P1-03 BLOCK receipt after its exact staging guard refused existing generated docs/_meta.json.",
+      "session": "codex-atlas-p1-03-review",
+      "shortname": "atlas-p1-03-review-commit-correction",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "Previous official audit consumed the original marker and regeneration passed. Exact staging refused docs/_meta.json, which is emitted by the already invoked documentation bundle. No commit then; all leases released. Finalization explicitly admits that generated path, records the class/sweep/control in the receipt, regenerates and commits. Actual review12/12 boundaries. Native qualification remains BLOCKED; no source change or rerun.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     }
   ],
   "changes": [

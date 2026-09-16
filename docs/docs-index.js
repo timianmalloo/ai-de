@@ -12942,6 +12942,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "c46e74678a794b33b57b5bbeb1ba9d8ee8dfea11ad4f44a7495971a041f53ca3"
     },
     {
+      "id": "proof-atlas-p1-03-combined-review",
+      "path": "docs/proof/atlas-p1-03-combined-review.md",
+      "title": "Independent combined P1-03 qualification review",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "BLOCK: the single canonical P1-03 execution failed its native App test; Core completion, final gates and Release were not established.",
+      "tags": [
+        "atlas",
+        "qualification",
+        "independent-review"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-five-gates",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b7fc04cfb69f530c455fb6c7efa6a7de44ad118ff81d7465ae5612eaf82c4f16"
+    },
+    {
       "id": "proof-atlas-peer-review-transport",
       "path": "docs/proof/atlas-peer-review-transport.md",
       "title": "Atlas independent review receipt transport",
@@ -23312,5 +23337,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a73634a3cf52331e56ddb7d1d7dc670726e26a4ce1828ac020f289af0e04b45c"
+  "graphSha256": "1aabe028f184bf911efd12645f92108e1fd44e3a33844cace9682d18d74b7502"
 };
