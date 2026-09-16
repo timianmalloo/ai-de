@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T18:49:57Z",
+  "generated": "2026-09-16T18:50:03Z",
   "audit": [
     {
       "actor": null,
@@ -26305,6 +26305,38 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M2NRVX3Q52RSZF9EY1E7VW1Z",
+      "shortname": "atlas-p1-03-block-review-join",
+      "datetime": "2026-09-16T18:50:02Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "Resolve Grok consumer request and continue the admitted Atlas observer preparation and serialized branch assembly.",
+      "summary": "Official conductor join merged exact independent BLOCK tip 876acbfa7565883ac7ddc8c9d4a2ea68710797cb then intentionally stopped at the reviewed pre-recount barrier, exit4/check86. No new qualification, acceptance, push or Release. Source unchanged from failed input5406ea69; original e6 preserved except exact reviewed native-test626d16a2. Full-content parent audit/change fingerprints conserved with zero missing rows. Actual App1258/1257/1/0 and native first lookup failure inspected; remaining Core/gates/Release unestablished. Reviewer reports12 orchestration boundaries but13 nested tool operations against12; the leaf-operation overrun is retained, not cap compliance. Generated raw.artifacts retained. Independent read-only RCA and design preparation have no authority to alter product or rerun. This consumes the join marker; official regeneration and checkpoint follow; raw artifacts/atlas-five-gates/p1-03-review-assembly/.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Retain reviewed evidence and source without asserting runtime qualification.",
+      "done_when": "Exact merge and audit conservation observed; derived records current; unqualified candidate committed.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T18:50:01Z",
+      "duration_seconds": 1.0,
+      "git": {
+        "sha": "fd8ce1dd2c585d92f47e2d067c42fae51a1cb613",
+        "short": "fd8ce1dd2",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
