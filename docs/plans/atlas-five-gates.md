@@ -12,7 +12,7 @@ review-by: 2026-12-15
 summary: "Repair the five frozen Atlas integration failures before main publication and E1/E2 continuation."
 ---
 
-# Current state: runner review BLOCK; bounded correction active
+# Current state: corrected runner CLEAR; fresh execution slot next
 
 Goal: resolve the current Grok consumer request and continue the admitted Atlas qualification
 preparation. Done when the exact proposal has a direct semantic response and recorded
@@ -30,8 +30,15 @@ Astra Owner and Conductor. Main publication stays with foreground GHCP.
 | Native shared receipt | Keep optional observation failures from poisoning original evidence | Source715523d0 independently CLEAR for FR-NO-001 at12c1f883; own21/21 and actual replay inspected |
 | Native per-view state | Complete settled loaded/visible evidence for every observed view | Source626d16a2 independently CLEARd31eab23; own21/21 and actual JSON inspected |
 | Native qualification / main | Establish combined runtime acceptance before publication | P1-03 App1257/1258; native failure; remaining canonical steps stopped and slot released; independent RCA active |
-| Transition experiment | Distinguish loading-time traversal association | Runner88035753 independently BLOCK; exact Owner-admitted correction active |
+| Transition experiment | Distinguish loading-time traversal association | Correctedd679e156 independently CLEAR8e60f415;16/16 + nine refused mutations inspected; fresh slot next |
 | E1/E2 | Continue admitted Sequence/Activity and architecture view work | Integration remains the priority |
+
+## Corrected runner clearance
+
+Candidate d679e156 is independently CLEAR at 8e60f415cbb12e3fa15ffe6d315b3b1d5f656e71.
+Conductor inspected16/16 controls, nine additional refusals and preserved input
+identity. Exact evidence and residuals are in the programme Proof Pack. Next is
+a fresh watcher slot; no shown execution or canonical qualification is implied.
 
 ## Runner BLOCK and bounded Owner correction — 2026-09-16
 

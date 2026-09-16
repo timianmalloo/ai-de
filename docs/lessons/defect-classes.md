@@ -2884,6 +2884,15 @@ for both or split.*
   experimental path control, not a claim about every cleanup site. Evidence:
   docs/proof/atlas-p1-03-transition-design-review.md and the pinned author Proof Pack.
 
+- **Recurrence (2026-09-16, Atlas runner finalization and oracle classification):**
+  an identity-read failure skipped later cleanup/evidence, while a stack substring
+  mislabeled a provider error as a missing-name assertion. Class -> sweep -> derive
+  -> prevent: reuse DC-078; sweep finalization and negative classification; isolate
+  cleanup errors from the primary failure and require typed, correlated query proof.
+  Actual-path malformed/missing/unreadable controls and provider/schema mutations
+  reproduce the red shape and pass in d679e156; independent16/16 plus nine refusal
+  mutations clear the named boundary. Evidence: programme transition-design Proof Pack.
+
 ### DC-079 — Two conventions for one job coexist with nothing marking which is correct, so copying is a coin flip
 
 - **Shape:** the same helper is written by hand in many files. Over time the copies diverge, and one
@@ -8355,6 +8364,17 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   why. Red first: 2 findings on `tools/compile-eval/derive-fixtures.py` after the sweep's sed missed
   a file, then green.
 - **Status:** `controlled`.
+
+- **Recurrence (2026-09-16, Atlas process and executable identity):** lossy CIM
+  timestamps were compared with raw native identity; a launcher shim also omitted
+  its measured implementation/modules from the freeze. Class -> sweep -> derive
+  -> prevent: reuse the representation-identity class; sweep both identity readers;
+  correlate one retained live Job-owned handle and measure consumed Git images.
+  Actual six-tick mismatch succeeds with raw handle authority, wrong identities
+  refuse, and the full manifest now checks five measured Git additions. Controls:
+  test_actual_cim_handle_and_negative_identity_controls, precision/refusal fixtures,
+  measured Git dependency capture and added/changed/missing-input guards at d679e156.
+  Independent clearance is bounded to the recorded experiment preparation.
 
 ### DC-212 — A template's header toggle bound one-way to the state it is meant to drive: the click moves the chevron and nothing else, and every oracle sets the state through the property
 

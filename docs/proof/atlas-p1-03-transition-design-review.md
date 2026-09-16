@@ -375,3 +375,39 @@ of13 nested tools was corrected by the reviewer to10 across the first8 batches.
 Root makes no retrospective budget-compliance claim. Historical outgoing r4
 notice req-01M2NKJGEJQ2DR9FPKS9T9H403 was resolved as superseded by the already
 frozen r5; r4 is never relabeled ACK and no additional peer response is required.
+
+## Corrected runner independently CLEAR — 2026-09-16
+
+Candidate d679e1567e2d74fa2ef85f1eddae6c44b6d5b758; independent receipt
+8e60f415cbb12e3fa15ffe6d315b3b1d5f656e71:docs/proof/atlas-p1-03-pair-rereview.md.
+Receipt Git-byte SHA256 6ff0bffd9a862562fb4665f313ea1bba0e75cae5c7a6026d5e14f7790eb62f68.
+Conductor read the complete receipt and actual own16/16, nine refused independent
+mutations, real retained-handle/CIM six-tick discrepancy, saved malformed-record
+failure with zero open handles, and manifest/Git comparison. Test Architect,
+SRE and Simplifier clear this preparation candidate; the older88035753 remains
+historically BLOCK. No shown experiment or canonical qualification is established.
+
+Author correction used16/16calls, audit984seconds at
+al-01M2P1V9QXYWMGKAGRYNSS1XP5. Its red13 cases had10pass/2fail/1error;
+corrected author and reviewer suites each pass16/16. Root independently ran full
+successor verification: PINS-MATCH. Direct map comparison confirms11624 prior
+non-runner inputs identical, no removals and exactly five measured Git additions.
+The old manifest remains preserved; no rebuild or source/test/tools change occurred.
+Current runner SHA25626567e7b408430ef29d4a44e6c60a1792cb2ddae9b23dd01393e1cc6ea3a3daa;
+successor SHA256a58c5993e2a8ce0c30ca3ea38339da0f2faf5943a7d891d7b3cf6a42b51ba23c.
+Raw inspected records are retained locally in pair-handoff; they are not claimed
+committed payloads. Every future arm still checks current complete input pins.
+
+Next: exact fresh watcher execution request for this candidate in the original
+pair tree, session codex-atlas-p1-03-pair-execution/codex-astra-pair-executor.
+Only one A then one B, fresh processes, Debug/no-build/no-restore, no retry;
+180seconds per arm plus at most30seconds owned containment. Fresh profiles,
+actual runtime/profile correlation, treatment ancestry and separate fixture/oracle/
+cleanup validity remain mandatory. Missing proof/changed inputs/expiry/forced
+cleanup stops the pair. Independent interpretation follows any actual run.
+No experimental source joins canonical/main. P1-03 remains failed; GHCP publishes.
+
+Watcher attribution request req-01M2P0PZJWAFSG343QCD8TH127 was resolved from this
+Conductor's actual check-only transcript, preserved in pair-handoff/identity-check-only.json.
+Anonymous decision history remains anonymous; the later ALLOW is not retroactive
+validation. This was no authored-file mutation or new defect-ID allocation.
