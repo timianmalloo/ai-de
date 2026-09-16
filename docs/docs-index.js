@@ -5580,6 +5580,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "3e860fbf0e6932ec762c4cf6910fd9f05e23415c9033b98228febc8544cfba3b"
     },
     {
+      "id": "note-d1-n1-inventory",
+      "path": "docs/notes/d1-n1-inventory.md",
+      "title": "D-1 N1 inventory — existing store and queries (facts; handshake not frozen)",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Opened-code inventory for D-1. Does not freeze listing/classification/E1 mapping. Handshake r2 remains NOTICE SENT. No IWorkspaceQueries change.",
+      "tags": [
+        "decision-note",
+        "D-1",
+        "inventory",
+        "N1"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-d1-admission",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r2",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0a13d513ce222e1f4e323e155969cc9eb348d9fe88dd6e1dc703774566aa494d"
+    },
+    {
       "id": "note-dc-115-evidence-in-a-lanes-own-checkout",
       "path": "docs/notes/dc-115-evidence-in-a-lanes-own-checkout.md",
       "title": "DC-115 — verifying a lane's evidence in the checkout it committed it in",
@@ -20635,5 +20665,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "be8479a608796b23364e277624c7370d67eca72e92e862a823e6d49ae12bdb12"
+  "graphSha256": "c3d6bbd33c60d5b420651b955fdf56fa55f2dcf8ae95cb1330b4e06bad9911ab"
 };
