@@ -171,12 +171,20 @@ prose stays inert; neither a matching hash nor an injection scanner promotes it 
 
 ## 3. Data & Persistence co-authored P2 floor
 
+**P2 correction, 2026-09-16: Data/DS design scribe; independent DS findings recorded,
+not cleared.** This section and the ADR's P2 addendum supersede earlier generic P2
+wording where it implied pre-admission rejection could discard already-canonical input,
+replay could refresh registration, or checkpointing proved O(new bytes) scanning.
+Independent Data/DS review remains **BLOCKED/PENDING**. Test-only P2 RED authoring is
+allowed; none is performed here. Solution code remains unadmitted until meaningful
+real C# RED and the concrete schema/transaction gate. P1 semantics review is separate.
+
 ### Logical grain, history, additivity and field-complete reader trace
 
 | Logical record → candidate physical representation | Grain / key / recorded when | History and additivity | Writer → compute reader |
 |---|---|---|---|
-| CoordinationFact → official JSONL event | Exactly one canonical event `(repository,stream,eventId)` on successful append | All semantic fields Type-0 immutable; corrections append facts; event counts additive over disjoint keys, not repeated deliveries | Official CLI/adapters → deterministic obligation fold |
-| LegacyOccurrence → derived source identity | Exactly one original complete record occurrence `(stream,byteOffset,rawDigest)` in immutable prefix | Preserve existing `id` even though resolve reuses request ID; do not collapse byte-identical historical occurrences | Official import mapping → retry/conflict and provenance computation |
+| CoordinationFact → official JSONL event | Exactly one canonical event `(repository,origin,streamIncarnation,eventId)` on successful append | All semantic fields Type-0 immutable; corrections append facts; event counts additive over disjoint keys, not repeated deliveries | Official CLI/adapters → deterministic obligation fold |
+| LegacyOccurrence → derived source identity | Exactly one original complete record occurrence `(repository,origin,streamIncarnation,startOffset,rawSHA256)` | Preserve existing `id` even though resolve reuses request ID; do not collapse byte-identical historical occurrences | Official import mapping → retry/conflict and provenance computation |
 | EndpointGeneration → referenced registrar version | Exactly one authenticated incarnation `(repository,actor,generation)` on registration | Binding/harness/model/rights Type-2 by new version/generation; unknown stays unknown; active count semi-additive over time | Registrar → routing/capability/consumption checks |
 | ProposalRevision → immutable artifact reference in fact | Exactly one named proposal revision `(repo,proposal,revision,contentDigest)` on proposal publication | Path/commit/blob/hash immutable; new content means new revision, never Type-1 rename | Proposer + verifier → acceptance applicability computation |
 | ProjectionApplication → candidate `coord_projection_event` cache | Exactly one terminal/pending application state per SourceEventKey for a projection version | Raw/digest/ref immutable; state is a labelled rebuildable cache; applied counts additive per key, pending gauge semi-additive | Import transaction → retry equality, pending recovery and board fold |
@@ -204,70 +212,318 @@ ADR-0023 is tracked **inherited architecture debt**, not claimed conformant and 
 expanded into this programme. Data/Persistence and Distributed Systems must coapprove the
 concrete additive representation **before P2 code**; candidate table names are not approval.
 
-Use existing SQLite capability, not new storage dependencies. Candidate additive cache
-tables must have UNIQUE SourceEventKey, full payload digest and canonical bytes reference,
-stable source-to-message identity mapping and explicit projection version. Feed key is
-UNIQUE `(repository,feedEpoch,feedSeq)`, never current count+1 outside a transaction.
-Parent links enforce same repository and existing parent in the applied relation
-(composite FK/UNIQUE); missing-parent records live in bounded pending state instead of
-creating orphan board facts. Enable/check foreign keys on every connection. Required
-columns/check constraints reject missing versions, negative offsets and invalid states.
-Immutable source columns and feed facts reject ordinary UPDATE/DELETE at the store;
-tests attempt the forbidden operations. Pending state/checkpoint may update as caches,
-with equality-to-replay tests. No modification of old native-board constraints by stealth.
+### P2-A. Source identity and bounded capture proposal
 
-**Atomic unit:** begin a SQLite write transaction that serializes writers across
-connections/service instances, check SourceEventKey and payload, validate parent/state,
-allocate stable message mapping and feed sequence under that transaction, write durable
-effect OR durable pending/refused application, record receipt and scan checkpoint, commit.
-Only after commit return the projection receipt. This is one technical application
-aggregate; it does not transactionally modify another thread or mint domain acceptance.
+Use the existing bound `RepositoryIdentity.CanonicalPath`, not a wire repository or a
+basename. `WatcherIdentity.cs:85–111` supplies `Canonicalise`: backslash identity
+separators, trailing-separator handling and Windows-only invariant case folding.
+Reuse that function for the absolute source-path identity; keep the actual filesystem
+path separate. Do not introduce another case rule or infer repository identity from a
+path alias. Unresolved binding/alias evidence blocks capture, not an invented binding.
 
-**Committed cursor safety:** use SQLite serialized write transactions (e.g. explicit
-non-deferred writer acquisition supported by the installed provider), not an instance
-lock. Writer B cannot allocate its committed sequence until writer A commits or rolls
-back. A reader between A and B commits sees A; B subsequently has a strictly greater
-sequence. A rejected transaction publishes neither its sequence nor a checkpoint.
-Read a bounded page and high watermark in one read snapshot, ascending after the cursor.
-Do not use producer time, native `Seq`, MAX observed outside the transaction, or newest-N.
-Pending→applied emits a **new feed transition**, so a reader that saw the pending event
-does not miss its later application below an already-advanced cursor.
-Cursor carries repository, feed epoch/version and last emitted sequence; incompatible
-epoch returns `XH.CURSOR_RESET_REQUIRED` plus replay instructions, never a silent jump.
+Proposed injective encoding **XHK/1**: bytes `58 48 4b 01`, then a big-endian unsigned
+32-bit field count, then, for each field, a one-byte type (`01` strict UTF-8 text,
+`02` unsigned 64-bit integer, `03` opaque bytes), a big-endian unsigned 32-bit byte
+length, and those bytes. Integers contain exactly eight big-endian bytes. No null,
+delimiter joining, Unicode normalization or implicit text conversion. Reject invalid
+Unicode and overflow. Domain tags are first text fields. The entire encoding is the
+key; a hash alone is not claimed injective. Cross-language golden vectors are owed.
 
-Native board identity and integer `Seq` stay unchanged; the coordination feed is a
-labelled cache order, not a rewritten native message sequence or new source of truth.
-Legacy rows that cannot be attributed by exact provenance stay unlinked and visible as
-legacy; never infer a source key from matching content/time or delete “duplicates.”
-The physical table names above are candidate names, not approved public APIs.
+Let `K(tag,...)` mean that encoding. A logical stream incarnation is
+`K("stream", boundRepo, origin, normalizedSourcePath, projectionEpoch)`, recorded on
+first capture. Origin is the closed discriminator `official-coord` or `native-contract`;
+it is importer-selected, not sender-selected. Enhanced SourceEventKey is
+`K("event", boundRepo, origin, incarnation, originalEventId)`. Legacy key is
+`K("occurrence", boundRepo, origin, incarnation, startOffset, rawSHA256)`.
+Scope is `K("scope", boundRepo, projectionEpoch, projectionVersion)`. The projection
+epoch is a persisted explicit rebuild/reset identity, **not** file creation time,
+inode/file ID, replacement time or a newly guessed incarnation.
 
-### Bounded recovery and indexing
+Never automatically mint a new incarnation on replacement/truncation. At each bounded
+read-pass/recovery snapshot, compare the **full accepted prefix digest once**, not once
+per page. Same-byte physical replacement keeps the logical identity; changed/truncated
+accepted prefix yields `XH.SOURCE_GAP`, no checkpoint advance. Missing previously bound
+source is a gap, not an empty successful scan. New paths require explicit binding;
+renaming cannot quietly become a new source. File identity/creation metadata is only
+diagnostic. Arbitrary historical mutation detection costs O(accepted prefix bytes);
+neither this design nor a checkpoint promises O(new bytes) for that mode.
 
-Scan checkpoints advance only across records durably accounted for (applied, pending,
-quarantined or refused). A partial trailing line does not advance the complete-record
-offset. Prefix mutation/truncation/gap stops replay with an explicit error; it is not a
-new empty stream. Persist pending parent identities and attempt state atomically; restart
-replays those, not a volatile dictionary. A permanently missing parent exhausts bounded
-automatic retry and enters explicit needs-human state; accepted obligation is retained.
-Late parent/recovery emits a transition. Tombstone references retain envelope/thread
-identity and cannot restore payload on replay; unsupported versions get visible refusal
-and do not masquerade as ignored success.
+Capture a finite byte snapshot under a source handle that excludes mutation while
+copying, then hash/parse that immutable snapshot. Whether the supported Windows handle
+and unchanged writer coexistence can actually supply that exclusion is **unverified and
+blocks code selection**; do not substitute before/after timestamps or two matching
+hashes for a coherent snapshot. Append beyond the captured length belongs to the next
+pass. Preserve offsets and full raw digests before `ReadAttrs` or timestamp sorting.
+Record length includes the terminating LF (and CR if present); a partial final record
+is neither fabricated with an added newline nor checkpointed.
 
-Bounds are named configuration inputs with conservative pilot values to be established
-by P2 evidence: maximum record bytes, admitted outstanding obligations, pending-parent
-records/bytes, in-flight endpoint notifications, attempts and retry delay. No unbounded
-queue is hidden behind the 200-message display cap. At **limit+1**, reject before admission
-with retry/checkpoint guidance; accepted items remain durable even during indefinite
-outage. Maintain storage capacity for status/refusal progress, stop accepting new work
-before reserve exhaustion, expose disk-full separately. Backoff retries transport, never
-semantic decisions or runs. Fair pending batches must not starve older obligations.
+Proposed pilot ceilings, **not measurements or approved defaults**: 128 source files
+per discovery pass (enumerate at most 129 to detect overflow), 32 MiB aggregate captured
+bytes, 128 complete records/4 MiB per apply page, 64 KiB decoded/admissible record.
+One official source is resolved by coord-core: `.agents/requests.jsonl`. Native discovery
+is top-directory `*.jsonl` under the already-bound contract directory, never recursive,
+and sorted by normalized identity. No broad repository scan or second consumed file.
+Oversized complete records within the snapshot can be streamed to a raw digest and
+source-reference quarantine without copying their payload into the DB. A snapshot,
+discovery or binding ceiling failure stops that pass with explicit backpressure and no
+unaccounted advance. A byte ceiling is not permission to truncate a record or source
+list and call it complete. Data/DS must review a larger-scope mode; no automatic approval.
 
-Indexes planned: SourceEventKey UNIQUE; `(repository,feedEpoch,feedSeq)` covering paging;
-`(repository,parentSourceKey,state)` pending lookup; `(state,nextAttemptAt,sourceKey)`
-bounded due work; thread/obligation/revision index for detail/fold. Checkpoint primary key
-supports restart without a whole-log scan. Initial rebuild is O(n) offline/observable;
-hot incremental reads seek by cursor. P2 must supply EXPLAIN QUERY PLAN, 100× fixture
-cardinality, rows visited, busy-timeout/backpressure and bounded-memory measurements.
+### P2-B. Concrete three-table candidate (DDL for review, not an applied migration)
+
+One application aggregate, rooted at `(scope, source_key)`, protects **one durable
+effect/disposition and its receipt/checkpoint commit**. Native historical registration
+is a referenced observation, not another aggregate whose live authority replay may
+mutate. Three new tables only: application cache, immutable transition/receipt feed,
+and checkpoint cache. No fourth receipt entity, cyclic FK or immediate cyclic trigger.
+`scope` encodes repository/epoch/version as above; every FK retains that same scope.
+`ever_applied` is a sticky identity marker, not an authorization or live-session flag.
+
+```sql
+CREATE TABLE coord_projection_event (
+  scope BLOB NOT NULL,
+  source_key BLOB NOT NULL,
+  stream_key BLOB NOT NULL,
+  original_id TEXT,
+  raw_start INTEGER NOT NULL CHECK(raw_start >= 0),
+  raw_length INTEGER NOT NULL CHECK(raw_length > 0),
+  raw_sha BLOB NOT NULL CHECK(length(raw_sha) = 32),
+  digest_version INTEGER CHECK(digest_version = 1),
+  canonical_sha BLOB CHECK(length(canonical_sha) = 32),
+  canonical_bytes BLOB CHECK(length(canonical_bytes) <= 65536),
+  payload_ref BLOB NOT NULL,
+  mapping BLOB,
+  conflict_of BLOB,
+  logical_parent_key BLOB,
+  applied_parent_key BLOB,
+  parent_applied INTEGER,
+  ever_applied INTEGER NOT NULL DEFAULT 0 CHECK(ever_applied IN (0,1)),
+  state TEXT NOT NULL CHECK(state IN ('pending','applied','refused','quarantine')),
+  reason TEXT NOT NULL,
+  attempts INTEGER NOT NULL DEFAULT 0 CHECK(attempts BETWEEN 0 AND 8),
+  due INTEGER CHECK(due >= 0),
+  recovery_n INTEGER NOT NULL DEFAULT 0 CHECK(recovery_n >= 0),
+  active_bytes INTEGER NOT NULL DEFAULT 0 CHECK(active_bytes BETWEEN 0 AND 65536),
+  PRIMARY KEY(scope, source_key),
+  UNIQUE(scope, stream_key, raw_start),
+  UNIQUE(scope, source_key, ever_applied),
+  FOREIGN KEY(scope, conflict_of)
+    REFERENCES coord_projection_event(scope, source_key),
+  FOREIGN KEY(scope, applied_parent_key, parent_applied)
+    REFERENCES coord_projection_event(scope, source_key, ever_applied),
+  CHECK((digest_version IS NULL AND canonical_sha IS NULL AND canonical_bytes IS NULL)
+     OR (digest_version IS NOT NULL AND canonical_sha IS NOT NULL)),
+  CHECK((applied_parent_key IS NULL AND parent_applied IS NULL)
+     OR (applied_parent_key IS NOT NULL AND parent_applied IS NOT NULL AND parent_applied = 1)),
+  CHECK((state = 'applied' AND ever_applied = 1)
+     OR (state <> 'applied' AND ever_applied = 0)),
+  CHECK(state <> 'applied'
+     OR (logical_parent_key IS NULL AND applied_parent_key IS NULL)
+     OR (logical_parent_key IS NOT NULL AND applied_parent_key IS NOT NULL
+         AND applied_parent_key = logical_parent_key)),
+  CHECK(conflict_of IS NULL OR state = 'refused')
+);
+CREATE TABLE coord_projection_feed (
+  n INTEGER PRIMARY KEY AUTOINCREMENT,
+  scope BLOB NOT NULL,
+  source_key BLOB NOT NULL,
+  transition_key BLOB NOT NULL,
+  outcome TEXT NOT NULL CHECK(outcome IN
+    ('pending','applied','refused','quarantine','tombstone')),
+  reason TEXT NOT NULL,
+  mapping BLOB,
+  UNIQUE(scope, source_key, transition_key),
+  FOREIGN KEY(scope, source_key)
+    REFERENCES coord_projection_event(scope, source_key)
+);
+CREATE TABLE coord_projection_checkpoint (
+  scope BLOB NOT NULL,
+  stream_key BLOB NOT NULL,
+  projection_version INTEGER NOT NULL CHECK(projection_version = 1),
+  complete_offset INTEGER NOT NULL CHECK(complete_offset >= 0),
+  prefix_sha BLOB NOT NULL CHECK(length(prefix_sha) = 32),
+  PRIMARY KEY(scope, stream_key)
+);
+CREATE INDEX coord_feed_page ON coord_projection_feed(scope, n);
+CREATE INDEX coord_parent_work
+  ON coord_projection_event(scope, logical_parent_key, state, raw_start, source_key);
+CREATE INDEX coord_due_work
+  ON coord_projection_event(scope, state, due, source_key);
+CREATE INDEX coord_first_receipt ON coord_projection_feed(scope, source_key, n);
+CREATE INDEX board_future_seq ON board_message_fact(repository_key, seq);
+CREATE TRIGGER coord_feed_no_update BEFORE UPDATE ON coord_projection_feed
+BEGIN SELECT RAISE(ABORT, 'XH.IMMUTABLE_FEED'); END;
+CREATE TRIGGER coord_feed_no_delete BEFORE DELETE ON coord_projection_feed
+BEGIN SELECT RAISE(ABORT, 'XH.IMMUTABLE_FEED'); END;
+CREATE TRIGGER coord_event_no_delete BEFORE DELETE ON coord_projection_event
+BEGIN SELECT RAISE(ABORT, 'XH.IMMUTABLE_SOURCE'); END;
+CREATE TRIGGER coord_event_identity_no_update BEFORE UPDATE OF
+  scope, source_key, stream_key, original_id, raw_start, raw_length, raw_sha,
+  digest_version, canonical_sha, payload_ref, conflict_of, logical_parent_key
+  ON coord_projection_event
+BEGIN SELECT RAISE(ABORT, 'XH.IMMUTABLE_SOURCE'); END;
+CREATE TRIGGER coord_event_sticky BEFORE UPDATE ON coord_projection_event
+WHEN (OLD.ever_applied = 1 AND NEW.ever_applied <> 1)
+  OR (OLD.mapping IS NOT NULL AND NEW.mapping IS NOT OLD.mapping)
+  OR (OLD.canonical_bytes IS NOT NULL
+      AND NEW.canonical_bytes IS NOT OLD.canonical_bytes)
+BEGIN SELECT RAISE(ABORT, 'XH.IMMUTABLE_MAPPING'); END;
+```
+
+This is **unexecuted candidate SQL**, including indexes/triggers. FK/recursive-trigger
+settings must be enabled/read back on every writer; raw SQL bypass tests include
+`INSERT OR REPLACE`. Payload materialization (null to bounded canonical bytes) must
+compare the full versioned bytes against a freshly validated source reference; SQL
+does not compute that canonicalization or digest. `active_bytes` is an operational
+budget cache, not another fact; writer reservation/release must equal materialized
+active payload bytes. Counts/byte totals are computed, not stored as another counter.
+Pending/retry/checkpoint fields are mutable Type-1 optimization caches; source identity,
+original ID and each feed outcome/mapping are immutable. Later changes append feed
+rows; no trigger freezes all current state or blocks existing native-table writes.
+These synthetic-only payload copies do not settle the live erasure design in §7.
+
+**Explicit constraint gap / BLOCKED:** one-way feed-to-event FK rejects orphan feed
+rows, but cannot require every event to have an initial receipt at commit. Nor does it
+alone prevent a raw current-state UPDATE without its matching feed transition. The
+transaction-boundary protocol below supplies application atomicity, not store-enforced
+initial-receipt existence. A raw `BEGIN; INSERT event; COMMIT` without feed is an explicit
+violation test expected to expose this candidate's gap. Data's hard floor is **not waived**.
+Data/DS must resolve it before schema/code admission. If a cycle is later justified,
+name `first_receipt_n` and prove exactly the initial receipt, never a generic receipt
+that prevents later transitions. No speculative cyclic FK is silently added here.
+
+The first feed row (`MIN(n)` for the source key in scope) is the immutable **ADMISSION**
+receipt; later feed rows are transition receipts. Duplicate same enhanced key and equal
+full canonical bytes returns that original admission receipt/mapping plus separately
+labelled **CURRENT** state/mapping. Digests are an index aid, never equality alone.
+New-offset duplicates need no new event or receipt; their accounted prefix advances
+atomically. UNIQUE first source position plus the full accepted-prefix check detects
+changed bytes; the latter also covers subsequent duplicate positions not copied as rows.
+
+Conflicting canonical bytes do not mutate the original event or its state. Persist one
+refusal application keyed by `K("conflict", originalKey, offendingOccurrenceKey,
+canonicalDigestVersion, offendingCanonicalDigest)` with `conflict_of` naming the original,
+then its admission feed row. Retry of that occurrence returns the same refusal.
+Repeated delivery never manufactures infinite rows; genuinely distinct offending
+occurrences remain distinct source facts subject to storage backpressure. Changed
+already-accounted source position is `SOURCE_GAP`, not a conflict overwriting that position.
+
+### P2-C. Prepare, write, commit, publish
+
+1. From the bounded immutable snapshot, validate/prepare **inert typed data**:
+   source identity, canonical bytes/reference, parent identity, proposed native effect,
+   lifecycle evidence reference and observation mapping. `PreparedEffect` is not a
+   callback/delegate that calls a registrar/service outside the DB transaction.
+2. Acquire a **non-deferred SQLite writer transaction before any lookup/allocation**.
+   Establish the installed provider's exact transaction API in the real C# RED fixture;
+   an instance lock or default-overload guess is not proof.
+3. Lookup source key/position, compare full bytes, resolve same-scope applied parent.
+   Insert application (or stable refusal/pending reference) first. Parent already applied
+   can be referenced by `(scope, key, 1)`; a missing parent leaves only the logical key.
+4. Write the durable effect, if allowed, and source-to-original-ID mapping using the
+   **same connection and transaction**; then INSERT admission/transition feed (database
+   allocates `n`), then UPSERT the complete-record checkpoint/digest, then COMMIT.
+   Pending-to-applied first sets the resolved discriminator/FK and writes the effect,
+   then appends its transition; parent identity remains valid after payload tombstoning.
+5. Publish process-local state only after commit; ACK/return only after that. A reader
+   sees either the whole durable unit or none. Uncertain commit, lost ACK and process
+   restart retry the **same identity**, never another GUID/event ID.
+
+**No `RebindObservedRegistration` capability-mint API.** Persist original
+OBSERVATION mapping; replay returns a historical reference, never `Register` again,
+never heartbeat refresh, ended-state clearing or generation mutation. Canonical
+coordination projection needs no capability. Native effects require current trusted
+lifecycle evidence or stay pending/refused; a historical mapping cannot self-mint it.
+Current `TrustedRegistrar.Issue:81–93` publishes a capability before separate session/
+ended/heartbeat writes. Wrapping `Register` in an outer transaction is not this protocol.
+Native first registration needs an independently cleared inert-prepare / same-transaction
+durable registration+mapping / postcommit publication design, with the lost-publication
+recovery case. **That exact seam remains BLOCKED**, not solved by this scribe.
+
+### P2-D. Native ordering and reliability inventory
+
+Independent DS correction: two `MessageBoardService` instances require future per-repo
+native `Seq` allocation **inside the store writer transaction**, using indexed
+`MAX(seq)+1` after writer acquisition and returning the allocated `BoardMessage`.
+Preserve every old ID/Seq/payload and historical duplicate Seq; no retrofit UNIQUE or
+dedup. Check integer exhaustion explicitly; never wrap or renumber. The current
+`AppendBoardMessage` accepting caller Seq is not claimed to provide this guarantee.
+Future native MCP `sinceSeq` uses earliest N ascending after the cursor, not newest N;
+snapshot mode without `sinceSeq` may retain its documented newest-N behavior.
+
+| Surface | Completeness contract after a future qualified P2 implementation |
+|---|---|
+| New coordination feed | Every visible transition including tombstone; ordered committed pages |
+| Updated native incremental reader + updated store writers | Future insert ordering only; existing duplicate Seq history is disclosed, not repaired |
+| Old binaries, native tombstone mutations, publisher snapshots | **NOT change-feed completeness**; old writers can reintroduce duplicate/nonmonotone Seq |
+
+Neither the new feed nor updated native ordering retroactively upgrades old clients.
+Old-binary rollback preserves data/operability; it suspends the new reliability guarantee.
+
+### P2-E. Capacity without child-before-parent deadlock
+
+Active retry capacity is **not retained-obligation capacity**. Proposed pilot bounds:
+1,024 active pending records and 16 MiB active pending payload; 64 retries per pass and
+8 attempts per eligibility cycle. These are proposals, not measured defaults.
+On overflow **after canonical acceptance**, commit a visible capacity-deferred
+`quarantine` application containing a bounded source reference only (no payload copy),
+its feed receipt and checkpoint. Continue scanning so a later parent can arrive.
+The checkpoint accounts for retained canonical work; it never drops it.
+
+Indexed parent arrival reconsiders bounded fair batches, including capacity-deferred
+and attempts-exhausted children. Recoverable edges are:
+`pending -> applied`; `pending -> quarantine(attempts-exhausted)`;
+`quarantine(capacity-deferred|attempts-exhausted) -> pending|applied` on evidenced parent
+arrival, restored capacity or explicit operator recovery. A new eligibility cycle
+resets attempts only for that evidence and increments `recovery_n`; clock ticks alone
+cannot bypass exhaustion. Unsupported versions require qualified-version recovery,
+not blind retries. Polling metadata changes need not emit facts; visible state changes
+do. Tombstoned applied parents still satisfy identity, never revive payload.
+
+Due-work and parent-work continuations use deterministic `(due, source_key)` or
+`(raw_start, source_key)` order with a rotating per-scope cursor and bounded share for
+each queue. A deferred batch cannot restart forever at its first child. Attempt limits
+end automatic retries, not the obligation. Canonical references may accumulate with
+canonical history; there is no promise of infinite finite-disk retention. Disk-full or
+unavailable DB stops scanning/admission with `XH.STORAGE_UNAVAILABLE`/backpressure and
+**no uncommitted checkpoint advance**. Reserve capacity for status/progress; its concrete
+size, accounting and recovery threshold remain Data/SRE gate inputs. If even a reference
+cannot commit, stop; recovery starts only after capacity is restored. No second spool.
+P1 producer-admission and P3 endpoint-queue limits remain separate floors, not excuses
+to omit this bounded P2 scanner over already-accepted input.
+
+### P2-F. Cursor, reconstruction, migration and measurement gates
+
+Cursor is `(repository, projectionEpoch, projectionVersion, lastReturnedN)`. Read earliest
+ascending page and high watermark from **one read snapshot**; continuation is the last
+returned row, **never high watermark**. Empty pages preserve continuation. Database-global
+AUTOINCREMENT gaps across repositories/rollbacks are legal; sequence contiguity is not
+promised. A reader between writer A and B commits sees A, then B above its continuation.
+Pending-to-applied and tombstone transitions are new feed rows; invalid scope/epoch/version
+requires explicit reset. O18 covers 401 rows as 200/200/1 **and larger corpora**.
+
+Semantic rebuild compares original identities/mappings, payload availability, parent
+relationships and folded outcomes at the **same canonical watermark**. It does not
+compare regenerated feed sequence numbers, retry timing, attempt counts or scheduling.
+An epoch reset requires cursor reset, not pretending an old feed is the new one.
+Indexes above are candidates; source lookup, first-receipt, cursor, parent and due
+queries require real EXPLAIN QUERY PLAN plus 100x cardinality/rows-visited/bytes evidence.
+Full-prefix capture once per pass must be counted separately from indexed page cost.
+
+Candidate v8 is additive on observed v7. `EnsureSchema:1057–1062` returns when
+`current >= SchemaVersion`; **there is no old-reader future-version block**. That is
+static evidence, not rollback proof. Actual `WatcherHost.Open` deployment must expand a
+representative old DB, preserve old writes/IDs/Seq including duplicates, retain newly
+accepted facts through an **actual old-binary open/rollback**, then re-enable and rebuild.
+No DROP, version downgrade, historical dedup, native relocation, new DB, workspace.db
+transaction or new trigger blocking old writes. Release/Data/DS clearance remains owed.
+
+Operator questions and normal-path emitting sources (all **unimplemented/unmeasured**):
+capture duration/files/prefix bytes/page bytes -> projection span; active records/bytes,
+oldest deferred age and reserve remaining -> bounded gauges; attempts, deferred/recovered
+transitions and source gaps -> counters; source-key/outcome/cursor and commit uncertainty
+-> structured logs without raw payload/capabilities. A failed metric reads Not Recorded,
+not zero. O20/O28 must observe both success and failure emission. No UI/endpoint work here.
 
 ## 4. Expand → migrate → contract; real rollback required
 

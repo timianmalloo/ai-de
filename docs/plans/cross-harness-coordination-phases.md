@@ -20,6 +20,64 @@ summary: >-
 
 # Durable phase graph
 
+## P2 checkpoint — corrected Data/DS proposal, not code admission
+
+**2026-09-16:** docs-only scribe in separately registered `feature/xh-p2-projection`,
+session `xh-p2-projection-b0d0`, based exactly on
+`f4109e144d4c56d16b4548013e948d0ba1f50e36`. The P1 checkpoint below remains its own
+author's evidence; parallel P1 semantics review is not cleared or rewritten here.
+The human's all-six-phase approval remains. P2 RED test-only authoring is allowed,
+but no test is authored/run here and solution code is **UNADMITTED** until real C# RED
+plus independent Data/DS schema/transaction clearance.
+
+The design §3 and ADR P2 addendum now record the independent DS corrections:
+future native transactional Seq/earliest-N reads; capacity-deferred reference-only
+obligations that do not block a later parent; explicit logical stream identity and
+bounded full-prefix snapshots; historical registration mapping without capability
+minting; three additive tables and honest initial-receipt constraint gap; original
+admission versus current-state receipts, stable conflicts, last-returned cursors and
+semantic rebuild; actual v7/v8 old-binary rollback through WatcherHost.
+
+| P2 gate | Exit condition / current state |
+|---|---|
+| Independent Data + DS design | Review exact corrected docs including proposed pilot ceilings, source snapshot evidence, DDL/INSERT order, recoverable edges and native lifecycle seam. **PENDING; supplied DS BLOCK not cleared** |
+| Real C# RED, test-only | Real SQLite register/post/two pumps, two services/barriers/reader between commits, source-gap/overflow-before-parent and raw SQL violation fixtures fail for the asserted reasons. **NOT RUN** |
+| Concrete schema admission | Resolve store-enforced initial receipt and state/feed pairing; verify same-scope applied-parent discriminator, immutable identity/feed, non-deferred transaction and first-registration durable mapping/postcommit publication. **BLOCKED** |
+| Implementation + operational proof | O09/O11–O20 refinements, crash/restart/end/tombstones/version, 401 and >401 paging, every limit+1/outage, full-prefix bounded reads, query plan/100x fixtures and actual old-binary rollback/re-enable. **UNADMITTED/PENDING** |
+| Activation | Existing authority, live retention/erasure, P1 producer compatibility and P3/P4/P5 gates remain; reference-only deferral is not permission for live sensitive import. **BLOCKED** |
+
+### This scribe's bounded execution graph and handoff
+
+| Node | Capability | Input -> exit condition | Dependency |
+|---|---|---|---|
+| S1 | Deterministic mechanics | Official help + exact base -> own registered worktree | None |
+| S2 | Reasoning | Four docs + scoped exact source -> static contracts and contradictions identified | S1 data |
+| S3 | Reasoning | Supplied Data/DS corrections -> coherent four-document draft under exact TTL300 leases | S2 decision |
+| S4 | Deterministic mechanics | Draft -> release claims, inspect bounded diff, append own audit, commit, end session clean | S3 data |
+| G2 | Independent review | Exact committed proposal -> external Data/DS dispositions, meaningful RED and schema gate | S4 data; outside this scribe |
+
+No agents. Shared schema/transaction context keeps authoring serial; file reads alone
+are independent. Inferred normalized work/span before and after: **5/5**, width one,
+speedup ceiling one. No measured speedup or runtime cost claim. Budget <=28 tool calls,
+150k context ceiling; author refinement worklist is the seven supplied DS corrections,
+floor zero. A cap reports remaining gaps, never waives them. No schema/replay test loop
+runs here. Actual shape follows S1–S4 with scoped output-paging overhead; G2 remains
+external. Audit duration starts at the recorded grounding marker, excluding earlier
+help/registration; token usage is not recorded. Final tool usage is recorded in audit.
+
+Mandatory surfaces for later admission are design P2-A–F and the Proof Pack's P2
+refinement table. A three-table draft is **not** a cleared physical design: raw INSERT
+without an initial receipt is a named still-permitted violation in the one-way candidate.
+Do not silently replace that hard floor with a successful application-path test.
+No new DB/native-history relocation/workspace.db/cross-DB transaction/second consumed
+file; ADR-0023 divergence remains debt. Conductor owns derived regeneration and review
+routing, never this scribe's automatic contract clearance.
+
+**Upstream dependency unchanged:** only AFTER verified completion of **all P0–P5**,
+produce the separately requested reusable-contract addendum/handoff in its own worktree.
+Project-neutral protocol/canonical encoding/CLI contracts may qualify; product-specific
+C# watcher-store and WPF code stay separate. No upstream research or push here.
+
 ## Current checkpoint — dormant P1 four-finding repair
 
 The Python author repaired independent F1–F4 on

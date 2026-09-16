@@ -20,6 +20,99 @@ summary: >-
 
 # Proof Pack — dormant P1 candidate; independent code gate pending
 
+## P2 design correction receipt — 2026-09-16, independent gates NOT cleared
+
+**Docs-only Data/DS scribe.** Officially registered session `xh-p2-projection-b0d0`,
+branch `feature/xh-p2-projection`, tree `C:\Projects\ai-de-feature-xh-p2-projection`,
+exact base `f4109e144d4c56d16b4548013e948d0ba1f50e36`. P1 author's tree and pending
+semantics review are untouched. Original P1 evidence below is historical input, not
+this scribe's execution. Only design §3, ADR P2 addendum, P2 proof/gates/oracles and
+phase plan are authored, plus own append-only audit. Inherited typed links remain;
+derived/site/lessons incorporation belongs to conductor, no regeneration here.
+
+### Fresh scoped source contracts at the exact base
+
+Paths below are relative to `src\AiDe.Core\Watcher` unless otherwise stated.
+**Verified means read source; no runtime reproduction or SQL execution occurred.**
+
+| Source / lines | Observed contract | What remains Inferred / unperformed |
+|---|---|---|
+| `MessageBoard.cs:85–175` | Instance lock; fresh GUID; BoardMessages.Count+1; current registrar capability check | Real two-service sequence race and repaired allocation/returned-message behavior |
+| `SqliteWatcherObservationStore.cs:546–588` | Native append persists caller Seq; board read orders by Seq | Non-deferred writer acquisition, atomic effect/feed/checkpoint, future indexed MAX+1 |
+| `CoordinationContractLog.cs:234–269` | Top-directory files read whole; synthetic newline added; every parsed event reapplied | Raw complete-record capture, replay one-effect and bounded read behavior |
+| `CoordinationContract.cs:259–305,576–654` | Sorts `(At, externalSessionId, Seq)`; non-string attrs become null; board posts call service; registration map in adapter | Pre-lossy canonical capture; durable observation mapping after restart/end |
+| `TrustedRegistrar.cs:65–119`; `IngestHost.cs:109–136` | Registration chooses next generation for an existing terminal; Issue publishes capability then writes session, clears ended and updates heartbeat | No replay capability mint; exact native first-registration prepare/write/postcommit seam |
+| `WatcherIdentity.cs:85–111` | Canonicalise uses backslash identities, trailing-separator rule and Windows-only invariant lowercase | Source-file alias/handle/coherent-snapshot qualification; no new identity rule invented |
+| `src\AiDe.Mcp\BoardTools.cs:76–112`; `BoardPublisher.cs:70–88` | sinceSeq filtering followed by newest-N; tombstones omitted; publisher is bounded snapshot | Future insert-only native incremental guarantee, not tombstone/history completeness |
+| `SqliteWatcherObservationStore.cs:17,32–49,1057–1084`; `WatcherHost.cs:51–73` | SchemaVersion 7; foreign keys/recursive triggers enabled; current >= version returns; actual host opens watcher.db | Actual v7 binary opening additive v8 and preserving new facts through rollback/re-enable |
+
+### Supplied independent DS findings and corrected proposal status
+
+| Finding | Correction recorded in design §3 / ADR | Independent status |
+|---|---|---|
+| DS1 native two-instance ordering | Future allocation inside store writer transaction, returned allocated message, earliest-N incremental read; preserve historical duplicates | Prior BLOCK retained pending Data/DS + O14/O18 |
+| DS2 overflow child before parent | Capacity-deferred source reference + receipt/checkpoint, continued scan, fair recovery including exhausted attempts, no unbounded payload copy | Prior BLOCK retained pending Data/DS + O16/O20 |
+| DS3 source identity evidence | XHK/1 injective tuple; explicit logical epoch; full-prefix snapshot once/pass; same bytes preserve identity, mutation/truncation SOURCE_GAP; finite discovery/read ceilings | Prior BLOCK retained; actual snapshot/exclusion and normalization goldens not established |
+| DS4 registration replay authority | Historical observation only; no RebindObservedRegistration API or wrapped Register; native lifecycle evidence required | Prior BLOCK retained; atomic first-registration durable mapping/publication unresolved |
+| DS5 schema invariant gap | Three-table one-way FK candidate; actual parent discriminator; feed immutable, current state mutable; raw SQL oracle exposes missing initial receipt enforcement | **BLOCKED**, not waived: initial-receipt and state/feed pairing not store-enforced |
+| DS6 duplicate and cursor semantics | Original ADMISSION plus separate CURRENT; stable conflict refusal; last-returned continuation; semantic same-watermark rebuild | Pending independent Data/DS + O09/O12/O18 |
+| DS7 rollback contract | Correct old current>=7 behavior; actual old-binary/new-facts/re-enable requirement retained | Pending independent Data/DS/Release + O15 |
+
+**GATE P2-DS-prior · 2026-09-16 · supplied independent DS findings · verdict:
+BLOCK; corrected proposal recorded, not independently cleared.**
+**GATE P2-schema · 2026-09-16 · independent Data/DS pending · verdict: BLOCKED;
+initial-receipt constraint, snapshot evidence and native registration seam unresolved.**
+**GATE P2-runtime · 2026-09-16 · Test/Data/DS/Release pending · verdict: NOT RUN;
+real C# RED, transaction, raw SQL, migration/rollback and query-plan evidence absent.**
+These are statuses, not fabricated reviewer PASS receipts. P2 test-only RED authoring
+is allowed; no solution code admission follows from this docs commit.
+
+### P2 oracle refinements — every row NOT RUN / RED not observed
+
+These specialize the original catalogue, not reduce it. Future tests must report exact
+selected names/counts, fixtures and asserted database state; Python diagnostics or
+registration-count-only assertions cannot qualify C# behavior.
+
+| Oracle | Falsifying fixture / required assertion |
+|---|---|
+| O09 / O12 | Equal enhanced key/full canonical bytes after pending→applied returns original admission receipt/mapping plus distinct current state. Lost ACK/uncertain commit retries same identity. Changed canonical bytes at a new offending occurrence gets one stable conflict refusal; repeat it, row counts stop growing; original state/mapping never overwritten. Changed accepted-position bytes cause SOURCE_GAP |
+| O11 / O19 | Real SQLite + real register/post writer/pump: two pumps leave one effect/receipt. Restart after end, then replay: same observation ID/generation, ended and heartbeat unchanged; no new capability. Native effect without current trusted lifecycle evidence cannot apply |
+| O13 | Crash before every durable step and immediately before commit: no partial effect/application/feed/checkpoint. Crash after DB commit before process publication/ACK: original receipt survives; native first-registration mapping is atomic and does not mint a replay capability |
+| O14 | Two distinct services, store connections and barriers: A holds non-deferred writer, B waits; reader between commits sees A; after B commit next page contains B. Test native future Seq allocation/returned message separately from coordination feed n; preload historical duplicate native Seq and preserve them |
+| O15 | Actual WatcherHost deployer expands representative v7; insert new accepted facts; actual old binary opens/writes against v8 without version downgrade; re-enable and compare semantic source/mapping/tombstone state at same watermark. Do not compare regenerated feed n/retry schedule; no DROP/dedup |
+| O16 / O20 | Fill active pending to each item/byte bound; overflow child occurs BEFORE parent in canonical input. Commit visible reference-only deferred receipt/checkpoint, reach parent, recover children across restart in bounded fair batches, including attempts exhausted; tombstoned applied parent identity remains valid |
+| O17 | Same-byte physical replacement keeps identity; altered/truncated accepted prefix, disappearance, path alias ambiguity and unsupported version are explicit. Capture full raw bytes before lossy attrs/timestamp sorting. Unterminated tail never advances; malformed/oversized complete line remains accounted, not ignored |
+| O18 | 401 unread transitions paginate 200/200/1, then repeat with >401, interleaved other-repo feed n and tombstones. Read page/highwater in one snapshot; continue from last returned, not highwater. Epoch/version/scope mismatch resets explicitly; native sinceSeq separately returns earliest N |
+| O20 limits | Every item/byte/retry limit at limit-1/limit/limit+1: 128 files (129th detected), 32 MiB snapshot, 128 records/4 MiB page, 64 KiB record, active 1024/16 MiB, 64 retries/pass, 8 attempts/cycle. Bounded reader proves bytes/rows visited and no prefix reread per page. Caps are proposed pilot fixtures, not measurements |
+| O20 outage | DB busy, indefinite missing parent, exhausted attempts, reserve exhaustion and actual injected disk-full: no accepted obligation lost; no false ACK/checkpoint. If reference/status cannot commit, scanning stops; resume only after storage restored, never a hidden second spool |
+| SQL / O13 / O16 | Execute candidate DDL in isolated real SQLite; FK/recursive triggers read back. Attempt feed UPDATE/DELETE, source identity rewrite/DELETE/REPLACE, changed established mapping and applied-parent demotion; each forbidden mutation must fail. Actual discriminator/composite FK rejects cross-scope/non-applied parent and applied child with missing parent |
+| SQL gap / schema gate | Raw transaction INSERT event then COMMIT without initial feed; raw state change without transition. One-way candidate permits the gap: observe it and keep Data BLOCK until concrete store-enforced resolution. If revised to a cycle, prove named first_receipt_n initial receipt and later transition insertion |
+| Index / boundedness | EXPLAIN QUERY PLAN + 100x cardinality, actual rows/bytes for source/admission/cursor/parent/due queries. Assert per-pass prefix capture rather than O(pages × prefix). No unmeasured O(new bytes) claim for arbitrary prefix mutation detection |
+| Canonical goldens | Python/C# exact XHK/1 bytes: delimiter-containing text, empty field, non-ASCII, field/type/length distinctions, integer boundaries, platform path cases, invalid Unicode, digest versions. Full pre-lossy semantic JSON goldens distinguish null/absent and typed values; P1 parallel semantics not assumed settled |
+
+Change reach: official accepted bytes/native log observation -> raw capture -> source
+key/PreparedEffect -> existing watcher store transaction -> feed/receipt/checkpoint ->
+projection DTO/cursor -> native MCP incremental read or coordination reader -> P5 UI.
+This turn changes only the four governing docs, not any listed implementation surface.
+Field writer/compute readers remain design §3's grain table plus P2-A–F: identity/digest
+serve equality/conflict; parent fields serve FK/recovery; state/attempt/due/active bytes
+serve scheduling/budget; feed n/outcome/mapping serve admission/cursor; checkpoint
+serves bounded recovery. No live capability is stored in observation mapping.
+
+**Scope/process receipt:** no agents, solution code, test authoring, runtime tests,
+live DB/GUI/endpoints, dependencies, hooks/config or upstream research. No graph exists
+in this own tree; inherited typed links are the bounded grounding path
+design -> spec/ADR -> proof -> plan. Source reads are at the pinned base, not histories.
+Two oversized tool outputs required paging; an unavailable shell `rg` attempt was
+replaced with available tools. These are process overhead, not product RED.
+The initial-receipt, coherent-snapshot, native-registration and live privacy gaps are
+explicitly unresolved. Full design DoD items 2/6/7/15/18 (enforced model, executed
+contracts, independent pattern review, rollups and veto clearance) are not claimed met.
+Append-only official audit helpers avoid the CLI renderer; no derived file is authored.
+`AIDE_SESSION` and `AIDE_CONTRACT_LOG` are absent, so episode capture is unavailable;
+no evidence path under `docs\proof` is invented for this existing `docs\proofs` artifact.
+The worktree is retained for independent review/integration because its commit is unmerged.
+
 ## Current receipt — four-finding repair, 2026-09-16, Python peer author
 
 **Outcome: F1–F4 repaired and regression-tested in the dormant P1 candidate;
@@ -439,7 +532,7 @@ are **specified future tests**, not files already written or passing tests selec
 | O17 | `Import_UnsupportedVersionOrSourceGap_ExplicitRefusal`: unknown version, malformed line, truncated/changed prefix; no false checkpoint success | P2 |
 | O18 | `Read_401Unread_PagesWithoutGaps`: page 200/200/1 ascending; tombstones included as envelopes; no newest-N skip; epoch mismatch explicit reset | P2 |
 | O19 | `Replay_TombstoneAndEndedGeneration_NoResurrection`: restart/register/end/late receipt; redacted payload never returns, old generation never revived | P2 |
-| O20 | `Queue_LimitPlusOneOutage_PreservesAccepted`: parameterize bytes/items/pending/retry bounds; overflow refused before admission, permanent parent needs-human, disk/DB outage then recovery loses no accepted obligation | P2 |
+| O20 | `Queue_LimitPlusOneOutage_PreservesAccepted`: parameterize every P2 item/byte/retry bound; already-canonical overflow becomes visible reference-only capacity-deferred quarantine with receipt/checkpoint, not dropped or blocked before its later parent; fair recovery includes exhausted attempts; disk/DB outage then recovery loses no accepted obligation. P1 producer admission is separate | P2 |
 | O21 | `Deliver_InFlightLimitAndRunningTurn_DefersSafely`: fake time/transport, limit+1, failed/unavailable model, sibling-read refusal; stable retry, no duplicate semantic action, outage recovery | P3 |
 | O22 | `Endpoint_RegisteredGeneration_ConsumesAndWakes`: installed/version-pinned foreground/background GHCP/Codex/Grok/Claude, approved low-volume synthetic message, witnessed correct conversation arrival+consumption+supported post-turn wake | P3; all real endpoints BLOCKED pending spikes/availability |
 | O23 | `Launch_TwoCallers_AttributesCorrectActor`: same helper under two launcher identities; actor/generation/worktree/candidate/run and PID creation/parent match each caller | P4 |

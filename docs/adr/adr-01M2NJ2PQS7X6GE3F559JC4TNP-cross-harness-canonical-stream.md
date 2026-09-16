@@ -121,3 +121,48 @@ SQLite/crash/replay/rollback floors are unchanged; static replay/cursor risks re
 Inferred. Live retention/erasure across payload copies and real foreground/background
 GHCP/Codex/Grok/Claude conformance remain unresolved/BLOCKED; fakes do not clear them.
 Proposed SLIs are not measurements. Docs index and rollups remain pending with conductor.
+
+## P2 addendum — corrected proposal after independent DS BLOCK findings
+
+**2026-09-16; Data/DS design scribe, not independent approval.** This addendum governs
+P2 where earlier prose suggested all hot reads could avoid full-prefix validation or
+all native sequences would remain allocated as before. The supplied independent DS
+BLOCK findings remain open until independent Data/DS review; no automatic self-clear.
+The concrete unexecuted DDL and transaction order are in design §3, not a migration.
+
+The fixed P0 boundary stands: official `.agents/requests.jsonl` is ONE canonical
+coordination stream; three additive application/feed/checkpoint caches use existing
+`IWatcherObservationStore` in existing `watcher.db`. No new DB, native history relocation,
+workspace.db migration, cross-DB transaction or second consumed file. ADR-0023 placement
+divergence remains explicitly inherited debt, not conformance.
+
+| Independent correction | Revised choice / still-open admission evidence |
+|---|---|
+| DS1: a new coordination feed leaves the two-native-service race | Future native per-repo Seq uses indexed MAX+1 inside a non-deferred store writer transaction and returns the allocated message. Preserve old IDs/Seq/duplicates, no UNIQUE retrofit. Native `sinceSeq` reads earliest N; old binaries, native tombstone mutations and snapshots are not complete change feeds |
+| DS2: pending cap before a later parent deadlocks accepted work | Separate active retries from retained obligations. Commit overflow source-reference-only capacity-deferred quarantine + feed receipt + accounted checkpoint, then reach the later parent. Fair indexed recovery includes exhausted attempts; disk-full stops until capacity is restored, never silently drops |
+| DS3: invented file incarnation hides source mutation | Proposed XHK/1 typed length-prefix keys; logical bound repo/origin/path/epoch established first capture. Same-byte replacement retains identity; changed/truncated prefix fails closed. Full accepted-prefix validation once per bounded snapshot/pass, not per page; O(prefix) cost acknowledged. Coherent snapshot/writer coexistence and 128-file/32 MiB capture ceilings still require Data/DS evidence |
+| DS4: replay registration mints authority/liveness | Original OBSERVATION mapping is historical only; no RebindObservedRegistration capability API, Register replay, heartbeat/ended/generation mutation. Canonical projection needs no capability; native effects need current trusted lifecycle evidence. Atomic first-registration mapping and postcommit publication remain BLOCKED |
+| DS5: receipt cycle and predicates masquerade as constraints | Three tables, one-way feed FK, actual parent-applied discriminator CHECK + same-scope composite FK. Immutable feed outcomes separate from mutable retry/current-state caches. No fourth receipt entity or unjustified cycle. Initial receipt existence/state-transition pairing are NOT store-enforced by this proposal: raw-SQL violation oracle and Data hard-floor BLOCK retained |
+| DS6: retries/cursors/rebuild compare the wrong thing | Equal key/full bytes returns original ADMISSION receipt/mapping plus separate CURRENT state. Conflict refusal keyed by offending occurrence/digest never overwrites original. Ascending snapshot cursor continues from last returned, not high water. Same-watermark semantic rebuild does not require feed-sequence/retry-schedule equality |
+| DS7: downgrade assumed to reject v8 | Observed old v7 returns for current >= 7; no future-version refusal. Actual old binary must open additive v8, retain new facts and old writes, then re-enable/replay through actual WatcherHost deployment; static source is not rollback proof |
+
+Rejected shortcuts: invoking existing service/registrar callbacks within a purported
+outer transaction; timestamp/path-change identity; blocking all scanning at the active
+pending cap; count+1 sequencing protected only by an instance lock; newest-N recovery;
+claiming transactional code is a raw-SQL constraint. Named patterns remain inbox,
+read model, append-only transition feed and expand-migrate-contract, using existing
+SQLite/stdlib; no speculative framework or dependency.
+
+The proposed bounded correctness mode permits 128 records/4 MiB per page, 64 KiB per
+admissible record, 1,024/16 MiB active pending, 64 retries/pass and 8 attempts/eligibility
+cycle. None is measured, approved by Data/DS, or adequate evidence for larger scope.
+Disk reserve and live retention/erasure remain unresolved. P1 producer-admission and P3
+endpoint limits remain independent programme floors.
+
+**Admission:** P2 RED test-only authoring may proceed, but no tests were authored/run in
+this docs repair. P2 solution code remains unadmitted until real C# RED plus independent
+Data/DS concrete schema/transaction clearance, including the explicit gaps above.
+Human P0–P5 approval remains; P1 semantics review runs separately. Runtime replay/race
+claims remain Inferred. Upstream work remains after verified completion of all six
+phases; only project-neutral protocol contracts are candidates, never product-specific
+C# watcher/store/WPF implementation by assumption.
