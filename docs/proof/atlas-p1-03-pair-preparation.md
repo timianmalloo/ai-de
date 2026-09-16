@@ -10,10 +10,208 @@ links:
   - { to: proof-atlas-p1-03-uia-transition, rel: relates-to }
   - { to: session-contracts, rel: relates-to }
 review-by: 2026-12-16
-summary: "Corrected preparation candidate: 16 harmless controls pass; successor freeze retains all 11,624 old non-runner inputs and adds five measured Git binaries. Independent rereview and an execution slot remain required."
+summary: "Four harmless process-image fixtures distinguish synchronized-exit error 31 from live zero-capacity error 122; both collapse to the frozen runner's bare refusal. Diagnostic-loss correction proposed only; historical cause remains unknown."
 ---
 
-# Corrected preparation candidate
+# Process-image investigation after pair 01
+
+## Root-cause overview and evidence boundary
+
+**Verified diagnostic loss:** two distinct controlled native failure states produce
+the same maintained `Refused: PROCESS-IMAGE-MISSING`. A synchronized process exit
+before the image query produced native error **31**, while a deliberately zero-sized
+image buffer against a live process produced **122**. The existing runner discards
+both native error codes and the pending PID/birth at this boundary. The historical
+pair's missing eighth process and the reason for its image-query failure remain
+**unknown**. This investigation demonstrates a mechanism, not that historical cause.
+
+Owner contract `req-01M2P3P146D09MKG08W1WPMX8V` was read and ACKed through official
+coordination before any fixture ran. The independently completed documentary
+outcome CLEAR at `0d8da79160ec8ce3c18b7e857f5b6f3dda8d7f56` was read through git.
+That CLEAR accepts the invalid-attempt interpretation; it grants no runner repair,
+readiness, native retry or new slot. The consumed pair slot was released by its
+watcher, as recorded in that independent receipt.
+
+Goal: distinguish the observer's failure states with at most four harmless fixtures.
+Done when observed distinctions, reproduction limits and the smallest supported
+correction are reviewable. Tier T2, no delegates; Astra for native identity/lifetime
+semantics. Eight-call / fifteen-minute bound, checkpoint five. The existing programme
+graph gains this bounded diagnostic node; no whole-programme replan or new execution
+policy is introduced. Surface list: native image-call boundary -> pending identity
+and exit observations -> actual failure/finalization record -> this proof -> Owner
+and independent reviewer. No product/UI/domain model or compiled input changes.
+
+The investigation tree is
+`C:/Projects/ai-de-investigate-atlas-p1-03-process-image`, branch
+`investigate/atlas-p1-03-process-image`, based on `f8ad3323`. Session/agent are
+`codex-atlas-p1-03-process-image` / `codex-astra-process-image-investigator`.
+Scratch lives only in `artifacts/atlas-process-image-investigation/` in that tree.
+The original prepared tree and frozen runner/manifests are retained unchanged.
+
+### Four planned fixtures, each executed once
+
+| Fixture | Observed query and same-handle state | Actual frozen-path result |
+| --- | --- | --- |
+| Live owned Python child | PID 7864, birth 134340698653414844; membership true; wait 258 before/after; image succeeds | `Job.sample` returns and records the Python image |
+| Synchronized exit before query | PID 35640, birth 134340698653905578; initially wait 258, then child exits via stdin byte and bounded wait; same handle wait 0 before query; query fails with immediate native error 31; after wait 0 | Bare `PROCESS-IMAGE-MISSING`; diagnostic cause reproduced for this synthetic sequence only |
+| Injected image-query failure while live | PID 28488, birth 134340698654327026; zero-capacity buffer substituted for this native call; wait 258 before/after; immediate native error 122 | Identical bare `PROCESS-IMAGE-MISSING`; proves the message does not distinguish exit from this live failure |
+| Failure containment/closure | Gate PID 21772; owned child PID 5024/birth 134340698654935019; second image query gets live zero-capacity error 122 | Actual `run_owned` records primary refusal, forced=true, active=0 of total=2, retained sampled handles exited=true; process.json retained |
+
+Fourth-fixture `identities_complete=true`: its direct-child record supplies the
+second PID/birth and reconciles the small two-process fixture. This does **not**
+reproduce the historical seven-of-eight population or waive that failure. It remains
+refused because forced termination and an execution error are present. No daemon,
+testhost, WPF/UIA, browser or native Fact was launched by these fixtures.
+
+Every proxy-observed `CloseHandle` returned success; all four fixtures ended with
+an empty proxy-tracked handle set. This covers handles opened through the runner's
+proxied APIs, not a whole-process or whole-system handle census. Fixtures 1–3 also
+observed their harmless child exit. Fixture 4 exercises the actual runner gate,
+Job termination, process evidence save and finalization. No global/name-based kill
+was used. The fixture fallback is limited to its own retained `Popen` handle.
+
+### Timing, API contracts and substitutions
+
+`spike.py` imports the unchanged runner with bytecode writes disabled. A scratch API
+proxy delegates real Win32 calls, records PID/raw birth/Job membership and separately
+timed zero-wait observations, and intercepts only the image call under study. For
+the exit case it releases the child's stdin gate and waits for that exact child to
+exit before the single image query. There are no sleep-based race guesses or repeated
+samples of that fixture. For the injected cases it passes a real zero-capacity
+argument to the native API; it does not fabricate a Windows error code.
+
+Immediately after a failed native image return, the first action is
+`ctypes.get_last_error()`. Only then are the end timestamp and post-query native
+observations taken. A successful call records native error as null. Both before
+and after observations retain their own ticks; an after-query signaled state is
+not backdated into a claim about the failure instant. Membership and raw identity
+remain separately represented. One observation row means exactly one intercepted
+image call, with immutable nested observations at their recorded times; counts and
+distinctions are derived from these rows, not a second authoritative identity list.
+
+Microsoft's [image-query contract](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-queryfullprocessimagenamew)
+specifies the query rights, buffer-size parameter and failure return. Its
+[last-error contract](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)
+requires immediate retrieval because later calls may overwrite the thread error.
+[Python 3.12 ctypes](https://docs.python.org/3.12/library/ctypes.html#ctypes.get_last_error)
+documents the saved thread-local value used with `WinDLL(use_last_error=True)`.
+[WaitForSingleObject](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)
+defines zero-time observations: 258 is nonsignaled and 0 signaled.
+[CloseHandle](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)
+supplies the observed closure return contract. No general claim that all exited
+processes return error 31 is made from this one controlled observation.
+
+Only fixture 4 substitutes the imported module's `ROOT` in memory so harmless
+commands use the investigator tree as cwd. It restores that value afterward and
+uses the unchanged runner's actual `_gate` and `run_owned`. Fixtures add observation
+calls and controlled scheduling; they are deliberately not timing-faithful native
+pair replays. No maintained file, binary, manifest, selector or policy was patched.
+
+## Smallest supported correction proposal — not implemented
+
+The supported correction addresses **diagnostic information loss**, whose source
+and effect are directly observed. It does not claim to repair the historical image
+failure. At `Job.sample`'s image-query refusal, retain:
+
+1. The pending PID, raw creation identity and already-observed membership result.
+2. API name, flags, requested capacity, Boolean result, query timing and the native
+   error captured immediately on failure, before clocks or another native call.
+3. A separately timestamped same-handle exit-state observation and any failure of
+   that observation, explicitly later than the failed image call.
+4. These fields in a structured failure diagnostic that survives `run_owned`'s
+   primary-error serialization and finalization, with secondary recording failures
+   kept separate. Do not insert an image-less row as a complete identity.
+
+Keep current failure/containment behavior, complete-population gate and no-retry
+policy. An exited process is not permission to ignore the missing identity. An error
+code alone is not cause. The smallest acceptance control must fail on the current
+maintained output (both states are indistinguishable), then prove the structured
+records distinguish the four admitted cases while preserving closure and refusal.
+There is no maintained repair or claimed green regression control in this unit.
+
+## Generalization, sweep and disconfirmation
+
+Class shape: native failure is collapsed into a generic message before its pending
+identity and same-thread error become durable. Signature: a native false return
+followed by a bare exception; downstream serialization records only type/message.
+It survives happy-path and synthetic containment checks because both can succeed
+without requiring diagnostic fields. Central class allocation belongs to Conductor.
+
+The bounded source sweep found two image-call sites in the frozen runner:
+`Job.sample` line 161 drops pending identity/error before row retention;
+`owned_snapshot` line 273 also emits a bare image-unavailable error (its input row
+already supplies identity). The second site is a **source-confirmed sibling**, not
+an executed fifth fixture. `docs/ai-forward-pack/scripts/bounded_process.py` contains
+no image-query site in the inspected search; no change to it is proposed. No
+`simplify:` marker was found in these two inspected files. An initial guessed
+`tools/bounded_process.py` lookup failed; the actual file was found with `rg --files`.
+
+Class -> sweep -> derive -> prevent: identify the lost native diagnostic, inspect
+the two image boundaries, derive immediate structured capture independent of final
+identity acceptance, and require the four-fixture diagnostic assertions in any later
+admitted repair. Prose alone is not reported as an installed control.
+
+Disconfirmation record:
+
+- The live fixture rules out unconditional failure of this image API/handle-rights
+  combination in the current environment.
+- The live zero-capacity failure disproves interpreting the bare message as unique
+  evidence of process exit.
+- The synchronized-exit fixture establishes that exit-before-query can produce the
+  bare refusal here; it does not establish it as necessary or as the historical cause.
+- Successful proxy-observed closure and actual forced containment distinguish
+  diagnostic loss from a demonstrated leak in these four fixtures.
+- Nothing identifies the historical eighth process, a Git/provider cause, or the
+  original native UIA missing-name failure.
+
+**SRE peer:** retain the failure's native evidence before any later call can replace
+it; do not relax containment on a guessed exit race. **Distributed-systems peer:**
+lifecycle observations have their own time; identity does not imply liveness.
+**Domain-research peer:** API documentation plus the controlled observations support
+the distinctions above, not a universal exited-process error code. **Test-author
+adversarial check:** the two different native errors and exit states collapse to the
+same maintained exception; the proposed diagnostic acceptance fails today. This is
+author analysis only. Independent findings review remains required; no hard veto
+or repair is self-cleared.
+
+## Phased repair proposal and retained evidence
+
+| Phase | Independently reviewable scope | Acceptance / boundary |
+| --- | --- | --- |
+| 1 | Owner-admitted diagnostic-only runner correction, including both image-query sites if retained in scope | Four admitted distinctions persist in structured output; immediate-error ordering, primary preservation, closure and fail-closed population gates remain intact |
+| 2 | Independent Test/SRE review of that correction and exact raw controls | Reviewer clears its own veto; no native execution implied |
+| 3 | Owner decision on any future experiment/slot | Separate explicit admission; no repair or retry authorized by this investigation |
+
+Rollback for a later diagnostic repair is to the frozen runner hash below; it must
+not silently reuse or replace the consumed native attempt or its manifest. Any new
+runner identity/freeze is a separate reviewed artifact. No build is required merely
+to retain diagnostic fields, but this investigation authorizes no implementation.
+
+Raw files in this investigator tree:
+
+- `artifacts/atlas-process-image-investigation/spike.py`: exact four-fixture harness.
+- `summary.json`, and `live/result.json`, `exit/result.json`, `inject/result.json`,
+  `containment/result.json`: actual outcomes, pending identities, native errors,
+  query/observation ticks and proxy closure records.
+- `containment/process.json`, direct-child identity and streams: actual frozen
+  `run_owned` result; the three direct-child fixture streams are retained too.
+- `before-pins.json` / `after-pins.json`: full **11,630-file / 1,030-root** inventories
+  match the existing corrected manifest, at 22:04:25.336382Z and 22:04:28.031260Z.
+
+Both pin checks read the original prepared tree's complete declared population.
+They also verify this tree's imported runner SHA256
+`26567e7b408430ef29d4a44e6c60a1792cb2ddae9b23dd01393e1cc6ea3a3daa`.
+Corrected manifest remains
+`a58c5993e2a8ce0c30ca3ea38339da0f2faf5943a7d891d7b3cf6a42b51ba23c`;
+predecessor remains
+`ed4f937ba886f57b186ea02b0fa9cf74135bbb7137d5938cf99942d210360314`.
+These are byte/population checks, not a fresh runtime resolver or native qualification.
+Scratch is ignored local evidence; it does not travel with this Markdown commit.
+Planned four fixtures / actual four; no resampling. Audit records actual duration
+and calls. Token/spend telemetry is not recorded. Final handoff supplies actual
+documentary checks, commit, clean state and release outcomes.
+
+# Corrected preparation candidate (preceding evidence)
 
 **Verified correction evidence; independent veto remains open.** The independent
 BLOCK at `2ab2f0b2bb2ae17ddb9bed5da1da935742bc9873` identified CIM precision loss,

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T21:50:36Z",
+  "generated": "2026-09-16T22:08:12Z",
   "audit": [
     {
       "actor": null,
@@ -26502,6 +26502,53 @@ window.AUDIT_DATA = {
         "sha": "d679e1567e2d74fa2ef85f1eddae6c44b6d5b758",
         "short": "d679e1567",
         "branch": "test/atlas-p1-03-uia-pair",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2P3ZR40RWFYFF4ZEKD4VKR1",
+      "shortname": "atlas-process-image-investigation",
+      "datetime": "2026-09-16T22:04:22Z",
+      "session": "codex-atlas-p1-03-process-image",
+      "prompt": "FIRST action: set session codex-atlas-p1-03-process-image and agent codex-astra-process-image-investigator; audit start --skill investigate. New Conductor-provisioned tree C:/Projects/ai-de-investigate-atlas-p1-03-process-image, branch investigate/atlas-p1-03-process-image at f8ad3323. Never EnterWorktree; absolute cwd. Publish own primary liveness immediately.\n\nGoal: distinguish process-image observer failure states with at most four harmless non-GUI fixtures, keeping the frozen experiment intact. Done when actual distinctions/reproduction status/raw evidence and smallest supported correction are returned for independent review. Tier T2, fanout zero, Astra for Win32 identity/timing semantics. Budget eight orchestration calls / fifteen minutes, checkpoint five, context ceiling 400k; cap is defect signal, no open-ended sampling.\n\nRead/ACK exact official contract req-01M2P3P146D09MKG08W1WPMX8V. Owner approved allowlist/tree. Independent outcome CLEAR0d8da79160ec8ce3c18b7e857f5b6f3dda8d7f56:docs/proof/atlas-p1-03-pair-outcome-review.md completed. Read receipt via git show and applicable investigate/repo guidance. Allowed ignored scratch artifacts/atlas-process-image-investigation, maintained docs/proof/atlas-p1-03-pair-preparation.md, own official audit/required derivatives only. Exact short leases; no central lesson edits.\n\nNo runner/source/test/tools/manifests/compiled-output edits, builds, GUI/native tests, attachment, retries, source joins or main publication. Scratch may import frozen runner and exercise actual paths with harmless owned Python children. Exactly four planned cases: live Job-owned image success; synchronized child exit around image query; injected image-query failure exposing diagnostic loss; failure containment/handle closure. Capture native error immediately after failed call before any other native call; retained PID/birth/Job membership, query result and separately timed exit observations. Check relevant API contract; actual scratch spike, no guessed semantics. No same-name/global kills; only retained owned handles/Job. Synthetic reproduction never identifies the historical missing eighth process or cause. Frozen-byte checks before/after. Return concrete correction proposal without implementing maintained repair or relaxing identity completeness. If inconclusive preserve precise unknown and stop; Owner decides. User delegates routine decisions to Owner/watcher; no new human approval wait inferred from workflow. Independent review follows. Source/diff/audit/regen/graph/commit, release leases/end session, retain raw/tree. Report planned versus actual and residuals. Root writes shared recurrence when supported.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2P46R3TFEAX5KYJ4WSD8SMB",
+      "shortname": "atlas-process-image-investigation",
+      "datetime": "2026-09-16T22:08:11Z",
+      "session": "codex-atlas-p1-03-process-image",
+      "prompt": "FIRST action: set session codex-atlas-p1-03-process-image and agent codex-astra-process-image-investigator; audit start --skill investigate. New Conductor-provisioned tree C:/Projects/ai-de-investigate-atlas-p1-03-process-image, branch investigate/atlas-p1-03-process-image at f8ad3323. Never EnterWorktree; absolute cwd. Publish own primary liveness immediately.\n\nGoal: distinguish process-image observer failure states with at most four harmless non-GUI fixtures, keeping the frozen experiment intact. Done when actual distinctions/reproduction status/raw evidence and smallest supported correction are returned for independent review. Tier T2, fanout zero, Astra for Win32 identity/timing semantics. Budget eight orchestration calls / fifteen minutes, checkpoint five, context ceiling 400k; cap is defect signal, no open-ended sampling.\n\nRead/ACK exact official contract req-01M2P3P146D09MKG08W1WPMX8V. Owner approved allowlist/tree. Independent outcome CLEAR0d8da79160ec8ce3c18b7e857f5b6f3dda8d7f56:docs/proof/atlas-p1-03-pair-outcome-review.md completed. Read receipt via git show and applicable investigate/repo guidance. Allowed ignored scratch artifacts/atlas-process-image-investigation, maintained docs/proof/atlas-p1-03-pair-preparation.md, own official audit/required derivatives only. Exact short leases; no central lesson edits.\n\nNo runner/source/test/tools/manifests/compiled-output edits, builds, GUI/native tests, attachment, retries, source joins or main publication. Scratch may import frozen runner and exercise actual paths with harmless owned Python children. Exactly four planned cases: live Job-owned image success; synchronized child exit around image query; injected image-query failure exposing diagnostic loss; failure containment/handle closure. Capture native error immediately after failed call before any other native call; retained PID/birth/Job membership, query result and separately timed exit observations. Check relevant API contract; actual scratch spike, no guessed semantics. No same-name/global kills; only retained owned handles/Job. Synthetic reproduction never identifies the historical missing eighth process or cause. Frozen-byte checks before/after. Return concrete correction proposal without implementing maintained repair or relaxing identity completeness. If inconclusive preserve precise unknown and stop; Owner decides. User delegates routine decisions to Owner/watcher; no new human approval wait inferred from workflow. Independent review follows. Source/diff/audit/regen/graph/commit, release leases/end session, retain raw/tree. Report planned versus actual and residuals. Root writes shared recurrence when supported.",
+      "summary": "Four fixtures executed once: live success; synchronized exit produces error31; live zero-capacity injection produces error122; both failures collapse to identical bare refusal. Actual run_owned contains2/2 with complete direct-child identity and successful proxy-observed closure; distinct from historical7/8. Full11630-file inventories unchanged before/after. Diagnostic-only proposal, no maintained repair or historical-cause claim. Guessed bounded_process path corrected through rg inventory.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-pair-preparation.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Distinguish process-image observer failure states with four harmless fixtures while preserving the frozen experiment.",
+      "done_when": "Actual distinctions and reproduction limits, retained raw evidence and smallest supported diagnostic correction are committed for independent review.",
+      "tier": "T2",
+      "main_calls": 8,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-16T22:01:15Z",
+      "duration_seconds": 416.0,
+      "git": {
+        "sha": "f8ad3323c1989855916115b3b343c4fee99566b8",
+        "short": "f8ad3323c",
+        "branch": "investigate/atlas-p1-03-process-image",
         "pushed": null
       }
     }

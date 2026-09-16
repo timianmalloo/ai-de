@@ -12911,7 +12911,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2026-12-16",
       "reviewSuggested": [],
-      "summary": "Corrected preparation candidate: 16 harmless controls pass; successor freeze retains all 11,624 old non-runner inputs and adds five measured Git binaries. Independent rereview and an execution slot remain required.",
+      "summary": "Four harmless process-image fixtures distinguish synchronized-exit error 31 from live zero-capacity error 122; both collapse to the frozen runner's bare refusal. Diagnostic-loss correction proposed only; historical cause remains unknown.",
       "tags": [
         "atlas",
         "proof",
@@ -12933,7 +12933,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "26d41fbd5e6f522825e07a0bdebea09f1744b254ffbaf8f450ab8c7b23ecdb3f"
+      "sourceSha256": "23650904df1f1f4ce35f871e12e4a651d5f9a64cf60ef551b52d5cc680056e43"
     },
     {
       "id": "proof-atlas-p1-03-transition-review",
@@ -23446,5 +23446,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "76834dcf2f3ef56d80cb8a298d69922153b617e4ed5968e4f4b5e79d7cdd81a1"
+  "graphSha256": "d1da0ddb451f84d5816c926846cfdbb7b9201534efe0a3181346bcad401f5cb1"
 };
