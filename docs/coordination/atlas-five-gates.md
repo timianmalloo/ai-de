@@ -12,6 +12,35 @@ review-by: 2026-12-15
 summary: "Exact blocker transfer; isolated repairs followed by GHCP-only main publication."
 ---
 
+
+# Current state: reviewed source joined; qualification pending
+
+The independent D0 clearance e5ee30f30330010395d430c7b43474ad441de550 is merged
+at f90bdce143812d86008f14a0aa806ff222bf3b17 in integration/atlas-five-gates.
+The official conductor-join completed the merge without unresolved conflicts and
+stopped at the reviewed assembly barrier: check exit86, join exit4, before recount,
+qualification, acceptance audit or publication. This is an intentional unqualified
+assembly stop, not a passing qualification run.
+
+Verified: the only src/tools/tests delta from assembled fe95be86 is
+tests/AiDe.App.Tests/SolutionTreeProbeTests.cs, with the exact independently reviewed
+SHA2565611216eca8ebcf4f207a853938991886a9401596908730a63afe0973dd4a0de.
+Both parents' append-only audit/change entries are conserved by repository fingerprint:
+930 merged audit rows and177 change rows, zero missing. Main bcf4959bc0e0e361736e6a179f05b69fcd0500f8
+and the reviewed tip are ancestors. Actual remote advertisement still equals that main.
+The transient register dirty status had no content diff (CRLF representation); index
+refresh made it clean without discarding any content. The earlier record commit omitted
+two generated bundle outputs; separate4dc9a799 preserved both before the clean source join.
+
+The component reviews and independent73/73 D0 evidence are clear. Combined App/Core,
+native/shown, complete gates and Release remain pending. Request a fresh checked slot
+from foreground GHCP and watcher at the final clean committed record HEAD. Neither
+the released SLOT-CODEX-P1-01 nor notice sent is a new grant. Reviewed preflight and
+canonical wrapper remain unchanged. Foreground GHCP alone performs final main publication.
+All source/evidence worktrees are retained; no other-session work was cleaned.
+
+## Historical checkpoints (superseded by the current state above)
+
 # Layer state
 
 **Latest binding checkpoint:** correction921cc229 passes37/37 in both author and independent

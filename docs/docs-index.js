@@ -9534,7 +9534,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d45ceb297e44fe9e3b5abe0f2c3871529d9363250e3af066267b1a771de7423d"
+      "sourceSha256": "efeda6c9f1d4f8ff6949bb922d2c53a7a6e2062987a93fd0af4ab9f8ea7e8e39"
     },
     {
       "id": "coordination-code-atlas",
@@ -12082,7 +12082,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "ff300c70006256e5a18cd756283f7a4af1c9a602619f84daef6aac7f5d9bb081"
+      "sourceSha256": "d828f7b018408cb0fae94d20d1e4ecbd476fcd6d02d9a23de3147a22d7fca159"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -12713,7 +12713,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0fd4efdb9c9d288b1b436d6ef56a2c3916e042489a345ffb7732b4d8a3b9f864"
+      "sourceSha256": "65e81db932111143abc73a93a5283531918c6d8293a5ce354189b93dd023ab6b"
     },
     {
       "id": "proof-code-atlas-contract-grounding",
@@ -12937,6 +12937,206 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "1d3497dbd514f71128d169650ed149cb82769090f34638335947c1a6220827ed"
+    },
+    {
+      "id": "proof-d0-atlas-capture-review",
+      "path": "docs/proof/d0-atlas-capture-review.md",
+      "title": "Independent clearance of D0 capture consistency and refusal metrics",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "CLEAR for the reviewed finite direct-static guard: real loader capture changes refuse, matching snapshots discriminate Atlas, and refusal metrics are observed or explicitly unavailable.",
+      "tags": [
+        "d0",
+        "atlas",
+        "independent-review",
+        "static-analysis"
+      ],
+      "links": [
+        {
+          "to": "proof-d0-atlas-independence",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-d0-atlas-conditional-review",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0d7705f804761026bc395543341eb8cc470ba286dcc2ab56fa6e56fd8123ba54"
+    },
+    {
+      "id": "proof-d0-atlas-conditional-review",
+      "path": "docs/proof/d0-atlas-conditional-review.md",
+      "title": "Independent review of D0 finite conditional closure",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "BLOCK: finite rebinding controls pass, but mismatched syntax/fingerprint capture is accepted and early refusals print unmeasured zero telemetry.",
+      "tags": [
+        "d0",
+        "atlas",
+        "independent-review",
+        "static-analysis"
+      ],
+      "links": [
+        {
+          "to": "proof-d0-atlas-independence",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-d0-atlas-independence-rereview",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cc983c76828e10cd99b68a928c0777edd287f1b0c4afb0ec97d4bff3f0f8a831"
+    },
+    {
+      "id": "proof-d0-atlas-independence",
+      "path": "docs/proof/d0-atlas-independence.md",
+      "title": "D0 direct static independence from Atlas",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Exact shared declaration authority and scoped conditional coverage; 37 headless cases, independent re-review pending.",
+      "tags": [
+        "d0",
+        "atlas",
+        "regression",
+        "static-analysis"
+      ],
+      "links": [
+        {
+          "to": "spec-understanding-views",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0038-d0-solution-tree-census-and-kind",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e1c3ff9dae9b6befe51341b32b43f3ea9aca1636926361b889c3c048b9c29920"
+    },
+    {
+      "id": "proof-d0-atlas-independence-rereview",
+      "path": "docs/proof/d0-atlas-independence-rereview.md",
+      "title": "D0 Atlas correction independent re-review",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "BLOCK retained: original overload and whole-file counterexamples are corrected, but an inactive extension declaration changes a selected D0 binding without refusal.",
+      "tags": [
+        "d0",
+        "atlas",
+        "independent-review",
+        "static-analysis"
+      ],
+      "links": [
+        {
+          "to": "proof-d0-atlas-independence",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-d0-atlas-independence-review",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0f81d89f88028a7e2658ffc9fdc58043a73394100bd1544a69ad21df692faa45"
+    },
+    {
+      "id": "proof-d0-atlas-independence-review",
+      "path": "docs/proof/d0-atlas-independence-review.md",
+      "title": "Independent review: D0 direct static Atlas boundary",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "BLOCK: a new overload of a named shared port bypasses helper accounting; unrelated conditional code is rejected outside selected D0 members.",
+      "tags": [
+        "d0",
+        "atlas",
+        "independent-review",
+        "static-analysis"
+      ],
+      "links": [
+        {
+          "to": "proof-d0-atlas-independence",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "efb319b3a31d9d7c4ff6ddd89bb15207c801424d43e817bb22da425ffae3fc3c"
+    },
+    {
+      "id": "proof-d0-inactive-binding-spike",
+      "path": "docs/proof/d0-inactive-binding-spike.md",
+      "title": "D0 inactive binding: Roslyn rebinding design spike",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Roslyn rebinding detects extension/import/project-reference changes, but a measured masking fixture disproves flattened-all and single-region configuration completeness. No source correction authorized.",
+      "tags": [
+        "d0",
+        "atlas",
+        "design-spike",
+        "static-analysis"
+      ],
+      "links": [
+        {
+          "to": "proof-d0-atlas-independence-rereview",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-d0-atlas-independence",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "008c57da7991484c9c957c6ee685c87775ee4618c7818cb1fff3e7dd3464f57a"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -22809,5 +23009,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c6f898d058cb461131c1e5d928bb7bf5e4f20b5eaf06635bb3d1a4ffe6a29388"
+  "graphSha256": "f257fbf28212aeaec4b74e2568a337748616299f6b5a5a2d16f5c12242296f10"
 };
