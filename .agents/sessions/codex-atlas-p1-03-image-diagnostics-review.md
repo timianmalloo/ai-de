@@ -1,0 +1,1 @@
+Agent codex-astra-image-diagnostics-reviewer; session codex-atlas-p1-03-image-diagnostics-review; tree C:/Projects/ai-de-review-atlas-p1-03-image-diagnostics; branch review/atlas-p1-03-image-diagnostics; active independent diagnostic-only runner review; harmless selftests authorized; native Facts/GUI/browser/build excluded; waiting on none.

@@ -41,3 +41,8 @@ Investigator committed5cdd01b868225b3c92a7c4b4fac368d4c62b78ce,8/8 calls/audit41
 
 Root8eebf72b29b692b8496fd0453f6445fe7d7d84ea:1001audit/192change,604artifacts/zero graphdefects/orphans/drift,14figures,225classes; allsevenrootleasesreleased. Native diagnostic-only author active under req-01M2P4X7X5184R9DN4C28X64W4 (12calls/18min then6review); no native retry. R124spikecandidate ninepaths staged onbcf; originalcoverage outcomeUNKNOWN due lostexecsessionID, not pass/fail. Six-callrecovery control completed16.015sec/exit0/fullstreams, but rootflags remainingtoolmirrordependency; Owneraskedfor directfile simplification beforeClaude replacementrequest. Alloldnativeinputs/source unchanged. Conductor freshboundedjoin/peerhandoff episode:18execbatches/20min/checkpoint12; prior20callplanexceededandrecorded, no retrospectivecomplianceclaim. No humanreplyawaited; mainpublicationunchanged.
 
+
+## Current source/recovery state
+
+Native diagnostic candidate41421c8e has observed red16pass/3missing-field errors, green19/19; runnerSHA9615a47a, proposed manifest66ccb1a3 with onlyrunnerchanged/11629unchanged. Root read raw fields and dispatched six-call independent review in review/atlas-p1-03-image-diagnostics. No manifest promotion or native request. R124 capture control02 ended before live observation; author false success auditP5G2 explicitly retracted by root al-01M2P5KVCRJDZ9RSBYAGM7829R. Separate Astra capture-proof agent takes over endedcandidate tree,6calls/10min, unchanged directfilewrapper and bounded hold/release control; no coverage invocation. Localmain1487bd09 docs/coord-only verified, remote stillbcf. Before any landing reconcile currentbase and requiredgates. No peer source edited or historical artifact removed.
+

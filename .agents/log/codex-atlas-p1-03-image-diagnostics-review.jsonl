@@ -1,1 +1,2 @@
 {"agent": "codex-astra-gate-conductor", "at": 1789597970.2245407, "kind": "session-start", "path": "-", "seq": 1, "session": "codex-atlas-p1-03-image-diagnostics-review", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-review-atlas-p1-03-image-diagnostics"}
+{"agent": "codex-astra-image-diagnostics-reviewer", "at": 1789598052.5515368, "kind": "claim", "path": "docs/proof/atlas-p1-03-image-diagnostics-review.md", "seq": 2, "session": "codex-atlas-p1-03-image-diagnostics-review", "ttl": 300.0, "wi": "atlas-image-diagnostics-review"}

@@ -278,3 +278,10 @@
 {"agent": "copilot-p24-feed", "at": 1789597926.102596, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationContractLog.cs", "seq": 278, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
 {"agent": "copilot-p24-feed", "at": 1789597926.181664, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationRead.cs", "seq": 279, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
 {"agent": "copilot-p24-feed", "at": 1789597926.2629933, "kind": "claim", "path": "src/AiDe.Mcp/Tools.cs", "seq": 280, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597998.3326697, "kind": "release", "path": "src/AiDe.Core/Watcher/CoordinationProjection.cs", "seq": 281, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597998.3994596, "kind": "release", "path": "tests/AiDe.Core.Tests/Watcher/CoordinationFeedTests.cs", "seq": 282, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597998.4655373, "kind": "release", "path": "src/AiDe.Core/Watcher/CoordinationContractLog.cs", "seq": 283, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597998.5249534, "kind": "release", "path": "src/AiDe.Core/Watcher/CoordinationRead.cs", "seq": 284, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597998.5836303, "kind": "release", "path": "src/AiDe.Mcp/Tools.cs", "seq": 285, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789598135.8179975, "kind": "claim", "path": "docs/proof/cross-harness-coordination-proof-pack.md", "seq": 286, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789598135.902773, "kind": "claim", "path": "docs/plans/cross-harness-coordination-phases.md", "seq": 287, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
