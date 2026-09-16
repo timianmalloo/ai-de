@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T18:20:41Z",
+  "generated": "2026-09-16T18:47:23Z",
   "audit": [
     {
       "actor": null,
@@ -26147,6 +26147,89 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "fdb3235f3de0561d36b8b2fe24f937620431d054",
         "short": "fdb3235f3",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NRQ16RXSTKEWFTHGR549PC",
+      "shortname": "keep going - dont block on me use the owner and the watcher to decide an…",
+      "datetime": "2026-09-16T18:47:22Z",
+      "session": "prompt-log",
+      "prompt": "keep going - dont block on me use the owner and the watcher to decide and coordinate aso we can make progress",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2NRQ1A4FF9727XGV4ZQ0N36",
+      "shortname": "atlas-p1-03-failed",
+      "datetime": "2026-09-16T18:47:22Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going - dont block on me use the owner and the watcher to decide and coordinate aso we can make progress",
+      "summary": "One granted unchanged P1-03 canonical attempt: App1258 executed/1257passed/1nativefailure/0skipped. RawTRX/native/query/observer/pixels inspected; V3 stopped owned process tree on actualfailedTRX and released18:37:45Z. Core/gates/Release incomplete, sourceHEADunchanged. Prompt capture deferred until frozen execution ended; now verbatim. No retry/main publication.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03.md"
+      ],
+      "tags": [],
+      "outcome": "failed",
+      "goal": "Advance the frozen Atlas candidate using Owner and watcher decisions.",
+      "done_when": "Required qualification and independent review support handoff, or actual failure has an Owner-approved resolution path.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T18:31:35Z",
+      "duration_seconds": 947.0,
+      "git": {
+        "sha": "5406ea69fc21f2cc765a329b4a99be28fc3583fb",
+        "short": "5406ea69f",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NRQ1EW2NNKA12PSW7RANPY",
+      "shortname": "atlas-p1-03-rca-dispatch",
+      "datetime": "2026-09-16T18:47:22Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going - dont block on me use the owner and the watcher to decide and coordinate aso we can make progress",
+      "summary": "Owner-approved read-only RCA dispatched after actualnativefailure. Matching pass/fail pixels and attached visible WPFreader contrast with boundedUIAloading-text observation; causal mechanism remainsunknown. Resource-window firstsample occurredafterfailedTRXstop; noresourceintervention. Consoleprojectiondefect corrected byreadingpersistedJSON. No sourcepatch/attachment/rerun; independentRCA andBLOCKreview proceed in distincttrees.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Advance the frozen Atlas candidate using Owner and watcher decisions.",
+      "done_when": "Required qualification and independent review support handoff, or actual failure has an Owner-approved resolution path.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T18:36:58Z",
+      "duration_seconds": 624.0,
+      "git": {
+        "sha": "5406ea69fc21f2cc765a329b4a99be28fc3583fb",
+        "short": "5406ea69f",
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }

@@ -9534,7 +9534,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e93b069dbd950b06d04a1603638cbb612acf25a5c5b27c3dfdd28c93dc63597d"
+      "sourceSha256": "8efb082f0ed86c072c52de5dd5787ae927abb8efbb2ba242128bbd85de11790c"
     },
     {
       "id": "coordination-code-atlas",
@@ -12108,7 +12108,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "0faf5d26a5016b9d8b9aed265cc705e8f4749a1edf1bb90afdeb3934be850282"
+      "sourceSha256": "58d7d9dd43e06e49ce19ee5bb2228f1ef5d2b9a52d734decdd584472b81e97a0"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -12769,7 +12769,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f3a76f87ec617f6ea0a96d9ff6e895ab2818887f20020a022a5ae59c5ea8aa05"
+      "sourceSha256": "1680d78ed108dd6775097c082f28f7d1dd0020d08f80740d69463bcf2fdf293b"
     },
     {
       "id": "proof-atlas-native-diag-01",
@@ -12900,6 +12900,46 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "8846eef929f694d56d99055a97a85125ddd0130ec7fb48776683c8d5f3df7cd4"
+    },
+    {
+      "id": "proof-atlas-p1-03",
+      "path": "docs/proof/atlas-p1-03.md",
+      "title": "Atlas P1-03 canonical failure and investigation handoff",
+      "type": "doc",
+      "status": "blocked",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "P1-03 completed the App cohort with1257 passed and one native UIA failure; subsequent qualification stopped, evidence preserved and independent RCA admitted.",
+      "tags": [
+        "atlas",
+        "qualification",
+        "proof",
+        "investigation"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-five-gates",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-atlas-native-diag-01",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Active graph and next bounded work",
+          "mermaid": "flowchart LR\n  F[Observed P1-03 failure] --> B[Independent BLOCK receipt]\n  F --> R[Independent read-only RCA]\n  R --> O[Owner: cause or precise evidence gap]\n  O --> W[Watcher: exact discriminator or repair authority]\n  W --> V[Red-first proof and independent clearance]\n  V --> Q[Fresh canonical slot]\n  Q --> H[Combined review and GHCP handoff]"
+        }
+      ],
+      "sourceSha256": "c46e74678a794b33b57b5bbeb1ba9d8ee8dfea11ad4f44a7495971a041f53ca3"
     },
     {
       "id": "proof-atlas-peer-review-transport",
@@ -23272,5 +23312,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "44e41a19a1f9b34c605019b52eac96bc5cf775f667029d0055b92fa70540f094"
+  "graphSha256": "a73634a3cf52331e56ddb7d1d7dc670726e26a4ce1828ac020f289af0e04b45c"
 };

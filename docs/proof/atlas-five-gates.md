@@ -11,7 +11,7 @@ review-by: 2026-12-15
 summary: "Observed frozen failures, repair controls and qualification receipts; acceptance remains open."
 ---
 
-# Current state: one native diagnostic passed; canonical qualification pending
+# Current state: P1-03 App cohort failed; independent RCA active
 
 Goal: resolve the current Grok consumer request and continue the admitted Atlas qualification
 preparation. Done when the exact proposal has a direct semantic response and recorded
@@ -28,10 +28,22 @@ Astra Owner and Conductor. Main publication stays with foreground GHCP.
 | D1 r4 | Separate mapper authorship from unadmitted E1 consumption | CHANGES REQUIRED sent directly; six incoming handles resolved; no r4 freeze |
 | Native shared receipt | Keep optional observation failures from poisoning original evidence | Source715523d0 independently CLEAR for FR-NO-001 at12c1f883; own21/21 and actual replay inspected |
 | Native per-view state | Complete settled loaded/visible evidence for every observed view | Source626d16a2 independently CLEARd31eab23; own21/21 and actual JSON inspected |
-| Native qualification / main | Establish combined runtime acceptance before publication | Diagnostic at7ccef6d8 passed1/1 and released; canonical qualification still pending; main observedbcf4959b |
+| Native qualification / main | Establish combined runtime acceptance before publication | P1-03 App1257/1258; native failure; remaining canonical steps stopped and slot released; independent RCA active |
 | E1/E2 | Continue admitted Sequence/Activity and architecture view work | Integration remains the priority |
 
-## Latest diagnostic and review handoff
+## Latest P1-03 outcome
+
+Verified: one granted canonical attempt at5406ea69 completed App1258 executed,1257 passed,
+1 native Atlas UIA failure and0skipped. The wrapper stopped remaining work and released
+the slot18:37:45Z. Core/static gates/Release are not qualified. No resource-limit
+intervention occurred; the proposed observation window began after terminal failure.
+See [P1-03 Proof Pack](../proof/atlas-p1-03.md) for exact raw hashes, query/observer/pixel
+evidence, process stop and limits. Owner admits independent read-only RCA8calls/15min;
+reviewer independently assesses the BLOCK boundary. No automatic retry or source edit.
+Owner and watcher decide the next exact discriminator/repair scope; no human reply
+is being awaited. Main publication remains with GHCP.
+
+## Previous diagnostic and review handoff
 
 Verified: SLOT-CODEX-NATIVE-DIAG-01 ran once at7ccef6d8; actual1/1 passed,
 Completed=true/FailureCount0, ten original UIA queries succeeded and both daemons exited
