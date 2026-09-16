@@ -33,13 +33,9 @@ public sealed class EntryPointsProjectionTests
         var projections = new ProjectionService(workspace.Store, Path.GetDirectoryName(workspace.DatabasePath)!);
         var result = projections.EntryPoints(new EntryPointsQuery());
         Assert.Equal(2, result.Rows.Count);
-        Assert.Contains(result.Rows, r => r.NodeId == "Api.Orders");
-        Assert.Contains(result.Rows, r => r.NodeId == "Cli.Program");
-        Assert.All(result.Rows, r =>
-        {
-            Assert.Equal(EntryPointKind.Unclassified, r.Kind);
-            Assert.Equal(EntryPointsProjection.UnclassifiedReasonPendingClassifier, r.UnclassifiedReason);
-        });
+        Assert.Equal(EntryPointKind.Api, result.Rows.Single(r => r.NodeId == "Api.Orders").Kind);
+        Assert.Equal(EntryPointKind.Cli, result.Rows.Single(r => r.NodeId == "Cli.Program").Kind);
+        Assert.Null(result.Rows.Single(r => r.NodeId == "Api.Orders").UnclassifiedReason);
         Assert.Equal(0, result.OmittedByCap);
     }
 
@@ -56,6 +52,15 @@ public sealed class EntryPointsProjectionTests
         Assert.Single(capped.Rows);
         Assert.Equal(1, capped.OmittedByCap);
         Assert.Contains("Omitted", capped.Disclosures[0], StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void KindFromDisplay_ApiUxCli_ElseUnclassified()
+    {
+        Assert.Equal(EntryPointKind.Api, EntryPointsListing.KindFromDisplay("Orders.OrdersController"));
+        Assert.Equal(EntryPointKind.Cli, EntryPointsListing.KindFromDisplay("App.Program"));
+        Assert.Equal(EntryPointKind.Ux, EntryPointsListing.KindFromDisplay("Shell.MainWindow"));
+        Assert.Equal(EntryPointKind.Unclassified, EntryPointsListing.KindFromDisplay("Domain.Order"));
     }
 
     [Fact]

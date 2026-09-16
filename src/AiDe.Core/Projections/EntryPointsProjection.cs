@@ -21,8 +21,8 @@ public sealed record EntryPointsResult(
 
 /// <summary>
 /// UV-0 listing: every latest-generation <c>has_type</c> source node is a row.
-/// Classification predicates do not exist yet — all rows are <see cref="EntryPointKind.Unclassified"/>.
-/// Open Sequence is not this query (mapper r4 unfrozen).
+/// Name heuristics classify api/ux/cli; otherwise unclassified (never silent-drop).
+/// Open Sequence is not this query (mapper r5: authorship only, Sequence still disabled).
 /// </summary>
 public static class EntryPointsProjection
 {
@@ -44,11 +44,7 @@ public static class EntryPointsListing
         var omitted = Math.Max(0, candidates.Count - cap);
         var rows = candidates
             .Take(cap)
-            .Select(c => new EntryPointRow(
-                EntryPointKind.Unclassified,
-                c.NodeId,
-                c.NodeId,
-                EntryPointsProjection.UnclassifiedReasonPendingClassifier))
+            .Select(c => Classify(c.NodeId, c.TypeKind))
             .ToList();
 
         IReadOnlyList<string> disclosures = omitted > 0
@@ -56,5 +52,50 @@ public static class EntryPointsListing
             : [];
 
         return new EntryPointsResult(rows, omitted, disclosures, sourceRevision);
+    }
+
+    /// <summary>
+    /// Listing-kind heuristics on the type display name. Not Core method-observation identity
+    /// (r5: has_member/call facts are not observation ids).
+    /// </summary>
+    internal static EntryPointRow Classify(string nodeId, string _)
+    {
+        var display = nodeId;
+        var kind = KindFromDisplay(display);
+        return new EntryPointRow(
+            kind,
+            nodeId,
+            display,
+            kind == EntryPointKind.Unclassified
+                ? EntryPointsProjection.UnclassifiedReasonPendingClassifier
+                : null);
+    }
+
+    internal static EntryPointKind KindFromDisplay(string display)
+    {
+        if (display.EndsWith(".Program", StringComparison.Ordinal)
+            || display.Equals("Program", StringComparison.Ordinal)
+            || display.Contains("CommandLine", StringComparison.Ordinal))
+        {
+            return EntryPointKind.Cli;
+        }
+
+        if (display.Contains("Controller", StringComparison.Ordinal)
+            || display.Contains("Endpoint", StringComparison.Ordinal)
+            || display.Contains(".Api.", StringComparison.Ordinal)
+            || display.StartsWith("Api.", StringComparison.Ordinal)
+            || display.EndsWith("Api", StringComparison.Ordinal))
+        {
+            return EntryPointKind.Api;
+        }
+
+        if (display.Contains("Window", StringComparison.Ordinal)
+            || display.Contains("UserControl", StringComparison.Ordinal)
+            || display.Contains("Page", StringComparison.Ordinal))
+        {
+            return EntryPointKind.Ux;
+        }
+
+        return EntryPointKind.Unclassified;
     }
 }

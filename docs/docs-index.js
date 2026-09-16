@@ -5811,6 +5811,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "b363db9792257ac7fcc9e28f9a5e77266ae38b224cf73eb6ff2c7fc8aae232c5"
     },
     {
+      "id": "note-d1-r5-producer-ack",
+      "path": "docs/notes/d1-r5-producer-ack.md",
+      "title": "D-1 handshake r5 PRODUCER ACK — authorship boundary frozen at blob a3cb0d63",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "Producer ACK of immutable r5. Does not rewrite that blob. Authorship-only freeze. Open Sequence remains disabled. Mapper implementation unadmitted.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "freeze"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake-r5",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-r3-producer-ack",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0c3cc4e97f026d5b2e21aa3be2a434e717486eb8ce5780f6dd117f429402292b"
+    },
+    {
       "id": "note-dc-115-evidence-in-a-lanes-own-checkout",
       "path": "docs/notes/dc-115-evidence-in-a-lanes-own-checkout.md",
       "title": "DC-115 — verifying a lane's evidence in the checkout it committed it in",
@@ -20969,5 +20999,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "4dfd4484ec8cd8875e58053b8ada5592da2ce06a812017b052118d83e27caa5e"
+  "graphSha256": "af21a45547a0bb7814726c33913c0b71bb0f9e3c0b5d0b3c3c28d66af562dd1c"
 };
