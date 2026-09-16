@@ -10130,7 +10130,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0e852003b29aea8ccc7aa4b1d53646b9dfa2a5ac76c2197404cb640a65500b4c"
+      "sourceSha256": "b5170b99e7e26b03899deaffd85a06194b1ecb0c7de98bf2d5646e5fc4cee8cb"
     },
     {
       "id": "investigation-code-atlas-legacy-peer-startup",
@@ -12740,6 +12740,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "6500a071134e7b750f0de77ada46689e5d08abb6b00cf3f24ce13524b66f9aa1"
+    },
+    {
+      "id": "proof-atlas-native-view-state-review",
+      "path": "docs/proof/atlas-native-view-state-review.md",
+      "title": "Independent clearance of complete admitted Atlas observer preparation",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Historical receipt: Independent clearance of complete admitted Atlas observer preparation",
+      "tags": [],
+      "links": [
+        {
+          "to": "investigation-atlas-p1-02-native-uia",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8846eef929f694d56d99055a97a85125ddd0130ec7fb48776683c8d5f3df7cd4"
     },
     {
       "id": "proof-code-atlas-contract-grounding",
@@ -23035,5 +23060,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "9c83bfdca9f3e0b885ced450558d06c69ac25e044f2e834425216facf68c764a"
+  "graphSha256": "fc54ce7b9f398b56492d91db3b93513dc5edaff631425e83b44d7c4ffc328eec"
 };
