@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T22:52:52Z",
+  "generated": "2026-09-16T16:48:46Z",
   "audit": [
     {
       "actor": null,
@@ -19872,6 +19872,35 @@ window.AUDIT_DATA = {
         "short": "bcf4959bc",
         "branch": "understanding-views-d1",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NHXVG85NWR87JK2WJW4PAQ",
+      "shortname": "specify-d1-entry-points",
+      "datetime": "2026-09-16T16:48:46Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "keep going / what is blocking Live Open Sequence / who has to resolve mapping-unavailable",
+      "summary": "Spec-entry-points draft: listing/unclassified/select-to-graph. Open Sequence blocked by UNASSIGNED mapper — Owner must admit a separate mapping contract; Grok and Codex cannot unilaterally enable it. N4 not self-cleared.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/entry-points.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "tier": "T2",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "git": {
+        "sha": "aa9e16a81ece87ce7d9086458d3178f98f99b7a0",
+        "short": "aa9e16a81",
+        "branch": "understanding-views-d1",
+        "pushed": true
       }
     }
   ],

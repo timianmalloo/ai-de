@@ -137,5 +137,5 @@ ADR-0030 trigger, quoted not paraphrased: *"Add an explicit `Perspectives` colum
 | | |
 |---|---|
 | **Completed** | D-0 on `main` `bcf4959b` (Ruling 108). N14 horizon closed. **D-1 re-admitted** (`note-understanding-views-owner-d1-admission`). |
-| **Remaining** | D-1 spine: specify → architecture (listing query + API/UX/CLI/unclassified) → spike if needed → design → UV-0 query (red first) → UV-1 kind. D-2…D-4 keep-deferred. |
-| **Best next action** | `/specify` for D-1 on `understanding-views-d1`. Do not add an `entry-points` kind until the query exists (AR3). |
+| **Remaining** | N4 on spec-entry-points. Architecture + UV-0 listing. UV-1 kind after query. Mapper UNASSIGNED (Open Sequence dark). D-2…D-4 keep-deferred. |
+| **Best next action** | `/define-architecture` for the listing query + identity minting. Open Sequence stays `mapping-unavailable` until Owner admits a mapper. N4 on `spec-entry-points` not self-cleared. |

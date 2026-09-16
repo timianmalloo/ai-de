@@ -9222,7 +9222,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3be72866262e3b3e1386d7a83ec8871fd838c5e332a2647aaa345cc70c06664a"
+      "sourceSha256": "5249e9f953f707bf64185f3404afc011ab4e92f5232cd934f3fb315df8839fb0"
     },
     {
       "id": "coordination-understanding-views-kickoff",
@@ -20071,6 +20071,71 @@ window.DOCS_INDEX = {
       "sourceSha256": "5060300c7c21d12f9a30ef6c50bf965174fb0fe1f6b8e16415641847615f388c"
     },
     {
+      "id": "spec-entry-points",
+      "path": "docs/specs/entry-points.md",
+      "title": "Understanding views — D-1 Entry-points listing (spec)",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2027-03-16",
+      "reviewSuggested": [],
+      "summary": "Admits D-1 Entry-points as an Architecture listing of API, UX, and CLI entry points plus unclassified. Select scopes the existing Architecture graph. Open Sequence is out: mapper UNASSIGNED (handshake r3 frozen). Status draft; N4 not self-cleared.",
+      "tags": [
+        "understanding-views",
+        "D-1",
+        "entry-points",
+        "architecture",
+        "addendum-c"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-admission",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r3",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-r3-producer-ack",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-n1-inventory",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "conceptual-model-ai-native-ide",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Part B — UX specification",
+          "mermaid": "flowchart TD\n  open[Open Entry-points] --> list{Listing}\n  list -->|ok| groups[API / UX / CLI / Unclassified]\n  list -->|error| err[Could not read entry points + Retry]\n  list -->|empty index| empty[Specified empty]\n  groups --> sel[Select classified row]\n  sel -->|has node_id| graph[Scope Architecture graph]\n  sel -->|no node_id| nog[Reason: no graph id]\n  groups --> src[View source]\n  src -->|has node_id| reader[NodeContentAsync]\n  src -->|no node_id| nos[Unavailable]\n  groups --> seq[Open Sequence]\n  seq --> dark[Disabled mapping-unavailable]"
+        }
+      ],
+      "sourceSha256": "4a3bffa833770562733b47c5c947a5d0342a0f426f28285cb3c5b7b9b030f1b4"
+    },
+    {
       "id": "spec-gemini-cli-agent-session",
       "path": "docs/specs/gemini-cli-agent-session.md",
       "title": "A Gemini CLI agent session, on par with Claude Code and GitHub Copilot (spec)",
@@ -20735,5 +20800,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3a175ba510d05d850016858a529686294bddeca1fc5d4d762bd19cc9cdd15ced"
+  "graphSha256": "43e9737bf32b637f36246071fcf04ec4c33760321ad37d8d6bf684e0d0510cbe"
 };
