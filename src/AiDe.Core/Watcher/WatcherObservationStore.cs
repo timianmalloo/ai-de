@@ -8,6 +8,10 @@ namespace AiDe.Core.Watcher;
 /// </summary>
 public interface IWatcherObservationStore
 {
+    /// <summary>Reads bound coordination receipt metadata; legacy stores fail closed.</summary>
+    CoordinationReadResult ReadCoordination(CoordinationReadRequest request) =>
+        CoordinationReadResult.Failure(CoordinationReadStatus.Unsupported);
+
     /// <summary>
     /// Appends a span if its content-addressed id is new. Returns false when the id is already
     /// present, which is how duplicate/redelivered spans are ignored idempotently.

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T22:03:03Z",
+  "generated": "2026-09-16T22:38:32Z",
   "audit": [
     {
       "actor": null,
@@ -20597,6 +20597,39 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-09-16T21:57:06Z",
       "duration_seconds": 357.0
+    },
+    {
+      "id": "al-01M2P5Y9W1S8WJGP8HDSZC8HT1",
+      "shortname": "p24-bound-feed",
+      "datetime": "2026-09-16T22:38:32Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "Implement approved P2.4A read-only coordination feed/source binding in assigned worktree; contract commit first, immutable trusted binding, source-local frozen pagination, metadata-only MCP, red-first unit fixtures, unchanged recovery REDs; no production activation or B work.",
+      "summary": "A author checkpoint: final feed 32/32; regression class selection 334/334 with all original 304 names present; MCP 72/72, overlapping selections. Separate recovery remains 3 pass/2 intentional failures. Schema 2 RED, frozen-H mutant 1 RED, update-repository/null boundaries 2 RED then restored GREEN. Exact source/binary pins and limits in canonical proof. Next independent Test/Security/Data gate; full P2 and B remain unshippable, authority DENY, enhanced append disabled. No site/index regeneration in this restricted author lane.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md",
+        "docs/plans/cross-harness-coordination-phases.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Implement the approved P2.4A bound metadata-only reader and actual MCP adapter.",
+      "done_when": "Contract committed before code; reader and MCP adapter executed against isolated SQLite; regression membership and evidence recorded and committed.",
+      "tier": "T2",
+      "main_calls": 43,
+      "main_budget": 45,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-16T22:21:10Z",
+      "duration_seconds": 1042.0,
+      "git": {
+        "sha": "2a9a66ada19b708f23c7a35088f9040f7967be85",
+        "short": "2a9a66ada",
+        "branch": "feature/xh-p2-projection",
+        "pushed": null
+      }
     }
   ],
   "changes": [

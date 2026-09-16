@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="42e05b11-ad62-45bf-9400-a80b998b0995" name="malla@TIMMALLSTRIX 2026-09-16 15:28:19" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-16T15:28:19.2559474-07:00" queuing="2026-09-16T15:28:19.2559475-07:00" start="2026-09-16T15:28:18.4478445-07:00" finish="2026-09-16T15:28:19.7309258-07:00" />
+  <TestSettings name="default" id="23f26630-6275-401f-a5ae-03944f7a96f5">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-16_15_28_19" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="747f49ac-cab6-426c-a484-b76e62a4d2d3" testId="f303f8c6-143d-fdcf-d415-8d023aaa82e5" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_EmptyBound_LimitAndAbsenceAreDistinct(limit: -1, expected: InvalidRequest)" computerName="TIMMALLSTRIX" duration="00:00:00.0107349" startTime="2026-09-16T15:28:19.2706191-07:00" endTime="2026-09-16T15:28:19.2813115-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="747f49ac-cab6-426c-a484-b76e62a4d2d3" />
+    <UnitTestResult executionId="fff0e652-3b05-4d65-bdfb-ac060ce16672" testId="f6b62018-098a-5116-228e-274379bcb5b9" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_EmptyBound_LimitAndAbsenceAreDistinct(limit: 0, expected: InvalidRequest)" computerName="TIMMALLSTRIX" duration="00:00:00.0104742" startTime="2026-09-16T15:28:19.2910041-07:00" endTime="2026-09-16T15:28:19.3014585-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fff0e652-3b05-4d65-bdfb-ac060ce16672" />
+    <UnitTestResult executionId="c084db5c-abda-4ec6-9a83-d4f7cd22ffd4" testId="0231fdac-ead5-8cc9-de59-3f2cc193e66a" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_InvalidCursor_RejectsTyped(version: &quot;coordination-read/1&quot;, epoch: &quot;legacy-native-1&quot;, after: -1, high: null, expected: InvalidRequest)" computerName="TIMMALLSTRIX" duration="00:00:00.0114020" startTime="2026-09-16T15:28:19.1187234-07:00" endTime="2026-09-16T15:28:19.1268121-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c084db5c-abda-4ec6-9a83-d4f7cd22ffd4" />
+    <UnitTestResult executionId="8f9b1316-1648-4db8-a524-16ddf39bf8bb" testId="fa684335-67ab-77f0-4f28-4dd3d0a7970f" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_EmptyBound_LimitAndAbsenceAreDistinct(limit: 1, expected: Available)" computerName="TIMMALLSTRIX" duration="00:00:00.0121126" startTime="2026-09-16T15:28:19.3015624-07:00" endTime="2026-09-16T15:28:19.3136562-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8f9b1316-1648-4db8-a524-16ddf39bf8bb" />
+    <UnitTestResult executionId="5c51a1d2-445f-404d-8476-f5a08efbcb5b" testId="732dc0c5-94dc-1db5-de33-614b7ee41ae5" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_InvalidCursor_RejectsTyped(version: &quot;coordination-read/1&quot;, epoch: &quot;legacy-native-1&quot;, after: 1, high: 0, expected: InvalidRequest)" computerName="TIMMALLSTRIX" duration="00:00:00.0000321" startTime="2026-09-16T15:28:19.1269135-07:00" endTime="2026-09-16T15:28:19.1269755-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5c51a1d2-445f-404d-8476-f5a08efbcb5b">
+      <Output>
+        <ErrorInfo>
+          <Message>System.ArgumentException : Object of type 'System.Int32' cannot be converted to type 'System.Nullable`1[System.Int64]'.</Message>
+          <StackTrace>   at System.RuntimeType.CheckValue(Object&amp; value, Binder binder, CultureInfo culture, BindingFlags invokeAttr)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithManyArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="99258d5d-6554-452d-933a-351762582420" testId="2b56549f-65ac-cfb6-21bc-c2730f6c29a8" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_InvalidCursor_RejectsTyped(version: &quot;coordination-read/1&quot;, epoch: &quot;legacy-native-1&quot;, after: 0, high: -1, expected: InvalidRequest)" computerName="TIMMALLSTRIX" duration="00:00:00.0000220" startTime="2026-09-16T15:28:19.1184349-07:00" endTime="2026-09-16T15:28:19.1184654-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="99258d5d-6554-452d-933a-351762582420">
+      <Output>
+        <ErrorInfo>
+          <Message>System.ArgumentException : Object of type 'System.Int32' cannot be converted to type 'System.Nullable`1[System.Int64]'.</Message>
+          <StackTrace>   at System.RuntimeType.CheckValue(Object&amp; value, Binder binder, CultureInfo culture, BindingFlags invokeAttr)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithManyArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2b6d133a-1f03-4607-85c1-b97a4140c9fb" testId="9d0b0793-bd0e-bf2c-02d4-415ae0fdacfd" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_Interleaved401Receipts_Freezes2002001ThenResumesNewTombstone" computerName="TIMMALLSTRIX" duration="00:00:00.2670631" startTime="2026-09-16T15:28:19.3495457-07:00" endTime="2026-09-16T15:28:19.6166033-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2b6d133a-1f03-4607-85c1-b97a4140c9fb" />
+    <UnitTestResult executionId="ae0e547e-e1cd-439b-9ee3-145cff6219dd" testId="0fb145d3-f507-3a16-598e-e5674cb709f2" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_EmptyBound_LimitAndAbsenceAreDistinct(limit: 200, expected: Available)" computerName="TIMMALLSTRIX" duration="00:00:00.0098686" startTime="2026-09-16T15:28:19.3137616-07:00" endTime="2026-09-16T15:28:19.3236082-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ae0e547e-e1cd-439b-9ee3-145cff6219dd" />
+    <UnitTestResult executionId="f65e499f-19ad-4b4f-b7f0-c3543bc0f39f" testId="57da43c8-de48-1901-0155-e4333e81d739" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_EmptyBound_LimitAndAbsenceAreDistinct(limit: 201, expected: InvalidRequest)" computerName="TIMMALLSTRIX" duration="00:00:00.0095415" startTime="2026-09-16T15:28:19.2813990-07:00" endTime="2026-09-16T15:28:19.2909115-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f65e499f-19ad-4b4f-b7f0-c3543bc0f39f" />
+    <UnitTestResult executionId="3cc1a297-c823-4197-98ce-d68d5a2befe6" testId="3e2c0e96-27c8-010f-07b9-35691177dd11" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.FreshSchema_CheckpointBinding_HasExactlyThreeNullableColumns" computerName="TIMMALLSTRIX" duration="00:00:00.0108489" startTime="2026-09-16T15:28:19.3245639-07:00" endTime="2026-09-16T15:28:19.3345228-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3cc1a297-c823-4197-98ce-d68d5a2befe6" />
+    <UnitTestResult executionId="4e727aa5-905d-4bac-8502-5598e882618e" testId="8a4daa60-294b-642f-6d86-730504651a0a" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Binding_ImmutableDimensions_RefuseUpdate(assignment: &quot;bound_repository_key='other'&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0117793" startTime="2026-09-16T15:28:19.2387260-07:00" endTime="2026-09-16T15:28:19.2466979-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4e727aa5-905d-4bac-8502-5598e882618e" />
+    <UnitTestResult executionId="e05c7b1e-41d8-4438-8973-106ac64d0fc9" testId="bd474691-238d-d411-c7b9-d2abc53e80de" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Binding_ImmutableDimensions_RefuseUpdate(assignment: &quot;source_origin='other'&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0132814" startTime="2026-09-16T15:28:19.2098005-07:00" endTime="2026-09-16T15:28:19.2230262-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e05c7b1e-41d8-4438-8973-106ac64d0fc9" />
+    <UnitTestResult executionId="b8e535a5-445b-488e-90ba-cf297dc50aa5" testId="c2b98c9a-a436-a15f-3351-88c41b97b09f" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Binding_ImmutableDimensions_RefuseUpdate(assignment: &quot;public_source_id='other'&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0117739" startTime="2026-09-16T15:28:19.2385269-07:00" endTime="2026-09-16T15:28:19.2385630-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b8e535a5-445b-488e-90ba-cf297dc50aa5" />
+    <UnitTestResult executionId="6322979b-8a86-4bad-94cb-c4b2a7388ea6" testId="5f266ec4-a2fc-5e01-8cfd-f41aaa1176b5" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.FreshSchema_BoundEmptyCheckpoint_AcceptsOnlyEmptyDigest" computerName="TIMMALLSTRIX" duration="00:00:00.0129272" startTime="2026-09-16T15:28:19.6167284-07:00" endTime="2026-09-16T15:28:19.6296006-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6322979b-8a86-4bad-94cb-c4b2a7388ea6" />
+    <UnitTestResult executionId="963be3cc-ec9c-4bbb-8f95-7ef3830a0e9b" testId="91fdea1d-c614-86c8-3974-d3e5565c3a28" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Binding_ImmutableDimensions_RefuseUpdate(assignment: &quot;epoch='other'&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0118543" startTime="2026-09-16T15:28:19.2586956-07:00" endTime="2026-09-16T15:28:19.2705110-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="963be3cc-ec9c-4bbb-8f95-7ef3830a0e9b" />
+    <UnitTestResult executionId="0783c207-118b-486c-8972-36c172b05a68" testId="5b6b586d-4b16-de80-d868-52aa5a41459b" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_ConcurrentWriterAfterBinding_UsesOneSnapshotForMaximumAndRows" computerName="TIMMALLSTRIX" duration="00:00:00.0184012" startTime="2026-09-16T15:28:19.6297126-07:00" endTime="2026-09-16T15:28:19.6497877-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0783c207-118b-486c-8972-36c172b05a68" />
+    <UnitTestResult executionId="5b5c98e1-3262-4956-88dd-0f7cc5592a28" testId="89ee9bdf-5255-9f08-360c-804257684144" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_InvalidCursor_RejectsTyped(version: &quot;coordination-read/1&quot;, epoch: &quot;legacy-native-1&quot;, after: 0, high: 9999, expected: InvalidRequest)" computerName="TIMMALLSTRIX" duration="00:00:00.0001976" startTime="2026-09-16T15:28:19.1155421-07:00" endTime="2026-09-16T15:28:19.1158333-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5b5c98e1-3262-4956-88dd-0f7cc5592a28">
+      <Output>
+        <ErrorInfo>
+          <Message>System.ArgumentException : Object of type 'System.Int32' cannot be converted to type 'System.Nullable`1[System.Int64]'.</Message>
+          <StackTrace>   at System.RuntimeType.CheckValue(Object&amp; value, Binder binder, CultureInfo culture, BindingFlags invokeAttr)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithManyArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fa569d19-ea46-4e09-9bde-ddd48bd3e9b2" testId="fa7af7c6-90b1-3b3a-acf3-7d4528c79ee7" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_StorageFailure_IsTypedUnavailableAndEmitsSafeSpan" computerName="TIMMALLSTRIX" duration="00:00:00.0098654" startTime="2026-09-16T15:28:19.6787481-07:00" endTime="2026-09-16T15:28:19.6885686-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fa569d19-ea46-4e09-9bde-ddd48bd3e9b2" />
+    <UnitTestResult executionId="d23029aa-9906-4f38-aac0-7db2f1e6d035" testId="4493b2b1-4152-14ef-14cc-8791a21c447c" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_OtherSourceReceiptOrToken_IsNotASnapshotOfThisSource" computerName="TIMMALLSTRIX" duration="00:00:00.0185266" startTime="2026-09-16T15:28:19.1915947-07:00" endTime="2026-09-16T15:28:19.2096704-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d23029aa-9906-4f38-aac0-7db2f1e6d035" />
+    <UnitTestResult executionId="84343310-a01e-4208-a4c9-be116c31a57a" testId="ecd79b5d-a1dd-a0e4-d15c-326fe7945294" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_InvalidCursor_RejectsTyped(version: &quot;coordination-read/1&quot;, epoch: &quot;wrong&quot;, after: 0, high: null, expected: Reset)" computerName="TIMMALLSTRIX" duration="00:00:00.0102636" startTime="2026-09-16T15:28:19.1271995-07:00" endTime="2026-09-16T15:28:19.1373097-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="84343310-a01e-4208-a4c9-be116c31a57a" />
+    <UnitTestResult executionId="2abdffa9-e63b-4573-93df-4d6e5746fae2" testId="3746a720-a0f7-c093-ab49-8c3b946fc9de" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_ActualSchemaAndDispatch_RejectsOverridesAndReturnsOnlyMetadata" computerName="TIMMALLSTRIX" duration="00:00:00.0531369" startTime="2026-09-16T15:28:19.1379711-07:00" endTime="2026-09-16T15:28:19.1910907-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2abdffa9-e63b-4573-93df-4d6e5746fae2">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : The node already has a parent.</Message>
+          <StackTrace>   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeAlreadyHasParent()&#xD;
+   at System.Text.Json.Nodes.JsonNode.AssignParent(JsonNode parent)&#xD;
+   at System.Text.Json.Nodes.JsonObject.SetItem(String propertyName, JsonNode value)&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.&lt;Mcp_ActualSchemaAndDispatch_RejectsOverridesAndReturnsOnlyMetadata&gt;g__Call|8_2(JsonObject arguments, &lt;&gt;c__DisplayClass8_0&amp;) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 254&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_ActualSchemaAndDispatch_RejectsOverridesAndReturnsOnlyMetadata() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 247&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="34787c27-2379-4abc-83a5-5e8264b02821" testId="0a177e15-12f4-3ede-98c9-ee20d2533290" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Binding_LegacyOrContradictorySource_IsNeverBackfilledOrApplied" computerName="TIMMALLSTRIX" duration="00:00:00.0281111" startTime="2026-09-16T15:28:19.6504515-07:00" endTime="2026-09-16T15:28:19.6786321-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="34787c27-2379-4abc-83a5-5e8264b02821" />
+    <UnitTestResult executionId="6d9c219a-9a47-421e-a7d5-471f9ef3193f" testId="d407debd-3324-0321-0d6e-936764885385" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Binding_PartialOrHashCollision_RefusesInsteadOfMerging" computerName="TIMMALLSTRIX" duration="00:00:00.0148405" startTime="2026-09-16T15:28:19.3346220-07:00" endTime="2026-09-16T15:28:19.3494333-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6d9c219a-9a47-421e-a7d5-471f9ef3193f" />
+    <UnitTestResult executionId="223ff262-47dd-40c7-9dbe-81da4c6b9226" testId="85f50e25-7d73-5520-9617-34a86069af73" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_InvalidCursor_RejectsTyped(version: &quot;wrong&quot;, epoch: &quot;legacy-native-1&quot;, after: 0, high: null, expected: Reset)" computerName="TIMMALLSTRIX" duration="00:00:00.0687254" startTime="2026-09-16T15:28:19.0381005-07:00" endTime="2026-09-16T15:28:19.1101972-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="223ff262-47dd-40c7-9dbe-81da4c6b9226" />
+    <UnitTestResult executionId="726ea493-8c67-42c8-9cda-a431c37bc7cd" testId="cdd853d8-3524-5459-f262-9b02493d342a" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Binding_ImmutableDimensions_RefuseUpdate(assignment: &quot;scope='other'&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0118350" startTime="2026-09-16T15:28:19.2467915-07:00" endTime="2026-09-16T15:28:19.2586030-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="726ea493-8c67-42c8-9cda-a431c37bc7cd" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Binding_LegacyOrContradictorySource_IsNeverBackfilledOrApplied" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0a177e15-12f4-3ede-98c9-ee20d2533290">
+      <Execution id="34787c27-2379-4abc-83a5-5e8264b02821" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Binding_LegacyOrContradictorySource_IsNeverBackfilledOrApplied" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_InvalidCursor_RejectsTyped(version: &quot;coordination-read/1&quot;, epoch: &quot;legacy-native-1&quot;, after: 0, high: 9999, expected: InvalidRequest)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="89ee9bdf-5255-9f08-360c-804257684144">
+      <Execution id="5b5c98e1-3262-4956-88dd-0f7cc5592a28" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Read_InvalidCursor_RejectsTyped" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_EmptyBound_LimitAndAbsenceAreDistinct(limit: 0, expected: InvalidRequest)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f6b62018-098a-5116-228e-274379bcb5b9">
+      <Execution id="fff0e652-3b05-4d65-bdfb-ac060ce16672" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Read_EmptyBound_LimitAndAbsenceAreDistinct" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Binding_ImmutableDimensions_RefuseUpdate(assignment: &quot;source_origin='other'&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="bd474691-238d-d411-c7b9-d2abc53e80de">
+      <Execution id="e05c7b1e-41d8-4438-8973-106ac64d0fc9" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Binding_ImmutableDimensions_RefuseUpdate" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_ActualSchemaAndDispatch_RejectsOverridesAndReturnsOnlyMetadata" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="3746a720-a0f7-c093-ab49-8c3b946fc9de">
+      <Execution id="2abdffa9-e63b-4573-93df-4d6e5746fae2" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Mcp_ActualSchemaAndDispatch_RejectsOverridesAndReturnsOnlyMetadata" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_InvalidCursor_RejectsTyped(version: &quot;coordination-read/1&quot;, epoch: &quot;legacy-native-1&quot;, after: 1, high: 0, expected: InvalidRequest)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="732dc0c5-94dc-1db5-de33-614b7ee41ae5">
+      <Execution id="5c51a1d2-445f-404d-8476-f5a08efbcb5b" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Read_InvalidCursor_RejectsTyped" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_InvalidCursor_RejectsTyped(version: &quot;coordination-read/1&quot;, epoch: &quot;wrong&quot;, after: 0, high: null, expected: Reset)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="ecd79b5d-a1dd-a0e4-d15c-326fe7945294">
+      <Execution id="84343310-a01e-4208-a4c9-be116c31a57a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Read_InvalidCursor_RejectsTyped" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_EmptyBound_LimitAndAbsenceAreDistinct(limit: 1, expected: Available)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="fa684335-67ab-77f0-4f28-4dd3d0a7970f">
+      <Execution id="8f9b1316-1648-4db8-a524-16ddf39bf8bb" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Read_EmptyBound_LimitAndAbsenceAreDistinct" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Binding_ImmutableDimensions_RefuseUpdate(assignment: &quot;scope='other'&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="cdd853d8-3524-5459-f262-9b02493d342a">
+      <Execution id="726ea493-8c67-42c8-9cda-a431c37bc7cd" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Binding_ImmutableDimensions_RefuseUpdate" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_InvalidCursor_RejectsTyped(version: &quot;coordination-read/1&quot;, epoch: &quot;legacy-native-1&quot;, after: 0, high: -1, expected: InvalidRequest)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="2b56549f-65ac-cfb6-21bc-c2730f6c29a8">
+      <Execution id="99258d5d-6554-452d-933a-351762582420" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Read_InvalidCursor_RejectsTyped" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_ConcurrentWriterAfterBinding_UsesOneSnapshotForMaximumAndRows" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="5b6b586d-4b16-de80-d868-52aa5a41459b">
+      <Execution id="0783c207-118b-486c-8972-36c172b05a68" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Read_ConcurrentWriterAfterBinding_UsesOneSnapshotForMaximumAndRows" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_EmptyBound_LimitAndAbsenceAreDistinct(limit: 200, expected: Available)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0fb145d3-f507-3a16-598e-e5674cb709f2">
+      <Execution id="ae0e547e-e1cd-439b-9ee3-145cff6219dd" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Read_EmptyBound_LimitAndAbsenceAreDistinct" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Binding_ImmutableDimensions_RefuseUpdate(assignment: &quot;public_source_id='other'&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="c2b98c9a-a436-a15f-3351-88c41b97b09f">
+      <Execution id="b8e535a5-445b-488e-90ba-cf297dc50aa5" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Binding_ImmutableDimensions_RefuseUpdate" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Binding_PartialOrHashCollision_RefusesInsteadOfMerging" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d407debd-3324-0321-0d6e-936764885385">
+      <Execution id="6d9c219a-9a47-421e-a7d5-471f9ef3193f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Binding_PartialOrHashCollision_RefusesInsteadOfMerging" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.FreshSchema_CheckpointBinding_HasExactlyThreeNullableColumns" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="3e2c0e96-27c8-010f-07b9-35691177dd11">
+      <Execution id="3cc1a297-c823-4197-98ce-d68d5a2befe6" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="FreshSchema_CheckpointBinding_HasExactlyThreeNullableColumns" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_StorageFailure_IsTypedUnavailableAndEmitsSafeSpan" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="fa7af7c6-90b1-3b3a-acf3-7d4528c79ee7">
+      <Execution id="fa569d19-ea46-4e09-9bde-ddd48bd3e9b2" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Read_StorageFailure_IsTypedUnavailableAndEmitsSafeSpan" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.FreshSchema_BoundEmptyCheckpoint_AcceptsOnlyEmptyDigest" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="5f266ec4-a2fc-5e01-8cfd-f41aaa1176b5">
+      <Execution id="6322979b-8a86-4bad-94cb-c4b2a7388ea6" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="FreshSchema_BoundEmptyCheckpoint_AcceptsOnlyEmptyDigest" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Binding_ImmutableDimensions_RefuseUpdate(assignment: &quot;epoch='other'&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="91fdea1d-c614-86c8-3974-d3e5565c3a28">
+      <Execution id="963be3cc-ec9c-4bbb-8f95-7ef3830a0e9b" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Binding_ImmutableDimensions_RefuseUpdate" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_EmptyBound_LimitAndAbsenceAreDistinct(limit: -1, expected: InvalidRequest)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f303f8c6-143d-fdcf-d415-8d023aaa82e5">
+      <Execution id="747f49ac-cab6-426c-a484-b76e62a4d2d3" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Read_EmptyBound_LimitAndAbsenceAreDistinct" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_EmptyBound_LimitAndAbsenceAreDistinct(limit: 201, expected: InvalidRequest)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="57da43c8-de48-1901-0155-e4333e81d739">
+      <Execution id="f65e499f-19ad-4b4f-b7f0-c3543bc0f39f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Read_EmptyBound_LimitAndAbsenceAreDistinct" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_InvalidCursor_RejectsTyped(version: &quot;coordination-read/1&quot;, epoch: &quot;legacy-native-1&quot;, after: -1, high: null, expected: InvalidRequest)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0231fdac-ead5-8cc9-de59-3f2cc193e66a">
+      <Execution id="c084db5c-abda-4ec6-9a83-d4f7cd22ffd4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Read_InvalidCursor_RejectsTyped" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_InvalidCursor_RejectsTyped(version: &quot;wrong&quot;, epoch: &quot;legacy-native-1&quot;, after: 0, high: null, expected: Reset)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="85f50e25-7d73-5520-9617-34a86069af73">
+      <Execution id="223ff262-47dd-40c7-9dbe-81da4c6b9226" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Read_InvalidCursor_RejectsTyped" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_OtherSourceReceiptOrToken_IsNotASnapshotOfThisSource" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="4493b2b1-4152-14ef-14cc-8791a21c447c">
+      <Execution id="d23029aa-9906-4f38-aac0-7db2f1e6d035" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Read_OtherSourceReceiptOrToken_IsNotASnapshotOfThisSource" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_Interleaved401Receipts_Freezes2002001ThenResumesNewTombstone" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="9d0b0793-bd0e-bf2c-02d4-415ae0fdacfd">
+      <Execution id="2b6d133a-1f03-4607-85c1-b97a4140c9fb" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Read_Interleaved401Receipts_Freezes2002001ThenResumesNewTombstone" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Binding_ImmutableDimensions_RefuseUpdate(assignment: &quot;bound_repository_key='other'&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="8a4daa60-294b-642f-6d86-730504651a0a">
+      <Execution id="4e727aa5-905d-4bac-8502-5598e882618e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Binding_ImmutableDimensions_RefuseUpdate" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f303f8c6-143d-fdcf-d415-8d023aaa82e5" executionId="747f49ac-cab6-426c-a484-b76e62a4d2d3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f6b62018-098a-5116-228e-274379bcb5b9" executionId="fff0e652-3b05-4d65-bdfb-ac060ce16672" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0231fdac-ead5-8cc9-de59-3f2cc193e66a" executionId="c084db5c-abda-4ec6-9a83-d4f7cd22ffd4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fa684335-67ab-77f0-4f28-4dd3d0a7970f" executionId="8f9b1316-1648-4db8-a524-16ddf39bf8bb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="732dc0c5-94dc-1db5-de33-614b7ee41ae5" executionId="5c51a1d2-445f-404d-8476-f5a08efbcb5b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2b56549f-65ac-cfb6-21bc-c2730f6c29a8" executionId="99258d5d-6554-452d-933a-351762582420" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9d0b0793-bd0e-bf2c-02d4-415ae0fdacfd" executionId="2b6d133a-1f03-4607-85c1-b97a4140c9fb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0fb145d3-f507-3a16-598e-e5674cb709f2" executionId="ae0e547e-e1cd-439b-9ee3-145cff6219dd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="57da43c8-de48-1901-0155-e4333e81d739" executionId="f65e499f-19ad-4b4f-b7f0-c3543bc0f39f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3e2c0e96-27c8-010f-07b9-35691177dd11" executionId="3cc1a297-c823-4197-98ce-d68d5a2befe6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8a4daa60-294b-642f-6d86-730504651a0a" executionId="4e727aa5-905d-4bac-8502-5598e882618e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bd474691-238d-d411-c7b9-d2abc53e80de" executionId="e05c7b1e-41d8-4438-8973-106ac64d0fc9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c2b98c9a-a436-a15f-3351-88c41b97b09f" executionId="b8e535a5-445b-488e-90ba-cf297dc50aa5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5f266ec4-a2fc-5e01-8cfd-f41aaa1176b5" executionId="6322979b-8a86-4bad-94cb-c4b2a7388ea6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="91fdea1d-c614-86c8-3974-d3e5565c3a28" executionId="963be3cc-ec9c-4bbb-8f95-7ef3830a0e9b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5b6b586d-4b16-de80-d868-52aa5a41459b" executionId="0783c207-118b-486c-8972-36c172b05a68" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="89ee9bdf-5255-9f08-360c-804257684144" executionId="5b5c98e1-3262-4956-88dd-0f7cc5592a28" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fa7af7c6-90b1-3b3a-acf3-7d4528c79ee7" executionId="fa569d19-ea46-4e09-9bde-ddd48bd3e9b2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4493b2b1-4152-14ef-14cc-8791a21c447c" executionId="d23029aa-9906-4f38-aac0-7db2f1e6d035" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ecd79b5d-a1dd-a0e4-d15c-326fe7945294" executionId="84343310-a01e-4208-a4c9-be116c31a57a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3746a720-a0f7-c093-ab49-8c3b946fc9de" executionId="2abdffa9-e63b-4573-93df-4d6e5746fae2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0a177e15-12f4-3ede-98c9-ee20d2533290" executionId="34787c27-2379-4abc-83a5-5e8264b02821" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d407debd-3324-0321-0d6e-936764885385" executionId="6d9c219a-9a47-421e-a7d5-471f9ef3193f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="85f50e25-7d73-5520-9617-34a86069af73" executionId="223ff262-47dd-40c7-9dbe-81da4c6b9226" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cdd853d8-3524-5459-f262-9b02493d342a" executionId="726ea493-8c67-42c8-9cda-a431c37bc7cd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="25" executed="25" passed="21" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.28]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.38]       System.ArgumentException : Object of type 'System.Int32' cannot be converted to type 'System.Nullable`1[System.Int64]'.&#xD;
+[xUnit.net 00:00:00.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.38]            at System.RuntimeType.CheckValue(Object&amp; value, Binder binder, CultureInfo culture, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBaseInvoker.InvokeWithManyArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)&#xD;
+[xUnit.net 00:00:00.38]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.38]       System.ArgumentException : Object of type 'System.Int32' cannot be converted to type 'System.Nullable`1[System.Int64]'.&#xD;
+[xUnit.net 00:00:00.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.38]            at System.RuntimeType.CheckValue(Object&amp; value, Binder binder, CultureInfo culture, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBaseInvoker.InvokeWithManyArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)&#xD;
+[xUnit.net 00:00:00.38]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.39]       System.ArgumentException : Object of type 'System.Int32' cannot be converted to type 'System.Nullable`1[System.Int64]'.&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]            at System.RuntimeType.CheckValue(Object&amp; value, Binder binder, CultureInfo culture, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InvokeWithManyArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)&#xD;
+[xUnit.net 00:00:00.39]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.45]       System.InvalidOperationException : The node already has a parent.&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]            at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_NodeAlreadyHasParent()&#xD;
+[xUnit.net 00:00:00.45]            at System.Text.Json.Nodes.JsonNode.AssignParent(JsonNode parent)&#xD;
+[xUnit.net 00:00:00.45]            at System.Text.Json.Nodes.JsonObject.SetItem(String propertyName, JsonNode value)&#xD;
+[xUnit.net 00:00:00.45]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(254,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.&lt;Mcp_ActualSchemaAndDispatch_RejectsOverridesAndReturnsOnlyMetadata&gt;g__Call|8_2(JsonObject arguments, &lt;&gt;c__DisplayClass8_0&amp;)&#xD;
+[xUnit.net 00:00:00.45]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(247,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_ActualSchemaAndDispatch_RejectsOverridesAndReturnsOnlyMetadata()&#xD;
+[xUnit.net 00:00:00.45]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.45]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.95]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:28:19.1173119-07:00">
+        <Text>[xUnit.net 00:00:00.38]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_InvalidCursor_RejectsTyped(version: "coordination-read/1", epoch: "legacy-native-1", after: 0, high: 9999, expected: InvalidRequest) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:28:19.1186259-07:00">
+        <Text>[xUnit.net 00:00:00.38]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_InvalidCursor_RejectsTyped(version: "coordination-read/1", epoch: "legacy-native-1", after: 0, high: -1, expected: InvalidRequest) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:28:19.1272554-07:00">
+        <Text>[xUnit.net 00:00:00.39]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_InvalidCursor_RejectsTyped(version: "coordination-read/1", epoch: "legacy-native-1", after: 1, high: 0, expected: InvalidRequest) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:28:19.1914997-07:00">
+        <Text>[xUnit.net 00:00:00.45]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Mcp_ActualSchemaAndDispatch_RejectsOverridesAndReturnsOnlyMetadata [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

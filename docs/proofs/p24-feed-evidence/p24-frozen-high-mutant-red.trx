@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="5d01b6f8-fb51-4406-86ba-a421a1e72301" name="malla@TIMMALLSTRIX 2026-09-16 15:30:40" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-16T15:30:40.7230012-07:00" queuing="2026-09-16T15:30:40.7230013-07:00" start="2026-09-16T15:30:39.7322290-07:00" finish="2026-09-16T15:30:40.7257097-07:00" />
+  <TestSettings name="default" id="e42fe16a-6449-4add-8568-6871550e025f">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-16_15_30_40" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="077addd6-9566-4a19-a77c-513c31179876" testId="9d0b0793-bd0e-bf2c-02d4-415ae0fdacfd" testName="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_Interleaved401Receipts_Freezes2002001ThenResumesNewTombstone" computerName="TIMMALLSTRIX" duration="00:00:00.3388228" startTime="2026-09-16T15:30:40.3023386-07:00" endTime="2026-09-16T15:30:40.6495978-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="077addd6-9566-4a19-a77c-513c31179876">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Collections differ&#xD;
+Expected: [CoordinationFeedEntry { N = 402, AdmissionN = 400, Outcome = duplicate-occurrence-accounted, State = , ReasonCode = , SessionId = , SessionGeneration = , MessageId =  }]&#xD;
+Actual:   [CoordinationFeedEntry { N = 402, AdmissionN = 400, Outcome = duplicate-occurrence-accounted, State = , ReasonCode = , SessionId = , SessionGeneration = , MessageId =  }, CoordinationFeedEntry { N = 403, AdmissionN = 400, Outcome = tombstone, State = applied, ReasonCode = , SessionId = 68e7cef2f46743e6b69ba4a2d22550eb, SessionGeneration = 1, MessageId = bbac37c73ea64888a5a2bed4cfefa1d2 }]&#xD;
+                                                                                                                                                                                     ↑ (pos 1)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_Interleaved401Receipts_Freezes2002001ThenResumesNewTombstone() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs:line 46&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_Interleaved401Receipts_Freezes2002001ThenResumesNewTombstone" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="9d0b0793-bd0e-bf2c-02d4-415ae0fdacfd">
+      <Execution id="077addd6-9566-4a19-a77c-513c31179876" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationFeedTests" name="Read_Interleaved401Receipts_Freezes2002001ThenResumesNewTombstone" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="9d0b0793-bd0e-bf2c-02d4-415ae0fdacfd" executionId="077addd6-9566-4a19-a77c-513c31179876" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.28]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.30]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.66]       Assert.Equal() Failure: Collections differ&#xD;
+[xUnit.net 00:00:00.66]       Expected: [CoordinationFeedEntry { N = 402, AdmissionN = 400, Outcome = duplicate-occurrence-accounted, State = , ReasonCode = , SessionId = , SessionGeneration = , MessageId =  }]&#xD;
+[xUnit.net 00:00:00.66]       Actual:   [CoordinationFeedEntry { N = 402, AdmissionN = 400, Outcome = duplicate-occurrence-accounted, State = , ReasonCode = , SessionId = , SessionGeneration = , MessageId =  }, CoordinationFeedEntry { N = 403, AdmissionN = 400, Outcome = tombstone, State = applied, ReasonCode = , SessionId = 68e7cef2f46743e6b69ba4a2d22550eb, SessionGeneration = 1, MessageId = bbac37c73ea64888a5a2bed4cfefa1d2 }]&#xD;
+[xUnit.net 00:00:00.66]                                                                                                                                                                                            ↑ (pos 1)&#xD;
+[xUnit.net 00:00:00.66]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.66]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationFeedTests.cs(46,0): at AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_Interleaved401Receipts_Freezes2002001ThenResumesNewTombstone()&#xD;
+[xUnit.net 00:00:00.66]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.66]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.66]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T15:30:40.6512481-07:00">
+        <Text>[xUnit.net 00:00:00.66]     AiDe.Core.Tests.Watcher.CoordinationFeedTests.Read_Interleaved401Receipts_Freezes2002001ThenResumesNewTombstone [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

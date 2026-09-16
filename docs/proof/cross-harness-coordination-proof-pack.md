@@ -1924,3 +1924,154 @@ slice. No source investigation report, lessons/site claim, P1 source, activation
 dependency/configuration/hook, live database, endpoint or upstream repository was
 changed. P3/P4/P5 remain later work; upstream work follows verification of all six
 phases. Keep this worktree for independent review; no push or merge.
+
+## P2.4A author checkpoint — bound metadata reader (2026-09-16)
+
+**A implemented and unit-verified; full P2 remains unshippable.** This section
+updates the earlier “401/MCP-feed work remains” statement for this bounded A unit
+only. Recovery B, canonical producers/bridge, released-binary rollback and the
+independent implementation gates remain open. Production authority is **DENY**;
+enhanced canonical append is disabled. The trusted overload is internal and
+exercised only by isolated fixtures; no production composition opts into it.
+
+### Approval, scope and execution
+
+Base: `7dd92c51acae91fa4034749fc0f3bad4c731cd7c`. Contract was committed before
+source changes as `2a9a66ad` (`docs(coordination): record approved P2.4A binding
+and reader contract`). Design/ADR contain the accepted Data/DS A contract;
+this is not independent code approval. The implementation is pinned by the exact
+Git blobs below, avoiding a self-referential commit hash.
+
+Goal: implement the approved bound, metadata-only A reader and actual MCP adapter.
+Done when: contract-first commit, real constructor/reader/adapter tests, regression
+membership readback, and a committed evidence checkpoint. Not in scope: B,
+production activation, human-channel qualification, P3–P5, actual old-binary
+rollback, upstream work, GUI/App or live stores. T2, fan-out zero, 45-call ceiling.
+Actual graph: scoped contracts → contract commit → schema/API RED → implementation
+→ bounded fault/boundary corrections → restored tests → evidence. No nested agents.
+The initial broad console reads exceeded the tool output bound; subsequent reads
+were scoped. That was retrieval overhead, not evidence of code behavior.
+
+### Writer → store → reader → wire reach
+
+| Surface | Implementation and scope |
+|---|---|
+| Trusted writer | Internal `CoordContractLogPump` overload supplies existing `RepositoryIdentity` and stable origin. No attribution from registration. Known typed register/update/board/episode repository contradictions reject before effects. |
+| Durable binding | Same three caches, fresh pre-release v8. Checkpoint has all NULL or all bound fields, unique scope hash, immutable binding/scope/epoch, and zero only at the empty digest with no accepted content. No candidate-v8 upgrade or NULL→bound backfill. |
+| Compute reader | `CoordinationProjection.cs` validates binding before querying receipts in one deferred read transaction. Source/epoch-local H and `(scope,epoch,n)` index; immutable receipt outcomes, including duplicate accounting and tombstones. |
+| Interface | `IWatcherObservationStore.ReadCoordination`; default Unsupported. Request repository is internal and derived from a service-supplied SessionRecord. |
+| Adapter | `BoardTools.ReadCoordination`; legacy `Read` and public Post authorization are unchanged. |
+| Wire/composition | Actual `Tools.Schema` and `Tools.Call` register/dispatch `aide_coordination_read`. Only `source_id`, structured `cursor`, `limit`; reject overrides, explicit nulls and malformed cursors. No public scope/root/repository argument. |
+
+The cursor is the returned JSON object, not a base64 credential. It contains
+SourceId, ContractVersion, Epoch, AfterN and nullable FrozenHighWater. It is not
+authorization. Continue with Continuation; after completion use FreshResume,
+which drops frozen H. No current-state event join rewrites earlier outcomes.
+Output omits raw scope, filesystem root, event payload and prose; only allowlisted
+stable reasons travel. Availability is explicitly CacheRead. Recovery, source
+health, lag and loss evidence are NotRecorded, not invented zeros or live claims.
+
+### Executed claims and oracles
+
+All tests below are in `tests/AiDe.Core.Tests/Watcher/CoordinationFeedTests.cs`.
+Raw receipts are confined to **new** `docs/proofs/p24-feed-evidence/`; older raw
+TRX files and recovery tests were not changed. This singular-path proof pack
+remains the canonical evidence narrative.
+
+| Claim | Concrete oracle / evidence | RED observed | Confidence / limit |
+|---|---|---|---|
+| Fresh binding columns and honest empty checkpoint | `FreshSchema_CheckpointBinding_HasExactlyThreeNullableColumns`, `FreshSchema_BoundEmptyCheckpoint_AcceptsOnlyEmptyDigest`; old constructor had zero columns and rejected the insert | `p24-schema-red.trx`: 2 failed | Verified for fresh v8, not candidate-v8 upgrade |
+| 401 source receipts page 200/200/1 despite global interleaving | `Read_Interleaved401Receipts_Freezes2002001ThenResumesNewTombstone`: source H=402, 401 distinct receipts, 200 pending admissions, 199 message-bearing applications, one duplicate occurrence | Missing-API compile RED, then frozen-H mutation | Verified through actual store/interface/BoardTools |
+| Frozen snapshot ends; fresh resume sees later tombstone without rewriting admissions | Same test: frozen reread remains one entry; resume returns receipt 403, original admission 400 | `p24-frozen-high-mutant-red.trx`: replacing requested H with current H leaked the tombstone into the earlier page and failed collection equality | Verified; mutation restored |
+| Repository checks include empty and unknown sources | `Read_EmptyBound_LimitAndAbsenceAreDistinct`, `Binding_LegacyOrContradictorySource_IsNeverBackfilledOrApplied` | Schema RED plus explicit mismatch fixtures | Verified; structural qualification only |
+| Binding cannot change during an otherwise valid advance | `Binding_ValidOffsetAdvanceCannotHideRebinding`, immutable/replacement/partial/collision tests; real SQL and foreign keys enabled | Source columns absent on baseline; no separate mutation campaign for each constraint | Verified executions; per-constraint mutation confidence unverified |
+| Binding contradictions on updates cannot slip past registration-only checks | `Binding_UpdateRepositoryContradiction_RefusesWholeCaptureBeforeEffects` asserts zero session/event/checkpoint effects | `p24-boundary-red.trx`: no exception before shared typed-record validation | Verified |
+| Limit 1/200 accepted; 0/-1/201 and bad cursor ranges rejected; version/epoch reset | Limit and cursor theories, plus other-source receipt/token test | Missing-API RED; boundary assertions executed restored | Verified |
+| Binding, local maximum and rows share one snapshot | `Read_ConcurrentWriterAfterBinding_UsesOneSnapshotForMaximumAndRows`: barriers commit tombstone on another connection after binding read; old snapshot has four rows/H=4; fresh read sees tombstone | Deterministic concurrent schedule executed; no isolated transaction-removal mutation | Verified execution; broader interleavings unverified |
+| Actual MCP schema/dispatch reject hidden override fields and explicit nulls | `Mcp_ActualSchemaAndDispatch_RejectsOverridesAndReturnsOnlyMetadata`, `Mcp_NullCursorOrLimit_RejectsSchemaViolations` | Null cursor/limit first returned Available; boundary RED captured | Verified in-process real dispatch, not live stdio/human transport qualification |
+| Failure is unavailable, not empty success; no exception-path leak | `Mcp_RealExclusiveLockOrMissingFile_ReturnsTypedUnavailable`, `Read_StorageFailure_IsTypedUnavailableAndEmitsSafeSpan` | Actual exclusive lock, missing file, disposed store, injected SQLite busy exception | Verified; busy path retains provider default timeout (~30 s observed), no latency SLO claimed |
+| Metadata and telemetry exclude synthetic private markers | 401, malformed-refusal, MCP and failure tests assert marker/root absence. Span status, entry count and elapsed field are read back | Synthetic forbidden payload/reason/exception markers are the negative inputs | Verified fixture outputs, not a general PII classifier |
+
+### Results, membership and pins
+
+| New raw receipt | Observed result |
+|---|---|
+| `p24-schema-red.trx` | 0 passed / 2 failed |
+| `p24-reader-first.trx` | 21 passed / 4 test-harness failures |
+| `p24-reader-green.trx` | 25 passed / 0 failed |
+| `p24-frozen-high-mutant-red.trx` | 0 passed / 1 expected mutation failure |
+| `p24-boundary-red.trx` | 0 passed / 2 expected pre-fix boundary failures |
+| `p24-final-feed-green.trx` | **32 passed / 0 failed / 0 skipped** |
+| `p24-prior-304-green.trx` | **334 passed / 0 failed** in the original class selection. Set comparison against the old 304 test names: **304 present, zero missing**. Filename names the baseline selection, not the current count. |
+| `p24-mcp-green.trx` | **72 passed / 0 failed**; overlaps other selections, so do not sum counts as unique tests |
+| `p24-recovery-still-red.trx` | **3 passed / 2 intentional existing failures**; separate from all green claims |
+
+Recovery failures remain exactly:
+`Pump_LateSameRepositoryParent_AppliesChildOnceWithOriginalAdmission` (child pending
+at admission 3), and
+`Pump_PendingLimitPlusOne_AccountsForParentWithoutExceedingActiveBoundsOrLosingChildren`
+(1,025 active pending, limit 1,024; 323,572 retained bytes). They are not A fixes.
+
+Runner: .NET SDK **10.0.303**, target net10.0, Microsoft.Data.Sqlite **10.0.11**,
+xUnit **2.9.3**, Microsoft.NET.Test.Sdk **17.14.1**, VS runner **3.1.4**.
+`dotnet test ... --no-restore --filter FullyQualifiedName~CoordinationFeedTests`
+built the final binaries. Subsequent class-selection, MCP and recovery runs used
+`--no-build --no-restore` against those same binaries.
+
+| Source/test path | Git blob |
+|---|---|
+| `src/AiDe.Core/Watcher/WatcherObservationStore.cs` | `952c5f81a79fcca63fca1d21571ecfb45ffe03e1` |
+| `src/AiDe.Core/Watcher/SqliteWatcherObservationStore.Coordination.cs` | `9e5ecfcd13ed2ee5362d9cb1bbf51a0638bb2b03` |
+| `src/AiDe.Core/Watcher/CoordinationProjection.cs` | `6ea40a1e7d7f9e4b57927bd86a84a1864dc50de6` |
+| `src/AiDe.Core/Watcher/CoordinationContractLog.cs` | `97c2cb2afbb38cc392d50a55da86319d3b15e5a6` |
+| `src/AiDe.Core/Watcher/CoordinationRead.cs` | `c905c9f5dcad97371e5b20ea59d2a9727d31c2bd` |
+| `src/AiDe.Mcp/BoardTools.cs` | `bbdf633f0da397f41d10ec18443186b198f9501f` |
+| `src/AiDe.Mcp/Tools.cs` | `9d2e4cd8aa22809562ffd68f8401915be960042e` |
+| `tests/AiDe.Core.Tests/Watcher/CoordinationFeedTests.cs` | `af0223466f31e2146b8e2801dd94890189aa3b40` |
+
+| Final Debug/net10.0 binary | SHA-256 |
+|---|---|
+| `AiDe.Core.dll` | `9EB1B7446E5FEFD942D4C07BEFCD4E274ACD3C53E8C2A26A9EBAF15CDA0EC0E7` |
+| `AiDe.Mcp.dll` | `52E1948598454C84AB7E4ED76CE0A9B913B7F8EE33EF040528F8D5F1B125E8D4` |
+| `AiDe.Core.Tests.dll` | `F2172642575827EE7800CB7FF700DBFF4B901C27AF1E3B3496D140CB04A4409B` |
+
+### Corrections, instrumentation and limits
+
+Class → sweep → derive → prevent:
+
+* A file-content result was initially associated with the wrong parallel read.
+  The exact-context patch refused before modifying either affected file; direct
+  path inspection located runtime in `CoordinationProjection.cs` and DDL in
+  `SqliteWatcherObservationStore.Coordination.cs`. Corrected patch targets were
+  checked by compilation and the real constructor tests. No new central lesson
+  entry is authored from this lane.
+* Test invocation is not test execution: three boxed Int32 theory values could
+  not bind to nullable Int64, and a test reused an already-parented JsonNode.
+  Swept the new theory high-water literals and local MCP request builder;
+  use explicit long literals and fresh node ownership. The four initial failures
+  remain in the raw receipt; the final run executes all 32 assertions/cases.
+* Registration-only validation misses other typed records' repository claims.
+  Swept register, update, board, episode-open and episode-close; derive checks
+  from one shared validator used before binding and at projection. The update
+  contradiction test was observed red, then green.
+* Optional and explicit-null are different schema states. Swept cursor and limit;
+  reject explicit null before defaults. The real Tools dispatch test was observed
+  red, then green. Neither correction changes native Post authorization.
+
+Operator sources: normal `coordination.cache.read` Activity emits status, entry
+count, elapsed milliseconds and stable error type. Existing pump LastRun remains
+unchanged in meaning. No source IDs, roots, payloads or exception messages enter
+the new span. No recovery fields, new database, dependency, application surface,
+production producer, upstream investigation or installation/configuration change.
+
+Empty-file binding enumerates existing zero-length files because legacy captures
+have no page/scope for them; nonempty scopes come from captured pages. This
+retains the approved optimistic filesystem contract, not exclusion or ABA
+protection. Concurrent filesystem identity replacement and actual human-channel
+qualification remain unverified. Existing candidate-v8 upgrade is not supported
+or claimed. Actual released-v7 binary rollback remains later qualification.
+
+**Next gate:** independent Test/Security/Data review of these pinned code and
+evidence surfaces. Recovery eligibility/counter-domain clarification precedes B.
+Full P2 producers/canonical bridge, rollback, P3/P4/P5 and upstream-after-all-six
+verification remain open. Retain this worktree for review; no merge or push.

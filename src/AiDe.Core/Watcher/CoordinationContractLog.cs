@@ -259,6 +259,10 @@ public sealed class CoordContractLogPump(string logDir, InjectedContractIngest i
 {
     private readonly string _logDir = !string.IsNullOrEmpty(logDir) ? logDir : throw new ArgumentException("logDir is required", nameof(logDir));
     private readonly InjectedContractIngest _ingest = ingest ?? throw new ArgumentNullException(nameof(ingest));
+    private readonly CoordinationSourceBinding? _sourceBinding;
+
+    internal CoordContractLogPump(string logDir, InjectedContractIngest ingest, CoordinationSourceBinding sourceBinding)
+        : this(logDir, ingest) => _sourceBinding = sourceBinding;
 
     /// <summary>Diagnostics from the last bounded capture, including replayed records.</summary>
     public CoordinationPumpStats LastRun { get; private set; } = new(0, 0, 0, 0, 0, 0, null);
@@ -278,11 +282,28 @@ public sealed class CoordContractLogPump(string logDir, InjectedContractIngest i
             string? diagnostic = null;
             try
             {
-                foreach (var capture in CoordinationSourceCapture.Read(_logDir, store, _ingest.Host))
+                var captures = CoordinationSourceCapture.Read(_logDir, store, _ingest.Host);
+                if (_sourceBinding is not null)
+                {
+                    var pages = captures.SelectMany(capture => capture.Pages).ToArray();
+                    SqliteWatcherObservationStore.ValidateCoordinationRepository(
+                        pages.SelectMany(page => page.Records), _sourceBinding.Repository.CanonicalPath);
+                    // Nonempty scopes come from the immutable capture. Only existing empty files
+                    // need a separate name: legacy capture has no page (and no scope) for them.
+                    var emptyScopes = Directory.Exists(_logDir)
+                        ? Directory.EnumerateFiles(_logDir, "*.jsonl").Where(file => new FileInfo(file).Length == 0)
+                            .Select(file => CoordinationSourceCapture.RootKey(_logDir)
+                                + CoordinationSourceCapture.RootKey(file).TrimEnd('|'))
+                        : [];
+                    store.BindCoordinationSources(pages.Select(page => page.Scope).Concat(emptyScopes)
+                        .Distinct(StringComparer.Ordinal).Take(129).ToArray(), _sourceBinding);
+                }
+                foreach (var capture in captures)
                 {
                     bytes += capture.Bytes;
                     records += capture.Recognized;
-                    var expected = capture.Checkpoint;
+                    var expected = capture.Checkpoint ?? (_sourceBinding is null
+                        ? null : new CoordinationCheckpoint(0, CoordinationSourceCapture.Hash([])));
                     foreach (var page in capture.Pages)
                     {
                         var result = store.ProjectCoordination(page, expected, _ingest.Host.ObservationAllocators);

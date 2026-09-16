@@ -5,7 +5,7 @@ using AiDe.Core.Watcher;
 namespace AiDe.Mcp;
 
 /// <summary>
-/// The five tools, their schemas, and the dispatch between them.
+/// The tools, their schemas, and the dispatch between them.
 /// </summary>
 /// <remarks>
 /// <para><b>Every tool answers, including when it cannot do its job.</b> No tool throws and none
@@ -21,6 +21,36 @@ public static class Tools
     /// <summary>The tool list, as `tools/list` returns it.</summary>
     public static JsonArray Schema() =>
     [
+        Tool(
+            "aide_coordination_read",
+            "Read metadata-only coordination cache receipts for a bound opaque source. "
+            + "Availability is cache-read availability, not source health or live delivery. "
+            + "Follow Continuation with the same source; when finished poll with FreshResume.",
+            new JsonObject
+            {
+                ["type"] = "object",
+                ["additionalProperties"] = false,
+                ["required"] = new JsonArray("source_id"),
+                ["properties"] = new JsonObject
+                {
+                    ["source_id"] = new JsonObject { ["type"] = "string", ["pattern"] = "^[0-9A-Fa-f]{64}$" },
+                    ["cursor"] = new JsonObject
+                    {
+                        ["type"] = "object",
+                        ["additionalProperties"] = false,
+                        ["required"] = new JsonArray("SourceId", "ContractVersion", "Epoch", "AfterN", "FrozenHighWater"),
+                        ["properties"] = new JsonObject
+                        {
+                            ["SourceId"] = new JsonObject { ["type"] = "string" },
+                            ["ContractVersion"] = new JsonObject { ["type"] = "string" },
+                            ["Epoch"] = new JsonObject { ["type"] = "string" },
+                            ["AfterN"] = new JsonObject { ["type"] = "integer", ["minimum"] = 0 },
+                            ["FrozenHighWater"] = new JsonObject { ["type"] = new JsonArray("integer", "null"), ["minimum"] = 0 },
+                        },
+                    },
+                    ["limit"] = new JsonObject { ["type"] = "integer", ["minimum"] = 1, ["maximum"] = 200 },
+                },
+            }),
         Tool(
             "aide_whoami",
             "Who you are to AI-DE: your session, repository, branch, worktree, and whether you are "
@@ -149,14 +179,59 @@ public static class Tools
 
         return name switch
         {
+            "aide_coordination_read" => Text(CoordinationRead(arguments, context)),
             "aide_whoami" => Text(WhoAmI(context)),
             "aide_board_read" => Text(BoardRead(arguments, context)),
             "aide_board_post" => Text(BoardPost(arguments, context)),
             "aide_episode_open" => Text(EpisodeOpen(arguments, context)),
             "aide_episode_close" => Text(EpisodeClose(arguments, context)),
             _ => Text($"There is no tool called '{name}'. This server offers aide_whoami, "
-                    + "aide_board_read, aide_board_post, aide_episode_open and aide_episode_close."),
+                    + "aide_coordination_read, aide_board_read, aide_board_post, aide_episode_open and aide_episode_close."),
         };
+    }
+
+    private static string CoordinationRead(JsonObject? arguments, ServerContext context)
+    {
+        var result = CoordinationReadResult.Failure(CoordinationReadStatus.Unavailable);
+        try
+        {
+            if (arguments is null || arguments.Any(p => p.Key is not ("source_id" or "cursor" or "limit"))
+                || arguments["source_id"] is null
+                || arguments.ContainsKey("cursor") && arguments["cursor"] is null
+                || arguments.ContainsKey("limit") && arguments["limit"] is null)
+            {
+                return JsonSerializer.Serialize(CoordinationReadResult.Failure(CoordinationReadStatus.InvalidRequest));
+            }
+            var sourceId = arguments["source_id"]!.GetValue<string>();
+            var limit = arguments["limit"]?.GetValue<int>() ?? BoardTools.MaxLimit;
+            CoordinationCursor? cursor = null;
+            if (arguments["cursor"] is { } node)
+            {
+                var token = node.AsObject();
+                if (token.Count != 5 || token.Any(p => p.Key is not
+                    ("SourceId" or "ContractVersion" or "Epoch" or "AfterN" or "FrozenHighWater"))
+                    || token["SourceId"] is null || token["ContractVersion"] is null || token["Epoch"] is null
+                    || token["AfterN"] is null || token.ToJsonString().Length > 4096)
+                {
+                    return JsonSerializer.Serialize(CoordinationReadResult.Failure(CoordinationReadStatus.InvalidRequest));
+                }
+                cursor = token.Deserialize<CoordinationCursor>();
+            }
+            if (context.Identity.IsResolved && context.DatabasePath is not null)
+            {
+                using var store = SqliteWatcherObservationStore.OpenReadOnly(context.DatabasePath);
+                result = BoardTools.ReadCoordination(store, context.Identity.Session!, sourceId, cursor, limit);
+            }
+        }
+        catch (Exception error) when (error is JsonException or InvalidOperationException or FormatException or OverflowException)
+        {
+            result = CoordinationReadResult.Failure(CoordinationReadStatus.InvalidRequest);
+        }
+        catch (Exception error) when (error is IOException or Microsoft.Data.Sqlite.SqliteException)
+        {
+            result = CoordinationReadResult.Failure(CoordinationReadStatus.Unavailable);
+        }
+        return JsonSerializer.Serialize(result);
     }
 
     private static string WhoAmI(ServerContext context)

@@ -77,6 +77,8 @@ public sealed partial class SqliteWatcherObservationStore
         );
         CREATE UNIQUE INDEX IF NOT EXISTS ix_coord_projection_initial
             ON coord_projection_feed(scope,epoch,event_key) WHERE is_initial = 1;
+        CREATE INDEX IF NOT EXISTS ix_coord_projection_read
+            ON coord_projection_feed(scope,epoch,n);
         CREATE INDEX IF NOT EXISTS ix_coord_projection_event_end
             ON coord_projection_event(scope,epoch,source_end DESC);
         CREATE INDEX IF NOT EXISTS ix_coord_projection_diagnostic_end
@@ -86,8 +88,18 @@ public sealed partial class SqliteWatcherObservationStore
         CREATE TABLE IF NOT EXISTS coord_projection_checkpoint (
             scope TEXT NOT NULL PRIMARY KEY CHECK(typeof(scope)='text' AND instr(scope,char(0))=0 AND length(CAST(scope AS BLOB)) BETWEEN 1 AND 4096),
             epoch TEXT NOT NULL CHECK(typeof(epoch)='text' AND instr(epoch,char(0))=0 AND length(CAST(epoch AS BLOB)) BETWEEN 1 AND 128),
-            accepted_offset INTEGER NOT NULL CHECK(typeof(accepted_offset)='integer' AND accepted_offset > 0),
-            prefix_digest TEXT NOT NULL CHECK(length(prefix_digest) > 0)
+            accepted_offset INTEGER NOT NULL CHECK(typeof(accepted_offset)='integer' AND accepted_offset >= 0),
+            prefix_digest TEXT NOT NULL CHECK(length(prefix_digest) > 0),
+            bound_repository_key TEXT NULL,
+            source_origin TEXT NULL,
+            public_source_id TEXT NULL UNIQUE,
+            CHECK((bound_repository_key IS NULL AND source_origin IS NULL AND public_source_id IS NULL)
+                OR (bound_repository_key IS NOT NULL AND source_origin IS NOT NULL AND public_source_id IS NOT NULL
+                    AND typeof(bound_repository_key)='text' AND length(trim(bound_repository_key))>0
+                    AND typeof(source_origin)='text' AND length(trim(source_origin))>0
+                    AND typeof(public_source_id)='text' AND length(trim(public_source_id))>0)),
+            CHECK(accepted_offset<>0 OR
+                prefix_digest='E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855')
         );
 
         CREATE TRIGGER IF NOT EXISTS coord_event_insert BEFORE INSERT ON coord_projection_event
@@ -187,6 +199,9 @@ public sealed partial class SqliteWatcherObservationStore
         CREATE TRIGGER IF NOT EXISTS coord_checkpoint_insert BEFORE INSERT ON coord_projection_checkpoint
         BEGIN
             SELECT CASE WHEN EXISTS(SELECT 1 FROM coord_projection_checkpoint WHERE scope=NEW.scope)
+                OR (NEW.accepted_offset=0 AND
+                    (EXISTS(SELECT 1 FROM coord_projection_event WHERE scope=NEW.scope)
+                     OR EXISTS(SELECT 1 FROM coord_projection_feed WHERE scope=NEW.scope)))
                 OR NEW.accepted_offset <> MAX(
                     COALESCE((SELECT source_end FROM coord_projection_event
                         WHERE scope=NEW.scope AND epoch=NEW.epoch ORDER BY source_end DESC LIMIT 1),0),
@@ -198,6 +213,9 @@ public sealed partial class SqliteWatcherObservationStore
         CREATE TRIGGER IF NOT EXISTS coord_checkpoint_update BEFORE UPDATE ON coord_projection_checkpoint
         BEGIN
             SELECT CASE WHEN NEW.scope IS NOT OLD.scope OR NEW.epoch IS NOT OLD.epoch
+                OR NEW.bound_repository_key IS NOT OLD.bound_repository_key
+                OR NEW.source_origin IS NOT OLD.source_origin
+                OR NEW.public_source_id IS NOT OLD.public_source_id
                 OR NEW.accepted_offset<=OLD.accepted_offset
                 OR NEW.accepted_offset <> MAX(
                     COALESCE((SELECT source_end FROM coord_projection_event

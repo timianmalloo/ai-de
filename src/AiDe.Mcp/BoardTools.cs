@@ -60,6 +60,16 @@ public static class BoardTools
     /// <summary>Messages returned when the caller names no limit.</summary>
     public const int DefaultLimit = 50;
 
+    /// <summary>Reads cache receipt metadata using the server-resolved session's repository.</summary>
+    public static CoordinationReadResult ReadCoordination(
+        IWatcherObservationStore store, SessionRecord session, string sourceId,
+        CoordinationCursor? cursor = null, int limit = MaxLimit)
+    {
+        ArgumentNullException.ThrowIfNull(store);
+        ArgumentNullException.ThrowIfNull(session);
+        return store.ReadCoordination(new(sourceId, cursor, limit, session));
+    }
+
     /// <summary>
     /// Reads this session's repository board — never another's.
     /// </summary>

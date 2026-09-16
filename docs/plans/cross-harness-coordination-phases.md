@@ -592,3 +592,26 @@ rollback/migration and independent final gates remain pending. Next is the
 approved recovery implementation against these counterexamples, not a request
 for fresh permission. Derived-index and central defect-register integration
 remain with the conductor; this author only edits the assigned evidence surfaces.
+
+### P2.4A read-only feed checkpoint — 2026-09-16
+
+The approved A contract was recorded in current design/ADR and committed as
+`2a9a66ad` before implementation. A now has trusted immutable source binding,
+source-local frozen receipt pagination, typed failures and an additive
+`aide_coordination_read` in the actual MCP schema/dispatch. Native BoardTools.Read
+and Post authorization remain unchanged. This is fixture-only source-binding
+qualification; no production trusted source or enhanced canonical append is active.
+
+Canonical evidence: `docs/proof/cross-harness-coordination-proof-pack.md`, P2.4A
+section. New raw receipts: `docs/proofs/p24-feed-evidence/`. Final A: 32/32;
+original-class regression: 334/334 with all original 304 test names present;
+MCP selection: 72/72 (overlapping selections, not additive unique counts).
+Frozen-H mutation and explicit-null/update-repository boundaries were observed
+red before restoration/correction.
+
+The separate recovery run is still 3 pass / 2 intentional RED, with the original
+late-parent and 1,025-pending counterexamples unchanged. Full P2 is **not cleared**.
+Next: independent Test/Security/Data code gate for A. B eligibility/counter-domain
+clarification, recovery implementation, producer/canonical bridge proof and actual
+released-binary rollback remain open; P3–P5/upstream follow the approved phase
+order. No new general proposal, activation, source investigation or upstream change.

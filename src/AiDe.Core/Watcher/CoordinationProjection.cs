@@ -16,6 +16,200 @@ internal sealed record CoordinationEffect(
 
 public sealed partial class SqliteWatcherObservationStore
 {
+    // Test-only scheduling seam after the first snapshot read. Never reachable from a wire request.
+    internal Action? CoordinationReadAfterBinding { get; set; }
+
+    /// <summary>Validates binding and reads a frozen source-local receipt page in one snapshot.</summary>
+    public CoordinationReadResult ReadCoordination(CoordinationReadRequest request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        using var activity = new System.Diagnostics.Activity("coordination.cache.read").Start();
+        var started = System.Diagnostics.Stopwatch.GetTimestamp();
+        var result = CoordinationReadResult.Failure(CoordinationReadStatus.Unavailable);
+        try
+        {
+            lock (_gate)
+            {
+                if (!_disposed)
+                {
+                    result = ReadCoordinationSnapshot(request);
+                }
+            }
+            return result;
+        }
+        catch (Exception error) when (error is SqliteException or IOException or InvalidOperationException)
+        {
+            return result = CoordinationReadResult.Failure(CoordinationReadStatus.Unavailable);
+        }
+        finally
+        {
+            activity.SetTag("coordination.read.status", result.Status.ToString());
+            activity.SetTag("coordination.read.entries", result.Entries.Count);
+            activity.SetTag("coordination.read.elapsed_ms",
+                System.Diagnostics.Stopwatch.GetElapsedTime(started).TotalMilliseconds);
+            activity.SetTag("error.type", result.Status == CoordinationReadStatus.Available ? null : result.Code);
+            activity.SetStatus(result.Status == CoordinationReadStatus.Available
+                ? System.Diagnostics.ActivityStatusCode.Ok : System.Diagnostics.ActivityStatusCode.Error);
+        }
+    }
+
+    private CoordinationReadResult ReadCoordinationSnapshot(CoordinationReadRequest request)
+    {
+        var cursor = request.Cursor;
+        var after = cursor?.AfterN ?? 0;
+        if (request.Limit is < 1 or > 200 || request.SourceId is not { Length: 64 }
+            || !request.SourceId.All(Uri.IsHexDigit) || after < 0
+            || cursor?.FrozenHighWater < 0 || cursor is not null && cursor.SourceId != request.SourceId)
+        {
+            return CoordinationReadResult.Failure(CoordinationReadStatus.InvalidRequest);
+        }
+
+        using var transaction = _connection.BeginTransaction(deferred: true);
+        string scope, epoch, origin;
+        using (var query = CoordinationCommand(transaction, """
+            SELECT scope,epoch,bound_repository_key,source_origin
+            FROM coord_projection_checkpoint WHERE public_source_id=$source;
+            """, ("$source", request.SourceId)))
+        using (var reader = query.ExecuteReader())
+        {
+            if (!reader.Read() || reader.IsDBNull(2) || reader.IsDBNull(3))
+            {
+                return CoordinationReadResult.Failure(CoordinationReadStatus.Unavailable);
+            }
+            if (reader.GetString(2) != request.ReaderRepository)
+            {
+                return CoordinationReadResult.Failure(CoordinationReadStatus.Mismatch);
+            }
+            scope = reader.GetString(0);
+            epoch = reader.GetString(1);
+            origin = reader.GetString(3);
+        }
+        if (cursor is not null && (cursor.ContractVersion != CoordinationCursor.Version || cursor.Epoch != epoch))
+        {
+            return CoordinationReadResult.Failure(CoordinationReadStatus.Reset);
+        }
+        CoordinationReadAfterBinding?.Invoke();
+        using var maximum = CoordinationCommand(transaction, """
+            SELECT COALESCE(MAX(n),0) FROM coord_projection_feed WHERE scope=$scope AND epoch=$epoch;
+            """, ("$scope", scope), ("$epoch", epoch));
+        var current = (long)maximum.ExecuteScalar()!;
+        var high = cursor?.FrozenHighWater ?? current;
+        if (after > high || high > current)
+        {
+            return CoordinationReadResult.Failure(CoordinationReadStatus.InvalidRequest);
+        }
+        if (high != 0)
+        {
+            using var receipt = CoordinationCommand(transaction, """
+                SELECT 1 FROM coord_projection_feed WHERE scope=$scope AND epoch=$epoch AND n=$high;
+                """, ("$scope", scope), ("$epoch", epoch), ("$high", high));
+            if (receipt.ExecuteScalar() is null)
+            {
+                return CoordinationReadResult.Failure(CoordinationReadStatus.InvalidRequest);
+            }
+        }
+        var entries = new List<CoordinationFeedEntry>();
+        using (var query = CoordinationCommand(transaction, """
+            SELECT n,COALESCE(admission_n,n),outcome,application_state,reason,session_id,session_generation,message_id
+            FROM coord_projection_feed WHERE scope=$scope AND epoch=$epoch AND n>$after AND n<=$high
+            ORDER BY n LIMIT $limit;
+            """, ("$scope", scope), ("$epoch", epoch), ("$after", after), ("$high", high), ("$limit", request.Limit)))
+        using (var reader = query.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+                entries.Add(new(reader.GetInt64(0), reader.GetInt64(1), reader.GetString(2),
+                    reader.IsDBNull(3) ? null : reader.GetString(3),
+                    reader.IsDBNull(4) ? null : PublicCoordinationReason(reader.GetString(4)),
+                    reader.IsDBNull(5) ? null : reader.GetString(5),
+                    reader.IsDBNull(6) ? null : reader.GetInt64(6),
+                    reader.IsDBNull(7) ? null : reader.GetString(7)));
+            }
+        }
+        var last = entries.Count == 0 ? after : entries[^1].N;
+        var resume = new CoordinationCursor(request.SourceId, CoordinationCursor.Version, epoch, last, high);
+        transaction.Commit();
+        return new(CoordinationReadStatus.Available, entries, request.SourceId, origin, high, last,
+            last < high ? resume : null, last >= high ? resume with { AfterN = high, FrozenHighWater = null } : null);
+    }
+
+    private static string? PublicCoordinationReason(string reason) => reason switch
+    {
+        "TRUSTED_LIFECYCLE_REQUIRED" or "NATIVE_BOARD_PENDING" or "NATIVE_SESSION_PENDING"
+            or "OBSERVED_REGISTER" or "OBSERVED_BOARD" or "OBSERVED_END" or "OBSERVED_UPDATE"
+            or "OBSERVED_HEARTBEAT" or "REGISTRATION_REQUIRED" or "SESSION_ENDED" or "MALFORMED_BOARD"
+            or "PARENT_REQUIRED" or "UNSUPPORTED_VERSION" or "UNSUPPORTED_RECORD"
+            or "MALFORMED_RECORD" or "CANONICAL_BOUND" => reason,
+        _ => null,
+    };
+
+    internal void BindCoordinationSources(IReadOnlyList<string> scopes, CoordinationSourceBinding binding)
+    {
+        if (scopes.Count > 128 || string.IsNullOrWhiteSpace(binding.Repository.CanonicalPath)
+            || string.IsNullOrWhiteSpace(binding.Origin) || binding.Origin.Length > 128
+            || binding.Origin.Any(c => !char.IsAsciiLetterOrDigit(c) && c is not ('.' or '_' or ':' or '-')))
+        {
+            throw new CoordinationSourceException(CoordinationBindingErrors.Invalid);
+        }
+        lock (_gate)
+        {
+            using var transaction = _connection.BeginTransaction(deferred: false);
+            foreach (var scope in scopes)
+            {
+                var sourceId = CoordinationSourceCapture.Hash(System.Text.Encoding.UTF8.GetBytes(scope));
+                using (var query = CoordinationCommand(transaction, """
+                    SELECT epoch,bound_repository_key,source_origin,public_source_id
+                    FROM coord_projection_checkpoint WHERE scope=$scope;
+                    """, ("$scope", scope)))
+                using (var reader = query.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        if (reader.GetString(0) != CoordinationSourceCapture.Epoch
+                            || reader.IsDBNull(1) || reader.IsDBNull(2) || reader.IsDBNull(3)
+                            || reader.GetString(1) != binding.Repository.CanonicalPath
+                            || reader.GetString(2) != binding.Origin || reader.GetString(3) != sourceId)
+                        {
+                            throw new CoordinationSourceException(CoordinationBindingErrors.Mismatch);
+                        }
+                        continue;
+                    }
+                }
+                using var insert = CoordinationCommand(transaction, """
+                    INSERT INTO coord_projection_checkpoint
+                    (scope,epoch,accepted_offset,prefix_digest,bound_repository_key,source_origin,public_source_id)
+                    VALUES($scope,$epoch,0,$digest,$repo,$origin,$source);
+                    """, ("$scope", scope), ("$epoch", CoordinationSourceCapture.Epoch),
+                    ("$digest", CoordinationSourceCapture.Hash([])), ("$repo", binding.Repository.CanonicalPath),
+                    ("$origin", binding.Origin), ("$source", sourceId));
+                insert.ExecuteNonQuery();
+            }
+            transaction.Commit();
+        }
+    }
+
+    internal static void ValidateCoordinationRepository(IEnumerable<CoordinationRecord> records, string repository)
+    {
+        foreach (var record in records)
+        {
+            var attributes = record.Event switch
+            {
+                ContractRegister value => value.Attributes,
+                ContractUpdate value => value.Attributes,
+                ContractBoardPost value => value.Attributes,
+                ContractEpisodeOpen value => value.Attributes,
+                ContractEpisodeClose value => value.Attributes,
+                _ => null,
+            };
+            if (record.Binding is { } binding && binding.Repository.CanonicalPath != repository
+                || attributes is not null && Attribute(attributes, OtelAttributes.RepoPath) is { } declared
+                    && RepositoryIdentity.Canonicalise(declared) != repository)
+            {
+                throw new CoordinationSourceException(CoordinationBindingErrors.Mismatch);
+            }
+        }
+    }
+
     // Internal deterministic fault seam: instance-local, not a callback or a wire-selected option.
     internal CoordinationFault ProjectionFault { get; set; }
 
@@ -65,6 +259,15 @@ public sealed partial class SqliteWatcherObservationStore
             if (checkpoint != expected)
             {
                 return new(true, checkpoint, []);
+            }
+            using (var binding = CoordinationCommand(transaction,
+                "SELECT bound_repository_key FROM coord_projection_checkpoint WHERE scope=$scope;",
+                ("$scope", page.Scope)))
+            {
+                if (binding.ExecuteScalar() is string repository)
+                {
+                    ValidateCoordinationRepository(page.Records, repository);
+                }
             }
             var results = new List<CoordinationResult>();
             foreach (var record in page.Records)
