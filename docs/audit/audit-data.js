@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T01:21:13Z",
+  "generated": "2026-09-16T01:32:05Z",
   "audit": [
     {
       "actor": null,
@@ -24098,6 +24098,39 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "703bb3ced1c79931a03b7e2b4c2b4b257cd74e83",
         "short": "703bb3ced",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2KXFATYT0F4KMVTCBX92MYV",
+      "shortname": "atlas-d0-freeze-recovery",
+      "datetime": "2026-09-16T01:32:04Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "the conflicts are yours to resolve",
+      "summary": "Root24/24 boundaries including waits/messages, counted prospectively from01:20:13Z; partial before review/join/slot. Conductor inspected correction-red28/24/4, conditional-width-red13/11/2, final37/37/0skip and sourceSHA0FBC79CDAF1944674A10B3488C32C5420185522382F01DB9D7A3B9CF495D9AE4. Author16/16 source unit reached freeze but default cp1252 scratch writer truncated only its own proof before audit; zero-byte state inspected. Source/raw evidence intact. Owner admits two-call UTF-8 atomic proof recovery from exact committed blob, no source changes or rerun, then independent review. Root record patch context and mixed Git-F/m options were refused; exact-readback and documented trailer option resolved them. A guessed close.py diagnostic path was absent; file inventory identified receipt.py; no result inferred from absence. Existing explicit-path/command-contract refusal is the control. Previous phase outcomes and hardBLOCK bbca8d6e remain. Next Owner-admitted16-call/30-minute phase,checkpoint10,width3: independent review, one cleared official barrier join, current-main freeze and fresh-slot request. Canonical/native run requires actual later grant.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": "codex-astra-gate-conductor",
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md",
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve bounded Atlas integration conflicts and prepare independent review of the correction.",
+      "done_when": "Correction is frozen, independently cleared, joined once with history conserved, and exact candidate reaches the fresh-slot request.",
+      "tier": "T2",
+      "main_calls": 24,
+      "main_budget": 24,
+      "main_over_budget": false,
+      "fan_out": 2,
+      "started_at": "2026-09-16T01:20:13Z",
+      "duration_seconds": 711.0,
+      "git": {
+        "sha": "42b9127ba9e30980c845f307d740986e37f15c0a",
+        "short": "42b9127ba",
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
