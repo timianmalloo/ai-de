@@ -1,13 +1,12 @@
 ---
 id: proof-codex-d1-r4-consumer-review
 title: "Independent consumer boundary review of D1 mapper r4"
-type: proof
+type: doc
 status: completed
 owner: "@timianmalloo"
 tags: [proof, atlas, d1, contract-review]
 links:
-  - { to: note-d1-codex-entry-point-handshake-r4, rel: verifies }
-  - { to: note-d1-codex-entry-point-handshake-r3, rel: relates-to }
+  - { to: session-contracts, rel: relates-to }
 review-by: 2026-12-16
 summary: "CHANGES REQUIRED: Grok may author the proposed mapper contract; consumer ACK cannot establish an existing E1 identity API, Core authority, or live activation."
 ---

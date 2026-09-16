@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T17:09:54Z",
+  "generated": "2026-09-16T17:27:20Z",
   "audit": [
     {
       "actor": null,
@@ -19931,6 +19931,38 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "173aa5a4ad245fda92bcc0bdadafac6ba9f0c8e4",
         "short": "173aa5a4a",
+        "branch": "review/atlas-d1-r4-boundary",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NM4FWBQE70ZKW5T0FMHY0T",
+      "shortname": "codex-d1-r4-metadata-repair",
+      "datetime": "2026-09-16T17:27:20Z",
+      "session": "codex-atlas-d1-r4-review",
+      "prompt": "Small artifact repair, unchanged review verdict. Start audit marker for document. Correct receipt frontmatter type proof to established doc; replace graph links to external r3/r4 notes with existing session-contracts and plan-atlas-five-gates relations after verifying IDs. Scope exact docs/proof/codex-d1-r4-consumer-review.md and own official audit; no verdict/body reinterpretation, peer ACK, source, index or site changes. Short lease, budget three calls/five minutes, zero agents. Run repository validator and inspect returned metadata; commit correction preserving original 7e205f5 history. Steering: use only existing session-contracts link; omit plan absent on this branch. Retain exact external r3/r4 citations in body.",
+      "summary": "Corrected invalid proof type to doc and replaced external-note graph links with the verified existing session-contracts ID. The plan ID was absent locally and omitted per conductor steering. Repository _validate_frontmatter observed unknown type proof before and returned doc metadata with problem null after. Explicit body equality assertion passed. Defect class: authored graph metadata outside actual schema/local inventory; sweep limited to this sole authorized receipt; control validates metadata and exact target before writing. Review verdict and evidence body unchanged; no source/index/site changes. Three shell calls against three-call budget; tokens/spend not exposed.",
+      "kind": "skill",
+      "skill": "document",
+      "tool": null,
+      "actor": "codex-astra-d1-r4-review",
+      "artifacts": [
+        "docs/proof/codex-d1-r4-consumer-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Repair receipt graph metadata without changing its independent review.",
+      "done_when": "Repository validator returns valid metadata, body remains identical, correction committed and short lease released.",
+      "tier": "T0",
+      "main_calls": 3,
+      "main_budget": 3,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-16T17:26:19Z",
+      "duration_seconds": 61.0,
+      "git": {
+        "sha": "7e205f5bb8d3ef804a2dd7d30c981838cffd991b",
+        "short": "7e205f5bb",
         "branch": "review/atlas-d1-r4-boundary",
         "pushed": null
       }
