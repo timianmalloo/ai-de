@@ -184,3 +184,85 @@ Final TRX start 2026-09-15T18:26:52.0080886-07:00; finish 2026-09-15T18:27:07.25
 ## Separate closure recovery
 
 The original correction unit reached its 16/16 ceiling without committing: the scratch proof writer used the Windows default cp1252 encoding and failed on an arrow after truncating the destination. This is a recorded encoding defect and cap firing, not budget-compliant completion. The Owner authorized a separate two-call closure recovery. It reconstructed this proof from the exact bbca8d6edc495b150c502999fd0fcc69fa922c72 blob, applied the intended clerical/evidence updates, and wrote explicit UTF-8 through a verified temporary file followed by atomic replacement. Source bytes and the previously observed 37-case result remain unchanged; no tests were rerun. The prevention is explicit encoding plus byte-verified atomic replacement in the retained receipt writer. All original red/green evidence and the independent BLOCK are preserved.
+
+
+## FR-003 finite conditional closure author unit (independent review pending)
+
+Goal: close the inactive-extension binding gap with the Owner-admitted finite exhaustive mechanism. Done when the fixed-input boundary and adversarial controls qualify and the frozen author result is returned for independent review. T2; one author, no children; exact source scope remains this test and this proof. Owner decision `cl-01M2KZXAG8BYSSH345PC435EKN` at parent `b027de4f` admitted implementation from spike `b76581ae38bb1344457ef161326bb5bc861400a8`. Previous independent BLOCK receipts and failed attempts above remain history; the author does not clear them.
+
+Session `codex-d0-atlas-conditional-closure`, author `codex-astra-d0-author`, provisioned branch `fix/d0-atlas-conditional-closure`. Marker started 2026-09-16T02:15:32Z. Evidence readback at 2026-09-16T02:34:49.232576+00:00. Planned20 calls/30minutes, checkpoint12; closure uses calls19 and20. No product/project/dependency changes, broad App/STA/native/UI tests, join or push. Primary liveness is `.agents/sessions/codex-d0-atlas-conditional-closure.md` in the primary checkout. Parent owns derived audit/docs views and central lesson union.
+
+### Fixed-input contract
+
+The source closure is App -> Core. The pinned App project declares Daemon/Mcp as nonlinking build edges. All ordinary `.cs` files under Core/App are discovered anew; no346-tree population pin remains. The exact26 D0 roots and60 reviewed port declarations are retained. The guard inspects direct static references; it makes no arbitrary transitive/runtime independence claim.
+
+`ClosurePins` fixes26 reviewed inputs/absences: SDK selection, root and source-ancestor build/package/editor controls, both source projects, three XAML inputs, and four generated inputs (Core/App global usings plus App.g.cs/MainWindow.g.cs). Pins use decoded UTF-8 text with BOM consumed and CRLF normalized to LF, matching Roslyn input text. New imports/project edges/conditional Compile changes alter the reviewed project/build input and refuse. Missing or altered generated input, a new XAML generator input, an introduced ancestor control, altered SDK selection and inconsistent references refuse with CLOSURE. No runtime pin refresh exists. A pin update requires behavioral qualification and independent review.
+
+The four generated outputs are an explicit ceiling. This guard does not execute generators or establish arbitrary MSBuild/environment/configuration completeness. Different generator output or changed pinned controls refuse; silently admitting unknown build closure is not the contract. Ordinary .cs files are automatically enumerated, but conditional project inclusion requires renewed manifest review. Metadata images, syntax texts and parse options are immutable during enumeration; Core is rebuilt and supplied as a fresh source compilation reference to App for every assignment. Disk source inventory/content and reviewed controls are checked before/after enumeration; an observed mutation refuses. A transient disk mutation that restores original content between checks cannot change the immutable compilation inputs. No adversarial concurrent disk-writer test was run; inconsistent references and unsupported parse options have permanent controls.
+
+Conditional keys are `(project,symbol)`, gathered using Roslyn If/Elif syntax from the complete admitted source closure, including inactive text. Population is calculated before enumeration; >8 refuses without sampling. Each assignment reparses original text with its own symbols, preserving file-local define/undef. Existing root/port/import/declaration conditional refusals remain. Canonical identity uses ReducedFrom then OriginalDefinition, exact source/project authority and declaration signatures, full metadata assembly identity, and explicit BuiltinOperator operand/return/operator signatures. Unsupported/unmapped identities and unresolved/ambiguous bindings refuse. Complete enumeration and acceptance are reported separately.
+
+### Red-first and observed qualification
+
+The original37 cases are retained. Additional controls cover real App/Core RELEASE extension escapes; competing extensions; unrelated namespace and incompatible receiver positives; file-local undef; capacity8 and overflow16; unsupported dynamic binding; inconsistent reference/parse-option inputs; seven build/generator manifest mutations; all8 standalone A+B+C masking states; and six distinct operator/signature/source-authority identities. The masking fixture is a standalone composition counterexample, not an observed bypass of the combined37-case guard.
+
+Initial red had56/38/18. A lazy extension-tree enumerable caused fixture exceptions. After materializing it, meaningful red31/24/7 directly observed empty error collections for both RELEASE escapes. A preceding shell quoting error prevented one intended fixture edit; its redundant run is retained rather than counted as meaningful FR003 evidence. First implementation56/12/44 exposed two WPF BOM fingerprint mismatches; the contract now uses the same decoded text representation as compilation. Second build failed three CS0103 output-helper names and produced no TRX. Third66/65/1 exposed a mixed-language fixture failure before the guard; the corrected fixture consistently changes all App trees. These author defects and raw receipts are preserved.
+
+Final normal-build filter: `FullyQualifiedName~SolutionTreeProbeTests.ProbeAtlas_`. Actual final counters:66 executed,66 passed,0 failed,0 skipped; `green.exit` records the actual dotnet exit. This is headless semantic/synthetic qualification only. The enum, File.Read and native-factory test method bodies were byte-equivalent after newline normalization against the base, and were not executed by this filter.
+
+| Raw TRX | Executed | Passed | Failed | SHA256 |
+|---|---:|---:|---:|---|
+| `closure-first.trx` | 56 | 12 | 44 | `a866804158b9bbcc872804c02232dff13ed17f5137f1c01555fccf0ddae15278` |
+| `closure-fixture-red.trx` | 31 | 24 | 7 | `dcaa810e0b1b088dc7868b39cb375e6d8c9154e2acbd23da3f6df3d66f797fde` |
+| `closure-green.trx` | 66 | 66 | 0 | `4320d5a0865a9f63c0a72001afed190c29f184bcc653fe79517a5f5bd567aee8` |
+| `closure-meaningful-red.trx` | 31 | 24 | 7 | `0617a1271c9420d4e23b98afa65fadfbedb74da332f0cb354e6b7bdd714fa6c7` |
+| `closure-red.trx` | 56 | 38 | 18 | `26f453666614e5d133c46481a93425af40a20cfa448ed4a3b758efd7b26944d2` |
+| `closure-third.trx` | 66 | 65 | 1 | `89e304a79db727ca700cdedf83e9bf9da0bc0b172288d8d51de9e7c91cd09698` |
+
+Selected actual emitted observations:
+
+```text
+AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_DirectStaticD0Boundary_DoesNotDependOnAtlas
+DIRECT_STATIC roots=26 references=3976 ports=58 errors=0 corpusTrees=346 symbols=0 expressions=4551 population=1 assignments=1 coverageComplete=True accepted=True seconds=0.869016
+
+AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_AdversarialD0Mutation_IsRejected(mutation: "parse-options", expected: "CLOSURE")
+parse-options DIRECT_STATIC roots=0 references=0 ports=0 errors=1 corpusTrees=0 symbols=0 expressions=0 population=0 assignments=0 coverageComplete=False accepted=False seconds=0.000000
+CLOSURE unsupported parse options
+AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_AdversarialD0Mutation_IsRejected(mutation: "unsupported-dynamic", expected: "UNSUPPORTED")
+unsupported-dynamic DIRECT_STATIC roots=26 references=3983 ports=58 errors=2 corpusTrees=346 symbols=0 expressions=4560 population=1 assignments=1 coverageComplete=False accepted=False seconds=0.864930
+UNACCOUNTED DynamicType dynamic at src/AiDe.App/Workbench/SolutionTreeSurface.cs
+UNSUPPORTED binding identity assignment=0
+AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_AdversarialD0Mutation_IsRejected(mutation: "release-extension", expected: "BINDING")
+release-extension DIRECT_STATIC roots=26 references=3976 ports=58 errors=1 corpusTrees=347 symbols=1 expressions=4551 population=2 assignments=2 coverageComplete=True accepted=False seconds=1.308531
+BINDING changed assignment=1 expressions=12
+AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_AdversarialD0Mutation_IsRejected(mutation: "core-release-extension", expected: "BINDING")
+core-release-extension DIRECT_STATIC roots=26 references=3976 ports=58 errors=1 corpusTrees=347 symbols=1 expressions=4551 population=2 assignments=2 coverageComplete=True accepted=False seconds=1.165590
+BINDING changed assignment=1 expressions=12
+AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_AdversarialD0Mutation_IsRejected(mutation: "competing-extensions", expected: "BINDING")
+competing-extensions DIRECT_STATIC roots=26 references=3976 ports=58 errors=2 corpusTrees=348 symbols=1 expressions=4551 population=2 assignments=2 coverageComplete=False accepted=False seconds=1.305208
+BINDING changed assignment=1 expressions=12
+BINDING unresolved assignment=1 diagnostics=4
+AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_AdversarialD0Mutation_IsRejected(mutation: "population-overflow", expected: "COVERAGE")
+population-overflow DIRECT_STATIC roots=26 references=3976 ports=58 errors=1 corpusTrees=0 symbols=0 expressions=0 population=16 assignments=0 coverageComplete=False accepted=False seconds=0.000000
+COVERAGE assignment-ceiling population=16
+AiDe.App.Tests.SolutionTreeProbeTests.ProbeAtlas_ExhaustiveCoverage_VisitsTheCompletePopulation
+DIRECT_STATIC roots=26 references=3976 ports=58 errors=0 corpusTrees=346 symbols=0 expressions=4551 population=1 assignments=1 coverageComplete=True accepted=True seconds=0.845556
+
+DIRECT_STATIC roots=26 references=3976 ports=58 errors=0 corpusTrees=347 symbols=3 expressions=4551 population=8 assignments=8 coverageComplete=True accepted=True seconds=3.900621
+
+```
+
+Source SHA256 bytes: `60fa8cccb388e396076787f023694a7c3e4eac377db1c553cb73da3a95528023`. LF SHA256: `60fa8cccb388e396076787f023694a7c3e4eac377db1c553cb73da3a95528023`. Raw logs, TRXs and executable author scripts remain under `.artifacts/d0-closure/`; the complete file/hash inventory is `.artifacts/d0-closure/inventory.json`. They are retained local evidence, not additional authored repository paths.
+
+Class -> sweep -> derive -> prevent: parent-recorded DC118 width drift and the binding/identity coverage class apply. The sweep reached all admitted Core/App sources, source-project propagation and build controls; the derived control exhausts bounded assignments rather than flattening alternatives. Permanent discriminators preserve coexistence and reject RELEASE extension/ambiguity/overflow/identity/closure changes. The temporary lazy-tree, text-encoding and fixture-compilation defects were found by actual red/qualification runs, fixed locally, and recorded for the parent's central lesson union. No self-clearance or production behavior change is claimed.
+
+Final closure readback:20/20 tool boundaries, approximately20 minutes from the measured marker; final source-only post-qualification change removed trailing whitespace (token sequence unchanged). Final66-case normal build exited0. Independent review remains pending. Automatic audit-data.js and local raw .artifacts files remain dirty/retained; they are not discarded or manually staged.
+
+
+### Administrative closure recurrence and authorized recovery
+
+At the original20-call ceiling, the official audit writer rejected the closing command because required `--shortname` was absent. The command stopped before staging, commit or lease release. The earlier PRIMARY liveness statement that release had completed was premature. The Conductor authorized one administrative recovery call under the same scope. Actual total: **21/20 calls (overrun)**, not budget compliance; the original20-call evidence and marker are preserved. This paragraph supersedes earlier closure wording where it implied successful completion at20 calls.
+
+Recovery at 2026-09-16T02:37:36.295602+00:00: use the actual writer contract with `--shortname d0-conditional-closure`, preserve the original timing marker, append the own audit, commit only test/proof/audit JSONL, and release the exact two leases in finally. PRIMARY liveness now records the observed release state. No source edit or test rerun occurs during recovery. Source SHA256 remains `60fa8cccb388e396076787f023694a7c3e4eac377db1c553cb73da3a95528023`. The final66/66 TRX is `.artifacts/d0-closure/closure-green.trx`, SHA256 `4320d5a0865a9f63c0a72001afed190c29f184bcc653fe79517a5f5bd567aee8`; its actual exit remains0.
+
+Recurrence class: administrative command contract omissions and premature lifecycle claims. Sweep: inspected the required audit field, exact staged manifest, source/TRX fingerprints and own leases. Derive/prevent: the retained recovery script asserts the immutable source and counters, supplies the required shortname, stops on writer/commit failure, and releases in finally with observed liveness readback. Parent owns the central class/control union. This recovery does not enlarge implementation scope or clear independent review.
