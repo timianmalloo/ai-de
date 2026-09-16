@@ -1,0 +1,513 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e4046cf3-a660-4311-aaf6-2f3ee4a1c686" name="malla@TIMMALLSTRIX 2026-09-16 16:38:22" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-16T16:38:22.2374828-07:00" queuing="2026-09-16T16:38:22.2374829-07:00" start="2026-09-16T16:38:20.4761089-07:00" finish="2026-09-16T16:38:33.2872684-07:00" />
+  <TestSettings name="default" id="a046f724-2d13-4b44-b3ce-ec0fd068d42a">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-16_16_38_22" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d3c212c4-41c3-4dc7-9ea9-96dd7461ee60" testId="5c26aef3-3b83-558b-f75a-14d34cf4a9f7" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_TwoComponentsTogether_OpensGenerationTwoWithoutIntermediateBudget" computerName="TIMMALLSTRIX" duration="00:00:00.0320923" startTime="2026-09-16T16:38:22.2312845-07:00" endTime="2026-09-16T16:38:22.2632266-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d3c212c4-41c3-4dc7-9ea9-96dd7461ee60" />
+    <UnitTestResult executionId="c9888f5c-2a1a-4b6d-b1ee-43602ba74ba8" testId="8230d30e-10a6-ab41-a779-495adb8d3997" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;ready_high&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0125141" startTime="2026-09-16T16:38:33.0290792-07:00" endTime="2026-09-16T16:38:33.0413829-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c9888f5c-2a1a-4b6d-b1ee-43602ba74ba8">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 120&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 67&#xD;
+   at InvokeStub_CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="95e102c2-95a4-46e5-84ca-c0d20adcde46" testId="65f896d0-4945-4003-df8d-75bc0bed318e" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.CurrentTuple_InvalidDomainOrHalfPayload_Refuses(change: &quot;raw_bytes=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0114245" startTime="2026-09-16T16:38:33.1749835-07:00" endTime="2026-09-16T16:38:33.1863850-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="95e102c2-95a4-46e5-84ca-c0d20adcde46" />
+    <UnitTestResult executionId="bab14963-e9bc-4db6-9972-5a5dba0e80e1" testId="559bdb9a-3a6c-0c42-cfe1-cd490c4b4762" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Transition_GenerationTwo_RequiresFinalizationAndRefusesSecondStaging" computerName="TIMMALLSTRIX" duration="00:00:00.0135584" startTime="2026-09-16T16:38:33.2344018-07:00" endTime="2026-09-16T16:38:33.2479495-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bab14963-e9bc-4db6-9972-5a5dba0e80e1" />
+    <UnitTestResult executionId="5b2a480d-64f6-4b63-8246-c5af3ff4bb64" testId="6cfd7b72-38de-f0dc-1f95-d18140249022" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.OperationalAttempt_StatusPollCannotResetBudget" computerName="TIMMALLSTRIX" duration="00:00:00.0127537" startTime="2026-09-16T16:38:33.2216215-07:00" endTime="2026-09-16T16:38:33.2342696-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5b2a480d-64f6-4b63-8246-c5af3ff4bb64" />
+    <UnitTestResult executionId="05009c73-7e03-4ed6-b4b8-e293970a8f87" testId="8e8cc63a-ba02-824a-91d6-630c05064fcf" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.CurrentTuple_InvalidDomainOrHalfPayload_Refuses(change: &quot;canonical_bytes=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0118251" startTime="2026-09-16T16:38:33.1631026-07:00" endTime="2026-09-16T16:38:33.1748887-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="05009c73-7e03-4ed6-b4b8-e293970a8f87" />
+    <UnitTestResult executionId="63df480a-8f58-4356-a212-54497773de8c" testId="912ec184-8c1d-cd81-7982-7f53a273ab28" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.CurrentTuple_InvalidDomainOrHalfPayload_Refuses(change: &quot;payload_presence=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0121136" startTime="2026-09-16T16:38:33.1974095-07:00" endTime="2026-09-16T16:38:33.2091880-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="63df480a-8f58-4356-a212-54497773de8c" />
+    <UnitTestResult executionId="478392bb-a9e7-4572-b1a8-3cd875cb0410" testId="095bfb85-e253-f960-92cd-46a59ded5ab7" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.CurrentTuple_InvalidDomainOrHalfPayload_Refuses(change: &quot;recovery_status=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0119278" startTime="2026-09-16T16:38:33.1391948-07:00" endTime="2026-09-16T16:38:33.1510553-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="478392bb-a9e7-4572-b1a8-3cd875cb0410" />
+    <UnitTestResult executionId="4f89c0e9-7343-4b5e-8346-36fbb0d9be0f" testId="a954dc2d-c24f-8a49-bbb4-fed344750093" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;ready_served&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0119608" startTime="2026-09-16T16:38:33.1139175-07:00" endTime="2026-09-16T16:38:33.1257308-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4f89c0e9-7343-4b5e-8346-36fbb0d9be0f">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 120&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 67&#xD;
+   at InvokeStub_CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="37476a56-d4aa-4112-9de2-fea5954e78cc" testId="d837efe9-4b51-b00d-6122-f2732aa4735f" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PendingLimitPlusOne_AccountsForParentWithoutExceedingActiveBoundsOrLosingChildren" computerName="TIMMALLSTRIX" duration="00:00:10.5098757" startTime="2026-09-16T16:38:22.3994690-07:00" endTime="2026-09-16T16:38:32.9093302-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="37476a56-d4aa-4112-9de2-fea5954e78cc">
+      <Output>
+        <StdOut>children=1025; activePending=0; retainedBytes=0; parentVisible=true; turns=20</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="92f810c7-ebb3-47dc-b116-b6a398445d33" testId="9d12b46a-49b8-038c-f635-1b3a1d13a1c3" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.CurrentTuple_InvalidDomainOrHalfPayload_Refuses(change: &quot;eligibility_generation=-1&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0118742" startTime="2026-09-16T16:38:33.1511540-07:00" endTime="2026-09-16T16:38:33.1629925-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="92f810c7-ebb3-47dc-b116-b6a398445d33" />
+    <UnitTestResult executionId="f98a47a8-a1ac-4af8-a290-bd3b83e8a24f" testId="be061490-a6b0-a7f6-8620-49bd09d799b7" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;due_served&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0124502" startTime="2026-09-16T16:38:33.1012691-07:00" endTime="2026-09-16T16:38:33.1135762-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f98a47a8-a1ac-4af8-a290-bd3b83e8a24f">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 120&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 67&#xD;
+   at InvokeStub_CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="18e53ed1-50b2-4cc4-977a-48340958edb8" testId="66b0375a-deca-3017-d376-6a4f62ac6338" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;due_last&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0123032" startTime="2026-09-16T16:38:33.0895287-07:00" endTime="2026-09-16T16:38:33.1009665-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="18e53ed1-50b2-4cc4-977a-48340958edb8">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 120&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 67&#xD;
+   at InvokeStub_CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d4ba01b2-30cf-4995-b67d-871ec7d75aae" testId="75911ef0-fa08-ed55-2356-149042b66c2c" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PartialRecoveryFailure_PreservesActualWorkAndRolledBackEvent" computerName="TIMMALLSTRIX" duration="00:00:00.4230194" startTime="2026-09-16T16:38:21.2107389-07:00" endTime="2026-09-16T16:38:21.6329401-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d4ba01b2-30cf-4995-b67d-871ec7d75aae">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 2&#xD;
+Actual:   0</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PartialRecoveryFailure_PreservesActualWorkAndRolledBackEvent() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs:line 309&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6cb218f1-9fb3-4af6-b58b-8be9a4002888" testId="4ca41cf6-a93a-1c8f-9641-d4b0c0abddcf" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;deferred_served&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0117257" startTime="2026-09-16T16:38:33.0644389-07:00" endTime="2026-09-16T16:38:33.0759337-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6cb218f1-9fb3-4af6-b58b-8be9a4002888">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 120&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 67&#xD;
+   at InvokeStub_CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cd93e12e-d1bf-45be-bf1b-a05a430a6148" testId="0608155b-3042-df56-46c1-fb07f88bc941" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ParentAlreadyCommitted_AppliesCrossSessionChildOnce" computerName="TIMMALLSTRIX" duration="00:00:00.0371777" startTime="2026-09-16T16:38:32.9740735-07:00" endTime="2026-09-16T16:38:33.0112000-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cd93e12e-d1bf-45be-bf1b-a05a430a6148" />
+    <UnitTestResult executionId="1489246b-e4be-47f9-8476-e1b2addd2c80" testId="54050975-40c8-ac37-5a2c-5212bde01e6f" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;deferred_last&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0113668" startTime="2026-09-16T16:38:33.0418048-07:00" endTime="2026-09-16T16:38:33.0529186-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1489246b-e4be-47f9-8476-e1b2addd2c80">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 120&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 67&#xD;
+   at InvokeStub_CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f3f1877a-8510-48c6-b726-e4d0e59b2c72" testId="e823ee96-bb05-84d1-1612-e7cf6834824b" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ParentInAnotherRepository_NeverSatisfiesPendingChild" computerName="TIMMALLSTRIX" duration="00:00:00.0427352" startTime="2026-09-16T16:38:22.3565954-07:00" endTime="2026-09-16T16:38:22.3993182-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f3f1877a-8510-48c6-b726-e4d0e59b2c72" />
+    <UnitTestResult executionId="bb323d5f-6224-440f-b6cc-9b80dc92509d" testId="0c5c414a-6e33-bd71-8583-46be3582da8d" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;deferred_high&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0110743" startTime="2026-09-16T16:38:33.0531606-07:00" endTime="2026-09-16T16:38:33.0640979-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bb323d5f-6224-440f-b6cc-9b80dc92509d">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 120&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 67&#xD;
+   at InvokeStub_CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="232ea76b-08ca-42e6-8ec1-a8073042f737" testId="8d8d7039-0750-c9a9-88fd-305d1f2390e2" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PermanentlyMissingParent_RetainsPayloadWithoutBoardOrLifecycleAuthority" computerName="TIMMALLSTRIX" duration="00:00:00.0445509" startTime="2026-09-16T16:38:32.9299712-07:00" endTime="2026-09-16T16:38:32.9738714-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="232ea76b-08ca-42e6-8ec1-a8073042f737" />
+    <UnitTestResult executionId="697cb575-2658-457b-9cd4-59e7cf975386" testId="bfc00f95-f1b8-926d-49aa-cb374344cd6d" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.CurrentTuple_InvalidDomainOrHalfPayload_Refuses(change: &quot;eligibility_generation=1.5&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0105971" startTime="2026-09-16T16:38:33.1864703-07:00" endTime="2026-09-16T16:38:33.1970181-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="697cb575-2658-457b-9cd4-59e7cf975386" />
+    <UnitTestResult executionId="be9d0d62-3d67-4536-b4ab-6c8c2fd15ee9" testId="6ddc849a-ac1c-f0f4-a2d5-ab0f10d61949" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_InitialPlusSevenFailures_ExhaustsWithoutNinthAttempt" computerName="TIMMALLSTRIX" duration="00:00:00.0194752" startTime="2026-09-16T16:38:32.9097950-07:00" endTime="2026-09-16T16:38:32.9292121-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="be9d0d62-3d67-4536-b4ab-6c8c2fd15ee9">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 1&#xD;
+Actual:   0</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_InitialPlusSevenFailures_ExhaustsWithoutNinthAttempt() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs:line 241&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bf40136b-f44a-4f41-9eea-0847ed0740ac" testId="9d1479b1-4cda-053b-c126-41dfbda9fdcd" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_EightFailures_ExhaustsThenNewParentOpensExactlyOneGeneration" computerName="TIMMALLSTRIX" duration="00:00:00.0930996" startTime="2026-09-16T16:38:22.2633793-07:00" endTime="2026-09-16T16:38:22.3564485-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bf40136b-f44a-4f41-9eea-0847ed0740ac" />
+    <UnitTestResult executionId="e2e61283-68d1-4211-85e6-7d1572801717" testId="7bb19bf7-4c98-a74e-f24f-cad16cc57a64" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_LateSameRepositoryParent_AppliesChildOnceWithOriginalAdmission" computerName="TIMMALLSTRIX" duration="00:00:00.0638576" startTime="2026-09-16T16:38:21.1536486-07:00" endTime="2026-09-16T16:38:21.2098441-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e2e61283-68d1-4211-85e6-7d1572801717">
+      <Output>
+        <StdOut>originalAdmission=3; pending=0; boardMessages=2</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6828ee03-a2b9-4ddb-82eb-afda320f1086" testId="c33b976f-4390-503b-db22-3b489023d824" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.CurrentTuple_InvalidDomainOrHalfPayload_Refuses(change: &quot;eligibility_generation=NULL&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0132653" startTime="2026-09-16T16:38:33.1260934-07:00" endTime="2026-09-16T16:38:33.1390587-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6828ee03-a2b9-4ddb-82eb-afda320f1086" />
+    <UnitTestResult executionId="9d6df425-d87d-4d8d-b63c-58793509ca16" testId="a8e3de78-3df2-81d8-ad8f-eac829175f9e" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;due_high&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0124466" startTime="2026-09-16T16:38:33.0762140-07:00" endTime="2026-09-16T16:38:33.0885212-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9d6df425-d87d-4d8d-b63c-58793509ca16">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 120&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 67&#xD;
+   at InvokeStub_CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="de5515e6-99fe-43ce-8253-738eb66a2cab" testId="c11515eb-2c6f-c870-8f97-0e5c70749960" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_MoreThan64ReadyChildren_RestartRetainsProgressAndPassBudgets" computerName="TIMMALLSTRIX" duration="00:00:00.5980390" startTime="2026-09-16T16:38:21.6334988-07:00" endTime="2026-09-16T16:38:22.2310142-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="de5515e6-99fe-43ce-8253-738eb66a2cab">
+      <Output>
+        <StdOut>turn=0; examined=64; attempts=64&#xD;
+turn=1; examined=64; attempts=64&#xD;
+turn=2; examined=2; attempts=2&#xD;
+turn=3; examined=0; attempts=0&#xD;
+turn=4; examined=0; attempts=0&#xD;
+turn=5; examined=0; attempts=0</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f505b095-5976-45c5-9cdf-676f730fc004" testId="00bb9b7b-9b0e-ef6f-6785-95610e0aa3d0" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;ready_last&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0150160" startTime="2026-09-16T16:38:33.0131841-07:00" endTime="2026-09-16T16:38:33.0286098-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f505b095-5976-45c5-9cdf-676f730fc004">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 120&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs:line 67&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f7a1671a-b871-4285-bd6d-8a6e94d7e6b6" testId="74f396a2-5739-b695-895e-706f68d054bb" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.CurrentTuple_InvalidDomainOrHalfPayload_Refuses(change: &quot;eligibility_generation='wrong'&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0121588" startTime="2026-09-16T16:38:33.2092997-07:00" endTime="2026-09-16T16:38:33.2214844-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f7a1671a-b871-4285-bd6d-8a6e94d7e6b6" />
+    <UnitTestResult executionId="e6ff6e77-9561-4d0f-9b5a-4574375575bb" testId="d8eaca04-4e50-d62c-9a64-cd7e10147728" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ServedCounterOverflow_RefusesWithoutMovingCursorOrAttempt" computerName="TIMMALLSTRIX" duration="00:00:00.0931337" startTime="2026-09-16T16:38:21.0445188-07:00" endTime="2026-09-16T16:38:21.1457816-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e6ff6e77-9561-4d0f-9b5a-4574375575bb">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ServedCounterOverflow_RefusesWithoutMovingCursorOrAttempt() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs:line 331&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_InitialPlusSevenFailures_ExhaustsWithoutNinthAttempt" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6ddc849a-ac1c-f0f4-a2d5-ab0f10d61949">
+      <Execution id="be9d0d62-3d67-4536-b4ab-6c8c2fd15ee9" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_InitialPlusSevenFailures_ExhaustsWithoutNinthAttempt" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;deferred_served&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="4ca41cf6-a93a-1c8f-9641-d4b0c0abddcf">
+      <Execution id="6cb218f1-9fb3-4af6-b58b-8be9a4002888" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="Checkpoint_InvalidLogicalCounter_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Transition_GenerationTwo_RequiresFinalizationAndRefusesSecondStaging" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="559bdb9a-3a6c-0c42-cfe1-cd490c4b4762">
+      <Execution id="bab14963-e9bc-4db6-9972-5a5dba0e80e1" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="Transition_GenerationTwo_RequiresFinalizationAndRefusesSecondStaging" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;due_served&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="be061490-a6b0-a7f6-8620-49bd09d799b7">
+      <Execution id="f98a47a8-a1ac-4af8-a290-bd3b83e8a24f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="Checkpoint_InvalidLogicalCounter_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PermanentlyMissingParent_RetainsPayloadWithoutBoardOrLifecycleAuthority" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="8d8d7039-0750-c9a9-88fd-305d1f2390e2">
+      <Execution id="232ea76b-08ca-42e6-8ec1-a8073042f737" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_PermanentlyMissingParent_RetainsPayloadWithoutBoardOrLifecycleAuthority" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PartialRecoveryFailure_PreservesActualWorkAndRolledBackEvent" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="75911ef0-fa08-ed55-2356-149042b66c2c">
+      <Execution id="d4ba01b2-30cf-4995-b67d-871ec7d75aae" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_PartialRecoveryFailure_PreservesActualWorkAndRolledBackEvent" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ServedCounterOverflow_RefusesWithoutMovingCursorOrAttempt" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d8eaca04-4e50-d62c-9a64-cd7e10147728">
+      <Execution id="e6ff6e77-9561-4d0f-9b5a-4574375575bb" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_ServedCounterOverflow_RefusesWithoutMovingCursorOrAttempt" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ParentAlreadyCommitted_AppliesCrossSessionChildOnce" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0608155b-3042-df56-46c1-fb07f88bc941">
+      <Execution id="cd93e12e-d1bf-45be-bf1b-a05a430a6148" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_ParentAlreadyCommitted_AppliesCrossSessionChildOnce" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.CurrentTuple_InvalidDomainOrHalfPayload_Refuses(change: &quot;eligibility_generation='wrong'&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="74f396a2-5739-b695-895e-706f68d054bb">
+      <Execution id="f7a1671a-b871-4285-bd6d-8a6e94d7e6b6" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="CurrentTuple_InvalidDomainOrHalfPayload_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_MoreThan64ReadyChildren_RestartRetainsProgressAndPassBudgets" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="c11515eb-2c6f-c870-8f97-0e5c70749960">
+      <Execution id="de5515e6-99fe-43ce-8253-738eb66a2cab" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_MoreThan64ReadyChildren_RestartRetainsProgressAndPassBudgets" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_TwoComponentsTogether_OpensGenerationTwoWithoutIntermediateBudget" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="5c26aef3-3b83-558b-f75a-14d34cf4a9f7">
+      <Execution id="d3c212c4-41c3-4dc7-9ea9-96dd7461ee60" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_TwoComponentsTogether_OpensGenerationTwoWithoutIntermediateBudget" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;ready_served&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a954dc2d-c24f-8a49-bbb4-fed344750093">
+      <Execution id="4f89c0e9-7343-4b5e-8346-36fbb0d9be0f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="Checkpoint_InvalidLogicalCounter_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ParentInAnotherRepository_NeverSatisfiesPendingChild" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="e823ee96-bb05-84d1-1612-e7cf6834824b">
+      <Execution id="f3f1877a-8510-48c6-b726-e4d0e59b2c72" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_ParentInAnotherRepository_NeverSatisfiesPendingChild" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;ready_last&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="00bb9b7b-9b0e-ef6f-6785-95610e0aa3d0">
+      <Execution id="f505b095-5976-45c5-9cdf-676f730fc004" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="Checkpoint_InvalidLogicalCounter_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.CurrentTuple_InvalidDomainOrHalfPayload_Refuses(change: &quot;canonical_bytes=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="8e8cc63a-ba02-824a-91d6-630c05064fcf">
+      <Execution id="05009c73-7e03-4ed6-b4b8-e293970a8f87" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="CurrentTuple_InvalidDomainOrHalfPayload_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;deferred_last&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="54050975-40c8-ac37-5a2c-5212bde01e6f">
+      <Execution id="1489246b-e4be-47f9-8476-e1b2addd2c80" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="Checkpoint_InvalidLogicalCounter_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.OperationalAttempt_StatusPollCannotResetBudget" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6cfd7b72-38de-f0dc-1f95-d18140249022">
+      <Execution id="5b2a480d-64f6-4b63-8246-c5af3ff4bb64" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="OperationalAttempt_StatusPollCannotResetBudget" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;due_last&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="66b0375a-deca-3017-d376-6a4f62ac6338">
+      <Execution id="18e53ed1-50b2-4cc4-977a-48340958edb8" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="Checkpoint_InvalidLogicalCounter_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;deferred_high&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0c5c414a-6e33-bd71-8583-46be3582da8d">
+      <Execution id="bb323d5f-6224-440f-b6cc-9b80dc92509d" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="Checkpoint_InvalidLogicalCounter_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.CurrentTuple_InvalidDomainOrHalfPayload_Refuses(change: &quot;eligibility_generation=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="c33b976f-4390-503b-db22-3b489023d824">
+      <Execution id="6828ee03-a2b9-4ddb-82eb-afda320f1086" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="CurrentTuple_InvalidDomainOrHalfPayload_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;ready_high&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="8230d30e-10a6-ab41-a779-495adb8d3997">
+      <Execution id="c9888f5c-2a1a-4b6d-b1ee-43602ba74ba8" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="Checkpoint_InvalidLogicalCounter_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: &quot;due_high&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a8e3de78-3df2-81d8-ad8f-eac829175f9e">
+      <Execution id="9d6df425-d87d-4d8d-b63c-58793509ca16" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="Checkpoint_InvalidLogicalCounter_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.CurrentTuple_InvalidDomainOrHalfPayload_Refuses(change: &quot;recovery_status=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="095bfb85-e253-f960-92cd-46a59ded5ab7">
+      <Execution id="478392bb-a9e7-4572-b1a8-3cd875cb0410" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="CurrentTuple_InvalidDomainOrHalfPayload_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.CurrentTuple_InvalidDomainOrHalfPayload_Refuses(change: &quot;raw_bytes=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="65f896d0-4945-4003-df8d-75bc0bed318e">
+      <Execution id="95e102c2-95a4-46e5-84ca-c0d20adcde46" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="CurrentTuple_InvalidDomainOrHalfPayload_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.CurrentTuple_InvalidDomainOrHalfPayload_Refuses(change: &quot;payload_presence=NULL&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="912ec184-8c1d-cd81-7982-7f53a273ab28">
+      <Execution id="63df480a-8f58-4356-a212-54497773de8c" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="CurrentTuple_InvalidDomainOrHalfPayload_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_EightFailures_ExhaustsThenNewParentOpensExactlyOneGeneration" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="9d1479b1-4cda-053b-c126-41dfbda9fdcd">
+      <Execution id="bf40136b-f44a-4f41-9eea-0847ed0740ac" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_EightFailures_ExhaustsThenNewParentOpensExactlyOneGeneration" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.CurrentTuple_InvalidDomainOrHalfPayload_Refuses(change: &quot;eligibility_generation=-1&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="9d12b46a-49b8-038c-f635-1b3a1d13a1c3">
+      <Execution id="92f810c7-ebb3-47dc-b116-b6a398445d33" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="CurrentTuple_InvalidDomainOrHalfPayload_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PendingLimitPlusOne_AccountsForParentWithoutExceedingActiveBoundsOrLosingChildren" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d837efe9-4b51-b00d-6122-f2732aa4735f">
+      <Execution id="37476a56-d4aa-4112-9de2-fea5954e78cc" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_PendingLimitPlusOne_AccountsForParentWithoutExceedingActiveBoundsOrLosingChildren" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_LateSameRepositoryParent_AppliesChildOnceWithOriginalAdmission" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="7bb19bf7-4c98-a74e-f24f-cad16cc57a64">
+      <Execution id="e2e61283-68d1-4211-85e6-7d1572801717" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_LateSameRepositoryParent_AppliesChildOnceWithOriginalAdmission" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.CurrentTuple_InvalidDomainOrHalfPayload_Refuses(change: &quot;eligibility_generation=1.5&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="bfc00f95-f1b8-926d-49aa-cb374344cd6d">
+      <Execution id="697cb575-2658-457b-9cd4-59e7cf975386" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests" name="CurrentTuple_InvalidDomainOrHalfPayload_Refuses" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="5c26aef3-3b83-558b-f75a-14d34cf4a9f7" executionId="d3c212c4-41c3-4dc7-9ea9-96dd7461ee60" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8230d30e-10a6-ab41-a779-495adb8d3997" executionId="c9888f5c-2a1a-4b6d-b1ee-43602ba74ba8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="65f896d0-4945-4003-df8d-75bc0bed318e" executionId="95e102c2-95a4-46e5-84ca-c0d20adcde46" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="559bdb9a-3a6c-0c42-cfe1-cd490c4b4762" executionId="bab14963-e9bc-4db6-9972-5a5dba0e80e1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6cfd7b72-38de-f0dc-1f95-d18140249022" executionId="5b2a480d-64f6-4b63-8246-c5af3ff4bb64" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8e8cc63a-ba02-824a-91d6-630c05064fcf" executionId="05009c73-7e03-4ed6-b4b8-e293970a8f87" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="912ec184-8c1d-cd81-7982-7f53a273ab28" executionId="63df480a-8f58-4356-a212-54497773de8c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="095bfb85-e253-f960-92cd-46a59ded5ab7" executionId="478392bb-a9e7-4572-b1a8-3cd875cb0410" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a954dc2d-c24f-8a49-bbb4-fed344750093" executionId="4f89c0e9-7343-4b5e-8346-36fbb0d9be0f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d837efe9-4b51-b00d-6122-f2732aa4735f" executionId="37476a56-d4aa-4112-9de2-fea5954e78cc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9d12b46a-49b8-038c-f635-1b3a1d13a1c3" executionId="92f810c7-ebb3-47dc-b116-b6a398445d33" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="be061490-a6b0-a7f6-8620-49bd09d799b7" executionId="f98a47a8-a1ac-4af8-a290-bd3b83e8a24f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="66b0375a-deca-3017-d376-6a4f62ac6338" executionId="18e53ed1-50b2-4cc4-977a-48340958edb8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="75911ef0-fa08-ed55-2356-149042b66c2c" executionId="d4ba01b2-30cf-4995-b67d-871ec7d75aae" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4ca41cf6-a93a-1c8f-9641-d4b0c0abddcf" executionId="6cb218f1-9fb3-4af6-b58b-8be9a4002888" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0608155b-3042-df56-46c1-fb07f88bc941" executionId="cd93e12e-d1bf-45be-bf1b-a05a430a6148" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="54050975-40c8-ac37-5a2c-5212bde01e6f" executionId="1489246b-e4be-47f9-8476-e1b2addd2c80" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e823ee96-bb05-84d1-1612-e7cf6834824b" executionId="f3f1877a-8510-48c6-b726-e4d0e59b2c72" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c5c414a-6e33-bd71-8583-46be3582da8d" executionId="bb323d5f-6224-440f-b6cc-9b80dc92509d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8d8d7039-0750-c9a9-88fd-305d1f2390e2" executionId="232ea76b-08ca-42e6-8ec1-a8073042f737" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bfc00f95-f1b8-926d-49aa-cb374344cd6d" executionId="697cb575-2658-457b-9cd4-59e7cf975386" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6ddc849a-ac1c-f0f4-a2d5-ab0f10d61949" executionId="be9d0d62-3d67-4536-b4ab-6c8c2fd15ee9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9d1479b1-4cda-053b-c126-41dfbda9fdcd" executionId="bf40136b-f44a-4f41-9eea-0847ed0740ac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7bb19bf7-4c98-a74e-f24f-cad16cc57a64" executionId="e2e61283-68d1-4211-85e6-7d1572801717" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c33b976f-4390-503b-db22-3b489023d824" executionId="6828ee03-a2b9-4ddb-82eb-afda320f1086" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a8e3de78-3df2-81d8-ad8f-eac829175f9e" executionId="9d6df425-d87d-4d8d-b63c-58793509ca16" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c11515eb-2c6f-c870-8f97-0e5c70749960" executionId="de5515e6-99fe-43ce-8253-738eb66a2cab" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="00bb9b7b-9b0e-ef6f-6785-95610e0aa3d0" executionId="f505b095-5976-45c5-9cdf-676f730fc004" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="74f396a2-5739-b695-895e-706f68d054bb" executionId="f7a1671a-b871-4285-bd6d-8a6e94d7e6b6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d8eaca04-4e50-d62c-9a64-cd7e10147728" executionId="e6ff6e77-9561-4d0f-9b5a-4574375575bb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="30" executed="30" passed="18" failed="12" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.27]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.29]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.40]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.40]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.40]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.40]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs(331,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ServedCounterOverflow_RefusesWithoutMovingCursorOrAttempt()&#xD;
+[xUnit.net 00:00:00.40]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.40]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.89]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.89]       Expected: 2&#xD;
+[xUnit.net 00:00:00.89]       Actual:   0&#xD;
+[xUnit.net 00:00:00.89]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.89]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs(309,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PartialRecoveryFailure_PreservesActualWorkAndRolledBackEvent()&#xD;
+[xUnit.net 00:00:00.89]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.89]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:12.19]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:12.19]       Expected: 1&#xD;
+[xUnit.net 00:00:12.19]       Actual:   0&#xD;
+[xUnit.net 00:00:12.19]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.19]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs(241,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_InitialPlusSevenFailures_ExhaustsWithoutNinthAttempt()&#xD;
+[xUnit.net 00:00:12.19]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:12.19]            at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.29]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.&#xD;
+[xUnit.net 00:00:12.29]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.29]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:12.29]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:12.29]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:12.29]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(120,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql)&#xD;
+[xUnit.net 00:00:12.29]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(67,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column)&#xD;
+[xUnit.net 00:00:12.29]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:12.29]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:12.30]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.&#xD;
+[xUnit.net 00:00:12.30]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.30]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:12.30]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:12.30]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:12.30]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(120,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql)&#xD;
+[xUnit.net 00:00:12.30]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(67,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column)&#xD;
+[xUnit.net 00:00:12.30]            at InvokeStub_CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(Object, Span`1)&#xD;
+[xUnit.net 00:00:12.30]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.31]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.&#xD;
+[xUnit.net 00:00:12.31]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.31]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:12.31]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:12.31]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:12.31]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(120,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql)&#xD;
+[xUnit.net 00:00:12.31]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(67,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column)&#xD;
+[xUnit.net 00:00:12.31]            at InvokeStub_CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(Object, Span`1)&#xD;
+[xUnit.net 00:00:12.31]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.32]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.&#xD;
+[xUnit.net 00:00:12.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.32]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:12.32]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:12.32]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:12.32]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(120,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql)&#xD;
+[xUnit.net 00:00:12.32]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(67,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column)&#xD;
+[xUnit.net 00:00:12.32]            at InvokeStub_CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(Object, Span`1)&#xD;
+[xUnit.net 00:00:12.32]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.33]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.&#xD;
+[xUnit.net 00:00:12.33]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.33]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:12.33]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:12.33]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:12.33]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(120,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql)&#xD;
+[xUnit.net 00:00:12.33]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(67,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column)&#xD;
+[xUnit.net 00:00:12.33]            at InvokeStub_CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(Object, Span`1)&#xD;
+[xUnit.net 00:00:12.33]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.35]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.&#xD;
+[xUnit.net 00:00:12.35]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.35]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:12.35]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:12.35]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:12.35]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(120,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql)&#xD;
+[xUnit.net 00:00:12.35]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(67,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column)&#xD;
+[xUnit.net 00:00:12.35]            at InvokeStub_CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(Object, Span`1)&#xD;
+[xUnit.net 00:00:12.35]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.36]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.&#xD;
+[xUnit.net 00:00:12.36]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.36]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:12.36]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:12.36]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:12.36]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(120,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql)&#xD;
+[xUnit.net 00:00:12.36]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(67,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column)&#xD;
+[xUnit.net 00:00:12.36]            at InvokeStub_CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(Object, Span`1)&#xD;
+[xUnit.net 00:00:12.36]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.37]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.&#xD;
+[xUnit.net 00:00:12.37]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.37]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:12.37]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:12.37]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:12.37]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(120,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql)&#xD;
+[xUnit.net 00:00:12.37]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(67,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column)&#xD;
+[xUnit.net 00:00:12.37]            at InvokeStub_CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(Object, Span`1)&#xD;
+[xUnit.net 00:00:12.37]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.38]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_CHECKPOINT_GAP'.&#xD;
+[xUnit.net 00:00:12.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.38]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:12.38]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:12.38]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:12.38]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(120,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Execute(SqliteConnection connection, SqliteTransaction transaction, String sql)&#xD;
+[xUnit.net 00:00:12.38]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryBoundaryTests.cs(67,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(String column)&#xD;
+[xUnit.net 00:00:12.38]            at InvokeStub_CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(Object, Span`1)&#xD;
+[xUnit.net 00:00:12.38]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.51]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T16:38:21.1473527-07:00">
+        <Text>[xUnit.net 00:00:00.40]     AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ServedCounterOverflow_RefusesWithoutMovingCursorOrAttempt [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T16:38:21.6334174-07:00">
+        <Text>[xUnit.net 00:00:00.89]     AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PartialRecoveryFailure_PreservesActualWorkAndRolledBackEvent [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T16:38:32.9295765-07:00">
+        <Text>[xUnit.net 00:00:12.19]     AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_InitialPlusSevenFailures_ExhaustsWithoutNinthAttempt [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T16:38:33.0289228-07:00">
+        <Text>[xUnit.net 00:00:12.29]     AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: "ready_last") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T16:38:33.0416824-07:00">
+        <Text>[xUnit.net 00:00:12.30]     AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: "ready_high") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T16:38:33.0530936-07:00">
+        <Text>[xUnit.net 00:00:12.31]     AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: "deferred_last") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T16:38:33.0643595-07:00">
+        <Text>[xUnit.net 00:00:12.32]     AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: "deferred_high") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T16:38:33.0760919-07:00">
+        <Text>[xUnit.net 00:00:12.33]     AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: "deferred_served") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T16:38:33.0887513-07:00">
+        <Text>[xUnit.net 00:00:12.35]     AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: "due_high") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T16:38:33.1011604-07:00">
+        <Text>[xUnit.net 00:00:12.36]     AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: "due_last") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T16:38:33.1138344-07:00">
+        <Text>[xUnit.net 00:00:12.37]     AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: "due_served") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T16:38:33.1259813-07:00">
+        <Text>[xUnit.net 00:00:12.38]     AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests.Checkpoint_InvalidLogicalCounter_Refuses(column: "ready_served") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

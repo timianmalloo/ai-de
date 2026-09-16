@@ -267,7 +267,7 @@ public sealed class CoordContractLogPump(string logDir, InjectedContractIngest i
     /// <summary>Diagnostics from the last bounded capture, including replayed records.</summary>
     public CoordinationPumpStats LastRun { get; private set; } = new(0, 0, 0, 0, 0, 0, null);
 
-    /// <summary>Actual metadata examinations and semantic attempts across the last complete pass.</summary>
+    /// <summary>Observed work with explicit completion/failure status; not recorded is not completed zero.</summary>
     public CoordinationRecoveryStats LastRecovery { get; private set; } = new(0, 0, 0);
 
     /// <summary>Returns recognized records in the capture, including already admitted records.</summary>
@@ -283,7 +283,8 @@ public sealed class CoordContractLogPump(string logDir, InjectedContractIngest i
             var pending = 0;
             var refused = 0;
             string? diagnostic = null;
-            LastRecovery = new(0, 0, 0);
+            var recovery = new CoordinationRecoveryStats(0, 0, 0);
+            LastRecovery = recovery;
             try
             {
                 var captures = CoordinationSourceCapture.Read(_logDir, store, _ingest.Host);
@@ -328,7 +329,7 @@ public sealed class CoordContractLogPump(string logDir, InjectedContractIngest i
                 }
                 if (diagnostic is null)
                 {
-                    LastRecovery = store.RecoverCoordination(captures, _ingest.Host.ObservationAllocators, out var recovered);
+                    store.RecoverCoordination(captures, _ingest.Host.ObservationAllocators, out var recovered, out recovery);
                     foreach (var item in recovered)
                     {
                         _ingest.Observe(item);
@@ -348,6 +349,7 @@ public sealed class CoordContractLogPump(string logDir, InjectedContractIngest i
             }
             finally
             {
+                LastRecovery = recovery;
                 LastRun = new(records, bytes, replayed, pending, refused,
                     System.Diagnostics.Stopwatch.GetElapsedTime(started).TotalMilliseconds, diagnostic);
                 activity.SetTag("coordination.records", records);

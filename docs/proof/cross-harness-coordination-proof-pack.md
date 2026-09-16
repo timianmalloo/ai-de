@@ -20,6 +20,173 @@ summary: >-
 
 # Proof Pack — dormant P1 candidate; independent code gate pending
 
+## Recovery B finite-known-gap continuation — 2026-09-16
+
+**Partial author evidence, not independent approval or full P2.** Base
+`e5b7949324c449999d1e96f290d28f188a128af8`. The unchanged B amendment is
+`f2ad827e`; its predecessor implementation base was
+`f12e8b86b5dfc1341a4526fdf0540af162ff599b`. Enhanced canonical append
+remains disabled and production authority is **DENY**.
+
+### One canonical pack: process correction
+
+The prior author created a second proof at
+`docs/proof/p24-recoveryB-author-checkpoint.md`, with `type: proof`,
+the wrong owner and path-valued/nonconforming typed links. That was an
+unauthorized second Proof Pack, not a gate or independent approval. This section
+consolidates its factual receipts and limits. The former path is now only a short
+historical `type: doc` pointer, with owner `@timianmalloo` and a typed link to
+`proof-cross-harness-coordination`. Its original text remains in commit
+`e5b7949324c449999d1e96f290d28f188a128af8`. No historical JSONL, TRX or pins
+were rewritten. No new design/review gate was invented for this path correction.
+
+### Preserved predecessor receipts and limits
+
+Every short evidence name here resolves under
+`docs/proofs/p24-recovery-evidence/`. `recoveryB-pins.json` retains the
+predecessor source/test/project/binary SHA-256 pins unchanged.
+
+| Predecessor factual receipt | Observation and limit |
+|---|---|
+| `recoveryB-baseline-red.trx` | Original late-parent and 1,025-child runtime failures; both subsequently green. |
+| `recoveryB-final-green.trx` | Late same-repository parent applies the child once at admission 3; pending 0, two board messages and unchanged native message on replay. |
+| Original capacity oracle | All 1,025 admissions survive; all children apply after the parent within 20 turns; active pending 0, retained pending bytes 0. Not a near-byte-limit fixture. |
+| Restart oracle | 130 children: recovery attempts/examinations 64/64/2/0/0/0 across fresh store/pump instances. Originally executed without a dedicated new budget mutant; the continuation supplies the 65-attempt mutant below. |
+| Original exhaustion oracle | Eight **recovery** failures exhausted both payloads at generation 1; a later parent opened generation 2 and applied once. It did **not** prove a combined initial-plus-recovery budget. Superseded only in interpretation by the new combined-budget oracle below. |
+| Original paired tuple boundaries | Generation 2 requires finalization, second staging rejects, eight invalid domain/half-payload cases reject, polling cannot reset attempts. Dedicated predecessor red proof was incomplete. |
+| `recoveryB-union.trx` | 488 passing result occurrences, zero failed/skipped, zero multiset difference from the earlier 471. Selected classes, not the full Core suite. |
+| `recoveryB-schema-mutants.trx` | 23 failing / 50 passing predecessor mutation-harness results: 21 lost-refusal assertions, one indexed-lookup assertion, one generation CHECK; zero missing anchors. Historical harness evidence, not a new recovery mutation score. |
+| `recoveryB-first-runtime.trx` | Intermediate capacity failure: a traversal ending below its frozen high-water after a terminal row failed to wrap. Common end-of-lane advancement fixed all three lanes; original 1,025-child oracle was observed red then green. |
+| `recoveryB-coordination.trx` | Intermediate reference activation lost the session snapshot; corrected by reusing the original scoped registration mapping. Old raw-SQL fixtures also required explicit staging/settling. These are failed receipts, never gate passes. |
+
+The previous payload-clause mutant disabled the independent paired-payload CHECK
+only inside its disposable transaction and rolled it back. No production guard
+was weakened. Optional cross-stream snapshots, SQL VM-work bounds and pending
+lifecycle semantics were not proven by these receipts.
+
+### Current change reach and meaning
+
+The existing aggregate remains one qualified event and its immutable receipts,
+with a mutable derived recovery position. No new durable queue or live authority
+was added. `ProjectRecord` now charges the actual initial `ApplyObservation`
+call, including successful admissions and deferred source references.
+`CoordinationRecovery` counts actual calls before execution, independently of
+committed per-event attempts. A thrown transaction rolls its event counter and
+cursor back; the pass still records the attempted call. A blocked reserved
+activation rolls payload/native effects back, then records its observed attempt
+and cursor in the existing progress transaction. Dedicated reserve rollback
+qualification remains B-3; this implementation is not presented as that proof.
+
+The reach is fresh-v8 DDL → event counter → projection → recovery → pump
+`LastRecovery` → normal Activity tags → real SQLite/native-writer tests.
+`NotRecorded` means recovery did not run; `Failed` carries observed partial work;
+`Completed` alone means a completed pass. Operator questions have named sources:
+work volume from examinations/attempts/applied, duration from elapsed milliseconds,
+failure/path from status and stable error code. `Applied` counts committed effects,
+including commits before a later failure. No raw content enters tags.
+`COORD_RECOVERY_COUNTER_OVERFLOW` refuses checked logical service-counter advance;
+`COORD_RECOVERY_FAILED` reports non-source exceptions without copying their text.
+
+Seen components remain cumulative. Registration then parent is 0→1→2; both at once
+is 0→2 without an intermediate attempt budget. Eligibility remains a nonnegative
+integer, never a boolean. All nine logical last/high/served fields now reject
+negative, fractional, nonnumeric, NULL and oversized values. Existing NOT NULL
+paired-current FK and generation-2 finalization remain intact.
+
+The pass still protects 32/16/16 attempts and 128/64/64 metadata selections before
+borrowing, with global totals 64/256, persistent least-served/keyset cursors and
+next-pass wrap. **Selections are not SQLite VM row visits.** Source records come
+from the already validated bounded capture, not per-retry rereads. Retained
+ordinary capacity remains 1,023 / 16,646,144 bytes; absolute reserve capacity
+remains 1,024 / 16,777,216 bytes. Cross-source fairness and query-plan work are
+explicitly unverified below.
+
+### Executed current oracles and mutations
+
+| Claim | Focal oracle / evidence | Red observed | Confidence / limit |
+|---|---|---|---|
+| Initial + seven recovery failures exhaust at eight, not nine | `Pump_InitialPlusSevenFailures_ExhaustsWithoutNinthAttempt`; initial 1, seven actual attempts, payload 0, restart stays at 8, new parent generation 2/attempt 1 | `recoveryB-finite-red.trx`: expected 1, actual 0. Reverse initial-charge mutant reproduces it. | Verified native fixture; flapping/disappearance boundaries remain B-3. |
+| Both components together do not create an intermediate budget | `Pump_TwoComponentsTogether_OpensGenerationTwoWithoutIntermediateBudget`; generation 2, no generation-1 transition, attempt 1 | Existing-path characterization, not independently mutated | Executed; no stand-alone mutation claim. |
+| Partial failed pass reports actual work and rethrows | `Pump_PartialRecoveryFailure_PreservesActualWorkAndRolledBackEvent`; second attempt faults before commit after one committed child; 2 examinations, 2 calls, 1 applied, Failed, elapsed and exact Activity tags; pending events retain generation 1 | Baseline expected attempts 2, actual 0; status mutant expected Failed, actual Completed | Verified before-commit partial outage. Recovery-specific lost ACK remains B-3. |
+| A failure before recovery is not completed zero work | `Pump_FailsBeforeRecovery_ReportsNotRecordedRatherThanCompletedZero`; injected projection fault, NotRecorded/no elapsed plus pump diagnostic | Fault executed; not separately source-mutated | Executed typed absence, not blanket outage coverage. |
+| Logical domains refuse invalid values | `Checkpoint_InvalidLogicalCounter_Refuses`, all nine fields × five invalid values | `recoveryB-finite-domains-red.trx`: nine focal “No exception was thrown” failures before DDL guards | Verified real SQLite. Initial nine setup failures in the first RED receipt were **not** semantic evidence. |
+| Logical service-counter overflow is atomic and typed | `Pump_ServedCounterOverflow_RefusesWithoutMovingCursorOrAttempt`; max integer, unchanged cursor and attempts | Baseline no exception; guard mutant throws wrong `OverflowException` instead of stable typed error | Verified served-counter overflow; eligibility-max runtime fixture remains B-3. |
+| Global attempt ceiling stays 64 across restart | Existing 130-child oracle | Reverse ceiling mutant observed 65 and failed 0..64 bound | Verified single child-source fixture, not cross-source fairness. |
+| Prior selected result occurrences remain passing | First restored implementation `recoveryB-finite-union.trx`: 502/502; final post-mutation `recoveryB-finite-restored.trx` with corresponding receipt | Four reverse mutants fail four independent focal oracles, 8 pass; none fail from build/setup | Exact ordinal multiset comparison against all 488 predecessor occurrences; selected classes only. |
+
+`recoveryB-finite-mutants.trx` and `recoveryB-finite-mutants-pins.json`
+retain mutant source/test/binary pins. The four simultaneous mutants have
+distinct failing oracles (initial count, failed status, overflow error, 65 ceiling);
+this is targeted mutation evidence, not an isolated mutation score.
+The final source/test/project/binary/TRX pins and full run transcript are
+`recoveryB-finite-restored-receipt.json` and
+`recoveryB-finite-restored-full-output.txt`. The earlier green receipt/transcript
+remain separate. Baseline RED source is the named base; no claim is made that
+its transient pre-fix test binary was preserved.
+
+### Additive feed machine-receipt correction
+
+The immutable `docs/proofs/p24-feed-evidence/p24-two-blockers-receipt.json`
+has empty `recovery_counters` and `restored_counters`. The new restored receipt
+reads namespace-aware TRX `ResultSummary/Counters` directly and requires a
+nonempty node; it includes the historical recovery RED and restored union.
+It corrects their machine-readable interpretation without rewriting the receipt
+or any TRX. Explicit comparer labels replace ambiguous “distinct” claims:
+
+| Receipt group | Occurrences | Ordinal distinct names | OrdinalIgnoreCase distinct names |
+|---|---:|---:|---:|
+| Original prior selection | 304 | 301 | 301 |
+| Feed/blocker restored union | 471 | 466 | 465 |
+| MCP selection | 72 | 72 | 71 |
+| Predecessor B union | 488 | 483 | 482 |
+| Current first green union | 502 | 497 | 496 |
+
+Selections overlap; none of these rows are additive coverage.
+The comparator verifies occurrence multiplicity, not guessed display-name totals.
+
+### Corrections as classes, controls and remaining gates
+
+* **Attempt undercount:** initial execution outside the recovery counter allowed
+  a ninth call. Sweep covers initial applied/pending and retained-reference paths.
+  Derive the budget from the one persisted event counter; combined-budget oracle
+  and reverse initial-charge mutant fail without the fix.
+* **Success-shaped outage:** publish-on-return discarded partial work and reset
+  looked like completed zero. Sweep covers pre-recovery failure, partial work and
+  commit-before-fault accounting. Derive both Activity and pump stats from the
+  same finally snapshot; actual partial-failure oracle and status mutant enforce it.
+* **Unchecked numeric cursor:** SQLite promotion could turn integer overflow into
+  a real value. Sweep covers all nine last/high/served columns. Derive service
+  order with checked integer arithmetic; invalid-domain and overflow controls
+  now fail on the old shape.
+* **Fixture failure mistaken for RED:** the first numeric fixture inserted offset
+  0 after a source row ending at 1. All nine cases failed setup. The corrected
+  fixture uses the actual boundary; only its separate nine refusal-assertion
+  failures count as RED. The original receipt is preserved, not relabeled.
+* **Duplicate proof/ambiguous counters:** consolidated into this canonical pack
+  and added an explicit comparer/counter receipt. No independent process gate
+  was self-cleared. Central lesson/index integration remains conductor work
+  under the explicit author scope.
+
+The prior checkpoint's eight numbered obligations retain stable local IDs.
+**Closed at author-evidence level: B-1, B-4, B-5. Exact remaining set:
+B-2, B-3, B-6, B-7, B-8 (8 → 5).**
+
+| Remaining ID | Exact unresolved obligation |
+|---|---|
+| B-2 | Cross-source fairness/blocked probes/restart, fresh-source starvation, shared 256/64 accounting across all sources, protected first opportunities/borrowing and SQL query-plan/VM-work bounds. Single-source ceiling evidence does not close this. |
+| B-3 | Flapping/disappearance/reappearance/duplicate and boundary-poll eight-budget matrix; eligibility overflow atomic refusal; byte-cap+1; legacy native-Seq parent; reserved-slot rollback; recovery-specific lost ACK; source GAP during reference rehydration. No runtime oracle for these is claimed here. |
+| B-6 | Pending register/update/heartbeat/end recovery semantics remain intentionally unexecuted; original-source whole-effect-once without live registration/generation/heartbeat refresh/capability is unproven. **Independent lifecycle/liveness floor BLOCK**, not a scope waiver. |
+| B-7 | Paired exhausted/tombstone history qualification and optional cross-stream projection-reference snapshots. Same-repository board-ID lookup alone does not discharge these. |
+| B-8 | Independent Data/Distributed Systems/Test code review and broader recovery mutations, including isolated attempts/examinations/fairness/reference guards. Historical 23 schema mutants remain predecessor evidence; not re-run or promoted to coverage of new code. |
+
+Independent gates remain **BLOCK / not convened by this no-agent author unit**.
+No producer, canonical bridge, released-v7 old-binary rollback, candidate-v8
+upgrade, UI, live database, endpoint, P2 completion, P3–P5 or upstream integration
+was performed. Retain the assigned worktree for those independent reviewers;
+release edit claims and end the session after the commit.
+The AI-DE capture environment (`AIDE_SESSION`, `AIDE_CONTRACT_LOG`) was absent
+in this author process, so no episode-close was fabricated for another session.
+
 ## P2 finite F1/F2 repair — 2026-09-16
 
 **Author implementation complete; independent Test/Security/Data re-gate pending.**

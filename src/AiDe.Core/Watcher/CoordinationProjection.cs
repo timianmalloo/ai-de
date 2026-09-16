@@ -373,13 +373,15 @@ public sealed partial class SqliteWatcherObservationStore
             insert.ExecuteNonQuery();
         }
         var effect = ApplyObservation(scope, record, allocators, transaction);
+        var receipt = initial;
         if (effect.State != "pending")
         {
-            var receipt = AppendReceipt(scope, record.Key, initial, effect, transaction, "none", generation, active ? 1 : 0);
-            FinalizeRecovery(scope, record, receipt, effect.State, "none", generation, active ? 1 : 0,
-                components, 0, allocators.RecordedAt, transaction);
+            status = "none";
+            receipt = AppendReceipt(scope, record.Key, initial, effect, transaction, status, generation, active ? 1 : 0);
         }
-        // Pending retains the initial receipt and complete payload; it is not a successful application.
+        FinalizeRecovery(scope, record, receipt, effect.State, status, generation, active ? 1 : 0,
+            components, 1, allocators.RecordedAt.AddSeconds(2), transaction);
+        // Initial admission is the first semantic attempt, including when only a reference is retained.
         return new(initial, effect.State, effect.MessageId, effect.Session,
             record.Event?.ExternalSessionId, record.Event, false);
     }

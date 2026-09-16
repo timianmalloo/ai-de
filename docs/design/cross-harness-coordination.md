@@ -1009,3 +1009,26 @@ Surface list: cache DDL → inert recovery rows → existing ProjectRecord/nativ
 Feed A historical outcomes remain immutable; no invented recovery-health zero.
 TimeProvider-derived UTC is scheduling only, with no unconditional SLA.
 Independent Data/DS/Test implementation review remains required.
+
+#### B counter/measurement implementation clarification — 2026-09-16
+
+Eight means the combined initial `ApplyObservation` call and subsequent recovery
+calls in that eligibility generation. A successful initial admission records one;
+a deferred reference that actually called the method also records one. Metadata
+selection, absent-dependency probes and exhausted-reference probes do not call it
+and do not consume semantic attempts. No polling or capacity change resets the count.
+If reserved activation returns pending, roll back the payload/native transaction
+and persist the observed attempt and any qualified generation change with cursor
+progress in a separate transaction. A thrown transaction leaves its event attempt
+and cursor uncommitted; the pass measurement still counts the attempted call.
+
+`LastRecovery.Status` distinguishes `NotRecorded`, `Completed` and `Failed`.
+The normal `coordination.recovery` Activity and the pump result expose the observed
+examinations, attempted calls, committed applied effects, elapsed milliseconds and
+stable error code. A partial failure rethrows; it is not converted to success.
+`COORD_RECOVERY_FAILED` covers non-source failures; existing source error codes
+remain exact; `COORD_RECOVERY_COUNTER_OVERFLOW` denies logical service-counter
+overflow before cursor movement. Raw payloads never enter these tags.
+Logical last/high/served columns are nonnegative SQLite integers; UTC scheduling
+remains a signed integer timestamp, not an eligibility flag or a logical clock.
+This is clarification within B, not independent approval or a new permission gate.

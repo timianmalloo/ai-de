@@ -1,0 +1,29 @@
+**********************
+PowerShell transcript start
+Start time: 20260916164725
+Username: TIMMALLSTRIX\malla
+RunAs User: TIMMALLSTRIX\malla
+Configuration Name: 
+Machine: TIMMALLSTRIX (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\Program Files\PowerShell\7\pwsh.dll -NoProfile -NoLogo -NonInteractive -Command try { [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false) } catch {}; try { if (Get-Variable -Name PSStyle -ErrorAction Ignore) { $PSStyle.OutputRendering = 'PlainText' } } catch {}; $global:LASTEXITCODE = 0; $__copilotCommandFinished = $false; $__copilotSuccess = $false; try { $global:LASTEXITCODE = 0
+Set-Location 'C:\Projects\ai-de-feature-xh-p2-projection'; $env:AGENT_SESSION='xh-p2-projection-b0d0'; $env:AGENT_NAME='copilot-recoveryB-finite'; 'src/AiDe.Core/Watcher/CoordinationProjection.cs','src/AiDe.Core/Watcher/CoordinationRecovery.cs','docs/proofs/p24-recovery-evidence','docs/proof/cross-harness-coordination-proof-pack.md','docs/proof/p24-recoveryB-author-checkpoint.md','docs/plans/cross-harness-coordination-phases.md','docs/design/cross-harness-coordination.md' | ForEach-Object { python docs\ai-forward-pack\scripts\coord-core.py release --path $_ }; & .\docs\proofs\p24-recovery-evidence\finite-verify.ps1; if (!$?) { exit 1 }; git --no-pager diff --check; git --no-pager status --short; git check-ignore docs\proofs\p24-recovery-evidence\recoveryB-finite-restored-full-output.log; Get-Content docs\proofs\p24-recovery-evidence\recoveryB-finite-restored-receipt.json -TotalCount 14
+$__copilotSuccess = $?
+$__copilotCommandFinished = $true
+ } finally { if ($__copilotCommandFinished) { if (-not $__copilotSuccess -and $LASTEXITCODE -is [int] -and $LASTEXITCODE -ne 0) { $host.SetShouldExit($LASTEXITCODE) } elseif (-not $__copilotSuccess) { $host.SetShouldExit(1) } else { $host.SetShouldExit(0) } } }
+Process ID: 24564
+PSVersion: 7.6.6
+PSEdition: Core
+GitCommitId: 7.6.6
+OS: Microsoft Windows 10.0.26200
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is docs\proofs\p24-recovery-evidence\recoveryB-finite-restored-full-output.log
+
+**********************
+PowerShell transcript end
+End time: 20260916164818
+**********************

@@ -1,0 +1,129 @@
+{
+  "base": "e5b7949324c449999d1e96f290d28f188a128af8",
+  "status": "partial-author-evidence-independent-review-blocked",
+  "priorOccurrencesMissing": 0,
+  "counts": [
+    {
+      "path": "docs\\proofs\\p24-recovery-evidence\\p24-prior-304-green.trx",
+      "counters": "<Counters total=\"304\" executed=\"304\" passed=\"304\" failed=\"0\" error=\"0\" timeout=\"0\" aborted=\"0\" inconclusive=\"0\" passedButRunAborted=\"0\" notRunnable=\"0\" notExecuted=\"0\" disconnected=\"0\" warning=\"0\" completed=\"0\" inProgress=\"0\" pending=\"0\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />",
+      "occurrences": 304,
+      "ordinalDistinct": 301,
+      "ordinalIgnoreCaseDistinct": 301
+    },
+    {
+      "path": "docs\\proofs\\p24-feed-evidence\\p24-two-blockers-restored-union-green.trx",
+      "counters": "<Counters total=\"471\" executed=\"471\" passed=\"471\" failed=\"0\" error=\"0\" timeout=\"0\" aborted=\"0\" inconclusive=\"0\" passedButRunAborted=\"0\" notRunnable=\"0\" notExecuted=\"0\" disconnected=\"0\" warning=\"0\" completed=\"0\" inProgress=\"0\" pending=\"0\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />",
+      "occurrences": 471,
+      "ordinalDistinct": 466,
+      "ordinalIgnoreCaseDistinct": 465
+    },
+    {
+      "path": "docs\\proofs\\p24-feed-evidence\\p24-mcp-green.trx",
+      "counters": "<Counters total=\"72\" executed=\"72\" passed=\"72\" failed=\"0\" error=\"0\" timeout=\"0\" aborted=\"0\" inconclusive=\"0\" passedButRunAborted=\"0\" notRunnable=\"0\" notExecuted=\"0\" disconnected=\"0\" warning=\"0\" completed=\"0\" inProgress=\"0\" pending=\"0\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />",
+      "occurrences": 72,
+      "ordinalDistinct": 72,
+      "ordinalIgnoreCaseDistinct": 71
+    },
+    {
+      "path": "docs\\proofs\\p24-recovery-evidence\\recoveryB-union.trx",
+      "counters": "<Counters total=\"488\" executed=\"488\" passed=\"488\" failed=\"0\" error=\"0\" timeout=\"0\" aborted=\"0\" inconclusive=\"0\" passedButRunAborted=\"0\" notRunnable=\"0\" notExecuted=\"0\" disconnected=\"0\" warning=\"0\" completed=\"0\" inProgress=\"0\" pending=\"0\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />",
+      "occurrences": 488,
+      "ordinalDistinct": 483,
+      "ordinalIgnoreCaseDistinct": 482
+    },
+    {
+      "path": "docs\\proofs\\p24-recovery-evidence\\recoveryB-finite-union.trx",
+      "counters": "<Counters total=\"502\" executed=\"502\" passed=\"502\" failed=\"0\" error=\"0\" timeout=\"0\" aborted=\"0\" inconclusive=\"0\" passedButRunAborted=\"0\" notRunnable=\"0\" notExecuted=\"0\" disconnected=\"0\" warning=\"0\" completed=\"0\" inProgress=\"0\" pending=\"0\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />",
+      "occurrences": 502,
+      "ordinalDistinct": 497,
+      "ordinalIgnoreCaseDistinct": 496
+    }
+  ],
+  "pins": [
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationRecovery.cs",
+      "sha256": "7DD120FD6154AF38C5D0DA26580229A7126E4151DA3B7347B15EFC7F33636B80"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationProjection.cs",
+      "sha256": "C8D5C2BEDC02D405459A5E13CBB7B1A7FD692E022C0DCD43681D3D3487763B45"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationContractLog.cs",
+      "sha256": "EF21D2F99EF9EB712112116A840C246B9C6BE896F09E8D80C6BE60D3C74F29C6"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\SqliteWatcherObservationStore.Coordination.cs",
+      "sha256": "325118C85C137FAB8DAD28254EDC2DF3EAA319DA1A46D40F5B2212F89B0D8560"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationRecoveryTests.cs",
+      "sha256": "618733A73C01307947B078F203E9FC76BA35AE1CDE8F0741981690A0D79705AE"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationRecoveryBoundaryTests.cs",
+      "sha256": "B9F5E7D416AABF1E2B1D007890B2782ECADE9B0272D132B2669C51C464A822D1"
+    },
+    {
+      "path": "src\\AiDe.Core\\AiDe.Core.csproj",
+      "sha256": "B63C41B97201DC3E1016B72B404A32411AC31E477231B281219DDA64D0AD584A"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "sha256": "FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D"
+    },
+    {
+      "path": "src\\AiDe.Core\\bin\\Debug\\net10.0\\AiDe.Core.dll",
+      "sha256": "F04A184E185D401FD3F5A2CD4602A72BD2BA3037ECE4C13DBA22E668C38EB3FD"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll",
+      "sha256": "5124EABC698579C49B30A28D3A20C2E6D3DDA04C3232405429B5EA4180AC49A6"
+    },
+    {
+      "path": "docs\\proofs\\p24-recovery-evidence\\p24-prior-304-green.trx",
+      "sha256": "5FDBF6B169C7C388D128229F9F22F632D8320A9B3D5E001BED0C10E146D769F5"
+    },
+    {
+      "path": "docs\\proofs\\p24-recovery-evidence\\p24-recovery-red.trx",
+      "sha256": "1AA42C6DEACA17816325CC8C4A6EA89E3D905530716599AF04C8B3B02E54B45A"
+    },
+    {
+      "path": "docs\\proofs\\p24-recovery-evidence\\recoveryB-baseline-red.trx",
+      "sha256": "B859CC49B48A836B68C5AC61A474DC0233B060201F50732323822C116E7FF624"
+    },
+    {
+      "path": "docs\\proofs\\p24-recovery-evidence\\recoveryB-coordination.trx",
+      "sha256": "99FE0D0EE3BED067D6B2968FE235AF8BCF688BAD30D1DB837DBE4C959EE18ED0"
+    },
+    {
+      "path": "docs\\proofs\\p24-recovery-evidence\\recoveryB-final-green.trx",
+      "sha256": "6C00929F473EEDE72BA5E719A25BF4A7A59E717D292F18B620D978B1C9196659"
+    },
+    {
+      "path": "docs\\proofs\\p24-recovery-evidence\\recoveryB-finite-domains-red.trx",
+      "sha256": "11B1EADFC18346AAEBDDDAE2EF39A952C72C995F1A65AF9FB28D7254D3ED0B88"
+    },
+    {
+      "path": "docs\\proofs\\p24-recovery-evidence\\recoveryB-finite-red.trx",
+      "sha256": "4E8A2A9C47CBEED3DEEEC7F828C124099510EE3B5109008CE3BDCBF000319E80"
+    },
+    {
+      "path": "docs\\proofs\\p24-recovery-evidence\\recoveryB-finite-union.trx",
+      "sha256": "878592D8FCF96C8D8D12D29D079738454B421CD17F37A6E5D8715EDBCD74D222"
+    },
+    {
+      "path": "docs\\proofs\\p24-recovery-evidence\\recoveryB-first-runtime.trx",
+      "sha256": "4C127474C9B725B455CAEA5291330452AE5EE2B3323507E3FE55D034931F9647"
+    },
+    {
+      "path": "docs\\proofs\\p24-recovery-evidence\\recoveryB-schema-mutants.trx",
+      "sha256": "0BE736956C06EB7FC4A698889097675A88B7FA3160E301355597C0AAB123F27B"
+    },
+    {
+      "path": "docs\\proofs\\p24-recovery-evidence\\recoveryB-union.trx",
+      "sha256": "B23D5D84A08563812C1FAEB79F51DBDAED5F360641B783FD1FFC7EF58A276C94"
+    }
+  ],
+  "comparatorCorrection": "Occurrence multisets use Ordinal; unique name counts explicitly name their comparer. Old TRX and JSON receipts are unchanged."
+}

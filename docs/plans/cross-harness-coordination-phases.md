@@ -676,7 +676,8 @@ Author result: original two runtime REDs are GREEN. Restored union is 488/488,
 including every one of the prior 471 result occurrences (multiset difference zero).
 The predecessor mutation harness still produces 23 semantic failures, no missing
 mutation anchors. Runtime restart trace is 64/64/2 attempts for 130 children.
-Proof: `docs/proof/p24-recoveryB-author-checkpoint.md`.
+Canonical proof: `docs/proof/cross-harness-coordination-proof-pack.md`.
+The former checkpoint path is retained only as a historical document pointer.
 
 **Partial, not finite-B closure:** initial admission attempts are not included in
 the persisted recovery-attempt counter; exact combined eight-attempt semantics,
@@ -684,3 +685,36 @@ strict logical-turn numeric guards, SQL-work bounds and the remaining finite-B
 runtime oracles need correction/proof before independent Data/DS/Test approval.
 The selected-row examination counters do not measure SQLite VM row visits.
 No production activation, full-P2 or P3–P5 claim is made.
+
+### Recovery B finite-known-gap continuation — 2026-09-16
+
+Base `e5b7949324c449999d1e96f290d28f188a128af8`; author code/evidence only.
+Goal: repair the supplied combined-attempt, failed-measurement and numeric gaps,
+then consolidate the single canonical Proof Pack.
+Done when: exact RED/GREEN/mutation receipts, unchanged prior occurrence coverage,
+finite remaining IDs and a clean committed handoff exist.
+Not in scope: producer, canonical bridge, released-binary qualification, UI,
+live data, activation, P3–P5 or independent self-approval.
+Tier T2; fan-out 0; main-line budget 38 tools; context ceiling 150k.
+
+| Node | Capability | Input → exit | Dependency |
+|---|---|---|---|
+| B-F1 | Reasoning | Existing B code/design/checkpoint → exact counterexamples | None |
+| B-F2 | Deterministic mechanics | Oracles → semantic RED receipts | B-F1 data |
+| B-F3 | Reasoning | RED → bounded counter/measurement/domain fixes | B-F2 decision |
+| B-F4 | Deterministic mechanics | Fixes → restored union, mutants and ordinal multiset comparison | B-F3 data |
+| B-F5 | Deterministic mechanics | Receipts → canonical proof, audit, commit and released session | B-F4 data |
+
+Serial shared-transaction work; width one, T1=T∞=five work units (Inferred),
+parallel saving zero. Fixed test cases terminate by remaining-case count.
+The realized graph required one fixture-correction pass: nine original
+`COORD_CHECKPOINT_GAP` setup failures are excluded as numeric RED evidence.
+No new design gate was added for the proof-path correction. Index/lesson rollup
+stays with the conductor under the explicit no-site/no-lessons author boundary.
+
+Current code closes checkpoint IDs **B-1, B-4, B-5** at author-evidence level.
+Exact remaining IDs: **B-2, B-3, B-6, B-7, B-8** (8 → 5, no renumbering).
+The canonical pack defines each remaining obligation and retains all prior
+receipt paths/hashes. Independent Data/DS/Test approval is BLOCK, particularly
+pending lifecycle liveness B-6. All six upstream phase approvals remain pending
+execution in their approved order; this is neither full finite B nor full P2.

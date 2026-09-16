@@ -122,6 +122,15 @@ public sealed partial class SqliteWatcherObservationStore
             ready_last INTEGER NOT NULL DEFAULT 0, ready_high INTEGER NOT NULL DEFAULT 0, ready_served INTEGER NOT NULL DEFAULT 0,
             deferred_last INTEGER NOT NULL DEFAULT 0, deferred_high INTEGER NOT NULL DEFAULT 0, deferred_served INTEGER NOT NULL DEFAULT 0,
             due_last INTEGER NOT NULL DEFAULT 0, due_high INTEGER NOT NULL DEFAULT 0, due_served INTEGER NOT NULL DEFAULT 0,
+            CHECK(typeof(ready_last)='integer' AND ready_last>=0),
+            CHECK(typeof(ready_high)='integer' AND ready_high>=0),
+            CHECK(typeof(ready_served)='integer' AND ready_served>=0),
+            CHECK(typeof(deferred_last)='integer' AND deferred_last>=0),
+            CHECK(typeof(deferred_high)='integer' AND deferred_high>=0),
+            CHECK(typeof(deferred_served)='integer' AND deferred_served>=0),
+            CHECK(typeof(due_last)='integer' AND due_last>=0),
+            CHECK(typeof(due_high)='integer' AND due_high>=0),
+            CHECK(typeof(due_served)='integer' AND due_served>=0),
             CHECK((bound_repository_key IS NULL AND source_origin IS NULL AND public_source_id IS NULL)
                 OR (bound_repository_key IS NOT NULL AND source_origin IS NOT NULL AND public_source_id IS NOT NULL
                     AND typeof(bound_repository_key)='text' AND length(trim(bound_repository_key))>0

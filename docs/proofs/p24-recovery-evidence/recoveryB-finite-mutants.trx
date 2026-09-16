@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="ef6820e3-6d9a-479b-bc45-ec0c14169c0b" name="malla@TIMMALLSTRIX 2026-09-16 16:44:02" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-16T16:44:02.9770204-07:00" queuing="2026-09-16T16:44:02.9770205-07:00" start="2026-09-16T16:44:01.2133947-07:00" finish="2026-09-16T16:44:13.7852699-07:00" />
+  <TestSettings name="default" id="0f078109-9a7a-498e-86e1-27c5bb7c66d6">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-16_16_44_02" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="a99dde2c-b4de-4a6c-9e71-5f2c7034ca77" testId="9d1479b1-4cda-053b-c126-41dfbda9fdcd" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_EightFailures_ExhaustsThenNewParentOpensExactlyOneGeneration" computerName="TIMMALLSTRIX" duration="00:00:00.0791433" startTime="2026-09-16T16:44:02.8283895-07:00" endTime="2026-09-16T16:44:02.9074906-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a99dde2c-b4de-4a6c-9e71-5f2c7034ca77" />
+    <UnitTestResult executionId="c8902f90-bbb8-4fc6-a4ee-46e673a0ffbc" testId="8d8d7039-0750-c9a9-88fd-305d1f2390e2" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PermanentlyMissingParent_RetainsPayloadWithoutBoardOrLifecycleAuthority" computerName="TIMMALLSTRIX" duration="00:00:00.0397705" startTime="2026-09-16T16:44:13.6699180-07:00" endTime="2026-09-16T16:44:13.7093298-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c8902f90-bbb8-4fc6-a4ee-46e673a0ffbc" />
+    <UnitTestResult executionId="5b339e98-f1c6-4eaa-bc7f-2281d8869a10" testId="6ddc849a-ac1c-f0f4-a2d5-ab0f10d61949" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_InitialPlusSevenFailures_ExhaustsWithoutNinthAttempt" computerName="TIMMALLSTRIX" duration="00:00:00.0173330" startTime="2026-09-16T16:44:13.6520713-07:00" endTime="2026-09-16T16:44:13.6693209-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5b339e98-f1c6-4eaa-bc7f-2281d8869a10">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 1&#xD;
+Actual:   0</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_InitialPlusSevenFailures_ExhaustsWithoutNinthAttempt() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs:line 241&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f4a3ce26-712e-47a8-92b5-2a11a34aefac" testId="5c26aef3-3b83-558b-f75a-14d34cf4a9f7" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_TwoComponentsTogether_OpensGenerationTwoWithoutIntermediateBudget" computerName="TIMMALLSTRIX" duration="00:00:00.0315639" startTime="2026-09-16T16:44:02.7972006-07:00" endTime="2026-09-16T16:44:02.8282512-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f4a3ce26-712e-47a8-92b5-2a11a34aefac" />
+    <UnitTestResult executionId="7dd2fdf1-5108-4e87-b8d3-6034e7f50a75" testId="d837efe9-4b51-b00d-6122-f2732aa4735f" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PendingLimitPlusOne_AccountsForParentWithoutExceedingActiveBoundsOrLosingChildren" computerName="TIMMALLSTRIX" duration="00:00:10.6852701" startTime="2026-09-16T16:44:02.9598546-07:00" endTime="2026-09-16T16:44:13.6356142-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7dd2fdf1-5108-4e87-b8d3-6034e7f50a75">
+      <Output>
+        <StdOut>children=1025; activePending=0; retainedBytes=0; parentVisible=true; turns=20</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="98e887d0-359c-44b2-af45-83a2b24440bd" testId="7bb19bf7-4c98-a74e-f24f-cad16cc57a64" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_LateSameRepositoryParent_AppliesChildOnceWithOriginalAdmission" computerName="TIMMALLSTRIX" duration="00:00:00.0607805" startTime="2026-09-16T16:44:01.8576697-07:00" endTime="2026-09-16T16:44:01.9111644-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="98e887d0-359c-44b2-af45-83a2b24440bd">
+      <Output>
+        <StdOut>originalAdmission=3; pending=0; boardMessages=2</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0735ca45-1e44-4020-a83f-58a969f367b8" testId="0608155b-3042-df56-46c1-fb07f88bc941" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ParentAlreadyCommitted_AppliesCrossSessionChildOnce" computerName="TIMMALLSTRIX" duration="00:00:00.0331023" startTime="2026-09-16T16:44:13.7096965-07:00" endTime="2026-09-16T16:44:13.7425027-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0735ca45-1e44-4020-a83f-58a969f367b8" />
+    <UnitTestResult executionId="25dc9d54-74e2-41e0-9413-eca9deffe59e" testId="75911ef0-fa08-ed55-2356-149042b66c2c" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PartialRecoveryFailure_PreservesActualWorkAndRolledBackEvent" computerName="TIMMALLSTRIX" duration="00:00:00.4580198" startTime="2026-09-16T16:44:01.9119069-07:00" endTime="2026-09-16T16:44:02.3693553-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="25dc9d54-74e2-41e0-9413-eca9deffe59e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Failed&#xD;
+Actual:   Completed</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PartialRecoveryFailure_PreservesActualWorkAndRolledBackEvent() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs:line 328&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a58d4af5-1e77-43b0-b559-28d919b22b86" testId="e823ee96-bb05-84d1-1612-e7cf6834824b" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ParentInAnotherRepository_NeverSatisfiesPendingChild" computerName="TIMMALLSTRIX" duration="00:00:00.0424989" startTime="2026-09-16T16:44:02.9076342-07:00" endTime="2026-09-16T16:44:02.9501176-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a58d4af5-1e77-43b0-b559-28d919b22b86" />
+    <UnitTestResult executionId="83cbc5fb-9e14-40b0-86ea-4663e22bbae9" testId="d8eaca04-4e50-d62c-9a64-cd7e10147728" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ServedCounterOverflow_RefusesWithoutMovingCursorOrAttempt" computerName="TIMMALLSTRIX" duration="00:00:00.0936987" startTime="2026-09-16T16:44:01.7478941-07:00" endTime="2026-09-16T16:44:01.8501341-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="83cbc5fb-9e14-40b0-86ea-4663e22bbae9">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+Actual:   typeof(System.OverflowException)&#xD;
+---- System.OverflowException : Arithmetic operation resulted in an overflow.</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ServedCounterOverflow_RefusesWithoutMovingCursorOrAttempt() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs:line 359&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.AdvanceRecovery(RecoveryCandidate candidate, String lane, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationRecovery.cs:line 271&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.&lt;RecoverCoordination&gt;g__Serve|27_5(String lane, Int32 examinationBudget, Int32 attemptBudget, &lt;&gt;c__DisplayClass27_0&amp;, &lt;&gt;c__DisplayClass27_1&amp;) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationRecovery.cs:line 78&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.RecoverCoordination(IReadOnlyList`1 captures, CoordinationAllocators allocators, IReadOnlyList`1&amp; observations, CoordinationRecoveryStats&amp; measured) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationRecovery.cs:line 49&#xD;
+   at AiDe.Core.Watcher.CoordContractLogPump.PumpOnce() in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationContractLog.cs:line 332&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.&lt;&gt;c__DisplayClass17_0.&lt;Pump_ServedCounterOverflow_RefusesWithoutMovingCursorOrAttempt&gt;b__0() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs:line 359</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="489813b1-7487-42c1-b331-af4b801e6e1a" testId="1325f8ec-e11d-e5b9-6927-eb32de600f0f" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_FailsBeforeRecovery_ReportsNotRecordedRatherThanCompletedZero" computerName="TIMMALLSTRIX" duration="00:00:00.0161026" startTime="2026-09-16T16:44:13.6363832-07:00" endTime="2026-09-16T16:44:13.6518312-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="489813b1-7487-42c1-b331-af4b801e6e1a" />
+    <UnitTestResult executionId="4a0d0d8e-557f-4e37-955f-d843cadba4ae" testId="c11515eb-2c6f-c870-8f97-0e5c70749960" testName="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_MoreThan64ReadyChildren_RestartRetainsProgressAndPassBudgets" computerName="TIMMALLSTRIX" duration="00:00:00.4268839" startTime="2026-09-16T16:44:02.3698963-07:00" endTime="2026-09-16T16:44:02.7966048-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4a0d0d8e-557f-4e37-955f-d843cadba4ae">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.InRange() Failure: Value not in range&#xD;
+Range:  (0 - 64)&#xD;
+Actual: 65</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_MoreThan64ReadyChildren_RestartRetainsProgressAndPassBudgets() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs:line 189&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ParentAlreadyCommitted_AppliesCrossSessionChildOnce" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0608155b-3042-df56-46c1-fb07f88bc941">
+      <Execution id="0735ca45-1e44-4020-a83f-58a969f367b8" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_ParentAlreadyCommitted_AppliesCrossSessionChildOnce" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ParentInAnotherRepository_NeverSatisfiesPendingChild" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="e823ee96-bb05-84d1-1612-e7cf6834824b">
+      <Execution id="a58d4af5-1e77-43b0-b559-28d919b22b86" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_ParentInAnotherRepository_NeverSatisfiesPendingChild" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_EightFailures_ExhaustsThenNewParentOpensExactlyOneGeneration" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="9d1479b1-4cda-053b-c126-41dfbda9fdcd">
+      <Execution id="a99dde2c-b4de-4a6c-9e71-5f2c7034ca77" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_EightFailures_ExhaustsThenNewParentOpensExactlyOneGeneration" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_LateSameRepositoryParent_AppliesChildOnceWithOriginalAdmission" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="7bb19bf7-4c98-a74e-f24f-cad16cc57a64">
+      <Execution id="98e887d0-359c-44b2-af45-83a2b24440bd" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_LateSameRepositoryParent_AppliesChildOnceWithOriginalAdmission" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_FailsBeforeRecovery_ReportsNotRecordedRatherThanCompletedZero" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="1325f8ec-e11d-e5b9-6927-eb32de600f0f">
+      <Execution id="489813b1-7487-42c1-b331-af4b801e6e1a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_FailsBeforeRecovery_ReportsNotRecordedRatherThanCompletedZero" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PartialRecoveryFailure_PreservesActualWorkAndRolledBackEvent" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="75911ef0-fa08-ed55-2356-149042b66c2c">
+      <Execution id="25dc9d54-74e2-41e0-9413-eca9deffe59e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_PartialRecoveryFailure_PreservesActualWorkAndRolledBackEvent" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_InitialPlusSevenFailures_ExhaustsWithoutNinthAttempt" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6ddc849a-ac1c-f0f4-a2d5-ab0f10d61949">
+      <Execution id="5b339e98-f1c6-4eaa-bc7f-2281d8869a10" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_InitialPlusSevenFailures_ExhaustsWithoutNinthAttempt" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PermanentlyMissingParent_RetainsPayloadWithoutBoardOrLifecycleAuthority" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="8d8d7039-0750-c9a9-88fd-305d1f2390e2">
+      <Execution id="c8902f90-bbb8-4fc6-a4ee-46e673a0ffbc" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_PermanentlyMissingParent_RetainsPayloadWithoutBoardOrLifecycleAuthority" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_TwoComponentsTogether_OpensGenerationTwoWithoutIntermediateBudget" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="5c26aef3-3b83-558b-f75a-14d34cf4a9f7">
+      <Execution id="f4a3ce26-712e-47a8-92b5-2a11a34aefac" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_TwoComponentsTogether_OpensGenerationTwoWithoutIntermediateBudget" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PendingLimitPlusOne_AccountsForParentWithoutExceedingActiveBoundsOrLosingChildren" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d837efe9-4b51-b00d-6122-f2732aa4735f">
+      <Execution id="7dd2fdf1-5108-4e87-b8d3-6034e7f50a75" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_PendingLimitPlusOne_AccountsForParentWithoutExceedingActiveBoundsOrLosingChildren" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_MoreThan64ReadyChildren_RestartRetainsProgressAndPassBudgets" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="c11515eb-2c6f-c870-8f97-0e5c70749960">
+      <Execution id="4a0d0d8e-557f-4e37-955f-d843cadba4ae" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_MoreThan64ReadyChildren_RestartRetainsProgressAndPassBudgets" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ServedCounterOverflow_RefusesWithoutMovingCursorOrAttempt" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d8eaca04-4e50-d62c-9a64-cd7e10147728">
+      <Execution id="83cbc5fb-9e14-40b0-86ea-4663e22bbae9" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationRecoveryTests" name="Pump_ServedCounterOverflow_RefusesWithoutMovingCursorOrAttempt" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="9d1479b1-4cda-053b-c126-41dfbda9fdcd" executionId="a99dde2c-b4de-4a6c-9e71-5f2c7034ca77" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8d8d7039-0750-c9a9-88fd-305d1f2390e2" executionId="c8902f90-bbb8-4fc6-a4ee-46e673a0ffbc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6ddc849a-ac1c-f0f4-a2d5-ab0f10d61949" executionId="5b339e98-f1c6-4eaa-bc7f-2281d8869a10" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5c26aef3-3b83-558b-f75a-14d34cf4a9f7" executionId="f4a3ce26-712e-47a8-92b5-2a11a34aefac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d837efe9-4b51-b00d-6122-f2732aa4735f" executionId="7dd2fdf1-5108-4e87-b8d3-6034e7f50a75" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7bb19bf7-4c98-a74e-f24f-cad16cc57a64" executionId="98e887d0-359c-44b2-af45-83a2b24440bd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0608155b-3042-df56-46c1-fb07f88bc941" executionId="0735ca45-1e44-4020-a83f-58a969f367b8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="75911ef0-fa08-ed55-2356-149042b66c2c" executionId="25dc9d54-74e2-41e0-9413-eca9deffe59e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e823ee96-bb05-84d1-1612-e7cf6834824b" executionId="a58d4af5-1e77-43b0-b559-28d919b22b86" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d8eaca04-4e50-d62c-9a64-cd7e10147728" executionId="83cbc5fb-9e14-40b0-86ea-4663e22bbae9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1325f8ec-e11d-e5b9-6927-eb32de600f0f" executionId="489813b1-7487-42c1-b331-af4b801e6e1a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c11515eb-2c6f-c870-8f97-0e5c70749960" executionId="4a0d0d8e-557f-4e37-955f-d843cadba4ae" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="12" executed="12" passed="8" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.25]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.27]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.38]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.38]       Expected: typeof(AiDe.Core.Watcher.CoordinationSourceException)&#xD;
+[xUnit.net 00:00:00.38]       Actual:   typeof(System.OverflowException)&#xD;
+[xUnit.net 00:00:00.38]       ---- System.OverflowException : Arithmetic operation resulted in an overflow.&#xD;
+[xUnit.net 00:00:00.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs(359,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ServedCounterOverflow_RefusesWithoutMovingCursorOrAttempt()&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.38]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationRecovery.cs(271,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.AdvanceRecovery(RecoveryCandidate candidate, String lane, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationRecovery.cs(78,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.&lt;RecoverCoordination&gt;g__Serve|27_5(String lane, Int32 examinationBudget, Int32 attemptBudget, &lt;&gt;c__DisplayClass27_0&amp;, &lt;&gt;c__DisplayClass27_1&amp;)&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationRecovery.cs(49,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.RecoverCoordination(IReadOnlyList`1 captures, CoordinationAllocators allocators, IReadOnlyList`1&amp; observations, CoordinationRecoveryStats&amp; measured)&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CoordinationContractLog.cs(332,0): at AiDe.Core.Watcher.CoordContractLogPump.PumpOnce()&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs(359,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.&lt;&gt;c__DisplayClass17_0.&lt;Pump_ServedCounterOverflow_RefusesWithoutMovingCursorOrAttempt&gt;b__0()&#xD;
+[xUnit.net 00:00:00.90]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.90]       Expected: Failed&#xD;
+[xUnit.net 00:00:00.90]       Actual:   Completed&#xD;
+[xUnit.net 00:00:00.90]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.90]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs(328,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PartialRecoveryFailure_PreservesActualWorkAndRolledBackEvent()&#xD;
+[xUnit.net 00:00:00.90]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.90]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.33]       Assert.InRange() Failure: Value not in range&#xD;
+[xUnit.net 00:00:01.33]       Range:  (0 - 64)&#xD;
+[xUnit.net 00:00:01.33]       Actual: 65&#xD;
+[xUnit.net 00:00:01.33]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.33]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs(189,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_MoreThan64ReadyChildren_RestartRetainsProgressAndPassBudgets()&#xD;
+[xUnit.net 00:00:01.33]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:01.33]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:12.20]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:12.20]       Expected: 1&#xD;
+[xUnit.net 00:00:12.20]       Actual:   0&#xD;
+[xUnit.net 00:00:12.20]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.20]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs(241,0): at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_InitialPlusSevenFailures_ExhaustsWithoutNinthAttempt()&#xD;
+[xUnit.net 00:00:12.20]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:12.20]            at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:12.28]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T16:44:01.8517432-07:00">
+        <Text>[xUnit.net 00:00:00.38]     AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_ServedCounterOverflow_RefusesWithoutMovingCursorOrAttempt [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T16:44:02.3697882-07:00">
+        <Text>[xUnit.net 00:00:00.90]     AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PartialRecoveryFailure_PreservesActualWorkAndRolledBackEvent [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T16:44:02.7973365-07:00">
+        <Text>[xUnit.net 00:00:01.33]     AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_MoreThan64ReadyChildren_RestartRetainsProgressAndPassBudgets [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T16:44:13.6695837-07:00">
+        <Text>[xUnit.net 00:00:12.20]     AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_InitialPlusSevenFailures_ExhaustsWithoutNinthAttempt [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

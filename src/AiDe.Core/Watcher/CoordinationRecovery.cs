@@ -2,8 +2,12 @@ using Microsoft.Data.Sqlite;
 
 namespace AiDe.Core.Watcher;
 
-/// <summary>Measured work in one complete pump pass, not a per-file budget.</summary>
-public sealed record CoordinationRecoveryStats(int Examinations, int Attempts, int Applied);
+public enum CoordinationRecoveryStatus { NotRecorded, Completed, Failed }
+
+/// <summary>Observed pass work, including rolled-back attempts; Applied counts committed effects only.</summary>
+public sealed record CoordinationRecoveryStats(int Examinations, int Attempts, int Applied,
+    CoordinationRecoveryStatus Status = CoordinationRecoveryStatus.NotRecorded,
+    string? ErrorCode = null, double? ElapsedMilliseconds = null);
 
 internal sealed record RecoveryCandidate(
     string Scope, string Key, long Admission, long Receipt, long Offset, long End,
@@ -14,167 +18,195 @@ public sealed partial class SqliteWatcherObservationStore
 {
     private static readonly string[] RecoveryLanes = ["ready", "deferred", "due"];
 
-    internal CoordinationRecoveryStats RecoverCoordination(
+    internal void RecoverCoordination(
         IReadOnlyList<CoordinationCapture> captures, CoordinationAllocators allocators,
-        out IReadOnlyList<CoordinationResult> observations)
+        out IReadOnlyList<CoordinationResult> observations, out CoordinationRecoveryStats measured)
     {
         using var activity = new System.Diagnostics.Activity("coordination.recovery").Start();
-        var records = captures.SelectMany(capture => capture.Pages)
-            .SelectMany(page => page.Records.Select(record => (page.Scope, Record: record)))
-            .ToDictionary(item => (item.Scope, item.Record.Offset), item => item.Record);
-        var scopes = records.Keys.Select(key => key.Scope).Distinct(StringComparer.Ordinal).ToArray();
-        var attempted = new HashSet<(string, string)>();
+        var started = System.Diagnostics.Stopwatch.GetTimestamp();
         var completed = new List<CoordinationResult>();
         var examinations = 0;
         var attempts = 0;
-        lock (_gate)
+        string? errorCode = null;
+        try
         {
-            foreach (var lane in RecoveryLanes)
+            var records = captures.SelectMany(capture => capture.Pages)
+                .SelectMany(page => page.Records.Select(record => (page.Scope, Record: record)))
+                .ToDictionary(item => (item.Scope, item.Record.Offset), item => item.Record);
+            var scopes = records.Keys.Select(key => key.Scope).Distinct(StringComparer.Ordinal).ToArray();
+            var attempted = new HashSet<(string, string)>();
+            lock (_gate)
             {
-                BeginRecoveryLane(scopes, lane);
-            }
-            int[] examinationLimits = [128, 64, 64];
-            int[] attemptLimits = [32, 16, 16];
-            // Every lane receives its protected opportunity before remaining work is borrowed.
-            for (var lane = 0; lane < RecoveryLanes.Length; lane++)
-            {
-                Serve(RecoveryLanes[lane], examinationLimits[lane], attemptLimits[lane]);
-            }
-            foreach (var lane in RecoveryLanes)
-            {
-                Serve(lane, 256 - examinations, 64 - attempts);
-            }
-        }
-        observations = completed;
-        var result = new CoordinationRecoveryStats(examinations, attempts, completed.Count);
-        activity.SetTag("coordination.recovery.examinations", examinations);
-        activity.SetTag("coordination.recovery.attempts", attempts);
-        activity.SetTag("coordination.recovery.applied", completed.Count);
-        return result;
-
-        void Serve(string lane, int examinationBudget, int attemptBudget)
-        {
-            while (examinationBudget > 0 && attemptBudget > 0 && examinations < 256 && attempts < 64)
-            {
-                using var transaction = _connection.BeginTransaction(deferred: false);
-                var candidate = NextRecovery(scopes, lane, transaction);
-                if (candidate is null)
+                foreach (var lane in RecoveryLanes)
                 {
-                    using var exhausted = CoordinationCommand(transaction, $"""
+                    BeginRecoveryLane(scopes, lane);
+                }
+                int[] examinationLimits = [128, 64, 64];
+                int[] attemptLimits = [32, 16, 16];
+                // Every lane receives its protected opportunity before remaining work is borrowed.
+                for (var lane = 0; lane < RecoveryLanes.Length; lane++)
+                {
+                    Serve(RecoveryLanes[lane], examinationLimits[lane], attemptLimits[lane]);
+                }
+                foreach (var lane in RecoveryLanes)
+                {
+                    Serve(lane, 256 - examinations, 64 - attempts);
+                }
+            }
+
+            void Serve(string lane, int examinationBudget, int attemptBudget)
+            {
+                while (examinationBudget > 0 && attemptBudget > 0 && examinations < 256 && attempts < 64)
+                {
+                    using var transaction = _connection.BeginTransaction(deferred: false);
+                    var candidate = NextRecovery(scopes, lane, transaction);
+                    if (candidate is null)
+                    {
+                        using var exhausted = CoordinationCommand(transaction, $"""
                         UPDATE coord_projection_checkpoint SET {lane}_last={lane}_high
                         WHERE scope IN ({string.Join(",", scopes.Select((_, index) => "$scope" + index))});
                         """, scopes.Select((scope, index) => ("$scope" + index, (object?)scope)).ToArray());
-                    if (scopes.Length > 0)
-                    {
-                        exhausted.ExecuteNonQuery();
+                        if (scopes.Length > 0)
+                        {
+                            exhausted.ExecuteNonQuery();
+                        }
+                        transaction.Commit();
+                        return;
                     }
-                    transaction.Commit();
-                    return;
-                }
-                examinations++;
-                examinationBudget--;
-                AdvanceRecovery(candidate, lane, transaction);
-                if (attempted.Contains((candidate.Scope, candidate.Key)))
-                {
-                    transaction.Commit();
-                    continue;
-                }
-                if (!records.TryGetValue((candidate.Scope, candidate.Offset), out var record)
-                    || record.Key != candidate.Key || record.End != candidate.End
-                    || record.Digest != candidate.Digest || candidate.Version != CoordContract.Version
-                    || CoordinationSourceCapture.Hash(record.Canonical) != candidate.CanonicalDigest)
-                {
-                    throw new CoordinationSourceException(CoordinationErrors.SourceGap);
-                }
-                var seen = candidate.Seen | RecoveryComponents(candidate.Scope, candidate.External, candidate.Parent, transaction);
-                var increment = ComponentCount(seen) - ComponentCount(candidate.Seen);
-                if (candidate.Generation > long.MaxValue - increment)
-                {
-                    throw new CoordinationSourceException("COORD_ELIGIBILITY_OVERFLOW");
-                }
-                var generation = candidate.Generation + increment;
-                var ready = (seen & 1) != 0 && (candidate.Parent is null || ParentPresent(candidate.Scope,
-                    candidate.External, candidate.Parent, transaction));
-                var priorAttempts = increment > 0 ? 0 : candidate.Attempts;
-                var canAttempt = priorAttempts < 8
-                    && (increment > 0 || candidate.Status == "deferred" && ready
-                        || candidate.Status == "active" && candidate.Due <= allocators.RecordedAt.ToUnixTimeMilliseconds());
-                if (increment > 0 && candidate.Presence == 0 && !ready)
-                {
-                    var eligibility = AppendReceipt(candidate.Scope, candidate.Key, candidate.Admission,
-                        new("pending", "REGISTRATION_REQUIRED",
-                            candidate.External is null ? null : FindObservation(candidate.Scope, candidate.External, transaction)),
-                        transaction, candidate.Status, generation, 0);
-                    FinalizeRecovery(candidate.Scope, record, eligibility, "pending", candidate.Status,
-                        generation, 0, seen, 0, allocators.RecordedAt, transaction);
-                    transaction.Commit();
-                    continue;
-                }
-                if (lane == "ready" && increment == 0 || lane == "deferred" && !ready || !canAttempt)
-                {
-                    transaction.Commit();
-                    continue;
-                }
-                // Recovery observes dependencies; it never replays a live registrar or lifecycle refresh.
-                if (record.Event is ContractRegister or ContractHeartbeat or ContractSessionEnd or ContractUpdate)
-                {
-                    transaction.Commit();
-                    continue;
-                }
-                if (candidate.Presence == 0 && (!ready || !HasRecoveryCapacity(record, transaction, reserved: true)))
-                {
-                    if (increment > 0)
+                    examinations++;
+                    examinationBudget--;
+                    AdvanceRecovery(candidate, lane, transaction);
+                    if (attempted.Contains((candidate.Scope, candidate.Key)))
+                    {
+                        transaction.Commit();
+                        continue;
+                    }
+                    if (!records.TryGetValue((candidate.Scope, candidate.Offset), out var record)
+                        || record.Key != candidate.Key || record.End != candidate.End
+                        || record.Digest != candidate.Digest || candidate.Version != CoordContract.Version
+                        || CoordinationSourceCapture.Hash(record.Canonical) != candidate.CanonicalDigest)
+                    {
+                        throw new CoordinationSourceException(CoordinationErrors.SourceGap);
+                    }
+                    var seen = candidate.Seen | RecoveryComponents(candidate.Scope, candidate.External, candidate.Parent, transaction);
+                    var increment = ComponentCount(seen) - ComponentCount(candidate.Seen);
+                    if (candidate.Generation > long.MaxValue - increment)
+                    {
+                        throw new CoordinationSourceException("COORD_ELIGIBILITY_OVERFLOW");
+                    }
+                    var generation = checked(candidate.Generation + increment);
+                    var ready = (seen & 1) != 0 && (candidate.Parent is null || ParentPresent(candidate.Scope,
+                        candidate.External, candidate.Parent, transaction));
+                    var priorAttempts = increment > 0 ? 0 : candidate.Attempts;
+                    var canAttempt = priorAttempts < 8
+                        && (increment > 0 || candidate.Status == "deferred" && ready
+                            || candidate.Status == "active" && candidate.Due <= allocators.RecordedAt.ToUnixTimeMilliseconds());
+                    if (increment > 0 && candidate.Presence == 0 && !ready)
                     {
                         var eligibility = AppendReceipt(candidate.Scope, candidate.Key, candidate.Admission,
-                            new("pending", "REGISTRATION_REQUIRED"), transaction, candidate.Status, generation, 0);
+                            new("pending", "REGISTRATION_REQUIRED",
+                                candidate.External is null ? null : FindObservation(candidate.Scope, candidate.External, transaction)),
+                            transaction, candidate.Status, generation, 0);
                         FinalizeRecovery(candidate.Scope, record, eligibility, "pending", candidate.Status,
                             generation, 0, seen, 0, allocators.RecordedAt, transaction);
+                        transaction.Commit();
+                        continue;
                     }
+                    if (lane == "ready" && increment == 0 || lane == "deferred" && !ready || !canAttempt)
+                    {
+                        transaction.Commit();
+                        continue;
+                    }
+                    // Recovery observes dependencies; it never replays a live registrar or lifecycle refresh.
+                    if (record.Event is ContractRegister or ContractHeartbeat or ContractSessionEnd or ContractUpdate)
+                    {
+                        transaction.Commit();
+                        continue;
+                    }
+                    if (candidate.Presence == 0 && (!ready || !HasRecoveryCapacity(record, transaction, reserved: true)))
+                    {
+                        if (increment > 0)
+                        {
+                            var eligibility = AppendReceipt(candidate.Scope, candidate.Key, candidate.Admission,
+                                new("pending", "REGISTRATION_REQUIRED"), transaction, candidate.Status, generation, 0);
+                            FinalizeRecovery(candidate.Scope, record, eligibility, "pending", candidate.Status,
+                                generation, 0, seen, 0, allocators.RecordedAt, transaction);
+                        }
+                        transaction.Commit();
+                        continue;
+                    }
+                    if (candidate.Presence == 0)
+                    {
+                        var activation = AppendReceipt(candidate.Scope, candidate.Key, candidate.Admission,
+                            new("pending", "NATIVE_BOARD_PENDING",
+                                candidate.External is null ? null : FindObservation(candidate.Scope, candidate.External, transaction)),
+                            transaction, "active", generation, 1);
+                        FinalizeRecovery(candidate.Scope, record, activation, "pending", "active", generation, 1,
+                            seen, priorAttempts, allocators.RecordedAt, transaction);
+                    }
+                    attempted.Add((candidate.Scope, candidate.Key));
+                    attempts = checked(attempts + 1);
+                    attemptBudget--;
+                    var count = checked(priorAttempts + 1);
+                    var effect = ApplyObservation(candidate.Scope, record, allocators, transaction);
+                    if (candidate.Presence == 0 && effect.State == "pending")
+                    {
+                        transaction.Rollback();
+                        // The reserve must never become a committed blocked holder.
+                        using var progress = _connection.BeginTransaction(deferred: false);
+                        AdvanceRecovery(candidate, lane, progress);
+                        var retainedStatus = count == 8 ? "exhausted" : "deferred";
+                        var retainedReceipt = candidate.Receipt;
+                        if (generation != candidate.Generation || retainedStatus != candidate.Status)
+                        {
+                            retainedReceipt = AppendReceipt(candidate.Scope, candidate.Key, candidate.Admission,
+                                effect, progress, retainedStatus, generation, 0);
+                        }
+                        FinalizeRecovery(candidate.Scope, record, retainedReceipt, "pending", retainedStatus,
+                            generation, 0, seen, count, allocators.RecordedAt.AddSeconds(1 << count), progress);
+                        progress.Commit();
+                        continue;
+                    }
+                    var status = effect.State == "pending" ? count == 8 ? "exhausted" : "active" : "none";
+                    var presence = status == "exhausted" ? 0 : 1;
+                    var receipt = candidate.Receipt;
+                    if (effect.State != "pending" || status != candidate.Status || generation != candidate.Generation)
+                    {
+                        receipt = AppendReceipt(candidate.Scope, candidate.Key, candidate.Admission, effect,
+                            transaction, status, generation, presence);
+                    }
+                    FinalizeRecovery(candidate.Scope, record, receipt, effect.State, status, generation, presence,
+                        seen, count, allocators.RecordedAt.AddSeconds(1 << Math.Min(count, 8)), transaction);
+                    FailAt(CoordinationFault.BeforeCommit);
                     transaction.Commit();
-                    continue;
-                }
-                if (candidate.Presence == 0)
-                {
-                    var activation = AppendReceipt(candidate.Scope, candidate.Key, candidate.Admission,
-                        new("pending", "NATIVE_BOARD_PENDING",
-                            candidate.External is null ? null : FindObservation(candidate.Scope, candidate.External, transaction)),
-                        transaction, "active", generation, 1);
-                    FinalizeRecovery(candidate.Scope, record, activation, "pending", "active", generation, 1,
-                        seen, priorAttempts, allocators.RecordedAt, transaction);
-                }
-                var effect = ApplyObservation(candidate.Scope, record, allocators, transaction);
-                if (candidate.Presence == 0 && effect.State == "pending")
-                {
-                    transaction.Rollback();
-                    // The reserve must never become a committed blocked holder.
-                    using var progress = _connection.BeginTransaction(deferred: false);
-                    AdvanceRecovery(candidate, lane, progress);
-                    progress.Commit();
-                    continue;
-                }
-                var count = priorAttempts + 1;
-                var status = effect.State == "pending" ? count == 8 ? "exhausted" : "active" : "none";
-                var presence = status == "exhausted" ? 0 : 1;
-                var receipt = candidate.Receipt;
-                if (effect.State != "pending" || status != candidate.Status || generation != candidate.Generation)
-                {
-                    receipt = AppendReceipt(candidate.Scope, candidate.Key, candidate.Admission, effect,
-                        transaction, status, generation, presence);
-                }
-                FinalizeRecovery(candidate.Scope, record, receipt, effect.State, status, generation, presence,
-                    seen, count, allocators.RecordedAt.AddSeconds(1 << Math.Min(count, 8)), transaction);
-                FailAt(CoordinationFault.BeforeCommit);
-                transaction.Commit();
-                FailAt(CoordinationFault.AfterCommit);
-                attempted.Add((candidate.Scope, candidate.Key));
-                attempts++;
-                attemptBudget--;
-                if (effect.State == "applied")
-                {
-                    completed.Add(new(candidate.Admission, effect.State, effect.MessageId, effect.Session,
-                        record.Event?.ExternalSessionId, record.Event, false));
+                    if (effect.State == "applied")
+                    {
+                        completed.Add(new(candidate.Admission, effect.State, effect.MessageId, effect.Session,
+                            record.Event?.ExternalSessionId, record.Event, false));
+                    }
+                    FailAt(CoordinationFault.AfterCommit);
                 }
             }
+        }
+        catch (Exception error)
+        {
+            errorCode = error is CoordinationSourceException source ? source.Code : "COORD_RECOVERY_FAILED";
+            throw;
+        }
+        finally
+        {
+            observations = completed;
+            measured = new(examinations, attempts, completed.Count,
+                errorCode is null ? CoordinationRecoveryStatus.Completed : CoordinationRecoveryStatus.Failed,
+                errorCode, System.Diagnostics.Stopwatch.GetElapsedTime(started).TotalMilliseconds);
+            activity.SetTag("coordination.recovery.status", measured.Status.ToString());
+            activity.SetTag("coordination.recovery.examinations", examinations);
+            activity.SetTag("coordination.recovery.attempts", attempts);
+            activity.SetTag("coordination.recovery.applied", completed.Count);
+            activity.SetTag("coordination.recovery.elapsed_ms", measured.ElapsedMilliseconds);
+            activity.SetTag("error.type", errorCode);
+            activity.SetStatus(errorCode is null ? System.Diagnostics.ActivityStatusCode.Ok
+                : System.Diagnostics.ActivityStatusCode.Error);
         }
     }
 
@@ -229,11 +261,19 @@ public sealed partial class SqliteWatcherObservationStore
 
     private void AdvanceRecovery(RecoveryCandidate candidate, string lane, SqliteTransaction transaction)
     {
+        using var maximum = CoordinationCommand(transaction,
+            $"SELECT COALESCE(MAX({lane}_served),0) FROM coord_projection_checkpoint;");
+        var lastServed = (long)maximum.ExecuteScalar()!;
+        if (lastServed == long.MaxValue)
+        {
+            throw new CoordinationSourceException("COORD_RECOVERY_COUNTER_OVERFLOW");
+        }
+        var nextServed = checked(lastServed + 1);
         using var command = CoordinationCommand(transaction, $"""
             UPDATE coord_projection_checkpoint SET {lane}_last=$last,
-                {lane}_served=(SELECT COALESCE(MAX({lane}_served),0)+1 FROM coord_projection_checkpoint)
+                {lane}_served=$served
             WHERE scope=$scope;
-            """, ("$last", candidate.Admission), ("$scope", candidate.Scope));
+            """, ("$last", candidate.Admission), ("$scope", candidate.Scope), ("$served", nextServed));
         command.ExecuteNonQuery();
     }
 

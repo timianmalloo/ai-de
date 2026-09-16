@@ -228,6 +228,160 @@ public sealed class CoordinationRecoveryTests(Xunit.Abstractions.ITestOutputHelp
         Assert.Equal(1, files.Number($"SELECT current_attempt FROM coord_projection_event WHERE first_receipt_n={admission};"));
     }
 
+    [Fact]
+    public void Pump_InitialPlusSevenFailures_ExhaustsWithoutNinthAttempt()
+    {
+        using var files = new NativeRecovery();
+        using var store = SqliteWatcherObservationStore.Open(files.Database);
+        files.Register(Child);
+        files.Writer.WriteBoardPost(Child, "reply", "eight-total", ParentMessageId);
+        var pump = files.Compose(store);
+        pump.PumpOnce();
+        var admission = files.ChildAdmission();
+        Assert.Equal(1, files.Number($"SELECT current_attempt FROM coord_projection_event WHERE first_receipt_n={admission};"));
+        for (var turn = 0; turn < 7; turn++)
+        {
+            files.Advance();
+            pump.PumpOnce();
+            Assert.Equal(1, pump.LastRecovery.Attempts);
+        }
+        Assert.Equal(8, files.Number($"SELECT current_attempt FROM coord_projection_event WHERE first_receipt_n={admission};"));
+        Assert.Equal(0, files.Number($"SELECT payload_presence FROM coord_projection_event WHERE first_receipt_n={admission};"));
+        files.Advance();
+        files.Compose(store).PumpOnce();
+        Assert.Equal(8, files.Number($"SELECT current_attempt FROM coord_projection_event WHERE first_receipt_n={admission};"));
+        files.Register(Parent);
+        files.Writer.WriteBoardPost(Parent, "question", "parent");
+        files.Pump(pump, 2);
+        Assert.Single(store.AllBoardMessages(), message => message.Content == "eight-total");
+        Assert.Equal(2, files.Number($"SELECT eligibility_generation FROM coord_projection_event WHERE first_receipt_n={admission};"));
+        Assert.Equal(1, files.Number($"SELECT current_attempt FROM coord_projection_event WHERE first_receipt_n={admission};"));
+        output.WriteLine("initial=1; remaining=7; exhausted=8; new-parent-generation=2; new-attempt=1");
+    }
+
+    [Fact]
+    public void Pump_TwoComponentsTogether_OpensGenerationTwoWithoutIntermediateBudget()
+    {
+        using var files = new NativeRecovery();
+        using var store = SqliteWatcherObservationStore.Open(files.Database);
+        files.Writer.WriteBoardPost(Child, "reply", "both-together", ParentMessageId);
+        var pump = files.Compose(store);
+        pump.PumpOnce();
+        var admission = files.Number("SELECT first_receipt_n FROM coord_projection_event;");
+        Assert.Equal(0, files.Number("SELECT eligibility_generation FROM coord_projection_event;"));
+        files.Register(Child);
+        files.Register(Parent);
+        files.Writer.WriteBoardPost(Parent, "question", "parent");
+
+        files.Pump(pump, 2);
+
+        Assert.Single(store.AllBoardMessages(), message => message.Content == "both-together");
+        Assert.Equal(2, files.Number($"SELECT eligibility_generation FROM coord_projection_event WHERE first_receipt_n={admission};"));
+        Assert.Equal(0, files.Number($"SELECT COUNT(*) FROM coord_projection_feed WHERE admission_n={admission} AND eligibility_generation=1;"));
+        Assert.Equal(1, files.Number($"SELECT current_attempt FROM coord_projection_event WHERE first_receipt_n={admission};"));
+    }
+
+    [Fact]
+    public void Pump_PartialRecoveryFailure_PreservesActualWorkAndRolledBackEvent()
+    {
+        using var trace = new System.Diagnostics.Activity("recovery-test").Start();
+        var activities = new System.Collections.Concurrent.ConcurrentQueue<System.Diagnostics.Activity>();
+        using var listener = new System.Diagnostics.ActivityListener
+        {
+            ShouldListenTo = source => source.Name == "",
+            Sample = (ref System.Diagnostics.ActivityCreationOptions<System.Diagnostics.ActivityContext> _) =>
+                System.Diagnostics.ActivitySamplingResult.AllData,
+            ActivityStopped = activity =>
+            {
+                if (activity.OperationName == "coordination.recovery" && activity.TraceId == trace.TraceId)
+                {
+                    activities.Enqueue(activity);
+                }
+            },
+        };
+        System.Diagnostics.ActivitySource.AddActivityListener(listener);
+        using var files = new NativeRecovery();
+        using var store = SqliteWatcherObservationStore.Open(files.Database);
+        var pump = files.Compose(store);
+        files.Register(Child);
+        files.WriteSyntheticChildren(130);
+        pump.PumpOnce();
+        files.Register(Parent);
+        files.Writer.WriteBoardPost(Parent, "question", "parent");
+        pump.PumpOnce();
+        var before = store.AllBoardMessages().Count;
+        var calls = 0;
+        files.MessageAllocated = () =>
+        {
+            if (++calls == 2)
+            {
+                store.ProjectionFault = CoordinationFault.BeforeCommit;
+            }
+        };
+
+        Assert.Throws<IOException>(() => pump.PumpOnce());
+
+        Assert.Equal(before + 1, store.AllBoardMessages().Count);
+        Assert.Equal(2, pump.LastRecovery.Attempts);
+        Assert.Equal(1, pump.LastRecovery.Applied);
+        Assert.Equal(2, pump.LastRecovery.Examinations);
+        Assert.Equal(CoordinationRecoveryStatus.Failed, pump.LastRecovery.Status);
+        Assert.Equal("COORD_RECOVERY_FAILED", pump.LastRecovery.ErrorCode);
+        Assert.True(pump.LastRecovery.ElapsedMilliseconds >= 0);
+        var failed = activities.Last();
+        Assert.Equal("Failed", failed.GetTagItem("coordination.recovery.status"));
+        Assert.Equal(2, failed.GetTagItem("coordination.recovery.attempts"));
+        Assert.Equal(2, failed.GetTagItem("coordination.recovery.examinations"));
+        Assert.Equal(1, failed.GetTagItem("coordination.recovery.applied"));
+        Assert.Equal("COORD_RECOVERY_FAILED", failed.GetTagItem("error.type"));
+        Assert.Equal(pump.LastRecovery.ElapsedMilliseconds, failed.GetTagItem("coordination.recovery.elapsed_ms"));
+        Assert.Equal(System.Diagnostics.ActivityStatusCode.Error, failed.Status);
+        Assert.DoesNotContain(failed.TagObjects, tag => tag.Value?.ToString()?.Contains("capacity-child", StringComparison.Ordinal) == true);
+        Assert.Equal(0, files.Number("""
+            SELECT COUNT(*) FROM coord_projection_event
+            WHERE application_state='pending' AND eligibility_generation<>1;
+            """));
+        output.WriteLine($"actualAttempts={pump.LastRecovery.Attempts}; committedApplied={pump.LastRecovery.Applied}; examined={pump.LastRecovery.Examinations}");
+    }
+
+    [Fact]
+    public void Pump_ServedCounterOverflow_RefusesWithoutMovingCursorOrAttempt()
+    {
+        using var files = new NativeRecovery();
+        using var store = SqliteWatcherObservationStore.Open(files.Database);
+        files.Register(Child);
+        files.Writer.WriteBoardPost(Child, "reply", "overflow", ParentMessageId);
+        var pump = files.Compose(store);
+        pump.PumpOnce();
+        files.Execute("UPDATE coord_projection_checkpoint SET ready_last=0,ready_served=9223372036854775807;");
+        var attempts = files.Number("SELECT SUM(current_attempt) FROM coord_projection_event;");
+
+        var error = Assert.Throws<CoordinationSourceException>(() => pump.PumpOnce());
+
+        Assert.Equal("COORD_RECOVERY_COUNTER_OVERFLOW", error.Code);
+        Assert.Equal(0, files.Number("SELECT ready_last FROM coord_projection_checkpoint;"));
+        Assert.Equal(long.MaxValue, files.Number("SELECT ready_served FROM coord_projection_checkpoint;"));
+        Assert.Equal(attempts, files.Number("SELECT SUM(current_attempt) FROM coord_projection_event;"));
+    }
+
+    [Fact]
+    public void Pump_FailsBeforeRecovery_ReportsNotRecordedRatherThanCompletedZero()
+    {
+        using var files = new NativeRecovery();
+        using var store = SqliteWatcherObservationStore.Open(files.Database);
+        files.Register(Child);
+        var pump = files.Compose(store);
+        pump.PumpOnce();
+        Assert.Equal(CoordinationRecoveryStatus.Completed, pump.LastRecovery.Status);
+        store.ProjectionFault = CoordinationFault.BeforeCommit;
+
+        Assert.Throws<IOException>(() => pump.PumpOnce());
+
+        Assert.Equal(CoordinationRecoveryStatus.NotRecorded, pump.LastRecovery.Status);
+        Assert.Null(pump.LastRecovery.ElapsedMilliseconds);
+        Assert.Equal("COORD_PUMP_FAILED", pump.LastRun.Diagnostic);
+    }
+
     private sealed class NativeRecovery : IDisposable
     {
         private readonly RecoveryClock _time = new();
@@ -237,6 +391,7 @@ public sealed class CoordinationRecoveryTests(Xunit.Abstractions.ITestOutputHelp
         private string Logs => Path.Combine(Root, "wire");
         public string OtherRepository => Path.Combine(Root, "other-repository");
         public CoordContractWriter Writer => new(Logs, _time);
+        public Action? MessageAllocated { get; set; }
         public void Advance() => _time.Now = _time.Now.AddHours(1);
 
         public NativeRecovery()
@@ -257,7 +412,11 @@ public sealed class CoordinationRecoveryTests(Xunit.Abstractions.ITestOutputHelp
         {
             var registrar = new TrustedRegistrar(store, new SequentialCapabilityFactory(), new FakeMonotonicClock());
             var board = new MessageBoardService(store, registrar, _time,
-                () => (++_messageId).ToString(CultureInfo.InvariantCulture));
+                () =>
+                {
+                    MessageAllocated?.Invoke();
+                    return (++_messageId).ToString(CultureInfo.InvariantCulture);
+                });
             var ingest = new InjectedContractIngest(new IngestHost(store, registrar, _time, board: board));
             return new(Logs, ingest);
         }
@@ -313,6 +472,18 @@ public sealed class CoordinationRecoveryTests(Xunit.Abstractions.ITestOutputHelp
             using var command = connection.CreateCommand();
             command.CommandText = sql;
             return (long)command.ExecuteScalar()!;
+        }
+
+        public void Execute(string sql)
+        {
+            using var connection = new SqliteConnection(new SqliteConnectionStringBuilder
+            {
+                DataSource = Database, Pooling = false, ForeignKeys = true,
+            }.ToString());
+            connection.Open();
+            using var command = connection.CreateCommand();
+            command.CommandText = sql;
+            command.ExecuteNonQuery();
         }
 
         public void Dispose() => Directory.Delete(Root, recursive: true);

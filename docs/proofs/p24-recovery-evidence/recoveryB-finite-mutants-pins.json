@@ -1,0 +1,22 @@
+[
+  {
+    "path": "src\\AiDe.Core\\Watcher\\CoordinationProjection.cs",
+    "sha256": "708AFB1EA4945422D540E1E50002A1A8DB93ED12A26268349B80A763481AB8BA"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\CoordinationRecovery.cs",
+    "sha256": "C8334CE8A48D6866E0ECFDB4855E64C44C4857D1FC2BB6C62750AEF45DC5509F"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationRecoveryTests.cs",
+    "sha256": "618733A73C01307947B078F203E9FC76BA35AE1CDE8F0741981690A0D79705AE"
+  },
+  {
+    "path": "src\\AiDe.Core\\bin\\Debug\\net10.0\\AiDe.Core.dll",
+    "sha256": "C03FDA253343F5143481CD1E6F4DF7FD63A6E7C138A7B5C182F00054F03E4D3B"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll",
+    "sha256": "5124EABC698579C49B30A28D3A20C2E6D3DDA04C3232405429B5EA4180AC49A6"
+  }
+]

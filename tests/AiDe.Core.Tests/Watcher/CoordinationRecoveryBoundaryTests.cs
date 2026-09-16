@@ -51,6 +51,31 @@ public sealed class CoordinationRecoveryBoundaryTests : IDisposable
         Assert.Equal(2L, read.ExecuteScalar());
     }
 
+    [Theory]
+    [InlineData("ready_last")]
+    [InlineData("ready_high")]
+    [InlineData("ready_served")]
+    [InlineData("deferred_last")]
+    [InlineData("deferred_high")]
+    [InlineData("deferred_served")]
+    [InlineData("due_last")]
+    [InlineData("due_high")]
+    [InlineData("due_served")]
+    public void Checkpoint_InvalidLogicalCounter_Refuses(string column)
+    {
+        using var connection = Create();
+        Execute(connection, null, """
+            INSERT INTO coord_projection_checkpoint(scope,epoch,accepted_offset,prefix_digest)
+            VALUES('scope','epoch',1,'digest');
+            """);
+
+        foreach (var value in new[] { "-1", "1.5", "'wrong'", "NULL", "9223372036854775808" })
+        {
+            Assert.Throws<SqliteException>(() => Execute(connection, null,
+                $"UPDATE coord_projection_checkpoint SET {column}={value};"));
+        }
+    }
+
     [Fact]
     public void OperationalAttempt_StatusPollCannotResetBudget()
     {
