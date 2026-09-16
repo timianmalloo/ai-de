@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T02:14:40Z",
+  "generated": "2026-09-16T02:39:16Z",
   "audit": [
     {
       "actor": null,
@@ -24201,6 +24201,45 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "caac0666269202b66917aae7be68947c7038a875",
         "short": "caac06662",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2M1ABF3DKBH10XHAKN86ETT",
+      "shortname": "atlas-d0-author-freeze",
+      "datetime": "2026-09-16T02:39:15Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "the conflicts are yours to resolve",
+      "summary": "\n## Frozen conditional-binding author checkpoint\n\nAuthor tip d8fe8b1f2da0df053694221d3a26e66026ce66b3 commits only the existing D0 test,\nits proof and official audit. Conductor directly parsed closure-green.trx:66 results,\n66 executed/passed, zero failures/skips; SHA256\n4320d5a0865a9f63c0a72001afed190c29f184bcc653fe79517a5f5bd567aee8.\nSource LF SHA25660fa8cccb388e396076787f023694a7c3e4eac377db1c553cb73da3a95528023\nmatched the inspected source. Root opened closure pins, census, enumeration, comparison\nand result reporting. Meaningful red31/24/7 was inspected, including actual empty-error\nApp/Core RELEASE escapes; earlier fixture exceptions are not credited as that proof.\n\nAuthor's20th call failed audit due missing required --shortname, before commit/release.\nConductor authorized one administrative recovery with no source/test/rerun change;\nactual21/20 is an overrun. Author corrected premature liveness and committed/released.\nNo independent veto clearance is inferred. Source remains unjoined in integration.\nTest/proof author tree and dirty generated audit/raw artifacts are retained.\n\nIndependent Astra reviewer is provisioned at C:/Projects/ai-de-review-d0-atlas-conditional-closure,\nbranch review/d0-atlas-conditional-closure, session codex-d0-atlas-conditional-review,\nbase d8fe8b1f. Exact new receipt docs/proof/d0-atlas-conditional-review.md plus official\naudit only. Budget20 calls/25minutes/checkpoint12. Read-only source; no repairs, main,\njoin, full/shown/native runs or duplicate ledgers. Rerun the66-case headless class in\nthe new tree and inspect actual results; independently disconfirm FR003 with applicable\nRELEASE extension, Core propagation, project-symbol separation, masking states, unrelated\npositives, overflow, unsupported identity and closure changes. Test Architect plus\narchitecture/security/SRE/Simplifier lenses must return exact pins and BLOCK/CLEAR;\nno source join before all triggered vetoes clear. Existing handoff review stays evidence,\nbut new compiler-input assumptions require scrutiny. Source is frozen during review.\n\nConductor author-coordination unit closes after27 actual boundaries (initial24, corrected\nbefore cap to40) with author frozen and review provisioned; programme acceptance remains\npartial. Next unit handles independent-review results and a staged join only if CLEAR.\nThe initial monitoring-cost omission, command parse/listing corrections and author\nfixture/encoding/audit failures remain visible in receipts; no retroactive compliance.\nPreserved prior design/re-review evidence: artifacts/atlas-five-gates/d0-design-b76581ae/manifest.json,\n20 files/1154896 bytes, all copied bytes equal; manifest SHA256\n935e9e5548c46fbd356ebc3d89006c24d1ad27984fb4a60af103c0002f2df3d9.\nLatest independently advertised main remains bcf4959bc0e0e361736e6a179f05b69fcd0500f8.\nNo fresh slot request or publication yet; foreground GHCP remains publisher.\n",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md",
+        "docs/coordination/atlas-five-gates.md",
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Resolve Atlas blockers and qualify the reviewed current-main candidate for GHCP publication.",
+      "done_when": "D0 repair independently clears, integrated checks and Release pass, and the exact candidate reaches the serialized publisher.",
+      "tier": "T2",
+      "main_calls": 27,
+      "main_budget": 40,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T02:14:39Z",
+      "duration_seconds": 1476.0,
+      "git": {
+        "sha": "b027de4f24799e0ce28f9cdf78dee59dce56cceb",
+        "short": "b027de4f2",
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }

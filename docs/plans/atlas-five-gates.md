@@ -395,3 +395,61 @@ inspect and independently qualify this correction, then stage only if CLEAR. Don
 frozen reviewed candidate or precise unresolved veto handed to Owner, plus preserved
 records. Scope excludes main publication and unscheduled native execution. Prior
 16-boundary design checkpoint is recorded approximate, not retroactively compliant.
+
+### Conductor cost correction before the cap, implementation checkpoint12
+
+Author reports12/20 boundaries and13 elapsed minutes, valid red31/24/7 then first
+implementation56/12/44 with two generated-input text/BOM fingerprint mismatches.
+Conductor reads actual TRX counters and extension failures at this checkpoint; no
+green or acceptance inferred. Remaining author work is the scoped encoding correction
+and permanent discriminator qualification, still within Owner20/30 contract.
+
+Current Conductor calls17/24 at this write, including bounded waits required by the
+harness's at-most60-second user update floor. The original24-call/40-minute estimate
+omitted that minimum wait/update cadence and cannot cover its own declared duration.
+This is a planning correction BEFORE the cap fires: reserve40 boundaries for the same
+40-minute unit; do not extend the author budget or drop review/verification. No extra
+implementation or policy scope. Report actual work separately; increase is not a
+termination argument or retrospective compliance. Future units include heartbeat
+costs in their initial envelope. Variant remains unresolved acceptance predicates;
+unchanged waiting is an external dependency, not claimed progress.
+
+## Frozen conditional-binding author checkpoint
+
+Author tip d8fe8b1f2da0df053694221d3a26e66026ce66b3 commits only the existing D0 test,
+its proof and official audit. Conductor directly parsed closure-green.trx:66 results,
+66 executed/passed, zero failures/skips; SHA256
+4320d5a0865a9f63c0a72001afed190c29f184bcc653fe79517a5f5bd567aee8.
+Source LF SHA25660fa8cccb388e396076787f023694a7c3e4eac377db1c553cb73da3a95528023
+matched the inspected source. Root opened closure pins, census, enumeration, comparison
+and result reporting. Meaningful red31/24/7 was inspected, including actual empty-error
+App/Core RELEASE escapes; earlier fixture exceptions are not credited as that proof.
+
+Author's20th call failed audit due missing required --shortname, before commit/release.
+Conductor authorized one administrative recovery with no source/test/rerun change;
+actual21/20 is an overrun. Author corrected premature liveness and committed/released.
+No independent veto clearance is inferred. Source remains unjoined in integration.
+Test/proof author tree and dirty generated audit/raw artifacts are retained.
+
+Independent Astra reviewer is provisioned at C:/Projects/ai-de-review-d0-atlas-conditional-closure,
+branch review/d0-atlas-conditional-closure, session codex-d0-atlas-conditional-review,
+base d8fe8b1f. Exact new receipt docs/proof/d0-atlas-conditional-review.md plus official
+audit only. Budget20 calls/25minutes/checkpoint12. Read-only source; no repairs, main,
+join, full/shown/native runs or duplicate ledgers. Rerun the66-case headless class in
+the new tree and inspect actual results; independently disconfirm FR003 with applicable
+RELEASE extension, Core propagation, project-symbol separation, masking states, unrelated
+positives, overflow, unsupported identity and closure changes. Test Architect plus
+architecture/security/SRE/Simplifier lenses must return exact pins and BLOCK/CLEAR;
+no source join before all triggered vetoes clear. Existing handoff review stays evidence,
+but new compiler-input assumptions require scrutiny. Source is frozen during review.
+
+Conductor author-coordination unit closes after27 actual boundaries (initial24, corrected
+before cap to40) with author frozen and review provisioned; programme acceptance remains
+partial. Next unit handles independent-review results and a staged join only if CLEAR.
+The initial monitoring-cost omission, command parse/listing corrections and author
+fixture/encoding/audit failures remain visible in receipts; no retroactive compliance.
+Preserved prior design/re-review evidence: artifacts/atlas-five-gates/d0-design-b76581ae/manifest.json,
+20 files/1154896 bytes, all copied bytes equal; manifest SHA256
+935e9e5548c46fbd356ebc3d89006c24d1ad27984fb4a60af103c0002f2df3d9.
+Latest independently advertised main remains bcf4959bc0e0e361736e6a179f05b69fcd0500f8.
+No fresh slot request or publication yet; foreground GHCP remains publisher.
