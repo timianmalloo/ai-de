@@ -658,3 +658,117 @@ holder. Existing Atlas bug, peer slots and observer remain untouched.
 are not measurements; docs index and security/privacy rollups remain conductor-owned/pending.
 **GATE P0-delta pending independent review. Best next action:** independent delta reviewer,
 then conductor-admitted Python P1 author for the compatible dormant subset only. No self-clearance.
+
+## 11. Accepted Data/DS amendments and P2.1 admission — 2026-09-16
+
+This amendment supersedes the contradictory P2-A/B/C candidate text above, including
+the one-way receipt gap and the former prohibition on cyclic foreign keys. The old
+candidate is retained as a correction record, **not executable approved DDL**.
+Human approval continues to cover P0–P5. The independent DS review of source
+`3d13270683655156f79dfe9d698cc0b410f2a32b` (12 calls) returned
+**PASS-WITH-CONDITIONS**: the following three Data amendments and narrow ordering
+design are DESIGN ADMITTED once committed. This is not implementation, migration,
+activation, or full-P2 PASS. Data's reduced SQLite 3.49.1 spike rejected 16 forbidden
+cases and rolled back first/current receipt transactions at four write boundaries.
+That is reduced-schema evidence, not C# full-schema verification.
+
+### A. Receipt aggregate correction (later P2 implementation)
+
+Keep exactly the same three event/feed/checkpoint caches in existing `watcher.db`;
+the canonical `.agents` stream is unchanged. Each event has immutable NOT NULL
+`first_receipt_n`, `first_kind = 1`, and `current_receipt_n >= first_receipt_n`.
+Feed rows carry `is_initial` in {0,1}, `admission_n`, and `application_state`
+separate from immutable `outcome`. Initial rows have `is_initial=1`,
+`admission_n=NULL`, and cannot be tombstones. Transition rows have `is_initial=0`,
+non-null `admission_n`, and `n > admission_n`. Ordinary outcome equals application
+state; a tombstone's application state remains applied.
+
+Use deferred composite foreign keys: event first receipt → feed `(n,is_initial)`;
+event current receipt/state → feed `(n,application_state)`; feed → event; transition
+admission → event first receipt. Include scope/source identity in every relevant
+key so another event's receipt cannot satisfy it. A partial UNIQUE index permits
+exactly one initial receipt per event. Applied-parent eligibility is an actual
+CHECK discriminator column plus composite FK, not an application-only check.
+Transition triggers enforce an increasing current pointer, no remapping and no
+resurrection. Derive current reason/mapping through the feed join, not duplicate
+mutable columns. Payload clearing is permitted only with a paired tombstone;
+release active bytes but preserve identity, digest and applied-parent identity.
+Never rematerialize cleared content.
+
+Acquire SQLite IMMEDIATE before key lookup or allocation. Within that transaction:
+insert initial feed and obtain `n` → insert event referencing `n` → typed native,
+session and mapping effects → checkpoint → COMMIT → publish memory/ACK. Deferred
+constraints are checked at commit. No registrar callback may escape this transaction.
+Full-cache implementation and raw-SQL/full-C# constraint tests remain later P2.
+
+### B. Capture guarantee correction (later P2 implementation)
+
+Use bounded optimistic, append-compatible capture, **not** a linearizable snapshot
+or mutation-excluding handle. Capture complete LF records; defer an incomplete tail.
+Validate copied prefix bytes and length and the accepted-prefix digest once per pass;
+apply immutable pages from that copy. Reload checkpoint in the write transaction:
+if it advanced beyond the snapshot, discard and recapture within the finite pass
+budget. Changed, truncated or missing accepted prefix reports `SOURCE_GAP` and
+retains checkpoint/incarnation. Mutation after validation and transient ABA are
+explicitly outside the guarantee. No blind new incarnation or unbounded recapture.
+
+Retain scoped injective repository/origin/path/epoch identity and ceilings of 128
+files, 32 MiB aggregate capture, 64 KiB record, 128 records/4 MiB page. These are
+design bounds, not measured production SLIs. Full capture implementation is later P2.
+
+### C. Observation-only replay correction (later P2 implementation)
+
+Prepare inert data → transactionally write the original OBSERVATION mapping and
+session facts → publish observations only after commit. Historical replay cannot
+Register, increment generation, refresh heartbeat, clear ended, or issue capability.
+Native observed content may persist through an internal typed projection bound to
+the observed mapping, preserving provenance, quarantine and thread constraints,
+without execution rights. Public Post/Reply/Acknowledge capability checks stay
+unchanged. Missing live authority leaves authority-requiring operations pending or
+refused. There is no public ID/generation rebinding. This is not implemented by P2.1.
+
+### D. Narrow native ordering/paging contract (P2.1 implementation admitted)
+
+Allocate each future repository sequence as checked `MAX(seq)+1` under SQLite
+IMMEDIATE in the same transaction as insertion; return the persisted BoardMessage
+only after COMMIT. Reuse existing `ix_board_message_repo(repository_key)`; it bounds
+the aggregate to the repository, not an O(1) max lookup. No schema-version bump,
+new index or migration. In memory the store-wide lock covers max and insert.
+
+Keep existing IDs and historical duplicate Seq values. Add
+`AppendBoardMessageAllocated(BoardMessage)` returning the allocated row to
+`IWatcherObservationStore`; a default may throw NotSupportedException, never
+fallback to allocation outside a transaction. Supported stores/proxies implement it.
+Existing service signatures stay unchanged but return the allocated result, not
+the proposal. All updated reliable writers use this path instead of count+1.
+
+**Compatibility exception:** retain legacy void `AppendBoardMessage` as explicit
+caller-sequenced seed/import insertion. Existing tests seed gaps and duplicates and
+SQLite inserts the supplied sequence. Delegating that method to an allocator would
+rewrite historical order; therefore it does not delegate. Legacy writes are outside
+the new reliable cursor guarantee. No unqualified binary-compatibility claim.
+The public Seq/BoardEntry/sinceSeq contract is Int32; checked overflow refuses before
+insertion, including a raw SQLite Int64 maximum. Do not widen the wire silently.
+
+MCP reads with `sinceSeq` return the **earliest** qualifying N ascending; use the
+last returned sequence as the next cursor. Without `sinceSeq`, preserve recent-N
+behavior. Do not claim completeness for historical ties, native tombstones or the
+publisher snapshot. Public capability checks, production authorization DENY and
+enhanced append disabled remain unchanged.
+
+### E. Evidence boundary and class control
+
+The supplied unmodified seven-case C#/SQLite receipt is 2 PASS / 5 RED: serial
+sequences 1/2 pass; R3 has B allocate 1 and wait, A commit 1, reader cursor 1,
+B commit 1, then reader `>1` empty. The relevant defect class is allocation outside
+the durable consistency boundary; count is not the maximum and a service lock is
+not a store lock. Sweep: the service count+1 producer, both store implementations,
+the scheduling proxy and MCP newest-N paging form this narrow change surface.
+Derive ordering in the store; prevent it with hole/max/overflow/concurrent-store,
+reader-between-commits and >200-page tests. The R3 preinsert proposal equality is
+incidental to the old bug and must not constrain a store-allocated result; preserve
+its actual reader-between-commits oracle and exact committed fact identity.
+
+R1 duplicate pump and R2 restart/ended/generation/heartbeat remain mandatory later
+P2 REDs. P1 `535b` independent PASS was reported but is not joined here; do not copy
+its source. Independent C#/Data/DS review of the implementation is still required.

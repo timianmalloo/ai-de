@@ -166,3 +166,34 @@ Human P0–P5 approval remains; P1 semantics review runs separately. Runtime rep
 claims remain Inferred. Upstream work remains after verified completion of all six
 phases; only project-neutral protocol contracts are candidates, never product-specific
 C# watcher/store/WPF implementation by assumption.
+
+## Accepted P2 amendment — 2026-09-16
+
+The decision is amended by design `cross-harness-coordination.md` §11 A–E.
+That section is the authoritative full transcription of the three accepted Data
+amendments: deferred initial/current receipt constraints on the same three caches,
+bounded optimistic append-compatible capture (not linearizable/excluding mutation),
+and inert observation preparation with transactional original mapping/session facts
+followed by post-commit publication without historical live registration.
+It supersedes the one-way receipt gap and the earlier no-cycle candidate. Full-cache
+DDL and capture/replay implementation remain later P2, not this native-ordering unit.
+
+Independent DS: **PASS-WITH-CONDITIONS**, source `3d13270683655156f79dfe9d698cc0b410f2a32b`,
+12-call review; DESIGN ADMITTED after this amendment is committed. Data's SQLite
+3.49.1 reduced spike rejected 16 forbidden cases and exercised rollback at four write
+boundaries; it is not proof of the C# full schema. No implementation/activation PASS.
+
+P2.1 admits checked per-repository MAX(seq)+1 under SQLite IMMEDIATE plus insertion
+and commit before return; in memory, store-wide locking. Add the distinct returning
+AppendBoardMessageAllocated seam with a fail-closed unsupported default. Preserve
+legacy void caller-sequenced insertion as a seed/import compatibility exception,
+historical IDs/duplicate sequences and Int32 public signatures. Overflow refuses.
+Reuse ix_board_message_repo; schema version remains 7, with no migration or index.
+MCP sinceSeq reads earliest qualifying N ascending and advances by last returned Seq;
+without sinceSeq retain newest-N. No historical-tie, tombstone or publisher-feed
+completeness claim. Production authority remains DENY and enhanced append disabled.
+
+Rejected: external allocation, service-instance-only locks, sequence renumbering,
+uniqueness retrofit, silent Int64 API widening, and newest-N cursor recovery.
+R1/R2 replay defects, full-P2 migration/rebuild/rollback and independent implementation
+gates remain open. This amendment authorizes the narrow implementation, not shipment.

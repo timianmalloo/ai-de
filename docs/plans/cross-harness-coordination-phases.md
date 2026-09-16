@@ -350,3 +350,31 @@ not automatically protect it. An upgraded shim is not compatibility evidence. En
 writing remains disabled until separate mixed-client contention/complete-record/conflict-
 safety proof and independent qualification exist. Stop at the dormant-subset proof receipt
 without claiming P1 complete; remaining P1, P2 schema and endpoint/run gates remain separate.
+
+## P2.1 bounded execution — 2026-09-16
+
+Goal: record/commit design §11's approved Data/DS amendments, then implement native
+ordering/paging. Done when two commits contain amendments, code and red/green proof.
+Not in scope: remaining P2 capture/replay/cache schema, P1 integration, activation,
+new dependencies, schema/index changes, endpoint/slot/UI work. Tier T2; fan-out 0;
+main-line budget 45 calls, context ceiling 150k. Work stays in the registered
+feature/xh-p2-projection tree, reopened as xh-p2-projection-b0d0.
+
+| Node | Capability | Inputs → exit | Dependency |
+|---|---|---|---|
+| N1 | Reasoning | Source, approved Data/DS conditions → exact amendments committed | None |
+| N2 | Deterministic mechanics | Pinned unmodified source → meaningful new RED ordering/page controls | N1 data/gate |
+| N3 | Reasoning | REDs and admitted contract → allocated seam, stores, service and paging | N2 data |
+| N4 | Deterministic mechanics | Candidate → targeted GREEN, explicit R1/R2 RED, hashes, proof, second commit | N3 data |
+
+Serial by coupling and shared source/test outputs; no independent delegate. Normalized
+work/span 4/4, parallel ceiling 1× (Inferred equal-node model, no measured latency
+claim). Finite test-case worklist reaches zero; one repair pass allowed before reporting
+a new blocker, never silently expanding scope. Claimed controls must fail on old source;
+R3 retains the reader between commits, not equality of an unallocated proposal.
+No tests/reviews run while edit leases are held. Independent C#/Data/DS implementation
+review follows this author handoff; author does not clear those gates.
+
+The design §11 supersedes earlier P2 admission statements only for this narrow unit.
+Unmodified seven-case baseline is 2 PASS/5 RED. R1/R2 and full-P2 floors remain required
+and nonshippable. Conductor still owns derived index/backlink/rollup regeneration.
