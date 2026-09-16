@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T03:21:23Z",
+  "generated": "2026-09-16T03:39:19Z",
   "audit": [
     {
       "actor": null,
@@ -24769,6 +24769,68 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "f90bdce143812d86008f14a0aa806ff222bf3b17",
         "short": "f90bdce14",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2M4FMHN912TH88230QNTYPB",
+      "shortname": "atlas-p1-02-uia-investigation",
+      "datetime": "2026-09-16T03:34:34Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "The conflicts are yours to resolve. Continue the bounded Atlas qualification; Owner admits four-call read-only investigation of its observed native failure.",
+      "summary": "P1-02 native original Atlas files lookup missing under verified own HWND/process. Completed=false/FailureCount4; root/census/screenshot observed, no necessary-and-sufficient cause. Prior IQV16 same shape; later green did not remove cause. No completeTRX, rerun, repair or publication. Four-call read-only investigation complete; foreground diagnostic decision requested.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-02-native-uia.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Identify the exact original native failure from retained evidence without guessing a cause.",
+      "done_when": "Original query, scope, primary/cleanup distinction and prior evidence pinned; smallest next diagnostic seam routed.",
+      "tier": "T2",
+      "main_calls": 4,
+      "main_budget": 4,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-16T03:31:41Z",
+      "duration_seconds": 173.0,
+      "git": {
+        "sha": "e6aed0857749a1409e5a4d3c704ed131aeea721c",
+        "short": "e6aed0857",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2M4R9QZJKVN8YBY674R02S9",
+      "shortname": "atlas-p1-02-failed-qualification",
+      "datetime": "2026-09-16T03:39:18Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "The conflicts are yours to resolve. Continue the reviewed qualification toward main under the foreground scheduler.",
+      "summary": "P1-02 exacte6aed085/basebcf granted once; actual preflight passed, native original Atlas files UIA query failed; receipt Completedfalse/FailureCount4. PID7888 start03:25:44.148310/end03:29:44.662781 finalexit1; inspected identity before owned tree stop; leasesreleased. No completedTRX/fullgates/Release/main acceptance. Root four-call read-only investigation separately audited; cause unresolved. Reviewed source/history preserved. Monitoring budget24calls/45minutes was declared; total mixed coordination/monitoring tool count not instrumented across the interleaved investigation, so no cap-compliance or token-cost claim. Actual runtime240.514471seconds from state; audit marker duration also includes evidence closure.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-five-gates.md",
+        "docs/proof/atlas-p1-02-native-uia.md"
+      ],
+      "tags": [],
+      "outcome": "failed",
+      "goal": "Execute one exact authorized canonical qualification and preserve its actual result.",
+      "done_when": "First failure or full completion observed, owned run ended/released, raw evidence and next decision recorded.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-16T03:25:44Z",
+      "duration_seconds": 814.0,
+      "git": {
+        "sha": "e6aed0857749a1409e5a4d3c704ed131aeea721c",
+        "short": "e6aed0857",
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }

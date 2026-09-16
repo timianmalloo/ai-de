@@ -9534,7 +9534,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "efeda6c9f1d4f8ff6949bb922d2c53a7a6e2062987a93fd0af4ab9f8ea7e8e39"
+      "sourceSha256": "d376de7267c32ca0a4cd8eedf4b1d5461d5602aeb18a29d345a36133ce637f83"
     },
     {
       "id": "coordination-code-atlas",
@@ -9722,7 +9722,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "451ba7cd12a44105f4ca5967f5f280809f9750165adf97f7ab5a064a48e7d6b4"
+      "sourceSha256": "c1b627e705389eafe2a847cd56e2f6bdafd0541e3a242107100a7e0c6006706b"
     },
     {
       "id": "design-session-profiler",
@@ -10105,6 +10105,32 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "9639568f02c25923e0a708cf46869fa2d1a2a68b844949f035afa761f5f79498"
+    },
+    {
+      "id": "investigation-atlas-p1-02-native-uia",
+      "path": "docs/proof/atlas-p1-02-native-uia.md",
+      "title": "Atlas P1-02 native UIA failure: preserved observation and bounded next diagnostic",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "The original Atlas files UIA query refused on the proof-owned HWND; current and historical evidence do not establish a necessary-and-sufficient cause.",
+      "tags": [
+        "atlas",
+        "investigation",
+        "native",
+        "uia"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-five-gates",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0e852003b29aea8ccc7aa4b1d53646b9dfa2a5ac76c2197404cb640a65500b4c"
     },
     {
       "id": "investigation-code-atlas-legacy-peer-startup",
@@ -12082,7 +12108,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "d828f7b018408cb0fae94d20d1e4ecbd476fcd6d02d9a23de3147a22d7fca159"
+      "sourceSha256": "3740f22083d5e0daca040985f4bc008bce6521d57c2bbcebebc9e07dbf06fa76"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -12713,7 +12739,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "65e81db932111143abc73a93a5283531918c6d8293a5ce354189b93dd023ab6b"
+      "sourceSha256": "e76c1626252eeb864ce762d80ba9c43c81a7ed3365e57ab5de4b1e221c6e5203"
     },
     {
       "id": "proof-code-atlas-contract-grounding",
@@ -23009,5 +23035,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f257fbf28212aeaec4b74e2568a337748616299f6b5a5a2d16f5c12242296f10"
+  "graphSha256": "dc0655b2055a4541492872e811c92ffd19d4455403957dfc186cca09d72449cf"
 };

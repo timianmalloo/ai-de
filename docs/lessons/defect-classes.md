@@ -7205,6 +7205,17 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 
 ### DC-160 — A Proof Pack figure or "red observed" cell is written before the measurement that would fill it
 
+- **Related evidence-lifecycle recurrence (assembly review, 2026-09-16):** the
+  reviewer set its identity for claims/audit but omitted it in a later commit process;
+  the hook correctly reported identity-unchecked. Sweep: original commit, exact receipt
+  and source hashes, both current path checks and audit-only recovery. Derive: environment
+  identity is per process, not inherited from a prior tool call. Prevent: retained recovery
+  sets both variables in the same process as coord checks and git commit; the observed
+  new hook checks one staged path. Original adb328a1 remains unchecked and11/8 remains
+  an overrun; audit-only12c1ddd0 is new evidence, never retroactive compliance.
+  Evidence: `docs/proof/atlas-five-gates.md` current P1-02 checkpoint and independent
+  `docs/proof/atlas-assembled-preservation-review.md` at12c1ddd0.
+
 - **Related lifecycle-evidence recurrence (D0 author closure, 2026-09-16):** own liveness
   said leases were released before the administrative chain reached release. The official
   audit writer rejected missing required --shortname and correctly prevented commit; the

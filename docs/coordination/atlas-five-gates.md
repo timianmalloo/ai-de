@@ -13,6 +13,51 @@ summary: "Exact blocker transfer; isolated repairs followed by GHCP-only main pu
 ---
 
 
+# Current state: P1-02 failed; source preserved, native diagnosis pending
+
+The five repairs and reviewed D0 source remain assembled at f90bdce1; qualification
+candidate e6aed085 remains the frozen source/evidence input. Actual independent73/73
+D0 and merge-preservation review are CLEAR. Preservation receipt adb328a1 / subsequent
+audit-only12c1ddd08202c9b29688dd1acb425300844fa553 is retained in the independent
+review tree. Its original commit emitted identity-unchecked and actual11/8; later2/2
+administrative recovery records fresh exact checks without relabeling history.
+
+Fresh foreground grant SLOT-CODEX-P1-02 was consumed once. Same-tree Debug daemon
+preflight passed with clean inputs and three binary hashes. Canonical PID7888 ran
+03:25:44.148310Z to03:29:44.662781Z, finalexit1; its native receipt failed with
+Completed=false/FailureCount4. The original Atlas files lookup failed under the verified
+owned HWND45680476/process7952; two later daemon forced-cleanup errors remain distinct.
+The root verified canonical PID command/creation before stopping only that process tree.
+All four leases were released; no matching integration dotnet/testhost/AiDe commands
+remained in the observed post-stop census. No completed suite TRX, fullgate or Release
+result exists for P1-02. Main publication remains blocked, and the released slot cannot
+authorize another run. No product/native-test/runner change was made.
+
+The four-call read-only investigation is complete at docs/proof/atlas-p1-02-native-uia.md.
+It identifies the missing element and preserves a diagnostic lead: after-original UIA
+census contains Loading Code Atlas. while the captured pixels show loaded member/source.
+The census is explicitly truncated atdepth12. Native test bytes are identical to prior
+5f651aaa diagnostic checkpoint; prior IQV16/UWQ proof recorded the same failure shape
+and later green while explicitly leaving its intermittent cause unknown. No causal fix
+is proposed. Foreground diagnostic disposition requested in req-01M2M4FMQW8QWMJX0GFWF54A5X
+and paired watcher req-01M2M4FMSHFE4S35KTFTT65PB1; notices are not acknowledgments.
+
+Foreground later reported Grok PID12744 START03:29:33.3644676Z. The original query
+failed at03:27:53.4013825Z, 99.963085seconds earlier. Wrapper-lifetime overlap is
+not evidence of the earlier failure's cause. The observed taskkill output places12744
+as a child of native testhost7952 inside the stopped7888 tree. This is a process-provenance
+question, not proof that a named peer was independently running or caused the failure.
+The exact command/window identity and authorization route have been requested; all
+recorded timings and raw evidence are preserved. No new coordination-policy scope.
+
+Next: foreground/Owner decide a narrowly named diagnostic capture or execution correction
+from existing evidence; any implementation requires its exact seam contract and independent
+review, and any shown run requires a fresh slot. Then canonical qualification, final review,
+GHCP main publication and E1/E2 continuation. The original user-authorized merge conflicts
+are resolved; this remaining native verification failure is not labeled a merge conflict.
+
+## Earlier checkpoints (historical)
+
 # Current state: reviewed source joined; qualification pending
 
 The independent D0 clearance e5ee30f30330010395d430c7b43474ad441de550 is merged
