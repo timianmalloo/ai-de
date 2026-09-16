@@ -5654,6 +5654,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "402c3dc5757dfb7516205cab2e78c73597c56feb5a0fce45e0042593291492c5"
     },
     {
+      "id": "note-d1-codex-entry-point-handshake-r5",
+      "path": "docs/notes/d1-codex-entry-point-handshake-r5.md",
+      "title": "D-1 mapper r5 — Grok authors the proposal only; Open Sequence still disabled",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "Consumes Codex CHANGES REQUIRED on r4 (NKJGBAWR / NS19CKPE). Freezes authorship only: Grok writes the mapper proposal. Identity, API, cardinality, and activation stay unadmitted. Open Sequence stays disabled. r3 listing freeze unchanged.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "mapper"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake-r4",
+          "rel": "supersedes"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r3",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-mapper",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-entry-points",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "26eb70ced8c90c9308a06544582b6ad8f2fd5fc657acea6766be292766baa6ea"
+    },
+    {
       "id": "note-d1-listing-query-architecture",
       "path": "docs/notes/d1-listing-query-architecture.md",
       "title": "D-1 listing query architecture (draft) — EntryPointsAsync; identity minting",
@@ -12125,7 +12163,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4e0c3f3532d0a8e0ddddad82477d0d42f2a943a2768710354de1be7bcba8280f"
+      "sourceSha256": "5c4126d8798dbb471b1f6e1a9aef4ae1ffde2ee79602248b4bd7f0f86fdcad9c"
     },
     {
       "id": "session-profiles",
@@ -20931,5 +20969,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "91b2d5cd3c613a5c2676902cf5b36d3af77339e4c0c0882bf854383035e00644"
+  "graphSha256": "4dfd4484ec8cd8875e58053b8ada5592da2ce06a812017b052118d83e27caa5e"
 };
