@@ -82,6 +82,65 @@ Loop variant: unresolved enumerated repair/review predicates decreases toward ze
 
 ## Planned versus actual
 
+### Resumed current-main assembly, 2026-09-16
+
+Goal: assemble the reviewed five repairs with current main and deliver the fully qualified
+candidate to foreground GHCP. Done when: the unchanged qualification union, independent combined
+review and prepublication Release have observed passing results, with exact candidate/base and
+history-conservation evidence handed back. Not in scope: main push, live GHCP trees, E1/E2/D1
+implementation or outside-manifest semantic resolutions. Tier T2; cap4, actual width3 while Owner
+and independent plan reviewer inspect the assembly procedure. Initial continuation budget36 tool
+boundaries, checkpoint24; qualification duration is measured, not assumed. Any cap firing causes
+diagnosis/replan, never a dropped gate.
+
+Foreground resolved req-01M2KNK3JNSKNTS80YHQAXYPGX and sent req-01M2KR6F0G883DPGFPBJXZTZKK:
+Codex is the current-main assembly/qualification executor. The failed background closer is not
+a route. Foreground copilot-atlas-recovery-b0d0 resolves precise outside-manifest semantic conflicts
+and retains publication. Watcher slot request req-01M2KR9M0180MSWTCYZ2DW77SM remains pending.
+Old records saying executor unanswered are superseded by this actual acknowledgment.
+
+Own registered integration tree: C:/Projects/ai-de-integration-atlas-five-gates,
+integration/atlas-five-gates, session codex-atlas-five-gates-integration; baseb0625686.
+Current local/origin/advertised main independently read asbcf4959bc0e0e361736e6a179f05b69fcd0500f8.
+No semantic source editing is planned. Surface list remains the existing repair ledger plus
+current-main source reconciliation, history union, derived views and integrated runtime receipts.
+
+| Node | Exit oracle | Dependency |
+|---|---|---|
+| R1 current state and authority | Exact main/components/leases/foreground response read | None |
+| R2 assembly contract review | Owner and independent Test Architect clear exact unconditional pre-recount barrier | R1 |
+| R3 official staged joins | All pinned ancestors/source manifests conserved; every stage explicitly unqualified | R2 |
+| R4 checked desktop slot | Watcher names current-holder release and bounded START/END allocation | R1 |
+| R5 unchanged qualification | Repo join.json checks/recount/gates/Release run; TRXs and full outcomes inspected | R3,R4 |
+| R6 independent combined review and handoff | Retained reviewers clear combined evidence; exact candidate/base sent foreground | R5 |
+
+```mermaid
+graph TD
+ R1-->R2-->R3-->R5-->R6
+ R1-->R4-->R5
+```
+
+Naive execution runs a whole recount after each incomplete source join. The official script has
+one branch argument and no assembly-only flag. Owner permits a temporary copy of join.json with
+ONLY an unconditional final checks entry appended; independent Test Architect must inspect it
+before use. It refuses before recount and accepted-audit emission. Every original check/recount/
+regeneration/gate/Release field remains intact. Each stage uses the official tool with --no-push,
+never --docs-only/--no-build. Only the named barrier is an expected stop. Final --continue uses
+UNCHANGED repository join.json under the actual watcher slot, all obligations once. No source
+join is reported accepted by the staging step. This is scheduling, not a framework change.
+
+Temporary files live under C:/Users/malla/AppData/Local/Temp/atlas-five-gates-assembly/.
+Repo join.json SHA25616a55a15c9d56ae365c6a2c9d5729f382a678d00aa9786be23269c508b6b085c;
+assembly.join.json SHA25670128acef232f1f856bb8d18149f62cba191f000d538d513ee32e31c134516e6;
+assembly_not_qualified.py SHA25620ea4612cb925bd0bebaddc80c7f8129088df3834fe4b07b1939b89947c3002e.
+Barrier exits86 unconditionally. Final use of --no-push is mandatory because the stock tool places
+push before Release. Independent review is an immovable floor; no author self-clear.
+
+Inferred unit-cost graph:6nodes, span5, width2 for scheduling versus assembly only; not a runtime
+or speedup claim. Variant: unjoined pinned components then unverified qualification/review
+predicates decreases. An unexpected conflict/failure or main movement triggers replan; two passes
+without reduction escalate. E1/E2 peer questions remain a separate pending seam, not extra work.
+
 ### Material replan: current main and integration owner
 
 Advertised main advanced from901320c4 tobcf4959bc0e0e361736e6a179f05b69fcd0500f8 while authors worked. The new D0 files do not overlap the exact P1 source manifests; Shell/factory integration remains outside those manifests. Owner confirmed disjoint authoring continues, and the GHCP closer consumes all reviewed repair commits plus then-current main before final integrated qualification. The frozen handoff explicitly retains finalintegration/reviews/publication with GHCP. No docs-only source join or implicit desktop slot is authorized.

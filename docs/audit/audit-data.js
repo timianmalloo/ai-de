@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T23:32:01Z",
+  "generated": "2026-09-16T00:05:27Z",
   "audit": [
     {
       "actor": null,
@@ -21920,6 +21920,36 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       }
+    },
+    {
+      "id": "al-01M2KRGPXFG3M3ZB4G8BQ2XEG9",
+      "shortname": "atlas-current-main-assembly-plan",
+      "datetime": "2026-09-16T00:05:26Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going",
+      "summary": "Foreground resolved executor seam: Codex assembles/qualifies in newly registered integration/atlas-five-gates; mainbcf verified local/origin/advertised. Existing R1-R6 graph retains all floors. Owner admits explicitly incomplete staged official joins with unconditional pre-recount refusal, contingent independent Test Architect review of exact temporary contract; final unchanged repo join.json only under actual watcher slot. No mainpush, source expansion, invented slot or peerACK. Startup duration begins at observed coordinator marker00:00:55Z, after earlier resumed readbacks. Thirty-six boundary continuation ceiling, checkpoint24; cost estimates labeled Inferred.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": "Codex",
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md",
+        "docs/coordination/atlas-five-gates.md",
+        "docs/proof/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Assemble the reviewed five-gate repairs with current main and deliver the qualified candidate to foreground GHCP.",
+      "done_when": "Unchanged full qualification, independent combined review and prepublication Release pass with exact candidate/base and conservation evidence handed back.",
+      "tier": "T2",
+      "fan_out": 4,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T00:00:55Z",
+      "duration_seconds": 271.0
     }
   ],
   "changes": [

@@ -8833,7 +8833,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d93ba5cf71e80ec9475d54af23bdffe2c78cf4f52a1fed1d6f549b15ebd0c5e5"
+      "sourceSha256": "f151e7afe0843fbfde8cd66805b26725c8d7938c4c46df3d8a2912d5dad53d07"
     },
     {
       "id": "coordination-code-atlas",
@@ -11232,9 +11232,14 @@ window.DOCS_INDEX = {
           "kind": "flowchart",
           "title": "Exact repair ledger (dispatch contract)",
           "mermaid": "graph TD\n A-->B-->C\n C-->D\n C-->E\n C-->F\n C-->G\n D-->H\n E-->H\n F-->H\n G-->H\n H-->I-->J"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Resumed current-main assembly, 2026-09-16",
+          "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "ef31fdd05d3b8eb6df28d762080f48432e656ffc0f1f39d4b35076de7f22adb8"
+      "sourceSha256": "ea001ac1409d890be3a879494ea2e58c4c4c25aed278d7a3944f11fd26f9e650"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -21441,5 +21446,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a364dbc2a0d2c0146a9ff8c35d987e78233e0ac24e6de56938a97eb72eb3f9a7"
+  "graphSha256": "bc6a71d1739e70153fa3ef7eadffa9f401db62356cd4b6942210809552c79472"
 };

@@ -14,6 +14,15 @@ summary: "Exact blocker transfer; isolated repairs followed by GHCP-only main pu
 
 # Layer state
 
+**Current continuation:** foreground explicitly acknowledged Codex as current-main assembly and
+qualification executor (resolved req-01M2KNK3JNSKNTS80YHQAXYPGX; req-01M2KR6F0G883DPGFPBJXZTZKK).
+Own new integration tree C:/Projects/ai-de-integration-atlas-five-gates, branch
+integration/atlas-five-gates, session codex-atlas-five-gates-integration, baseb0625686.
+Watcher request req-01M2KR9M0180MSWTCYZ2DW77SM asks the checked desktop slot; no slot inferred.
+Foreground copilot-atlas-recovery-b0d0 retains exact outside-manifest conflict decisions and
+publication. The older executor-pending rows below are historical; combined qualification and
+peer contract acceptance still remain pending.
+
 Primary product/index work is untouched; only supported shared coordination and our own liveness are written there. Tree C:/Projects/ai-de-conductor-atlas-five-gates, branch conductor/atlas-five-gates, session codex-atlas-five-gates, agent codex-astra-gate-conductor; created by coord worktree new from dd9b338f. Coordination doctor confirmed registered drivers,11 patterns and regeneration debts subsequently checked. Short exact claims protect authored records. Liveness and requests are primary-shared, never an alternate ownership map.
 
 ## Artifact classes
