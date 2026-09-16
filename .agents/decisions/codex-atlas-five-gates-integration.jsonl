@@ -487,3 +487,15 @@
 {"agent": "codex-astra-gate-conductor", "at": 1789596077.605237, "code": null, "kind": "allowed", "path": "docs/proof/atlas-p1-03-transition-design-review.md", "session": "codex-atlas-five-gates-integration", "wi": ""}
 {"agent": "codex-astra-gate-conductor", "at": 1789596077.6212554, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-atlas-five-gates-integration", "wi": ""}
 {"agent": "codex-astra-gate-conductor", "at": 1789596077.6367822, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789597507.0958605, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789597507.1123683, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789597507.1273718, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789597507.143387, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789597507.1608958, "code": null, "kind": "allowed", "path": "docs/audit/change-log.jsonl", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789597507.1769037, "code": null, "kind": "allowed", "path": "docs/coordination/atlas-five-gates.html", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789597507.1949139, "code": null, "kind": "allowed", "path": "docs/coordination/atlas-five-gates.md", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789597507.209924, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789597507.2264361, "code": null, "kind": "allowed", "path": "docs/plans/atlas-five-gates.md", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789597507.2429445, "code": null, "kind": "allowed", "path": "docs/proof/atlas-p1-03-transition-design-review.md", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789597507.2589486, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789597507.2754626, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-atlas-five-gates-integration", "wi": ""}

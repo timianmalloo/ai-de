@@ -134,3 +134,5 @@
 {"agent": "copilot-p2-recovery-tests", "at": 1789596238.3683476, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Watcher/CoordinationRecoveryTests.cs", "session": "xh-p2-projection-b0d0", "wi": ""}
 {"agent": "copilot-p2-recovery-tests", "at": 1789596238.452694, "code": null, "kind": "allowed", "path": "docs/proof/cross-harness-coordination-proof-pack.md", "session": "xh-p2-projection-b0d0", "wi": ""}
 {"agent": "copilot-p2-recovery-tests", "at": 1789596238.5327091, "code": null, "kind": "allowed", "path": "docs/plans/cross-harness-coordination-phases.md", "session": "xh-p2-projection-b0d0", "wi": ""}
+{"agent": "copilot-p24-feed", "at": 1789597327.7233098, "code": null, "kind": "allowed", "path": "docs/adr/adr-01M2NJ2PQS7X6GE3F559JC4TNP-cross-harness-canonical-stream.md", "session": "xh-p2-projection-b0d0", "wi": ""}
+{"agent": "copilot-p24-feed", "at": 1789597327.742354, "code": null, "kind": "allowed", "path": "docs/design/cross-harness-coordination.md", "session": "xh-p2-projection-b0d0", "wi": ""}

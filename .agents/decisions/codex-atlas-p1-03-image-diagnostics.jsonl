@@ -1,0 +1,9 @@
+{"agent": "codex-astra-image-diagnostics-author", "at": 1789597836.6880531, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "codex-atlas-p1-03-image-diagnostics", "wi": ""}
+{"agent": "codex-astra-image-diagnostics-author", "at": 1789597836.7060587, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "codex-atlas-p1-03-image-diagnostics", "wi": ""}
+{"agent": "codex-astra-image-diagnostics-author", "at": 1789597836.7238002, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-atlas-p1-03-image-diagnostics", "wi": ""}
+{"agent": "codex-astra-image-diagnostics-author", "at": 1789597836.7443147, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-atlas-p1-03-image-diagnostics", "wi": ""}
+{"agent": "codex-astra-image-diagnostics-author", "at": 1789597836.7611132, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "codex-atlas-p1-03-image-diagnostics", "wi": ""}
+{"agent": "codex-astra-image-diagnostics-author", "at": 1789597836.778437, "code": null, "kind": "allowed", "path": "docs/proof/atlas-p1-03-pair-preparation.md", "session": "codex-atlas-p1-03-image-diagnostics", "wi": ""}
+{"agent": "codex-astra-image-diagnostics-author", "at": 1789597836.7979515, "code": null, "kind": "allowed", "path": "docs/proof/records/atlas-p1-03-uia-transition/run_pair.py", "session": "codex-atlas-p1-03-image-diagnostics", "wi": ""}
+{"agent": "codex-astra-image-diagnostics-author", "at": 1789597836.816459, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-atlas-p1-03-image-diagnostics", "wi": ""}
+{"agent": "codex-astra-image-diagnostics-author", "at": 1789597836.8339698, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-atlas-p1-03-image-diagnostics", "wi": ""}

@@ -218,3 +218,63 @@
 {"agent": "copilot-p2-recovery-tests", "at": 1789596183.5787349, "kind": "release", "path": "docs/proof/cross-harness-coordination-proof-pack.md", "seq": 218, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
 {"agent": "copilot-p2-recovery-tests", "at": 1789596183.638528, "kind": "release", "path": "docs/plans/cross-harness-coordination-phases.md", "seq": 219, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
 {"agent": "copilot-p2-recovery-tests", "at": 1789596203.9422102, "kind": "session-end", "path": "-", "seq": 220, "session": "xh-p2-projection-b0d0", "wi": "WI-0", "worktree": "C:/Projects/ai-de-feature-xh-p2-projection"}
+{"agent": "copilot-p24-feed", "at": 1789597270.4167888, "kind": "session-start", "path": "-", "seq": 221, "session": "xh-p2-projection-b0d0", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-feature-xh-p2-projection"}
+{"agent": "copilot-p24-feed", "at": 1789597270.6517448, "kind": "claim", "path": "docs/design/cross-harness-coordination.md", "seq": 222, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597270.7409537, "kind": "claim", "path": "docs/adr/adr-01M2NJ2PQS7X6GE3F559JC4TNP-cross-harness-canonical-stream.md", "seq": 223, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597327.846827, "kind": "release", "path": "docs/design/cross-harness-coordination.md", "seq": 224, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597327.9061446, "kind": "release", "path": "docs/adr/adr-01M2NJ2PQS7X6GE3F559JC4TNP-cross-harness-canonical-stream.md", "seq": 225, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597327.9689295, "kind": "claim", "path": "tests/AiDe.Core.Tests/Watcher/CoordinationFeedTests.cs", "seq": 226, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597377.9509711, "kind": "release", "path": "tests/AiDe.Core.Tests/Watcher/CoordinationFeedTests.cs", "seq": 227, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597416.1197486, "kind": "claim", "path": "tests/AiDe.Core.Tests/Watcher/CoordinationFeedTests.cs", "seq": 228, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597416.2023015, "kind": "claim", "path": "src/AiDe.Core/Watcher/WatcherObservationStore.cs", "seq": 229, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597416.2858903, "kind": "claim", "path": "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.Coordination.cs", "seq": 230, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597416.374071, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationProjection.cs", "seq": 231, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597416.4618433, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationContractLog.cs", "seq": 232, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597416.5510104, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationRead.cs", "seq": 233, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597416.6432297, "kind": "claim", "path": "src/AiDe.Mcp/BoardTools.cs", "seq": 234, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597416.727062, "kind": "claim", "path": "src/AiDe.Mcp/Tools.cs", "seq": 235, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597483.8316941, "kind": "release", "path": "tests/AiDe.Core.Tests/Watcher/CoordinationFeedTests.cs", "seq": 236, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597483.8932586, "kind": "release", "path": "src/AiDe.Core/Watcher/WatcherObservationStore.cs", "seq": 237, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597483.9530675, "kind": "release", "path": "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.Coordination.cs", "seq": 238, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597484.0106122, "kind": "release", "path": "src/AiDe.Core/Watcher/CoordinationProjection.cs", "seq": 239, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597484.0717022, "kind": "release", "path": "src/AiDe.Core/Watcher/CoordinationContractLog.cs", "seq": 240, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597484.1322482, "kind": "release", "path": "src/AiDe.Core/Watcher/CoordinationRead.cs", "seq": 241, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597484.1928031, "kind": "release", "path": "src/AiDe.Mcp/BoardTools.cs", "seq": 242, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597484.2528667, "kind": "release", "path": "src/AiDe.Mcp/Tools.cs", "seq": 243, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597485.6902168, "kind": "claim", "path": "tests/AiDe.Core.Tests/Watcher/CoordinationFeedTests.cs", "seq": 244, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597485.7827208, "kind": "claim", "path": "src/AiDe.Core/Watcher/WatcherObservationStore.cs", "seq": 245, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597485.8664458, "kind": "claim", "path": "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.Coordination.cs", "seq": 246, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597485.949252, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationProjection.cs", "seq": 247, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597486.0314307, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationContractLog.cs", "seq": 248, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597486.1122706, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationRead.cs", "seq": 249, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597486.192855, "kind": "claim", "path": "src/AiDe.Mcp/BoardTools.cs", "seq": 250, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597486.2729168, "kind": "claim", "path": "src/AiDe.Mcp/Tools.cs", "seq": 251, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597692.5896163, "kind": "release", "path": "tests/AiDe.Core.Tests/Watcher/CoordinationFeedTests.cs", "seq": 252, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597692.646202, "kind": "release", "path": "src/AiDe.Core/Watcher/WatcherObservationStore.cs", "seq": 253, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597692.7042665, "kind": "release", "path": "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.Coordination.cs", "seq": 254, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597692.7611427, "kind": "release", "path": "src/AiDe.Core/Watcher/CoordinationProjection.cs", "seq": 255, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597692.8276856, "kind": "release", "path": "src/AiDe.Core/Watcher/CoordinationContractLog.cs", "seq": 256, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597692.8927946, "kind": "release", "path": "src/AiDe.Core/Watcher/CoordinationRead.cs", "seq": 257, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597692.9551933, "kind": "release", "path": "src/AiDe.Mcp/BoardTools.cs", "seq": 258, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597693.0122833, "kind": "release", "path": "src/AiDe.Mcp/Tools.cs", "seq": 259, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597713.2322357, "kind": "claim", "path": "tests/AiDe.Core.Tests/Watcher/CoordinationFeedTests.cs", "seq": 260, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597713.3153296, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationProjection.cs", "seq": 261, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597713.3948696, "kind": "claim", "path": "src/AiDe.Mcp/Tools.cs", "seq": 262, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597779.5650258, "kind": "release", "path": "tests/AiDe.Core.Tests/Watcher/CoordinationFeedTests.cs", "seq": 263, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597779.628486, "kind": "release", "path": "src/AiDe.Core/Watcher/CoordinationProjection.cs", "seq": 264, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597779.6946054, "kind": "release", "path": "src/AiDe.Mcp/Tools.cs", "seq": 265, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597783.1633165, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationProjection.cs", "seq": 266, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597837.918209, "kind": "release", "path": "src/AiDe.Core/Watcher/CoordinationProjection.cs", "seq": 267, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597840.8400502, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationProjection.cs", "seq": 268, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597840.9216335, "kind": "claim", "path": "tests/AiDe.Core.Tests/Watcher/CoordinationFeedTests.cs", "seq": 269, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597841.0022495, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationContractLog.cs", "seq": 270, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597841.0828714, "kind": "claim", "path": "src/AiDe.Mcp/Tools.cs", "seq": 271, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597922.7825336, "kind": "release", "path": "src/AiDe.Core/Watcher/CoordinationProjection.cs", "seq": 272, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597922.839331, "kind": "release", "path": "tests/AiDe.Core.Tests/Watcher/CoordinationFeedTests.cs", "seq": 273, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597922.8968723, "kind": "release", "path": "src/AiDe.Core/Watcher/CoordinationContractLog.cs", "seq": 274, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597922.9521136, "kind": "release", "path": "src/AiDe.Mcp/Tools.cs", "seq": 275, "session": "xh-p2-projection-b0d0", "wi": "WI-0"}
+{"agent": "copilot-p24-feed", "at": 1789597925.9427025, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationProjection.cs", "seq": 276, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597926.025257, "kind": "claim", "path": "tests/AiDe.Core.Tests/Watcher/CoordinationFeedTests.cs", "seq": 277, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597926.102596, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationContractLog.cs", "seq": 278, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597926.181664, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationRead.cs", "seq": 279, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
+{"agent": "copilot-p24-feed", "at": 1789597926.2629933, "kind": "claim", "path": "src/AiDe.Mcp/Tools.cs", "seq": 280, "session": "xh-p2-projection-b0d0", "ttl": 300.0, "wi": "P2.4A"}
