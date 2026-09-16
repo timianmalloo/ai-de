@@ -772,3 +772,27 @@ its actual reader-between-commits oracle and exact committed fact identity.
 R1 duplicate pump and R2 restart/ended/generation/heartbeat remain mandatory later
 P2 REDs. P1 `535b` independent PASS was reported but is not joined here; do not copy
 its source. Independent C#/Data/DS review of the implementation is still required.
+
+### P2.2 bounded author checkpoint
+
+The first independently testable increment is the additive v8 receipt aggregate in
+the actual SQLite constructor. Its grain is one immutable captured native source
+occurrence, one immutable admission/transition receipt, and one accounted prefix
+per stream/epoch. The current pointer is the only mutable event state; mappings
+remain in immutable receipts. This increment does not activate a reader or infer
+an observation mapping from existing history. The native pump remains explicitly
+unqualified until the subsequent typed-effect and bounded-capture increment lands.
+
+The partial class separates only the coordination cache SQL from the existing
+watcher store; it is not a new store, database, authority, or generic transaction
+framework. Raw-SQL fixtures admit inert records only; there is no production cache
+admission API or callback seam in this checkpoint. A receipt-only test is not proof
+of atomic native effects. The SQL error tokens `COORD_EVENT_IDENTITY`,
+`COORD_EVENT_IMMUTABLE`, `COORD_PAYLOAD_IMMUTABLE`, `COORD_RECEIPT_IMMUTABLE`,
+`COORD_TRANSITION_REFUSED`, `COORD_CHECKPOINT_GAP`, and
+`COORD_CHECKPOINT_IMMUTABLE` identify the respective schema refusals.
+
+Four real SQLite R1/R2 REDs were observed on `5bb8bf21` before source changes.
+The finite author checkpoint is schema/receipt constraints plus exact replay and
+conflicting-position refusals. If the author budget ends at this checkpoint,
+R1/R2 and native source-effect-checkpoint atomicity remain blocking—not waived.

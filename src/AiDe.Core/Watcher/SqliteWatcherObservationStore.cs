@@ -12,9 +12,9 @@ namespace AiDe.Core.Watcher;
 /// simplify: one connection guarded by a lock. Ceiling: fine at the reference scale for the skeleton.
 /// Upgrade trigger: read volume grows enough to want the WorkspaceStore read/write connection split.
 /// </summary>
-public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, IDisposable
+public sealed partial class SqliteWatcherObservationStore : IWatcherObservationStore, IDisposable
 {
-    private const int SchemaVersion = 7;
+    private const int SchemaVersion = 8;
 
     private readonly SqliteConnection _connection;
     private readonly object _gate = new();
@@ -1085,6 +1085,7 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         {
             using var create = connection.BeginTransaction();
             ExecuteNonQuery(connection, SchemaSql, create);
+            ExecuteNonQuery(connection, CoordinationSchemaSql, create);
             RecordVersion(connection, create, SchemaVersion);
             create.Commit();
             return;
@@ -1221,6 +1222,7 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         // never a partition axis (ADR-0028's amendment): a defaulted free-form and a chosen free-form
         // rank in one cell, and the board can tell them apart.
         (7, "", ("scored_episode_cell", "task_class_source", "TEXT NULL")),
+        (8, CoordinationSchemaSql, null),
     ];
 
     private const string SchemaSql =

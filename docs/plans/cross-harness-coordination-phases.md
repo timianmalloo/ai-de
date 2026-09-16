@@ -20,6 +20,47 @@ summary: >-
 
 # Durable phase graph
 
+## P2.2 author checkpoint — partial, native replay still blocked
+
+Goal: implement durable native replay and close R1/R2.
+Done when: real SQLite replay, atomic native effects, immutable receipts and bounded
+capture are verified and committed. Tier T2; fan-out 0; main-line budget 45 calls;
+context ceiling 150k. No authority, adapter, MCP/UI, live-source or upstream activation.
+
+**Actual:** the author stopped at an independently testable schema checkpoint,
+not at the requested P2.2 completion predicate. Repeated oversized grounding output
+consumed the main-line budget; this is an execution-estimate failure, not a waiver
+of native replay or permission to label P2 complete. No new scope approval is needed
+to continue the already-approved remaining graph.
+
+| Node | Capability | Dependency → terminal evidence | State |
+|---|---|---|---|
+| C1 | Reasoning | Committed §11 / ADR amendment → exact receipt constraints | Read; no contract widening |
+| C2 | Deterministic mechanics | C1 → four original replay REDs and 22 new schema REDs | Observed |
+| C3 | Reasoning | C2 → additive v8 constructor/cache DDL | Implemented, not independently cleared |
+| C4 | Deterministic mechanics | C3 → 32 cache + 91 P2.1 + 6 migration cases | 129 PASS; original full reliability still 3 PASS / 4 RED |
+| R1 | Reasoning | Independent Data/DS/Test code gate on C3/C4 → accepted cache foundation | Pending |
+| R2 | Reasoning | R1 → inert typed native effect/session observation mapping, same connection/IMMEDIATE transaction, post-commit publication | Pending; all four R1/R2 replay failures remain |
+| R3 | Reasoning | R2 → bounded LF/raw-byte capture, scoped occurrence identity, checkpoint revalidation, SOURCE_GAP, 128-file/32-MiB and 64-KiB/128-record/4-MiB bounds | Pending |
+| R4 | Deterministic mechanics | R2/R3 → duplicate original admission/mapping, stable conflict refusal, native-effect rollback and post-commit failed-delivery replay | Pending |
+| R5 | Reasoning | R4 → bounded late-parent recovery, 401 paging, sole canonical-stream adapter/bridge | Pending |
+| R6 | Deterministic mechanics | R5 → OS crash, actual old-binary rollback, query-plan/100× and full recovery/SLI proof | Pending |
+| P3 | Reasoning + deterministic mechanics | Full P2 → real harness adapters | Pending |
+| P4 | Reasoning + deterministic mechanics | P3 → launcher integration | Pending |
+| P5 | Reasoning + deterministic mechanics | P4 → surface consistency and SLIs | Pending |
+| Upstream | Deterministic mechanics | AFTER VERIFIED → all six previously deferred upstream actions | All six pending |
+
+Each node consumes the prior node's accepted evidence; none authorizes a source
+activation. One connection owns the SQL consistency boundary. There is no nested
+agent or new background service. Source/test/data gates remain independent gates,
+not author attestations. The v7-shaped fixture test verifies the real constructor's
+upgrade and writable historical tables; it does **not** run an old binary.
+
+Remaining instrument sources: native source/effect/receipt/checkpoint spans and
+latency/volume/failure SLIs are not implemented. Current evidence is limited to the
+normal schema-version row and actual SQL refusals, read back in tests. Full P2 is
+not deliverable from a green schema suite.
+
 ## P2.1 finite overlap-oracle remediation — 2026-09-16
 
 Base `494b2488fb869846df47d365c5407fd83f8c1556`. One supplied independent

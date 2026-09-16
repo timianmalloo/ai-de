@@ -1,0 +1,912 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e4298404-4f4a-47ce-b909-8f8010790dcd" name="malla@TIMMALLSTRIX 2026-09-16 13:00:04" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-16T13:00:04.4444784-07:00" queuing="2026-09-16T13:00:04.4444793-07:00" start="2026-09-16T13:00:03.7679566-07:00" finish="2026-09-16T13:00:04.5638239-07:00" />
+  <TestSettings name="default" id="1e18cb04-b962-4990-a488-008a18dc70db">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-16_13_00_04" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d25d430f-2f77-49ac-87f2-4b1ff31c75f1" testId="2a01c155-6c04-8e20-8469-8979c180b109" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: &quot;INSERT INTO coord_projection_feed(scope,epoch,even&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0074136" startTime="2026-09-16T13:00:04.4575854-07:00" endTime="2026-09-16T13:00:04.4648603-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d25d430f-2f77-49ac-87f2-4b1ff31c75f1">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 78&#xD;
+   at InvokeStub_CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="928585c0-9e29-4674-b401-f4d9729bf3ed" testId="2cc0bf5a-f8ee-dc8e-f001-e1d6877ff320" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;DELETE FROM coord_projection_event;&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0077852" startTime="2026-09-16T13:00:04.4252719-07:00" endTime="2026-09-16T13:00:04.4253253-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="928585c0-9e29-4674-b401-f4d9729bf3ed">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 63&#xD;
+   at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="04db9623-f5e4-4777-b273-46bb8ecb916c" testId="9be10f0f-1a56-6b68-06b9-6cd801f1928b" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;DELETE FROM coord_projection_feed;&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0091889" startTime="2026-09-16T13:00:04.4257421-07:00" endTime="2026-09-16T13:00:04.4260001-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="04db9623-f5e4-4777-b273-46bb8ecb916c">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 63&#xD;
+   at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="85d0477e-ae77-4757-a2e6-e8cae0c544ec" testId="92dc8e7f-c646-8542-78b3-94e4edddb29f" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_feed SET reason='changed';&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0306386" startTime="2026-09-16T13:00:04.3089307-07:00" endTime="2026-09-16T13:00:04.3470900-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="85d0477e-ae77-4757-a2e6-e8cae0c544ec">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 63&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0bbcd145-072c-4d21-906a-30b9a9ef7d64" testId="f3b1aa10-20f3-2e77-984f-4258fabeb32e" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET current_receipt_&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0072118" startTime="2026-09-16T13:00:04.4015949-07:00" endTime="2026-09-16T13:00:04.4086343-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0bbcd145-072c-4d21-906a-30b9a9ef7d64">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 63&#xD;
+   at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4a26eac8-73cd-4f91-a6c5-44e1a4c025ab" testId="14d0429c-5bbe-c106-180f-e08383787103" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Checkpoint_RequiresAccountedPrefixAndCannotMoveBackward" computerName="TIMMALLSTRIX" duration="00:00:00.0083262" startTime="2026-09-16T13:00:04.4836080-07:00" endTime="2026-09-16T13:00:04.4884764-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4a26eac8-73cd-4f91-a6c5-44e1a4c025ab">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Checkpoint_RequiresAccountedPrefixAndCannotMoveBackward() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 147&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="55b99055-1644-4151-b097-0626465b5c11" testId="8b01fb23-9def-be84-3dd0-f1248f68db1f" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET raw_digest='chan&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0076755" startTime="2026-09-16T13:00:04.3790182-07:00" endTime="2026-09-16T13:00:04.3865444-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="55b99055-1644-4151-b097-0626465b5c11">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 63&#xD;
+   at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="32de1048-9d74-4264-9317-cc890aaf04ec" testId="95d92ad1-c9eb-9226-f0d0-fe3e35a68c95" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;INSERT OR REPLACE INTO coord_projection_event SELE&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0080592" startTime="2026-09-16T13:00:04.3546774-07:00" endTime="2026-09-16T13:00:04.3554057-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="32de1048-9d74-4264-9317-cc890aaf04ec">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 63&#xD;
+   at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="272e49e1-eb55-419f-90bc-9b23e525f148" testId="d75e478d-d832-1cca-1e61-35ed0bdb9512" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(parentState: null)" computerName="TIMMALLSTRIX" duration="00:00:00.0076442" startTime="2026-09-16T13:00:04.4348169-07:00" endTime="2026-09-16T13:00:04.4419180-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="272e49e1-eb55-419f-90bc-9b23e525f148">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(String parentState) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 122&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c7125a2c-4928-4697-b395-4f30b09e8bdd" testId="06f36d75-5ead-fa66-8456-bbd937b8a630" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: &quot;INSERT INTO coord_projection_feed(scope,epoch,even&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0073859" startTime="2026-09-16T13:00:04.4651998-07:00" endTime="2026-09-16T13:00:04.4724435-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c7125a2c-4928-4697-b395-4f30b09e8bdd">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 78&#xD;
+   at InvokeStub_CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2828ee7f-e211-49fc-bae7-26877f4ed456" testId="6f290300-ea33-e180-20d0-8379ab4d56d6" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET canonical_versio&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0075505" startTime="2026-09-16T13:00:04.3634207-07:00" endTime="2026-09-16T13:00:04.3707987-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2828ee7f-e211-49fc-bae7-26877f4ed456">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 63&#xD;
+   at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="722b8f0a-a25e-493f-81b5-71c055b106f1" testId="8ab82b1b-b723-d146-2060-00e6600a0d0e" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET first_receipt_n=&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0077245" startTime="2026-09-16T13:00:04.4263373-07:00" endTime="2026-09-16T13:00:04.4338994-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="722b8f0a-a25e-493f-81b5-71c055b106f1">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 63&#xD;
+   at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="132457bc-68f0-4e16-8995-d82882836288" testId="6505a887-6aad-43be-c6c9-2a5234aacad2" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.InitialReceiptAndEvent_MustCommitTogether" computerName="TIMMALLSTRIX" duration="00:00:00.0086826" startTime="2026-09-16T13:00:04.5084422-07:00" endTime="2026-09-16T13:00:04.5170833-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="132457bc-68f0-4e16-8995-d82882836288">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.InitialReceiptAndEvent_MustCommitTogether() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 31&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f59d6fbe-eff4-429d-a3d3-16ed82a11a34" testId="6b47f0f5-4079-bf41-07c5-c67fb961d19e" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: &quot;INSERT INTO coord_projection_feed(scope,epoch,even&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0073210" startTime="2026-09-16T13:00:04.4727970-07:00" endTime="2026-09-16T13:00:04.4799297-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f59d6fbe-eff4-429d-a3d3-16ed82a11a34">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 78&#xD;
+   at InvokeStub_CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="482bdd81-0eee-4126-9b17-c0886438b1ba" testId="51aeb727-013c-4380-f7d0-4690779f4800" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET raw_bytes=X'02';&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0070551" startTime="2026-09-16T13:00:04.3869338-07:00" endTime="2026-09-16T13:00:04.3937270-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="482bdd81-0eee-4126-9b17-c0886438b1ba">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 63&#xD;
+   at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b7decb13-e263-406d-b839-43696a9c32b1" testId="0f5102ca-e162-630d-1c5b-8d98925eaea3" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;INSERT OR REPLACE INTO coord_projection_feed SELEC&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0076616" startTime="2026-09-16T13:00:04.3711774-07:00" endTime="2026-09-16T13:00:04.3786436-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b7decb13-e263-406d-b839-43696a9c32b1">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 63&#xD;
+   at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="25854d00-3389-4492-adcd-6918e16cc3dd" testId="316b615e-1759-c71a-4137-0e83ffc81f58" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(parentState: &quot;pending&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0075720" startTime="2026-09-16T13:00:04.4422707-07:00" endTime="2026-09-16T13:00:04.4496423-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="25854d00-3389-4492-adcd-6918e16cc3dd">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(String parentState) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 116&#xD;
+   at InvokeStub_CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="74897ae0-af5b-413a-b6c1-2a23273801af" testId="1c62bfb7-b654-16a1-3de9-5876dc608309" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET application_stat&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0074844" startTime="2026-09-16T13:00:04.3560306-07:00" endTime="2026-09-16T13:00:04.3630506-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="74897ae0-af5b-413a-b6c1-2a23273801af">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 63&#xD;
+   at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="73b5a84b-7751-450c-8dc3-881c723fa3fb" testId="2d6004b0-8838-5677-788f-08da07d69170" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: &quot;INSERT INTO coord_projection_feed(scope,epoch,even&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0074491" startTime="2026-09-16T13:00:04.4499834-07:00" endTime="2026-09-16T13:00:04.4572701-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="73b5a84b-7751-450c-8dc3-881c723fa3fb">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 78&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9fd0f8f9-69f7-44f8-9f42-9c27b6f88c11" testId="c005947d-3fae-3e20-363a-7e87fa66a7d9" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET original_id='cha&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0073843" startTime="2026-09-16T13:00:04.3940596-07:00" endTime="2026-09-16T13:00:04.4012650-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9fd0f8f9-69f7-44f8-9f42-9c27b6f88c11">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 63&#xD;
+   at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c335c386-6c6e-4053-9729-30d6eda7be7c" testId="01b8af28-7f17-e48b-d50b-8915eb07bb9e" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Tombstone_ClearsPayloadAndCannotResurrect" computerName="TIMMALLSTRIX" duration="00:00:00.0076496" startTime="2026-09-16T13:00:04.4888470-07:00" endTime="2026-09-16T13:00:04.4963303-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c335c386-6c6e-4053-9729-30d6eda7be7c">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 175&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Tombstone_ClearsPayloadAndCannotResurrect() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 88&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8cb9c46d-196f-400b-8a5e-5abad9fcabfa" testId="4eb66574-a0eb-e710-0fa5-17eeed8ae894" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Constructor_InstallsThreeCachesAndVersionEight" computerName="TIMMALLSTRIX" duration="00:00:00.0103731" startTime="2026-09-16T13:00:04.4966745-07:00" endTime="2026-09-16T13:00:04.5081580-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8cb9c46d-196f-400b-8a5e-5abad9fcabfa">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 8&#xD;
+Actual:   7</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Constructor_InstallsThreeCachesAndVersionEight() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 19&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET application_stat&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="1c62bfb7-b654-16a1-3de9-5876dc608309">
+      <Execution id="74897ae0-af5b-413a-b6c1-2a23273801af" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Tombstone_ClearsPayloadAndCannotResurrect" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="01b8af28-7f17-e48b-d50b-8915eb07bb9e">
+      <Execution id="c335c386-6c6e-4053-9729-30d6eda7be7c" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="Tombstone_ClearsPayloadAndCannotResurrect" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_feed SET reason='changed';&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="92dc8e7f-c646-8542-78b3-94e4edddb29f">
+      <Execution id="85d0477e-ae77-4757-a2e6-e8cae0c544ec" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET raw_bytes=X'02';&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="51aeb727-013c-4380-f7d0-4690779f4800">
+      <Execution id="482bdd81-0eee-4126-9b17-c0886438b1ba" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: &quot;INSERT INTO coord_projection_feed(scope,epoch,even&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="2a01c155-6c04-8e20-8469-8979c180b109">
+      <Execution id="d25d430f-2f77-49ac-87f2-4b1ff31c75f1" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="Transition_RejectsDuplicateInitialRegressionAndRemapping" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET first_receipt_n=&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="8ab82b1b-b723-d146-2060-00e6600a0d0e">
+      <Execution id="722b8f0a-a25e-493f-81b5-71c055b106f1" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(parentState: null)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d75e478d-d832-1cca-1e61-35ed0bdb9512">
+      <Execution id="272e49e1-eb55-419f-90bc-9b23e525f148" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="AppliedChild_RequiresActuallyAppliedParent" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;DELETE FROM coord_projection_event;&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="2cc0bf5a-f8ee-dc8e-f001-e1d6877ff320">
+      <Execution id="928585c0-9e29-4674-b401-f4d9729bf3ed" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET raw_digest='chan&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="8b01fb23-9def-be84-3dd0-f1248f68db1f">
+      <Execution id="55b99055-1644-4151-b097-0626465b5c11" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;INSERT OR REPLACE INTO coord_projection_feed SELEC&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0f5102ca-e162-630d-1c5b-8d98925eaea3">
+      <Execution id="b7decb13-e263-406d-b839-43696a9c32b1" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: &quot;INSERT INTO coord_projection_feed(scope,epoch,even&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6b47f0f5-4079-bf41-07c5-c67fb961d19e">
+      <Execution id="f59d6fbe-eff4-429d-a3d3-16ed82a11a34" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="Transition_RejectsDuplicateInitialRegressionAndRemapping" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET original_id='cha&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="c005947d-3fae-3e20-363a-7e87fa66a7d9">
+      <Execution id="9fd0f8f9-69f7-44f8-9f42-9c27b6f88c11" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;DELETE FROM coord_projection_feed;&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="9be10f0f-1a56-6b68-06b9-6cd801f1928b">
+      <Execution id="04db9623-f5e4-4777-b273-46bb8ecb916c" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(parentState: &quot;pending&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="316b615e-1759-c71a-4137-0e83ffc81f58">
+      <Execution id="25854d00-3389-4492-adcd-6918e16cc3dd" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="AppliedChild_RequiresActuallyAppliedParent" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.InitialReceiptAndEvent_MustCommitTogether" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6505a887-6aad-43be-c6c9-2a5234aacad2">
+      <Execution id="132457bc-68f0-4e16-8995-d82882836288" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="InitialReceiptAndEvent_MustCommitTogether" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET current_receipt_&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f3b1aa10-20f3-2e77-984f-4258fabeb32e">
+      <Execution id="0bbcd145-072c-4d21-906a-30b9a9ef7d64" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: &quot;INSERT INTO coord_projection_feed(scope,epoch,even&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="06f36d75-5ead-fa66-8456-bbd937b8a630">
+      <Execution id="c7125a2c-4928-4697-b395-4f30b09e8bdd" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="Transition_RejectsDuplicateInitialRegressionAndRemapping" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET canonical_versio&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6f290300-ea33-e180-20d0-8379ab4d56d6">
+      <Execution id="2828ee7f-e211-49fc-bae7-26877f4ed456" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Checkpoint_RequiresAccountedPrefixAndCannotMoveBackward" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="14d0429c-5bbe-c106-180f-e08383787103">
+      <Execution id="4a26eac8-73cd-4f91-a6c5-44e1a4c025ab" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="Checkpoint_RequiresAccountedPrefixAndCannotMoveBackward" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;INSERT OR REPLACE INTO coord_projection_event SELE&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="95d92ad1-c9eb-9226-f0d0-fe3e35a68c95">
+      <Execution id="32de1048-9d74-4264-9317-cc890aaf04ec" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: &quot;INSERT INTO coord_projection_feed(scope,epoch,even&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="2d6004b0-8838-5677-788f-08da07d69170">
+      <Execution id="73b5a84b-7751-450c-8dc3-881c723fa3fb" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="Transition_RejectsDuplicateInitialRegressionAndRemapping" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Constructor_InstallsThreeCachesAndVersionEight" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="4eb66574-a0eb-e710-0fa5-17eeed8ae894">
+      <Execution id="8cb9c46d-196f-400b-8a5e-5abad9fcabfa" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="Constructor_InstallsThreeCachesAndVersionEight" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="2a01c155-6c04-8e20-8469-8979c180b109" executionId="d25d430f-2f77-49ac-87f2-4b1ff31c75f1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2cc0bf5a-f8ee-dc8e-f001-e1d6877ff320" executionId="928585c0-9e29-4674-b401-f4d9729bf3ed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9be10f0f-1a56-6b68-06b9-6cd801f1928b" executionId="04db9623-f5e4-4777-b273-46bb8ecb916c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="92dc8e7f-c646-8542-78b3-94e4edddb29f" executionId="85d0477e-ae77-4757-a2e6-e8cae0c544ec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f3b1aa10-20f3-2e77-984f-4258fabeb32e" executionId="0bbcd145-072c-4d21-906a-30b9a9ef7d64" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="14d0429c-5bbe-c106-180f-e08383787103" executionId="4a26eac8-73cd-4f91-a6c5-44e1a4c025ab" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b01fb23-9def-be84-3dd0-f1248f68db1f" executionId="55b99055-1644-4151-b097-0626465b5c11" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="95d92ad1-c9eb-9226-f0d0-fe3e35a68c95" executionId="32de1048-9d74-4264-9317-cc890aaf04ec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d75e478d-d832-1cca-1e61-35ed0bdb9512" executionId="272e49e1-eb55-419f-90bc-9b23e525f148" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="06f36d75-5ead-fa66-8456-bbd937b8a630" executionId="c7125a2c-4928-4697-b395-4f30b09e8bdd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6f290300-ea33-e180-20d0-8379ab4d56d6" executionId="2828ee7f-e211-49fc-bae7-26877f4ed456" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8ab82b1b-b723-d146-2060-00e6600a0d0e" executionId="722b8f0a-a25e-493f-81b5-71c055b106f1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6505a887-6aad-43be-c6c9-2a5234aacad2" executionId="132457bc-68f0-4e16-8995-d82882836288" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6b47f0f5-4079-bf41-07c5-c67fb961d19e" executionId="f59d6fbe-eff4-429d-a3d3-16ed82a11a34" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="51aeb727-013c-4380-f7d0-4690779f4800" executionId="482bdd81-0eee-4126-9b17-c0886438b1ba" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0f5102ca-e162-630d-1c5b-8d98925eaea3" executionId="b7decb13-e263-406d-b839-43696a9c32b1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="316b615e-1759-c71a-4137-0e83ffc81f58" executionId="25854d00-3389-4492-adcd-6918e16cc3dd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1c62bfb7-b654-16a1-3de9-5876dc608309" executionId="74897ae0-af5b-413a-b6c1-2a23273801af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2d6004b0-8838-5677-788f-08da07d69170" executionId="73b5a84b-7751-450c-8dc3-881c723fa3fb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c005947d-3fae-3e20-363a-7e87fa66a7d9" executionId="9fd0f8f9-69f7-44f8-9f42-9c27b6f88c11" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="01b8af28-7f17-e48b-d50b-8915eb07bb9e" executionId="c335c386-6c6e-4053-9729-30d6eda7be7c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4eb66574-a0eb-e710-0fa5-17eeed8ae894" executionId="8cb9c46d-196f-400b-8a5e-5abad9fcabfa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="22" executed="22" passed="0" failed="22" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.24]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.32]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.32]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.32]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.32]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.32]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.32]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.32]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(63,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.32]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.32]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.32]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.32]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.32]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.32]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.32]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(63,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation)&#xD;
+[xUnit.net 00:00:00.32]            at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.33]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.33]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.33]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.33]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.33]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.33]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.33]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.33]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.33]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.33]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.33]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.33]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(63,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation)&#xD;
+[xUnit.net 00:00:00.33]            at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.33]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.34]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.34]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.34]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.34]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.34]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.34]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.34]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.34]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.34]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(63,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation)&#xD;
+[xUnit.net 00:00:00.34]            at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.35]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.35]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.35]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.35]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.35]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.35]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.35]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.35]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.35]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.35]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.35]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.35]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(63,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation)&#xD;
+[xUnit.net 00:00:00.35]            at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.35]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.35]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.35]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.35]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.35]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.35]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.35]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.35]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.35]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.35]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.35]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.35]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.35]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(63,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation)&#xD;
+[xUnit.net 00:00:00.35]            at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.35]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.36]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.36]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.36]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.36]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.36]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.36]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.36]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.36]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.36]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.36]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.36]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.36]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(63,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation)&#xD;
+[xUnit.net 00:00:00.36]            at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.36]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.37]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.37]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.37]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.37]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.37]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.37]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.37]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.37]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.37]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.37]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.37]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.37]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(63,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation)&#xD;
+[xUnit.net 00:00:00.37]            at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.37]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.38]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.38]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.38]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.38]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.38]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.38]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.38]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.38]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(63,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation)&#xD;
+[xUnit.net 00:00:00.38]            at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.39]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.39]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.39]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.39]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.39]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.39]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.39]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.39]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.39]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.39]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(63,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation)&#xD;
+[xUnit.net 00:00:00.39]            at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.39]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.39]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.39]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.39]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.39]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.39]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.39]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.39]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.39]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.39]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(63,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation)&#xD;
+[xUnit.net 00:00:00.39]            at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.39]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.40]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.40]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.40]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.40]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.40]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.40]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.40]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.40]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.40]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.40]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.40]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.40]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(63,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(String mutation)&#xD;
+[xUnit.net 00:00:00.40]            at InvokeStub_CoordinationProjectionTests.ImmutableFacts_RejectMutation(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.40]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.41]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.41]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.41]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.41]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.41]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.41]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.41]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.41]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.41]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(122,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(String parentState)&#xD;
+[xUnit.net 00:00:00.41]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.41]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.42]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.42]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.42]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.42]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.42]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.42]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.42]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(116,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(String parentState)&#xD;
+[xUnit.net 00:00:00.42]            at InvokeStub_CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.42]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.42]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.42]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.42]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.42]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.42]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.42]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(78,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(String mutation)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.43]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.43]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.43]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.43]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.43]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.43]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.43]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.43]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.43]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.43]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.43]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.43]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(78,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(String mutation)&#xD;
+[xUnit.net 00:00:00.43]            at InvokeStub_CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.43]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.44]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(78,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(String mutation)&#xD;
+[xUnit.net 00:00:00.44]            at InvokeStub_CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.45]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.45]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.45]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.45]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.45]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.45]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.45]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.45]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.45]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.45]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(78,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(String mutation)&#xD;
+[xUnit.net 00:00:00.45]            at InvokeStub_CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.45]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.46]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.46]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(147,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Checkpoint_RequiresAccountedPrefixAndCannotMoveBackward()&#xD;
+[xUnit.net 00:00:00.46]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.46]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.46]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.46]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(175,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Admit(SqliteConnection connection)&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(88,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Tombstone_ClearsPayloadAndCannotResurrect()&#xD;
+[xUnit.net 00:00:00.46]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.46]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.48]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.48]       Expected: 8&#xD;
+[xUnit.net 00:00:00.48]       Actual:   7&#xD;
+[xUnit.net 00:00:00.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.48]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(19,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Constructor_InstallsThreeCachesAndVersionEight()&#xD;
+[xUnit.net 00:00:00.48]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.48]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.48]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: coord_projection_feed'.&#xD;
+[xUnit.net 00:00:00.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.48]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.48]            at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.48]            at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()&#xD;
+[xUnit.net 00:00:00.48]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.48]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.48]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.48]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.48]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.48]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(31,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.InitialReceiptAndEvent_MustCommitTogether()&#xD;
+[xUnit.net 00:00:00.48]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.48]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.49]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.3489319-07:00">
+        <Text>[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: "UPDATE coord_projection_feed SET reason='changed';") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.3557668-07:00">
+        <Text>[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: "INSERT OR REPLACE INTO coord_projection_event SELE"···) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.3633608-07:00">
+        <Text>[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: "UPDATE coord_projection_event SET application_stat"···) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.3711221-07:00">
+        <Text>[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: "UPDATE coord_projection_event SET canonical_versio"···) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.3790281-07:00">
+        <Text>[xUnit.net 00:00:00.35]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: "INSERT OR REPLACE INTO coord_projection_feed SELEC"···) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.3869223-07:00">
+        <Text>[xUnit.net 00:00:00.35]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: "UPDATE coord_projection_event SET raw_digest='chan"···) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.3939496-07:00">
+        <Text>[xUnit.net 00:00:00.36]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: "UPDATE coord_projection_event SET raw_bytes=X'02';") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.4014939-07:00">
+        <Text>[xUnit.net 00:00:00.37]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: "UPDATE coord_projection_event SET original_id='cha"···) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.4089211-07:00">
+        <Text>[xUnit.net 00:00:00.38]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: "UPDATE coord_projection_event SET current_receipt_"···) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.4485221-07:00">
+        <Text>[xUnit.net 00:00:00.39]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: "DELETE FROM coord_projection_event;") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.4485480-07:00">
+        <Text>[xUnit.net 00:00:00.39]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: "DELETE FROM coord_projection_feed;") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.4485751-07:00">
+        <Text>[xUnit.net 00:00:00.40]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: "UPDATE coord_projection_event SET first_receipt_n="···) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.4485969-07:00">
+        <Text>[xUnit.net 00:00:00.41]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(parentState: null) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.4498879-07:00">
+        <Text>[xUnit.net 00:00:00.42]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(parentState: "pending") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.4575613-07:00">
+        <Text>[xUnit.net 00:00:00.42]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: "INSERT INTO coord_projection_feed(scope,epoch,even"···) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.4651381-07:00">
+        <Text>[xUnit.net 00:00:00.43]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: "INSERT INTO coord_projection_feed(scope,epoch,even"···) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.4727684-07:00">
+        <Text>[xUnit.net 00:00:00.44]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: "INSERT INTO coord_projection_feed(scope,epoch,even"···) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.4802341-07:00">
+        <Text>[xUnit.net 00:00:00.45]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: "INSERT INTO coord_projection_feed(scope,epoch,even"···) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.4887204-07:00">
+        <Text>[xUnit.net 00:00:00.46]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Checkpoint_RequiresAccountedPrefixAndCannotMoveBackward [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.4966244-07:00">
+        <Text>[xUnit.net 00:00:00.46]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Tombstone_ClearsPayloadAndCannotResurrect [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.5084470-07:00">
+        <Text>[xUnit.net 00:00:00.48]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Constructor_InstallsThreeCachesAndVersionEight [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:00:04.5175571-07:00">
+        <Text>[xUnit.net 00:00:00.48]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.InitialReceiptAndEvent_MustCommitTogether [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

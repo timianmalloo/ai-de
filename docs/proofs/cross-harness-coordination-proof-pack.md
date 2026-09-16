@@ -20,6 +20,169 @@ summary: >-
 
 # Proof Pack — dormant P1 candidate; independent code gate pending
 
+## P2.2 additive cache checkpoint — 2026-09-16
+
+**PARTIAL; R1/R2 NOT FIXED; P2 NOT COMPLETE.** Source baseline:
+`5bb8bf2119b235467bec88dc5af2c062f612b103`; assigned branch
+`feature/xh-p2-projection`, session `xh-p2-projection-b0d0`. The accepted design/ADR
+amendment at `36e560f54b55306575dd3a5e2c57ab679feef2a1` was read before code.
+No P1 source was copied. Production authority stays DENY; enhanced append stays
+disabled. No live source/database, endpoint, GUI or application suite was used.
+
+GATE P2.1 · 2026-09-16 · independent reviewer result supplied in this author task ·
+exit criteria: prior 91-case subset and true-overlap IMMEDIATE-vs-DEFERRED oracle ·
+verdict: PASS as supplied for `5bb8bf21` only · full P2: NOT CLEARED.
+This author re-executed those 91 cases, but did not independently re-run their
+DEFERRED mutant. Independent Data/DS/Test **code** review of this v8 delta is pending.
+
+### Change reach and exact boundary
+
+Changed production code is only `SqliteWatcherObservationStore.cs` plus its
+coordination DDL partial. Both fresh creation and the additive v8 migration use
+the same DDL string and the existing constructor/connection. Exactly three cache
+tables are created. Old board IDs, sequence ties and legacy writes are preserved.
+The partial has no second connection, database, generic transaction abstraction,
+public authority surface or producer callback.
+
+The event grain is a captured occurrence at a scoped epoch/offset; the feed grain
+is an immutable initial/transition receipt; the checkpoint grain is one accounted
+prefix per stream/epoch. Initial/current receipt composite FKs are deferred and
+bidirectional; only one initial receipt is allowed. An actual constrained
+`parent_application_state` column enforces applied-parent eligibility. A feed
+transition moves the current pointer and pairs payload clearing with a tombstone.
+Mappings cannot change once present, and terminal content cannot resurrect.
+
+**Not implemented:** an authenticated/scoped source-key producer; raw-byte hash
+validation; canonicalization/version admission; native/session effects; the
+production receipt lookup/replay API; memory-store semantics; reader capture and
+checkpoint validation. The schema does not prove any of these by itself. In
+particular, the SQL checkpoint guards require accounted contiguous rows, not that
+a file was captured honestly. Raw fixtures are not trusted source bytes.
+There is no source-field production writer or UI/compute reader yet. This remains
+an unqualified foundation, not a shipped declared-but-unwritten capability.
+
+### Executed receipts
+
+All commands ran in the assigned worktree with explicit session/name/UTF-8.
+Tests used the actual `SqliteWatcherObservationStore.Open` constructor and isolated
+SQLite files. New fixtures live beneath the test working directory and remove their
+own directories. Existing compatibility fixtures were unchanged. No test ran while
+an edit lease was held.
+
+Common command:
+`dotnet test tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --no-restore
+--filter <selector> --logger "console;verbosity=quiet"
+--logger "trx;LogFileName=<receipt>.trx" --results-directory .artifacts\p22`.
+The first final compatibility/reliability pair used `--no-build`. After tightening
+the parent oracle to assert SQLite extended error 787, the final compatibility run
+rebuilt the test assembly. Seven raw TRX receipts are committed under
+`docs\proofs\p22-cache-evidence`; their generated paths inside the XML preserve
+the actual original run locations. They are evidence, not source/authority.
+
+| Receipt | Selection / observed result | Logical exit / tool |
+|---|---|---|
+| `p22-baseline-red.trx` | Four original replay cases: **0 PASS / 4 FAIL** before source changes | **1**, shell 960 |
+| `p22-cache-red.trx` | `CoordinationProjectionTests`: **0 PASS / 22 FAIL**, actual constructor still v7; missing cache tables/version | **1**, shells 970/972 |
+| `p22-cache-first-green.trx` | **20 PASS / 2 FAIL**; parent fixtures accidentally failed contiguity before their FK oracle | **1**, shells 974/975 |
+| `p22-cache-green.trx` | Corrected oracle plus expanded controls: **32 PASS**, zero failed/skipped | **0**, shell 977 |
+| `p22-compatibility.trx` | **129 PASS** = original **91 P2.1** + **32 cache** + **6 Daydream migration**; zero failed/skipped | **0**, shells 981/983 |
+| `p22-reliability-remaining.trx` | Entire unchanged reliability class: **3 PASS / 4 FAIL** | **1**, shell 981 |
+| `p22-compatibility-final.trx` | Rebuilt final test source with explicit parent FK error **787**: **129 PASS**, zero failed/skipped | **0**, shell 987 |
+
+The joined compatibility/reliability command returned **1**, not success. Its explicit outputs were
+`COMPATIBILITY_EXIT=0 RELIABILITY_EXIT=1`. The 129-case selection was the union of
+`CoordinationProjectionTests`, `BoardOrderingTests`, `CoordinationReliabilityTests.Post_`,
+`MessageBoardTests`, `SqliteWatcherObservationStoreTests`, `McpMatchesTheJsonlPathTests`,
+`ContractBoardPostTests`, `BoardPublisherTests`, `SqliteAllocationOverlapTests`, and
+`DaydreamPersistenceTests`. Group counts were read from the TRX, not inferred from
+test names. No zero-selection or blanket full-Watcher PASS is claimed.
+
+### Claim / oracle ledger
+
+All new cases are in `tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs`.
+
+| Claim / case group | Oracle | Red / confidence / residual |
+|---|---|---|
+| Three caches/version 8 | Actual constructor; SQLite schema/version queries | Old constructor RED; current **Verified** |
+| Initial receipt/event pairing | Commit either side alone fails; both together commit | Missing-schema RED; paired actual SQLite commit failures **Verified** |
+| Twelve immutable-fact attacks | UPDATE/DELETE/REPLACE, raw/digest/version/ID/first/current/state changes raise SQLite errors | Missing-schema RED; refusals **Verified** |
+| Four invalid transitions | Duplicate initial, applied regression, remap, wrong admission fail without feed growth | Missing-schema RED; refusals **Verified** |
+| Tombstone | Paired transition clears bytes, moves pointer; reinsertion and resurrection fail | Missing-schema RED; current **Verified** |
+| Applied parent | Missing/pending parent produces extended FK error; whole child transaction rolls back | Fixture correction retained above; current **Verified**, not native-thread validation |
+| Checkpoint | Missing accounted row, backwards update, changed same-prefix digest and REPLACE fail | Missing-schema RED; current **Verified**, not filesystem SOURCE_GAP proof |
+| v7-shaped migration | Constructor upgrades a complete v7-shaped fixture; original IDs/ties survive; old/new writes work; reopen does not remigrate | Added after DDL; **Verified execution**, no old-binary rollback or pre-fix RED claim |
+| Three rollback boundaries | Deliberate failing SQL after initial/event/checkpoint; explicit transaction rollback leaves all three caches empty | Fault injected and observed; **Verified**, not native-effect/OS-crash proof |
+| Pending→applied | First receipt stays pending; current receipt advances to applied | Added after DDL; **Verified execution**, not replay API proof |
+| Cross-scope/epoch/state receipt borrowing | Deferred FK commit error **787** | Added after DDL; **Verified execution**, not an authority check |
+| Changed occurrence/epoch | Attempt leaves event/feed counts at one | Added after DDL; **Verified SQL refusal**, not stable producer refusal/replay behavior |
+| Trigger-removal mutation | Same UPDATE is refused before dropping `coord_feed_update`, then changes the row after removal | Actual destructive mutation on isolated test DB **Verified**; not a full mutation-score claim |
+
+**Correction/control:** two parent test fixtures initially used offset 2 without an
+accounted predecessor, so they failed the wrong invariant. The corrected fixture
+uses contiguous offsets and requires the expected FK error at COMMIT. This is the
+wrong-failure-oracle class; it is recorded here without editing the lessons register,
+which this author's scope excludes. The ten expanded cases were added after the
+first schema implementation; they are not falsely labelled pre-code REDs.
+
+### SHA-256 identities (executed working bytes)
+
+| Path | SHA-256 |
+|---|---|
+| `src\AiDe.Core\Watcher\SqliteWatcherObservationStore.cs` | `F712D2CEB543E7DD2269D9D71DF83E99101A72966627BC4A07A4AA8903FA26B2` |
+| `src\AiDe.Core\Watcher\SqliteWatcherObservationStore.Coordination.cs` | `C84D78B1B4D31C2BC5B41A8898547182BEECF8BF3DD77AAEFD3C5024F18307A5` |
+| `tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs` (final) | `F63FACD9F50232173FADE4C0110D13B4C82D0098988B1402D9361D7B01FB4F79` |
+| `tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj` (unchanged) | `FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D` |
+| Test output `AiDe.Core.Tests.dll` (final) | `A998BB9AD0B7BEA6ED7CCA9065430D2A69E5A7E1608BB8897E0E1129FD56F918` |
+| Test output `AiDe.Core.dll` | `B766C583A46C23FB8292FB0890F09C8C9476DA046694921275A466FAA202C61C` |
+| Pre-change `AiDe.Core.v7.dll` (hashed before rebuild; scratch copy removed, not executed as rollback) | `305005F5DADD7FD217FA30C0A41861CD73D4CF162F21B0F24EEC481DBB743B56` |
+| `p22-baseline-red.trx` | `C446F8970AB1F787C04053C3B92DA9F77E818C2DB36205105D47BC6A83E73DB5` |
+| `p22-cache-red.trx` | `86446EB95E7A85336D6BC382388723C88BE15399FC3E9A36201CF514FD3C85B7` |
+| `p22-cache-first-green.trx` | `44690C211E40C22D0D1277F9F511CDF8B81EB4317EC7443EFC00306784510C5A` |
+| `p22-cache-green.trx` | `CA6B81C46CF7CC960C1C1705315D3240EA1AA5CEE03E4B62D247F1C8F9847A21` |
+| `p22-compatibility.trx` | `FBA6E95C2E1A1C0A3861A59BCC7713DE542D071D314DAC6B98486485C975C23D` |
+| `p22-reliability-remaining.trx` | `83F99220E410C295A56823DD98086CD492B00AF62C1E107A94F0C0B8B4D2940D` |
+| `p22-compatibility-final.trx` | `2868404E7B587D4297BAD3BF0404D327FD5A1B5E413EA842EF2D84F896E32D90` |
+
+Before that test-only tightening, test source SHA was
+`FBA5E3525355E05B89C2B52D0FFD5104D00833C7BCEC3E5654E9F9C5F1AB3D28`
+and test assembly SHA was
+`87558188B094AC2FD72E88A8C2FE7133D0575B4F65C7DD50B333675B9F8D74AC`.
+The production assembly did not change. The remaining-reliability RED receipt was
+observed against those prior test bytes and the same final production bytes.
+
+Git normalizes CRLF on the new files. These additional **staged LF byte hashes**
+identify the committed copies; the working-byte table above identifies executed
+inputs/outputs, not a promise that a checkout retains CRLF.
+
+| Staged path (receipt basenames are under `docs\proofs\p22-cache-evidence`) | SHA-256 |
+|---|---|
+| `p22-baseline-red.trx` | `3c3b33531a7711f1333973e25ee5f84ab03a644b6f8daa30e51e21f5029db83d` |
+| `p22-cache-first-green.trx` | `350b0206981ac39538ce822eb235583c54f75b876eb595ecf196ed1f62d8b37f` |
+| `p22-cache-green.trx` | `9058feb3e7e87ab35264393c9e6fd6ca7a1b0d5c92bb9e2e56509097d44dc5db` |
+| `p22-cache-red.trx` | `0cf148dd942bf3031a342b60ba5077255dc5bd01b9be8f083290bdf12533cf6f` |
+| `p22-compatibility-final.trx` | `12f2595eef06696ec3d2242b2a4b45f90c16e1ad14e0192eac98521cdc73fa30` |
+| `p22-compatibility.trx` | `34f3ad5db243d6effc84f9704da4bafce3cac0fcd3fa340507838f5c94a4a7be` |
+| `p22-reliability-remaining.trx` | `439a59a2ac083afa9975cd53a79f206a5f5a292457a2811929a86b8bd7d007af` |
+| `src\AiDe.Core\Watcher\SqliteWatcherObservationStore.Coordination.cs` | `355682130be26b000b7bb1451d01cf66ee121b7511b03005f3f7acc16991f04d` |
+| `src\AiDe.Core\Watcher\SqliteWatcherObservationStore.cs` | `f712d2ceb543e7dd2269d9d71df83e99101a72966627bc4a07a4aa8903fa26b2` |
+| `tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs` | `c6d208e7f815e3783dc7bf6eb0460d383a534f2f1a0c7688c183b9471b15abee` |
+
+Hashes identify local observed bytes, not trusted provenance or cross-machine
+deterministic builds. The complete remaining graph is in the phase plan's P2.2
+checkpoint: native R1/R2; typed effect/mapping atomicity and failed-delivery replay;
+bounded source capture/late parents; 401 paging and canonical bridge; OS crash,
+old-binary rollback and query-plan/100× proof; P3 adapters; P4 launcher; P5 surface
+SLIs; all six upstream actions AFTER VERIFIED. No floor has been waived.
+
+Schema instrumentation uses the existing normal-path version/applied-at row and
+SQL refusal tokens; tests read both state and errors. Native operator latency,
+volume, path/failure telemetry remains a named gap. Conductor-owned derived
+index/backlink/site/rollup regeneration remains pending. No self-cleared code gate.
+The official audit append auto-rendered `docs\audit\audit-data.js`; only that
+unowned generated change was restored to the baseline. The append-only audit
+entry remains intact. Closing selfcheck observed zero missing goal states and the
+same two historical main-budget gaps already recorded by `5bb8bf21`.
+
 ## P2.1 allocation-overlap remediation — 2026-09-16
 
 **Test-only candidate; independent Test/Data/DS re-gate pending.** Base

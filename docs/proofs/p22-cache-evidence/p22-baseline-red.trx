@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="5d4eef41-38c5-42b1-a58d-d6a5d18d2f2e" name="malla@TIMMALLSTRIX 2026-09-16 12:56:30" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-16T12:56:30.7014914-07:00" queuing="2026-09-16T12:56:30.7014915-07:00" start="2026-09-16T12:56:29.9231810-07:00" finish="2026-09-16T12:56:30.7058007-07:00" />
+  <TestSettings name="default" id="2f161b99-c2be-4c6e-a134-b988245d6231">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-16_12_56_30" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="78129c1e-c413-4bfb-bfd9-3b8074541b5e" testId="bf84f92d-5610-96f7-cbf4-940a20293ecc" testName="AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.Apply_ReplayedRegisterOfEndedSession_PreservesEndedGenerationAndHeartbeat" computerName="TIMMALLSTRIX" duration="00:00:00.0153725" startTime="2026-09-16T12:56:30.6160827-07:00" endTime="2026-09-16T12:56:30.6312293-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="78129c1e-c413-4bfb-bfd9-3b8074541b5e">
+      <Output>
+        <StdOut>R2 register phase only: expected={"Sessions":[{"SessionId":"first-session","Generation":1,"Heartbeat":1000000,"Ended":true}],"Messages":[]}; actual={"Sessions":[{"SessionId":"first-session","Generation":2,"Heartbeat":1001000,"Ended":false}],"Messages":[]}</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+                                  ↓ (pos 55)&#xD;
+Expected: ···"ssion","Generation":1,"Heartbeat":1000000"···&#xD;
+Actual:   ···"ssion","Generation":2,"Heartbeat":1001000"···&#xD;
+                                  ↑ (pos 55)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.Apply_ReplayedRegisterOfEndedSession_PreservesEndedGenerationAndHeartbeat() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationReliabilityTests.cs:line 120&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="282761c6-bc97-4f22-bdae-4ba6f26eb90a" testId="a915d773-3efb-318e-0a9a-a8cd19a8b33d" testName="AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_UnchangedLogTwice_PreservesOneOriginalMessage" computerName="TIMMALLSTRIX" duration="00:00:00.0855506" startTime="2026-09-16T12:56:30.4786027-07:00" endTime="2026-09-16T12:56:30.5724863-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="282761c6-bc97-4f22-bdae-4ba6f26eb90a">
+      <Output>
+        <StdOut>R1: expected=[first-message-1]; actual=[{"MessageId":"first-message-1","RepositoryKey":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\bin\\debug\\net10.0\\aide-p2-red-ad00843c85d040bf8b6f39d249c4afa5","Kind":0,"AuthorSessionId":"first-session","AuthorTrust":1,"ParentMessageId":null,"Content":"synthetic question","Quarantined":true,"InjectionFlagged":false,"Tombstoned":false,"RecordedAt":"1970-01-01T00:00:00+00:00","Seq":1},{"MessageId":"first-message-2","RepositoryKey":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\bin\\debug\\net10.0\\aide-p2-red-ad00843c85d040bf8b6f39d249c4afa5","Kind":0,"AuthorSessionId":"first-session","AuthorTrust":1,"ParentMessageId":null,"Content":"synthetic question","Quarantined":true,"InjectionFlagged":false,"Tombstoned":false,"RecordedAt":"1970-01-01T00:00:00+00:00","Seq":2}]; boardPosts=2; duplicateRegisters=1</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Collections differ&#xD;
+Expected: ["first-message-1"]&#xD;
+Actual:   ["first-message-1", "first-message-2"]&#xD;
+                              ↑ (pos 1)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_UnchangedLogTwice_PreservesOneOriginalMessage() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationReliabilityTests.cs:line 56&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8d802846-6ace-489c-8ad4-edc51593c15b" testId="fd118aab-73ea-885c-a37d-e4075cf6617e" testName="AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle(ended: True)" computerName="TIMMALLSTRIX" duration="00:00:00.0182805" startTime="2026-09-16T12:56:30.5979878-07:00" endTime="2026-09-16T12:56:30.6157006-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8d802846-6ace-489c-8ad4-edc51593c15b">
+      <Output>
+        <StdOut>R2 full replay, ended=True: expected={"Sessions":[{"SessionId":"first-session","Generation":1,"Heartbeat":1000000,"Ended":true}],"Messages":[{"MessageId":"first-message-1","RepositoryKey":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\bin\\debug\\net10.0\\aide-p2-red-7c5b5534e8f7464895894c185753dd2e","Kind":0,"AuthorSessionId":"first-session","AuthorTrust":1,"ParentMessageId":null,"Content":"synthetic question","Quarantined":true,"InjectionFlagged":false,"Tombstoned":false,"RecordedAt":"1970-01-01T00:00:00+00:00","Seq":1}]}; actual={"Sessions":[{"SessionId":"first-session","Generation":2,"Heartbeat":1001000,"Ended":true}],"Messages":[{"MessageId":"first-message-1","RepositoryKey":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\bin\\debug\\net10.0\\aide-p2-red-7c5b5534e8f7464895894c185753dd2e","Kind":0,"AuthorSessionId":"first-session","AuthorTrust":1,"ParentMessageId":null,"Content":"synthetic question","Quarantined":true,"InjectionFlagged":false,"Tombstoned":false,"RecordedAt":"1970-01-01T00:00:00+00:00","Seq":1},{"MessageId":"restarted-message-1","RepositoryKey":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\bin\\debug\\net10.0\\aide-p2-red-7c5b5534e8f7464895894c185753dd2e","Kind":0,"AuthorSessionId":"first-session","AuthorTrust":1,"ParentMessageId":null,"Content":"synthetic question","Quarantined":true,"InjectionFlagged":false,"Tombstoned":false,"RecordedAt":"1970-01-01T00:00:00+00:00","Seq":2}]}</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+                                  ↓ (pos 55)&#xD;
+Expected: ···"ssion","Generation":1,"Heartbeat":1000000"···&#xD;
+Actual:   ···"ssion","Generation":2,"Heartbeat":1001000"···&#xD;
+                                  ↑ (pos 55)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle(Boolean ended) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationReliabilityTests.cs:line 91&#xD;
+   at InvokeStub_CoordinationReliabilityTests.PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9523e923-68ba-4edb-9b87-e3fd7efe91c7" testId="01e49a40-fca9-5027-785f-2d71701d5fa2" testName="AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle(ended: False)" computerName="TIMMALLSTRIX" duration="00:00:00.0246836" startTime="2026-09-16T12:56:30.5803918-07:00" endTime="2026-09-16T12:56:30.5972325-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9523e923-68ba-4edb-9b87-e3fd7efe91c7">
+      <Output>
+        <StdOut>R2 full replay, ended=False: expected={"Sessions":[{"SessionId":"first-session","Generation":1,"Heartbeat":1000000,"Ended":false}],"Messages":[{"MessageId":"first-message-1","RepositoryKey":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\bin\\debug\\net10.0\\aide-p2-red-08f51c4f72e545d8a5541c490423714c","Kind":0,"AuthorSessionId":"first-session","AuthorTrust":1,"ParentMessageId":null,"Content":"synthetic question","Quarantined":true,"InjectionFlagged":false,"Tombstoned":false,"RecordedAt":"1970-01-01T00:00:00+00:00","Seq":1}]}; actual={"Sessions":[{"SessionId":"first-session","Generation":2,"Heartbeat":1001000,"Ended":false}],"Messages":[{"MessageId":"first-message-1","RepositoryKey":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\bin\\debug\\net10.0\\aide-p2-red-08f51c4f72e545d8a5541c490423714c","Kind":0,"AuthorSessionId":"first-session","AuthorTrust":1,"ParentMessageId":null,"Content":"synthetic question","Quarantined":true,"InjectionFlagged":false,"Tombstoned":false,"RecordedAt":"1970-01-01T00:00:00+00:00","Seq":1},{"MessageId":"restarted-message-1","RepositoryKey":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\bin\\debug\\net10.0\\aide-p2-red-08f51c4f72e545d8a5541c490423714c","Kind":0,"AuthorSessionId":"first-session","AuthorTrust":1,"ParentMessageId":null,"Content":"synthetic question","Quarantined":true,"InjectionFlagged":false,"Tombstoned":false,"RecordedAt":"1970-01-01T00:00:00+00:00","Seq":2}]}</StdOut>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+                                  ↓ (pos 55)&#xD;
+Expected: ···"ssion","Generation":1,"Heartbeat":1000000"···&#xD;
+Actual:   ···"ssion","Generation":2,"Heartbeat":1001000"···&#xD;
+                                  ↑ (pos 55)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle(Boolean ended) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationReliabilityTests.cs:line 91&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle(ended: False)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="01e49a40-fca9-5027-785f-2d71701d5fa2">
+      <Execution id="9523e923-68ba-4edb-9b87-e3fd7efe91c7" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationReliabilityTests" name="PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_UnchangedLogTwice_PreservesOneOriginalMessage" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a915d773-3efb-318e-0a9a-a8cd19a8b33d">
+      <Execution id="282761c6-bc97-4f22-bdae-4ba6f26eb90a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationReliabilityTests" name="PumpOnce_UnchangedLogTwice_PreservesOneOriginalMessage" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle(ended: True)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="fd118aab-73ea-885c-a37d-e4075cf6617e">
+      <Execution id="8d802846-6ace-489c-8ad4-edc51593c15b" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationReliabilityTests" name="PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.Apply_ReplayedRegisterOfEndedSession_PreservesEndedGenerationAndHeartbeat" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="bf84f92d-5610-96f7-cbf4-940a20293ecc">
+      <Execution id="78129c1e-c413-4bfb-bfd9-3b8074541b5e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationReliabilityTests" name="Apply_ReplayedRegisterOfEndedSession_PreservesEndedGenerationAndHeartbeat" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="bf84f92d-5610-96f7-cbf4-940a20293ecc" executionId="78129c1e-c413-4bfb-bfd9-3b8074541b5e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a915d773-3efb-318e-0a9a-a8cd19a8b33d" executionId="282761c6-bc97-4f22-bdae-4ba6f26eb90a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fd118aab-73ea-885c-a37d-e4075cf6617e" executionId="8d802846-6ace-489c-8ad4-edc51593c15b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="01e49a40-fca9-5027-785f-2d71701d5fa2" executionId="9523e923-68ba-4edb-9b87-e3fd7efe91c7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="4" executed="4" passed="0" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.25]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.27]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.38]       Assert.Equal() Failure: Collections differ&#xD;
+[xUnit.net 00:00:00.38]       Expected: ["first-message-1"]&#xD;
+[xUnit.net 00:00:00.38]       Actual:   ["first-message-1", "first-message-2"]&#xD;
+[xUnit.net 00:00:00.38]                                     ↑ (pos 1)&#xD;
+[xUnit.net 00:00:00.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationReliabilityTests.cs(56,0): at AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_UnchangedLogTwice_PreservesOneOriginalMessage()&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.38]       Output:&#xD;
+[xUnit.net 00:00:00.38]         R1: expected=[first-message-1]; actual=[{"MessageId":"first-message-1","RepositoryKey":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\bin\\debug\\net10.0\\aide-p2-red-ad00843c85d040bf8b6f39d249c4afa5","Kind":0,"AuthorSessionId":"first-session","AuthorTrust":1,"ParentMessageId":null,"Content":"synthetic question","Quarantined":true,"InjectionFlagged":false,"Tombstoned":false,"RecordedAt":"1970-01-01T00:00:00+00:00","Seq":1},{"MessageId":"first-message-2","RepositoryKey":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\bin\\debug\\net10.0\\aide-p2-red-ad00843c85d040bf8b6f39d249c4afa5","Kind":0,"AuthorSessionId":"first-session","AuthorTrust":1,"ParentMessageId":null,"Content":"synthetic question","Quarantined":true,"InjectionFlagged":false,"Tombstoned":false,"RecordedAt":"1970-01-01T00:00:00+00:00","Seq":2}]; boardPosts=2; duplicateRegisters=1&#xD;
+[xUnit.net 00:00:00.40]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.40]                                         ↓ (pos 55)&#xD;
+[xUnit.net 00:00:00.40]       Expected: ···"ssion","Generation":1,"Heartbeat":1000000"···&#xD;
+[xUnit.net 00:00:00.40]       Actual:   ···"ssion","Generation":2,"Heartbeat":1001000"···&#xD;
+[xUnit.net 00:00:00.40]                                         ↑ (pos 55)&#xD;
+[xUnit.net 00:00:00.40]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.40]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationReliabilityTests.cs(91,0): at AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle(Boolean ended)&#xD;
+[xUnit.net 00:00:00.40]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.40]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.40]       Output:&#xD;
+[xUnit.net 00:00:00.40]         R2 full replay, ended=False: expected={"Sessions":[{"SessionId":"first-session","Generation":1,"Heartbeat":1000000,"Ended":false}],"Messages":[{"MessageId":"first-message-1","RepositoryKey":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\bin\\debug\\net10.0\\aide-p2-red-08f51c4f72e545d8a5541c490423714c","Kind":0,"AuthorSessionId":"first-session","AuthorTrust":1,"ParentMessageId":null,"Content":"synthetic question","Quarantined":true,"InjectionFlagged":false,"Tombstoned":false,"RecordedAt":"1970-01-01T00:00:00+00:00","Seq":1}]}; actual={"Sessions":[{"SessionId":"first-session","Generation":2,"Heartbeat":1001000,"Ended":false}],"Messages":[{"MessageId":"first-message-1","RepositoryKey":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\bin\\debug\\net10.0\\aide-p2-red-08f51c4f72e545d8a5541c490423714c","Kind":0,"AuthorSessionId":"first-session","AuthorTrust":1,"ParentMessageId":null,"Content":"synthetic question","Quarantined":true,"InjectionFlagged":false,"Tombstoned":false,"RecordedAt":"1970-01-01T00:00:00+00:00","Seq":1},{"MessageId":"restarted-message-1","RepositoryKey":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\bin\\debug\\net10.0\\aide-p2-red-08f51c4f72e545d8a5541c490423714c","Kind":0,"AuthorSessionId":"first-session","AuthorTrust":1,"ParentMessageId":null,"Content":"synthetic question","Quarantined":true,"InjectionFlagged":false,"Tombstoned":false,"RecordedAt":"1970-01-01T00:00:00+00:00","Seq":2}]}&#xD;
+[xUnit.net 00:00:00.42]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.42]                                         ↓ (pos 55)&#xD;
+[xUnit.net 00:00:00.42]       Expected: ···"ssion","Generation":1,"Heartbeat":1000000"···&#xD;
+[xUnit.net 00:00:00.42]       Actual:   ···"ssion","Generation":2,"Heartbeat":1001000"···&#xD;
+[xUnit.net 00:00:00.42]                                         ↑ (pos 55)&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationReliabilityTests.cs(91,0): at AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle(Boolean ended)&#xD;
+[xUnit.net 00:00:00.42]            at InvokeStub_CoordinationReliabilityTests.PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.42]       Output:&#xD;
+[xUnit.net 00:00:00.42]         R2 full replay, ended=True: expected={"Sessions":[{"SessionId":"first-session","Generation":1,"Heartbeat":1000000,"Ended":true}],"Messages":[{"MessageId":"first-message-1","RepositoryKey":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\bin\\debug\\net10.0\\aide-p2-red-7c5b5534e8f7464895894c185753dd2e","Kind":0,"AuthorSessionId":"first-session","AuthorTrust":1,"ParentMessageId":null,"Content":"synthetic question","Quarantined":true,"InjectionFlagged":false,"Tombstoned":false,"RecordedAt":"1970-01-01T00:00:00+00:00","Seq":1}]}; actual={"Sessions":[{"SessionId":"first-session","Generation":2,"Heartbeat":1001000,"Ended":true}],"Messages":[{"MessageId":"first-message-1","RepositoryKey":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\bin\\debug\\net10.0\\aide-p2-red-7c5b5534e8f7464895894c185753dd2e","Kind":0,"AuthorSessionId":"first-session","AuthorTrust":1,"ParentMessageId":null,"Content":"synthetic question","Quarantined":true,"InjectionFlagged":false,"Tombstoned":false,"RecordedAt":"1970-01-01T00:00:00+00:00","Seq":1},{"MessageId":"restarted-message-1","RepositoryKey":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\bin\\debug\\net10.0\\aide-p2-red-7c5b5534e8f7464895894c185753dd2e","Kind":0,"AuthorSessionId":"first-session","AuthorTrust":1,"ParentMessageId":null,"Content":"synthetic question","Quarantined":true,"InjectionFlagged":false,"Tombstoned":false,"RecordedAt":"1970-01-01T00:00:00+00:00","Seq":2}]}&#xD;
+[xUnit.net 00:00:00.44]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.44]                                         ↓ (pos 55)&#xD;
+[xUnit.net 00:00:00.44]       Expected: ···"ssion","Generation":1,"Heartbeat":1000000"···&#xD;
+[xUnit.net 00:00:00.44]       Actual:   ···"ssion","Generation":2,"Heartbeat":1001000"···&#xD;
+[xUnit.net 00:00:00.44]                                         ↑ (pos 55)&#xD;
+[xUnit.net 00:00:00.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationReliabilityTests.cs(120,0): at AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.Apply_ReplayedRegisterOfEndedSession_PreservesEndedGenerationAndHeartbeat()&#xD;
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.44]       Output:&#xD;
+[xUnit.net 00:00:00.44]         R2 register phase only: expected={"Sessions":[{"SessionId":"first-session","Generation":1,"Heartbeat":1000000,"Ended":true}],"Messages":[]}; actual={"Sessions":[{"SessionId":"first-session","Generation":2,"Heartbeat":1001000,"Ended":false}],"Messages":[]}&#xD;
+[xUnit.net 00:00:00.44]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T12:56:30.5741254-07:00">
+        <Text>[xUnit.net 00:00:00.38]     AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_UnchangedLogTwice_PreservesOneOriginalMessage [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T12:56:30.5976449-07:00">
+        <Text>[xUnit.net 00:00:00.40]     AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle(ended: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T12:56:30.6160426-07:00">
+        <Text>[xUnit.net 00:00:00.42]     AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.PumpOnce_ReopenedComposition_PreservesObservationsAndLifecycle(ended: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T12:56:30.6316135-07:00">
+        <Text>[xUnit.net 00:00:00.44]     AiDe.Core.Tests.Watcher.CoordinationReliabilityTests.Apply_ReplayedRegisterOfEndedSession_PreservesEndedGenerationAndHeartbeat [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

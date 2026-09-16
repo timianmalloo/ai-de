@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="304450d2-17fe-4fe3-8f6f-1a46a324974a" name="malla@TIMMALLSTRIX 2026-09-16 13:01:57" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-16T13:01:57.5054415-07:00" queuing="2026-09-16T13:01:57.5054418-07:00" start="2026-09-16T13:01:56.8073425-07:00" finish="2026-09-16T13:01:57.6457593-07:00" />
+  <TestSettings name="default" id="94e897e8-db21-45c6-8362-e6b12ebd484a">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-16_13_01_57" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ea3c3d7b-3ec8-481d-98d2-967c52782dad" testId="316b615e-1759-c71a-4137-0e83ffc81f58" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(parentState: &quot;pending&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0103629" startTime="2026-09-16T13:01:57.5156793-07:00" endTime="2026-09-16T13:01:57.5232351-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ea3c3d7b-3ec8-481d-98d2-967c52782dad">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_EVENT_IDENTITY'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(String parentState) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 122&#xD;
+   at InvokeStub_CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="127a434e-470b-4cf7-9089-5a570c65d64a" testId="8ab82b1b-b723-d146-2060-00e6600a0d0e" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET first_receipt_n=&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0088292" startTime="2026-09-16T13:01:57.4906125-07:00" endTime="2026-09-16T13:01:57.4994400-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="127a434e-470b-4cf7-9089-5a570c65d64a" />
+    <UnitTestResult executionId="2b9c2b11-9078-4907-95e8-83ec8a5fab98" testId="2a01c155-6c04-8e20-8469-8979c180b109" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: &quot;INSERT INTO coord_projection_feed(scope,epoch,even&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0098060" startTime="2026-09-16T13:01:57.5333523-07:00" endTime="2026-09-16T13:01:57.5431935-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2b9c2b11-9078-4907-95e8-83ec8a5fab98" />
+    <UnitTestResult executionId="81286ef1-4654-4ce9-894a-13d21e095f96" testId="06f36d75-5ead-fa66-8456-bbd937b8a630" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: &quot;INSERT INTO coord_projection_feed(scope,epoch,even&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0093144" startTime="2026-09-16T13:01:57.5432761-07:00" endTime="2026-09-16T13:01:57.5526004-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="81286ef1-4654-4ce9-894a-13d21e095f96" />
+    <UnitTestResult executionId="116c65be-e195-455d-b5b6-8c0a94adae1c" testId="d75e478d-d832-1cca-1e61-35ed0bdb9512" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(parentState: null)" computerName="TIMMALLSTRIX" duration="00:00:00.0098468" startTime="2026-09-16T13:01:57.5001150-07:00" endTime="2026-09-16T13:01:57.5130064-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="116c65be-e195-455d-b5b6-8c0a94adae1c">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_EVENT_IDENTITY'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 196&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(String parentState) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs:line 122&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0096948c-21be-4d0f-bae1-3512d3ad5da0" testId="4eb66574-a0eb-e710-0fa5-17eeed8ae894" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Constructor_InstallsThreeCachesAndVersionEight" computerName="TIMMALLSTRIX" duration="00:00:00.0083614" startTime="2026-09-16T13:01:57.5850195-07:00" endTime="2026-09-16T13:01:57.5933841-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0096948c-21be-4d0f-bae1-3512d3ad5da0" />
+    <UnitTestResult executionId="7203097a-863b-4d39-ac09-4bb6d25f22ee" testId="95d92ad1-c9eb-9226-f0d0-fe3e35a68c95" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;INSERT OR REPLACE INTO coord_projection_event SELE&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0111136" startTime="2026-09-16T13:01:57.3928604-07:00" endTime="2026-09-16T13:01:57.3989449-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7203097a-863b-4d39-ac09-4bb6d25f22ee" />
+    <UnitTestResult executionId="b3436e73-1781-4ea8-bc1b-9c9c4f154cbc" testId="2d6004b0-8838-5677-788f-08da07d69170" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: &quot;INSERT INTO coord_projection_feed(scope,epoch,even&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0099977" startTime="2026-09-16T13:01:57.5236000-07:00" endTime="2026-09-16T13:01:57.5332867-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b3436e73-1781-4ea8-bc1b-9c9c4f154cbc" />
+    <UnitTestResult executionId="7019d5d7-9956-40bc-bf24-ccc92030a989" testId="6f290300-ea33-e180-20d0-8379ab4d56d6" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET canonical_versio&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0110736" startTime="2026-09-16T13:01:57.4087521-07:00" endTime="2026-09-16T13:01:57.4198587-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7019d5d7-9956-40bc-bf24-ccc92030a989" />
+    <UnitTestResult executionId="bd6876c2-5b37-4840-8e52-7db27b80c518" testId="6b47f0f5-4079-bf41-07c5-c67fb961d19e" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: &quot;INSERT INTO coord_projection_feed(scope,epoch,even&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0105669" startTime="2026-09-16T13:01:57.5526828-07:00" endTime="2026-09-16T13:01:57.5632055-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bd6876c2-5b37-4840-8e52-7db27b80c518" />
+    <UnitTestResult executionId="014942e3-b5b7-443b-970e-c900c5ba485a" testId="9be10f0f-1a56-6b68-06b9-6cd801f1928b" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;DELETE FROM coord_projection_feed;&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0094911" startTime="2026-09-16T13:01:57.4872600-07:00" endTime="2026-09-16T13:01:57.4905522-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="014942e3-b5b7-443b-970e-c900c5ba485a" />
+    <UnitTestResult executionId="2c1d516b-5eb3-4ff7-8ffe-50d92645a3ea" testId="2cc0bf5a-f8ee-dc8e-f001-e1d6877ff320" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;DELETE FROM coord_projection_event;&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0095933" startTime="2026-09-16T13:01:57.4870587-07:00" endTime="2026-09-16T13:01:57.4871052-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2c1d516b-5eb3-4ff7-8ffe-50d92645a3ea" />
+    <UnitTestResult executionId="78182559-2fbf-4126-85e8-78edb5818a23" testId="c005947d-3fae-3e20-363a-7e87fa66a7d9" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET original_id='cha&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0109524" startTime="2026-09-16T13:01:57.4502615-07:00" endTime="2026-09-16T13:01:57.4612119-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="78182559-2fbf-4126-85e8-78edb5818a23" />
+    <UnitTestResult executionId="883d5c68-d34c-4e9b-aca9-6bee4042524e" testId="01b8af28-7f17-e48b-d50b-8915eb07bb9e" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Tombstone_ClearsPayloadAndCannotResurrect" computerName="TIMMALLSTRIX" duration="00:00:00.0109511" startTime="2026-09-16T13:01:57.5739787-07:00" endTime="2026-09-16T13:01:57.5849279-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="883d5c68-d34c-4e9b-aca9-6bee4042524e" />
+    <UnitTestResult executionId="d50977f0-ca41-439d-8862-67a569b50d0b" testId="92dc8e7f-c646-8542-78b3-94e4edddb29f" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_feed SET reason='changed';&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0357933" startTime="2026-09-16T13:01:57.3478036-07:00" endTime="2026-09-16T13:01:57.3876522-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d50977f0-ca41-439d-8862-67a569b50d0b" />
+    <UnitTestResult executionId="20bfb53b-d520-47ce-9775-da34cac2a369" testId="0f5102ca-e162-630d-1c5b-8d98925eaea3" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;INSERT OR REPLACE INTO coord_projection_feed SELEC&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0100743" startTime="2026-09-16T13:01:57.4199823-07:00" endTime="2026-09-16T13:01:57.4300807-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="20bfb53b-d520-47ce-9775-da34cac2a369" />
+    <UnitTestResult executionId="023fc7e5-fd11-4870-8a32-a30d8f12454d" testId="6505a887-6aad-43be-c6c9-2a5234aacad2" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.InitialReceiptAndEvent_MustCommitTogether" computerName="TIMMALLSTRIX" duration="00:00:00.0104850" startTime="2026-09-16T13:01:57.5934715-07:00" endTime="2026-09-16T13:01:57.6039587-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="023fc7e5-fd11-4870-8a32-a30d8f12454d" />
+    <UnitTestResult executionId="aca498a9-f2cf-443f-82bd-87788d19f0a0" testId="8b01fb23-9def-be84-3dd0-f1248f68db1f" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET raw_digest='chan&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0098560" startTime="2026-09-16T13:01:57.4301459-07:00" endTime="2026-09-16T13:01:57.4399601-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aca498a9-f2cf-443f-82bd-87788d19f0a0" />
+    <UnitTestResult executionId="8f4ed7d0-bf89-4c3c-8e8f-22fade243f97" testId="1c62bfb7-b654-16a1-3de9-5876dc608309" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET application_stat&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0097809" startTime="2026-09-16T13:01:57.3993120-07:00" endTime="2026-09-16T13:01:57.4086900-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8f4ed7d0-bf89-4c3c-8e8f-22fade243f97" />
+    <UnitTestResult executionId="235bd092-8086-42b1-a64a-46a76e9cc842" testId="f3b1aa10-20f3-2e77-984f-4258fabeb32e" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET current_receipt_&quot;···)" computerName="TIMMALLSTRIX" duration="00:00:00.0100719" startTime="2026-09-16T13:01:57.4612877-07:00" endTime="2026-09-16T13:01:57.4713497-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="235bd092-8086-42b1-a64a-46a76e9cc842" />
+    <UnitTestResult executionId="1be04eb9-65c9-4f4b-b087-292a91d9cf58" testId="51aeb727-013c-4380-f7d0-4690779f4800" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET raw_bytes=X'02';&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0101714" startTime="2026-09-16T13:01:57.4400263-07:00" endTime="2026-09-16T13:01:57.4501909-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1be04eb9-65c9-4f4b-b087-292a91d9cf58" />
+    <UnitTestResult executionId="d6f1f40d-99a7-423f-8130-e666046e9e3f" testId="14d0429c-5bbe-c106-180f-e08383787103" testName="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Checkpoint_RequiresAccountedPrefixAndCannotMoveBackward" computerName="TIMMALLSTRIX" duration="00:00:00.0105953" startTime="2026-09-16T13:01:57.5644625-07:00" endTime="2026-09-16T13:01:57.5738885-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d6f1f40d-99a7-423f-8130-e666046e9e3f" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET application_stat&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="1c62bfb7-b654-16a1-3de9-5876dc608309">
+      <Execution id="8f4ed7d0-bf89-4c3c-8e8f-22fade243f97" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Tombstone_ClearsPayloadAndCannotResurrect" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="01b8af28-7f17-e48b-d50b-8915eb07bb9e">
+      <Execution id="883d5c68-d34c-4e9b-aca9-6bee4042524e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="Tombstone_ClearsPayloadAndCannotResurrect" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_feed SET reason='changed';&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="92dc8e7f-c646-8542-78b3-94e4edddb29f">
+      <Execution id="d50977f0-ca41-439d-8862-67a569b50d0b" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET raw_bytes=X'02';&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="51aeb727-013c-4380-f7d0-4690779f4800">
+      <Execution id="1be04eb9-65c9-4f4b-b087-292a91d9cf58" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: &quot;INSERT INTO coord_projection_feed(scope,epoch,even&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="2a01c155-6c04-8e20-8469-8979c180b109">
+      <Execution id="2b9c2b11-9078-4907-95e8-83ec8a5fab98" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="Transition_RejectsDuplicateInitialRegressionAndRemapping" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET first_receipt_n=&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="8ab82b1b-b723-d146-2060-00e6600a0d0e">
+      <Execution id="127a434e-470b-4cf7-9089-5a570c65d64a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(parentState: null)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d75e478d-d832-1cca-1e61-35ed0bdb9512">
+      <Execution id="116c65be-e195-455d-b5b6-8c0a94adae1c" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="AppliedChild_RequiresActuallyAppliedParent" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;DELETE FROM coord_projection_event;&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="2cc0bf5a-f8ee-dc8e-f001-e1d6877ff320">
+      <Execution id="2c1d516b-5eb3-4ff7-8ffe-50d92645a3ea" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET raw_digest='chan&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="8b01fb23-9def-be84-3dd0-f1248f68db1f">
+      <Execution id="aca498a9-f2cf-443f-82bd-87788d19f0a0" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;INSERT OR REPLACE INTO coord_projection_feed SELEC&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0f5102ca-e162-630d-1c5b-8d98925eaea3">
+      <Execution id="20bfb53b-d520-47ce-9775-da34cac2a369" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: &quot;INSERT INTO coord_projection_feed(scope,epoch,even&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6b47f0f5-4079-bf41-07c5-c67fb961d19e">
+      <Execution id="bd6876c2-5b37-4840-8e52-7db27b80c518" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="Transition_RejectsDuplicateInitialRegressionAndRemapping" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET original_id='cha&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="c005947d-3fae-3e20-363a-7e87fa66a7d9">
+      <Execution id="78182559-2fbf-4126-85e8-78edb5818a23" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;DELETE FROM coord_projection_feed;&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="9be10f0f-1a56-6b68-06b9-6cd801f1928b">
+      <Execution id="014942e3-b5b7-443b-970e-c900c5ba485a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(parentState: &quot;pending&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="316b615e-1759-c71a-4137-0e83ffc81f58">
+      <Execution id="ea3c3d7b-3ec8-481d-98d2-967c52782dad" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="AppliedChild_RequiresActuallyAppliedParent" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.InitialReceiptAndEvent_MustCommitTogether" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6505a887-6aad-43be-c6c9-2a5234aacad2">
+      <Execution id="023fc7e5-fd11-4870-8a32-a30d8f12454d" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="InitialReceiptAndEvent_MustCommitTogether" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET current_receipt_&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f3b1aa10-20f3-2e77-984f-4258fabeb32e">
+      <Execution id="235bd092-8086-42b1-a64a-46a76e9cc842" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: &quot;INSERT INTO coord_projection_feed(scope,epoch,even&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="06f36d75-5ead-fa66-8456-bbd937b8a630">
+      <Execution id="81286ef1-4654-4ce9-894a-13d21e095f96" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="Transition_RejectsDuplicateInitialRegressionAndRemapping" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;UPDATE coord_projection_event SET canonical_versio&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6f290300-ea33-e180-20d0-8379ab4d56d6">
+      <Execution id="7019d5d7-9956-40bc-bf24-ccc92030a989" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Checkpoint_RequiresAccountedPrefixAndCannotMoveBackward" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="14d0429c-5bbe-c106-180f-e08383787103">
+      <Execution id="d6f1f40d-99a7-423f-8130-e666046e9e3f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="Checkpoint_RequiresAccountedPrefixAndCannotMoveBackward" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.ImmutableFacts_RejectMutation(mutation: &quot;INSERT OR REPLACE INTO coord_projection_event SELE&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="95d92ad1-c9eb-9226-f0d0-fe3e35a68c95">
+      <Execution id="7203097a-863b-4d39-ac09-4bb6d25f22ee" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="ImmutableFacts_RejectMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Transition_RejectsDuplicateInitialRegressionAndRemapping(mutation: &quot;INSERT INTO coord_projection_feed(scope,epoch,even&quot;···)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="2d6004b0-8838-5677-788f-08da07d69170">
+      <Execution id="b3436e73-1781-4ea8-bc1b-9c9c4f154cbc" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="Transition_RejectsDuplicateInitialRegressionAndRemapping" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Constructor_InstallsThreeCachesAndVersionEight" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="4eb66574-a0eb-e710-0fa5-17eeed8ae894">
+      <Execution id="0096948c-21be-4d0f-bae1-3512d3ad5da0" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProjectionTests" name="Constructor_InstallsThreeCachesAndVersionEight" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="316b615e-1759-c71a-4137-0e83ffc81f58" executionId="ea3c3d7b-3ec8-481d-98d2-967c52782dad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8ab82b1b-b723-d146-2060-00e6600a0d0e" executionId="127a434e-470b-4cf7-9089-5a570c65d64a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2a01c155-6c04-8e20-8469-8979c180b109" executionId="2b9c2b11-9078-4907-95e8-83ec8a5fab98" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="06f36d75-5ead-fa66-8456-bbd937b8a630" executionId="81286ef1-4654-4ce9-894a-13d21e095f96" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d75e478d-d832-1cca-1e61-35ed0bdb9512" executionId="116c65be-e195-455d-b5b6-8c0a94adae1c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4eb66574-a0eb-e710-0fa5-17eeed8ae894" executionId="0096948c-21be-4d0f-bae1-3512d3ad5da0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="95d92ad1-c9eb-9226-f0d0-fe3e35a68c95" executionId="7203097a-863b-4d39-ac09-4bb6d25f22ee" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2d6004b0-8838-5677-788f-08da07d69170" executionId="b3436e73-1781-4ea8-bc1b-9c9c4f154cbc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6f290300-ea33-e180-20d0-8379ab4d56d6" executionId="7019d5d7-9956-40bc-bf24-ccc92030a989" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6b47f0f5-4079-bf41-07c5-c67fb961d19e" executionId="bd6876c2-5b37-4840-8e52-7db27b80c518" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9be10f0f-1a56-6b68-06b9-6cd801f1928b" executionId="014942e3-b5b7-443b-970e-c900c5ba485a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2cc0bf5a-f8ee-dc8e-f001-e1d6877ff320" executionId="2c1d516b-5eb3-4ff7-8ffe-50d92645a3ea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c005947d-3fae-3e20-363a-7e87fa66a7d9" executionId="78182559-2fbf-4126-85e8-78edb5818a23" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="01b8af28-7f17-e48b-d50b-8915eb07bb9e" executionId="883d5c68-d34c-4e9b-aca9-6bee4042524e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="92dc8e7f-c646-8542-78b3-94e4edddb29f" executionId="d50977f0-ca41-439d-8862-67a569b50d0b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0f5102ca-e162-630d-1c5b-8d98925eaea3" executionId="20bfb53b-d520-47ce-9775-da34cac2a369" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6505a887-6aad-43be-c6c9-2a5234aacad2" executionId="023fc7e5-fd11-4870-8a32-a30d8f12454d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b01fb23-9def-be84-3dd0-f1248f68db1f" executionId="aca498a9-f2cf-443f-82bd-87788d19f0a0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1c62bfb7-b654-16a1-3de9-5876dc608309" executionId="8f4ed7d0-bf89-4c3c-8e8f-22fade243f97" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f3b1aa10-20f3-2e77-984f-4258fabeb32e" executionId="235bd092-8086-42b1-a64a-46a76e9cc842" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="51aeb727-013c-4380-f7d0-4690779f4800" executionId="1be04eb9-65c9-4f4b-b087-292a91d9cf58" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="14d0429c-5bbe-c106-180f-e08383787103" executionId="d6f1f40d-99a7-423f-8130-e666046e9e3f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="22" executed="22" passed="20" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.24]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.44]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_EVENT_IDENTITY'.&#xD;
+[xUnit.net 00:00:00.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(122,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(String parentState)&#xD;
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.45]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'COORD_EVENT_IDENTITY'.&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.45]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.45]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.45]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.45]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.45]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(196,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Execute(SqliteConnection connection, String sql, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.45]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationProjectionTests.cs(122,0): at AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(String parentState)&#xD;
+[xUnit.net 00:00:00.45]            at InvokeStub_CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.45]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.53]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:01:57.5146555-07:00">
+        <Text>[xUnit.net 00:00:00.44]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(parentState: null) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T13:01:57.5235639-07:00">
+        <Text>[xUnit.net 00:00:00.45]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.AppliedChild_RequiresActuallyAppliedParent(parentState: "pending") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
