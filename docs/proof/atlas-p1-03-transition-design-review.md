@@ -182,3 +182,55 @@ freshly checked atbcf4959bc0e0e361736e6a179f05b69fcd0500f8. P1-03 qualification
 still fails; the five component repairs do not establish combined acceptance.
 Grok r5 freeze is complete and has no remaining Codex ACK dependency. E1/E2 follow
 the existing integration priority. Trees/raw evidence remain retained for review.
+
+## Independent preparation CLEAR and next runner boundary — 2026-09-16
+
+Verified: independent review1d46d651cd5b6356e05545115757ba7eb7ffbf45 clears
+Test Architect/SRE/Simplifier for experiment-only preparation atc192a7ed.
+Conductor read the whole committed receipt, source-backed disconfirmation and
+actual independent TRX43/43/0, with identical population to author/discovery.
+Receipt Git-byte SHA2569b15021378d7587572a1a918fa09eb54398aa402883cc627eb84d053c1b417c7;
+working-file SHA256d2bda47ef6ae36efb54f9ca6e45300e25e1f3d1f9c3e0718dda22f6bde466dca.
+The capture guard initially stopped before writes: Git stores LF, while the reviewed
+working file has161CRLF line endings. Full normalized content equality and both
+byte hashes were then measured and enforced; no substantive difference was hidden.
+TRX SHA256254600d5f944c04104c38abe9ca06f570c4ef0390b1348dde01fcf21132470bc.
+Both are snapshotted under artifacts/atlas-five-gates/transition-source-handoff/.
+The speculative Completed-field mismatch was disconfirmed: actual Receipt.Save
+serializes Completed && FailureCount==0. No change was needed for that concern.
+Reviewer actual12/12tools, approximately362seconds; own regeneration passed.
+Doctor separately reports11registry patterns/effective drivers and6global owed
+regenerations; no global doctor-clearance or peer cleanup is claimed.
+
+Owner conditionally admitted runner/binary preparation after this final CLEAR;
+the condition is now met. Newly provisioned execution preparation tree:
+C:/Projects/ai-de-test-atlas-p1-03-uia-pair, branch test/atlas-p1-03-uia-pair,
+session codex-atlas-p1-03-pair-preparation, base1d46d651. One Astra author18calls/
+25minutes/checkpoint10, independent runner/SRE8calls/15minutes, no fanout by leaves.
+Allowed new script docs/proof/records/atlas-p1-03-uia-transition/run_pair.py and
+docs/proof/atlas-p1-03-pair-preparation.md plus own official records only.
+No test/product/shared-runner/STA/canonical-preflight edit. Exact watcher preparation
+request req-01M2NYTSRKJZ22SS0KR0PBKAS6 was filed; its grant must be read before
+dispatch. Source preparation CLEAR is not that grant or a shown-execution slot.
+
+Owner contract: normal same-tree Debug App.Tests and Daemon builds, freeze only
+after both; full consumed output/dependency/runtime-config and resolved SDK/testhost/
+installed runtime identity manifests. Refuse additions, omissions or changes before
+each arm and afterwards. Separate fresh processes, one exact Fact and unique label
+each, no-build/no-restore, fixedAthenB and no retry/rebuild. Stream raw output;
+interpret fixture validity, original-oracle outcome and cleanup separately.
+Actual B loading Atlas/placeholder ancestry is required, not merely census-called.
+External180seconds per arm plus at most30seconds for owned-process containment is
+a new experimental circuit breaker, never a product timeout. Track creation-bound
+runner/descendants and recorded daemon IDs; never kill by name. Missing ownership,
+pins, unresolved cleanup or containment expiry stops the pair. Prove refusal and
+containment with harmless subprocess controls before independent runner review.
+A normally completed negative original oracle permits plannedB only when the
+fixture and owned cleanup are valid. Forced daemon cleanup invalidates the arm.
+
+The existing serial graph now has preparation review complete; runner/binary
+preparation -> independent runner review -> fresh checked watcher slot -> fixed
+pair -> independent interpretation remain. This refines the already planned node;
+no renewed whole-programme optimize-graph run or new scope is needed. No shown
+execution/main publication/source join occurred. P1-03 BLOCK remains; future
+scaffolding disposition returns to Owner. Root retained all worktrees/raw evidence.

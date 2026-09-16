@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T20:30:10Z",
+  "generated": "2026-09-16T20:37:00Z",
   "audit": [
     {
       "actor": null,
@@ -26492,6 +26492,36 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2NYZR5HT91E2V5ZN2CDAAC5",
+      "shortname": "atlas-transition-review-clear",
+      "datetime": "2026-09-16T20:36:59Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going",
+      "summary": "Read full independent CLEAR1d46d651 and inspected own43/43 actualTRX/population. Completed concern disconfirmed from persistence code. Owner runner/binary preparation contract recorded; new tree provisioned, exact watcher requestNYTS filed, not yet a grant. No shown run/source join/main.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md",
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Advance cleared diagnostic preparation to a concrete reviewed experiment boundary.",
+      "done_when": "Independent preparation verdict inspected, Owner next boundary recorded and exact runner-preparation request made without bypassing execution gates.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-16T20:32:32Z",
+      "duration_seconds": 267.0,
+      "git": {
+        "sha": "cc83a8aa5e3cd5afb7ce487d7640bc165e45b275",
+        "short": "cc83a8aa5",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -31175,6 +31205,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "19ee8f4a9d5ecc98770b8af217654c4f6b742781",
         "after": "19ee8f4a9d5ecc98770b8af217654c4f6b742781",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2NYZR1VKJ0XCTG2XGJ2G59Q",
+      "datetime": "2026-09-16T20:36:59Z",
+      "session": null,
+      "kind": "design",
+      "skill": "execute-with-coordination",
+      "title": "Prepare a contained Atlas pair after independent diagnostic clearance",
+      "prompt": "keep going",
+      "summary": "Astra Owner admits one isolated runner/binary preparation unit18calls/25min then independent8calls/15min review; new180second arm limit plus30second creation-bound owned-process containment. Full post-build manifest and treatment-reach/cleanup oracles required. No shown execution or canonical-source integration.",
+      "rationale": "The previous preflight fixes a different tree and hashes only three daemon files; the association experiment requires identical complete consumed inputs across two fresh processes and explicit containment independent of WPF dispatcher timeout.",
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "cc83a8aa5e3cd5afb7ce487d7640bc165e45b275",
+        "after": "cc83a8aa5e3cd5afb7ce487d7640bc165e45b275",
         "branch": "integration/atlas-five-gates",
         "pushed": null,
         "commits": []
