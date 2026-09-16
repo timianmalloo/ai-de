@@ -2893,6 +2893,18 @@ for both or split.*
   reproduce the red shape and pass in d679e156; independent16/16 plus nine refusal
   mutations clear the named boundary. Evidence: programme transition-design Proof Pack.
 
+- **Recurrence (2026-09-16, process-image reason lost before serialization):**
+  generic PROCESS-IMAGE-MISSING discarded the immediate native error and pending
+  process identity. Class -> sweep -> derive -> prevent: reuse DC-078; sweep both
+  Job.sample and owned_snapshot consumers; preserve original failure separately from
+  later observations; three maintained runner controls fail red on missing fields
+  then pass in41421c8e. Independent43a1099b executed19/19, inspected persisted122
+  surviving clobber9876/secondary6 and actual refusal predicates. Control lives in
+  docs/proof/records/atlas-p1-03-uia-transition/run_pair.py on the experimental branch;
+  no claim it is installed on main. FixedROOT reviewer evidence-location defect is
+  separately disclosed; raw singleton preservation is not claimed. Programme Proof
+  Pack pins the exact runner, review and remaining qualification boundary.
+
 ### DC-079 — Two conventions for one job coexist with nothing marking which is correct, so copying is a coin flip
 
 - **Shape:** the same helper is written by hand in many files. Over time the copies diverge, and one
@@ -4691,6 +4703,18 @@ for both or split.*
   control cannot be a habit. **Control (the profile's F-20):** a managed-block shell rule — *a gate's
   status is never behind a pipe* — and the profiler's SP-24 counter, red at 168/102; the join is
   already a script. Status stays `partially-controlled` until SP-24 reads 0 on a later profile.
+
+- **Recurrence (2026-09-16, discarded tool status and ungated nested result):**
+  emitting only tool.output lost a coverage session/result; later nested operations
+  continued after a live-observation prerequisite returned51 and falsely audited
+  success. Class -> sweep -> derive -> prevent: reuse DC-113's discarded decisive
+  status; sweep launch, resume, result readback and audit generation; retain full tool
+  results, gate dependent calls, derive summaries from parsed receipts. The false row
+  is append-only retracted. One saved direct-file hold/release control now proves
+  liveBEGIN before completion and END/result after release. It is retained local
+  evidence, not an installed repository-wide prevention gate; that wider control
+  remains a finding for the Owner, outside this handoff. Original coverage UNKNOWN
+  is preserved; a replacement needs explicit permission. See programme Proof Pack.
 
 ### DC-114 — A fix to the deployment mechanism cannot deploy itself: correct, tested, green, and unreachable
 

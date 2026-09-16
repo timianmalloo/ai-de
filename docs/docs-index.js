@@ -9533,8 +9533,14 @@ window.DOCS_INDEX = {
           "rel": "depends-on"
         }
       ],
-      "diagrams": [],
-      "sourceSha256": "0b01d7a605566176616b5ec0a4d4d006e76ff4eda3be681a890b3d9f66197b7f"
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Material graph, floors and cost",
+          "mermaid": "flowchart LR\n  C[Truthful partial close] --> O[Owner promotion by reference]\n  O --> N[Exact native slot request]\n  C --> R[Claude replacement and base decision request]\n  N --> H[Record and commit handoffs]\n  R --> H"
+        }
+      ],
+      "sourceSha256": "78447dbc8f19f39d124de5e456138732f7b134391917dce3af13350e272d5cf2"
     },
     {
       "id": "coordination-code-atlas",
@@ -9722,7 +9728,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "08b72f04393f4d002acaf07b8b0a5c5d84a9a06065f347380930f673f4bc6e85"
+      "sourceSha256": "3d6f056917e8a0635f75de3f20555ee8cb42d2350d705aaff8c60fe9536272c2"
     },
     {
       "id": "design-session-profiler",
@@ -12089,6 +12095,11 @@ window.DOCS_INDEX = {
       "diagrams": [
         {
           "kind": "flowchart",
+          "title": "Material graph, floors and cost",
+          "mermaid": "flowchart LR\n  C[Truthful partial close] --> O[Owner promotion by reference]\n  O --> N[Exact native slot request]\n  C --> R[Claude replacement and base decision request]\n  N --> H[Record and commit handoffs]\n  R --> H"
+        },
+        {
+          "kind": "flowchart",
           "title": "Material replan: mutable WebView state versus frozen inputs",
           "mermaid": "graph TD\n  F[Cleared diagnostic source] --> C[Containment and refusal controls]\n  F --> M[Two builds and complete freeze]\n  P[Owner profile contract and controls] --> M\n  P --> R[Independent runner and graph review]\n  C --> R\n  M --> R\n  R --> S[Fresh checked execution slot]\n  S --> A[Arm A]\n  A -->|Valid fixture and owned cleanup| B[Arm B]\n  B --> I[Independent interpretation and Owner disposition]"
         },
@@ -12113,7 +12124,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "8b23f0118370a8f5c43d0bcea8b70faf1c84813f02a40107f21e9e7a82cc5dbc"
+      "sourceSha256": "3ddf39f06393369c98d003463993d5dc062742596f099ac56d2bf42c145da75d"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -13012,9 +13023,14 @@ window.DOCS_INDEX = {
           "kind": "flowchart",
           "title": "Material execution-graph update and cost",
           "mermaid": "flowchart LR\n  J[Reviewed diagnostic-loss finding] --> D[Diagnostic repair]\n  D --> R[Independent repair review]\n  R --> O[Separate next Owner decision]\n  S[Exact spike transport; original run unknown] --> C[Durable capture control]\n  C --> G[Claude explicit replacement disposition]\n  G --> V[One granted combined verification]\n  V --> P[Claude personal proof inspection]\n  P --> H[Coordinated integration handoff]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Material graph, floors and cost",
+          "mermaid": "flowchart LR\n  C[Truthful partial close] --> O[Owner promotion by reference]\n  O --> N[Exact native slot request]\n  C --> R[Claude replacement and base decision request]\n  N --> H[Record and commit handoffs]\n  R --> H"
         }
       ],
-      "sourceSha256": "4118ff02894abd3f7bf24b710200f95929176ebaae87fb5edf92b18649eca50a"
+      "sourceSha256": "36cb4b1d4d8150f241c9ea645e549b93c41f6152280a0142acc814c115787d16"
     },
     {
       "id": "proof-atlas-peer-review-transport",
@@ -23417,5 +23433,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "9b0224b5f595f89b906254a311428ca597786b0ef7ed2f07bb7e73e2219c5a92"
+  "graphSha256": "c215e7aa3d0562e13667f176fdf4e46a4705a927e98efa4ef79fac66baab5faf"
 };

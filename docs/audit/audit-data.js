@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T22:25:03Z",
+  "generated": "2026-09-16T22:50:24Z",
   "audit": [
     {
       "actor": null,
@@ -26760,6 +26760,67 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2P6970EB788VH261B0CZPB2",
+      "shortname": "atlas-capture-review-partial-close",
+      "datetime": "2026-09-16T22:44:29Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going",
+      "summary": "Partial close of marker22:25:32Z. Native diagnostic author41421c8e independently CLEAR43a1099b; root inspected review receipt and actual19/19 selftest. Capture03 live-before-release and completed records directly inspected; original coverage remainsUNKNOWN. Appended correction al-01M2P670MSP5Q245ANDKPQ6ZNW for unsupported serialization wording. Owner permits manifest promotion by reference and one administrative fresh-slot request, no execution. Core desktophold explicitly ACKed. Remaining: canonical proof/plan/lesson/derived/commit, correct Claude request routing, exact native request and actual grants. Plan18execbatches/20minutes; elapsed comes from marker; exact aggregate call count lost across compaction and compliance is NOT asserted. Read batch output truncated, load-bearing control evidence recovered narrowly; invalid coord status command and guessed liveness path were observed errors, no success claimed. Previous capture/reviewer administrative defects preserved. Material evidence now supports distinct bounded preparation unit8calls/12min, checkpoint5, no executor agents, all execution held.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close diagnostic review and recover durable R124 evidence without ungranted execution.",
+      "done_when": "Actual review/capture evidence inspected, truthful records persisted, next decisions routed; execution remains behind explicit grants.",
+      "tier": "T1",
+      "fan_out": 4,
+      "started_at": "2026-09-16T22:25:32Z",
+      "duration_seconds": 1137.0,
+      "git": {
+        "sha": "8eebf72b29b692b8496fd0453f6445fe7d7d84ea",
+        "short": "8eebf72b2",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2P6M0W875TK8Y7MKP1D01SX",
+      "shortname": "atlas-reviewed-diagnostic-and-r124-handoffs",
+      "datetime": "2026-09-16T22:50:24Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going",
+      "summary": "Bounded administrative preparation completed: inspected actual review/control results and recomputed seven source blobs/nine staged manifest; exact native request req-01M2P6J5WY6VRBJEKCPKD9TVAP; canonical R124 request req-01M2P6J5SDEYEY6A9CKRNXJ9CE; watcher relay req-01M2P6J5YPYVQQY3HNNFNC8A09. No native/coverage execution or publication. Capture audit errors corrected append-only; experimental diagnostic controls and remaining broader status-control finding recorded. Checkpoint5 helper parsed plain-text lease output as JSON and stopped before document writes; correction reused saved exact request packets. Planned8calls/12min, actual7orchestration calls through closure invocation; nested operations separately visible, no token cost exposed. Final regeneration/graph/commit results read after this entry; failure is not acceptance.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md",
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Record reviewed diagnostic identity and send exact bounded execution requests.",
+      "done_when": "Both request packets, evidence and Owner decision are persisted in reviewed programme records, checks pass and documentary commit is retained.",
+      "tier": "T1",
+      "main_calls": 7,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 4,
+      "started_at": "2026-09-16T22:44:30Z",
+      "duration_seconds": 354.0,
+      "change": "cl-01M2P6M0REKY6C9QKC88YPTZCY",
+      "git": {
+        "sha": "8eebf72b29b692b8496fd0453f6445fe7d7d84ea",
+        "short": "8eebf72b2",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -31575,6 +31636,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "7b8d7508e7b4ab5db1861737ed4af0724b214f43",
         "after": "7b8d7508e7b4ab5db1861737ed4af0724b214f43",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2P6M0REKY6C9QKC88YPTZCY",
+      "datetime": "2026-09-16T22:50:23Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "decision",
+      "skill": "optimize-graph",
+      "title": "Promote reviewed diagnostic identity and request bounded independent execution lanes",
+      "prompt": "keep going",
+      "summary": "Astra Owner promotes exact manifest by reference after independent43a1099b CLEAR; one fresh native request, no run. R124 capture03 proved; original coverageUNKNOWN; replacement/base decision routed canonically through watcher. Both lanes remain behind explicit grants.",
+      "rationale": "Returned independent diagnostic review and observed hold/release evidence remove preparation dependencies without removing execution or publication gates.",
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "8eebf72b29b692b8496fd0453f6445fe7d7d84ea",
+        "after": "8eebf72b29b692b8496fd0453f6445fe7d7d84ea",
         "branch": "integration/atlas-five-gates",
         "pushed": null,
         "commits": []

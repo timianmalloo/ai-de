@@ -12,7 +12,116 @@ review-by: 2026-12-15
 summary: "Exact blocker transfer; isolated repairs followed by GHCP-only main publication."
 ---
 
-# Current state: diagnostic repair and independent R124 handoff preparation
+# Current state: reviewed diagnostic handoff; R124 replacement pending
+
+## Current disposition: reviewed diagnostics and R124 handoff
+
+Goal: record the reviewed diagnostic identity and send exact bounded execution requests.
+Done when both requests, evidence, Owner decision and official records are persisted.
+Not in scope: native/coverage execution, source changes, automatic retries or publication.
+Tier T1 administration (native evidence remains T2); cap4 including Owner/Conductor,
+zero executing child agents. Owner-admitted ceiling8calls/12minutes, checkpoint5.
+
+| Task | Purpose | Verified state / next dependency |
+| --- | --- | --- |
+| Diagnostics | Retain native failure reason | Author41421c8e, independent CLEAR43a1099b; root read19/19 actual result |
+| Fresh pair | Observe previously missing diagnostics | Request `req-01M2P6J5WY6VRBJEKCPKD9TVAP`; no slot grant or launch |
+| E1/E2 capture | Preserve streams and result across tool yields | Control03 live BEGIN then release/END/exit0,41.75seconds |
+| Combined coverage | Qualify nine-path spike candidate | Original UNKNOWN; replacement/base decision `req-01M2P6J5SDEYEY6A9CKRNXJ9CE` pending |
+| Main | Serialize integration | Local `2a5f1b2d`, origin/main `8c061183` observed; current Core desktop hold ACKed |
+
+### Independent review and Owner decision
+
+Author `41421c8e844942e0e23ad26e757d95da8ebf29d6`; review `43a1099bd32723b70b4ac53aa0e0b021457d877d` in
+`C:/Projects/ai-de-review-atlas-p1-03-image-diagnostics`.
+Receipt: `docs/proof/atlas-p1-03-image-diagnostics-review.md` at that commit.
+Root inspected the actual selftest JSON:19cases,0failures,0errors. Independent review
+measured2.430seconds, directly inspected persisted primary122 against later9876/6,
+executed process/browser refusal predicates and checked all11630files/1030roots.
+The16priorcontrols and named acceptance/containment policies remain unchanged.
+Those population/source conclusions are independent review evidence, not a claim
+that Conductor reran the population hash. Root rechecked runner/manifest bytes.
+
+Owner promotes the exact manifest BY REFERENCE: `66ccb1a395d44e34818f21c24c2f0608605f539484452c42890e2c0abcd1ff3e`.
+Runner `9615a47ac9b5acb7ce8c4fb09e23bdb0e99d4ebd62aedf804a97944ded86af2b`. Candidate JSON still says proposed-not-promoted; its bytes
+were not rewritten. This Owner decision supplies its external promotion record.
+Future run checks all pins again. Old manifests and historical invalid result remain.
+FR-IDR-001 is retained: fixedROOT placed reviewer control outputs in the prepared
+tree and overwrote ignored containment-control.json. Three author UUID image records
+and old manifests were independently preserved; the singleton was not preserved.
+No rerun or cleanup concealed the location mistake.
+
+The information-gain argument is Inferred: a separately admitted observation can
+retain pendingPID/birth/nativeerror and later timed state that the historical refusal
+omitted. It cannot establish the past cause. OneA then oneB only when every existing
+A-validity gate passes;180seconds/arm plus30seconds containment, fresh profiles,
+Debug/no-build/no-restore, no retries. Invalid evidence stops beforeB. Any result
+returns for independent interpretation. Canonical qualification remainsBLOCK.
+
+### R124 capture, source preservation and audit corrections
+
+Candidate remains `C:/Projects/ai-de-integration-atlas-view-spikes`, basebcf4959b.
+Root compared all seven source Git blobs with E1 `5d361f2a` and E2 `90189411`,
+checked working-file hashes and recomputed the nine-entry staged manifest:
+`b0c4d40948c0a4e165280c45a26169bd4b1051479e0fadf6fde1086f5280eb35`. Serialization is `LF_final_LF`.
+Source preservation is now directly checked; combined coverage remains UNKNOWN.
+
+Raw evidence remains under that tree's `artifacts/atlas-view-spikes-evidence/`:
+`control-03-observations/before-release.json`, `after-completion.json`,
+`wrapper-exit.json`, `control-03/result.json`, stdout.log and stderr.log.
+Root read the exact before/after states: PID5784/birth134340718937513055 alive at
+22:38:55.454533Z, both BEGIN lines present and result/release absent. After explicit
+release, both END lines and exit0 in41.75seconds were persisted. Retained tool
+session13438 ended0 per author; wrapper-exit0 was directly read. This proves one
+normal controlled completion, not general crash durability or a coverage result.
+Wrapper SHA `0f89329db757639b184c05efd917a765f6f1391dfafe584576142d9111431ac7`.
+Before receipt SHA `71308270e53c238917523b93e427cdf7e0702b429af3406af36aab525ef6168c`.
+
+Original control02 success claim was retracted by al-01M2P5KVCRJDZ9RSBYAGM7829R.
+Control03 audit serialization wording was corrected by al-01M2P670MSP5Q245ANDKPQ6ZNW;
+the measured receipt and valid capture outcome remain. Both original rows survive.
+The request uses canonical claude-conductor routing and asks the watcher to deliver
+it (`req-01M2P6J5YPYVQQY3HNNFNC8A09`); a session-addressed notice is not confirmed consumption.
+R124 still needs exact replacement permission and base choice, actual coverage
+contents/counts/elapsed, independent candidate inspection, Claude's personal read
+of both Proof Packs and serialized integration. No product or main grant is added.
+
+### Material graph, floors and cost
+
+```mermaid
+flowchart LR
+  C[Truthful partial close] --> O[Owner promotion by reference]
+  O --> N[Exact native slot request]
+  C --> R[Claude replacement and base decision request]
+  N --> H[Record and commit handoffs]
+  R --> H
+```
+
+Existing graph/specification/architecture and independent reviews are reused. New
+evidence changes the native node from repair-review to administrative request; no
+new product design is required. Native and R124 requests have no data edge; actual
+desktop contention is the watcher's exclusive-resource gate. Closure is serial.
+Variant: two unrecorded requests plus uncommitted records, each removed by observed
+receipt/readback. No polling or rerun loop. Exit: exact packets and reviewed evidence
+recorded; pending peer decisions remain pending. Raw packets are retained in
+`artifacts/atlas-five-gates/pair-handoff/diagnostic-promotion-packet.json`.
+
+Before: diagnostic review and capture proof blocked their respective requests.
+After: both evidence floors returned; two requests can be prepared without execution.
+No independent-review, pin, ownership, coverage, personal-proof, audit or join gate
+is removed. Inferred ceiling12minutes, width1 for administration; external response
+time is not modeled. Owner decision4/4calls; diagnostic author8/12; review6/6;
+capture proof6orchestrationcalls/9nestedoperations and267auditseconds. Earlier root
+18call/20minute episode closed partial as al-01M2P6970EB788VH261B0CZPB2; exact total
+calls were not recoverable across compaction, so compliance is not asserted.
+This record's close captures measured elapsed and actual visible continuation calls.
+Tokens/spend not exposed. Worktrees/raw evidence are retained for reproducibility.
+At checkpoint5 the helper stopped after creating/saving requests: it incorrectly
+parsed the lease command's plain-text output as JSON. No programme document had
+been changed. Correction preserves/reuses the exact saved packets and checks every
+command exit; no duplicate request or lease refusal was treated as success.
+
+## Earlier programme record
 
 Goal: diagnose the process-observer refusal without changing the frozen native experiment.
 Done when four bounded harmless fixture cases distinguish observable failure states,
