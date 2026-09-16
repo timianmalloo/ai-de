@@ -885,3 +885,65 @@ snapshot, pending/refused dispositions and elapsed duration on each normal pump.
 Fault/restart tests must read all three cache tables and native effects through
 independent SQLite connections. This author checkpoint does not clear full P2,
 canonical bridging, parent retry scheduling, P3–P5, activation, or independent gates.
+
+### P2.4A — approved bound cache-reader contract (2026-09-16)
+
+This is the read-only A unit, not pending recovery B. Data/Distributed Systems
+design approval is conditional on the source contract below; independent
+implementation review remains open. Production authority is DENY; enhanced
+canonical append stays disabled. No producer is activated by this unit.
+
+The same three caches remain fresh, pre-release schema v8. This is not an upgrade
+of an existing candidate-v8 database. Released v7 remains the migration floor;
+actual released-binary rollback qualification is later work.
+
+One checkpoint is one normalized source scope/epoch and its accounted prefix.
+Add `bound_repository_key`, `source_origin`, `public_source_id`: either all NULL
+or all nonempty. The repository uses the existing canonical identity; origin
+comes from trusted composition; the public ID is a deterministic SHA-256 of the
+existing normalized scope, uniquely constrained. The hash hides paths, not
+authorization. Scope, epoch and binding are immutable, including NULL→bound.
+No attribution backfill, rebinding or collision merge is permitted. Legacy native
+inserts default to all NULL and remain observational; public reads return
+Unavailable for them.
+
+The new trusted pump overload receives repository and origin before capture.
+It establishes a bound zero checkpoint before admitting the first records,
+including an existing empty source file. Zero requires the empty-prefix digest
+and no accepted source content. Contradictory registration repository data refuses
+the capture without effects; registration never supplies source trust. Existing
+source-gap, contiguous-advance and replacement prohibitions remain in force.
+
+The additive `IWatcherObservationStore.ReadCoordination(CoordinationReadRequest)`
+returns a typed result; unsupported implementations default to Unsupported,
+never empty success. A request has an opaque source ID, versioned source/epoch
+cursor, after-N, optional frozen-H and a limit of 1–200. Its internal reader
+repository is derived from the service's SessionRecord. MCP exposes only source,
+cursor and pagination; it cannot override repository or name a root/scope.
+
+One read transaction resolves and validates the checkpoint/binding before any
+feed query, including empty results. Unknown/unbound is Unavailable, a different
+reader repository is Mismatch without disclosure, malformed cursor/limit is
+InvalidRequest, and wrong version/epoch is Reset. Nonzero H must be a receipt
+of this source/epoch, not a different source's global receipt. Capture the local
+maximum N and read ascending `after-N < n <= H` using `(scope,epoch,n)`.
+All admissions, transitions, duplicate-accounting diagnostics, refusals and
+tombstones travel as immutable receipt outcomes, not mutable current-event state.
+Global sequence interleaving is not loss evidence.
+
+Return actual last-returned-N (unchanged on empty), frozen H, continuation retaining
+H until complete, then no continuation and FreshResume after H without frozen H.
+The 401-row oracle is 200/200/1, followed by a new transition visible on FreshResume.
+Metadata includes admission/session/message identifiers and source ID/origin only;
+no source root, raw scope, payload or prose. Stable reason codes are allowlisted.
+Availability describes the cache read only. Source health, recovery and lag are
+NotRecorded, not fabricated zero or recipient health. I/O/busy fails typed
+Unavailable. Normal reads emit duration, volume and stable outcome via a span.
+
+Surface/proof matrix: trusted binding → checkpoint constraints → transactional
+receipt reader → interface → BoardTools adapter → existing Tools schema/dispatch.
+Real isolated SQLite fixtures and actual MCP dispatch prove the seams; old native
+BoardTools.Read and producer behavior retain their tests. Structural source-binding
+proof is not human-channel qualification. Recovery eligibility/counter semantics,
+full P2, producer/canonical bridge qualification, actual binary rollback, and
+P3–P5 remain outside this unit.

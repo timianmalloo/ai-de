@@ -214,3 +214,22 @@ Rejected: external allocation, service-instance-only locks, sequence renumbering
 uniqueness retrofit, silent Int64 API widening, and newest-N cursor recovery.
 R1/R2 replay defects, full-P2 migration/rebuild/rollback and independent implementation
 gates remain open. This amendment authorizes the narrow implementation, not shipment.
+
+### P2.4A approved read-only binding amendment — 2026-09-16
+
+Adopt the P2.4A contract in `docs/design/cross-harness-coordination.md`:
+fresh pre-release v8, the same three caches, all-NULL or all-bound immutable source
+identity, opaque deterministic scope hash, trusted pre-capture repository/origin,
+and one-transaction source-local frozen receipt pagination. Legacy unbound sources
+remain observational but unavailable through this public reader. Do not upgrade
+candidate-v8 caches, backfill attribution or infer source trust from registration.
+Reject global high-water pagination, mutable-event outcome joins, repository
+arguments in MCP, and silent empty success on unsupported/unavailable stores.
+
+The source file must exist for an empty bound checkpoint; zero is an accounted
+empty prefix, never evidence that an absent source is healthy. Metadata-only
+results distinguish cache availability from NotRecorded recovery/source health/lag.
+Public Post authorization is unchanged. Production authority remains DENY and
+enhanced canonical append disabled. Data/DS design approval is not code approval:
+independent Test/Security/Data gates, recovery B, full P2 producer/bridge proof,
+released-v7 binary rollback and P3–P5 remain open.
