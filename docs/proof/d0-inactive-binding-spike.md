@@ -160,3 +160,133 @@ All paths below are local retained scratch in this author tree; hashes are SHA25
 | C:/Projects/ai-de-spike-d0-inactive-binding/.artifacts/d0-binding-spike/write-proof.py | ed3cabe487e2ef6963b68130f57d5a6798d61b5c78eec3e871b98fdef72c3b96 |
 
 Only this proof and own official audit append are committed. The proof is written with explicit UTF-8 to a temporary file, byte-verified, then atomically replaced and fully read back. Exact short proof lease is released at closure; own PRIMARY liveness names the Owner decision wait. Automatic audit-data and raw scratch are retained. No AIDE_CONTRACT_LOG was supplied, so no capture destination was invented. Named episode artifact: docs/proof/d0-inactive-binding-spike.md.
+
+
+# Exhaustive-assignment design candidate (subsequent Owner-authorized run)
+
+## Decision returned: supported finite contract, awaiting Owner approval
+
+**Verified candidate:** enumerate the complete Boolean assignment population for the actual Roslyn input/dependency closure, keyed by (source project, conditional symbol), then reparse original files and propagate the changed Core source reference into App for every assignment. Accept only if every required assignment has resolvable, unchanged selected bindings and the existing root/port refusals pass. **Proposed fixed ceiling: eight assignments.** A larger population produces a specific incomplete-coverage refusal before any partial sample could be mistaken for acceptance.
+
+This is a design candidate, not a source correction. The preceding flattened-only failure remains valid history. Exhaustive enumeration visits the A+B state that flattened-all and singleton testing missed. The masking example is a **standalone composition counterexample**, not an observed escape of the combined existing 37-case guard. Independent FR-003 BLOCK remains until an authorized implementation and re-review; no implementation or 37-case rerun occurred here.
+
+Same isolated session/tree, base frozen proof 9206f9407667a27f4dff26fade3f8e3efea568be. New audit marker: 2026-09-16T02:00:10Z. This run's goal: measured symbol census/population, enumeration cost, exact canonical identity and a fail-closed ceiling. Done when executable positive/negative distinctions and limits are frozen for Owner decision. T2, width one, eight-call/fifteen-minute ceiling, checkpoint six; actual final boundary eight. Earlier run budgets/results are unchanged.
+
+Graph delta: census actual inputs and inspect prior discrepancies -> compiler-grounded canonical identity -> exhaustive assignment measurements/discriminators -> choose and measure proposed ceiling -> unsupported-identity control -> proof/audit -> Owner decision. No new agents, source projects, dependencies, SAT solver, MSBuild framework, product/test edits, joins or pushes. The existing surface list and D0/domain limits remain unchanged.
+
+## Actual closure and population before ceiling choice
+
+The loaded compiler input is **240 Core trees + 106 App trees = 346 trees**, including the loader's explicit generated global-using/WPF sources. Roslyn conditional directive expressions in this actual input contain **zero conditional identifiers**. The complete assignment population is therefore **2^0 = 1**, not an empty test.
+
+The actual csproj source-reference readback establishes App -> Core as the compilation dependency edge. App's Daemon and Mcp project references explicitly have ReferenceOutputAssembly=false; they are build/copy dependencies, not source references in this Roslyn compilation. Core has no further project reference. Package/framework metadata remains fixed compiler input. This claim is about the declared current Roslyn source closure, not unlisted generator output or every possible MSBuild conditional Compile-item expansion.
+
+The census reads IfDirectiveTriviaSyntax/ElifDirectiveTriviaSyntax condition IdentifierNameSyntax nodes through Roslyn, including nested inactive regions. It does not regex C# or manually approximate extension lookup. Keys include project identity. Original source text and parse options are retained; assigned external symbols are supplied using WithPreprocessorSymbols, so Roslyn still applies each file's #define/#undef in source order. Symbols locally forced by a file can create redundant global assignments; redundancy is retained rather than used to narrow coverage.
+
+The first measurement used a scratch trial ceiling of 32 after calculating the population. No production ceiling was selected from that trial. After observing the actual one-state cost and two-/four-state discriminators, the candidate chose **eight**, then measured all eight states over the full actual corpus plus an unrelated three-symbol conditional fixture. Four-symbol population sixteen was refused before enumeration. Future unrelated conditions can therefore trigger a resource-coverage refusal; that is an explicit ceiling, not a global member or namespace ban. The current baseline fits and passes; it is not permanently refused.
+
+## Exact identity correction: the 15 discrepancies resolved
+
+Roslyn reports the discrepant enum operations as **MethodKind.BuiltinOperator**. A built-in operator has no source method declaration; its synthetic containing assembly version is not its semantic declaration identity. The candidate uses the compiler-provided complete operator signature:
+
+    BuiltinOperator + MetadataName
+    + return RefKind + canonical ReturnType
+    + ordered parameter RefKind + canonical ParameterType
+
+Each type retains source project/path + exact declaration ID, or full metadata assembly identity + declaration ID. Constructed generic arguments, arrays/rank and pointers are recursive identities. No assembly-version stripping applies to ordinary metadata symbols. No synthetic-symbol blanket exemption is used. Operators become explicitly compared identities, not ignored expressions.
+
+**Observed:** canonical source-reference baseline versus compiled-metadata baseline now has **zero changed observations, zero selected diagnostics, zero unsupported identities** across all 26 roots/4551 expressions. This resolves the earlier observed 15 discrepancies for the measured corpus.
+
+Adversarial identities distinguish:
+
+- enum equality from inequality (op_Equality/op_Inequality);
+- Int64 operands from Int32 operands;
+- the same enum/operator signature declared in FirstAuthority.cs versus SecondAuthority.cs;
+- a **UserDefinedOperator**, which retains its source project/path and exact M:...op_Equality(Number,Number) documentation ID rather than entering the BuiltinOperator branch.
+
+Ordinary methods still normalize ReducedFrom before OriginalDefinition and retain full declaration identities/signatures. Core metadata resolves uniquely to current Core source by documentation ID. Source locals/range variables/functions use their compiler declaration location and type/signature; parameters/type parameters use owner identity plus ordinal/kind. Any other unhandled identity is explicitly UNSUPPORTED, never an empty or plausible fallback. DynamicType is deliberately unsupported in this candidate. A real selected-root in-memory dynamic-expression control reports three unsupported observations and a refused assignment, with zero compiler errors; unsupported identity therefore does not rely on a compilation failure to stop acceptance.
+
+## Exhaustive algorithm contract
+
+1. Freeze/validate the current source input set, project graph and metadata references. Require the established nonempty exact D0 roots.
+2. Census every conditional symbol in every tree of that source closure. Use sorted (project,symbol) keys.
+3. Calculate 2^N with an arbitrary-precision integer **before** casting or enumerating. If population > 8, report incomplete coverage with census/population/ceiling and refuse.
+4. For every assignment, reparse original text under project-specific symbols, preserving file-local directives. Rebuild current Core and replace exactly one Core App reference with currentCore.ToMetadataReference(). A stale compiled Core reference is not admissible.
+5. Re-select the D0 roots, compare compiler-grounded canonical identities, and read candidate sets and selected diagnostics. Record assignment visits and refusal reasons. Missing/duplicate roots, exceptions, unresolved/ambiguous binding, changed binding, unrecognized identity or incomplete enumeration cannot return accepted.
+6. Retain existing exact source/signature shared-port policy and conditional root/port/import refusals. Rebinding complements those controls. Green means complete valid coverage AND no forbidden/changed binding in any assignment.
+
+The scratch ENUM complete flag denotes **all assignments visited**, not accepted: unsupported or changed bindings still increase refusedAssignments. An implementation must expose coverage-complete and acceptance separately and name the refusal reason. The dynamic control visits its single state but refuses certification. Console exit zero likewise means evidence collection finished, not a green policy verdict.
+
+For fixed source files, references and Roslyn parse options, all Boolean assignments of all conditional identifiers cover their preprocessing choices. File-local directives may collapse assignments, not introduce an uncensused external Boolean variable. This is finite enumeration, not a claim about changing the project graph, source generator inputs, compiler versions, metadata binaries or files between variants.
+
+## Measured results
+
+All real-corpus assignments rebind 26 roots. Ordinary variants have 4551 expression observations. The deliberately edited in-memory dynamic root has 4560; its ordinal-key shifts produce many differences, so the observed three unsupported identities are the specific independent refusal signal.
+
+| Log | Actual enumeration result |
+| --- | --- |
+| measured | actual-corpus examined=1 complete=true refusedAssignments=0 seconds=1.471713 |
+| measured | app-extension examined=2 complete=true refusedAssignments=1 seconds=1.828319 |
+| measured | unimported examined=2 complete=true refusedAssignments=0 seconds=1.831571 |
+| measured | incompatible examined=2 complete=true refusedAssignments=0 seconds=1.917846 |
+| measured | import examined=2 complete=true refusedAssignments=1 seconds=1.740692 |
+| measured | core-propagation examined=2 complete=true refusedAssignments=1 seconds=1.604767 |
+| measured | project-symbol-independence examined=4 complete=true refusedAssignments=2 seconds=2.266915 |
+| measured | file-local-define-undef examined=2 complete=true refusedAssignments=0 seconds=1.028762 |
+| measured | competing examined=2 complete=true refusedAssignments=1 seconds=0.901715 |
+| measured | overflow examined=0 complete=false refusal=assignment-ceiling |
+| boundary | ceiling-eight examined=8 complete=true refusedAssignments=0 seconds=7.794592 |
+| boundary | ceiling-overflow-sixteen examined=0 complete=false refusal=assignment-ceiling |
+| identity | unsupported-dynamic-root examined=1 complete=true refusedAssignments=1 seconds=1.518216 |
+
+The actual one-assignment corpus took **1.471713 seconds**. The full eight-assignment ceiling fixture took **7.794592 seconds**. These are Stopwatch wall measurements around census, reparsing, source-reference propagation and root snapshot comparison, not inferred scaling. They are observations on this machine/corpus, not latency guarantees. The second normal-build console invocation for the boundary controls took 14.3248468 seconds overall; the later identity-control invocation took 7.8652484 seconds.
+
+Required distinctions observed:
+
+- Applicable RELEASE extension: two states visited; the enabled state changes twelve expression identities and is refused.
+- Identical unimported-namespace and incompatible-receiver extensions: both states pass with zero differences/errors/unsupported identities.
+- Conditional global import: enabled state becomes ambiguous/unresolved and refuses.
+- Core conditional extension: the enabled assignment reaches App through the rebuilt source reference and changes binding.
+- Same symbol spelling in App and Core: separate keys produce **four** assignments; both states with Core RELEASE enabled refuse, while App-only RELEASE does not affect selected binding.
+- File-local #undef keeps the otherwise-applicable extension disabled in both external assignments; file-local #define keeps an unrelated declaration active. Both assignments preserve D0 binding.
+- Competing extensions: the applicable joint state has ambiguous binding and refuses.
+- The standalone A/B/C masking composition is evaluated in **all eight states**. Bits 3 (A+B) reports OverloadResolutionFailure and one diagnostic; the other seven retain Pick(I1). Enumeration finds the previously masked state.
+- Existing conditional-atlas and conditional-definition guard checks each retain one CONDITIONAL refusal; no full 37-case rerun was used.
+- Population 64 refused against trial ceiling 32; population 16 refused against proposed ceiling 8, with zero states sampled and explicit assignment-ceiling reason.
+- Dynamic identity is UNSUPPORTED and refuses its selected-root assignment independently of diagnostics.
+
+Recorded population across the successful executable logs: **28 real-corpus assignment visits**, plus **8 standalone masking assignments**. Overflow cases intentionally examine zero assignments. These are design-spike measurements, not xUnit test counts.
+
+## Supported scope and remaining qualification
+
+The measured candidate supports a finite implementation contract at ceiling eight for this **fixed, explicit source closure**. Baseline coverage is complete and passes. It resolves the previous operator identity mismatch without broad metadata normalization. No hand-written extension applicability model is needed.
+
+Before claiming an implementation complete, the author must translate this measured contract into the existing test, preserve all 37 cases and the independent veto predicates, and have it independently reviewed. The source-input closure must remain explicit: conditional MSBuild source-item inclusion, generator output varying with symbols, new source-project dependencies, changing metadata and broader runtime/transitive behavior are not covered by the present two-project snapshot. A new or unsupported closure must refuse qualification until incorporated; it must not silently become green. This candidate does not remove the existing loader's generated-source ceiling.
+
+The operator corpus and adversaries ground the measured canonical cases. Future unhandled symbol kinds require explicit compiler-grounded identity support or refusal; they are not auto-admitted. Population growth above eight requires an explicit new cost/coverage decision. A partially evaluated large space is never coverage.
+
+Scratch correction history: first candidate compilation failed CS8321 because the inherited flattened Expose function was dead under the new exhaustive design. It was removed rather than suppressed. The earlier snapshot/encoding histories remain untouched. Actual source hash remains the original LF/Git blob hash. No source correction has been authorized or authored.
+
+Class -> sweep -> derive -> prevent: DC-118, sampled variants substituted for complete coverage and synthetic assembly ownership substituted for built-in operator signature. Sweep covered the actual closure/census, project-symbol independence, local directives, source-reference propagation, all masking states, explicit type/operator/source authority differences, overflow and unsupported identity. Derive: complete finite enumeration needs a measured population and fail-closed ceiling; built-in semantic identity comes from compiler signature/type authority. Prevent: these executable discriminators and explicit unsupported/overflow refusals are the proposed implementation floor. Parent owns the central lesson record.
+
+## Continuation artifact hashes and closure
+
+New executable scratch and logs are retained under exhaustive/. Hashes are exact-byte SHA256. Earlier raw artifacts and their hashes remain above.
+
+| Artifact | SHA256 |
+| --- | --- |
+| .artifacts/d0-binding-spike/exhaustive/boundary.log | e601794df606a553edf71373053765b40e582e01ae879d414da9eae64b3132aa |
+| .artifacts/d0-binding-spike/exhaustive/Candidate.csproj | 058898a6b0d26b5636bf2febd430abbddd9f7803da60adc8552d9099199960e4 |
+| .artifacts/d0-binding-spike/exhaustive/extend.py | 7c896373c68783d57a683d69ad2d73c70c0f4f3e97a859c90f84aca29c182c9b |
+| .artifacts/d0-binding-spike/exhaustive/first.log | add7de68b39372d705c1dad2d17da67921dcb4e87e82955805d3e43cd54d603f |
+| .artifacts/d0-binding-spike/exhaustive/fix.py | 80ce72e7deed4e2a5f2e6232abb207f445f00fbd7182f5ec44eae41b14a730d2 |
+| .artifacts/d0-binding-spike/exhaustive/identity-control.py | 170a77a6594685bee7c5b80d2ec9b33c21eb970b0ff7d0cf4427f7a8931a5476 |
+| .artifacts/d0-binding-spike/exhaustive/identity.log | dfc5396a2293e79a6d22c41d1b60f90a8b978ff422c05c2ad00c665ca34640e0 |
+| .artifacts/d0-binding-spike/exhaustive/measured.log | faa7b1066609769fc364298e7db077863cd24e682afead4d41aa9237b7386919 |
+| .artifacts/d0-binding-spike/exhaustive/Prefix.cs.txt | 4f2e370247b4009663919edeeef3745e6b371aa33980bcce5a552e0920e8c60c |
+| .artifacts/d0-binding-spike/exhaustive/prepare.py | 19c8e961457577c4adcfac5066fa0958cfc3a14dcbca1b0ebf705cd94b80a015 |
+| .artifacts/d0-binding-spike/exhaustive/Program.cs | d39dd2067974e114142ea082f72a2f6eaea69c49ce8dd539160e614830f3e2c6 |
+| .artifacts/d0-binding-spike/exhaustive/prompt.txt | 88a7992e6c23166f99ffb2ad95188071aa1d137a5bdca3af2d6ddb08d1259143 |
+| .artifacts/d0-binding-spike/exhaustive/Tail.cs.txt | 1b599806806d6af16cd833935ad6a94c9b24744e323ae20834956ef56a86f82e |
+| .artifacts/d0-binding-spike/exhaustive/write-proof.py | 316884a4ff0e709e8b7740f7ffd434efda68d78f642878198f9b2f0323fda802 |
+
+Only this existing proof and own official audit append are committed. The append is explicit UTF-8, byte-verified through a temporary file and atomic replacement. Own PRIMARY liveness is updated and the exact proof lease released. Generated audit-data and raw evidence remain retained. Owner decision is required before any correction authoring; independent BLOCK remains in force.
