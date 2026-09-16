@@ -5,6 +5,6 @@
 - Worktree: C:\Projects\ai-de-understanding-views-d1
 - Branch: understanding-views-d1
 - Status: D-1 admitted; handshake proposed, not frozen
-- Updated: 2026-09-15T23:45Z
-- Doing: Handshake NOTICE SENT. Pin on origin/understanding-views-d1 f073e2a0 blob 661c92a3. Follow-up to views-conductor, e1-behavior, e2-architect. No UV-0 source.
-- Waiting on: Codex PEER ACK citing blob 661c92a3. CONTRACT not frozen.
+- Updated: 2026-09-16T00:10Z
+- Doing: Handshake r2 NOTICE SENT (62670a0a blob 76e592a3). Withdrew InteractionAsync as E1 seam. D0 published bcf4959b — not re-landed. No UV-0 source.
+- Waiting on: Codex five-gates PEER ACK of blob 76e592a3. FROZEN: no. IMPLEMENTED: no.
