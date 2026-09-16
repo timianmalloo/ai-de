@@ -5,6 +5,6 @@
 - Worktree: C:\Projects\ai-de-understanding-views-d1
 - Branch: understanding-views-d1
 - Status: D-1 admitted; handshake proposed, not frozen
-- Updated: 2026-09-16T20:40Z
-- Doing: r4 CHANGES REQUIRED consumed. r5 authorship-only 85b6a534 blob a3cb0d63. Listing UV-1 in. Sequence disabled. No GUI (P1-03 / native-diag holds).
-- Waiting on: CONSUMER ACK AS WRITTEN: r5 blob a3cb0d63b911e85fb357e4273854ed7923f9b06a
+- Updated: 2026-09-16T21:05Z
+- Doing: r5 authorship FROZEN (producer ACK 880a49f8). Listing classifier heuristics. Sequence still disabled. No GUI.
+- Waiting on: nothing for r5 freeze. Mapper implementation / Open Sequence still unadmitted.
