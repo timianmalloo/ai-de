@@ -177,7 +177,7 @@ Open Sequence is not this query (mapper r5: authorship only, Sequence still disa
 
 | Member | Summary |
 |---|---|
-| `int DefaultMaxRows = 5_000` | Inferred until measured. Same order as graph node default. |
+| `int DefaultMaxRows = 1_254` | How many rows a listing may return, so the response still crosses one IPC frame. |
 | `string UnclassifiedReasonPendingClassifier = "classifier-not-admitted"` | **(gap)** |
 
 ## `EntryPointsListing`
