@@ -8555,3 +8555,29 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Sweep:** `NativeCommandLocator` (the engines lane's, `EngineCatalog.cs:115-160`) resolves with the same rule — read, and it probes extensions first on Windows.
 - **Control:** the named test; the rule for the next resolver: on Windows, `PATHEXT` candidates before the bare name.
 - **Status:** `controlled`.
+
+
+### Recurrence receipts — 2026-09-17 Atlas execution coordination
+
+- **DC-116, asserted grant punctuation:** a reused ignored operational wrapper
+  required a period after the exact slot token, although the actual watcher grant
+  continued with `after explicit READY`. Preflight refused before any native launch.
+  **Class → sweep → derive → prevent:** inspect the actual grant and all wrapper
+  authority checks together; derive resolver/status/exact slot/expiry from those
+  fields rather than incidental prose punctuation. The new03 wrapper's executing
+  assertion compares the first two tokens with `GRANTED` and the exact03 slot,
+  retains resolver/status/expiry/stop checks, and passed before the one admitted
+  native invocation. Control: original prepared tree
+  `artifacts/atlas-pair-preparation/execute-once03.py` line16. The prior refusal and
+  changed preflight are observed; no global/general parser prevention is claimed.
+  Maintained evidence: `docs/proof/atlas-p1-03-pair-execution.md`, Pair03 addendum.
+- **DC-154, unsupported approval dependency:** after loss of a coverage result,
+  Conductor/Owner added another approval gate not present in original R124. The
+  independent Owner reread the actual request and withdrew that interpretation.
+  **Class → sweep → derive → prevent:** the request, graph and watcher relay all
+  carried the added edge; P6J5S is explicitly superseded and current records separate
+  audit-writer release, one durable coverage result, personal proof inspection and
+  publication. Existing one-shot capture and exact source/manifest checks remain
+  executable floors. They do not automatically detect invented authority edges;
+  this operational recurrence remains partially controlled by the scoped Owner
+  review rule already recorded under DC-154, not falsely marked automated.

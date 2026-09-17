@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T13:30:03Z",
+  "generated": "2026-09-17T14:07:11Z",
   "audit": [
     {
       "actor": null,
@@ -26867,6 +26867,53 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2QS79K3F0ZSMK3EPWX29J4J",
+      "shortname": "keep going actively coordinate with the watcher lets stop blocking so mu…",
+      "datetime": "2026-09-17T13:34:44Z",
+      "session": "prompt-log",
+      "prompt": "keep going actively coordinate with the watcher lets stop blocking so much",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2QV2P1YDTV6HTACF1VB9WKW",
+      "shortname": "atlas-pair03-evidence-and-r124-authority-correction",
+      "datetime": "2026-09-17T14:07:10Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going\nactively coordinate with the watcher\nlets stop blocking so much",
+      "summary": "Partial programme, completed native experiment handoff preparation: exact03 watchergrant consumed; Aprocessidentityrefusal/nativeerror5 captured, Bnotrun, no nativeoracle, canonicalBLOCK. Executorproofb6c0a8a7 andrawdirectlyinspected; independentSolclassificationCLEAR3calls30.84s, separateAstraOwner closesphasewithoutretry. ActualwatcherreleaseQTRFWACKed; exactnegativepacketQTZC sentpublisher/watchernoACKclaimed. R124extraapprovalgatewasourunsupportedinterpretation; Ownerdirectlyreadoriginalandwithdrewit, P6J5Ssuperseded. ONEdurablecombinedcoverageadmittedafteracceptedtwofileauditrescuecompletionorexplicithandback; sourcebasebcfplusauditonly,originalresultUNKNOWN. Claudepersonalproofreviewandpublicationfloorsremain. Grokr6oneactivationcorrectionindependentlyreviewed; emptyadmittedstub/listingnotheld, exact414fblobnotACKed. No productsource/test/tool edits or mainpublication. Nativeplanned10calls changedafterpreparationrefusal to bounded8callrecordclose; actual16/18,312seconds. Rootaggregatecallcountnotinstrumented and no retrospectivecapcomplianceclaimed.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md",
+        "docs/proof/codex-d1-r6-consumer-review.md",
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Complete bounded verification and the evidence-based integration handoff.",
+      "done_when": "Authorized checks have inspected results, required independent gates clear, and publisher acknowledges exact candidate and evidence.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-17T13:34:44Z",
+      "duration_seconds": 1946.0,
+      "change": "cl-01M2QTZBYWPM2T0WWH9N0PMPT8",
+      "git": {
+        "sha": "ca0c17e42814f615d9545b58642c5e77d6661306",
+        "short": "ca0c17e42",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -31726,6 +31773,29 @@ window.AUDIT_DATA = {
       "git": {
         "before": "ea8d1a8671c07a733ed37ca93c159ec1c7457e8b",
         "after": "ea8d1a8671c07a733ed37ca93c159ec1c7457e8b",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2QTZBYWPM2T0WWH9N0PMPT8",
+      "datetime": "2026-09-17T14:05:21Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "decision",
+      "skill": "execute-with-coordination",
+      "title": "Owner closes pair03 inconclusive and removes unsupported R124 approval edge",
+      "prompt": null,
+      "summary": "Separate Astra Owner accepts independent classification-only CLEAR for actual pair03 refusal; no native retry/investigation/repair thisphase. Watcher actual RELEASE QTRFW ACKed. R124 original text was directly read: added replacement permission was our unsupported interpretation, now withdrawn; one durable replacement follows accepted two-path audit rescue completion or explicit handback. Sourcebasebcf plusauditonly; canonicalBLOCK and Claude personalproof/publication gates preserved.",
+      "rationale": "Actual raw diagnostics identify missing PID/immediate error but no image/native oracle; source cannot supply missing observations. Original R124 does not impose the additional replacement approval. Preserve actual authority while removing incidental blocking.",
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md",
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "ca0c17e42814f615d9545b58642c5e77d6661306",
+        "after": "ca0c17e42814f615d9545b58642c5e77d6661306",
         "branch": "integration/atlas-five-gates",
         "pushed": null,
         "commits": []

@@ -843,3 +843,106 @@ acknowledgment/disposition. No notice counts as peer ACK, frozen execution grant
 coverage success or main-readiness. Native canonical qualification remainsBLOCK.
 Prepared executor packet is retained at artifacts/atlas-five-gates/pair-handoff/
 pair03-execution-assignment.md; it is conditional, not a dispatched executor.
+
+
+## Active coordination and actual pair03 outcome — 2026-09-17
+
+Goal: finish bounded verification and the truthful integration handoff. Done when
+the admitted checks have inspected results, independent required reviews are returned,
+and publishers receive and acknowledge the exact evidence and remaining gates. Not in
+scope: changing product/source, weakening identity checks, automatic native retries,
+new ownership policy or self-publication. Tier T2; programme fan-out cap4.
+
+**Verified by Conductor direct read:** watcher QRBK granted SLOT-CODEX-UIA-PAIR-03
+through 14:06:28.4990767Z. Frozen41421c8e was invoked once13:58:55.383750Z, ending
+13:59:05.169800Z with runner exit2. The surrounding capture wrapper's exit0 is not
+a native success. A stopped on PROCESS-IMAGE-MISSING; B did not run. Actual
+Job.sample QueryFullProcessImageNameW failure records PID15424,
+creation134341271423333958, observed owned membership true and immediate native
+error5. A separately timed later observation returned wait258. The image and cause
+are unknown. Job accounting total11/active0, ten complete identities and sampled
+handles exited support owned containment; identities_complete is false. No TRX or
+native oracle was produced. PINS-BEFORE and PINS-AFTER match manifest66ccb1a3.
+
+Raw artifacts are in the original prepared tree:
+artifacts/atlas-pair-preparation/execution03/result.json and
+artifacts/atlas-uia-pairs/atlas-uia-pair-03-41421c8e-20260917/{state.json,A/process.json}.
+PRE-SPAWN QTKJMC, START QTKJP6 and END/RELEASE QTKW86 are actual requests, not
+watcher release. Independent outcome interpretation and maintained executor proof
+follow; canonical qualification remains BLOCK. A punctuation assumption in the new
+ignored wrapper refused before launch, was explicitly corrected, then the one native
+invocation ran. No reviewed runner, input, source or manifest changed.
+
+**Owner correction of our R124 interpretation:** original R124
+req-01M2KD3D85NBQXEN2BWPZQTAWE requires one combined coverage result, elapsed time,
+Claude personal proof inspection, R108 empty failing set and exact candidate/base.
+It does not add approval for replacing an invocation whose result was lost. The
+extra permission edge was our interpretation, now withdrawn. Original replacement
+request P6J5S is resolved as superseded by this correction, never as a Claude grant.
+Direct notices QTJJ709 (Claude) and QTJJ8SP (watcher) carry the actual decision.
+Exactly one replacement is admitted under existing user verification authorization.
+Original outcome remains UNKNOWN. Source base stays bcf4959b plus audit-only rescue;
+record the actual post-rescue HEAD and unchanged nine staged source/proof entries.
+Current advertised main f009b6f6710bab8ff9f026d32a272343313fde6f was directly read;
+the old candidate is not described as qualified on that newer main.
+
+Claude's offered two-path audit conservation is explicitly accepted (QST5).
+Conductor has no competing writer in the spike tree. QTKPAR requests either actual
+commit/preservation/release or explicit stopped-state handback; QTMGV routes that
+operational request to the active watcher. Silence and elapsed time do not hand
+back the tree. All six audit rows, including retractions, and all nine staged paths
+must survive. Rescue completion is a writer dependency; native qualification is not.
+
+Material optimize-graph correction: remove the unsupported replacement-approval edge.
+Reuse all existing specification/architecture/design. No new implementation stage.
+Native execution -> independent interpretation -> negative evidence handoff runs
+independently from rescue release -> exact post-rescue pins -> one durable combined
+coverage invocation -> actual output inspection -> Claude personal proof review and
+publication gates. Grok's one-clause r6 correction is independent of both; its admitted
+empty stub/listing remains unheld. Variants: missing concrete evidence/receipt fields,
+not elapsed waiting. Native failure terminates the run; coverage failure/capture loss
+terminates its unit. No automatic retry loop.
+
+Planned/actual: native10-call estimate was insufficient after preparation refusal;
+at checkpoint6 the executor requested a separately bounded8-call documentary close.
+It receives no extra execution. Sol/high independent interpretation3calls/10min is
+right-sized for a read-only evidence classification; Astra Owner3calls/10min decides
+next scope. The Conductor's full turn tool cost is not separately instrumented; no
+retrospective budget-compliance claim is made. Remaining root record/handoff unit
+is10calls/15min, checkpoint6; new operational evidence may require an explicit replan.
+
+
+### Pair03 independent disposition and physical release
+
+Independent Sol/high reviewer `r124_handoff_readiness` returned CLEAR for result
+classification only: three read-only calls,30.84seconds. It read result/state,
+A/process, direct-child, both streams and pinned41421c8e refusal/arm sequencing.
+It confirms the forced fail-closed identity refusal and owned containment; no
+complete identity, native oracle or product qualification follows. Missing image
+and error cause remain unknown. The Conductor read the same primary JSON records
+and the executor's138-line maintained proof; the agent's report was not the only
+verification. The review's final broad directory output truncated, and its report
+explicitly did not promote omitted wrapper fields. No test or probe was repeated.
+
+Separate Astra Owner read the actual records and source in two inspection batches,
+accepted this independently cleared classification and closed pair03 as refused
+and inconclusive. No further investigation, repair or native rerun is admitted in
+this phase. The new identity/immediate-error observations fulfill the diagnostic
+information objective; they do not explain the image-query failure. The remaining
+image/error cause is a finding for future scope, not automatic continuation.
+
+Watcher req-01M2QTRFW2X02D5E57A0AXTV9V records actual RELEASE / ATTEMPT CONSUMED.
+It independently read the records and found all12 reported outer/accepted/pending
+PIDs absent, with no matching executor/test process. Root explicitly ACKed that
+receipt. This supersedes pending-release descriptions as a later event, preserving
+their history. Executor proof commit is b6c0a8a768f9680f4838bc5a767317708d2b2b9c;
+proof path docs/proof/atlas-p1-03-pair-execution.md. Its raw ignored artifacts are
+retained in the prepared tree and do not travel with the commit. Executor report:
+15calls/revised18, official measured312seconds, clean tracked tree, source/runner
+preserved. Conductor will inspect commit and actual derived receipts before final
+documentary close. No experimental branch/source is admitted to main. Canonical
+qualification remains BLOCK. R124 is independent and continues after rescue release.
+
+Final executor accounting is16calls/revised18 (the earlier15 was a checkpoint). Conductor inspected b6c0a8a7: eight paths limited to proof/audit/derived/site figures; git diff41421c8e over src/tests/tools/records empty and working tree clean. Actual regeneration record:349API files,35bundled pages,14figures,998audit+187change entries,225classes, all listed derived gates passed. Parsed graph:605artifacts, zero problems/defects/orphans/drift,74existing suggestions. Source-preservation record exit0 inspected. Initial guessed receipt filenames were absent; actual directory names were then opened and parsed before these claims. No result is derived from the earlier outer shell exit0 that followed those failed reads.
+
+Exact negative handoff req-01M2QTZC2SW14XJ59QY43VQM6X to Atlas publisher and req-01M2QTZC4GPM3NZY677R5T6RZ0 to watcher carry executor commit/artifact pins. At documentary close they await recipient ACK; delivery is not acceptance. Owner decision cl-01M2QTZBYWPM2T0WWH9N0PMPT8 is recorded through official audit.

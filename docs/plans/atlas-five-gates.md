@@ -1547,3 +1547,70 @@ r3 consumer ACK reached the shared request store for currently registered watche
 copilot-main-watch-b0d0 as req-01M2NGZFZDRKAVGRHY9JYEZPQS. Neither routing nor a request
 record establishes peer consumption. Grok's exact same-blob producer ACK is still pending.
 Remote main was freshly checked and remains bcf4959bc0e0e361736e6a179f05b69fcd0500f8.
+
+
+## Active coordination and actual pair03 outcome — 2026-09-17
+
+Goal: finish bounded verification and the truthful integration handoff. Done when
+the admitted checks have inspected results, independent required reviews are returned,
+and publishers receive and acknowledge the exact evidence and remaining gates. Not in
+scope: changing product/source, weakening identity checks, automatic native retries,
+new ownership policy or self-publication. Tier T2; programme fan-out cap4.
+
+**Verified by Conductor direct read:** watcher QRBK granted SLOT-CODEX-UIA-PAIR-03
+through 14:06:28.4990767Z. Frozen41421c8e was invoked once13:58:55.383750Z, ending
+13:59:05.169800Z with runner exit2. The surrounding capture wrapper's exit0 is not
+a native success. A stopped on PROCESS-IMAGE-MISSING; B did not run. Actual
+Job.sample QueryFullProcessImageNameW failure records PID15424,
+creation134341271423333958, observed owned membership true and immediate native
+error5. A separately timed later observation returned wait258. The image and cause
+are unknown. Job accounting total11/active0, ten complete identities and sampled
+handles exited support owned containment; identities_complete is false. No TRX or
+native oracle was produced. PINS-BEFORE and PINS-AFTER match manifest66ccb1a3.
+
+Raw artifacts are in the original prepared tree:
+artifacts/atlas-pair-preparation/execution03/result.json and
+artifacts/atlas-uia-pairs/atlas-uia-pair-03-41421c8e-20260917/{state.json,A/process.json}.
+PRE-SPAWN QTKJMC, START QTKJP6 and END/RELEASE QTKW86 are actual requests, not
+watcher release. Independent outcome interpretation and maintained executor proof
+follow; canonical qualification remains BLOCK. A punctuation assumption in the new
+ignored wrapper refused before launch, was explicitly corrected, then the one native
+invocation ran. No reviewed runner, input, source or manifest changed.
+
+**Owner correction of our R124 interpretation:** original R124
+req-01M2KD3D85NBQXEN2BWPZQTAWE requires one combined coverage result, elapsed time,
+Claude personal proof inspection, R108 empty failing set and exact candidate/base.
+It does not add approval for replacing an invocation whose result was lost. The
+extra permission edge was our interpretation, now withdrawn. Original replacement
+request P6J5S is resolved as superseded by this correction, never as a Claude grant.
+Direct notices QTJJ709 (Claude) and QTJJ8SP (watcher) carry the actual decision.
+Exactly one replacement is admitted under existing user verification authorization.
+Original outcome remains UNKNOWN. Source base stays bcf4959b plus audit-only rescue;
+record the actual post-rescue HEAD and unchanged nine staged source/proof entries.
+Current advertised main f009b6f6710bab8ff9f026d32a272343313fde6f was directly read;
+the old candidate is not described as qualified on that newer main.
+
+Claude's offered two-path audit conservation is explicitly accepted (QST5).
+Conductor has no competing writer in the spike tree. QTKPAR requests either actual
+commit/preservation/release or explicit stopped-state handback; QTMGV routes that
+operational request to the active watcher. Silence and elapsed time do not hand
+back the tree. All six audit rows, including retractions, and all nine staged paths
+must survive. Rescue completion is a writer dependency; native qualification is not.
+
+Material optimize-graph correction: remove the unsupported replacement-approval edge.
+Reuse all existing specification/architecture/design. No new implementation stage.
+Native execution -> independent interpretation -> negative evidence handoff runs
+independently from rescue release -> exact post-rescue pins -> one durable combined
+coverage invocation -> actual output inspection -> Claude personal proof review and
+publication gates. Grok's one-clause r6 correction is independent of both; its admitted
+empty stub/listing remains unheld. Variants: missing concrete evidence/receipt fields,
+not elapsed waiting. Native failure terminates the run; coverage failure/capture loss
+terminates its unit. No automatic retry loop.
+
+Planned/actual: native10-call estimate was insufficient after preparation refusal;
+at checkpoint6 the executor requested a separately bounded8-call documentary close.
+It receives no extra execution. Sol/high independent interpretation3calls/10min is
+right-sized for a read-only evidence classification; Astra Owner3calls/10min decides
+next scope. The Conductor's full turn tool cost is not separately instrumented; no
+retrospective budget-compliance claim is made. Remaining root record/handoff unit
+is10calls/15min, checkpoint6; new operational evidence may require an explicit replan.

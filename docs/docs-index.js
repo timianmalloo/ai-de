@@ -9540,7 +9540,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  C[Truthful partial close] --> O[Owner promotion by reference]\n  O --> N[Exact native slot request]\n  C --> R[Claude replacement and base decision request]\n  N --> H[Record and commit handoffs]\n  R --> H"
         }
       ],
-      "sourceSha256": "cf1c9f86dce9478856acdfdc476d0251db58578a77cea23174a746bceab05c08"
+      "sourceSha256": "c6deebf1d104f01706440115344c8c206c22ff28e8da4d203477188c3d3e5b15"
     },
     {
       "id": "coordination-code-atlas",
@@ -9728,7 +9728,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4f92c799fcdd70eb6b2bcf053c883378ebcc5ca1daf90cc08504b0c4ad43dabf"
+      "sourceSha256": "7057e1380216bab1541002d1eacd48f8b76ca42bbf38044223d6620aaa5f735b"
     },
     {
       "id": "design-session-profiler",
@@ -12124,7 +12124,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "994cea058f0064eb25353f71cae986b2cf431ff7ab7d1dab01c4eb8121c1ba81"
+      "sourceSha256": "2733dd2815d9289674fa8f44fd7b7a9eb35a4f7357b90add1f7011183c342b25"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -13035,7 +13035,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  P[Readiness and exact request] --> G[Fresh watcher grant]\n  G --> E[One frozen pair]\n  E --> I[Independent actual interpretation]\n  I --> H[Coordinated evidence handoff]\n  B[Read-only current-base receipt] --> C[Claude replacement and base decision]\n  C --> V[One granted combined coverage]\n  V --> R[Independent candidate and Claude proof reviews]\n  R --> H"
         }
       ],
-      "sourceSha256": "2c63f81584b7cd20435f03f3fb3fe26722c26393db3a46baf2d8420eb3d3fa89"
+      "sourceSha256": "f949b2dcc264e3df6bd429dad894ca2a2846ebedfa5b41d5c98fa49a36f8113b"
     },
     {
       "id": "proof-atlas-peer-review-transport",
@@ -19312,6 +19312,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "5330bfa6f6412a51e0e0e4a307ceb4dbb4376d36600dd2899d80d0b67c3b93e9"
     },
     {
+      "id": "proof-codex-d1-r6-consumer-review",
+      "path": "docs/proof/codex-d1-r6-consumer-review.md",
+      "title": "D1 r6 consumer review: one activation correction, listing independent",
+      "type": "proof-pack",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "Independent reviewer and separate Owner require one clarification before exact r6 ACK. Grok's admitted empty stub and listing work remain independent.",
+      "tags": [
+        "proof",
+        "atlas",
+        "d1",
+        "contract-review"
+      ],
+      "links": [
+        {
+          "to": "proof-codex-d1-r5-consumer-review",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "de7423b4f574197db3c61ec959af29abf49deec2ff1bd19fae76521109471bdb"
+    },
+    {
       "id": "proof-coding-recut-left-dock",
       "path": "docs/proof/coding-recut-left-dock.md",
       "title": "Proof Pack: SH-4.2 — Coding's re-cut and the left dock",
@@ -23438,5 +23468,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "74712c19b77ca3ae01216e4f25b6b1673932c3b096eb8e1b603f39aae8fca922"
+  "graphSha256": "63cc13a84df34d127abba15bbf00d7d8e38fcd25d3b9e10ac61b0f395009ac18"
 };
