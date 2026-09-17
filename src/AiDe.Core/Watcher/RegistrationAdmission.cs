@@ -140,6 +140,16 @@ internal static class NativeAdmissionCodec
         RejectReparseAncestors(input.PublicationRoot);
     }
 
+    internal static void ValidateCompatibilitySession(string sessionId)
+    {
+        Text(sessionId, 250);
+        if (sessionId.Any(character => !(character is >= 'a' and <= 'z'
+            or >= '0' and <= '9' or '-' or '_')))
+            throw NativeAdmissionErrors.Error(NativeAdmissionErrors.ContextMismatch);
+        ValidateLocalPath(Path.Combine(Path.GetPathRoot(Environment.CurrentDirectory)!,
+            StandingPublisher.FileNameFor(sessionId)));
+    }
+
     internal static void ValidateLocalPath(string path)
     {
         Text(path, 4096);

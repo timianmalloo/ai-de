@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="75794a24-8512-4b03-a9d8-9b5b6bdfb575" name="malla@TIMMALLSTRIX 2026-09-17 08:28:42" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-17T08:28:42.3435581-07:00" queuing="2026-09-17T08:28:42.3435583-07:00" start="2026-09-17T08:28:41.5900807-07:00" finish="2026-09-17T08:28:42.3467741-07:00" />
+  <TestSettings name="default" id="66ab80b0-d266-48bf-a6e4-b1f0a2636528">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-17_08_28_42" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="943e34e2-d56b-4ea2-9b9f-86ba925999bc" testId="f00efb91-b6de-83e0-52f0-33459151fbc4" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt" computerName="TIMMALLSTRIX" duration="00:00:00.1046155" startTime="2026-09-17T08:28:42.1440978-07:00" endTime="2026-09-17T08:28:42.2561230-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="943e34e2-d56b-4ea2-9b9f-86ba925999bc">
+      <Output>
+        <ErrorInfo>
+          <Message>System.IO.FileNotFoundException : Could not find file 'C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\obj\repair-mutants\latest\tests\n1-fixtures\f9734ad8f6654d60b0a11b4e563609f8\output\registration\session-1.json'.</Message>
+          <StackTrace>   at Microsoft.Win32.SafeHandles.SafeFileHandle.CreateFile(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)&#xD;
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)&#xD;
+   at System.IO.File.OpenHandle(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize)&#xD;
+   at System.IO.File.ReadAllBytes(String path)&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 382&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\obj\repair-mutants\latest\tests\aide.core.tests.dll" id="f00efb91-b6de-83e0-52f0-33459151fbc4">
+      <Execution id="943e34e2-d56b-4ea2-9b9f-86ba925999bc" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\obj\repair-mutants\latest\tests\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f00efb91-b6de-83e0-52f0-33459151fbc4" executionId="943e34e2-d56b-4ea2-9b9f-86ba925999bc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.27]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.28]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.41]       System.IO.FileNotFoundException : Could not find file 'C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\obj\repair-mutants\latest\tests\n1-fixtures\f9734ad8f6654d60b0a11b4e563609f8\output\registration\session-1.json'.&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]            at Microsoft.Win32.SafeHandles.SafeFileHandle.CreateFile(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)&#xD;
+[xUnit.net 00:00:00.41]            at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)&#xD;
+[xUnit.net 00:00:00.41]            at System.IO.File.OpenHandle(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize)&#xD;
+[xUnit.net 00:00:00.41]            at System.IO.File.ReadAllBytes(String path)&#xD;
+[xUnit.net 00:00:00.41]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(382,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt()&#xD;
+[xUnit.net 00:00:00.41]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.41]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.41]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T08:28:42.2578114-07:00">
+        <Text>[xUnit.net 00:00:00.41]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

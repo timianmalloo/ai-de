@@ -1,0 +1,19 @@
+{
+  "total": 1,
+  "sourceBefore": "9B6D90D6E2DA52C5A136899CC0221218DFDCA1618B3C8CDC57B478309A5D550A",
+  "actualExit": 1,
+  "failed": 1,
+  "sourceAfter": "9B6D90D6E2DA52C5A136899CC0221218DFDCA1618B3C8CDC57B478309A5D550A",
+  "parent": "18603eed2c2dd4e480e8431381573d0f7c54808d",
+  "testsDll": "4EAEA458115373257E2546870A293FF548B2373E19A8FF343C1EA7DD092520FF",
+  "mutantDll": "5A1DF2457CAA04BEB75DBEDE87D75BD504BF25343C0F00C75F6AA3F1E9335837",
+  "mutant": "reader",
+  "results": [
+    {
+      "outcome": "Failed",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Admit_RetainedAccountingReaderFails_UncertainPreservesOwnerAndCapacity",
+      "message": "Assert.Throws() Failure: No exception was thrown\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)"
+    }
+  ],
+  "scope": "Watcher\\NoticeAdmissionCoordinator.cs"
+}

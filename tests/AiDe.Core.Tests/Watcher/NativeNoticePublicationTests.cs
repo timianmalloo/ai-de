@@ -2,6 +2,8 @@ using System.Diagnostics;
 using System.Text.Json;
 using AiDe.Core.Watcher;
 using Microsoft.Data.Sqlite;
+using System.Collections;
+using System.Reflection;
 
 namespace AiDe.Core.Tests.Watcher;
 
@@ -9,6 +11,149 @@ namespace AiDe.Core.Tests.Watcher;
 [System.Runtime.Versioning.SupportedOSPlatform("windows")]
 public sealed class NativeNoticePublicationTests
 {
+    [Fact]
+    public void Admit_ExistingLegacyOwnerMismatch_RefusesBeforeAdmission()
+    {
+        using var fixture = new Fixture(() => "a-b");
+        var path = RegistrationPublisher.Publish(fixture.Output, new("a:b", "sent", "used", "synthetic"));
+        var original = File.ReadAllBytes(path);
+        var before = fixture.NativeState();
+
+        Assert.Equal("COORD_NOTICE_CONFLICT", Assert.Throws<WatcherException>(() => fixture.Admit("first")).Code);
+        Assert.Equal(before, fixture.NativeState());
+        Assert.Equal(original, File.ReadAllBytes(path));
+        Assert.Single(Directory.GetFiles(fixture.Output, "*.json", SearchOption.AllDirectories));
+    }
+
+    [Fact]
+    public void PublishLegacy_MissingOrdinaryRoot_CreatesPinnedPathAndPreservesJson()
+    {
+        using var fixture = new Fixture();
+        var root = Path.Combine(fixture.Output, "new", "root");
+        var notice = new RegistrationNotice("safe-session", "sent", "used", "synthetic");
+
+        var path = RegistrationPublisher.Publish(root, notice);
+
+        Assert.Equal(Path.Combine(root, "registration", "safe-session.json"), path);
+        using var document = JsonDocument.Parse(File.ReadAllBytes(path));
+        Assert.Equal("safe-session", document.RootElement.GetProperty("sessionId").GetString());
+        Assert.Equal("synthetic", document.RootElement.GetProperty("reason").GetString());
+        Assert.Empty(Directory.GetFiles(fixture.Output, "*.tmp", SearchOption.AllDirectories));
+    }
+
+    [Fact]
+    public void Admit_AmbiguousCompatibilityIds_RefusesBothBeforeAdmissionOrFiles()
+    {
+        var ids = new Queue<string>(["a:b", "a?b"]);
+        using var fixture = new Fixture(() => ids.Dequeue());
+        var before = fixture.NativeState();
+        var errors = new List<Exception?>();
+        foreach (var id in new[] { "a:b", "a?b" })
+            errors.Add(Record.Exception(() =>
+            {
+                fixture.Admit(id, id);
+                fixture.Run();
+            }));
+
+        Assert.True(errors.All(error => error is WatcherException { Code: "COORD_NATIVE_CONTEXT" }),
+            $"Both IDs must refuse; errors={string.Join(",", errors.Select(error => error?.Message ?? "SUCCESS"))}; " +
+            $"files={string.Join(",", Directory.GetFiles(fixture.Output, "*.json", SearchOption.AllDirectories).Select(File.ReadAllText))}");
+        Assert.Equal(before, fixture.NativeState());
+        Assert.Empty(Directory.GetFileSystemEntries(fixture.Output));
+    }
+
+    [Fact]
+    public void PublishLegacy_AmbiguousExistingOwner_RefusesWithoutOverwrite()
+    {
+        using var fixture = new Fixture();
+        var path = RegistrationPublisher.Publish(fixture.Output, new("a:b", "sent", "used", "synthetic"));
+        var original = File.ReadAllBytes(path);
+        var error = Assert.Throws<WatcherException>(() =>
+            RegistrationPublisher.Publish(fixture.Output, new("a?b", "sent", "used", "synthetic")));
+
+        Assert.Equal("COORD_NOTICE_CONFLICT", error.Code);
+        Assert.Equal(error.Code, error.Message);
+        Assert.Equal(original, File.ReadAllBytes(path));
+        Assert.Empty(Directory.GetFiles(fixture.Output, "*.tmp", SearchOption.AllDirectories));
+    }
+
+    [Fact]
+    public void PublishLegacy_RegistrationJunction_RefusesWithoutSiblingFiles()
+    {
+        using var fixture = new Fixture();
+        var sibling = Path.Combine(fixture.Root, "sibling");
+        Directory.CreateDirectory(sibling);
+        var junction = Path.Combine(fixture.Output, "registration");
+        var start = new ProcessStartInfo("cmd.exe")
+        {
+            UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true,
+        };
+        foreach (var argument in new[] { "/c", "mklink", "/J", junction, sibling }) start.ArgumentList.Add(argument);
+        using var process = Process.Start(start)!;
+        process.WaitForExit();
+        Assert.Equal(0, process.ExitCode);
+        try
+        {
+            var error = Record.Exception(() =>
+                RegistrationPublisher.Publish(fixture.Output, new("safe-session", "sent", "used", "synthetic")));
+            Assert.True(error is WatcherException { Code: "COORD_NATIVE_CONTEXT" },
+                $"Expected context refusal; error={error?.Message ?? "SUCCESS"}; siblingFiles={Directory.GetFiles(sibling).Length}");
+            Assert.Equal(error!.Message, ((WatcherException)error).Code);
+            Assert.Empty(Directory.GetFileSystemEntries(sibling));
+        }
+        finally { Directory.Delete(junction); }
+    }
+
+    [Fact]
+    public void Complete_WrongVersionSameOwnerAndAttempt_RetainsInFlight()
+    {
+        using var fixture = new Fixture();
+        fixture.Admit("first");
+        var claimed = fixture.Store.ClaimNativeNotice(fixture.Notice().NoticeId, "same-owner")!;
+
+        Assert.False(fixture.Store.CompleteNativeNotice(claimed with { Version = claimed.Version + 1 }, 0));
+        Assert.Equal(1, fixture.Store.PendingNativeNoticeCount());
+        Assert.True(fixture.Store.RequeueNativeNotice(claimed, 0));
+        Assert.Equal(1, fixture.Run().Published);
+    }
+
+    [Fact]
+    public void Admit_RetainedAccountingReaderFails_UncertainPreservesOwnerAndCapacity()
+    {
+        using var first = new Fixture();
+        using var second = new Fixture();
+        for (var index = 0; index < 128; index++) first.Admit($"op-{index}", $"terminal-{index}");
+        first.AdmissionRoot.Dispose();
+        var enrollments = (IDictionary)typeof(NoticeAdmissionCoordinator)
+            .GetField("Enrollments", BindingFlags.Static | BindingFlags.NonPublic)!.GetValue(null)!;
+        var readers = enrollments.Values.Cast<object>().Select(value =>
+            (SqliteWatcherObservationStore)value.GetType().GetProperty("Reader", BindingFlags.Instance | BindingFlags.NonPublic)!
+                .GetValue(value)!);
+        var reader = readers.Single(value => value.DatabasePath == first.Database);
+        var connection = (SqliteConnection)typeof(SqliteWatcherObservationStore)
+            .GetField("_connection", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(reader)!;
+        Assert.NotSame(first.Store, reader);
+        connection.Close();
+        try
+        {
+            Assert.Equal("COORD_NOTICE_UNCERTAIN", Assert.Throws<WatcherException>(() => second.Admit("overflow")).Code);
+            Assert.Equal(128, first.Store.PendingNativeNoticeCount());
+            Assert.Equal(0L, second.Scalar("SELECT count(*) FROM native_registration_admission_fact"));
+            using var ownerProbe = new FileStream(first.Database, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+            Assert.Throws<IOException>(() => ownerProbe.Lock(long.MaxValue - 1, 1));
+        }
+        finally { connection.Open(); }
+
+        Assert.Equal("COORD_NOTICE_CAPACITY", Assert.Throws<WatcherException>(() => second.Admit("overflow")).Code);
+        Assert.Equal(1, first.Run(1).Published);
+        Assert.False(second.Admit("overflow").Replayed);
+        while (first.Store.PendingNativeNoticeCount() > 0) Assert.True(first.Run(32).Published > 0);
+        Assert.Equal(1, second.Run().Published);
+        using var released = new FileStream(first.Database, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+        released.Lock(long.MaxValue - 1, 1);
+        released.Unlock(long.MaxValue - 1, 1);
+    }
+
     [Fact]
     public void Publish_DeniedThenRetried_PreservesFrozenAdmissionAndBytes()
     {
@@ -300,14 +445,14 @@ public sealed class NativeNoticePublicationTests
         internal SqliteWatcherObservationStore Store { get; }
         internal NativeRegistrationAdmissionRoot AdmissionRoot { get; }
         internal IngestHost Host { get; }
-        internal Fixture()
+        internal Fixture(Func<string>? sessionIds = null)
         {
             Directory.CreateDirectory(Output);
             Directory.CreateDirectory(Worktree);
             Store = SqliteWatcherObservationStore.Open(Database);
             AdmissionRoot = new(Store);
             var registrar = new TrustedRegistrar(Store, new SequentialCapabilityFactory(),
-                new FakeMonotonicClock(), () => $"session-{++_session}");
+                new FakeMonotonicClock(), sessionIds ?? (() => $"session-{++_session}"));
             Host = new(Store, registrar, new FixedTimeProvider(DateTimeOffset.UnixEpoch));
         }
         internal RegistrationAdmissionResult Admit(string op, string terminal = "terminal") =>

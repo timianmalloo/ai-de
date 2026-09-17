@@ -1,0 +1,59 @@
+{
+  "phase": "repair-final",
+  "head": "18603eed2c2dd4e480e8431381573d0f7c54808d",
+  "command": [
+    "dotnet",
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "-p:UseSharedCompilation=false",
+    "-m:1",
+    "-nodeReuse:false",
+    "--filter",
+    "FullyQualifiedName~RegistrationAdmissionTests|FullyQualifiedName~RegistrationNoticeReliabilityTests|FullyQualifiedName~AWorktreeRegistrationIsCorrectedAndSaidSoTests|FullyQualifiedName~TrustedRegistrarTests|FullyQualifiedName~SqliteWatcherObservationStoreTests|FullyQualifiedName~NativeAdmissionRuntimeTests|FullyQualifiedName~NativeNoticePublicationTests",
+    "--logger",
+    "trx;LogFileName=notice.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p25-notice-evidence\\runtime-repair-final",
+    "--verbosity",
+    "minimal"
+  ],
+  "startedUtc": "2026-09-17T15:28:03.4913932+00:00",
+  "endedUtc": "2026-09-17T15:28:21.7207067+00:00",
+  "durationSeconds": 18.2293135,
+  "actualExit": 1,
+  "total": 254,
+  "passed": 252,
+  "failures": [
+    {
+      "message": "Assert.Equal() Failure: Strings differ\r\n                            ↓ (pos 17)\r\nExpected: \"{\"sessionRows\":128,\"firstCapabilities\":64\"···\r\nActual:   \"{\"sessionRows\":129,\"firstCapabilities\":64\"···\r\n                            ↑ (pos 17)",
+      "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.Register_TwoHostsHave128OutstandingCorrections_RefusesBeforeNativeMutation"
+    },
+    {
+      "message": "Assert.Single() Failure: The collection was empty",
+      "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.DrainRegistrationNotices_PublicationFails_RetryRetainsOriginalCorrection"
+    }
+  ],
+  "evidencePins": [
+    {
+      "sha256": "BB85C9AFF9EF1100E2FF5B855278183DE50E1A3CCA12D1BDBB39E10AB7FF5DE2",
+      "file": "after-pins.json"
+    },
+    {
+      "sha256": "10A0E037157BD571940170A6436361C67D748CF2DC107BEBA10B6F197BA72767",
+      "file": "before-pins.json"
+    },
+    {
+      "sha256": "3E8631FFD4A8F770BB4FBBAB3EA904A7D60E5B10E65E2178C55DD1CF3AAE05D2",
+      "file": "notice.trx"
+    },
+    {
+      "sha256": "1F9328DD67BB86404A223D8BC5C9C89EEC2515186788FBE9D601BD3199BD1669",
+      "file": "stderr.txt"
+    },
+    {
+      "sha256": "7BC9A3084BC7D96DF842852D9C1CE5944A31A46793E0B61D83430432193737EC",
+      "file": "stdout.txt"
+    }
+  ]
+}

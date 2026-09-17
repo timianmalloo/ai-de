@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T15:07:52Z",
+  "generated": "2026-09-17T15:32:50Z",
   "audit": [
     {
       "actor": null,
@@ -21187,6 +21187,63 @@ window.AUDIT_DATA = {
       "tier": "T2",
       "fan_out": 0,
       "supersedes": "al-01M2QYAH8HTY8BEP3A7QQV6ZW6"
+    },
+    {
+      "id": "al-01M2QZZH20EWRWNWDH3JG1FYK2",
+      "shortname": "implement-native-publication-repair",
+      "datetime": "2026-09-17T15:32:49Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "WRITE-CAPABLE C# finite NativePublication repair <=35 tools 150k no agents. Own P2 registered tree C:\\Projects\\ai-de-feature-xh-p2-projection HEAD18603eed2c2dd4e480e8431381573d0f7c54808d session xh-p2-projection-b0d0 ended reopen. All P0-P5 approved no fresh permission. Exact TTL300 edit minutes release before tests; environment session/name UTF8; apply_patch; no hook overrides, main/push/force/amend/config/hooks/install/deps/GUI/App/fullslot/liveDB/endpoints/upstreamresearch/other worktree edits. Synthetic Windows-local fixtures only.\nP1: a:b and a?b collide under StandingPublisher.FileNameFor and overwrite compatibility JSON despite distinct notice IDs. Require unambiguous compatibility ownership before enhanced admission/publication. Preserve ordinary legacy filenames and usability; reject unsafe enhanced IDs with explicit code before native admission/files. Existing other-session owner must refuse without overwrite; no history rename/backfill/dedup.\nP2: public RegistrationPublisher.Publish follows registration junction into sibling directory. Reuse pinned non-reparse Windows-local ancestor/directory handling and exclusive unique atomic temporary writer; preserve legacy JSON and normal usability, private-safe errors, root normalization. Actual junction RED/GREEN, no sibling files or temp remnants; no disabling public helper or global ACL changes.\nP3: close missing semantic red evidence for eight added publication cases. Invalid-ID/reserved-name mutants must admit invalid candidates in valid fixtures, not fail setup. Version-only completion mutant uses same owner/attempt. Retained coordinator accounting-reader failure uses its independent read-only connection after accepted Pending obligations; uncertainty preserves counts/owner/cap. Restore reader and release through actual publication.\nPreserve immutable bytes/digest/no-overwrite/unique-temp/CAS/fair poison/quota release. Keep both legacy diagnostics honestly RED; no canonical completion from native-file Published and no binder activation. Own publisher, narrow admission ID guard, optional coordinator observable defect only, native tests and relevant notice fixtures. Existing design, ADR/phase plan/canonical docs/proof/cross-harness-coordination-proof-pack.md and existing p25 raw evidence/audit only; no other proofpacks/sitegen/lessons/Meta/config. Before commit local audit --root own docs render/verify and stage audit-data.js with JSONL. Capture baseline code/test/bin SHA before fix; parent18603 pins, actual stdout/stderr/exits/TRX named occurrences. Cover all247 previous occurrences; no all-green claim. Commit with Copilot trailer, clean/released/ended. Independent re-gate is mandatory next continuation; author cannot self-clear full code/noActivation/P2/P3-P5.",
+      "summary": "Author checkpoint only: strict compatibility ID/owner checks before admission; public Windows pinned writer; real collision and junction REDs repaired; final252/254 with original legacy N1/N2 REDs; seven isolated variants nine focal REDs including version-only, independent retained-reader, invalid/reserved admissions and latest bytes. Full canonical proof and raw receipts. Independent re-gate required; non-Windows public helper unavailable; no activation. Prompt file is a normalized task brief, not a verbatim transcript.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md",
+        "docs/proofs/p25-notice-evidence/repair-occurrence-receipt.json"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Repair three finite native-publication findings without activation",
+      "done_when": "Scoped repair and retained red/green/mutant evidence committed for independent re-gating",
+      "tier": "T2",
+      "main_calls": 35,
+      "main_budget": 35,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-17T15:21:00Z",
+      "duration_seconds": 709.0,
+      "git": {
+        "sha": "18603eed2c2dd4e480e8431381573d0f7c54808d",
+        "short": "18603eed2",
+        "branch": "feature/xh-p2-projection",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2QZZH72T9C9Z1XB29ZPSW7D",
+      "shortname": "optimize-native-publication-repair",
+      "datetime": "2026-09-17T15:32:50Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "WRITE-CAPABLE C# finite NativePublication repair <=35 tools 150k no agents. Own P2 registered tree C:\\Projects\\ai-de-feature-xh-p2-projection HEAD18603eed2c2dd4e480e8431381573d0f7c54808d session xh-p2-projection-b0d0 ended reopen. All P0-P5 approved no fresh permission. Exact TTL300 edit minutes release before tests; environment session/name UTF8; apply_patch; no hook overrides, main/push/force/amend/config/hooks/install/deps/GUI/App/fullslot/liveDB/endpoints/upstreamresearch/other worktree edits. Synthetic Windows-local fixtures only.\nP1: a:b and a?b collide under StandingPublisher.FileNameFor and overwrite compatibility JSON despite distinct notice IDs. Require unambiguous compatibility ownership before enhanced admission/publication. Preserve ordinary legacy filenames and usability; reject unsafe enhanced IDs with explicit code before native admission/files. Existing other-session owner must refuse without overwrite; no history rename/backfill/dedup.\nP2: public RegistrationPublisher.Publish follows registration junction into sibling directory. Reuse pinned non-reparse Windows-local ancestor/directory handling and exclusive unique atomic temporary writer; preserve legacy JSON and normal usability, private-safe errors, root normalization. Actual junction RED/GREEN, no sibling files or temp remnants; no disabling public helper or global ACL changes.\nP3: close missing semantic red evidence for eight added publication cases. Invalid-ID/reserved-name mutants must admit invalid candidates in valid fixtures, not fail setup. Version-only completion mutant uses same owner/attempt. Retained coordinator accounting-reader failure uses its independent read-only connection after accepted Pending obligations; uncertainty preserves counts/owner/cap. Restore reader and release through actual publication.\nPreserve immutable bytes/digest/no-overwrite/unique-temp/CAS/fair poison/quota release. Keep both legacy diagnostics honestly RED; no canonical completion from native-file Published and no binder activation. Own publisher, narrow admission ID guard, optional coordinator observable defect only, native tests and relevant notice fixtures. Existing design, ADR/phase plan/canonical docs/proof/cross-harness-coordination-proof-pack.md and existing p25 raw evidence/audit only; no other proofpacks/sitegen/lessons/Meta/config. Before commit local audit --root own docs render/verify and stage audit-data.js with JSONL. Capture baseline code/test/bin SHA before fix; parent18603 pins, actual stdout/stderr/exits/TRX named occurrences. Cover all247 previous occurrences; no all-green claim. Commit with Copilot trailer, clean/released/ended. Independent re-gate is mandatory next continuation; author cannot self-clear full code/noActivation/P2/P3-P5.",
+      "summary": "Six serial data-dependent author nodes; no delegates; Inferred equal-node work/span6/6, measured durations in receipts. Fixed seven-variant worklist plus one stronger replacement. Budget35/35. Independent next-continuation gates remain unclaimed. Earlier same-session goal/budget gaps remain historical findings, not rewritten.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/cross-harness-coordination-phases.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Bound native publication repair and independent handoff",
+      "done_when": "Author evidence committed, leases released, session ended",
+      "tier": "T2",
+      "main_calls": 35,
+      "main_budget": 35,
+      "main_over_budget": false,
+      "fan_out": 0
     }
   ],
   "changes": [

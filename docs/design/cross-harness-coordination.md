@@ -1274,3 +1274,33 @@ current could regress a newer file whose database ACK was lost. Accepted facts,
 not delivery status or a filesystem document, now select latest. A pending
 newer accepted correction may therefore appear in the compatibility document;
 that appearance is not an acknowledgement of its immutable transport.
+
+### Finite publication repair — 2026-09-17 author contract correction
+
+The compatibility filename is an identity boundary, not a lossy display mapping.
+Enhanced admission accepts only session IDs made from lowercase ASCII letters,
+digits, hyphen and underscore, at most 250 characters, with reserved Windows
+device names refused. This finite domain preserves ordinary UUID/session filenames
+and excludes replacement, case-folding and trailing-dot aliases. Validation occurs
+before capability preparation and transactional admission writes. Existing historical
+rows are not renamed, backfilled or deduplicated. Refusal is `COORD_NATIVE_CONTEXT`.
+Existing compatibility JSON naming another session is `COORD_NOTICE_CONFLICT`,
+checked before enhanced admission and again before publication.
+
+The public legacy helper remains a writer with its existing JSON and filename
+mapping. It must refuse a known owner mismatch rather than overwrite another
+session. Both writers reuse the Windows-local checked ancestor/registration
+directory pins and exclusive unique temporary-file installation. No directory
+reparse point may be followed; no global ACL or permission changes are permitted.
+This is a qualified Windows-local guard, not a cross-platform or hostile
+cross-process file-race guarantee. Native file publication is transport evidence,
+never canonical completion or human authority.
+
+Surface list: trusted session-ID selection → admission guard → retained fact/notice
+→ immutable file and compatibility JSON → legacy reader. No payload/schema change,
+App edit, binder activation or canonical bridge is part of this repair.
+Oracles use synthetic local files, the exact `a:b`/`a?b` pair, a registration
+junction, same-owner/same-attempt wrong-version completion, and failure of the
+retained independent accounting reader after 128 accepted obligations.
+The existing worker-store disposal test does not establish that last property.
+Independent Test/Data/Security re-gating remains required.

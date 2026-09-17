@@ -33,11 +33,11 @@ public sealed class RegistrationNoticeReliabilityTests(ITestOutputHelper output)
             StandingPublisher.FileNameFor(original.SessionId));
         Directory.CreateDirectory(destination);
 
-        // A destination directory prevents the real final rename, after acceptance and .tmp writing.
+        // The checked writer cleans its unique temporary file; legacy Drain still loses the notice.
         var failure = Record.Exception(() => RegistrationPublisher.Publish(fixture.Output, delivery));
 
-        Assert.True(failure is IOException or UnauthorizedAccessException);
-        Assert.True(File.Exists(destination + ".tmp"));
+        Assert.Equal("COORD_NOTICE_IO", Assert.IsType<WatcherException>(failure).Code);
+        Assert.Empty(Directory.GetFiles(fixture.Output, "*.tmp", SearchOption.AllDirectories));
         Assert.Equal(before, fixture.NativeState());
         Directory.Delete(destination);
         var retry = fixture.First.DrainRegistrationNotices();

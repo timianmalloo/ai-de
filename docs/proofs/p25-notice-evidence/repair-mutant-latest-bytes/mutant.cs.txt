@@ -1,0 +1,501 @@
+using Microsoft.Data.Sqlite;
+
+namespace AiDe.Core.Watcher;
+
+public sealed partial class SqliteWatcherObservationStore
+{
+    internal void RecoverNativeNotices()
+    {
+        lock (_gate)
+            ExecuteNonQuery(_connection, """
+                UPDATE registration_notice_delivery
+                SET state='Pending',owner_id=NULL,ownership_version=ownership_version+1
+                WHERE notice_id IN (SELECT notice_id FROM registration_notice_delivery
+                    WHERE state='InFlight' LIMIT 128);
+                """);
+    }
+
+    internal IReadOnlyList<string> PendingNativeNoticeIds(int maximum)
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText = """
+                SELECT notice_id FROM registration_notice_delivery WHERE state='Pending'
+                ORDER BY attempt,due_at_ms,notice_id LIMIT $maximum;
+                """;
+            command.Parameters.AddWithValue("$maximum", maximum);
+            using var reader = command.ExecuteReader();
+            var result = new List<string>();
+            while (reader.Read()) result.Add(reader.GetString(0));
+            return result;
+        }
+    }
+
+    internal NativeNoticeDelivery? ClaimNativeNotice(string noticeId, string owner)
+    {
+        lock (_gate)
+        {
+            using var transaction = _connection.BeginTransaction(deferred: false);
+            using var command = _connection.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandText = """
+                UPDATE registration_notice_delivery SET state='InFlight',owner_id=$owner,
+                    attempt=attempt+1,ownership_version=ownership_version+1
+                WHERE notice_id=$id AND state='Pending' AND attempt<2147483647;
+                """;
+            command.Parameters.AddWithValue("$owner", owner);
+            command.Parameters.AddWithValue("$id", noticeId);
+            if (1 != command.ExecuteNonQuery()) return null;
+            var notice = ReadNativeDelivery(noticeId, transaction);
+            transaction.Commit();
+            return notice;
+        }
+    }
+
+    private NativeNoticeDelivery ReadNativeDelivery(string id, SqliteTransaction transaction)
+    {
+        using var command = _connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = """
+            SELECT n.operation_id,n.target_root,n.publication_bytes,n.publication_digest,a.session_id,
+                   n.owner_id,n.attempt,n.ownership_version
+            FROM registration_notice_delivery n JOIN native_registration_admission_fact a USING(operation_id)
+            WHERE notice_id=$id AND target_kind='native-file';
+            """;
+        command.Parameters.AddWithValue("$id", id);
+        NativeNoticeDelivery notice;
+        using (var reader = command.ExecuteReader())
+        {
+            if (!reader.Read()) throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Integrity);
+            notice = new(id, reader.GetString(0), reader.GetString(1), (byte[])reader[2],
+                reader.GetString(3), reader.GetString(4), reader.IsDBNull(5) ? string.Empty : reader.GetString(5),
+                reader.GetInt64(6), reader.GetInt64(7));
+        }
+        var admission = ReadNativeAdmission(notice.OperationId, transaction)
+            ?? throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Integrity);
+        if (admission.DecisionDigest[..32] != id)
+            throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Integrity);
+        NativeAdmissionCodec.RequireNotice(admission, notice.Bytes, notice.Digest);
+        return notice;
+    }
+
+    internal byte[] LatestNativeNoticeBytes(NativeNoticeDelivery notice)
+    {
+        lock (_gate)
+        {
+            using var transaction = _connection.BeginTransaction(deferred: false);
+            using var command = _connection.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandText = """
+                SELECT n.notice_id FROM registration_notice_delivery n
+                JOIN native_registration_admission_fact a USING(operation_id)
+                WHERE a.session_id=$session AND n.target_root=$root
+                ORDER BY a.generation DESC LIMIT 1;
+                """;
+            command.Parameters.AddWithValue("$session", notice.SessionId);
+            command.Parameters.AddWithValue("$root", notice.Root);
+            var id = (string?)command.ExecuteScalar()
+                ?? throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Integrity);
+            var bytes = notice.Bytes;
+            transaction.Commit();
+            return bytes;
+        }
+    }
+
+    internal bool CompleteNativeNotice(NativeNoticeDelivery notice, long now) =>
+        TransitionNativeNotice(notice, "Published", now);
+
+    internal bool RequeueNativeNotice(NativeNoticeDelivery notice, long now) =>
+        TransitionNativeNotice(notice, "Pending", now);
+
+    private bool TransitionNativeNotice(NativeNoticeDelivery notice, string state, long now)
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText = """
+                UPDATE registration_notice_delivery SET state=$state,owner_id=NULL,
+                    published_at_ms=CASE WHEN $state='Published' THEN $now ELSE NULL END,
+                    due_at_ms=$now,ownership_version=ownership_version+1
+                WHERE notice_id=$id AND state='InFlight' AND owner_id=$owner
+                    AND attempt=$attempt AND ownership_version=$version;
+                """;
+            command.Parameters.AddWithValue("$state", state);
+            command.Parameters.AddWithValue("$now", now);
+            command.Parameters.AddWithValue("$id", notice.NoticeId);
+            command.Parameters.AddWithValue("$owner", notice.Owner);
+            command.Parameters.AddWithValue("$attempt", notice.Attempt);
+            command.Parameters.AddWithValue("$version", notice.Version);
+            return 1 == command.ExecuteNonQuery();
+        }
+    }
+
+    internal long PendingNativeNoticeCount()
+    {
+        lock (_gate) return PendingNativeNoticeCount(null);
+    }
+
+    private long PendingNativeNoticeCount(SqliteTransaction? transaction)
+    {
+        using var command = _connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = """
+            SELECT count(*) FROM (
+                SELECT notice_id FROM registration_notice_delivery
+                WHERE state IN ('Pending','InFlight') LIMIT 129
+            );
+            """;
+        return (long)command.ExecuteScalar()!;
+    }
+
+    internal RegistrationAdmissionResult AdmitNative(
+        BoundNativeRegistration input, long recordedAtMilliseconds, long ticks,
+        Func<string> newSessionId, Action prepareCapability, Func<long, bool, IDisposable> reserve,
+        Action<NativeAdmissionFaultPoint>? fault)
+    {
+        lock (_gate)
+        {
+            using var transaction = _connection.BeginTransaction(deferred: false);
+            var historical = ReadNativeAdmission(input.OperationId, transaction);
+            if (historical is not null)
+            {
+                if (historical.InputDigest != input.InputDigest || historical.ContextDigest != input.ContextDigest)
+                    throw NativeAdmissionErrors.Error(NativeAdmissionErrors.OperationConflict);
+                transaction.Commit();
+                return new(historical, null, true);
+            }
+
+            using var reservation = reserve(PendingNativeNoticeCount(transaction), input.CorrectionCode != "NONE");
+            fault?.Invoke(NativeAdmissionFaultPoint.BeforeContextRead);
+            NativeAdmissionCodec.ValidateContextFiles(input);
+            var existing = NativeSessionForTerminal(input.Binding.Terminal.TerminalId, transaction);
+            var sessionId = existing?.SessionId ?? newSessionId();
+            NativeAdmissionCodec.Text(sessionId, 512);
+            NativeAdmissionCodec.ValidateCompatibilitySession(sessionId);
+            RegistrationPublisher.ValidateCompatibilityOwner(input.PublicationRoot, sessionId);
+            var generation = new SessionGeneration(existing is null ? 1 : checked(existing.Generation.Value + 1));
+            var session = new SessionRecord(sessionId, generation, input.Binding);
+            var admission = new RegistrationAdmission(input.OperationId, input.InputDigest, input.ContextDigest,
+                string.Empty, session, input.RepositorySent, input.RepositoryUsed, input.CorrectionCode,
+                recordedAtMilliseconds);
+            admission = admission with { DecisionDigest = NativeAdmissionCodec.DecisionDigest(admission) };
+            prepareCapability();
+            InsertNativeAdmission(admission, transaction);
+            fault?.Invoke(NativeAdmissionFaultPoint.AfterAdmission);
+            if (input.CorrectionCode != "NONE") InsertInitialNativeNotice(admission, input.PublicationRoot, transaction);
+            fault?.Invoke(NativeAdmissionFaultPoint.AfterNotice);
+            RecordSession(session, transaction);
+            fault?.Invoke(NativeAdmissionFaultPoint.AfterSession);
+            ExecuteNonQuery(_connection, "DELETE FROM session_ended WHERE session_id=$id;", transaction, ("$id", sessionId));
+            fault?.Invoke(NativeAdmissionFaultPoint.AfterEndClear);
+            WriteNativeHeartbeat(sessionId, ticks, transaction);
+            fault?.Invoke(NativeAdmissionFaultPoint.AfterHeartbeat);
+            fault?.Invoke(NativeAdmissionFaultPoint.BeforeCommit);
+            transaction.Commit();
+            fault?.Invoke(NativeAdmissionFaultPoint.AfterCommit);
+            return new(admission, null, false);
+        }
+    }
+
+    private SessionRecord? NativeSessionForTerminal(string terminal, SqliteTransaction transaction)
+    {
+        using var command = _connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = "SELECT session_id FROM agent_session_dim WHERE terminal_id=$terminal LIMIT 2;";
+        command.Parameters.AddWithValue("$terminal", terminal);
+        string? sessionId;
+        using (var reader = command.ExecuteReader())
+        {
+            sessionId = reader.Read() ? reader.GetString(0) : null;
+            if (reader.Read()) throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Stale);
+        }
+        return sessionId is null ? null : FindSession(sessionId, transaction);
+    }
+
+    private void InsertNativeAdmission(RegistrationAdmission admission, SqliteTransaction transaction)
+    {
+        var binding = admission.Session.Binding;
+        ExecuteNonQuery(_connection, """
+            INSERT INTO native_registration_admission_fact
+                (operation_id,schema_version,input_digest,context_digest,decision_digest,session_id,generation,
+                 repository_sent,repository_used,worktree_path,worktree_branch,terminal_id,agent_name,
+                 harness_name,harness_version,model_name,model_version,trust,correction_code,recorded_at_ms)
+            VALUES ($op,1,$input,$context,$decision,$session,$generation,$sent,$used,$path,$branch,$terminal,
+                    $agent,$harness,$hversion,$model,$mversion,$trust,$correction,$at);
+            """, transaction,
+            ("$op", admission.OperationId), ("$input", admission.InputDigest), ("$context", admission.ContextDigest),
+            ("$decision", admission.DecisionDigest), ("$session", admission.Session.SessionId),
+            ("$generation", admission.Session.Generation.Value), ("$sent", admission.RepositorySent),
+            ("$used", admission.RepositoryUsed), ("$path", binding.Worktree.Path), ("$branch", binding.Worktree.Branch),
+            ("$terminal", binding.Terminal.TerminalId), ("$agent", binding.Agent.AgentName),
+            ("$harness", binding.Harness?.Name), ("$hversion", binding.Harness?.Version),
+            ("$model", binding.Model?.Name), ("$mversion", binding.Model?.Version), ("$trust", binding.Trust.ToString()),
+            ("$correction", admission.CorrectionCode), ("$at", admission.RecordedAtMilliseconds));
+    }
+
+    private void InsertInitialNativeNotice(
+        RegistrationAdmission admission, string publicationRoot, SqliteTransaction transaction)
+    {
+        var bytes = NativeAdmissionCodec.NoticeBytes(admission);
+        var digest = NativeAdmissionCodec.Digest(bytes);
+        NativeAdmissionCodec.RequireNotice(admission, bytes, digest);
+        ExecuteNonQuery(_connection, """
+            INSERT INTO registration_notice_delivery
+                (notice_id,operation_id,schema_version,decision_digest,correction_code,publication_bytes,
+                 publication_digest,target_kind,target_root,state,attempt,ownership_version,due_at_ms)
+            VALUES ($id,$op,1,$decision,'LINKED_WORKTREE',$bytes,$digest,'native-file',$root,'Pending',0,0,$at);
+            """, transaction, ("$id", admission.DecisionDigest[..32]), ("$op", admission.OperationId),
+            ("$decision", admission.DecisionDigest), ("$bytes", bytes), ("$digest", digest),
+            ("$root", publicationRoot), ("$at", admission.RecordedAtMilliseconds));
+    }
+
+    private RegistrationAdmission? ReadNativeAdmission(string operationId, SqliteTransaction transaction)
+    {
+        using var command = _connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = """
+            SELECT input_digest,context_digest,decision_digest,session_id,generation,repository_sent,repository_used,
+                   worktree_path,worktree_branch,terminal_id,agent_name,harness_name,harness_version,
+                   model_name,model_version,trust,correction_code,recorded_at_ms
+            FROM native_registration_admission_fact WHERE operation_id=$op;
+            """;
+        command.Parameters.AddWithValue("$op", operationId);
+        using var reader = command.ExecuteReader();
+        if (!reader.Read()) return null;
+        var repository = new RepositoryIdentity(reader.GetString(6), reader.GetString(6));
+        var binding = new SessionBinding(repository,
+            new WorktreeIdentity(repository, reader.GetString(8), reader.GetString(7)),
+            new TerminalIdentity(reader.GetString(9)), new AgentIdentity(reader.GetString(10)),
+            reader.IsDBNull(11) ? null : new HarnessIdentity(reader.GetString(11), reader.GetString(12)),
+            reader.IsDBNull(13) ? null : new ModelIdentity(reader.GetString(13), reader.GetString(14)),
+            Enum.Parse<TrustClassification>(reader.GetString(15)));
+        var admission = new RegistrationAdmission(operationId, reader.GetString(0), reader.GetString(1),
+            reader.GetString(2), new SessionRecord(reader.GetString(3), new(reader.GetInt64(4)), binding),
+            reader.GetString(5), reader.GetString(6), reader.GetString(16), reader.GetInt64(17));
+        if (NativeAdmissionCodec.DecisionDigest(admission) != admission.DecisionDigest)
+            throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Integrity);
+        return admission;
+    }
+
+    internal SessionRecord ApplyNativeLifecycle(
+        SessionRecord expected, NativeLifecycle operation, long ticks, HarnessIdentity? harness, ModelIdentity? model)
+    {
+        if (harness is not null)
+        {
+            NativeAdmissionCodec.Text(harness.Name, 256);
+            NativeAdmissionCodec.Text(harness.Version, 128);
+        }
+        if (model is not null)
+        {
+            NativeAdmissionCodec.Text(model.Name, 256);
+            NativeAdmissionCodec.Text(model.Version, 128);
+        }
+        lock (_gate)
+        {
+            using var transaction = _connection.BeginTransaction(deferred: false);
+            if (FindSession(expected.SessionId, transaction) != expected)
+                throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Stale);
+            var updated = expected;
+            switch (operation)
+            {
+                case NativeLifecycle.Heartbeat:
+                    WriteNativeHeartbeat(expected.SessionId, ticks, transaction);
+                    break;
+                case NativeLifecycle.End:
+                    ExecuteNonQuery(_connection, "INSERT OR IGNORE INTO session_ended(session_id) VALUES($id);",
+                        transaction, ("$id", expected.SessionId));
+                    break;
+                case NativeLifecycle.Update:
+                    updated = expected with { Binding = expected.Binding with
+                    {
+                        Harness = harness ?? expected.Binding.Harness, Model = model ?? expected.Binding.Model,
+                    } };
+                    RecordSession(updated, transaction);
+                    break;
+            }
+            transaction.Commit();
+            return updated;
+        }
+    }
+
+    private void WriteNativeHeartbeat(string sessionId, long ticks, SqliteTransaction transaction) =>
+        ExecuteNonQuery(_connection, """
+            INSERT INTO session_heartbeat(session_id,monotonic_ticks) VALUES($id,$ticks)
+            ON CONFLICT(session_id) DO UPDATE SET monotonic_ticks=$ticks;
+            """, transaction, ("$id", sessionId), ("$ticks", ticks));
+
+    // Pattern: Transactional Outbox. The internal admission/transport composition uses this floor;
+    // DDL alone cannot establish content digests, qualified roots or production enrollment.
+    private const string NativeRegistrationSchemaSql = """
+        CREATE TABLE native_registration_admission_fact (
+            operation_id TEXT NOT NULL PRIMARY KEY
+                CHECK(typeof(operation_id)='text' AND length(operation_id) BETWEEN 1 AND 128
+                    AND instr(operation_id,char(0))=0),
+            schema_version INTEGER NOT NULL CHECK(typeof(schema_version)='integer' AND schema_version=1),
+            input_digest TEXT NOT NULL
+                CHECK(typeof(input_digest)='text' AND length(input_digest)=64
+                    AND instr(input_digest,char(0))=0 AND length(CAST(input_digest AS BLOB))=64
+                    AND input_digest NOT GLOB '*[^0-9a-f]*'),
+            context_digest TEXT NOT NULL
+                CHECK(typeof(context_digest)='text' AND length(context_digest)=64
+                    AND instr(context_digest,char(0))=0 AND length(CAST(context_digest AS BLOB))=64
+                    AND context_digest NOT GLOB '*[^0-9a-f]*'),
+            decision_digest TEXT NOT NULL
+                CHECK(typeof(decision_digest)='text' AND length(decision_digest)=64
+                    AND instr(decision_digest,char(0))=0 AND length(CAST(decision_digest AS BLOB))=64
+                    AND decision_digest NOT GLOB '*[^0-9a-f]*'),
+            session_id TEXT NOT NULL
+                CHECK(typeof(session_id)='text' AND length(session_id) BETWEEN 1 AND 512
+                    AND instr(session_id,char(0))=0),
+            generation INTEGER NOT NULL
+                CHECK(typeof(generation)='integer' AND generation>=1),
+            repository_sent TEXT NOT NULL
+                CHECK(typeof(repository_sent)='text' AND length(repository_sent) BETWEEN 1 AND 4096
+                    AND instr(repository_sent,char(0))=0),
+            repository_used TEXT NOT NULL
+                CHECK(typeof(repository_used)='text' AND length(repository_used) BETWEEN 1 AND 4096
+                    AND instr(repository_used,char(0))=0),
+            worktree_path TEXT NOT NULL
+                CHECK(typeof(worktree_path)='text' AND length(worktree_path) BETWEEN 1 AND 4096
+                    AND instr(worktree_path,char(0))=0),
+            worktree_branch TEXT NOT NULL
+                CHECK(typeof(worktree_branch)='text' AND length(worktree_branch) BETWEEN 0 AND 512
+                    AND instr(worktree_branch,char(0))=0),
+            terminal_id TEXT NOT NULL
+                CHECK(typeof(terminal_id)='text' AND length(terminal_id) BETWEEN 1 AND 512
+                    AND instr(terminal_id,char(0))=0),
+            agent_name TEXT NOT NULL
+                CHECK(typeof(agent_name)='text' AND length(agent_name) BETWEEN 1 AND 256
+                    AND instr(agent_name,char(0))=0),
+            harness_name TEXT NULL
+                CHECK(harness_name IS NULL OR
+                    (typeof(harness_name)='text' AND length(harness_name) BETWEEN 1 AND 256
+                    AND instr(harness_name,char(0))=0)),
+            harness_version TEXT NULL
+                CHECK(harness_version IS NULL OR
+                    (typeof(harness_version)='text' AND length(harness_version) BETWEEN 1 AND 128
+                    AND instr(harness_version,char(0))=0)),
+            model_name TEXT NULL
+                CHECK(model_name IS NULL OR
+                    (typeof(model_name)='text' AND length(model_name) BETWEEN 1 AND 256
+                    AND instr(model_name,char(0))=0)),
+            model_version TEXT NULL
+                CHECK(model_version IS NULL OR
+                    (typeof(model_version)='text' AND length(model_version) BETWEEN 1 AND 128
+                    AND instr(model_version,char(0))=0)),
+            trust TEXT NOT NULL CHECK(typeof(trust)='text' AND trust IN ('Asserted','Verified')),
+            correction_code TEXT NOT NULL
+                CHECK(typeof(correction_code)='text' AND correction_code IN ('NONE','LINKED_WORKTREE')),
+            recorded_at_ms INTEGER NOT NULL CHECK(typeof(recorded_at_ms)='integer'),
+            CHECK(harness_version IS NULL OR harness_name IS NOT NULL),
+            CHECK(model_version IS NULL OR model_name IS NOT NULL),
+            CHECK((correction_code='NONE' AND repository_sent=repository_used)
+                OR (correction_code='LINKED_WORKTREE' AND repository_sent<>repository_used)),
+            UNIQUE(session_id,generation),
+            UNIQUE(operation_id,schema_version,decision_digest,correction_code)
+        );
+
+        CREATE TRIGGER native_registration_admission_no_update
+        BEFORE UPDATE ON native_registration_admission_fact BEGIN
+            SELECT RAISE(ABORT,'COORD_NATIVE_ADMISSION_IMMUTABLE');
+        END;
+        CREATE TRIGGER native_registration_admission_no_delete
+        BEFORE DELETE ON native_registration_admission_fact BEGIN
+            SELECT RAISE(ABORT,'COORD_NATIVE_ADMISSION_IMMUTABLE');
+        END;
+        CREATE TRIGGER native_registration_admission_no_replace
+        BEFORE INSERT ON native_registration_admission_fact
+        WHEN EXISTS(SELECT 1 FROM native_registration_admission_fact
+            WHERE operation_id=NEW.operation_id
+                OR (session_id=NEW.session_id AND generation=NEW.generation))
+        BEGIN
+            SELECT RAISE(ABORT,'COORD_NATIVE_ADMISSION_IMMUTABLE');
+        END;
+
+        CREATE TABLE registration_notice_delivery (
+            notice_id TEXT NOT NULL PRIMARY KEY
+                CHECK(typeof(notice_id)='text' AND length(notice_id)=32
+                    AND instr(notice_id,char(0))=0 AND length(CAST(notice_id AS BLOB))=32
+                    AND notice_id NOT GLOB '*[^0-9a-f]*'),
+            operation_id TEXT NOT NULL UNIQUE
+                CHECK(typeof(operation_id)='text' AND length(operation_id) BETWEEN 1 AND 128
+                    AND instr(operation_id,char(0))=0),
+            schema_version INTEGER NOT NULL CHECK(typeof(schema_version)='integer' AND schema_version=1),
+            decision_digest TEXT NOT NULL
+                CHECK(typeof(decision_digest)='text' AND length(decision_digest)=64
+                    AND instr(decision_digest,char(0))=0 AND length(CAST(decision_digest AS BLOB))=64
+                    AND decision_digest NOT GLOB '*[^0-9a-f]*'),
+            correction_code TEXT NOT NULL CHECK(correction_code='LINKED_WORKTREE'),
+            publication_bytes BLOB NOT NULL
+                CHECK(typeof(publication_bytes)='blob' AND length(publication_bytes) BETWEEN 1 AND 65536),
+            publication_digest TEXT NOT NULL
+                CHECK(typeof(publication_digest)='text' AND length(publication_digest)=64
+                    AND instr(publication_digest,char(0))=0 AND length(CAST(publication_digest AS BLOB))=64
+                    AND publication_digest NOT GLOB '*[^0-9a-f]*'),
+            target_kind TEXT NOT NULL CHECK(typeof(target_kind)='text' AND target_kind='native-file'),
+            target_root TEXT NOT NULL
+                CHECK(typeof(target_root)='text' AND length(target_root) BETWEEN 1 AND 4096
+                    AND instr(target_root,char(0))=0),
+            state TEXT NOT NULL CHECK(typeof(state)='text' AND state IN ('Pending','InFlight','Published')),
+            attempt INTEGER NOT NULL CHECK(typeof(attempt)='integer' AND attempt BETWEEN 0 AND 2147483647),
+            ownership_version INTEGER NOT NULL
+                CHECK(typeof(ownership_version)='integer' AND ownership_version>=0),
+            due_at_ms INTEGER NOT NULL CHECK(typeof(due_at_ms)='integer'),
+            owner_id TEXT NULL
+                CHECK(owner_id IS NULL OR
+                    (typeof(owner_id)='text' AND length(owner_id) BETWEEN 1 AND 128
+                    AND instr(owner_id,char(0))=0)),
+            published_at_ms INTEGER NULL
+                CHECK(published_at_ms IS NULL OR typeof(published_at_ms)='integer'),
+            CHECK((state='InFlight' AND owner_id IS NOT NULL) OR
+                (state<>'InFlight' AND owner_id IS NULL)),
+            CHECK((state='Published' AND published_at_ms IS NOT NULL) OR
+                (state<>'Published' AND published_at_ms IS NULL)),
+            FOREIGN KEY(operation_id,schema_version,decision_digest,correction_code)
+                REFERENCES native_registration_admission_fact
+                    (operation_id,schema_version,decision_digest,correction_code)
+        );
+
+        CREATE INDEX ix_registration_notice_due ON registration_notice_delivery(state,due_at_ms,notice_id)
+            WHERE state IN ('Pending','InFlight');
+
+        CREATE TRIGGER registration_notice_initial
+        BEFORE INSERT ON registration_notice_delivery
+        WHEN NEW.state<>'Pending' OR NEW.attempt<>0 OR NEW.ownership_version<>0
+        BEGIN
+            SELECT RAISE(ABORT,'COORD_NATIVE_NOTICE_INITIAL');
+        END;
+        CREATE TRIGGER registration_notice_no_replace
+        BEFORE INSERT ON registration_notice_delivery
+        WHEN EXISTS(SELECT 1 FROM registration_notice_delivery
+            WHERE notice_id=NEW.notice_id OR operation_id=NEW.operation_id)
+        BEGIN
+            SELECT RAISE(ABORT,'COORD_NATIVE_NOTICE_IMMUTABLE');
+        END;
+        CREATE TRIGGER registration_notice_no_delete
+        BEFORE DELETE ON registration_notice_delivery BEGIN
+            SELECT RAISE(ABORT,'COORD_NATIVE_NOTICE_IMMUTABLE');
+        END;
+        CREATE TRIGGER registration_notice_identity
+        BEFORE UPDATE OF notice_id,operation_id,schema_version,decision_digest,correction_code,
+            publication_bytes,publication_digest,target_kind,target_root
+        ON registration_notice_delivery BEGIN
+            SELECT RAISE(ABORT,'COORD_NATIVE_NOTICE_IMMUTABLE');
+        END;
+        CREATE TRIGGER registration_notice_transition
+        BEFORE UPDATE ON registration_notice_delivery
+        WHEN NOT (
+            NEW.ownership_version=OLD.ownership_version+1 AND (
+                (OLD.state='Pending' AND NEW.state='InFlight'
+                    AND NEW.attempt=OLD.attempt+1 AND NEW.due_at_ms=OLD.due_at_ms)
+                OR
+                (OLD.state='InFlight' AND NEW.state IN ('Pending','Published')
+                    AND NEW.attempt=OLD.attempt)
+            )
+        )
+        BEGIN
+            SELECT RAISE(ABORT,'COORD_NATIVE_NOTICE_TRANSITION');
+        END;
+        """;
+}

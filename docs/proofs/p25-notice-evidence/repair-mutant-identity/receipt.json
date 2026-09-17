@@ -1,0 +1,24 @@
+{
+  "total": 2,
+  "sourceBefore": "F8D0B78EB8956E17D6D13A020186922941ECEA5C79DAC4B444351D84A58DD857",
+  "actualExit": 1,
+  "failed": 2,
+  "sourceAfter": "F8D0B78EB8956E17D6D13A020186922941ECEA5C79DAC4B444351D84A58DD857",
+  "parent": "18603eed2c2dd4e480e8431381573d0f7c54808d",
+  "testsDll": "4EAEA458115373257E2546870A293FF548B2373E19A8FF343C1EA7DD092520FF",
+  "mutantDll": "A734855F14A62FB461DF0FA96686A32C88B8F1CE217F87EC35999FFAA697738B",
+  "mutant": "identity",
+  "results": [
+    {
+      "outcome": "Failed",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidId_RejectsBeforeDirectoryCreation(id: \"fffffffffffffffffffffffffffffffZ\")",
+      "message": "Assert.Throws() Failure: No exception was thrown\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)"
+    },
+    {
+      "outcome": "Failed",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidId_RejectsBeforeDirectoryCreation(id: \"../escape\")",
+      "message": "Assert.Throws() Failure: No exception was thrown\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)"
+    }
+  ],
+  "scope": "Watcher\\RegistrationPublisher.cs"
+}

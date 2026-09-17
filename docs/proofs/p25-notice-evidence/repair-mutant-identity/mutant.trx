@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="37b01a32-facf-47f6-830d-6b1e795dd41a" name="malla@TIMMALLSTRIX 2026-09-17 08:28:25" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-17T08:28:25.9315678-07:00" queuing="2026-09-17T08:28:25.9315680-07:00" start="2026-09-17T08:28:25.2010851-07:00" finish="2026-09-17T08:28:25.9345940-07:00" />
+  <TestSettings name="default" id="0b16c623-e737-4410-9ceb-6ded8e1431b8">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-17_08_28_25" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="094782ca-f541-4399-aaaa-be5090784b7b" testId="a5336366-8d35-c5a8-3fd2-0e4b1a3c7018" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidId_RejectsBeforeDirectoryCreation(id: &quot;fffffffffffffffffffffffffffffffZ&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0202818" startTime="2026-09-17T08:28:25.8439263-07:00" endTime="2026-09-17T08:28:25.8574018-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="094782ca-f541-4399-aaaa-be5090784b7b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.WatcherException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidId_RejectsBeforeDirectoryCreation(String id) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 399&#xD;
+   at InvokeStub_NativeNoticePublicationTests.Publish_InvalidId_RejectsBeforeDirectoryCreation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f79a04d0-854b-44d6-ae9c-e23ac45042f2" testId="22a42324-825f-4d44-7eb9-eaaff4db8f39" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidId_RejectsBeforeDirectoryCreation(id: &quot;../escape&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0852964" startTime="2026-09-17T08:28:25.7431337-07:00" endTime="2026-09-17T08:28:25.8370388-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f79a04d0-854b-44d6-ae9c-e23ac45042f2">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.WatcherException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidId_RejectsBeforeDirectoryCreation(String id) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 399&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidId_RejectsBeforeDirectoryCreation(id: &quot;../escape&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\obj\repair-mutants\identity\tests\aide.core.tests.dll" id="22a42324-825f-4d44-7eb9-eaaff4db8f39">
+      <Execution id="f79a04d0-854b-44d6-ae9c-e23ac45042f2" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\obj\repair-mutants\identity\tests\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_InvalidId_RejectsBeforeDirectoryCreation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidId_RejectsBeforeDirectoryCreation(id: &quot;fffffffffffffffffffffffffffffffZ&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\obj\repair-mutants\identity\tests\aide.core.tests.dll" id="a5336366-8d35-c5a8-3fd2-0e4b1a3c7018">
+      <Execution id="094782ca-f541-4399-aaaa-be5090784b7b" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\obj\repair-mutants\identity\tests\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_InvalidId_RejectsBeforeDirectoryCreation" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="a5336366-8d35-c5a8-3fd2-0e4b1a3c7018" executionId="094782ca-f541-4399-aaaa-be5090784b7b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="22a42324-825f-4d44-7eb9-eaaff4db8f39" executionId="f79a04d0-854b-44d6-ae9c-e23ac45042f2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.25]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.27]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.38]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.38]       Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+[xUnit.net 00:00:00.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(399,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidId_RejectsBeforeDirectoryCreation(String id)&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.40]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.40]       Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+[xUnit.net 00:00:00.40]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.40]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(399,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidId_RejectsBeforeDirectoryCreation(String id)&#xD;
+[xUnit.net 00:00:00.40]            at InvokeStub_NativeNoticePublicationTests.Publish_InvalidId_RejectsBeforeDirectoryCreation(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.40]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.40]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T08:28:25.8385444-07:00">
+        <Text>[xUnit.net 00:00:00.38]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidId_RejectsBeforeDirectoryCreation(id: "../escape") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T08:28:25.8576616-07:00">
+        <Text>[xUnit.net 00:00:00.40]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidId_RejectsBeforeDirectoryCreation(id: "fffffffffffffffffffffffffffffffZ") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

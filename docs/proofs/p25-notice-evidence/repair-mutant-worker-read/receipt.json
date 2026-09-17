@@ -1,0 +1,19 @@
+{
+  "total": 1,
+  "sourceBefore": "F8D0B78EB8956E17D6D13A020186922941ECEA5C79DAC4B444351D84A58DD857",
+  "actualExit": 1,
+  "failed": 1,
+  "sourceAfter": "F8D0B78EB8956E17D6D13A020186922941ECEA5C79DAC4B444351D84A58DD857",
+  "parent": "18603eed2c2dd4e480e8431381573d0f7c54808d",
+  "testsDll": "4EAEA458115373257E2546870A293FF548B2373E19A8FF343C1EA7DD092520FF",
+  "mutantDll": "3FBC2184DEB6F354DC7F185CB75DD1283E7D7698AA75BD9EB35EB1A5630FE48E",
+  "mutant": "worker-read",
+  "results": [
+    {
+      "outcome": "Failed",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_StoreReadFails_IsUncertainAndRetainsPending",
+      "message": "Assert.Equal() Failure: Strings differ\r\nExpected: \"COORD_NOTICE_UNCERTAIN\"\r\nActual:   null"
+    }
+  ],
+  "scope": "Watcher\\RegistrationPublisher.cs"
+}

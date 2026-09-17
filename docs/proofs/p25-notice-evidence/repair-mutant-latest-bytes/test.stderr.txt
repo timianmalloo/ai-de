@@ -1,0 +1,1 @@
+[xUnit.net 00:00:00.42]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt [FAIL]

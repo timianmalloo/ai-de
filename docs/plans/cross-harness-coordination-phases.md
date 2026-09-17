@@ -921,3 +921,27 @@ Independent gates and production binder/activation remain the next checkpoint.
 The final reserved-filename checks and deterministic poison-test correction are
 recorded in `runtime-n1-final2` (failed) and `runtime-n1-final3` (only legacy REDs);
 the earlier 19-control/245-test checkpoint is retained as historical evidence.
+
+### 2026-09-17 finite publication repair checkpoint
+
+The canonical Proof Pack's **finite publication repair** section supersedes the
+preceding missing filename-ownership, public-helper hard-path and retained-reader
+proof statements. The design was refined before code. Enhanced admission now
+rejects ambiguous compatibility IDs before its native writes; existing different
+owners refuse. The public helper remains usable on the exercised Windows-local
+path and uses checked ancestor pins and unique temporary files.
+
+Verified author evidence: baseline 245/247 with two legacy REDs; final 252/254
+with the same original two legacy failure assertions reached. All 247 previous
+occurrences remain in the selection. Publication cases are 28/28 and admission
+cases 51/51. Seven isolated semantic variants produce nine focal failures,
+including version-only completion, invalid/reserved candidates admitted by their
+mutants, actual independent retained-reader failure and latest-byte regression.
+Raw receipts and full pins live in the existing p25 evidence directory; there
+is no second proof pack.
+
+This remains an **author checkpoint, not a phase approval**. Next continuation
+must independently re-gate the full source, privacy, domain and portability
+limits, evidence and no-activation boundary. Public non-Windows execution is
+Unavailable; uncooperative cross-process legacy actors are not fenced. Neither
+legacy N1/N2 nor full P2/P3–P5 is cleared, and canonical writing remains disabled.

@@ -1,0 +1,16 @@
+{
+  "publication": {
+    "passed": 28,
+    "total": 28
+  },
+  "baselineTrxSha": "5112FE676D1806FA5AB5B69D295D081E71C488828B933A77F0A852F95311FA64",
+  "baselineOccurrences": 247,
+  "parent": "18603eed2c2dd4e480e8431381573d0f7c54808d",
+  "missingOccurrences": [],
+  "admission": {
+    "passed": 51,
+    "total": 51
+  },
+  "finalTrxSha": "3E8631FFD4A8F770BB4FBBAB3EA904A7D60E5B10E65E2178C55DD1CF3AAE05D2",
+  "finalOccurrences": 254
+}

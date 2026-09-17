@@ -1,0 +1,12 @@
+{
+  "command": [
+    "dotnet",
+    "vstest",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\obj\\repair-mutants\\reserved\\tests\\AiDe.Core.Tests.dll",
+    "/TestCaseFilter:FullyQualifiedName~Publish_ReservedLegacyFilename",
+    "/Logger:trx;LogFileName=mutant.trx",
+    "/ResultsDirectory:C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p25-notice-evidence\\repair-mutant-reserved"
+  ],
+  "durationSeconds": 0.9742668,
+  "exit": 1
+}

@@ -1,0 +1,19 @@
+{
+  "total": 1,
+  "sourceBefore": "31C931B51173E9F057AB37A228E10D96C02261DF7F99E700E5B3E5A02809083D",
+  "actualExit": 1,
+  "failed": 1,
+  "sourceAfter": "31C931B51173E9F057AB37A228E10D96C02261DF7F99E700E5B3E5A02809083D",
+  "parent": "18603eed2c2dd4e480e8431381573d0f7c54808d",
+  "testsDll": "4EAEA458115373257E2546870A293FF548B2373E19A8FF343C1EA7DD092520FF",
+  "mutantDll": "83F64284FBEEE0D7CD2290A19A550F59F720D9988E0CC4DE10FA83BC97D89FA1",
+  "mutant": "unavailable",
+  "results": [
+    {
+      "outcome": "Failed",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_DefaultComposition_IsUnavailableNotEmpty",
+      "message": "Assert.Throws() Failure: No exception was thrown\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)"
+    }
+  ],
+  "scope": "Watcher\\IngestHost.cs"
+}

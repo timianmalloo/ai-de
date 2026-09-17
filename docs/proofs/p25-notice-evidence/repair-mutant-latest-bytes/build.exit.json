@@ -1,0 +1,15 @@
+{
+  "durationSeconds": 2.6210849,
+  "command": [
+    "dotnet",
+    "build",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\obj\\repair-mutants\\latest-bytes\\core\\AiDe.Core.csproj",
+    "--no-restore",
+    "-p:UseSharedCompilation=false",
+    "-m:1",
+    "-nodeReuse:false",
+    "--verbosity",
+    "minimal"
+  ],
+  "exit": 0
+}

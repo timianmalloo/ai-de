@@ -1,0 +1,3 @@
+[xUnit.net 00:00:01.26]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Admit_AmbiguousCompatibilityIds_RefusesBothBeforeAdmissionOrFiles [FAIL]
+[xUnit.net 00:00:02.12]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.PublishLegacy_AmbiguousExistingOwner_RefusesWithoutOverwrite [FAIL]
+[xUnit.net 00:00:02.18]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.PublishLegacy_RegistrationJunction_RefusesWithoutSiblingFiles [FAIL]

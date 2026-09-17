@@ -1,0 +1,2 @@
+[xUnit.net 00:00:12.94]     AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.DrainRegistrationNotices_PublicationFails_RetryRetainsOriginalCorrection [FAIL]
+[xUnit.net 00:00:13.08]     AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.Register_TwoHostsHave128OutstandingCorrections_RefusesBeforeNativeMutation [FAIL]

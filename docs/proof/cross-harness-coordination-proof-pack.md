@@ -3146,3 +3146,141 @@ worker/restart scheduling, hardened publisher/hard paths, canonical bridge,
 released old binaries/rollback, retention, P3-P5 and upstream remain open as
 enumerated above. No primary code, hook or config edit, hook override, site
 generation, dependency change or agent delegation belongs to this correction.
+
+## 2026-09-17 — finite publication repair, author evidence (not independent clearance)
+
+**Parent/source baseline:** `18603eed2c2dd4e480e8431381573d0f7c54808d`.
+Assigned tree: `C:\Projects\ai-de-feature-xh-p2-projection`.
+Session: `xh-p2-projection-b0d0`. No production binder or canonical writer was
+activated. This section corrects the preceding hard-path/evidence gaps; it does
+not retroactively promote the earlier checkpoints or clear full P2/P3–P5.
+
+### Goal, contract and change reach
+
+Goal: repair compatibility-name collisions and public-helper junction escape,
+then establish the missing failure-sensitive publication/accounting oracles.
+Done when: scoped source/tests, retained raw evidence and this canonical record
+are committed for independent re-gating. Excluded: other worktrees, App/GUI,
+live databases/endpoints, source/customer data, dependencies, hook/config
+changes, activation, history migration, canonical completion and upstream work.
+T2; no delegates; main-line budget 35 tool operations; 150k context ceiling.
+
+The design's **Finite publication repair** section was written before source.
+Enhanced IDs have a strict lowercase ASCII letter/digit/hyphen/underscore domain,
+maximum 250 characters, with Windows device names refused. This makes the
+unchanged ordinary compatibility filename unambiguous without renaming history.
+Validation occurs at the existing session-selection seam in
+`SqliteWatcherObservationStore.RegistrationNotices.cs`, before capability
+preparation and admission inserts. That narrow seam calls the shared codec and
+publisher ownership check. The immutable receipt/schema/history is unchanged.
+
+`RegistrationPublisher` checks an existing compatibility document's exact
+`sessionId`, before admission and again before publication. Known-other-session
+or malformed ownership refuses with `COORD_NOTICE_CONFLICT`. The public legacy
+helper still writes its existing JSON and filename shape. Both writers reuse
+checked, pinned non-reparse ancestors/registration directories, unique
+`CreateNew` temporaries, atomic installation and byte verification. Ordinary
+missing root directories are created only while the preceding ancestors are
+pinned. Cooperative in-process writers share a publication gate.
+
+Surface trace: trusted ID selection → pre-admission guard → immutable native
+fact/notice → worker → immutable file + compatibility JSON → existing legacy
+reader. No client payload change or new persisted field. Transport counters and
+private-safe codes are the existing emitting sources; native `Published` remains
+file-transport evidence, never human consumption or canonical completion.
+
+### Executed baseline, red and restored candidate
+
+All paths in this table are beneath `docs/proofs/p25-notice-evidence/`.
+`run-native.ps1` records full commands, actual process exits, elapsed seconds,
+stdout/stderr, per-occurrence TRX and before/after source/test/project/binary
+SHA-256 pins. A runner's successful expectation check is **not** an all-green suite.
+
+| Evidence directory | Actual result | Interpretation |
+|---|---:|---|
+| `runtime-repair-baseline` | exit 1; 247 executed, 245 pass, 2 fail | Prior binaries and source pinned **before** repairs |
+| `runtime-repair-red` | exit 1; 26 executed, 23 pass, 3 fail | Both `a:b`/`a?b` admitted and published; first compatibility JSON overwritten despite two immutable files; public owner mismatch overwritten; registration junction writes one sibling file |
+| `runtime-repair-green` | exit 1; 252 executed, 250 pass, 2 fail | Intermediate: N1 stopped at its obsolete raw-exception expectation, **not** its lost-retry oracle |
+| `runtime-repair-final` | exit 1; 254 executed, 252 pass, 2 fail | 28 publication and 51 admission occurrences pass; N1 again fails on empty retry, N2 on 129th native mutation |
+
+The retained N1 diagnostic was updated only for the deliberately changed writer:
+stable `COORD_NOTICE_IO` and no leaked temporary. Its empty-retry assertion was
+not removed or weakened. N2 was not changed. Neither RED is waived. Final
+selection includes all 247 prior occurrences plus seven new ones; no theory
+arguments are collapsed into method counts. Raw TRX remains authoritative.
+
+Final candidate binaries (also in `runtime-repair-final/after-pins.json`):
+
+* `AiDe.Core.dll`: `7EB000A4836D50124A298C66CB68DEBA69F12CEEC5567544A85C1BCCBF75AD7D`
+* `AiDe.Core.Tests.dll`: `4EAEA458115373257E2546870A293FF548B2373E19A8FF343C1EA7DD092520FF`
+
+These hashes were read back unchanged after isolated mutant execution.
+
+### Focal controls and semantic mutants
+
+`run-repair-mutants.ps1` generates isolated Core/test-binary fixtures under the
+assigned tree's test `obj` directory. It never changes the production source.
+Each evidence directory retains original/mutant source text, exact build/test
+commands, separate stdout/stderr/exits, nonzero per-case TRX, parent SHA,
+source-before/source-after equality and mutant/test binary hashes. Build failures
+are not accepted as semantic RED. Each successful fixture is removed after its
+receipt is written. No external data, live database or endpoint is used.
+
+| Claim / oracle | Deliberate falsification and observed result | Evidence directory | Confidence |
+|---|---|---|---|
+| Invalid notice IDs refuse before files | Disable ID guard and route invalid IDs into safe synthetic immutable filenames; both exact invalid candidates now succeed, so both `Assert.Throws` fail | `repair-mutant-identity` (2/2 RED) | Verified |
+| Reserved compatibility names refuse | Disable session-name guard and route reserved IDs to a safe synthetic compatibility target; `CON` and `LPT1` are admitted, not failed by device I/O | `repair-mutant-reserved` (2/2 RED) | Verified |
+| Completion requires current version | Remove only SQL version predicate; **same owner and attempt**, wrong version incorrectly returns true | `repair-mutant-version` (1/1 RED) | Verified |
+| Retained accounting failure is not zero | Close the enrollment's independent read-only connection after 128 accepted Pending rows and root retirement; mutant converts that reader's exception to zero, so a new admission incorrectly succeeds | `repair-mutant-reader` (1/1 RED) | Verified |
+| Latest accepted bytes cannot regress | Return current attempt's bytes instead of the selected newest accepted bytes; retained older-attempt test fails **byte equality** | `repair-mutant-latest-bytes` (1/1 RED) | Verified |
+| Unavailable is not empty success | Default public worker returns an empty batch instead of refusing; retained refusal assertion fails | `repair-mutant-unavailable` (1/1 RED) | Verified |
+| Worker-store read error remains explicit | Change its reported Uncertain to null; retained code assertion fails | `repair-mutant-worker-read` (1/1 RED) | Verified |
+
+The earlier `repair-mutant-latest` filtered all Pending rows out and failed with
+a missing output file. It is retained as an observed weaker attempt, **not counted**
+as the latest-byte regression proof; the byte-equality mutant above supersedes it.
+Counted evidence is seven independent variants, nine executed focal failures.
+
+The retained-reader test does **not** dispose the worker store: reflection selects
+the enrollment's actual reader connection and closes/reopens it at the test
+boundary. With the fault present, production reports Uncertain, preserves 128
+obligations and its OS owner lock, and creates no second-store admission. After
+restoration it reports Capacity; one actual publication frees one slot. Further
+actual publication drains the retained obligations and releases the owner lock.
+No coordinator production change or public fault-bypass API was needed.
+
+### Failure classes, limits and next gate
+
+* **Class/sweep:** lossy filename mapping used as identity; the enhanced and public
+  publisher paths both consumed `StandingPublisher.FileNameFor`. Both are guarded;
+  the unrelated standing/contract-log producers are not changed by this unit.
+* **Derive/prevent:** preserve ordinary filenames, restrict enhanced IDs once in
+  the codec, and check existing ownership through shared pinned publication code.
+  Retained collision/junction REDs and final positives cover the actual files.
+* **Evidence-class correction:** an error injected into the worker's connection
+  does not test the retained accounting reader. The new independent-reader
+  fixture and zero-on-error mutant close that specific gap.
+* No new lesson-register or separate proof-pack file was written, per the explicit
+  ownership boundary. The class/control record is here for the next independent
+  reviewer, not a claim that the global lessons register was updated.
+
+**Windows-local limitation:** pins qualify local Windows ancestor/directory
+handling, not all-platform symlink-race immunity. The public helper now refuses
+non-Windows execution with Unavailable; no non-Windows usability proof is claimed.
+The publication gate does not fence uncooperative cross-process legacy writers.
+No global ACL changes or history repair occurred. Existing ambiguous historical
+rows may remain unpublishable rather than being silently renamed.
+
+Plan: baseline → retained oracles → repair → isolated mutants → regression/evidence
+→ commit; all data dependencies, shared builds serial, zero fan-out. Equal-node
+modeled work/span is 6/6 (**Inferred**, not wall time). Actual durations are in
+receipts. Fixed seven-variant worklist terminates at zero remaining variants;
+the weaker latest-output mutant prompted one bounded stronger replacement.
+No external reviewer was convened in this no-agents unit.
+
+**Next mandatory gate:** independent Test/Data/Security review of the full diff,
+strict ID-domain compatibility, Windows-local public-helper behavior, P3 evidence
+and no-activation boundary. Author evidence closes the three finite implementation/
+evidence findings for review; it does **not** self-clear those gates, full P2,
+legacy N1/N2, production binding/scheduling, canonical integration, retention,
+old-binary rollback or P3–P5.

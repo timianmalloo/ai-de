@@ -1,0 +1,63 @@
+{
+  "phase": "repair-red",
+  "head": "18603eed2c2dd4e480e8431381573d0f7c54808d",
+  "command": [
+    "dotnet",
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "-p:UseSharedCompilation=false",
+    "-m:1",
+    "-nodeReuse:false",
+    "--filter",
+    "FullyQualifiedName~NativeNoticePublicationTests",
+    "--logger",
+    "trx;LogFileName=notice.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p25-notice-evidence\\runtime-repair-red",
+    "--verbosity",
+    "minimal"
+  ],
+  "startedUtc": "2026-09-17T15:23:57.4569026+00:00",
+  "endedUtc": "2026-09-17T15:24:09.2939156+00:00",
+  "durationSeconds": 11.837013,
+  "actualExit": 1,
+  "total": 26,
+  "passed": 23,
+  "failures": [
+    {
+      "message": "Expected context refusal; error=SUCCESS; siblingFiles=1",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.PublishLegacy_RegistrationJunction_RefusesWithoutSiblingFiles"
+    },
+    {
+      "message": "Both IDs must refuse; errors=SUCCESS,SUCCESS; files={\"generatedBy\":\"ai-de/registration-publisher\",\"noticeId\":\"74744952df9d3fd7fa0f3aec809eae05\",\"sessionId\":\"a?b\",\"repositorySent\":\"C:\\\\Projects\\\\ai-de-feature-xh-p2-projection\\\\tests\\\\AiDe.Core.Tests\\\\bin\\\\Debug\\\\net10.0\\\\n1-fixtures\\\\dcaca1bb7d284046a719515a45d6fe68\\\\PRIVATE_MARKER\",\"repositoryUsed\":\"repository\",\"reason\":\"the registered path is a linked worktree; its repository is used so the fleet map, the message board and the score segment all agree with the other worktrees of that repository\"},{\"generatedBy\":\"ai-de/registration-publisher\",\"noticeId\":\"1abf063b58e555077e6da03539995cf2\",\"sessionId\":\"a:b\",\"repositorySent\":\"C:\\\\Projects\\\\ai-de-feature-xh-p2-projection\\\\tests\\\\AiDe.Core.Tests\\\\bin\\\\Debug\\\\net10.0\\\\n1-fixtures\\\\dcaca1bb7d284046a719515a45d6fe68\\\\PRIVATE_MARKER\",\"repositoryUsed\":\"repository\",\"reason\":\"the registered path is a linked worktree; its repository is used so the fleet map, the message board and the score segment all agree with the other worktrees of that repository\"},{\"generatedBy\":\"ai-de/registration-publisher\",\"noticeId\":\"74744952df9d3fd7fa0f3aec809eae05\",\"sessionId\":\"a?b\",\"repositorySent\":\"C:\\\\Projects\\\\ai-de-feature-xh-p2-projection\\\\tests\\\\AiDe.Core.Tests\\\\bin\\\\Debug\\\\net10.0\\\\n1-fixtures\\\\dcaca1bb7d284046a719515a45d6fe68\\\\PRIVATE_MARKER\",\"repositoryUsed\":\"repository\",\"reason\":\"the registered path is a linked worktree; its repository is used so the fleet map, the message board and the score segment all agree with the other worktrees of that repository\"}",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Admit_AmbiguousCompatibilityIds_RefusesBothBeforeAdmissionOrFiles"
+    },
+    {
+      "message": "Assert.Throws() Failure: No exception was thrown\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.PublishLegacy_AmbiguousExistingOwner_RefusesWithoutOverwrite"
+    }
+  ],
+  "evidencePins": [
+    {
+      "sha256": "0494F37726EAA43F82E868EFB36E2E0EB1CF1A3C524BBD4D076372829402EA79",
+      "file": "after-pins.json"
+    },
+    {
+      "sha256": "68CCC0330D0ACA92CFE4D5C94E0C5B07FAE23FEDC7E8210BACE3001273330426",
+      "file": "before-pins.json"
+    },
+    {
+      "sha256": "E6B2EAF6B1523681D7E48C06C076E11FA9C81D758AB84E47AC829AD0F414C798",
+      "file": "notice.trx"
+    },
+    {
+      "sha256": "DA57FE8968CC93A6672008E4AAE2CA793D33A6CDA40D379796D7E71F0B275A0A",
+      "file": "stderr.txt"
+    },
+    {
+      "sha256": "3B0F568A62E83AA95ED41F639E2B416F6DC1A24F2C4F937830B3CDDC569F3AF8",
+      "file": "stdout.txt"
+    }
+  ]
+}

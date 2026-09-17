@@ -1,0 +1,18 @@
+VSTest version 18.6.0 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+  Failed AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt [115 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                        ↓ (pos 58)
+Expected: [···, 58, 34, 102, 49, 100, ···]
+Actual:   [···, 58, 34, 57, 101, 51, ···]
+                        ↑ (pos 58)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 387
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+Results File: C:\Projects\ai-de-feature-xh-p2-projection\docs\proofs\p25-notice-evidence\repair-mutant-latest-bytes\mutant.trx
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 124 ms - AiDe.Core.Tests.dll (net10.0)

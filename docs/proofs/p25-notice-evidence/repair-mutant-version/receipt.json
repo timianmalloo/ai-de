@@ -1,0 +1,19 @@
+{
+  "total": 1,
+  "sourceBefore": "49592146B20D7B3CE158186C32440363F9E23C69C601C18A2EA682EBCE9C8863",
+  "actualExit": 1,
+  "failed": 1,
+  "sourceAfter": "49592146B20D7B3CE158186C32440363F9E23C69C601C18A2EA682EBCE9C8863",
+  "parent": "18603eed2c2dd4e480e8431381573d0f7c54808d",
+  "testsDll": "4EAEA458115373257E2546870A293FF548B2373E19A8FF343C1EA7DD092520FF",
+  "mutantDll": "21A6325921EE05A0527AC403FD5EFAD315479733B60B462DDAF97C5BE39EEB66",
+  "mutant": "version",
+  "results": [
+    {
+      "outcome": "Failed",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Complete_WrongVersionSameOwnerAndAttempt_RetainsInFlight",
+      "message": "Assert.False() Failure\r\nExpected: False\r\nActual:   True"
+    }
+  ],
+  "scope": "Watcher\\SqliteWatcherObservationStore.RegistrationNotices.cs"
+}

@@ -1,0 +1,1 @@
+[xUnit.net 00:00:00.39]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_StoreReadFails_IsUncertainAndRetainsPending [FAIL]

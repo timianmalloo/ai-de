@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="3f54061a-db73-4f0d-bb26-b9fd59190484" name="malla@TIMMALLSTRIX 2026-09-17 08:28:34" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-17T08:28:34.0092962-07:00" queuing="2026-09-17T08:28:34.0092964-07:00" start="2026-09-17T08:28:33.2905725-07:00" finish="2026-09-17T08:28:34.0122096-07:00" />
+  <TestSettings name="default" id="f066eecf-c9a6-4458-93a1-38983135975b">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-17_08_28_34" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="08f3e08b-3352-4a87-a5b6-5337258f1622" testId="096b2d30-1b63-75d5-55d1-c4aeda0a9e24" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Complete_WrongVersionSameOwnerAndAttempt_RetainsInFlight" computerName="TIMMALLSTRIX" duration="00:00:00.0811678" startTime="2026-09-17T08:28:33.8407097-07:00" endTime="2026-09-17T08:28:33.9299645-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="08f3e08b-3352-4a87-a5b6-5337258f1622">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Complete_WrongVersionSameOwnerAndAttempt_RetainsInFlight() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 114&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Complete_WrongVersionSameOwnerAndAttempt_RetainsInFlight" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\obj\repair-mutants\version\tests\aide.core.tests.dll" id="096b2d30-1b63-75d5-55d1-c4aeda0a9e24">
+      <Execution id="08f3e08b-3352-4a87-a5b6-5337258f1622" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\obj\repair-mutants\version\tests\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Complete_WrongVersionSameOwnerAndAttempt_RetainsInFlight" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="096b2d30-1b63-75d5-55d1-c4aeda0a9e24" executionId="08f3e08b-3352-4a87-a5b6-5337258f1622" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.28]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.38]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.38]       Expected: False&#xD;
+[xUnit.net 00:00:00.38]       Actual:   True&#xD;
+[xUnit.net 00:00:00.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(114,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Complete_WrongVersionSameOwnerAndAttempt_RetainsInFlight()&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.39]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T08:28:33.9315901-07:00">
+        <Text>[xUnit.net 00:00:00.38]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Complete_WrongVersionSameOwnerAndAttempt_RetainsInFlight [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
