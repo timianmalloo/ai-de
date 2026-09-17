@@ -256,16 +256,29 @@ public sealed record WorkbenchLayout(
     /// </remarks>
     private static WorkbenchLayout ArchitectureDefault()
     {
-        var left = new ZoneStack([new Surface("graph", "canvas", "Graph")]);
+        // Ruling 140 amends Ruling 94's layout line to the operator's own words: "the right-side-views
+        // for the architecture explorer need to be Graph and Tree - where tree is the more familiar dev
+        // view like in vs code". The operator's "right-side views" are THIS zone — the pane holding
+        // Contexts | Domain in their screenshot — so the request is Center = [Graph, Tree], and the
+        // Graph cannot also stay in Left: one Graph, one home. Contexts and Domain leave the default
+        // and stay admitted through the View menu, exactly as Evidence does under 94; their kinds stay
+        // restorable, so a saved slot carrying them still reconciles.
+        //
+        // Graph is first, so ZoneStack's ActiveIndex of 0 makes it active. `solution-tree` is the
+        // Tree's registered kind (SurfaceContentFactory.cs:179, "Solution tree") — fetched, not
+        // invented, per Ruling 140 (a).
         var center = new ZoneStack(
         [
-            new Surface("contexts", "contexts", "Contexts"),
-            new Surface("domain", "classdiagram", "Domain"),
+            new Surface("graph", "canvas", "Graph"),
+            new Surface("tree", "solution-tree", "Tree"),
         ]);
 
         var zones = ImmutableDictionary.CreateRange(new[]
         {
-            KeyValuePair.Create(ZoneId.Left, new ZoneState(ZoneId.Left, left, ArchitectureLeftExtent, Collapsed: false)),
+            // Left retires its Graph with it, which also makes Ruling 94 condition (3)'s header-strip
+            // overflow finding MOOT rather than fixed: the strip overflowed because the Graph sat in a
+            // 0.22-width zone, and it no longer does. Recorded as moot, not repaired.
+            KeyValuePair.Create(ZoneId.Left, new ZoneState(ZoneId.Left, Content: null, ZoneState.DefaultExtent, Collapsed: true)),
             KeyValuePair.Create(ZoneId.Right, new ZoneState(ZoneId.Right, Content: null, ZoneState.DefaultExtent, Collapsed: true)),
             // (empty, collapsed) per §B4: Diagnostics is a Show entry, not a default.
             KeyValuePair.Create(ZoneId.Bottom, new ZoneState(ZoneId.Bottom, Content: null, ZoneState.DefaultExtent, Collapsed: true)),
