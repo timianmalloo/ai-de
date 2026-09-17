@@ -14,6 +14,7 @@ import uuid
 from unittest.mock import patch
 
 from test_coord_responses import coord, digest, question, response, remove_fixture, REPO, SCRIPTS
+import test_coord_responses
 
 
 class ProtocolTests(unittest.TestCase):
@@ -618,6 +619,74 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual([], events)
         self.assertEqual(1, len(errors))
 
+    def test_Validate_InvalidTimestamp_FieldInvalid(self):
+        protocol = coord._protocol()
+        values = (10 ** 1000, -(10 ** 1000), True, False, None, "2", [], {})
+        for kind, field, index in itertools.product(
+                sorted(protocol.FACT_TYPES), ("producerAt", "recordedAt"), range(len(values))):
+            with self.subTest(kind=kind, field=field, case=index):
+                event = self.event(kind, **{field: values[index]})
+
+                try:
+                    with self.assertRaises(protocol.ProtocolError) as raised:
+                        protocol.validate_fact(event)
+                except OverflowError:
+                    self.fail("timestamp overflow escaped the field-error boundary")
+
+                self.assertEqual("XH.FIELD_INVALID", raised.exception.code)
+                with self.assertRaises(coord.CoordError) as wrapped:
+                    coord.validate_response(event)
+                self.assertEqual("XH.FIELD_INVALID", wrapped.exception.code)
+
+    def test_Read_HugeIntegerTimestamp_FieldInvalidKeepsNextRecord(self):
+        for field, sign in itertools.product(("producerAt", "recordedAt"), (1, -1)):
+            with self.subTest(field=field, sign=sign):
+                event = self.event(**{field: sign * 10 ** 1000})
+                raw = b"".join(json.dumps(e).encode() + b"\n" for e in (event, self.q))
+
+                events, errors = self.read(raw)
+
+                self.assertEqual([self.q], events)
+                self.assertEqual(["requests.jsonl:1: XH.FIELD_INVALID"], errors)
+                self.assertEqual([], self.calls)
+                self.assertEqual(raw, (self.root / "requests.jsonl").read_bytes())
+
+    def test_Cli_HugeIntegerTimestamp_FieldInvalidWithoutPartialState(self):
+        for field, sign in itertools.product(("producerAt", "recordedAt"), (1, -1)):
+            with self.subTest(field=field, sign=sign):
+                event = self.event(**{field: sign * 10 ** 1000})
+                raw = b"".join(json.dumps(e).encode() + b"\n" for e in (event, self.q))
+                self.read(raw)
+                env = dict(self.env, COORD_ROOT=str(self.root), AGENT_SESSION="synthetic",
+                           AGENT_NAME="synthetic", PYTHONIOENCODING="utf-8")
+
+                proc = subprocess.run(
+                    [sys.executable, "-B", str(SCRIPTS / "coord-core.py"), "request", "list",
+                     "--status", "all", "--actionable", "--json"],
+                    cwd=self.root, env=env, capture_output=True, text=True, timeout=30)
+
+                self.assertEqual(4, proc.returncode)
+                self.assertEqual("", proc.stdout)
+                self.assertIn("requests.jsonl:1: XH.FIELD_INVALID", proc.stderr)
+                self.assertNotIn("Traceback", proc.stderr)
+                self.assertEqual([], self.calls)
+                self.assertEqual(raw, (self.root / "requests.jsonl").read_bytes())
+
+    def test_Validate_FiniteTimestampBoundaries_PreservesBytesAndValues(self):
+        values = (0, -1, -1.5, 2 ** 53 + 1, 10 ** 308, -0.0,
+                  float.fromhex("0x0.0000000000001p-1022"),
+                  sys.float_info.max, -sys.float_info.max, int(sys.float_info.max))
+        for field, value in itertools.product(("producerAt", "recordedAt"), values):
+            with self.subTest(field=field, value=value):
+                event = self.event(**{field: value})
+                before = copy.deepcopy(event)
+
+                canonical = coord._protocol().validate_fact(event)
+
+                self.assertEqual(digest(event), hashlib.sha256(canonical).hexdigest())
+                self.assertEqual(before, event)
+                self.assertIs(type(value), type(event[field]))
+
     def test_Read_DepthAndReferenceExactLimits_Accept(self):
         tree = {}
         for _ in range(15):
@@ -882,6 +951,20 @@ def mutation_receipt() -> int:
             finally:
                 fixture.doCleanups()
         results.append({"mutant": name, "tests": result.testsRun, "failures": len(result.failures),
+                        "errors": len(result.errors),
+                        "killed": bool(result.failures) and not result.errors})
+    old = "except OverflowError:\n        return False"
+    if source.count(old) != 1:
+        raise AssertionError("timestamp overflow mutation anchor not unique")
+    for suite in (test_coord_responses.ResponseTests, ProtocolTests):
+        module = types.ModuleType("coord_protocol")
+        with patch.dict(sys.modules, {"coord_protocol": module}):
+            exec(compile(source.replace(old, "except OverflowError:\n        return True", 1),
+                         str(SCRIPTS / "coord_protocol.py"), "exec"), module.__dict__)
+            result = unittest.TextTestRunner(stream=io.StringIO()).run(
+                suite("test_Validate_InvalidTimestamp_FieldInvalid"))
+        results.append({"mutant": "timestamp-overflow-" + suite.__name__,
+                        "tests": result.testsRun, "failures": len(result.failures),
                         "errors": len(result.errors),
                         "killed": bool(result.failures) and not result.errors})
     print(json.dumps(results))

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T13:10:05Z",
+  "generated": "2026-09-17T17:00:10Z",
   "audit": [
     {
       "actor": null,
@@ -20223,6 +20223,36 @@ window.AUDIT_DATA = {
         "branch": "feature/xh-p1-responses",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2R4ZEKEWEP6F2P6YEZCYXZJ",
+      "shortname": "implement-p1-timestamp-field-error",
+      "datetime": "2026-09-17T17:00:10Z",
+      "session": "xh-p1-responses-b0d0",
+      "prompt": "WRITE-CAPABLE Python finiteP1 field-errorcorrection <=20tools150k noagents. OwnregisteredP1treeC:\\Projects\\ai-de-feature-xh-p1-responses HEADebd4f1c8473b70934ec29d778419289719ef5481 sessionxh-p1-responses-b0d0 endedreopen. ParallelC#validator usesPINNEDebd4oracle don'tsilentlychangeSPIKEcorpus/otherbranch. UserP0/P1parseralreadyapprovedrequiredmalformederror explicit; measuredcanonicalspike nowhugeINTtimestamp validJSONcausesUNCaughtOverflowError directP1validators due math.isfinite beforetry. Need surgicalfieldtype/bounds/error fix, notnewgenericBigIntlim orpayloadban. No needinvestigateoldhistories/newplan. Owner Data/Testcontract peer establishedprioragent; followimplementTDD existingactiveonce.\nReadactualcoord-core/coord_protocol finitevalidation paths+testfixtures. producerAt/recordedAt allowint/float finiteNOTbool; 'Huge' e.g10**1000timestamp math.isfinite(hugeInt)OverflowError direct, readercatchesprintedruntimeexceptiontextnotstableerror. Changehelper finitecheckguard tocatch specificOverflowError/TYPESchema predicate with XH.FIELD_INVALID explicit BOTHresponse/protocolfacttimestamp validation. ReuseONE sharedhelper ifcrossmoduleimportpatterns(existingcircdependency?)firstholdingstdlibmin check don'tcreate framework. PreservevalidlargeINTEGER payloadextension (1001digit withinPythonconversionmax configured)—don'tconvertallnumericJSON double/drop precision or globalrejecttimestampsoutside domain? Currentfiniteint conversion accidentallyrangeDB? Establishintfinite mathematicallytrue but chosenJSONtimestamp Pythonfinitecheckcannotrepresenthuge; contract newstableFIELD_INVALID permittedrangedadapter notsilentlynewunrecordedlimit; documentacceptedtimestampfinitebinary64/rangefromobserved math.isfinite semantics ifimplementationfloat conversion follows. Reason exactinvalidfield notunknownunsupportedwholeversion. Read intboolguardsofpriorcases. No sourceProse/ACKtrust.\nRED actualdirectvalidator+officialReader/CLIfixture eachtimestampfield response/fact hugeJSONpayload raises/returnsbadtext before, after explicitstableFIELD_INVALID no traceback/admittedrows/authority. Validtimestampcounterexamplesnegativefinite/maxfloat? currentnonnegativeAt mustcheckexistingcontracttimebounds don'tinvent; retainoldpositives (recordedAtdigestexcludednotvalidation). Arbitrarypayloadint1e1000 remainsvalid+canon/digest currentgoldens intact. Booltimestamp/repeatedkeys/nonfinite standards oldtestsremain. SemanticmutationreverseOverflowguardsamefocalassert fails notmissingAPI; old62P1suite/18mutants/no legacyCLI regressions. No live.primaryqueue/posts/observer/peerrequests/endpoints/upstream.\nOWN actualvalidationCorePythonfiles onlyneeded/test_coord_protocol.py/test_coord_responses.py; NEWshortdocs/notes/cross-harness-timestamp-boundary.md validfrontmatterid/type/owner@timianmalloo propertypedlinks spec/design(beforecode) becauseparallelC#ownsCANONICALdesign/ProofPack. Ownappendaudit+derivedaudit-data.js local--rootOWNdocsrenderverify stagedSAMEcommit (neverglobalcoordregen/site). No P1pluralProofPackediting/extraProofDoc. ExactTTL300editleaseenvsession/name/utf8apply_patchnoheredoc/outputredirect/pipedgates/nohookoverride/main/push/amend/force/config/hooks/install/deps/GUI/process. CommitCopilottrailer(s)cleanreleasedended<=1000wordsexactcommitnegativecasesredgreen hugepayloadpositive versionederrorchange/newsourcehash provideC#authorlateroraclecontrolledupdate parent. Actualendpoint/triageauthstillunqualified; enhancedwriterDENY.",
+      "summary": "P1 v1 timestamp adapter now shares an overflow-safe finite-number predicate. Both validators emit XH.FIELD_INVALID for invalid timestamp types or conversion overflow; no global BigInt ban or canonical change. Baseline 62 passed; nine new tests red with 96 assertion failures and zero errors; full 71 green; original 18 plus two overflow semantic mutants killed with zero errors. Exact 1001-digit payload, finite boundaries, golden bytes and pinned legacy CLI/rollback preserved. Note records pre-code boundary, class/sweep/derive/control and evidence. Canonical design/Proof Pack, spike corpus and C# pinned ebd4 oracle untouched. No agents; existing Data/Test contract reused. Source/endpoint/triage authority unqualified; enhanced writer DENY. Five edit leases TTL300; audit register explicitly lease-free. Initial oversized read batches required bounded recovery reads (tool-efficiency finding); no scope expansion. Docs/site/global regeneration excluded; local audit rendered after append.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs\\ai-forward-pack\\scripts\\coord-core.py",
+        "docs\\ai-forward-pack\\scripts\\coord_protocol.py",
+        "docs\\ai-forward-pack\\scripts\\tests\\test_coord_responses.py",
+        "docs\\ai-forward-pack\\scripts\\tests\\test_coord_protocol.py",
+        "docs\\notes\\cross-harness-timestamp-boundary.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Return stable XH.FIELD_INVALID for oversized P1 timestamp fields without changing payload integer or digest behavior.",
+      "done_when": "Direct and reader/CLI red-green proof, full P1 regression and semantic mutations, boundary note, local audit and one clean commit; exact leases released and session ended.",
+      "tier": "T2",
+      "main_calls": 17,
+      "main_budget": 20,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-17T16:54:09Z",
+      "duration_seconds": 361.0
     }
   ],
   "changes": [

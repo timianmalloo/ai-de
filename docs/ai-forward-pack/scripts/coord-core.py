@@ -18,7 +18,6 @@ import argparse
 import fnmatch
 import hashlib
 import json
-import math
 import os
 import re
 import subprocess
@@ -431,10 +430,6 @@ def _unique_object(pairs: list) -> dict:
     return obj
 
 
-def _finite_number(value: object) -> bool:
-    return type(value) in (int, float) and math.isfinite(value)
-
-
 def _reject_constant(value: str) -> None:
     raise ValueError("XH.NONFINITE_JSON")
 
@@ -489,7 +484,8 @@ def validate_response(event: dict) -> bytes:
                 "inReplyTo", "causationId"):
         require(text(event[key]))
     require(type(event["producerSeq"]) is int and 0 < event["producerSeq"] < 2 ** 53)
-    require(all(_finite_number(event[k]) for k in ("producerAt", "recordedAt")))
+    if not all(protocol.finite_number(event[k]) for k in ("producerAt", "recordedAt")):
+        raise CoordError("XH.FIELD_INVALID", "producerAt and recordedAt must be finite numbers")
     require(isinstance(event["disposition"], str) and event["disposition"] in dispositions)
     require(event["supersedes"] is None or text(event["supersedes"]))
     require(isinstance(event["authorityRefs"], list) and len(event["authorityRefs"]) <= 16)
@@ -520,7 +516,7 @@ def validate_response(event: dict) -> bytes:
 def _request_event(event: object, seen: dict) -> dict:
     if not isinstance(event, dict):
         raise ValueError("XH.RECORD_OBJECT_REQUIRED")
-    if "at" in event and not _finite_number(event["at"]):
+    if "at" in event and not _protocol().finite_number(event["at"]):
         raise ValueError("XH.INVALID_TIMESTAMP")
     if "id" in event and not isinstance(event["id"], str):
         raise ValueError("XH.INVALID_ID")

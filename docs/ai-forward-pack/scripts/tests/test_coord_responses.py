@@ -271,6 +271,83 @@ class ResponseTests(unittest.TestCase):
                 self.assertEqual([], events)
                 self.assertEqual(1, len(errors))
 
+    def test_Validate_InvalidTimestamp_FieldInvalid(self) -> None:
+        values = (10 ** 1000, -(10 ** 1000), True, False, None, "2", [], {})
+        for field, index in itertools.product(("producerAt", "recordedAt"), range(len(values))):
+            with self.subTest(field=field, case=index):
+                event = response(**{field: values[index]})
+
+                try:
+                    with self.assertRaises(coord.CoordError) as raised:
+                        coord.validate_response(event)
+                except OverflowError:
+                    self.fail("timestamp overflow escaped the field-error boundary")
+
+                self.assertEqual("XH.FIELD_INVALID", raised.exception.code)
+
+    def test_Read_HugeIntegerTimestamp_FieldInvalidKeepsNextRecord(self) -> None:
+        for field, sign in itertools.product(("producerAt", "recordedAt"), (1, -1)):
+            with self.subTest(field=field, sign=sign):
+                self.write_events([response(**{field: sign * 10 ** 1000}), question()])
+                raw = (self.root / "requests.jsonl").read_bytes()
+
+                events, errors = coord.read_request_events(self.root)
+
+                self.assertEqual([question()], events)
+                self.assertEqual(["requests.jsonl:1: XH.FIELD_INVALID"], errors)
+                self.assertEqual(raw, (self.root / "requests.jsonl").read_bytes())
+
+    def test_Cli_HugeIntegerTimestamp_FieldInvalidWithoutPartialState(self) -> None:
+        for field, sign in itertools.product(("producerAt", "recordedAt"), (1, -1)):
+            with self.subTest(field=field, sign=sign):
+                self.write_events([response(**{field: sign * 10 ** 1000}), question()])
+                raw = (self.root / "requests.jsonl").read_bytes()
+                env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+                env.update(COORD_ROOT=str(self.root), AGENT_SESSION="synthetic",
+                           AGENT_NAME="synthetic", PYTHONIOENCODING="utf-8")
+
+                proc = subprocess.run(
+                    [sys.executable, "-B", str(SCRIPTS / "coord-core.py"), "request", "list",
+                     "--status", "all", "--actionable", "--json"],
+                    cwd=self.root, env=env, capture_output=True, text=True, timeout=30)
+
+                self.assertEqual(4, proc.returncode)
+                self.assertEqual("", proc.stdout)
+                self.assertIn("requests.jsonl:1: XH.FIELD_INVALID", proc.stderr)
+                self.assertNotIn("Traceback", proc.stderr)
+                self.assertEqual(raw, (self.root / "requests.jsonl").read_bytes())
+
+    def test_Validate_FiniteTimestampBoundaries_PreservesBytesAndValues(self) -> None:
+        values = (0, -1, -1.5, 2 ** 53 + 1, 10 ** 308, -0.0,
+                  float.fromhex("0x0.0000000000001p-1022"),
+                  sys.float_info.max, -sys.float_info.max, int(sys.float_info.max))
+        for field, value in itertools.product(("producerAt", "recordedAt"), values):
+            with self.subTest(field=field, value=value):
+                event = response(**{field: value})
+                before = copy.deepcopy(event)
+
+                canonical = coord.validate_response(event)
+
+                self.assertEqual(digest(event), hashlib.sha256(canonical).hexdigest())
+                self.assertEqual(before, event)
+                self.assertIs(type(value), type(event[field]))
+
+    def test_Read_HugeIntegerPayload_PreservesExactCanonicalAndDigest(self) -> None:
+        value = 10 ** 1000
+        event = response(payload={"text": "synthetic", "extension": value})
+        self.write_events([event])
+        raw = (self.root / "requests.jsonl").read_bytes()
+
+        events, errors = coord.read_request_events(self.root)
+        canonical = coord.validate_response(events[0])
+
+        self.assertEqual([], errors)
+        self.assertIs(type(events[0]["payload"]["extension"]), int)
+        self.assertEqual(value, events[0]["payload"]["extension"])
+        self.assertIn(b'"extension":1' + b"0" * 1000 + b',', canonical)
+        self.assertEqual(event["payloadDigest"], hashlib.sha256(canonical).hexdigest())
+        self.assertEqual(raw, (self.root / "requests.jsonl").read_bytes())
+
     def test_Append_ShortWrite_FailsWithoutRepairClaim(self) -> None:
         original = coord.os.write
         with patch.object(coord.os, "write", side_effect=lambda fd, data: original(fd, data[:1])):

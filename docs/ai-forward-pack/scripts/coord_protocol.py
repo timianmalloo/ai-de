@@ -32,7 +32,7 @@ INTEGRITY_FIELDS = frozenset(("repositoryIdentity", "fullCommitId", "repositoryR
                               "gitObjectFormat", "fullBlobId", "sha256", "sectionOrDecisionId"))
 PROPOSAL_FIELDS = INTEGRITY_FIELDS | {"id", "revision"}
 AUTHORITY_FIELDS = INTEGRITY_FIELDS | {"scope", "issuerEvidenceRef", "verifierReceiptRef"}
-CODES = frozenset(("XH.SCHEMA_INVALID", "XH.RECORD_TOO_LARGE", "XH.DEPTH_EXCEEDED",
+CODES = frozenset(("XH.SCHEMA_INVALID", "XH.FIELD_INVALID", "XH.RECORD_TOO_LARGE", "XH.DEPTH_EXCEEDED",
                    "XH.NONFINITE_JSON", "XH.DIGEST_MISMATCH", "XH.INTEGRITY_INVALID",
                    "XH.AUTHORITY_UNVERIFIED", "XH.PROPOSAL_CONTRACT_MISMATCH",
                    "XH.CORRELATION_MISMATCH", "XH.GENERATION_UNKNOWN",
@@ -77,6 +77,14 @@ class TrustedContext:
 
 def text(value: object) -> bool:
     return isinstance(value, str) and bool(value.strip()) and len(value) <= 512
+
+
+def finite_number(value: object) -> bool:
+    """Timestamp adapter: exact int/float whose binary64 conversion is finite."""
+    try:
+        return type(value) in (int, float) and math.isfinite(value)
+    except OverflowError:
+        return False
 
 
 def require(condition: bool, code: str = "XH.SCHEMA_INVALID") -> None:
@@ -129,8 +137,8 @@ def validate_fact(event: dict) -> bytes:
     require(all(text(event[k]) for k in ("eventId", "repositoryId", "streamId", "threadId",
                                          "obligationId", "inReplyTo", "causationId")))
     require(type(event["producerSeq"]) is int and 0 < event["producerSeq"] < 2 ** 53)
-    require(all(type(event[k]) in (int, float) and math.isfinite(event[k])
-                for k in ("producerAt", "recordedAt")))
+    require(all(finite_number(event[k]) for k in ("producerAt", "recordedAt")),
+            "XH.FIELD_INVALID")
     endpoint(event["sender"])
     endpoint(event["recipient"])
     reference_shape(event["proposal"], PROPOSAL_FIELDS)
