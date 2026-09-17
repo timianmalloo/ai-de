@@ -472,7 +472,7 @@ def validate_response(event: dict) -> bytes:
               "threadId", "obligationId", "inReplyTo", "causationId", "sender", "recipient",
               "proposal", "producerSeq", "producerAt", "recordedAt", "disposition",
               "supersedes", "authorityRefs", "payload", "digestVersion", "payloadDigest"}
-    dispositions = {"answer", "changes-requested", "rejected", "needs-human", "unable", "deferred"}
+    dispositions = {"answer", "question", "changes-requested", "rejected", "needs-human", "unable", "deferred"}
 
     def require(condition: bool) -> None:
         if not condition:
@@ -660,8 +660,8 @@ def _fold_responses(row: dict, replies: list, generations: dict) -> None:
         response = latest[0]
         disposition = response["disposition"]
         row.update(unanswered=False, latest_disposition=disposition,
-                   remaining=disposition in ("deferred", "needs-human"),
-                   next=response["payload"] if disposition == "deferred" else None)
+                   remaining=disposition in ("deferred", "needs-human", "question"),
+                   next=response["payload"] if disposition in ("deferred", "question") else None)
     elif len(latest) > 1:
         row["response_errors"].append({"code": "XH.RESPONSE_AMBIGUOUS"})
 

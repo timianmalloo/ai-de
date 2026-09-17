@@ -480,21 +480,29 @@ class ProtocolTests(unittest.TestCase):
             "transfer_granted", "start_granted")))
 
     def test_Fold_QuestionUnderAckTitle_PreservesQuestionWithoutAcceptance(self):
-        """UNSHIPPABLE P0/P1 semantic floor: question must not be coerced to answer."""
-        self.q.update(contract="ACK", reason="awaiting triage")
-        reply = response(proposal=self.ref, disposition="question",
-                         payload={"text": "Which synthetic boundary needs review?"})
+        """A typed question is a response and leaves requester follow-up visible."""
+        for title, reason in (("ACK", "awaiting triage"), ("opaque-17", "opaque-29")):
+            with self.subTest(title=title, reason=reason):
+                self.q.update(contract=title, reason=reason)
+                reply = response(proposal=self.ref, disposition="question",
+                                 payload={"text": "Which synthetic boundary needs review?"})
+                legacy = {"kind": "request-resolve", "id": "q", "resolution": "ACK approved"}
 
-        row = self.folded([self.event(), reply])
+                row = self.folded([self.event(), reply, legacy])
 
-        self.assertEqual([reply], row["responses"])
-        self.assertEqual("question", row["latest_disposition"])
-        self.assertEqual([], row["response_errors"])
-        self.assertEqual([], row["acceptances"])
-        self.assertFalse(row["accepted"])
-        self.assertFalse(any(row[k] for k in (
-            "execution_eligible", "ownership_granted", "run_granted",
-            "transfer_granted", "start_granted")))
+                self.assertEqual([reply], row["responses"])
+                self.assertEqual(self.q["sender"], reply["recipient"])
+                self.assertEqual("question", row["latest_disposition"])
+                self.assertFalse(row["unanswered"])
+                self.assertTrue(row["remaining"])
+                self.assertEqual(reply["payload"], row["next"])
+                self.assertEqual("resolved", row["status"])
+                self.assertEqual([], row["response_errors"])
+                self.assertEqual([], row["acceptances"])
+                self.assertFalse(row["accepted"])
+                self.assertFalse(any(row[k] for k in (
+                    "execution_eligible", "ownership_granted", "run_granted",
+                    "transfer_granted", "start_granted")))
 
     def test_Fold_ConsumptionWrongDigestAttesterRestart_Denied(self):
         for field in ("eventId", "eventDigest", "sender", "restart"):
@@ -807,13 +815,16 @@ def mutation_receipt() -> int:
                         "errors": len(result.errors),
                         "killed": bool(result.failures) and not result.errors})
     repairs = (
+        ("question-rejected", "core",
+         (('dispositions = {"answer", "question",', 'dispositions = {"answer",'),),
+         "test_Fold_QuestionUnderAckTitle_PreservesQuestionWithoutAcceptance"),
         ("consumption-as-acceptance", "protocol",
          (('row["accepted"] = all((current, peer) in accepted for peer in peers[current])',
            'row["accepted"] = bool(row["consumptions"]) or '
            'all((current, peer) in accepted for peer in peers[current])'),),
          "test_Fold_StaleCallerReasonAndAckTitle_TypedOutcomesRemainDistinct"),
         ("deferred-obligation-dropped", "core",
-         (('remaining=disposition in ("deferred", "needs-human")',
+         (('remaining=disposition in ("deferred", "needs-human", "question")',
            'remaining=disposition == "needs-human"'),),
          "test_Fold_StaleCallerReasonAndAckTitle_TypedOutcomesRemainDistinct"),
         ("global-proposal-invalidation", "protocol",
