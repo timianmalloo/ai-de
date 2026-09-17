@@ -4140,3 +4140,43 @@ old-binary qualification and the remaining P2 oracles are not completed by this
 unit. Existing M0–M5 scopes remain unchanged; full P1 authority and mixed-client
 `9d82` C# qualification remain blocked. P3–P5, publication, main, push and
 upstream transfer are outside this checkpoint.
+
+### Independent current-root and receipt checkpoint — 2026-09-17
+
+Reviewed commit: `540690989626349958b43c98f57f6771681ffb97`.
+Production source/tests are unchanged from the receipt repair at
+`396892e19b76892f7ed13a5b5657dd91642f2bce`; the original P2 `37923c03`
+and the subsequent alias correction remain in ancestry.
+
+**GATE current-root · Test/Data/DS · BLOCK:** the requested actual-directory
+isolation fixture and inverse fault were not authored. This is missing proof,
+not a reproduced production defect. Logical descriptor negatives do not replace
+the missing common-prefix sibling-directory scenario.
+
+**GATE original-page receipt recovery · Test/Data/DS · PASS (finite scope):**
+the independent reviewer executed 79/79 runtime occurrences, with zero failures
+or skips and exit 0: 49 official and 30 native. This includes all 15 receipt
+repair additions. The observed wall time was 15.302 seconds, not a service SLI.
+The reviewer checked complete captured-prefix traversal, physical occurrence
+and canonical-byte comparison, receipt-only recovery without admission writes,
+and the unchanged strict new-admission CAS. The exact lost-ACK 34-to-68 case
+retains original admissions and checks full table equality on repeated recovery.
+
+The reviewer verified all 53 archived member hashes, 21 working input/binary
+pins and 18 tracked Git pins in their separate byte domains. Retained original
+two-case RED, nine-failure guard mutant and one-failure prefix mutant were
+hash-qualified, not re-executed. A new build produced a separately pinned test
+DLL; historical binary equality is not asserted.
+
+Independent receipt: `independent-root-receipt.trx` under
+`%TEMP%\aide-independent-root-receipt-cmgrnzls`, SHA-256
+`9E0262DE48EC4C1274A27B6D68C8FFDF8EA772AFCB765A47996AE825956B71C2`.
+The reviewer observed clean source state after execution.
+
+The author exhausted 24 calls without the requested new physical-root tests.
+The reviewer stopped at 12 calls after completing the observations above.
+Neither cap clears the remaining ROOT gate or authorizes a larger next run.
+The next bounded implementation node starts directly with the known sibling-root
+fixture and its inverse fault, rather than repeating normalization or general
+grounding. All remaining P0–P5 floors and the after-verification-only upstream
+dependency remain unchanged.

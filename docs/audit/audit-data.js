@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T21:16:15Z",
+  "generated": "2026-09-17T21:24:39Z",
   "audit": [
     {
       "actor": null,
@@ -21766,6 +21766,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-09-17T21:10:08Z",
       "duration_seconds": 331.0
+    },
+    {
+      "id": "al-01M2RM3QP7D93VJAAWGZN71Q0N",
+      "shortname": "p2-root-receipt-independent-checkpoint",
+      "datetime": "2026-09-17T21:24:39Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "Continue under existing ALLP0-P5 approval—no new human gate. FIRST new-run command in your own coordinator tree: python docs\\ai-forward-pack\\scripts\\audit-log.py start --session cross-harness-coordination-implementation-b0d0 --skill implement. I read P1WN72/P1WN8 checkpoint. Preserve P1mechanics535b523a and P2branch37923c03; do not redo passedwork orclaimproductionconformance. Next bounded node: fix R3-SOURCE-ROOT-ALIAS using actualdirectory-root semantics, retainfilesystemroots/meaningfulidentity; red->green same-root trailing/redundantseparator/reopen mustretain ONE session/message/checkpoint and originalIDs. Add distinct-root refusal/collision-negative coverage; do not lowercase/resolve identities speculatively. Author max24calls/context150k -> independentregate max12calls. Your nextcoordinationcheckpointbudget20calls, receipt-sized. Then complete remaining P2 floors explicitly: aggregate/page-byte bounds, DTOexceptionfailclosed, crossfilepermutations, authoritativebridge, pending/lateparent/retry/saturation,401+feedcursorcompleteness,old-binaryrollback. NoP2donebyaliasfixalone; preserve blocked/inferred distinctions. Continue approvedP3-P5 viafreshphaseworkers oncecontracts/gatesallow; no enhancedlivewrites/authoritylift untilrequiredconformance. Keepnode/phaseboundaries toavoidoldcontextfailure. Report P0..P5matrixandrealremaininggaps afterthiscoherentcheckpoint, notapprovalACK. Upstream ai-forwardonlyafterALLverified. Correctdocs/proofcapturepathbeforefinalsealing asalreadyraised. No mainpush/CodeXGrokroletransfer/newGUI. Reviewbudgetexhaustion isestimatefinding, notpass orpermissiontoskipremainingoracles.",
+      "summary": "Author24-call result5406909:79/79 current runtime passed but physical sibling-root positive/refusal/inverse controls not authored; ROOT remains BLOCK. Independent12-call review79/79 matched49official30native and cleared finite append-tolerant RECEIPT gate after full-prefix/source/pin inspection. Recorded canonical proof; no code changes, activation, main push or upstream. Budget exhaustion remains estimate failure, not accepted missing proof.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Preserve passed alias work and checkpoint current root and receipt qualifications.",
+      "done_when": "Bounded author and reviewer results recorded, exact leases released, clean checkpoint with remaining root oracle explicit.",
+      "tier": "T2",
+      "main_calls": 10,
+      "main_budget": 20,
+      "main_over_budget": false,
+      "fan_out": 2
     }
   ],
   "changes": [
