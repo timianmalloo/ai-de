@@ -59,8 +59,24 @@ public sealed class EntryPointsProjectionTests
     {
         Assert.Equal(EntryPointKind.Api, EntryPointsListing.KindFromDisplay("Orders.OrdersController"));
         Assert.Equal(EntryPointKind.Cli, EntryPointsListing.KindFromDisplay("App.Program"));
+        Assert.Equal(EntryPointKind.Cli, EntryPointsListing.KindFromDisplay("App.Program.Main"));
         Assert.Equal(EntryPointKind.Ux, EntryPointsListing.KindFromDisplay("Shell.MainWindow"));
         Assert.Equal(EntryPointKind.Unclassified, EntryPointsListing.KindFromDisplay("Domain.Order"));
+    }
+
+    [Fact]
+    public void HasMember_MainIsCli_WithoutGraphNodeId()
+    {
+        using var workspace = TestWorkspace.Create();
+        workspace.CommitSnapshot(
+            "fixture", 1, "rev-1",
+            TestWorkspace.Assertion("App.Program", "has_type", "class"),
+            TestWorkspace.Assertion("App.Program", "has_member", "Main"));
+        var projections = new ProjectionService(workspace.Store, Path.GetDirectoryName(workspace.DatabasePath)!);
+        var result = projections.EntryPoints(new EntryPointsQuery());
+        var main = Assert.Single(result.Rows, r => r.Display.EndsWith(".Main", StringComparison.Ordinal));
+        Assert.Equal(EntryPointKind.Cli, main.Kind);
+        Assert.Null(main.NodeId);
     }
 
     [Fact]

@@ -392,6 +392,30 @@ public sealed class StoreReader : IDisposable
         return all;
     }
 
+    /// <summary>
+    /// Latest-generation <c>has_member</c> facts. Listing display only — not Core observation ids (r5).
+    /// </summary>
+    public IReadOnlyList<(string TypeNodeId, string Member)> SourceHasMembers()
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT a.subject, a.object
+            FROM evidence_assertion_fact a
+            JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+            WHERE a.predicate = 'has_member'
+            GROUP BY a.subject, a.object
+            ORDER BY a.subject, a.object;
+            """);
+        using var reader = command.ExecuteReader();
+        var all = new List<(string, string)>();
+        while (reader.Read())
+        {
+            all.Add((reader.GetString(0), reader.GetString(1)));
+        }
+
+        return all;
+    }
+
     public IReadOnlySet<string> KnowledgeNodeIds(int limit)
     {
         using var command = Command(

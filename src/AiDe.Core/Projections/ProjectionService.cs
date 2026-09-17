@@ -695,8 +695,9 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
         {
             using var reader = store.BeginRead();
             var candidates = reader.SourceHasTypeNodes();
+            var members = reader.SourceHasMembers();
             var result = EntryPointsListing.FromHasType(
-                candidates, query.MaxRows, reader.CurrentSourceRevision());
+                candidates, query.MaxRows, reader.CurrentSourceRevision(), members);
             activity?.SetTag("returned.rows", result.Rows.Count);
             activity?.SetTag("omitted.by_cap", result.OmittedByCap);
             activity?.SetTag("outcome", "ok");

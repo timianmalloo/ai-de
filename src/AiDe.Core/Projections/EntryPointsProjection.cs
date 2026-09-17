@@ -38,14 +38,39 @@ public static class EntryPointsListing
     public static EntryPointsResult FromHasType(
         IReadOnlyList<(string NodeId, string TypeKind)> candidates,
         int maxRows,
-        string sourceRevision)
+        string sourceRevision,
+        IReadOnlyList<(string TypeNodeId, string Member)>? members = null)
     {
+        var built = new List<EntryPointRow>();
+        foreach (var c in candidates)
+        {
+            built.Add(Classify(c.NodeId, nodeId: c.NodeId));
+        }
+
+        if (members is not null)
+        {
+            foreach (var (typeId, member) in members)
+            {
+                var display = $"{typeId}.{member}";
+                var kind = KindFromDisplay(display);
+                if (kind == EntryPointKind.Unclassified)
+                {
+                    kind = KindFromDisplay(member);
+                }
+
+                built.Add(new EntryPointRow(
+                    kind,
+                    NodeId: null,
+                    display,
+                    kind == EntryPointKind.Unclassified
+                        ? EntryPointsProjection.UnclassifiedReasonPendingClassifier
+                        : null));
+            }
+        }
+
         var cap = maxRows < 1 ? 1 : maxRows;
-        var omitted = Math.Max(0, candidates.Count - cap);
-        var rows = candidates
-            .Take(cap)
-            .Select(c => Classify(c.NodeId, c.TypeKind))
-            .ToList();
+        var omitted = Math.Max(0, built.Count - cap);
+        var rows = built.Take(cap).ToList();
 
         IReadOnlyList<string> disclosures = omitted > 0
             ? [$"Omitted ({omitted})"]
@@ -58,9 +83,8 @@ public static class EntryPointsListing
     /// Listing-kind heuristics on the type display name. Not Core method-observation identity
     /// (r5: has_member/call facts are not observation ids).
     /// </summary>
-    internal static EntryPointRow Classify(string nodeId, string _)
+    internal static EntryPointRow Classify(string display, string? nodeId)
     {
-        var display = nodeId;
         var kind = KindFromDisplay(display);
         return new EntryPointRow(
             kind,
@@ -75,6 +99,8 @@ public static class EntryPointsListing
     {
         if (display.EndsWith(".Program", StringComparison.Ordinal)
             || display.Equals("Program", StringComparison.Ordinal)
+            || display.EndsWith(".Main", StringComparison.Ordinal)
+            || display.Equals("Main", StringComparison.Ordinal)
             || display.Contains("CommandLine", StringComparison.Ordinal))
         {
             return EntryPointKind.Cli;
