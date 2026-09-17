@@ -24,3 +24,17 @@
 {"agent": "copilot-finite3findingrepair", "at": 1789585467.6652808, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "xh-p1-responses-b0d0", "wi": ""}
 {"agent": "copilot-p1-testauthor", "at": 1789594614.9286225, "code": null, "kind": "allowed", "path": "docs/ai-forward-pack/scripts/tests/test_coord_protocol.py", "session": "xh-p1-responses-b0d0", "wi": ""}
 {"agent": "copilot-p1-testauthor", "at": 1789594614.9441376, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "xh-p1-responses-b0d0", "wi": ""}
+{"agent": "copilot-p1-fixtures", "at": 1789649704.9526675, "code": null, "kind": "allowed", "path": "docs/ai-forward-pack/scripts/tests/test_coord_protocol.py", "session": "xh-p1-responses-b0d0", "wi": ""}
+{"agent": "copilot-p1-fixtures", "at": 1789649705.0342367, "code": null, "kind": "allowed", "path": "docs/ai-forward-pack/scripts/tests/test_coord_responses.py", "session": "xh-p1-responses-b0d0", "wi": ""}
+{"agent": "copilot-p1-fixtures", "at": 1789649970.9270527, "code": null, "kind": "allowed", "path": "docs/ai-forward-pack/scripts/tests/test_coord_protocol.py", "session": "xh-p1-responses-b0d0", "wi": ""}
+{"agent": "copilot-p1-fixtures", "at": 1789649970.9455764, "code": null, "kind": "allowed", "path": "docs/ai-forward-pack/scripts/tests/test_coord_responses.py", "session": "xh-p1-responses-b0d0", "wi": ""}
+{"agent": "copilot-p1-fixtures", "at": 1789649970.9621007, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "xh-p1-responses-b0d0", "wi": ""}
+{"agent": "copilot-p1-fixtures", "at": 1789649970.9801886, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "xh-p1-responses-b0d0", "wi": ""}
+{"agent": "copilot-xh-p1-responses", "at": 1789650425.6175244, "code": null, "kind": "allowed", "path": "docs/ai-forward-pack/scripts/tests/test_coord_protocol.py", "session": "xh-p1-responses-b0d0", "wi": ""}
+{"agent": "copilot-xh-p1-responses", "at": 1789650425.6991465, "code": null, "kind": "allowed", "path": "docs/notes/cross-harness-question-response.md", "session": "xh-p1-responses-b0d0", "wi": ""}
+{"agent": "copilot-xh-p1-responses", "at": 1789650425.7807288, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "xh-p1-responses-b0d0", "wi": ""}
+{"agent": "copilot-xh-p1-responses", "at": 1789650605.6498044, "code": null, "kind": "allowed", "path": "docs/ai-forward-pack/scripts/coord-core.py", "session": "xh-p1-responses-b0d0", "wi": ""}
+{"agent": "copilot-xh-p1-responses", "at": 1789650605.6688094, "code": null, "kind": "allowed", "path": "docs/ai-forward-pack/scripts/tests/test_coord_protocol.py", "session": "xh-p1-responses-b0d0", "wi": ""}
+{"agent": "copilot-xh-p1-responses", "at": 1789650605.6868362, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "xh-p1-responses-b0d0", "wi": ""}
+{"agent": "copilot-xh-p1-responses", "at": 1789650605.7043443, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "xh-p1-responses-b0d0", "wi": ""}
+{"agent": "copilot-xh-p1-responses", "at": 1789650605.721856, "code": null, "kind": "allowed", "path": "docs/notes/cross-harness-question-response.md", "session": "xh-p1-responses-b0d0", "wi": ""}

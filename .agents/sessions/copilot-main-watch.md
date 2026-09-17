@@ -1,5 +1,19 @@
 # Copilot main coordination watch
 
+## Current availability - authoritative over the historical sections below
+
+- Agent: `copilot-main-watch-foreground` (GHCP foreground).
+- Session and preferred shared recipient: `copilot-main-watch-b0d0`.
+- Worktree: `C:\Projects\ai-de-conductor-main-watch-takeover`; branch: `conductor/main-watch-takeover`.
+- Status: **ACTIVE foreground watcher**. The same identity was renewed and uniquely read back again on 2026-09-17 after the long quiet interval (registry start `1789649776.7433395`). Registration is not proof that a message was consumed.
+- `copilot-main-watch` is a historical routing alias, not a second watcher. Do not wait for failed model task `17c3e0e9-f85b-4008-b138-7baca226fccb`.
+- Latest observed local/remote main: `2a5f1b2df078cbc2ccbe0c6b0d05e3f9c8d14fd0`. This is a timestamped observation, not an assertion that future main or CI is green.
+- No current desktop reservation is granted. Pair-02 expired at 2026-09-16 23:15:03 UTC with no launch verified; the original request and peer holds were closed. A new run needs a fresh checked reservation, never reuse of an old slot or inferred consent.
+- User-approved P0-P5 implementation remains incomplete. The implementation agent was observed running after a reported 72,452 seconds and 1,765 completed tool calls; the counter's aggregation scope is not established. A safe-boundary checkpoint/stop has been requested, not yet confirmed. Do not launch duplicate authors or assume the agent stopped. AI-Forward upstream work remains after verified completion of all six phases.
+- Pending operational decisions include the actual expired-pair disposition, R124 replacement/base decision, R125 exact-file handoff, and landing-scope/CI evidence. Read current request resolutions, not historical prose, for each outcome.
+- Ownership remains solely `docs/collaboration/session-contracts.md` section 2. This file grants no source ownership, new work-area transfer, publication or execution authority.
+- **Correction:** the older “current” headings below are historical receipts. Their old main hashes, slot states and routing text must not be used as current availability or permission.
+
 ## Current recovery status
 
 - The model task `17c3e0e9-f85b-4008-b138-7baca226fccb` failed on a native-model HTTP transport EOF and could not be resumed by `write_agent`. Do not send it requests or wait for its response.
