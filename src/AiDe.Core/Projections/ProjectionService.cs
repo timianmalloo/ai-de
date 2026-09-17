@@ -9,6 +9,22 @@ public static class ProjectionErrorCodes
 {
     public const string LimitExceeded = "AIDE-MCP-LIMIT-EXCEEDED";
     public const string NodeUnknown = "AIDE-PROJECTION-NODE-UNKNOWN";
+
+    // INV-0014 P4. One code per non-located NodeContent outcome, emitted on the span beside
+    // `content.outcome`. Search-key stability is the whole point: these are what an operator greps
+    // for when a language's files stop being readable — which is how DC-229 should have surfaced.
+
+    /// <summary>No assertion names a source artifact for the node at all.</summary>
+    public const string ContentNoDeclaration = "AIDE-PROJECTION-CONTENT-NO-DECLARATION";
+
+    /// <summary>A recorded artifact path that does not name a file inside the workspace.</summary>
+    public const string ContentUnresolvable = "AIDE-PROJECTION-CONTENT-UNRESOLVABLE";
+
+    /// <summary>The file is there and could not be opened.</summary>
+    public const string ContentUnreadable = "AIDE-PROJECTION-CONTENT-UNREADABLE";
+
+    /// <summary>A real file whose extension this reader does not render inline.</summary>
+    public const string ContentNotRendered = "AIDE-PROJECTION-CONTENT-NOT-RENDERED";
 }
 
 /// <summary>
@@ -861,6 +877,28 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
     }
 
     /// <summary>
+    /// True when a row's artifact path could not name a file under its scope at all — as opposed to
+    /// naming one that is not there.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>DC-229.</b> Both language extractors wrote the SCOPE id into this field, and a scope
+    /// id is a kind and a colon: <c>csharp:PROJECT:TFM</c>, <c>python:DIR</c>,
+    /// <c>typescript:DIR</c> (<see cref="Extraction.ScopeDescriptor"/>,
+    /// <see cref="SolutionTreeProjection.IsPythonOrTypeScriptScope"/>). A scope-relative artifact
+    /// path carries no colon, and on Windows it could not: the colon is the volume and
+    /// alternate-stream separator, so such a value resolves to an ADS name or throws, depending on
+    /// the spelling. Asking the question here rather than letting the path parser decide is what
+    /// puts the class in ONE bucket on every platform.</para>
+    ///
+    /// <para><b>Only ever asked about a skip.</b> Resolution is attempted first and wins; this only
+    /// says which kind of failure a failure was, so a POSIX file legitimately spelled with a colon
+    /// is still searched.</para>
+    /// </remarks>
+    private static bool IsUnusableArtifactPath(string artifactPath) =>
+        string.IsNullOrWhiteSpace(artifactPath)
+        || artifactPath.Contains(':', StringComparison.Ordinal);
+
+    /// <summary>
     /// The workspace at a distance: groups rather than nodes, for a graph too large to draw.
     /// </summary>
     /// <remarks>
@@ -1197,9 +1235,17 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
 
         var matches = new List<ContentMatch>();
         var searched = 0;
-        var skipped = 0;
         var bytes = 0;
         var truncated = false;
+
+        // INV-0014 P4: the skip count, by reason. A bare integer cannot be read as a defect signal —
+        // DC-229 made every TypeScript and Python file in the corpus unresolvable, and the only trace
+        // was a larger number in the same place a big `node_modules` would put one. The total is the
+        // SUM of these, computed once below, so the buckets and the reply can never disagree.
+        var skippedNoArtifactPath = 0;
+        var skippedUnresolvedPath = 0;
+        var skippedUnreadable = 0;
+        var skippedTooLarge = 0;
 
         // An empty term would match every line of every file. Refused rather than served: the
         // cheapest wrong answer here is the most expensive one to produce.
@@ -1213,7 +1259,12 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
 
                 if (resolved is null)
                 {
-                    skipped++;
+                    // Classified only AFTER resolution failed, never before it: a path that resolves
+                    // is searched whatever it is spelled like, so the bucket decides which kind of
+                    // skip this was and changes no answer.
+                    if (IsUnusableArtifactPath(artifactPath)) skippedNoArtifactPath++;
+                    else skippedUnresolvedPath++;
+
                     continue;
                 }
 
@@ -1225,15 +1276,17 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
                 }
                 catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
                 {
-                    skipped++;
+                    skippedUnreadable++;
                     continue;
                 }
 
                 if (length > MaxContentBytes)
                 {
                     // The same ceiling NodeContent uses. A file too large to serve whole is too
-                    // large to scan on a query a person is waiting on.
-                    skipped++;
+                    // large to scan on a query a person is waiting on. Its own bucket, because a
+                    // corpus of big generated files and a corpus nobody can open are different
+                    // problems with different repairs.
+                    skippedTooLarge++;
                     continue;
                 }
 
@@ -1245,7 +1298,7 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
                 }
                 catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
                 {
-                    skipped++;
+                    skippedUnreadable++;
                     continue;
                 }
 
@@ -1285,6 +1338,19 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
             }
         }
 
+        var skipped =
+            skippedNoArtifactPath + skippedUnresolvedPath + skippedUnreadable + skippedTooLarge;
+
+        // Emitted on every search, zeros included: a measured zero says the search looked and found
+        // none, an absent tag says nothing was recorded. Collapsing those two is how a reason code
+        // becomes a plausible wrong number. Counts only — a span that named the files would put
+        // repository content into telemetry (P2-PRIV-02), and the reply is opaque for the same
+        // reason (see ResolveWithinWorkspace).
+        activity?.SetTag("search.skipped.no_artifact_path", skippedNoArtifactPath);
+        activity?.SetTag("search.skipped.unresolved_path", skippedUnresolvedPath);
+        activity?.SetTag("search.skipped.unreadable", skippedUnreadable);
+        activity?.SetTag("search.skipped.too_large", skippedTooLarge);
+
         return new ContentSearchResult(
             matches, searched, skipped, truncated,
             new ResultBounds(
@@ -1315,6 +1381,17 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
         using var activity = Activity.StartActivity("aide.projection.query");
         activity?.SetTag("projection", "node-content");
 
+        // INV-0014 P4: every return below goes through this, so an outcome cannot be added without
+        // a tag and the span can never claim `located` by omission. `error.code` is passed null on
+        // the one outcome that is not an error — SetTag with a null value REMOVES the tag, so a
+        // reader sees "not recorded" rather than an empty code that looks like one.
+        NodeContent Recorded(string outcome, string? errorCode, NodeContent content)
+        {
+            activity?.SetTag("content.outcome", outcome);
+            activity?.SetTag("error.code", errorCode);
+            return content;
+        }
+
         using var reader = store.BeginRead();
 
         // The node's own facts carry both halves of its address: the scope it belongs to, and the
@@ -1325,25 +1402,34 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
 
         if (declaring is null)
         {
-            return new NodeContent(
-                nodeId, NodeContentKind.None, null, string.Empty, "this node has no recorded source");
+            return Recorded(
+                NodeContentOutcome.NoDeclaration,
+                ProjectionErrorCodes.ContentNoDeclaration,
+                new NodeContent(
+                    nodeId, NodeContentKind.None, null, string.Empty, "this node has no recorded source"));
         }
 
         var resolved = ResolveWithinWorkspace(reader, declaring.ScopeId, declaring.Provenance.ArtifactPathId);
 
         if (resolved is null)
         {
-            return new NodeContent(
-                nodeId, NodeContentKind.None, null, string.Empty,
-                $"the source for this node could not be located ({declaring.Provenance.ArtifactPathId})");
+            return Recorded(
+                NodeContentOutcome.Unresolvable,
+                ProjectionErrorCodes.ContentUnresolvable,
+                new NodeContent(
+                    nodeId, NodeContentKind.None, null, string.Empty,
+                    $"the source for this node could not be located ({declaring.Provenance.ArtifactPathId})"));
         }
 
         var kind = KindOf(resolved);
 
         if (kind == NodeContentKind.None)
         {
-            return new NodeContent(
-                nodeId, kind, null, string.Empty, $"{Path.GetExtension(resolved)} is not rendered inline");
+            return Recorded(
+                NodeContentOutcome.NotRendered,
+                ProjectionErrorCodes.ContentNotRendered,
+                new NodeContent(
+                    nodeId, kind, null, string.Empty, $"{Path.GetExtension(resolved)} is not rendered inline"));
         }
 
         try
@@ -1351,19 +1437,25 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
             var length = new FileInfo(resolved).Length;
             var text = ReadBounded(resolved, out var truncated);
 
-            return new NodeContent(
-                nodeId, kind, LanguageOf(resolved), text,
-                truncated
-                    ? $"first {MaxContentBytes / 1024} KB of {length / 1024} KB — open the source for the rest"
-                    : null);
+            return Recorded(
+                NodeContentOutcome.Located,
+                null,
+                new NodeContent(
+                    nodeId, kind, LanguageOf(resolved), text,
+                    truncated
+                        ? $"first {MaxContentBytes / 1024} KB of {length / 1024} KB — open the source for the rest"
+                        : null));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             // A file that cannot be read is a reader saying so, not a failed query: the node, its
             // metadata and its edges are still worth rendering.
-            return new NodeContent(
-                nodeId, NodeContentKind.None, null, string.Empty,
-                $"the source could not be read: {ex.Message}");
+            return Recorded(
+                NodeContentOutcome.Unreadable,
+                ProjectionErrorCodes.ContentUnreadable,
+                new NodeContent(
+                    nodeId, NodeContentKind.None, null, string.Empty,
+                    $"the source could not be read: {ex.Message}"));
         }
     }
 

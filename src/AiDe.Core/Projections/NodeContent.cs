@@ -1,6 +1,37 @@
 namespace AiDe.Core.Projections;
 
 /// <summary>
+/// What a <see cref="NodeContent"/> query actually did — the value of the <c>content.outcome</c>
+/// span tag.
+/// </summary>
+/// <remarks>
+/// <para><b>INV-0014 P4.</b> <see cref="NodeContent.Shortfall"/> tells one reader what to show;
+/// this tells an operator what happened, and it is the only one of the two that can be aggregated
+/// across a workspace. The span carried no outcome at all, which is why "wrong for two whole
+/// languages" was a screenshot rather than a signal.</para>
+///
+/// <para>Constants rather than literals at the call site: these names travel into saved searches
+/// and dashboards, so renaming one is a breaking change and should read like one.</para>
+/// </remarks>
+public static class NodeContentOutcome
+{
+    /// <summary>The file was found, opened and returned. The only outcome with no error code.</summary>
+    public const string Located = "located";
+
+    /// <summary>No assertion names a source artifact for this node.</summary>
+    public const string NoDeclaration = "no-declaration";
+
+    /// <summary>A recorded artifact path that does not name a file inside the workspace.</summary>
+    public const string Unresolvable = "unresolvable";
+
+    /// <summary>The file is there and could not be opened.</summary>
+    public const string Unreadable = "unreadable";
+
+    /// <summary>A real file whose extension this reader does not render inline.</summary>
+    public const string NotRendered = "not-rendered";
+}
+
+/// <summary>
 /// How a node's content should be rendered — the authority's call, not the reader's guess.
 /// </summary>
 /// <remarks>
