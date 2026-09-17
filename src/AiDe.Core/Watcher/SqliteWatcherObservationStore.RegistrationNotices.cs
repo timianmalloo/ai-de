@@ -1,7 +1,201 @@
+using Microsoft.Data.Sqlite;
+
 namespace AiDe.Core.Watcher;
 
 public sealed partial class SqliteWatcherObservationStore
 {
+    internal long PendingNativeNoticeCount()
+    {
+        lock (_gate) return PendingNativeNoticeCount(null);
+    }
+
+    private long PendingNativeNoticeCount(SqliteTransaction? transaction)
+    {
+        using var command = _connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = """
+            SELECT count(*) FROM (
+                SELECT notice_id FROM registration_notice_delivery
+                WHERE state IN ('Pending','InFlight') LIMIT 129
+            );
+            """;
+        return (long)command.ExecuteScalar()!;
+    }
+
+    internal RegistrationAdmissionResult AdmitNative(
+        BoundNativeRegistration input, long recordedAtMilliseconds, long ticks,
+        Func<string> newSessionId, Action prepareCapability, Func<long, bool, IDisposable> reserve,
+        Action<NativeAdmissionFaultPoint>? fault)
+    {
+        lock (_gate)
+        {
+            using var transaction = _connection.BeginTransaction(deferred: false);
+            var historical = ReadNativeAdmission(input.OperationId, transaction);
+            if (historical is not null)
+            {
+                if (historical.InputDigest != input.InputDigest || historical.ContextDigest != input.ContextDigest)
+                    throw NativeAdmissionErrors.Error(NativeAdmissionErrors.OperationConflict);
+                transaction.Commit();
+                return new(historical, null, true);
+            }
+
+            using var reservation = reserve(PendingNativeNoticeCount(transaction), input.CorrectionCode != "NONE");
+            fault?.Invoke(NativeAdmissionFaultPoint.BeforeContextRead);
+            NativeAdmissionCodec.ValidateContextFiles(input);
+            var existing = NativeSessionForTerminal(input.Binding.Terminal.TerminalId, transaction);
+            var sessionId = existing?.SessionId ?? newSessionId();
+            NativeAdmissionCodec.Text(sessionId, 512);
+            var generation = new SessionGeneration(existing is null ? 1 : checked(existing.Generation.Value + 1));
+            var session = new SessionRecord(sessionId, generation, input.Binding);
+            var admission = new RegistrationAdmission(input.OperationId, input.InputDigest, input.ContextDigest,
+                string.Empty, session, input.RepositorySent, input.RepositoryUsed, input.CorrectionCode,
+                recordedAtMilliseconds);
+            admission = admission with { DecisionDigest = NativeAdmissionCodec.DecisionDigest(admission) };
+            prepareCapability();
+            InsertNativeAdmission(admission, transaction);
+            fault?.Invoke(NativeAdmissionFaultPoint.AfterAdmission);
+            if (input.CorrectionCode != "NONE") InsertInitialNativeNotice(admission, input.PublicationRoot, transaction);
+            fault?.Invoke(NativeAdmissionFaultPoint.AfterNotice);
+            RecordSession(session, transaction);
+            fault?.Invoke(NativeAdmissionFaultPoint.AfterSession);
+            ExecuteNonQuery(_connection, "DELETE FROM session_ended WHERE session_id=$id;", transaction, ("$id", sessionId));
+            fault?.Invoke(NativeAdmissionFaultPoint.AfterEndClear);
+            WriteNativeHeartbeat(sessionId, ticks, transaction);
+            fault?.Invoke(NativeAdmissionFaultPoint.AfterHeartbeat);
+            fault?.Invoke(NativeAdmissionFaultPoint.BeforeCommit);
+            transaction.Commit();
+            fault?.Invoke(NativeAdmissionFaultPoint.AfterCommit);
+            return new(admission, null, false);
+        }
+    }
+
+    private SessionRecord? NativeSessionForTerminal(string terminal, SqliteTransaction transaction)
+    {
+        using var command = _connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = "SELECT session_id FROM agent_session_dim WHERE terminal_id=$terminal LIMIT 2;";
+        command.Parameters.AddWithValue("$terminal", terminal);
+        string? sessionId;
+        using (var reader = command.ExecuteReader())
+        {
+            sessionId = reader.Read() ? reader.GetString(0) : null;
+            if (reader.Read()) throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Stale);
+        }
+        return sessionId is null ? null : FindSession(sessionId, transaction);
+    }
+
+    private void InsertNativeAdmission(RegistrationAdmission admission, SqliteTransaction transaction)
+    {
+        var binding = admission.Session.Binding;
+        ExecuteNonQuery(_connection, """
+            INSERT INTO native_registration_admission_fact
+                (operation_id,schema_version,input_digest,context_digest,decision_digest,session_id,generation,
+                 repository_sent,repository_used,worktree_path,worktree_branch,terminal_id,agent_name,
+                 harness_name,harness_version,model_name,model_version,trust,correction_code,recorded_at_ms)
+            VALUES ($op,1,$input,$context,$decision,$session,$generation,$sent,$used,$path,$branch,$terminal,
+                    $agent,$harness,$hversion,$model,$mversion,$trust,$correction,$at);
+            """, transaction,
+            ("$op", admission.OperationId), ("$input", admission.InputDigest), ("$context", admission.ContextDigest),
+            ("$decision", admission.DecisionDigest), ("$session", admission.Session.SessionId),
+            ("$generation", admission.Session.Generation.Value), ("$sent", admission.RepositorySent),
+            ("$used", admission.RepositoryUsed), ("$path", binding.Worktree.Path), ("$branch", binding.Worktree.Branch),
+            ("$terminal", binding.Terminal.TerminalId), ("$agent", binding.Agent.AgentName),
+            ("$harness", binding.Harness?.Name), ("$hversion", binding.Harness?.Version),
+            ("$model", binding.Model?.Name), ("$mversion", binding.Model?.Version), ("$trust", binding.Trust.ToString()),
+            ("$correction", admission.CorrectionCode), ("$at", admission.RecordedAtMilliseconds));
+    }
+
+    private void InsertInitialNativeNotice(
+        RegistrationAdmission admission, string publicationRoot, SqliteTransaction transaction)
+    {
+        var bytes = NativeAdmissionCodec.NoticeBytes(admission);
+        var digest = NativeAdmissionCodec.Digest(bytes);
+        NativeAdmissionCodec.RequireNotice(admission, bytes, digest);
+        ExecuteNonQuery(_connection, """
+            INSERT INTO registration_notice_delivery
+                (notice_id,operation_id,schema_version,decision_digest,correction_code,publication_bytes,
+                 publication_digest,target_kind,target_root,state,attempt,ownership_version,due_at_ms)
+            VALUES ($id,$op,1,$decision,'LINKED_WORKTREE',$bytes,$digest,'native-file',$root,'Pending',0,0,$at);
+            """, transaction, ("$id", admission.DecisionDigest[..32]), ("$op", admission.OperationId),
+            ("$decision", admission.DecisionDigest), ("$bytes", bytes), ("$digest", digest),
+            ("$root", publicationRoot), ("$at", admission.RecordedAtMilliseconds));
+    }
+
+    private RegistrationAdmission? ReadNativeAdmission(string operationId, SqliteTransaction transaction)
+    {
+        using var command = _connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = """
+            SELECT input_digest,context_digest,decision_digest,session_id,generation,repository_sent,repository_used,
+                   worktree_path,worktree_branch,terminal_id,agent_name,harness_name,harness_version,
+                   model_name,model_version,trust,correction_code,recorded_at_ms
+            FROM native_registration_admission_fact WHERE operation_id=$op;
+            """;
+        command.Parameters.AddWithValue("$op", operationId);
+        using var reader = command.ExecuteReader();
+        if (!reader.Read()) return null;
+        var repository = new RepositoryIdentity(reader.GetString(6), reader.GetString(6));
+        var binding = new SessionBinding(repository,
+            new WorktreeIdentity(repository, reader.GetString(8), reader.GetString(7)),
+            new TerminalIdentity(reader.GetString(9)), new AgentIdentity(reader.GetString(10)),
+            reader.IsDBNull(11) ? null : new HarnessIdentity(reader.GetString(11), reader.GetString(12)),
+            reader.IsDBNull(13) ? null : new ModelIdentity(reader.GetString(13), reader.GetString(14)),
+            Enum.Parse<TrustClassification>(reader.GetString(15)));
+        var admission = new RegistrationAdmission(operationId, reader.GetString(0), reader.GetString(1),
+            reader.GetString(2), new SessionRecord(reader.GetString(3), new(reader.GetInt64(4)), binding),
+            reader.GetString(5), reader.GetString(6), reader.GetString(16), reader.GetInt64(17));
+        if (NativeAdmissionCodec.DecisionDigest(admission) != admission.DecisionDigest)
+            throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Integrity);
+        return admission;
+    }
+
+    internal SessionRecord ApplyNativeLifecycle(
+        SessionRecord expected, NativeLifecycle operation, long ticks, HarnessIdentity? harness, ModelIdentity? model)
+    {
+        if (harness is not null)
+        {
+            NativeAdmissionCodec.Text(harness.Name, 256);
+            NativeAdmissionCodec.Text(harness.Version, 128);
+        }
+        if (model is not null)
+        {
+            NativeAdmissionCodec.Text(model.Name, 256);
+            NativeAdmissionCodec.Text(model.Version, 128);
+        }
+        lock (_gate)
+        {
+            using var transaction = _connection.BeginTransaction(deferred: false);
+            if (FindSession(expected.SessionId, transaction) != expected)
+                throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Stale);
+            var updated = expected;
+            switch (operation)
+            {
+                case NativeLifecycle.Heartbeat:
+                    WriteNativeHeartbeat(expected.SessionId, ticks, transaction);
+                    break;
+                case NativeLifecycle.End:
+                    ExecuteNonQuery(_connection, "INSERT OR IGNORE INTO session_ended(session_id) VALUES($id);",
+                        transaction, ("$id", expected.SessionId));
+                    break;
+                case NativeLifecycle.Update:
+                    updated = expected with { Binding = expected.Binding with
+                    {
+                        Harness = harness ?? expected.Binding.Harness, Model = model ?? expected.Binding.Model,
+                    } };
+                    RecordSession(updated, transaction);
+                    break;
+            }
+            transaction.Commit();
+            return updated;
+        }
+    }
+
+    private void WriteNativeHeartbeat(string sessionId, long ticks, SqliteTransaction transaction) =>
+        ExecuteNonQuery(_connection, """
+            INSERT INTO session_heartbeat(session_id,monotonic_ticks) VALUES($id,$ticks)
+            ON CONFLICT(session_id) DO UPDATE SET monotonic_ticks=$ticks;
+            """, transaction, ("$id", sessionId), ("$ticks", ticks));
+
     // Dormant storage floor only: no enhanced ingress or worker is enabled by this migration.
     // Pattern: Transactional Outbox. Admission/native effects and derived-byte validation still
     // require the protected writer; DDL cannot establish content digests or trusted filesystem roots.

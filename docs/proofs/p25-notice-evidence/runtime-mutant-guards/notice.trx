@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d23265a8-09a4-4baf-8c2e-aad94c906779" name="malla@TIMMALLSTRIX 2026-09-17 06:55:57" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-17T06:55:57.0588599-07:00" queuing="2026-09-17T06:55:57.0588600-07:00" start="2026-09-17T06:55:55.5777383-07:00" finish="2026-09-17T06:55:57.0627254-07:00" />
+  <TestSettings name="default" id="dda98de9-1650-4bcb-9fde-12ecd346268f">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-17_06_55_57" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ee7d59cf-fb6d-4700-813d-eb074e65aec0" testId="34167ceb-1cd0-e0aa-3186-6c5d4fc17179" testName="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(existingTerminal: True)" computerName="TIMMALLSTRIX" duration="00:00:00.1890847" startTime="2026-09-17T06:55:56.4518270-07:00" endTime="2026-09-17T06:55:56.6405540-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ee7d59cf-fb6d-4700-813d-eb074e65aec0">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.WatcherException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(Boolean existingTerminal) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 26&#xD;
+   at InvokeStub_NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f1707dd6-7428-46e1-9bd2-ad5613e6cf6d" testId="b8529113-6ace-b278-0f46-eae21fa5c144" testName="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(operation: &quot;heartbeat&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0323033" startTime="2026-09-17T06:55:56.6985871-07:00" endTime="2026-09-17T06:55:56.7312675-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f1707dd6-7428-46e1-9bd2-ad5613e6cf6d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.IsType() Failure: Value is null&#xD;
+Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+Actual:   null</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 181&#xD;
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 190&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c55118c8-9564-4166-93fd-9f4e2549beb7" testId="a7263e1e-2297-1233-ff12-b75e1318881e" testName="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(existingTerminal: False)" computerName="TIMMALLSTRIX" duration="00:00:00.1729063" startTime="2026-09-17T06:55:56.2791256-07:00" endTime="2026-09-17T06:55:56.4512663-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c55118c8-9564-4166-93fd-9f4e2549beb7">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.WatcherException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(Boolean existingTerminal) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 26&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="94ed822a-65c0-4969-8530-5a0712d3b97d" testId="752695df-c216-44e4-9c6f-2cdb1a42bd37" testName="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(operation: &quot;update&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0387997" startTime="2026-09-17T06:55:56.6410491-07:00" endTime="2026-09-17T06:55:56.6820471-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94ed822a-65c0-4969-8530-5a0712d3b97d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.IsType() Failure: Value is null&#xD;
+Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+Actual:   null</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 181&#xD;
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 190&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ba449f93-b23e-49f6-8be2-0d93c6a34b63" testId="a32b2776-61ab-2da5-b398-72d4c76443a5" testName="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision" computerName="TIMMALLSTRIX" duration="00:00:00.0285293" startTime="2026-09-17T06:55:56.9488052-07:00" endTime="2026-09-17T06:55:56.9771235-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ba449f93-b23e-49f6-8be2-0d93c6a34b63">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.WatcherException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 277&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5f575a96-3aa3-41f3-88d2-6d9aa8a9110f" testId="d7356225-538b-d001-8178-f7beb4391b43" testName="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(changeContext: True)" computerName="TIMMALLSTRIX" duration="00:00:00.0279930" startTime="2026-09-17T06:55:56.2583557-07:00" endTime="2026-09-17T06:55:56.2780051-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5f575a96-3aa3-41f3-88d2-6d9aa8a9110f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.WatcherException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(Boolean changeContext) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 148&#xD;
+   at InvokeStub_NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="11386ff9-8ab2-4789-a85f-e86d82ce9245" testId="ac063ac7-8c71-db99-4afc-2a3085eaebe8" testName="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoDifferentStores_SharesProcessCapacity" computerName="TIMMALLSTRIX" duration="00:00:00.1831074" startTime="2026-09-17T06:55:56.7650818-07:00" endTime="2026-09-17T06:55:56.9483914-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="11386ff9-8ab2-4789-a85f-e86d82ce9245">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.WatcherException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoDifferentStores_SharesProcessCapacity() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 48&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fd3478b8-c8ca-44cf-9d18-998ac5ebe046" testId="a52e8178-8448-dfe5-143d-bdebd30fa812" testName="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(changeContext: False)" computerName="TIMMALLSTRIX" duration="00:00:00.0990760" startTime="2026-09-17T06:55:56.1424727-07:00" endTime="2026-09-17T06:55:56.2499154-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fd3478b8-c8ca-44cf-9d18-998ac5ebe046">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(AiDe.Core.Watcher.WatcherException)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(Boolean changeContext) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 148&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d9f9707f-d3f8-43bc-8a1f-fda21400b73f" testId="57f994f4-1341-0ec9-b34b-ce7bcd026d3e" testName="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(operation: &quot;end&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0327938" startTime="2026-09-17T06:55:56.7316520-07:00" endTime="2026-09-17T06:55:56.7645064-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d9f9707f-d3f8-43bc-8a1f-fda21400b73f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.IsType() Failure: Value is null&#xD;
+Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+Actual:   null</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 181&#xD;
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 190&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a32b2776-61ab-2da5-b398-72d4c76443a5">
+      <Execution id="ba449f93-b23e-49f6-8be2-0d93c6a34b63" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests" name="RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoDifferentStores_SharesProcessCapacity" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="ac063ac7-8c71-db99-4afc-2a3085eaebe8">
+      <Execution id="11386ff9-8ab2-4789-a85f-e86d82ce9245" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests" name="RegisterNative_TwoDifferentStores_SharesProcessCapacity" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(operation: &quot;heartbeat&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="b8529113-6ace-b278-0f46-eae21fa5c144">
+      <Execution id="f1707dd6-7428-46e1-9bd2-ad5613e6cf6d" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests" name="Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(existingTerminal: False)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a7263e1e-2297-1233-ff12-b75e1318881e">
+      <Execution id="c55118c8-9564-4166-93fd-9f4e2549beb7" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests" name="RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(operation: &quot;update&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="752695df-c216-44e4-9c6f-2cdb1a42bd37">
+      <Execution id="94ed822a-65c0-4969-8530-5a0712d3b97d" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests" name="Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(existingTerminal: True)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="34167ceb-1cd0-e0aa-3186-6c5d4fc17179">
+      <Execution id="ee7d59cf-fb6d-4700-813d-eb074e65aec0" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests" name="RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(changeContext: False)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a52e8178-8448-dfe5-143d-bdebd30fa812">
+      <Execution id="fd3478b8-c8ca-44cf-9d18-998ac5ebe046" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests" name="RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(changeContext: True)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d7356225-538b-d001-8178-f7beb4391b43">
+      <Execution id="5f575a96-3aa3-41f3-88d2-6d9aa8a9110f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests" name="RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(operation: &quot;end&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="57f994f4-1341-0ec9-b34b-ce7bcd026d3e">
+      <Execution id="d9f9707f-d3f8-43bc-8a1f-fda21400b73f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests" name="Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="34167ceb-1cd0-e0aa-3186-6c5d4fc17179" executionId="ee7d59cf-fb6d-4700-813d-eb074e65aec0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b8529113-6ace-b278-0f46-eae21fa5c144" executionId="f1707dd6-7428-46e1-9bd2-ad5613e6cf6d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a7263e1e-2297-1233-ff12-b75e1318881e" executionId="c55118c8-9564-4166-93fd-9f4e2549beb7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="752695df-c216-44e4-9c6f-2cdb1a42bd37" executionId="94ed822a-65c0-4969-8530-5a0712d3b97d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a32b2776-61ab-2da5-b398-72d4c76443a5" executionId="ba449f93-b23e-49f6-8be2-0d93c6a34b63" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d7356225-538b-d001-8178-f7beb4391b43" executionId="5f575a96-3aa3-41f3-88d2-6d9aa8a9110f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ac063ac7-8c71-db99-4afc-2a3085eaebe8" executionId="11386ff9-8ab2-4789-a85f-e86d82ce9245" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a52e8178-8448-dfe5-143d-bdebd30fa812" executionId="fd3478b8-c8ca-44cf-9d18-998ac5ebe046" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="57f994f4-1341-0ec9-b34b-ce7bcd026d3e" executionId="d9f9707f-d3f8-43bc-8a1f-fda21400b73f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="9" executed="9" passed="0" failed="9" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.28]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.30]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.42]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.42]       Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(148,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(Boolean changeContext)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.44]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.44]       Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+[xUnit.net 00:00:00.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(148,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(Boolean changeContext)&#xD;
+[xUnit.net 00:00:00.44]            at InvokeStub_NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.62]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.62]       Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+[xUnit.net 00:00:00.62]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.62]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(26,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(Boolean existingTerminal)&#xD;
+[xUnit.net 00:00:00.62]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.62]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.81]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.81]       Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+[xUnit.net 00:00:00.81]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.81]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(26,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(Boolean existingTerminal)&#xD;
+[xUnit.net 00:00:00.81]            at InvokeStub_NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.81]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.85]       Assert.IsType() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.85]       Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+[xUnit.net 00:00:00.85]       Actual:   null&#xD;
+[xUnit.net 00:00:00.85]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.85]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(181,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation)&#xD;
+[xUnit.net 00:00:00.85]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(190,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation)&#xD;
+[xUnit.net 00:00:00.85]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.90]       Assert.IsType() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.90]       Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+[xUnit.net 00:00:00.90]       Actual:   null&#xD;
+[xUnit.net 00:00:00.90]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.90]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(181,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation)&#xD;
+[xUnit.net 00:00:00.90]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(190,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation)&#xD;
+[xUnit.net 00:00:00.90]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.93]       Assert.IsType() Failure: Value is null&#xD;
+[xUnit.net 00:00:00.93]       Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+[xUnit.net 00:00:00.93]       Actual:   null&#xD;
+[xUnit.net 00:00:00.93]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.93]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(181,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation)&#xD;
+[xUnit.net 00:00:00.93]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(190,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation)&#xD;
+[xUnit.net 00:00:00.93]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.11]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:01.11]       Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+[xUnit.net 00:00:01.11]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.12]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(48,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoDifferentStores_SharesProcessCapacity()&#xD;
+[xUnit.net 00:00:01.12]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:01.12]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.14]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:01.14]       Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+[xUnit.net 00:00:01.14]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.14]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(277,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision()&#xD;
+[xUnit.net 00:00:01.14]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:01.14]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.15]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T06:55:56.2523030-07:00">
+        <Text>[xUnit.net 00:00:00.42]     AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(changeContext: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T06:55:56.2784027-07:00">
+        <Text>[xUnit.net 00:00:00.44]     AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(changeContext: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T06:55:56.4518378-07:00">
+        <Text>[xUnit.net 00:00:00.62]     AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(existingTerminal: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T06:55:56.6409934-07:00">
+        <Text>[xUnit.net 00:00:00.81]     AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(existingTerminal: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T06:55:56.6824388-07:00">
+        <Text>[xUnit.net 00:00:00.85]     AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(operation: "update") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T06:55:56.7316097-07:00">
+        <Text>[xUnit.net 00:00:00.90]     AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(operation: "heartbeat") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T06:55:56.7648677-07:00">
+        <Text>[xUnit.net 00:00:00.93]     AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(operation: "end") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T06:55:56.9488723-07:00">
+        <Text>[xUnit.net 00:00:01.11]     AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoDifferentStores_SharesProcessCapacity [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T06:55:56.9774034-07:00">
+        <Text>[xUnit.net 00:00:01.14]     AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -49,6 +49,44 @@ public sealed class TrustedRegistrar : ITrustedRegistrar
 
     // Capabilities live only in memory, keyed by session id - never written to the observation store.
     private readonly Dictionary<string, SessionCapability> _capabilityBySession = new();
+    private readonly Dictionary<string, SessionRecord> _nativeExpected = new();
+
+    internal Action<NativeAdmissionFaultPoint>? NativeLifecycleFault { get; set; }
+
+    internal RegistrationAdmissionResult AdmitNative(
+        SqliteWatcherObservationStore store, NoticeAdmissionCoordinator coordinator,
+        BoundNativeRegistration input, long recordedAtMilliseconds, Action<NativeAdmissionFaultPoint>? fault)
+    {
+        if (!ReferenceEquals(_store, store)) throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Unavailable);
+        lock (_gate)
+        {
+            SessionCapability? prepared = null;
+            var result = coordinator.Run(reserve => store.AdmitNative(input, recordedAtMilliseconds,
+                _clock.Ticks, _newSessionId, () => prepared = _capabilities.Create(), reserve, fault));
+            if (!result.Replayed)
+            {
+                _capabilityBySession[result.Admission.Session.SessionId] = prepared!;
+                _nativeExpected[result.Admission.Session.SessionId] = result.Admission.Session;
+                return result with { Capability = prepared };
+            }
+            return result;
+        }
+    }
+
+    private bool ApplyNativeLifecycle(string sessionId, SessionCapability capability, NativeLifecycle operation,
+        HarnessIdentity? harness = null, ModelIdentity? model = null)
+    {
+        lock (_gate)
+        {
+            if (!_nativeExpected.TryGetValue(sessionId, out var expected)) return false;
+            RequireCapability(sessionId, capability);
+            NativeLifecycleFault?.Invoke(NativeAdmissionFaultPoint.BeforeLifecycleCheck);
+            var updated = ((SqliteWatcherObservationStore)_store).ApplyNativeLifecycle(
+                expected, operation, _clock.Ticks, harness, model);
+            _nativeExpected[sessionId] = updated;
+            return true;
+        }
+    }
 
     public TrustedRegistrar(
         IWatcherObservationStore store,
@@ -89,6 +127,7 @@ public sealed class TrustedRegistrar : ITrustedRegistrar
         lock (_gate)
         {
             _capabilityBySession[sessionId] = capability; // replaces any prior generation's capability
+            _nativeExpected.Remove(sessionId);
         }
         _store.RecordSession(record);
         // A fresh generation starts Alive from now and inherits no prior liveness or ended state.
@@ -113,12 +152,14 @@ public sealed class TrustedRegistrar : ITrustedRegistrar
 
     public void Heartbeat(string sessionId, SessionCapability capability)
     {
+        if (ApplyNativeLifecycle(sessionId, capability, NativeLifecycle.Heartbeat)) return;
         RequireCapability(sessionId, capability);
         _store.UpsertHeartbeat(sessionId, _clock.Ticks);
     }
 
     public void End(string sessionId, SessionCapability capability)
     {
+        if (ApplyNativeLifecycle(sessionId, capability, NativeLifecycle.End)) return;
         RequireCapability(sessionId, capability);
         _store.MarkEnded(sessionId);
     }
@@ -144,6 +185,7 @@ public sealed class TrustedRegistrar : ITrustedRegistrar
     public void UpdateHarnessAndModel(
         string sessionId, SessionCapability capability, HarnessIdentity? harness, ModelIdentity? model)
     {
+        if (ApplyNativeLifecycle(sessionId, capability, NativeLifecycle.Update, harness, model)) return;
         RequireCapability(sessionId, capability);
 
         var existing = _store.FindSession(sessionId);

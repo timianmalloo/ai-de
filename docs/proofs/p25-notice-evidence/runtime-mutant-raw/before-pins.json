@@ -1,0 +1,562 @@
+[
+  {
+    "path": "docs\\proofs\\p25-notice-evidence\\run-native.ps1",
+    "sha256": "4DAA50E44374F9C7358BE2857CA4B39AF0FD1415DDE857A5CF39081E242CBFCA"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\AdvisoryEvaluators.cs",
+    "sha256": "689ADAE6CAE12E497D40EF5455F7C5F0DC807CE3D3D765825EE080A059ADE737"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\AdvisoryScoring.cs",
+    "sha256": "82A8A155D17FF37248F062CA41C9421FAC37B99C82C179FC8D9C43E3D9CC15F0"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\AgentProtocolDocument.cs",
+    "sha256": "A55A0DB0BE3D9BB93B5F81D9E90144F87B650748F8ACC7D9FFE3BE47917FD419"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\AuditLogEpisodeSource.cs",
+    "sha256": "464E8FD0310698879288C69397D663E60EB289B0CB858C6D2781134F5F0FFFB2"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\BoardPublisher.cs",
+    "sha256": "B9D59E07681428D8F34C6EB2A8059B9FDE8D267D77620C2C213A9DA8ACA16B4D"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\ClosedEpisodeScoring.cs",
+    "sha256": "053B6B408E1B99D813C1C2A17898F581445BB2E51DA4FB95295F1650FE0EB9CF"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\CoordinationContract.cs",
+    "sha256": "623C9BC5CF8C8B74951D60B7C1A4DC24EE9D04B417A54229DFD6058D4E43775E"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\CoordinationContractLog.cs",
+    "sha256": "EF21D2F99EF9EB712112116A840C246B9C6BE896F09E8D80C6BE60D3C74F29C6"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\CoordinationProjection.cs",
+    "sha256": "C8D5C2BEDC02D405459A5E13CBB7B1A7FD692E022C0DCD43681D3D3487763B45"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\CoordinationRead.cs",
+    "sha256": "055417128EA470FDD0F9D679309120CD803615FA9386B36C750082235218F6B5"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\CoordinationRecovery.cs",
+    "sha256": "F72117B08DC25786E7A1A67B1352405363671A371B94EAFF5BDF3D8E2498A3C5"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\CoordinationSourceCapture.cs",
+    "sha256": "CA2600BC46D7B0735E94E9ADC69FC24E2B3F66A222617507114CA1E8A3F1E899"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\DaydreamCandidate.cs",
+    "sha256": "54B72705B6F5A668EA078B30C5A664AB72324D652E752012BCFA09236A2763DF"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\DaydreamObservation.cs",
+    "sha256": "C678AE8AF33D51B406691AA5BF69D640D0C0E16F1EB288C849EF824C41DA4EE6"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\DaydreamReachProbe.cs",
+    "sha256": "18F079E43A8A17821B7BDC6E3074ECFBCCCF87331A4B277C9ACC1C256B854838"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\DaydreamRecorder.cs",
+    "sha256": "07A04A2506D0C6F792B5EDAE739EA52DD424C6EDC2BF3AF0E434A8AABF4C0CD2"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\DaydreamRepositoryRecord.cs",
+    "sha256": "6BA1DB18BD9ED2D0C644B874C73675D895582370CD14FF31F66D8BF71940341A"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\DeclaredEpisodeArtifact.cs",
+    "sha256": "29C3478459E210271A875A281EA3BC0610073F972A4214B4F9D763749D37CBBE"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\DeterministicSignalsDeriver.cs",
+    "sha256": "F022F20F237966EC51006343B727EB632BC4B573559629B8FC52596203F6BCB2"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\DisputeService.cs",
+    "sha256": "75CF9B25D204B8FC8C32FCCE8E81A992DB9F2812367ADFE76C494641319EF5CE"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\DreamCorpusReader.cs",
+    "sha256": "7F66808873766253BC1AD9120A1F7B18715B63116B3CC480C8DB47F2B2044D8D"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\EgressGate.cs",
+    "sha256": "B06A201529940B2466ED6E48F237CAE771E0BD267FCA0B02AB8F533B06E486BA"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\FleetAggregator.cs",
+    "sha256": "4215120BED6004B9FB8CDC684902185C872EF47B6A32911DBA472EA8AE4D645D"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\IngestHost.cs",
+    "sha256": "731214C92C3A8A124DAA6F5E00CC719E1C1117A297DFD8B4B5C0B0E798EB70AC"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\Leaderboard.cs",
+    "sha256": "9B29035D633D1582C63B30A9F76D21DD4AE98C7D6BB7C2A0C9967518AD157E42"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\LivenessProjection.cs",
+    "sha256": "9E0C68C30619C1226709B8CE99ED5971774390884B35E1411FA8A3108AD4A0DF"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\McpConfigWriter.cs",
+    "sha256": "824D25E09BCC2FBFB410A67C74CB4E3F4955F012C1059057210C0F513453E1F2"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\MessageBoard.cs",
+    "sha256": "E9E6597E8164D5895218F24E42F1F309406448EE94550FE84050CAF605698C04"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\MonotonicClock.cs",
+    "sha256": "3FACE6DB381DE90F0F876FAF4268A87EB78898D8AA129B3D4C5F11CFD4360806"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\NativeRegistrationAdmissionRoot.cs",
+    "sha256": "54E5B3CD64BC61FFE4852284D1B7AC58ED412784EE4E972CA1DB69BFD3CEDB49"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\NoticeAdmissionCoordinator.cs",
+    "sha256": "C844CD19A8391CF29611501E1FDAF6A004EDF82D6955DCA98DE58DADDF839C85"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\ObservedSpan.cs",
+    "sha256": "D8BAFB986D420C91301AC7E6DD0FC1B9C3D824349BA143DFEE31D5F389FF7441"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\OtelSpanMapper.cs",
+    "sha256": "CFA085268B68BDCF5738A88266BB00E3D9FF5D34CB1FBF0F8FE1610F1C79AC21"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\OtlpReceiver.cs",
+    "sha256": "FA39D546BE8BE9046EFE9E36D2161CB271DC873D3BD4BCEBD5F1EFF0B53A3504"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\ProofPackVerifier.cs",
+    "sha256": "35CE21A7C2290B02D9FF4F93D4B9D4E3E8243B867958CBD839DFE425949E26E2"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\RegistrationAdmission.cs",
+    "sha256": "F8D45C035B343075927F5B6688697D00D5A5D61B4C92BC368B4A27FFB712BC3C"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\RegistrationPublisher.cs",
+    "sha256": "0BBFD1806AFDEDFBFD4733FBF9F4CA3683E87FA8207057AD618B195E46E74BCD"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\RepositoryCorrection.cs",
+    "sha256": "492DF16FBD5EF26A83C836374129F10EE55F7C7305839EB92F819D81E9476542"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\ScoreDispute.cs",
+    "sha256": "41B39C304922BDC6A7E9CBE265D882C532D3744DCFE1328DD089D52A1C1514C7"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\ScoringService.cs",
+    "sha256": "85CA9C9C8E1C92F859FDEA4058ABD93B82A7A26B4AA5F79598A211DD08EC94AE"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\SessionCapability.cs",
+    "sha256": "57467AF2291D7BB5AD792882BED3CC5C0C2C6DD6304DBE424E8F3F274CD85A42"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\SessionCoordinationEmitter.cs",
+    "sha256": "E5C9AF92EE2D2CDD4A96AE6E9D6E910DC7B27549B1C6D62A72D909E84AD56CC2"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\SpanIngest.cs",
+    "sha256": "D200A06EB6338F7E557520645F89FC7193A6C851789E380D67D04274BA6FD8F3"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\SqliteWatcherObservationStore.Coordination.cs",
+    "sha256": "325118C85C137FAB8DAD28254EDC2DF3EAA319DA1A46D40F5B2212F89B0D8560"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\SqliteWatcherObservationStore.cs",
+    "sha256": "80F96C277A2A376EA843BCF0E5D95CC4A97369CC31515E87741EB800D5FE376C"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\SqliteWatcherObservationStore.RegistrationNotices.cs",
+    "sha256": "A60EB85126557DF0F514D5A482F5C20B11121B7CB20316AC474A8EC50423AD6C"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\StandingPublisher.cs",
+    "sha256": "954A53961E4C172826C3EE894A340409081A0FDADD093C595119B9F4034B7399"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\TrustedRegistrar.cs",
+    "sha256": "60ED2EB06A50A7333A5144F1CBB1EE3F33DF43A4C055EDB5D76EC7786DC668AC"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\WatcherException.cs",
+    "sha256": "697C60D48D5401F87A2C5A8E5367CCA287678737A309670BFFFD83600DBB362C"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\WatcherHost.cs",
+    "sha256": "B7B63C2DBE8CA15F1C1A320A729E01E2F902AEE013923CD7DCB4D617DE492B72"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\WatcherIdentity.cs",
+    "sha256": "DB96A3DE5ADE1D0C68EACB71FCA5224A40F5119FB1C97FD27A755BFD72BEFBDD"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\WatcherObservationStore.cs",
+    "sha256": "41258A6950E1950EF34CD047AD525F6A39E245C3E4983DE548F38F64AA4B6E73"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\WeaveScore.cs",
+    "sha256": "066D48A879121EB899E5536AAD10EE90117EDB4BD8245EA930D445B3931129E7"
+  },
+  {
+    "path": "src\\AiDe.Core\\Watcher\\WorkEpisode.cs",
+    "sha256": "381460F5AD7AC8674F0160E4DBC0377640F67974E854760DF46D92F97AB3D43E"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\AdvisoryEvaluatorsTests.cs",
+    "sha256": "C79D6D7918642720194E424150C467B76AF2A871774648E4360AFA8F4EA2526E"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\AdvisoryScoringTests.cs",
+    "sha256": "EAD32FB7937994A333CF01A9C2A82C6D73980C8C55A19558295DA6A28F8D5893"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\AgentProtocolDocumentTests.cs",
+    "sha256": "959AABC0B80C3DA7BC317981C2EA1A6AAC6162F10EB9310C6BDDE75A93FE4EFB"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\AGovernedLaneIsCreditedForItsOwnBranchTests.cs",
+    "sha256": "F93263AB3F7864A0104CDB5ECBDD069864FE57ED280D870615BD985741AF730B"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\AnAgentCanPullItsOwnStandingTests.cs",
+    "sha256": "001855CAA933EFBF84264AC71CC40236C9C746B884FE3E014E0225C70511C8F0"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\AnEvidencedAgentEpisodeIsScoredTests.cs",
+    "sha256": "C2F81CDB97FAE1387E822F2B1E982B5C6C9824884BC0856C5639275D7492B123"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\AuditLogEpisodeSourceTests.cs",
+    "sha256": "C286C77A855C9312274538B68893790283EE64468D68CAA45A73BB4A014CE4C6"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\AWorktreeRegistrationIsCorrectedAndSaidSoTests.cs",
+    "sha256": "0B2C335E09E08CF9BE28CAF1438B26962E7DC403A6AF2C2ABE008DFC69207E76"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\BoardOrderingTests.cs",
+    "sha256": "DB93C6E0BA1DF2268FB0203FC058E1CC64F75E9EC686378B4DFACE5CE6E197FC"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\BoardPublisherTests.cs",
+    "sha256": "349F1C58B1F677FDA5E745CB2DC23D096ED56F774DD7BFF64772A4A46A2491C3"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\ContractBoardPostTests.cs",
+    "sha256": "3C60E87CC3B8262226DB415A802475E8B5EE005B49B04A52911275879252B20A"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\ContractDeclaredArtifactTests.cs",
+    "sha256": "D586B9A639AC01456B36836FB97BB80D8F6A1AF1A2D0B701E08D8CE3A82C441F"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\ContractEpisodeTests.cs",
+    "sha256": "E821423C39657F219A107DB0C599D23D3E4AD360EE6633FC3EF2681D2F478E74"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\ContractUpdateTests.cs",
+    "sha256": "CE2C864214DA2FA036638D1062D8563D32DD5EB84480FC3A9D3FCBB3F0A14AB1"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationContractLogTests.cs",
+    "sha256": "84B670FE610B5822FD4D93480AF777466300EF39F1DAF73EBB7402BF4667EB46"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationContractTests.cs",
+    "sha256": "70A76C069B9ED3B3308721DEEB9024096D2DDB228BEB23A1A3F26EA232D51136"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationFeedTests.cs",
+    "sha256": "6A4D7AAB00A565B82DC82BEBC941525C868DF5F8EFDC95616E164B1C8F3411EC"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionBoundaryTests.cs",
+    "sha256": "CDF3C27E4B5AD34CA878A59422D7F4EDC82081654D6622232FDD002AEEC5E9EC"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionEvidence.cs",
+    "sha256": "58387AAF01FA6AC676AE02C8A30F6E4C67DB65C5FB8F0513EC583E13303345D5"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionRuntimeTests.cs",
+    "sha256": "B9DCF488863BF13D48048E284920F4415044292E2C0A42C67956D7A8EAF3DCF3"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionTests.cs",
+    "sha256": "9E9D44DA0D8AF0C294423F415B886A68A253B80CFB5D8CD0A70B7333CC454B3C"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationRecoveryBoundaryTests.cs",
+    "sha256": "B9F5E7D416AABF1E2B1D007890B2782ECADE9B0272D132B2669C51C464A822D1"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationRecoveryTests.cs",
+    "sha256": "1949209769E4DE45FD1F665B73199F45A7003F0FDC75B7458A6605E33BD126EB"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationReliabilityTests.cs",
+    "sha256": "F582F7B3BBBC84A481AC4459925B19449D3099F5EC014DEB995E6CB398FADA43"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordLogSurvivesASessionIdWithAColonTests.cs",
+    "sha256": "32EAC3672FBB21C353F121738A24421F1623B8FEE9BB2112F06E91F1800B6196"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\DaydreamCandidateTests.cs",
+    "sha256": "B98C95C18BA65ACCA22ED4885B5A9A76EC78B8E5C91F4312DEFC31B9E7661D39"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\DaydreamObservationTests.cs",
+    "sha256": "9BFFDFA076B2F77ED24C0B2D5FD36340F985F1F20E23322D0997165690C061FF"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\DaydreamPersistenceTests.cs",
+    "sha256": "B73E28AAB19D4FE8131F41B99D4ED480C8EA56B4BD30135D57EBBC371A69726E"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\DaydreamReachProbeTests.cs",
+    "sha256": "6BBEDDB4BFF404C6AEF99458426D80D3D697A646B42DDF9BBE475FB05EC24BB0"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\DaydreamRecorderTests.cs",
+    "sha256": "ADB628E1D68485C8915FD7C3EC7AFA252E510859FD3AB9F6C05494D932EFD8EE"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\DaydreamRepositoryRecordTests.cs",
+    "sha256": "9D070FA125E0B1D2621106B79E53980B8532B8D2F91BF2EE9487FB2126EEB98F"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\DeclaredArtifactTests.cs",
+    "sha256": "A89A7EA04739F8205E4FCEE3EFD222D3D43BED86548D7B17A69F9A7A91B7F534"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\DeterministicSignalsDeriverTests.cs",
+    "sha256": "1B2647009CFEB7C3DB4ED4DA28402BF6E05BF7DD7B5A56742544E77178F38AC2"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\DisputeServiceTests.cs",
+    "sha256": "8FD8577452E94EDCB2E05C5FC29A1367F0D85CCFF1222DD3DFBF097A4C587319"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\DreamCorpusReaderTests.cs",
+    "sha256": "3C353D2754312E07C74683795961A34AECE90F4BDD06633BD28572AE56E4E595"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\EgressGateTests.cs",
+    "sha256": "44456844BFA48BA473066A215BFC935D0A4E863B4C942454A777A5CEC903A35C"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\FleetAggregatorTests.cs",
+    "sha256": "185BDF3EA57A207EFBE48CCB212C3B0AD671D589F2F7687C99AD14CBABA93777"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\IngestHostTests.cs",
+    "sha256": "054A7F459D0BB920DAE8BF9A6E5523FE69AB0B973CC0998CF14F5A15CBC7A1B9"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\LeaderboardTests.cs",
+    "sha256": "71A135130E29220BD848E5BB1A973B146191FE40DBF9FB5705C1D83D12464DBB"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\LivenessProjectionTests.cs",
+    "sha256": "4F61115042F5010268682ED556F9DFB499F40BED40E1D17CA32CB7C471B6AD68"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\McpConfigWriterTests.cs",
+    "sha256": "22332FBA77049EEBBE945C53BA04D1F52EB7BA10BF3CA2B4255CB447889C0A79"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\McpMatchesTheJsonlPathTests.cs",
+    "sha256": "124E931B64336D48090F4217B30FE4BC30EEDA156089623BB2EDB53DA900E399"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\McpSessionIdentityTests.cs",
+    "sha256": "E12D76961B51425F5BEDFCF73DF166A5398FE9C2D9C9FA18700DC72006AB787A"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\MessageBoardTests.cs",
+    "sha256": "0C9EC4AC55A4AE5F10C56F02AAB00D3B81F4B8C0D19E428F1AD7D648DA325FF3"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\NativeAdmissionRuntimeTests.cs",
+    "sha256": "D57C2861F211D59B1D4F0CD640018010667BE8684324597CE4C312FDD8BB9A28"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\OneRepositoryIsOneRepositoryTests.cs",
+    "sha256": "42EA4BB9E8839E84BAEE049504EBA2074951FFB8704FC2CD8B27A50739FCE2DD"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\OtelSpanMapperTests.cs",
+    "sha256": "F58AD9BBF2606B08840B7F719A273411039C7B99EE0D11C0568365A5CD74DD31"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\OtlpReceiverTests.cs",
+    "sha256": "879786B76291AB1D25C8372FDFB05A881C7B16DBEE02015D5E3554E6EABE01B3"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\ProofPackVerifierAcrossCheckoutsTests.cs",
+    "sha256": "19BCAC22967E93E14EAEF260D36E7B6E840C2109651B134FED8697FAD2EBF360"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\ProofPackVerifierTests.cs",
+    "sha256": "109BBB54026AEFAEF1EC65CC616AB763ED89F86473CE02525E3C4C430DCC0862"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\RegistrationAdmissionTests.cs",
+    "sha256": "1B389915E34B2B6BBF4D8B4C689ECBE10274EA8C63422FB69CF10A3377A8E230"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\RegistrationNoticeReliabilityTests.cs",
+    "sha256": "5E26A73671CC7681FCB4099EE15926A800F47F91EB7DA35109301F3152CCD6A7"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\RestartDoesNotMultiplySessionsTests.cs",
+    "sha256": "87098DC91CEC23EA8402801ED25B450A1E26D6875344DD7C650BB98B17F7AFA4"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\ScoredEpisodeModeMigrationTests.cs",
+    "sha256": "D3C2B2B01EBA7E92FA7215F19D0C46A37E7888157766A0940508815D03540E14"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\ScoreDisputeTests.cs",
+    "sha256": "10A435725E5C9776DA60EBDE8F1CEECBCF80BD46FEC8D06D08071EE16DA47BC3"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\ScorePersistenceTests.cs",
+    "sha256": "5A3498832038029D04B266C20BAC75FB40B60E036D3FB173F80796F1A3C78074"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\ScoringServiceTests.cs",
+    "sha256": "A787AF333692A626F8A02890F612BC116702897F34BCEFC4629ECB18A8872180"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\SessionCoordinationEmitterTests.cs",
+    "sha256": "D17F5BC9A5EFC382D4460B9E755F5A9598A86336F5EDCD52F85E048F3FBF8F13"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\SpanIngestTests.cs",
+    "sha256": "220B1625310BB6CDEEAEE296F2882BACEBCA9EC6409B8BE287C12787A706F7AC"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\SqliteAllocationOverlapTests.cs",
+    "sha256": "C9BD62923980304C02055F460F57FDCAE92AD6157EDA9CD10C955F747F151782"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\SqliteWatcherObservationStoreTests.cs",
+    "sha256": "55383D3C57128996B620F936536E197A61DEB255B37871D2A049A78862690D08"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\StandingReachesTheAgentTests.cs",
+    "sha256": "8D03D9E9FE076BD58D3CFD92F2843714FC13CD6F55C2562BF9A706EEB0E6F6E4"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\TaskClassSourceCohortColumnTests.cs",
+    "sha256": "1D3BE69131891FE5D61425B42520AA746066C8563BED7DBA0AD38A402483BD90"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\TestWorkspaces.cs",
+    "sha256": "8C9AF89059A13A185C8BF640D1401E56E039B073B37128000DDE0528BF4D1500"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\TheAgentCollaborationCircuitTests.cs",
+    "sha256": "3D7CA3C2019061E5A1A37564613C7EF0239FCF467DC30F82E193F5B7DCE64953"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\TheFileSystemRepositoryLocatorTests.cs",
+    "sha256": "3ECFCF163094F7BBA5D553E4CD375F86BA1814A22385D2F8EB557962AD14A027"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\TrustedRegistrarTests.cs",
+    "sha256": "51CD2EEF7895673432F0A543F21124D3648069A253C7A6234A27EF26EEC9A564"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\WatcherBoardPaneViewModelTests.cs",
+    "sha256": "2A1015D22B4B695B509592273CBDDA26E83E53EDB23248851F9D5E4696268B07"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\WatcherCompositionTests.cs",
+    "sha256": "B7B248578BA9C868868C2D70DEEDE789A94303EFD6551DAC549A7AA2C117FFAD"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\WatcherDaydreamPaneTests.cs",
+    "sha256": "E40CA3157274656DC489484EA03D7280D319E01AE6F40B9DA164E0EB98FA10BB"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\WatcherHostTests.cs",
+    "sha256": "63A8FDEA75AB89B315E6F5EB3365DE489A294AD19E81901103D832E75E7FD281"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\WatcherLeaderboardPaneViewModelTests.cs",
+    "sha256": "5494C8491B44FB47968DFA684E877BF44EF7F7585D6F9E8BE0BC181175C014A3"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\WatcherSessionsPaneViewModelTests.cs",
+    "sha256": "007D6862DFED9838FB8033DD76464957101CE215811851060D9914943713BCD4"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\WatcherTestDoubles.cs",
+    "sha256": "449C16CAA5D03B8A034E5DA92B4E6161FC1D1A17DC1B28963A66578951F353E0"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\WeaveScorerTests.cs",
+    "sha256": "1EFABBC399B27DB60B72D7C6C3BAE115696640660C5B5241199207DA260280FE"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\WhatDaydreamSeesInAnAgentEpisodeTests.cs",
+    "sha256": "50160ECEE815E7C46BB932C0812D0F4BDA9181EA66E907CF05B6ED496AD9B325"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\WhatTheRealCorpusCanProduceTests.cs",
+    "sha256": "10B2707567D931A0A07DE7BE71FA6366F827DAF31FDAE72CB87DDAA8DEC5E1EF"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\Watcher\\WorkEpisodeTests.cs",
+    "sha256": "775E0E9F750490B85BEEEF96C380D0C0FCCBB7B0D508816FEC6A350A404ED571"
+  },
+  {
+    "path": "Directory.Build.props",
+    "sha256": "43D0FD406351A125E58AA5282409B22E528185BAE595CD2938E1B427BC409E69"
+  },
+  {
+    "path": "Directory.Packages.props",
+    "sha256": "A57D2EE58BD9787119F5D71C07B956A72F986FEF30287647AABCA25212E95F64"
+  },
+  {
+    "path": "src\\AiDe.Core\\AiDe.Core.csproj",
+    "sha256": "B63C41B97201DC3E1016B72B404A32411AC31E477231B281219DDA64D0AD584A"
+  },
+  {
+    "path": "src\\AiDe.Mcp\\AiDe.Mcp.csproj",
+    "sha256": "C7C0B953C60DD8CF638E8725FB10FFC9B709F0B76AD52267553BFFC70AA68AB0"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "sha256": "FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.dll",
+    "sha256": "E795B683A3E6B6BCD121A283F074A71F4076D92B74022A1CC5A0C3BC3C1B5378"
+  },
+  {
+    "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll",
+    "sha256": "C68468A17F963FC954DB935B89E5CF9923C3DE10474D0462E136284F204B2962"
+  }
+]

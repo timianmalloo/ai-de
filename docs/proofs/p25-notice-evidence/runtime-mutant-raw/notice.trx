@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="92eaf47b-f6b3-4edd-b81f-ab5ff20690d6" name="malla@TIMMALLSTRIX 2026-09-17 06:56:14" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-17T06:56:14.6566126-07:00" queuing="2026-09-17T06:56:14.6566127-07:00" start="2026-09-17T06:56:13.7734590-07:00" finish="2026-09-17T06:56:14.6611894-07:00" />
+  <TestSettings name="default" id="bb429984-6731-48a5-a68a-daaa80d67b00">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-17_06_56_14" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d848ee07-ca90-4eaf-97c1-b2e225a3f0a9" testId="9f255931-96b9-965b-61eb-f7c0d089e72d" testName="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(key: &quot;worktree.path&quot;, value: &quot;\\\\outside\\share&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0674407" startTime="2026-09-17T06:56:14.3493792-07:00" endTime="2026-09-17T06:56:14.4205270-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d848ee07-ca90-4eaf-97c1-b2e225a3f0a9" />
+    <UnitTestResult executionId="542cb370-c515-4e42-bb6d-c10aac9fb227" testId="3414421c-4f37-5f25-5efa-124c43e99266" testName="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(key: &quot;repo.canonical_path&quot;, value: &quot;abc\0suffix&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0224002" startTime="2026-09-17T06:56:14.4896613-07:00" endTime="2026-09-17T06:56:14.5114676-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="542cb370-c515-4e42-bb6d-c10aac9fb227" />
+    <UnitTestResult executionId="c53e2c46-234d-478b-ab6b-03a9386814db" testId="a32b2776-61ab-2da5-b398-72d4c76443a5" testName="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision" computerName="TIMMALLSTRIX" duration="00:00:00.0348038" startTime="2026-09-17T06:56:14.5378558-07:00" endTime="2026-09-17T06:56:14.5723949-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c53e2c46-234d-478b-ab6b-03a9386814db">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+           ↓ (pos 0)&#xD;
+Expected: "C:\\USERS\\MALLA\\APPDATA\\LOCAL\\TEMP\\AIDE-NA"···&#xD;
+Actual:   "c:\\users\\malla\\appdata\\local\\temp\\aide-na"···&#xD;
+           ↑ (pos 0)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 270&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b75767d5-8a09-4fc9-82be-ad61755e6b3e" testId="edd15359-743a-75dd-ba13-fd0320d602ba" testName="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(key: &quot;service.version&quot;, value: &quot;version\0suffix&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0415042" startTime="2026-09-17T06:56:14.4258002-07:00" endTime="2026-09-17T06:56:14.4671191-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b75767d5-8a09-4fc9-82be-ad61755e6b3e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+Actual:   typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+---- Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'CHECK constraint failed: harness_version IS NULL OR&#xD;
+            (typeof(harness_version)='text' AND length(harness_version) BETWEEN 1 AND 128&#xD;
+            AND instr(harness_version,char(0))=0)'.</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(String key, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 248&#xD;
+   at InvokeStub_NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.ExecuteNonQuery(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.cs:line 1477&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.InsertNativeAdmission(RegistrationAdmission admission, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.RegistrationNotices.cs:line 90&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.AdmitNative(BoundNativeRegistration input, Int64 recordedAtMilliseconds, Int64 ticks, Func`1 newSessionId, Action prepareCapability, Func`3 reserve, Action`1 fault) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.RegistrationNotices.cs:line 55&#xD;
+   at AiDe.Core.Watcher.TrustedRegistrar.&lt;&gt;c__DisplayClass11_1.&lt;AdmitNative&gt;b__0(Func`3 reserve) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs:line 64&#xD;
+   at AiDe.Core.Watcher.NoticeAdmissionCoordinator.Run[T](Func`2 operation) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NoticeAdmissionCoordinator.cs:line 70&#xD;
+   at AiDe.Core.Watcher.TrustedRegistrar.AdmitNative(SqliteWatcherObservationStore store, NoticeAdmissionCoordinator coordinator, BoundNativeRegistration input, Int64 recordedAtMilliseconds, Action`1 fault) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs:line 64&#xD;
+   at AiDe.Core.Watcher.NativeRegistrationAdmissionRoot.Admit(TrustedRegistrar registrar, String operationId, HarnessRegistration registration, NativeRegistrationContext context, Int64 recordedAtMilliseconds) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NativeRegistrationAdmissionRoot.cs:line 28&#xD;
+   at AiDe.Core.Watcher.IngestHost.RegisterNative(NativeRegistrationAdmissionRoot root, String operationId, HarnessRegistration registration, NativeRegistrationContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\IngestHost.cs:line 151&#xD;
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.&lt;&gt;c__DisplayClass11_0.&lt;RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates&gt;b__1() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 249</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="17c1f0ef-1f21-4f3d-a312-a1e609be9d36" testId="4d3f0e12-6db9-a069-d55b-60dcec8afeee" testName="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(key: &quot;agent.name&quot;, value: &quot;agent\0suffix&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0220716" startTime="2026-09-17T06:56:14.4704232-07:00" endTime="2026-09-17T06:56:14.4889972-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="17c1f0ef-1f21-4f3d-a312-a1e609be9d36">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+Actual:   typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+---- Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'CHECK constraint failed: typeof(agent_name)='text' AND length(agent_name) BETWEEN 1 AND 256&#xD;
+            AND instr(agent_name,char(0))=0'.</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(String key, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 248&#xD;
+   at InvokeStub_NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.ExecuteNonQuery(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.cs:line 1477&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.InsertNativeAdmission(RegistrationAdmission admission, SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.RegistrationNotices.cs:line 90&#xD;
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.AdmitNative(BoundNativeRegistration input, Int64 recordedAtMilliseconds, Int64 ticks, Func`1 newSessionId, Action prepareCapability, Func`3 reserve, Action`1 fault) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.RegistrationNotices.cs:line 55&#xD;
+   at AiDe.Core.Watcher.TrustedRegistrar.&lt;&gt;c__DisplayClass11_1.&lt;AdmitNative&gt;b__0(Func`3 reserve) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs:line 64&#xD;
+   at AiDe.Core.Watcher.NoticeAdmissionCoordinator.Run[T](Func`2 operation) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NoticeAdmissionCoordinator.cs:line 70&#xD;
+   at AiDe.Core.Watcher.TrustedRegistrar.AdmitNative(SqliteWatcherObservationStore store, NoticeAdmissionCoordinator coordinator, BoundNativeRegistration input, Int64 recordedAtMilliseconds, Action`1 fault) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs:line 64&#xD;
+   at AiDe.Core.Watcher.NativeRegistrationAdmissionRoot.Admit(TrustedRegistrar registrar, String operationId, HarnessRegistration registration, NativeRegistrationContext context, Int64 recordedAtMilliseconds) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NativeRegistrationAdmissionRoot.cs:line 28&#xD;
+   at AiDe.Core.Watcher.IngestHost.RegisterNative(NativeRegistrationAdmissionRoot root, String operationId, HarnessRegistration registration, NativeRegistrationContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\IngestHost.cs:line 151&#xD;
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.&lt;&gt;c__DisplayClass11_0.&lt;RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates&gt;b__1() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 249</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c2e89069-9a8a-41a6-998e-b8094cdb0908" testId="2305e236-0c99-7a23-d852-de71ad53902b" testName="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(key: &quot;terminal.id&quot;, value: &quot;terminal\0suffix&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0255905" startTime="2026-09-17T06:56:14.5116024-07:00" endTime="2026-09-17T06:56:14.5371794-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c2e89069-9a8a-41a6-998e-b8094cdb0908" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(key: &quot;agent.name&quot;, value: &quot;agent\0suffix&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="4d3f0e12-6db9-a069-d55b-60dcec8afeee">
+      <Execution id="17c1f0ef-1f21-4f3d-a312-a1e609be9d36" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests" name="RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(key: &quot;service.version&quot;, value: &quot;version\0suffix&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="edd15359-743a-75dd-ba13-fd0320d602ba">
+      <Execution id="b75767d5-8a09-4fc9-82be-ad61755e6b3e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests" name="RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(key: &quot;terminal.id&quot;, value: &quot;terminal\0suffix&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="2305e236-0c99-7a23-d852-de71ad53902b">
+      <Execution id="c2e89069-9a8a-41a6-998e-b8094cdb0908" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests" name="RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(key: &quot;repo.canonical_path&quot;, value: &quot;abc\0suffix&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="3414421c-4f37-5f25-5efa-124c43e99266">
+      <Execution id="542cb370-c515-4e42-bb6d-c10aac9fb227" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests" name="RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a32b2776-61ab-2da5-b398-72d4c76443a5">
+      <Execution id="c53e2c46-234d-478b-ab6b-03a9386814db" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests" name="RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(key: &quot;worktree.path&quot;, value: &quot;\\\\outside\\share&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="9f255931-96b9-965b-61eb-f7c0d089e72d">
+      <Execution id="d848ee07-ca90-4eaf-97c1-b2e225a3f0a9" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests" name="RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="9f255931-96b9-965b-61eb-f7c0d089e72d" executionId="d848ee07-ca90-4eaf-97c1-b2e225a3f0a9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3414421c-4f37-5f25-5efa-124c43e99266" executionId="542cb370-c515-4e42-bb6d-c10aac9fb227" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a32b2776-61ab-2da5-b398-72d4c76443a5" executionId="c53e2c46-234d-478b-ab6b-03a9386814db" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="edd15359-743a-75dd-ba13-fd0320d602ba" executionId="b75767d5-8a09-4fc9-82be-ad61755e6b3e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4d3f0e12-6db9-a069-d55b-60dcec8afeee" executionId="17c1f0ef-1f21-4f3d-a312-a1e609be9d36" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2305e236-0c99-7a23-d852-de71ad53902b" executionId="c2e89069-9a8a-41a6-998e-b8094cdb0908" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="6" executed="6" passed="3" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.29]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.30]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.44]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.44]       Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+[xUnit.net 00:00:00.44]       Actual:   typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.44]       ---- Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'CHECK constraint failed: harness_version IS NULL OR&#xD;
+[xUnit.net 00:00:00.44]                   (typeof(harness_version)='text' AND length(harness_version) BETWEEN 1 AND 128&#xD;
+[xUnit.net 00:00:00.44]                   AND instr(harness_version,char(0))=0)'.&#xD;
+[xUnit.net 00:00:00.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(248,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(String key, String value)&#xD;
+[xUnit.net 00:00:00.44]            at InvokeStub_NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.44]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.44]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.cs(1477,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.ExecuteNonQuery(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters)&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.RegistrationNotices.cs(90,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.InsertNativeAdmission(RegistrationAdmission admission, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.RegistrationNotices.cs(55,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.AdmitNative(BoundNativeRegistration input, Int64 recordedAtMilliseconds, Int64 ticks, Func`1 newSessionId, Action prepareCapability, Func`3 reserve, Action`1 fault)&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs(64,0): at AiDe.Core.Watcher.TrustedRegistrar.&lt;&gt;c__DisplayClass11_1.&lt;AdmitNative&gt;b__0(Func`3 reserve)&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NoticeAdmissionCoordinator.cs(70,0): at AiDe.Core.Watcher.NoticeAdmissionCoordinator.Run[T](Func`2 operation)&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs(64,0): at AiDe.Core.Watcher.TrustedRegistrar.AdmitNative(SqliteWatcherObservationStore store, NoticeAdmissionCoordinator coordinator, BoundNativeRegistration input, Int64 recordedAtMilliseconds, Action`1 fault)&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NativeRegistrationAdmissionRoot.cs(28,0): at AiDe.Core.Watcher.NativeRegistrationAdmissionRoot.Admit(TrustedRegistrar registrar, String operationId, HarnessRegistration registration, NativeRegistrationContext context, Int64 recordedAtMilliseconds)&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\IngestHost.cs(151,0): at AiDe.Core.Watcher.IngestHost.RegisterNative(NativeRegistrationAdmissionRoot root, String operationId, HarnessRegistration registration, NativeRegistrationContext context)&#xD;
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(249,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.&lt;&gt;c__DisplayClass11_0.&lt;RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates&gt;b__1()&#xD;
+[xUnit.net 00:00:00.46]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:00.46]       Expected: typeof(AiDe.Core.Watcher.WatcherException)&#xD;
+[xUnit.net 00:00:00.46]       Actual:   typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.46]       ---- Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'CHECK constraint failed: typeof(agent_name)='text' AND length(agent_name) BETWEEN 1 AND 256&#xD;
+[xUnit.net 00:00:00.46]                   AND instr(agent_name,char(0))=0'.&#xD;
+[xUnit.net 00:00:00.46]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(248,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(String key, String value)&#xD;
+[xUnit.net 00:00:00.46]            at InvokeStub_NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.46]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.46]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.46]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.cs(1477,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.ExecuteNonQuery(SqliteConnection connection, String sql, SqliteTransaction tx, ValueTuple`2[] parameters)&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.RegistrationNotices.cs(90,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.InsertNativeAdmission(RegistrationAdmission admission, SqliteTransaction transaction)&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.RegistrationNotices.cs(55,0): at AiDe.Core.Watcher.SqliteWatcherObservationStore.AdmitNative(BoundNativeRegistration input, Int64 recordedAtMilliseconds, Int64 ticks, Func`1 newSessionId, Action prepareCapability, Func`3 reserve, Action`1 fault)&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs(64,0): at AiDe.Core.Watcher.TrustedRegistrar.&lt;&gt;c__DisplayClass11_1.&lt;AdmitNative&gt;b__0(Func`3 reserve)&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NoticeAdmissionCoordinator.cs(70,0): at AiDe.Core.Watcher.NoticeAdmissionCoordinator.Run[T](Func`2 operation)&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs(64,0): at AiDe.Core.Watcher.TrustedRegistrar.AdmitNative(SqliteWatcherObservationStore store, NoticeAdmissionCoordinator coordinator, BoundNativeRegistration input, Int64 recordedAtMilliseconds, Action`1 fault)&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NativeRegistrationAdmissionRoot.cs(28,0): at AiDe.Core.Watcher.NativeRegistrationAdmissionRoot.Admit(TrustedRegistrar registrar, String operationId, HarnessRegistration registration, NativeRegistrationContext context, Int64 recordedAtMilliseconds)&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\IngestHost.cs(151,0): at AiDe.Core.Watcher.IngestHost.RegisterNative(NativeRegistrationAdmissionRoot root, String operationId, HarnessRegistration registration, NativeRegistrationContext context)&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(249,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.&lt;&gt;c__DisplayClass11_0.&lt;RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates&gt;b__1()&#xD;
+[xUnit.net 00:00:00.54]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.54]                  ↓ (pos 0)&#xD;
+[xUnit.net 00:00:00.54]       Expected: "C:\\USERS\\MALLA\\APPDATA\\LOCAL\\TEMP\\AIDE-NA"···&#xD;
+[xUnit.net 00:00:00.54]       Actual:   "c:\\users\\malla\\appdata\\local\\temp\\aide-na"···&#xD;
+[xUnit.net 00:00:00.54]                  ↑ (pos 0)&#xD;
+[xUnit.net 00:00:00.54]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.54]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(270,0): at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision()&#xD;
+[xUnit.net 00:00:00.54]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.54]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.54]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T06:56:14.4689554-07:00">
+        <Text>[xUnit.net 00:00:00.44]     AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(key: "service.version", value: "version\0suffix") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T06:56:14.4893832-07:00">
+        <Text>[xUnit.net 00:00:00.46]     AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(key: "agent.name", value: "agent\0suffix") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T06:56:14.5728033-07:00">
+        <Text>[xUnit.net 00:00:00.54]     AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

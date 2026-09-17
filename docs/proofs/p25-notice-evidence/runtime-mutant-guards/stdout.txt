@@ -1,0 +1,87 @@
+
+  AiDe.Core -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Mcp -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(changeContext: False) [99 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(Boolean changeContext) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 148
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(changeContext: True) [27 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(Boolean changeContext) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 148
+   at InvokeStub_NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(existingTerminal: False) [172 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(Boolean existingTerminal) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 26
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(existingTerminal: True) [189 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(Boolean existingTerminal) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 26
+   at InvokeStub_NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(operation: "update") [38 ms]
+  Error Message:
+   Assert.IsType() Failure: Value is null
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+Actual:   null
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 181
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 190
+--- End of stack trace from previous location ---
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(operation: "heartbeat") [32 ms]
+  Error Message:
+   Assert.IsType() Failure: Value is null
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+Actual:   null
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 181
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 190
+--- End of stack trace from previous location ---
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(operation: "end") [32 ms]
+  Error Message:
+   Assert.IsType() Failure: Value is null
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+Actual:   null
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 181
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(String operation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 190
+--- End of stack trace from previous location ---
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoDifferentStores_SharesProcessCapacity [183 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoDifferentStores_SharesProcessCapacity() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 48
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision [28 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 277
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+Results File: C:\Projects\ai-de-feature-xh-p2-projection\docs\proofs\p25-notice-evidence\runtime-mutant-guards\notice.trx
+
+Failed!  - Failed:     9, Passed:     0, Skipped:     0, Total:     9, Duration: 834 ms - AiDe.Core.Tests.dll (net10.0)

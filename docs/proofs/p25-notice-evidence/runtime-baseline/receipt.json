@@ -1,0 +1,59 @@
+{
+  "phase": "baseline",
+  "head": "bb31d5a164a4c33e126a38bafaf6d3575e23a2f6",
+  "command": [
+    "dotnet",
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "-p:UseSharedCompilation=false",
+    "-m:1",
+    "-nodeReuse:false",
+    "--filter",
+    "FullyQualifiedName~RegistrationAdmissionTests|FullyQualifiedName~RegistrationNoticeReliabilityTests|FullyQualifiedName~AWorktreeRegistrationIsCorrectedAndSaidSoTests|FullyQualifiedName~TrustedRegistrarTests|FullyQualifiedName~SqliteWatcherObservationStoreTests|FullyQualifiedName~NativeAdmissionRuntimeTests",
+    "--logger",
+    "trx;LogFileName=notice.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p25-notice-evidence\\runtime-baseline",
+    "--verbosity",
+    "minimal"
+  ],
+  "startedUtc": "2026-09-17T13:44:04.1258623+00:00",
+  "endedUtc": "2026-09-17T13:44:21.3456303+00:00",
+  "durationSeconds": 17.219768,
+  "actualExit": 1,
+  "total": 175,
+  "passed": 173,
+  "failures": [
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.DrainRegistrationNotices_PublicationFails_RetryRetainsOriginalCorrection",
+      "message": "Assert.Single() Failure: The collection was empty"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.Register_TwoHostsHave128OutstandingCorrections_RefusesBeforeNativeMutation",
+      "message": "Assert.Equal() Failure: Strings differ\r\n                            ↓ (pos 17)\r\nExpected: \"{\"sessionRows\":128,\"firstCapabilities\":64\"···\r\nActual:   \"{\"sessionRows\":129,\"firstCapabilities\":64\"···\r\n                            ↑ (pos 17)"
+    }
+  ],
+  "evidencePins": [
+    {
+      "file": "after-pins.json",
+      "sha256": "792AD377462DE7066F6E316B3C30F3576821295E1B54A3FA5DF5ABBDCA332B9F"
+    },
+    {
+      "file": "before-pins.json",
+      "sha256": "5FFCAD0E18880ABD7E5CAE51731051124C5CC38F4AAE32F2C951D540BA0CC542"
+    },
+    {
+      "file": "notice.trx",
+      "sha256": "03C19C27B3977797DF048BCCE0531A5AEFDA4DF8E81F04A377DE59827EBC0782"
+    },
+    {
+      "file": "stderr.txt",
+      "sha256": "68F9D9F44916563CD65E7FF84F22B739698D29A5C692ED4BFA30D8424CBCFE5A"
+    },
+    {
+      "file": "stdout.txt",
+      "sha256": "414D7E83D28574DCB18E95B62EA2CE3B6BEEDB54DAA6FE9BE47225D328AF8542"
+    }
+  ]
+}

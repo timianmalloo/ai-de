@@ -1,0 +1,1 @@
+[xUnit.net 00:00:00.42]     AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_CorrectedFact_HasInitialNoticeAndNoPrecommitCapability [FAIL]

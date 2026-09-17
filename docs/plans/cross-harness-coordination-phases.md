@@ -876,3 +876,17 @@ two repair passes are the circuit breaker, never permission to weaken assertions
 D0/D1/D2/D4/D6, exact-byte receipts and explicit implementation-review gaps remain.
 No additional proof-pack authority: S1-S3 evidence moves into the canonical pack,
 with its old location retained only as a frontmatter-bearing pointer.
+
+**Actual NR1-NR5:** design commit `bb31d5a164a4c33e126a38bafaf6d3575e23a2f6`
+preceded source. Final 213 executed / 211 pass / two unchanged legacy N1/N2 REDs;
+38 enhanced runtime cases pass. Focal guard mutants produced 9/9 RED, raw-input/
+claim mutants 3/6 RED (three other cases pass), and missing initial notice 1/1
+RED. Six per-write/before-commit faults, after-commit lost return, stale-G1
+barriers, concurrent terminal adoption and quota/hydration use real SQLite.
+No agents or parallel builds. Three compiler-fix passes exceeded the two-pass
+estimate; no failures were hidden as semantic RED or waived to hit the estimate.
+Measured final command duration is 12.9131623 seconds, not modeled pipeline time.
+Canonical proof contains all pins, controls, limitations and the merged S1-S3
+history. Real enrollment, native transport/worker/N1, canonical bridge,
+independent implementation gates, released binaries, P3-P5 and upstream remain
+pending; the default enhanced writer is unavailable. No site/API regeneration.

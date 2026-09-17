@@ -1,0 +1,55 @@
+{
+  "phase": "mutant-initial-notice",
+  "head": "bb31d5a164a4c33e126a38bafaf6d3575e23a2f6",
+  "command": [
+    "dotnet",
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "-p:UseSharedCompilation=false",
+    "-m:1",
+    "-nodeReuse:false",
+    "--filter",
+    "FullyQualifiedName~NativeAdmissionRuntimeTests.RegisterNative_CorrectedFact",
+    "--logger",
+    "trx;LogFileName=notice.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p25-notice-evidence\\runtime-mutant-initial-notice",
+    "--verbosity",
+    "minimal"
+  ],
+  "startedUtc": "2026-09-17T13:56:48.0818409+00:00",
+  "endedUtc": "2026-09-17T13:56:52.2541157+00:00",
+  "durationSeconds": 4.1722748,
+  "actualExit": 1,
+  "total": 1,
+  "passed": 0,
+  "failures": [
+    {
+      "message": "Assert.Equal() Failure: Values differ\r\nExpected: 1\r\nActual:   0",
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_CorrectedFact_HasInitialNoticeAndNoPrecommitCapability"
+    }
+  ],
+  "evidencePins": [
+    {
+      "sha256": "ABE619D7F8A1B07226E3CF373D75EEE159FFD2F30A6CA7A25205810329ABDB30",
+      "file": "after-pins.json"
+    },
+    {
+      "sha256": "175D6614437BE0D0AD8047E158ED5E9915FDC3657BAF1AFEB74436F54460572A",
+      "file": "before-pins.json"
+    },
+    {
+      "sha256": "27FB443C84CFA46883D1D6B903DF3CD71E5E726FBA9AA0CCFB42B6ED3E707B37",
+      "file": "notice.trx"
+    },
+    {
+      "sha256": "0FBA8A805D08EC40DB6F839988CD5EDD469ED7D4610768D2D8E82393F6E085EF",
+      "file": "stderr.txt"
+    },
+    {
+      "sha256": "D7DEC4E976F1774C9E73828709E95903F08CE3D8C2DF9AFE17D322F872BDD143",
+      "file": "stdout.txt"
+    }
+  ]
+}

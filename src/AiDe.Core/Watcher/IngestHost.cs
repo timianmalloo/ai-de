@@ -138,6 +138,20 @@ public sealed class IngestHost
 
     internal SqliteWatcherObservationStore? CoordinationStore => _store as SqliteWatcherObservationStore;
 
+    /// <summary>
+    /// Enhanced admission is unavailable until trusted workspace/terminal composition is installed.
+    /// Never falls back to legacy registration or takes trusted roots from the registration payload.
+    /// </summary>
+    public RegistrationAdmissionResult RegisterNative(string operationId, HarnessRegistration registration) =>
+        throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Unavailable);
+
+    internal RegistrationAdmissionResult RegisterNative(
+        NativeRegistrationAdmissionRoot root, string operationId, HarnessRegistration registration,
+        NativeRegistrationContext context) =>
+        _registrar is TrustedRegistrar registrar
+            ? root.Admit(registrar, operationId, registration, context, _time.GetUtcNow().ToUnixTimeMilliseconds())
+            : throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Unavailable);
+
     internal CoordinationAllocators ObservationAllocators =>
         _registrar is TrustedRegistrar registrar && _board is MessageBoardService board
             ? new(registrar.ObservationIds, board.ObservationIds, registrar.ObservationTicks, _time.GetUtcNow())
@@ -148,17 +162,12 @@ public sealed class IngestHost
             OtelSpanMapper.MapRegistration(new HarnessRegistration(registration.Attributes)), _locator).Binding;
 
     /// <summary>
-    /// Takes the registration corrections that have not yet been delivered, emptying the queue.
+    /// Legacy destructive drain, unqualified for reliable delivery. Enhanced notices remain in SQLite.
     /// </summary>
     /// <remarks>
-    /// <para><b>Drained, not read.</b> A notice is delivered once; leaving it queued would rewrite
-    /// the same file every tick forever, and a re-appearing correction reads as a recurring problem
-    /// rather than a single one that was already handled.</para>
-    ///
-    /// <para><b>Queued rather than published inline</b> because a registration arrives on the ingest
-    /// path, where a filesystem write would put an agent's disk in the way of the pump every other
-    /// session depends on. The delay is one tick, which is well inside the constraint that matters:
-    /// the notice must be readable BEFORE the agent's first episode, not before its next instruction.</para>
+    /// This removes legacy notices before publication succeeds. Failure can lose them; there is
+    /// no retry or before-first-episode guarantee. It neither claims nor completes enhanced SQLite
+    /// obligations, and publication is not consumption, acknowledgement, or authority.
     /// </remarks>
     public IReadOnlyList<RegistrationNotice> DrainRegistrationNotices()
     {

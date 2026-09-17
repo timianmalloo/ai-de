@@ -1,0 +1,63 @@
+{
+  "phase": "mutant-raw",
+  "head": "bb31d5a164a4c33e126a38bafaf6d3575e23a2f6",
+  "command": [
+    "dotnet",
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "-p:UseSharedCompilation=false",
+    "-m:1",
+    "-nodeReuse:false",
+    "--filter",
+    "FullyQualifiedName~NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput|FullyQualifiedName~NativeAdmissionRuntimeTests.RegisterNative_OriginalClaim",
+    "--logger",
+    "trx;LogFileName=notice.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p25-notice-evidence\\runtime-mutant-raw",
+    "--verbosity",
+    "minimal"
+  ],
+  "startedUtc": "2026-09-17T13:56:10.3976133+00:00",
+  "endedUtc": "2026-09-17T13:56:14.7096848+00:00",
+  "durationSeconds": 4.3120715,
+  "actualExit": 1,
+  "total": 6,
+  "passed": 3,
+  "failures": [
+    {
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision",
+      "message": "Assert.Equal() Failure: Strings differ\r\n           ↓ (pos 0)\r\nExpected: \"C:\\\\USERS\\\\MALLA\\\\APPDATA\\\\LOCAL\\\\TEMP\\\\AIDE-NA\"···\r\nActual:   \"c:\\\\users\\\\malla\\\\appdata\\\\local\\\\temp\\\\aide-na\"···\r\n           ↑ (pos 0)"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(key: \"service.version\", value: \"version\\0suffix\")",
+      "message": "Assert.Throws() Failure: Exception type was not an exact match\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)\r\nActual:   typeof(Microsoft.Data.Sqlite.SqliteException)\r\n---- Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'CHECK constraint failed: harness_version IS NULL OR\r\n            (typeof(harness_version)='text' AND length(harness_version) BETWEEN 1 AND 128\r\n            AND instr(harness_version,char(0))=0)'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(key: \"agent.name\", value: \"agent\\0suffix\")",
+      "message": "Assert.Throws() Failure: Exception type was not an exact match\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)\r\nActual:   typeof(Microsoft.Data.Sqlite.SqliteException)\r\n---- Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'CHECK constraint failed: typeof(agent_name)='text' AND length(agent_name) BETWEEN 1 AND 256\r\n            AND instr(agent_name,char(0))=0'."
+    }
+  ],
+  "evidencePins": [
+    {
+      "sha256": "C4E96310EAA6669BF3DBDF61EBA29B58C2A9A136540F1AC95C49FDE044EDA045",
+      "file": "after-pins.json"
+    },
+    {
+      "sha256": "0B26C4199FD5293F05E50209E1595C280115FBA004938422A6FFFC3EB39822D6",
+      "file": "before-pins.json"
+    },
+    {
+      "sha256": "8F5F8D82D8A778AED2174DAB914E7F03E47CEEF0EA21752C6D38EBEB0BE0D5B8",
+      "file": "notice.trx"
+    },
+    {
+      "sha256": "BC77B2A60C01F9CBFCB84664EA9B5D39BCC9825ECD7C16E0904942FCCBC94EBE",
+      "file": "stderr.txt"
+    },
+    {
+      "sha256": "578BD2BD07A39C340E618FC59292005D654FF1A1251364659D002A392AAA1B5A",
+      "file": "stdout.txt"
+    }
+  ]
+}

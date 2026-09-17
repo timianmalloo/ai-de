@@ -1,0 +1,3 @@
+[xUnit.net 00:00:00.44]     AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(key: "service.version", value: "version\0suffix") [FAIL]
+[xUnit.net 00:00:00.46]     AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_InvalidRawInput_NeverReadsFilesystemOrMutates(key: "agent.name", value: "agent\0suffix") [FAIL]
+[xUnit.net 00:00:00.54]     AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision [FAIL]

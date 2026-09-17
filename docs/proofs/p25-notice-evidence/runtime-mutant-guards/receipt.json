@@ -1,0 +1,87 @@
+{
+  "phase": "mutant-guards",
+  "head": "bb31d5a164a4c33e126a38bafaf6d3575e23a2f6",
+  "command": [
+    "dotnet",
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "-p:UseSharedCompilation=false",
+    "-m:1",
+    "-nodeReuse:false",
+    "--filter",
+    "FullyQualifiedName~NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128|FullyQualifiedName~NativeAdmissionRuntimeTests.RegisterNative_TwoDifferentStores|FullyQualifiedName~NativeAdmissionRuntimeTests.RegisterNative_OperationReused|FullyQualifiedName~NativeAdmissionRuntimeTests.Lifecycle_G1Verified|FullyQualifiedName~NativeAdmissionRuntimeTests.RegisterNative_OriginalClaim",
+    "--logger",
+    "trx;LogFileName=notice.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p25-notice-evidence\\runtime-mutant-guards",
+    "--verbosity",
+    "minimal"
+  ],
+  "startedUtc": "2026-09-17T13:55:52.1743076+00:00",
+  "endedUtc": "2026-09-17T13:55:57.1090892+00:00",
+  "durationSeconds": 4.9347816,
+  "actualExit": 1,
+  "total": 9,
+  "passed": 0,
+  "failures": [
+    {
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(existingTerminal: True)",
+      "message": "Assert.Throws() Failure: No exception was thrown\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(operation: \"heartbeat\")",
+      "message": "Assert.IsType() Failure: Value is null\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)\r\nActual:   null"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoHostsAt128_RefusesWithoutAnyMutation(existingTerminal: False)",
+      "message": "Assert.Throws() Failure: No exception was thrown\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(operation: \"update\")",
+      "message": "Assert.IsType() Failure: Value is null\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)\r\nActual:   null"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OriginalClaimAndNoticeBytes_AgreeWithHistoricalDecision",
+      "message": "Assert.Throws() Failure: No exception was thrown\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(changeContext: True)",
+      "message": "Assert.Throws() Failure: No exception was thrown\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_TwoDifferentStores_SharesProcessCapacity",
+      "message": "Assert.Throws() Failure: No exception was thrown\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_OperationReusedWithDifferentInputOrContext_Refuses(changeContext: False)",
+      "message": "Assert.Throws() Failure: No exception was thrown\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Lifecycle_G1VerifiedThenG2Registered_RefusesStaleWrite(operation: \"end\")",
+      "message": "Assert.IsType() Failure: Value is null\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)\r\nActual:   null"
+    }
+  ],
+  "evidencePins": [
+    {
+      "sha256": "E0414318F3EB704C5764DDDF0B246E948CEDA216A24CCD45C2AB61B5FE8BC17B",
+      "file": "after-pins.json"
+    },
+    {
+      "sha256": "B8A86AF96DD0F8BA94EF7A9FAE30ACC0DD52F849AF92C9B8CE23E9FB99117D45",
+      "file": "before-pins.json"
+    },
+    {
+      "sha256": "22645E88428F4FA00FFF739166D0DADE5BB0722CF1FDD7960D898FEE37BE3CF6",
+      "file": "notice.trx"
+    },
+    {
+      "sha256": "3B6811320F42D26F3B8E2534D5025289539BA025E18C95676F52B5ABF132669E",
+      "file": "stderr.txt"
+    },
+    {
+      "sha256": "607665B8D404AE3E68138EC54777B687E3C1565F9FEFB128E45180C35FDC0BFE",
+      "file": "stdout.txt"
+    }
+  ]
+}

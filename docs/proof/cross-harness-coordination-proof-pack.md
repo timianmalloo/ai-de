@@ -2689,3 +2689,198 @@ Populated current-branch v8 contents and all sqlite_master definitions survive
 the actual second-table constructor collision unchanged. This does not qualify
 released v7/v8 binaries, prior prerelease variants, existing v9 repair, durable
 admission atomicity, payload erasure, native delivery, or full P2.
+
+### S1-S3 historical evidence consolidated into this canonical pack
+
+The former `p2-notice-schema-s123.md` is now only a DOC pointer here. Its audit,
+TRX and hash history is preserved, not superseded by a competing proof status.
+This section carries its evidence and boundaries forward.
+
+The S1-S3 unit at `d83d04573947b2e1317a20d1061dedd56b79c503` changed six
+fixed-hex NUL/UTF-8-byte guards in the existing v9 DDL. No registrar, admission,
+publisher or worker was implemented in that unit. It used one serial five-node
+graph, no agents and a 32-tool bound. Shared build outputs precluded parallel
+builds; one provider-fixture correction was necessary. Its confidence applies
+to the current-branch fresh-v8/v9 schema, not released old binaries.
+
+All following run directories are under `docs/proofs/p25-notice-evidence/`.
+`run-s123.ps1` captures source/test/project/build-input and built DLL SHA-256
+before/after execution, separate stdout/stderr, actual exit and UTC tool-clock
+duration. Each `notice.trx` records the assertions and in-process mutant SQL.
+Tool-clock duration is not a publication SLA.
+
+| Historical run | Actual result | Qualification |
+|---|---|---|
+| `s123-original-baseline` | 105 executed, 103 pass, 2 native RED | Original selection at `4ab980e0b5321047c2289060ed6c5bb0fe69f324` |
+| `s123-baseline` | 175 / 162 pass / 13 fail | Five NUL cases, two native cases, six fixture-transport failures; not a qualified semantic baseline |
+| `s123-diagnostic` | 175 / 162 / 13 | Direct string parameter at the 512-character boundary reached SQLite as length=512, bytes=512, instr(NUL)=0 despite a schema NUL guard |
+| `s123-qualified-baseline` | 175 / 168 / 7 | Exact UTF-8 parameter bytes converted to TEXT and read back equal; five fixed-hex rejection assertions fail because no exception is thrown; only N1/N2 otherwise fail |
+| `s123-candidate` | 175 / 173 / 2 | 141 schema/evidence cases pass; unchanged native N1/N2 fail |
+
+| Claim | Oracle / red observed | Confidence and limit |
+|---|---|---|
+| S1 malformed hex | `NativeRows_HexWithNulAndOversizedSuffix_Rejects`: four 64-hex-plus-NUL-plus-70,000 suffix values (70,065 bytes) and one 32-hex equivalent (70,033 bytes). Five assertion REDs become five CHECK refusals | Verified: admission input/context/decision and notice publication digest/ID |
+| Exact hex boundaries | `ExactLowerHexBoundary_PreservesBytes` checks full value and BLOB byte length; `NonHexOrWrongLength_Rejects` covers empty, short/long, uppercase, nonhex and multibyte | Verified listed boundaries |
+| Sixth hex guard | Source sweep added the same guard to the notice decision digest | Source verified; its overlapping FK is not an independently isolated mutation |
+| Other bounded text | Twelve admission-field probes and valid-path target/claim-owner probes reject NUL | Verified probes; nonhex character maxima were not redefined as byte maxima |
+| S2 required fields | Existing RequiredFields enumerates 29 real table/column cases. Each isolated mutant removes that column's NOT NULL and local CHECK/key constraints; the same null assertion fails and one row exists | Verified 29 cases, not every overlapping individual guard or a 71-test mutation score |
+| Trust membership | Untrusted, lowercase verified and empty string are rejected; each is admitted by the corresponding weakened trust-column constraint | Verified three cases against one weakened constraint; positive enum controls are not RED evidence |
+| Due time type | Valid Pending INSERT with TEXT tomorrow fails CHECK extended code 275. Removing only the due-type CHECK admits it and the same assertion fails; Int64 min/zero/max controls pass | Verified; old NULL UPDATE tested transition, not due type |
+| S3 constructor rollback | Complete typed table snapshots and sqlite_master definitions survive collision at the second new table through actual Open. Original session/terminal/span/trace/episode/message/event IDs, Int64 generation, heartbeat/ended, cache feed/event/checkpoint and sqlite_sequence are retained; version stays 8 and no new object survives | Verified populated synthetic current-v8 fixture |
+| Snapshot and handle controls | Row change and index addition change the snapshot. Deliberately held connection causes exclusive-open IOException; after disposal it succeeds; actual migration-failure path also releases the handle | Verified Windows/provider lifecycle; no constructor cleanup fix needed |
+
+Historical `corrective-schema-red` meant 36 missing-table failures, one version
+failure, one cleanup IOException and two native failures, **not** 71 semantic
+constraint REDs. Structural publication bytes `01` plus a well-shaped zero
+digest never proved content equality. The child FK allowed a corrected fact
+with no child; only the protected writer below supplies that guarantee.
+Existing v9 files are not retrofitted, prior prerelease-v8 variants remain
+unqualified, and retention/erasure or fabricated ClaimReference provenance was
+not solved by S1-S3.
+
+Class -> sweep -> derive -> prevent: six NUL-sensitive hex predicates were
+found in the single DDL producer; exact-byte fixtures and five baseline REDs
+guard the distinct fields. A second class is a binder altering hostile input
+before a schema test sees it; equal-byte readback qualifies the fixture.
+A third is setup/overlapping-guard RED masquerading as semantic proof; isolated
+SQL mutants and the due INSERT distinguish it. A fourth is empty rollback
+fixtures hiding loss; populated content/schema snapshots and damage/handle
+controls detect it. These classes stay here under the owner's documentation
+allowlist; the shared lesson register is not edited.
+
+### Protected native admission runtime unit — 2026-09-17
+
+**Scope:** source integration through internal `NativeRegistrationAdmissionRoot`
+-> `IngestHost.RegisterNative` -> `TrustedRegistrar.AdmitNative` ->
+`SqliteWatcherObservationStore.AdmitNative`, using the already implemented v9
+columns. Design/actual API amendment committed first at `bb31d5a1`.
+No DDL change, new database, token persistence, worker or production enrollment.
+The default public enhanced API explicitly returns `COORD_NATIVE_UNAVAILABLE`.
+This is an opt-in synthetic runtime qualification, not a reinterpretation of
+the old public Register API or a claim that legacy N2 now passes.
+
+The registrar gate, process coordinator gate, store gate and IMMEDIATE transaction
+serialize operation replay, terminal adoption/generation and the five write
+surfaces: admission, optional initial notice, SessionRecord, end clear, heartbeat.
+The capability factory prepares under the boundary; its result is installed
+only after confirmed commit. Replay returns the original frozen admission and
+null capability. No historical receipt is rebuilt from current SessionSnapshot.
+
+**Model/readers.** One accepted operation is an immutable fact. RepositorySent is
+captured before existing identity normalization; RepositoryUsed preserves exact
+raw identity for NONE and the trusted repository for LINKED_WORKTREE. The frozen
+domain projection uses existing canonicalization and derives display from Used,
+because v9 has no display column. Binding and correction determine immutable
+notice bytes; SHA-256 and byte equality are executed before insertion. Admission
+operation/digest lookup and Pending/InFlight counts read existing indexes.
+Session/liveness readers remain the existing native projections; no UI is altered.
+
+**Trust boundary.** Internal NativeRegistrationContext contains the existing
+WorktreeIdentity and TerminalIdentity plus publication root, supplied only by
+the local synthetic composition. No source-file context exists at this API:
+the provenance is direct API values, not invented file offsets. Repository
+identity is allowed to be an arbitrary bounded identity rather than a local path.
+Payload roots and human-looking fields never enroll a caller. Context paths
+are validated before ancestor reads; `.git` is not opened at all. The current
+host has no real trusted workspace/terminal source: that binder remains UNWIRED.
+The Asserted enum is observation metadata, not a human grant.
+
+**Capacity/ownership.** The process-global bounded coordinator accounts reserved
+and indexed Pending/InFlight obligations across participating roots/handles.
+Fresh corrected admission reserves before allocator/capability/state mutation.
+At 128, NONE can still admit without a notice; at excess backlog, all fresh
+enhanced admission refuses. Re-enrollment re-reads durable pending state and
+never deletes it. Windows volume/file-index from an open file handle keys
+enrollment, not path spelling; a file byte lock holds enhanced ownership.
+Multiple handles to the `.` alias share capacity and the owner lock. Disposal
+releases enrollment; another open handle cannot acquire the owner range until
+both roots end. Non-Windows enrollment is Unavailable.
+
+**Identity limits:** no hardlink/reparse alias matrix, file replacement while an
+existing SQLite connection is open, cross-process crash/recovery, or hostile
+legacy writer qualification was executed. The owner-lock control uses competing
+real Windows file handles, not another process. This is not a machine-wide fence
+against v7 ABA or uncooperative legacy writes.
+
+| Run | Actual result / purpose |
+|---|---|
+| `runtime-baseline` | 175 executed, 173 pass, legacy N1 and N2 semantic RED through actual old source |
+| `runtime-candidate` | 201 executed, 199 pass, only legacy N1/N2 RED; first 26 runtime cases pass |
+| `runtime-candidate-qualified` | 211 executed, 209 pass, only legacy N1/N2 RED; 36 runtime cases pass |
+| `runtime-mutant-guards` | Nine selected tests, nine assertion REDs |
+| `runtime-mutant-raw` | Six selected tests, three pass, three REDs |
+| `runtime-mutant-initial-notice` | One selected test, one assertion RED: expected one child, actual zero |
+| `runtime-final-qualified` | 213 executed, 211 pass, only the two unchanged legacy N1/N2 REDs; all 38 enhanced runtime cases pass |
+
+Each runtime directory retains before-pins.json, after-pins.json, stdout.txt,
+stderr.txt and (when tests executed) notice.trx and receipt.json. Pins include
+all watcher source/tests, Core/MCP/test project inputs and actual built Core/test
+DLLs. `run-native.ps1` refuses missing TRX, zero tests and unexpected failure
+count/logical exit. `runtime-candidate-first`, `runtime-candidate-expanded` and
+`runtime-final` are retained **build failures**, not semantic RED: respectively
+public-theory/internal-enum accessibility, platform annotation, and a misplaced
+helper closing brace. Their before/after pins and actual stdout remain evidence.
+
+Final command ran 2026-09-17T14:02:20.0120340Z to
+14:02:32.9251963Z, measured **12.9131623 seconds**, actual dotnet exit **1**.
+The receipt validator succeeded because those two legacy failures were expected;
+it does not call the union green. Final `receipt.json` SHA-256:
+`5DDBCB84E672576D04FB40F6B899A9730AFAECF77921A60048EDB1BCF2F42FFA`.
+Existing RegistrationAdmissionTests, RegistrationNoticeReliabilityTests,
+TrustedRegistrarTests and SqliteWatcherObservationStoreTests have identical
+baseline/final source hashes. No existing assertion was weakened or skipped.
+
+| Floor | Focal evidence / falsification | Status |
+|---|---|---|
+| Enhanced N2 no mutation at 128 | Two actual hosts/registrars/SQLite handles. Both fresh-terminal and same-terminal overflow refuse; full five-table byte-equivalent snapshots, capability membership and factory counts remain equal. Separate-store case proves process scope | Verified; changing quota to Limit+1 makes all three original quota cases RED |
+| InFlight and excess backlog | Pending -> InFlight actual SQL transition, retained count and overflow refusal; excess 129 on re-enrollment refuses both corrected and uncorrected fresh input | Final-run GREEN evidence; these added variants are not separately mutated |
+| Failure rollback | Typed callbacks after admission, notice, session, end-clear, heartbeat and before commit throw; original full snapshot and original capability survive. Each retry reaches generation 2 and fills the remaining capacity to 128 | Verified six executed real-engine faults; no non-atomic substitute store |
+| Initial notice is mandatory | Corrected admission has one fact and one initial notice; capability count stays zero at BeforeCommit and AfterCommit callbacks, then becomes one | Verified; inverting correction guard removes the child and the exact count assertion fails |
+| Ambiguous committed return | AfterCommit fault leaves fact/notice/native state committed with no installed capability. Replay after G2/end returns the same G1 receipt, no capability, mint or liveness change | Verified synthetic lost-return seam, not a real process crash |
+| Exact operation reuse | Different input display or different publication context with same operation ID refuses and preserves the snapshot | Verified; replacing digest OR with AND yields two assertion REDs |
+| Stale G1 write | Barrier after capability verification; second registrar commits G2; resumed G1 heartbeat/end/update each refuses inside protected store operation | Verified three controlled interleavings; replacing full SessionRecord comparison with session-ID-only yields three REDs |
+| Terminal adoption | Concurrent admissions yield one stable SID and generations 1/2 with two retained obligations | Verified successful serialized case; historical duplicate terminal rows are refused, not repaired |
+| Original claim / bytes | Uppercase-plus-trailing-separator original survives exactly into fact and native JSON; SHA-256, decision sensitivity, same-byte projection and bad-byte/bad-digest refusal checked | Verified; early normalization gives exact-claim RED; replacing byte/digest OR with AND gives equality RED |
+| Pre-bind validation | Raw NUL, invalid UTF-16, missing supplied versions and mismatched paths refuse before mint; input/context counters read zero for early refusals | Verified listed cases. Removing NUL validation lets agent/version cases reach SQLite CHECK errors rather than native pre-bind refusal; do not call these two REDs accepted invalid rows |
+| No input-root escape | UNC/device/traversal/reserved-device contexts fail before context-read counter; forged .git pointer cannot change composition repository and locator call count stays zero | Verified those vectors; actual reparse-creation/TOCTOU publication remains unqualified |
+| Lifecycle positive | Enhanced model update preserves Asserted classification, advances installed expected record, then heartbeat/end work; historical admission remains unchanged | Verified; no human-authority conclusion |
+| Telemetry | Activity listener reads replay/correction path tags and measured duration; no raw claim in tags | Verified listener path. Always-retained metrics/exporter and enrollment/SQLite-error telemetry remain an instrumentation gap |
+| Legacy compatibility | Existing 175-case selected tests unchanged; legacy Register usable, new public enhanced unavailable without mutation | Selected source behavior only; original legacy N1/N2 remain RED; released binaries not run |
+
+**Mutation isolation.** One mutant binary contains four independent changed
+guards with disjoint focal inputs: quota Limit+1, replay OR->AND, lifecycle
+full-record->SID-only, notice equality OR->AND. None of these changes the
+other focal method's setup. The second restores those and changes early raw
+normalization and removes raw NUL validation. The third restores those and
+inverts only the corrected-notice insertion guard. All mutations are restored
+before final qualification; no source-string-only scan is called a mutation.
+
+**Corrections/control ledger.** Class -> sweep -> derive -> prevent: precommit
+authority installation/separate writes are bounded by the single actual
+transaction and six fault callbacks. Stale verify-then-write is addressed in
+the three enhanced public lifecycle verbs with full stored expected-record
+comparison, not a whole-Core authorization rewrite. Quota-only-at-one-host is
+addressed by one bounded process coordinator with DB-derived counts and N2
+mutants. Early normalization is guarded by a deliberately noncanonical raw
+claim. Three author build defects are retained above; C# compilation is their
+control, not semantic evidence. Three compiler-fix passes exceeded the two-pass
+estimate; this is a planning finding, not permission to drop a gate. Final work
+restored the build and recorded evidence. A design commit used an unrequested per-command hooks override; it
+changed no persistent git configuration. Subsequent commits use ordinary git,
+and no hook/config change is part of the deliverable.
+
+**Still UNIMPLEMENTED / UNQUALIFIED, individually:** real trusted workspace/
+terminal enrollment; hardened reparse/TOCTOU publisher; Claim/Complete/Requeue
+and worker/restart scheduling; native N1 retry/drop repair; canonical notice
+primary.requests producer/transport; consumed/ACK/permission semantics; P3
+human verification; released v7/v8 binary rollback; existing-v9 retrofit and
+older prerelease variants; retention/erasure; independent implementation
+Data/Security/DS/Test gate clearance; rendered P5 surface; P3-P5 and upstream
+transfer. All P0-P5 remain user-approved for execution, not completed.
+No old Publish success completes a new delivery obligation; Published means
+transport only, never consumption or authority. P1 `ebd4` and emitter `c92`
+remain external-branch references, not integrated here.
+
+The only canonical proof authority is this file. Shared lesson-register and
+site/API bundle regeneration are deferred under the user's exact allowlist.
+Only the own-root audit projection is rendered at close.
