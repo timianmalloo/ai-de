@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="9916d4de-33f6-48d5-8d85-391bbed1ed9d" name="malla@TIMMALLSTRIX 2026-09-17 11:13:28" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-17T11:13:28.5404580-07:00" queuing="2026-09-17T11:13:28.5404581-07:00" start="2026-09-17T11:13:27.6574739-07:00" finish="2026-09-17T11:13:28.5432052-07:00" />
+  <TestSettings name="default" id="9e1ef748-5703-4b04-9243-e9f9459439c1">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-17_11_13_28" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="a78faaf9-3743-425d-ad22-0d256f2090bd" testId="f7fc1ea7-f3e4-4a27-7553-bdfc7dd742e8" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionTests.Open_PopulatedV9_AddsV10WithoutChangingNativeRowsOrGuards" computerName="TIMMALLSTRIX" duration="00:00:00.1490453" startTime="2026-09-17T11:13:28.2052197-07:00" endTime="2026-09-17T11:13:28.3625932-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a78faaf9-3743-425d-ad22-0d256f2090bd">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 10&#xD;
+Actual:   9</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionTests.Open_PopulatedV9_AddsV10WithoutChangingNativeRowsOrGuards() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationProjectionTests.cs:line 35&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7e2610db-989f-47a1-bc62-596072d26a06" testId="45f4a9d8-12c1-b90b-a476-f1024a9be912" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionTests.Open_VersionTenRecordFault_RollsBackEntirePopulatedSchemaAndRows" computerName="TIMMALLSTRIX" duration="00:00:00.1013363" startTime="2026-09-17T11:13:28.3698645-07:00" endTime="2026-09-17T11:13:28.4646871-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7e2610db-989f-47a1-bc62-596072d26a06">
+      <Output>
+        <ErrorInfo>
+          <Message>System.AggregateException : One or more errors occurred. (Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)) (The process cannot access the file 'watcher.db' because it is being used by another process.)&#xD;
+---- Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+---- System.IO.IOException : The process cannot access the file 'watcher.db' because it is being used by another process.</Message>
+          <StackTrace>&#xD;
+----- Inner Stack Trace #1 (Xunit.Sdk.ThrowsException) -----&#xD;
+   at AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionTests.Open_VersionTenRecordFault_RollsBackEntirePopulatedSchemaAndRows() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationProjectionTests.cs:line 54&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+----- Inner Stack Trace #2 (System.IO.IOException) -----&#xD;
+   at System.IO.FileSystem.RemoveDirectoryRecursive(String fullPath, WIN32_FIND_DATA&amp; findData, Boolean topLevel)&#xD;
+   at System.IO.FileSystem.RemoveDirectory(String fullPath, Boolean recursive)&#xD;
+   at AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionTests.Dispose() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationProjectionTests.cs:line 312&#xD;
+   at ReflectionAbstractionExtensions.DisposeTestClass(ITest test, Object testClass, IMessageBus messageBus, ExecutionTimer timer, CancellationTokenSource cancellationTokenSource) in /_/src/xunit.execution/Extensions/ReflectionAbstractionExtensions.cs:line 79</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionTests.Open_VersionTenRecordFault_RollsBackEntirePopulatedSchemaAndRows" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="45f4a9d8-12c1-b90b-a476-f1024a9be912">
+      <Execution id="7e2610db-989f-47a1-bc62-596072d26a06" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionTests" name="Open_VersionTenRecordFault_RollsBackEntirePopulatedSchemaAndRows" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionTests.Open_PopulatedV9_AddsV10WithoutChangingNativeRowsOrGuards" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f7fc1ea7-f3e4-4a27-7553-bdfc7dd742e8">
+      <Execution id="a78faaf9-3743-425d-ad22-0d256f2090bd" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionTests" name="Open_PopulatedV9_AddsV10WithoutChangingNativeRowsOrGuards" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f7fc1ea7-f3e4-4a27-7553-bdfc7dd742e8" executionId="a78faaf9-3743-425d-ad22-0d256f2090bd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="45f4a9d8-12c1-b90b-a476-f1024a9be912" executionId="7e2610db-989f-47a1-bc62-596072d26a06" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.28]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.45]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.45]       Expected: 10&#xD;
+[xUnit.net 00:00:00.45]       Actual:   9&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationProjectionTests.cs(35,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionTests.Open_PopulatedV9_AddsV10WithoutChangingNativeRowsOrGuards()&#xD;
+[xUnit.net 00:00:00.45]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.45]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.55]       System.AggregateException : One or more errors occurred. (Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.55]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)) (The process cannot access the file 'watcher.db' because it is being used by another process.)&#xD;
+[xUnit.net 00:00:00.55]       ---- Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:00.55]       Expected: typeof(Microsoft.Data.Sqlite.SqliteException)&#xD;
+[xUnit.net 00:00:00.55]       ---- System.IO.IOException : The process cannot access the file 'watcher.db' because it is being used by another process.&#xD;
+[xUnit.net 00:00:00.55]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.55]         &#xD;
+[xUnit.net 00:00:00.55]         ----- Inner Stack Trace #1 (Xunit.Sdk.ThrowsException) -----&#xD;
+[xUnit.net 00:00:00.55]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationProjectionTests.cs(54,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionTests.Open_VersionTenRecordFault_RollsBackEntirePopulatedSchemaAndRows()&#xD;
+[xUnit.net 00:00:00.55]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.55]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.55]         ----- Inner Stack Trace #2 (System.IO.IOException) -----&#xD;
+[xUnit.net 00:00:00.55]            at System.IO.FileSystem.RemoveDirectoryRecursive(String fullPath, WIN32_FIND_DATA&amp; findData, Boolean topLevel)&#xD;
+[xUnit.net 00:00:00.55]            at System.IO.FileSystem.RemoveDirectory(String fullPath, Boolean recursive)&#xD;
+[xUnit.net 00:00:00.55]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationProjectionTests.cs(312,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionTests.Dispose()&#xD;
+[xUnit.net 00:00:00.55]         /_/src/xunit.execution/Extensions/ReflectionAbstractionExtensions.cs(79,0): at ReflectionAbstractionExtensions.DisposeTestClass(ITest test, Object testClass, IMessageBus messageBus, ExecutionTimer timer, CancellationTokenSource cancellationTokenSource)&#xD;
+[xUnit.net 00:00:00.55]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T11:13:28.3641260-07:00">
+        <Text>[xUnit.net 00:00:00.45]     AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionTests.Open_PopulatedV9_AddsV10WithoutChangingNativeRowsOrGuards [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T11:13:28.4651438-07:00">
+        <Text>[xUnit.net 00:00:00.55]     AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionTests.Open_VersionTenRecordFault_RollsBackEntirePopulatedSchemaAndRows [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

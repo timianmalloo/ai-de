@@ -12,11 +12,11 @@ public sealed class CoordinationProjectionTests : IDisposable
     public CoordinationProjectionTests() => Directory.CreateDirectory(_root);
 
     [Fact]
-    public void Constructor_InstallsThreeCachesAndVersionEight()
+    public void Constructor_InstallsThreeCachesAndVersionTen()
     {
         using var store = SqliteWatcherObservationStore.Open(DatabasePath);
         using var connection = Connect();
-        Assert.Equal(8L, Scalar(connection, "SELECT MAX(version) FROM watcher_schema_version;"));
+        Assert.Equal(10L, Scalar(connection, "SELECT MAX(version) FROM watcher_schema_version;"));
         Assert.Equal(3L, Scalar(connection,
             "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name LIKE 'coord_projection_%';"));
     }
@@ -172,13 +172,14 @@ public sealed class CoordinationProjectionTests : IDisposable
         }
         using (var connection = Connect())
         {
-            // The existing constructor creates the complete legacy shape. Remove only this
-            // increment's empty caches/version to exercise its actual v7->v8 deployment path.
+            // Synthetic v7 fixture: remove all later empty tables, including the v9 additions.
             Execute(connection, """
                 PRAGMA foreign_keys=OFF;
                 DROP TABLE coord_projection_feed;
                 DROP TABLE coord_projection_event;
                 DROP TABLE coord_projection_checkpoint;
+                DROP TABLE registration_notice_delivery;
+                DROP TABLE native_registration_admission_fact;
                 DELETE FROM watcher_schema_version;
                 INSERT INTO watcher_schema_version(version,applied_at) VALUES(7,'1970-01-01T00:00:00Z');
                 """);

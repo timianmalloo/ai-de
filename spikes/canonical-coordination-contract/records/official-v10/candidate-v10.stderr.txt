@@ -1,0 +1,3 @@
+[xUnit.net 00:00:03.50]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Constructor_V7FixturePreservesLegacyIdsDuplicateSequencesAndWritableTables [FAIL]
+[xUnit.net 00:00:03.51]     AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Constructor_InstallsThreeCachesAndVersionEight [FAIL]
+[xUnit.net 00:00:39.64]     AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Migration_VersionRecordAbort_RollsBackDdlAndPreservesV7History [FAIL]

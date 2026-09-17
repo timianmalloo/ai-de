@@ -20,6 +20,80 @@ summary: >-
 
 # Proof Pack — P1/P2 candidates; independent code gate pending
 
+## Official-origin v10 structural store checkpoint — 2026-09-17
+
+**PARTIAL P2; not ProjectOfficialPage or a complete canonical bridge.** Base
+`6c565425e3afab501889aa68f3eccf8a1db8e848`; design/ADR committed first at
+`cc6859de81a36c1a36d951221147428495fa1665`. The user's independent 47-case binding,
+12,568-vector codec and pinned comparator clearances are inputs, not this
+author's implementation approval. No agent, live queue, live DB, endpoint, App,
+dependency installation, main merge or push was used.
+
+Implemented: constructor v9-to-v10 expansion and identical fresh composition;
+six new columns across the existing three caches; additive origin guards and
+full-BLOB partial uniqueness; metadata SELECT -> CoordinationFeedEntry ->
+BoardTools.ReadCoordination -> JSON serialization. Existing v9 CHECKs/triggers
+are unchanged, including native raw 65,536 and nullable terminal payloads.
+Official raw framing supports content 65,536 plus LF/CRLF; no native reserve or
+allocator is involved. Official initial feed rows retain the old inert applied
+parent discriminator. Equal/Conflict occurrence metadata is separate from
+state/admission; fixtures prove it never moves the original event.
+
+Raw receipts and hashes:
+`spikes/canonical-coordination-contract/records/official-v10/`.
+The original session copies remain under session `b0d0c445-0dbc-47cb-8e51-19bfe9427c29`,
+`files/official-v10/`. Result JSONs retain exact commands, exit codes, elapsed
+seconds and TRX counters; stdout/stderr/TRX and source/test/project/corpus SHA-256
+manifests accompany them. Final before/after manifests include Core/test DLLs.
+The post-build red-run DLL hash was not captured before the next build; its
+before-build binary hash must not be represented as the executed red binary.
+
+| Claim | Evidence / oracle | Red observed | Confidence / residual |
+|---|---|---|---|
+| v9 constructor advances to v10 | `Open_PopulatedV9...`; old version is 9, expected 10 | `red-v9.trx`: actual 9 versus expected 10 | Verified for populated native event/feed fixture, not a deployed database |
+| DDL/version failure rolls back full schema and rows | `Open_VersionTenRecordFault...`: injected version-10 abort; every table and sqlite_master compared | Baseline did not throw; candidate/final inject and observe TEST_V10_ABORT | Verified; no old-binary operational rollback |
+| Fresh and migrated schemas agree | `Open_FreshAndMigrated...`, complete sqlite_master equality | Constructor behavior red above; no separate schema-equality mutant | Verified equality only |
+| Official versus native raw ceilings | Six LF/CRLF cases and three native ±1 cases | Negative oversized/incomplete/multiline frames reject on real SQLite | Verified structural bytes; not trusted file capture |
+| Native spoof/NULL and immutable official columns reject | `OfficialPartition_*`, `OfficialAdmission_Mutation_*` | Isolated `coord_official_event_update` removal admits the forbidden native official-byte UPDATE | Verified one named SQL-guard mutation; no whole-code mutation score |
+| Occurrences preserve admission/current event and export distinct metadata | Two `ReadCoordination_OfficialOccurrence...` cases compare complete event row and real BoardTools result | Fault/NULL/immutability tests above; serializer mutation not run | Verified adapter + JSON shape, not MCP transport dispatch or payload equality classification |
+
+Final `final-v10.trx`: **262 executed, 262 passed, zero skipped** in measured
+43.094 seconds command elapsed. Exact classes: new CanonicalCoordinationProjection
+33; existing canonical Binding 13, Record 22, Contract 12 (**47**); native
+Projection 32, ProjectionBoundary 73, RecoveryBoundary 19, Feed 58 (**182**).
+The historical 12,568-vector standalone probe was not rerun; corpus and codec
+hashes are retained without upgrading historical evidence to a new execution.
+Initial candidate was 254/257: one stale v8 version assertion and two synthetic
+v7 builders left v9 tables behind. Builders now remove those empty fixture-only
+tables; production migration performs no table/data DROP. Final fixture asserts
+version 10 while retaining historical version-8 migration receipt checks.
+
+The first rollback RED also leaked its successful baseline Open result when
+Assert.Throws failed. That cleanup error is retained, not counted as migration
+evidence. The assertion lambda now disposes a returned store. Register class
+RES-LEAK-TEST records the correction and control. No extra proof document was
+created. Shared audit JSONL is append-only and requires no lease.
+
+**Structural limits and remaining floors:** SQL checks XHB1 descriptor framing
+and XHE1/XHL1/XHI1 native-repository/origin association, not complete trusted
+descriptor contents, sorted allowlists, schema/digest validity or authentication.
+Full descriptor/key construction, forced hash-collision comparison, immutable
+actual-file capture, page/prefix/CAS checks, ProjectOfficialPage, canonical
+full-key equality/conflict classification, ignored/legacy/future-type occurrence
+semantics, two-projector/restart/lost-ACK tests and official 401-record projection
+are **unimplemented**. Current binding remains snapshot-only and NotStorable.
+Official payload columns have SQL fixture writers only, not a production writer;
+they are a dormant migration foundation, not completed change reach.
+Existing native feed tests cover 401-row paging; they do not prove the missing
+official writer. FullReader/OriginalQuestions/LatestThread and P1-fold integration,
+retained old-binary rollback, full P2 and P3-P5 remain open. Enhanced official
+writes remain Unavailable; authority remains Denied. Existing reader Activity
+volume/status/duration tests ran; no official projection measurement is claimed.
+
+GATE official-v10 candidate · 2026-09-17 · author execution · **CONCERNS**:
+bounded structural evidence retained; independent implementation review and the
+remaining producer/capture/transaction floors are not cleared.
+
 ## Finite B1/B2 binding repair — 2026-09-17
 
 **Author evidence, not independent gate clearance.** Base:

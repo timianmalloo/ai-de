@@ -14,7 +14,7 @@ namespace AiDe.Core.Watcher;
 /// </summary>
 public sealed partial class SqliteWatcherObservationStore : IWatcherObservationStore, IDisposable
 {
-    private const int SchemaVersion = 9;
+    private const int SchemaVersion = 10;
 
     private readonly SqliteConnection _connection;
     private readonly object _gate = new();
@@ -1102,6 +1102,7 @@ public sealed partial class SqliteWatcherObservationStore : IWatcherObservationS
             ExecuteNonQuery(connection, SchemaSql, create);
             ExecuteNonQuery(connection, CoordinationSchemaSql, create);
             ExecuteNonQuery(connection, NativeRegistrationSchemaSql, create);
+            AddOfficialCoordinationSchema(connection, create);
             RecordVersion(connection, create, SchemaVersion);
             create.Commit();
             return;
@@ -1117,6 +1118,7 @@ public sealed partial class SqliteWatcherObservationStore : IWatcherObservationS
         using var tx = connection.BeginTransaction();
         foreach (var (version, ddl, addsColumn) in Migrations.Where(m => m.Version > current).OrderBy(m => m.Version))
         {
+            if (version == 10) AddOfficialCoordinationSchema(connection, tx);
             // SQLite has no "ADD COLUMN IF NOT EXISTS", so the guard is explicit rather than in the
             // DDL. Without it the idempotency this method claims would be false for exactly one
             // migration shape, and the claim is load-bearing: a database that already holds part of
@@ -1240,6 +1242,7 @@ public sealed partial class SqliteWatcherObservationStore : IWatcherObservationS
         (7, "", ("scored_episode_cell", "task_class_source", "TEXT NULL")),
         (8, CoordinationSchemaSql, null),
         (9, NativeRegistrationSchemaSql, null),
+        (10, "", null),
     ];
 
     private const string SchemaSql =

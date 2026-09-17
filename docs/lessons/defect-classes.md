@@ -8187,3 +8187,25 @@ These are instances of the pack's existing **CI-ENV**, **RES-LEAK-TEST** and
   and membership (2 failures) mutations and a restored 36/36 run.
 - **Status:** controlled for these two named mutants; not a whole-code mutation
   score or an independent validator/binding approval.
+
+### RES-LEAK-TEST — Negative assertion abandons a successfully created resource
+
+- **Signature:** Assert.Throws invokes a disposable factory; on the unfixed
+  baseline the factory succeeds, and the assertion loses its returned handle.
+- **Why it survives:** the green implementation throws as expected, so only the
+  required RED run leaks the resource and adds a teardown failure.
+- **Instances:** 2026-09-17 official-v10 rollback test: baseline Open returned a
+  SQLite store; the expected missing exception and a locked-file cleanup error
+  both appeared in retained red-v9.trx.
+- **Class / sweep:** negative factory assertions must dispose unexpected success.
+  The new canonical migration test was affected; the existing
+  CoordinationProjectionBoundaryTests migration assertion already used a
+  block-scoped `using var failed` and was unaffected.
+- **Derive:** ownership belongs inside the assertion lambda, not only inside
+  the production throwing path.
+- **Control:** `CanonicalCoordinationProjectionTests.Open_VersionTenRecordFault_RollsBackEntirePopulatedSchemaAndRows`
+  now scopes the result with `using`. Retained RED documents the original leak;
+  final 262-case run completed without teardown failure. A dedicated
+  success-path disposal mutation was not executed.
+- **Status:** partially-controlled; do not count a cleanup error as the
+  behavioral RED of the migration.

@@ -110,7 +110,7 @@ public sealed partial class SqliteWatcherObservationStore
         }
         var entries = new List<CoordinationFeedEntry>();
         using (var query = CoordinationCommand(transaction, """
-            SELECT n,COALESCE(admission_n,n),outcome,application_state,reason,session_id,session_generation,message_id
+            SELECT n,COALESCE(admission_n,n),outcome,application_state,reason,session_id,session_generation,message_id,occurrence_kind
             FROM coord_projection_feed WHERE scope=$scope AND epoch=$epoch AND n>$after AND n<=$high
             ORDER BY n LIMIT $limit;
             """, ("$scope", scope), ("$epoch", epoch), ("$after", after), ("$high", high), ("$limit", request.Limit)))
@@ -123,7 +123,13 @@ public sealed partial class SqliteWatcherObservationStore
                     reader.IsDBNull(4) ? null : PublicCoordinationReason(reader.GetString(4)),
                     reader.IsDBNull(5) ? null : reader.GetString(5),
                     reader.IsDBNull(6) ? null : reader.GetInt64(6),
-                    reader.IsDBNull(7) ? null : reader.GetString(7)));
+                    reader.IsDBNull(7) ? null : reader.GetString(7),
+                    reader.IsDBNull(8) ? null : reader.GetString(8) switch
+                    {
+                        "equal" => CoordinationOccurrenceKind.Equal,
+                        "conflict" => CoordinationOccurrenceKind.Conflict,
+                        _ => throw new InvalidOperationException("COORD_OFFICIAL_RECEIPT"),
+                    }));
             }
         }
         var last = entries.Count == 0 ? after : entries[^1].N;
@@ -139,7 +145,7 @@ public sealed partial class SqliteWatcherObservationStore
             or "OBSERVED_REGISTER" or "OBSERVED_BOARD" or "OBSERVED_END" or "OBSERVED_UPDATE"
             or "OBSERVED_HEARTBEAT" or "REGISTRATION_REQUIRED" or "SESSION_ENDED" or "MALFORMED_BOARD"
             or "PARENT_REQUIRED" or "UNSUPPORTED_VERSION" or "UNSUPPORTED_RECORD"
-            or "MALFORMED_RECORD" or "CANONICAL_BOUND" => reason,
+            or "MALFORMED_RECORD" or "CANONICAL_BOUND" or "CANONICAL_EQUAL" or "XH.EVENT_CONFLICT" => reason,
         _ => null,
     };
 

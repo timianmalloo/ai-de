@@ -1079,3 +1079,13 @@ serialization. Missing columns alone are not semantic red evidence.
 Fixed remaining-test worklist terminates at zero; the call cap reports partial
 work rather than weakening a floor. Existing independent design clearances are
 inputs, not author-issued implementation approval.
+
+Execution closed at the declared structural checkpoint: design commit
+cc6859de, additive v10 and receipt metadata, 33 new plus 229 retained cases.
+Final 262/262 execution is in the canonical Proof Pack. Early oversized reads
+and an unavailable shell `rg` consumed avoidable calls; no substitute agent
+was launched. Rework repaired a baseline Assert.Throws disposal leak and
+synthetic v7 setup that retained v9-only tables. The bounded code result is
+not a plan-only response, and is not full P2. The next dependency is immutable
+trusted captured-page/descriptor construction, then ProjectOfficialPage and
+its comparison/CAS/fault/concurrency oracles. No pending floor was waived.

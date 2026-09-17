@@ -1,0 +1,41 @@
+{
+  "command": [
+    "dotnet",
+    "test",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "--filter",
+    "FullyQualifiedName~CanonicalCoordination|FullyQualifiedName~CoordinationProjectionTests|FullyQualifiedName~CoordinationProjectionBoundaryTests|FullyQualifiedName~CoordinationRecoveryBoundaryTests|FullyQualifiedName~CoordinationFeedTests",
+    "--logger",
+    "trx;LogFileName=candidate-v10.trx",
+    "--results-directory",
+    "C:\\Users\\malla\\.copilot\\session-state\\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\\files\\official-v10",
+    "--verbosity",
+    "quiet"
+  ],
+  "exit": 1,
+  "seconds": 45.70299999997951,
+  "counters": {
+    "total": "257",
+    "executed": "257",
+    "passed": "254",
+    "failed": "3",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "failed": [
+    "AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Constructor_V7FixturePreservesLegacyIdsDuplicateSequencesAndWritableTables",
+    "AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests.Migration_VersionRecordAbort_RollsBackDdlAndPreservesV7History",
+    "AiDe.Core.Tests.Watcher.CoordinationProjectionTests.Constructor_InstallsThreeCachesAndVersionEight"
+  ]
+}

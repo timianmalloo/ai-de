@@ -251,6 +251,8 @@ public sealed class CoordinationProjectionBoundaryTests : IDisposable
                 DROP TABLE coord_projection_feed;
                 DROP TABLE coord_projection_event;
                 DROP TABLE coord_projection_checkpoint;
+                DROP TABLE registration_notice_delivery;
+                DROP TABLE native_registration_admission_fact;
                 DELETE FROM watcher_schema_version;
                 INSERT INTO watcher_schema_version(version,applied_at) VALUES(7,'1970-01-01T00:00:00Z');
                 CREATE TRIGGER reject_v8 BEFORE INSERT ON watcher_schema_version

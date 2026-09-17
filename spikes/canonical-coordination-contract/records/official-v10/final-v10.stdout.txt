@@ -1,0 +1,5 @@
+Test run for C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+Results File: C:\Users\malla\.copilot\session-state\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\files\official-v10\final-v10.trx
+
+Passed!  - Failed:     0, Passed:   262, Skipped:     0, Total:   262, Duration: 40 s - AiDe.Core.Tests.dll (net10.0)

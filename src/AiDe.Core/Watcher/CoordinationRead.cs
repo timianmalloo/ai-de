@@ -26,7 +26,12 @@ public sealed class CoordinationReadRequest(
 /// <summary>One immutable receipt. State is the state at this receipt, not the event's current state.</summary>
 public sealed record CoordinationFeedEntry(
     long N, long AdmissionN, string Outcome, string? State, string? ReasonCode,
-    string? SessionId, long? SessionGeneration, string? MessageId);
+    string? SessionId, long? SessionGeneration, string? MessageId,
+    CoordinationOccurrenceKind? OccurrenceKind = null);
+
+/// <summary>Official occurrence comparison, not semantic acceptance or recipient consumption.</summary>
+[JsonConverter(typeof(JsonStringEnumConverter<CoordinationOccurrenceKind>))]
+public enum CoordinationOccurrenceKind { Equal, Conflict }
 
 /// <summary>A bounded metadata-only snapshot with separate continuation and fresh-resume positions.</summary>
 public sealed record CoordinationReadResult(
