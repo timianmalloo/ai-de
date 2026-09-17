@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T13:53:57Z",
+  "generated": "2026-09-17T14:09:49Z",
   "audit": [
     {
       "actor": null,
@@ -20120,6 +20120,43 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "e1589d016d82e8405592989cf30b40922db59f01",
         "short": "e1589d016",
+        "branch": "understanding-views-d1",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M2QV7H7KJJM4W7S85F02V324",
+      "shortname": "n4-d1-entry-points-rereview",
+      "datetime": "2026-09-17T14:09:49Z",
+      "session": "test-architect-d1-n4-entry-points-rereview",
+      "prompt": "You are Test Architect (Adversary) for D-1 listing spec RE-REVIEW after a BLOCK. You did NOT author the spec or the repair. You do NOT clear your own veto — the prior BLOCK was another reviewer (note-understanding-views-n4-entry-points, commit b256f184). Read: docs/specs/entry-points.md (grain now closed; F-EP composed; candidate set named); docs/notes/understanding-views-n4-entry-points.md (the BLOCK); docs/notes/d1-listing-query-architecture.md; tests/AiDe.Core.Tests/EntryPointsProjectionTests.cs (Fep_ComposedOracle, + Main()); src/AiDe.Core/Projections/EntryPointsProjection.cs (MemberBareName). Verdict PASS / PASS-WITH-CONDITIONS / BLOCK. Write docs/notes/understanding-views-n4-entry-points-rereview.md. Spec stays draft unless PASS and you are not the author (you are not). Open Sequence must stay mapping-unavailable. Cwd: C:\\Projects\\ai-de-understanding-views-d1. python not python3. Commit the note if you can. Return verdict.",
+      "summary": "N4 Test Architect re-review PASS-WITH-CONDITIONS on spec-entry-points (blob 6945c5bc, repair 82f1710b). Prior four Blockers closed (grain closed, F-EP composed with + Main(), candidate set named). Open Sequence stays mapping-unavailable. Spec stays draft; not marked accepted. Conditions: N5 implements declaring-type borrow (not mint); F-EP Then/oracle pin all five rows; members_truncated Then or named residual; US-L0 surface oracles. Receipt: docs/notes/understanding-views-n4-entry-points-rereview.md.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "grok",
+      "actor": "test-architect",
+      "artifacts": [
+        "docs/notes/understanding-views-n4-entry-points-rereview.md",
+        "docs/specs/entry-points.md"
+      ],
+      "tags": [
+        "D-1",
+        "N4",
+        "entry-points"
+      ],
+      "outcome": "success",
+      "goal": "Test Architect (Adversary) N4 re-review of D-1 listing spec after BLOCK; write the receipt; do not implement src/ or mark the spec accepted.",
+      "done_when": "Verdict PASS | PASS-WITH-CONDITIONS | BLOCK recorded in docs/notes/understanding-views-n4-entry-points-rereview.md; Open Sequence remains mapping-unavailable; spec stays draft; note committed if git allows.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "82f1710b38fff13b084782b654187ce5235fe75e",
+        "short": "82f1710b3",
         "branch": "understanding-views-d1",
         "pushed": true
       }

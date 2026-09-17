@@ -7063,6 +7063,59 @@ window.DOCS_INDEX = {
       "sourceSha256": "5fc03f78820bb4539967f03062554249cef65e003e4d1cd3bbff5a6d4215873b"
     },
     {
+      "id": "note-understanding-views-n4-entry-points-rereview",
+      "path": "docs/notes/understanding-views-n4-entry-points-rereview.md",
+      "title": "N4 Test Architect re-review D-1 listing spec — PASS-WITH-CONDITIONS; Open Sequence stays mapping-unavailable",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2027-03-16",
+      "reviewSuggested": [],
+      "summary": "Test Architect (Adversary) N4 re-review of docs/specs/entry-points.md after 82f1710b. Prior BLOCK's four hard findings are closed. Verdict PASS-WITH-CONDITIONS. Open Sequence stays mapping-unavailable. Spec status stays draft. This reviewer did not author the spec or the repair and does not mark the spec accepted.",
+      "tags": [
+        "decision-note",
+        "understanding-views",
+        "N4",
+        "D-1",
+        "entry-points",
+        "test-architect",
+        "rereview"
+      ],
+      "links": [
+        {
+          "to": "spec-entry-points",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-n4-entry-points",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-n1-inventory",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r3",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r5",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-d1-listing-query-architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-n4-pass",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a498df2b50b7d70643ef281c9b526d7100fb4ac06b669922e425dd28d6181d2e"
+    },
+    {
       "id": "note-understanding-views-n4-pass",
       "path": "docs/notes/understanding-views-n4-pass.md",
       "title": "N4 hard vetoes cleared for D-0 spec; architecture (N5) may start; spec stays draft",
@@ -21122,5 +21175,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6cb06d915d8aaffbea95dd6528be58a181530492a4db7461a704a110b80723a1"
+  "graphSha256": "9618aa8493233826b09837e08c03720fb3e0babb2864afca63eab837c0671f17"
 };
