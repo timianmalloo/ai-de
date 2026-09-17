@@ -32,8 +32,8 @@ Result: rows `{ Kind: api|ux|cli|unclassified, NodeId: string?, Display, Unclass
 
 ## Identity
 
-- If the occurrence is already a graph node: `NodeId` = `node_dim.node_id` (type `ToDisplayString()` today).
-- If the occurrence is a **member** (`has_member` object, no node): `NodeId` null until architecture mints a member id. Select→graph and View source disabled with specified reason (spec US-L2/L3). UV-0 may ship type-grain first [Flagged] if member minting is the spike.
+- Type row: `NodeId` = that type's `node_dim.node_id`.
+- Member row: `NodeId` = **declaring type** id (graph/source = type neighbourhood). Display = `{typeId}.{has_member object}` (extractor shape e.g. `+ Main()`). Row identity ≠ `NodeId`. No minted member node this slice.
 
 ## Classification
 

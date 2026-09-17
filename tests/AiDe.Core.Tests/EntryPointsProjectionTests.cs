@@ -23,19 +23,24 @@ public sealed class EntryPointsProjectionTests
     }
 
     [Fact]
-    public void HasTypeNodes_AreUnclassified_NeverSilentDrop()
+    public void Fep_ComposedOracle_KindsAndUnclassifiedNeverSilent()
     {
         using var workspace = TestWorkspace.Create();
         workspace.CommitSnapshot(
             "fixture", 1, "rev-1",
-            TestWorkspace.Assertion("Api.Orders", "has_type", "class"),
-            TestWorkspace.Assertion("Cli.Program", "has_type", "class"));
+            TestWorkspace.Assertion("Orders.OrdersController", "has_type", "class"),
+            TestWorkspace.Assertion("Shell.MainWindow", "has_type", "class"),
+            TestWorkspace.Assertion("App.Program", "has_type", "class"),
+            TestWorkspace.Assertion("App.Program", "has_member", "+ Main()"),
+            TestWorkspace.Assertion("Domain.Order", "has_type", "class"));
         var projections = new ProjectionService(workspace.Store, Path.GetDirectoryName(workspace.DatabasePath)!);
         var result = projections.EntryPoints(new EntryPointsQuery());
-        Assert.Equal(2, result.Rows.Count);
-        Assert.Equal(EntryPointKind.Api, result.Rows.Single(r => r.NodeId == "Api.Orders").Kind);
-        Assert.Equal(EntryPointKind.Cli, result.Rows.Single(r => r.NodeId == "Cli.Program").Kind);
-        Assert.Null(result.Rows.Single(r => r.NodeId == "Api.Orders").UnclassifiedReason);
+        Assert.Equal(EntryPointKind.Api, result.Rows.Single(r => r.Display == "Orders.OrdersController").Kind);
+        Assert.Equal(EntryPointKind.Ux, result.Rows.Single(r => r.Display == "Shell.MainWindow").Kind);
+        Assert.Equal(EntryPointKind.Cli, result.Rows.Single(r => r.Display.Contains("Main()", StringComparison.Ordinal)).Kind);
+        var order = result.Rows.Single(r => r.Display == "Domain.Order");
+        Assert.Equal(EntryPointKind.Unclassified, order.Kind);
+        Assert.Equal(EntryPointsProjection.UnclassifiedReasonPendingClassifier, order.UnclassifiedReason);
         Assert.Equal(0, result.OmittedByCap);
     }
 
@@ -59,7 +64,8 @@ public sealed class EntryPointsProjectionTests
     {
         Assert.Equal(EntryPointKind.Api, EntryPointsListing.KindFromDisplay("Orders.OrdersController"));
         Assert.Equal(EntryPointKind.Cli, EntryPointsListing.KindFromDisplay("App.Program"));
-        Assert.Equal(EntryPointKind.Cli, EntryPointsListing.KindFromDisplay("App.Program.Main"));
+        Assert.Equal(EntryPointKind.Cli, EntryPointsListing.KindFromDisplay("Main"));
+        Assert.Equal("Main", EntryPointsListing.MemberBareName("+ Main()"));
         Assert.Equal(EntryPointKind.Ux, EntryPointsListing.KindFromDisplay("Shell.MainWindow"));
         Assert.Equal(EntryPointKind.Unclassified, EntryPointsListing.KindFromDisplay("Domain.Order"));
     }
@@ -71,12 +77,23 @@ public sealed class EntryPointsProjectionTests
         workspace.CommitSnapshot(
             "fixture", 1, "rev-1",
             TestWorkspace.Assertion("App.Program", "has_type", "class"),
-            TestWorkspace.Assertion("App.Program", "has_member", "Main"));
+            TestWorkspace.Assertion("App.Program", "has_member", "+ Main()"));
         var projections = new ProjectionService(workspace.Store, Path.GetDirectoryName(workspace.DatabasePath)!);
         var result = projections.EntryPoints(new EntryPointsQuery());
-        var main = Assert.Single(result.Rows, r => r.Display.EndsWith(".Main", StringComparison.Ordinal));
+        var main = Assert.Single(result.Rows, r => r.Display.Contains("Main()", StringComparison.Ordinal));
         Assert.Equal(EntryPointKind.Cli, main.Kind);
         Assert.Equal("App.Program", main.NodeId);
+    }
+
+    [Fact]
+    public void EmptyIndex_RowsEmpty_OmitZero()
+    {
+        using var workspace = TestWorkspace.Create();
+        workspace.CommitSnapshot("fixture", 1, "rev-1");
+        var projections = new ProjectionService(workspace.Store, Path.GetDirectoryName(workspace.DatabasePath)!);
+        var result = projections.EntryPoints(new EntryPointsQuery());
+        Assert.Empty(result.Rows);
+        Assert.Equal(0, result.OmittedByCap);
     }
 
     [Fact]

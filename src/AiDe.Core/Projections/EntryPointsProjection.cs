@@ -55,7 +55,7 @@ public static class EntryPointsListing
                 var kind = KindFromDisplay(display);
                 if (kind == EntryPointKind.Unclassified)
                 {
-                    kind = KindFromDisplay(member);
+                    kind = KindFromDisplay(MemberBareName(member));
                 }
 
                 built.Add(new EntryPointRow(
@@ -93,6 +93,32 @@ public static class EntryPointsListing
             kind == EntryPointKind.Unclassified
                 ? EntryPointsProjection.UnclassifiedReasonPendingClassifier
                 : null);
+    }
+
+    /// <summary>Extractor <c>has_member</c> object is UML text (<c>+ Main()</c>), not a bare name.</summary>
+    internal static string MemberBareName(string memberObject)
+    {
+        var text = memberObject.Trim();
+        if (text.StartsWith("+ ", StringComparison.Ordinal)
+            || text.StartsWith("# ", StringComparison.Ordinal)
+            || text.StartsWith("- ", StringComparison.Ordinal))
+        {
+            text = text[2..].Trim();
+        }
+
+        var paren = text.IndexOf('(', StringComparison.Ordinal);
+        if (paren >= 0)
+        {
+            text = text[..paren];
+        }
+
+        var colon = text.IndexOf(':', StringComparison.Ordinal);
+        if (colon >= 0)
+        {
+            text = text[..colon].Trim();
+        }
+
+        return text;
     }
 
     internal static EntryPointKind KindFromDisplay(string display)

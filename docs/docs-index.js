@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generator": "docs-graph.py derive (n4-entry-points)",
+  "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
     "knowledge",
@@ -5752,7 +5752,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "40fedb8fb92815a195e43ee11e8d713bc4843acb7dd33ff850d85089e0577868"
+      "sourceSha256": "4390b253a23b9890fc3b3794a68c9cc2645516badd184994913b31fcdd0c666c"
     },
     {
       "id": "note-d1-n1-inventory",
@@ -20395,7 +20395,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "understanding-views-d1",
       "reviewBy": "2027-03-16",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "note-understanding-views-n4-entry-points",
+          "on": "2026-09-17",
+          "reason": "N4 BLOCK; grain/F-EP/candidate-set repair in this file; authors do not self-clear"
+        }
+      ],
       "summary": "Admits D-1 Entry-points as an Architecture listing of API, UX, and CLI entry points plus unclassified. Select scopes the existing Architecture graph. Open Sequence is out: mapper UNASSIGNED (handshake r3 frozen). Status draft; N4 not self-cleared.",
       "tags": [
         "understanding-views",
@@ -20449,7 +20455,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  open[Open Entry-points] --> list{Listing}\n  list -->|ok| groups[API / UX / CLI / Unclassified]\n  list -->|error| err[Could not read entry points + Retry]\n  list -->|empty index| empty[Specified empty]\n  groups --> sel[Select classified row]\n  sel -->|has node_id| graph[Scope Architecture graph]\n  sel -->|no node_id| nog[Reason: no graph id]\n  groups --> src[View source]\n  src -->|has node_id| reader[NodeContentAsync]\n  src -->|no node_id| nos[Unavailable]\n  groups --> seq[Open Sequence]\n  seq --> dark[Disabled mapping-unavailable]"
         }
       ],
-      "sourceSha256": "4a3bffa833770562733b47c5c947a5d0342a0f426f28285cb3c5b7b9b030f1b4"
+      "sourceSha256": "aafee923ad8556331757633a54687e89fab1524ac463e1f4087b4bfc24397141"
     },
     {
       "id": "spec-gemini-cli-agent-session",
@@ -21116,5 +21122,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c10648b91c91f6eb3234b6a07ae7c7730d8dc0cf8a6afa6046d4e68841a2f75a"
+  "graphSha256": "6cb06d915d8aaffbea95dd6528be58a181530492a4db7461a704a110b80723a1"
 };

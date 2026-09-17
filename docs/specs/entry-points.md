@@ -17,7 +17,8 @@ links:
   - { to: adr-0018-node-content-reader-contract, rel: depends-on }
   - { to: conceptual-model-ai-native-ide, rel: relates-to }
 review-by: 2027-03-16
-review-suggested: []
+review-suggested:
+  - { by: note-understanding-views-n4-entry-points, on: 2026-09-17, reason: "N4 BLOCK; grain/F-EP/candidate-set repair in this file; authors do not self-clear" }
 summary: >-
   Admits D-1 Entry-points as an Architecture listing of API, UX, and CLI entry points
   plus unclassified. Select scopes the existing Architecture graph. Open Sequence is
@@ -71,14 +72,23 @@ Workspace is indexed. Operator opens Entry-points. Every API, UX, and CLI entry 
 | Kind | `api` \| `ux` \| `cli` \| `unclassified` — **not** type-kind (`class`/`interface`) |
 | Listing row | One occurrence in the current index snapshot |
 | Unclassified | Found in the index as a candidate, kind not assigned; **never silent-drop** |
-| Graph id | `node_dim.node_id` when the row is a graph node [Verified] N1 |
-| Mapping | Later-admitted D-1-row → method-observation function; **UNASSIGNED** |
+| Graph id | `node_dim.node_id` of a **type** (or the declaring type for a member row). Not a minted member node. |
+| Row identity | `(occurrence-kind, display)` — **not** `NodeId`. Two members of one type share a graph id and remain two rows. |
+| Mapping | r6 proposed; Sequence stays `mapping-unavailable` until r6 ACK **and** Core observation API |
 
 **Entities vs values:** Listing is a **query result** (value), not a stored census. Kind is a value. Unclassified reason is a disclosure (same family as D-0 not-recorded).
 
 **Aggregate:** **Entry-point listing** for one workspace snapshot. Root: the listing. **Invariant:** every candidate the index produced is either `api`/`ux`/`cli` or present under unclassified; the query must not drop a candidate. Caps, if hit, disclose omitted counts (known/unknown denominator) rather than a complete-looking short list.
 
-**Grain (declare before columns):** one row is exactly one **entry-point candidate occurrence** in the current snapshot. [Flagged] whether that occurrence is a **type** (existing `node_id` = `ToDisplayString()`) or a **member** (today `has_member` on the type, no own `node_id` — N1). Architecture must mint identity if members are listed. UV-0 must not pretend members already have `node_id`.
+**Grain (closed):** one row is exactly one **candidate occurrence** in the current snapshot.
+
+**Candidate set (named):** latest-generation `has_type` facts on non-knowledge subjects **union** latest-generation `has_member` facts. Order: types by `node_id`, then members by `(type, member)`. Cap takes that prefix; `Omitted (N)` is disclosed (not a complete-looking short list). Extractor `members_truncated` (cap 40 per type) is a **separate** disclosure when present — listing those 40 is not pretending the type's member set is complete.
+
+**Identity:**
+- **Type row:** `NodeId` = that type's `node_dim.node_id` (`ToDisplayString()`). Display = that id. Graph/source use that id.
+- **Member row:** `Display` = `{typeId}.{extractor has_member object}` (e.g. `App.Program.+ Main()`). `NodeId` = **declaring type** `node_id` so graph/source open the **type neighbourhood**, not a minted member node. Row identity is **not** `NodeId`.
+
+**Not:** D-0 census grain. **Not:** `has_member` object as a Core method-observation id (r5).
 
 ### In scope / Out of scope
 
@@ -89,16 +99,20 @@ Workspace is indexed. Operator opens Entry-points. Every API, UX, and CLI entry 
 ### User stories
 
 **US-L1 — Open listing.** As an operator, I want every indexed API, UX, and CLI entry point listed with kind so I can start from invocable surfaces.
-- **Given** fixture F-EP with known API, UX, and CLI occurrences **When** the listing query runs **Then** each appears with the matching kind and a stable row identity
-- **Given** an occurrence the classifier cannot assign **When** the listing query runs **Then** it appears under `unclassified` with a reason, never omitted
+- **Given** fixture F-EP (composed: `Orders.OrdersController` has_type class; `Shell.MainWindow` has_type class; `App.Program` has_type class and has_member `+ Main()`; `Domain.Order` has_type class) **When** the listing query runs **Then** Controller is `api`, MainWindow is `ux`, `+ Main()` member row is `cli`, Order is `unclassified` with a reason
+- **Given** an occurrence the classifier cannot assign **When** the listing query runs **Then** it appears under `unclassified` with a reason, never omitted (unless cap-omitted and disclosed)
 
 **US-L2 — Select scopes graph.** As an operator, I want selecting a classified row to scope the Architecture graph to that neighbourhood.
-- **Given** a classified row with `node_id` **When** I select it **Then** `DescribeAsync`/`GraphAsync` is invoked with that id (existing Core)
-- **Given** a row without `node_id` **When** I select it **Then** graph scope is disabled with a specified reason (not a fake neighbourhood)
+- **Given** a type row **When** I select it **Then** `DescribeAsync`/`GraphAsync` uses that type `node_id`
+- **Given** a member row **When** I select it **Then** graph uses the **declaring type** `node_id` (type neighbourhood, not a member node)
 
-**US-L3 — View source.** As an operator, I want source for a row that is a graph node.
-- **Given** `node_id` **When** View source **Then** `NodeContentAsync` (ADR-0018)
-- **Given** no `node_id` **When** View source **Then** specified unavailable, not E1 occurrence Source
+**US-L3 — View source.** As an operator, I want source for a graph node.
+- **Given** a type or member row **When** View source **Then** `NodeContentAsync` of the **type** `node_id` (ADR-0018), never E1 occurrence Source
+
+**US-L0 — Empty / error / no-workspace.**
+- **Given** an indexed workspace with no `has_type`/`has_member` **When** the query runs **Then** rows are empty and omit count is 0 (not a fake complete list)
+- **Given** the query throws **When** the surface shows **Then** error copy + Retry (US-T8 family)
+- **Given** no workspace **When** the surface binds **Then** "Open a workspace to see entry points."
 
 **US-L4 — Open Sequence stays dark.** As an operator, I must not be offered a live Sequence jump that guesses a method.
 - **Given** any listing row **When** the surface renders **Then** Open Sequence is disabled with reason `mapping-unavailable`
@@ -187,6 +201,6 @@ N8-level glyphs: architecture/design-slice (kind word required even if glyph def
 - **UX/IA:** flows cover disabled Sequence and missing `node_id`. N4 required.
 - **Security:** DC-022 named.
 
-**Residual risk:** member-vs-type grain [Flagged]. Classification predicates do not exist in `KindOf` [Verified]. Caps Inferred.
+**Residual risk:** name-heuristic classifier is not extractor-precise (Flagged). Caps Inferred. N4 BLOCK repair in this file; **authors do not self-clear** — different Test Architect re-reviews. Grain is closed as declaring-type `node_id` for members.
 
 **Handoff:** `/define-architecture` for the listing query + identity minting; UV-1 kind only after UV-0 red-green.
