@@ -43,7 +43,7 @@ public sealed class TheLocatorTellsShimFromExecutableOnlyByWindowsSuffixTests
     public void AnNpmShimIsRefusedOnWindows_AndIsItselfTheLaunchOffWindows()
     {
         using var path = new EngineCatalogTests.FakePath();
-        var shim = path.AddNpmShim("copilot", "@github/copilot", "npm-loader.js");
+        path.AddNpmShim("copilot", "@github/copilot", "npm-loader.js");
 
         if (OperatingSystem.IsWindows())
         {
@@ -55,6 +55,15 @@ public sealed class TheLocatorTellsShimFromExecutableOnlyByWindowsSuffixTests
         }
         else
         {
+            // Derived from the fixture, never hand-written: `AddNpmShim` returns the SCRIPT beside
+            // the shim, and an earlier draft compared against that by mistake — green on Windows,
+            // which never reaches this arm, and red on the Linux runner. That is the very shape
+            // INV-0012 diagnosed, reproduced by the test written to document it; the expected value
+            // is now read off the fixture's own PATH entries, where it cannot drift.
+            var shim = path.Entries
+                .Select(entry => Path.Combine(entry, "copilot"))
+                .First(File.Exists);
+
             var launch = EngineCatalog.ResolveLaunch("copilot", InstallRoot, path.Locator);
 
             Assert.Equal(shim, launch.FileName);
