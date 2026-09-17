@@ -1,0 +1,594 @@
+{
+  "head": "396892e19b76892f7ed13a5b5657dd91642f2bce",
+  "started_at": "2026-09-17T14:13:34.2951216-07:00",
+  "ended_at": "2026-09-17T14:13:49.8557784-07:00",
+  "exit_code": 0,
+  "filter": "FullyQualifiedName~CoordinationProjectionRuntimeTests",
+  "pins": [
+    {
+      "sha256": "CA2600BC46D7B0735E94E9ADC69FC24E2B3F66A222617507114CA1E8A3F1E899",
+      "path": "C:\\Projects\\ai-de-feature-xh-p2-projection\\src\\AiDe.Core\\Watcher\\CoordinationSourceCapture.cs"
+    },
+    {
+      "sha256": "3F544D8B44D1FDCDE7A35F7EA9A778F70ABB2B0734DECF3CD4CDAAC020E02EAF",
+      "path": "C:\\Projects\\ai-de-feature-xh-p2-projection\\src\\AiDe.Core\\Watcher\\CoordinationProjection.cs"
+    },
+    {
+      "sha256": "BEB2A136FF2C8C28CD3A7A535D83940736F14B304B609C51D3853444A3DD0387",
+      "path": "C:\\Projects\\ai-de-feature-xh-p2-projection\\src\\AiDe.Core\\Watcher\\CanonicalCoordinationOfficialCapture.cs"
+    },
+    {
+      "sha256": "B9DCF488863BF13D48048E284920F4415044292E2C0A42C67956D7A8EAF3DCF3",
+      "path": "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionRuntimeTests.cs"
+    },
+    {
+      "sha256": "E021B13133C5E7238C3364FED0809E7A7B89706A2E8D33D03C498729186911FC",
+      "path": "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\Watcher\\CanonicalCoordinationProjectionRuntimeTests.cs"
+    },
+    {
+      "sha256": "4C20438BA5BA4C5DFA9E8BE59A4EEA1FD4B2C5238D2061A5732EE328E53A67A3",
+      "path": "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll"
+    },
+    {
+      "sha256": "FFECEFAC46F22F364F49DFCCDB6DFF5A09C8314D85ED9271CD8205AB52AE82C6",
+      "path": "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.dll"
+    }
+  ],
+  "cases": [
+    {
+      "testId": "900b42a2-2464-d655-43b6-97f5f0080719",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_RecoveryBindingMismatch_CannotBorrowReceipt",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_RecoveryBindingMismatch_CannotBorrowReceipt(mismatch: \"scope\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "f6d9f1df-c6d3-49d5-5dc3-e7b199269052",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "Capture_AcceptedSourceChanges_ReturnsGapAndRetainsCheckpoint",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.Capture_AcceptedSourceChanges_ReturnsGapAndRetainsCheckpoint(change: \"missing\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "3757c96f-9034-60d0-a4bb-0fdd57fc4375",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "Acquire_CallerRepositorySpoof_RejectsBeforeEmptyOrMalformedSource",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.Acquire_CallerRepositorySpoof_RejectsBeforeEmptyOrMalformedSource",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "82e4ba60-ad71-6b26-32ab-005a19fa5977",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: \"\\\\\\\\server\\\\share\\\\\", count: 8)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "9863335e-8de4-2405-6a99-3afc3ba47bea",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: \"C:\\\\\", count: 1)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "f70104bf-db9b-0b3e-792e-35adffc2381d",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(separatorCount: 2, alternateSeparator: False)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "62936d28-822a-fe1e-910e-fd4f1e6f20af",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_LateParentAndAuthorityWork_RetainPendingPayloads",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_LateParentAndAuthorityWork_RetainPendingPayloads",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "080a40e1-6a55-ac70-db93-2684f4dd7e6d",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_RecoveryBindingMismatch_CannotBorrowReceipt",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_RecoveryBindingMismatch_CannotBorrowReceipt(mismatch: \"descriptor\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "f8ecdb65-d2f5-56af-c729-a4c59dbe8bea",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: \"\\\\\\\\server\\\\share\", count: 1)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "69554af6-79d4-80a1-ab50-dc41f517955d",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "RunOnce_NormalPath_EmitsMeasuredCountsAndDurationWithoutPayloadTags",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.RunOnce_NormalPath_EmitsMeasuredCountsAndDurationWithoutPayloadTags",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "571d2553-b109-dd48-261d-71a8ba066162",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_ConcurrentLostAckAndAdvance_RecoversAfterBarrier",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_ConcurrentLostAckAndAdvance_RecoversAfterBarrier",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "35707ea8-0710-cbb6-b351-40653b83ee7f",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "Acquire_FullDescriptorByteLimit_RejectsBoundedButOversizedPairs",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.Acquire_FullDescriptorByteLimit_RejectsBoundedButOversizedPairs",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "69028a60-9369-d373-fd4e-35b0a8067fb1",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_RecoveryBindingMismatch_CannotBorrowReceipt",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_RecoveryBindingMismatch_CannotBorrowReceipt(mismatch: \"hash\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "7998cbd8-14b3-ad2f-1959-c3869a27ecf9",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_ForgedExpectedCheckpoint_RejectsWithoutPartialRows",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_ForgedExpectedCheckpoint_RejectsWithoutPartialRows(field: \"prefix\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "75276250-5a1b-9a7b-a320-af6def1d73aa",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "Acquire_TooManyOrNoAllowances_RefusesBoundedDescriptor",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.Acquire_TooManyOrNoAllowances_RefusesBoundedDescriptor(count: 17)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "9fb3601d-e3b4-0744-d065-a1a6ba93de1d",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_AppendTolerantOccurrence_KeepsOriginalStateAndReason",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_AppendTolerantOccurrence_KeepsOriginalStateAndReason(occurrence: \"initial\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "034d4a8c-f1ad-d5f6-8fee-10a70b504cd3",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_ForgedExpectedCheckpoint_RejectsWithoutPartialRows",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_ForgedExpectedCheckpoint_RejectsWithoutPartialRows(field: \"epoch\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "1645fe64-27ab-271b-fd02-ee8e6bdbf574",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "Capture_SixtyFourMaximumCrLfFrames_SplitsAtSixtyThreeAndMakesProgress",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.Capture_SixtyFourMaximumCrLfFrames_SplitsAtSixtyThreeAndMakesProgress",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "8936583f-286c-647b-9c8e-3b85dd43800e",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_ForgedExpectedCheckpoint_RejectsWithoutPartialRows",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_ForgedExpectedCheckpoint_RejectsWithoutPartialRows(field: \"scope\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "c524f349-d329-d150-ee9d-9e2e77d5253c",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_CompactKeyCollision_ComparesFullIdentityAndRollsBackWholePage",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_CompactKeyCollision_ComparesFullIdentityAndRollsBackWholePage",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "dd207dd8-531e-0ee4-ecc0-cffa8d865644",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(separatorCount: 2, alternateSeparator: True)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "aaa73475-f4c0-4bd8-cb71-04ba9e278cdf",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "RunOnce_AbsentThenEmpty_DistinguishesUnavailableWithoutCreatingSource",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.RunOnce_AbsentThenEmpty_DistinguishesUnavailableWithoutCreatingSource",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "bc106570-4d3f-194f-25d9-e4a7cb7eb849",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_ExactDuplicateOccurrence_AccountsBytesWithoutNewEffectOrAdmission",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_ExactDuplicateOccurrence_AccountsBytesWithoutNewEffectOrAdmission",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "785ec070-6c50-090a-5ea4-7ea5e63be04e",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_ChangedSemanticOrEarlierPrefix_RejectsHistoricalForgery",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_ChangedSemanticOrEarlierPrefix_RejectsHistoricalForgery(earlierPrefix: False)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "ca7fa958-7f05-6c0a-8d80-878408a058dc",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_ConflictingDuplicate_RefusesWithoutRewritingHistoryOrAdvancing",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_ConflictingDuplicate_RefusesWithoutRewritingHistoryOrAdvancing",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "d2b90be6-9825-19eb-9fca-b5036ffcfa2d",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ReadCoordination_FourHundredOneWithInterleavedScope_UsesFrozen2002001ThenFreshResume",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ReadCoordination_FourHundredOneWithInterleavedScope_UsesFrozen2002001ThenFreshResume",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "c432fb0c-51b8-bb96-e602-760fca9d933a",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_TooManyFiles_RejectsBeforeAnyAdmission",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_TooManyFiles_RejectsBeforeAnyAdmission",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "04fdc933-b4df-f98c-67ed-788f331822e5",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_PartlyAccountedPage_RequiresCasWithoutPartialMutation",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_PartlyAccountedPage_RequiresCasWithoutPartialMutation",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "b1e4b69a-607f-1cca-c41b-d262654e63e4",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_NativeUnboundCheckpoint_CannotRetrobind",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_NativeUnboundCheckpoint_CannotRetrobind",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "779fee7b-78b7-f86d-7386-71139a307a24",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "Capture_IncompleteUtf8Tail_DefersUntilLfWithoutCheckpointingTail",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.Capture_IncompleteUtf8Tail_DefersUntilLfWithoutCheckpointingTail",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "4d241a8e-f470-9e8f-96f7-cd2e1ab13bf7",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: \"C:\\\\\", count: 8)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "cd8c9749-4b27-e438-59ea-caf30e06c034",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "RunOnce_IgnoredInvalidLegacyAndTail_AccountsPhysicalBytesWithoutQuestions",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.RunOnce_IgnoredInvalidLegacyAndTail_AccountsPhysicalBytesWithoutQuestions",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "fb2f60ff-7fff-e915-af5a-cb56e8980f4b",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "RunOnce_InvalidDigestAndSpoofedStream_RetainsRawWithoutEnhancedIdentity",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.RunOnce_InvalidDigestAndSpoofedStream_RetainsRawWithoutEnhancedIdentity",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "3593971b-db6e-e814-94c6-be2c46fc2e73",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_AppendTolerantOccurrence_KeepsOriginalStateAndReason",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_AppendTolerantOccurrence_KeepsOriginalStateAndReason(occurrence: \"diagnostic\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "e8000364-e4a5-0b41-dd0a-c9b6c1f8df41",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "Capture_MaximumContent_KeepsExactFramingAndLegacyContent",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.Capture_MaximumContent_KeepsExactFramingAndLegacyContent(ending: \"\\r\\n\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "c380cd6d-c3d5-a6de-31bb-d6c3ef698c79",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_ChangedStaleEmptySnapshot_RejectsEvenWhenOffsetAlreadyApplied",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_ChangedStaleEmptySnapshot_RejectsEvenWhenOffsetAlreadyApplied",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "98ed69e1-5510-8324-fe54-5d3dd80e5b09",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "Capture_OverContentAndCaptureBounds_PreservesAcceptedHistory",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.Capture_OverContentAndCaptureBounds_PreservesAcceptedHistory",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "e018908a-d926-2e08-c24a-8f88723e4d07",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_ChangedSemanticOrEarlierPrefix_RejectsHistoricalForgery",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_ChangedSemanticOrEarlierPrefix_RejectsHistoricalForgery(earlierPrefix: True)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "64d99469-0c4e-c2cd-3ab0-d56e08c6d10d",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "RunOnce_ActualPrimarySource_ProducesReceiptWithoutNativeEffects",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.RunOnce_ActualPrimarySource_ProducesReceiptWithoutNativeEffects",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "6225ce93-9205-d202-d6b4-efa79d60d583",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: \"\\\\\\\\server\\\\share\", count: 8)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "0d3034c9-7a4e-e3b3-4757-8d5dee33b484",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_PageBoundaries_KeepContiguousCheckpointsAndStableReplay",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_PageBoundaries_KeepContiguousCheckpointsAndStableReplay(records: 127)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "a7ebff85-3138-7339-36a3-67e9ed381280",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_OverlargeCompleteRecord_RejectsBeforeAnyAdmission",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_OverlargeCompleteRecord_RejectsBeforeAnyAdmission",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "28409608-447e-7dce-2683-a2de0bb1b77a",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_DifferentScopeSamePhysicalSource_RefusesReconfiguration",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_DifferentScopeSamePhysicalSource_RefusesReconfiguration",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "ac6673c6-bce3-b211-f744-dbadee4f40be",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_AfterCommitBeforeAcknowledgement_ReplayReturnsOriginalReceiptAndEffectWithoutAuthority",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_AfterCommitBeforeAcknowledgement_ReplayReturnsOriginalReceiptAndEffectWithoutAuthority",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "d333eee0-2555-9a24-76c3-59c6c63c3e47",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_IncompleteTail_DefersUntilLfAndReportsUnsupportedVersion",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_IncompleteTail_DefersUntilLfAndReportsUnsupportedVersion",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "df8ed763-3dd6-7220-c783-c7fae62966e1",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "RunOnce_RebuildSameCorpus_ReproducesExactReceiptsWatermarkAndBytes",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.RunOnce_RebuildSameCorpus_ReproducesExactReceiptsWatermarkAndBytes",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "03ddc330-a96a-d072-750b-638b5026c28b",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: \"\\\\\\\\server\\\\share\\\\\", count: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "2a952bd3-4b77-38ee-7e0e-c87a5c2b8a8a",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "Capture_MaximumContent_KeepsExactFramingAndLegacyContent",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.Capture_MaximumContent_KeepsExactFramingAndLegacyContent(ending: \"\\n\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "b3d932b2-756d-b41f-96ce-828fc442eb44",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_HistoricalCaptureAfterSourceChange_RecoversButNextCaptureReportsGap",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_HistoricalCaptureAfterSourceChange_RecoversButNextCaptureReportsGap",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "e7d6574b-1cc8-7b4e-56d7-ce4fd2ea4cbc",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_AppendTolerantOccurrence_KeepsOriginalStateAndReason",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_AppendTolerantOccurrence_KeepsOriginalStateAndReason(occurrence: \"conflict\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "e129fce7-748f-ee2f-1bb5-07e71a207d3d",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_LostAcknowledgementThenRestart_ReplaysOriginalAdmissionAndState",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_LostAcknowledgementThenRestart_ReplaysOriginalAdmissionAndState",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "779b105e-0b44-31d1-6b1c-53092192a3ce",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: \"C:\\\\\", count: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "760feb59-e500-c710-a4cd-085ed7742599",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_PageBoundaries_KeepContiguousCheckpointsAndStableReplay",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_PageBoundaries_KeepContiguousCheckpointsAndStableReplay(records: 129)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "62549c77-27ea-bbcb-311f-d82f08aece46",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "Capture_AcceptedSourceChanges_ReturnsGapAndRetainsCheckpoint",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.Capture_AcceptedSourceChanges_ReturnsGapAndRetainsCheckpoint(change: \"truncated\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "df8acd13-b3c1-212c-5ed5-e4a772e1aaaf",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_LostAckThenOtherProjectorAdvances_RecoversOriginalReceipt",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_LostAckThenOtherProjectorAdvances_RecoversOriginalReceipt",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "7271efea-83c2-1265-9d80-9ef60c546d0f",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_IndependentWriters_CommitOneMappingAndEffect",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_IndependentWriters_CommitOneMappingAndEffect",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "ec5aa1c9-681e-e966-0184-2ae942dec718",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_AcceptedSourceGap_RefusesWithoutAdvance",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_AcceptedSourceGap_RefusesWithoutAdvance(change: \"truncated\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "5ac83c21-f508-f31a-bb9e-96ecb1b27793",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "Acquire_TooManyOrNoAllowances_RefusesBoundedDescriptor",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.Acquire_TooManyOrNoAllowances_RefusesBoundedDescriptor(count: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "bc589726-46a3-00c8-111a-749e99bbe186",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_RecordedAtEqualAndSemanticConflict_PreservesOriginalBytesAndReceipt",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_RecordedAtEqualAndSemanticConflict_PreservesOriginalBytesAndReceipt",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "b613dc85-c84b-63f5-0424-a44e1ca16d0c",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_BeforeCommitFailure_RollsBackCheckpointEventAndReceipt",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_BeforeCommitFailure_RollsBackCheckpointEventAndReceipt",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "db3f6d03-6676-c5d0-c57c-96d4ff1189fb",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "Acquire_LinkedCheckoutAndReorderedOpaquePairs_UsesOneFullDescriptor",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.Acquire_LinkedCheckoutAndReorderedOpaquePairs_UsesOneFullDescriptor",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "ff4795fd-c431-814c-1d00-b652eb0c9fe1",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_AcceptedSourceGap_RefusesWithoutAdvance",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_AcceptedSourceGap_RefusesWithoutAdvance(change: \"missing\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "a6ac9b11-7f6a-41ae-e142-8687aaf5ec08",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_AppendTolerantOccurrence_KeepsOriginalStateAndReason",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_AppendTolerantOccurrence_KeepsOriginalStateAndReason(occurrence: \"recordedAt\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "e9719e70-4da8-42d9-15a6-0c90e29aefc3",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "Capture_AcceptedSourceChanges_ReturnsGapAndRetainsCheckpoint",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.Capture_AcceptedSourceChanges_ReturnsGapAndRetainsCheckpoint(change: \"changed\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "23e06313-cb8d-7df5-8928-a0d474879211",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_RecoveryBindingMismatch_CannotBorrowReceipt",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_RecoveryBindingMismatch_CannotBorrowReceipt(mismatch: \"key\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "b2234871-33ed-8584-9bba-f25117ad4241",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: \"\\\\\\\\server\\\\share\", count: 0)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "575d9f0c-a42d-dfe5-b839-41502aade623",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_ForgedExpectedCheckpoint_RejectsWithoutPartialRows",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_ForgedExpectedCheckpoint_RejectsWithoutPartialRows(field: \"offset\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "78ecd97e-185f-5dda-a4a4-84a5344d9199",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Project_StaleCapture_DiscardsWithoutAllocatingOrPublishing",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Project_StaleCapture_DiscardsWithoutAllocatingOrPublishing",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "d906a5b8-78e3-2e5d-1556-52fc816746e2",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_PageBoundaries_KeepContiguousCheckpointsAndStableReplay",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_PageBoundaries_KeepContiguousCheckpointsAndStableReplay(records: 128)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "9c8cc188-35b3-f0f9-d13e-45550f215b7d",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_AcceptedSourceGap_RefusesWithoutAdvance",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_AcceptedSourceGap_RefusesWithoutAdvance(change: \"changed\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "4f1848a9-1432-ecad-f367-8959ab9de8bf",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_AppendTolerantOccurrence_KeepsOriginalStateAndReason",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_AppendTolerantOccurrence_KeepsOriginalStateAndReason(occurrence: \"equal\")",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "bdc2a79b-362f-ac2b-98dc-ce045b5837f9",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(separatorCount: 8, alternateSeparator: False)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "df9f9572-e34c-f715-fa53-302e7208e437",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "RunOnce_ExpandedInvalidResponse_RetainsRawButNeverCanonicalMasquerade",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.RunOnce_ExpandedInvalidResponse_RetainsRawButNeverCanonicalMasquerade",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "1c06e8a3-29e6-447c-71d0-69cb9608f77a",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint(separatorCount: 1, alternateSeparator: False)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "74eed471-0d3e-a25c-2543-55acaef8c1bb",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_PageBoundaries_KeepContiguousCheckpointsAndStableReplay",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_PageBoundaries_KeepContiguousCheckpointsAndStableReplay(records: 257)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "225ca0a3-7cfd-c476-dc35-cff54b3a5252",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "Pump_BeforeCommit_RollsBackEffectsReceiptsCheckpointAndMemory",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.Pump_BeforeCommit_RollsBackEffectsReceiptsCheckpointAndMemory",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "f1225143-6483-53b6-911e-36795f3c3d55",
+      "class": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests",
+      "method": "RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot",
+      "display_name": "AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests.RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot(root: \"\\\\\\\\server\\\\share\\\\\", count: 1)",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "8a942ced-886c-4b26-68f0-2ebbf908dc4e",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_FullDescriptorCollision_RefusesRebindingBeforeAdmission",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_FullDescriptorCollision_RefusesRebindingBeforeAdmission",
+      "outcome": "Passed"
+    },
+    {
+      "testId": "fc8d621d-c1c2-c236-5ab4-2fa32d7b2b60",
+      "class": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests",
+      "method": "ProjectOfficialPage_TwoStoresCompete_OneAdmissionBothReceiveOriginalReceipt",
+      "display_name": "AiDe.Core.Tests.Watcher.CanonicalCoordinationProjectionRuntimeTests.ProjectOfficialPage_TwoStoresCompete_OneAdmissionBothReceiveOriginalReceipt",
+      "outcome": "Passed"
+    }
+  ],
+  "trx_sha256": "977A8001D853B67AC34580D30FCD6C057F3AAC507419646145E91A73639AB4EC",
+  "scope": "Current-source observation only; no mutation or independent approval in this run. Exact occurrence inventory retained, not distinct-name counts."
+}

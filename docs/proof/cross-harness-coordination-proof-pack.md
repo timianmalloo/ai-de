@@ -4048,3 +4048,95 @@ not rerun by this closure. Original raw receipts and the earlier failed closure
 attempts remain unchanged. Independent code re-gating is still required after
 the ordinary commit. This is a safe code/evidence checkpoint, not completion of
 P2, P3–P5, final publication, or upstream transfer.
+
+## P2 current root qualification checkpoint — 2026-09-17
+
+**Partial author evidence, not a root-isolation qualification or an independent
+re-gate.** The source remained at
+`396892e19b76892f7ed13a5b5657dd91642f2bce` throughout this run. No production code
+or tests changed. The already-landed alias correction was not redone, reverted,
+or represented as newly authored. The existing P1 mechanics and P2 history,
+including the committed official receipt-recovery changes, remain intact.
+
+### Current execution and pins
+
+`dotnet test tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj --no-restore
+--filter FullyQualifiedName~CoordinationProjectionRuntimeTests` executed **79
+occurrences: 79 passed, 0 failed, 0 skipped; exit 0**. The TRX reports eight
+seconds of test execution. This was a current-source run, not a replay of the
+historical 304-pass or 311-pass evidence.
+
+- [Raw current TRX](p2-root-current-qualified.trx).
+- [Current run identity and occurrence inventory](p2-root-current-qualified.json):
+  UTC start/end, exit, filter, source/test/binary SHA-256 pins, TRX digest, and
+  every test-ID/class/method/display-name occurrence. Occurrences, not distinct
+  display names, are the counting unit.
+- Current normalization source:
+  `CA2600BC46D7B0735E94E9ADC69FC24E2B3F66A222617507114CA1E8A3F1E899`.
+- Executed test DLL:
+  `4C20438BA5BA4C5DFA9E8BE59A4EEA1FD4B2C5238D2061A5732EE328E53A67A3`.
+
+These pins describe working-file bytes after the run and before any documentation
+edit. They do not claim reproducible binary identity across rebuilds, a
+staged-blob comparison, or new baseline/mutant/restored phases.
+
+### Coverage classification
+
+| Category | Current evidence | Confidence and limit |
+|---|---|---|
+| Same-root aliases | `Pump_EquivalentRootAfterReopen_PreservesOriginalIdentitiesAndCheckpoint`: four passing cases; repeated pumps after reopen preserve the exact original session, message, admission extrema, feed/event counts and one checkpoint. The direct captured-page replay also returns the original admissions/message ID. | **Verified** for the four native/alternate trailing-separator spellings exercised. |
+| Filesystem-root preservation | `RootKey_FilesystemRootWithRedundantSeparators_PreservesQualifiedRoot`: nine passing Windows drive/UNC cases. | **Verified pure function only**. No live UNC share, filesystem-root pump, symlink or junction equivalence was exercised. Existing Windows uppercase behavior is unchanged. |
+| Valid distinct roots | No new two-directory, identical-byte, identical-relative-filename, common-prefix-sibling scenario was authored in this bounded run. | **Flagged gap**: independent legitimate roots must be allowed their independent truth where the contract permits; distinct keys alone would not prove non-borrowing. |
+| Refused mismatch/collision | `Acquire_CallerRepositorySpoof_RejectsBeforeEmptyOrMalformedSource`; `ProjectOfficialPage_FullDescriptorCollision_RefusesRebindingBeforeAdmission`; `ProjectOfficialPage_DifferentScopeSamePhysicalSource_RefusesReconfiguration`; and four `ProjectOfficialPage_RecoveryBindingMismatch_CannotBorrowReceipt` cases passed. | **Verified for their actual inputs**: caller-repository mismatch, full-descriptor collision/rebind, reconfiguration, and descriptor/scope/hash/key recovery mismatch. These are **not** a substitute for the missing actual-directory root-isolation scenario. |
+
+The official recovery test compares the complete table snapshot after refusal;
+the descriptor collision and reconfiguration tests compare their cache snapshot.
+The caller-repository spoof test asserts the stable mismatch code before source
+admission. These differing assertion widths are not conflated into an
+all-tables/no-mutation claim for every test.
+
+### Contract trace and next oracle
+
+The bounded path read here was native root → `Normalize`/`RootKey` →
+immutable capture/page scope → `ProjectCoordination` → persisted checkpoint and
+original admission/session/message readers. The normalizer trims native ending
+separators only above native root length. The native checkpoint is an
+offset/digest value; the page carries scope. `ProjectCoordination` compares the
+stored checkpoint in that page's scope with the expected checkpoint and returns
+`Stale` on inequality. A test must not invent a root-bearing native checkpoint
+token or label every valid second-root call an error.
+
+The official path additionally validates descriptor-bound capture and expected
+scope (`OfficialCapturedPage.ValidateExpected`), and caller repository binding
+before acquisition. Future mismatch coverage must use those actual guarded
+entry points, not a newly exposed test bypass.
+
+**Remaining root work:** construct synthetic sibling directories such as `wire`
+and `wire-other` with equal log bytes and relative filenames; prove rightful
+independent projection and reopen preserve distinct meaningful identities;
+attempt the cross-root capture/descriptor/expected-state combination actually
+represented by the API; assert its stable refusal and zero relevant mutation.
+Then inject an appropriate root-identity/descriptor-comparison fault and observe
+the same behavioral assertion fail. **No mutant ran in this checkpoint.** The
+historical 13-case alias RED (nine failures/four controls) remains historical;
+this checkpoint makes no new red-first claim.
+
+### Budget, gate and programme state
+
+The 24-call author budget was consumed disproportionately by grounding output:
+oversized combined reads, a JSON-only assumption about mixed-format liveness
+files, and attempts to invoke shell `rg` where only the search tool was available.
+Those attempts provided no usable root evidence. This is an execution-estimate
+finding, not permission to enlarge the budget or skip the missing oracle.
+The retained result is therefore a clean evidence checkpoint with the root
+qualification **blocked**, not completed. No central policy or ownership register
+was changed to excuse the gap.
+
+The implementation definition-of-done items for full boundary coverage, a new
+inverse-fault observation, and independent Test Architect clearance remain unmet
+for the requested additional root scenario. Independent re-gate is still a
+separate next action. P2 has advanced, but raw metrics, bridge/full-fold behavior,
+old-binary qualification and the remaining P2 oracles are not completed by this
+unit. Existing M0–M5 scopes remain unchanged; full P1 authority and mixed-client
+`9d82` C# qualification remain blocked. P3–P5, publication, main, push and
+upstream transfer are outside this checkpoint.

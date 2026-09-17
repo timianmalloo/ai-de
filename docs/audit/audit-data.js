@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T20:59:50Z",
+  "generated": "2026-09-17T21:16:15Z",
   "audit": [
     {
       "actor": null,
@@ -21738,6 +21738,34 @@ window.AUDIT_DATA = {
       "fan_out": 1,
       "started_at": "2026-09-17T20:47:40Z",
       "duration_seconds": 730.0
+    },
+    {
+      "id": "al-01M2RKK8KJT9HC7JWVYCEK6ERN",
+      "shortname": "implement-p2-root-current-checkpoint",
+      "datetime": "2026-09-17T21:15:39Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "Bounded current P2 root qualification: preserve existing fixes; measure aliases, valid distinct roots, and refused mismatch; do not claim wider P2 completion. Original full delegation is retained in parent session, not reproduced in this abbreviated audit prompt.",
+      "summary": "79 current runtime occurrences passed. No code or test changes. Actual-directory distinct-root and inverse-fault oracles remain unqualified; bounded evidence checkpoint, independent re-gate pending.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md",
+        "docs/proof/p2-root-current-qualified.json",
+        "docs/proof/p2-root-current-qualified.trx"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Qualify current P2 root identity without redoing the alias fix",
+      "done_when": "Alias, valid-distinct-root, and refused-mismatch coverage is measured and recorded",
+      "tier": "T2",
+      "main_calls": 24,
+      "main_budget": 24,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-17T21:10:08Z",
+      "duration_seconds": 331.0
     }
   ],
   "changes": [
