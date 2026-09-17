@@ -118,6 +118,83 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
     }
 
     [Fact]
+    public async Task Register_FormerWaiterOwnsGate_ThirdOperationCannotOvertakeHeartbeat()
+    {
+        using var time = new ThreeOperationTime();
+        using var files = new ProducerDirectory(time);
+        var emitter = new SessionCoordinationEmitter(files.Writer);
+        var owner = Task.Run(() => emitter.Register(Subject, Identity()));
+        Task? waiter = null;
+        Task? third = null;
+        var reusedGate = false;
+        var thirdReachedWriter = false;
+        var liveWhileWaiting = -1;
+        string[] durableWhileWaiting = [];
+        try
+        {
+            Assert.True(time.FirstEntered.Wait(WaitBound), "Register did not reach the writer seam.");
+            waiter = Task.Run(() => emitter.Heartbeat(Subject));
+            WaitForContender(emitter, waiter);
+            object originalGate;
+            lock (PrivateField(emitter, "_gate")!)
+            {
+                var gates = Assert.IsAssignableFrom<System.Collections.IDictionary>(
+                    PrivateField(emitter, "_sessionGates"));
+                originalGate = Assert.IsAssignableFrom<object>(gates[Subject]);
+                Assert.Equal(2, originalGate.GetType().GetField("References")!.GetValue(originalGate));
+            }
+
+            time.FirstRelease.Set();
+            await owner.WaitAsync(WaitBound);
+            Assert.True(time.SecondEntered.Wait(WaitBound), "Former waiter did not reach the writer seam.");
+            third = Task.Run(() => emitter.End(Subject));
+            // Observe admission, not elapsed time: an unscheduled third operation cannot pass.
+            Assert.True(SpinWait.SpinUntil(() =>
+            {
+                lock (PrivateField(emitter, "_gate")!)
+                {
+                    return time.ThirdReachedWriter.IsSet || third.IsCompleted ||
+                        (int)originalGate.GetType().GetField("References")!.GetValue(originalGate)! >= 2;
+                }
+            }, WaitBound), "Third operation neither acquired the original gate nor reached the writer.");
+            lock (PrivateField(emitter, "_gate")!)
+            {
+                var gates = Assert.IsAssignableFrom<System.Collections.IDictionary>(
+                    PrivateField(emitter, "_sessionGates"));
+                reusedGate = ReferenceEquals(originalGate, gates[Subject]);
+            }
+            thirdReachedWriter = time.ThirdReachedWriter.IsSet;
+            if (thirdReachedWriter)
+            {
+                await third.WaitAsync(WaitBound);
+            }
+            liveWhileWaiting = emitter.LiveCount;
+            durableWhileWaiting = Kinds(files, Subject);
+        }
+        finally
+        {
+            time.FirstRelease.Set();
+            time.SecondRelease.Set();
+            await Task.WhenAll(owner, waiter ?? Task.CompletedTask, third ?? Task.CompletedTask)
+                .WaitAsync(WaitBound);
+        }
+
+        var records = files.Read(Subject);
+        output.WriteLine($"reusedGate={reusedGate}; thirdReachedWriterWhileHeartbeatPaused={thirdReachedWriter}; " +
+            $"liveWhileWaiting={liveWhileWaiting}; durableWhileWaiting={string.Join(",", durableWhileWaiting)}; " +
+            $"durableFinal={string.Join(",", Kinds(files, Subject))}; liveFinal={emitter.LiveCount}; gatesFinal={GateCount(emitter)}");
+        Assert.Equal(new[] { "register", "heartbeat", "session-end" }, Kinds(files, Subject));
+        Assert.True(reusedGate, "Third operation replaced the gate still owned by the former waiter.");
+        Assert.False(thirdReachedWriter);
+        Assert.Equal(new[] { "register" }, durableWhileWaiting);
+        Assert.Equal(1, liveWhileWaiting);
+        Assert.Single(records, record => record.GetProperty("kind").GetString() == "register");
+        Assert.Equal(new[] { 1, 2, 3 }, records.Select(record => record.GetProperty("seq").GetInt32()));
+        Assert.Equal(0, emitter.LiveCount);
+        Assert.Equal(0, GateCount(emitter));
+    }
+
+    [Fact]
     public async Task Register_PausedAppend_EndWaitsForDurableRegistration()
     {
         using var time = new PausedTime();
@@ -438,6 +515,45 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
         {
             time.Release.Set();
             await Task.WhenAll(writing, contender() ?? Task.CompletedTask).WaitAsync(WaitBound);
+        }
+    }
+
+    private sealed class ThreeOperationTime : TimeProvider, IDisposable
+    {
+        private int _calls;
+        public ManualResetEventSlim FirstEntered { get; } = new();
+        public ManualResetEventSlim FirstRelease { get; } = new();
+        public ManualResetEventSlim SecondEntered { get; } = new();
+        public ManualResetEventSlim SecondRelease { get; } = new();
+        public ManualResetEventSlim ThirdReachedWriter { get; } = new();
+
+        public override DateTimeOffset GetUtcNow()
+        {
+            var call = Interlocked.Increment(ref _calls);
+            if (call == 3)
+            {
+                ThirdReachedWriter.Set();
+            }
+            else if (call is 1 or 2)
+            {
+                var entered = call == 1 ? FirstEntered : SecondEntered;
+                var release = call == 1 ? FirstRelease : SecondRelease;
+                entered.Set();
+                if (!release.Wait(WaitBound))
+                {
+                    throw new TimeoutException($"Operation {call} writer seam was not released.");
+                }
+            }
+            return DateTimeOffset.UnixEpoch;
+        }
+
+        public void Dispose()
+        {
+            FirstEntered.Dispose();
+            FirstRelease.Dispose();
+            SecondEntered.Dispose();
+            SecondRelease.Dispose();
+            ThirdReachedWriter.Dispose();
         }
     }
 
