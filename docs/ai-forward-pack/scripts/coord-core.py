@@ -553,6 +553,160 @@ def staged_paths(repo):
     return [p for p in out.split("\0") if p], None
 
 
+# --- control currency (DC-226, Ruling 131 (c)) -------------------------------
+#
+# THE DEFECT THIS EXISTS FOR. Every control in this pack ships as a file under version
+# control, so it runs at the version of whichever worktree invokes it. A lane branched on
+# Monday enforces Monday's rules on Thursday, and nothing anywhere compares the copy that ran
+# against the copy on `main` -- so the fleet silently runs mixed versions of its own rules,
+# and the exposure is every control added since the oldest live lane branched.
+#
+# MEASURED INSTANCE (2026-09-16, DC-226). `coord claim` has refused `register`-class paths
+# since pack revision 70 (2026-09-14). On 2026-09-16 the Atlas native lane held a lease on
+# `docs/audit/audit-log.jsonl` and stopped a `main` join at its commit step. Counting the
+# refusal's own code in that tree's copy of THIS FILE --
+#   grep -c COORD-CLAIM-REGISTER-CLASS \
+#     C:/Projects/ai-de-atlas-e1-native-class-view/docs/ai-forward-pack/scripts/coord-core.py
+# -- returns 0, while the recovery and five-gates trees return 1 each. The peer looked
+# careless and was not: the refusal existed on `main` and did not exist in the tree that
+# invoked it. That is the highest-severity shape in the register, because it makes every
+# OTHER control's coverage a function of when its caller branched.
+#
+# WHY A REFUSAL AND NOT A WARNING (Ruling 131 (c)). A warning is read only by sessions that
+# run `doctor`, and those are not the stale ones. A control that only warns is a memoir (CI6).
+#
+# WHY MERGE-BASE AND NOT A TIP COMPARISON (Ruling 131 condition (i)). The comparison is
+# DIRECTION-AWARE. A lane whose own edits to `tools/` are AHEAD of main is still stale if main
+# moved the control set, and a tip-to-tip diff or a "who has more commits" reading gets that
+# case exactly backwards -- it reads the lane as the newer copy. `merge-base..origin/main`
+# asks the only question that matters: what has main added to the control set that this tree
+# has never seen? The lane's own edits are not in that range, by construction.
+#
+# THE NAMED ESCAPE, AND WHY IT IS NARROW. `origin/main` is the ref a clone of this repository
+# records. A tree with no remote -- an offline clone, a fresh `git init`, a CI checkout with
+# no remotes -- genuinely cannot answer the question, and a control that cannot see is not
+# licensed to accuse (the rule `unique_commits` above already follows). That case prints what
+# was not recorded and PROCEEDS, and the claim event carries the fact, so escape use is
+# countable rather than a quiet default (Ruling 131 condition (iv)). Every OTHER failure is
+# also "not recorded" -- but it SAYS which, because "this clone has no remote" and "git could
+# not answer" are different facts about the same tree, and collapsing them is how an escape
+# becomes the silent default (IO: degrade to "not recorded", never to a plausible number).
+#
+# THE HALF THIS CANNOT REACH, and what carries it. A stale tree runs the stale copy of this
+# check, so a tree that predates this code is not refused by it -- that is DC-226 applied to
+# its own control, and it is not a hole that can be closed from inside the tree. `worktree
+# list` therefore reads the same question for every tree from the PRIMARY (below), where a
+# watcher on `main` runs a current copy.
+
+CONTROL_PATHS = ("docs/ai-forward-pack/scripts", "tools")
+CONTROL_CURRENCY_REF = "refs/remotes/origin/main"
+CONTROL_CURRENCY_REMOTE = "origin/main"
+
+# Memo for ONE PROCESS, which is the entire lifetime of a `coord` invocation -- so there is no
+# TTL to state and none would be honest: the process IS the TTL, and nothing can move a ref
+# under a single `claim`. That is also why nothing is cached to disk: a cache file with a TTL
+# is a second, staler copy of an answer about staleness, which is this very defect class one
+# level along.
+#
+# MEASURED, not reasoned (IO1), on this repository at 144 worktrees, 2026-09-17:
+#   claim (cold, three git calls)  36.1 ms mean / 37.0 ms p95 over 25 reads
+#                                  (rev-parse 10.6, merge-base 12.1, log 12.8)
+#   the same read on a memo hit    0.0 ms
+#   `worktree list`, 144 trees     16,761 ms before -> 18,770 ms after (+2.0 s, +12%)
+# `claim` can afford 36 ms: it is NOT the per-edit path -- `hook` -> `check` is, and neither
+# touches this -- and ADR-0007's 60 ms budget is stated for `check`, which is unchanged. The
+# memo earns its place in `worktree list`, which asks the same question once per tree:
+# `origin/main` resolves once instead of 144 times, and the trees that share a HEAD (six share
+# one today) share their merge-base and their behind-count.
+_CURRENCY_MEMO = {}
+
+
+def control_currency(cwd, head="HEAD"):
+    """Is this tree's copy of the control set current with `origin/main`? Returns a reading:
+
+      {"state": "current" | "stale" | "not-recorded",
+       "behind": int | None,   # commits on origin/main touching CONTROL_PATHS, unseen here
+       "escape": None | str,   # a short, countable key when nothing could be recorded
+       "detail": str}          # one line, for a human
+
+    `head` lets the fleet view ask the same question about ANOTHER tree from a current copy:
+    every linked worktree shares one object database, so `merge-base <that tree's HEAD>
+    origin/main` run from the primary answers exactly what it would answer there. That is the
+    half DC-226 needs most, because the stale tree is the one running the stale check.
+    """
+    origin, origin_escape = _CURRENCY_MEMO.get(("origin", str(cwd)), (None, None))
+    if origin is None and origin_escape is None:
+        out, err = _git(cwd, "rev-parse", "--verify", "--quiet", CONTROL_CURRENCY_REF)
+        origin = "" if err else (out or "").strip()
+        if not origin:
+            # Only NOW is the fourth subprocess paid, so the normal path stays at three.
+            # `rev-parse --verify --quiet` exits 1 with no output for a ref that is simply
+            # absent and 128 for a directory that is not a work tree; reading those apart
+            # from the message TEXT would be brittle, so ask git the question directly.
+            _, not_a_tree = _git(cwd, "rev-parse", "--is-inside-work-tree")
+            origin_escape = "not-a-git-tree" if not_a_tree else "no-origin-main"
+        _CURRENCY_MEMO[("origin", str(cwd))] = (origin, origin_escape)
+    if origin_escape == "not-a-git-tree":
+        return {"state": "not-recorded", "behind": None, "escape": "not-a-git-tree",
+                "detail": "not a git work tree, so {} cannot be read".format(
+                    CONTROL_CURRENCY_REMOTE)}
+    if origin_escape:
+        return {"state": "not-recorded", "behind": None, "escape": "no-origin-main",
+                "detail": "this clone records no {} ref".format(CONTROL_CURRENCY_REF)}
+    if not head:
+        # A bare worktree has no HEAD line in the porcelain. There is no tree to be stale.
+        return {"state": "not-recorded", "behind": None, "escape": "no-head",
+                "detail": "no HEAD (bare), so there is no working copy of the controls"}
+
+    base_key = ("base", str(cwd), head, origin)
+    if base_key in _CURRENCY_MEMO:
+        base, base_err = _CURRENCY_MEMO[base_key]
+    else:
+        # Unrelated histories exit 1 with no message, which `_git` already returns as an
+        # error -- and that is the right treatment: two histories with no common ancestor
+        # cannot be compared, so the answer is "not recorded", never "current".
+        out, err = _git(cwd, "merge-base", head, origin)
+        base, base_err = (out or "").strip(), err
+        _CURRENCY_MEMO[base_key] = (base, base_err)
+    if base_err:
+        return {"state": "not-recorded", "behind": None, "escape": "git-failed",
+                "detail": "{} exists but `git merge-base {} {}` did not answer: {}".format(
+                    CONTROL_CURRENCY_REMOTE, _safe(head, 12), CONTROL_CURRENCY_REMOTE,
+                    _safe(base_err, 120))}
+
+    behind_key = ("behind", str(cwd), base, origin)
+    if behind_key in _CURRENCY_MEMO:
+        behind, behind_err = _CURRENCY_MEMO[behind_key]
+    else:
+        # `--` is load-bearing: without it a pathspec naming a directory this tree does not
+        # have is read as a revision and git refuses the whole command.
+        out, err = _git(cwd, "log", "--oneline", "{}..{}".format(base, origin),
+                        "--", *CONTROL_PATHS)
+        behind = None if err else len(
+            [line for line in (out or "").splitlines() if line.strip()])
+        behind_err = err
+        _CURRENCY_MEMO[behind_key] = (behind, behind_err)
+    if behind_err:
+        return {"state": "not-recorded", "behind": None, "escape": "git-failed",
+                "detail": "{} exists but `git log {}..{} -- <controls>` did not answer: "
+                          "{}".format(CONTROL_CURRENCY_REMOTE, base[:12],
+                                      CONTROL_CURRENCY_REMOTE, _safe(behind_err, 120))}
+    if behind:
+        return {"state": "stale", "behind": behind, "escape": None,
+                "detail": "{} commit(s) on {} touch {} and are not in this tree".format(
+                    behind, CONTROL_CURRENCY_REMOTE, " or ".join(CONTROL_PATHS))}
+    return {"state": "current", "behind": 0, "escape": None,
+            "detail": "no commit on {} touches {} since this tree's merge-base".format(
+                CONTROL_CURRENCY_REMOTE, " or ".join(CONTROL_PATHS))}
+
+
+def control_currency_line(reading):
+    """The single line the escape prints. It names WHICH thing was not recorded, because an
+    escape that reads the same for every cause is the one that quietly becomes the default.
+    """
+    return "control currency: not recorded ({})".format(reading["detail"])
+
+
 # --- CLI --------------------------------------------------------------------
 
 def _identity():
@@ -2073,13 +2227,39 @@ def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
         verdicts.append((record, safe, reason))
 
     if action == "list":
+        # DC-226 / Ruling 131 (c), the fleet half, and the reason it has to live HERE. The
+        # refusal in `claim` runs from the invoking tree, so it cannot reach a tree that is
+        # stale -- that tree runs the stale copy of the refusal, which is the class pointed
+        # at its own control. This column is the other half: run from a current checkout
+        # (`main`), it reads every tree's currency from the PRIMARY's object database, which
+        # every linked worktree shares, so a watcher sees the fleet from a copy that is
+        # current. Ruling 131 condition (iii) is what reads it: the conductor sends one fleet
+        # notice naming the trees reported stale here.
         print("{} worktree(s); primary {}".format(len(records), _safe(primary, 200)))
+        print("control set  {}  vs {}".format(" ".join(CONTROL_PATHS), CONTROL_CURRENCY_REMOTE))
+        counts = {"stale": 0, "current": 0, "not-recorded": 0}
         for record, safe, reason in verdicts:
-            print("  {:<10} {:<44} {:<22} {}".format(
+            # `head` from the porcelain, NOT the tree's own cwd: a tree whose directory has
+            # been hand-deleted still has a HEAD in the record, and reading it from the
+            # primary answers for that tree too, rather than reporting the primary's own
+            # currency under that tree's name.
+            currency = control_currency(repo, head=record.get("head") or "")
+            counts[currency["state"]] = counts.get(currency["state"], 0) + 1
+            label = {"stale": "STALE -{}".format(currency["behind"]),
+                     "current": "current"}.get(currency["state"], "not recorded")
+            print("  {:<10} {:<13} {:<44} {:<22} {}".format(
                 "SAFE" if safe else "HELD",
+                label,
                 _safe(record.get("path", "?"), 140),
                 _safe(record.get("branch") or "(detached)", 40),
                 reason))
+        # The count is printed even when it is zero: a control that reports nothing and a
+        # control that found nothing must never render the same (R4, the rule this file
+        # already follows for an empty record).
+        print("control currency: {} stale, {} current, {} not recorded - a stale tree runs "
+              "the rules of the day it branched (DC-226); remedy in that tree: git merge {}"
+              .format(counts["stale"], counts["current"], counts["not-recorded"],
+                      CONTROL_CURRENCY_REMOTE))
         return 0
 
     # cleanup: reports by default; --remove is the explicit gate on an irreversible act (WT8).
@@ -2646,14 +2826,35 @@ _DRIVER_PATH_CODES = {"missing": "COORD-DRIVER-PATH-MISSING",
                       "unchecked": "COORD-NOT-CHECKED-DRIVER-PATH"}
 
 
+def _self_test_commit(repo, message):
+    """One commit in a throwaway repo, with an identity the machine may not have configured.
+
+    `-c` rather than `git config` so nothing is written to the temp repo's config, and
+    `commit.gpgsign=false` because a machine that signs by default would otherwise block the
+    self-test on a passphrase prompt — a control that hangs on someone's keyring is a control
+    that gets switched off.
+    """
+    subprocess.run(["git", "-c", "user.email=self-test@example.invalid",
+                    "-c", "user.name=coord self-test", "-c", "commit.gpgsign=false",
+                    "commit", "-q", "-m", message], cwd=str(repo), capture_output=True)
+
+
 def cmd_claim_self_test():
-    """Prove the two class refusals fire, and that an authored path is still granted.
+    """Prove the claim refusals fire, and that an authored path in a current tree is granted.
 
     The control for DC-163's own blind spot: the `register` refusal shipped on 2026-09-14 and
     nothing anywhere asserted it — no test in this repository names a single `COORD-` code — so
     when the `derived` half turned out to be missing two days later, the gap was found by a
     blocked join rather than by a control. A refusal nobody has watched fail is not a control
     (DC-104). Run: `coord claim --self-test`.
+
+    DC-226 / Ruling 131 condition (ii) adds the currency pair, and they need two repositories
+    because the readings are mutually exclusive: the first temp repo has no `origin/main` at
+    all, which is the NAMED ESCAPE (the line prints and the claim PROCEEDS); the second plants
+    a commit on `origin/main` touching `tools/` that the tree's own HEAD has never seen, which
+    is the REFUSAL. Condition (iv) is asserted separately and last, against the written record
+    rather than the printed line: the escape has to reach the claim EVENT, or it is a silent
+    default nobody can count.
     """
     import subprocess
     import tempfile
@@ -2682,6 +2883,12 @@ def cmd_claim_self_test():
             ("register refused", "docs/audit/audit-log.jsonl", "COORD-CLAIM-REGISTER-CLASS", 3),
             ("derived refused", "docs/audit/audit-data.js", "COORD-CLAIM-DERIVED-CLASS", 3),
             ("authored granted", "docs/collaboration/session-contracts.md", "granted", 0),
+            # DC-226 / Ruling 131 (c) (ii), the escape half. This repo is `git init` with no
+            # remote, so `refs/remotes/origin/main` does not exist and the question genuinely
+            # cannot be answered. The control says what it did not record and PROCEEDS — the
+            # authored path is still granted, in the same run, from the same output.
+            ("currency escape printed", "docs/collaboration/session-contracts.md",
+             "control currency: not recorded", 0),
         ]
         failures = []
         for name, path, expected, code in cases:
@@ -2690,13 +2897,98 @@ def cmd_claim_self_test():
                 failures.append("{}: expected {!r} and exit {}, got exit {} and {!r}".format(
                     name, expected, code, rc, text.strip()[:200]))
 
+        # Ruling 131 condition (iv): escape use is written into the claim event so it is
+        # COUNTABLE. Asserted against the record, not the console — a line on stdout is read
+        # by whoever was watching, and the whole point of the escape being narrow is that
+        # someone can later ask how often it was taken and get a number.
+        logfile = repo / COORD_DIRNAME / "log" / "coord-self-test.jsonl"
+        recorded = []
+        if logfile.exists():
+            for line in logfile.read_text(encoding="utf-8").splitlines():
+                if line.strip():
+                    try:
+                        row = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+                    if row.get("kind") == "claim" and row.get("control_currency"):
+                        recorded.append(row["control_currency"])
+        if not recorded:
+            failures.append("currency escape recorded: no claim event in {} carries a "
+                            "`control_currency` field, so escape use cannot be counted "
+                            "(Ruling 131 condition (iv))".format(logfile.name))
+
+    # DC-226 / Ruling 131 (c) (ii), the refusal half, in its OWN repository: the readings are
+    # mutually exclusive, so a tree that is behind cannot also be the tree with no remote.
+    with tempfile.TemporaryDirectory() as tmp:
+        stale = Path(tmp)
+        (stale / COORD_DIRNAME).mkdir()
+        (stale / "docs" / "collaboration").mkdir(parents=True)
+        subprocess.run(["git", "init", "-q"], cwd=stale, capture_output=True)
+        (stale / "README.md").write_text("the tree before the control moved\n", encoding="utf-8")
+        subprocess.run(["git", "add", "-A"], cwd=stale, capture_output=True)
+        _self_test_commit(stale, "the lane's base")
+        lane = subprocess.run(["git", "rev-parse", "HEAD"], cwd=stale,
+                              capture_output=True, text=True).stdout.strip()
+        # A control lands on main AFTER this tree branched. `update-ref` plants it without a
+        # network: `refs/remotes/origin/main` is an ordinary ref, and a clone of this
+        # repository has exactly this shape.
+        (stale / "tools").mkdir()
+        (stale / "tools" / "a-gate.py").write_text("# a control this tree has never seen\n",
+                                                   encoding="utf-8")
+        subprocess.run(["git", "add", "-A"], cwd=stale, capture_output=True)
+        _self_test_commit(stale, "a control moves on main")
+        subprocess.run(["git", "update-ref", "refs/remotes/origin/main", "HEAD"],
+                       cwd=stale, capture_output=True)
+        # Back to the lane's own commit: HEAD no longer contains `tools/a-gate.py`, which is
+        # the whole shape of DC-226 — the tree runs the copy it branched from.
+        subprocess.run(["git", "reset", "--hard", "-q", lane], cwd=stale, capture_output=True)
+
+        env = dict(os.environ, AGENT_SESSION="coord-self-test", AGENT_NAME="coord-self-test")
+        env.pop("COORD_ROOT", None)
+
+        def stale_claim():
+            out = subprocess.run(
+                [sys.executable, script, "claim",
+                 "--path", "docs/collaboration/session-contracts.md",
+                 "--wi", "self-test", "--ttl", "60"],
+                cwd=stale, capture_output=True, text=True, encoding="utf-8", env=env)
+            return out.returncode, (out.stdout or "") + (out.stderr or "")
+
+        rc, text = stale_claim()
+        if "COORD-CLAIM-STALE-CONTROLS" not in text or rc != 3:
+            failures.append("stale controls refused: expected 'COORD-CLAIM-STALE-CONTROLS' and "
+                            "exit 3 from a tree one commit behind origin/main on tools/, got "
+                            "exit {} and {!r}".format(rc, text.strip()[:200]))
+
+        # Ruling 131 condition (i), pinned rather than argued: the comparison is
+        # DIRECTION-AWARE. Give this lane its own, NEWER edit to `tools/` -- so a tip diff, a
+        # commit-count or a "whose control file is younger" reading would now call this tree
+        # the current one -- and the refusal must STILL fire, because main carries a control
+        # this tree has never seen. This is the case a future simplification of the three git
+        # calls into one would silently get backwards, which is why it is a case and not a
+        # comment.
+        (stale / "tools").mkdir(exist_ok=True)
+        (stale / "tools" / "the-lanes-own-gate.py").write_text(
+            "# a control this lane wrote AFTER main moved\n", encoding="utf-8")
+        subprocess.run(["git", "add", "-A"], cwd=stale, capture_output=True)
+        _self_test_commit(stale, "the lane edits a control of its own, later than main's")
+        rc, text = stale_claim()
+        if "COORD-CLAIM-STALE-CONTROLS" not in text or rc != 3:
+            failures.append("stale controls refused while AHEAD: a lane with its own newer "
+                            "edit to tools/ is still stale when main moved the control set "
+                            "(Ruling 131 condition (i)); expected "
+                            "'COORD-CLAIM-STALE-CONTROLS' and exit 3, got exit {} and "
+                            "{!r}".format(rc, text.strip()[:200]))
+
     if failures:
         print("coord claim --self-test: FAILED")
         for f in failures:
             print("  - " + f)
         return 1
     print("coord claim --self-test: OK — a register-class and a derived-class path are each "
-          "refused by name, and an authored path is still granted")
+          "refused by name, an authored path is still granted, a tree behind origin/main on "
+          "the control set is refused by name (DC-226), and a tree with no origin/main takes "
+          "the named escape and records it on the claim event")
     return 0
 
 
@@ -3023,6 +3315,32 @@ def main(argv=None):
             print("coord claim: --wi and --path are required (or --self-test alone)",
                   file=sys.stderr)
             return 2
+        # (0) DC-226 / Ruling 131 (c): CONTROL CURRENCY, computed from the INVOKING tree and
+        # placed ahead of every refusal this file owns -- because a stale copy's verdict on
+        # those refusals is a verdict from a superseded rule set, and the measured instance
+        # is exactly that: a lease granted on 2026-09-16 by a copy that predated the refusal
+        # which would have stopped it. Refusing first is also the only order in which the
+        # remedy is the right one: merging `origin/main` changes what the next three
+        # refusals are, so answering them from the old copy first would be answering the
+        # wrong question. os.getcwd() rather than `repo`: `repo` is the PRIMARY checkout
+        # (that is what the coordination record is keyed by), and the currency question is
+        # about THIS tree (class PACK-P -- the same distinction `base_commit` documents).
+        currency = control_currency(os.getcwd())
+        if currency["state"] == "stale":
+            print("COORD-CLAIM-STALE-CONTROLS  {}\n"
+                  "  {}\n"
+                  "  this tree runs its OWN copy of the controls, so every refusal below and\n"
+                  "  every gate in tools/ is the version you branched from - a lane enforces\n"
+                  "  the rules of the day it branched, and nothing says so (DC-226)\n"
+                  "  remedy    git merge {}".format(
+                      _safe(args.path, 200), currency["detail"], CONTROL_CURRENCY_REMOTE),
+                  file=sys.stderr)
+            return 3
+        if currency["escape"]:
+            # The escape PROCEEDS, and says so on the way past. Printed on stdout with the
+            # grant rather than on stderr, because it is not a refusal and the reader who
+            # needs it is the one reading the claim's own output.
+            print(control_currency_line(currency))
         # DC-163, three refusals BEFORE the check: none is a contention verdict.
         # (1) A `register`-class artifact merges by UNION (its driver is the mechanism), so
         # a lease on it protects nothing and blocks every join that must append to it.
@@ -3067,6 +3385,13 @@ def main(argv=None):
             event = make_event("claim", session, agent, args.wi, args.path, now, args.ttl)
             if args.long_edit:
                 event["long_edit"] = args.long_edit
+            if currency["escape"]:
+                # Ruling 131 condition (iv): escape use is written into the claim event so it
+                # is COUNTABLE. Same shape as `long_edit` directly above -- a field carried by
+                # the record, not a line on a console someone may not have been reading. An
+                # escape nobody can count is an escape that becomes the default without
+                # anyone deciding to make it one.
+                event["control_currency"] = "not-recorded: {}".format(currency["escape"])
             append_event(root, event)
         except CoordError as exc:
             print("{}: {}".format(exc.code, exc), file=sys.stderr)
