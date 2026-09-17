@@ -854,3 +854,25 @@ on actual constructor collision with a live-handle control.
 No 71-case blanket mutation claim survives. This checkpoint is not protected
 admission or delivery completion. The next bounded implementation remains the
 protected Admission transaction; do not activate ingress/publisher on DDL proof.
+
+### Protected-runtime unit
+
+Goal: commit the native admission transaction and capacity unit, not full P2.
+Done when: actual enhanced N2, rollback/replay/lifecycle and frozen-byte oracles
+are recorded with remaining gates in the canonical proof. Tier T2, fan-out 0,
+main-line 45 tools, context 150k. No new agents, other trees, UI or activation.
+
+| Node | Capability | Dependency / exit |
+|---|---|---|
+| NR1 | Reasoning | Actual APIs -> subset design committed before code |
+| NR2 | Deterministic mechanics | NR1 -> pinned 175-case legacy baseline |
+| NR3 | Reasoning | NR2 -> protected source plus finite runtime oracles |
+| NR4 | Deterministic mechanics | NR3 -> candidate and isolated fault receipts |
+| NR5 | Deterministic mechanics | NR4 -> canonical ledger, audit render, clean commits and release |
+
+Serial T1=T-infinity (five modeled work units); no measured timing estimate.
+One build output is exclusive. Finite cases remaining is the loop variant;
+two repair passes are the circuit breaker, never permission to weaken assertions.
+D0/D1/D2/D4/D6, exact-byte receipts and explicit implementation-review gaps remain.
+No additional proof-pack authority: S1-S3 evidence moves into the canonical pack,
+with its old location retained only as a frontmatter-bearing pointer.

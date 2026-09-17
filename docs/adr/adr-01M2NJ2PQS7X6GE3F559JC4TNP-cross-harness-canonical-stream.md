@@ -278,3 +278,17 @@ The author must leave enhanced ingress/worker absent until the remaining contrac
 is implemented and qualified. Retain legacy behavior and historical N1/N2 REDs
 honestly. Rollback disables enhanced entry points and retains these new tables;
 released-v7 binary proof, retention/erasure and independent code gates remain owed.
+
+#### Native protected-runtime subset
+
+Adopt the 2026-09-17 actual-API amendment in the design before source changes:
+internal synthetic enrollment through IngestHost/TrustedRegistrar; one store-owned
+IMMEDIATE admission transaction; exact historical operation replay without
+capability; protected lifecycle comparison; process-global hydrated 128 quota.
+Windows volume/file-index identity and an enrolled-owner byte lock replace any
+path-spelling quota key. No DDL change is planned. Direct API claim provenance
+is explicit; production workspace/terminal enrollment is unavailable rather than
+fabricated. Reject treating legacy N2 as enhanced qualification, deriving
+human authority from harness labels, or completing delivery from old Publish.
+Native transport/claim worker, real binder, released-binary and independent
+implementation qualification remain outside this commit.

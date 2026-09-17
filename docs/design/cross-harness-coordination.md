@@ -1143,3 +1143,67 @@ The fact-to-initial-notice child FK does **not** require any child to exist;
 one admission plus its required initial notice must be enforced by the protected
 writer transaction. Structural publication bytes/digest shape is not content
 digest verification. ClaimReference payload-retention/erasure stays unresolved.
+
+#### Protected native admission subset / actual API amendment — 2026-09-17
+
+This unit implements the existing v9 contract, not another schema checkpoint.
+`IngestHost.Register`, `TrustedRegistrar.Issue` and the legacy drain stay usable
+and unqualified. New `RegisterNative` returns a `RegistrationAdmissionResult`;
+unsupported public composition returns `COORD_NATIVE_UNAVAILABLE`, not legacy
+fallback. There is no trusted workspace/terminal source in the current IngestHost
+constructor. Consequently enrollment is **internal and synthetic-only** in this
+unit. Its `NativeRegistrationContext` is supplied by the local test composition,
+not read from attributes, environment, repository prose, or human-looking fields.
+Default production enrollment and P3 human verification remain DENY.
+
+`NativeRegistrationAdmissionRoot` owns enrollment and calls the actual registrar.
+Context contains the existing WorktreeIdentity and TerminalIdentity plus a local
+publication root. Validate raw attribute values before mapping or SQL binding:
+bounded strings, no NUL or invalid UTF-16, no missing required values silently
+manufactured. Hash the exact sorted API input; capture repository_sent before
+RepositoryIdentity.Canonicalise. This is **direct API provenance**, not a
+fabricated source-file offset. Repository identity is not treated as a path.
+Correction uses the explicitly bound WorktreeIdentity.Repository, only when the
+claim names that worktree. No payload-driven filesystem locator or `.git` read
+is made. Local context paths are validated before checking their ancestors for
+reparse points. TOCTOU-safe publication and real workspace enrollment are deferred.
+
+One registrar gate -> process coordinator gate -> store gate -> SQLite IMMEDIATE
+transaction encloses operation lookup, terminal adoption, generation selection,
+admission/optional initial notice/session/end-clear/heartbeat writes and commit.
+Use existing RecordSession(transaction), FindSession(transaction) and SQL helpers.
+Prepare the capability inside that boundary but install it only after commit.
+Exact operation/input/context replay reads the historical admission and returns
+**no capability**. Replay neither reads current lifecycle to create a new receipt
+nor renews a capability. A lost return after commit is reconciled by that lookup.
+Conflicting reuse returns `COORD_NATIVE_OPERATION_CONFLICT` without overwrite.
+
+The fact's minimal frozen binding does not contain repo display text. Derive its
+display deterministically from repository_used; do not add a column or guess a
+missing source claim. For an uncorrected claim, repository_used preserves the
+same original identity string required by the v9 NONE constraint; the domain
+projection applies its existing identity canonicalization. Immutable notice bytes
+are a deterministic projection with a content digest. Only LINKED_WORKTREE
+creates a notice and consumes quota. All enhanced lifecycle calls check the
+installed expected SessionRecord against the stored record inside IMMEDIATE;
+an update advances the expected record only after commit. Legacy writers remain
+outside that fence; no v7 ABA or machine-wide uncooperative-writer guarantee.
+
+Reuse the bounded reservation/disposable-lease idiom: one process-wide critical
+section accounts reserved plus indexed Pending/InFlight counts across enrolled
+stores before capability preparation. SQLite rows remain the only durable
+authority. Windows file-handle volume/file-index identity, not path spelling,
+keys enrollment; a byte-range lock on that file excludes another enhanced
+process. Non-Windows enrollment is unavailable in this bounded unit. At most
+128 enrolled stores; excess recovered backlog refuses fresh enhanced admission,
+never deletes data or blocks legacy APIs. Root disposal releases enrollment;
+re-enrollment hydrates before admitting. No invented StoreId table.
+
+Typed internal fault seams run only under the protected gate, after each write,
+before commit and after commit/before return. They are inaccessible to payloads.
+Tests must pin source/project/binary bytes before mutations and execute the
+same focal assertions against capacity/replay/lifecycle/notice-byte mutants.
+Legacy N1/N2 remain labeled diagnostics; new opt-in N2 is distinct.
+Claim/Complete/Requeue and hardened N1 publication are deferred as a complete
+transport unit; no old Publish success marks the new delivery row Published.
+Canonical primary.requests emission stays disabled. No UserAuthority DTO field.
