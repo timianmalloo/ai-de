@@ -1,0 +1,53 @@
+
+  AiDe.Core -> /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core/debug/AiDe.Core.dll
+  AiDe.Mcp -> /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Mcp/debug/AiDe.Mcp.dll
+  AiDe.Core.TerminalHost -> /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.TerminalHost/debug/AiDe.Core.TerminalHost.dll
+  AiDe.Core.AcpProbe -> /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.AcpProbe/debug/AiDe.Core.AcpProbe.dll
+  AiDe.Core.Tests -> /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll
+Test run for /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.55]     AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: "ancestor") [FAIL]
+[xUnit.net 00:00:00.56]     AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: "root") [FAIL]
+[xUnit.net 00:00:00.56]     AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: "registration") [FAIL]
+  Failed AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: "ancestor") [26 ms]
+  Error Message:
+   Assert.IsType() Failure: Value is null
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+Actual:   null
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(String position) in /mnt/c/Projects/ai-de-feature-xh-p2-projection/tests/AiDe.Core.Tests/Watcher/PortableRegistrationPublicationTests.cs:line 59
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Standard Output Messages:
+ position=ancestor; outsideEntries=4; sentinelUnchanged=True
+
+
+  Failed AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: "root") [2 ms]
+  Error Message:
+   Assert.IsType() Failure: Value is null
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+Actual:   null
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(String position) in /mnt/c/Projects/ai-de-feature-xh-p2-projection/tests/AiDe.Core.Tests/Watcher/PortableRegistrationPublicationTests.cs:line 59
+   at InvokeStub_PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ position=root; outsideEntries=3; sentinelUnchanged=True
+
+
+  Failed AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: "registration") [2 ms]
+  Error Message:
+   Assert.IsType() Failure: Value is null
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+Actual:   null
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(String position) in /mnt/c/Projects/ai-de-feature-xh-p2-projection/tests/AiDe.Core.Tests/Watcher/PortableRegistrationPublicationTests.cs:line 59
+   at InvokeStub_PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ position=registration; outsideEntries=1; sentinelUnchanged=False
+
+
+Results File: /mnt/c/Projects/ai-de-feature-xh-p2-projection/docs/proof/records/p25-portability/linux-mutant-follow.trx
+
+Failed!  - Failed:     3, Passed:     1, Skipped:     0, Total:     4, Duration: 40 ms - AiDe.Core.Tests.dll (net10.0)

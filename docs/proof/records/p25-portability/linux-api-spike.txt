@@ -1,0 +1,26 @@
+{
+  "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "libc": [
+    "glibc",
+    "2.39"
+  ],
+  "flags": {
+    "O_RDONLY": 0,
+    "O_WRONLY": 1,
+    "O_CREAT": 64,
+    "O_EXCL": 128,
+    "O_NOFOLLOW": 131072,
+    "O_CLOEXEC": 524288,
+    "O_DIRECTORY": 65536,
+    "O_NONBLOCK": 2048
+  },
+  "LOCK_EX": 2,
+  "LOCK_NB": 4,
+  "ENOENT": 2,
+  "EEXIST": 17,
+  "ELOOP": 40,
+  "ENOTDIR": 20,
+  "root": "/home/timmall/.aide-p25-b0d0/fixtures/api-c978946199db4797a62c71f4014f8baa",
+  "filesystem": 6952182566339867200,
+  "assertions": "nofollow, exclusive create, fsync, flock, renameat, replacement anchored: passed"
+}

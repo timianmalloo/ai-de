@@ -3307,7 +3307,7 @@ metadata and `builds.dotnet.microsoft.com`. Verified archive SHA512:
 `538df11ceb9d86bdda061bab6ede3d1f6d46bb9ba087ae905643f3d456afe982949d1b952bceb305a5d22d2d6e69cc0e5100216ffcc709aaa86e867f2d9cdf9a`.
 `sdk-source.json` retains the URL/hash. Linux: runtime 10.0.11, Ubuntu 24.04,
 x86_64, glibc 2.39, WSL kernel 6.18.33.2-microsoft-standard-WSL2.
-Native constants and libc calls were executed in `linux-api-spike.log`;
+Native constants and libc calls were executed in `linux-api-spike.txt`;
 contracts were checked against Linux man-pages
 [open](https://man7.org/linux/man-pages/man2/open.2.html),
 [rename](https://man7.org/linux/man-pages/man2/rename.2.html),
@@ -3363,6 +3363,12 @@ unmeasured; structured errors and existing worker telemetry are unchanged.
   (RIG-A/DM-A). This was not a product failure.
 * Per ownership, class/control capture is here, not a new global lesson entry
   or second Proof Pack.
+* **Evidence-retention correction:** the first author commit retained TRX and
+  JSON receipts but not raw `.log` files, because the repository ignores that
+  extension. Raw outputs now use `.txt`; tracked-file checks cover each declared
+  transcript. This is the “generated evidence exists locally but is absent from
+  the commit” shape; the fix preserves the original bytes rather than recreating
+  earlier runs.
 
 Six dependent nodes, zero agents; discovery cost exceeded the initial estimate.
 Run durations are measured in receipts. Independent COMPAT re-gating is next;

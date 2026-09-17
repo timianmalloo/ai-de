@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T16:02:11Z",
+  "generated": "2026-09-17T16:03:59Z",
   "audit": [
     {
       "actor": null,
@@ -21271,6 +21271,30 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-09-17T15:50:04Z",
       "duration_seconds": 727.0
+    },
+    {
+      "id": "al-01M2R1RJG58VX291HFXQPNXZ33",
+      "shortname": "p2-compat-retain-raw-output",
+      "datetime": "2026-09-17T16:03:59Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "Retain the already-produced P2 COMPAT raw evidence in the commit; the ignored .log extension is not persistent evidence.",
+      "summary": "Renamed raw output byte-for-byte to tracked .txt files, corrected proof references and made SDK-source sealing repeatable after download cleanup. No product source or test changes.",
+      "kind": "command",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Persist all declared COMPAT raw evidence.",
+      "done_when": "Declared raw outputs are tracked with proof and audit in a clean commit.",
+      "tier": "T0",
+      "main_calls": 38,
+      "main_budget": 45,
+      "main_over_budget": false,
+      "fan_out": 0
     }
   ],
   "changes": [

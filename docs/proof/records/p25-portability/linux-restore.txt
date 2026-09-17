@@ -1,0 +1,24 @@
+
+Welcome to .NET 10.0!
+---------------------
+SDK Version: 10.0.303
+
+----------------
+Installed an ASP.NET Core HTTPS development certificate.
+To trust the certificate, run 'dotnet dev-certs https --trust'
+Learn about HTTPS: https://aka.ms/dotnet-https
+
+----------------
+Write your first app: https://aka.ms/dotnet-hello-world
+Find out what's new: https://aka.ms/dotnet-whats-new
+Explore documentation: https://aka.ms/dotnet-docs
+Report issues and find source on GitHub: https://github.com/dotnet/core
+Use 'dotnet --help' to see available commands or visit: https://aka.ms/dotnet-cli
+--------------------------------------------------------------------------------------
+
+  Determining projects to restore...
+  Restored /mnt/c/Projects/ai-de-feature-xh-p2-projection/src/AiDe.Core/AiDe.Core.csproj (in 2.36 sec).
+  Restored /mnt/c/Projects/ai-de-feature-xh-p2-projection/tests/AiDe.Core.AcpProbe/AiDe.Core.AcpProbe.csproj (in 2.36 sec).
+  Restored /mnt/c/Projects/ai-de-feature-xh-p2-projection/tests/AiDe.Core.TerminalHost/AiDe.Core.TerminalHost.csproj (in 2.36 sec).
+  Restored /mnt/c/Projects/ai-de-feature-xh-p2-projection/src/AiDe.Mcp/AiDe.Mcp.csproj (in 2.36 sec).
+  Restored /mnt/c/Projects/ai-de-feature-xh-p2-projection/tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj (in 2.36 sec).

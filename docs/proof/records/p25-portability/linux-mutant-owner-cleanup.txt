@@ -1,0 +1,39 @@
+
+  AiDe.Core -> /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core/debug/AiDe.Core.dll
+  AiDe.Mcp -> /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Mcp/debug/AiDe.Mcp.dll
+  AiDe.Core.AcpProbe -> /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.AcpProbe/debug/AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.TerminalHost/debug/AiDe.Core.TerminalHost.dll
+  AiDe.Core.Tests -> /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll
+Test run for /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.55]     AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.KnownDifferentOwnerIsNeverOverwritten(session: "a/b", otherOwner: "a-b") [FAIL]
+[xUnit.net 00:00:00.55]     AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.KnownDifferentOwnerIsNeverOverwritten(session: "session-1", otherOwner: "other-session") [FAIL]
+[xUnit.net 00:00:00.59]     AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.FailedTargetClosesAllDescriptorsAndLeavesNoTemporaryFiles [FAIL]
+  Failed AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.KnownDifferentOwnerIsNeverOverwritten(session: "a/b", otherOwner: "a-b") [9 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.KnownDifferentOwnerIsNeverOverwritten(String session, String otherOwner) in /mnt/c/Projects/ai-de-feature-xh-p2-projection/tests/AiDe.Core.Tests/Watcher/PortableRegistrationPublicationTests.cs:line 76
+   at InvokeStub_PortableRegistrationPublicationTests.KnownDifferentOwnerIsNeverOverwritten(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.KnownDifferentOwnerIsNeverOverwritten(session: "session-1", otherOwner: "other-session") [3 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.KnownDifferentOwnerIsNeverOverwritten(String session, String otherOwner) in /mnt/c/Projects/ai-de-feature-xh-p2-projection/tests/AiDe.Core.Tests/Watcher/PortableRegistrationPublicationTests.cs:line 76
+   at InvokeStub_PortableRegistrationPublicationTests.KnownDifferentOwnerIsNeverOverwritten(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.FailedTargetClosesAllDescriptorsAndLeavesNoTemporaryFiles [36 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 195
+Actual:   227
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.FailedTargetClosesAllDescriptorsAndLeavesNoTemporaryFiles() in /mnt/c/Projects/ai-de-feature-xh-p2-projection/tests/AiDe.Core.Tests/Watcher/PortableRegistrationPublicationTests.cs:line 104
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+Results File: /mnt/c/Projects/ai-de-feature-xh-p2-projection/docs/proof/records/p25-portability/linux-mutant-owner-cleanup.trx
+
+Failed!  - Failed:     3, Passed:     1, Skipped:     0, Total:     4, Duration: 70 ms - AiDe.Core.Tests.dll (net10.0)

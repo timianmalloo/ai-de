@@ -23,7 +23,7 @@ ORDINARY = "FullyQualifiedName~TheAgentIsToldWhatChanged_AndWhy|FullyQualifiedNa
 def run(label, command):
     started = time.monotonic()
     result = subprocess.run(command, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    (EVIDENCE / f"{label}.log").write_bytes(result.stdout)
+    (EVIDENCE / f"{label}.txt").write_bytes(result.stdout)
     record = {"command": command, "exit": result.returncode, "seconds": time.monotonic() - started,
               "head": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
               "source": {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()

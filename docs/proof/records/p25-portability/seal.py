@@ -40,7 +40,10 @@ files = [root / "global.json", root / "Directory.Packages.props",
          root / "src/AiDe.Core/Watcher/RegistrationPublicationUnix.cs",
          root / "tests/AiDe.Core.Tests/Watcher/PortableRegistrationPublicationTests.cs",
          root / "tests/AiDe.Core.Tests/Watcher/AWorktreeRegistrationIsCorrectedAndSaidSoTests.cs"]
-sdk = json.loads((root / ".p25-portability/sdk-source.json").read_text(encoding="utf-8-sig"))
+sdk_source = root / ".p25-portability/sdk-source.json"
+if not sdk_source.exists():
+    sdk_source = evidence / "sdk-source.json"
+sdk = json.loads(sdk_source.read_text(encoding="utf-8-sig"))
 (evidence / "sdk-source.json").write_text(json.dumps(sdk, indent=2), encoding="utf-8")
 manifest = {
     "at": datetime.now(timezone.utc).isoformat(),

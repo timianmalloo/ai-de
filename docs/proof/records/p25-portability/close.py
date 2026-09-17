@@ -42,7 +42,7 @@ path.write_text(json.dumps(record, indent=2), encoding="utf-8")
 
 def checked(label, command):
     result = subprocess.run(command, cwd=root, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    (evidence / (label + ".log")).write_bytes(result.stdout)
+    (evidence / (label + ".txt")).write_bytes(result.stdout)
     print(label, result.returncode, result.stdout.decode("utf-8", errors="replace")[-1600:])
     if result.returncode:
         raise SystemExit(result.returncode)

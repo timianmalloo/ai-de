@@ -1,0 +1,20 @@
+
+  AiDe.Core -> /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core/debug/AiDe.Core.dll
+  AiDe.Mcp -> /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Mcp/debug/AiDe.Mcp.dll
+  AiDe.Core.AcpProbe -> /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.AcpProbe/debug/AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.TerminalHost/debug/AiDe.Core.TerminalHost.dll
+  AiDe.Core.Tests -> /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll
+Test run for /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.56]     AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SameOwnerUpdatesTheOrdinaryJson [FAIL]
+  Failed AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SameOwnerUpdatesTheOrdinaryJson [4 ms]
+  Error Message:
+   System.Collections.Generic.KeyNotFoundException : The given key was not present in the dictionary.
+  Stack Trace:
+     at System.Text.Json.JsonElement.GetProperty(String propertyName)
+   at AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SameOwnerUpdatesTheOrdinaryJson() in /mnt/c/Projects/ai-de-feature-xh-p2-projection/tests/AiDe.Core.Tests/Watcher/PortableRegistrationPublicationTests.cs:line 20
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+Results File: /mnt/c/Projects/ai-de-feature-xh-p2-projection/docs/proof/records/p25-portability/linux-green.trx
+
+Failed!  - Failed:     1, Passed:    18, Skipped:     0, Total:    19, Duration: 64 ms - AiDe.Core.Tests.dll (net10.0)
