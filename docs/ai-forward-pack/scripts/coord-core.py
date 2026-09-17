@@ -3213,12 +3213,12 @@ def main(argv=None):
 
     if args.cmd == "claim":
         # DC-163, two refusals BEFORE the check: neither is a contention verdict.
-        # (1) A `register`-class artifact merges by UNION (its driver is the mechanism), so
-        # a lease on it protects nothing and blocks every join that must append to it.
-        try:
-            klass, _why = classify(root, args.path)
-        except CoordError as exc:
-            print("{}: {}".format(exc.code, exc), file=sys.stderr)
+        # (1) Registers merge by union; derived artifacts regenerate. Neither needs a lease.
+        # Normalize dot-relative spelling without resolving claim patterns against disk.
+        klass, reason = classify(root, Path(_norm(args.path)).as_posix())
+        if reason and reason != "COORD-CLASS-UNREGISTERED":
+            print("{}: the artifact registry could not be read".format(reason),
+                  file=sys.stderr)
             return 2
         if klass == "register":
             print("COORD-CLAIM-REGISTER-CLASS  {}\n"
@@ -3226,6 +3226,12 @@ def main(argv=None):
                   "  only queues the joins behind it - append (a placeholder id if the\n"
                   "  allocator is the join's) and commit".format(_safe(args.path, 200)),
                   file=sys.stderr)
+            return 3
+        if klass == "derived":
+            print("COORD-CLAIM-DERIVED-CLASS  {}\n"
+                  "  a derived artifact regenerates from its registered source; no lease\n"
+                  "  is needed - run the registered producer and commit its output".format(
+                      _safe(args.path, 200)), file=sys.stderr)
             return 3
         # (2) A TTL past the cap needs a recorded reason: the lease is for the minutes of
         # the edit, and a queued peer reads why it waits from the claim event itself.

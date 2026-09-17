@@ -7106,8 +7106,39 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   (`.agents/artifacts.yml`) — append with a placeholder id and commit*; (2) proposed for the pack:
   `coord claim` refuses a `register`-class path outright and caps `--ttl` at 900 s unless
   `--long-edit` names the reason. Until (2) lands the control is the brief and the contract.
-- **Status:** `partially-controlled` — the instance is released; the brief is fixed for every
-  node dispatched after this entry; the mechanical refusal is a pack proposal.
+- **Correction (2026-09-17, P1 classification guard):** the preceding "pack proposal" status
+  is historical. At `eb07995ba04899681cc99b021906b7f89c6e63fe`, the official claim branch
+  already refused registers and capped TTL, but did not refuse derived artifacts.
+  The registry was correct; changing registry entries or reinstalling it was not the fix.
+  A worker bypassing the classify-first floor could therefore acquire a pointless lease.
+- **Supplied instance, not a fresh history investigation:** session
+  `xh-p2-projection-b0d0` (not its display label `copilot-p2-red-tests`) claimed derived
+  `docs/audit/audit-data.js` at `1789585196.314918`; the reported CodeX refusal followed at
+  `1789585248.748123`; the worker explicitly released at `1789585347.154532`.
+  Explicit release is not TTL expiry. This correction neither replays that interaction nor
+  rewrites its records.
+- **Class → sweep → derive → prevent:** the class includes leases on artifacts whose merge
+  strategy already removes exclusive ownership. The bounded sweep covered the official claim
+  dispatch, classifier, registry parser, slash/backslash/dot-relative spellings, generated
+  `docs/api/*.md` matches, register refusal, authored HTML/Markdown, and linked-worktree root
+  selection. Derive eligibility from the existing registry, not a filename denylist. The
+  dispatch now refuses `derived` with `COORD-CLAIM-DERIVED-CLASS`/3 before any lease write;
+  classification parse errors fail closed with their existing code/2. Missing registry remains
+  advisory, not a parse error. Register refusal and TTL/identity boundaries remain unchanged.
+- **Executable control:** `docs/ai-forward-pack/scripts/tests/test_coord_claim_classes.py`
+  runs the copied official CLI in disposable, repository-local synthetic Git fixtures; the
+  resolved metadata root and script path must be inside that fixture before invocation.
+  The original CLI granted concrete derived claims; denial assertions were observed red.
+  Removing the new guard grants again and fails the same assertion. Ten new controls and
+  the 71 existing P1 tests passed together; see `proof-cross-harness-coordination`.
+- **Worker floor:** classify every exact target with the registry-aware official CLI before
+  claiming; claim only `authored`, for the edit's minutes, normally TTL 300, then release
+  before tests. Never claim `derived` or `register`; do not reclassify authored site HTML.
+  An unregistered repository is explicitly advisory; a malformed registry is not permission.
+- **Status:** `partially-controlled` — concrete claim refusal is implemented and tested in
+  the retained P1 tree. Other script copies require rollout. Broad wildcard claims that do not
+  themselves match a derived pattern can still overlap generated paths; owner: coordination
+  maintainer. No glob-intersection engine or historical-lease migration is included.
 
 ### DC-164 — A child started under a redirected parent inherits the parent's standard handles, so its output lands in the parent's stream instead of the console it was attached to
 

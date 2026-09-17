@@ -315,3 +315,54 @@ not automatically protect it. An upgraded shim is not compatibility evidence. En
 writing remains disabled until separate mixed-client contention/complete-record/conflict-
 safety proof and independent qualification exist. Stop at the dormant-subset proof receipt
 without claiming P1 complete; remaining P1, P2 schema and endpoint/run gates remain separate.
+
+## Bounded pre-runtime correction: artifact-class lease refusal (2026-09-17)
+
+This is a prerequisite correction inside the approved programme, not a new runtime phase.
+Goal: reconcile worker behavior and the official claim guard with the existing artifact registry.
+Done when: concrete derived claims are refused without new lease events, compatibility controls
+and a meaningful guard-removal mutant pass in isolated Git fixtures, and evidence is committed.
+Not in scope: registry reinstallation, authored-site reclassification, glob-intersection redesign,
+live claim experiments, historical lease cleanup, primary/P2 edits, or activation.
+Tier: T2. Fan-out: 0, as directed. Main-line budget: 22 tool calls. Context ceiling: 150k.
+
+| Node | Capability | Input / dependency | Exit |
+|---|---|---|---|
+| C1 | Reasoning | User findings; official classifier and dispatch | Identify eligibility gap without re-investigating the resolved handoff |
+| C2 | Deterministic mechanics | C1 decision | Copied official CLI grants a derived lease; denial assertion is red |
+| C3 | Reasoning | C2 evidence | Dispatch-only refusal, shared registry retained, malformed classification closed |
+| C4 | Deterministic mechanics | C3 data | Concrete paths, compatibility, linked tree, and guard-removal oracle pass |
+| C5 | Independent review | C4 evidence and exact commit | Parent/conductor dispositions rollout; no author self-clearance |
+| C6 | Deterministic mechanics | C4 evidence | DC-163, this plan, canonical proof and own audit recorded; ordinary local commit |
+
+```mermaid
+flowchart LR
+  C1 --> C2 --> C3 --> C4
+  C4 --> C6 --> C5
+```
+
+Before/after: retain one tightly coupled chain; combine compatibility selectors into one runner.
+No agent fan-out, no retries, no open-ended refinement loop. Tests enumerate a finite case set.
+Inferred unit-cost model: six nodes, work and span both six, width one; there is no useful
+parallel speedup to buy. This is not measured wall-clock cost. Re-plan only for a failed oracle;
+the budget is a reporting boundary, not permission to remove a gate.
+
+Mandatory surfaces: primary registry → shared-root resolution → normalized claim classification
+→ stderr/exit status → absence of appended lease → future check/precommit readers. No schema,
+UI, endpoint, or event format changes. D0/D1/D2/D4/D5-provider apply: real CLI/filesystem/Git,
+boundary spellings, stable refusal codes and mutation. No external service, new dependency,
+or model call is introduced. Existing registers retain union and derived artifacts regeneration.
+
+Observed C4: 81 tests passed in 27.449 seconds, including 10 new tests and all 71 existing P1
+tests. One new guard-removal mutant demonstrably grants and defeats the denial oracle; the
+earlier 20 P1 mutants are unchanged historical evidence, not rerun claims. See the canonical
+`docs/proof/cross-harness-coordination-proof-pack.md` for pins and the red/green split.
+C5 remains independent; this local commit does not activate any P0–P5 capability.
+
+**Worker contract before further runtime work:** use the authoritative registry, classify the
+exact target, and lease only authored paths with TTL 300 for edit minutes; release before tests.
+Do not lease register/derived paths. An old helper does not acquire this guard by publication of
+a proof. Isolated linked-tree proof supports a pinned updated absolute CLI path as a possible
+temporary rollout route; the foreground must select and verify its actual deployment. No primary
+copy, hook, or worker installation was changed here. Broad overlapping wildcard claims remain
+outside the concrete-path guarantee (DC-163).

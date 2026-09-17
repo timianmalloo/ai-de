@@ -869,3 +869,71 @@ PASS belongs solely to the supplied independent isolated diagnostic.
 
 **Next: independent delta reviewer on the exact correction commit, then conductor-admitted
 Python P1 author. No self-clearance; no renewed human approval of the already approved phases.**
+
+## Artifact-class lease correction receipt (2026-09-17)
+
+This appended receipt is scoped to the pre-runtime claim correction. Earlier phase tables and
+source pins remain historical; this receipt does not promote any global P0–P5 gate.
+Base: `eb07995ba04899681cc99b021906b7f89c6e63fe`, retained
+`C:\Projects\ai-de-feature-xh-p1-responses`, session `xh-p1-responses-b0d0`.
+Canonical proof is this singular `proof-pack` path; no path repair was needed.
+
+**Root cause:** the registry correctly classified audit data as derived and audit JSONL as
+register (parent-supplied direct-source finding). The official claim dispatch read here refused
+only registers, then checked contention and appended the claim. It ignored the classifier's
+error reason; a malformed registry returned authored plus an error code and could also grant.
+The fix uses the existing classifier, normalizes slash/backslash/dot-relative claim spelling,
+refuses derived with `COORD-CLAIM-DERIVED-CLASS`/3, and refuses malformed classification with
+its existing code/2. Register behavior, advisory absence, TTL cap, and identity guard stay intact.
+No lease records are deleted, migrated, or released by the change.
+
+| Claim | Evidence and oracle | Red observed | Confidence / limit |
+|---|---|---|---|
+| Concrete derived JS and generated Markdown cannot acquire a new lease | `test_claim_derived_spellings_refused_without_lease`: eight spellings; exit 3, stable stderr code, identical claim-event list | Old official CLI returned `granted`, exit 0, for all eight | Verified in isolated fixtures, not broad glob intersections |
+| Malformed classification cannot fall back to a lease | `test_claim_malformed_registry_fails_closed`: code `COORD-CLASS-CONFLICT`, exit 2, unchanged claims | Old CLI granted | Verified for parser failure; registry absence deliberately remains advisory |
+| Compatibility stays intact | Register code/3; authored site HTML and Markdown; session distinct from display label; TTL 300/900/901 with and without override; missing/empty identity; missing registry | Existing paths exercised; no claim that unchanged behavior was red | Verified synthetic CLI compatibility |
+| Absolute updated helper works from another linked worktree | `test_claim_absolute_updated_cli_from_linked_tree_uses_shared_registry`: shared primary registry, caller identity, derived refusal, authored grant | Old copied helper granted derived | Verified in a synthetic linked Git worktree; no installed worker rollout claimed |
+| Denial oracle detects a missing guard | `test_claim_removed_derived_guard_grants_and_breaks_denial_oracle`: remove guard only in copied script, observe grant and one lease, then observe the denial assertion fail | Actual grant and assertion failure, not missing API or argument syntax | Verified one meaningful new mutant |
+| Existing P1 behavior remains covered | `python -m unittest discover -s docs\ai-forward-pack\scripts\tests -p 'test_coord*.py' -v`: **81 tests, OK, 27.449 s** | New regression rows above | Verified 10 new + 71 existing; prior 20 mutants were not rerun |
+
+The first red run reported 12 failures across nine test methods: ten behavior failures
+(eight spelling cases, malformed registry, linked-tree use), one expected absent-guard mutation
+setup failure, and one test expectation error. The last guessed that missing-identity stderr
+printed its internal code; it actually renders `NOT CHECKED`. That assertion was corrected
+without changing production identity behavior, and an empty-identity case was added.
+Only the ten behavior failures count as original defect reproduction.
+
+All new invocations copy official support scripts and create Git repositories under the test's
+repository-local `.agents/xh-claim-fixtures/<unique-id>` directory. Before each CLI call, the
+resolved metadata root must equal the fixture's primary `.agents` and both root and script must
+remain inside that fixture. Teardown removes its own fixtures. No real derived/register lease
+experiment, live handoff, observer query, or P2-tree modification was performed.
+
+**Source SHA-256 pins (working bytes tested):**
+
+- `docs/ai-forward-pack/scripts/coord-core.py`:
+  `eda666970a695fb23b8594e7e540e6a9ab43203669e2d6578962834d11fa48ae`
+- `docs/ai-forward-pack/scripts/tests/test_coord_claim_classes.py`:
+  `9913941b42bdf8763eb1e69a4c58ee2b14eec3c9e2a596ef6e7275bf05bf6d05`
+
+**Supplied chronology, not re-investigated:** actual session `xh-p2-projection-b0d0`, display
+label `copilot-p2-red-tests`, claimed at `1789585196.314918`; CodeX refusal at
+`1789585248.748123`; explicit release at `1789585347.154532`. This was not TTL expiry.
+The foreground's supplied ALLOW/resolved results for NSFMHC2 and NSKSRM already close the
+handoff incident. No renewed contact, replay, or stale-routing diagnosis belongs to this fix.
+
+**Instrumentation:** the new normal-path refusal emits the tested stable error code and exit
+status; claim-event readback proves no new lease. Existing event timestamps/session/TTL remain
+unchanged. Audit start/append records elapsed work; the test runner records verification time.
+There is no new service, telemetry backend, or runtime activation.
+
+**GATE claim-correction evidence · 2026-09-17 · execution only:** the regression and mutation
+oracles passed. Independent Security/Test/Distributed review is not self-certified; no agents
+were convened, as directed. Parent/conductor retains the independent review and rollout gate.
+
+**Residual limits:** broad claim patterns can overlap a derived artifact without themselves
+matching its registry pattern; no glob-intersection engine was added. Other installed copies
+remain old until foreground rollout. A pinned updated absolute helper is supported by the
+isolated linked-tree test, not automatically installed anywhere. DC-163 records the class and
+worker floor. Own audit rendering is scoped here; site-wide generation/publication is deferred
+to the foreground as directed. All P0–P5 scope and activation restrictions remain unchanged.
