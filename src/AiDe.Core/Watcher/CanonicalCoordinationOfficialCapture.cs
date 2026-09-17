@@ -233,9 +233,12 @@ internal sealed class OfficialCapturedPage
             throw new CoordinationSourceException(CoordinationErrors.StaleSnapshot);
     }
 
-    internal IEnumerable<(int Offset, int End)> Frames()
+    internal IEnumerable<(int Offset, int End)> Frames() => FramesFrom(Offset);
+
+    internal IEnumerable<(int Offset, int End)> PrefixFrames() => FramesFrom(0);
+
+    private IEnumerable<(int Offset, int End)> FramesFrom(int start)
     {
-        var start = Offset;
         for (var i = start; i < End; i++)
             if (_snapshot[i] == (byte)'\n')
             {

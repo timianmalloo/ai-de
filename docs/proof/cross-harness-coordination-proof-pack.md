@@ -20,6 +20,118 @@ summary: >-
 
 # Proof Pack — P1/P2 candidates; independent code gate pending
 
+## Append-tolerant receipt recovery correction - 2026-09-17
+
+**Author candidate only; independent parent re-gate remains required.** Baseline
+HEAD is `e3330489ecc18c6deed02d8d9fa832aaaae77281`. The supplied independent
+Test/Data/DS counterexample is a receipt-recovery failure, not demonstrated data
+loss: the current-offset/snapshot-length guard ran before physical replay.
+The earlier lost-ACK and competing-projector tests proved their separate
+conditions, not their composition.
+
+Change reach: immutable capture prefix enumeration -> official transaction
+recovery -> existing admission/checkpoint result. No schema, reducer, reader DTO,
+Source/Header.TreeName metadata, scope fold, UI or production binding changes.
+The normal pump's existing Activity/count/duration/error reporting is unchanged.
+The source capture remains optimistic; no root-handle/ABA or Linux result is
+newly claimed.
+
+Raw evidence is alongside the existing official-runtime records:
+`spikes/canonical-coordination-contract/records/official-runtime/receipt-recovery-raw.zip`
+and `receipt-recovery-manifest.json`. The original archive is untouched.
+The new archive contains actual stdout/stderr, TRX, command/exit/count/duration
+records, pre-edit source/test/project/binary hashes, per-run hashes, mutation
+restoration records, original-case inventory and the execution recipe.
+
+| Claim / oracle | Executed evidence | Confidence / boundary |
+|---|---|---|
+| Original ring retained | `recovery-baseline`: 296/296; final TRX: 311/311. The original `recovery-inventory.json` counts 291 and 306 **distinct display names**, not executed occurrences | Retained Windows synthetic evidence; 262 foundation + 34 original runtime + 15 new cases. Duplicate display names must not be discarded when checking occurrence preservation |
+| Lost ACK survives another projector's advance | `recovery-exact-original-red`: 0/2 on the byte-checked baseline projection source, both COORD_STALE_SNAPSHOT; exact 34-byte A commit/fault, no-growth control replay, B's actual pump at 68, same original page/NULL retry | Verified red against original source; final green asserts receipt/current receipt 1, current checkpoint 68, repeated equality and all-table equality |
+| Concurrent composition is exercised | `ConcurrentLostAckAndAdvance`: two real store connections, task-completion barriers, no sleeps; old-source failure then green | Verified prescribed interleaving; not a load/stress or all-interleavings claim |
+| Initial, diagnostic, equal, new-recordedAt and conflict recovery preserves original state/reason | Five `AppendTolerantOccurrence` cases, each after commit fault and another projector append; repeated recovery and all-table comparison | Verified; semantic full-byte comparison remains distinct from physical raw-digest association |
+| Forged semantic bytes and earlier captured prefix cannot borrow receipts | Two `ChangedSemanticOrEarlierPrefix` cases use valid digests and equal-sized altered content; earlier-prefix case starts the requested page after the altered frame | Verified stable refusal with no partial mutation |
+| Recovery does not bypass new-admission CAS or binding | `PartlyAccountedPage`, four `RecoveryBindingMismatch` cases; retained full-descriptor/public-hash collision, scope/epoch/expected and caller-repository controls | Verified finite inputs; complete deployment RootAlias/caller-context integration is not certified |
+| Historical result is not fresh-source health | `HistoricalCaptureAfterSourceChange`: original captured page recovers; next capture returns COORD_SOURCE_GAP | Verified source-content-change fixture; no source-race/held-root guarantee |
+| Reverse recovery guard is detected | `recovery-guard-mutant`: 40 passed / 9 failed, including exact lost-ACK focal failure | Verified compiled semantic mutant, then exact source restoration |
+| Prefix validation cannot narrow to page-only | `recovery-validation-mutant`: 48 passed / 1 failed; earlier-prefix negative reports “No exception was thrown” | Verified compiled validation-bypass mutant, then exact source restoration |
+| Restored source passes the full ring | `recovery-green` and `recovery-final`: 311/311 each, none unexecuted | Verified selected ring only; independent acceptance remains open |
+
+**Class -> sweep -> derive -> prevent.** Recovery gated by a later write's
+precondition can lose an already-durable receipt. The official replay branch,
+native/CAS controls in the retained 182-case ring, and separate lost-ACK/
+competition tests were examined; no native change is warranted. Recovery now
+derives from the committed full identity and physical occurrences, not a
+length-only shortcut or another receipt store. Exact-composition and
+earlier-prefix tests fail on the original guard and narrowed-validation mutant.
+This class/control record stays in the authorized canonical Proof Pack; the
+shared defect register is not edited by this bounded owner.
+
+### Inventory closure correction
+
+The original closing assertion compared the unique-display-name inventory
+`291 -> 306` against execution totals `296 -> 311`. Its failure did not
+invalidate the retained green run, but it did prevent sealing the evidence.
+The failed checker and its actual stdout/stderr are preserved, not rewritten.
+There are five more executions than distinct display names in each run.
+
+The closure recipe derives two different quantities from the raw TRX:
+distinct display names, and an **ordinal multiset** keyed by class, method,
+display name and stable test ID. Each repeated identity carries its own
+occurrence ordinal; run-specific execution IDs are deliberately excluded.
+Every original key must retain at least its original multiplicity. TRX
+total/executed/passed counters must equal the result-node count, and every
+retained result must be Passed. Selected source files, their SHA-256 hashes,
+resolved method identifiers and occurrence counts are recorded separately.
+This is not a source-only InlineData expansion claim.
+
+`recovery-occurrence-inventory.json` is the corrected inventory;
+`closure-controls.json` is the separate qualification receipt. The closure
+recipe refuses missing, malformed and under-populated manifests, compares
+the exact ZIP entry set and each digest, and reads the finished archive back.
+Its `StagedSourceCheck` compares current files and staged tracked bytes against
+the latest retained green source/test/project/binary pins. It also records the
+green pin-manifest SHA-256; model or informational versions are not substitutes.
+Qualification requires that receipt and the manifest check to succeed.
+The 311-case run and both semantic mutants are **retained executions**, not
+new executions by this closure checker. Parent review is still independent.
+
+**Class -> sweep -> derive -> prevent (inventory).** Conflating set cardinality
+with execution multiplicity survives name-set containment. The producer's
+set-based inventory and consumer's numeric assertion were both examined.
+The corrected check derives each named quantity from TRX and compares ordinal
+multiplicities instead of changing constants or dropping the retention check.
+The original inventory and failed receipt remain as evidence of the mismatch.
+An initial closure-checker attempt also rejected BOM-prefixed TRX after decoding
+it as a string. Its actual tool output is retained as
+`closure-inventory-bom.tool-output.txt`, not relabelled stdout/stderr.
+The parser now loads XML bytes through the XML reader so encoding/BOM handling
+has one owner. A failure of any new control still blocks the ordinary commit.
+
+**Corrections and limits.** The initial new exact fixtures were 36 bytes, not
+34: `recovery-red` (40/49) and the first green attempt (309/311, retained as
+`recovery-green.previous-0.*`) expose that mistake and its barrier timeout.
+The fixture was corrected to measured 34-byte frames, then the original source
+was restored temporarily to obtain the genuine two-case red above. No initial
+fixture assertion or timeout is presented as semantic red. A console-only
+inspection encountered cp1252 output failure; persisted UTF-8/JSON evidence
+was retained. Repeated oversized discovery outputs consumed the tool budget.
+
+All-table snapshots include SQLite's allocator table, but are **not a native
+allocator-call trap**. No such trap was added or zero-call claim fabricated.
+The implementation's recovery branch has no admission/effect calls; independent
+seam-level allocator proof remains a separate requirement if requested.
+The unqualified original-official-raw immutability policy is unchanged.
+P1's ebd4f1c oracle stays unchanged; the supplied
+`9d82c4e088dbdde69626749de625386a1492a9c8` timestamp fix still requires a future
+controlled oracle update.
+
+**GATE receipt-recovery author evidence · 2026-09-17 · CONCERNS:** exact red,
+311-case green and two killed mutants are recorded. The independent parent must
+re-gate before partial-runtime PASS. Full descriptor deployment/source-race
+qualification, complete semantic reducer, full P2 and P3-P5 remain open.
+No renewed programme approval, upstream operation or all-phase completion
+is implied.
+
 ## Official capture / ProjectOfficialPage runtime - 2026-09-17
 
 **Implemented runtime unit; not full P2 or a shipping bridge.** Starting HEAD
@@ -3905,3 +4017,34 @@ Continuation accounting: no agents; the declared ceiling is 22 tool calls.
 Oversized diagnostic reads consumed avoidable calls and are an execution-cost
 finding, not evidence. The earlier overwritten quiet-green stream remains a
 provenance gap; no replacement is presented as its original.
+
+### P2 receipt-recovery safe-boundary closure — 2026-09-17
+
+The retained code and tests were not rewritten during this closure. A delegated
+closure attempt returned HTTP 404 before yielding a usable receipt; the conductor
+completed the evidence checks directly instead of restarting the implementation.
+
+`receipt-recovery-closure-qualified.json` in the existing official-runtime
+records directory records the complete closure result:
+
+| Check | Observed result |
+|---|---|
+| Retained archive | All 53 members exactly match the manifest and SHA-256 values |
+| Executed inputs and binaries | All 21 working-byte pins match the retained restored run |
+| Git representation | Every tracked pinned input matches its staged blob through Git's actual clean conversion; external filters were absent |
+| Test inventory | 296 baseline and 311 final execution occurrences; zero missing using ordinal test-ID/class/method/display-name multiplicity |
+| Display names | 291 baseline and 306 final distinct names; these are not execution counts |
+| Checker inverse controls | Missing archive member, unequal digest, malformed manifest and missing execution occurrence each fail |
+| Retained red controls | Original-source two-case RED; reverse-recovery guard nine failures; page-only-prefix mutation one failure; each recorded exit is 1 |
+
+Executed working-file bytes and staged Git-blob bytes are separate evidence
+domains. The codec discrepancy was 189 CRLF sequences in the unchanged working
+file versus LF in the staged blob; the staged blob also equals HEAD. The new
+receipt retains both SHA-256 values and the Git object identity. This does not
+claim that an independently rebuilt binary or another platform is byte-identical.
+
+The 311-pass run and historical mutations were inspected and hash-qualified,
+not rerun by this closure. Original raw receipts and the earlier failed closure
+attempts remain unchanged. Independent code re-gating is still required after
+the ordinary commit. This is a safe code/evidence checkpoint, not completion of
+P2, P3–P5, final publication, or upstream transfer.

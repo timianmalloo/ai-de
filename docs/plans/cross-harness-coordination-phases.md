@@ -20,6 +20,40 @@ summary: >-
 
 # Durable phase graph
 
+## Bounded official receipt-recovery correction - 2026-09-17
+
+Goal: recover the original accounted page after lost ACK plus another
+projector's append, without weakening admission CAS or binding. Done when
+exact original-source red, retained full ring, negative controls, two focal
+mutants, canonical evidence and an ordinary owned-branch commit exist.
+Not in scope: other trees, production source, schema/reducer/UI, upstream,
+fresh programme approval or P3-P5 completion. T2; no agents.
+
+| Node | Capability / dependency | Exit |
+|---|---|---|
+| Ground and pin | Reasoning; accepted v10 + supplied independent counterexample | Exact tree/source/test/project/binary baseline, capture/binding contracts read |
+| Reproduce and repair | Reasoning + deterministic mechanics; grounding data edge | Exact lost-ACK/advance composition fails old source; read-only full-prefix receipt path; unchanged new-admission CAS |
+| Disconfirm and restore | Deterministic mechanics; changed source data edge | Original 296 cases preserved, 311/311, reverse-recovery and narrowed-prefix mutants fail, source restored |
+| Record and hand off | Deterministic mechanics; evidence data edge | One canonical Proof Pack, audit/derived data, ordinary commit, released session |
+| Parent re-gate | Independent review; committed candidate decision edge | Separate Test/Data/DS verdict before partial-runtime PASS |
+
+The author path is serial: the same source/test binaries are exclusive resources,
+so no fan-out buys span reduction. Inferred work equals span at this granularity;
+no elapsed-time speedup is claimed. Execution recipes record measured per-run
+durations. Recovery terminates over the finite captured prefix (32 MiB ceiling);
+test barriers have ten-second fault caps, not sleeps or retry loops. Actual
+evidence: 296 baseline; corrected exact old-source red 0/2; 311 final; mutants
+40/49 and 48/49. Two fixture/measurement mistakes and oversized-read overhead
+are recorded in the canonical Proof Pack rather than concealed as successes.
+The planned 28 main-line requests were exhausted; the five-read parallel batch
+means individual tool executions exceed that count. No larger budget or
+additional agent was used to expand scope.
+
+All existing P0-P5 approval remains in force. This is the requested existing
+lost-ACK/replay-floor repair, not a new approval cycle. Parent independent
+re-gating, full descriptor deployment/source-race evidence, semantic reducer,
+full P2 and P3-P5 are not cleared by this author checkpoint.
+
 ## B5/B6 bounded continuation checkpoint — 2026-09-17
 
 Goal: qualify pre-recovery measurement absence, implement and test bounded

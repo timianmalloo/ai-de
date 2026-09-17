@@ -1621,11 +1621,42 @@ binding lookup, checkpoint lookup, identity lookup or admission. Validate the
 complete acquisition, scope, epoch, expected offset/prefix and page continuity.
 Create the fully bound zero-offset checkpoint with the empty digest inside this
 transaction before the first event. Never retrobind an unbound/native checkpoint.
-Validate the captured bytes against the current accepted prefix. A stale page
-may recover a lost post-commit acknowledgement only when its expected start and
-the complete accounted prefix still match and every physical occurrence is
-already accounted; it returns the original admission and current state, without
-appending. A changed stale snapshot is refused.
+New admission validates the captured bytes against the current accepted prefix
+and requires the exact expected checkpoint CAS. A partly accounted page is not
+partly replayed/admitted: stale CAS rejects the entire transaction.
+
+Receipt recovery is a separate read-only transaction path. After full acquisition,
+descriptor BLOB, public scope, native repository, origin and epoch validation,
+the expected start must match the privately captured page. When every requested
+frame is already accounted, a later committed checkpoint may exceed that
+snapshot's length. Verify **all complete captured prefix frames from zero through
+page.End**, not only frames starting at page.Offset, against committed physical
+occurrences in the same IMMEDIATE transaction. Full tagged identity, compact key,
+offset, end and raw digest must agree; initial occurrences additionally compare
+their immutable stored raw and canonical bytes. Equal/conflict duplicate rows
+store physical raw digests, not another full raw payload: recompute the physical
+digest and compare validated canonical bytes against the semantic original,
+requiring the persisted Equal/Conflict classification to agree. A hash is never
+the semantic equality oracle. Initial diagnostic rows require matching raw bytes
+and canonical absence. No erasure policy for official immutable raw is introduced.
+
+Return only the requested page's original admissions/current receipt and state,
+with the occurrence's original reason (including CANONICAL_EQUAL), separately
+from the **current** checkpoint. Recovery adds no rows, performs no UPDATE,
+calls no native allocator/effect and never rewinds the checkpoint. Repetition
+has the same result and leaves all tables unchanged. A covered current prefix
+still requires the existing prefix-digest match. An empty truncated snapshot
+cannot claim historical recovery without any accounted prefix.
+
+This is historical receipt recovery, not evidence of fresh source state. If the
+source content changed after a valid capture, historical recovery can succeed;
+the next capture against the returned current checkpoint still reports
+COORD_SOURCE_GAP. Descriptor/root/caller-context checks remain in force.
+Optimistic source capture is not a held-root, TOCTOU or ABA guarantee.
+Recovery scans at most the existing 32 MiB captured prefix; it does not introduce
+a new capture/recapture loop or a throughput guarantee. This clarifies the
+previous unqualified stale-snapshot wording, not permission to accept all stale
+pages or merely trust CurrentOffset >= page.End.
 
 New identity appends a terminal official fact and initial receipt. Existing
 full identity with equal validated comparison bytes retains original admission

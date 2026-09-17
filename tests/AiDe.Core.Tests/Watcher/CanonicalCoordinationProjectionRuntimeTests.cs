@@ -446,6 +446,233 @@ public sealed class CanonicalCoordinationProjectionRuntimeTests : IDisposable
     }
 
     [Fact]
+    public void ProjectOfficialPage_LostAckThenOtherProjectorAdvances_RecoversOriginalReceipt()
+    {
+        var firstFrame = Legacy("request-add", "aaa");
+        Assert.Equal(34, firstFrame.Length);
+        File.WriteAllBytes(Source, firstFrame);
+        using var first = SqliteWatcherObservationStore.Open(Database);
+        using var second = SqliteWatcherObservationStore.Open(Database);
+        var descriptor = Acquire();
+        var page = Assert.Single(OfficialCapturedPage.Capture(descriptor).Pages);
+        first.ProjectionFault = CoordinationFault.AfterCommit;
+        Assert.Equal("COORD_FAULT_AfterCommit", Assert.Throws<IOException>(
+            () => first.ProjectOfficialPage(descriptor, page, null)).Message);
+        var committed = AllTablesSnapshot();
+        var control = first.ProjectOfficialPage(descriptor, page, null);
+        Assert.Equal(1, Assert.Single(control.Admissions).Admission);
+        Assert.Equal(committed, AllTablesSnapshot());
+        Append(Legacy("request-add", "bbb"));
+        var advanced = CanonicalCoordinationOfficialRuntime.RunOnce(descriptor, second, Reader);
+        Assert.Null(advanced.Stats.Diagnostic);
+        Assert.Equal(68, advanced.Checkpoint!.Offset);
+        var before = AllTablesSnapshot();
+
+        var recovered = first.ProjectOfficialPage(descriptor, page, null);
+        var repeated = first.ProjectOfficialPage(descriptor, page, null);
+
+        Assert.Equal(advanced.Checkpoint, recovered.Checkpoint);
+        Assert.Equal(control.Admissions, recovered.Admissions);
+        Assert.Equal(recovered.Admissions, repeated.Admissions);
+        Assert.Equal(1, Assert.Single(recovered.Admissions).CurrentReceipt);
+        Assert.Equal(before, AllTablesSnapshot());
+    }
+
+    [Fact]
+    public async Task ProjectOfficialPage_ConcurrentLostAckAndAdvance_RecoversAfterBarrier()
+    {
+        File.WriteAllBytes(Source, Legacy("request-add", "aaa"));
+        using var first = SqliteWatcherObservationStore.Open(Database);
+        using var second = SqliteWatcherObservationStore.Open(Database);
+        var descriptor = Acquire();
+        var page = Assert.Single(OfficialCapturedPage.Capture(descriptor).Pages);
+        var lost = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var advanced = new TaskCompletionSource<OfficialCheckpoint>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var recovery = Task.Run(async () =>
+        {
+            first.ProjectionFault = CoordinationFault.AfterCommit;
+            Assert.Throws<IOException>(() => first.ProjectOfficialPage(descriptor, page, null));
+            lost.SetResult();
+            var checkpoint = await advanced.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            var before = AllTablesSnapshot();
+            var result = first.ProjectOfficialPage(descriptor, page, null);
+            Assert.Equal(checkpoint, result.Checkpoint);
+            Assert.Equal(1, Assert.Single(result.Admissions).Admission);
+            Assert.Equal(before, AllTablesSnapshot());
+        });
+        var writer = Task.Run(async () =>
+        {
+            await lost.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            Append(Legacy("request-add", "bbb"));
+            var result = CanonicalCoordinationOfficialRuntime.RunOnce(descriptor, second, Reader);
+            Assert.Null(result.Stats.Diagnostic);
+            Assert.Equal(68, result.Checkpoint!.Offset);
+            advanced.SetResult(result.Checkpoint);
+        });
+
+        await Task.WhenAll(recovery, writer);
+    }
+
+    [Theory]
+    [InlineData("initial")]
+    [InlineData("diagnostic")]
+    [InlineData("equal")]
+    [InlineData("recordedAt")]
+    [InlineData("conflict")]
+    public void ProjectOfficialPage_AppendTolerantOccurrence_KeepsOriginalStateAndReason(string occurrence)
+    {
+        File.WriteAllBytes(Source, occurrence == "diagnostic" ? [255, 10] : [.. Response(1), 10]);
+        using var first = SqliteWatcherObservationStore.Open(Database);
+        using var second = SqliteWatcherObservationStore.Open(Database);
+        var descriptor = Acquire();
+        OfficialCheckpoint? expected = null;
+        if (occurrence is "equal" or "recordedAt" or "conflict")
+        {
+            expected = CanonicalCoordinationOfficialRuntime.RunOnce(descriptor, first, Reader).Checkpoint;
+            Append([.. Response(1, occurrence == "conflict" ? "different" : "synthetic",
+                occurrence == "recordedAt" ? 2 : 1), 10]);
+        }
+        var page = Assert.Single(OfficialCapturedPage.Capture(descriptor, expected).Pages);
+        first.ProjectionFault = CoordinationFault.AfterCommit;
+        Assert.Throws<IOException>(() => first.ProjectOfficialPage(descriptor, page, expected));
+        Append(Legacy("request-add"));
+        var advanced = CanonicalCoordinationOfficialRuntime.RunOnce(descriptor, second, Reader);
+        Assert.Null(advanced.Stats.Diagnostic);
+        var before = AllTablesSnapshot();
+
+        var result = first.ProjectOfficialPage(descriptor, page, expected);
+        var receipt = Assert.Single(result.Admissions);
+
+        Assert.Equal(advanced.Checkpoint, result.Checkpoint);
+        Assert.Equal(1, receipt.Admission);
+        Assert.Equal(1, receipt.CurrentReceipt);
+        Assert.Equal(occurrence == "diagnostic" ? "refused" : "applied", receipt.State);
+        Assert.Equal(occurrence switch
+        {
+            "equal" or "recordedAt" => "CANONICAL_EQUAL",
+            "conflict" => "XH.EVENT_CONFLICT",
+            "diagnostic" => CanonicalErrors.Schema,
+            _ => OfficialCoordinationErrors.Ingested,
+        }, receipt.InterpretationReason);
+        Assert.Equal(occurrence switch
+        {
+            "equal" or "recordedAt" => CoordinationOccurrenceKind.Equal,
+            "conflict" => CoordinationOccurrenceKind.Conflict,
+            _ => (CoordinationOccurrenceKind?)null,
+        }, receipt.OccurrenceKind);
+        Assert.True(receipt.Replayed);
+        Assert.Equal(result.Admissions, first.ProjectOfficialPage(descriptor, page, expected).Admissions);
+        Assert.Equal(before, AllTablesSnapshot());
+    }
+
+    [Fact]
+    public void ProjectOfficialPage_HistoricalCaptureAfterSourceChange_RecoversButNextCaptureReportsGap()
+    {
+        File.WriteAllBytes(Source, Legacy("request-add", "aaaaa"));
+        using var first = SqliteWatcherObservationStore.Open(Database);
+        using var second = SqliteWatcherObservationStore.Open(Database);
+        var descriptor = Acquire();
+        var page = Assert.Single(OfficialCapturedPage.Capture(descriptor).Pages);
+        first.ProjectOfficialPage(descriptor, page, null);
+        Append(Legacy("request-add", "bbbbb"));
+        var advanced = CanonicalCoordinationOfficialRuntime.RunOnce(descriptor, second, Reader);
+        File.WriteAllBytes(Source, Legacy("request-end", "aaaaa"));
+        var before = AllTablesSnapshot();
+
+        var result = first.ProjectOfficialPage(descriptor, page, null);
+
+        Assert.Equal(advanced.Checkpoint, result.Checkpoint);
+        Assert.Equal(1, Assert.Single(result.Admissions).Admission);
+        Assert.Equal(CoordinationErrors.SourceGap, Assert.Throws<CoordinationSourceException>(
+            () => OfficialCapturedPage.Capture(descriptor, result.Checkpoint)).Code);
+        Assert.Equal(before, AllTablesSnapshot());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void ProjectOfficialPage_ChangedSemanticOrEarlierPrefix_RejectsHistoricalForgery(bool earlierPrefix)
+    {
+        var original = Response(1);
+        File.WriteAllBytes(Source, [.. original, 10]);
+        using var store = SqliteWatcherObservationStore.Open(Database);
+        var descriptor = Acquire();
+        var first = CanonicalCoordinationOfficialRuntime.RunOnce(descriptor, store, Reader);
+        var secondFrame = Legacy("request-add", "bbbbb");
+        if (earlierPrefix)
+        {
+            Append(secondFrame);
+            CanonicalCoordinationOfficialRuntime.RunOnce(descriptor, store, Reader);
+        }
+        Append(Legacy("request-add", "ccccc"));
+        CanonicalCoordinationOfficialRuntime.RunOnce(descriptor, store, Reader);
+        var changed = Response(1, "tampered!");
+        Assert.Equal(original.Length, changed.Length);
+        File.WriteAllBytes(Source, earlierPrefix ? [.. changed, 10, .. secondFrame] : [.. changed, 10]);
+        var expected = earlierPrefix
+            ? first.Checkpoint! with { PrefixDigest = CoordinationSourceCapture.Hash([.. changed, 10]) }
+            : null;
+        var page = Assert.Single(OfficialCapturedPage.Capture(descriptor, expected).Pages);
+        var before = AllTablesSnapshot();
+
+        Assert.Equal(CoordinationErrors.StaleSnapshot, Assert.Throws<CoordinationSourceException>(
+            () => store.ProjectOfficialPage(descriptor, page, expected)).Code);
+        Assert.Equal(before, AllTablesSnapshot());
+    }
+
+    [Fact]
+    public void ProjectOfficialPage_PartlyAccountedPage_RequiresCasWithoutPartialMutation()
+    {
+        File.WriteAllBytes(Source, Legacy("request-add", "aaaaa"));
+        using var store = SqliteWatcherObservationStore.Open(Database);
+        var descriptor = Acquire();
+        CanonicalCoordinationOfficialRuntime.RunOnce(descriptor, store, Reader);
+        Append(Legacy("request-add", "bbbbb"));
+        var page = Assert.Single(OfficialCapturedPage.Capture(descriptor).Pages);
+        var before = AllTablesSnapshot();
+
+        Assert.Equal(CoordinationErrors.StaleSnapshot, Assert.Throws<CoordinationSourceException>(
+            () => store.ProjectOfficialPage(descriptor, page, null)).Code);
+        Assert.Equal(before, AllTablesSnapshot());
+    }
+
+    [Theory]
+    [InlineData("descriptor")]
+    [InlineData("scope")]
+    [InlineData("hash")]
+    [InlineData("key")]
+    public void ProjectOfficialPage_RecoveryBindingMismatch_CannotBorrowReceipt(string mismatch)
+    {
+        File.WriteAllBytes(Source, [.. Response(1), 10]);
+        using var store = SqliteWatcherObservationStore.Open(Database);
+        var descriptor = Acquire();
+        var page = Assert.Single(OfficialCapturedPage.Capture(descriptor).Pages);
+        store.ProjectOfficialPage(descriptor, page, null);
+        Append(Legacy("request-add"));
+        CanonicalCoordinationOfficialRuntime.RunOnce(descriptor, store, Reader);
+        var before = AllTablesSnapshot();
+        var candidate = mismatch switch
+        {
+            "descriptor" => Acquire(streams: [new("other", "stream")]),
+            "hash" => Acquire(OfficialHashMode.Collision),
+            _ => descriptor,
+        };
+        if (mismatch == "key") store.OfficialEventHashMode = OfficialHashMode.Collision;
+        var expected = mismatch == "scope" ? OfficialCheckpoint.Empty(descriptor) with { Scope = "wrong" } : null;
+
+        var error = Assert.Throws<CoordinationSourceException>(
+            () => store.ProjectOfficialPage(candidate, page, expected));
+
+        Assert.Equal(mismatch switch
+        {
+            "scope" => CoordinationErrors.StaleSnapshot,
+            "key" => OfficialCoordinationErrors.KeyCollision,
+            _ => OfficialCoordinationErrors.Descriptor,
+        }, error.Code);
+        Assert.Equal(before, AllTablesSnapshot());
+    }
+
+    [Fact]
     public void ReadCoordination_FourHundredOneWithInterleavedScope_UsesFrozen2002001ThenFreshResume()
     {
         File.WriteAllBytes(Source, Enumerable.Range(0, 401).SelectMany(i => Legacy("request-add", "id-" + i)).ToArray());
@@ -570,12 +797,17 @@ public sealed class CanonicalCoordinationProjectionRuntimeTests : IDisposable
     private string CacheSnapshot() => string.Concat(new[] { "event", "feed", "checkpoint" }
         .Select(table => Rows("SELECT * FROM coord_projection_" + table + " ORDER BY rowid")));
 
-    private string NativeSnapshot()
+    private string NativeSnapshot() => TablesSnapshot(
+        " AND name NOT LIKE 'coord_projection_%' AND name NOT LIKE 'sqlite_%'");
+
+    private string AllTablesSnapshot() => TablesSnapshot("");
+
+    private string TablesSnapshot(string filter)
     {
         using var connection = new SqliteConnection($"Data Source={Database};Pooling=False");
         connection.Open();
         using var command = connection.CreateCommand();
-        command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'coord_projection_%' AND name NOT LIKE 'sqlite_%' ORDER BY name";
+        command.CommandText = "SELECT name FROM sqlite_master WHERE type='table'" + filter + " ORDER BY name";
         var tables = new List<string>();
         using (var reader = command.ExecuteReader()) while (reader.Read()) tables.Add(reader.GetString(0));
         return string.Concat(tables.Select(t => Rows("SELECT * FROM \"" + t.Replace("\"", "\"\"") + "\" ORDER BY rowid")));

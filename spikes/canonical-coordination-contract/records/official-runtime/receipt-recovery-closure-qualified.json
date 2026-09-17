@@ -1,0 +1,203 @@
+{
+  "kind": "checkpoint-verification",
+  "code": "XH.CLOSURE_VERIFIED",
+  "head_before_commit": "e3330489ecc18c6deed02d8d9fa832aaaae77281",
+  "archive_members_verified": 53,
+  "working_input_and_binary_pins_verified": 21,
+  "baseline_executed": 296,
+  "final_executed": 311,
+  "baseline_distinct_display_names": 291,
+  "final_distinct_display_names": 306,
+  "missing_execution_occurrences": 0,
+  "negative_checker_controls": 4,
+  "historical_red_and_mutants": {
+    "recovery-exact-original-red": {
+      "executed": 2,
+      "outcomes": {
+        "Failed": 2
+      },
+      "exit": 1
+    },
+    "recovery-guard-mutant": {
+      "executed": 49,
+      "outcomes": {
+        "Passed": 40,
+        "Failed": 9
+      },
+      "exit": 1
+    },
+    "recovery-validation-mutant": {
+      "executed": 49,
+      "outcomes": {
+        "Passed": 48,
+        "Failed": 1
+      },
+      "exit": 1
+    }
+  },
+  "historical_executions_rerun": false,
+  "byte_domains": "Executed working bytes and staged Git blob bytes are separately pinned.",
+  "pins": [
+    {
+      "path": "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.OfficialProjection.cs",
+      "executed_working_sha256": "632dca3cf36ca41d3b6cfa9be760d7ef9951e661aec3aaec42b8648a56a8d6ef",
+      "staged_git_blob": "a2657e235615889d638b768d1581974d7f424378",
+      "staged_blob_sha256": "632dca3cf36ca41d3b6cfa9be760d7ef9951e661aec3aaec42b8648a56a8d6ef",
+      "working_equals_staged": true,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/CanonicalCoordinationOfficialCapture.cs",
+      "executed_working_sha256": "beb2a136ff2c8c28cd3a7a535d83940736f14b304b609c51d3853444a3dd0387",
+      "staged_git_blob": "367d7ab78c159f1b40d4fc604f0845351ffbf4af",
+      "staged_blob_sha256": "beb2a136ff2c8c28cd3a7a535d83940736f14b304b609c51d3853444a3dd0387",
+      "working_equals_staged": true,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/Watcher/CanonicalCoordinationProjectionRuntimeTests.cs",
+      "executed_working_sha256": "e021b13133c5e7238c3364fed0809e7a7b89706a2e8d33d03c498729186911fc",
+      "staged_git_blob": "2030d6c18ed7d809af03f97413a364f52cb9b895",
+      "staged_blob_sha256": "e021b13133c5e7238c3364fed0809e7a7b89706a2e8d33d03c498729186911fc",
+      "working_equals_staged": true,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "src/AiDe.Core/AiDe.Core.csproj",
+      "executed_working_sha256": "b63c41b97201dc3e1016b72b404a32411ac31e477231b281219dda64d0ad584a",
+      "staged_git_blob": "8b1aae911d042c33ccab160e997ad82d612227b3",
+      "staged_blob_sha256": "b63c41b97201dc3e1016b72b404a32411ac31e477231b281219dda64d0ad584a",
+      "working_equals_staged": true,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj",
+      "executed_working_sha256": "93e7b6f722edb65fad6e8f40d6b31921ea5a73998f6841bcc99a2ab4a7d827ff",
+      "staged_git_blob": "25266e1e7b2c6d8e78a06b3528ca0b81307617c2",
+      "staged_blob_sha256": "93e7b6f722edb65fad6e8f40d6b31921ea5a73998f6841bcc99a2ab4a7d827ff",
+      "working_equals_staged": true,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/CanonicalCoordinationCodec.cs",
+      "executed_working_sha256": "de7f3be675b566b006cb559820cd961f9b525ceb6f7394f2db3c601dc0db52c5",
+      "staged_git_blob": "b22b1ea0b56e7f06ef64abf47ebcb1d1470b111c",
+      "staged_blob_sha256": "901ff9db3ea35c962a701d83abd1faff34f3952459b5f80bca4dd6b8e130763d",
+      "working_equals_staged": false,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/CanonicalCoordinationRecord.cs",
+      "executed_working_sha256": "e8e583718b6eb3513ddcd944ccb8b777d8675841caa357b277e92102cba7de4e",
+      "staged_git_blob": "39e90322dde4a9bd28100ba1fb052f8fedf7c66e",
+      "staged_blob_sha256": "9a0634747e497c5ff3bd59897418652b9cff6fe388b44d10afaeaddacb610f87",
+      "working_equals_staged": false,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/CanonicalCoordinationSourceBinding.cs",
+      "executed_working_sha256": "e4dac607a776b4477b21cbfa3c8bacc4bdf030d4f5b1d46aa810d958b04ebc1a",
+      "staged_git_blob": "0977c63536d4574ac91492b264106f5efcbbf427",
+      "staged_blob_sha256": "e4dac607a776b4477b21cbfa3c8bacc4bdf030d4f5b1d46aa810d958b04ebc1a",
+      "working_equals_staged": true,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.CanonicalCoordination.cs",
+      "executed_working_sha256": "b9fcedf99ead903e923ae9e155eae5481ef5041656420a028bbb5480affa8d4b",
+      "staged_git_blob": "585b6ce460388ce22fc42c404632f799d4cd82eb",
+      "staged_blob_sha256": "712f6957351ac402d1e672755d19022125a079677607c4069b4d239c61c09a9b",
+      "working_equals_staged": false,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/CoordinationContract.cs",
+      "executed_working_sha256": "623c9bc5cf8c8b74951d60b7c1a4dc24ee9d04b417a54229dfd6058d4e43775e",
+      "staged_git_blob": "d99b5603740e49af271f7297a481f73c47762fc2",
+      "staged_blob_sha256": "623c9bc5cf8c8b74951d60b7c1a4dc24ee9d04b417a54229dfd6058d4e43775e",
+      "working_equals_staged": true,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/CoordinationContractLog.cs",
+      "executed_working_sha256": "ef21d2f99ef9eb712112116a840c246b9c6be896f09e8d80c6be60d3c74f29c6",
+      "staged_git_blob": "639afba72b2f8858b2b35b952e03ca601268e758",
+      "staged_blob_sha256": "ef21d2f99ef9eb712112116a840c246b9c6be896f09e8d80c6be60d3c74f29c6",
+      "working_equals_staged": true,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/CoordinationProjection.cs",
+      "executed_working_sha256": "3f544d8b44d1fdcde7a35f7ea9a778f70abb2b0734decf3cd4cdaac020e02eaf",
+      "staged_git_blob": "adc59bfdb27c5faf80800718a15e9b2bbbc997d2",
+      "staged_blob_sha256": "3f544d8b44d1fdcde7a35f7ea9a778f70abb2b0734decf3cd4cdaac020e02eaf",
+      "working_equals_staged": true,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/CoordinationRead.cs",
+      "executed_working_sha256": "c517d5229752088e99280c2ff95a1001c097041b6276dfd53d1f4a7877e86484",
+      "staged_git_blob": "31f95e29bce7b5b7f55b7361b79e1b2a08f22c52",
+      "staged_blob_sha256": "d8a92971368da3f5f8175ec1b6b06b1695995635aa8e3aff48b75a90120e5bc1",
+      "working_equals_staged": false,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/CoordinationRecovery.cs",
+      "executed_working_sha256": "f72117b08dc25786e7a1a67b1352405363671a371b94eaff5bdf3d8e2498a3c5",
+      "staged_git_blob": "02a3cd02aff22582cd476b6770eb1f307adb37da",
+      "staged_blob_sha256": "29112f2dcc61f2a01c7eb0353aad76cbafd38154aa45af52dc9732576b364c0b",
+      "working_equals_staged": false,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/CoordinationSourceCapture.cs",
+      "executed_working_sha256": "ca2600bc46d7b0735e94e9adc69fc24e2b3f66a222617507114ca1e8a3f1e899",
+      "staged_git_blob": "90011b617d208d7da05d59e7d4510d1815c05f15",
+      "staged_blob_sha256": "f8f21d5c65765d06b857c28658a5738c42378c85576d9363bd5d9f07c9b713af",
+      "working_equals_staged": false,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/SessionCoordinationEmitter.cs",
+      "executed_working_sha256": "e5c9af92ee2d2cdd4a96ae6e9d6e910dc7b27549b1c6d62a72d909e84ad56cc2",
+      "staged_git_blob": "4bfdd23bc37667a843eef81fe7120c6b44efdbc1",
+      "staged_blob_sha256": "e5c9af92ee2d2cdd4a96ae6e9d6e910dc7b27549b1c6d62a72d909e84ad56cc2",
+      "working_equals_staged": true,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.Coordination.cs",
+      "executed_working_sha256": "325118c85c137fab8dad28254edc2df3eaa319da1a46d40f5b2212f89b0d8560",
+      "staged_git_blob": "e9fc026901ea22dac82bf9a9e9951d31f1d74f5d",
+      "staged_blob_sha256": "059a700eb27e12e9f063dcef74f5246a475117cdedd6ba1cc43340b6a3d7e055",
+      "working_equals_staged": false,
+      "git_clean_filter_matches_staged": true
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/bin/Debug/net10.0/AiDe.Core.dll",
+      "executed_working_sha256": "71cfe040c1d8e0fb58860e6eb4340b56d8e1cf7401856dada9803eda58d63a5b",
+      "staged_git_blob": null
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/bin/Debug/net10.0/AiDe.Core.Tests.dll",
+      "executed_working_sha256": "7fd41876317a20eac55a44f8ebbace2f9e60de914b6ca26ff8cdc32470de3528",
+      "staged_git_blob": null
+    },
+    {
+      "path": "tests/AiDe.Core.Tests/bin/Debug/net10.0/AiDe.Mcp.dll",
+      "executed_working_sha256": "b649fee3127e7d8594329fd6d2d03770edc08fff16eeef4b8c17f6bfe7068574",
+      "staged_git_blob": null
+    },
+    {
+      "path": "spikes/canonical-coordination-contract/records/validator-oracle.json",
+      "executed_working_sha256": "9b78fc19d3f0fbbdc99f55b7fd407c629d537f68d04b1a1e990caa57326641e2",
+      "staged_git_blob": "1940737e8844fcce8ce2aa6ba81c09a759359369",
+      "staged_blob_sha256": "888977947afbe89afdd61f045c22b30265e2959b9296ca685914ca63b6d48c8a",
+      "working_equals_staged": false,
+      "git_clean_filter_matches_staged": true
+    }
+  ],
+  "independent_code_regate": "pending",
+  "programme_complete": false
+}

@@ -1959,6 +1959,48 @@ window.DOCS_INDEX = {
       "sourceSha256": "b5a123e86a10cc8f903d389150dc2deb41c42d3a5948574250313e7277af2265"
     },
     {
+      "id": "adr-01M2NJ2PQS7X6GE3F559JC4TNP-cross-harness-canonical-stream",
+      "path": "docs/adr/adr-01M2NJ2PQS7X6GE3F559JC4TNP-cross-harness-canonical-stream.md",
+      "title": "Cross-harness coordination uses the official request stream",
+      "type": "adr",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "P0",
+      "reviewBy": "2026-10-16",
+      "reviewSuggested": [],
+      "summary": "Draft ADR selecting the human-approved canonical official request log, not board dual-write. Records the event-log alternative to dimensional authoritative storage, accepted fold cost, unchanged-client compatibility, bounded existing-watcher-store additions and inherited debt.",
+      "tags": [
+        "coordination",
+        "canonical-stream",
+        "data",
+        "compatibility"
+      ],
+      "links": [
+        {
+          "to": "spec-cross-harness-coordination",
+          "rel": "implements"
+        },
+        {
+          "to": "design-cross-harness-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0023-watcher-observation-projection",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-cross-harness-coordination",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3f9cadb05e3caea1920cfff9f1bec4a714b2d28e2cada451b5558a38239baae2"
+    },
+    {
       "id": "api-aide-app",
       "path": "docs/api/AiDe.App.md",
       "title": "API: AiDe.App",
@@ -7042,6 +7084,53 @@ window.DOCS_INDEX = {
       "sourceSha256": "97d517658252e65e6cf51a7392d73986c9eb96aa4d78d91569aaeeead093e21e"
     },
     {
+      "id": "design-cross-harness-coordination",
+      "path": "docs/design/cross-harness-coordination.md",
+      "title": "Cross-harness coordination: canonical facts and fail-closed projection",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "P0",
+      "reviewBy": "2026-10-16",
+      "reviewSuggested": [],
+      "summary": "Data & Persistence P0 co-authored blueprint for typed obligations, immutable authority references and a single official request stream. Specifies bounded additive storage, atomic replay/cursor floors, failure/privacy controls and unperformed phase gates.",
+      "tags": [
+        "coordination",
+        "data-model",
+        "identity",
+        "replay",
+        "migration"
+      ],
+      "links": [
+        {
+          "to": "spec-cross-harness-coordination",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0023-watcher-observation-projection",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-01M2NJ2PQS7X6GE3F559JC4TNP-cross-harness-canonical-stream",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-cross-harness-coordination",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8b6d2c482278d9e0bc0a491aa033f00ab69effe52ea521ba0e69639eeae2b52c"
+    },
+    {
       "id": "design-knowledge-explorer-mode",
       "path": "docs/design/knowledge-explorer-mode.md",
       "title": "Knowledge Explorer mode — component design (Phase 1 walking skeleton)",
@@ -9034,7 +9123,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "36b55687af31b37193fab986062795499e13b65a0c39e885764ddd8b6ffc707f"
+      "sourceSha256": "0d6a04588cdb0cb5cdf72b9b9e08637d3a1160d6ecfc043f5389048203b57726"
     },
     {
       "id": "design-session-profiler",
@@ -10835,6 +10924,55 @@ window.DOCS_INDEX = {
       "sourceSha256": "0ec7953f9e19111c5664ef32e0187568e34018104b95a5989b2643e90bf1e463"
     },
     {
+      "id": "plan-cross-harness-coordination-phases",
+      "path": "docs/plans/cross-harness-coordination-phases.md",
+      "title": "Cross-harness coordination P0–P5 phase graph",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "P2",
+      "reviewBy": "2026-10-16",
+      "reviewSuggested": [],
+      "summary": "Preserves every approved P0–P5 repair floor and records the dormant P1 four-finding repair with independent re-review pending. Names remaining implementation gates, finite stops, rollback and the deferred upstream handoff.",
+      "tags": [
+        "coordination",
+        "phases",
+        "rollback",
+        "handoff"
+      ],
+      "links": [
+        {
+          "to": "spec-cross-harness-coordination",
+          "rel": "implements"
+        },
+        {
+          "to": "design-cross-harness-coordination",
+          "rel": "depends-on"
+        },
+        {
+          "to": "investigation-cross-harness-message-delivery",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-cross-harness-coordination",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Finite repair graph and cost ledger",
+          "mermaid": "flowchart LR\n  R1[Inspect and reopen] --> R2[Final RED]\n  R2 --> R3[Four-findings repair]\n  R3 --> R4[GREEN and killed mutant]\n  R4 --> R5[Evidence and clean commit]\n  R5 --> G1[Independent re-review pending]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Prior checkpoint — original dormant P1 candidate (historical)",
+          "mermaid": "flowchart LR\n  H[Actual human P0-P5 scope approval] --> P0[P0 corrected draft]\n  P0 --> G0[P0-delta independent review pending]\n  G0 --> D1[Compatible dormant P1 subset only]\n  D1 --> Q1[Remaining P1 qualification gates]\n  Q1 --> P1[P1 canonical fold and compatibility complete]\n  P1 --> P2[P2 atomic projection and complete cursor]\n  P2 --> P3[P3 endpoint adapters and real conformance]\n  G0 --> D4[P4 design only]\n  D4 --> Q4[Authority and launcher qualification BLOCKED]\n  Q4 --> P4[P4 launcher provenance and single-use admission]\n  P1 --> P4\n  P3 --> P5[P5 same-corpus conformance and pilot SLIs]\n  P4 --> P5"
+        }
+      ],
+      "sourceSha256": "45078f5557f769f19df292cfdae9cd159d0572c43472c86d5333afce73f6137e"
+    },
+    {
       "id": "plan-daydream-and-collaboration-slices",
       "path": "docs/plans/daydream-and-collaboration-slices.md",
       "title": "Delivery plan — Daydream and Collaboration, split across two sessions",
@@ -11077,6 +11215,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "9e61d57a0e9a194f671837afc66f920506b2d30c472c4b5bdb2a5cb396d4272c"
     },
     {
+      "id": "pp-p24-recoveryB-author-b0d0",
+      "path": "docs/proof/p24-recoveryB-author-checkpoint.md",
+      "title": "Historical pointer to the canonical Recovery B evidence",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-10-16",
+      "reviewSuggested": [],
+      "summary": "Historical pointer only. The canonical cross-harness Proof Pack preserves the prior author receipts, corrections and unresolved Recovery B obligations.",
+      "tags": [
+        "coordination",
+        "recovery",
+        "history"
+      ],
+      "links": [
+        {
+          "to": "proof-cross-harness-coordination",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2ce5550c5bcbcd77e0f610db0a86b53cd9037db535101ae44130886449fc9b74"
+    },
+    {
       "id": "profile-addendum-cd",
       "path": "docs/profiles/addendum-cd.md",
       "title": "Session profile — the Addenda C/D programme",
@@ -11217,6 +11380,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "2c0e0bbdcecc72079f6b8a801b7777b95b6c28834d8623bbe6aa2998ecb44925"
+    },
+    {
+      "id": "proof-p2-notice-schema-s123",
+      "path": "docs/proof/p2-notice-schema-s123.md",
+      "title": "Native notice S1-S3 historical proof pointer",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "xh-p2-projection-b0d0",
+      "phase": "",
+      "reviewBy": "2026-10-17",
+      "reviewSuggested": [],
+      "summary": "Historical S1-S3 evidence is consolidated into the canonical cross-harness proof pack. This pointer carries no independent qualification or phase status.",
+      "tags": [
+        "sqlite",
+        "native-notice",
+        "historical-pointer"
+      ],
+      "links": [
+        {
+          "to": "proof-cross-harness-coordination",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "11753737e97b144b4bd2a0771e9e24a811778732262a91250f57c8be900f5b69"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -17160,6 +17348,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "f370c61b726501bbff187f6d01803e50ca1f215cb4b946154666792a43b11e7e"
     },
     {
+      "id": "proof-cross-harness-coordination",
+      "path": "docs/proof/cross-harness-coordination-proof-pack.md",
+      "title": "Cross-harness coordination: P1 foundation and P2 official runtime evidence",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "P2",
+      "reviewBy": "2026-10-16",
+      "reviewSuggested": [],
+      "summary": "Consolidates P1, native P2 and bounded official capture/projection runtime evidence. The official runtime has synthetic Git/SQLite receipt, replay and collision proofs. Full P1 fold, independent runtime review, production authority and P3–P5 remain unqualified.",
+      "tags": [
+        "coordination",
+        "proof-pack",
+        "confidence",
+        "pending"
+      ],
+      "links": [
+        {
+          "to": "spec-cross-harness-coordination",
+          "rel": "documents"
+        },
+        {
+          "to": "design-cross-harness-coordination",
+          "rel": "documents"
+        },
+        {
+          "to": "plan-cross-harness-coordination-phases",
+          "rel": "relates-to"
+        },
+        {
+          "to": "investigation-cross-harness-message-delivery",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "32f5341868d22a6663e79a9932acea03c87acd0d13f272333897989a98f5f2c5"
+    },
+    {
       "id": "proof-editor-rest",
       "path": "docs/proof/editor-rest.md",
       "title": "Proof Pack — CV-5.4, the editor's rest: it fills the body at 0 turns with no scrollbar, rests at 280 px with turns, keeps its 130 px floor under a short window; ComposerShare retired; one floor constant read by the host and the page (Ruling 80)",
@@ -19797,6 +20023,58 @@ window.DOCS_INDEX = {
       "sourceSha256": "430d21bd7fe77910ecf67996e2a698d0ea3826483f9b4037e8bd81c5707311c8"
     },
     {
+      "id": "spec-cross-harness-coordination",
+      "path": "docs/specs/cross-harness-coordination.md",
+      "title": "Cross-harness coordination: obligations without implicit authority",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "P0",
+      "reviewBy": "2026-10-16",
+      "reviewSuggested": [],
+      "summary": "P0 draft of the human-approved repair scope. Separates response visibility, endpoint delivery, exact proposal acceptance and execution authority, with one canonical request stream and explicit negative outcomes. No runtime implementation or independent PASS.",
+      "tags": [
+        "coordination",
+        "cross-harness",
+        "authority",
+        "contracts"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "investigation-cross-harness-message-delivery",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "refines"
+        },
+        {
+          "to": "design-cross-harness-coordination",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-cross-harness-coordination-phases",
+          "rel": "relates-to"
+        },
+        {
+          "to": "proof-cross-harness-coordination",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "class",
+          "title": "2. Part A — conceptual domain model",
+          "mermaid": "classDiagram\n  class CoordinationThread {\n    ThreadId identity\n  }\n  class Obligation {\n    ObligationId identity\n    RevisionRef revision\n  }\n  class CoordinationFact {\n    SourceEventKey identity\n    Disposition disposition\n  }\n  class EndpointGeneration {\n    EndpointRef identity\n  }\n  class RunAdmission {\n    RunTokenRef identity\n  }\n  CoordinationThread \"1\" *-- \"1..*\" Obligation : protects\n  Obligation \"1\" -- \"0..*\" CoordinationFact : evidenced by\n  CoordinationFact ..> EndpointGeneration : references identity\n  RunAdmission ..> CoordinationThread : references identity"
+        }
+      ],
+      "sourceSha256": "f64b2a192bd793e675d4d0dedbd57eff90cc1b99d54cf67283c399f0060e9625"
+    },
+    {
       "id": "spec-editor-surfaces",
       "path": "docs/specs/editor-surfaces.md",
       "title": "Editor & Content Surfaces — read-only code viewer & prompt drafts (spec)",
@@ -20517,5 +20795,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "be803a2121f5fc0b979fa07506833b302ecaebda26aaf40227a294e7d80ae1cb"
+  "graphSha256": "8de35ac24b48ac69892c8fbdf36b8dbd7a5e64c53c42957b63b136b4db8eab49"
 };

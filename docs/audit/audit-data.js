@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T19:13:14Z",
+  "generated": "2026-09-17T20:59:50Z",
   "audit": [
     {
       "actor": null,
@@ -21647,6 +21647,97 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-09-17T18:44:12Z",
       "duration_seconds": 1742.0
+    },
+    {
+      "id": "al-01M2RE4CBBJ6QH17GSSR4SE2J3",
+      "shortname": "receipt-recovery-request",
+      "datetime": "2026-09-17T19:40:08Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "WRITE-CAPABLE C# ONEfiniteofficialruntimefix <=28tools150k noagents. OwnregisteredP2treeC:\\Projects\\ai-de-feature-xh-p2-projection HEADe3330489ecc18c6deed02d8d9fa832aaaae77281 sessionxh-p2-projection-b0d0 endedreopen. UserallP0–P5approvedexistinglostACK/replayfloor, no freshapproval. ExactTTL300/env/apply_patch/noheredoc/outputredirect/pipedgates/NOHOOKOVERRIDE. No otherworktree/primaryqueue/observer/main/push/force/amend/config/deps/install/GUI/App/liveDB/endpoints/upstream. SyntheticGit/SQLitecaptureonly. CanonicalProofPackoneexistingpath.\nIndependentTest/DataDSBLOCKONE verifiedcounterexample: OfficialProjection.cs35–38 rejects current.Offset>page.SnapshotLength beforeALREADY-ACCOUNTEDphysical replay. Real2connections/syntheticfile sequence: capturepage[0,34) expectedNULL; ACOMMITadmission1 thenAfterCommitfaultnolocalreceipt; controlretryreturnsadmission1nogrowth; appendsecondframe Bactualpump advancescheckpoint68; retrySAMEORIGINALpage+expectedNULL =>COORD_STALE_SNAPSHOT noadmission despiteunchangedhistory. ThisisRECEIPTRECOVERYfailure notdataloss. ExistinglostACKandcompetingprojectorstestsseparateconditionsdon'tcovercomposition. Fixappend-tolerantrequestedguarantee anddocumentprecisecontractinsteadclaimallstalesnapshotsvalid.\nSeparate VERIFIEDalready-accounted recovery fromNEWADMISSIONCAS. Need fullDescriptor/scope/epoch/fullIdentity/canonicalbytes andphysicaloccurrence(start/end/rawDigest) verification atSAMEtransaction/snapshot; originalpagefullyaccounted mustreturnitsORIGINALadmission(s) evenwhenlatercommittedrecordsraiseCurrentOffsetbeyondoriginalcapturedlength. NOnewrows/updates/nativeallocations,effects,checkpointrewind. Keepcurrentcheckpoint68 inresultseparatelyfromorigreceipt1. Changedpayload/newunaccounted/mismatchingdescriptors/key/capturedprefixmustremainrejected; NOTsimplydeleteprefix/lengthguardoracceptOffset>=End. Validateinitialvsduplicatediagnostic/conflictreceiptcases: duplicatephysicaloccurrencemaynotstorefullrawbytesbuthasboundrawDigest/semanticoriginalcomparison; reasonthisexplicitlyperacceptedv10contract nohash-onlysemanticcomparison. Existingoriginalerasurepolicy unqualified officialrawimmutable. IfcurrentSOURCEpathnowchangedbutoriginalCapturedSnapshotwasvalid historically receiptquerycanrecoverthehistoricaladmission, notclaimfresh-sourcestate; NEXTcapture stillreportsGAP. CurrentdataChapterbindRootAlias/callercontext mismatchescan'tborroworiginalreceipt.\nTestREDexactoldsourcecontrol above originalfaultbeforeACK/otherProjectoradvance68, comparealltablesbeforeafter retry; trueCONCURRENTbarrier variant ifbudget2projectorsdeterministic notsleep. Newnegativesameoffsetchangedsemanticvaliddigest, wrongdescriptor/publicscope/hash, partialpageaccounted/restnew mustCASfailno partialmutation; repeatedoriginalreceiptcallno growth. Retainoriginal296cases incl262foundation and34runtime; appendtolerantmodelalsoequality/newRecordedAtduplicatephysical andconflictoccurrences nowrongOriginalState. AddtargetedreverseRecoveryGuardmutantfocalfail, and validation-bypass mutantshouldfailnegativeifcheap. Source/Header.TreeName metadata no scopefold/reducer UI/P3 semanticstate code nottouched.\nIndependentevidenceRootStoreSource full296runpassed; sourcecontentaftercapturehistoricalprojectionkeepscapturedbytes notrace-proof explicitdesign source captureoptimisticnotheldRoot/ABA guarantee. No allocator-calltrap independentproof earlieronlynativecounts; newtestfakedelegateNativeTrap optionalsourceproperSourceMethodNo argument cancount ifactualseam; don'tfakeallzerojustSQLcount. No Linuxvalidationnewclaims. P1OraclepinEB unchanged9d82updatefuturecontrolled. No schemaDDL/migration unlesscriticalrecordcausebeforecodeveryunlikely.\nOWN SqliteWatcherObservationStore.OfficialProjection.cs/OfficialCapturedtypesONLYneeded, testsCanonicalCoordinationProjectionRuntimeTests.cs, canonicaldesign/phaseplan/ONEproof/audit+rawrecords existingofficialruntime. No newproofnotes/sites. Actualsource/test/project/binSHA captureBASELINEbeforepatch thenredmutant/restored; retainstdoutstderr/TRX logicalexit actualcounts—notinfosVersionalone. StageownderivedauditJSwithJSONLownrootrenderverifyordinarycommit, release/endclean. CommitCopilottrailer(s)≤1100wordsfullSHAexactguardfixREDGREEN/mutants/remainingfulldescriptorSourceRace/reducer/fullP2/P3–5. Parentmustindependentre-gatebeforepartialruntimePASS, no allphasecomplete.",
+      "summary": "User's bounded official receipt-recovery repair request.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Recover original accounted-page receipts after lost ACK and another projector's append without mutation.",
+      "done_when": "Exact old-source red, all original 296 cases retained in final 311, two killed mutants, canonical evidence and ordinary commit.",
+      "tier": "T2",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M2RE4CECP8XXQSG27HMBPH3Z",
+      "shortname": "optimize-receipt-recovery",
+      "datetime": "2026-09-17T19:40:09Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "WRITE-CAPABLE C# ONEfiniteofficialruntimefix <=28tools150k noagents. OwnregisteredP2treeC:\\Projects\\ai-de-feature-xh-p2-projection HEADe3330489ecc18c6deed02d8d9fa832aaaae77281 sessionxh-p2-projection-b0d0 endedreopen. UserallP0–P5approvedexistinglostACK/replayfloor, no freshapproval. ExactTTL300/env/apply_patch/noheredoc/outputredirect/pipedgates/NOHOOKOVERRIDE. No otherworktree/primaryqueue/observer/main/push/force/amend/config/deps/install/GUI/App/liveDB/endpoints/upstream. SyntheticGit/SQLitecaptureonly. CanonicalProofPackoneexistingpath.\nIndependentTest/DataDSBLOCKONE verifiedcounterexample: OfficialProjection.cs35–38 rejects current.Offset>page.SnapshotLength beforeALREADY-ACCOUNTEDphysical replay. Real2connections/syntheticfile sequence: capturepage[0,34) expectedNULL; ACOMMITadmission1 thenAfterCommitfaultnolocalreceipt; controlretryreturnsadmission1nogrowth; appendsecondframe Bactualpump advancescheckpoint68; retrySAMEORIGINALpage+expectedNULL =>COORD_STALE_SNAPSHOT noadmission despiteunchangedhistory. ThisisRECEIPTRECOVERYfailure notdataloss. ExistinglostACKandcompetingprojectorstestsseparateconditionsdon'tcovercomposition. Fixappend-tolerantrequestedguarantee anddocumentprecisecontractinsteadclaimallstalesnapshotsvalid.\nSeparate VERIFIEDalready-accounted recovery fromNEWADMISSIONCAS. Need fullDescriptor/scope/epoch/fullIdentity/canonicalbytes andphysicaloccurrence(start/end/rawDigest) verification atSAMEtransaction/snapshot; originalpagefullyaccounted mustreturnitsORIGINALadmission(s) evenwhenlatercommittedrecordsraiseCurrentOffsetbeyondoriginalcapturedlength. NOnewrows/updates/nativeallocations,effects,checkpointrewind. Keepcurrentcheckpoint68 inresultseparatelyfromorigreceipt1. Changedpayload/newunaccounted/mismatchingdescriptors/key/capturedprefixmustremainrejected; NOTsimplydeleteprefix/lengthguardoracceptOffset>=End. Validateinitialvsduplicatediagnostic/conflictreceiptcases: duplicatephysicaloccurrencemaynotstorefullrawbytesbuthasboundrawDigest/semanticoriginalcomparison; reasonthisexplicitlyperacceptedv10contract nohash-onlysemanticcomparison. Existingoriginalerasurepolicy unqualified officialrawimmutable. IfcurrentSOURCEpathnowchangedbutoriginalCapturedSnapshotwasvalid historically receiptquerycanrecoverthehistoricaladmission, notclaimfresh-sourcestate; NEXTcapture stillreportsGAP. CurrentdataChapterbindRootAlias/callercontext mismatchescan'tborroworiginalreceipt.\nTestREDexactoldsourcecontrol above originalfaultbeforeACK/otherProjectoradvance68, comparealltablesbeforeafter retry; trueCONCURRENTbarrier variant ifbudget2projectorsdeterministic notsleep. Newnegativesameoffsetchangedsemanticvaliddigest, wrongdescriptor/publicscope/hash, partialpageaccounted/restnew mustCASfailno partialmutation; repeatedoriginalreceiptcallno growth. Retainoriginal296cases incl262foundation and34runtime; appendtolerantmodelalsoequality/newRecordedAtduplicatephysical andconflictoccurrences nowrongOriginalState. AddtargetedreverseRecoveryGuardmutantfocalfail, and validation-bypass mutantshouldfailnegativeifcheap. Source/Header.TreeName metadata no scopefold/reducer UI/P3 semanticstate code nottouched.\nIndependentevidenceRootStoreSource full296runpassed; sourcecontentaftercapturehistoricalprojectionkeepscapturedbytes notrace-proof explicitdesign source captureoptimisticnotheldRoot/ABA guarantee. No allocator-calltrap independentproof earlieronlynativecounts; newtestfakedelegateNativeTrap optionalsourceproperSourceMethodNo argument cancount ifactualseam; don'tfakeallzerojustSQLcount. No Linuxvalidationnewclaims. P1OraclepinEB unchanged9d82updatefuturecontrolled. No schemaDDL/migration unlesscriticalrecordcausebeforecodeveryunlikely.\nOWN SqliteWatcherObservationStore.OfficialProjection.cs/OfficialCapturedtypesONLYneeded, testsCanonicalCoordinationProjectionRuntimeTests.cs, canonicaldesign/phaseplan/ONEproof/audit+rawrecords existingofficialruntime. No newproofnotes/sites. Actualsource/test/project/binSHA captureBASELINEbeforepatch thenredmutant/restored; retainstdoutstderr/TRX logicalexit actualcounts—notinfosVersionalone. StageownderivedauditJSwithJSONLownrootrenderverifyordinarycommit, release/endclean. CommitCopilottrailer(s)≤1100wordsfullSHAexactguardfixREDGREEN/mutants/remainingfulldescriptorSourceRace/reducer/fullP2/P3–5. Parentmustindependentre-gatebeforepartialruntimePASS, no allphasecomplete.",
+      "summary": "Serial same-source graph; no agents. Budget finding: 28 main-line requests, but five batched reads increase individual tool execution count. Parent re-gate remains open.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/cross-harness-coordination-phases.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Recover original accounted-page receipts after lost ACK and another projector's append without mutation.",
+      "done_when": "Exact old-source red, all original 296 cases retained in final 311, two killed mutants, canonical evidence and ordinary commit.",
+      "tier": "T2",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M2RE4CHDF6H7S2Z1Z675XFBT",
+      "shortname": "implement-receipt-recovery",
+      "datetime": "2026-09-17T19:40:09Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "WRITE-CAPABLE C# ONEfiniteofficialruntimefix <=28tools150k noagents. OwnregisteredP2treeC:\\Projects\\ai-de-feature-xh-p2-projection HEADe3330489ecc18c6deed02d8d9fa832aaaae77281 sessionxh-p2-projection-b0d0 endedreopen. UserallP0–P5approvedexistinglostACK/replayfloor, no freshapproval. ExactTTL300/env/apply_patch/noheredoc/outputredirect/pipedgates/NOHOOKOVERRIDE. No otherworktree/primaryqueue/observer/main/push/force/amend/config/deps/install/GUI/App/liveDB/endpoints/upstream. SyntheticGit/SQLitecaptureonly. CanonicalProofPackoneexistingpath.\nIndependentTest/DataDSBLOCKONE verifiedcounterexample: OfficialProjection.cs35–38 rejects current.Offset>page.SnapshotLength beforeALREADY-ACCOUNTEDphysical replay. Real2connections/syntheticfile sequence: capturepage[0,34) expectedNULL; ACOMMITadmission1 thenAfterCommitfaultnolocalreceipt; controlretryreturnsadmission1nogrowth; appendsecondframe Bactualpump advancescheckpoint68; retrySAMEORIGINALpage+expectedNULL =>COORD_STALE_SNAPSHOT noadmission despiteunchangedhistory. ThisisRECEIPTRECOVERYfailure notdataloss. ExistinglostACKandcompetingprojectorstestsseparateconditionsdon'tcovercomposition. Fixappend-tolerantrequestedguarantee anddocumentprecisecontractinsteadclaimallstalesnapshotsvalid.\nSeparate VERIFIEDalready-accounted recovery fromNEWADMISSIONCAS. Need fullDescriptor/scope/epoch/fullIdentity/canonicalbytes andphysicaloccurrence(start/end/rawDigest) verification atSAMEtransaction/snapshot; originalpagefullyaccounted mustreturnitsORIGINALadmission(s) evenwhenlatercommittedrecordsraiseCurrentOffsetbeyondoriginalcapturedlength. NOnewrows/updates/nativeallocations,effects,checkpointrewind. Keepcurrentcheckpoint68 inresultseparatelyfromorigreceipt1. Changedpayload/newunaccounted/mismatchingdescriptors/key/capturedprefixmustremainrejected; NOTsimplydeleteprefix/lengthguardoracceptOffset>=End. Validateinitialvsduplicatediagnostic/conflictreceiptcases: duplicatephysicaloccurrencemaynotstorefullrawbytesbuthasboundrawDigest/semanticoriginalcomparison; reasonthisexplicitlyperacceptedv10contract nohash-onlysemanticcomparison. Existingoriginalerasurepolicy unqualified officialrawimmutable. IfcurrentSOURCEpathnowchangedbutoriginalCapturedSnapshotwasvalid historically receiptquerycanrecoverthehistoricaladmission, notclaimfresh-sourcestate; NEXTcapture stillreportsGAP. CurrentdataChapterbindRootAlias/callercontext mismatchescan'tborroworiginalreceipt.\nTestREDexactoldsourcecontrol above originalfaultbeforeACK/otherProjectoradvance68, comparealltablesbeforeafter retry; trueCONCURRENTbarrier variant ifbudget2projectorsdeterministic notsleep. Newnegativesameoffsetchangedsemanticvaliddigest, wrongdescriptor/publicscope/hash, partialpageaccounted/restnew mustCASfailno partialmutation; repeatedoriginalreceiptcallno growth. Retainoriginal296cases incl262foundation and34runtime; appendtolerantmodelalsoequality/newRecordedAtduplicatephysical andconflictoccurrences nowrongOriginalState. AddtargetedreverseRecoveryGuardmutantfocalfail, and validation-bypass mutantshouldfailnegativeifcheap. Source/Header.TreeName metadata no scopefold/reducer UI/P3 semanticstate code nottouched.\nIndependentevidenceRootStoreSource full296runpassed; sourcecontentaftercapturehistoricalprojectionkeepscapturedbytes notrace-proof explicitdesign source captureoptimisticnotheldRoot/ABA guarantee. No allocator-calltrap independentproof earlieronlynativecounts; newtestfakedelegateNativeTrap optionalsourceproperSourceMethodNo argument cancount ifactualseam; don'tfakeallzerojustSQLcount. No Linuxvalidationnewclaims. P1OraclepinEB unchanged9d82updatefuturecontrolled. No schemaDDL/migration unlesscriticalrecordcausebeforecodeveryunlikely.\nOWN SqliteWatcherObservationStore.OfficialProjection.cs/OfficialCapturedtypesONLYneeded, testsCanonicalCoordinationProjectionRuntimeTests.cs, canonicaldesign/phaseplan/ONEproof/audit+rawrecords existingofficialruntime. No newproofnotes/sites. Actualsource/test/project/binSHA captureBASELINEbeforepatch thenredmutant/restored; retainstdoutstderr/TRX logicalexit actualcounts—notinfosVersionalone. StageownderivedauditJSwithJSONLownrootrenderverifyordinarycommit, release/endclean. CommitCopilottrailer(s)≤1100wordsfullSHAexactguardfixREDGREEN/mutants/remainingfulldescriptorSourceRace/reducer/fullP2/P3–5. Parentmustindependentre-gatebeforepartialruntimePASS, no allphasecomplete.",
+      "summary": "Separate full-prefix read-only recovery from new-admission CAS. Corrected 36-byte fixtures to exact 34/68; original-source red 0/2, final 311/311 retaining 296, reverse guard 40/49 and prefix bypass 48/49. No independent PASS; no native allocator-call or Linux claim.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md",
+        "spikes/canonical-coordination-contract/records/official-runtime/receipt-recovery-raw.zip"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Recover original accounted-page receipts after lost ACK and another projector's append without mutation.",
+      "done_when": "Exact old-source red, all original 296 cases retained in final 311, two killed mutants, canonical evidence and ordinary commit.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-17T19:26:36Z",
+      "duration_seconds": 813.0
+    },
+    {
+      "id": "al-01M2RJP9N8X6V8A4ATC0QZG6FV",
+      "shortname": "p2-receipt-safe-boundary",
+      "datetime": "2026-09-17T20:59:50Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "Context-safe phase checkpoint, NOT scope reduction or new approval gate: finish the current coherent P2 edit/verification boundary, then return a concise actual M0-M5 matrix with exact commits, red/green/rollback/review evidence, unmet floors and next bounded implementation graph before moving into another long phase. User's ALLP0-P5 approval remains; parent will continue it, not ask the user again. Do not let the coordinator prefix grow to the earlier94-turn failure. The docs/proofs vsrepo-required docs/proof capture-path warning was sent earlier; report actual correction/status ratherthanleaveitimplicit. Preserve/releaseexactleases beforecheckpoint; don'tclaimallphasesdone or upstreamanything early. Avoid another ACK-only turn; return substantivecheckpoint when currentboundary is safe.",
+      "summary": "Conductor direct closure after delegate404: verified53 archive members,21 executed working input/binary pins, Git clean-conversion correspondence for tracked inputs,296->311 execution occurrences with0 missing and291->306 distinct names,4 inverse checker controls; retained2/9/1 failing controls. No production rewrite, historical tests not rerun by closure, no fullP2/programme/activation claim. Independent gate follows.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md",
+        "spikes/canonical-coordination-contract/records/official-runtime/receipt-recovery-closure-qualified.json"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Seal the existing P2 receipt-recovery edit without starting another phase.",
+      "done_when": "Archive, executed inputs, staged byte domains and case preservation are qualified; ordinary commit made; exact leases released; independent re-gate requested.",
+      "tier": "T2",
+      "main_calls": 15,
+      "main_budget": 20,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "started_at": "2026-09-17T20:47:40Z",
+      "duration_seconds": 730.0
     }
   ],
   "changes": [

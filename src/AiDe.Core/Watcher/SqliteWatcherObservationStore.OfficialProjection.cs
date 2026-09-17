@@ -32,37 +32,48 @@ public sealed partial class SqliteWatcherObservationStore
             if (start.Offset != page.Offset || start.PrefixDigest != page.PrefixDigest(page.Offset))
                 throw new CoordinationSourceException(CoordinationErrors.StaleSnapshot);
             var current = ValidateOfficialBinding(descriptor, transaction);
+            if (current is not null && current.Offset >= page.End)
+            {
+                // Receipt recovery verifies historical bytes, not the current source file.
+                if (current.Offset <= page.SnapshotLength
+                    ? page.PrefixDigest((int)current.Offset) != current.PrefixDigest
+                    : page.End == 0)
+                    throw new CoordinationSourceException(CoordinationErrors.StaleSnapshot);
+                var recovered = new List<OfficialAdmission>();
+                foreach (var (offset, end) in page.PrefixFrames())
+                {
+                    var frame = OfficialPreparedFrame.Prepare(descriptor, page, offset, end, OfficialEventHashMode);
+                    var admission = ReplayOfficialOccurrence(descriptor, frame, offset, end, transaction);
+                    if (offset >= page.Offset) recovered.Add(admission);
+                }
+                transaction.Commit();
+                return new(current, recovered.AsReadOnly());
+            }
             if (current is not null && (current.Offset > page.SnapshotLength
                 || page.PrefixDigest((int)current.Offset) != current.PrefixDigest))
                 throw new CoordinationSourceException(CoordinationErrors.StaleSnapshot);
-            var replay = current is not null && current.Offset >= page.End;
-            if (!replay && current != expected)
+            if (current != expected)
                 throw new CoordinationSourceException(CoordinationErrors.StaleSnapshot);
             if (current is null) InsertOfficialCheckpoint(descriptor, transaction);
             var admissions = new List<OfficialAdmission>();
             foreach (var (offset, end) in page.Frames())
             {
                 var frame = OfficialPreparedFrame.Prepare(descriptor, page, offset, end, OfficialEventHashMode);
-                admissions.Add(replay
-                    ? ReplayOfficialOccurrence(descriptor, frame, offset, end, transaction)
-                    : AdmitOfficialOccurrence(descriptor, frame, offset, end, transaction));
+                admissions.Add(AdmitOfficialOccurrence(descriptor, frame, offset, end, transaction));
             }
-            if (!replay)
-            {
-                current = new(descriptor.Scope, OfficialDescriptorAcquisition.Epoch, page.End, page.PrefixDigest(page.End));
-                using var advance = CoordinationCommand(transaction, """
-                    UPDATE coord_projection_checkpoint SET accepted_offset=$end,prefix_digest=$digest
-                    WHERE scope=$scope AND epoch=$epoch AND accepted_offset=$start AND prefix_digest=$previous;
-                    """, ("$end", current.Offset), ("$digest", current.PrefixDigest),
-                    ("$scope", descriptor.Scope), ("$epoch", OfficialDescriptorAcquisition.Epoch),
-                    ("$start", start.Offset), ("$previous", start.PrefixDigest));
-                if (advance.ExecuteNonQuery() != 1)
-                    throw new CoordinationSourceException(CoordinationErrors.StaleSnapshot);
-            }
+            current = new(descriptor.Scope, OfficialDescriptorAcquisition.Epoch, page.End, page.PrefixDigest(page.End));
+            using var advance = CoordinationCommand(transaction, """
+                UPDATE coord_projection_checkpoint SET accepted_offset=$end,prefix_digest=$digest
+                WHERE scope=$scope AND epoch=$epoch AND accepted_offset=$start AND prefix_digest=$previous;
+                """, ("$end", current.Offset), ("$digest", current.PrefixDigest),
+                ("$scope", descriptor.Scope), ("$epoch", OfficialDescriptorAcquisition.Epoch),
+                ("$start", start.Offset), ("$previous", start.PrefixDigest));
+            if (advance.ExecuteNonQuery() != 1)
+                throw new CoordinationSourceException(CoordinationErrors.StaleSnapshot);
             FailAt(CoordinationFault.BeforeCommit);
             transaction.Commit();
             FailAt(CoordinationFault.AfterCommit);
-            return new(current ?? OfficialCheckpoint.Empty(descriptor), admissions.AsReadOnly());
+            return new(current, admissions.AsReadOnly());
         }
     }
 
@@ -148,8 +159,20 @@ public sealed partial class SqliteWatcherObservationStore
         var kind = reader.IsDBNull(2) ? (CoordinationOccurrenceKind?)null :
             reader.GetString(2) == "equal" ? CoordinationOccurrenceKind.Equal : CoordinationOccurrenceKind.Conflict;
         if (reader.Read()) throw new CoordinationSourceException(CoordinationErrors.StaleSnapshot);
+        var equal = stored.Canonical is not null && frame.Canonical is not null
+            && stored.Canonical.AsSpan().SequenceEqual(frame.Canonical);
+        if (kind is null
+            ? (stored.Canonical is null) != (frame.Canonical is null) || stored.Canonical is not null && !equal
+            : frame.Canonical is null || stored.Canonical is null
+                || (kind == CoordinationOccurrenceKind.Equal) != equal)
+            throw new CoordinationSourceException(CoordinationErrors.StaleSnapshot);
         return new(stored.Admission, stored.CurrentReceipt, stored.State,
-            kind == CoordinationOccurrenceKind.Conflict ? "XH.EVENT_CONFLICT" : frame.Reason,
+            kind switch
+            {
+                CoordinationOccurrenceKind.Equal => "CANONICAL_EQUAL",
+                CoordinationOccurrenceKind.Conflict => "XH.EVENT_CONFLICT",
+                _ => frame.Reason,
+            },
             offset, end, frame.Digest, kind, true);
     }
 
