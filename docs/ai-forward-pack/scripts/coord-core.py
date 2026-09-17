@@ -565,8 +565,11 @@ def _build_parser():
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     claim = sub.add_parser("claim", help="declare intent over an artifact set")
-    claim.add_argument("--wi", required=True)
-    claim.add_argument("--path", required=True)
+    claim.add_argument("--self-test", action="store_true",
+                       help="prove the class refusals fire (register, derived) and that an "
+                            "authored path is still granted; takes no other argument")
+    claim.add_argument("--wi")
+    claim.add_argument("--path")
     claim.add_argument("--ttl", type=float, default=TTL_DEFAULT,
                        help="seconds the lease lasts (default {}; capped at {} unless "
                             "--long-edit names why - a lease is for the MINUTES of the edit, "
@@ -2643,6 +2646,60 @@ _DRIVER_PATH_CODES = {"missing": "COORD-DRIVER-PATH-MISSING",
                       "unchecked": "COORD-NOT-CHECKED-DRIVER-PATH"}
 
 
+def cmd_claim_self_test():
+    """Prove the two class refusals fire, and that an authored path is still granted.
+
+    The control for DC-163's own blind spot: the `register` refusal shipped on 2026-09-14 and
+    nothing anywhere asserted it — no test in this repository names a single `COORD-` code — so
+    when the `derived` half turned out to be missing two days later, the gap was found by a
+    blocked join rather than by a control. A refusal nobody has watched fail is not a control
+    (DC-104). Run: `coord claim --self-test`.
+    """
+    import subprocess
+    import tempfile
+
+    script = str(Path(__file__).resolve())
+    with tempfile.TemporaryDirectory() as tmp:
+        repo = Path(tmp)
+        (repo / COORD_DIRNAME).mkdir()
+        (repo / "docs" / "audit").mkdir(parents=True)
+        (repo / "docs" / "collaboration").mkdir(parents=True)
+        (repo / COORD_DIRNAME / REGISTRY_NAME).write_text(
+            "docs/audit/audit-log.jsonl: register\n"
+            "docs/audit/audit-data.js: derived echo regenerate\n", encoding="utf-8")
+        subprocess.run(["git", "init", "-q"], cwd=repo, capture_output=True)
+
+        env = dict(os.environ, AGENT_SESSION="coord-self-test", AGENT_NAME="coord-self-test")
+        env.pop("COORD_ROOT", None)
+
+        def claim(path):
+            out = subprocess.run(
+                [sys.executable, script, "claim", "--path", path, "--wi", "self-test", "--ttl", "60"],
+                cwd=repo, capture_output=True, text=True, encoding="utf-8", env=env)
+            return out.returncode, (out.stdout or "") + (out.stderr or "")
+
+        cases = [
+            ("register refused", "docs/audit/audit-log.jsonl", "COORD-CLAIM-REGISTER-CLASS", 3),
+            ("derived refused", "docs/audit/audit-data.js", "COORD-CLAIM-DERIVED-CLASS", 3),
+            ("authored granted", "docs/collaboration/session-contracts.md", "granted", 0),
+        ]
+        failures = []
+        for name, path, expected, code in cases:
+            rc, text = claim(path)
+            if expected not in text or rc != code:
+                failures.append("{}: expected {!r} and exit {}, got exit {} and {!r}".format(
+                    name, expected, code, rc, text.strip()[:200]))
+
+    if failures:
+        print("coord claim --self-test: FAILED")
+        for f in failures:
+            print("  - " + f)
+        return 1
+    print("coord claim --self-test: OK — a register-class and a derived-class path are each "
+          "refused by name, and an authored path is still granted")
+    return 0
+
+
 def cmd_doctor(root, repo):
     problems = 0
     try:
@@ -2960,7 +3017,13 @@ def main(argv=None):
         return 4
 
     if args.cmd == "claim":
-        # DC-163, two refusals BEFORE the check: neither is a contention verdict.
+        if getattr(args, "self_test", False):
+            return cmd_claim_self_test()
+        if not args.wi or not args.path:
+            print("coord claim: --wi and --path are required (or --self-test alone)",
+                  file=sys.stderr)
+            return 2
+        # DC-163, three refusals BEFORE the check: none is a contention verdict.
         # (1) A `register`-class artifact merges by UNION (its driver is the mechanism), so
         # a lease on it protects nothing and blocks every join that must append to it.
         try:
@@ -2974,6 +3037,18 @@ def main(argv=None):
                   "  only queues the joins behind it - append (a placeholder id if the\n"
                   "  allocator is the join's) and commit".format(_safe(args.path, 200)),
                   file=sys.stderr)
+            return 3
+        # (1b) A `derived` artifact is REGENERATED at the join, never merged: its content is a
+        # function of its sources, so a lease on it protects a value nobody edits and blocks every
+        # peer that must regenerate it. Measured 2026-09-16: a lease on `docs/audit/audit-data.js`
+        # stopped a main join at its commit step while the register half of this refusal (DC-163,
+        # above) had already been in place for two days -- the class was half-closed.
+        if klass == "derived":
+            print("COORD-CLAIM-DERIVED-CLASS  {}\n"
+                  "  a derived artifact is regenerated, never merged; a lease on it protects a\n"
+                  "  value nobody edits and queues every peer that must regenerate it - claim its\n"
+                  "  SOURCE instead and let the join regenerate this".format(
+                      _safe(args.path, 200)), file=sys.stderr)
             return 3
         # (2) A TTL past the cap needs a recorded reason: the lease is for the minutes of
         # the edit, and a queued peer reads why it waits from the claim event itself.
