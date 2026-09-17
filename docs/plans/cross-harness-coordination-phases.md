@@ -1081,6 +1081,24 @@ provenance are floors, not tradeable for the call budget. If the ceiling fires,
 retain a coherent implemented runtime increment and list uncovered oracles.
 Independent runtime review is an external next gate, not author-issued PASS.
 
+Actual: runtime code, not a second schema checkpoint. One missing-receipt red,
+34 new runtime cases, the retained 262-case ring, three focal mutants and their
+restoration are recorded in the canonical Proof Pack. Early oversized reads
+and two unavailable shell-rg calls spent avoidable budget; no extra agent or
+broader investigation followed. One build-only xUnit2013 repair was needed.
+Owned source/test files receive LF-only formatting before the final
+byte-pinned ring and staging; all source changes remain within the declared
+surface list. Work/span figures above remain modeled; each executed gate
+records elapsed duration and actual counts. Source/test/binary and staged-byte
+checks, local ordinary-hook commit, exact-lease release and session end close
+this unit. Full fold, independent runtime review and P3-P5 remain open.
+Docs Explorer/site regeneration is deferred under this unit's explicit no-site
+scope; the owned audit-data view is rendered from this worktree's JSONL.
+The close initially attempted an exclusive audit-register lease. Coordination
+refused it with COORD-CLAIM-REGISTER-CLASS; the plan was corrected to append by
+union and render the derived view without an exclusive register lease. No wait,
+TTL extension or hook override was used.
+
 ### Official store v10 bounded execution — 2026-09-17
 
 Goal: dormant official-occurrence projection; terminal checkpoint if the 45-call

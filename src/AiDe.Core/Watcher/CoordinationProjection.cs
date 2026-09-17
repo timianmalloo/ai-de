@@ -145,7 +145,12 @@ public sealed partial class SqliteWatcherObservationStore
             or "OBSERVED_REGISTER" or "OBSERVED_BOARD" or "OBSERVED_END" or "OBSERVED_UPDATE"
             or "OBSERVED_HEARTBEAT" or "REGISTRATION_REQUIRED" or "SESSION_ENDED" or "MALFORMED_BOARD"
             or "PARENT_REQUIRED" or "UNSUPPORTED_VERSION" or "UNSUPPORTED_RECORD"
-            or "MALFORMED_RECORD" or "CANONICAL_BOUND" or "CANONICAL_EQUAL" or "XH.EVENT_CONFLICT" => reason,
+            or "MALFORMED_RECORD" or "CANONICAL_BOUND" or "CANONICAL_EQUAL" or "XH.EVENT_CONFLICT"
+            or OfficialCoordinationErrors.Ingested or OfficialCoordinationErrors.Legacy or OfficialCoordinationErrors.Ignored
+            or CanonicalErrors.Schema or CanonicalErrors.Digest or CanonicalErrors.Unsupported
+            or CanonicalErrors.IntegerUnsupported or CanonicalErrors.Field or CanonicalErrors.TooLarge
+            or CanonicalErrors.Nonfinite or CanonicalErrors.Duplicate or CanonicalErrors.Depth
+            or CoordinationBindingErrors.Mismatch => reason,
         _ => null,
     };
 

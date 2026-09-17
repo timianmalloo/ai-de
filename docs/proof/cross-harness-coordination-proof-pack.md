@@ -1,6 +1,6 @@
 ---
 id: proof-cross-harness-coordination
-title: "Cross-harness coordination: P1 foundation and P2 native replay evidence"
+title: "Cross-harness coordination: P1 foundation and P2 official runtime evidence"
 type: proof-pack
 status: draft
 owner: "@timianmalloo"
@@ -13,12 +13,110 @@ links:
   - { to: investigation-cross-harness-message-delivery, rel: depends-on }
 review-by: 2026-10-16
 summary: >-
-  Consolidates P1 producer and bounded P2 projection evidence, including the isolated
-  pre-recovery measurement mutant and pending-update red/green receipts. Full lifecycle,
-  independent review, production authority and P3–P5 remain unqualified.
+  Consolidates P1, native P2 and bounded official capture/projection runtime evidence.
+  The official runtime has synthetic Git/SQLite receipt, replay and collision proofs.
+  Full P1 fold, independent runtime review, production authority and P3–P5 remain unqualified.
 ---
 
 # Proof Pack — P1/P2 candidates; independent code gate pending
+
+## Official capture / ProjectOfficialPage runtime - 2026-09-17
+
+**Implemented runtime unit; not full P2 or a shipping bridge.** Starting HEAD
+`90e3d924795350689ecf16a72be982d5289711ed`; accepted runtime inputs, errors,
+invariants and boundaries were committed before source at `731fed49`.
+The old schema-only checkpoint below remains historical evidence, not the
+description of this new unit.
+
+Runtime surface, all in Core: `OfficialDescriptorAcquisition.Acquire` ->
+`OfficialCapturedPage.Capture` -> `ProjectOfficialPage` ->
+`CanonicalCoordinationOfficialRuntime.RunOnce` -> existing `ReadCoordination`.
+The helper shared with the old binder resolves reciprocal physical Git metadata;
+the old `CanonicalBindingResult.IsStorable` remains false. New page construction
+is private and owns immutable captured bytes. No serialized trusted flag creates
+an acquisition/page. The internal configured pump has no recapture loop.
+`ReadCoordination` exposes bounded receipt metadata and Equal/Conflict, never raw
+payload. Internal admissions retain offset/end/raw-digest interpretation references.
+No production binder, native writer fallback or official C# writer was added.
+
+Evidence is in `spikes/canonical-coordination-contract/records/official-runtime/`:
+`raw-receipts.zip` plus a SHA-256 `manifest.json`. The archive retains actual
+stdout, stderr, TRX, per-run result/count records, before/after input/source/test/
+project/binary SHA-256 manifests and the execution recipe. `qualification.json`
+checks restored focal source against the green source, unchanged codec/parser/
+v10/native-schema/corpus hashes, and final source bytes against staged Git bytes.
+Tool version output is context only, never the source pin.
+
+| Run | Observed result | Qualification |
+|---|---|---|
+| `baseline` | 262/262 passed | Unchanged source at this unit's baseline; same selected classes as the prior v10 run |
+| `red-runtime` | 0/1, Available expected / Unavailable actual | Real synthetic primary source and old binder existed; the receipt was absent. Not a missing API or compile failure |
+| `candidate-runtime` | 14/14 passed | First real pump receipt and 13 retained reciprocal-binding cases |
+| `runtime-boundaries` | Build refused by xUnit2013 | Collection-count assertion style; **not** semantic red evidence |
+| `green-runtime` | 296/296 passed | 34 runtime cases + all prior 262 cases |
+| `three-focal-mutants` | 0/3, three named assertion failures | Semantic length-only comparison, descriptor-size-only comparison, and prefix-length-only comparison each escaped its own focal guard |
+| `final-runtime` | 296/296 passed | All three mutations restored; full selected ring rerun |
+| `final-staged-runtime` | 296/296 passed | Final byte-pinned run after LF-only formatting of owned source/test files; staged bytes checked against the tested bytes |
+
+The retained 262 consist of 33 structural official tests, 47 canonical
+codec/record/binding tests, and 182 native projection/boundary/recovery/feed tests.
+The supplied independent v10 78-case falsification is not relabelled as a new
+independent runtime result. The 12,568-vector historical byte probe is **not
+rerun here**; only unchanged codec/parser and corpus hashes are requalified.
+The ebd4f1c oracle remains pinned; the separate P1 timestamp repair is not imported.
+
+| Runtime claim | Executed oracle in `CanonicalCoordinationProjectionRuntimeTests` | Red / disconfirmation | Confidence and limit |
+|---|---|---|---|
+| Actual primary source reaches receipts without native writes | `ActualPrimarySource`, `IgnoredInvalidLegacyAndTail`; snapshot of all non-coordination tables and unchanged source bytes | Missing-receipt red; native table equality assertions | Verified on synthetic Git/SQLite, not live enrollment |
+| Physical primary/linked checkouts and reordered opaque pairs yield one descriptor | `LinkedCheckoutAndReorderedOpaquePairs`, `CallerRepositorySpoof`, allowance/descriptor bounds | Invalid repository and oversized inputs refused; retained binding suite includes reparses | Verified finite fixtures; no held-root/ABA guarantee |
+| Full descriptor, not hash/size, prevents rebinding | `FullDescriptorCollision`, `DifferentScopeSamePhysicalSource`, `NativeUnboundCheckpoint` | Descriptor-size-only mutant: expected exception, none thrown | Verified; physical-source reconfiguration deliberately unsupported |
+| Blank/unknown frames are accounted without invented questions | `IgnoredInvalidLegacyAndTail` | Seven physical frames, three ignored reasons, two legacy facts, raw-only invalid/future rows | Verified; refused is the v10 raw-only sentinel, not a semantic rejection |
+| Exact content/framing/page limits | `MaximumContent`, `SixtyFourMaximumCrLfFrames`, `OverContentAndCaptureBounds` | LF/CRLF edges, 63/1 page split, over-bound refusal without changed cache | Verified finite boundaries; native 65,536 remains unchanged |
+| Unterminated input is deferred | `IncompleteUtf8Tail` | Zero offset before LF; four bytes accounted only after LF | Verified; intentional difference from manual P1 EOF acceptance |
+| Invalid digest/stream/expanded response cannot become canonical data | `InvalidDigestAndSpoofedStream`, `ExpandedInvalidResponse` | Raw preserved, canonical NULL, XHI1 rather than enhanced identity | Verified; parser's existing full-fact boundary tests also retained |
+| Equality/conflict preserves original payload and current receipt | `RecordedAtEqualAndSemanticConflict` | Same-length semantic mutant reports Equal instead of Conflict | Verified validated full-byte comparison, not digest-only equality |
+| Compact key collisions cannot merge full identities | `CompactKeyCollision` | Forced collision refuses and rolls back whole page | Verified synthetic collision seam; no serialized hash selector |
+| Current accepted prefix is checked even on a stale empty page | `ChangedStaleEmptySnapshot` | Prefix-length-only mutant accepts a changed prefix | Verified optimistic captured-prefix contract |
+| Gaps and forged expectations retain old history | `AcceptedSourceChanges`, `ForgedExpectedCheckpoint` | Changed/truncated/missing source and scope/epoch/offset/prefix negatives | Verified finite fixtures, no automatic incarnation |
+| Before-commit fault has no partial rows; lost acknowledgement is recoverable | `BeforeCommitFailure`, `LostAcknowledgementThenRestart` | Actual deterministic pre/post-commit faults; reopen same SQLite file | Verified exact page/expected replay and original admission/current state |
+| Competing projectors converge | `TwoStoresCompete` | Two actual store connections return one original admission | Verified local concurrency fixture; not production load qualification |
+| Receipt readers freeze their own corpus | `FourHundredOneWithInterleavedScope` | 200/200/1 despite interleaved source H, late append excluded from frozen page, fresh resume returns it | Verified actual existing reader; full thread fold absent |
+| Rebuild is deterministic for the frozen fixture | `RebuildSameCorpus` | Exact event/feed rows, bytes, IDs, checkpoint and serialized receipt result match fresh SQLite | Verified fixture; arbitrary multi-source replay ordering is not promised |
+| Normal path measures volume and elapsed time | `NormalPath` | Observed Activity tags equal returned counts/duration, with no payload text tags | Verified; no spend/token cost exists in this deterministic path |
+
+No canonical call accepts native allocators or enters `ProjectRecord` /
+`ApplyObservation`; the implementation reader trace ends at the three official
+cache tables and receipt API. The native-table snapshot proof is executed; a
+separate native allocator callback-injection test was not added because this
+entry point has no allocator/callback parameter. Independent reviewers must
+still assess that isolation and all new internal entry points.
+
+**GATE runtime author evidence - 2026-09-17 - CONCERNS:** source/pump tests and
+three semantic focal mutants executed; this is not independent implementation
+approval. Individual remaining guards have negative fixtures, not an exhaustive
+mutation score. No new DDL, table/data deletion, dependency install, hook override,
+main update, push, GUI, live queue, endpoint or live observer was used.
+
+**Class / sweep / derive / prevent.** The three falsified shapes are size/hash
+substitution for full identity/comparison, and replay that skips accepted-prefix
+validation. The finite sweep covers descriptor lookup, compact event key,
+validated payload comparison and replay prefix in the official partial. They
+derive from the existing codec/physical binder and a single transaction owner,
+not parallel producers. The three named focal controls above were observed red
+with mutations and green after restoration. The xUnit2013 build-only repair
+reuses the installed analyzer; it is not presented as a runtime bug fix or red
+oracle. No new register ID or unowned defect-register edit was made.
+The evidence closer initially compared the pre-format restoration hash with the
+post-LF-format hash and refused sealing. Its corrected qualification compares
+green to restored **before** formatting, then proves each change to final bytes
+is LF-only and that current inputs/binaries still equal the retained final run.
+No test result or raw receipt was overwritten to repair that evidence check.
+
+Remaining: independent runtime review; full P1 thread/obligation fold; manual
+canonical actor/reply channel integration; P3/P4/P5 same-corpus MCP/UI surfaces;
+production binder/activation; native old-binary rollback evidence. Applied here
+means ingestion, never peer acceptance or recipient consumption. No claim that
+the shipping bridge, historical N1/N2, full P2 or P3-P5 is done.
 
 ## Official-origin v10 structural store checkpoint — 2026-09-17
 
