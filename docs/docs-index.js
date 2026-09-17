@@ -5692,6 +5692,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "26eb70ced8c90c9308a06544582b6ad8f2fd5fc657acea6766be292766baa6ea"
     },
     {
+      "id": "note-d1-codex-entry-point-handshake-r6",
+      "path": "docs/notes/d1-codex-entry-point-handshake-r6.md",
+      "title": "D-1 mapping-implementation r6 — admitted; Sequence still dark until this blob is ACKed and E1 observation API exists",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "Implementation contract. Does not rewrite r5 a3cb0d63 or r3 e448383a. Grok implements the mapper when Core observation identity is pinned. Open Sequence stays disabled until this blob is ACKed AND that Core API is admitted (r5 §4).",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "mapper"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake-r5",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-mapping-impl",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b50a136df4e300dbf1143ed4f36240904bc2850e40bc0c758b03e646a57c21bf"
+    },
+    {
       "id": "note-d1-listing-query-architecture",
       "path": "docs/notes/d1-listing-query-architecture.md",
       "title": "D-1 listing query architecture (draft) — EntryPointsAsync; identity minting",
@@ -7157,6 +7187,41 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "3af30f9d2841323f18356bc5ad0c2dc4e4640593a923448245ebcb6c3c9ac246"
+    },
+    {
+      "id": "note-understanding-views-owner-d1-mapping-impl",
+      "path": "docs/notes/understanding-views-owner-d1-mapping-impl.md",
+      "title": "Admit D-1 mapping implementation; 108 land listing on main; do not block listing on the human",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2027-03-17",
+      "reviewSuggested": [],
+      "summary": "Operator 2026-09-17: admit mapping-impl; 108 granted; stop blocking keep-going on the human. Owner persona + conductor execute. Codex same-blob ACK remains the watcher track, not a human gate.",
+      "tags": [
+        "decision-note",
+        "owner",
+        "D-1",
+        "mapper",
+        "ruling-108"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-d1-mapper",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r5",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-entry-points",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2318e20f0b29fe7fdee38f7fe6cda81b6d7a75013e865fa13f3cd3d0e7ac89b7"
     },
     {
       "id": "note-understanding-views-owner-n1-disposition",
@@ -20999,5 +21064,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "af21a45547a0bb7814726c33913c0b71bb0f9e3c0b5d0b3c3c28d66af562dd1c"
+  "graphSha256": "59516ba608cf9066924eef26c9d4b56ae965a94cdd6c5b8604d556ba3435ad9a"
 };
