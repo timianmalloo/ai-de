@@ -1,0 +1,16 @@
+Test run for C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests
+[xUnit.net 00:00:00.25]   Discovered:  AiDe.Core.Tests
+[xUnit.net 00:00:00.26]   Starting:    AiDe.Core.Tests
+[xUnit.net 00:00:00.32]   Finished:    AiDe.Core.Tests
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.PrepareAndAppend_ExternalOsRootLockBusy_ReclaimsLocalEntryAndPreservesHolder [36 ms]
+Results File: C:\Projects\ai-de-feature-xh-p2-producers\docs\proofs\p24-producer-rootlock-runs\p24-producer-rootlock-restored.trx
+
+Test Run Successful.
+Total tests: 1
+     Passed: 1
+ Total time: 0.6395 Seconds
+
+STDERR:

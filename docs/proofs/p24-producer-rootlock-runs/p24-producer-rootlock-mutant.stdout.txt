@@ -1,0 +1,36 @@
+Test run for C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests
+[xUnit.net 00:00:00.26]   Discovered:  AiDe.Core.Tests
+[xUnit.net 00:00:00.27]   Starting:    AiDe.Core.Tests
+[xUnit.net 00:00:00.32]       retained local root entry after OS-open failure
+[xUnit.net 00:00:00.32]       Stack Trace:
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationPreparedWriteTests.cs(347,0): at AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.<>c__DisplayClass14_0.<PrepareAndAppend_ExternalOsRootLockBusy_ReclaimsLocalEntryAndPreservesHolder>g__AssertBusyAndReclaimed|0(CoordinationWriteResult result, String operation, <>c__DisplayClass14_1&, <>c__DisplayClass14_2&)
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationPreparedWriteTests.cs(325,0): at AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.PrepareAndAppend_ExternalOsRootLockBusy_ReclaimsLocalEntryAndPreservesHolder()
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.32]       Output:
+[xUnit.net 00:00:00.32]         operation=Prepare; busy=COORD_WRITER_BUSY; acceptedBytes=82; originalOsHolderValid=true; competingOsOpenDenied=true
+[xUnit.net 00:00:00.33]   Finished:    AiDe.Core.Tests
+  Failed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.PrepareAndAppend_ExternalOsRootLockBusy_ReclaimsLocalEntryAndPreservesHolder [30 ms]
+  Error Message:
+   retained local root entry after OS-open failure
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.<>c__DisplayClass14_0.<PrepareAndAppend_ExternalOsRootLockBusy_ReclaimsLocalEntryAndPreservesHolder>g__AssertBusyAndReclaimed|0(CoordinationWriteResult result, String operation, <>c__DisplayClass14_1&, <>c__DisplayClass14_2&) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationPreparedWriteTests.cs:line 347
+   at AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.PrepareAndAppend_ExternalOsRootLockBusy_ReclaimsLocalEntryAndPreservesHolder() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationPreparedWriteTests.cs:line 325
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ operation=Prepare; busy=COORD_WRITER_BUSY; acceptedBytes=82; originalOsHolderValid=true; competingOsOpenDenied=true
+
+
+Results File: C:\Projects\ai-de-feature-xh-p2-producers\docs\proofs\p24-producer-rootlock-runs\p24-producer-rootlock-mutant.trx
+
+Total tests: 1
+     Failed: 1
+ Total time: 0.6472 Seconds
+
+STDERR:
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.PrepareAndAppend_ExternalOsRootLockBusy_ReclaimsLocalEntryAndPreservesHolder [FAIL]
+Test Run Failed.

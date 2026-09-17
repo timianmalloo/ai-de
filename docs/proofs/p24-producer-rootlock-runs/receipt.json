@@ -1,0 +1,20 @@
+{
+  "test": "PrepareAndAppend_ExternalOsRootLockBusy_ReclaimsLocalEntryAndPreservesHolder",
+  "qualification": "Same-process independently owned FileStream; real OS FileShare.None denial, not a second-process claim. Target root registry absent before the holder and after each failed Prepare/Append.",
+  "mutation": "Only the recognized OS-open sharing-error catch sets failedOsOpen. Its outer catch releases Monitor but skips RootLease.Dispose/reference retirement. All other cleanup remains unchanged.",
+  "oracle": "Same test fails at retained target-key RootGates entry after asserting Unavailable/COORD_WRITER_BUSY, unchanged accepted bytes, valid original holder and continued OS exclusion.",
+  "green": "3 Prepare + 3 Append denials; original handle remains valid; after disposing it, pending Append and fresh Prepare+Append succeed with exact native bytes and 3 parsed events.",
+  "source_restored_byte_exact": true,
+  "production_index_blobs_unchanged": true,
+  "production_worktree_diff_empty": true,
+  "existing_root_holder": "Append_HeldThroughFlush_NormalizedAliasWriterFailsFastAndGateReclaims remains unchanged; it qualifies the local monitor branch, not this OS-open branch.",
+  "historical_evidence": "Untouched; earlier AccessDenied failed probe and abort/zero-test qualifications are not RED evidence here.",
+  "remaining": [
+    "Independent Test/DS re-gate and canonical parent Proof Pack attachment",
+    "Global-128 emitter Prepared/notices",
+    "Old-binary qualification",
+    "P2 bridge/recovery",
+    "P3-P5"
+  ],
+  "execution_graph": "Read/author -> original -> isolated mutant -> exact restoration -> full suite -> receipt. Serial builds; no agents; bounded 3 repeats per operation."
+}

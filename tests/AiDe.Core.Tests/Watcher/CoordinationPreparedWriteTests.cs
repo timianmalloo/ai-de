@@ -299,6 +299,66 @@ public sealed class CoordinationPreparedWriteTests(ITestOutputHelper output)
     }
 
     [Fact]
+    public void PrepareAndAppend_ExternalOsRootLockBusy_ReclaimsLocalEntryAndPreservesHolder()
+    {
+        using var files = new Files();
+        var writer = files.Writer();
+        var seed = Ready(writer.Prepare("heartbeat", "subject"));
+        Assert.Equal(CoordinationWriteStatus.Admitted, writer.Append(seed).Status);
+        var pending = Ready(writer.Prepare("heartbeat", "subject"));
+        var before = File.ReadAllBytes(files.Log());
+        var lockPath = Path.Combine(files.Root, CoordContractWriter.RootLockFile);
+        var table = (System.Collections.IDictionary)typeof(CoordContractWriter)
+            .GetField("RootGates", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!
+            .GetValue(null)!;
+        var sync = typeof(CoordContractWriter).GetField("RootTableLock",
+            System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!.GetValue(null)!;
+        var key = CoordinationSourceCapture.RootKey(files.Root);
+        lock (sync) Assert.False(table.Contains(key));
+
+        // Independent OS handle, not a borrowed writer lease or the in-process root monitor.
+        using (var holder = new FileStream(lockPath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+        {
+            var originalHandle = holder.SafeFileHandle;
+            for (var repeat = 0; repeat < 3; repeat++)
+            {
+                AssertBusyAndReclaimed(writer.Prepare("heartbeat", "subject"), "Prepare");
+                AssertBusyAndReclaimed(writer.Append(pending), "Append");
+            }
+
+            void AssertBusyAndReclaimed(CoordinationWriteResult result, string operation)
+            {
+                Assert.Equal(CoordinationWriteStatus.Unavailable, result.Status);
+                Assert.Equal(CoordinationWriteCodes.WriterBusy, result.Code);
+                Assert.Equal(before, File.ReadAllBytes(files.Log()));
+                Assert.Same(originalHandle, holder.SafeFileHandle);
+                Assert.False(originalHandle.IsClosed);
+                Assert.False(originalHandle.IsInvalid);
+                Assert.Equal(-1, holder.ReadByte());
+                holder.Flush(true);
+                var denial = Assert.Throws<IOException>(() =>
+                {
+                    using var contender = new FileStream(lockPath, FileMode.Open,
+                        FileAccess.ReadWrite, FileShare.None);
+                });
+                Assert.Contains(denial.HResult & 0xffff, new[] { 32, 33, 11 });
+                output.WriteLine($"operation={operation}; busy={result.Code}; acceptedBytes={before.Length}; originalOsHolderValid=true; competingOsOpenDenied=true");
+                lock (sync)
+                    Assert.False(table.Contains(key), "retained local root entry after OS-open failure");
+            }
+        }
+
+        Assert.Equal(CoordinationWriteStatus.Admitted, writer.Append(pending).Status);
+        var next = Ready(writer.Prepare("heartbeat", "subject"));
+        Assert.Equal(CoordinationWriteStatus.Admitted, writer.Append(next).Status);
+        Assert.Equal(before.Concat(pending.CopyBytes()).Concat(next.CopyBytes()).ToArray(),
+            File.ReadAllBytes(files.Log()));
+        lock (sync) Assert.False(table.Contains(key));
+        Assert.Equal(3, CoordContractLog.ReadDirectory(files.Root).Count);
+        output.WriteLine("deniedPrepare=3; deniedAppend=3; holderReleased=true; pendingAdmitted=true; freshPrepareAppendAdmitted=true; events=3; reclaimedRoot=true");
+    }
+
+    [Fact]
     public void Prepare_RecordRefusalAndAdmission_EmitMeasuredOutcomeWithoutPayload()
     {
         using var files = new Files();
