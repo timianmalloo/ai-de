@@ -253,3 +253,28 @@ the transaction that applies them.
 This is fresh unreleased-v8 design approval only. Existing candidate-v8 upgrade,
 actual old-binary rollback, independent code gates and full P2 remain unclaimed.
 All authority grants remain false; the canonical bridge and producers are separate.
+
+### Native admission/delivery corrective decision — 2026-09-17
+
+Adopt the design's P2 native correction before code. The user's conditional
+Data/Security/Distributed Systems code admission is dormant and synthetic-only,
+not a live-data or shipment gate. Add only version-9
+`native_registration_admission_fact` and `registration_notice_delivery` to the
+existing watcher database. Original claim/decision has one immutable home;
+publication bytes are a checked, immutable derived projection. No tokens, new
+database, fabricated source offset or attribution backfill.
+
+Choose a future enhanced trusted-root ingress plus a single store IMMEDIATE
+transaction for decision/notice/session/lifecycle, prepared-not-exposed capability,
+operation idempotency/reconciliation and protected expected-generation CAS.
+Reject separate lifecycle transactions, drain-as-ack, re-registration recovery,
+path-spelling quota identity and global fencing of legacy writers. Global 128
+reservation/hydration and enrolled-owner exclusion precede enhanced activation.
+File publication uses stable IDs/no-overwrite/full-byte equality; the legacy JSON
+is only a latest projection. Official canonical target remains Pending/DENY.
+
+This commit permits the additive structural data floor as a bounded prerequisite.
+The author must leave enhanced ingress/worker absent until the remaining contract
+is implemented and qualified. Retain legacy behavior and historical N1/N2 REDs
+honestly. Rollback disables enhanced entry points and retains these new tables;
+released-v7 binary proof, retention/erasure and independent code gates remain owed.

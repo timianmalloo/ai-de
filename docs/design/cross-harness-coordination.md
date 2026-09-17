@@ -1032,3 +1032,102 @@ overflow before cursor movement. Raw payloads never enter these tags.
 Logical last/high/served columns are nonnegative SQLite integers; UTC scheduling
 remains a signed integer timestamp, not an eligibility flag or a logical clock.
 This is clarification within B, not independent approval or a new permission gate.
+
+### P2 native registration admission and notice delivery correction — 2026-09-17
+
+This supersedes any suggestion that an in-memory producer preparation or a drained
+notice constitutes durable native admission. The user supplied conditional Data/
+Security/Distributed Systems code admission for a **dormant, synthetic-only**
+implementation. It is not independent code approval or permission for live
+sensitive admission. Canonical official-API qualification and production authority
+remain ENHANCED DENY. Native file publication is not semantic acknowledgement,
+consumption, a human assertion, or a work-area grant.
+
+**Model and durable representation.** The existing watcher database gains exactly
+two tables in additive version 9, based on this branch's fresh-v8 cache layout:
+
+* `native_registration_admission_fact`: one accepted trusted-ingress operation,
+  identified by operation ID. Its immutable decision records the input/context
+  digests, original supplied repository before normalization, corrected repository,
+  typed reason, session/generation and minimal frozen binding. The original claim
+  exists here once. A source observation is not human authority.
+* `registration_notice_delivery`: one correction obligation per admission,
+  identified by stable notice ID, with admission/version-digest foreign key,
+  immutable derived publication bytes/digest and typed native target. Only
+  Pending/InFlight/Published delivery metadata changes: attempt, due time,
+  owner and ownership version. Publication is monotonic; identity and bytes are
+  not. No bearer/capability, arbitrary attributes, transcript or source prose is
+  persisted. Counts derive from rows; no competing persistent quota counter.
+
+All attributes are immutable history except the delivery scheduling cells.
+Operation count is additive; outstanding-count snapshots are non-additive across
+time. Publication bytes are a frozen derived projection, not a second source;
+the future admission writer must prove serialization equality and digest equality
+against the admission before commit. SQL structural validation alone cannot prove
+SHA-256 equality. No historical reconstruction, DROP, fake coordination-event
+offset, v7-table trigger, new database, or invented durable store identity.
+
+**Trusted ingress and atomicity.** Add an enhanced entry point; leave legacy
+writers usable and explicitly unqualified. Capture bounded typed input under
+composition-owned local roots before filesystem access. Reject UNC/network,
+device/traversal, reparse escapes and forged `.git` pointers selecting a root.
+Neither payload nor environment establishes trusted root binding. Reuse the
+actual host's trusted workspace context; introducing configured binding requires
+an explicit composition contract, not inference.
+
+Within registrar → store lock order, serialize terminal adoption and expected
+generation CAS. One store-owned IMMEDIATE transaction writes the admission,
+notice, session upsert, end clearing and heartbeat. Prepare an opaque capability
+without exposing it; install/return only after confirmed commit. Same operation
+and input/context returns the original admission; conflicting reuse fails.
+Unknown commit outcome reconciles the operation ID, never re-registers, bumps
+generation or mints authority. Enhanced Heartbeat/End/UpdateHarnessAndModel
+validate capability and stored expected binding/generation in the protected
+operation. No whole-Core auth rewrite; legacy v7 ABA/uncooperative writes are not
+claimed fenced.
+
+**Capacity and ownership.** Reserve before any registrar mutation for a correction.
+The process-global 128 bound includes reserved, queued and in-flight obligations
+across hosts/store handles. Full returns `COORD_NOTICE_CAPACITY` with unchanged
+facts, generation, capability and membership. Hydrate known Pending/InFlight
+before fresh enhanced admission; excess recovered backlog blocks new enhanced
+admission, not legacy use, and never deletes facts. Identify the actual store,
+not a path spelling. Any new durable identity requires a prior recorded decision
+and real-engine spike. One enrolled enhanced owner/publisher per store uses OS
+exclusion; this is not a global fence against legacy clients. Failed precommit
+reservation releases; committed Pending remains until publication reconciliation.
+One bounded fair due batch avoids poison-head starvation. Stale completion fails
+ownership CAS; cancellation after commit retains the obligation.
+
+**Native publication.** Keep `registration/` compatible. Install an immutable
+safe notice-ID filename via unique exclusive attempt temporary file, flush and
+atomic no-overwrite move. Existing full bytes and digest equal means idempotent
+success; difference means conflict, preserving the original/history. The
+session-keyed JSON stays a derived latest snapshot, never consumption authority.
+Late older replay cannot replace the newer known snapshot. File success plus lost
+DB acknowledgement retries the same ID/bytes, not another consumed file. Native
+success does not complete any canonical target. Recovery only publishes notices;
+it never invokes registration/lifecycle/capability issuance.
+
+**Migration and rollback.** Enforce fact update/delete/REPLACE refusal; immutable
+notice identity/bytes; monotonic publication; explicit SQLite type, null, length,
+key and numeric bounds; session-generation uniqueness; and due-selection index.
+Pending selection is bounded to at most 129 by the future reader, not by deleting
+excess history. Validate constructor migration abort atomicity on real SQLite.
+Rollback disables enhanced entry points/worker and retains new facts. Released
+old-binary compatibility and prerelease-v8 variant upgrades are not claimed.
+Live retention/erasure remains BLOCKED.
+
+**Change reach and proof boundary.** Trusted host input → correction → protected
+registrar preparation → store transaction → durable notice → claimed attempt →
+native publisher → optional existing Workbench notice dispatch. Only the dispatch
+section may change; no layout/style/Atlas work. Actual host/native N1/N2, per-write
+fault rollback, operation replay/conflict, capacity across handles, late stale
+lifecycle CAS, immutable bytes and retry/restart are required. D0/D1/D2/D4/D6
+apply. Normal telemetry emits opaque IDs/counts/codes/duration, never raw paths
+or prose. Core/native-file tests do not replace P5 rendered-surface qualification.
+
+The bounded author increment first supplies the **dormant DDL floor** and real
+constructor/SQL tests. It deliberately exposes no admission or delivery API and
+does not connect a worker. N1/N2 remain semantic RED until the complete protected
+pipeline is implemented. No storage-unit green is a host-path or P2 green.

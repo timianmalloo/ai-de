@@ -798,3 +798,34 @@ This checkpoint is RED/UNSHIPPABLE and clears no production hard veto.
 Next: Data/DS/Security design acceptance for native durable admission/delivery,
 then implementation and recovery proof. Producers, canonical bridge, legacy/
 released-binary compatibility, P3–P5 and upstream-after-all-six remain pending.
+
+### Native NOTICE corrective increment — 2026-09-17
+
+Goal: correct the native admission/delivery unit in the assigned P2 tree.
+Done when: corrected contract commits before code; actual native N1/N2 are green,
+or a precise partial stop commits evidence and names unmet gates.
+Not in scope: canonical bridge, P3–P5, UI layout, other trees, live data or activation.
+Tier: T2. Fan-out cap: 0. Main-line budget: 45 tools. Context ceiling: 150k.
+
+| Node | Capability | Input → exit | Dependency |
+|---|---|---|---|
+| NC1 | Reasoning | Read native path + conditional admission → corrected design/ADR committed | None |
+| NC2 | Reasoning | Version-9 data contract → constructor/SQL REDs plus unchanged N1/N2 | NC1 decision |
+| NC3 | Reasoning | REDs → dormant additive DDL, no admission/worker activation | NC2 data |
+| NC4 | Deterministic mechanics | DDL → actual process/TRX structural GREEN and explicit native RED | NC3 data |
+| NC5 | Deterministic mechanics | Receipts → canonical proof/audit/code commit, postcommit pins, release | NC4 data |
+
+All dependencies are real; schema and tests share one build/transaction context.
+Width one, inferred T1=T∞=five work units, parallel saving zero. No delegates.
+No retry-until-green loop: finite assertion/fault cases decrease to zero, with
+one repair pass allowed before a precise partial stop. Floors are retained:
+real SQLite, failure oracles, legacy regression, receipt content inspection,
+unqualified independent gates and no live sensitive activation. Budget/coverage
+shortfall stops at the dormant structural increment rather than inventing a
+weaker admission guarantee. No path-coherence/store-identity claim is introduced.
+
+Oracle: absent tables, missing constraints, mutable facts/notice identity,
+nonmonotonic publication or non-atomic constructor migration fail the structural
+tests. N1/N2 remain separate actual host diagnostics, not API-name fixtures.
+Full atomic admission, hydration/global quota, ownership, hardened publisher,
+protected lifecycle races and actual native retry are still necessary.

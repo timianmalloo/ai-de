@@ -20,6 +20,31 @@ summary: >-
 
 # Proof Pack — P1/P2 candidates; independent code gate pending
 
+## Native NOTICE corrective contract checkpoint — 2026-09-17
+
+Source: `d0c3afd38fa9bd3fb6b3a6980338a61c389324fc`, containing diagnostic source
+commit `7e9f1d9af4d692db94dc04d58b5260781f8a5fee` and derived-audit reconciliation.
+The user's conditional Data/Security/DS contract is recorded in the existing P0
+design/ADR and phase plan **before code**. No new independent review is asserted.
+The first bounded implementation is dormant additive version-9 DDL in the actual
+watcher database, not a substitute admission API or an in-memory queue repair.
+
+GATE native-contract · 2026-09-17 · user-supplied Data/Security/DS conditional
+CODEADMISSION · exit criteria: two-table contract, protected admission/lifecycle,
+quota/owner, privacy and native/canonical boundary recorded · verdict:
+CONDITIONAL, dormant synthetic code only · vetoes: live retention/erasure and
+independent implementation qualification remain BLOCK.
+
+N1/N2 at the source are **Verified RED**, not acceptance met. Their original
+claims/reasons cannot be reconstructed from native session/liveness tables.
+All enhanced admission/worker paths remain absent until the remaining contract
+is fulfilled. Structural DDL tests, even green, do not prove either native oracle.
+Remaining: trusted root capture, transactional admission and postcommit capability,
+idempotent operation reconciliation, protected lifecycle CAS, process-global 128
+hydration/reservation, actual store identity/enrolled owner, durable attempt
+worker, immutable publisher/latest projection and caller wiring. Canonical bridge,
+legacy binary qualification, P3–P5 and all-six-before-upstream remain unqualified.
+
 ## B5 qualification and bounded B6 update candidate — 2026-09-17
 
 **Partial author evidence, not approval.** This continuation starts from

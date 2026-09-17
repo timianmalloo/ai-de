@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T02:55:53Z",
+  "generated": "2026-09-17T03:18:38Z",
   "audit": [
     {
       "actor": null,
@@ -20882,6 +20882,35 @@ window.AUDIT_DATA = {
       "main_budget": 28,
       "main_over_budget": false,
       "fan_out": 0
+    },
+    {
+      "id": "al-01M2PNZ66E42669WDW0DS7GQZN",
+      "shortname": "p2-native-corrected-contract",
+      "datetime": "2026-09-17T03:18:38Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "WRITE-CAPABLE C# AUTHOR P2 native NOTICE admission/delivery corrective unit, <=45 tools, no agents. Assigned HEAD d0c3afd38fa9bd3fb6b3a6980338a61c389324fc. FIRST record/COMMIT corrected existing design/ADR/phaseplan before code. Conditional Data/Security/DS dormant synthetic code admission: two additive native tables in existing watcher.db; original minimal claim frozen once, publication derived; protected atomic admission/lifecycle, global 128 across handles, hydration, enrolled owner, trusted roots, immutable native publisher. Legacy usable; canonical official API ENHANCED DENY until qualified. Require actual N1/N2 green or precise partial stop; do not promote storage/API tests. No live data, UI, other trees, dependencies, push, hooks or cleanup. Keep locked scratch. Commit own audit-data with JSONL, release claims before tests, end session. Full detailed request is in this harness turn; this audit text is an explicitly abbreviated capture, not verbatim.",
+      "summary": "Committed corrected native contract before code; bounded dormant schema prerequisite, N1/N2 remain RED. Full request capture unavailable as a local file; abbreviated prompt explicitly labelled.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/cross-harness-coordination.md",
+        "docs/adr/adr-01M2NJ2PQS7X6GE3F559JC4TNP-cross-harness-canonical-stream.md",
+        "docs/plans/cross-harness-coordination-phases.md",
+        "docs/proof/cross-harness-coordination-proof-pack.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Correct native admission and retained notice delivery",
+      "done_when": "Actual N1/N2 green or precise committed partial stop with unmet gates",
+      "tier": "T2",
+      "main_calls": 23,
+      "main_budget": 45,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-17T03:15:04Z",
+      "duration_seconds": 214.0
     }
   ],
   "changes": [
