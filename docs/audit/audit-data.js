@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T21:24:39Z",
+  "generated": "2026-09-17T23:35:23Z",
   "audit": [
     {
       "actor": null,
@@ -21787,6 +21787,30 @@ window.AUDIT_DATA = {
       "done_when": "Bounded author and reviewer results recorded, exact leases released, clean checkpoint with remaining root oracle explicit.",
       "tier": "T2",
       "main_calls": 10,
+      "main_budget": 20,
+      "main_over_budget": false,
+      "fan_out": 2
+    },
+    {
+      "id": "al-01M2RVK4DB70RNAE2CQRP3ZERD",
+      "shortname": "producer-first-boundary-checkpoint",
+      "datetime": "2026-09-17T23:35:23Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "Continue the already approved P0-P5 programme from PE1TVB/PE1TX5 checkpoint, no fresh human permission. FIRST new-run command in your own coordinator tree: python docs\\ai-forward-pack\\scripts\\audit-log.py start --session cross-harness-coordination-implementation-b0d0 --skill implement; renew/readback SAME session if its live entry expired. Preserve P1 9b72f87a, P2 18490655 and producer a855e1ad exact receipts; do not redo passed slices or promote partial floors. Next bounded graph: (1) producer global128 Prepared retention/notice-capacity with actual boundary/refusal/release proof and Data-reviewed durable recovery BEFORE storage changes; (2) close FULLB6 lostACK/authority ambiguity/GAP/register-heartbeat-end plus explicitly pending B2/B3/B7/B8 fairness/aggregate-page bytes/history/fault oracles; (3) canonical .agents bridge/cross-language compatibility and ACTUAL old-binary rollback; then independent fullP2 gate. Use retained exact authors in owned trees, author<=24calls/context150k, reviewer<=12, coordinator20calls then substantivecheckpoint; no broad rediscovery/council. SharedP1coord-core R125 claim-guard handoff toClaude stillsinglewriter—no independentduplicate; raiseactualseam ifbridge needsit. ProductionauthorityDENY/enhancedappenddisabled until required rollout qualification. Progress into approvedP3 real adapters/P4 launcher/P5 same-corpus SLIs as dependencies genuinely clear; no abandoned remainingphases or user approvalloop. Main now2a5f1b2d local/remote; reconcile atqualifiedjoin, no silentfrozen-input refresh or mainpush. CanonicalProofPack singularpath observedcorrected; consolidate producer rawproof/API/site derivation carefully and release authoredfigureleases promptly. UpstreamonlyAFTERall6verified. Return exact pass/block/unexecuted matrix and remaininggraph, not an ACK-only turn; keep coordinatorcontext receipt-sized and hand off before failure.",
+      "summary": "Producer38e6d6 adds Preparing, failed-End Busy and observer-safe release. Restored99/100 historical failure preserved with unknown outcome/cause. Controlled fixture3170614 candidate2/2 and baseline2/2; identity mutant expectedRefused/actualNoOp; independent101/101 floor and2/2pair pass. Actual flush-lock contention returnsCOORD_WRITER_BUSY retaining one End intent, then one explicit retry admits and releases. Fullnotice/recovery/P2/P3-P5 remain unqualified. Retained sync agent handle refused write_agent followup; same role/session/tree used via synchronous invocation, no duplicate active track. A mistyped draft evidence pin was removed before commit and cat-file checked; no fake pin retained.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close the next retained producer reservation/quiescence boundary without reopening passed work.",
+      "done_when": "Current boundary behavior has controlled evidence and independent disposition; canonical proof records exact pins and remaining programme floors.",
+      "tier": "T2",
+      "main_calls": 14,
       "main_budget": 20,
       "main_over_budget": false,
       "fan_out": 2

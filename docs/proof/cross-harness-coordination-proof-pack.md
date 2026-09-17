@@ -4180,3 +4180,58 @@ The next bounded implementation node starts directly with the known sibling-root
 fixture and its inverse fault, rather than repeating normalization or general
 grounding. All remaining P0–P5 floors and the after-verification-only upstream
 dependency remain unchanged.
+
+### Producer-first reservation and quiescence checkpoint — 2026-09-17
+
+This is evidence from the separate, retained `feature/xh-p2-producers` branch,
+not a claim that its source has been merged into this checkout.
+
+| Pin | Meaning |
+|---|---|
+| `1f43127928f3e5cc185a3a7641a29f66727af1f6` | Preserved producer baseline, including the previously reviewed Prepared/global-128 mechanics |
+| `38e6d6233335a919551bc9e4c9a6cd8b76bf524e` | Preparing publication, quiescent failed-End batch classification, observer-safe release; initially blocked by a restored-run test failure |
+| `31706144288a0631d846bb8b5cb2b8e8cc2c6d95` | Controlled stale-target/root-contention fixtures and retained evidence; no further production change |
+
+The first author observed four expected boundary failures, an intermediate
+97/100 run, a corrected 100/100 run, four matching reverse-mutation failures,
+then a restored 99/100 result. The last result is preserved. Its unsuccessful
+End outcome was not recorded beyond the failed success assertion; its historical
+cause remains **unknown**. Root contention is a source-supported candidate, not
+an established retrospective cause.
+
+The follow-up fixture removes the one-shot-clock/reference-count scheduling
+ambiguity. It holds the explicitly captured target before action, completes
+unrelated native work, admits End, then releases stale work. A separate fixture
+holds the actual native root lock through flush. No uncontrolled retry loop or
+fixed sleep substitutes for the required ordering.
+
+**GATE producer-first reservation/quiescence · Test/DS · PASS (finite scope):**
+
+| Oracle | Independently observed result |
+|---|---|
+| Reserved state before blocked factory | `Preparing / PendingRegistration` is visible at capacity 128; excess admission performs no factory or filesystem work |
+| Quiescent failed End | Batch reports Busy without changing native bytes |
+| Completion observer, End and abandonment | Retained state/capacity remain while the observer runs and release after completion |
+| Explicit stale target | End is admitted at sequence 2; target retains exactly register/end; released stale work is refused with `COORD_EMITTER_STALE_LIFECYCLE`, without Prepared or admission |
+| Real root contention | End is `Unavailable / COORD_WRITER_BUSY`, membership remains Live, and target bytes stay unchanged; one explicit retry after release writes exactly one End and releases the retained slot |
+| Current selected floor | 101 executed, 101 passed, zero failed/skipped, exit 0; controlled pair also 2/2, exit 0 |
+
+The isolated baseline also passes both corrected schedule tests. This shows
+behavior consistent with the corrected fixture, not recovery of the missing
+historical outcome. The isolated identity-guard mutant fails the actual
+`Refused` versus `NoOp` assertion; its wire remains register/end-only. It is not
+credited as a missing-method or build failure.
+
+All 25 producer pins matched: 23 source/test/project files and two DLLs.
+Production is unchanged between the two latter commits. The 91→96→100→101
+inventories are retained without rewriting failed historical occurrences.
+Raw evidence is addressed by the producer commit:
+`31706144288a0631d846bb8b5cb2b8e8cc2c6d95:docs/proofs/p24-emitter-pending-evidence/`.
+Independent fresh TRXs are retained in the session's
+`files/retainedreviewer-3170614/review-pair.trx` and `review-selected.trx`.
+
+Remaining stress schedules, comprehensive root-contention policy, telemetry and
+identity coverage, durable notice/cold-restart integration, full recovery B6 and
+other P2 floors are **not** cleared by this result. P3–P5 remain pending.
+The entire P1 `coord-core.py` edit seam stays frozen for Claude R125. No main
+merge, production activation, GUI run or upstream transfer occurred.
