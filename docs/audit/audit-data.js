@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T15:32:50Z",
+  "generated": "2026-09-17T16:02:11Z",
   "audit": [
     {
       "actor": null,
@@ -21244,6 +21244,33 @@ window.AUDIT_DATA = {
       "main_budget": 35,
       "main_over_budget": false,
       "fan_out": 0
+    },
+    {
+      "id": "al-01M2R1N97G56XTZFEDN4H4QWPS",
+      "shortname": "p2-compat-linux-portability",
+      "datetime": "2026-09-17T16:02:11Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "[Task summary; verbatim prompt remains in harness] WRITE-CAPABLE C# portability repair within approved P2 COMPAT floor, <=45 tools, no agents. Own registered P2 tree C:\\Projects\\ai-de-feature-xh-p2-projection, HEAD 194863021d030faef6fb20a9f7bc385fb0c8d260, session xh-p2-projection-b0d0. Restore safe non-Windows ordinary RegistrationPublisher.Publish; retain Windows alias, junction, ownership, immutable full-byte conflict and monotonic projection guarantees. Real Linux baseline two existing ordinary tests RED, then GREEN plus symlink/ownership/fault-cleanup controls and cross-process directory replacement where feasible. Windows 79/79 focused and 252/254 floor with only known legacy N1/N2 REDs. Official SDK in own isolated storage allowed; source stays local. Do not edit live observers, App, hooks, dependencies or global configuration; no push or agents. Update owned design/ADR/phase plan/canonical proof plus audit. Commit with Copilot trailer, clean, released, ended. Independent COMPAT re-gate next; P0-P5 qualification remains pending.",
+      "summary": "Restored public Linux x86_64 publication using no-follow directory descriptors. Real Linux baseline 0/2 then 19/19; six focal mutant failures. Windows 79/79 and 252/254 with only original N1/N2. Source/API/SDK/binary/TRX pins in canonical proof. Independent COMPAT pending; bootstrap certificate message is an isolation caveat.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md",
+        "docs/proof/records/p25-portability/final-manifest.json"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Restore safe ordinary Linux publication without weakening Windows publication.",
+      "done_when": "Linux baseline and controls plus Windows floor, canonical proof, clean author commit.",
+      "tier": "T2",
+      "main_calls": 41,
+      "main_budget": 45,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-17T15:50:04Z",
+      "duration_seconds": 727.0
     }
   ],
   "changes": [

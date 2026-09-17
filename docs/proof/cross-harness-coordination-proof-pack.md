@@ -3284,3 +3284,86 @@ and no-activation boundary. Author evidence closes the three finite implementati
 evidence findings for review; it does **not** self-clear those gates, full P2,
 legacy N1/N2, production binding/scheduling, canonical integration, retention,
 old-binary rollback or P3–P5.
+
+## P2 COMPAT portability repair — 2026-09-17 author evidence
+
+**Correction:** `Unavailable` on every non-Windows public-helper call was a
+compatibility regression, not an accepted outcome. Ordinary Linux x86_64
+publication is restored. The public signature, JSON, existing test guards,
+Windows native installation, immutable comparison and monotonic latest selection
+are unchanged. No canonical completion, triage, human grant, production binder,
+schema, App or live observer changes occurred.
+
+### Execution/provider pins
+
+Raw evidence: `docs/proof/records/p25-portability/`. Named runs retain exact
+commands, actual exits, measured seconds, HEAD/source SHA256 receipts, full logs
+and TRX. `final-manifest.json` parses counters and expected legacy failure names;
+it pins final source/tests/build configuration, Windows/Linux binaries and SDKs.
+Baseline HEAD: `194863021d030faef6fb20a9f7bc385fb0c8d260`.
+
+Both SDKs are **10.0.303**. The Linux archive came from Microsoft's 10.0 release
+metadata and `builds.dotnet.microsoft.com`. Verified archive SHA512:
+`538df11ceb9d86bdda061bab6ede3d1f6d46bb9ba087ae905643f3d456afe982949d1b952bceb305a5d22d2d6e69cc0e5100216ffcc709aaa86e867f2d9cdf9a`.
+`sdk-source.json` retains the URL/hash. Linux: runtime 10.0.11, Ubuntu 24.04,
+x86_64, glibc 2.39, WSL kernel 6.18.33.2-microsoft-standard-WSL2.
+Native constants and libc calls were executed in `linux-api-spike.log`;
+contracts were checked against Linux man-pages
+[open](https://man7.org/linux/man-pages/man2/open.2.html),
+[rename](https://man7.org/linux/man-pages/man2/rename.2.html),
+[link](https://man7.org/linux/man-pages/man2/link.2.html), and
+[flock](https://man7.org/linux/man-pages/man2/flock.2.html).
+
+| Claim | Evidence / oracle | Red observed | Qualification |
+|---|---|---|---|
+| Existing ordinary clients work on Linux | Baseline exit 1: exactly the two existing tests fail with Unavailable. `linux-verified`: same tests pass within 19/19 | Real baseline, not SDK absence | Verified Linux x86_64 |
+| Root/ancestor/registration/leaf symlinks cannot redirect writes | Four real filesystem cases assert outside bytes/entries unchanged | `linux-mutant-follow`: three failures; outside entries become 4/3 and registration sentinel changes | Verified inode anchoring, not arbitrary rename prevention |
+| Different owners cannot overwrite the same filename | Linux `a/b`→`a-b`, mismatched owner, refused `a:b`; old bytes retained | Owner-check mutant yields two failures | Verified; Windows `a:b`/`a?b` controls remain within 79/79 |
+| Target failure closes descriptors | Repeated directory-as-file failure; `/proc/self/fd` unchanged; repaired target succeeds | Disposal mutant: 195 handles become 227 | Verified for this fault, not disk-full/unlink failure |
+| Other-process root replacement cannot select the output inode | `/bin/mv` plus `/bin/ln -s` while scope held; only original held registration gets a file | Replacement API spike; no separate replacement mutant | Executed internal-scope seam, not stochastic race immunity |
+| Cooperating scopes exclude each other | Second scope refuses while flock held; success after disposal | No lock mutant | Executed positive/negative, not hostile-writer fencing |
+| Windows floor retained | `windows-focus`: exit 0, 79/79; `windows-floor`: exit 1, 252/254 | Original N1 empty retry and N2 129th mutation still fail | Verified selected floor, not all-suite green |
+
+### Isolation and residual risk
+
+No source/customer data was uploaded. Restore used the existing Windows NuGet
+cache as its **only** source, with session-local Linux packages. SDK, packages,
+build/obj, CLI and `TMPDIR` lived under `/home/timmall/.aide-p25-b0d0`;
+source stayed in the owned worktree via measured `wslpath`. `Path.GetTempPath()`
+put fixtures on the WSL filesystem (`stat -f`: `ext2/ext3`), not DrvFS.
+The final manifest distinguishes SDK scratch/socket entries from test fixtures.
+The isolated SDK/build state is retained for independent reproduction; no
+synthetic `aide-p25-*` or `aide-reg-*` fixture remains.
+
+**Bootstrap caveat:** first restore printed “Installed an ASP.NET Core HTTPS
+development certificate.” Its storage was not inspected (credentials excluded)
+and no trust command was issued. Subsequent runs set isolated `HOME` and disable
+certificate generation. That message prevents claiming all first-run user-state
+effects were proven confined; independent review must retain this qualification.
+
+Other Unix kernels/architectures explicitly refuse. Pinned inode identity does
+not prevent an ancestor owner moving that inode; advisory flock does not fence
+uncooperative same-user writers. Absent-target competing-creator stress,
+disk-full/failed-unlink cleanup, crash-durability replay, macOS/ARM and
+released-binary rollback were not run. Public-helper normal-path latency remains
+unmeasured; structured errors and existing worker telemetry are unchanged.
+
+### Class → sweep → derive → prevent
+
+* **Class:** platform hardening accidentally gates a portable public entry.
+  **Sweep:** public Publish, internal PublishNative and owner preflight traced;
+  only the public helper needs the Linux path.
+* **Derive:** retain one serializer/owner parser; native relative operations,
+  not a second serializer or vulnerable path-write fallback.
+* **Prevent:** keep existing ordinary tests unguarded, with the new Linux controls
+  and retained no-follow/owner/disposal focal REDs.
+* **Correction during this run:** the new test guessed `generatedBy`;
+  `linux-green` records 18/19 due to that test error. It now uses the existing
+  `RegistrationPublisher.GeneratedByField`, eliminating the duplicated spelling
+  (RIG-A/DM-A). This was not a product failure.
+* Per ownership, class/control capture is here, not a new global lesson entry
+  or second Proof Pack.
+
+Six dependent nodes, zero agents; discovery cost exceeded the initial estimate.
+Run durations are measured in receipts. Independent COMPAT re-gating is next;
+no author self-cleared hard veto or P0–P5 completion claim is made.

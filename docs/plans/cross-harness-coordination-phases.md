@@ -942,6 +942,23 @@ is no second proof pack.
 
 This remains an **author checkpoint, not a phase approval**. Next continuation
 must independently re-gate the full source, privacy, domain and portability
-limits, evidence and no-activation boundary. Public non-Windows execution is
-Unavailable; uncooperative cross-process legacy actors are not fenced. Neither
+limits, evidence and no-activation boundary. Public non-Windows execution at that checkpoint was
+Unavailable; the P2 COMPAT correction below supersedes that regression.
+Uncooperative cross-process legacy actors are not fenced. Neither
 legacy N1/N2 nor full P2/P3–P5 is cleared, and canonical writing remains disabled.
+
+### P2 COMPAT author checkpoint — Linux ordinary publication restored
+
+The public helper is again usable on measured Linux x86_64, through a small
+descriptor-relative Linux publisher. The enhanced binder remains unavailable
+there. Both existing ordinary tests failed on the actual baseline with
+`COORD_NATIVE_UNAVAILABLE`, then passed unchanged. The Linux selection passed
+19/19. Three no-follow and three owner/descriptor-cleanup mutant failures were
+observed. A separate process replaced the pinned root without redirecting writes
+to its symlink target. Windows remains 79/79 focused and 252/254 in the exact
+previous selection; only the original N1/N2 assertions fail.
+
+Evidence: the canonical proof pack's P2 COMPAT section and
+`docs/proof/records/p25-portability/`. This is not independent review,
+Linux ARM/macOS qualification, hostile-writer fencing, or P0–P5 completion.
+Next: independent COMPAT re-gate before any upstream action.

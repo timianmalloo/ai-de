@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="1c195485-e08a-4ba7-97a4-432ef8fdc366" name="@TimmallStrix 2026-09-17 08:52:12" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-17T08:52:12.6000057-07:00" queuing="2026-09-17T08:52:12.6000058-07:00" start="2026-09-17T08:52:11.7889019-07:00" finish="2026-09-17T08:52:12.6029701-07:00" />
+  <TestSettings name="default" id="ff71a519-c1a8-45aa-9bec-2e58bc430f17">
+    <Deployment runDeploymentRoot="_TimmallStrix_2026-09-17_08_52_12" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="31aba33c-8839-4a89-b516-2d26356d1749" testId="18cb4be9-df3f-24fc-70ac-aeb446c56b4f" testName="AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheContractPumpCannotSeeTheNotice" computerName="TimmallStrix" duration="00:00:00.0004161" startTime="2026-09-17T08:52:12.5363864-07:00" endTime="2026-09-17T08:52:12.5364642-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="31aba33c-8839-4a89-b516-2d26356d1749">
+      <Output>
+        <ErrorInfo>
+          <Message>AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE</Message>
+          <StackTrace>   at AiDe.Core.Watcher.RegistrationPublisher.WithPinnedRegistration(String root, Boolean create, Action publish) in /mnt/c/Projects/ai-de-feature-xh-p2-projection/src/AiDe.Core/Watcher/RegistrationPublisher.cs:line 178
+   at AiDe.Core.Watcher.RegistrationPublisher.Publish(String coordLogDirectory, RegistrationNotice notice) in /mnt/c/Projects/ai-de-feature-xh-p2-projection/src/AiDe.Core/Watcher/RegistrationPublisher.cs:line 327
+   at AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheContractPumpCannotSeeTheNotice() in /mnt/c/Projects/ai-de-feature-xh-p2-projection/tests/AiDe.Core.Tests/Watcher/AWorktreeRegistrationIsCorrectedAndSaidSoTests.cs:line 226
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ccd75ac2-9add-475f-a4a5-3d2ae57c2a19" testId="2caa63c1-45da-9288-9e6f-cab5a957744f" testName="AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheAgentIsToldWhatChanged_AndWhy" computerName="TimmallStrix" duration="00:00:00.0197897" startTime="2026-09-17T08:52:12.5039593-07:00" endTime="2026-09-17T08:52:12.5286345-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ccd75ac2-9add-475f-a4a5-3d2ae57c2a19">
+      <Output>
+        <ErrorInfo>
+          <Message>AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE</Message>
+          <StackTrace>   at AiDe.Core.Watcher.RegistrationPublisher.WithPinnedRegistration(String root, Boolean create, Action publish) in /mnt/c/Projects/ai-de-feature-xh-p2-projection/src/AiDe.Core/Watcher/RegistrationPublisher.cs:line 178
+   at AiDe.Core.Watcher.RegistrationPublisher.Publish(String coordLogDirectory, RegistrationNotice notice) in /mnt/c/Projects/ai-de-feature-xh-p2-projection/src/AiDe.Core/Watcher/RegistrationPublisher.cs:line 327
+   at AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheAgentIsToldWhatChanged_AndWhy() in /mnt/c/Projects/ai-de-feature-xh-p2-projection/tests/AiDe.Core.Tests/Watcher/AWorktreeRegistrationIsCorrectedAndSaidSoTests.cs:line 172
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheAgentIsToldWhatChanged_AndWhy" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="2caa63c1-45da-9288-9e6f-cab5a957744f">
+      <Execution id="ccd75ac2-9add-475f-a4a5-3d2ae57c2a19" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests" name="TheAgentIsToldWhatChanged_AndWhy" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheContractPumpCannotSeeTheNotice" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="18cb4be9-df3f-24fc-70ac-aeb446c56b4f">
+      <Execution id="31aba33c-8839-4a89-b516-2d26356d1749" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests" name="TheContractPumpCannotSeeTheNotice" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="18cb4be9-df3f-24fc-70ac-aeb446c56b4f" executionId="31aba33c-8839-4a89-b516-2d26356d1749" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2caa63c1-45da-9288-9e6f-cab5a957744f" executionId="ccd75ac2-9add-475f-a4a5-3d2ae57c2a19" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests
+[xUnit.net 00:00:00.47]   Discovered:  AiDe.Core.Tests
+[xUnit.net 00:00:00.49]   Starting:    AiDe.Core.Tests
+[xUnit.net 00:00:00.53]       AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE
+[xUnit.net 00:00:00.53]       Stack Trace:
+[xUnit.net 00:00:00.53]         /mnt/c/Projects/ai-de-feature-xh-p2-projection/src/AiDe.Core/Watcher/RegistrationPublisher.cs(178,0): at AiDe.Core.Watcher.RegistrationPublisher.WithPinnedRegistration(String root, Boolean create, Action publish)
+[xUnit.net 00:00:00.53]         /mnt/c/Projects/ai-de-feature-xh-p2-projection/src/AiDe.Core/Watcher/RegistrationPublisher.cs(327,0): at AiDe.Core.Watcher.RegistrationPublisher.Publish(String coordLogDirectory, RegistrationNotice notice)
+[xUnit.net 00:00:00.53]         /mnt/c/Projects/ai-de-feature-xh-p2-projection/tests/AiDe.Core.Tests/Watcher/AWorktreeRegistrationIsCorrectedAndSaidSoTests.cs(172,0): at AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheAgentIsToldWhatChanged_AndWhy()
+[xUnit.net 00:00:00.53]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.53]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.53]       AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE
+[xUnit.net 00:00:00.53]       Stack Trace:
+[xUnit.net 00:00:00.53]         /mnt/c/Projects/ai-de-feature-xh-p2-projection/src/AiDe.Core/Watcher/RegistrationPublisher.cs(178,0): at AiDe.Core.Watcher.RegistrationPublisher.WithPinnedRegistration(String root, Boolean create, Action publish)
+[xUnit.net 00:00:00.53]         /mnt/c/Projects/ai-de-feature-xh-p2-projection/src/AiDe.Core/Watcher/RegistrationPublisher.cs(327,0): at AiDe.Core.Watcher.RegistrationPublisher.Publish(String coordLogDirectory, RegistrationNotice notice)
+[xUnit.net 00:00:00.53]         /mnt/c/Projects/ai-de-feature-xh-p2-projection/tests/AiDe.Core.Tests/Watcher/AWorktreeRegistrationIsCorrectedAndSaidSoTests.cs(226,0): at AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheContractPumpCannotSeeTheNotice()
+[xUnit.net 00:00:00.53]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.53]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.53]   Finished:    AiDe.Core.Tests
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TimmallStrix" outcome="Error" timestamp="2026-09-17T08:52:12.5309603-07:00">
+        <Text>[xUnit.net 00:00:00.53]     AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheAgentIsToldWhatChanged_AndWhy [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TimmallStrix" outcome="Error" timestamp="2026-09-17T08:52:12.5366756-07:00">
+        <Text>[xUnit.net 00:00:00.53]     AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheContractPumpCannotSeeTheNotice [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,17 @@
+{
+  "command": [
+    "wsl",
+    "--distribution",
+    "Ubuntu-24.04",
+    "--exec",
+    "python3",
+    "/mnt/c/Projects/ai-de-feature-xh-p2-projection/.p25-portability/spike.py",
+    "/home/timmall/.aide-p25-b0d0/fixtures"
+  ],
+  "exit": 0,
+  "seconds": 0.0779999999795109,
+  "head": "194863021d030faef6fb20a9f7bc385fb0c8d260",
+  "source": {
+    "src\\AiDe.Core\\Watcher\\RegistrationPublisher.cs": "f8d0b78eb8956e17d6d13a020186922941ecea5c79dac4b444351d84a58dd857"
+  }
+}

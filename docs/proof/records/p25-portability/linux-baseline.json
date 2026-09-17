@@ -1,0 +1,34 @@
+{
+  "command": [
+    "wsl",
+    "--distribution",
+    "Ubuntu-24.04",
+    "--exec",
+    "env",
+    "DOTNET_ROOT=/home/timmall/.aide-p25-b0d0/sdk",
+    "DOTNET_CLI_HOME=/home/timmall/.aide-p25-b0d0/cli",
+    "NUGET_PACKAGES=/home/timmall/.aide-p25-b0d0/packages",
+    "TMPDIR=/home/timmall/.aide-p25-b0d0/fixtures",
+    "DOTNET_CLI_TELEMETRY_OPTOUT=1",
+    "DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1",
+    "/home/timmall/.aide-p25-b0d0/sdk/dotnet",
+    "test",
+    "/mnt/c/Projects/ai-de-feature-xh-p2-projection/tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "--artifacts-path",
+    "/home/timmall/.aide-p25-b0d0/build",
+    "--filter",
+    "FullyQualifiedName~TheAgentIsToldWhatChanged_AndWhy|FullyQualifiedName~TheContractPumpCannotSeeTheNotice",
+    "--logger",
+    "trx;LogFileName=linux-baseline.trx",
+    "--results-directory",
+    "/mnt/c/Projects/ai-de-feature-xh-p2-projection/docs/proof/records/p25-portability",
+    "-p:NuGetAudit=false"
+  ],
+  "exit": 1,
+  "seconds": 6.812999999994645,
+  "head": "194863021d030faef6fb20a9f7bc385fb0c8d260",
+  "source": {
+    "src\\AiDe.Core\\Watcher\\RegistrationPublisher.cs": "f8d0b78eb8956e17d6d13a020186922941ecea5c79dac4b444351d84a58dd857"
+  }
+}

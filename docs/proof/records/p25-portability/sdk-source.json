@@ -1,0 +1,6 @@
+{
+  "name": "dotnet-sdk-linux-x64.tar.gz",
+  "rid": "linux-x64",
+  "url": "https://builds.dotnet.microsoft.com/dotnet/Sdk/10.0.303/dotnet-sdk-10.0.303-linux-x64.tar.gz",
+  "hash": "538df11ceb9d86bdda061bab6ede3d1f6d46bb9ba087ae905643f3d456afe982949d1b952bceb305a5d22d2d6e69cc0e5100216ffcc709aaa86e867f2d9cdf9a"
+}

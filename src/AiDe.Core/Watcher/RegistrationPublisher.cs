@@ -207,6 +207,11 @@ public static class RegistrationPublisher
         if (!File.Exists(path)) return;
         using var handle = OpenNativePath(path, directory: false);
         using var stream = new FileStream(handle, FileAccess.Read);
+        RequireCompatibilityOwner(stream, sessionId);
+    }
+
+    internal static void RequireCompatibilityOwner(Stream stream, string sessionId)
+    {
         if (stream.Length > 65536) throw NativeAdmissionErrors.Error(NativeAdmissionErrors.NoticeConflict);
         try
         {
@@ -324,6 +329,12 @@ public static class RegistrationPublisher
         document.Insert(0, GeneratedByField, JsonValue.Create(GeneratedBy));
 
         var bytes = System.Text.Encoding.UTF8.GetBytes(document.ToJsonString(Json));
+        if (OperatingSystem.IsLinux())
+        {
+            using var publication = RegistrationPublicationUnix.Open(coordLogDirectory);
+            publication.Publish(Path.GetFileName(path), notice.SessionId, bytes);
+            return path;
+        }
         WithPinnedRegistration(coordLogDirectory, create: true, () =>
         {
             RequireCompatibilityOwner(path, notice.SessionId);

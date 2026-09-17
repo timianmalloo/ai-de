@@ -304,3 +304,13 @@ No custom canonical writer, new DDL, callback-backed restart promise or producti
 binder activation. Existing destructive Drain remains explicitly unqualified.
 This replaces the earlier transport deferral only for the internal synthetic
 composition. Independent implementation gates and all broader P2 gates remain open.
+
+#### P2 COMPAT correction: preserve the public portable helper
+
+The Windows-only internal native transport must not disable the existing public
+legacy helper on portable Core. The design's 2026-09-17 P2 COMPAT contract adds
+a Linux x86_64 descriptor-relative scope while preserving the common serializer
+and owner check. Reject restoring path-based check-then-write, applying Windows
+UNC rules to a single-leading-slash Linux path, or treating notice publication
+as canonical completion. Other Unix ABIs remain explicitly unqualified;
+independent COMPAT review is pending.

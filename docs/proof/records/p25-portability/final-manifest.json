@@ -1,0 +1,276 @@
+{
+  "at": "2026-09-17T15:59:08.688721+00:00",
+  "head": "194863021d030faef6fb20a9f7bc385fb0c8d260",
+  "windows_sdk": ".NET SDK:\n Version:           10.0.303\n Commit:            e730f1db75\n Workload version:  10.0.300-manifests.31fc4b23\n MSBuild version:   18.6.14+e730f1db7\n\nRuntime Environment:\n OS Name:     Windows\n OS Version:  10.0.26200\n OS Platform: Windows\n RID:         win-x64\n Base Path:   C:\\Program Files\\dotnet\\sdk\\10.0.303\\\n\n.NET workloads installed:\n [maui-windows]\n   Installation Source: VS 18.7.11925.98\n   Manifest Version:    10.0.20/10.0.100\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.maui\\10.0.20\\WorkloadManifest.json\n   Install Type:              Msi\n\n [maccatalyst]\n   Installation Source: VS 18.7.11925.98\n   Manifest Version:    26.5.10284/10.0.100\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.maccatalyst\\26.5.10284\\WorkloadManifest.json\n   Install Type:              Msi\n\n [ios]\n   Installation Source: VS 18.7.11925.98\n   Manifest Version:    26.5.10284/10.0.100\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.ios\\26.5.10284\\WorkloadManifest.json\n   Install Type:              Msi\n\n [android]\n   Installation Source: VS 18.7.11925.98\n   Manifest Version:    36.1.43/10.0.100\n   Manifest Path:       C:\\Program Files\\dotnet\\sdk-manifests\\10.0.100\\microsoft.net.sdk.android\\36.1.43\\WorkloadManifest.json\n   Install Type:              Msi\n\nConfigured to use workload sets when installing new manifests.\nNo workload sets are installed. Run \"dotnet workload restore\" to install a workload set.\n\nHost:\n  Version:      10.0.11\n  Architecture: x64\n  Commit:       e2f47b0110\n\n.NET SDKs installed:\n  10.0.301 [C:\\Program Files\\dotnet\\sdk]\n  10.0.303 [C:\\Program Files\\dotnet\\sdk]\n\n.NET runtimes installed:\n  Microsoft.AspNetCore.App 8.0.28 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\n  Microsoft.AspNetCore.App 10.0.9 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\n  Microsoft.AspNetCore.App 10.0.11 [C:\\Program Files\\dotnet\\shared\\Microsoft.AspNetCore.App]\n  Microsoft.NETCore.App 8.0.21 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\n  Microsoft.NETCore.App 8.0.28 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\n  Microsoft.NETCore.App 8.0.31 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\n  Microsoft.NETCore.App 10.0.9 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\n  Microsoft.NETCore.App 10.0.11 [C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App]\n  Microsoft.WindowsDesktop.App 8.0.28 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\n  Microsoft.WindowsDesktop.App 10.0.9 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\n  Microsoft.WindowsDesktop.App 10.0.11 [C:\\Program Files\\dotnet\\shared\\Microsoft.WindowsDesktop.App]\n\nOther architectures found:\n  x86   [C:\\Program Files (x86)\\dotnet]\n    registered at [HKLM\\SOFTWARE\\dotnet\\Setup\\InstalledVersions\\x86\\InstallLocation]\n\nEnvironment variables:\n  Not set\n\nglobal.json file:\n  C:\\Projects\\ai-de-feature-xh-p2-projection\\global.json\n\nLearn more:\n  https://aka.ms/dotnet/info\n\nDownload .NET:\n  https://aka.ms/dotnet/download\n",
+  "linux_sdk": ".NET SDK:\n Version:           10.0.303\n Commit:            e730f1db75\n Workload version:  10.0.300-manifests.330ea142\n MSBuild version:   18.6.14+e730f1db7\n\nRuntime Environment:\n OS Name:     ubuntu\n OS Version:  24.04\n OS Platform: Linux\n RID:         linux-x64\n Base Path:   /home/timmall/.aide-p25-b0d0/sdk/sdk/10.0.303/\n\n.NET workloads installed:\nThere are no installed workloads to display.\nConfigured to use workload sets when installing new manifests.\nNo workload sets are installed. Run \"dotnet workload restore\" to install a workload set.\n\nHost:\n  Version:      10.0.11\n  Architecture: x64\n  Commit:       e2f47b0110\n\n.NET SDKs installed:\n  10.0.303 [/home/timmall/.aide-p25-b0d0/sdk/sdk]\n\n.NET runtimes installed:\n  Microsoft.AspNetCore.App 10.0.11 [/home/timmall/.aide-p25-b0d0/sdk/shared/Microsoft.AspNetCore.App]\n  Microsoft.NETCore.App 10.0.11 [/home/timmall/.aide-p25-b0d0/sdk/shared/Microsoft.NETCore.App]\n\nOther architectures found:\n  None\n\nEnvironment variables:\n  Not set\n\nglobal.json file:\n  /mnt/c/Projects/ai-de-feature-xh-p2-projection/global.json\n\nLearn more:\n  https://aka.ms/dotnet/info\n\nDownload .NET:\n  https://aka.ms/dotnet/download\n",
+  "linux_filesystem": "ext2/ext3",
+  "linux_binary_sha256": "32a874fddcae579534cda3054f5ea2521736f912ad24d4c2d54a3b223751978b  /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core/debug/AiDe.Core.dll\n6c332e9d3817ea48f3d5260424bc04041c479f092ca400b248c1d8bcb846d127  /home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll\n",
+  "sha256": {
+    "global.json": "9a043b1d3955efbb205f9dbd351e25dd0c7f060f9a9a08e03a54ba51a0971190",
+    "Directory.Packages.props": "a57d2ee58bd9787119f5d71c07b956a72f986fef30287647aabca25212e95f64",
+    "src\\AiDe.Core\\Watcher\\RegistrationPublisher.cs": "3a4e7213d0914322561370c50e2a81e6f33cdf60312f9fd1981398ef50fd4af8",
+    "src\\AiDe.Core\\Watcher\\RegistrationPublicationUnix.cs": "3cf588fe3b6e8fa5cd543eb8cb211a573523774ea94b869de28d86c03dc54860",
+    "tests\\AiDe.Core.Tests\\Watcher\\PortableRegistrationPublicationTests.cs": "0f05bdd2173cd22f28ea3182775a2a683a58d5b3fbe9f39aafbe490e992bfa84",
+    "tests\\AiDe.Core.Tests\\Watcher\\AWorktreeRegistrationIsCorrectedAndSaidSoTests.cs": "0b2c335e09e08cf9be28caf1438b26962e7dc403a6af2c2abe008dfc69207e76",
+    "src\\AiDe.Core\\bin\\Debug\\net10.0\\AiDe.Core.dll": "1f4821c50fabce57ce9fd4455d07869201e0a3abf44a819e3c2c785fc83d1e03",
+    "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll": "3030df0295ad6de9a1d548d196a790a82b221796f7f6e12d42413755883c8661"
+  },
+  "runs": {
+    "linux-baseline": {
+      "counters": {
+        "total": "2",
+        "executed": "2",
+        "passed": "0",
+        "failed": "2",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [
+        {
+          "name": "AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheContractPumpCannotSeeTheNotice",
+          "message": "AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE"
+        },
+        {
+          "name": "AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheAgentIsToldWhatChanged_AndWhy",
+          "message": "AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE"
+        }
+      ]
+    },
+    "linux-final": {
+      "counters": {
+        "total": "19",
+        "executed": "19",
+        "passed": "19",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": []
+    },
+    "linux-green": {
+      "counters": {
+        "total": "19",
+        "executed": "19",
+        "passed": "18",
+        "failed": "1",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [
+        {
+          "name": "AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SameOwnerUpdatesTheOrdinaryJson",
+          "message": "System.Collections.Generic.KeyNotFoundException : The given key was not present in the dictionary."
+        }
+      ]
+    },
+    "linux-mutant-follow": {
+      "counters": {
+        "total": "4",
+        "executed": "4",
+        "passed": "1",
+        "failed": "3",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [
+        {
+          "name": "AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: \"registration\")",
+          "message": "Assert.IsType() Failure: Value is null\nExpected: typeof(AiDe.Core.Watcher.WatcherException)\nActual:   null"
+        },
+        {
+          "name": "AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: \"ancestor\")",
+          "message": "Assert.IsType() Failure: Value is null\nExpected: typeof(AiDe.Core.Watcher.WatcherException)\nActual:   null"
+        },
+        {
+          "name": "AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: \"root\")",
+          "message": "Assert.IsType() Failure: Value is null\nExpected: typeof(AiDe.Core.Watcher.WatcherException)\nActual:   null"
+        }
+      ]
+    },
+    "linux-mutant-owner-cleanup": {
+      "counters": {
+        "total": "4",
+        "executed": "4",
+        "passed": "1",
+        "failed": "3",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [
+        {
+          "name": "AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.KnownDifferentOwnerIsNeverOverwritten(session: \"a/b\", otherOwner: \"a-b\")",
+          "message": "Assert.Throws() Failure: No exception was thrown\nExpected: typeof(AiDe.Core.Watcher.WatcherException)"
+        },
+        {
+          "name": "AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.KnownDifferentOwnerIsNeverOverwritten(session: \"session-1\", otherOwner: \"other-session\")",
+          "message": "Assert.Throws() Failure: No exception was thrown\nExpected: typeof(AiDe.Core.Watcher.WatcherException)"
+        },
+        {
+          "name": "AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.FailedTargetClosesAllDescriptorsAndLeavesNoTemporaryFiles",
+          "message": "Assert.Equal() Failure: Values differ\nExpected: 195\nActual:   227"
+        }
+      ]
+    },
+    "linux-verified": {
+      "counters": {
+        "total": "19",
+        "executed": "19",
+        "passed": "19",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": []
+    },
+    "windows-floor": {
+      "counters": {
+        "total": "254",
+        "executed": "254",
+        "passed": "252",
+        "failed": "2",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [
+        {
+          "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.DrainRegistrationNotices_PublicationFails_RetryRetainsOriginalCorrection",
+          "message": "Assert.Single() Failure: The collection was empty"
+        },
+        {
+          "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.Register_TwoHostsHave128OutstandingCorrections_RefusesBeforeNativeMutation",
+          "message": "Assert.Equal() Failure: Strings differ\r\n                            \u2193 (pos 17)\r\nExpected: \"{\"sessionRows\":128,\"firstCapabilities\":64\"\u00b7\u00b7\u00b7\r\nActual:   \"{\"sessionRows\":129,\"firstCapabilities\":64\"\u00b7\u00b7\u00b7\r\n                            \u2191 (pos 17)"
+        }
+      ]
+    },
+    "windows-focus": {
+      "counters": {
+        "total": "79",
+        "executed": "79",
+        "passed": "79",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": []
+    }
+  },
+  "isolation": {
+    "linux": "/home/timmall/.aide-p25-b0d0",
+    "windows": "C:\\Projects\\ai-de-feature-xh-p2-projection",
+    "fixture_files_remaining": [
+      "/home/timmall/.aide-p25-b0d0/fixtures/clr-debug-pipe-480-653-out",
+      "/home/timmall/.aide-p25-b0d0/fixtures/clr-debug-pipe-480-653-in",
+      "/home/timmall/.aide-p25-b0d0/fixtures/clr-debug-pipe-472-9733-out",
+      "/home/timmall/.aide-p25-b0d0/fixtures/clr-debug-pipe-646-765-in",
+      "/home/timmall/.aide-p25-b0d0/fixtures/q0V0bX",
+      "/home/timmall/.aide-p25-b0d0/fixtures/dotnet-diagnostic-450-12288-socket",
+      "/home/timmall/.aide-p25-b0d0/fixtures/dotnet-diagnostic-472-9733-socket",
+      "/home/timmall/.aide-p25-b0d0/fixtures/clr-debug-pipe-464-5891-out",
+      "/home/timmall/.aide-p25-b0d0/fixtures/2btTjU",
+      "/home/timmall/.aide-p25-b0d0/fixtures/clr-debug-pipe-454-17406-in",
+      "/home/timmall/.aide-p25-b0d0/fixtures/dotnet-diagnostic-646-765-socket",
+      "/home/timmall/.aide-p25-b0d0/fixtures/clr-debug-pipe-472-9733-in",
+      "/home/timmall/.aide-p25-b0d0/fixtures/clr-debug-pipe-464-5891-in",
+      "/home/timmall/.aide-p25-b0d0/fixtures/dotnet-diagnostic-464-5891-socket",
+      "/home/timmall/.aide-p25-b0d0/fixtures/Gjfad4",
+      "/home/timmall/.aide-p25-b0d0/fixtures/QbJvYy",
+      "/home/timmall/.aide-p25-b0d0/fixtures/clr-debug-pipe-450-12288-in",
+      "/home/timmall/.aide-p25-b0d0/fixtures/7rjjOP",
+      "/home/timmall/.aide-p25-b0d0/fixtures/JzCe1F",
+      "/home/timmall/.aide-p25-b0d0/fixtures/clr-debug-pipe-454-17406-out",
+      "/home/timmall/.aide-p25-b0d0/fixtures/kTvnYT",
+      "/home/timmall/.aide-p25-b0d0/fixtures/GOqqW4",
+      "/home/timmall/.aide-p25-b0d0/fixtures/NuGetScratchtimmall",
+      "/home/timmall/.aide-p25-b0d0/fixtures/9DiKev",
+      "/home/timmall/.aide-p25-b0d0/fixtures/clr-debug-pipe-646-765-out",
+      "/home/timmall/.aide-p25-b0d0/fixtures/qDBMIW",
+      "/home/timmall/.aide-p25-b0d0/fixtures/VVdFIx",
+      "/home/timmall/.aide-p25-b0d0/fixtures/clr-debug-pipe-450-12288-out",
+      "/home/timmall/.aide-p25-b0d0/fixtures/8yb84g",
+      "/home/timmall/.aide-p25-b0d0/fixtures/dotnet-diagnostic-454-17406-socket",
+      "/home/timmall/.aide-p25-b0d0/fixtures/dotnet-diagnostic-480-653-socket",
+      "/home/timmall/.aide-p25-b0d0/fixtures/EzKzhk",
+      "/home/timmall/.aide-p25-b0d0/fixtures/OjP58V"
+    ]
+  }
+}

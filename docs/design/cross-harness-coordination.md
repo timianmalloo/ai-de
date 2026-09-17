@@ -1304,3 +1304,56 @@ junction, same-owner/same-attempt wrong-version completion, and failure of the
 retained independent accounting reader after 128 accepted obligations.
 The existing worker-store disposal test does not establish that last property.
 Independent Test/Data/Security re-gating remains required.
+
+### P2 COMPAT portability repair — 2026-09-17
+
+The Windows-only guard on **public legacy** `RegistrationPublisher.Publish` is
+a regression, not an approved compatibility break. The two existing unguarded
+ordinary-publication tests failed on Ubuntu 24.04 / .NET SDK 10.0.303 at
+`194863021d030faef6fb20a9f7bc385fb0c8d260`, both with
+`COORD_NATIVE_UNAVAILABLE`. Their JSON and filenames must remain unchanged.
+The enhanced production binder and `PublishNative` remain Windows-qualified;
+restoring this helper does not admit, complete, triage, or grant an operation.
+
+Reuse the existing serializer, filename mapper, owner parser and error codes.
+Add only a Linux directory-descriptor scope: open `/`, walk each validated
+component with `openat(O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC)`, create missing
+components with `mkdirat`, and retain all handles through installation.
+Within the pinned registration directory, take a nonblocking `flock` to serialize
+cooperating publishers, check existing exact session ownership through a
+no-follow read, create a unique exclusive 0600 temporary file, flush it, and
+install relative to that same descriptor. For an absent target, `linkat` must
+fail rather than overwrite a concurrent creator. For a same-owner latest
+document, `renameat` atomically replaces the directory entry, never follows it.
+Remove the temporary entry with `unlinkat` and close every handle on failure.
+No new package, persistent lock file, global permission change, or schema.
+
+The Linux x86_64 spike executed these contracts on the session's WSL filesystem
+(the measured `stat -f` type is `ext2/ext3`, not DrvFS);
+Linux man-pages `open(2)`, `rename(2)`, `link(2)`, and `flock(2)` describe their
+signatures and semantics. Constants were measured from installed Python's `os`
+and `fcntl` modules and exercised through libc 2.39, not copied from memory.
+Reject NUL, relative paths, device/UNC forms and filesystem-root publication;
+a single-leading-slash Linux absolute path is not UNC.
+
+Scope is **pinned directory identity**, not a promise to prevent an owner of an
+ancestor from renaming that directory elsewhere. Replacing a path component with
+a symlink does not redirect descriptor-relative writes to the symlink target.
+The advisory lock does not fence arbitrary noncooperating writers. macOS,
+other Unix kernels and non-x86_64 architectures are unqualified and refuse;
+do not apply the measured Linux x86_64 ABI constants to them.
+No macOS support claim was found in the consulted architecture/README.
+
+Surface list: public caller root → existing validation/serialization → Linux
+descriptor scope → exact-owner check → atomic latest file → unchanged ordinary
+reader/pump exclusions. Windows native immutable bytes, monotonic latest
+projection and production admission are untouched.
+
+Execution graph: baseline/API spike → this contract → retained tests/repair →
+Linux controls/mutants → Windows regression → evidence/commit. These are data
+dependencies; builds are serial to avoid shared output contention. Six modeled
+equal-cost nodes give work/span 6/6 (Inferred), width one, zero agents. Fixed
+oracles cover outside-symlink writes, conflicting ownership, no-overwrite
+creation, descriptor cleanup and pinned-directory replacement; stop when each
+is observed or explicitly qualified. Independent COMPAT review is the next gate,
+not a claim the implementation author can clear.

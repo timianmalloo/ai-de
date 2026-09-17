@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="8040b48d-ba60-4900-a8f7-098040ec0ca5" name="@TimmallStrix 2026-09-17 08:55:38" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-17T08:55:38.0135673-07:00" queuing="2026-09-17T08:55:38.0135673-07:00" start="2026-09-17T08:55:37.2028195-07:00" finish="2026-09-17T08:55:38.0328755-07:00" />
+  <TestSettings name="default" id="e08bd225-8682-40cb-8058-06249a1eb53a">
+    <Deployment runDeploymentRoot="_TimmallStrix_2026-09-17_08_55_38" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="64ad4ef1-3b55-42a0-bca4-fde38538edb0" testId="0b75f851-ca9b-edc2-8e44-8d9c30aaf657" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.InvalidRootsRefuseBeforeAnyFileEffect(root: &quot;//server/share&quot;)" computerName="TimmallStrix" duration="00:00:00.0022952" startTime="2026-09-17T08:55:37.9438874-07:00" endTime="2026-09-17T08:55:37.9492247-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="64ad4ef1-3b55-42a0-bca4-fde38538edb0" />
+    <UnitTestResult executionId="093e1926-b38c-4711-bb6c-a38888ae7f9c" testId="3e8b237b-0a94-3a95-2d80-1a55640ffbce" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.CompetingScopeRefusesAndLockIsReleasedOnDispose" computerName="TimmallStrix" duration="00:00:00.0035285" startTime="2026-09-17T08:55:37.9832836-07:00" endTime="2026-09-17T08:55:37.9833180-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="093e1926-b38c-4711-bb6c-a38888ae7f9c" />
+    <UnitTestResult executionId="404a6fcb-978e-4827-9c9f-6eba7a96c437" testId="e1bba1cc-ba7c-c22e-8ec2-331293bab0a9" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: &quot;ancestor&quot;)" computerName="TimmallStrix" duration="00:00:00.0014478" startTime="2026-09-17T08:55:37.9834779-07:00" endTime="2026-09-17T08:55:37.9834985-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="404a6fcb-978e-4827-9c9f-6eba7a96c437" />
+    <UnitTestResult executionId="ad1d751b-f19f-4056-8332-0612d27be1fe" testId="fc2682d1-456f-c5a2-b279-d6d3c3f8c835" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.KnownDifferentOwnerIsNeverOverwritten(session: &quot;a/b&quot;, otherOwner: &quot;a-b&quot;)" computerName="TimmallStrix" duration="00:00:00.0017596" startTime="2026-09-17T08:55:37.9664439-07:00" endTime="2026-09-17T08:55:37.9681765-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ad1d751b-f19f-4056-8332-0612d27be1fe" />
+    <UnitTestResult executionId="701fd5e6-9528-4b28-b55a-726b3d6483e7" testId="7660ed1c-2ac9-845a-b345-061c7574fbb3" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: &quot;registration&quot;)" computerName="TimmallStrix" duration="00:00:00.0005328" startTime="2026-09-17T08:55:37.9836412-07:00" endTime="2026-09-17T08:55:37.9836570-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="701fd5e6-9528-4b28-b55a-726b3d6483e7" />
+    <UnitTestResult executionId="524c7784-ee3e-4323-a28b-13f1d642bb36" testId="18cb4be9-df3f-24fc-70ac-aeb446c56b4f" testName="AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheContractPumpCannotSeeTheNotice" computerName="TimmallStrix" duration="00:00:00.0032440" startTime="2026-09-17T08:55:37.9983804-07:00" endTime="2026-09-17T08:55:38.0007220-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="524c7784-ee3e-4323-a28b-13f1d642bb36" />
+    <UnitTestResult executionId="d669901b-00ae-4799-a43c-1c36d219b5d0" testId="65f8a8eb-c287-4cb7-d050-b86682ed0b2a" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.FailedTargetClosesAllDescriptorsAndLeavesNoTemporaryFiles" computerName="TimmallStrix" duration="00:00:00.0055973" startTime="2026-09-17T08:55:37.9836949-07:00" endTime="2026-09-17T08:55:37.9837114-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d669901b-00ae-4799-a43c-1c36d219b5d0" />
+    <UnitTestResult executionId="24d95095-037a-49bc-a3f0-8cedde2c958b" testId="ef656771-6529-053c-0bda-4a6bb951c0f1" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SameOwnerUpdatesTheOrdinaryJson" computerName="TimmallStrix" duration="00:00:00.0034995" startTime="2026-09-17T08:55:37.9866599-07:00" endTime="2026-09-17T08:55:37.9901177-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="24d95095-037a-49bc-a3f0-8cedde2c958b" />
+    <UnitTestResult executionId="3e4c65db-4591-4f32-bd7c-c671f05cd627" testId="953ae927-1480-d64e-2ed2-fccefe84abac" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.InvalidRootsRefuseBeforeAnyFileEffect(root: &quot;/dev/NUL&quot;)" computerName="TimmallStrix" duration="00:00:00.0002164" startTime="2026-09-17T08:55:37.9546963-07:00" endTime="2026-09-17T08:55:37.9547201-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3e4c65db-4591-4f32-bd7c-c671f05cd627" />
+    <UnitTestResult executionId="71456a89-b614-450e-92da-a081388c730f" testId="04f420da-2c02-44dc-8d05-3f547a954df7" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: &quot;target&quot;)" computerName="TimmallStrix" duration="00:00:00.0006241" startTime="2026-09-17T08:55:37.9835439-07:00" endTime="2026-09-17T08:55:37.9835616-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="71456a89-b614-450e-92da-a081388c730f" />
+    <UnitTestResult executionId="bafc0e47-f490-4b37-a18b-2eda00baea9d" testId="dcf69695-b710-058c-0630-2de0cb00a845" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.KnownDifferentOwnerIsNeverOverwritten(session: &quot;session-1&quot;, otherOwner: &quot;other-session&quot;)" computerName="TimmallStrix" duration="00:00:00.0006900" startTime="2026-09-17T08:55:37.9682268-07:00" endTime="2026-09-17T08:55:37.9688829-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bafc0e47-f490-4b37-a18b-2eda00baea9d" />
+    <UnitTestResult executionId="2a900a63-6c0e-47e0-a9f6-d4d45d027f71" testId="0b51a57f-57f3-af97-97f9-dc3dc7ef1510" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: &quot;root&quot;)" computerName="TimmallStrix" duration="00:00:00.0005522" startTime="2026-09-17T08:55:37.9835962-07:00" endTime="2026-09-17T08:55:37.9836126-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2a900a63-6c0e-47e0-a9f6-d4d45d027f71" />
+    <UnitTestResult executionId="124c551a-91d6-4a99-a431-f038eff168e0" testId="7b4253e4-87d1-deed-1f9e-f44a1c54aa00" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.InvalidRootsRefuseBeforeAnyFileEffect(root: &quot;\\\\?\\C:\\device&quot;)" computerName="TimmallStrix" duration="00:00:00.0000031" startTime="2026-09-17T08:55:37.9548116-07:00" endTime="2026-09-17T08:55:37.9548285-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="124c551a-91d6-4a99-a431-f038eff168e0" />
+    <UnitTestResult executionId="6f2229aa-6450-4e39-8635-df19863cc9ec" testId="e8578e7e-2ba6-9eb1-ce32-15b31ae45440" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.OtherProcessReplacingRootCannotSelectTheWriteDirectory" computerName="TimmallStrix" duration="00:00:00.0051789" startTime="2026-09-17T08:55:37.9837475-07:00" endTime="2026-09-17T08:55:37.9865808-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6f2229aa-6450-4e39-8635-df19863cc9ec" />
+    <UnitTestResult executionId="c4f0f2ba-31a8-464a-a2cc-fd31bd6a42a3" testId="eaaf768a-e10a-6339-ce4f-3cc952cc903e" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.InvalidRootsRefuseBeforeAnyFileEffect(root: &quot;relative&quot;)" computerName="TimmallStrix" duration="00:00:00.0000979" startTime="2026-09-17T08:55:37.9543232-07:00" endTime="2026-09-17T08:55:37.9543611-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c4f0f2ba-31a8-464a-a2cc-fd31bd6a42a3" />
+    <UnitTestResult executionId="2eb1ff2c-656b-4500-a799-71d3e83543dc" testId="2caa63c1-45da-9288-9e6f-cab5a957744f" testName="AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheAgentIsToldWhatChanged_AndWhy" computerName="TimmallStrix" duration="00:00:00.0061465" startTime="2026-09-17T08:55:37.9916116-07:00" endTime="2026-09-17T08:55:37.9974434-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2eb1ff2c-656b-4500-a799-71d3e83543dc" />
+    <UnitTestResult executionId="e4165020-28f8-42ed-8d01-a6d7baaf6ef7" testId="f9f14b96-f684-0b6e-11b4-6626c806fc70" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.KnownDifferentOwnerIsNeverOverwritten(session: &quot;a:b&quot;, otherOwner: &quot;a?b&quot;)" computerName="TimmallStrix" duration="00:00:00.0029640" startTime="2026-09-17T08:55:37.9638043-07:00" endTime="2026-09-17T08:55:37.9663899-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e4165020-28f8-42ed-8d01-a6d7baaf6ef7" />
+    <UnitTestResult executionId="717aa885-0e57-4c5a-8ad8-969755d68491" testId="d2790738-d2ce-79a4-d05a-835e0c87b51b" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.InvalidRootsRefuseBeforeAnyFileEffect(root: &quot;nul\0path&quot;)" computerName="TimmallStrix" duration="00:00:00.0000078" startTime="2026-09-17T08:55:37.9547601-07:00" endTime="2026-09-17T08:55:37.9547778-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="717aa885-0e57-4c5a-8ad8-969755d68491" />
+    <UnitTestResult executionId="81e820a3-1ec1-40aa-a368-e85c71183024" testId="b5fef061-18b9-1cc7-cc4b-aca9405c6b75" testName="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.InvalidRootsRefuseBeforeAnyFileEffect(root: &quot;/&quot;)" computerName="TimmallStrix" duration="00:00:00.0138612" startTime="2026-09-17T08:55:37.9548566-07:00" endTime="2026-09-17T08:55:37.9633604-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="81e820a3-1ec1-40aa-a368-e85c71183024" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.InvalidRootsRefuseBeforeAnyFileEffect(root: &quot;/&quot;)" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="b5fef061-18b9-1cc7-cc4b-aca9405c6b75">
+      <Execution id="81e820a3-1ec1-40aa-a368-e85c71183024" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="InvalidRootsRefuseBeforeAnyFileEffect" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.KnownDifferentOwnerIsNeverOverwritten(session: &quot;a/b&quot;, otherOwner: &quot;a-b&quot;)" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="fc2682d1-456f-c5a2-b279-d6d3c3f8c835">
+      <Execution id="ad1d751b-f19f-4056-8332-0612d27be1fe" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="KnownDifferentOwnerIsNeverOverwritten" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.CompetingScopeRefusesAndLockIsReleasedOnDispose" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="3e8b237b-0a94-3a95-2d80-1a55640ffbce">
+      <Execution id="093e1926-b38c-4711-bb6c-a38888ae7f9c" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="CompetingScopeRefusesAndLockIsReleasedOnDispose" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheContractPumpCannotSeeTheNotice" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="18cb4be9-df3f-24fc-70ac-aeb446c56b4f">
+      <Execution id="524c7784-ee3e-4323-a28b-13f1d642bb36" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests" name="TheContractPumpCannotSeeTheNotice" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.FailedTargetClosesAllDescriptorsAndLeavesNoTemporaryFiles" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="65f8a8eb-c287-4cb7-d050-b86682ed0b2a">
+      <Execution id="d669901b-00ae-4799-a43c-1c36d219b5d0" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="FailedTargetClosesAllDescriptorsAndLeavesNoTemporaryFiles" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.InvalidRootsRefuseBeforeAnyFileEffect(root: &quot;/dev/NUL&quot;)" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="953ae927-1480-d64e-2ed2-fccefe84abac">
+      <Execution id="3e4c65db-4591-4f32-bd7c-c671f05cd627" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="InvalidRootsRefuseBeforeAnyFileEffect" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.InvalidRootsRefuseBeforeAnyFileEffect(root: &quot;\\\\?\\C:\\device&quot;)" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="7b4253e4-87d1-deed-1f9e-f44a1c54aa00">
+      <Execution id="124c551a-91d6-4a99-a431-f038eff168e0" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="InvalidRootsRefuseBeforeAnyFileEffect" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.InvalidRootsRefuseBeforeAnyFileEffect(root: &quot;relative&quot;)" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="eaaf768a-e10a-6339-ce4f-3cc952cc903e">
+      <Execution id="c4f0f2ba-31a8-464a-a2cc-fd31bd6a42a3" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="InvalidRootsRefuseBeforeAnyFileEffect" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: &quot;ancestor&quot;)" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="e1bba1cc-ba7c-c22e-8ec2-331293bab0a9">
+      <Execution id="404a6fcb-978e-4827-9c9f-6eba7a96c437" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="SymlinkCannotRedirectPublication" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.InvalidRootsRefuseBeforeAnyFileEffect(root: &quot;//server/share&quot;)" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="0b75f851-ca9b-edc2-8e44-8d9c30aaf657">
+      <Execution id="64ad4ef1-3b55-42a0-bca4-fde38538edb0" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="InvalidRootsRefuseBeforeAnyFileEffect" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: &quot;registration&quot;)" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="7660ed1c-2ac9-845a-b345-061c7574fbb3">
+      <Execution id="701fd5e6-9528-4b28-b55a-726b3d6483e7" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="SymlinkCannotRedirectPublication" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.KnownDifferentOwnerIsNeverOverwritten(session: &quot;a:b&quot;, otherOwner: &quot;a?b&quot;)" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="f9f14b96-f684-0b6e-11b4-6626c806fc70">
+      <Execution id="e4165020-28f8-42ed-8d01-a6d7baaf6ef7" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="KnownDifferentOwnerIsNeverOverwritten" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SameOwnerUpdatesTheOrdinaryJson" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="ef656771-6529-053c-0bda-4a6bb951c0f1">
+      <Execution id="24d95095-037a-49bc-a3f0-8cedde2c958b" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="SameOwnerUpdatesTheOrdinaryJson" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.InvalidRootsRefuseBeforeAnyFileEffect(root: &quot;nul\0path&quot;)" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="d2790738-d2ce-79a4-d05a-835e0c87b51b">
+      <Execution id="717aa885-0e57-4c5a-8ad8-969755d68491" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="InvalidRootsRefuseBeforeAnyFileEffect" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: &quot;target&quot;)" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="04f420da-2c02-44dc-8d05-3f547a954df7">
+      <Execution id="71456a89-b614-450e-92da-a081388c730f" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="SymlinkCannotRedirectPublication" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.SymlinkCannotRedirectPublication(position: &quot;root&quot;)" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="0b51a57f-57f3-af97-97f9-dc3dc7ef1510">
+      <Execution id="2a900a63-6c0e-47e0-a9f6-d4d45d027f71" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="SymlinkCannotRedirectPublication" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheAgentIsToldWhatChanged_AndWhy" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="2caa63c1-45da-9288-9e6f-cab5a957744f">
+      <Execution id="2eb1ff2c-656b-4500-a799-71d3e83543dc" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests" name="TheAgentIsToldWhatChanged_AndWhy" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.OtherProcessReplacingRootCannotSelectTheWriteDirectory" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="e8578e7e-2ba6-9eb1-ce32-15b31ae45440">
+      <Execution id="6f2229aa-6450-4e39-8635-df19863cc9ec" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="OtherProcessReplacingRootCannotSelectTheWriteDirectory" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests.KnownDifferentOwnerIsNeverOverwritten(session: &quot;session-1&quot;, otherOwner: &quot;other-session&quot;)" storage="/home/timmall/.aide-p25-b0d0/build/bin/aide.core.tests/debug/aide.core.tests.dll" id="dcf69695-b710-058c-0630-2de0cb00a845">
+      <Execution id="bafc0e47-f490-4b37-a18b-2eda00baea9d" />
+      <TestMethod codeBase="/home/timmall/.aide-p25-b0d0/build/bin/AiDe.Core.Tests/debug/AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.PortableRegistrationPublicationTests" name="KnownDifferentOwnerIsNeverOverwritten" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="0b75f851-ca9b-edc2-8e44-8d9c30aaf657" executionId="64ad4ef1-3b55-42a0-bca4-fde38538edb0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3e8b237b-0a94-3a95-2d80-1a55640ffbce" executionId="093e1926-b38c-4711-bb6c-a38888ae7f9c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e1bba1cc-ba7c-c22e-8ec2-331293bab0a9" executionId="404a6fcb-978e-4827-9c9f-6eba7a96c437" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fc2682d1-456f-c5a2-b279-d6d3c3f8c835" executionId="ad1d751b-f19f-4056-8332-0612d27be1fe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7660ed1c-2ac9-845a-b345-061c7574fbb3" executionId="701fd5e6-9528-4b28-b55a-726b3d6483e7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="18cb4be9-df3f-24fc-70ac-aeb446c56b4f" executionId="524c7784-ee3e-4323-a28b-13f1d642bb36" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="65f8a8eb-c287-4cb7-d050-b86682ed0b2a" executionId="d669901b-00ae-4799-a43c-1c36d219b5d0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ef656771-6529-053c-0bda-4a6bb951c0f1" executionId="24d95095-037a-49bc-a3f0-8cedde2c958b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="953ae927-1480-d64e-2ed2-fccefe84abac" executionId="3e4c65db-4591-4f32-bd7c-c671f05cd627" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="04f420da-2c02-44dc-8d05-3f547a954df7" executionId="71456a89-b614-450e-92da-a081388c730f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dcf69695-b710-058c-0630-2de0cb00a845" executionId="bafc0e47-f490-4b37-a18b-2eda00baea9d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0b51a57f-57f3-af97-97f9-dc3dc7ef1510" executionId="2a900a63-6c0e-47e0-a9f6-d4d45d027f71" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7b4253e4-87d1-deed-1f9e-f44a1c54aa00" executionId="124c551a-91d6-4a99-a431-f038eff168e0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e8578e7e-2ba6-9eb1-ce32-15b31ae45440" executionId="6f2229aa-6450-4e39-8635-df19863cc9ec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eaaf768a-e10a-6339-ce4f-3cc952cc903e" executionId="c4f0f2ba-31a8-464a-a2cc-fd31bd6a42a3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2caa63c1-45da-9288-9e6f-cab5a957744f" executionId="2eb1ff2c-656b-4500-a799-71d3e83543dc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f9f14b96-f684-0b6e-11b4-6626c806fc70" executionId="e4165020-28f8-42ed-8d01-a6d7baaf6ef7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d2790738-d2ce-79a4-d05a-835e0c87b51b" executionId="717aa885-0e57-4c5a-8ad8-969755d68491" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b5fef061-18b9-1cc7-cc4b-aca9405c6b75" executionId="81e820a3-1ec1-40aa-a368-e85c71183024" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="19" executed="19" passed="19" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.Core.Tests
+[xUnit.net 00:00:00.46]   Discovered:  AiDe.Core.Tests
+[xUnit.net 00:00:00.49]   Starting:    AiDe.Core.Tests
+[xUnit.net 00:00:00.56]   Finished:    AiDe.Core.Tests
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

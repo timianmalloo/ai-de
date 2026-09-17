@@ -1,0 +1,5 @@
+{
+  "windows_bootstrap_directory_exists": false,
+  "linux_setup_retained": "/home/timmall/.aide-p25-b0d0",
+  "reason": "Independent COMPAT reproduction with isolated SDK/build/package state; no worktree removed."
+}
