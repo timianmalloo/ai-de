@@ -1,0 +1,39 @@
+[
+  {
+    "label": "green-build",
+    "command": [
+      "dotnet",
+      "build",
+      "C:\\Projects\\ai-de-feature-xh-p2-projection\\spikes\\canonical-coordination-contract\\CanonicalProbe.csproj",
+      "--nologo",
+      "-v:q"
+    ],
+    "exit": 0,
+    "durationSeconds": 1.0538450000167359
+  },
+  {
+    "label": "green-probe",
+    "command": [
+      "dotnet",
+      "C:\\Projects\\ai-de-feature-xh-p2-projection\\spikes\\canonical-coordination-contract\\bin\\Debug\\net10.0\\CanonicalProbe.dll",
+      "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\Watcher\\Fixtures\\canonical-coordination-v1.json"
+    ],
+    "exit": 0,
+    "durationSeconds": 0.10329560001264326
+  },
+  {
+    "label": "green-tests",
+    "command": [
+      "dotnet",
+      "test",
+      "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "--no-restore",
+      "--nologo",
+      "-v:q",
+      "--filter",
+      "FullyQualifiedName~CanonicalCoordinationContractTests"
+    ],
+    "exit": 0,
+    "durationSeconds": 2.360790900012944
+  }
+]

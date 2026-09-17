@@ -1357,3 +1357,53 @@ oracles cover outside-symlink writes, conflicting ownership, no-overwrite
 creation, descriptor cleanup and pinned-directory replacement; stop when each
 is observed or explicitly qualified. Independent COMPAT review is the next gate,
 not a claim the implementation author can clear.
+
+### 2026-09-17 Data continuation: bounded canonical-byte experiment
+
+The current Data choice is a **conformance-locked C# reader of the P1 definition**,
+not a second writer, fold or status authority. Canonical `.agents` capture remains
+the single source of truth. No Python-per-UI-read dependency is admitted.
+`spikes/canonical-coordination-contract/` is experimental tooling only. It is
+linked into tests, not Core; its probe references Core for existing identity
+conversion. This does not admit a bridge, source adapter, migration or live pump.
+
+The pinned Python definition is commit
+`ebd4f1c8473b70934ec29d778419289719ef5481`, `coord_protocol.py:104-108`,
+`validate_fact:122-171`, and `coord-core.py:462-568`. The versioned golden fixture
+records SHA-256 for the actual six imported source/support/test files. Python
+fixtures are called directly; no transcript or live coordination data is used.
+Byte parity is established for the retained corpus, **not the entire reader
+contract**. The probe explicitly emits `fullContractQualified: false`.
+
+Required bridge changes remain proposals:
+
+* Select a physical primary checkout from trusted composition first. Official
+  `repo_identity.canonical_project` returns a display/project-name string;
+  native `RepositoryIdentity` carries canonical path and display name.
+  Synthetic distinct repositories with equal remote basenames return the same
+  project name. Neither that name nor an event's `repositoryId` may select a store.
+  The trusted mapping to the canonical event repository ID is still unqualified.
+* Use an origin-qualified, versioned scope containing repository, origin,
+  physical source path and epoch. Four strict UTF-8/base64 components separated
+  by `|` are injective before hashing: base64 cannot contain that delimiter.
+  The 6,561-tuple test exercises empty values, delimiters, NUL and Unicode.
+  Filesystem normalization and opaque/public-source-ID server mapping are separate;
+  the test is not a claim that physical and public identities coincide.
+* P1 accepts up to 65,536 input bytes **excluding** CRLF. Canonical-origin capture
+  must retain up to 65,538 raw bytes, including CRLF, without silently dropping
+  a valid record. Existing native capture/cache guards include LF and remain
+  unchanged at 65,536. Propose origin-qualified raw limits and corresponding
+  additive cache constraints; do not widen all native/publication guards.
+  Responses already bound validated canonical bytes to 32,768. Facts bound their
+  full Python reserialization to 65,536, which also bounds their smaller compact
+  semantic representation. Do not infer an unbounded validated-output problem
+  from an unchecked serializer expansion.
+* Complete P1 envelope/error parity before a reader can be called qualified:
+  exact fields, all five event types, endpoints with **string** generations,
+  schema integers, timestamp and sequence rules, proposal/authority shapes and
+  origin-specific bounds. The byte codec deliberately does not implement these
+  admission rules. The retained invalid ledger makes this missing surface visible.
+
+Independent review of the new generator, numeric normalization, parser and tests
+is next. The full Proof Pack records the byte evidence and remaining errors.
+No runtime clearance follows from this experiment.

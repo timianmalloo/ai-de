@@ -962,3 +962,38 @@ Evidence: the canonical proof pack's P2 COMPAT section and
 `docs/proof/records/p25-portability/`. This is not independent review,
 Linux ARM/macOS qualification, hostile-writer fencing, or P0–P5 completion.
 Next: independent COMPAT re-gate before any upstream action.
+
+### 2026-09-17 bounded canonical contract spike checkpoint
+
+The supplied independent COMPAT receipt closes its last documentation-only SCOPE
+gap; see the single canonical Proof Pack. It does not clear macOS/ARM or new code.
+
+This continuation stops **before bridge source**. Goal: retained pinned Python
+oracle, C# byte candidate, fixed corpus, real native-bound measurements, synthetic
+Git mapping and explicit remaining Data scope. Not in scope: P1/primary edits,
+live observers/endpoints, bridge/admission/migration, upstream, or P3-P5 code.
+T2 experiment; zero agents; 35-call ceiling; 150k context ceiling.
+
+| Node / capability | Input -> exit | Dependency |
+|---|---|---|
+| Ground / Reasoning | Exact pins/source/validators/fixtures -> contracts read | none |
+| Oracle / Deterministic mechanics | Pinned imports -> versioned bounded corpus | Ground, data |
+| RED / Deterministic mechanics | Corpus + BCL baseline -> focal mismatches retained | Oracle, data |
+| Candidate / Reasoning | RED evidence -> versioned R-format/Unicode normalization | RED, decision |
+| Qualify / Deterministic mechanics | Candidate -> parity, invalid ledger, real bounds/mapping | Candidate, data |
+| Seal / Deterministic mechanics | Measured results -> proof, audit, commit | Qualify, data |
+
+No independent branches or agents: the source-to-vector-to-candidate trace is
+tightly coupled. Modeled work/span are 6/6 equal-cost nodes, width 1 (Inferred),
+so parallelism buys no modeled span reduction. Fixed worklist decreases to zero:
+10,000 seeded finite patterns plus finite decimal families and explicit edges;
+cap 15,000 cases and 2 MiB. The cap is a refusal, not a retry-until-green loop.
+Actual: six nodes; one test-placement compile repair retained separately.
+Runtime/durations are in spike receipts, tokens not measured. No gate was waived
+to get byte parity: full envelope/error and binding qualification remain blocked.
+
+Next: independent new-code/generator review and completion of missing contract
+surfaces **before** canonical bridge implementation. Full P2 legacy N1/N2,
+canonical bridge, recovery, old-binary proof, P3-P5 and upstream remain pending.
+P3/P5 exact-expiry snapshots and their inverse cases stay deferred, not implemented
+as live observer coalescing in this spike.

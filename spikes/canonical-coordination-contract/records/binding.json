@@ -1,0 +1,37 @@
+{
+  "code": "SPIKE.BINDING_OK",
+  "rows": [
+    {
+      "physicalCheckout": "C:\\Users\\malla\\AppData\\Local\\Temp\\canonical-oracle-g2ychmpj\\synthetic",
+      "officialPrimary": "C:\\Users\\malla\\AppData\\Local\\Temp\\canonical-oracle-g2ychmpj\\synthetic",
+      "officialProject": "same-name",
+      "native": {
+        "CanonicalPath": "c:\\users\\malla\\appdata\\local\\temp\\canonical-oracle-g2ychmpj\\synthetic",
+        "DisplayName": "synthetic",
+        "physical": "c:\\users\\malla\\appdata\\local\\temp\\canonical-oracle-g2ychmpj\\synthetic"
+      }
+    },
+    {
+      "physicalCheckout": "C:\\Users\\malla\\AppData\\Local\\Temp\\canonical-oracle-g2ychmpj\\different-worktree-name",
+      "officialPrimary": "C:\\Users\\malla\\AppData\\Local\\Temp\\canonical-oracle-g2ychmpj\\synthetic",
+      "officialProject": "same-name",
+      "native": {
+        "CanonicalPath": "c:\\users\\malla\\appdata\\local\\temp\\canonical-oracle-g2ychmpj\\synthetic",
+        "DisplayName": "synthetic",
+        "physical": "c:\\users\\malla\\appdata\\local\\temp\\canonical-oracle-g2ychmpj\\synthetic"
+      }
+    },
+    {
+      "physicalCheckout": "C:\\Users\\malla\\AppData\\Local\\Temp\\canonical-oracle-g2ychmpj\\other\\synthetic",
+      "officialPrimary": "C:\\Users\\malla\\AppData\\Local\\Temp\\canonical-oracle-g2ychmpj\\other\\synthetic",
+      "officialProject": "same-name",
+      "native": {
+        "CanonicalPath": "c:\\users\\malla\\appdata\\local\\temp\\canonical-oracle-g2ychmpj\\other\\synthetic",
+        "DisplayName": "synthetic",
+        "physical": "c:\\users\\malla\\appdata\\local\\temp\\canonical-oracle-g2ychmpj\\other\\synthetic"
+      }
+    }
+  ],
+  "eventRepositoryAuthority": "not established by project names or event payload",
+  "rule": "Trusted physical primary selection precedes native identity construction"
+}

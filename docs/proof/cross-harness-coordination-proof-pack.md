@@ -3373,3 +3373,154 @@ unmeasured; structured errors and existing worker telemetry are unchanged.
 Six dependent nodes, zero agents; discovery cost exceeded the initial estimate.
 Run durations are measured in receipts. Independent COMPAT re-gating is next;
 no author self-cleared hard veto or P0–P5 completion claim is made.
+
+## 2026-09-17 canonical contract SPIKE — byte parity, reader gate still blocked
+
+**Scope:** retained experiment only; no `src/` changes. Owned P2 baseline
+`70d2c226812fb4bcf1b74209bfa4c409c583f3ea`; read-only P1 oracle
+`ebd4f1c8473b70934ec29d778419289719ef5481`. Session
+`xh-p2-projection-b0d0`. Goal/done/not-in-scope and the six-node bounded graph are
+recorded in the phase plan. No agents, live `.agents` observer/endpoints, new
+dependency, production bridge, admission or migration.
+
+### Source and corpus
+
+`spikes/canonical-coordination-contract/generate.py` extracts six exact Git blobs
+from the pinned commit into a disposable temporary directory. It imports the
+official `coord-core.py`, `coord_protocol.py`, `coord_ids.py`, `repo_identity.py`
+and both P1 fixture modules. It calls their actual fixture factories,
+`canonical_bytes`, `validate_response`, `source_key` and `read_request_events`.
+No official fixture setup is run against its original `.agents` location.
+Per-file SHA-256 values are retained in the fixture, not guessed from its version.
+
+`tests/AiDe.Core.Tests/Watcher/Fixtures/canonical-coordination-v1.json`:
+**12,568 cases, 615,027 bytes**, SHA-256
+`da65af014026d69145a0a0dbd5eeebb1fe0cfcee8362bc093b8bb43c068ca603`.
+Deterministic regeneration with `--check` produced identical bytes.
+Python **3.12.10**, SDK **10.0.303**; the C# receipt reports its runtime.
+Synthetic Git commit `ec0a0a7a5b56d680f0c2ead6c57177a1c93c8600`,
+blob `452d967d8e531d03e52277c352e6faba8887aa13`. Corpus caps:
+15,000 cases / 2 MiB; all numeric examples are synthetic.
+
+There are 12,538 numeric vectors: 10,000 fixed seeded finite bit patterns, six
+explicit IEEE edges and 2,532 signed decimal-family cases across exponents
+-324 through 308. Finite pattern generation maps exponent 2047 to 0 rather than
+retrying; this is a fixed, biased corpus, **not exhaustive sampling**. Every
+numeric value is passed through an actual valid P1 response before retaining its
+compact bits/expected-string pair. It includes negative zero, maximum double,
+subnormal/minimum-normal boundaries and fixed/scientific transitions. Eighteen
+complete events cover all five types, int 1 vs float 1.0, a 1,001-digit integer,
+bool/null/absence, finite timestamps, supplementary-plane vs BMP key ordering,
+combining vs precomposed strings and escapes/control characters. Each retains
+raw source, full `(repositoryId, streamId, eventId)` key, canonical bytes and SHA.
+Only top-level `payloadDigest` and `recordedAt` are excluded.
+
+### Executed evidence and its ceiling
+
+All paths below are under `spikes/canonical-coordination-contract/`.
+
+| Claim | Evidence / oracle / RED | Confidence and residual risk |
+|---|---|---|
+| Default .NET output is not the Python byte contract | `records/red-probe.txt`: 12,179 numeric/event mismatches; `red-tests.txt`: 4 failed / 7 passed. Examples include `0` vs `0.0`, `E` vs `e`, and Unicode encoding/order. | **Verified** baseline failure; not an allegation against System.Text.Json's own contract |
+| Versioned candidate matches retained valid examples | `records/green-probe.txt`: 12,538 numeric + 18 event cases, zero byte/digest mismatches. `CanonicalCandidate.cs` uses BCL round-trip digits plus explicit Python-style normalization and scalar-value key ordering. | **Verified finite corpus only**; not an all-binary64 proof or shipping reader |
+| Retained tests exercise exact bytes, digest, keys, lexical refusals, scope and native capture | `records/green-tests.txt`: 12/12. `run.py` captures separate build, probe and test exit codes. | **Verified** focused selection; no claim that legacy N1/N2 or full suite passed |
+| P1 LF/CRLF boundary differs from native capture | Fixture `limits`: 65,536 content bytes accepted with LF (65,537 raw) and CRLF (65,538 raw); 65,537 content rejected. `Capture_CanonicalOriginLineEdges_ExposesNativeLfBound` uses actual `CoordinationSourceCapture.Read`, store and IngestHost, with no session effect. | **Verified**, not a bridge or GUI test. Native at 65,536 including LF rejects valid canonical-origin edge records |
+| Unchecked canonicalization can expand beyond 65,536, but validation already refuses | Float source 44,683 bytes -> 66,584 unchecked semantic bytes -> `XH.SCHEMA_INVALID`. Oversized fact 86,097 unchecked semantic bytes -> `XH.RECORD_TOO_LARGE`. | **Verified** measured examples plus source bounds: response canonical <=32,768; fact full reserialization <=65,536 |
+| Project name is not repository identity or a selector | `records/binding.json`: real isolated Git primary/linked tree map to the same official root and native identity; another repository with the same remote basename shares `same-name` but has a different native path. | **Verified Windows mapping shape**. Trusted event-repository-ID binding, filesystem aliases and other platforms remain unqualified |
+| Proposed four-component scope does not collapse tested tuples | `Scope_RepositoryOriginPathEpochTuples_DoNotAlias`: 6,561 combinations of empty/delimiter/NUL/Unicode components. Base64 alphabet excludes separator. | **Verified finite test + injective encoding argument**; length budgets, path normalization and public-source-ID mapping are separate |
+
+The producer of the fixture is Python, the compute reader is the C# probe and
+test assembly, and the evidence consumer is this proof. No production store,
+wire, client type or UI surface changes. Existing native capture/cache/publication
+guards were inspected, not relaxed. The Data proposal is canonical-origin raw
+capacity 65,538 with distinct origin-qualified constraints, native raw capacity
+unchanged, and validated semantic limits retained. This requires explicit
+cache/capture design and migration review before any implementation.
+
+### Invalid-input ledger — deliberately blocks full qualification
+
+The fixture preserves twelve invalid inputs and exact P1 reader errors.
+`green-probe.txt` preserves each candidate outcome; zero **valid-byte**
+mismatches must never be read as zero **contract** mismatches.
+
+* Three stable lexical errors match: duplicate keys `XH.DUPLICATE_KEY`, overflowing
+  finite syntax `1e309` -> `XH.NONFINITE_JSON`, depth -> `XH.DEPTH_EXCEEDED`.
+* NaN/Infinity are rejected by both, but .NET currently reports
+  `JsonReaderException`, not P1's `XH.NONFINITE_JSON`. Invalid UTF-8 is rejected,
+  but P1's reader exposes decoder text while C# gives `DecoderFallbackException`.
+  Unpaired surrogate is rejected, with P1 `XH.SCHEMA_INVALID` vs C#
+  `InvalidOperationException`. These error translations are **not qualified**.
+* Integer endpoint generation, boolean sequence, float schema version, boolean
+  timestamp and huge integer timestamp are accepted **by the byte-only codec**
+  and refused by P1 validation. This is a missing envelope-validation surface,
+  not permission to coerce them or use the candidate for admission.
+* The direct P1 validator throws an **uncaught `OverflowError`** for the huge
+  integer timestamp, with no stable code. Its reader catches it and reports
+  `int too large to convert to float`. The same numeric value is valid in a
+  payload extension. This factual P1 error-contract gap is retained separately;
+  no P1 source was fixed or redefined here.
+
+Thus **fullContractQualified=false**. Complete envelope/error parity and trusted
+repository-ID mapping are open. Large-integer parser limits, arbitrary malformed
+JSON combinations and exhaustive numeric rounding ties are not established.
+The current Data choice remains a conformance-locked C# reader of P1, never a
+second writer/status authority and never a silent Python-per-UI-read dependency.
+
+### Corrections, reproduction and gate
+
+Class -> sweep -> derive -> prevent: host serialization defaults erase semantic
+distinctions; byte encoding, numeric values, Unicode keys, timestamp exclusions,
+native raw/canonical guards and repository-name consumers were swept. Derive
+expected values only from the pinned official oracle; retain exact comparisons
+that failed on the default implementation. Scope-local class/control capture
+lives here, not a new shared register or second proof note.
+
+One author defect occurred: a new test landed inside the preceding test method.
+The compiler rejected `public` at that position (`records/compile-error-tests.txt`,
+`compile-error.json`). The method boundary was repaired; final 12/12 followed.
+No product defect or extra runtime clearance is inferred from that repair.
+The transcript also emitted repeated-read warnings during oversized discovery
+output handling; this is an execution-cost finding, not new contract evidence.
+An audit-register lease was refused by the official union-only rule; the final
+audit is appended without a register lease, never by waiting out the refusal.
+
+Reproduce from this worktree (Windows `python`, no new packages):
+
+```
+python spikes\canonical-coordination-contract\generate.py --check
+python spikes\canonical-coordination-contract\run.py green
+python spikes\canonical-coordination-contract\generate.py --check --binding
+```
+
+The `red` receipts are the historical BCL-baseline run, before normalization;
+running `run.py red` against the final candidate intentionally does not recreate
+that baseline. Temporary oracle/Git fixtures are removed by their scoped
+temporary-directory lifecycle. Build outputs stay ignored. No retained Linux
+SDK, certificate, private key, live stream or endpoint was changed.
+
+**GATE canonical reader contract · 2026-09-17 · author experiment · BLOCKED**:
+finite byte parity established; envelope/error and binding gaps above remain;
+independent new-code/generator/Test/Data/Security review next, before bridge.
+This is not a request to reapprove the already approved P0-P5 programme.
+Full P2 legacy N1/N2, canonical bridge, recovery, released-binary rollback,
+P3-P5 and upstream-after-all-phases remain pending. Exact-expiry snapshots and
+inverse cases are recorded for deferred P3/P5, not implemented here.
+
+### Portable SCOPE clarification — supplied independent evidence, not a rerun
+
+The independent **Linux 19/19 and Windows 79/79 functional/security selections
+passed**, per the supplied review receipt. Its last missing contract-root rename
+check independently read **glibc 2.39 `libio/stdio.h` blob
+`6762cffb0f1b7878d9bd82b0b8e951ea3cfeaf78`**:
+`int fd, const char *, int fd, const char * -> int`. Alongside
+[POSIX Issue 8 rename](https://pubs.opengroup.org/onlinepubs/9799919799/functions/rename.html),
+the contract is relative to held directory descriptors, atomic replacement,
+and replacement of the final symlink itself, not its referent. This matches the
+C# P/Invoke. **The documentation-only SCOPE gap is closed** by that independent
+evidence; no facts were fetched again, no new runtime/macOS/ARM qualification.
+
+The existing home `.pfx` metadata is dated **September 15**, before the
+**September 17** SDK bootstrap. There is no causal proof that bootstrap created
+it. The earlier first-run message alone cannot establish that cause. No private
+key was read or deleted. All previously stated platform and crash/recovery
+limits remain; this correction closes neither the new reader gate nor full P2.

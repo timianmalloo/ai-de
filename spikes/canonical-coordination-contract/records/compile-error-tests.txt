@@ -1,0 +1,1 @@
+C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationContractTests.cs(98,9): error CS0106: The modifier 'public' is not valid for this item [C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj]
