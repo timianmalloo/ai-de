@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T22:44:56Z",
+  "generated": "2026-09-17T13:28:27Z",
   "audit": [
     {
       "actor": null,
@@ -19964,6 +19964,34 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-16T22:35:50Z",
       "duration_seconds": 545.0
+    },
+    {
+      "id": "al-01M2QRVRJTTZVA0ZA5RYVPWB8T",
+      "shortname": "join-main-red-char-fix",
+      "datetime": "2026-09-17T13:28:26Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "the join of lane/main-red-0915 into main",
+      "summary": "Fast follow to 2a5f1b2d: the new characterisation test asserted against FakePath.AddNpmShim's return (the script) instead of the shim, so its off-Windows arm was red on CI while green here - the platform-arm-nobody-observes-locally class INV-0012 diagnosed, reproduced by the test documenting it. Expected value now derived from the fixture's PATH entries, computed inside the off-Windows arm only. The same run confirmed groups 1-2 worked: the four EngineCatalogTests and the purge test left the portable half and pass on the nonportable half (180 executed, 0 failed). recount_seconds=518 (docs_only=False).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/AgentPlane/TheLocatorTellsShimFromExecutableOnlyByWindowsSuffixTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Restore CI's portable half to green - the only failure there is the test I landed",
+      "done_when": "main carries 53115a53; recount and gates green; pushed; the landed SHA's Build result recorded",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-17T13:19:46Z",
+      "duration_seconds": 520.0
     }
   ],
   "changes": [
