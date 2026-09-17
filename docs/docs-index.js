@@ -20944,6 +20944,13 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-workbench"
     },
     {
+      "id": "surface-mockups-first-use-accounts",
+      "path": "docs/mockups/first-use-accounts.html",
+      "title": "AI-DE — first-use accounts mockup",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
       "id": "surface-mockups-solution-tree",
       "path": "docs/mockups/solution-tree.html",
       "title": "AI-DE — Solution tree mockup",
