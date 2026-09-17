@@ -122,6 +122,81 @@ RegistrationNotice capacity, durable Data recovery, emitter retention of Prepare
 after unresolved IOException, canonical P2 consolidation, old-binary/mixed-writer
 qualification and P3–P5. No activation or full-producer PASS is authorized.
 
+### P2.P2A implementation receipt
+
+Contract-first commit: `95a7e17b`. The writer now has a single bounded prepared
+admission path; the existing emitter source remains unchanged. The original
+producer tests were not edited. Their baseline is 17 cases: 13 PASS, four RED
+(two 65,537-byte encodings, file 129 and root 33,554,432 + 92 bytes). The broader
+final selector is 76 cases, including the nine ordinary emitter tests, seven log
+compatibility tests, parser corpus and 26 prepared-writer cases. The previously
+described producer-plus-emitter set is 26, not 26 producer-only tests.
+
+Evidence is raw, not a second Proof Pack:
+`docs/proofs/p24-producer-baseline-red.trx`;
+`docs/proofs/p24-producer-final-restored.trx`;
+`docs/proofs/p24-producer-final-restored.stdout.txt`;
+`docs/proofs/p24-producer-writer-pins.json`.
+The finite runner `docs/proofs/p24-producer-verify.py` records actual child stdout
+and stderr, per-run logical counts, measured duration, and source/test/project/
+binary SHA-256 values. Its mutants raise all three bounds, falsely authenticate
+a never-attempted preparation, publish membership before I/O, and prematurely
+retire a gate used by three operations. Every mutant is followed by exact source
+restoration; the last run rebuilds restored source. Initial baseline binary
+SHA was not captured and is not reconstructed or claimed.
+
+Observed controls cover: exact ASCII/escaped-Unicode limits; refused oversized
+lines; empty-file count; root bytes and separator overhead; mutable attributes
+and clock; independent-session progress while the clock pauses before I/O;
+competing process file-count, byte-quota and sequence admission; same-root aliases
+busy during flush; root gate reclamation; safe/unsafe filename collisions and
+Windows case aliases; native CR/LF/CRLF nonempty-line counting and gapped sequence
+values; original native parser corpus; immutable copied bytes; stale independent
+intent refusal; attempted complete replay; actual prefix writes of 0/1/19 bytes
+followed by IOException; flush/disposal acknowledgement loss; blocked recovery;
+changed bytes, extra partial suffix and truncated prefix; and measured outcome,
+code, byte count and duration without payload logging.
+
+Boundaries of that evidence: Windows local filesystem only. The fault hooks
+write real bytes and inject errors; the disposal test simulates lost
+acknowledgement **after actual successful disposal**, not a kernel-generated
+FileStream.Dispose failure. The return path does wait for target and root-handle
+disposal. Unsuccessful durability acknowledgement remains uncertain. An available
+PreparedWrite instance can be retried by another participating writer instance;
+there is no durable PreparedWrite deserializer or restart-recovery claim.
+Prepare may create the directory and empty non-JSONL lockfile, never reserve
+accepted JSONL capacity. Source scanning allocates at most the 32-MiB target
+snapshot and bounds each decoded line; it is bounded, not constant-memory.
+Serialization preflight limits copied character volume, and a composed bounded
+output Stream counts actual bytes rather than encoder buffer reservations.
+
+Corrections from this run, for parent defect-register consolidation:
+
+- **Virtual-overload recursion:** the first bounded stream inherited MemoryStream
+  and forwarded span/array overrides to each other through virtual dispatch.
+  The real test host stack-overflowed. Sweep: both overrides in this new helper;
+  no second new subtype. Derive: compose an unmodified MemoryStream behind Stream.
+  Prevent: every serializer test exercises the real path; the retained aborted
+  TRX is `p24-producer-stream-recursion-red.trx`. No correctness label is attached
+  to that aborted run.
+- **Platform text in mutation mechanics:** exact mutation seams initially treated
+  CRLF bytes as LF text; printing unbounded Unicode test output also interrupted
+  the evidence runner. Derive: normalize text only for mutation, restore original
+  bytes exactly, persist actual output as UTF-8 and print numeric counters. The
+  runner requires a unique seam, exact expected failures, and restored-source
+  equality. Prior incomplete runs are not used as completed mutation proof.
+- **Blocking task result in async test:** xUnit1031 rejected `.Result`; use `await`.
+  The existing analyzer is the prevention, not a suppression.
+- **Commit identity:** the contract-first commit reported AGENT_SESSION unset.
+  Subsequent coordination and commit calls explicitly export both variables;
+  this does not retroactively label the initial check enforcing.
+
+Independent DS/Test/language final review and canonical proof attachment remain
+the parent's gates. Global emitter 128 prepared-state capacity, RegistrationNotice
+capacity, Data recovery and P3–P5 remain pending. Legacy concurrent writers can
+ignore root exclusion; only detected overruns are refused, without history edits.
+The writer's guarantee does not disable or qualify those binaries.
+
 The current-task DS code admission authorizes only
 `src/AiDe.Core/Watcher/SessionCoordinationEmitter.cs`. This is not approval of the
 whole native producer or P2. The canonical design and Proof Pack remain the parent

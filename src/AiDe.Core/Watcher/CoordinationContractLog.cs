@@ -1,16 +1,15 @@
 using System.Text;
-using System.Text.Json;
 
 namespace AiDe.Core.Watcher;
 
 /// <summary>
 /// Writes injected-contract events for one or more non-AI-Forward sessions to a coord-core-shaped
 /// append log (spike S4): one file per session (<c>&lt;dir&gt;/&lt;session&gt;.jsonl</c>), one JSON object
-/// per line, <c>seq</c> auto-assigned, an atomic single-write append, and the <b>LOG-A</b> guard - a
-/// leading newline when the file did not already end in one, so a fused line is impossible to express.
+/// per line and <c>seq</c> auto-assigned. Participating writers use bounded prepared admission.
+/// Complete JSON tails can be separated; unknown truncated tails are never completed.
 /// This is the session-side half of the contract; <see cref="InjectedContractIngest"/> is the ingest half.
 /// </summary>
-public sealed class CoordContractWriter
+public sealed partial class CoordContractWriter
 {
     private readonly string _logDir;
     private readonly TimeProvider _time;
@@ -18,7 +17,7 @@ public sealed class CoordContractWriter
     public CoordContractWriter(string logDir, TimeProvider? time = null)
     {
         ArgumentException.ThrowIfNullOrEmpty(logDir);
-        _logDir = logDir;
+        _logDir = Path.GetFullPath(logDir);
         _time = time ?? TimeProvider.System;
     }
 
@@ -43,7 +42,7 @@ public sealed class CoordContractWriter
     /// contract line is spelled would make that claim untestable — the two paths could then differ
     /// in precisely the way the equivalence gate exists to catch.</para>
     ///
-    /// <para><b>It validates nothing.</b> Every kind's refusals belong to
+    /// <para><b>It validates transport bounds, not event semantics.</b> Every kind's refusals belong to
     /// <c>InjectedContractIngest</c>, with counters, and re-deciding any of them here would be a
     /// second set of rules free to drift from the first. Callers report what the ingest will do;
     /// this writes what the caller said.</para>
@@ -120,10 +119,9 @@ public sealed class CoordContractWriter
     ///
     /// <para><b>An id that is already safe is left exactly alone</b>, digest and all. Renaming
     /// <c>terminal-1.jsonl</c> would orphan every log already on disk and change the file name for
-    /// the case that was never broken — the existing suite caught the first version of this doing
-    /// precisely that. Only a name the filesystem would have mangled is rewritten, so the two forms
-    /// cannot collide: a rewritten name always carries the digest suffix, and an untouched one
-    /// contained no invalid character to have been rewritten from.</para>
+    /// the case that was never broken. Only unsafe names are rewritten. Target content identity
+    /// is checked because a safe ID can equal a rewritten name, the short digest can collide,
+    /// and filesystem case aliases can share a target.</para>
     /// </remarks>
     internal static string FileNameFor(string session)
     {
@@ -156,70 +154,15 @@ public sealed class CoordContractWriter
 
     private void Append(string session, string kind, IReadOnlyDictionary<string, string?>? attributes)
     {
-        ArgumentException.ThrowIfNullOrEmpty(session);
-        Directory.CreateDirectory(_logDir);
-        var file = Path.Combine(_logDir, FileNameFor(session));
-
-        var payload = new Dictionary<string, object?>(StringComparer.Ordinal)
+        var result = Prepare(kind, session, attributes);
+        if (result.Prepared is { } prepared && result.Status == CoordinationWriteStatus.Ready)
         {
-            ["kind"] = kind,
-            ["contract"] = CoordContract.Version,
-            ["session"] = session,
-            ["at"] = _time.GetUtcNow().ToUnixTimeMilliseconds() / 1000.0,
-            ["seq"] = NextSeq(file),
-        };
-        if (attributes is not null)
-        {
-            payload["attrs"] = attributes.ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.Ordinal);
+            result = Append(prepared);
         }
-
-        var line = JsonSerializer.Serialize(payload);
-        // LOG-A: prepend a newline when the file does not already end in one, so a record left
-        // unterminated by a crash or a hand edit cannot fuse with this one (control ladder rung 1).
-        var text = (NeedsLeadingNewline(file) ? "\n" : "") + line + "\n";
-        var bytes = Encoding.UTF8.GetBytes(text);
-
-        // One Write under FileMode.Append (O_APPEND) is atomic: a concurrent writer cannot interleave
-        // a partial line (mirrors the coord-core writer, spike S3/S4).
-        using var stream = new FileStream(file, FileMode.Append, FileAccess.Write, FileShare.Read);
-        stream.Write(bytes, 0, bytes.Length);
-    }
-
-    private static bool NeedsLeadingNewline(string file)
-    {
-        if (!File.Exists(file))
+        if (result.Status != CoordinationWriteStatus.Admitted)
         {
-            return false;
+            throw new CoordinationWriteException(result.Code!, result.Prepared);
         }
-
-        using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-        if (stream.Length == 0)
-        {
-            return false;
-        }
-
-        stream.Seek(-1, SeekOrigin.End);
-        var last = stream.ReadByte();
-        return last is not ('\n' or '\r');
-    }
-
-    private static int NextSeq(string file)
-    {
-        if (!File.Exists(file))
-        {
-            return 1;
-        }
-
-        var count = 0;
-        foreach (var line in File.ReadLines(file))
-        {
-            if (line.Trim().Length > 0)
-            {
-                count++;
-            }
-        }
-
-        return count + 1;
     }
 }
 

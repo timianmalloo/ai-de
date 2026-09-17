@@ -15,7 +15,7 @@ public sealed class SessionCoordinationEmitterTests
     private sealed class TempDir : IDisposable
     {
         public string Path { get; } = System.IO.Path.Combine(
-            System.IO.Path.GetTempPath(), $"aide-emitter-{Guid.NewGuid():N}");
+            AppContext.BaseDirectory, "native-compat-fixtures", $"aide-emitter-{Guid.NewGuid():N}");
 
         public TempDir() => Directory.CreateDirectory(Path);
 

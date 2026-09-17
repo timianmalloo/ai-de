@@ -28,6 +28,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\AiDe.Core\AiDe.Core.csproj" />
+    <ProjectReference Include="..\AiDe.Core.NativeWriterProbe\AiDe.Core.NativeWriterProbe.csproj"
+                      ReferenceOutputAssembly="false" />
 
     <!--
       The MCP server lives here for its tests because the one that matters spans both: the

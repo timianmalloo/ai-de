@@ -15,7 +15,7 @@ public sealed class CoordinationContractLogTests
     private sealed class TempDir : IDisposable
     {
         public string Path { get; } = System.IO.Path.Combine(
-            System.IO.Path.GetTempPath(), $"aide-coordlog-{Guid.NewGuid():N}");
+            AppContext.BaseDirectory, "native-compat-fixtures", $"aide-coordlog-{Guid.NewGuid():N}");
 
         public TempDir() => Directory.CreateDirectory(Path);
 
@@ -109,7 +109,7 @@ public sealed class CoordinationContractLogTests
     [Fact]
     public void ReadDirectory_MissingDirectory_ReturnsEmpty()
     {
-        var missing = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"aide-coordlog-missing-{Guid.NewGuid():N}");
+        var missing = System.IO.Path.Combine(AppContext.BaseDirectory, "native-compat-fixtures", $"aide-coordlog-missing-{Guid.NewGuid():N}");
         Assert.Empty(CoordContractLog.ReadDirectory(missing));
     }
 

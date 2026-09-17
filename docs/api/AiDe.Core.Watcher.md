@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 164 types, 328 members, 64% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 179 types, 362 members, 61% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**164 public types · 328 public members · 64% documented.**
+**179 public types · 362 public members · 61% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -700,8 +700,8 @@ Pattern: Adapter over the ingest host's port (DDD ACL), keyed by the external se
 
 Writes injected-contract events for one or more non-AI-Forward sessions to a coord-core-shaped
 append log (spike S4): one file per session (`<dir>/<session>.jsonl`), one JSON object
-per line, `seq` auto-assigned, an atomic single-write append, and the **LOG-A** guard - a
-leading newline when the file did not already end in one, so a fused line is impossible to express.
+per line and `seq` auto-assigned. Participating writers use bounded prepared admission.
+Complete JSON tails can be separated; unknown truncated tails are never completed.
 This is the session-side half of the contract; `InjectedContractIngest` is the ingest half.
 
 | Member | Summary |
@@ -712,6 +712,11 @@ This is the session-side half of the contract; `InjectedContractIngest` is the i
 | `void WriteSessionEnd(string externalSessionId)` | **(gap)** |
 | `void Write(string kind, string externalSessionId, IReadOnlyDictionary<string, string?> attributes)` | Writes one contract line of any kind — the same line an agent writes by hand. |
 | `void WriteBoardPost(` | Writes one `board-post` line — the same line an agent writes by hand. |
+| `int MaximumLineBytes = 65_536` | **(gap)** |
+| `int MaximumFiles = 128` | **(gap)** |
+| `long MaximumRootBytes = 33_554_432` | **(gap)** |
+| `CoordinationWriteResult Prepare(string kind, string session,` | Copies and bounds input before exclusion; never writes/reserves accepted log bytes. |
+| `CoordinationWriteResult Append(PreparedWrite prepared)` | Admits the exact preparation or preserves it as uncertain. Never rebases an intent. |
 
 ### `void Write(string kind, string externalSessionId, IReadOnlyDictionary<string, string?> attributes)`
 
@@ -727,7 +732,7 @@ in precisely the way the equivalence gate exists to catch.
 
 
 
-**It validates nothing.** Every kind's refusals belong to
+**It validates transport bounds, not event semantics.** Every kind's refusals belong to
 `InjectedContractIngest`, with counters, and re-deciding any of them here would be a
 second set of rules free to drift from the first. Callers report what the ingest will do;
 this writes what the caller said.
@@ -756,13 +761,254 @@ Reads a coord-core append log directory into ordered contract events (stdlib, to
 *class* — `CoordinationContractLog.cs`
 
 Reads a contract log directory and applies it to an `InjectedContractIngest`. Re-running
-is safe: the adapter is idempotent (a duplicate register is ignored, a heartbeat merely refreshes
-liveness), so a whole-directory re-read never double-registers - which is why a naive "read it all"
-pump is correct here without tracking file offsets.
+uses durable source receipts for SQLite observation projection. The value-only in-memory adapter
+remains a compatibility path; it does not claim durable replay or source-gap detection.
 
 | Member | Summary |
 |---|---|
-| `int PumpOnce()` | Reads the log directory once and applies every event; returns the count applied. |
+| `CoordinationPumpStats LastRun { get; private set; } = new(0, 0, 0, 0, 0, 0, null)` | Diagnostics from the last bounded capture, including replayed records. |
+| `int PumpOnce()` | Returns recognized records in the capture, including already admitted records. |
+
+## `CoordinationWriteStatus`
+
+*enum* — `CoordinationNativeWrite.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `CoordinationWriteResult`
+
+*record* — `CoordinationNativeWrite.cs`
+
+Transport outcomes, not event-semantic acceptance by ingest.
+
+## `CoordinationAdmission`
+
+*record* — `CoordinationNativeWrite.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `PreparedWrite`
+
+*class* — `CoordinationNativeWrite.cs`
+
+Immutable exact bytes and source evidence; only the writer can create an attempt.
+
+| Member | Summary |
+|---|---|
+| `CoordinationAdmission Admission { get; }` | **(gap)** |
+| `byte[] CopyBytes()` | **(gap)** |
+
+## `CoordinationWriteException`
+
+*class* — `CoordinationNativeWrite.cs`
+
+*No doc comment on this type.* **(gap)**
+
+| Member | Summary |
+|---|---|
+| `string Code { get; } = code` | **(gap)** |
+| `PreparedWrite? Prepared { get; } = prepared` | **(gap)** |
+
+## `CoordinationWriteCodes`
+
+*class* — `CoordinationNativeWrite.cs`
+
+*No doc comment on this type.* **(gap)**
+
+| Member | Summary |
+|---|---|
+| `string RecordBound = "COORD_RECORD_BOUND"` | **(gap)** |
+| `string FileBound = "COORD_FILE_BOUND"` | **(gap)** |
+| `string RootBound = "COORD_ROOT_BOUND"` | **(gap)** |
+| `string SequenceConflict = "COORD_SEQUENCE_CONFLICT"` | **(gap)** |
+| `string StalePreparation = "COORD_STALE_PREPARATION"` | **(gap)** |
+| `string IdentityConflict = "COORD_IDENTITY_CONFLICT"` | **(gap)** |
+| `string WriterBusy = "COORD_WRITER_BUSY"` | **(gap)** |
+| `string SourceUnavailable = "COORD_SOURCE_UNAVAILABLE"` | **(gap)** |
+| `string RootOverrun = "COORD_ROOT_OVERRUN"` | **(gap)** |
+| `string WriteUncertain = "COORD_WRITE_UNCERTAIN"` | **(gap)** |
+
+## `CoordContractWriter`
+
+*class* — `CoordinationNativeWrite.cs`
+
+*No doc comment on this type.* **(gap)**
+
+| Member | Summary |
+|---|---|
+| `CoordContractWriter(string logDir, TimeProvider? time = null)` | **(gap)** |
+| `void WriteRegister(string externalSessionId, IReadOnlyDictionary<string, string?> attributes)` | Writes a registration with the same `OtelAttributes` keys as the OTLP path. |
+| `void WriteHeartbeat(string externalSessionId)` | **(gap)** |
+| `void WriteSessionEnd(string externalSessionId)` | **(gap)** |
+| `void Write(string kind, string externalSessionId, IReadOnlyDictionary<string, string?> attributes)` | Writes one contract line of any kind — the same line an agent writes by hand. |
+| `void WriteBoardPost(` | Writes one `board-post` line — the same line an agent writes by hand. |
+| `int MaximumLineBytes = 65_536` | **(gap)** |
+| `int MaximumFiles = 128` | **(gap)** |
+| `long MaximumRootBytes = 33_554_432` | **(gap)** |
+| `CoordinationWriteResult Prepare(string kind, string session,` | Copies and bounds input before exclusion; never writes/reserves accepted log bytes. |
+| `CoordinationWriteResult Append(PreparedWrite prepared)` | Admits the exact preparation or preserves it as uncertain. Never rebases an intent. |
+
+### `void Write(string kind, string externalSessionId, IReadOnlyDictionary<string, string?> attributes)`
+
+Writes one contract line of any kind — the same line an agent writes by hand.
+
+**Remarks.** **Here rather than in the MCP server, because the line format must have exactly one
+definition.** The server's whole claim is that it is a translation of the contract rather
+than a parallel API (`design-mcp-enlightened-path`), and a second place that knows how a
+contract line is spelled would make that claim untestable — the two paths could then differ
+in precisely the way the equivalence gate exists to catch.
+
+
+
+
+
+**It validates transport bounds, not event semantics.** Every kind's refusals belong to
+`InjectedContractIngest`, with counters, and re-deciding any of them here would be a
+second set of rules free to drift from the first. Callers report what the ingest will do;
+this writes what the caller said.
+
+### `void WriteBoardPost(`
+
+Writes one `board-post` line — the same line an agent writes by hand.
+
+**Remarks.** Its own method rather than a `Write` call at each site because the absent-vs-null
+content rule below is a property of the board's wire shape, and a rule enforced at the call
+sites is a rule the next call site will not know about. It validates nothing else, for the
+reason `Write` gives.
+
+## `SqliteWatcherObservationStore`
+
+*class* — `CoordinationProjection.cs`
+
+*No doc comment on this type.* **(gap)**
+
+| Member | Summary |
+|---|---|
+| `CoordinationReadResult ReadCoordination(CoordinationReadRequest request)` | Validates binding and reads a frozen source-local receipt page in one snapshot. |
+| `string DatabasePath { get; }` | The backing database file. Exposed so a test can open a raw connection against it. |
+| `SqliteWatcherObservationStore Open(string databasePath)` | **(gap)** |
+| `SqliteWatcherObservationStore OpenReadOnly(string databasePath)` | Opens an EXISTING store read-only. Creates nothing and migrates nothing. |
+| `bool TryAppendSpan(ObservedSpan span)` | **(gap)** |
+| `int SpanCount(string sessionId)` | **(gap)** |
+| `int SpanCountInInterval(string sessionId, DateTimeOffset from, DateTimeOffset toInclusive)` | **(gap)** |
+| `void UpsertHeartbeat(string sessionId, long monotonicTicks)` | **(gap)** |
+| `long? LastHeartbeat(string sessionId)` | **(gap)** |
+| `void RecordSession(SessionRecord session)` | **(gap)** |
+| `SessionRecord? FindSession(string sessionId)` | **(gap)** |
+| `IReadOnlyList<SessionRecord> AllSessions()` | **(gap)** |
+| `void RecordEpisode(WorkEpisode episode)` | **(gap)** |
+| `WorkEpisode? FindEpisode(string episodeId)` | **(gap)** |
+| `IReadOnlyList<WorkEpisode> EpisodesForSession(string sessionId)` | **(gap)** |
+| `IReadOnlyList<WorkEpisode> AllEpisodes()` | **(gap)** |
+| `void AppendDeclaredArtifact(DeclaredEpisodeArtifact artifact)` | **(gap)** |
+| `IReadOnlyList<DeclaredEpisodeArtifact> DeclaredArtifactsFor(string episodeId)` | **(gap)** |
+| `void AppendDaydreamObservation(DaydreamObservation observation)` | **(gap)** |
+| `IReadOnlyList<DaydreamObservation> AllDaydreamObservations()` | **(gap)** |
+| `void AppendDaydreamEvent(DaydreamEvent daydreamEvent)` | **(gap)** |
+| `IReadOnlyList<DaydreamEvent> AllDaydreamEvents()` | **(gap)** |
+| `void AppendBoardMessage(BoardMessage message)` | **(gap)** |
+| `BoardMessage AppendBoardMessageAllocated(BoardMessage message)` | **(gap)** |
+| `IReadOnlyList<BoardMessage> BoardMessages(string repositoryKey)` | **(gap)** |
+| `IReadOnlyList<BoardMessage> AllBoardMessages()` | **(gap)** |
+| `BoardMessage? FindBoardMessage(string messageId)` | **(gap)** |
+| `void RedactBoardMessage(string messageId)` | **(gap)** |
+| `void MarkEnded(string sessionId)` | **(gap)** |
+| `void ClearEnded(string sessionId)` | **(gap)** |
+| `bool IsEnded(string sessionId)` | **(gap)** |
+| `void RecordScorecard(ScoredEpisode scored)` | **(gap)** |
+| `ScoredEpisode? FindScoredEpisode(string episodeId)` | **(gap)** |
+| `IReadOnlyList<ScoredEpisode> AllScoredEpisodes()` | **(gap)** |
+| `bool RecordEpisodeMode(string episodeId, string mode)` | **(gap)** |
+| `string? FindEpisodeMode(string episodeId)` | **(gap)** |
+| `bool RecordEpisodeTaskClassSource(string episodeId, string source)` | **(gap)** |
+| `string? FindEpisodeTaskClassSource(string episodeId)` | **(gap)** |
+| `void AppendScoreDispute(ScoreDispute dispute)` | **(gap)** |
+| `IReadOnlyList<ScoreDispute> DisputesForEpisode(string episodeId)` | **(gap)** |
+| `IReadOnlyList<ScoreDispute> AllDisputes()` | **(gap)** |
+| `void Dispose()` | **(gap)** |
+
+### `SqliteWatcherObservationStore OpenReadOnly(string databasePath)`
+
+Opens an EXISTING store read-only. Creates nothing and migrates nothing.
+
+**Throws `FileNotFoundException`.** The store does not exist — an absence, not an empty store.
+
+**Remarks.** **For a reader that must hold no authority** — the MCP server, whose whole claim is
+that it can do nothing an agent writing JSONL by hand cannot. A write handle to the fact store
+would be exactly such an authority and would bypass every guarantee the ingest provides, so
+the mode is enforced here rather than trusted to a caller's discipline.
+
+
+
+
+
+**ReadOnly, not ReadWrite-and-be-careful.** The distinction is enforced by SQLite
+rather than by convention, which is what makes "this process cannot write" a fact rather than
+a promise — and what a test can assert.
+
+
+
+
+
+**No `EnsureSchema`.** A reader must never migrate: it would race the owning
+process, and a schema change is a decision the writer makes. A store older than this reader
+fails on the missing column, loudly, which is the honest outcome.
+
+## `CoordinationReadStatus`
+
+*enum* — `CoordinationRead.cs`
+
+Cache-read outcomes, not source-health or recipient-liveness claims.
+
+## `CoordinationCursor`
+
+*record* — `CoordinationRead.cs`
+
+A source-local resume position; FrozenHighWater is retained only while paging.
+
+| Member | Summary |
+|---|---|
+| `string Version = "coordination-read/1"` | **(gap)** |
+
+## `CoordinationReadRequest`
+
+*class* — `CoordinationRead.cs`
+
+The service supplies its resolved session; the repository is not a wire parameter.
+
+| Member | Summary |
+|---|---|
+| `string SourceId { get; } = sourceId` | **(gap)** |
+| `CoordinationCursor? Cursor { get; } = cursor` | **(gap)** |
+| `int Limit { get; } = limit` | **(gap)** |
+
+## `CoordinationFeedEntry`
+
+*record* — `CoordinationRead.cs`
+
+One immutable receipt. State is the state at this receipt, not the event's current state.
+
+## `CoordinationReadResult`
+
+*record* — `CoordinationRead.cs`
+
+A bounded metadata-only snapshot with separate continuation and fresh-resume positions.
+
+| Member | Summary |
+|---|---|
+| `string Code` | **(gap)** |
+| `string AvailabilityScope` | **(gap)** |
+| `string Recovery` | **(gap)** |
+| `string SourceHealth` | **(gap)** |
+| `string Lag` | **(gap)** |
+| `string LossEvidence` | **(gap)** |
+| `CoordinationReadResult Failure(CoordinationReadStatus status)` | **(gap)** |
+
+## `CoordinationPumpStats`
+
+*record* — `CoordinationSourceCapture.cs`
+
+*No doc comment on this type.* **(gap)**
 
 ## `DaydreamState`
 
@@ -2609,19 +2855,13 @@ facts) and then appending idempotently by content-addressed id (ADR-0006 / ADR-0
 
 ## `SqliteWatcherObservationStore`
 
-*class* — `SqliteWatcherObservationStore.cs`
+*class* — `SqliteWatcherObservationStore.Coordination.cs`
 
-The durable `IWatcherObservationStore` on one SQLite file, reusing the ADR-0002 fact-store
-idiom (WAL, append-only facts enforced by triggers, a single writer). It substitutes for
-`InMemoryWatcherObservationStore` behind the same seam - the same contract, now persisted
-across a restart. Spans are an append-only fact (dedup by content-addressed primary key); sessions,
-heartbeats, and the ended flag are current-state cells (upsert), mirroring the in-memory maps.
-
-simplify: one connection guarded by a lock. Ceiling: fine at the reference scale for the skeleton.
-Upgrade trigger: read volume grows enough to want the WorkspaceStore read/write connection split.
+*No doc comment on this type.* **(gap)**
 
 | Member | Summary |
 |---|---|
+| `CoordinationReadResult ReadCoordination(CoordinationReadRequest request)` | Validates binding and reads a frozen source-local receipt page in one snapshot. |
 | `string DatabasePath { get; }` | The backing database file. Exposed so a test can open a raw connection against it. |
 | `SqliteWatcherObservationStore Open(string databasePath)` | **(gap)** |
 | `SqliteWatcherObservationStore OpenReadOnly(string databasePath)` | Opens an EXISTING store read-only. Creates nothing and migrates nothing. |
@@ -2644,6 +2884,92 @@ Upgrade trigger: read volume grows enough to want the WorkspaceStore read/write 
 | `void AppendDaydreamEvent(DaydreamEvent daydreamEvent)` | **(gap)** |
 | `IReadOnlyList<DaydreamEvent> AllDaydreamEvents()` | **(gap)** |
 | `void AppendBoardMessage(BoardMessage message)` | **(gap)** |
+| `BoardMessage AppendBoardMessageAllocated(BoardMessage message)` | **(gap)** |
+| `IReadOnlyList<BoardMessage> BoardMessages(string repositoryKey)` | **(gap)** |
+| `IReadOnlyList<BoardMessage> AllBoardMessages()` | **(gap)** |
+| `BoardMessage? FindBoardMessage(string messageId)` | **(gap)** |
+| `void RedactBoardMessage(string messageId)` | **(gap)** |
+| `void MarkEnded(string sessionId)` | **(gap)** |
+| `void ClearEnded(string sessionId)` | **(gap)** |
+| `bool IsEnded(string sessionId)` | **(gap)** |
+| `void RecordScorecard(ScoredEpisode scored)` | **(gap)** |
+| `ScoredEpisode? FindScoredEpisode(string episodeId)` | **(gap)** |
+| `IReadOnlyList<ScoredEpisode> AllScoredEpisodes()` | **(gap)** |
+| `bool RecordEpisodeMode(string episodeId, string mode)` | **(gap)** |
+| `string? FindEpisodeMode(string episodeId)` | **(gap)** |
+| `bool RecordEpisodeTaskClassSource(string episodeId, string source)` | **(gap)** |
+| `string? FindEpisodeTaskClassSource(string episodeId)` | **(gap)** |
+| `void AppendScoreDispute(ScoreDispute dispute)` | **(gap)** |
+| `IReadOnlyList<ScoreDispute> DisputesForEpisode(string episodeId)` | **(gap)** |
+| `IReadOnlyList<ScoreDispute> AllDisputes()` | **(gap)** |
+| `void Dispose()` | **(gap)** |
+
+### `SqliteWatcherObservationStore OpenReadOnly(string databasePath)`
+
+Opens an EXISTING store read-only. Creates nothing and migrates nothing.
+
+**Throws `FileNotFoundException`.** The store does not exist — an absence, not an empty store.
+
+**Remarks.** **For a reader that must hold no authority** — the MCP server, whose whole claim is
+that it can do nothing an agent writing JSONL by hand cannot. A write handle to the fact store
+would be exactly such an authority and would bypass every guarantee the ingest provides, so
+the mode is enforced here rather than trusted to a caller's discipline.
+
+
+
+
+
+**ReadOnly, not ReadWrite-and-be-careful.** The distinction is enforced by SQLite
+rather than by convention, which is what makes "this process cannot write" a fact rather than
+a promise — and what a test can assert.
+
+
+
+
+
+**No `EnsureSchema`.** A reader must never migrate: it would race the owning
+process, and a schema change is a decision the writer makes. A store older than this reader
+fails on the missing column, loudly, which is the honest outcome.
+
+## `SqliteWatcherObservationStore`
+
+*class* — `SqliteWatcherObservationStore.cs`
+
+The durable `IWatcherObservationStore` on one SQLite file, reusing the ADR-0002 fact-store
+idiom (WAL, append-only facts enforced by triggers, a single writer). It substitutes for
+`InMemoryWatcherObservationStore` behind the same seam - the same contract, now persisted
+across a restart. Spans are an append-only fact (dedup by content-addressed primary key); sessions,
+heartbeats, and the ended flag are current-state cells (upsert), mirroring the in-memory maps.
+
+simplify: one connection guarded by a lock. Ceiling: fine at the reference scale for the skeleton.
+Upgrade trigger: read volume grows enough to want the WorkspaceStore read/write connection split.
+
+| Member | Summary |
+|---|---|
+| `CoordinationReadResult ReadCoordination(CoordinationReadRequest request)` | Validates binding and reads a frozen source-local receipt page in one snapshot. |
+| `string DatabasePath { get; }` | The backing database file. Exposed so a test can open a raw connection against it. |
+| `SqliteWatcherObservationStore Open(string databasePath)` | **(gap)** |
+| `SqliteWatcherObservationStore OpenReadOnly(string databasePath)` | Opens an EXISTING store read-only. Creates nothing and migrates nothing. |
+| `bool TryAppendSpan(ObservedSpan span)` | **(gap)** |
+| `int SpanCount(string sessionId)` | **(gap)** |
+| `int SpanCountInInterval(string sessionId, DateTimeOffset from, DateTimeOffset toInclusive)` | **(gap)** |
+| `void UpsertHeartbeat(string sessionId, long monotonicTicks)` | **(gap)** |
+| `long? LastHeartbeat(string sessionId)` | **(gap)** |
+| `void RecordSession(SessionRecord session)` | **(gap)** |
+| `SessionRecord? FindSession(string sessionId)` | **(gap)** |
+| `IReadOnlyList<SessionRecord> AllSessions()` | **(gap)** |
+| `void RecordEpisode(WorkEpisode episode)` | **(gap)** |
+| `WorkEpisode? FindEpisode(string episodeId)` | **(gap)** |
+| `IReadOnlyList<WorkEpisode> EpisodesForSession(string sessionId)` | **(gap)** |
+| `IReadOnlyList<WorkEpisode> AllEpisodes()` | **(gap)** |
+| `void AppendDeclaredArtifact(DeclaredEpisodeArtifact artifact)` | **(gap)** |
+| `IReadOnlyList<DeclaredEpisodeArtifact> DeclaredArtifactsFor(string episodeId)` | **(gap)** |
+| `void AppendDaydreamObservation(DaydreamObservation observation)` | **(gap)** |
+| `IReadOnlyList<DaydreamObservation> AllDaydreamObservations()` | **(gap)** |
+| `void AppendDaydreamEvent(DaydreamEvent daydreamEvent)` | **(gap)** |
+| `IReadOnlyList<DaydreamEvent> AllDaydreamEvents()` | **(gap)** |
+| `void AppendBoardMessage(BoardMessage message)` | **(gap)** |
+| `BoardMessage AppendBoardMessageAllocated(BoardMessage message)` | **(gap)** |
 | `IReadOnlyList<BoardMessage> BoardMessages(string repositoryKey)` | **(gap)** |
 | `IReadOnlyList<BoardMessage> AllBoardMessages()` | **(gap)** |
 | `BoardMessage? FindBoardMessage(string messageId)` | **(gap)** |
@@ -3137,6 +3463,7 @@ trigger: the SQLite store lands (remaining Phase-1 task), which bounds and persi
 | `IReadOnlyList<WorkEpisode> EpisodesForSession(string sessionId)` | **(gap)** |
 | `IReadOnlyList<WorkEpisode> AllEpisodes()` | **(gap)** |
 | `void AppendBoardMessage(BoardMessage message)` | **(gap)** |
+| `BoardMessage AppendBoardMessageAllocated(BoardMessage message)` | **(gap)** |
 | `void AppendDeclaredArtifact(DeclaredEpisodeArtifact artifact)` | **(gap)** |
 | `IReadOnlyList<DeclaredEpisodeArtifact> DeclaredArtifactsFor(string episodeId)` | **(gap)** |
 | `void AppendDaydreamObservation(DaydreamObservation observation)` | **(gap)** |

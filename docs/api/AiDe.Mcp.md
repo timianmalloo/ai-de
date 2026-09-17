@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Mcp: 10 types, 19 members, 93% carrying a summary doc comment.
+  Extracted public surface of AiDe.Mcp: 10 types, 20 members, 93% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Mcp`
 
-**10 public types · 19 public members · 93% documented.**
+**10 public types · 20 public members · 93% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -76,6 +76,7 @@ against a hand-written line with no transport in the way.
 |---|---|
 | `int MaxLimit = 200` | Most messages one read may return. |
 | `int DefaultLimit = 50` | Messages returned when the caller names no limit. |
+| `CoordinationReadResult ReadCoordination(` | Reads cache receipt metadata using the server-resolved session's repository. |
 | `BoardRead Read(` | Reads this session's repository board — never another's. |
 | `string Post(` | Posts to this session's board by appending one contract line. |
 | `IReadOnlyList<string> KnownKinds { get; } =` | The kinds an agent may send, spelled the way the wire spells them. |
@@ -101,8 +102,9 @@ free.
 
 
 
-Newest last, so an agent appending to its context reads the board in the order it was
-written — the order a person reads a thread in.
+With a cursor, return the earliest qualifying page ascending; its last Seq is the
+next cursor. Without a cursor, return the most recent page, also ascending. Historical
+sequence ties and later native tombstones are not a complete change feed.
 
 ### `string Post(`
 
@@ -305,7 +307,7 @@ testable without an environment or a filesystem.
 
 *class* — `Tools.cs`
 
-The five tools, their schemas, and the dispatch between them.
+The tools, their schemas, and the dispatch between them.
 
 **Remarks.** **Every tool answers, including when it cannot do its job.** No tool throws and none
 returns an MCP error for a missing session, an unopened workspace or an unreadable store: each is
