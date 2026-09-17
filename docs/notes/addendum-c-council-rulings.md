@@ -2584,3 +2584,238 @@ that slot runs.
 rule 128 records — and the rule earned its keep inside the measurement that was checking a different rule.
 
 ---
+
+---
+
+## Ruling 137 — 112(1) does not block; the expected set is one named Core test plus an App set that is "not recorded" until the slot names it
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17), answering the 127(c) return
+appended under Ruling 136. **The Owner corrected the conductor's premise before ruling:** the return
+under 136 said "Ruling 112(1) makes it the block on every join until it is green." That is a
+misreading. 112(1) was written so candidates can land on a red trunk **without widening or hiding the
+red set**; it never required `main` green. The block is the unnamed App 11, not the named Core 1.*
+
+**RULING:** Land P0a+P2 (and the rest of the Stream X batch) under 112(1) once the expected set is
+enumerated at `main`'s tip: **Core** = exactly
+`AiDe.Core.Tests.EveryOperationFitsTheFrameTests.NoOperationCanBuildAResponseTheTransportWouldRefuse`,
+cited by name **and** by its failure text (`EntryPointsAsync = 2,191,570 bytes`); **App** = the 11
+named from the `.trx` of the desktop slot 136(1) already requires — deterministic members by name, the
+intermittent population labelled as a population. No product code lands until that slot has run, and
+the same enumeration serves every landing until `main` moves.
+
+**BECAUSE:** 112(1) as filed is a subset-and-still-executes rule with a receipt naming both sets,
+re-enumerated per 112(iv); the frame test is named, deterministic, reproduced with CI's arithmetic, and
+the candidate reproduces it untouched, so it satisfies the rule. The App 11 cannot be *cited* because
+nothing has named them, and 126(ii) requires names for deterministic members. The slot is not a new
+cost — 136(1) already batches it for the Explore landing.
+
+**CONFIDENCE:** Verified (112(1)/(iv), 126(ii), 136(1)–(3); the test at `EveryOperationFitsTheFrameTests.cs:155-175`);
+Inferred (the CI counts and the candidate's 2,764/1 — the conductor's, not opened).
+
+**SCOPE EFFECT:** Freezes: **no landing receipt may cite "11 App failures" as a count — a count is not
+an enumeration.** Admits: once Ruling 138 lands and is merged in, the candidate's Core set is empty and
+the receipt says so.
+
+**CONDITIONS:** (a) The receipt states the platform filter the candidate ran (whole Core vs
+`Platform!=Windows`) so the subset check is like-for-like with CI's job — **2,764 vs 2,575 is not
+comparable as written**. (b) The App enumeration comes from the `.trx`, not the console. (c) The
+candidate re-merges `main` after Ruling 138 lands (Ruling 107's shape) so its Core set is empty at push.
+
+**RECORD AS:** Ruling 137 — 112(1) does not block P2-Repairs on the frame defect; expected set = the
+one named Core frame test + the 11 App failures enumerated by name from the batched desktop slot at
+main's tip; nothing lands on a count.
+
+---
+
+## Ruling 138 — the conductor repairs the frame bound in `lane/main-red-0915`, on the Core-owned projection; the frame is not raised
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17).*
+
+**RULING:** The conductor authors the repair as its own commit in `lane/main-red-0915` (112(2)'s scope
+amended by this one named test), bounding `EntryPointsProjection`'s row ceiling so the hostile-ceiling
+response fits `IpcFraming.MaxFrameBytes` with the margin INV-0003 used for the other operations; the
+number is **derived from the test's own `WireBytes` measurement and recorded in the commit, never
+picked**; `IpcFraming.MaxFrameBytes` is **not** touched; Grok is told by `request-add` before and after.
+
+**BECAUSE:** `src/AiDe.Core/Projections/*.cs` is Core-owned under `session-contracts.md:184` ("Core
+edits; Design requests"), so this is not Grok's file to repair and no grant is needed; the owning
+session is dark and 112(1) makes an unnamed-or-unrepaired red a cost on every join. The test is already
+red on `main`, so **red-first is satisfied by `main` itself**. `DefaultMaxRows = 5_000` at ~438 bytes
+per hostile row is the arithmetic of the failure, and the listing's `Omitted (n)` disclosure already
+keeps a lower cap honest on the surface. Raising the frame would trade a bounded response for an
+unbounded one — INV-0003's own rule.
+
+**CONFIDENCE:** Verified (`session-contracts.md:184`, the test, `EntryPointsProjection.cs:30` and `:76`);
+Inferred (that `f009b6f6` introduced the red — the conductor's reading of run history; not needed for
+the fix, needed for the class entry).
+
+**SCOPE EFFECT:** Amends 112(2) by one named test. Cuts: pagination or a query-level ceiling redesign (a
+finding for the D-1 lane if they need more than the cap); any App or `EntryPointsSurface.cs` change.
+
+**CONDITIONS:** (a) **Before filing the class entry, the conductor fetches the D-1 landing's closing
+entry (`f009b6f6`) and its recorded CI run id/result. If it recorded Core green at that SHA, that is a
+receipt asserting something not observed — bring it to the Owner as an integrity finding; if it
+recorded nothing, it is a 127(iv) breach and an INV-0005-class recurrence, filed as such.** (b) The
+commit records the measured hostile bytes per row and the resulting cap. (c) Lands before the Explore
+batch; the Explore candidate re-merges it (137(c)).
+
+**RECORD AS:** Ruling 138 — frame bound repaired by the conductor in lane/main-red-0915 (112(2) +1
+test): EntryPoints row ceiling derived from the frame test's bytes, frame size untouched, Grok told;
+D-1 landing receipt fetched before the class entry.
+
+---
+
+## Ruling 139 — the baseline is repaired first from measured counts at main's tip; `verify-test-run.py` names failures now
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17).*
+
+**RULING:** **(4)** Yes — the conductor repairs `tools/expected-test-counts.json` as the **first commit**
+in `lane/main-red-0915`, from counts measured at `main`'s tip (App and portable from run 35228503081's
+`.trx`, nonportable and whole measured locally at the same SHA, split invariant holding), **never from a
+candidate's run**; thereafter every landing that adds tests raises it in the same candidate. **(5)**
+Admitted now, same lane, own commit: `verify-test-run.py` prints each non-passed `UnitTestResult` (name
++ first line of its error message) under its FAILED output; exit semantics unchanged. The upward-drift
+class — *a floor-only baseline drifts up silently and lowers the abort-detection margin* — is registered
+with the join-side control: **the join refuses a candidate whose executed count exceeds the baseline
+without the baseline moving in the same candidate**; CI's floor semantics unchanged.
+
+**BECAUSE:** The gate fails only on `executed < expected` (`verify-test-run.py:302`), so two landings
+added eight Core and two App tests and nothing fired — the baseline is now 8 below reality and a silent
+abort of up to 8 tests is invisible. The gate **already parses the `.trx`** (`:205`) and reads only the
+summary counters; the cost of the enumeration this round was a local reproduction plus a desktop slot,
+which is exactly what naming at the gate would have saved. Both are controls, and 132(a) says class
+controls land with their stream, not deferred.
+
+**CONFIDENCE:** Verified (the tool, the baseline file); Inferred (the CI counts).
+
+**SCOPE EFFECT:** Admits three commits into `lane/main-red-0915` (baseline, names, drift control) ahead
+of or beside the frame fix — none gates the Explore landing except the baseline. Cuts: any change to the
+split invariant or to `--update` semantics; any filtering of which failures print.
+
+**CONDITIONS:** (a) Red-first for (5): `verify-gate-self-tests.py` plants a `.trx` with one failed
+result and shows the name printed; plants an executed-over-baseline result and shows the join refusal.
+(b) The baseline commit message states the measured numbers and the run id they came from.
+
+**RECORD AS:** Ruling 139 — expected-test-counts.json repaired first from measured counts at main's
+tip; verify-test-run.py prints failing test names now; upward baseline drift becomes a join refusal; all
+in lane/main-red-0915.
+
+---
+
+## Ruling 140 — Ruling 94 amended to the operator's words: Center = [Graph (active), Tree]; Left retires its Graph
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17), on the KG-visualization lens's
+finding that the operator's "right-side views" are Ruling 94's **Center** pane.*
+
+**RULING:** Option (a). `ArchitectureDefault()` becomes **Left = empty, collapsed; Center =
+`[Graph (active), Tree]` at extent 1.0**; Right and Bottom unchanged. **Contexts and Domain leave the
+default and stay admitted via the View menu**, their kinds remaining restorable (no envelope drop). This
+is an amendment to Ruling 94's layout line; 94's `inspector` retirement, Evidence fold and conditions
+(2)–(3) stand. The **placement** (one change to `ZoneLayout.cs:257-273` plus its default-layout test) is
+admitted into Stream X as its own commit now; the **bidirectional seam** (Reveal in tree,
+folder-to-group, expansion persisted by path, facet carry, Shift+F10 on the tree menu) is **deferred to
+its own slice** after Stream X lands.
+
+**BECAUSE:** The operator's words are a full statement of the default ("need to be Graph and Tree"), and
+94's own reasoning for Evidence applies — a surface not in the operator's stated default leaves the
+default and nothing more. **Option (b) keeps two surfaces the operator did not name in the strip, which
+is the lens preserving its own prior ruling rather than reading the instruction**; (c) leaves issue 1
+unanswered. The Tree is a built, tested surface with one-way Tree→Graph navigation already
+(`SolutionTreeSurface.cs:277`), so placement alone delivers the VS Code idiom today; the seam is a T1
+slice with STA tests and is not a placement. With Graph leaving Left @0.22, the header-strip overflow
+finding (94 cond. 3) becomes **moot rather than fixed** — record it as such.
+
+**CONFIDENCE:** Verified (94 as filed, `ArchitectureDefault` as coded, the Tree's menu); Inferred (that
+"right-side views" is 94's Center — the lens's reading of the screenshot, which the Owner did not open;
+the operator's verbatim words, quoted only by the review).
+
+**SCOPE EFFECT:** Amends 94. Admits one Shell-file commit into Stream X (`ZoneLayout.cs` + its test).
+Defers the seam slice with a name ("Explore Tree seam"). Cuts: option (b)'s four-tab strip; any split
+pane.
+
+**CONDITIONS:** (a) The Tree's surface kind id is **fetched** from the allow-lists /
+`SurfaceContentFactory`, not invented; if `SolutionTreeSurface` is not yet a restorable kind, that is a
+scope change and returns to the Owner before the commit. (b) 132(c)/126(i) seam check on `ZoneLayout.cs`
+against the Atlas E1 and Grok candidates before the edit — the conductor's 132(c) return did not cover
+this file. (c) The operator's saved slot (`layout.architecture.zones.json`) still restores as saved — the
+amendment changes the default, not the reconciliation. (d) The conductor logs the operator's verbatim
+instruction with `prompt-log.py add` so the note can cite it.
+
+**RECORD AS:** Ruling 140 — 94 amended to the operator's words: Architecture default Center = [Graph
+(active), Tree], Left empty; Contexts/Domain leave the default, stay admitted; Tree placement admitted
+into Stream X now, the Graph↔Tree seam is its own next slice.
+
+---
+
+## Ruling 141 — Stream X re-ordered: provenance on every edge ahead of P1; `fit()`-only rides in the P1 commit; seed-by-stable-id is its own commit
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17), on the KG lens's three canvas
+Blockers.*
+
+**RULING:** Stream X becomes P0a+P2 (built) → P4 → P3 → **P6: provenance on every edge**
+(`CanvasPage.cs:716-718`, the `else` branch gains the same dash/`<title>` encoding as the join branch,
+using the page's existing inferred colour) → P0b + P1 (**the P1 commit's resize handler calls `fit()` +
+`place()` only, never `layout2d`**) → **P7: seed by stable id** (own commit) → P5 query. **P1 does not
+land in a batch that lacks P6.** Not admitted into Stream X: the banner word and `DeclaredByKind` chips,
+the edge-stroke contrast token, the layout settle, the keyboard grammar, the metric overlay, token
+injection — filed as the named next slice **"Explore truthfulness"** with the review as its evidence.
+
+**BECAUSE:** `CanvasPage.cs:708-718` applies the encoding only to join edges while `edge.status` /
+`isInferred` are on every edge, and `DESIGN.md:322-324` names that exact shape a correctness rule with a
+hard escalation — the committed design system already rules it, so the Owner is admitting the fix, not
+waiving anything. **The lens's "same commit" argument for seeding is refuted by its own item 3:**
+re-scatter on splitter drag is prevented by `fit()`-only (`fit()` at `:527-544` is pure re-framing), so
+seeding addresses a different trigger (a data change) and gets its own commit and evidence under 136(1).
+Built commits are not reordered.
+
+**CONFIDENCE:** Verified (the three code sites, the design tokens, 136(1)); Inferred (the "~10 lines"
+estimate; `CanvasPage.cs:769` and `DeclaredByKind` — not opened).
+
+**SCOPE EFFECT:** Admits P6 and P7 into Stream X; adds one rule to the P1 commit. Cuts everything else in
+the review's plan from Stream X **by name**. Defers the "Explore truthfulness" slice; its first item is
+the two false numbers.
+
+**CONDITIONS:** (a) P6's proof is rendered in the P1 desktop slot: one inferred and one extracted
+non-join edge screenshotted with the `<title>` text, in the receipt. (b) **P7's test statement is
+honest**: seed position is a function of id; settled position still depends on the set at one iteration
+— full US-K8 waits on the settle work. (c) P6 uses colours already present in the page string; **no new
+hex literal enters** (DC-230's medium).
+
+**RECORD AS:** Ruling 141 — Stream X: … → P3 → P6 provenance on every edge → P0b+P1 (fit()-only resize)
+→ P7 seed-by-stable-id → P5; P1 never lands without P6; the rest of the review is the next slice
+"Explore truthfulness".
+
+---
+
+## Ruling 142 — DC-230 sharpened as the lens states, with the control amended: the injection is the fix, the contract test is the control
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17).*
+
+**RULING:** Amend DC-230's class statement to the lens's form — *"a C# raw-string literal is invisible to
+both `ui-craft-gate.py` and `design-lint.py`"* — with `height: 440px` and the page's raw hex colours as
+**two instances of one blind spot**. Amend the control, do not replace it: (i) the headless contract test
+over inlined page strings (P0b, as 132 admitted) **stays the control** and is the thing that fails on
+recurrence; (ii) token injection at navigate time (TC5) is **the fix** that lets (i) later assert "no hex
+literal in the page string", and lands in the "Explore truthfulness" slice, at which point P0b widens to
+that assertion. **P0b does not widen now.**
+
+**BECAUSE:** A control is something that fails when the shape recurs (CI6); injection alone does not fail
+on the next `height: 440px` typed into the string — the assertion does. Widening P0b to hex literals now
+would make it red with no fix in the batch, which is not red-first, it is **a permanently red gate**. The
+lens's class statement is the correct generalisation: DC-230's own "why it survived" already says the
+blind spot is *between* two gates.
+
+**CONFIDENCE:** Verified (DC-230 as filed, three hex literals at `CanvasPage.cs:710,717`); Inferred (the
+count of fifteen; TC5 at `DESIGN.md:546` — not opened).
+
+**SCOPE EFFECT:** Amends the DC-230 entry text now (own hygiene commit in Stream X); defers the injection
+and the widened assertion to the named slice; status stays `uncontrolled` until P0b lands.
+
+**CONDITIONS:** The entry names both controls with which one is owed by which slice, and records the
+hex-literal count **as measured from the string**, not the lens's figure.
+
+**RECORD AS:** Ruling 142 — DC-230 sharpened: a C# raw-string literal is invisible to both lints; P0b's
+contract test is the control, token injection is the fix and lands with the truthfulness slice, after
+which P0b asserts no hex literals.
+
+---
