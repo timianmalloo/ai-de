@@ -2625,6 +2625,45 @@ candidate re-merges `main` after Ruling 138 lands (Ruling 107's shape) so its Co
 one named Core frame test + the 11 App failures enumerated by name from the batched desktop slot at
 main's tip; nothing lands on a count.
 
+**CONDUCTOR'S RETURN ON 137 — THE ENUMERATED SET AT `main`'s TIP `f009b6f6`.** The desktop slot ran
+(announced as `req-01M2R57CR7T0GNCNG57PXT5T9S`). The names below are read from **CI run 35228503081's
+own `.trx` artefacts** (`test-results`, `test-results-linux`) per condition (b), not from a console.
+**This is the set every landing receipt cites until `main` moves.**
+
+**Core — `AiDe.Core.Tests.portable` (`Platform!=Windows`), 1 deterministic:**
+
+| Test | Failure text |
+|---|---|
+| `EveryOperationFitsTheFrameTests.NoOperationCanBuildAResponseTheTransportWouldRefuse` | `these responses cannot cross the 1,048,576-byte frame: EntryPointsAsync = 2,191,570 bytes` |
+
+Ruling 138's repair removes it; after that lands, an Explore candidate that re-merges `main` (137(c))
+has an **empty** Core set and its receipt says so.
+
+**App — `AiDe.App.Tests`, 11, which is three groups and not one:**
+
+| Group | n | Members | Reading |
+|---|---|---|---|
+| `Shell.CodingsLeftExtentTests` | 4 | `AtStartupSize…WithTheEditorAt280(1440×900, "five", ≥1)`, same `(…, "prose", ≥1)`, `CodingsLeftExtent_HoldsThe96chMeasureAtEveryViewportTheDisplayGives(1440×900)`, `CodingsLeftExtent_HoldsThe96chMeasureAtStartupSize` | **Ruling 112's named four.** Text: *"the words' column (451) cannot hold 96ch (673)"*. Ruling 126 groups 3–4 hold. |
+| `Sessions.Thread.TheThreadIsChatLikeTests` | 5 | `ARunningTurnShowsItsLastFourLines…`, `AnAppendWhilePinned…`, `AtRest_TheThreadRendersUnderTheAppTheme…`, `TheEditorsTopEdgeIsEqualAt1_5_40Turns…(1440×600, structureOpen:False)`, same `(800×600, structureOpen:True)` | **The intermittent population**, labelled as one per 126(ii). Every member fails with *"the STA thread did not finish within 60s"* — a timeout, not an assertion. |
+| **New, deterministic, in no expected set** | 2 | `BoundsReachTheSurfaceTests.EveryBoundCarryingFieldIsCoveredOrAllowed` — *"Core publishes bound-carrying field(s) that no surface assertion covers and no allowance explains"*; `TokenDisciplineTests.EveryResourceKeyTheAppNames_IsDeclared` — *"these resource keys are named and never declared in App.xaml. A reference to a missing key fails SILENTLY"* | **Both reproduce locally at the same SHA**, so neither is a runner artefact. Neither is in Ruling 112's set and neither is intermittent. They are the two reds that were hiding inside the number "11". |
+
+**Why the enumeration had to come from the `.trx` and not from a local run — measured.** The same
+suite run locally at `f009b6f6` produced **3** failures, not 11: the two new deterministic ones, plus
+`SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph` (*"foreground not held;
+SendInput would prove another window"*), which is an artefact of this machine having other windows up
+and is **not** in CI's set. The four extent tests and the five STA timeouts all **passed** locally. So
+a local run would have produced a set that is wrong in both directions — it invents one member and
+drops nine. Condition (b) earned its keep on its first use.
+
+**The two new reds are unassigned.** They are App-surface, outside both P2-Repairs streams and outside
+Ruling 126's held groups, and they are announced to the watcher rather than taken by this lane.
+
+**Counts, for 139(4).** App 1,053 · portable 2,575 · nonportable 181 · whole Core 2,756 (the two halves,
+and the invariant is the check). Note that `verify-test-run.py` compares the `.trx` **total**, not its
+`passed` or its `executed` attribute: the CI nonportable file reads `total=181, passed=177`, and
+recording 177 would have set a floor the gate can never meet.
+
+
 ---
 
 ## Ruling 138 — the conductor repairs the frame bound in `lane/main-red-0915`, on the Core-owned projection; the frame is not raised
