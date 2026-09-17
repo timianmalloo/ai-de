@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T14:07:11Z",
+  "generated": "2026-09-17T14:38:29Z",
   "audit": [
     {
       "actor": null,
@@ -26914,6 +26914,38 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2QWVZQDZM645447JAG23BF7",
+      "shortname": "atlas-bounded-verification-and-publisher-handoff",
+      "datetime": "2026-09-17T14:38:28Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going\nactively coordinate with the watcher\nlets stop blocking so much",
+      "summary": "Boundedverificationcompletewithtruthfulhandoff: nativepair03refused/inconclusive independentlyclassified, Ownerphaseclosed, actualwatcherreleaseandpublisherforegroundACKreceived; canonicalBLOCK. R124isolatedexactcandidatea63de46c onbcf built24outsideprojects28.656s exit0,43/19/24/0 reconciled,19solutionnotbuilt. OriginalUNKNOWNretained. IndependentreviewsCLEAR; seven sourceblobsunchanged; twoproofmetadatafixes preservebranchdesignprovenance; finalgraph522zero andactualderivedgatesPASS. Newtreeauditscommitted/sessionended, oldClaudeauditrescuetreeuntouched. Exactcandidate/base/threeproofs deliveredClaudeQWRKQN andwatcherQWRKSC, no integrationACK/mainmergeclaimed. Originalextraapprovaledgeandsharedindextocompileedge removed throughOwner/worktreeisolation. Failedpreparation11/6,recovery8stop,successful6/6capture,closingbudgetoverrunandnarrowmetadatacorrectionrecorded; aggregateactualrootcallsnotinstrumented,nocapcomplianceclaim. Remainingpersonalproof/auditconservation/currentmain/R108/publicationfloorspreserved. Grokr6exactsinglecorrectionstillpending; admittedstub/listingunheld.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md",
+        "docs/proof/codex-d1-r6-consumer-review.md",
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Complete bounded verification and the evidence-based integration handoff.",
+      "done_when": "Authorized checks have inspected results, required independent gates clear, and publisher receives exact candidate and evidence with remaining integration gates explicit.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-17T14:11:02Z",
+      "duration_seconds": 1646.0,
+      "change": "cl-01M2QVBT01GD9656SCY7JWTCXC",
+      "git": {
+        "sha": "d17c10422966114d88c3c9fb031c7a99171e1d21",
+        "short": "d17c10422",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -31796,6 +31828,29 @@ window.AUDIT_DATA = {
       "git": {
         "before": "ca0c17e42814f615d9545b58642c5e77d6661306",
         "after": "ca0c17e42814f615d9545b58642c5e77d6661306",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2QVBT01GD9656SCY7JWTCXC",
+      "datetime": "2026-09-17T14:12:09Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "decision",
+      "skill": "optimize-graph",
+      "title": "Owner separates R124 source verification from original audit rescue",
+      "prompt": null,
+      "summary": "Admit one exact-input isolated tree atbcf for existingONEreplacementcoverage. GenericcapturewrapperactualSHAandexplicitcwdreadbyOwner. Nine frozenblobmanifestmustmatch; no originaltree/index/auditwrites. Claude retainsacceptedrescuebeforejoin, personalproofreview/R108/publication. Nativeexactnegativehandoffnowpublisher/foregroundACKed andclosed; canonicalBLOCK.",
+      "rationale": "Separate index and build outputs remove the exclusive-writer edge from compilation while preserving audit conservation before integration. No source or authority is inferred or expanded.",
+      "artifacts": [
+        "docs/plans/atlas-five-gates.md",
+        "docs/proof/atlas-p1-03-transition-design-review.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "d17c10422966114d88c3c9fb031c7a99171e1d21",
+        "after": "d17c10422966114d88c3c9fb031c7a99171e1d21",
         "branch": "integration/atlas-five-gates",
         "pushed": null,
         "commits": []

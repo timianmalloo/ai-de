@@ -9538,9 +9538,14 @@ window.DOCS_INDEX = {
           "kind": "flowchart",
           "title": "Material graph, floors and cost",
           "mermaid": "flowchart LR\n  C[Truthful partial close] --> O[Owner promotion by reference]\n  O --> N[Exact native slot request]\n  C --> R[Claude replacement and base decision request]\n  N --> H[Record and commit handoffs]\n  R --> H"
+        },
+        {
+          "kind": "flowchart",
+          "title": "R124 isolation replan — 2026-09-17 14:10Z",
+          "mermaid": "flowchart LR\n  P[Provision isolated exact base] --> M[Verify nine blobs and wrapper]\n  M --> V[One durable combined coverage]\n  V --> I[Inspect actual population and result]\n  I --> R[Independent evidence review]\n  R --> H[Exact candidate and evidence handoff]\n  A[Claude conserves original audit] --> J[Serialized integration]\n  H --> J\n  J --> C[Claude personal proof review and R108 gates]"
         }
       ],
-      "sourceSha256": "c6deebf1d104f01706440115344c8c206c22ff28e8da4d203477188c3d3e5b15"
+      "sourceSha256": "3fe873cf6c741a6e9ef6ad67fd4260c7dec1965a2e0e9b62549b32a6646a7ff3"
     },
     {
       "id": "coordination-code-atlas",
@@ -9728,7 +9733,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7057e1380216bab1541002d1eacd48f8b76ca42bbf38044223d6620aaa5f735b"
+      "sourceSha256": "e35e09d214ec1eda64629d5946f9c947287a118bdf793306195dbe03055c5866"
     },
     {
       "id": "design-session-profiler",
@@ -12122,9 +12127,14 @@ window.DOCS_INDEX = {
           "kind": "flowchart",
           "title": "Resumed current-main assembly, 2026-09-16",
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
+        },
+        {
+          "kind": "flowchart",
+          "title": "R124 isolation replan — 2026-09-17 14:10Z",
+          "mermaid": "flowchart LR\n  P[Provision isolated exact base] --> M[Verify nine blobs and wrapper]\n  M --> V[One durable combined coverage]\n  V --> I[Inspect actual population and result]\n  I --> R[Independent evidence review]\n  R --> H[Exact candidate and evidence handoff]\n  A[Claude conserves original audit] --> J[Serialized integration]\n  H --> J\n  J --> C[Claude personal proof review and R108 gates]"
         }
       ],
-      "sourceSha256": "2733dd2815d9289674fa8f44fd7b7a9eb35a4f7357b90add1f7011183c342b25"
+      "sourceSha256": "965c0704003428560f872998e566e8a675448351eafcd82c9bf7fc1b139b2479"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -13035,7 +13045,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  P[Readiness and exact request] --> G[Fresh watcher grant]\n  G --> E[One frozen pair]\n  E --> I[Independent actual interpretation]\n  I --> H[Coordinated evidence handoff]\n  B[Read-only current-base receipt] --> C[Claude replacement and base decision]\n  C --> V[One granted combined coverage]\n  V --> R[Independent candidate and Claude proof reviews]\n  R --> H"
         }
       ],
-      "sourceSha256": "f949b2dcc264e3df6bd429dad894ca2a2846ebedfa5b41d5c98fa49a36f8113b"
+      "sourceSha256": "ec9c32abc1d109967c406fd3f16f0cfed9332e4264da68686782e4c1c56da782"
     },
     {
       "id": "proof-atlas-peer-review-transport",
@@ -23468,5 +23478,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "63cc13a84df34d127abba15bbf00d7d8e38fcd25d3b9e10ac61b0f395009ac18"
+  "graphSha256": "649b4c5a1c73ab2dc6bc026e167acfe70af7d6c69cf028ab9ba48813f62b7a8f"
 };

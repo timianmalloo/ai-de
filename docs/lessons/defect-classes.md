@@ -8581,3 +8581,24 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   executable floors. They do not automatically detect invented authority edges;
   this operational recurrence remains partially controlled by the scoped Owner
   review rule already recorded under DC-154, not falsely marked automated.
+
+
+- **DC-116 recurrence, R124 preparation/lookup (2026-09-17):** guessed request-store
+  paths, wrong AIDE variables for coord identity, an unsupported request-list --id
+  option and an omitted required audit prompt caused refusals before useful work.
+  **Class → sweep → derive → prevent:** the actual CLI/signatures and shared-store
+  routing were read; the saved R124 recovery script sets AGENT_SESSION/AGENT_NAME,
+  consumes the official request list, checks exact registered identity, refuses
+  any mismatching blob/wrapper or competing invocation, and gates dependent writes
+  on actual command results. Identity refusal and audit-validator refusal were
+  observed before population; the corrected guarded path executed once. These
+  are local executable controls, not automated prevention of every future CLI guess.
+  Evidence: candidatea63de46c aggregate Proof Pack and retained run_r124_recovery.py.
+- **DC-154 recurrence, doctor result scope (2026-09-17):** treating any doctor exit1
+  as a ban on isolated compilation blocked on regeneration debt despite effective
+  registry/drivers. Owner read cmd_doctor's actual problem counter. The corrected
+  guarded continuation reused the full observed result, retained six owed entries,
+  and removed only the regeneration-debt-to-compilation edge. Registry/driver,
+  ownership, byte-identity and capture failures still stop. No primary-targeting
+  regeneration ran. The one actual coverage result and separate final own-tree
+  derivation prove this scoped path, not general coordination health.

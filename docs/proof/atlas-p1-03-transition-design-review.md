@@ -946,3 +946,70 @@ qualification remains BLOCK. R124 is independent and continues after rescue rele
 Final executor accounting is16calls/revised18 (the earlier15 was a checkpoint). Conductor inspected b6c0a8a7: eight paths limited to proof/audit/derived/site figures; git diff41421c8e over src/tests/tools/records empty and working tree clean. Actual regeneration record:349API files,35bundled pages,14figures,998audit+187change entries,225classes, all listed derived gates passed. Parsed graph:605artifacts, zero problems/defects/orphans/drift,74existing suggestions. Source-preservation record exit0 inspected. Initial guessed receipt filenames were absent; actual directory names were then opened and parsed before these claims. No result is derived from the earlier outer shell exit0 that followed those failed reads.
 
 Exact negative handoff req-01M2QTZC2SW14XJ59QY43VQM6X to Atlas publisher and req-01M2QTZC4GPM3NZY677R5T6RZ0 to watcher carry executor commit/artifact pins. At documentary close they await recipient ACK; delivery is not acceptance. Owner decision cl-01M2QTZBYWPM2T0WWH9N0PMPT8 is recorded through official audit.
+
+### Native handoff receipt completed
+
+Publisher/foreground and watcher requests req-01M2QTZC2SW14XJ59QY43VQM6X and req-01M2QTZC4GPM3NZY677R5T6RZ0 are resolved RECEIPT ACK. Foreground directly inspected b6c0a8a7 and earlier raw state/process/cleanup, accepted the independently classified refusal and Owner phase closure, retained canonical BLOCK, and explicitly said no ACK-of-ACK is needed. This completes the bounded negative-evidence handoff; it is not native qualification or source admission to main.
+
+
+## R124 candidate verification complete — 2026-09-17
+
+The isolated candidate is committed at
+a63de46cb1e67abf4baa8e1b1b2b8f1535031aa3, verify/atlas-view-spikes,
+C:/Projects/ai-de-verify-atlas-view-spikes, exact basebcf4959b. Its session ended,
+tree is clean and own leases released. Retain it for raw evidence and integration.
+The original Claude rescue tree was untouched; its conservation remains assigned.
+
+Actual ONE replacement command python tools/verify-project-coverage.py ran
+14:20:13.621689Z-14:20:42.277304Z, PID23164,28.656seconds, child/wrapper/terminal
+exit0. It built24 outside-solution projects, including both Atlas spikes. Actual
+population43tracked/19solution/24outside/0exempt; the19solution projects were not
+built by this invocation. Basebcf has41/19/22;1bfb250a moved SolutionTreeProbe into
+solution membership, then the two admitted Atlas projects add2outside. Earlier
+expected41/18/23 is retained as a corrected expectation, not an unexplained input.
+Original lost result stays UNKNOWN. Separate Owner accepts bounded compilation;
+no new runtime/native/current-main or full-solution qualification is inferred.
+
+Independent result/population CLEAR: Sol/high3readonlycalls62.18seconds. Final
+aggregate review CLEAR after direct R124 retrieval: its initial Linux contradiction
+was withdrawn because Core had explicitly accepted the earlier manual SDK10.0.303
+evidence once, not CI. A failed unsupported --id lookup was corrected with the
+official request list and exact-ID filter. No Linux run was added here.
+
+Actual docs graph initially found two absent branch-local design links. Owner
+admitted only two proof metadata/provenance corrections, preserving all seven
+source blobs. Independent one-call diff review cleared those changes with two
+exact temporal clarifications, both applied. The aggregate records pre-run nine-file
+manifestb0c4d409... and final proof OIDs2e5a8d5a.../b290af84.... No design was imported.
+Final observed derive checks: conflict markers clean; four derived views match;
+14sitefigures;225classes;765audit+155change entries; graph522artifacts,zero defects,
+problems,orphans,indexdrift. Conductor read commit receipt and actual clean tree;
+candidate has no src/tests/Directory.Packages.props diff against its exact base.
+
+Three Proof Packs are on that candidate: docs/proof/atlas-behavior-contract.md,
+docs/proof/atlas-architecture-contract.md, and
+docs/proof/atlas-view-spikes-combined-verification.md. The aggregate contains actual
+output, full input/proof identities, measured duration, raw artifact hashes, review
+provenance, corrections and explicit limits. Its raw artifacts/r124-isolated-verification/
+are retained locally; they do not travel with the commit. No AIDE contract destination
+was available at Conductor grounding; no synthetic episode delivery is claimed.
+
+Exact handoff req-01M2QWRKQNFS17DGDJ91DYCEQV goes to Claude and
+req-01M2QWRKSCZMBWZ9TQGSF1TEZW to watcher. Personal proof inspection, old-audit
+conservation, current-main reconciliation, R108 empty failing set and serialized
+publication remain the existing publisher responsibilities. Handoff disposition is
+recorded if received; no notice is promoted to ACK and no main integration is claimed.
+Native pair03's separate negative-evidence handoff is already publisher/foreground
+ACKed and closed; canonical Atlas qualification remains BLOCK, no more native work.
+
+Planned versus actual: Sol preparation11/6 calls failed before population on guessed
+store/identity; Conductor8-call recovery stopped before population after missing
+prompt correction and a too-broad doctor exit guard. Owner inspected actual doctor
+semantics:6owedregeneration items explain exit1, registry/drivers effective, not
+overall green coordination health. A separately admitted6-call continuation ran
+the one capture and inspected it in6calls. Documentary close exceeded its8-call
+estimate through review rework and the actual graph finding; Owner admitted a
+narrow metadata correction and independent diff review. No retrospective closing
+cap compliance is claimed; authoring/communication overhead outweighed the measured
+28.656second build. No cap was used to abandon a live child or waive an actual gate.
+Remaining scope is publication handoff; no speculative investigation is opened.

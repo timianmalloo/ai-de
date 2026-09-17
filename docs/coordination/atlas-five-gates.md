@@ -1351,3 +1351,119 @@ right-sized for a read-only evidence classification; Astra Owner3calls/10min dec
 next scope. The Conductor's full turn tool cost is not separately instrumented; no
 retrospective budget-compliance claim is made. Remaining root record/handoff unit
 is10calls/15min, checkpoint6; new operational evidence may require an explicit replan.
+
+
+## R124 isolation replan — 2026-09-17 14:10Z
+
+Goal: capture one combined E1/E2 coverage result for the frozen candidate and hand
+off its exact evidence. Done when actual inventory/build findings/exit/elapsed are
+inspected, independent evidence review is returned, and publisher receives the
+candidate/evidence with remaining integration gates explicit. Not in scope: new
+source, current-main qualification, native runs, automatic retry, editing Claude's
+rescue tree or publishing main. Tier T2 programme, cap4; Sol/high deterministic
+execution6calls/15min checkpoint4, fan-out0; Conductor remaining record/join unit
+10calls/15min checkpoint6, independent review separately bounded after actual result.
+
+The accepted rescue had returned no completion/handback. Owner inspected the proven
+generic capture wrapper (explicit cwd/output, no fixed root; SHA0f89329d...) and
+admitted isolation. This supersedes waiting for rescue before source verification.
+It does not take back the rescue or infer consent. Claude retains the original tree,
+index and audit. Conservation remains before eventual integration, not compilation.
+
+Actual new coord worktree: C:/Projects/ai-de-verify-atlas-view-spikes,
+branch verify/atlas-view-spikes, exact basebcf4959bc0e0e361736e6a179f05b69fcd0500f8,
+session codex-atlas-view-spikes-isolated-verification / codex-sol-spike-verifier.
+Exact bounded contract req-01M2QV86D1D4WA2SQDAPWBTS29 precedes population. Notices
+QV86ET to watcher and QV86GG to Claude preserve their rescue assignment; no new
+approval is requested. Only nine retained mode/OID/path entries may populate this
+tree, manifestb0c4d40948c0a4e165280c45a26169bd4b1051479e0fadf6fde1086f5280eb35,
+checked against both index and working contents. Copy the unchanged wrapper and
+write all new evidence inside the new tree. No old audit row or index is touched.
+
+```mermaid
+flowchart LR
+  P[Provision isolated exact base] --> M[Verify nine blobs and wrapper]
+  M --> V[One durable combined coverage]
+  V --> I[Inspect actual population and result]
+  I --> R[Independent evidence review]
+  R --> H[Exact candidate and evidence handoff]
+  A[Claude conserves original audit] --> J[Serialized integration]
+  H --> J
+  J --> C[Claude personal proof review and R108 gates]
+```
+
+Real edges: byte identity is a data edge; review/publication are decision edges;
+original-index writer exclusivity is removed from compilation by a distinct tree.
+No wider fan-out is needed. Existing specification/architecture/spike source and
+independent source reviewacdf4894 are reused; only evidence needs a new artifact.
+Oracle: expected41tracked/18solution/23outside/0exempt, every actual build result
+inspected, actual captured terminal exit and elapsed, unchanged source pins. A
+different population or missing result fails. Input mismatch/command failure/capture
+loss ends the unit without repair, retry or another tree. The one invocation is the
+termination bound; the15minute cap is a planning defect signal, not child abandonment.
+Original lost invocation stays UNKNOWN. New result applies tobcf frozen source,
+not currentmainf009. Rescue and publisher gates remain intact. Planned elapsed/cost
+are estimates, no measured speedup is claimed. Actuals are recorded after the run.
+
+
+## R124 candidate verification complete — 2026-09-17
+
+The isolated candidate is committed at
+a63de46cb1e67abf4baa8e1b1b2b8f1535031aa3, verify/atlas-view-spikes,
+C:/Projects/ai-de-verify-atlas-view-spikes, exact basebcf4959b. Its session ended,
+tree is clean and own leases released. Retain it for raw evidence and integration.
+The original Claude rescue tree was untouched; its conservation remains assigned.
+
+Actual ONE replacement command python tools/verify-project-coverage.py ran
+14:20:13.621689Z-14:20:42.277304Z, PID23164,28.656seconds, child/wrapper/terminal
+exit0. It built24 outside-solution projects, including both Atlas spikes. Actual
+population43tracked/19solution/24outside/0exempt; the19solution projects were not
+built by this invocation. Basebcf has41/19/22;1bfb250a moved SolutionTreeProbe into
+solution membership, then the two admitted Atlas projects add2outside. Earlier
+expected41/18/23 is retained as a corrected expectation, not an unexplained input.
+Original lost result stays UNKNOWN. Separate Owner accepts bounded compilation;
+no new runtime/native/current-main or full-solution qualification is inferred.
+
+Independent result/population CLEAR: Sol/high3readonlycalls62.18seconds. Final
+aggregate review CLEAR after direct R124 retrieval: its initial Linux contradiction
+was withdrawn because Core had explicitly accepted the earlier manual SDK10.0.303
+evidence once, not CI. A failed unsupported --id lookup was corrected with the
+official request list and exact-ID filter. No Linux run was added here.
+
+Actual docs graph initially found two absent branch-local design links. Owner
+admitted only two proof metadata/provenance corrections, preserving all seven
+source blobs. Independent one-call diff review cleared those changes with two
+exact temporal clarifications, both applied. The aggregate records pre-run nine-file
+manifestb0c4d409... and final proof OIDs2e5a8d5a.../b290af84.... No design was imported.
+Final observed derive checks: conflict markers clean; four derived views match;
+14sitefigures;225classes;765audit+155change entries; graph522artifacts,zero defects,
+problems,orphans,indexdrift. Conductor read commit receipt and actual clean tree;
+candidate has no src/tests/Directory.Packages.props diff against its exact base.
+
+Three Proof Packs are on that candidate: docs/proof/atlas-behavior-contract.md,
+docs/proof/atlas-architecture-contract.md, and
+docs/proof/atlas-view-spikes-combined-verification.md. The aggregate contains actual
+output, full input/proof identities, measured duration, raw artifact hashes, review
+provenance, corrections and explicit limits. Its raw artifacts/r124-isolated-verification/
+are retained locally; they do not travel with the commit. No AIDE contract destination
+was available at Conductor grounding; no synthetic episode delivery is claimed.
+
+Exact handoff req-01M2QWRKQNFS17DGDJ91DYCEQV goes to Claude and
+req-01M2QWRKSCZMBWZ9TQGSF1TEZW to watcher. Personal proof inspection, old-audit
+conservation, current-main reconciliation, R108 empty failing set and serialized
+publication remain the existing publisher responsibilities. Handoff disposition is
+recorded if received; no notice is promoted to ACK and no main integration is claimed.
+Native pair03's separate negative-evidence handoff is already publisher/foreground
+ACKed and closed; canonical Atlas qualification remains BLOCK, no more native work.
+
+Planned versus actual: Sol preparation11/6 calls failed before population on guessed
+store/identity; Conductor8-call recovery stopped before population after missing
+prompt correction and a too-broad doctor exit guard. Owner inspected actual doctor
+semantics:6owedregeneration items explain exit1, registry/drivers effective, not
+overall green coordination health. A separately admitted6-call continuation ran
+the one capture and inspected it in6calls. Documentary close exceeded its8-call
+estimate through review rework and the actual graph finding; Owner admitted a
+narrow metadata correction and independent diff review. No retrospective closing
+cap compliance is claimed; authoring/communication overhead outweighed the measured
+28.656second build. No cap was used to abandon a live child or waive an actual gate.
+Remaining scope is publication handoff; no speculative investigation is opened.
