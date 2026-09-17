@@ -1,0 +1,565 @@
+
+  AiDe.Core -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Mcp -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(column: "worktree_path", maximum: 4096) [17 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.AssertInsertRejected(Database db, String table, String column, Object value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 456
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(String column, Int32 maximum) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 79
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Standard Output Messages:
+ PARAM length|bytes|nul: 4096|4096|0
+ ACTUAL SCHEMA: CREATE TABLE native_registration_admission_fact (
+     operation_id TEXT NOT NULL PRIMARY KEY
+         CHECK(typeof(operation_id)='text' AND length(operation_id) BETWEEN 1 AND 128
+             AND instr(operation_id,char(0))=0),
+     schema_version INTEGER NOT NULL CHECK(typeof(schema_version)='integer' AND schema_version=1),
+     input_digest TEXT NOT NULL
+         CHECK(typeof(input_digest)='text' AND length(input_digest)=64
+             AND input_digest NOT GLOB '*[^0-9a-f]*'),
+     context_digest TEXT NOT NULL
+         CHECK(typeof(context_digest)='text' AND length(context_digest)=64
+             AND context_digest NOT GLOB '*[^0-9a-f]*'),
+     decision_digest TEXT NOT NULL
+         CHECK(typeof(decision_digest)='text' AND length(decision_digest)=64
+             AND decision_digest NOT GLOB '*[^0-9a-f]*'),
+     session_id TEXT NOT NULL
+         CHECK(typeof(session_id)='text' AND length(session_id) BETWEEN 1 AND 512
+             AND instr(session_id,char(0))=0),
+     generation INTEGER NOT NULL
+         CHECK(typeof(generation)='integer' AND generation>=1),
+     repository_sent TEXT NOT NULL
+         CHECK(typeof(repository_sent)='text' AND length(repository_sent) BETWEEN 1 AND 4096
+             AND instr(repository_sent,char(0))=0),
+     repository_used TEXT NOT NULL
+         CHECK(typeof(repository_used)='text' AND length(repository_used) BETWEEN 1 AND 4096
+             AND instr(repository_used,char(0))=0),
+     worktree_path TEXT NOT NULL
+         CHECK(typeof(worktree_path)='text' AND length(worktree_path) BETWEEN 1 AND 4096
+             AND instr(worktree_path,char(0))=0),
+     worktree_branch TEXT NOT NULL
+         CHECK(typeof(worktree_branch)='text' AND length(worktree_branch) BETWEEN 0 AND 512
+             AND instr(worktree_branch,char(0))=0),
+     terminal_id TEXT NOT NULL
+         CHECK(typeof(terminal_id)='text' AND length(terminal_id) BETWEEN 1 AND 512
+             AND instr(terminal_id,char(0))=0),
+     agent_name TEXT NOT NULL
+         CHECK(typeof(agent_name)='text' AND length(agent_name) BETWEEN 1 AND 256
+             AND instr(agent_name,char(0))=0),
+     harness_name TEXT NULL
+         CHECK(harness_name IS NULL OR
+             (typeof(harness_name)='text' AND length(harness_name) BETWEEN 1 AND 256
+             AND instr(harness_name,char(0))=0)),
+     harness_version TEXT NULL
+         CHECK(harness_version IS NULL OR
+             (typeof(harness_version)='text' AND length(harness_version) BETWEEN 1 AND 128
+             AND instr(harness_version,char(0))=0)),
+     model_name TEXT NULL
+         CHECK(model_name IS NULL OR
+             (typeof(model_name)='text' AND length(model_name) BETWEEN 1 AND 256
+             AND instr(model_name,char(0))=0)),
+     model_version TEXT NULL
+         CHECK(model_version IS NULL OR
+             (typeof(model_version)='text' AND length(model_version) BETWEEN 1 AND 128
+             AND instr(model_version,char(0))=0)),
+     trust TEXT NOT NULL CHECK(typeof(trust)='text' AND trust IN ('Asserted','Verified')),
+     correction_code TEXT NOT NULL
+         CHECK(typeof(correction_code)='text' AND correction_code IN ('NONE','LINKED_WORKTREE')),
+     recorded_at_ms INTEGER NOT NULL CHECK(typeof(recorded_at_ms)='integer'),
+     CHECK(harness_version IS NULL OR harness_name IS NOT NULL),
+     CHECK(model_version IS NULL OR model_name IS NOT NULL),
+     CHECK((correction_code='NONE' AND repository_sent=repository_used)
+         OR (correction_code='LINKED_WORKTREE' AND repository_sent<>repository_used)),
+     UNIQUE(session_id,generation),
+     UNIQUE(operation_id,schema_version,decision_digest,correction_code)
+ )
+
+
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(column: "session_id", maximum: 512) [14 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.AssertInsertRejected(Database db, String table, String column, Object value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 456
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(String column, Int32 maximum) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 79
+   at InvokeStub_RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ PARAM length|bytes|nul: 512|512|0
+ ACTUAL SCHEMA: CREATE TABLE native_registration_admission_fact (
+     operation_id TEXT NOT NULL PRIMARY KEY
+         CHECK(typeof(operation_id)='text' AND length(operation_id) BETWEEN 1 AND 128
+             AND instr(operation_id,char(0))=0),
+     schema_version INTEGER NOT NULL CHECK(typeof(schema_version)='integer' AND schema_version=1),
+     input_digest TEXT NOT NULL
+         CHECK(typeof(input_digest)='text' AND length(input_digest)=64
+             AND input_digest NOT GLOB '*[^0-9a-f]*'),
+     context_digest TEXT NOT NULL
+         CHECK(typeof(context_digest)='text' AND length(context_digest)=64
+             AND context_digest NOT GLOB '*[^0-9a-f]*'),
+     decision_digest TEXT NOT NULL
+         CHECK(typeof(decision_digest)='text' AND length(decision_digest)=64
+             AND decision_digest NOT GLOB '*[^0-9a-f]*'),
+     session_id TEXT NOT NULL
+         CHECK(typeof(session_id)='text' AND length(session_id) BETWEEN 1 AND 512
+             AND instr(session_id,char(0))=0),
+     generation INTEGER NOT NULL
+         CHECK(typeof(generation)='integer' AND generation>=1),
+     repository_sent TEXT NOT NULL
+         CHECK(typeof(repository_sent)='text' AND length(repository_sent) BETWEEN 1 AND 4096
+             AND instr(repository_sent,char(0))=0),
+     repository_used TEXT NOT NULL
+         CHECK(typeof(repository_used)='text' AND length(repository_used) BETWEEN 1 AND 4096
+             AND instr(repository_used,char(0))=0),
+     worktree_path TEXT NOT NULL
+         CHECK(typeof(worktree_path)='text' AND length(worktree_path) BETWEEN 1 AND 4096
+             AND instr(worktree_path,char(0))=0),
+     worktree_branch TEXT NOT NULL
+         CHECK(typeof(worktree_branch)='text' AND length(worktree_branch) BETWEEN 0 AND 512
+             AND instr(worktree_branch,char(0))=0),
+     terminal_id TEXT NOT NULL
+         CHECK(typeof(terminal_id)='text' AND length(terminal_id) BETWEEN 1 AND 512
+             AND instr(terminal_id,char(0))=0),
+     agent_name TEXT NOT NULL
+         CHECK(typeof(agent_name)='text' AND length(agent_name) BETWEEN 1 AND 256
+             AND instr(agent_name,char(0))=0),
+     harness_name TEXT NULL
+         CHECK(harness_name IS NULL OR
+             (typeof(harness_name)='text' AND length(harness_name) BETWEEN 1 AND 256
+             AND instr(harness_name,char(0))=0)),
+     harness_version TEXT NULL
+         CHECK(harness_version IS NULL OR
+             (typeof(harness_version)='text' AND length(harness_version) BETWEEN 1 AND 128
+             AND instr(harness_version,char(0))=0)),
+     model_name TEXT NULL
+         CHECK(model_name IS NULL OR
+             (typeof(model_name)='text' AND length(model_name) BETWEEN 1 AND 256
+             AND instr(model_name,char(0))=0)),
+     model_version TEXT NULL
+         CHECK(model_version IS NULL OR
+             (typeof(model_version)='text' AND length(model_version) BETWEEN 1 AND 128
+             AND instr(model_version,char(0))=0)),
+     trust TEXT NOT NULL CHECK(typeof(trust)='text' AND trust IN ('Asserted','Verified')),
+     correction_code TEXT NOT NULL
+         CHECK(typeof(correction_code)='text' AND correction_code IN ('NONE','LINKED_WORKTREE')),
+     recorded_at_ms INTEGER NOT NULL CHECK(typeof(recorded_at_ms)='integer'),
+     CHECK(harness_version IS NULL OR harness_name IS NOT NULL),
+     CHECK(model_version IS NULL OR model_name IS NOT NULL),
+     CHECK((correction_code='NONE' AND repository_sent=repository_used)
+         OR (correction_code='LINKED_WORKTREE' AND repository_sent<>repository_used)),
+     UNIQUE(session_id,generation),
+     UNIQUE(operation_id,schema_version,decision_digest,correction_code)
+ )
+
+
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(column: "worktree_branch", maximum: 512) [14 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.AssertInsertRejected(Database db, String table, String column, Object value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 456
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(String column, Int32 maximum) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 79
+   at InvokeStub_RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ PARAM length|bytes|nul: 512|512|0
+ ACTUAL SCHEMA: CREATE TABLE native_registration_admission_fact (
+     operation_id TEXT NOT NULL PRIMARY KEY
+         CHECK(typeof(operation_id)='text' AND length(operation_id) BETWEEN 1 AND 128
+             AND instr(operation_id,char(0))=0),
+     schema_version INTEGER NOT NULL CHECK(typeof(schema_version)='integer' AND schema_version=1),
+     input_digest TEXT NOT NULL
+         CHECK(typeof(input_digest)='text' AND length(input_digest)=64
+             AND input_digest NOT GLOB '*[^0-9a-f]*'),
+     context_digest TEXT NOT NULL
+         CHECK(typeof(context_digest)='text' AND length(context_digest)=64
+             AND context_digest NOT GLOB '*[^0-9a-f]*'),
+     decision_digest TEXT NOT NULL
+         CHECK(typeof(decision_digest)='text' AND length(decision_digest)=64
+             AND decision_digest NOT GLOB '*[^0-9a-f]*'),
+     session_id TEXT NOT NULL
+         CHECK(typeof(session_id)='text' AND length(session_id) BETWEEN 1 AND 512
+             AND instr(session_id,char(0))=0),
+     generation INTEGER NOT NULL
+         CHECK(typeof(generation)='integer' AND generation>=1),
+     repository_sent TEXT NOT NULL
+         CHECK(typeof(repository_sent)='text' AND length(repository_sent) BETWEEN 1 AND 4096
+             AND instr(repository_sent,char(0))=0),
+     repository_used TEXT NOT NULL
+         CHECK(typeof(repository_used)='text' AND length(repository_used) BETWEEN 1 AND 4096
+             AND instr(repository_used,char(0))=0),
+     worktree_path TEXT NOT NULL
+         CHECK(typeof(worktree_path)='text' AND length(worktree_path) BETWEEN 1 AND 4096
+             AND instr(worktree_path,char(0))=0),
+     worktree_branch TEXT NOT NULL
+         CHECK(typeof(worktree_branch)='text' AND length(worktree_branch) BETWEEN 0 AND 512
+             AND instr(worktree_branch,char(0))=0),
+     terminal_id TEXT NOT NULL
+         CHECK(typeof(terminal_id)='text' AND length(terminal_id) BETWEEN 1 AND 512
+             AND instr(terminal_id,char(0))=0),
+     agent_name TEXT NOT NULL
+         CHECK(typeof(agent_name)='text' AND length(agent_name) BETWEEN 1 AND 256
+             AND instr(agent_name,char(0))=0),
+     harness_name TEXT NULL
+         CHECK(harness_name IS NULL OR
+             (typeof(harness_name)='text' AND length(harness_name) BETWEEN 1 AND 256
+             AND instr(harness_name,char(0))=0)),
+     harness_version TEXT NULL
+         CHECK(harness_version IS NULL OR
+             (typeof(harness_version)='text' AND length(harness_version) BETWEEN 1 AND 128
+             AND instr(harness_version,char(0))=0)),
+     model_name TEXT NULL
+         CHECK(model_name IS NULL OR
+             (typeof(model_name)='text' AND length(model_name) BETWEEN 1 AND 256
+             AND instr(model_name,char(0))=0)),
+     model_version TEXT NULL
+         CHECK(model_version IS NULL OR
+             (typeof(model_version)='text' AND length(model_version) BETWEEN 1 AND 128
+             AND instr(model_version,char(0))=0)),
+     trust TEXT NOT NULL CHECK(typeof(trust)='text' AND trust IN ('Asserted','Verified')),
+     correction_code TEXT NOT NULL
+         CHECK(typeof(correction_code)='text' AND correction_code IN ('NONE','LINKED_WORKTREE')),
+     recorded_at_ms INTEGER NOT NULL CHECK(typeof(recorded_at_ms)='integer'),
+     CHECK(harness_version IS NULL OR harness_name IS NOT NULL),
+     CHECK(model_version IS NULL OR model_name IS NOT NULL),
+     CHECK((correction_code='NONE' AND repository_sent=repository_used)
+         OR (correction_code='LINKED_WORKTREE' AND repository_sent<>repository_used)),
+     UNIQUE(session_id,generation),
+     UNIQUE(operation_id,schema_version,decision_digest,correction_code)
+ )
+
+
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(column: "terminal_id", maximum: 512) [15 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.AssertInsertRejected(Database db, String table, String column, Object value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 456
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(String column, Int32 maximum) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 79
+   at InvokeStub_RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ PARAM length|bytes|nul: 512|512|0
+ ACTUAL SCHEMA: CREATE TABLE native_registration_admission_fact (
+     operation_id TEXT NOT NULL PRIMARY KEY
+         CHECK(typeof(operation_id)='text' AND length(operation_id) BETWEEN 1 AND 128
+             AND instr(operation_id,char(0))=0),
+     schema_version INTEGER NOT NULL CHECK(typeof(schema_version)='integer' AND schema_version=1),
+     input_digest TEXT NOT NULL
+         CHECK(typeof(input_digest)='text' AND length(input_digest)=64
+             AND input_digest NOT GLOB '*[^0-9a-f]*'),
+     context_digest TEXT NOT NULL
+         CHECK(typeof(context_digest)='text' AND length(context_digest)=64
+             AND context_digest NOT GLOB '*[^0-9a-f]*'),
+     decision_digest TEXT NOT NULL
+         CHECK(typeof(decision_digest)='text' AND length(decision_digest)=64
+             AND decision_digest NOT GLOB '*[^0-9a-f]*'),
+     session_id TEXT NOT NULL
+         CHECK(typeof(session_id)='text' AND length(session_id) BETWEEN 1 AND 512
+             AND instr(session_id,char(0))=0),
+     generation INTEGER NOT NULL
+         CHECK(typeof(generation)='integer' AND generation>=1),
+     repository_sent TEXT NOT NULL
+         CHECK(typeof(repository_sent)='text' AND length(repository_sent) BETWEEN 1 AND 4096
+             AND instr(repository_sent,char(0))=0),
+     repository_used TEXT NOT NULL
+         CHECK(typeof(repository_used)='text' AND length(repository_used) BETWEEN 1 AND 4096
+             AND instr(repository_used,char(0))=0),
+     worktree_path TEXT NOT NULL
+         CHECK(typeof(worktree_path)='text' AND length(worktree_path) BETWEEN 1 AND 4096
+             AND instr(worktree_path,char(0))=0),
+     worktree_branch TEXT NOT NULL
+         CHECK(typeof(worktree_branch)='text' AND length(worktree_branch) BETWEEN 0 AND 512
+             AND instr(worktree_branch,char(0))=0),
+     terminal_id TEXT NOT NULL
+         CHECK(typeof(terminal_id)='text' AND length(terminal_id) BETWEEN 1 AND 512
+             AND instr(terminal_id,char(0))=0),
+     agent_name TEXT NOT NULL
+         CHECK(typeof(agent_name)='text' AND length(agent_name) BETWEEN 1 AND 256
+             AND instr(agent_name,char(0))=0),
+     harness_name TEXT NULL
+         CHECK(harness_name IS NULL OR
+             (typeof(harness_name)='text' AND length(harness_name) BETWEEN 1 AND 256
+             AND instr(harness_name,char(0))=0)),
+     harness_version TEXT NULL
+         CHECK(harness_version IS NULL OR
+             (typeof(harness_version)='text' AND length(harness_version) BETWEEN 1 AND 128
+             AND instr(harness_version,char(0))=0)),
+     model_name TEXT NULL
+         CHECK(model_name IS NULL OR
+             (typeof(model_name)='text' AND length(model_name) BETWEEN 1 AND 256
+             AND instr(model_name,char(0))=0)),
+     model_version TEXT NULL
+         CHECK(model_version IS NULL OR
+             (typeof(model_version)='text' AND length(model_version) BETWEEN 1 AND 128
+             AND instr(model_version,char(0))=0)),
+     trust TEXT NOT NULL CHECK(typeof(trust)='text' AND trust IN ('Asserted','Verified')),
+     correction_code TEXT NOT NULL
+         CHECK(typeof(correction_code)='text' AND correction_code IN ('NONE','LINKED_WORKTREE')),
+     recorded_at_ms INTEGER NOT NULL CHECK(typeof(recorded_at_ms)='integer'),
+     CHECK(harness_version IS NULL OR harness_name IS NOT NULL),
+     CHECK(model_version IS NULL OR model_name IS NOT NULL),
+     CHECK((correction_code='NONE' AND repository_sent=repository_used)
+         OR (correction_code='LINKED_WORKTREE' AND repository_sent<>repository_used)),
+     UNIQUE(session_id,generation),
+     UNIQUE(operation_id,schema_version,decision_digest,correction_code)
+ )
+
+
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(column: "repository_used", maximum: 4096) [14 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.AssertInsertRejected(Database db, String table, String column, Object value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 456
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(String column, Int32 maximum) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 79
+   at InvokeStub_RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ PARAM length|bytes|nul: 4096|4096|0
+ ACTUAL SCHEMA: CREATE TABLE native_registration_admission_fact (
+     operation_id TEXT NOT NULL PRIMARY KEY
+         CHECK(typeof(operation_id)='text' AND length(operation_id) BETWEEN 1 AND 128
+             AND instr(operation_id,char(0))=0),
+     schema_version INTEGER NOT NULL CHECK(typeof(schema_version)='integer' AND schema_version=1),
+     input_digest TEXT NOT NULL
+         CHECK(typeof(input_digest)='text' AND length(input_digest)=64
+             AND input_digest NOT GLOB '*[^0-9a-f]*'),
+     context_digest TEXT NOT NULL
+         CHECK(typeof(context_digest)='text' AND length(context_digest)=64
+             AND context_digest NOT GLOB '*[^0-9a-f]*'),
+     decision_digest TEXT NOT NULL
+         CHECK(typeof(decision_digest)='text' AND length(decision_digest)=64
+             AND decision_digest NOT GLOB '*[^0-9a-f]*'),
+     session_id TEXT NOT NULL
+         CHECK(typeof(session_id)='text' AND length(session_id) BETWEEN 1 AND 512
+             AND instr(session_id,char(0))=0),
+     generation INTEGER NOT NULL
+         CHECK(typeof(generation)='integer' AND generation>=1),
+     repository_sent TEXT NOT NULL
+         CHECK(typeof(repository_sent)='text' AND length(repository_sent) BETWEEN 1 AND 4096
+             AND instr(repository_sent,char(0))=0),
+     repository_used TEXT NOT NULL
+         CHECK(typeof(repository_used)='text' AND length(repository_used) BETWEEN 1 AND 4096
+             AND instr(repository_used,char(0))=0),
+     worktree_path TEXT NOT NULL
+         CHECK(typeof(worktree_path)='text' AND length(worktree_path) BETWEEN 1 AND 4096
+             AND instr(worktree_path,char(0))=0),
+     worktree_branch TEXT NOT NULL
+         CHECK(typeof(worktree_branch)='text' AND length(worktree_branch) BETWEEN 0 AND 512
+             AND instr(worktree_branch,char(0))=0),
+     terminal_id TEXT NOT NULL
+         CHECK(typeof(terminal_id)='text' AND length(terminal_id) BETWEEN 1 AND 512
+             AND instr(terminal_id,char(0))=0),
+     agent_name TEXT NOT NULL
+         CHECK(typeof(agent_name)='text' AND length(agent_name) BETWEEN 1 AND 256
+             AND instr(agent_name,char(0))=0),
+     harness_name TEXT NULL
+         CHECK(harness_name IS NULL OR
+             (typeof(harness_name)='text' AND length(harness_name) BETWEEN 1 AND 256
+             AND instr(harness_name,char(0))=0)),
+     harness_version TEXT NULL
+         CHECK(harness_version IS NULL OR
+             (typeof(harness_version)='text' AND length(harness_version) BETWEEN 1 AND 128
+             AND instr(harness_version,char(0))=0)),
+     model_name TEXT NULL
+         CHECK(model_name IS NULL OR
+             (typeof(model_name)='text' AND length(model_name) BETWEEN 1 AND 256
+             AND instr(model_name,char(0))=0)),
+     model_version TEXT NULL
+         CHECK(model_version IS NULL OR
+             (typeof(model_version)='text' AND length(model_version) BETWEEN 1 AND 128
+             AND instr(model_version,char(0))=0)),
+     trust TEXT NOT NULL CHECK(typeof(trust)='text' AND trust IN ('Asserted','Verified')),
+     correction_code TEXT NOT NULL
+         CHECK(typeof(correction_code)='text' AND correction_code IN ('NONE','LINKED_WORKTREE')),
+     recorded_at_ms INTEGER NOT NULL CHECK(typeof(recorded_at_ms)='integer'),
+     CHECK(harness_version IS NULL OR harness_name IS NOT NULL),
+     CHECK(model_version IS NULL OR model_name IS NOT NULL),
+     CHECK((correction_code='NONE' AND repository_sent=repository_used)
+         OR (correction_code='LINKED_WORKTREE' AND repository_sent<>repository_used)),
+     UNIQUE(session_id,generation),
+     UNIQUE(operation_id,schema_version,decision_digest,correction_code)
+ )
+
+
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(column: "repository_sent", maximum: 4096) [14 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.AssertInsertRejected(Database db, String table, String column, Object value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 456
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(String column, Int32 maximum) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 79
+   at InvokeStub_RegistrationAdmissionTests.Admission_BoundedTextNulSuffix_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ PARAM length|bytes|nul: 4096|4096|0
+ ACTUAL SCHEMA: CREATE TABLE native_registration_admission_fact (
+     operation_id TEXT NOT NULL PRIMARY KEY
+         CHECK(typeof(operation_id)='text' AND length(operation_id) BETWEEN 1 AND 128
+             AND instr(operation_id,char(0))=0),
+     schema_version INTEGER NOT NULL CHECK(typeof(schema_version)='integer' AND schema_version=1),
+     input_digest TEXT NOT NULL
+         CHECK(typeof(input_digest)='text' AND length(input_digest)=64
+             AND input_digest NOT GLOB '*[^0-9a-f]*'),
+     context_digest TEXT NOT NULL
+         CHECK(typeof(context_digest)='text' AND length(context_digest)=64
+             AND context_digest NOT GLOB '*[^0-9a-f]*'),
+     decision_digest TEXT NOT NULL
+         CHECK(typeof(decision_digest)='text' AND length(decision_digest)=64
+             AND decision_digest NOT GLOB '*[^0-9a-f]*'),
+     session_id TEXT NOT NULL
+         CHECK(typeof(session_id)='text' AND length(session_id) BETWEEN 1 AND 512
+             AND instr(session_id,char(0))=0),
+     generation INTEGER NOT NULL
+         CHECK(typeof(generation)='integer' AND generation>=1),
+     repository_sent TEXT NOT NULL
+         CHECK(typeof(repository_sent)='text' AND length(repository_sent) BETWEEN 1 AND 4096
+             AND instr(repository_sent,char(0))=0),
+     repository_used TEXT NOT NULL
+         CHECK(typeof(repository_used)='text' AND length(repository_used) BETWEEN 1 AND 4096
+             AND instr(repository_used,char(0))=0),
+     worktree_path TEXT NOT NULL
+         CHECK(typeof(worktree_path)='text' AND length(worktree_path) BETWEEN 1 AND 4096
+             AND instr(worktree_path,char(0))=0),
+     worktree_branch TEXT NOT NULL
+         CHECK(typeof(worktree_branch)='text' AND length(worktree_branch) BETWEEN 0 AND 512
+             AND instr(worktree_branch,char(0))=0),
+     terminal_id TEXT NOT NULL
+         CHECK(typeof(terminal_id)='text' AND length(terminal_id) BETWEEN 1 AND 512
+             AND instr(terminal_id,char(0))=0),
+     agent_name TEXT NOT NULL
+         CHECK(typeof(agent_name)='text' AND length(agent_name) BETWEEN 1 AND 256
+             AND instr(agent_name,char(0))=0),
+     harness_name TEXT NULL
+         CHECK(harness_name IS NULL OR
+             (typeof(harness_name)='text' AND length(harness_name) BETWEEN 1 AND 256
+             AND instr(harness_name,char(0))=0)),
+     harness_version TEXT NULL
+         CHECK(harness_version IS NULL OR
+             (typeof(harness_version)='text' AND length(harness_version) BETWEEN 1 AND 128
+             AND instr(harness_version,char(0))=0)),
+     model_name TEXT NULL
+         CHECK(model_name IS NULL OR
+             (typeof(model_name)='text' AND length(model_name) BETWEEN 1 AND 256
+             AND instr(model_name,char(0))=0)),
+     model_version TEXT NULL
+         CHECK(model_version IS NULL OR
+             (typeof(model_version)='text' AND length(model_version) BETWEEN 1 AND 128
+             AND instr(model_version,char(0))=0)),
+     trust TEXT NOT NULL CHECK(typeof(trust)='text' AND trust IN ('Asserted','Verified')),
+     correction_code TEXT NOT NULL
+         CHECK(typeof(correction_code)='text' AND correction_code IN ('NONE','LINKED_WORKTREE')),
+     recorded_at_ms INTEGER NOT NULL CHECK(typeof(recorded_at_ms)='integer'),
+     CHECK(harness_version IS NULL OR harness_name IS NOT NULL),
+     CHECK(model_version IS NULL OR model_name IS NOT NULL),
+     CHECK((correction_code='NONE' AND repository_sent=repository_used)
+         OR (correction_code='LINKED_WORKTREE' AND repository_sent<>repository_used)),
+     UNIQUE(session_id,generation),
+     UNIQUE(operation_id,schema_version,decision_digest,correction_code)
+ )
+
+
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(table: "native_registration_admission_fact", column: "decision_digest", length: 64) [11 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.AssertInsertRejected(Database db, String table, String column, Object value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 456
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(String table, String column, Int32 length) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 33
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Standard Output Messages:
+ column=native_registration_admission_fact.decision_digest; utf8Bytes=70065
+
+
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(table: "registration_notice_delivery", column: "publication_digest", length: 64) [13 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.AssertInsertRejected(Database db, String table, String column, Object value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 456
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(String table, String column, Int32 length) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 33
+   at InvokeStub_RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ column=registration_notice_delivery.publication_digest; utf8Bytes=70065
+
+
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(table: "registration_notice_delivery", column: "notice_id", length: 32) [12 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.AssertInsertRejected(Database db, String table, String column, Object value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 456
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(String table, String column, Int32 length) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 33
+   at InvokeStub_RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ column=registration_notice_delivery.notice_id; utf8Bytes=70033
+
+
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(table: "native_registration_admission_fact", column: "input_digest", length: 64) [12 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.AssertInsertRejected(Database db, String table, String column, Object value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 456
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(String table, String column, Int32 length) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 33
+   at InvokeStub_RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ column=native_registration_admission_fact.input_digest; utf8Bytes=70065
+
+
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(table: "native_registration_admission_fact", column: "context_digest", length: 64) [12 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(Microsoft.Data.Sqlite.SqliteException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.AssertInsertRejected(Database db, String table, String column, Object value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 456
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(String table, String column, Int32 length) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 33
+   at InvokeStub_RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Standard Output Messages:
+ column=native_registration_admission_fact.context_digest; utf8Bytes=70065
+
+
+  Failed AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.DrainRegistrationNotices_PublicationFails_RetryRetainsOriginalCorrection [21 ms]
+  Error Message:
+   Assert.Single() Failure: The collection was empty
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.DrainRegistrationNotices_PublicationFails_RetryRetainsOriginalCorrection() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationNoticeReliabilityTests.cs:line 53
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ {"scenario":"N1","failure":"UnauthorizedAccessException","accepted":1,"original":{"SessionId":"notice-first-1","RepositorySent":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\obj\\notice-fixtures\\bc10e9b231324b8384c01d8afd309d24\\linked","RepositoryUsed":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\obj\\notice-fixtures\\bc10e9b231324b8384c01d8afd309d24\\repository","Reason":"the registered path is a linked worktree; its repository is used so the fleet map, the message board and the score segment all agree with the other worktrees of that repository"},"retryCount":0,"nativeStateUnchanged":true,"temporaryFilePreserved":true}
+
+
+  Failed AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.Register_TwoHostsHave128OutstandingCorrections_RefusesBeforeNativeMutation [137 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                            ↓ (pos 17)
+Expected: "{"sessionRows":128,"firstCapabilities":64"···
+Actual:   "{"sessionRows":129,"firstCapabilities":64"···
+                            ↑ (pos 17)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.Register_TwoHostsHave128OutstandingCorrections_RefusesBeforeNativeMutation() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationNoticeReliabilityTests.cs:line 94
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ {"scenario":"N2","before":"{\u0022sessionRows\u0022:128,\u0022firstCapabilities\u0022:64,\u0022secondCapabilities\u0022:64,\u0022sessions\u0022:[{\u0022SessionId\u0022:\u0022notice-first-1\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-10\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-11\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-12\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-13\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-14\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-15\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-16\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-17\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-18\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-19\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-2\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-20\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-21\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-22\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-23\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-24\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-25\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-26\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-27\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-28\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-29\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-3\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-30\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-31\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-32\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-33\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-34\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-35\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-36\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-37\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-38\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-39\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-4\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-40\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-41\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-42\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-43\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-44\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-45\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-46\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-47\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-48\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-49\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-5\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-50\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-51\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-52\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-53\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-54\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-55\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-56\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-57\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-58\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-59\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-6\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-60\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-61\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-62\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-63\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-64\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-7\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-8\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-9\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-1\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-10\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-11\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-12\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-13\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-14\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-15\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-16\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-17\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-18\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-19\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-2\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-20\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-21\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-22\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-23\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-24\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-25\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-26\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-27\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-28\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-29\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-3\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-30\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-31\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-32\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-33\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-34\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-35\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-36\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-37\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-38\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-39\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-4\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-40\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-41\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-42\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-43\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-44\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-45\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-46\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-47\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-48\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-49\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-5\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-50\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-51\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-52\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-53\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-54\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-55\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-56\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-57\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-58\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-59\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-6\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-60\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-61\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-62\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-63\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-64\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-7\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-8\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-9\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false}]}","after":"{\u0022sessionRows\u0022:129,\u0022firstCapabilities\u0022:64,\u0022secondCapabilities\u0022:65,\u0022sessions\u0022:[{\u0022SessionId\u0022:\u0022notice-first-1\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-10\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-11\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-12\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-13\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-14\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-15\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-16\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-17\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-18\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-19\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-2\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-20\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-21\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-22\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-23\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-24\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-25\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-26\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-27\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-28\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-29\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-3\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-30\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-31\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-32\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-33\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-34\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-35\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-36\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-37\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-38\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-39\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-4\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-40\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-41\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-42\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-43\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-44\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-45\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-46\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-47\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-48\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-49\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-5\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-50\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-51\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-52\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-53\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-54\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-55\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-56\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-57\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-58\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-59\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-6\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-60\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-61\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-62\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-63\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-64\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-7\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-8\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-9\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-1\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-10\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-11\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-12\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-13\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-14\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-15\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-16\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-17\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-18\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-19\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-2\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-20\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-21\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-22\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-23\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-24\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-25\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-26\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-27\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-28\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-29\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-3\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-30\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-31\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-32\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-33\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-34\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-35\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-36\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-37\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-38\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-39\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-4\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-40\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-41\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-42\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-43\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-44\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-45\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-46\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-47\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-48\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-49\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-5\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-50\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-51\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-52\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-53\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-54\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-55\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-56\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-57\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-58\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-59\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-6\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-60\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-61\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-62\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-63\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-64\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-65\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1031000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-7\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-8\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-9\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false}]}","outstanding":129,"admitted":true,"refusal":null}
+
+
+Results File: C:\Projects\ai-de-feature-xh-p2-projection\docs\proofs\p25-notice-evidence\s123-diagnostic\notice.trx
+
+Failed!  - Failed:    13, Passed:   162, Skipped:     0, Total:   175, Duration: 6 s - AiDe.Core.Tests.dll (net10.0)

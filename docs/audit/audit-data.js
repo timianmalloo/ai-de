@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T03:27:30Z",
+  "generated": "2026-09-17T13:14:56Z",
   "audit": [
     {
       "actor": null,
@@ -20965,6 +20965,35 @@ window.AUDIT_DATA = {
       "main_budget": 45,
       "main_over_budget": false,
       "fan_out": 0
+    },
+    {
+      "id": "al-01M2QR31J7A7YGR8FCRJ83JJ9Q",
+      "shortname": "implement-native-notice-schema-s123",
+      "datetime": "2026-09-17T13:14:56Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "WRITE-CAPABLE C# finiteNativeNoticeSCHEMArepair <=32tools150k noagents. OwnregisteredP2treeC:\\Projects\\ai-de-feature-xh-p2-projection HEAD4ab980e0b5321047c2289060ed6c5bb0fe69f324 sessionxh-p2-projection-b0d0 endedreopen. No sourceRegistrar/admission/deliverywiring yet; thisfixesoneVerifiedschemaBlocker+2evidenceMajors beforedependentcode. Userall6approved no freshgatepermission. ExactTTL300/env/apply_patch/noheredoc/outputredirect/pipedgates. No otherworktree/main/push/force/amend/config/hooks/install/deps/GUI/App/slots/liveDB/endpoints/upstreamresearch. Preserveignorelockedcompilerscratchdon'tkillunownedprocesses. ParallelP1Questionfixsourceotherbranch/noDOCSclaims exceptnewnote soavoidconflicts.\nIndependentTest18calls gateBLOCK:\nS1VerifiedDigest/noticeIdNUL bypassSQLiteTEXTlength/GLOB:valid64hex+U0000+70000suffixacceptedinput_digest/context_digest/decision_digest/publication_digest =>70065B; notice_id32hex+NUL70000suffix70033B. SourceSqliteWatcherObservationStore.RegistrationNotices.cs14–22,92–107. Addexplicitinstr(col,char(0))=0ALLthese plusauditremainingboundedidentityTEXTsamefailureclass (operation/session/target IDswhereboundsclaimed) notbroadunrelatedstore. Fixedhexlengthtype/lowerhex+UTF8bytebounds ifdomainmax appropriate no inputnormalizing. RealProviderparameterizedotherwiseVALIDadmission+noticefixtures malformed5casesMUST fail oncurrentcodeRED beforefix, candidatevalidcontrolsboundary mustpass. No previousmissingtableredsmisrepresented.\nS2MajorstructuralRED36missingtable+1version+1cleanupIOException not71semanticproof; addedrequiredfields/trustenumsGREENonly. due_at_msNULL UPDATEprobe masksdueCHECK byTRANSITIONguard. NeedguardisolatingVALIDINSERT due_at_ms='tomorrow' currentreject dueCHECK mutantremovingonlytypeguardaccepts and SAMEassertionfails, preserveintcontrols. Forclaimedrequiredfield/trustenums negativecases newlyaddedafterimplementation attachtargetedisolatedfaultymutantsmatchingactualcase (notsource-stringonly); don'tblanketclaimfull71constraintmutations ifnotexecuted. ReadactualcurrentRegistrationAdmissionTests theoryparameters, knownpubdigest structuralbytes01+wellshapeddigestnotactualmatching expectedWRITERvalidation later so don'tforceunapprovedDDLdigestverifycode.\nS3Majorconstructorrollbackevidence lacksfullpopulatedV8cache/schemabeforeafter. SeedREPRESENTATIVEnative/session/cacheevent/feed/checkpoint rows ORIGINALIDs, capturecompletecontents+sqlite_master objectdefinitions; injectSECONDnewNativeNoticeTABLEcollisionthroughACTUALStore.Open. ExpectzeroNEWobjects/version8/preservedfullsnapshot; collisionfixtureitselfretained. Ensurecleanupdoesn'treplaceintendedSQLiteException; actualno-leakedhandlescontrol. RealoldV7/v8BINARYnotthisfixturequalification. No droppinghistory/rewritingreceipts/freshpre-releaseversion9migrationonlyqualifiedbasev8current; olderprereleasev8variantsunsupportedexplicit.\nExisting105selection103PASS2realN1/N2RED untouched; 71structuralpassedbutnotallred-proven. CorrectedFact→initialNoticechildFKalone leaves0noticeallowed: previousreviewexplicitPROTECTEDWRITERobligation notschemafloorproved. Don'tsilentlyclaimdurableadmissionatomic fromDDL; NativeRegistration transaction/Notice128/Trustedroots/publisher inactiveblockstill. Keep originalClaimReferencepayloadretention unresolvednotclaimerasure. Code/sourcegenerationInt64typeboundaryalreadycorrectpreserve.\nOWN .RegistrationNotices.cs onlyproductionunlessminimalctorcleanupfixneeded; testsRegistrationAdmissionTests.cs +newRegistrationNoticeSchemaBoundaryTests.cs ifneeded, canonicalProofPack/design/phaseplan+owndaudit/newTRXstdoutpinsdocs/proofs/p25-notice-evidence. No othercode/nativeUI/producerbranch/lessons/site. StageOWNderivedaudit-data.js alongsideJSONL afterofficial--rootOWNdocsrender/verify beforecommit toavoidrepeatdirt; noglobalcoordregen. Source/test/project/binarypins forbaseline+candidate+mutants actuallycapturebeforepatch; recordedUTC toolclocknotproducerSLA. CommitCopilottrailercleanreleasedended<=1300wordsexactcommit verifiedS1S2S3scope/missingguardsunverified andnextprotectedAdmissioncode. No fakefullP2/P3–5/upstream.",
+      "summary": "Six fixed-hex NUL/byte guards; five exact-byte baseline assertion REDs repaired. Candidate 175/173/2 with original N1/N2 RED. 29 required-field mutant cases, three invalid-trust cases against a weakened constraint, one due-type mutant; populated current-v8 schema/data rollback and held-handle control. No protected admission/delivery or full-P2 claim. Evidence docs/proof/p2-notice-schema-s123.md. One diagnostic fixture correction; direct string binding truncated embedded NUL. No agents, no site regeneration, retained owned worktree.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/p2-notice-schema-s123.md",
+        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.RegistrationNotices.cs",
+        "tests/AiDe.Core.Tests/Watcher/RegistrationAdmissionTests.cs",
+        "docs/proofs/p25-notice-evidence/s123-candidate/receipt.json"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Repair S1 fixed-hex schema bypass and qualify S2/S3 evidence without admission or delivery wiring.",
+      "done_when": "Byte-exact baseline REDs, candidate, isolated mutants and populated-v8 rollback are pinned, committed cleanly, and the owned session released/ended.",
+      "tier": "T2",
+      "main_calls": 32,
+      "main_budget": 32,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-17T13:04:41Z",
+      "duration_seconds": 615.0
     }
   ],
   "changes": [

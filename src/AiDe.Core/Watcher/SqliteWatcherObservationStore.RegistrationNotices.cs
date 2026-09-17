@@ -13,12 +13,15 @@ public sealed partial class SqliteWatcherObservationStore
             schema_version INTEGER NOT NULL CHECK(typeof(schema_version)='integer' AND schema_version=1),
             input_digest TEXT NOT NULL
                 CHECK(typeof(input_digest)='text' AND length(input_digest)=64
+                    AND instr(input_digest,char(0))=0 AND length(CAST(input_digest AS BLOB))=64
                     AND input_digest NOT GLOB '*[^0-9a-f]*'),
             context_digest TEXT NOT NULL
                 CHECK(typeof(context_digest)='text' AND length(context_digest)=64
+                    AND instr(context_digest,char(0))=0 AND length(CAST(context_digest AS BLOB))=64
                     AND context_digest NOT GLOB '*[^0-9a-f]*'),
             decision_digest TEXT NOT NULL
                 CHECK(typeof(decision_digest)='text' AND length(decision_digest)=64
+                    AND instr(decision_digest,char(0))=0 AND length(CAST(decision_digest AS BLOB))=64
                     AND decision_digest NOT GLOB '*[^0-9a-f]*'),
             session_id TEXT NOT NULL
                 CHECK(typeof(session_id)='text' AND length(session_id) BETWEEN 1 AND 512
@@ -91,6 +94,7 @@ public sealed partial class SqliteWatcherObservationStore
         CREATE TABLE registration_notice_delivery (
             notice_id TEXT NOT NULL PRIMARY KEY
                 CHECK(typeof(notice_id)='text' AND length(notice_id)=32
+                    AND instr(notice_id,char(0))=0 AND length(CAST(notice_id AS BLOB))=32
                     AND notice_id NOT GLOB '*[^0-9a-f]*'),
             operation_id TEXT NOT NULL UNIQUE
                 CHECK(typeof(operation_id)='text' AND length(operation_id) BETWEEN 1 AND 128
@@ -98,12 +102,14 @@ public sealed partial class SqliteWatcherObservationStore
             schema_version INTEGER NOT NULL CHECK(typeof(schema_version)='integer' AND schema_version=1),
             decision_digest TEXT NOT NULL
                 CHECK(typeof(decision_digest)='text' AND length(decision_digest)=64
+                    AND instr(decision_digest,char(0))=0 AND length(CAST(decision_digest AS BLOB))=64
                     AND decision_digest NOT GLOB '*[^0-9a-f]*'),
             correction_code TEXT NOT NULL CHECK(correction_code='LINKED_WORKTREE'),
             publication_bytes BLOB NOT NULL
                 CHECK(typeof(publication_bytes)='blob' AND length(publication_bytes) BETWEEN 1 AND 65536),
             publication_digest TEXT NOT NULL
                 CHECK(typeof(publication_digest)='text' AND length(publication_digest)=64
+                    AND instr(publication_digest,char(0))=0 AND length(CAST(publication_digest AS BLOB))=64
                     AND publication_digest NOT GLOB '*[^0-9a-f]*'),
             target_kind TEXT NOT NULL CHECK(typeof(target_kind)='text' AND target_kind='native-file'),
             target_root TEXT NOT NULL

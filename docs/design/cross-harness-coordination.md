@@ -1131,3 +1131,15 @@ The bounded author increment first supplies the **dormant DDL floor** and real
 constructor/SQL tests. It deliberately exposes no admission or delivery API and
 does not connect a worker. N1/N2 remain semantic RED until the complete protected
 pipeline is implemented. No storage-unit green is a host-path or P2 green.
+
+**S1-S3 schema clarification (2026-09-17).** Fixed-hex digest/notice identifiers
+require explicit NUL exclusion and exact UTF-8 byte length as well as TEXT,
+character length and lowercase-hex shape. The shared fresh/v8-to-v9 DDL now
+enforces these. Existing v9 files are not retrofitted; prior prerelease-v8 variants
+and released old binaries remain unqualified. See
+[the S1-S3 proof](../proof/p2-notice-schema-s123.md) for byte-exact parameter
+fixtures, isolated mutants and populated-v8 rollback snapshots.
+The fact-to-initial-notice child FK does **not** require any child to exist;
+one admission plus its required initial notice must be enforced by the protected
+writer transaction. Structural publication bytes/digest shape is not content
+digest verification. ClaimReference payload-retention/erasure stays unresolved.

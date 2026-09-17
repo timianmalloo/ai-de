@@ -2672,3 +2672,20 @@ open. Cross-harness obligations must later use official canonical requests.
 Routing-typo/triage vectors stay backlog items; no peer research or reply action
 was taken. Upstream transfer waits for verified completion of all six phases.
 Keep this isolated branch for review; do not merge or ship its intentional REDs.
+
+### Native NOTICE schema review response S1-S3, 2026-09-17
+
+The exact correction and claim ledger are in
+[p2-notice-schema-s123.md](p2-notice-schema-s123.md). Six fixed-hex columns now
+reject NUL and enforce exact UTF-8 byte lengths. Five distinct malformed cases
+were observed RED before repair. Candidate: 175 executed, 173 pass, only the
+unchanged N1/N2 REDs; 141/141 schema/evidence cases pass.
+
+Historical structural RED was 36 missing-table failures, one version failure,
+one cleanup IOException, plus N1/N2; it never established 71 semantic constraint
+mutations. New evidence executes 29 required-column mutants, three invalid-trust
+cases against a weakened constraint, and one isolated due-time type mutant.
+Populated current-branch v8 contents and all sqlite_master definitions survive
+the actual second-table constructor collision unchanged. This does not qualify
+released v7/v8 binaries, prior prerelease variants, existing v9 repair, durable
+admission atomicity, payload erasure, native delivery, or full P2.

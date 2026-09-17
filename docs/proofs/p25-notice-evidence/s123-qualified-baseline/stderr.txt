@@ -1,0 +1,7 @@
+[xUnit.net 00:00:00.42]     AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.DrainRegistrationNotices_PublicationFails_RetryRetainsOriginalCorrection [FAIL]
+[xUnit.net 00:00:00.59]     AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.Register_TwoHostsHave128OutstandingCorrections_RefusesBeforeNativeMutation [FAIL]
+[xUnit.net 00:00:04.88]     AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(table: "native_registration_admission_fact", column: "decision_digest", length: 64) [FAIL]
+[xUnit.net 00:00:04.90]     AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(table: "registration_notice_delivery", column: "publication_digest", length: 64) [FAIL]
+[xUnit.net 00:00:04.92]     AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(table: "registration_notice_delivery", column: "notice_id", length: 32) [FAIL]
+[xUnit.net 00:00:04.93]     AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(table: "native_registration_admission_fact", column: "input_digest", length: 64) [FAIL]
+[xUnit.net 00:00:04.94]     AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_HexWithNulAndOversizedSuffix_Rejects(table: "native_registration_admission_fact", column: "context_digest", length: 64) [FAIL]

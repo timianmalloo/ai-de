@@ -844,3 +844,13 @@ admission/delivery. The next checkpoint is the protected store/registrar
 transaction and validated input/owner binding; do not enable the enhanced API
 before its entire admission/quota/capability and retained-notice contract holds.
 Independent code reviews and full P2, P3–P5 remain open.
+
+**S1-S3 repair checkpoint (2026-09-17).** The finite schema response is recorded
+in [the S1-S3 proof](../proof/p2-notice-schema-s123.md): five byte-exact NUL REDs
+before six fixed-hex guard additions; candidate 175 cases, 173 pass and unchanged
+N1/N2 RED; 29 required-column mutant cases, three invalid-trust mutant cases,
+one isolated due-type mutant; complete populated-v8 contents/schema preserved
+on actual constructor collision with a live-handle control.
+No 71-case blanket mutation claim survives. This checkpoint is not protected
+admission or delivery completion. The next bounded implementation remains the
+protected Admission transaction; do not activate ingress/publisher on DDL proof.
