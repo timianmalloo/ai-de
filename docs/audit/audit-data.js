@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T13:45:25Z",
+  "generated": "2026-09-17T13:51:02Z",
   "audit": [
     {
       "actor": null,
@@ -20129,6 +20129,43 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M2QT45J7V3WF9R59AHD0AF6K",
+      "shortname": "investigate-clean-machine-issues",
+      "datetime": "2026-09-17T13:50:30Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "/investigate the issues — five operator-reported issues from a clean-machine build test on 2026-09-16, screenshots in C:\\Users\\malla\\Downloads\\AI-DE new issues",
+      "summary": "Three verified root causes, none where the symptom pointed. (1) The New Session sheet answers 'can this engine launch here?' from the product's own config file, short-circuiting EngineCatalog.InstallRefusal whenever providers.json is absent - so a native CLI on PATH reads 'not configured'; proven necessary and sufficient by a headless probe, with four confirmed siblings including a sign-in path hardcoded to claude-code that makes 'ready' unreachable for github, and a test that asserts the defect as the spec. (2) The Explore graph fills 21.8% of its pane because CanvasPage's #stage carries height:440px; fit()'s own arithmetic predicts the drawn disc to 1px. (3) TypeScript and Python extractors write the scope id into Provenance.ArtifactPathId - which breaks View source AND silently skips every TS/Python file in content search, returning 'no matches' instead of 'I could not open these files'. Five classes registered (DC-226 control currency, DC-227 harness-reported status, DC-228 CAP-P, DC-229 scope-id-as-path, DC-230 fixed extent in an unlinted medium). Issue 4 (Graph and Tree views) is a design change, routed to /ui-design. Nothing implemented.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": "claude-conductor",
+      "artifacts": [
+        "docs/investigations/INV-0013-the-sheet-asks-the-config-not-the-machine.md",
+        "docs/investigations/INV-0014-the-graph-stage-is-capped-and-typescript-provenance-is-a-scope-id.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "investigation",
+        "clean-machine"
+      ],
+      "outcome": "success",
+      "goal": "Find the verified root cause of each reported issue, generalise to the failure class, sweep for siblings, and produce a phased repair plan — stopping at the report",
+      "done_when": "INV-0013 and INV-0014 on main with necessary+sufficient proof per cause; the classes registered with controls; the phases ruled by the Owner; no implementation started",
+      "tier": "T1",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "d74874c7daa48fd28d66ae2c83573bff1e29a606",
+        "short": "d74874c7d",
+        "branch": "conductor/watch-0915",
+        "pushed": null
+      }
     }
   ],
   "changes": [
