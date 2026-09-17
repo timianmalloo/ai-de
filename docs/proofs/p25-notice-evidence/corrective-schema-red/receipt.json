@@ -1,0 +1,639 @@
+{
+  "classification": "PARTIAL DDL evidence; native N1/N2 remain RED",
+  "head": "52339c3e72ca309730ed3577d2094250ad77100e",
+  "command": [
+    "dotnet",
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "--filter",
+    "FullyQualifiedName~RegistrationAdmissionTests|FullyQualifiedName~RegistrationNoticeReliabilityTests|FullyQualifiedName~AWorktreeRegistrationIsCorrectedAndSaidSoTests|FullyQualifiedName~TrustedRegistrarTests|FullyQualifiedName~SqliteWatcherObservationStoreTests",
+    "--logger",
+    "trx;LogFileName=native-notice.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p25-notice-evidence\\corrective-schema-red",
+    "--verbosity",
+    "minimal"
+  ],
+  "started": "2026-09-17T03:20:43.2208374+00:00",
+  "ended": "2026-09-17T03:20:50.8653650+00:00",
+  "durationSeconds": 7.6445276,
+  "actualExit": 1,
+  "total": 72,
+  "passed": 32,
+  "failed": 40,
+  "schemaTotal": 38,
+  "schemaPassed": 0,
+  "results": [
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.RepositoryFor_SyntheticKnownRoots_MatchesRealFilesystemLocator",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheNoticeIsDeliveredOnce",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(mutation: \"UPDATE registration_notice_delivery SET ownership_\"···)",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.Register_RepositoryAlreadyCanonical_ProducesNoCorrectionNotice",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.TrustedRegistrarTests.Register_UnknownHarnessAndModel_StillRegisters",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.SqliteWatcherObservationStoreTests.Spans_PersistAcrossReopen",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.SqliteWatcherObservationStoreTests.TryAppendSpan_NewSpan_PersistsAndCounts",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: \"schema_version\", value: \"2\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.SqliteWatcherObservationStoreTests.ObservedSpanFact_IsAppendOnly_UpdateIsRejected",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.TrustedRegistrarTests.Verify_CapabilityFromAnotherSession_IsRejectedAsForgery",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.TrustedRegistrarTests.Register_MissingRequiredField_ThrowsInvalidBinding(repo: \"C:/repos/ai-de\", terminal: \"\", agent: \"agent-1\")",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.SqliteWatcherObservationStoreTests.FullCore_ComposesOverSqlite_AndSurvivesReopen",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.SqliteWatcherObservationStoreTests.FindSession_Unknown_ReturnsNull",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.TrustedRegistrarTests.RegisterNextGeneration_ClearsEndedState",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: \"publication_bytes\", value: \"'not a blob'\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: \"operation_id\", value: \"''\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(mutation: \"UPDATE registration_notice_delivery SET target_roo\"···)",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(mutation: \"UPDATE registration_notice_delivery SET attempt=-1\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: \"operation_id\", value: \"'absent'\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.DrainRegistrationNotices_PublicationFails_RetryRetainsOriginalCorrection",
+      "outcome": "Failed",
+      "message": "Assert.Single() Failure: The collection was empty"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.TrustedRegistrarTests.Verify_UnknownSession_IsFalse",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.TrustedRegistrarTests.Register_TwoSessions_HaveDistinctCapabilities",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.SqliteWatcherObservationStoreTests.RecordSession_RoundTrips_HarnessModelAndTrust",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_ClaimRetryAndPublish_PreservesBytesAndMakesPublicationTerminal",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: \"generation\", value: \"'text'\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.Register_TwoHostsHave128OutstandingCorrections_RefusesBeforeNativeMutation",
+      "outcome": "Failed",
+      "message": "Assert.Equal() Failure: Strings differ\r\n                            ↓ (pos 17)\r\nExpected: \"{\"sessionRows\":128,\"firstCapabilities\":64\"···\r\nActual:   \"{\"sessionRows\":129,\"firstCapabilities\":64\"···\r\n                            ↑ (pos 17)"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.SqliteWatcherObservationStoreTests.TryAppendSpan_DuplicateId_IsIgnoredIdempotently",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(mutation: \"UPDATE registration_notice_delivery SET due_at_ms=\"···)",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: \"correction_code\", value: \"'HUMAN_AUTHORITY'\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: \"operation_id\", value: \"NULL\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: \"operation_id\", value: \"zeroblob(4)\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: \"generation\", value: \"1.5\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.SqliteWatcherObservationStoreTests.Heartbeat_UpsertsAndReadsLatest_NullWhenNone",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(mutation: \"UPDATE native_registration_admission_fact SET repo\"···)",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: \"publication_bytes\", value: \"NULL\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: \"target_root\", value: \"NULL\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(mutation: \"INSERT OR REPLACE INTO native_registration_admissi\"···)",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(mutation: \"UPDATE registration_notice_delivery SET publicatio\"···)",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheContractPumpCannotSeeTheNotice",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TwoSessionsInDifferentWorktreesShareOneBoard",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.AnUnresolvablePathIsLeftAlone_RatherThanGuessed",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: \"decision_digest\", value: \"'incorrect'\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: \"publication_digest\", value: \"'invalid'\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(mutation: \"UPDATE registration_notice_delivery SET state='Pub\"···)",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.SqliteWatcherObservationStoreTests.RecordSession_RoundTrips_IncludingNullHarnessAndModel",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(mutation: \"DELETE FROM registration_notice_delivery\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: \"repository_sent\", value: \"printf('%4097d',1)\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Open_FreshAndVersionEight_ProduceIdenticalSchemaWithoutNativeEffects",
+      "outcome": "Failed",
+      "message": "Assert.Equal() Failure: Values differ\r\nExpected: 9\r\nActual:   8"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.SqliteWatcherObservationStoreTests.ObservedSpanFact_IsAppendOnly_DeleteIsRejected",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(mutation: \"DELETE FROM native_registration_admission_fact\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.TrustedRegistrarTests.Register_MissingRequiredField_ThrowsInvalidBinding(repo: \"\", terminal: \"term-1\", agent: \"agent-1\")",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: \"target_kind\", value: \"'canonical-ack'\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.TrustedRegistrarTests.RegisterNextGeneration_IncrementsGeneration_AndInvalidatesPriorCapability",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.SqliteWatcherObservationStoreTests.Ended_MarkClearAndQuery",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: \"publication_bytes\", value: \"zeroblob(65537)\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.TrustedRegistrarTests.Register_ValidBinding_IssuesGenerationOneAndCapability",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(mutation: \"UPDATE registration_notice_delivery SET publicatio\"···)",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.TrustedRegistrarTests.Register_MissingRequiredField_ThrowsInvalidBinding(repo: \"C:/repos/ai-de\", terminal: \"term-1\", agent: \"\")",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(mutation: \"UPDATE registration_notice_delivery SET state='Con\"···)",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: \"generation\", value: \"NULL\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(mutation: \"UPDATE registration_notice_delivery SET state='InF\"···)",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.TrustedRegistrarTests.Heartbeat_WithForgedCapability_ThrowsForgery",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: \"decision_digest\", value: \"printf('%064d',1)\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_AnotherOperationForSameSessionGeneration_RejectsReplacement",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.TheAgentIsToldWhatChanged_AndWhy",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: \"generation\", value: \"-1\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(mutation: \"INSERT OR REPLACE INTO registration_notice_deliver\"···)",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.Publish_CorrectedRegistrationAndIdenticalRetry_PreservesLegacyDocumentBytes",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.ARepositoryRootIsLeftAlone_AndNoNoticeIsRaised",
+      "outcome": "Passed",
+      "message": null
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Open_SecondNewTableCollides_RollsBackWholeMigration",
+      "outcome": "Failed",
+      "message": "System.IO.IOException : The process cannot access the file 'watcher.db' because it is being used by another process."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: \"repository_sent\", value: \"NULL\")",
+      "outcome": "Failed",
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'."
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.AWorktreeRegistrationIsCorrectedAndSaidSoTests.AWorktreePathIsRegisteredAsItsRepository_AndTheWorktreeKeepsItsOwnPath",
+      "outcome": "Passed",
+      "message": null
+    }
+  ],
+  "hashes": [
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\RegistrationAdmissionTests.cs",
+      "sha256": "900AAAA88C44E76335115D9A8D4D5032FB42DF1550303EF3F230DA3EA2B41D4D"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\RegistrationNoticeReliabilityTests.cs",
+      "sha256": "5E26A73671CC7681FCB4099EE15926A800F47F91EB7DA35109301F3152CCD6A7"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "sha256": "FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D"
+    },
+    {
+      "path": "src\\AiDe.Core\\AiDe.Core.csproj",
+      "sha256": "B63C41B97201DC3E1016B72B404A32411AC31E477231B281219DDA64D0AD584A"
+    },
+    {
+      "path": "Directory.Build.props",
+      "sha256": "43D0FD406351A125E58AA5282409B22E528185BAE595CD2938E1B427BC409E69"
+    },
+    {
+      "path": "Directory.Packages.props",
+      "sha256": "A57D2EE58BD9787119F5D71C07B956A72F986FEF30287647AABCA25212E95F64"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll",
+      "sha256": "4C64A99F41879BC604636DE5580A699237AEA7B611A7F259882D026BBA184F6C"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.dll",
+      "sha256": "3BDE8C46D393C768798331C445B91B9A4A51A3022E0C723A9016AF124C3C072B"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\AdvisoryEvaluators.cs",
+      "sha256": "689ADAE6CAE12E497D40EF5455F7C5F0DC807CE3D3D765825EE080A059ADE737"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\AdvisoryScoring.cs",
+      "sha256": "82A8A155D17FF37248F062CA41C9421FAC37B99C82C179FC8D9C43E3D9CC15F0"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\AgentProtocolDocument.cs",
+      "sha256": "A55A0DB0BE3D9BB93B5F81D9E90144F87B650748F8ACC7D9FFE3BE47917FD419"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\AuditLogEpisodeSource.cs",
+      "sha256": "464E8FD0310698879288C69397D663E60EB289B0CB858C6D2781134F5F0FFFB2"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\BoardPublisher.cs",
+      "sha256": "B9D59E07681428D8F34C6EB2A8059B9FDE8D267D77620C2C213A9DA8ACA16B4D"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\ClosedEpisodeScoring.cs",
+      "sha256": "053B6B408E1B99D813C1C2A17898F581445BB2E51DA4FB95295F1650FE0EB9CF"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationContract.cs",
+      "sha256": "623C9BC5CF8C8B74951D60B7C1A4DC24EE9D04B417A54229DFD6058D4E43775E"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationContractLog.cs",
+      "sha256": "EF21D2F99EF9EB712112116A840C246B9C6BE896F09E8D80C6BE60D3C74F29C6"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationProjection.cs",
+      "sha256": "C8D5C2BEDC02D405459A5E13CBB7B1A7FD692E022C0DCD43681D3D3487763B45"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationRead.cs",
+      "sha256": "055417128EA470FDD0F9D679309120CD803615FA9386B36C750082235218F6B5"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationRecovery.cs",
+      "sha256": "F72117B08DC25786E7A1A67B1352405363671A371B94EAFF5BDF3D8E2498A3C5"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationSourceCapture.cs",
+      "sha256": "CA2600BC46D7B0735E94E9ADC69FC24E2B3F66A222617507114CA1E8A3F1E899"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\DaydreamCandidate.cs",
+      "sha256": "54B72705B6F5A668EA078B30C5A664AB72324D652E752012BCFA09236A2763DF"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\DaydreamObservation.cs",
+      "sha256": "C678AE8AF33D51B406691AA5BF69D640D0C0E16F1EB288C849EF824C41DA4EE6"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\DaydreamReachProbe.cs",
+      "sha256": "18F079E43A8A17821B7BDC6E3074ECFBCCCF87331A4B277C9ACC1C256B854838"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\DaydreamRecorder.cs",
+      "sha256": "07A04A2506D0C6F792B5EDAE739EA52DD424C6EDC2BF3AF0E434A8AABF4C0CD2"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\DaydreamRepositoryRecord.cs",
+      "sha256": "6BA1DB18BD9ED2D0C644B874C73675D895582370CD14FF31F66D8BF71940341A"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\DeclaredEpisodeArtifact.cs",
+      "sha256": "29C3478459E210271A875A281EA3BC0610073F972A4214B4F9D763749D37CBBE"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\DeterministicSignalsDeriver.cs",
+      "sha256": "F022F20F237966EC51006343B727EB632BC4B573559629B8FC52596203F6BCB2"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\DisputeService.cs",
+      "sha256": "75CF9B25D204B8FC8C32FCCE8E81A992DB9F2812367ADFE76C494641319EF5CE"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\DreamCorpusReader.cs",
+      "sha256": "7F66808873766253BC1AD9120A1F7B18715B63116B3CC480C8DB47F2B2044D8D"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\EgressGate.cs",
+      "sha256": "B06A201529940B2466ED6E48F237CAE771E0BD267FCA0B02AB8F533B06E486BA"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\FleetAggregator.cs",
+      "sha256": "4215120BED6004B9FB8CDC684902185C872EF47B6A32911DBA472EA8AE4D645D"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\IngestHost.cs",
+      "sha256": "533E34A1D522FD90B90771BBA2F3686D81F038A5F398B36C153E26CFC27ABE14"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\Leaderboard.cs",
+      "sha256": "9B29035D633D1582C63B30A9F76D21DD4AE98C7D6BB7C2A0C9967518AD157E42"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\LivenessProjection.cs",
+      "sha256": "9E0C68C30619C1226709B8CE99ED5971774390884B35E1411FA8A3108AD4A0DF"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\McpConfigWriter.cs",
+      "sha256": "824D25E09BCC2FBFB410A67C74CB4E3F4955F012C1059057210C0F513453E1F2"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\MessageBoard.cs",
+      "sha256": "E9E6597E8164D5895218F24E42F1F309406448EE94550FE84050CAF605698C04"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\MonotonicClock.cs",
+      "sha256": "3FACE6DB381DE90F0F876FAF4268A87EB78898D8AA129B3D4C5F11CFD4360806"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\ObservedSpan.cs",
+      "sha256": "D8BAFB986D420C91301AC7E6DD0FC1B9C3D824349BA143DFEE31D5F389FF7441"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\OtelSpanMapper.cs",
+      "sha256": "CFA085268B68BDCF5738A88266BB00E3D9FF5D34CB1FBF0F8FE1610F1C79AC21"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\OtlpReceiver.cs",
+      "sha256": "FA39D546BE8BE9046EFE9E36D2161CB271DC873D3BD4BCEBD5F1EFF0B53A3504"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\ProofPackVerifier.cs",
+      "sha256": "35CE21A7C2290B02D9FF4F93D4B9D4E3E8243B867958CBD839DFE425949E26E2"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\RegistrationPublisher.cs",
+      "sha256": "0BBFD1806AFDEDFBFD4733FBF9F4CA3683E87FA8207057AD618B195E46E74BCD"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\RepositoryCorrection.cs",
+      "sha256": "492DF16FBD5EF26A83C836374129F10EE55F7C7305839EB92F819D81E9476542"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\ScoreDispute.cs",
+      "sha256": "41B39C304922BDC6A7E9CBE265D882C532D3744DCFE1328DD089D52A1C1514C7"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\ScoringService.cs",
+      "sha256": "85CA9C9C8E1C92F859FDEA4058ABD93B82A7A26B4AA5F79598A211DD08EC94AE"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\SessionCapability.cs",
+      "sha256": "57467AF2291D7BB5AD792882BED3CC5C0C2C6DD6304DBE424E8F3F274CD85A42"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\SessionCoordinationEmitter.cs",
+      "sha256": "E5C9AF92EE2D2CDD4A96AE6E9D6E910DC7B27549B1C6D62A72D909E84AD56CC2"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\SpanIngest.cs",
+      "sha256": "D200A06EB6338F7E557520645F89FC7193A6C851789E380D67D04274BA6FD8F3"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\SqliteWatcherObservationStore.Coordination.cs",
+      "sha256": "325118C85C137FAB8DAD28254EDC2DF3EAA319DA1A46D40F5B2212F89B0D8560"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\SqliteWatcherObservationStore.cs",
+      "sha256": "CDA7A302CEA06D570AF4DD17B41A081E1FEC5208C751D923D525A3D72AA58C64"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\StandingPublisher.cs",
+      "sha256": "954A53961E4C172826C3EE894A340409081A0FDADD093C595119B9F4034B7399"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\TrustedRegistrar.cs",
+      "sha256": "82B3DB573397EE37A3D7F7B84F21732E0FD3947967151789FEBAF8CEC3277B15"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\WatcherException.cs",
+      "sha256": "697C60D48D5401F87A2C5A8E5367CCA287678737A309670BFFFD83600DBB362C"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\WatcherHost.cs",
+      "sha256": "B7B63C2DBE8CA15F1C1A320A729E01E2F902AEE013923CD7DCB4D617DE492B72"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\WatcherIdentity.cs",
+      "sha256": "DB96A3DE5ADE1D0C68EACB71FCA5224A40F5119FB1C97FD27A755BFD72BEFBDD"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\WatcherObservationStore.cs",
+      "sha256": "41258A6950E1950EF34CD047AD525F6A39E245C3E4983DE548F38F64AA4B6E73"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\WeaveScore.cs",
+      "sha256": "066D48A879121EB899E5536AAD10EE90117EDB4BD8245EA930D445B3931129E7"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\WorkEpisode.cs",
+      "sha256": "381460F5AD7AC8674F0160E4DBC0377640F67974E854760DF46D92F97AB3D43E"
+    },
+    {
+      "path": "docs\\proofs\\p25-notice-evidence\\corrective-schema-red\\native-notice.trx",
+      "sha256": "D79FCCA3231F816BE457313000D405B4C31A8585BAAB12E15A96E1FE259CEE48"
+    },
+    {
+      "path": "docs\\proofs\\p25-notice-evidence\\corrective-schema-red\\stdout.txt",
+      "sha256": "6FF611E0E96B806105DD462EABD968D0601B6B1B0FAE6DD94303B857D5FBAA60"
+    },
+    {
+      "path": "docs\\proofs\\p25-notice-evidence\\corrective-schema-red\\stderr.txt",
+      "sha256": "1538E9B0A0227ED572C5B4D50FF7684B6F67DFC2DE21AF1339B5FC65E8072ACB"
+    },
+    {
+      "path": "docs\\proofs\\p25-notice-evidence\\run-corrective.ps1",
+      "sha256": "95872A6FBBB8AD64E9965EB53BE067818483BB8F0294F02FB95A206D768FC939"
+    }
+  ]
+}

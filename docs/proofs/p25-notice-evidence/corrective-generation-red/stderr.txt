@@ -1,0 +1,4 @@
+[xUnit.net 00:00:00.54]     AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.DrainRegistrationNotices_PublicationFails_RetryRetainsOriginalCorrection [FAIL]
+[xUnit.net 00:00:00.72]     AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.Register_TwoHostsHave128OutstandingCorrections_RefusesBeforeNativeMutation [FAIL]
+[xUnit.net 00:00:01.36]     AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_ValidInt64Generation_PreservesActualDomainValue(value: 9223372036854775807) [FAIL]
+[xUnit.net 00:00:01.37]     AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_ValidInt64Generation_PreservesActualDomainValue(value: 2147483648) [FAIL]

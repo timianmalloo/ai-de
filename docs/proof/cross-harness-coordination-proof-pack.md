@@ -45,6 +45,73 @@ hydration/reservation, actual store identity/enrolled owner, durable attempt
 worker, immutable publisher/latest projection and caller wiring. Canonical bridge,
 legacy binary qualification, P3–P5 and all-six-before-upstream remain unqualified.
 
+### Native NOTICE dormant storage increment — author partial stop
+
+Corrected contract committed first at
+`52339c3e72ca309730ed3577d2094250ad77100e`. This increment changes only the actual
+SQLite constructor/migration and a new private DDL constant, focal tests and their
+receipt runner. It does **not** implement the requested complete admission and
+delivery corrective unit. **N1 and N2 remain RED/UNSHIPPABLE.**
+
+| Claim / oracle | Actual evidence | Red / confidence | Limit |
+|---|---|---|---|
+| Fresh and branch-v8 databases receive the same additive version-9 shape | `RegistrationAdmissionTests.Open_FreshAndVersionEight_ProduceIdenticalSchemaWithoutNativeEffects`: compares ordered actual `sqlite_master`, reads version 9 and zero native sessions/new facts | In `corrective-schema-red`, absent schema fails; in `corrective-final-green`, passes. **Verified structural behavior** | Branch-v8 fixture uses the unchanged real legacy DDL constants; not a released binary or candidate-v8 upgrade matrix |
+| A collision at the second new table rolls the whole migration back | `Open_SecondNewTableCollides_RollsBackWholeMigration`: actual constructor raises; version stays 8, first new table absent, collision sentinel preserved | RED before migration exists; GREEN afterward. **Verified** | Fresh-creation fault at every statement and all precommit native writes are not covered |
+| Admission facts and notice identity/bytes cannot be updated, deleted or replaced | Eight real SQL mutation cases, including raw connection with `recursive_triggers=OFF`; compares complete rows afterward | Initial table-absence RED → positive inserts and mutation refusals GREEN. **Verified tested mutations** | No general malicious-writer fence; disabling FK enforcement remains outside the enrolled protocol |
+| Required fields reject NULL and typed/bounded values are checked | 29 generated required-field cases plus explicit invalid generation/path/digest/blob/target cases; actual inserts and row-count readback | First 38 structural cases were RED before DDL; added NULL/enum cases observed GREEN only. **Verified executions; isolated constraint-mutation coverage unverified** | SQL validates digest *shape*, not SHA-256 content or canonical serialization equality. Payload `x'01'` and zero digest are deliberate synthetic structural fixtures |
+| Valid native Int64 generation values are not narrowed | `Admission_ValidInt64Generation_PreservesActualDomainValue` uses the actual `SessionGeneration` with 2,147,483,648 and Int64.MaxValue | Both RED against the author's mistaken Int32 ceiling; both GREEN after removing that ceiling. **Verified red/green** | No generation increment/overflow or lifecycle issuance API was added |
+| Actual enum classifications are accepted without minting authority | `Admission_ActualTrustEnum_PreservesClassificationWithoutIssuingAuthority`: actual Asserted/Verified enum, stored string and zero native sessions | **Verified structural positive**, not a permission test | No human/source authority columns; enum acceptance is not authorization |
+| Pending → InFlight → Pending → InFlight → Published preserves bytes and publication is terminal | Real SQL transition test checks attempts 2, ownership version 4, bytes `01`; invalid transitions and terminal reversal fail without changing rows | Original missing-table RED → GREEN. **Verified structural transitions** | No claimant, stale-worker CAS, due reader, OS ownership, retry worker or publication effect exists |
+| Existing selected native behavior remains unchanged | `corrective-final-green`: **105 executed, 103 passed, 2 failed**; **71/71 structural cases pass**, actual dotnet exit **1** | **Verified**, including 32 existing positive cases | This selected union is not all Core or UI. The two failures are intentionally retained diagnostics, not regressions made green |
+| N1 is still lost-notice failure | Actual host drain → native publisher IO failure → second drain: `Assert.Single`, empty retry collection | **Verified RED** in every new receipt | No durable recovery was implemented |
+| N2 still admits correction 129 | Actual two-host/store pipeline changes sessionRows 128 → 129 and outstanding corrections 128 → 129 | **Verified RED** in every new receipt | No global reservation/hydration was implemented |
+
+All run directories are under `docs/proofs/p25-notice-evidence/`, each retaining
+`stdout.txt`, `stderr.txt`, `native-notice.trx` and `receipt.json`:
+
+* `corrective-schema-red`: 72 executed / 32 passed / 40 failed; structural 0/38.
+* `corrective-schema-green`: 72 executed / 70 passed / 2 native failures;
+  structural 38/38.
+* `corrective-generation-red`: 105 executed / 101 passed / 4 failed; structural
+  69/71, two Int64 boundary failures plus the two native failures.
+* `corrective-final-green`: 105 executed / 103 passed / 2 native failures;
+  structural 71/71.
+
+`run-corrective.ps1` captures actual process stdout/stderr separately and records
+the real nonzero dotnet exit before checking expected failures. Its own success
+means **receipt checked**, not suite passed. Each receipt pins the source,
+projects, Core/test binaries, raw streams and TRX with SHA-256. No transcript
+metadata is described as actual stdout. Baseline receipts remain unchanged.
+
+**Class → sweep → derive → prevent.** Existing RIG-A recurred in this author
+increment: the initial SQL assumed an Int32 generation without opening the actual
+Int64 value object. The source sweep found `WatcherIdentity.SessionGeneration`
+and both SQLite `GetInt64` readers; the new table was the only newly introduced
+Int32 generation restriction. The corrected check uses SQLite integer/positive
+semantics, not a competing 32-bit ceiling. Two actual-domain boundary tests were
+observed RED then GREEN. The lessons register is outside this lane's explicit
+ownership; this same canonical record carries the instance for conductor
+incorporation. No additional lesson file or parallel Proof Pack was authored.
+
+**Reach/measurement debt.** DDL is consumed by real `Open`, on fresh creation and
+upgrade, in the existing transaction. There is no production writer/compute
+reader for the new rows yet: this is a dormant prerequisite, explicitly not a
+shipped capability. Existing `watcher_schema_version.applied_at` records
+successful application; normal-path admission/publisher cost, failures, opaque
+operation IDs and queue measurements remain unimplemented. The receipt's
+measured durations describe tests only. Digest derivation, original binding
+reconstruction, trusted local target validation, immutable file publication and
+canonical target handling are **not** proved by these rows.
+
+**Gates and handoff.** Data/Security/DS/Test implementation review remains open;
+the author clears no veto. Release rollback is retain-tables/disable-enhanced
+entrypoints, which are still absent; actual released old-binary qualification
+remains owed. Live retention/erasure stays BLOCKED. No Workbench/public UI source
+changed, so no desktop/UX review is requested for this increment; caller and
+rendered-surface qualification remain later P5 work. Full prompt capture in the
+audit is explicitly abbreviated, not represented as verbatim. Docs Explorer/
+larger derived bundle and lessons reconciliation remain with the conductor.
+
 ## B5 qualification and bounded B6 update candidate — 2026-09-17
 
 **Partial author evidence, not approval.** This continuation starts from

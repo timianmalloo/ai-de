@@ -1,0 +1,622 @@
+
+  AiDe.Core -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Daemon -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(mutation: "UPDATE registration_notice_delivery SET target_roo"···) [33 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 52
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(mutation: "INSERT OR REPLACE INTO registration_notice_deliver"···) [12 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 52
+   at InvokeStub_RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(mutation: "INSERT OR REPLACE INTO native_registration_admissi"···) [10 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 52
+   at InvokeStub_RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(mutation: "UPDATE registration_notice_delivery SET publicatio"···) [10 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 52
+   at InvokeStub_RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(mutation: "DELETE FROM native_registration_admission_fact") [10 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 52
+   at InvokeStub_RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(mutation: "DELETE FROM registration_notice_delivery") [10 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 52
+   at InvokeStub_RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(mutation: "UPDATE native_registration_admission_fact SET repo"···) [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 52
+   at InvokeStub_RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(mutation: "UPDATE registration_notice_delivery SET publicatio"···) [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 52
+   at InvokeStub_RegistrationAdmissionTests.NativeRows_ImmutableMutation_RejectsWithoutChangingRows(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: "schema_version", value: "2") [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 143
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: "publication_bytes", value: "'not a blob'") [20 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 143
+   at InvokeStub_RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: "publication_digest", value: "'invalid'") [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 143
+   at InvokeStub_RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: "publication_bytes", value: "zeroblob(65537)") [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 143
+   at InvokeStub_RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: "target_root", value: "NULL") [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 143
+   at InvokeStub_RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: "operation_id", value: "'absent'") [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 143
+   at InvokeStub_RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: "decision_digest", value: "printf('%064d',1)") [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 143
+   at InvokeStub_RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: "publication_bytes", value: "NULL") [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 143
+   at InvokeStub_RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(column: "target_kind", value: "'canonical-ack'") [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 143
+   at InvokeStub_RegistrationAdmissionTests.Notice_InvalidIdentityOrPayload_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: "generation", value: "-1") [10 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteScalar()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Scalar(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 252
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 82
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: "operation_id", value: "zeroblob(4)") [10 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteScalar()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Scalar(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 252
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 82
+   at InvokeStub_RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: "operation_id", value: "NULL") [10 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteScalar()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Scalar(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 252
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 82
+   at InvokeStub_RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: "repository_sent", value: "NULL") [10 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteScalar()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Scalar(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 252
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 82
+   at InvokeStub_RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: "generation", value: "1.5") [10 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteScalar()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Scalar(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 252
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 82
+   at InvokeStub_RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: "generation", value: "'text'") [10 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteScalar()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Scalar(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 252
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 82
+   at InvokeStub_RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: "repository_sent", value: "printf('%4097d',1)") [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteScalar()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Scalar(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 252
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 82
+   at InvokeStub_RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: "decision_digest", value: "'incorrect'") [10 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteScalar()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Scalar(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 252
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 82
+   at InvokeStub_RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: "generation", value: "NULL") [11 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteScalar()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Scalar(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 252
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 82
+   at InvokeStub_RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: "operation_id", value: "''") [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteScalar()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Scalar(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 252
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 82
+   at InvokeStub_RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(column: "correction_code", value: "'HUMAN_AUTHORITY'") [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteScalar()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Scalar(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 252
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(String column, String value) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 82
+   at InvokeStub_RegistrationAdmissionTests.Admission_InsertInvalidField_Rejects(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(mutation: "UPDATE registration_notice_delivery SET due_at_ms="···) [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 95
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(mutation: "UPDATE registration_notice_delivery SET attempt=-1") [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 95
+   at InvokeStub_RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(mutation: "UPDATE registration_notice_delivery SET state='InF"···) [8 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 95
+   at InvokeStub_RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(mutation: "UPDATE registration_notice_delivery SET state='Con"···) [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 95
+   at InvokeStub_RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(mutation: "UPDATE registration_notice_delivery SET ownership_"···) [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 95
+   at InvokeStub_RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(mutation: "UPDATE registration_notice_delivery SET state='Pub"···) [10 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(String mutation) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 95
+   at InvokeStub_RegistrationAdmissionTests.Notice_InvalidTransition_RejectsWithoutChangingObligation(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_AnotherOperationForSameSessionGeneration_RejectsReplacement [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Admission_AnotherOperationForSameSessionGeneration_RejectsReplacement() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 155
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_ClaimRetryAndPublish_PreservesBytesAndMakesPublicationTerminal [9 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 1: 'no such table: native_registration_admission_fact'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Execute(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 244
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.WithAdmission() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 219
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Notice_ClaimRetryAndPublish_PreservesBytesAndMakesPublicationTerminal() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 107
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Open_FreshAndVersionEight_ProduceIdenticalSchemaWithoutNativeEffects [95 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 9
+Actual:   8
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Open_FreshAndVersionEight_ProduceIdenticalSchemaWithoutNativeEffects() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 18
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Open_SecondNewTableCollides_RollsBackWholeMigration [92 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'watcher.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.RemoveDirectoryRecursive(String fullPath, WIN32_FIND_DATA& findData, Boolean topLevel)
+   at System.IO.FileSystem.RemoveDirectory(String fullPath, Boolean recursive)
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Database.Dispose() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 274
+   at AiDe.Core.Tests.Watcher.RegistrationAdmissionTests.Open_SecondNewTableCollides_RollsBackWholeMigration() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationAdmissionTests.cs:line 39
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.DrainRegistrationNotices_PublicationFails_RetryRetainsOriginalCorrection [21 ms]
+  Error Message:
+   Assert.Single() Failure: The collection was empty
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.DrainRegistrationNotices_PublicationFails_RetryRetainsOriginalCorrection() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationNoticeReliabilityTests.cs:line 53
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ {"scenario":"N1","failure":"UnauthorizedAccessException","accepted":1,"original":{"SessionId":"notice-first-1","RepositorySent":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\obj\\notice-fixtures\\5248e42850b24d078ad7297dae1d195c\\linked","RepositoryUsed":"c:\\projects\\ai-de-feature-xh-p2-projection\\tests\\aide.core.tests\\obj\\notice-fixtures\\5248e42850b24d078ad7297dae1d195c\\repository","Reason":"the registered path is a linked worktree; its repository is used so the fleet map, the message board and the score segment all agree with the other worktrees of that repository"},"retryCount":0,"nativeStateUnchanged":true,"temporaryFilePreserved":true}
+
+
+  Failed AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.Register_TwoHostsHave128OutstandingCorrections_RefusesBeforeNativeMutation [166 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                            ↓ (pos 17)
+Expected: "{"sessionRows":128,"firstCapabilities":64"···
+Actual:   "{"sessionRows":129,"firstCapabilities":64"···
+                            ↑ (pos 17)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.Register_TwoHostsHave128OutstandingCorrections_RefusesBeforeNativeMutation() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\RegistrationNoticeReliabilityTests.cs:line 94
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ {"scenario":"N2","before":"{\u0022sessionRows\u0022:128,\u0022firstCapabilities\u0022:64,\u0022secondCapabilities\u0022:64,\u0022sessions\u0022:[{\u0022SessionId\u0022:\u0022notice-first-1\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-10\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-11\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-12\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-13\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-14\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-15\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-16\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-17\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-18\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-19\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-2\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-20\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-21\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-22\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-23\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-24\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-25\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-26\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-27\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-28\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-29\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-3\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-30\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-31\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-32\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-33\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-34\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-35\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-36\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-37\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-38\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-39\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-4\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-40\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-41\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-42\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-43\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-44\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-45\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-46\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-47\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-48\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-49\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-5\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-50\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-51\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-52\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-53\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-54\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-55\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-56\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-57\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-58\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-59\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-6\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-60\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-61\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-62\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-63\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-64\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-7\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-8\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-9\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-1\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-10\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-11\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-12\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-13\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-14\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-15\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-16\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-17\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-18\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-19\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-2\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-20\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-21\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-22\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-23\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-24\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-25\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-26\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-27\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-28\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-29\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-3\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-30\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-31\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-32\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-33\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-34\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-35\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-36\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-37\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-38\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-39\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-4\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-40\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-41\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-42\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-43\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-44\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-45\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-46\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-47\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-48\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-49\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-5\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-50\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-51\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-52\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-53\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-54\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-55\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-56\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-57\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-58\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-59\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-6\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-60\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-61\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-62\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-63\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-64\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-7\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-8\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-9\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false}]}","after":"{\u0022sessionRows\u0022:129,\u0022firstCapabilities\u0022:64,\u0022secondCapabilities\u0022:65,\u0022sessions\u0022:[{\u0022SessionId\u0022:\u0022notice-first-1\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-10\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-11\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-12\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-13\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-14\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-15\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-16\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-17\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-18\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-19\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-2\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-20\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-21\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-22\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-23\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-24\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-25\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-26\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-27\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-28\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-29\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-3\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-30\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-31\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-32\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-33\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-34\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-35\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-36\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-37\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-38\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-39\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-4\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-40\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-41\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-42\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-43\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-44\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-45\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-46\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-47\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-48\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-49\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-5\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-50\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-51\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-52\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-53\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-54\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-55\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-56\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-57\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-58\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-59\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-6\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-60\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-61\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-62\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-63\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-64\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-7\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-8\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-first-9\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-1\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-10\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-11\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-12\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-13\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-14\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-15\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-16\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-17\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-18\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-19\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-2\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-20\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-21\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-22\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-23\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-24\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-25\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-26\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-27\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-28\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-29\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-3\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-30\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-31\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-32\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-33\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-34\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-35\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-36\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-37\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-38\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-39\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-4\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-40\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-41\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-42\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-43\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-44\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-45\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-46\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-47\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-48\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-49\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-5\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-50\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-51\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-52\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-53\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-54\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-55\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-56\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-57\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-58\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-59\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-6\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-60\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-61\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-62\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-63\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-64\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-65\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1031000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-7\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-8\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false},{\u0022SessionId\u0022:\u0022notice-second-9\u0022,\u0022generation\u0022:1,\u0022heartbeat\u0022:1000000,\u0022ended\u0022:false}]}","outstanding":129,"admitted":true,"refusal":null}
+
+
+Results File: C:\Projects\ai-de-feature-xh-p2-projection\docs\proofs\p25-notice-evidence\corrective-schema-red\native-notice.trx
+
+Failed!  - Failed:    40, Passed:    32, Skipped:     0, Total:    72, Duration: 970 ms - AiDe.Core.Tests.dll (net10.0)

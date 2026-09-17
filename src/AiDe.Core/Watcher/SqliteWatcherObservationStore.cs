@@ -14,7 +14,7 @@ namespace AiDe.Core.Watcher;
 /// </summary>
 public sealed partial class SqliteWatcherObservationStore : IWatcherObservationStore, IDisposable
 {
-    private const int SchemaVersion = 8;
+    private const int SchemaVersion = 9;
 
     private readonly SqliteConnection _connection;
     private readonly object _gate = new();
@@ -1101,6 +1101,7 @@ public sealed partial class SqliteWatcherObservationStore : IWatcherObservationS
             using var create = connection.BeginTransaction();
             ExecuteNonQuery(connection, SchemaSql, create);
             ExecuteNonQuery(connection, CoordinationSchemaSql, create);
+            ExecuteNonQuery(connection, NativeRegistrationSchemaSql, create);
             RecordVersion(connection, create, SchemaVersion);
             create.Commit();
             return;
@@ -1238,6 +1239,7 @@ public sealed partial class SqliteWatcherObservationStore : IWatcherObservationS
         // rank in one cell, and the board can tell them apart.
         (7, "", ("scored_episode_cell", "task_class_source", "TEXT NULL")),
         (8, CoordinationSchemaSql, null),
+        (9, NativeRegistrationSchemaSql, null),
     ];
 
     private const string SchemaSql =

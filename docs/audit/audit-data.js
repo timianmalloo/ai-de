@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T03:18:38Z",
+  "generated": "2026-09-17T03:25:39Z",
   "audit": [
     {
       "actor": null,
@@ -20911,6 +20911,35 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-09-17T03:15:04Z",
       "duration_seconds": 214.0
+    },
+    {
+      "id": "al-01M2PPC0VFBJVSFFK5HX4HE1PH",
+      "shortname": "p2-native-dormant-schema",
+      "datetime": "2026-09-17T03:25:39Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "Continuation of the native NOTICE corrective-unit request recorded by al-01M2PNZ66E42669WDW0DS7GQZN. Explicitly abbreviated prompt capture; full instructions remain in the harness turn.",
+      "summary": "PARTIAL: additive native admission/notice DDL v9 only. 105 actual tests: 103 pass, original N1/N2 remain RED; 71 structural pass. Initial generation bound was wrong: actual Int64 tests observed RED then GREEN. Enhanced APIs/worker/authority absent. No independent veto cleared. Canonical proof records all remaining gates.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md",
+        "docs/plans/cross-harness-coordination-phases.md",
+        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.RegistrationNotices.cs",
+        "tests/AiDe.Core.Tests/Watcher/RegistrationAdmissionTests.cs"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Correct native admission and retained notice delivery",
+      "done_when": "Actual N1/N2 green or precise committed partial stop with unmet gates",
+      "tier": "T2",
+      "main_calls": 37,
+      "main_budget": 45,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-17T03:19:30Z",
+      "duration_seconds": 369.0
     }
   ],
   "changes": [

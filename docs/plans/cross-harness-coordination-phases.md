@@ -829,3 +829,18 @@ nonmonotonic publication or non-atomic constructor migration fail the structural
 tests. N1/N2 remain separate actual host diagnostics, not API-name fixtures.
 Full atomic admission, hydration/global quota, ownership, hardened publisher,
 protected lifecycle races and actual native retry are still necessary.
+
+**Actual checkpoint.** NC1 committed at
+`52339c3e72ca309730ed3577d2094250ad77100e`; NC2–NC4 produced the dormant version-9
+DDL and 71 passing structural cases. The selected 105-case union remains RED:
+103 pass, original native N1/N2 fail. One substantive repair pass corrected an
+author-created Int32/Int64 generation mismatch, proven with two actual-domain
+boundary REDs before repair. No elapsed-time estimate is substituted for receipt
+durations. Repeated oversized read output consumed avoidable budget; future
+continuation must use bounded file ranges before combined reads.
+
+Partial termination is the plan's declared fallback, not completed native
+admission/delivery. The next checkpoint is the protected store/registrar
+transaction and validated input/owner binding; do not enable the enhanced API
+before its entire admission/quota/capability and retained-notice contract holds.
+Independent code reviews and full P2, P3–P5 remain open.
