@@ -154,21 +154,18 @@ public sealed class SessionCoordinationEmitter : IDisposable
     /// </summary>
     public void HeartbeatAll()
     {
-        var results = HeartbeatAllResultsAsync().ConfigureAwait(false).GetAwaiter().GetResult().ToArray();
-        // A single serial reconciliation of root contention preserves the old ordinary void path.
-        // It never rebases an assigned preparation, and does not retry transport uncertainty.
-        for (var index = 0; index < results.Length; index++)
-            if (results[index].Code == CoordinationWriteCodes.WriterBusy)
-                results[index] = ForSession(results[index].Session, CoordinationEmitterOperation.Heartbeat,
-                    state => PerformControl(state, CoordinationEmitterOperation.Heartbeat), wait: false);
+        var results = HeartbeatBatchAsync(default, true).ConfigureAwait(false).GetAwaiter().GetResult();
         var failed = results.Where(result => !result.Succeeded).ToArray();
         if (failed.Length > 0) throw new CoordinationEmitterBatchException(failed);
     }
 
-    public async Task<IReadOnlyList<CoordinationEmitterResult>> HeartbeatAllResultsAsync(
-        CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<CoordinationEmitterResult>> HeartbeatAllResultsAsync(
+        CancellationToken cancellationToken = default) => HeartbeatBatchAsync(cancellationToken, false);
+
+    private async Task<IReadOnlyList<CoordinationEmitterResult>> HeartbeatBatchAsync(
+        CancellationToken cancellationToken, bool reconcileWriterBusy)
     {
-        string[] sessions;
+        CoordinationEmitterState[] sessions;
         lock (_gate)
         {
             if (_batch)
@@ -178,30 +175,41 @@ public sealed class SessionCoordinationEmitter : IDisposable
                 return [new("", CoordinationEmitterMembership.Unknown, CoordinationEmitterOutcome.Refused,
                     CoordinationEmitterCodes.Retired)];
             _batch = true;
-            sessions = [.. _states.Values.Where(state => state.Registered).Select(state => state.Session)];
+            sessions = [.. _states.Values.Where(state => state.Registered)];
         }
         var work = new List<Task<CoordinationEmitterResult>>(sessions.Length);
         foreach (var session in sessions)
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                work.Add(Task.FromResult(SnapshotResult(session, CoordinationEmitterOutcome.Busy,
+                work.Add(Task.FromResult(Result(session, CoordinationEmitterOutcome.Busy,
                     CoordinationEmitterCodes.Cancelled)));
                 continue;
             }
-            var lease = Acquire(session, CoordinationEmitterOperation.Heartbeat, false, out var failure);
+            var lease = Acquire(session.Session, CoordinationEmitterOperation.Heartbeat, false, out var failure, session);
             work.Add(lease is null ? Task.FromResult(failure!) :
-                Task.Run(() => RunLease(session, lease, CoordinationEmitterOperation.Heartbeat,
+                Task.Run(() => RunLease(session.Session, lease, CoordinationEmitterOperation.Heartbeat,
                     state => PerformControl(state, CoordinationEmitterOperation.Heartbeat))));
         }
         var completion = FinishBatch(work);
-        try { return await completion.WaitAsync(cancellationToken).ConfigureAwait(false); }
+        try
+        {
+            var results = (await completion.WaitAsync(cancellationToken).ConfigureAwait(false)).ToArray();
+            // Reconciliation may retry contention, never transfer work to a replacement lifecycle.
+            if (reconcileWriterBusy)
+                for (var index = 0; index < results.Length; index++)
+                    if (results[index].Code == CoordinationWriteCodes.WriterBusy)
+                        results[index] = ForSession(sessions[index].Session, CoordinationEmitterOperation.Heartbeat,
+                            state => PerformControl(state, CoordinationEmitterOperation.Heartbeat),
+                            wait: false, expected: sessions[index]);
+            return results;
+        }
         catch (OperationCanceledException)
         {
             // The join continues owning _batch and leases. Cancellation is not an I/O acknowledgement.
             return work.Select((task, index) => task.IsCompletedSuccessfully
                 ? task.GetAwaiter().GetResult()
-                : SnapshotResult(sessions[index], CoordinationEmitterOutcome.InFlight,
+                : Result(sessions[index], CoordinationEmitterOutcome.InFlight,
                     CoordinationEmitterCodes.InFlight)).ToArray();
         }
     }
@@ -303,19 +311,26 @@ public sealed class SessionCoordinationEmitter : IDisposable
     }
 
     private CoordinationEmitterResult ForSession(string session, CoordinationEmitterOperation operation,
-        Func<CoordinationEmitterState, CoordinationEmitterResult> action, bool wait = true)
+        Func<CoordinationEmitterState, CoordinationEmitterResult> action, bool wait = true,
+        CoordinationEmitterState? expected = null)
     {
         ArgumentException.ThrowIfNullOrEmpty(session);
-        var lease = Acquire(session, operation, wait, out var failure);
+        var lease = Acquire(session, operation, wait, out var failure, expected);
         return lease is null ? failure! : RunLease(session, lease, operation, action);
     }
 
-    private SessionGate? Acquire(string session, CoordinationEmitterOperation operation, bool wait,
-        out CoordinationEmitterResult? failure)
+    private SessionLease? Acquire(string session, CoordinationEmitterOperation operation, bool wait,
+        out CoordinationEmitterResult? failure, CoordinationEmitterState? expected = null)
     {
         lock (_gate)
         {
             failure = null;
+            if (expected is not null &&
+                (!_states.TryGetValue(session, out var current) || !ReferenceEquals(current, expected)))
+            {
+                failure = Result(expected, CoordinationEmitterOutcome.Refused, CoordinationEmitterCodes.StaleLifecycle);
+                return null;
+            }
             if (_retired) failure = SnapshotResult(session, CoordinationEmitterOutcome.Refused, CoordinationEmitterCodes.Retired);
             else if (!_states.ContainsKey(session))
             {
@@ -344,73 +359,83 @@ public sealed class SessionCoordinationEmitter : IDisposable
             }
             gate.References++;
             if (operation == CoordinationEmitterOperation.End) gate.EndReferences++;
-            return gate;
+            return new(gate, _states[session]);
         }
     }
 
-    private CoordinationEmitterResult RunLease(string session, SessionGate gate,
+    private CoordinationEmitterResult RunLease(string session, SessionLease lease,
         CoordinationEmitterOperation operation, Func<CoordinationEmitterState, CoordinationEmitterResult> action)
     {
-        using var activity = new System.Diagnostics.Activity("coordination.emitter").Start();
-        var started = System.Diagnostics.Stopwatch.GetTimestamp();
-        gate.Semaphore.Wait();
-        CoordinationEmitterResult result;
+        var gate = lease.Gate;
+        var acquired = false;
+        try
+        {
+            using var activity = new System.Diagnostics.Activity("coordination.emitter");
+            activity.Start();
+            var started = System.Diagnostics.Stopwatch.GetTimestamp();
+            gate.Semaphore.Wait();
+            acquired = true;
+            var result = RunAction(session, lease.State, operation, action);
+            activity.SetTag("coordination.outcome", result.Outcome.ToString());
+            activity.SetTag("coordination.membership", result.Membership.ToString());
+            activity.SetTag("coordination.retained", RetainedCount);
+            activity.SetTag("coordination.duration_ms", System.Diagnostics.Stopwatch.GetElapsedTime(started).TotalMilliseconds);
+            activity.SetTag("error.type", result.Code);
+            return result;
+        }
+        finally
+        {
+            if (acquired) gate.Semaphore.Release();
+            lock (_gate)
+            {
+                if (operation == CoordinationEmitterOperation.End) gate.EndReferences--;
+                if (--gate.References == 0)
+                {
+                    _sessionGates.Remove(session);
+                    gate.Semaphore.Dispose();
+                    if (_states.TryGetValue(session, out var state) && !state.Registered && state.Pending is null)
+                        Release(state);
+                }
+            }
+        }
+    }
+
+    private CoordinationEmitterResult RunAction(string session, CoordinationEmitterState expected,
+        CoordinationEmitterOperation operation, Func<CoordinationEmitterState, CoordinationEmitterResult> action)
+    {
         try
         {
             CoordinationEmitterState? state;
             lock (_gate)
             {
                 _states.TryGetValue(session, out state);
-                if (state is null && operation == CoordinationEmitterOperation.Register && _budget.TryReserve(this))
-                {
-                    state = new(session);
-                    _states.Add(session, state);
-                }
+                if (!ReferenceEquals(state, expected))
+                    return Result(expected, CoordinationEmitterOutcome.Refused, CoordinationEmitterCodes.StaleLifecycle);
             }
-            result = state is null ? SnapshotResult(session, operation == CoordinationEmitterOperation.Register
-                ? CoordinationEmitterOutcome.Refused : CoordinationEmitterOutcome.NoOp,
-                operation == CoordinationEmitterOperation.Register ? CoordinationEmitterCodes.Capacity : null) : action(state);
+            return action(expected);
         }
         catch (CoordinationEmitterInputException)
         {
             lock (_gate)
             {
-                if (_states.TryGetValue(session, out var state) && state.Pending is null && !state.Registered)
+                if (expected.Pending is null && !expected.Registered)
                 {
-                    state.Pending = CoordinationEmitterOperation.Register;
-                    state.BlockedCode = CoordinationEmitterCodes.RetentionBound;
+                    expected.Pending = CoordinationEmitterOperation.Register;
+                    expected.BlockedCode = CoordinationEmitterCodes.RetentionBound;
                 }
             }
-            result = SnapshotResult(session, CoordinationEmitterOutcome.Refused, CoordinationEmitterCodes.RetentionBound);
+            return Result(expected, CoordinationEmitterOutcome.Refused, CoordinationEmitterCodes.RetentionBound);
         }
         catch (Exception)
         {
             lock (_gate)
             {
-                if (_states.TryGetValue(session, out var state))
-                {
-                    state.Pending ??= operation;
-                    state.ProvenNoWrite = false;
-                    state.Phase = CoordinationEmitterPhase.Uncertain;
-                }
+                expected.Pending ??= operation;
+                expected.ProvenNoWrite = false;
+                expected.Phase = CoordinationEmitterPhase.Uncertain;
             }
-            result = SnapshotResult(session, CoordinationEmitterOutcome.Uncertain, CoordinationEmitterCodes.WriteUncertain);
+            return Result(expected, CoordinationEmitterOutcome.Uncertain, CoordinationEmitterCodes.WriteUncertain);
         }
-        finally
-        {
-            gate.Semaphore.Release();
-            lock (_gate)
-            {
-                if (operation == CoordinationEmitterOperation.End) gate.EndReferences--;
-                if (--gate.References == 0) { _sessionGates.Remove(session); gate.Semaphore.Dispose(); }
-            }
-        }
-        activity.SetTag("coordination.outcome", result.Outcome.ToString());
-        activity.SetTag("coordination.membership", result.Membership.ToString());
-        activity.SetTag("coordination.retained", RetainedCount);
-        activity.SetTag("coordination.duration_ms", System.Diagnostics.Stopwatch.GetElapsedTime(started).TotalMilliseconds);
-        activity.SetTag("error.type", result.Code);
-        return result;
     }
 
     private void Release(CoordinationEmitterState state)
@@ -444,6 +469,8 @@ public sealed class SessionCoordinationEmitter : IDisposable
     {
         if (!result.Succeeded) throw new CoordinationEmitterException(result);
     }
+
+    private sealed record SessionLease(SessionGate Gate, CoordinationEmitterState State);
 
     private sealed class SessionGate
     {

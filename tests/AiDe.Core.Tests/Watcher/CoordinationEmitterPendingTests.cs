@@ -397,6 +397,124 @@ public sealed class CoordinationEmitterPendingTests
         public override DateTimeOffset GetUtcNow() => DateTimeOffset.UnixEpoch;
     }
 
+    [Theory]
+    [InlineData("typed")]
+    [InlineData("legacy")]
+    [InlineData("direct")]
+    public async Task HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(string mode)
+    {
+        var legacy = mode == "legacy";
+        using var files = new PendingDirectory();
+        var emitter = new SessionCoordinationEmitter(new CoordContractWriter(files.Root, new EpochTime()),
+            new CoordinationEmitterBudget());
+        using var lifetime = new EmitterTestLifetime(emitter);
+        emitter.Register("a", Identity);
+        emitter.Register("b", Identity);
+        using var entered = new CountdownEvent(2);
+        using var release = new ManualResetEventSlim();
+        using var writerTurn = new SemaphoreSlim(1, 1);
+        var arrivals = 0;
+        void PauseWorkers(object? sender, System.Diagnostics.ActivityChangedEventArgs args)
+        {
+            if (args.Previous?.OperationName == "coordination.emitter" &&
+                args.Current?.OperationName == "synthetic-batch")
+            {
+                writerTurn.Release();
+                return;
+            }
+            if (args.Previous?.OperationName != "synthetic-batch" ||
+                args.Current?.OperationName != "coordination.emitter") return;
+            if (Interlocked.Increment(ref arrivals) <= 2) entered.Signal();
+            if (!release.Wait(TimeSpan.FromSeconds(10))) throw new TimeoutException("synthetic barrier");
+            if (!writerTurn.Wait(TimeSpan.FromSeconds(10))) throw new TimeoutException("synthetic writer turn");
+        }
+        System.Diagnostics.Activity.CurrentChanged += PauseWorkers;
+        var batch = Task.Run(async () =>
+        {
+            using var parent = new System.Diagnostics.Activity("synthetic-batch").Start();
+            if (mode == "direct")
+                return (IReadOnlyList<CoordinationEmitterResult>)await Task.WhenAll(
+                    Task.Run(() => emitter.HeartbeatResult("a")), Task.Run(() => emitter.HeartbeatResult("b")));
+            if (!legacy) return await emitter.HeartbeatAllResultsAsync();
+            var error = Record.Exception(emitter.HeartbeatAll);
+            return error is CoordinationEmitterBatchException failed ? failed.Results : [];
+        });
+        IReadOnlyList<CoordinationEmitterResult> results;
+        try
+        {
+            Assert.True(entered.Wait(TimeSpan.FromSeconds(10)));
+            Assert.Equal(CoordinationEmitterOutcome.Admitted, emitter.EndResult("b").Outcome);
+            Assert.Equal(CoordinationEmitterOutcome.Admitted, emitter.RegisterResult("b", Identity).Outcome);
+            Assert.Equal(3, File.ReadAllLines(files.Log("b")).Length);
+        }
+        finally
+        {
+            release.Set();
+            try { results = await batch.WaitAsync(TimeSpan.FromSeconds(10)); }
+            finally { System.Diagnostics.Activity.CurrentChanged -= PauseWorkers; }
+        }
+
+        Assert.Equal(3, File.ReadAllLines(files.Log("b")).Length);
+        Assert.Equal(2, File.ReadAllLines(files.Log("a")).Length);
+        Assert.Equal(legacy ? 1 : 2, results.Count);
+        var stale = Assert.Single(results, result => result.Session == "b");
+        Assert.Equal(CoordinationEmitterOutcome.Refused, stale.Outcome);
+        Assert.Equal("COORD_EMITTER_STALE_LIFECYCLE", stale.Code);
+        Assert.Null(stale.Prepared);
+        Assert.Equal(0, GateReferences(emitter, "b"));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(bool onStop)
+    {
+        using var files = new PendingDirectory();
+        var budget = CoordinationEmitterBudget.Production;
+        var before = budget.Occupied;
+        var emitter = new SessionCoordinationEmitter(new CoordContractWriter(files.Root, new EpochTime()));
+        using var parent = new System.Diagnostics.Activity("synthetic-observer").Start();
+        var thread = Environment.CurrentManagedThreadId;
+        var observed = 0;
+        void ThrowObserver(object? sender, System.Diagnostics.ActivityChangedEventArgs args)
+        {
+            if (Environment.CurrentManagedThreadId != thread) return;
+            var matches = onStop
+                ? args.Previous?.OperationName == "coordination.emitter" && ReferenceEquals(parent, args.Current)
+                : args.Current?.OperationName == "coordination.emitter" && ReferenceEquals(parent, args.Previous);
+            if (matches && Interlocked.Exchange(ref observed, 1) == 0)
+                throw new InvalidOperationException("synthetic observer");
+        }
+        Exception? error;
+        System.Diagnostics.Activity.CurrentChanged += ThrowObserver;
+        try { error = Record.Exception(() => emitter.RegisterResult("a", Identity)); }
+        finally { System.Diagnostics.Activity.CurrentChanged -= ThrowObserver; }
+
+        var restored = System.Diagnostics.Activity.Current;
+        System.Diagnostics.Activity.Current = parent;
+        try
+        {
+            Assert.IsType<InvalidOperationException>(error);
+            Assert.Equal(0, GateReferences(emitter, "a"));
+            Assert.Same(parent, restored);
+            Assert.Equal(onStop ? 1 : 0, emitter.LiveCount);
+            Assert.Equal(onStop ? 1 : 0, emitter.RetainedCount);
+            Assert.Equal(before + (onStop ? 1 : 0), budget.Occupied);
+            Assert.Equal(onStop, File.Exists(files.Log("a")));
+            Assert.Equal(CoordinationEmitterOutcome.NoOp, emitter.TryAbandonPending("a").Outcome);
+            Assert.True(emitter.RegisterResult("a", Identity).Succeeded);
+            Assert.Equal(CoordinationEmitterOutcome.Admitted, emitter.EndResult("a").Outcome);
+            Assert.Equal(before, budget.Occupied);
+            Assert.True(emitter.TryRetire());
+        }
+        finally
+        {
+            emitter.TryAbandonPending("a");
+            emitter.EndResult("a");
+            emitter.TryRetire();
+        }
+    }
+
     private sealed class PausingTime : TimeProvider, IDisposable
     {
         private int _armed;

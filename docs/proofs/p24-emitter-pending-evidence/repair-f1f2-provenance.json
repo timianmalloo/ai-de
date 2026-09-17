@@ -1,0 +1,14 @@
+{
+  "historical_pin_count": 25,
+  "current_baseline_pin_count": 25,
+  "historical_vs_current_differences": [
+    "src\\AiDe.Core\\bin\\Debug\\net10.0\\AiDe.Core.dll",
+    "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll"
+  ],
+  "source_before_fix_matches_baseline": true,
+  "restored_source_matches_first_green": true,
+  "current_baseline_test_binary": "f8ca1d6abf80c604f5376bbe76436f05f619fdcbc417b51f4367bef05ec175b7",
+  "red_test_binary": "5f67cc1a017c1fbeb0a33621081ffe5d9b0deb1da9775bdd3c38c14c3749c595",
+  "restored_test_binary": "72fda55e2c83ed1f46e72e7638a45c6d5ad091e0f967c22f2cb2961a1c7412f0",
+  "qualification": "SHA256 pins hash actual working-tree bytes at each run, including Git EOL checkout effects; historical receipts are not current run bytes. Combined reverse mutations were tested with separate F1 and F2 selectors. Final direct-path row was added after mutation runs."
+}

@@ -425,6 +425,100 @@ conductor's responsibility.
 
 ## Grounding and scope
 
+### F1/F2 repair contract — 2026-09-17
+
+This bounded repair answers the independent BLOCK at `739cd167d3f3d5262ba5f4618131cfe3595ae21a`.
+F1 binds each snapshot item and acquired lease to the actual state object, not the
+session string. Acquisition, execution and legacy WriterBusy reconciliation must
+reject a replaced lifecycle before Prepare. F2 places every acquired reference
+inside cleanup before Activity.Start or semaphore acquisition. Only an acquired
+semaphore is released. Observer exceptions propagate; they are not writer no-write
+evidence. A never-started, unregistered reservation is reclaimed when its last
+reference leaves. Pending/attempted operations remain retained.
+
+Surface reach: snapshot → acquisition → lease execution → legacy reconciliation →
+real JSONL and typed results; activity start/stop → reference/semaphore cleanup →
+production budget and quiescent retirement. No wire schema, data store, UI or
+authority boundary changes. Existing result codes describe writer failures;
+`COORD_EMITTER_STALE_LIFECYCLE` names the new pre-Prepare rejection.
+
+The execution graph is inspect/pin → RED → repair → GREEN → reverse mutations →
+restored GREEN → commit/handoff. Shared source and binary outputs serialize these
+nodes; inferred work equals span, width one, speedup ceiling one. No measured cost
+estimate exists. The finite variant is the remaining two verified defects; the
+30-call cap is a reporting checkpoint, not permission to waive floors.
+
+Class/sweep/derive/prevent: F1 is stable-key ABA across queued/snapshotted work.
+Sweep covers typed batch, void compatibility retry and direct acquired work;
+derive authority from one captured state identity. F2 is a reference acquired
+outside observer/semaphore cleanup. Sweep covers start, stop, wait and action
+failure; derive release through an outer finally. Named controls are
+`HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter` (typed and legacy)
+and `RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery`
+(start and stop). Existing uncertain-append controls must remain green.
+Canonical defect-register and global Proof Pack consolidation remain conductor-owned.
+
+#### Repair evidence and limits
+
+New receipts live only in `docs/proofs/p24-emitter-pending-evidence/`; historical
+receipts were not changed. Each run has full stdout/stderr, TRX assertions/counts,
+the command, measured elapsed seconds and SHA256 source/test/project/binary pins.
+
+| Receipt prefix | Observed result | Oracle / scope |
+|---|---|---|
+| `repair-f1f2-baseline` | exit 0; 91/91 passed | Current baseline rebuilt before new tests or production edits |
+| `repair-f1f2-red` | exit 1; 1 passed, 3 failed | Initial fixture; contention and cleanup could obscure the primary assertion; not the stable proof |
+| `repair-f1f2-stable-red` | exit 1; 1 passed, 3 failed | Typed and legacy wire count expected 3, actual 4; observer-start references expected 0, actual 1 |
+| `repair-f1f2-green` | exit 0; 95/95 passed | 91 previous cases plus four regression rows |
+| `repair-f1-reverse-mutant` | exit 1; 0 passed, 2 failed | Re-resolving current state gives the forbidden fourth record |
+| `repair-f2-reverse-mutant` | exit 1; 1 passed, 1 failed | Moving Activity.Start before cleanup retains one reference |
+| `repair-f1f2-restored` | exit 0; 96/96 passed | Restored production source plus the direct-heartbeat row |
+
+Both reverse mutations were present in the same build, with separate focal test
+selectors. This is not a claim of two isolated mutant builds. Observer-stop
+already passed RED: it is retained non-regression coverage, not a newly found
+defect. The final direct-heartbeat row exercises the shared lease path and passed;
+that row itself was added after the mutation runs and has no separate RED receipt.
+
+The controlled interleaving pauses both acquired workers at Activity.Start,
+before semaphore acquisition or writer access. While they are paused, independent
+End and Register for `b` both complete. Worker I/O is then serialized by the test
+observer to exclude root WriterBusy contention. Assertions read real JSONL and
+typed outcomes; no sleeps or private-method invocation manufacture the result.
+This proves post-acquisition ABA, not a separately paused snapshot-to-acquisition
+window or the WriterBusy reconciliation window. The source carries the same
+identity through those windows; independent re-gating must inspect that coverage.
+
+The observer-start test observes no writer file, restored ambient Activity,
+zero retained references/reservations, unchanged production budget occupancy,
+successful registration retry, End and retirement. Stop failure preserves the
+admitted registration and permits End. Existing uncertain append/exact Prepared,
+UTF-16 bounds, global-capacity and abandonment tests remain in the 96-case run.
+The synchronous semaphore API has no cancellation token; acquisition-failure
+cleanup is structural, not a separately injected cancellation proof.
+
+`repair-f1f2-provenance.json` distinguishes the 23 source/test/project pins from
+the two actual binary pins. Historical versus current baseline differs in both
+DLLs, not those 23 files. Stable RED production source matches current baseline;
+restored production source matches first GREEN. Pins hash checkout bytes,
+including Git EOL effects, not normalized Git blobs.
+
+Fixture correction class: test-worker concurrency masked the intended wire
+oracle with root contention, and asserting teardown masked reference leaks.
+Sweep: the two new observer fixtures. Control: serialized worker I/O plus
+straight-line wire/reference assertions; the stable RED and reverse runs expose
+the exact intended failures. The generated provenance count initially enumerated
+PowerShell member counts instead of counting properties; corrected scalar counts
+are checked against 25 before commit.
+
+The 30-call estimate leaves no discretionary investigation budget; oversized
+orientation output and a missing shell `rg` consumed avoidable calls. No floor
+is deemed cleared because the budget was reached. Independent review remains
+required. Six author floors remain reserved: reserved-state phase,
+quiescent-End classification, stress, cross-root contention, telemetry and broader
+review. Global RegistrationNotice, durable recovery, cold restart, human channel,
+the rest of P2 and P3–P5 remain pending. No overall producer/P2 PASS is claimed.
+
 Baseline: `54ec0aae745b8f645b54ea631a2d97b4253e56f8`.
 `CoordinationContractLog.cs` defines the sealed `CoordContractWriter`: `Append`
 calls the supplied `TimeProvider`, determines sequence, serializes and appends.

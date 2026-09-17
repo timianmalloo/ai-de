@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="09ac12e4-2737-4899-88d8-c50090bb1c14" name="malla@TIMMALLSTRIX 2026-09-16 18:50:28" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-16T18:50:28.9919253-07:00" queuing="2026-09-16T18:50:28.9919254-07:00" start="2026-09-16T18:50:28.3216202-07:00" finish="2026-09-16T18:50:28.9949809-07:00" />
+  <TestSettings name="default" id="572ac555-7bc0-4054-ad2f-c16c5ef2fcac">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-16_18_50_28" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="421e7eb2-f77f-4be3-b09c-d61ae3d3c8fb" testId="e4d84642-cc7a-8e2c-800f-451fbbf0fbd7" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(legacy: False)" computerName="TIMMALLSTRIX" duration="00:00:00.0465254" startTime="2026-09-16T18:50:28.8503675-07:00" endTime="2026-09-16T18:50:28.9063415-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="421e7eb2-f77f-4be3-b09c-d61ae3d3c8fb">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 3&#xD;
+Actual:   4</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(Boolean legacy) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 452&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="70cafc84-9939-4e80-96ff-69d30d16fe7a" testId="63c1fa1c-d714-049c-6a96-7fbc59edd53f" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(onStop: True)" computerName="TIMMALLSTRIX" duration="00:00:00.0045410" startTime="2026-09-16T18:50:28.9201013-07:00" endTime="2026-09-16T18:50:28.9247042-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="70cafc84-9939-4e80-96ff-69d30d16fe7a" />
+    <UnitTestResult executionId="5fa664b6-3aa8-4b35-a365-046abf035ba6" testId="b71a3b61-f545-2a43-c8bc-c9710530b92e" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(legacy: True)" computerName="TIMMALLSTRIX" duration="00:00:00.0109597" startTime="2026-09-16T18:50:28.9134151-07:00" endTime="2026-09-16T18:50:28.9177546-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5fa664b6-3aa8-4b35-a365-046abf035ba6">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 3&#xD;
+Actual:   4</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(Boolean legacy) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 452&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="18779475-aad5-465f-b688-f26b7d0b67ea" testId="88af69c0-b89a-8be7-9eb8-efa0fa6b2e6c" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(onStop: False)" computerName="TIMMALLSTRIX" duration="00:00:00.0012714" startTime="2026-09-16T18:50:28.9187070-07:00" endTime="2026-09-16T18:50:28.9199097-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="18779475-aad5-465f-b688-f26b7d0b67ea">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 0&#xD;
+Actual:   1</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(Boolean onStop) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 493&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(onStop: True)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="63c1fa1c-d714-049c-6a96-7fbc59edd53f">
+      <Execution id="70cafc84-9939-4e80-96ff-69d30d16fe7a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(legacy: True)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="b71a3b61-f545-2a43-c8bc-c9710530b92e">
+      <Execution id="5fa664b6-3aa8-4b35-a365-046abf035ba6" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(legacy: False)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="e4d84642-cc7a-8e2c-800f-451fbbf0fbd7">
+      <Execution id="421e7eb2-f77f-4be3-b09c-d61ae3d3c8fb" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(onStop: False)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="88af69c0-b89a-8be7-9eb8-efa0fa6b2e6c">
+      <Execution id="18779475-aad5-465f-b688-f26b7d0b67ea" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="e4d84642-cc7a-8e2c-800f-451fbbf0fbd7" executionId="421e7eb2-f77f-4be3-b09c-d61ae3d3c8fb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="63c1fa1c-d714-049c-6a96-7fbc59edd53f" executionId="70cafc84-9939-4e80-96ff-69d30d16fe7a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b71a3b61-f545-2a43-c8bc-c9710530b92e" executionId="5fa664b6-3aa8-4b35-a365-046abf035ba6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="88af69c0-b89a-8be7-9eb8-efa0fa6b2e6c" executionId="18779475-aad5-465f-b688-f26b7d0b67ea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="4" executed="4" passed="1" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.25]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.27]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.33]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.33]       Expected: 3&#xD;
+[xUnit.net 00:00:00.33]       Actual:   4&#xD;
+[xUnit.net 00:00:00.34]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(452,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(Boolean legacy)&#xD;
+[xUnit.net 00:00:00.34]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.34]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.34]       Expected: 3&#xD;
+[xUnit.net 00:00:00.34]       Actual:   4&#xD;
+[xUnit.net 00:00:00.34]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(452,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(Boolean legacy)&#xD;
+[xUnit.net 00:00:00.34]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.35]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.35]       Expected: 0&#xD;
+[xUnit.net 00:00:00.35]       Actual:   1&#xD;
+[xUnit.net 00:00:00.35]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.35]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(493,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(Boolean onStop)&#xD;
+[xUnit.net 00:00:00.35]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.35]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.35]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T18:50:28.9080028-07:00">
+        <Text>[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(legacy: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T18:50:28.9179331-07:00">
+        <Text>[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(legacy: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T18:50:28.9200017-07:00">
+        <Text>[xUnit.net 00:00:00.35]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(onStop: False) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

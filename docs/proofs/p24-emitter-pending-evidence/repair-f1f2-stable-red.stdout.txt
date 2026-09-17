@@ -1,0 +1,64 @@
+Test run for C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.Core.Tests
+[xUnit.net 00:00:00.25]   Discovered:  AiDe.Core.Tests
+[xUnit.net 00:00:00.27]   Starting:    AiDe.Core.Tests
+[xUnit.net 00:00:00.33]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:00.33]       Expected: 3
+[xUnit.net 00:00:00.33]       Actual:   4
+[xUnit.net 00:00:00.34]       Stack Trace:
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(452,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(Boolean legacy)
+[xUnit.net 00:00:00.34]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.34]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:00.34]       Expected: 3
+[xUnit.net 00:00:00.34]       Actual:   4
+[xUnit.net 00:00:00.34]       Stack Trace:
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(452,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(Boolean legacy)
+[xUnit.net 00:00:00.34]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.35]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:00.35]       Expected: 0
+[xUnit.net 00:00:00.35]       Actual:   1
+[xUnit.net 00:00:00.35]       Stack Trace:
+[xUnit.net 00:00:00.35]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(493,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(Boolean onStop)
+[xUnit.net 00:00:00.35]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.35]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.35]   Finished:    AiDe.Core.Tests
+  Failed AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(legacy: False) [46 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 3
+Actual:   4
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(Boolean legacy) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 452
+--- End of stack trace from previous location ---
+  Failed AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(legacy: True) [10 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 3
+Actual:   4
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(Boolean legacy) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 452
+--- End of stack trace from previous location ---
+  Failed AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(onStop: False) [1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   1
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(Boolean onStop) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 493
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Passed AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(onStop: True) [4 ms]
+Results File: C:\Projects\ai-de-feature-xh-p2-producers\docs\proofs\p24-emitter-pending-evidence\repair-f1f2-stable-red.trx
+
+Total tests: 4
+     Passed: 1
+     Failed: 3
+ Total time: 0.6588 Seconds
+
+STDERR:
+[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(legacy: False) [FAIL]
+[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(legacy: True) [FAIL]
+[xUnit.net 00:00:00.35]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(onStop: False) [FAIL]
+Test Run Failed.

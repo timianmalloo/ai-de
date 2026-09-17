@@ -40,6 +40,7 @@ public static class CoordinationEmitterCodes
     public const string BatchIncomplete = "COORD_EMITTER_BATCH_INCOMPLETE";
     public const string WriteUncertain = "COORD_WRITE_UNCERTAIN";
     public const string RecoveryRequired = "COORD_CANONICAL_PULL_REQUIRED";
+    public const string StaleLifecycle = "COORD_EMITTER_STALE_LIFECYCLE";
 }
 
 /// <summary>Internal fixed-size fixture composition; production always uses the single static budget.</summary>
