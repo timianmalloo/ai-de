@@ -138,7 +138,6 @@ public sealed class SessionCoordinationEmitter : IDisposable
             lock (_gate)
             {
                 state.ClearPending();
-                if (!state.Registered) Release(state);
                 return Result(state, CoordinationEmitterOutcome.Abandoned);
             }
         }, wait: false);
@@ -304,7 +303,6 @@ public sealed class SessionCoordinationEmitter : IDisposable
                 var ending = state.Pending == CoordinationEmitterOperation.End;
                 state.Registered = !ending;
                 state.ClearPending();
-                if (ending) Release(state);
             }
             return FromWrite(state, appended);
         }
@@ -329,6 +327,20 @@ public sealed class SessionCoordinationEmitter : IDisposable
                 (!_states.TryGetValue(session, out var current) || !ReferenceEquals(current, expected)))
             {
                 failure = Result(expected, CoordinationEmitterOutcome.Refused, CoordinationEmitterCodes.StaleLifecycle);
+                return null;
+            }
+            if (operation == CoordinationEmitterOperation.Heartbeat &&
+                expected?.Pending == CoordinationEmitterOperation.End)
+            {
+                failure = Result(expected, CoordinationEmitterOutcome.Busy, CoordinationEmitterCodes.Busy);
+                return null;
+            }
+            // A completed transition still owns its state until its last lease (including observers) exits.
+            if (_states.TryGetValue(session, out var completing) && !completing.Registered &&
+                completing.Pending is null && completing.Phase != CoordinationEmitterPhase.Preparing &&
+                _sessionGates.TryGetValue(session, out var completingGate) && completingGate.References > 0)
+            {
+                failure = Result(completing, CoordinationEmitterOutcome.InFlight, CoordinationEmitterCodes.InFlight);
                 return null;
             }
             if (_retired) failure = SnapshotResult(session, CoordinationEmitterOutcome.Refused, CoordinationEmitterCodes.Retired);
@@ -385,9 +397,14 @@ public sealed class SessionCoordinationEmitter : IDisposable
         }
         finally
         {
-            if (acquired) gate.Semaphore.Release();
             lock (_gate)
             {
+                // Waiting leases carry identity only; an ended lifecycle can retire before they run.
+                if (acquired && operation is CoordinationEmitterOperation.End or CoordinationEmitterOperation.Abandon &&
+                    _states.TryGetValue(session, out var completed) && ReferenceEquals(completed, lease.State) &&
+                    !completed.Registered && completed.Pending is null)
+                    Release(completed);
+                if (acquired) gate.Semaphore.Release();
                 if (operation == CoordinationEmitterOperation.End) gate.EndReferences--;
                 if (--gate.References == 0)
                 {
@@ -453,7 +470,8 @@ public sealed class SessionCoordinationEmitter : IDisposable
     private static CoordinationEmitterResult Result(CoordinationEmitterState state,
         CoordinationEmitterOutcome outcome, string? code = null, CoordinationAdmission? admission = null) =>
         new(state.Session, state.Registered ? CoordinationEmitterMembership.Live :
-            state.Pending is not null ? CoordinationEmitterMembership.PendingRegistration : CoordinationEmitterMembership.Unknown,
+            state.Pending is not null || state.Phase == CoordinationEmitterPhase.Preparing
+                ? CoordinationEmitterMembership.PendingRegistration : CoordinationEmitterMembership.Unknown,
             outcome, code, admission, state.Prepared, state.Phase);
 
     private static CoordinationEmitterResult FromWrite(CoordinationEmitterState state, CoordinationWriteResult result) =>

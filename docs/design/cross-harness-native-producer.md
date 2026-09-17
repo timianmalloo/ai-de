@@ -160,7 +160,68 @@ Implemented and exercised:
   retirement. The compatibility bridge is tested under a context that rejects
   Post, without claiming an unconditional scheduling or I/O deadline.
 
-**Exact remaining P2.P2B floors / qualification limits:**
+### Retained boundary continuation — 2026-09-17
+
+This bounded continuation addresses floors 1–2, not full producer qualification.
+The reservation publishes Preparing before the identity factory, attribute copy,
+clock or writer preparation. PendingRegistration is derived from that phase;
+LiveCount continues to count only committed membership. No second status store,
+durable schema or liveness authority is added.
+
+End-pending batch work returns Busy without invoking the writer. An admitted End
+or proven-no-write registration abandonment clears membership but keeps the state
+and global slot while its executing lease, including Activity observers, remains
+active. Concurrent control then reports InFlight rather than a fabricated NoOp.
+Release runs under the emitter gate on transition completion, once, before waking
+waiters. Queued leases are identity-only obligations: they may survive replacement,
+but must pass the existing object-identity check before touching its writer.
+Uncertain Prepared ownership and retry identity remain unchanged.
+
+Change reach: budget reservation → state phase → result membership → batch
+admission → executing-lease cleanup → real JSONL bytes. This node adds no UI,
+storage, notices or telemetry source; complete telemetry qualification remains open.
+
+Evidence lives in `docs\proofs\p24-emitter-pending-evidence`:
+
+| Record | Observed result and oracle |
+|---|---|
+| `boundary-red` | Four executed failures: Preparing/AwaitingPreparation; Busy/Refused; two InFlight/NoOp completion failures. No setup or compile failures. |
+| `boundary-green` | First implementation: 97/100. The three pre-existing ABA modes rejected Register with InFlight. This filename is a run label, **not** a PASS. |
+| `boundary-corrected` | 100/100 after distinguishing executing transition completion from queued identity-only references. All 96 pre-existing selected controls are retained. |
+| `boundary-mutant` | Composite reversal of reservation phase, immediate release and batch classification: the same four boundary tests fail on the same assertions. This is not an independently scored mutation campaign. |
+| `boundary-restored` | Final restored-tree run is recorded separately with actual exit, counters, stdout/stderr, TRX and source/test/project/DLL hashes; its recorded counters, not this plan, determine PASS. |
+
+The blocked factory test fills production capacity with two roots (64 live plus
+63 live and one Preparing). Owner 129 cannot call its factory or create its root.
+The snapshots prove retained count, LiveCount and absent reserved file. End frees
+one slot and the refused owner is admitted once. Completion tests read durable
+End bytes (or absent file for no-write abandonment), gate references, membership
+and occupied slots while the observer is paused, then prove zero references,
+zero retained states and zero slots after completion and repeated End.
+
+Class → sweep → derive → prevent: **an execution obligation confused with an
+identity-only waiter** over-retains an ended lifecycle. The first patch made that
+mistake. Sweep covers End, abandonment, batch and direct heartbeat waiters.
+Derive release from captured state identity and executing transition completion,
+not the total reference count. The three existing ABA controls failed on the
+mistake and pass after correction; the new completion controls prevent reverting
+to release before observers exit. Canonical defect-register consolidation remains
+parent-owned. No separate defect ID or Proof Pack is created here.
+
+Process findings: oversized orientation outputs consumed avoidable calls; output
+was subsequently bounded. The first red run generated its three raw files after
+classification but without edit leases. Later raw outputs were individually
+classified and leased. This is a disclosed coordination lapse, not a retroactive
+claim that the red output had a lease.
+
+Remaining: stress/boundary union, transport contention qualification,
+instrumentation proof and full independent qualification. Full 128-blocked stress,
+GC retention, cold restart, notices, Data recovery, human permissions and remaining
+P2/P3–P5 are not qualified by these tests. Parent-owned independent review and the
+canonical singular Proof Pack remain required before integration. No producer/P2
+PASS follows from this author run.
+
+**P2.P2B floor ledger (historical gaps; boundary continuation above records closure evidence):**
 
 1. **Reserved-state publication is incomplete.** A newly reserved state has null
    Pending and AwaitingPreparation until its input is frozen. It consumes a
@@ -168,11 +229,17 @@ Implemented and exercised:
    publication before the identity callback is not yet represented. A Busy
    result in that interval can report Unknown membership. This requires code and
    a blocked-factory result assertion, not a wording change.
+   **Boundary continuation:** corrected by publishing Preparing on reservation
+   and deriving PendingRegistration from that phase before input production.
 2. **End-pending batch classification is incomplete.** Waiting/running End
    suppresses new batch work through gate references. A *quiescent failed* End,
    however, reaches the generic operation-conflict path and reports
    Refused/INPUT_CONFLICT, not the requested Busy/InFlight batch classification.
    No write is attempted. This needs a narrow batch-admission correction/test.
+   **Boundary continuation:** batch admission now returns Busy for captured
+   End-pending state. Completion retains ownership until the executing transition
+   exits, including its observer callbacks; queued identity-only leases do not
+   prevent a new lifecycle, and revalidate state identity before executing.
 3. **The full stress/boundary union is not proven.** The suite does not run 128
    simultaneously blocked registrations across production roots; it runs 128
    live globally and 127 live plus one reserved in a fixture scope. It lacks

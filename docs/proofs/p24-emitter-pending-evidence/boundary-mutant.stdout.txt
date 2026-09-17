@@ -1,0 +1,81 @@
+Test run for C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests
+[xUnit.net 00:00:00.26]   Discovered:  AiDe.Core.Tests
+[xUnit.net 00:00:00.27]   Starting:    AiDe.Core.Tests
+[xUnit.net 00:00:01.07]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:01.07]       Expected: Preparing
+[xUnit.net 00:00:01.07]       Actual:   AwaitingPreparation
+[xUnit.net 00:00:01.07]       Stack Trace:
+[xUnit.net 00:00:01.07]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(50,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity()
+[xUnit.net 00:00:01.07]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(58,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity()
+[xUnit.net 00:00:01.07]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:01.08]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:01.08]       Expected: InFlight
+[xUnit.net 00:00:01.08]       Actual:   NoOp
+[xUnit.net 00:00:01.08]       Stack Trace:
+[xUnit.net 00:00:01.08]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(131,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(Boolean abandon)
+[xUnit.net 00:00:01.08]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(140,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(Boolean abandon)
+[xUnit.net 00:00:01.08]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:01.08]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:01.08]       Expected: InFlight
+[xUnit.net 00:00:01.08]       Actual:   NoOp
+[xUnit.net 00:00:01.08]       Stack Trace:
+[xUnit.net 00:00:01.08]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(131,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(Boolean abandon)
+[xUnit.net 00:00:01.08]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(140,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(Boolean abandon)
+[xUnit.net 00:00:01.08]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:01.08]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:01.08]       Expected: Busy
+[xUnit.net 00:00:01.08]       Actual:   Refused
+[xUnit.net 00:00:01.08]       Stack Trace:
+[xUnit.net 00:00:01.08]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(83,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_QuiescentFailedEnd_ReportsBusyWithoutChangingWire()
+[xUnit.net 00:00:01.08]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:01.09]   Finished:    AiDe.Core.Tests
+  Failed AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity [770 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Preparing
+Actual:   AwaitingPreparation
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 50
+   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 58
+--- End of stack trace from previous location ---
+  Failed AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(abandon: True) [1 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: InFlight
+Actual:   NoOp
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(Boolean abandon) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 131
+   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(Boolean abandon) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 140
+--- End of stack trace from previous location ---
+  Failed AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(abandon: False) [3 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: InFlight
+Actual:   NoOp
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(Boolean abandon) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 131
+   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(Boolean abandon) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 140
+--- End of stack trace from previous location ---
+  Failed AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_QuiescentFailedEnd_ReportsBusyWithoutChangingWire [7 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Busy
+Actual:   Refused
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_QuiescentFailedEnd_ReportsBusyWithoutChangingWire() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 83
+--- End of stack trace from previous location ---
+Results File: C:\Projects\ai-de-feature-xh-p2-producers\docs\proofs\p24-emitter-pending-evidence\boundary-mutant.trx
+
+Total tests: 4
+     Failed: 4
+ Total time: 1.3989 Seconds
+
+STDERR:
+[xUnit.net 00:00:01.07]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity [FAIL]
+[xUnit.net 00:00:01.08]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(abandon: True) [FAIL]
+[xUnit.net 00:00:01.08]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(abandon: False) [FAIL]
+[xUnit.net 00:00:01.08]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_QuiescentFailedEnd_ReportsBusyWithoutChangingWire [FAIL]
+Test Run Failed.

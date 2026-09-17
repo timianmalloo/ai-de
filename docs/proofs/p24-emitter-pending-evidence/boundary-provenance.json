@@ -1,0 +1,162 @@
+{
+  "status": "Blocked qualification checkpoint; not producer PASS",
+  "base_commit": "1f43127928f3e5cc185a3a7641a29f66727af1f6",
+  "generated_at": "2026-09-17T21:53:50.3091949+00:00",
+  "final_counts": {
+    "total": "100",
+    "executed": "100",
+    "passed": "99",
+    "failed": "1",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "blocker": "HeartbeatAll_StaleSnapshot_DoesNotHeartbeatEndedSession failed at CoordinationProducerTests.cs:280. Cause unverified. Earlier corrected run passed 100/100; restored run passed 99/100. Four new boundary tests and three ABA modes passed both. Do not retry to green without diagnosis.",
+  "process_findings": [
+    "24-call cap reached; oversized orientation outputs consumed avoidable calls",
+    "First red raw generation was classified but not leased; no retroactive lease claim"
+  ],
+  "pins": [
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationContract.cs",
+      "working_sha256": "623c9bc5cf8c8b74951d60b7c1a4dc24ee9d04b417a54229dfd6058d4e43775e",
+      "working_git_blob": "d99b5603740e49af271f7297a481f73c47762fc2"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationContractLog.cs",
+      "working_sha256": "f2bd4cad5dbcde4f5574bd6b90ba82a42855caf18b2b9b37d11b6634035e08b6",
+      "working_git_blob": "b6e9acd589c406853122ab5a4530999f19227b1f"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationEmitterState.cs",
+      "working_sha256": "14409d5c7208bf4c09547059b6ede062e0cc1bb22af92e471cc6655c842a39f4",
+      "working_git_blob": "c1d8395bba34ade3a6386189e4270c966af4b07b"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationNativeWrite.cs",
+      "working_sha256": "0e7a99899bb59144b751cf9fb3f38788ad468c21c1ca1ae99905d27248312ba9",
+      "working_git_blob": "3eac9932a2ae05ad36b9f5c97b8458431d0ad1e8"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationProjection.cs",
+      "working_sha256": "baecce371782d692df5f8e76c27e0520631750f4f6d681265aeacf16fa826ad1",
+      "working_git_blob": "6ea40a1e7d7f9e4b57927bd86a84a1864dc50de6"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationRead.cs",
+      "working_sha256": "339a82896e54eff48cb8dee5ccd0fbe7a0c8d4196f7dcc52b22ad1a75d4d64fa",
+      "working_git_blob": "c905c9f5dcad97371e5b20ea59d2a9727d31c2bd"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\CoordinationSourceCapture.cs",
+      "working_sha256": "f8f21d5c65765d06b857c28658a5738c42378c85576d9363bd5d9f07c9b713af",
+      "working_git_blob": "90011b617d208d7da05d59e7d4510d1815c05f15"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\SessionCoordinationEmitter.cs",
+      "working_sha256": "deb0b3ed2a35830464b54bfca220d50b4986961ee09e639b49c9371dcc6724c2",
+      "working_git_blob": "6d81c7b94393323bfef5aa7e0cda333322329105"
+    },
+    {
+      "path": "src\\AiDe.Core\\Watcher\\SqliteWatcherObservationStore.Coordination.cs",
+      "working_sha256": "9897c38e48bd9554a84ae0567a6fcfa2e85bc76bdb3e7036de574c1b99525570",
+      "working_git_blob": "9e5ecfcd13ed2ee5362d9cb1bbf51a0638bb2b03"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationContractLogTests.cs",
+      "working_sha256": "2143353263caa13157e41c4581c35c05260b4f68aa2a8cd6f1131d63d6989c94",
+      "working_git_blob": "ba37df5a46a39c003f6d0b895dfc914b12733ba9"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationContractTests.cs",
+      "working_sha256": "70a76c069b9ed3b3308721deeb9024096d2ddb228beb23a1a3f26ea232d51136",
+      "working_git_blob": "79cd55ff6a59ac0a136cd3cc393fd19f75a6bff4"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationEmitterPendingTests.cs",
+      "working_sha256": "478acf928ae617e115e1c38ec6eea47c90295d8da3aa1e2b278216a00a0c2308",
+      "working_git_blob": "dafa25411cba9e3a05ef36fd966314a1c55fd218"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationFeedTests.cs",
+      "working_sha256": "b28df3f329728b1c74cff00d1ae41fadd0d7f17269aa9a073be187fed9f36357",
+      "working_git_blob": "af0223466f31e2146b8e2801dd94890189aa3b40"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationPreparedWriteTests.cs",
+      "working_sha256": "4913a574b2eb490782560bbf9d41422e87908054324baf8a07f279486784d9c9",
+      "working_git_blob": "c246834d8de7d47d05e58391d7275235aee507c7"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProducerTests.cs",
+      "working_sha256": "c5d45d164c0f86d6bd56fb5f209f4df86c5a08dbf34866ad18942d072576414d",
+      "working_git_blob": "546850e9f974a538069ce4204070cf86dcdf7981"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionBoundaryTests.cs",
+      "working_sha256": "5f247466afd12cf039afcc65046aa00b4d7744b630e96e2bd2cd335f0ab69e61",
+      "working_git_blob": "dda697f2408ea41383b6f9ba8c9f990f980353e1"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionEvidence.cs",
+      "working_sha256": "7e3dd24e5985e56c47bad372b372a31e7339a4f0ff9b99505ae61e937f9c26b0",
+      "working_git_blob": "78c40703491f7acd910448c4f55927631bd3471f"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionRuntimeTests.cs",
+      "working_sha256": "ffcbf7ddddbe399be743f39cf6056f4bbb8557e688f287c1359457b3db3eee97",
+      "working_git_blob": "65233a94d92b9e36777f54587ba05ab00668c1ab"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionTests.cs",
+      "working_sha256": "c6d208e7f815e3783dc7bf6eb0460d383a534f2f1a0c7688c183b9471b15abee",
+      "working_git_blob": "3ab1a472951b5df5c20f65c98b623b6d9e09ee45"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationRecoveryTests.cs",
+      "working_sha256": "03258d062653f7244158d888ecc44fc38fb0ca3cb8e5095acc642e6ea8bc6f5a",
+      "working_git_blob": "8b474cb1c8bc5439b05900ceff234308e4be75d1"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\CoordinationReliabilityTests.cs",
+      "working_sha256": "6b21812318fb5d2aeb39f004c27debab7e80fd75f7f530e7e0b850dbe99222f2",
+      "working_git_blob": "bfea2f05e9549d3ac2c1e7ae47bf6d2565f86fab"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\Watcher\\SessionCoordinationEmitterTests.cs",
+      "working_sha256": "50e6a8f444c7e11b6fc9a5ae02315ae3d4ca98529cd06b7ce35d6a91542ea2fd",
+      "working_git_blob": "f1c6410201937a273ba9bd3e1b93618551095813"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "working_sha256": "ba67064e1adad5265b45f2803eb4d1168d1e1d93af8fcb4a9cfee2360d02cf52",
+      "working_git_blob": "7c39b633e124fb221c6756b1da3d6eba1ded44dc"
+    },
+    {
+      "path": "src\\AiDe.Core\\bin\\Debug\\net10.0\\AiDe.Core.dll",
+      "working_sha256": "dd7051ef36668dde962cb0648ec92f57fe75bb7786f55534b83131c64c30a7e7",
+      "working_git_blob": "37100bc6283429cf4908d1ef6710f665bf82325f"
+    },
+    {
+      "path": "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll",
+      "working_sha256": "1ecc3e3c0ae49ba34ee299c5a448e198ee154fbce34bab0c319ed0971c63772d",
+      "working_git_blob": "ff1345871d9972112bf43a55d724549300f22200"
+    },
+    {
+      "path": "src\\AiDe.Core\\AiDe.Core.csproj",
+      "working_sha256": "b63c41b97201dc3e1016b72b404a32411ac31e477231b281219dda64d0ad584a",
+      "working_git_blob": "8b1aae911d042c33ccab160e997ad82d612227b3"
+    }
+  ],
+  "pin_count": 26,
+  "note": "SHA256 identifies actual working bytes; Git blob is hash-object with path attributes, not HEAD identity. Per-run pins preserve source and DLL versions. Canonical Proof Pack and defect-register consolidation remain parent-owned."
+}

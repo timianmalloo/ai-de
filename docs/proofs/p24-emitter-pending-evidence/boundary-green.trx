@@ -1,0 +1,811 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="2929d798-33b1-4677-ac1b-819f9a40df59" name="malla@TIMMALLSTRIX 2026-09-17 14:49:17" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-17T14:49:17.5218261-07:00" queuing="2026-09-17T14:49:17.5218262-07:00" start="2026-09-17T14:49:16.2329993-07:00" finish="2026-09-17T14:49:20.7687884-07:00" />
+  <TestSettings name="default" id="923d69a1-4ae2-4056-bc54-f908f0082d38">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-17_14_49_17" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="88f2be2c-846a-4791-8de7-3466c95ce251" testId="0ea31f83-a360-fe36-cb4c-f376c491932f" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_RepairLfExceedsPacketBound_RefusesBeforeAppendAndCanAbandon" computerName="TIMMALLSTRIX" duration="00:00:00.0037931" startTime="2026-09-17T14:49:20.4722407-07:00" endTime="2026-09-17T14:49:20.4759510-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="88f2be2c-846a-4791-8de7-3466c95ce251" />
+    <UnitTestResult executionId="ada24a68-9f1e-4c19-b392-d3d3e3b9c759" testId="9eb9a8ea-4a38-0f95-3069-516ef6301757" testName="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.Register_IsIdempotent_OneSessionAfterPump" computerName="TIMMALLSTRIX" duration="00:00:00.0168327" startTime="2026-09-17T14:49:20.5998184-07:00" endTime="2026-09-17T14:49:20.6166996-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ada24a68-9f1e-4c19-b392-d3d3e3b9c759" />
+    <UnitTestResult executionId="d2f1ad2f-aeac-4fb5-8014-81c19a15e446" testId="bb286a41-2146-5434-c73f-269402d0a414" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.ContractVersion_IsPinned" computerName="TIMMALLSTRIX" duration="00:00:00.0000409" startTime="2026-09-17T14:49:20.4991917-07:00" endTime="2026-09-17T14:49:20.4992137-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d2f1ad2f-aeac-4fb5-8014-81c19a15e446" />
+    <UnitTestResult executionId="083a967f-dcee-49a9-b90b-2712ee476ef7" testId="baa60288-6b00-c120-585d-0ec1adf51017" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(mode: &quot;direct&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0095627" startTime="2026-09-17T14:49:17.8588212-07:00" endTime="2026-09-17T14:49:17.8739468-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="083a967f-dcee-49a9-b90b-2712ee476ef7">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Admitted&#xD;
+Actual:   InFlight</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(String mode) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 587&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(String mode) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 595&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ca7d4afb-02d9-457f-80be-987656f3901a" testId="d5833197-fb58-d552-2c88-7f80cfdad545" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_CompleteTailRepairAtRootLimit_CountsSeparatorAndPreservesUnknownTail" computerName="TIMMALLSTRIX" duration="00:00:00.0053619" startTime="2026-09-17T14:49:17.5181575-07:00" endTime="2026-09-17T14:49:17.5224724-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ca7d4afb-02d9-457f-80be-987656f3901a" />
+    <UnitTestResult executionId="4eec4e92-79ae-434d-9d0d-ea8edc0d4e1b" testId="3bf3007a-e274-658e-24a0-d40578cc3375" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_HeldThroughFlush_NormalizedAliasWriterFailsFastAndGateReclaims" computerName="TIMMALLSTRIX" duration="00:00:00.0048799" startTime="2026-09-17T14:49:17.5119981-07:00" endTime="2026-09-17T14:49:17.5170387-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4eec4e92-79ae-434d-9d0d-ea8edc0d4e1b">
+      <Output>
+        <StdOut>aliasBusy=COORD_WRITER_BUSY; completed=2; reclaimedRoot=true</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fd3f53c1-f34b-475a-9c5a-5380c7c37933" testId="b2e30d7a-1898-597f-1b0c-2b8243d95ce5" testName="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.ToAttributes_OmitsAbsentHarnessAndModel" computerName="TIMMALLSTRIX" duration="00:00:00.0001818" startTime="2026-09-17T14:49:20.5996886-07:00" endTime="2026-09-17T14:49:20.5997473-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fd3f53c1-f34b-475a-9c5a-5380c7c37933" />
+    <UnitTestResult executionId="cc420198-0fd0-4428-971b-28b512d663b8" testId="dc7a6241-42e6-f11f-102c-141271943312" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_TwoParticipatingProcesses_OnlyOneCanClaimFinalCapacityOrSequence(race: &quot;sequence&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.1516051" startTime="2026-09-17T14:49:17.3323126-07:00" endTime="2026-09-17T14:49:17.4841212-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cc420198-0fd0-4428-971b-28b512d663b8">
+      <Output>
+        <StdOut>race=sequence; first=Unavailable; second=Admitted; files=1; rootBytes=82; events=1; sequence=1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="268df02f-649b-4592-a0e2-5f9d64574945" testId="59c0aa86-1860-1379-f800-2b05094fe185" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_BlockingBridge_DoesNotPostToCallerContext" computerName="TIMMALLSTRIX" duration="00:00:00.0051504" startTime="2026-09-17T14:49:18.5709620-07:00" endTime="2026-09-17T14:49:18.5762071-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="268df02f-649b-4592-a0e2-5f9d64574945" />
+    <UnitTestResult executionId="731d989f-9e29-43cb-8d86-6ccb6d06079e" testId="b4401b59-7c1f-af55-693e-c1b5f5e93103" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_RealCoordCoreByteShape_GoldenFixture" computerName="TIMMALLSTRIX" duration="00:00:00.0001707" startTime="2026-09-17T14:49:20.5008474-07:00" endTime="2026-09-17T14:49:20.5009746-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="731d989f-9e29-43cb-8d86-6ccb6d06079e" />
+    <UnitTestResult executionId="be4ff016-9fb3-4065-9f26-511c518266fc" testId="b8bbbc9a-2c4d-237b-a464-2016127cf173" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_IdenticalNeverAttemptedPreparation_CannotBorrowAdmission" computerName="TIMMALLSTRIX" duration="00:00:00.0027657" startTime="2026-09-17T14:49:17.5816948-07:00" endTime="2026-09-17T14:49:17.5844126-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="be4ff016-9fb3-4065-9f26-511c518266fc">
+      <Output>
+        <StdOut>stale=COORD_STALE_PREPARATION; replaySeq=1; bytesAfter=82</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="07081319-e881-4820-8288-426d818fe84f" testId="0ebfac73-a05f-bd58-7dc1-173ac05ee459" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_MalformedLine_IsSkippedAndCounted_OthersSurvive" computerName="TIMMALLSTRIX" duration="00:00:00.0001554" startTime="2026-09-17T14:49:20.5003373-07:00" endTime="2026-09-17T14:49:20.5003681-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="07081319-e881-4820-8288-426d818fe84f" />
+    <UnitTestResult executionId="46d336be-b720-4d1a-b523-7bd6049c8338" testId="cb5552b1-1760-8f31-0fe8-d8db1348c5af" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_SourceChangedAfterPartialWrite_RemainsUncertainWithoutFurtherAppend(mutation: &quot;truncate&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0022602" startTime="2026-09-17T14:49:17.5049307-07:00" endTime="2026-09-17T14:49:17.5049673-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="46d336be-b720-4d1a-b523-7bd6049c8338">
+      <Output>
+        <StdOut>mutation=truncate; outcome=Uncertain; preservedBytes=81</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="db969743-6101-487f-bfbb-d4a587f1cb1f" testId="c6de37b6-e231-b0ac-46bb-6ba3e3489ad9" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Control_PrewriteFailure_PreservesMembershipAndAbandonsOnlyPending(end: False)" computerName="TIMMALLSTRIX" duration="00:00:00.0034371" startTime="2026-09-17T14:49:17.8557901-07:00" endTime="2026-09-17T14:49:17.8587042-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="db969743-6101-487f-bfbb-d4a587f1cb1f" />
+    <UnitTestResult executionId="79fcd546-5875-4d9d-b131-acacea498f2b" testId="660f065f-5d16-c409-bbab-0acad4812335" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_FullBytesButLostDurabilityAcknowledgement_ReconcilesSameAdmission(fault: &quot;dispose&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0023624" startTime="2026-09-17T14:49:17.5096062-07:00" endTime="2026-09-17T14:49:17.5119186-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="79fcd546-5875-4d9d-b131-acacea498f2b">
+      <Output>
+        <StdOut>fault=dispose; uncertain=COORD_WRITE_UNCERTAIN; exactBytes=82; replaySeq=1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7829da34-c794-4714-ab00-e94e73f8df2a" testId="6f07f9d9-aee4-3e36-a0b0-c27768bd235a" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_OrdinaryLifecycle_RecordsOneRegisterHeartbeatAndEnd" computerName="TIMMALLSTRIX" duration="00:00:00.0050797" startTime="2026-09-17T14:49:17.8207609-07:00" endTime="2026-09-17T14:49:17.8258540-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7829da34-c794-4714-ab00-e94e73f8df2a">
+      <Output>
+        <StdOut>durableRegisters=1; durableHeartbeats=1; durableEnds=1; live=0</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d4fab6f8-e1db-451f-a8b0-ac006e72f1d7" testId="a9d407ce-6dc6-6e3f-45eb-2887e99522bd" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_SourceChangedAfterPartialWrite_RemainsUncertainWithoutFurtherAppend(mutation: &quot;extra&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0038465" startTime="2026-09-17T14:49:17.4846716-07:00" endTime="2026-09-17T14:49:17.4885139-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d4fab6f8-e1db-451f-a8b0-ac006e72f1d7">
+      <Output>
+        <StdOut>mutation=extra; outcome=Uncertain; preservedBytes=93</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a94b9a7b-2d90-43f8-9437-aaa4891b5cce" testId="1d852b39-870d-3db2-7dea-b91ec43a9a85" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(abandon: True)" computerName="TIMMALLSTRIX" duration="00:00:00.0013417" startTime="2026-09-17T14:49:20.4089245-07:00" endTime="2026-09-17T14:49:20.4101988-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a94b9a7b-2d90-43f8-9437-aaa4891b5cce" />
+    <UnitTestResult executionId="72a7efde-43a2-4c51-9b1f-c9fd94362bf5" testId="bc5a6026-fb4b-2c01-3b4f-1a391921a41f" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_UnresolvedFlushThenOutage_PreservesPreparationUntilRecovery" computerName="TIMMALLSTRIX" duration="00:00:00.0022092" startTime="2026-09-17T14:49:17.5765017-07:00" endTime="2026-09-17T14:49:17.5786604-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="72a7efde-43a2-4c51-9b1f-c9fd94362bf5" />
+    <UnitTestResult executionId="5c954c9f-5bcb-4cc1-9b57-41536381931a" testId="9429f04d-506e-5181-158f-913c59184dbd" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_FormerWaiterOwnsGate_ThirdOperationCannotOvertakeHeartbeat" computerName="TIMMALLSTRIX" duration="00:00:00.0221750" startTime="2026-09-17T14:49:17.8259344-07:00" endTime="2026-09-17T14:49:17.8483117-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5c954c9f-5bcb-4cc1-9b57-41536381931a">
+      <Output>
+        <StdOut>reusedGate=True; thirdReachedWriterWhileHeartbeatPaused=False; liveWhileWaiting=1; durableWhileWaiting=register; durableFinal=register,heartbeat,session-end; liveFinal=0; gatesFinal=0</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fab487bd-f6a3-4d67-b1e5-b0cc275ed4c0" testId="8797cbcf-8cd0-b315-4e82-2ed8ea03959a" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_PausedAppend_ConcurrentDuplicateRegistersOnce" computerName="TIMMALLSTRIX" duration="00:00:00.0160119" startTime="2026-09-17T14:49:17.7045820-07:00" endTime="2026-09-17T14:49:17.7203464-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fab487bd-f6a3-4d67-b1e5-b0cc275ed4c0" />
+    <UnitTestResult executionId="caab2062-5c89-4805-bb37-6b74ae2bd3ef" testId="eb48cdaf-bc11-336b-05c9-3cc28ff0e06a" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_RepeatedFailedFirstRegistrations_ReclaimsEverySessionGate" computerName="TIMMALLSTRIX" duration="00:00:00.0350737" startTime="2026-09-17T14:49:17.6616328-07:00" endTime="2026-09-17T14:49:17.6966979-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="caab2062-5c89-4805-bb37-6b74ae2bd3ef" />
+    <UnitTestResult executionId="6039b1d9-1dc0-42b4-a35f-d569319252f0" testId="c702d844-fe94-959e-0aec-9356d406edd9" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLineAt64KiB_AcceptsExactlyTheBound(glyph: 'é')" computerName="TIMMALLSTRIX" duration="00:00:00.0051375" startTime="2026-09-17T14:49:17.6519249-07:00" endTime="2026-09-17T14:49:17.6570069-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6039b1d9-1dc0-42b4-a35f-d569319252f0">
+      <Output>
+        <StdOut>glyph=U+00E9; completeLineBytes=65536; terminalByte=10</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f7b9d90a-f82e-4f6d-864a-dcb76ac6668e" testId="e0e44bca-dfd3-e53d-cdf6-c1c1a60b8290" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_PreparationUnavailable_FreezesInputAndRejectsMutation" computerName="TIMMALLSTRIX" duration="00:00:00.0043137" startTime="2026-09-17T14:49:20.4805113-07:00" endTime="2026-09-17T14:49:20.4847635-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f7b9d90a-f82e-4f6d-864a-dcb76ac6668e" />
+    <UnitTestResult executionId="782f25ee-38c4-4de6-82cd-849ef5ee19a1" testId="3bfae52b-25e9-8c4f-d7db-4e840506ca92" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_ExistingSequenceWouldDuplicate_RefusesRatherThanRenumbering" computerName="TIMMALLSTRIX" duration="00:00:00.0008601" startTime="2026-09-17T14:49:17.5808032-07:00" endTime="2026-09-17T14:49:17.5816205-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="782f25ee-38c4-4de6-82cd-849ef5ee19a1" />
+    <UnitTestResult executionId="42d3f505-0c45-4704-b0ba-522cae279e66" testId="e057e0b3-3261-55ff-caef-c3a2aa1eda43" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_UnsafeFilenameCollidesWithSafeId_RefusesExistingContentIdentity" computerName="TIMMALLSTRIX" duration="00:00:00.0229384" startTime="2026-09-17T14:49:16.7689320-07:00" endTime="2026-09-17T14:49:16.7958961-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="42d3f505-0c45-4704-b0ba-522cae279e66" />
+    <UnitTestResult executionId="497c92ce-92f4-459b-96ec-34d4a4f99eb8" testId="35247a77-0490-a292-a890-f3ae5d8f3e56" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_FirstSourceDenied_HealthySourceStillWritten" computerName="TIMMALLSTRIX" duration="00:00:00.0085737" startTime="2026-09-17T14:49:20.4217361-07:00" endTime="2026-09-17T14:49:20.4301021-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="497c92ce-92f4-459b-96ec-34d4a4f99eb8" />
+    <UnitTestResult executionId="2391ab73-b601-449d-b44c-8c57e165c8f9" testId="60fcbeb5-b35a-7397-3cf9-820df8a85805" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_HeartbeatForUnregisteredSession_IsDroppedAndCounted" computerName="TIMMALLSTRIX" duration="00:00:00.0000847" startTime="2026-09-17T14:49:20.4990755-07:00" endTime="2026-09-17T14:49:20.4991279-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2391ab73-b601-449d-b44c-8c57e165c8f9" />
+    <UnitTestResult executionId="48bc9753-8de9-44b8-b15d-bb1bab60cbef" testId="5bac2949-61b9-f7c6-d2e4-688c29b67c46" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_AppendDeniedThenRetried_DurablyRegistersExactlyOnce" computerName="TIMMALLSTRIX" duration="00:00:00.0051425" startTime="2026-09-17T14:49:17.7640009-07:00" endTime="2026-09-17T14:49:17.7690691-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="48bc9753-8de9-44b8-b15d-bb1bab60cbef">
+      <Output>
+        <StdOut>liveAfterFailure=0; durableRegisters=1; liveAfterRetry=1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4e0ffae8-e87b-4588-8503-fdb18b25db45" testId="35e64b56-80ba-903f-294c-6e4d9c3b19d0" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(abandon: False)" computerName="TIMMALLSTRIX" duration="00:00:00.0044111" startTime="2026-09-17T14:49:20.4103117-07:00" endTime="2026-09-17T14:49:20.4148411-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4e0ffae8-e87b-4588-8503-fdb18b25db45" />
+    <UnitTestResult executionId="6ec20466-b662-4e75-b16a-bb61ad4cd3f1" testId="6c750f87-4586-9880-8cbb-62c9c5c3cc88" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_RegisterWithoutHarnessName_IsAssertedTrust" computerName="TIMMALLSTRIX" duration="00:00:00.0001493" startTime="2026-09-17T14:49:20.4986720-07:00" endTime="2026-09-17T14:49:20.4987876-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6ec20466-b662-4e75-b16a-bb61ad4cd3f1" />
+    <UnitTestResult executionId="d3ff75c9-7af0-4820-b736-04bba6f2fa2b" testId="01a40350-d6f6-e31b-065a-dd1a6c608258" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_DuplicateRegister_DiscardsTheSecondAttributes_ItDoesNotMerge" computerName="TIMMALLSTRIX" duration="00:00:00.0002501" startTime="2026-09-17T14:49:20.5006074-07:00" endTime="2026-09-17T14:49:20.5007719-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d3ff75c9-7af0-4820-b736-04bba6f2fa2b" />
+    <UnitTestResult executionId="46ace992-2f34-47e8-99f9-a68932c15e6f" testId="a58fc875-5e0a-d408-610e-c0170377ad69" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_QuiescentFailedEnd_ReportsBusyWithoutChangingWire" computerName="TIMMALLSTRIX" duration="00:00:00.0043561" startTime="2026-09-17T14:49:20.4760997-07:00" endTime="2026-09-17T14:49:20.4803829-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="46ace992-2f34-47e8-99f9-a68932c15e6f" />
+    <UnitTestResult executionId="baafb373-be7d-4260-85c9-13fe7d8320ff" testId="0a04bc27-1418-acc5-f28c-9f5e18c17a67" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_PrefixWrittenThenIOException_RetriesOnlyMissingExactSuffix(prefix: 0)" computerName="TIMMALLSTRIX" duration="00:00:00.0022489" startTime="2026-09-17T14:49:17.5052590-07:00" endTime="2026-09-17T14:49:17.5072589-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="baafb373-be7d-4260-85c9-13fe7d8320ff">
+      <Output>
+        <StdOut>partial=0; uncertain=COORD_WRITE_UNCERTAIN; recoveredLength=82; seq=1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5db8f6fc-a8f5-4865-be6e-d3ead2dcb729" testId="7f1c41bd-7d12-45b1-61e8-c1dfc33a5583" testName="AiDe.Core.Tests.Watcher.CoordinationContractLogTests.Writer_AssignsIncrementingSeq" computerName="TIMMALLSTRIX" duration="00:00:00.0049106" startTime="2026-09-17T14:49:20.5011224-07:00" endTime="2026-09-17T14:49:20.5060780-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5db8f6fc-a8f5-4865-be6e-d3ead2dcb729" />
+    <UnitTestResult executionId="ec6c4b13-a4c8-4b01-86ff-f92603aa7c6b" testId="64a5d809-2e28-7ba5-0761-c287d728fc58" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(mode: &quot;typed&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0071376" startTime="2026-09-17T14:49:17.8822031-07:00" endTime="2026-09-17T14:49:17.8893949-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ec6c4b13-a4c8-4b01-86ff-f92603aa7c6b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Admitted&#xD;
+Actual:   InFlight</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(String mode) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 587&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(String mode) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 595&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="dc790260-31f9-4355-b641-f742a132aef0" testId="ce45ee38-17d8-4c07-6438-c553e939b7e3" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_FullBytesButLostDurabilityAcknowledgement_ReconcilesSameAdmission(fault: &quot;flush&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0022102" startTime="2026-09-17T14:49:17.5073506-07:00" endTime="2026-09-17T14:49:17.5095079-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dc790260-31f9-4355-b641-f742a132aef0">
+      <Output>
+        <StdOut>fault=flush; uncertain=COORD_WRITE_UNCERTAIN; exactBytes=82; replaySeq=1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b127df60-848e-44c9-b750-724652f07f61" testId="4b12701e-6eb7-429c-c1b3-8764a14df74c" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_LegacyNonemptyLinesAndGappedSequence_PreservesNativeCount(newline: &quot;\r&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0015986" startTime="2026-09-17T14:49:16.8032409-07:00" endTime="2026-09-17T14:49:16.8048369-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b127df60-848e-44c9-b750-724652f07f61" />
+    <UnitTestResult executionId="32a5f448-e5af-44f5-9a23-c2199f0bd5ab" testId="a3cc3c01-c4ce-bb58-e3ad-5ca0aaa169c4" testName="AiDe.Core.Tests.Watcher.CoordinationContractLogTests.ReadDirectory_MissingDirectory_ReturnsEmpty" computerName="TIMMALLSTRIX" duration="00:00:00.0005903" startTime="2026-09-17T14:49:20.5238312-07:00" endTime="2026-09-17T14:49:20.5243527-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="32a5f448-e5af-44f5-9a23-c2199f0bd5ab" />
+    <UnitTestResult executionId="d41cc57f-3836-4c82-8ae0-63f88f2319be" testId="b2102a81-1722-4606-86ab-0d6190876406" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_ExternalRootOverrun_PreservesHistoryAndReportsUnavailable" computerName="TIMMALLSTRIX" duration="00:00:00.0434477" startTime="2026-09-17T14:49:17.5305373-07:00" endTime="2026-09-17T14:49:17.5740392-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d41cc57f-3836-4c82-8ae0-63f88f2319be" />
+    <UnitTestResult executionId="70fff741-3576-4679-9761-fdff4b60c410" testId="22e2dd77-b072-27bc-4c84-39b5a7c8673b" testName="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.Heartbeat_ForAnUnknownSession_IsANoOp" computerName="TIMMALLSTRIX" duration="00:00:00.0133424" startTime="2026-09-17T14:49:20.6432132-07:00" endTime="2026-09-17T14:49:20.6559208-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="70fff741-3576-4679-9761-fdff4b60c410" />
+    <UnitTestResult executionId="bad6bcab-56d8-4273-854c-d1e24d65c95f" testId="fc3a0066-c1ad-ea9a-4efe-35a074397784" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.WriteHeartbeat_RootAlreadyHas128Files_RefusesFile129" computerName="TIMMALLSTRIX" duration="00:00:00.0271616" startTime="2026-09-17T14:49:17.7367355-07:00" endTime="2026-09-17T14:49:17.7638751-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bad6bcab-56d8-4273-854c-d1e24d65c95f">
+      <Output>
+        <StdOut>rootFilesBefore=128; rootFilesAfter=128; acceptedBytes=0; refusal=AiDe.Core.Watcher.CoordinationWriteException</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bd5c195e-88a6-48bd-b591-a361cb3dd5b1" testId="d28332f5-f229-e3d5-d9a9-6c4c68e239ad" testName="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.Register_ThenPump_SessionAppearsLiveInTheStore" computerName="TIMMALLSTRIX" duration="00:00:00.0610733" startTime="2026-09-17T14:49:20.5268307-07:00" endTime="2026-09-17T14:49:20.5879867-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bd5c195e-88a6-48bd-b591-a361cb3dd5b1" />
+    <UnitTestResult executionId="4efbd5af-e00f-4479-b281-ec8947477fd1" testId="d6156cde-96aa-1120-5fb9-f0815f86d291" testName="AiDe.Core.Tests.Watcher.CoordinationContractLogTests.WriterAndPump_RegisterThenHeartbeat_SessionIsAliveInTheStore" computerName="TIMMALLSTRIX" duration="00:00:00.0055032" startTime="2026-09-17T14:49:20.5061771-07:00" endTime="2026-09-17T14:49:20.5116726-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4efbd5af-e00f-4479-b281-ec8947477fd1" />
+    <UnitTestResult executionId="7724419f-c4be-4567-82fe-659d49181d59" testId="63c1fa1c-d714-049c-6a96-7fbc59edd53f" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(onStop: True)" computerName="TIMMALLSTRIX" duration="00:00:00.0038131" startTime="2026-09-17T14:49:20.4050262-07:00" endTime="2026-09-17T14:49:20.4087747-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7724419f-c4be-4567-82fe-659d49181d59" />
+    <UnitTestResult executionId="234dfb88-fed1-4fb6-8f5e-bf23be2d5236" testId="8f264b18-daf3-269c-9782-1a6b8e7b1ed3" testName="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.Reconcile_Registers_Heartbeats_AndEnds_FromASnapshot" computerName="TIMMALLSTRIX" duration="00:00:00.0327228" startTime="2026-09-17T14:49:20.6561032-07:00" endTime="2026-09-17T14:49:20.6887570-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="234dfb88-fed1-4fb6-8f5e-bf23be2d5236" />
+    <UnitTestResult executionId="f68e5a2a-0bb3-4236-9ca9-41dc6bdb3447" testId="664c6bb7-e6f3-569a-28c6-e4719b2cc01e" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_SessionEnd_ForgetsTheMapping_SoALaterHeartbeatIsUnknown" computerName="TIMMALLSTRIX" duration="00:00:00.0005645" startTime="2026-09-17T14:49:20.4932468-07:00" endTime="2026-09-17T14:49:20.4937447-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f68e5a2a-0bb3-4236-9ca9-41dc6bdb3447" />
+    <UnitTestResult executionId="046ffc13-ad03-4da5-9c88-10befc1d210d" testId="57f1bf5a-43ae-41e8-a5b9-e25b70e98ad2" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RetryPending_UncertainRegister_PreservesActualPreparationAndAdmission" computerName="TIMMALLSTRIX" duration="00:00:00.0058525" startTime="2026-09-17T14:49:20.4149892-07:00" endTime="2026-09-17T14:49:20.4208053-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="046ffc13-ad03-4da5-9c88-10befc1d210d" />
+    <UnitTestResult executionId="d86381e2-f4ee-4885-be27-6499caa933c8" testId="cb0c6bbd-9a39-94f1-657a-945f7293f7a0" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_RecordRefusalAndAdmission_EmitMeasuredOutcomeWithoutPayload" computerName="TIMMALLSTRIX" duration="00:00:00.0043545" startTime="2026-09-17T14:49:17.5050347-07:00" endTime="2026-09-17T14:49:17.5050681-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d86381e2-f4ee-4885-be27-6499caa933c8">
+      <Output>
+        <StdOut>coordination.native.prepare:Ready:0.3046:; coordination.native.append:Admitted:0.8658:; coordination.native.prepare:Refused:0.0181:COORD_RECORD_BOUND</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="eaab0a29-2ffa-486a-941b-50185ae2530e" testId="84f1618d-2f8d-cd47-96f9-5c1e2f2da2b7" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_QuotaFilledSincePreparation_RefusesWithoutCreatingFile129" computerName="TIMMALLSTRIX" duration="00:00:00.0230590" startTime="2026-09-17T14:49:17.5844792-07:00" endTime="2026-09-17T14:49:17.6075297-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eaab0a29-2ffa-486a-941b-50185ae2530e">
+      <Output>
+        <StdOut>result=COORD_FILE_BOUND; jsonlFiles=128; subjectExists=false</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6c62b446-dcc6-494b-accd-49d0deeeae88" testId="e5adf78c-c56c-430f-1e34-a1f03bda4907" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.End_AppendDeniedThenRetried_DurablyEndsExactlyOnceAndKeepsRegistration" computerName="TIMMALLSTRIX" duration="00:00:00.0057186" startTime="2026-09-17T14:49:17.6463530-07:00" endTime="2026-09-17T14:49:17.6518298-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6c62b446-dcc6-494b-accd-49d0deeeae88">
+      <Output>
+        <StdOut>liveAfterFailure=1; durableEnds=1; records=2; liveAfterRetry=0</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1ac6f673-5bbf-47e6-a42c-17614c2befdd" testId="1202a685-d9d6-ea92-0b94-022948689572" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_WrongContractVersion_IsRejectedAndCounted" computerName="TIMMALLSTRIX" duration="00:00:00.0001441" startTime="2026-09-17T14:49:20.5001793-07:00" endTime="2026-09-17T14:49:20.5002106-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1ac6f673-5bbf-47e6-a42c-17614c2befdd" />
+    <UnitTestResult executionId="eafd48a9-73c7-42bb-9bf0-1dc71056632a" testId="1f7d21f8-3e2c-8236-dd8d-3e952f36f0b6" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(mode: &quot;legacy&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0077871" startTime="2026-09-17T14:49:17.8767559-07:00" endTime="2026-09-17T14:49:17.8818611-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eafd48a9-73c7-42bb-9bf0-1dc71056632a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Admitted&#xD;
+Actual:   InFlight</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(String mode) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 587&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(String mode) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 595&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4f20862e-36bb-4288-83e3-158eaaf55410" testId="5d65dbd4-e701-9c6a-5126-52feac2d0b3c" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity" computerName="TIMMALLSTRIX" duration="00:00:00.6810899" startTime="2026-09-17T14:49:17.8897515-07:00" endTime="2026-09-17T14:49:18.5707945-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4f20862e-36bb-4288-83e3-158eaaf55410" />
+    <UnitTestResult executionId="849e75c4-80b9-4f89-886a-8ef857cccbfa" testId="13b725ca-41bc-7f37-a95e-85311ac91b30" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ReservedSlotAndControlFlood_OnlyOneWaiterAndNoQuotaBypass" computerName="TIMMALLSTRIX" duration="00:00:00.9232130" startTime="2026-09-17T14:49:18.5763131-07:00" endTime="2026-09-17T14:49:19.4998013-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="849e75c4-80b9-4f89-886a-8ef857cccbfa" />
+    <UnitTestResult executionId="c2b7b0cd-982c-4292-9d5a-aa37077be03b" testId="21fd2be7-83ed-0996-9fe5-e1c4dadff3fa" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_DuplicateRegister_IsIgnoredAndCounted" computerName="TIMMALLSTRIX" duration="00:00:00.0002447" startTime="2026-09-17T14:49:20.4944745-07:00" endTime="2026-09-17T14:49:20.4945114-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c2b7b0cd-982c-4292-9d5a-aa37077be03b" />
+    <UnitTestResult executionId="d0a37236-f578-48fd-bb0c-04f17ae86cb4" testId="52a2a528-2d85-7849-e4cd-1797015da491" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_PausedAppend_EndWaitsForDurableRegistration" computerName="TIMMALLSTRIX" duration="00:00:00.0071724" startTime="2026-09-17T14:49:17.6968331-07:00" endTime="2026-09-17T14:49:17.7040722-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d0a37236-f578-48fd-bb0c-04f17ae86cb4" />
+    <UnitTestResult executionId="8684f0ea-3ed4-4de6-8d88-d3a5572c1e92" testId="2a284e9b-b1a9-9d29-9fa5-ad4178a68129" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_CallerMutatesAttributesAndClock_ExactFrozenBytesAreAppended" computerName="TIMMALLSTRIX" duration="00:00:00.0079487" startTime="2026-09-17T14:49:17.5225577-07:00" endTime="2026-09-17T14:49:17.5304409-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8684f0ea-3ed4-4de6-8d88-d3a5572c1e92">
+      <Output>
+        <StdOut>preparedBytes=108; admittedBytes=108; seq=1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4c8e5733-be3c-4bd8-b5e0-8cba3754142e" testId="5d1cf3ec-0db5-6f86-aa06-7ddb8bf9293b" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.WriteHeartbeat_RootAlreadyHas32MiB_RefusesWithoutChangingExistingBytes" computerName="TIMMALLSTRIX" duration="00:00:00.0465714" startTime="2026-09-17T14:49:17.7691396-07:00" endTime="2026-09-17T14:49:17.8158052-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4c8e5733-be3c-4bd8-b5e0-8cba3754142e">
+      <Output>
+        <StdOut>rootBytesBefore=33554432; rootBytesAfter=33554432; acceptedBytes=0; refusal=AiDe.Core.Watcher.CoordinationWriteException</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0e64b91c-e174-4cc8-a4ab-88e3af149dcc" testId="ef6ce0c6-d74c-618c-667f-f62eabdc8c84" testName="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.HeartbeatAll_KeepsEveryLiveSessionAlive" computerName="TIMMALLSTRIX" duration="00:00:00.0256185" startTime="2026-09-17T14:49:20.6168725-07:00" endTime="2026-09-17T14:49:20.6424445-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0e64b91c-e174-4cc8-a4ab-88e3af149dcc" />
+    <UnitTestResult executionId="8884b845-6fb6-43d0-9da3-c7aecd980a48" testId="457e059d-b679-3bb5-40de-63928eac46e8" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_SourceChangedAfterPartialWrite_RemainsUncertainWithoutFurtherAppend(mutation: &quot;different&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0024553" startTime="2026-09-17T14:49:17.5047207-07:00" endTime="2026-09-17T14:49:17.5047763-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8884b845-6fb6-43d0-9da3-c7aecd980a48">
+      <Output>
+        <StdOut>mutation=different; outcome=Uncertain; preservedBytes=92</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bb173f4f-5d3e-46d2-8fdc-b589f2087e39" testId="7cfb7639-0a1f-2500-fc0b-ba07fe79521e" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Write_LegacyVoidFailure_ContainsExactUncertainPreparation" computerName="TIMMALLSTRIX" duration="00:00:00.0020266" startTime="2026-09-17T14:49:17.5787405-07:00" endTime="2026-09-17T14:49:17.5807285-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bb173f4f-5d3e-46d2-8fdc-b589f2087e39" />
+    <UnitTestResult executionId="d65d2ca7-e598-4bbf-88be-63eff22bbaf9" testId="5210c4f0-29b7-3948-ca22-950e9a283a8b" testName="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.ToAttributes_MapsTheIdentity" computerName="TIMMALLSTRIX" duration="00:00:00.0001972" startTime="2026-09-17T14:49:20.7084038-07:00" endTime="2026-09-17T14:49:20.7085011-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d65d2ca7-e598-4bbf-88be-63eff22bbaf9" />
+    <UnitTestResult executionId="e6a2d772-bb48-4304-9b47-500a3472dd26" testId="19a33595-7568-658f-c584-166ce424440d" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_TwoParticipatingProcesses_OnlyOneCanClaimFinalCapacityOrSequence(race: &quot;quota&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.1841775" startTime="2026-09-17T14:49:17.1477133-07:00" endTime="2026-09-17T14:49:17.3322033-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e6a2d772-bb48-4304-9b47-500a3472dd26">
+      <Output>
+        <StdOut>race=quota; first=Unavailable; second=Admitted; files=128; rootBytes=80; events=1; sequence=1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="69ae4f28-7acc-4965-b173-c0e885c0be98" testId="6f5d81e9-c34e-9049-5110-a0e8e013e7d7" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_InputBound_CountsUtf16AndDoesNotRetainOversize" computerName="TIMMALLSTRIX" duration="00:00:00.0013724" startTime="2026-09-17T14:49:19.5004752-07:00" endTime="2026-09-17T14:49:19.5012669-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="69ae4f28-7acc-4965-b173-c0e885c0be98" />
+    <UnitTestResult executionId="dfc4ae25-1221-44a8-bbbe-63ff9dc56972" testId="448d94ef-77d6-220f-fa94-b47a41df503a" testName="AiDe.Core.Tests.Watcher.CoordinationContractLogTests.Pump_ReRun_IsIdempotent_NoDoubleRegister" computerName="TIMMALLSTRIX" duration="00:00:00.0027897" startTime="2026-09-17T14:49:20.5118250-07:00" endTime="2026-09-17T14:49:20.5145046-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dfc4ae25-1221-44a8-bbbe-63ff9dc56972" />
+    <UnitTestResult executionId="940758ad-e0fc-4340-b901-b91f72fff4ba" testId="f9b0247d-4bf8-0a96-71f3-1925b4eeb6d8" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_OtherSessionAppendDenied_IndependentSessionStillCompletes" computerName="TIMMALLSTRIX" duration="00:00:00.0048615" startTime="2026-09-17T14:49:17.8159548-07:00" endTime="2026-09-17T14:49:17.8206791-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="940758ad-e0fc-4340-b901-b91f72fff4ba">
+      <Output>
+        <StdOut>deniedSubjectBytes=0; otherSessionRecords=3; otherSessionEnded=true</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8c33f4ef-b059-4b88-9a98-576672574a5c" testId="546de401-1150-1548-b1f6-910fc1f24900" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_WindowsCaseAlias_RefusesDifferentExactSession" computerName="TIMMALLSTRIX" duration="00:00:00.0023358" startTime="2026-09-17T14:49:17.5741911-07:00" endTime="2026-09-17T14:49:17.5764081-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8c33f4ef-b059-4b88-9a98-576672574a5c" />
+    <UnitTestResult executionId="fa27c739-a7cf-4e7b-b5dc-330686a287e2" testId="5f6a5e11-8ae3-c266-c047-922f3b88784b" testName="AiDe.Core.Tests.Watcher.CoordinationContractLogTests.Writer_WritesRegister_ReaderParsesItBack" computerName="TIMMALLSTRIX" duration="00:00:00.0022688" startTime="2026-09-17T14:49:20.5244294-07:00" endTime="2026-09-17T14:49:20.5266871-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fa27c739-a7cf-4e7b-b5dc-330686a287e2" />
+    <UnitTestResult executionId="83dc8af1-1b8f-4afe-8b8e-d7a3cfbba8c6" testId="2ed00e20-b1c0-8eb6-0f18-73b1b2bccea1" testName="AiDe.Core.Tests.Watcher.CoordinationContractLogTests.Writer_KeepsEachRecordOnItsOwnLine_EvenAfterAnUnterminatedFile_LOGA" computerName="TIMMALLSTRIX" duration="00:00:00.0042309" startTime="2026-09-17T14:49:20.5151803-07:00" endTime="2026-09-17T14:49:20.5187913-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="83dc8af1-1b8f-4afe-8b8e-d7a3cfbba8c6" />
+    <UnitTestResult executionId="9cbf0d54-e947-4a88-9eaf-9d9b9df94840" testId="98fe27da-2da2-299c-f659-6c32b7018c37" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.PrepareAndAppend_ExternalOsRootLockBusy_ReclaimsLocalEntryAndPreservesHolder" computerName="TIMMALLSTRIX" duration="00:00:00.0101429" startTime="2026-09-17T14:49:16.8049645-07:00" endTime="2026-09-17T14:49:16.8150679-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9cbf0d54-e947-4a88-9eaf-9d9b9df94840">
+      <Output>
+        <StdOut>operation=Prepare; busy=COORD_WRITER_BUSY; acceptedBytes=82; originalOsHolderValid=true; competingOsOpenDenied=true&#xD;
+operation=Append; busy=COORD_WRITER_BUSY; acceptedBytes=82; originalOsHolderValid=true; competingOsOpenDenied=true&#xD;
+operation=Prepare; busy=COORD_WRITER_BUSY; acceptedBytes=82; originalOsHolderValid=true; competingOsOpenDenied=true&#xD;
+operation=Append; busy=COORD_WRITER_BUSY; acceptedBytes=82; originalOsHolderValid=true; competingOsOpenDenied=true&#xD;
+operation=Prepare; busy=COORD_WRITER_BUSY; acceptedBytes=82; originalOsHolderValid=true; competingOsOpenDenied=true&#xD;
+operation=Append; busy=COORD_WRITER_BUSY; acceptedBytes=82; originalOsHolderValid=true; competingOsOpenDenied=true&#xD;
+deniedPrepare=3; deniedAppend=3; holderReleased=true; pendingAdmitted=true; freshPrepareAppendAdmitted=true; events=3; reclaimedRoot=true</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e75bf18e-6846-4dd9-ad93-39620803572b" testId="9e6d6e69-1909-7e85-352c-a3f48358a1a6" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_LegacyNonemptyLinesAndGappedSequence_PreservesNativeCount(newline: &quot;\n&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0018663" startTime="2026-09-17T14:49:16.8023294-07:00" endTime="2026-09-17T14:49:16.8032016-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e75bf18e-6846-4dd9-ad93-39620803572b" />
+    <UnitTestResult executionId="d44faf25-4afb-410c-93f5-95f86b1f4248" testId="79f606fe-0340-49e4-edf1-8326f4fd7322" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.HeartbeatAll_PausedAppend_ConcurrentEndCannotPrecedeHeartbeat" computerName="TIMMALLSTRIX" duration="00:00:00.0159634" startTime="2026-09-17T14:49:17.7204697-07:00" endTime="2026-09-17T14:49:17.7366133-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d44faf25-4afb-410c-93f5-95f86b1f4248" />
+    <UnitTestResult executionId="64d9366d-c0ba-45ef-bfa5-1dba30f7e8c0" testId="31252224-d9a7-d1c7-5140-8ba9ed1ec4dd" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ProductionGlobalAcrossRoots_RefusesBeforeFactoryAndReadmitsAfterEnd" computerName="TIMMALLSTRIX" duration="00:00:00.8914617" startTime="2026-09-17T14:49:19.5070190-07:00" endTime="2026-09-17T14:49:20.3984571-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="64d9366d-c0ba-45ef-bfa5-1dba30f7e8c0" />
+    <UnitTestResult executionId="8027a77c-5ce7-4282-92fc-ed5692439e6f" testId="85faae0c-1550-7d73-0b8a-1687df134d23" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Control_PrewriteFailure_PreservesMembershipAndAbandonsOnlyPending(end: True)" computerName="TIMMALLSTRIX" duration="00:00:00.0066026" startTime="2026-09-17T14:49:17.8485183-07:00" endTime="2026-09-17T14:49:17.8552150-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8027a77c-5ce7-4282-92fc-ed5692439e6f" />
+    <UnitTestResult executionId="675249ca-2cce-485b-8061-e7eda0572ee0" testId="e14681a0-bd2a-7068-ef30-2afd97ff685c" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(glyph: 'A')" computerName="TIMMALLSTRIX" duration="00:00:00.0051956" startTime="2026-09-17T14:49:17.6104063-07:00" endTime="2026-09-17T14:49:17.6151208-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="675249ca-2cce-485b-8061-e7eda0572ee0">
+      <Output>
+        <StdOut>glyph=U+0041; candidateCompleteLineBytes=65537; acceptedBytes=0; refusal=AiDe.Core.Watcher.CoordinationWriteException</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b9a427d0-2212-4c89-b780-2049ec125c3a" testId="eff6e1cb-28e5-9d47-d816-0b865cd1a3ac" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Register_LostCompleteAcknowledgement_RetryDoesNotDuplicate" computerName="TIMMALLSTRIX" duration="00:00:00.0054354" startTime="2026-09-17T14:49:19.5014148-07:00" endTime="2026-09-17T14:49:19.5068417-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b9a427d0-2212-4c89-b780-2049ec125c3a" />
+    <UnitTestResult executionId="815cb86d-cfff-4368-b301-f9393dfdc3bf" testId="847a8665-250a-dc23-8883-ba1ea5a84c47" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_PrefixWrittenThenIOException_RetriesOnlyMissingExactSuffix(prefix: 19)" computerName="TIMMALLSTRIX" duration="00:00:00.0028289" startTime="2026-09-17T14:49:17.5051942-07:00" endTime="2026-09-17T14:49:17.5052221-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="815cb86d-cfff-4368-b301-f9393dfdc3bf">
+      <Output>
+        <StdOut>partial=19; uncertain=COORD_WRITE_UNCERTAIN; recoveredLength=82; seq=1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d686879b-c764-4fc8-af63-9009e245dc8e" testId="88af69c0-b89a-8be7-9eb8-efa0fa6b2e6c" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(onStop: False)" computerName="TIMMALLSTRIX" duration="00:00:00.0063087" startTime="2026-09-17T14:49:20.3986394-07:00" endTime="2026-09-17T14:49:20.4048756-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d686879b-c764-4fc8-af63-9009e245dc8e" />
+    <UnitTestResult executionId="0ad92c76-b07b-4d30-a7a2-4f67480b37a4" testId="0b2ac8ec-2cd1-7475-be8d-62884b9bb800" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_LegacyNonemptyLinesAndGappedSequence_PreservesNativeCount(newline: &quot;\r\n&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0055893" startTime="2026-09-17T14:49:16.8020148-07:00" endTime="2026-09-17T14:49:16.8020526-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0ad92c76-b07b-4d30-a7a2-4f67480b37a4" />
+    <UnitTestResult executionId="d7667c18-49ab-4702-bdfe-e3bb2531bed8" testId="f713572c-86fa-a471-2fab-e8ea997a9ce9" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_OutOfOrderLines_AreSortedByAtThenSeq" computerName="TIMMALLSTRIX" duration="00:00:00.0007536" startTime="2026-09-17T14:49:20.4978770-07:00" endTime="2026-09-17T14:49:20.4986002-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7667c18-49ab-4702-bdfe-e3bb2531bed8" />
+    <UnitTestResult executionId="04ad17db-3b54-4015-bea5-fee2d26e4c35" testId="57d498de-20a9-5ec1-720e-ea656ef42ecd" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_BlankAndLogALeadingNewlineAndCrlf_AreTolerated" computerName="TIMMALLSTRIX" duration="00:00:00.0001882" startTime="2026-09-17T14:49:20.4988540-07:00" endTime="2026-09-17T14:49:20.4990143-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="04ad17db-3b54-4015-bea5-fee2d26e4c35" />
+    <UnitTestResult executionId="0cfa2edf-778c-4812-a983-92fc1b689efe" testId="e3042e1b-1946-092d-0f72-43b035fc64ce" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(glyph: 'é')" computerName="TIMMALLSTRIX" duration="00:00:00.0027541" startTime="2026-09-17T14:49:17.6151826-07:00" endTime="2026-09-17T14:49:17.6179172-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0cfa2edf-778c-4812-a983-92fc1b689efe">
+      <Output>
+        <StdOut>glyph=U+00E9; candidateCompleteLineBytes=65537; acceptedBytes=0; refusal=AiDe.Core.Watcher.CoordinationWriteException</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0af3b907-124e-4943-9348-ab0a42c67a59" testId="c5146fd8-174e-b00f-fec0-566305d6e12a" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.HeartbeatAll_StaleSnapshot_DoesNotHeartbeatEndedSession" computerName="TIMMALLSTRIX" duration="00:00:00.0094344" startTime="2026-09-17T14:49:17.6365896-07:00" endTime="2026-09-17T14:49:17.6461273-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0af3b907-124e-4943-9348-ab0a42c67a59" />
+    <UnitTestResult executionId="fc5b84e4-fae4-415a-8b75-a4700077c37c" testId="a4c56b40-5dcf-0c8a-431f-0f8613145f55" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_Register_MintsSessionInTheStore_WithVerifiedTrust" computerName="TIMMALLSTRIX" duration="00:00:00.0079708" startTime="2026-09-17T14:49:20.4850821-07:00" endTime="2026-09-17T14:49:20.4931086-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fc5b84e4-fae4-415a-8b75-a4700077c37c" />
+    <UnitTestResult executionId="c4fca867-20cc-4d00-bfe6-66fd48f5fef9" testId="f6af8b6e-ad30-5e28-f1eb-d297bc121ce2" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.EndToEnd_JsonlRegisterThenHeartbeat_SessionIsAlive_ThenGoesStale" computerName="TIMMALLSTRIX" duration="00:00:00.0034302" startTime="2026-09-17T14:49:20.4946046-07:00" endTime="2026-09-17T14:49:20.4975182-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c4fca867-20cc-4d00-bfe6-66fd48f5fef9" />
+    <UnitTestResult executionId="75a1442d-5390-4dba-bb9b-03cf1f58c192" testId="16b28635-5f35-a137-9c81-b66ee32d6528" testName="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.CreateEmitter_UsesTheHostsCoordDirectory" computerName="TIMMALLSTRIX" duration="00:00:00.0114159" startTime="2026-09-17T14:49:20.5881676-07:00" endTime="2026-09-17T14:49:20.5995200-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="75a1442d-5390-4dba-bb9b-03cf1f58c192" />
+    <UnitTestResult executionId="450dd6c6-f2cc-400c-bd1d-980b8ac28dff" testId="a13579d2-1715-b465-605f-3d13611cc8a6" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_HeartbeatForRegisteredSession_RefreshesLivenessToAlive" computerName="TIMMALLSTRIX" duration="00:00:00.0002635" startTime="2026-09-17T14:49:20.4976357-07:00" endTime="2026-09-17T14:49:20.4978040-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="450dd6c6-f2cc-400c-bd1d-980b8ac28dff" />
+    <UnitTestResult executionId="75aceeec-174f-4d5c-8710-7d590876f80c" testId="79d9d843-c8d3-cc96-f4ba-2d3025e94a05" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_AppendUnavailableWithNullFailurePrepared_RetainsReadyObjectForRetry" computerName="TIMMALLSTRIX" duration="00:00:00.0043815" startTime="2026-09-17T14:49:20.4677360-07:00" endTime="2026-09-17T14:49:20.4720667-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="75aceeec-174f-4d5c-8710-7d590876f80c" />
+    <UnitTestResult executionId="df99ae27-9d4b-4a52-856d-8254fde601a9" testId="7e1ebad4-77b6-4f8f-168f-dae476ae07ee" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_UnknownKindWithValidVersion_IsSilentlySkipped_NotMalformed" computerName="TIMMALLSTRIX" duration="00:00:00.0001666" startTime="2026-09-17T14:49:20.5004331-07:00" endTime="2026-09-17T14:49:20.5004574-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="df99ae27-9d4b-4a52-856d-8254fde601a9" />
+    <UnitTestResult executionId="db939233-038b-468e-9026-09a947c66d33" testId="96e92957-a8a7-6c20-f32f-89193adbef70" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_TwoParticipatingProcesses_OnlyOneCanClaimFinalCapacityOrSequence(race: &quot;bytes&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.3309239" startTime="2026-09-17T14:49:16.8153960-07:00" endTime="2026-09-17T14:49:17.1474164-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="db939233-038b-468e-9026-09a947c66d33">
+      <Output>
+        <StdOut>race=bytes; first=Admitted; second=Unavailable; files=2; rootBytes=33554432; events=1; sequence=1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d773db5e-de7a-4e61-a4ba-65a4641969e9" testId="b8065429-6344-dffe-40d2-ff56395372b7" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_PausedClock_HealthyProgressAndCancellationRetainInFlight" computerName="TIMMALLSTRIX" duration="00:00:00.0371687" startTime="2026-09-17T14:49:20.4302348-07:00" endTime="2026-09-17T14:49:20.4675572-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d773db5e-de7a-4e61-a4ba-65a4641969e9" />
+    <UnitTestResult executionId="79d92d99-4630-48f1-ab96-e4a219ad7678" testId="fe6804c5-e5da-0277-a96c-e5c2451bc388" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_RegisterMissingRequiredIdentity_IsQuarantined_AndTheStreamSurvives" computerName="TIMMALLSTRIX" duration="00:00:00.0003292" startTime="2026-09-17T14:49:20.4992694-07:00" endTime="2026-09-17T14:49:20.4995643-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="79d92d99-4630-48f1-ab96-e4a219ad7678" />
+    <UnitTestResult executionId="5110ad55-e0a1-4654-94d7-e59d145fbe95" testId="54d5194c-f772-c9eb-cf23-e0b7e57b5f35" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLineAt64KiB_AcceptsExactlyTheBound(glyph: 'A')" computerName="TIMMALLSTRIX" duration="00:00:00.0044047" startTime="2026-09-17T14:49:17.6570911-07:00" endTime="2026-09-17T14:49:17.6615015-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5110ad55-e0a1-4654-94d7-e59d145fbe95">
+      <Output>
+        <StdOut>glyph=U+0041; completeLineBytes=65536; terminalByte=10</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2404875a-27a4-4136-b56e-c735253e7135" testId="d9999e64-e5d6-4d48-6a2b-b040e5258226" testName="AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_RegisterAndHeartbeat_ReturnsBothSortedByAt" computerName="TIMMALLSTRIX" duration="00:00:00.0002373" startTime="2026-09-17T14:49:20.5005295-07:00" endTime="2026-09-17T14:49:20.5005515-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2404875a-27a4-4136-b56e-c735253e7135" />
+    <UnitTestResult executionId="e423935b-ff46-430d-8ed8-23cdd57dc4df" testId="22a4601a-e7e2-cd1e-1acc-c2aaf725f139" testName="AiDe.Core.Tests.Watcher.CoordinationContractLogTests.Writer_TwoSessions_WriteSeparateFiles_BothRead" computerName="TIMMALLSTRIX" duration="00:00:00.0048822" startTime="2026-09-17T14:49:20.5188952-07:00" endTime="2026-09-17T14:49:20.5237273-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e423935b-ff46-430d-8ed8-23cdd57dc4df" />
+    <UnitTestResult executionId="d1d2de8f-9208-4a47-bb3b-3ac1d8c48e5f" testId="fe5308cc-71c2-4ff9-6615-5ef01d03f63f" testName="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_PrefixWrittenThenIOException_RetriesOnlyMissingExactSuffix(prefix: 1)" computerName="TIMMALLSTRIX" duration="00:00:00.0043687" startTime="2026-09-17T14:49:17.5051237-07:00" endTime="2026-09-17T14:49:17.5051572-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d1d2de8f-9208-4a47-bb3b-3ac1d8c48e5f">
+      <Output>
+        <StdOut>partial=1; uncertain=COORD_WRITE_UNCERTAIN; recoveredLength=82; seq=1</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c57fa471-1c65-4622-94d6-d30941ffbbaf" testId="1042da85-157c-d773-1465-a5ec56a117de" testName="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.End_WritesSessionEnd_AndStopsTracking" computerName="TIMMALLSTRIX" duration="00:00:00.0193506" startTime="2026-09-17T14:49:20.6889280-07:00" endTime="2026-09-17T14:49:20.7082243-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c57fa471-1c65-4622-94d6-d30941ffbbaf" />
+    <UnitTestResult executionId="d309b2a9-ef4f-4faf-bd10-7c1386b573a1" testId="695060bd-8a47-20f2-078b-87719a729003" testName="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_PausedInsideWriter_IndependentSessionCompletes" computerName="TIMMALLSTRIX" duration="00:00:00.0182826" startTime="2026-09-17T14:49:17.6179967-07:00" endTime="2026-09-17T14:49:17.6364803-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d309b2a9-ef4f-4faf-bd10-7c1386b573a1" />
+    <UnitTestResult executionId="d6016ce2-ad5b-40e3-937d-ba9153311b2f" testId="4d43a83e-b34e-20d0-a204-14f0807a2d76" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Retention_MetadataAccounting_IncludesUtf16FingerprintAndPacket" computerName="TIMMALLSTRIX" duration="00:00:00.0005764" startTime="2026-09-17T14:49:20.4215896-07:00" endTime="2026-09-17T14:49:20.4216284-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d6016ce2-ad5b-40e3-937d-ba9153311b2f" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_FormerWaiterOwnsGate_ThirdOperationCannotOvertakeHeartbeat" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="9429f04d-506e-5181-158f-913c59184dbd">
+      <Execution id="5c954c9f-5bcb-4cc1-9b57-41536381931a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Register_FormerWaiterOwnsGate_ThirdOperationCannotOvertakeHeartbeat" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_MalformedLine_IsSkippedAndCounted_OthersSurvive" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0ebfac73-a05f-bd58-7dc1-173ac05ee459">
+      <Execution id="07081319-e881-4820-8288-426d818fe84f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="Parse_MalformedLine_IsSkippedAndCounted_OthersSurvive" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(onStop: False)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="88af69c0-b89a-8be7-9eb8-efa0fa6b2e6c">
+      <Execution id="d686879b-c764-4fc8-af63-9009e245dc8e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.Register_ThenPump_SessionAppearsLiveInTheStore" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d28332f5-f229-e3d5-d9a9-6c4c68e239ad">
+      <Execution id="bd5c195e-88a6-48bd-b591-a361cb3dd5b1" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests" name="Register_ThenPump_SessionAppearsLiveInTheStore" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.HeartbeatAll_KeepsEveryLiveSessionAlive" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="ef6ce0c6-d74c-618c-667f-f62eabdc8c84">
+      <Execution id="0e64b91c-e174-4cc8-a4ab-88e3af149dcc" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests" name="HeartbeatAll_KeepsEveryLiveSessionAlive" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_UnknownKindWithValidVersion_IsSilentlySkipped_NotMalformed" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="7e1ebad4-77b6-4f8f-168f-dae476ae07ee">
+      <Execution id="df99ae27-9d4b-4a52-856d-8254fde601a9" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="Parse_UnknownKindWithValidVersion_IsSilentlySkipped_NotMalformed" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery(onStop: True)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="63c1fa1c-d714-049c-6a96-7fbc59edd53f">
+      <Execution id="7724419f-c4be-4567-82fe-659d49181d59" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="RegisterResult_ObserverThrows_ReleasesReferencesAndPreservesRecovery" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_RecordRefusalAndAdmission_EmitMeasuredOutcomeWithoutPayload" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="cb0c6bbd-9a39-94f1-657a-945f7293f7a0">
+      <Execution id="d86381e2-f4ee-4885-be27-6499caa933c8" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Prepare_RecordRefusalAndAdmission_EmitMeasuredOutcomeWithoutPayload" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_TwoParticipatingProcesses_OnlyOneCanClaimFinalCapacityOrSequence(race: &quot;quota&quot;)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="19a33595-7568-658f-c584-166ce424440d">
+      <Execution id="e6a2d772-bb48-4304-9b47-500a3472dd26" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Append_TwoParticipatingProcesses_OnlyOneCanClaimFinalCapacityOrSequence" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_FullBytesButLostDurabilityAcknowledgement_ReconcilesSameAdmission(fault: &quot;dispose&quot;)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="660f065f-5d16-c409-bbab-0acad4812335">
+      <Execution id="79fcd546-5875-4d9d-b131-acacea498f2b" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Append_FullBytesButLostDurabilityAcknowledgement_ReconcilesSameAdmission" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.WriteHeartbeat_RootAlreadyHas128Files_RefusesFile129" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="fc3a0066-c1ad-ea9a-4efe-35a074397784">
+      <Execution id="bad6bcab-56d8-4273-854c-d1e24d65c95f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="WriteHeartbeat_RootAlreadyHas128Files_RefusesFile129" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractLogTests.Writer_KeepsEachRecordOnItsOwnLine_EvenAfterAnUnterminatedFile_LOGA" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="2ed00e20-b1c0-8eb6-0f18-73b1b2bccea1">
+      <Execution id="83dc8af1-1b8f-4afe-8b8e-d7a3cfbba8c6" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractLogTests" name="Writer_KeepsEachRecordOnItsOwnLine_EvenAfterAnUnterminatedFile_LOGA" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.ContractVersion_IsPinned" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="bb286a41-2146-5434-c73f-269402d0a414">
+      <Execution id="d2f1ad2f-aeac-4fb5-8014-81c19a15e446" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="ContractVersion_IsPinned" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RetryPending_UncertainRegister_PreservesActualPreparationAndAdmission" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="57f1bf5a-43ae-41e8-a5b9-e25b70e98ad2">
+      <Execution id="046ffc13-ad03-4da5-9c88-10befc1d210d" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="RetryPending_UncertainRegister_PreservesActualPreparationAndAdmission" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_BlankAndLogALeadingNewlineAndCrlf_AreTolerated" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="57d498de-20a9-5ec1-720e-ea656ef42ecd">
+      <Execution id="04ad17db-3b54-4015-bea5-fee2d26e4c35" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="Parse_BlankAndLogALeadingNewlineAndCrlf_AreTolerated" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_CompleteTailRepairAtRootLimit_CountsSeparatorAndPreservesUnknownTail" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d5833197-fb58-d552-2c88-7f80cfdad545">
+      <Execution id="ca7d4afb-02d9-457f-80be-987656f3901a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Prepare_CompleteTailRepairAtRootLimit_CountsSeparatorAndPreservesUnknownTail" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.Heartbeat_ForAnUnknownSession_IsANoOp" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="22e2dd77-b072-27bc-4c84-39b5a7c8673b">
+      <Execution id="70fff741-3576-4679-9761-fdff4b60c410" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests" name="Heartbeat_ForAnUnknownSession_IsANoOp" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(abandon: False)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="35e64b56-80ba-903f-294c-6e4d9c3b19d0">
+      <Execution id="4e0ffae8-e87b-4588-8503-fdb18b25db45" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="Completion_ObserverStillRunning_RetainsStateUntilQuiescence" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(glyph: 'é')" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="e3042e1b-1946-092d-0f72-43b035fc64ce">
+      <Execution id="0cfa2edf-778c-4812-a983-92fc1b689efe" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Write_LegacyVoidFailure_ContainsExactUncertainPreparation" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="7cfb7639-0a1f-2500-fc0b-ba07fe79521e">
+      <Execution id="bb173f4f-5d3e-46d2-8fdc-b589f2087e39" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Write_LegacyVoidFailure_ContainsExactUncertainPreparation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_UnresolvedFlushThenOutage_PreservesPreparationUntilRecovery" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="bc5a6026-fb4b-2c01-3b4f-1a391921a41f">
+      <Execution id="72a7efde-43a2-4c51-9b1f-c9fd94362bf5" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Append_UnresolvedFlushThenOutage_PreservesPreparationUntilRecovery" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_LegacyNonemptyLinesAndGappedSequence_PreservesNativeCount(newline: &quot;\r\n&quot;)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0b2ac8ec-2cd1-7475-be8d-62884b9bb800">
+      <Execution id="0ad92c76-b07b-4d30-a7a2-4f67480b37a4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Prepare_LegacyNonemptyLinesAndGappedSequence_PreservesNativeCount" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_SourceChangedAfterPartialWrite_RemainsUncertainWithoutFurtherAppend(mutation: &quot;truncate&quot;)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="cb5552b1-1760-8f31-0fe8-d8db1348c5af">
+      <Execution id="46d336be-b720-4d1a-b523-7bd6049c8338" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Append_SourceChangedAfterPartialWrite_RemainsUncertainWithoutFurtherAppend" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(mode: &quot;typed&quot;)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="64a5d809-2e28-7ba5-0761-c287d728fc58">
+      <Execution id="ec6c4b13-a4c8-4b01-86ff-f92603aa7c6b" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_HeartbeatForRegisteredSession_RefreshesLivenessToAlive" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a13579d2-1715-b465-605f-3d13611cc8a6">
+      <Execution id="450dd6c6-f2cc-400c-bd1d-980b8ac28dff" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="Apply_HeartbeatForRegisteredSession_RefreshesLivenessToAlive" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_PausedAppend_ConcurrentDuplicateRegistersOnce" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="8797cbcf-8cd0-b315-4e82-2ed8ea03959a">
+      <Execution id="fab487bd-f6a3-4d67-b1e5-b0cc275ed4c0" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Register_PausedAppend_ConcurrentDuplicateRegistersOnce" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_PrefixWrittenThenIOException_RetriesOnlyMissingExactSuffix(prefix: 1)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="fe5308cc-71c2-4ff9-6615-5ef01d03f63f">
+      <Execution id="d1d2de8f-9208-4a47-bb3b-3ac1d8c48e5f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Append_PrefixWrittenThenIOException_RetriesOnlyMissingExactSuffix" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_RegisterMissingRequiredIdentity_IsQuarantined_AndTheStreamSurvives" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="fe6804c5-e5da-0277-a96c-e5c2451bc388">
+      <Execution id="79d92d99-4630-48f1-ab96-e4a219ad7678" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="Apply_RegisterMissingRequiredIdentity_IsQuarantined_AndTheStreamSurvives" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_RepeatedFailedFirstRegistrations_ReclaimsEverySessionGate" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="eb48cdaf-bc11-336b-05c9-3cc28ff0e06a">
+      <Execution id="caab2062-5c89-4805-bb37-6b74ae2bd3ef" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Register_RepeatedFailedFirstRegistrations_ReclaimsEverySessionGate" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLineAt64KiB_AcceptsExactlyTheBound(glyph: 'é')" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="c702d844-fe94-959e-0aec-9356d406edd9">
+      <Execution id="6039b1d9-1dc0-42b4-a35f-d569319252f0" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Write_CompleteEncodedLineAt64KiB_AcceptsExactlyTheBound" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_ExistingSequenceWouldDuplicate_RefusesRatherThanRenumbering" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="3bfae52b-25e9-8c4f-d7db-4e840506ca92">
+      <Execution id="782f25ee-38c4-4de6-82cd-849ef5ee19a1" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Prepare_ExistingSequenceWouldDuplicate_RefusesRatherThanRenumbering" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_AppendUnavailableWithNullFailurePrepared_RetainsReadyObjectForRetry" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="79d9d843-c8d3-cc96-f4ba-2d3025e94a05">
+      <Execution id="75aceeec-174f-4d5c-8710-7d590876f80c" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="RegisterResult_AppendUnavailableWithNullFailurePrepared_RetainsReadyObjectForRetry" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_PausedClock_HealthyProgressAndCancellationRetainInFlight" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="b8065429-6344-dffe-40d2-ff56395372b7">
+      <Execution id="d773db5e-de7a-4e61-a4ba-65a4641969e9" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="HeartbeatAll_PausedClock_HealthyProgressAndCancellationRetainInFlight" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_SourceChangedAfterPartialWrite_RemainsUncertainWithoutFurtherAppend(mutation: &quot;extra&quot;)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a9d407ce-6dc6-6e3f-45eb-2887e99522bd">
+      <Execution id="d4fab6f8-e1db-451f-a8b0-ac006e72f1d7" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Append_SourceChangedAfterPartialWrite_RemainsUncertainWithoutFurtherAppend" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_RegisterAndHeartbeat_ReturnsBothSortedByAt" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d9999e64-e5d6-4d48-6a2b-b040e5258226">
+      <Execution id="2404875a-27a4-4136-b56e-c735253e7135" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="Parse_RegisterAndHeartbeat_ReturnsBothSortedByAt" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_WindowsCaseAlias_RefusesDifferentExactSession" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="546de401-1150-1548-b1f6-910fc1f24900">
+      <Execution id="8c33f4ef-b059-4b88-9a98-576672574a5c" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Prepare_WindowsCaseAlias_RefusesDifferentExactSession" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_ExternalRootOverrun_PreservesHistoryAndReportsUnavailable" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="b2102a81-1722-4606-86ab-0d6190876406">
+      <Execution id="d41cc57f-3836-4c82-8ae0-63f88f2319be" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Prepare_ExternalRootOverrun_PreservesHistoryAndReportsUnavailable" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_RealCoordCoreByteShape_GoldenFixture" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="b4401b59-7c1f-af55-693e-c1b5f5e93103">
+      <Execution id="731d989f-9e29-43cb-8d86-6ccb6d06079e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="Parse_RealCoordCoreByteShape_GoldenFixture" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_RepairLfExceedsPacketBound_RefusesBeforeAppendAndCanAbandon" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0ea31f83-a360-fe36-cb4c-f376c491932f">
+      <Execution id="88f2be2c-846a-4791-8de7-3466c95ce251" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="RegisterResult_RepairLfExceedsPacketBound_RefusesBeforeAppendAndCanAbandon" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(mode: &quot;direct&quot;)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="baa60288-6b00-c120-585d-0ec1adf51017">
+      <Execution id="083a967f-dcee-49a9-b90b-2712ee476ef7" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_QuiescentFailedEnd_ReportsBusyWithoutChangingWire" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a58fc875-5e0a-d408-610e-c0170377ad69">
+      <Execution id="46ace992-2f34-47e8-99f9-a68932c15e6f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="HeartbeatAll_QuiescentFailedEnd_ReportsBusyWithoutChangingWire" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.ToAttributes_OmitsAbsentHarnessAndModel" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="b2e30d7a-1898-597f-1b0c-2b8243d95ce5">
+      <Execution id="fd3f53c1-f34b-475a-9c5a-5380c7c37933" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests" name="ToAttributes_OmitsAbsentHarnessAndModel" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_InputBound_CountsUtf16AndDoesNotRetainOversize" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6f5d81e9-c34e-9049-5110-a0e8e013e7d7">
+      <Execution id="69ae4f28-7acc-4965-b173-c0e885c0be98" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="RegisterResult_InputBound_CountsUtf16AndDoesNotRetainOversize" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_PrefixWrittenThenIOException_RetriesOnlyMissingExactSuffix(prefix: 0)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0a04bc27-1418-acc5-f28c-9f5e18c17a67">
+      <Execution id="baafb373-be7d-4260-85c9-13fe7d8320ff" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Append_PrefixWrittenThenIOException_RetriesOnlyMissingExactSuffix" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ProductionGlobalAcrossRoots_RefusesBeforeFactoryAndReadmitsAfterEnd" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="31252224-d9a7-d1c7-5140-8ba9ed1ec4dd">
+      <Execution id="64d9366d-c0ba-45ef-bfa5-1dba30f7e8c0" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="RegisterResult_ProductionGlobalAcrossRoots_RefusesBeforeFactoryAndReadmitsAfterEnd" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_CallerMutatesAttributesAndClock_ExactFrozenBytesAreAppended" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="2a284e9b-b1a9-9d29-9fa5-ad4178a68129">
+      <Execution id="8684f0ea-3ed4-4de6-8d88-d3a5572c1e92" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Prepare_CallerMutatesAttributesAndClock_ExactFrozenBytesAreAppended" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLineAt64KiB_AcceptsExactlyTheBound(glyph: 'A')" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="54d5194c-f772-c9eb-cf23-e0b7e57b5f35">
+      <Execution id="5110ad55-e0a1-4654-94d7-e59d145fbe95" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Write_CompleteEncodedLineAt64KiB_AcceptsExactlyTheBound" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractLogTests.Pump_ReRun_IsIdempotent_NoDoubleRegister" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="448d94ef-77d6-220f-fa94-b47a41df503a">
+      <Execution id="dfc4ae25-1221-44a8-bbbe-63ff9dc56972" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractLogTests" name="Pump_ReRun_IsIdempotent_NoDoubleRegister" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.EndToEnd_JsonlRegisterThenHeartbeat_SessionIsAlive_ThenGoesStale" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f6af8b6e-ad30-5e28-f1eb-d297bc121ce2">
+      <Execution id="c4fca867-20cc-4d00-bfe6-66fd48f5fef9" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="EndToEnd_JsonlRegisterThenHeartbeat_SessionIsAlive_ThenGoesStale" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractLogTests.WriterAndPump_RegisterThenHeartbeat_SessionIsAliveInTheStore" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d6156cde-96aa-1120-5fb9-f0815f86d291">
+      <Execution id="4efbd5af-e00f-4479-b281-ec8947477fd1" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractLogTests" name="WriterAndPump_RegisterThenHeartbeat_SessionIsAliveInTheStore" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.End_WritesSessionEnd_AndStopsTracking" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="1042da85-157c-d773-1465-a5ec56a117de">
+      <Execution id="c57fa471-1c65-4622-94d6-d30941ffbbaf" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests" name="End_WritesSessionEnd_AndStopsTracking" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_BlockingBridge_DoesNotPostToCallerContext" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="59c0aa86-1860-1379-f800-2b05094fe185">
+      <Execution id="268df02f-649b-4592-a0e2-5f9d64574945" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="HeartbeatAll_BlockingBridge_DoesNotPostToCallerContext" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Control_PrewriteFailure_PreservesMembershipAndAbandonsOnlyPending(end: True)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="85faae0c-1550-7d73-0b8a-1687df134d23">
+      <Execution id="8027a77c-5ce7-4282-92fc-ed5692439e6f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="Control_PrewriteFailure_PreservesMembershipAndAbandonsOnlyPending" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_SourceChangedAfterPartialWrite_RemainsUncertainWithoutFurtherAppend(mutation: &quot;different&quot;)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="457e059d-b679-3bb5-40de-63928eac46e8">
+      <Execution id="8884b845-6fb6-43d0-9da3-c7aecd980a48" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Append_SourceChangedAfterPartialWrite_RemainsUncertainWithoutFurtherAppend" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_AppendDeniedThenRetried_DurablyRegistersExactlyOnce" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="5bac2949-61b9-f7c6-d2e4-688c29b67c46">
+      <Execution id="48bc9753-8de9-44b8-b15d-bb1bab60cbef" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Register_AppendDeniedThenRetried_DurablyRegistersExactlyOnce" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_FullBytesButLostDurabilityAcknowledgement_ReconcilesSameAdmission(fault: &quot;flush&quot;)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="ce45ee38-17d8-4c07-6438-c553e939b7e3">
+      <Execution id="dc790260-31f9-4355-b641-f742a132aef0" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Append_FullBytesButLostDurabilityAcknowledgement_ReconcilesSameAdmission" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.End_AppendDeniedThenRetried_DurablyEndsExactlyOnceAndKeepsRegistration" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="e5adf78c-c56c-430f-1e34-a1f03bda4907">
+      <Execution id="6c62b446-dcc6-494b-accd-49d0deeeae88" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="End_AppendDeniedThenRetried_DurablyEndsExactlyOnceAndKeepsRegistration" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_HeldThroughFlush_NormalizedAliasWriterFailsFastAndGateReclaims" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="3bf3007a-e274-658e-24a0-d40578cc3375">
+      <Execution id="4eec4e92-79ae-434d-9d0d-ea8edc0d4e1b" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Append_HeldThroughFlush_NormalizedAliasWriterFailsFastAndGateReclaims" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_LegacyNonemptyLinesAndGappedSequence_PreservesNativeCount(newline: &quot;\n&quot;)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="9e6d6e69-1909-7e85-352c-a3f48358a1a6">
+      <Execution id="e75bf18e-6846-4dd9-ad93-39620803572b" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Prepare_LegacyNonemptyLinesAndGappedSequence_PreservesNativeCount" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.ToAttributes_MapsTheIdentity" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="5210c4f0-29b7-3948-ca22-950e9a283a8b">
+      <Execution id="d65d2ca7-e598-4bbf-88be-63eff22bbaf9" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests" name="ToAttributes_MapsTheIdentity" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_OrdinaryLifecycle_RecordsOneRegisterHeartbeatAndEnd" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6f07f9d9-aee4-3e36-a0b0-c27768bd235a">
+      <Execution id="7829da34-c794-4714-ab00-e94e73f8df2a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Register_OrdinaryLifecycle_RecordsOneRegisterHeartbeatAndEnd" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.Register_IsIdempotent_OneSessionAfterPump" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="9eb9a8ea-4a38-0f95-3069-516ef6301757">
+      <Execution id="ada24a68-9f1e-4c19-b392-d3d3e3b9c759" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests" name="Register_IsIdempotent_OneSessionAfterPump" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.HeartbeatAll_PausedAppend_ConcurrentEndCannotPrecedeHeartbeat" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="79f606fe-0340-49e4-edf1-8326f4fd7322">
+      <Execution id="d44faf25-4afb-410c-93f5-95f86b1f4248" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="HeartbeatAll_PausedAppend_ConcurrentEndCannotPrecedeHeartbeat" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(mode: &quot;legacy&quot;)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="1f7d21f8-3e2c-8236-dd8d-3e952f36f0b6">
+      <Execution id="eafd48a9-73c7-42bb-9bf0-1dc71056632a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_QuotaFilledSincePreparation_RefusesWithoutCreatingFile129" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="84f1618d-2f8d-cd47-96f9-5c1e2f2da2b7">
+      <Execution id="eaab0a29-2ffa-486a-941b-50185ae2530e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Append_QuotaFilledSincePreparation_RefusesWithoutCreatingFile129" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Register_LostCompleteAcknowledgement_RetryDoesNotDuplicate" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="eff6e1cb-28e5-9d47-d816-0b865cd1a3ac">
+      <Execution id="b9a427d0-2212-4c89-b780-2049ec125c3a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="Register_LostCompleteAcknowledgement_RetryDoesNotDuplicate" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_FirstSourceDenied_HealthySourceStillWritten" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="35247a77-0490-a292-a890-f3ae5d8f3e56">
+      <Execution id="497c92ce-92f4-459b-96ec-34d4a4f99eb8" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="HeartbeatAll_FirstSourceDenied_HealthySourceStillWritten" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractLogTests.ReadDirectory_MissingDirectory_ReturnsEmpty" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a3cc3c01-c4ce-bb58-e3ad-5ca0aaa169c4">
+      <Execution id="32a5f448-e5af-44f5-9a23-c2199f0bd5ab" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractLogTests" name="ReadDirectory_MissingDirectory_ReturnsEmpty" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Control_PrewriteFailure_PreservesMembershipAndAbandonsOnlyPending(end: False)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="c6de37b6-e231-b0ac-46bb-6ba3e3489ad9">
+      <Execution id="db969743-6101-487f-bfbb-d4a587f1cb1f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="Control_PrewriteFailure_PreservesMembershipAndAbandonsOnlyPending" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_OtherSessionAppendDenied_IndependentSessionStillCompletes" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f9b0247d-4bf8-0a96-71f3-1925b4eeb6d8">
+      <Execution id="940758ad-e0fc-4340-b901-b91f72fff4ba" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Register_OtherSessionAppendDenied_IndependentSessionStillCompletes" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.HeartbeatAll_StaleSnapshot_DoesNotHeartbeatEndedSession" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="c5146fd8-174e-b00f-fec0-566305d6e12a">
+      <Execution id="0af3b907-124e-4943-9348-ab0a42c67a59" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="HeartbeatAll_StaleSnapshot_DoesNotHeartbeatEndedSession" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_Register_MintsSessionInTheStore_WithVerifiedTrust" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a4c56b40-5dcf-0c8a-431f-0f8613145f55">
+      <Execution id="fc5b84e4-fae4-415a-8b75-a4700077c37c" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="Apply_Register_MintsSessionInTheStore_WithVerifiedTrust" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_TwoParticipatingProcesses_OnlyOneCanClaimFinalCapacityOrSequence(race: &quot;sequence&quot;)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="dc7a6241-42e6-f11f-102c-141271943312">
+      <Execution id="cc420198-0fd0-4428-971b-28b512d663b8" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Append_TwoParticipatingProcesses_OnlyOneCanClaimFinalCapacityOrSequence" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.Reconcile_Registers_Heartbeats_AndEnds_FromASnapshot" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="8f264b18-daf3-269c-9782-1a6b8e7b1ed3">
+      <Execution id="234dfb88-fed1-4fb6-8f5e-bf23be2d5236" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests" name="Reconcile_Registers_Heartbeats_AndEnds_FromASnapshot" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_UnsafeFilenameCollidesWithSafeId_RefusesExistingContentIdentity" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="e057e0b3-3261-55ff-caef-c3a2aa1eda43">
+      <Execution id="42d3f505-0c45-4704-b0ba-522cae279e66" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Prepare_UnsafeFilenameCollidesWithSafeId_RefusesExistingContentIdentity" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.CreateEmitter_UsesTheHostsCoordDirectory" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="16b28635-5f35-a137-9c81-b66ee32d6528">
+      <Execution id="75a1442d-5390-4dba-bb9b-03cf1f58c192" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests" name="CreateEmitter_UsesTheHostsCoordDirectory" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_HeartbeatForUnregisteredSession_IsDroppedAndCounted" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="60fcbeb5-b35a-7397-3cf9-820df8a85805">
+      <Execution id="2391ab73-b601-449d-b44c-8c57e165c8f9" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="Apply_HeartbeatForUnregisteredSession_IsDroppedAndCounted" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_RegisterWithoutHarnessName_IsAssertedTrust" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6c750f87-4586-9880-8cbb-62c9c5c3cc88">
+      <Execution id="6ec20466-b662-4e75-b16a-bb61ad4cd3f1" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="Apply_RegisterWithoutHarnessName_IsAssertedTrust" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Retention_MetadataAccounting_IncludesUtf16FingerprintAndPacket" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="4d43a83e-b34e-20d0-a204-14f0807a2d76">
+      <Execution id="d6016ce2-ad5b-40e3-937d-ba9153311b2f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="Retention_MetadataAccounting_IncludesUtf16FingerprintAndPacket" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_PrefixWrittenThenIOException_RetriesOnlyMissingExactSuffix(prefix: 19)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="847a8665-250a-dc23-8883-ba1ea5a84c47">
+      <Execution id="815cb86d-cfff-4368-b301-f9393dfdc3bf" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Append_PrefixWrittenThenIOException_RetriesOnlyMissingExactSuffix" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_OutOfOrderLines_AreSortedByAtThenSeq" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f713572c-86fa-a471-2fab-e8ea997a9ce9">
+      <Execution id="d7667c18-49ab-4702-bdfe-e3bb2531bed8" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="Parse_OutOfOrderLines_AreSortedByAtThenSeq" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.WriteHeartbeat_RootAlreadyHas32MiB_RefusesWithoutChangingExistingBytes" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="5d1cf3ec-0db5-6f86-aa06-7ddb8bf9293b">
+      <Execution id="4c8e5733-be3c-4bd8-b5e0-8cba3754142e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="WriteHeartbeat_RootAlreadyHas32MiB_RefusesWithoutChangingExistingBytes" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_WrongContractVersion_IsRejectedAndCounted" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="1202a685-d9d6-ea92-0b94-022948689572">
+      <Execution id="1ac6f673-5bbf-47e6-a42c-17614c2befdd" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="Parse_WrongContractVersion_IsRejectedAndCounted" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_SessionEnd_ForgetsTheMapping_SoALaterHeartbeatIsUnknown" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="664c6bb7-e6f3-569a-28c6-e4719b2cc01e">
+      <Execution id="f68e5a2a-0bb3-4236-9ca9-41dc6bdb3447" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="Apply_SessionEnd_ForgetsTheMapping_SoALaterHeartbeatIsUnknown" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_LegacyNonemptyLinesAndGappedSequence_PreservesNativeCount(newline: &quot;\r&quot;)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="4b12701e-6eb7-429c-c1b3-8764a14df74c">
+      <Execution id="b127df60-848e-44c9-b750-724652f07f61" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Prepare_LegacyNonemptyLinesAndGappedSequence_PreservesNativeCount" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.PrepareAndAppend_ExternalOsRootLockBusy_ReclaimsLocalEntryAndPreservesHolder" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="98fe27da-2da2-299c-f659-6c32b7018c37">
+      <Execution id="9cbf0d54-e947-4a88-9eaf-9d9b9df94840" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="PrepareAndAppend_ExternalOsRootLockBusy_ReclaimsLocalEntryAndPreservesHolder" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="5d65dbd4-e701-9c6a-5126-52feac2d0b3c">
+      <Execution id="4f20862e-36bb-4288-83e3-158eaaf55410" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractLogTests.Writer_AssignsIncrementingSeq" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="7f1c41bd-7d12-45b1-61e8-c1dfc33a5583">
+      <Execution id="5db8f6fc-a8f5-4865-be6e-d3ead2dcb729" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractLogTests" name="Writer_AssignsIncrementingSeq" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(abandon: True)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="1d852b39-870d-3db2-7dea-b91ec43a9a85">
+      <Execution id="a94b9a7b-2d90-43f8-9437-aaa4891b5cce" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="Completion_ObserverStillRunning_RetainsStateUntilQuiescence" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_DuplicateRegister_IsIgnoredAndCounted" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="21fd2be7-83ed-0996-9fe5-e1c4dadff3fa">
+      <Execution id="c2b7b0cd-982c-4292-9d5a-aa37077be03b" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="Apply_DuplicateRegister_IsIgnoredAndCounted" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractLogTests.Writer_TwoSessions_WriteSeparateFiles_BothRead" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="22a4601a-e7e2-cd1e-1acc-c2aaf725f139">
+      <Execution id="e423935b-ff46-430d-8ed8-23cdd57dc4df" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractLogTests" name="Writer_TwoSessions_WriteSeparateFiles_BothRead" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_PausedInsideWriter_IndependentSessionCompletes" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="695060bd-8a47-20f2-078b-87719a729003">
+      <Execution id="d309b2a9-ef4f-4faf-bd10-7c1386b573a1" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Register_PausedInsideWriter_IndependentSessionCompletes" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_TwoParticipatingProcesses_OnlyOneCanClaimFinalCapacityOrSequence(race: &quot;bytes&quot;)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="96e92957-a8a7-6c20-f32f-89193adbef70">
+      <Execution id="db939233-038b-468e-9026-09a947c66d33" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Append_TwoParticipatingProcesses_OnlyOneCanClaimFinalCapacityOrSequence" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(glyph: 'A')" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="e14681a0-bd2a-7068-ef30-2afd97ff685c">
+      <Execution id="675249ca-2cce-485b-8061-e7eda0572ee0" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractLogTests.Writer_WritesRegister_ReaderParsesItBack" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="5f6a5e11-8ae3-c266-c047-922f3b88784b">
+      <Execution id="fa27c739-a7cf-4e7b-b5dc-330686a287e2" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractLogTests" name="Writer_WritesRegister_ReaderParsesItBack" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_PausedAppend_EndWaitsForDurableRegistration" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="52a2a528-2d85-7849-e4cd-1797015da491">
+      <Execution id="d0a37236-f578-48fd-bb0c-04f17ae86cb4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationProducerTests" name="Register_PausedAppend_EndWaitsForDurableRegistration" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ReservedSlotAndControlFlood_OnlyOneWaiterAndNoQuotaBypass" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="13b725ca-41bc-7f37-a95e-85311ac91b30">
+      <Execution id="849e75c4-80b9-4f89-886a-8ef857cccbfa" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="RegisterResult_ReservedSlotAndControlFlood_OnlyOneWaiterAndNoQuotaBypass" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_DuplicateRegister_DiscardsTheSecondAttributes_ItDoesNotMerge" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="01a40350-d6f6-e31b-065a-dd1a6c608258">
+      <Execution id="d3ff75c9-7af0-4820-b736-04bba6f2fa2b" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationContractTests" name="Apply_DuplicateRegister_DiscardsTheSecondAttributes_ItDoesNotMerge" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_PreparationUnavailable_FreezesInputAndRejectsMutation" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="e0e44bca-dfd3-e53d-cdf6-c1c1a60b8290">
+      <Execution id="f7b9d90a-f82e-4f6d-864a-dcb76ac6668e" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="RegisterResult_PreparationUnavailable_FreezesInputAndRejectsMutation" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_IdenticalNeverAttemptedPreparation_CannotBorrowAdmission" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="b8bbbc9a-2c4d-237b-a464-2016127cf173">
+      <Execution id="be4ff016-9fb3-4065-9f26-511c518266fc" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests" name="Append_IdenticalNeverAttemptedPreparation_CannotBorrowAdmission" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="0ea31f83-a360-fe36-cb4c-f376c491932f" executionId="88f2be2c-846a-4791-8de7-3466c95ce251" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9eb9a8ea-4a38-0f95-3069-516ef6301757" executionId="ada24a68-9f1e-4c19-b392-d3d3e3b9c759" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bb286a41-2146-5434-c73f-269402d0a414" executionId="d2f1ad2f-aeac-4fb5-8014-81c19a15e446" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="baa60288-6b00-c120-585d-0ec1adf51017" executionId="083a967f-dcee-49a9-b90b-2712ee476ef7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d5833197-fb58-d552-2c88-7f80cfdad545" executionId="ca7d4afb-02d9-457f-80be-987656f3901a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3bf3007a-e274-658e-24a0-d40578cc3375" executionId="4eec4e92-79ae-434d-9d0d-ea8edc0d4e1b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b2e30d7a-1898-597f-1b0c-2b8243d95ce5" executionId="fd3f53c1-f34b-475a-9c5a-5380c7c37933" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dc7a6241-42e6-f11f-102c-141271943312" executionId="cc420198-0fd0-4428-971b-28b512d663b8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="59c0aa86-1860-1379-f800-2b05094fe185" executionId="268df02f-649b-4592-a0e2-5f9d64574945" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b4401b59-7c1f-af55-693e-c1b5f5e93103" executionId="731d989f-9e29-43cb-8d86-6ccb6d06079e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b8bbbc9a-2c4d-237b-a464-2016127cf173" executionId="be4ff016-9fb3-4065-9f26-511c518266fc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0ebfac73-a05f-bd58-7dc1-173ac05ee459" executionId="07081319-e881-4820-8288-426d818fe84f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cb5552b1-1760-8f31-0fe8-d8db1348c5af" executionId="46d336be-b720-4d1a-b523-7bd6049c8338" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c6de37b6-e231-b0ac-46bb-6ba3e3489ad9" executionId="db969743-6101-487f-bfbb-d4a587f1cb1f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="660f065f-5d16-c409-bbab-0acad4812335" executionId="79fcd546-5875-4d9d-b131-acacea498f2b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6f07f9d9-aee4-3e36-a0b0-c27768bd235a" executionId="7829da34-c794-4714-ab00-e94e73f8df2a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a9d407ce-6dc6-6e3f-45eb-2887e99522bd" executionId="d4fab6f8-e1db-451f-a8b0-ac006e72f1d7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1d852b39-870d-3db2-7dea-b91ec43a9a85" executionId="a94b9a7b-2d90-43f8-9437-aaa4891b5cce" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bc5a6026-fb4b-2c01-3b4f-1a391921a41f" executionId="72a7efde-43a2-4c51-9b1f-c9fd94362bf5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9429f04d-506e-5181-158f-913c59184dbd" executionId="5c954c9f-5bcb-4cc1-9b57-41536381931a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8797cbcf-8cd0-b315-4e82-2ed8ea03959a" executionId="fab487bd-f6a3-4d67-b1e5-b0cc275ed4c0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eb48cdaf-bc11-336b-05c9-3cc28ff0e06a" executionId="caab2062-5c89-4805-bb37-6b74ae2bd3ef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c702d844-fe94-959e-0aec-9356d406edd9" executionId="6039b1d9-1dc0-42b4-a35f-d569319252f0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e0e44bca-dfd3-e53d-cdf6-c1c1a60b8290" executionId="f7b9d90a-f82e-4f6d-864a-dcb76ac6668e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3bfae52b-25e9-8c4f-d7db-4e840506ca92" executionId="782f25ee-38c4-4de6-82cd-849ef5ee19a1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e057e0b3-3261-55ff-caef-c3a2aa1eda43" executionId="42d3f505-0c45-4704-b0ba-522cae279e66" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="35247a77-0490-a292-a890-f3ae5d8f3e56" executionId="497c92ce-92f4-459b-96ec-34d4a4f99eb8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="60fcbeb5-b35a-7397-3cf9-820df8a85805" executionId="2391ab73-b601-449d-b44c-8c57e165c8f9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5bac2949-61b9-f7c6-d2e4-688c29b67c46" executionId="48bc9753-8de9-44b8-b15d-bb1bab60cbef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="35e64b56-80ba-903f-294c-6e4d9c3b19d0" executionId="4e0ffae8-e87b-4588-8503-fdb18b25db45" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6c750f87-4586-9880-8cbb-62c9c5c3cc88" executionId="6ec20466-b662-4e75-b16a-bb61ad4cd3f1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="01a40350-d6f6-e31b-065a-dd1a6c608258" executionId="d3ff75c9-7af0-4820-b736-04bba6f2fa2b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a58fc875-5e0a-d408-610e-c0170377ad69" executionId="46ace992-2f34-47e8-99f9-a68932c15e6f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0a04bc27-1418-acc5-f28c-9f5e18c17a67" executionId="baafb373-be7d-4260-85c9-13fe7d8320ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7f1c41bd-7d12-45b1-61e8-c1dfc33a5583" executionId="5db8f6fc-a8f5-4865-be6e-d3ead2dcb729" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="64a5d809-2e28-7ba5-0761-c287d728fc58" executionId="ec6c4b13-a4c8-4b01-86ff-f92603aa7c6b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ce45ee38-17d8-4c07-6438-c553e939b7e3" executionId="dc790260-31f9-4355-b641-f742a132aef0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4b12701e-6eb7-429c-c1b3-8764a14df74c" executionId="b127df60-848e-44c9-b750-724652f07f61" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a3cc3c01-c4ce-bb58-e3ad-5ca0aaa169c4" executionId="32a5f448-e5af-44f5-9a23-c2199f0bd5ab" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b2102a81-1722-4606-86ab-0d6190876406" executionId="d41cc57f-3836-4c82-8ae0-63f88f2319be" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="22e2dd77-b072-27bc-4c84-39b5a7c8673b" executionId="70fff741-3576-4679-9761-fdff4b60c410" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fc3a0066-c1ad-ea9a-4efe-35a074397784" executionId="bad6bcab-56d8-4273-854c-d1e24d65c95f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d28332f5-f229-e3d5-d9a9-6c4c68e239ad" executionId="bd5c195e-88a6-48bd-b591-a361cb3dd5b1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d6156cde-96aa-1120-5fb9-f0815f86d291" executionId="4efbd5af-e00f-4479-b281-ec8947477fd1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="63c1fa1c-d714-049c-6a96-7fbc59edd53f" executionId="7724419f-c4be-4567-82fe-659d49181d59" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8f264b18-daf3-269c-9782-1a6b8e7b1ed3" executionId="234dfb88-fed1-4fb6-8f5e-bf23be2d5236" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="664c6bb7-e6f3-569a-28c6-e4719b2cc01e" executionId="f68e5a2a-0bb3-4236-9ca9-41dc6bdb3447" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="57f1bf5a-43ae-41e8-a5b9-e25b70e98ad2" executionId="046ffc13-ad03-4da5-9c88-10befc1d210d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cb0c6bbd-9a39-94f1-657a-945f7293f7a0" executionId="d86381e2-f4ee-4885-be27-6499caa933c8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="84f1618d-2f8d-cd47-96f9-5c1e2f2da2b7" executionId="eaab0a29-2ffa-486a-941b-50185ae2530e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e5adf78c-c56c-430f-1e34-a1f03bda4907" executionId="6c62b446-dcc6-494b-accd-49d0deeeae88" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1202a685-d9d6-ea92-0b94-022948689572" executionId="1ac6f673-5bbf-47e6-a42c-17614c2befdd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1f7d21f8-3e2c-8236-dd8d-3e952f36f0b6" executionId="eafd48a9-73c7-42bb-9bf0-1dc71056632a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5d65dbd4-e701-9c6a-5126-52feac2d0b3c" executionId="4f20862e-36bb-4288-83e3-158eaaf55410" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="13b725ca-41bc-7f37-a95e-85311ac91b30" executionId="849e75c4-80b9-4f89-886a-8ef857cccbfa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="21fd2be7-83ed-0996-9fe5-e1c4dadff3fa" executionId="c2b7b0cd-982c-4292-9d5a-aa37077be03b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="52a2a528-2d85-7849-e4cd-1797015da491" executionId="d0a37236-f578-48fd-bb0c-04f17ae86cb4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2a284e9b-b1a9-9d29-9fa5-ad4178a68129" executionId="8684f0ea-3ed4-4de6-8d88-d3a5572c1e92" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5d1cf3ec-0db5-6f86-aa06-7ddb8bf9293b" executionId="4c8e5733-be3c-4bd8-b5e0-8cba3754142e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ef6ce0c6-d74c-618c-667f-f62eabdc8c84" executionId="0e64b91c-e174-4cc8-a4ab-88e3af149dcc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="457e059d-b679-3bb5-40de-63928eac46e8" executionId="8884b845-6fb6-43d0-9da3-c7aecd980a48" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7cfb7639-0a1f-2500-fc0b-ba07fe79521e" executionId="bb173f4f-5d3e-46d2-8fdc-b589f2087e39" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5210c4f0-29b7-3948-ca22-950e9a283a8b" executionId="d65d2ca7-e598-4bbf-88be-63eff22bbaf9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="19a33595-7568-658f-c584-166ce424440d" executionId="e6a2d772-bb48-4304-9b47-500a3472dd26" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6f5d81e9-c34e-9049-5110-a0e8e013e7d7" executionId="69ae4f28-7acc-4965-b173-c0e885c0be98" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="448d94ef-77d6-220f-fa94-b47a41df503a" executionId="dfc4ae25-1221-44a8-bbbe-63ff9dc56972" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f9b0247d-4bf8-0a96-71f3-1925b4eeb6d8" executionId="940758ad-e0fc-4340-b901-b91f72fff4ba" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="546de401-1150-1548-b1f6-910fc1f24900" executionId="8c33f4ef-b059-4b88-9a98-576672574a5c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5f6a5e11-8ae3-c266-c047-922f3b88784b" executionId="fa27c739-a7cf-4e7b-b5dc-330686a287e2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2ed00e20-b1c0-8eb6-0f18-73b1b2bccea1" executionId="83dc8af1-1b8f-4afe-8b8e-d7a3cfbba8c6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="98fe27da-2da2-299c-f659-6c32b7018c37" executionId="9cbf0d54-e947-4a88-9eaf-9d9b9df94840" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9e6d6e69-1909-7e85-352c-a3f48358a1a6" executionId="e75bf18e-6846-4dd9-ad93-39620803572b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="79f606fe-0340-49e4-edf1-8326f4fd7322" executionId="d44faf25-4afb-410c-93f5-95f86b1f4248" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="31252224-d9a7-d1c7-5140-8ba9ed1ec4dd" executionId="64d9366d-c0ba-45ef-bfa5-1dba30f7e8c0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="85faae0c-1550-7d73-0b8a-1687df134d23" executionId="8027a77c-5ce7-4282-92fc-ed5692439e6f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e14681a0-bd2a-7068-ef30-2afd97ff685c" executionId="675249ca-2cce-485b-8061-e7eda0572ee0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eff6e1cb-28e5-9d47-d816-0b865cd1a3ac" executionId="b9a427d0-2212-4c89-b780-2049ec125c3a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="847a8665-250a-dc23-8883-ba1ea5a84c47" executionId="815cb86d-cfff-4368-b301-f9393dfdc3bf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="88af69c0-b89a-8be7-9eb8-efa0fa6b2e6c" executionId="d686879b-c764-4fc8-af63-9009e245dc8e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0b2ac8ec-2cd1-7475-be8d-62884b9bb800" executionId="0ad92c76-b07b-4d30-a7a2-4f67480b37a4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f713572c-86fa-a471-2fab-e8ea997a9ce9" executionId="d7667c18-49ab-4702-bdfe-e3bb2531bed8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="57d498de-20a9-5ec1-720e-ea656ef42ecd" executionId="04ad17db-3b54-4015-bea5-fee2d26e4c35" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e3042e1b-1946-092d-0f72-43b035fc64ce" executionId="0cfa2edf-778c-4812-a983-92fc1b689efe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c5146fd8-174e-b00f-fec0-566305d6e12a" executionId="0af3b907-124e-4943-9348-ab0a42c67a59" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a4c56b40-5dcf-0c8a-431f-0f8613145f55" executionId="fc5b84e4-fae4-415a-8b75-a4700077c37c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f6af8b6e-ad30-5e28-f1eb-d297bc121ce2" executionId="c4fca867-20cc-4d00-bfe6-66fd48f5fef9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="16b28635-5f35-a137-9c81-b66ee32d6528" executionId="75a1442d-5390-4dba-bb9b-03cf1f58c192" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a13579d2-1715-b465-605f-3d13611cc8a6" executionId="450dd6c6-f2cc-400c-bd1d-980b8ac28dff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="79d9d843-c8d3-cc96-f4ba-2d3025e94a05" executionId="75aceeec-174f-4d5c-8710-7d590876f80c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7e1ebad4-77b6-4f8f-168f-dae476ae07ee" executionId="df99ae27-9d4b-4a52-856d-8254fde601a9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="96e92957-a8a7-6c20-f32f-89193adbef70" executionId="db939233-038b-468e-9026-09a947c66d33" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b8065429-6344-dffe-40d2-ff56395372b7" executionId="d773db5e-de7a-4e61-a4ba-65a4641969e9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fe6804c5-e5da-0277-a96c-e5c2451bc388" executionId="79d92d99-4630-48f1-ab96-e4a219ad7678" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="54d5194c-f772-c9eb-cf23-e0b7e57b5f35" executionId="5110ad55-e0a1-4654-94d7-e59d145fbe95" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d9999e64-e5d6-4d48-6a2b-b040e5258226" executionId="2404875a-27a4-4136-b56e-c735253e7135" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="22a4601a-e7e2-cd1e-1acc-c2aaf725f139" executionId="e423935b-ff46-430d-8ed8-23cdd57dc4df" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fe5308cc-71c2-4ff9-6615-5ef01d03f63f" executionId="d1d2de8f-9208-4a47-bb3b-3ac1d8c48e5f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1042da85-157c-d773-1465-a5ec56a117de" executionId="c57fa471-1c65-4622-94d6-d30941ffbbaf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="695060bd-8a47-20f2-078b-87719a729003" executionId="d309b2a9-ef4f-4faf-bd10-7c1386b573a1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4d43a83e-b34e-20d0-a204-14f0807a2d76" executionId="d6016ce2-ad5b-40e3-937d-ba9153311b2f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="100" executed="100" passed="97" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.24]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.27]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:01.39]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.39]       Expected: Admitted&#xD;
+[xUnit.net 00:00:01.39]       Actual:   InFlight&#xD;
+[xUnit.net 00:00:01.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.39]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(587,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(String mode)&#xD;
+[xUnit.net 00:00:01.39]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(595,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(String mode)&#xD;
+[xUnit.net 00:00:01.39]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.39]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.39]       Expected: Admitted&#xD;
+[xUnit.net 00:00:01.39]       Actual:   InFlight&#xD;
+[xUnit.net 00:00:01.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.39]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(587,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(String mode)&#xD;
+[xUnit.net 00:00:01.39]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(595,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(String mode)&#xD;
+[xUnit.net 00:00:01.39]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.40]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.40]       Expected: Admitted&#xD;
+[xUnit.net 00:00:01.40]       Actual:   InFlight&#xD;
+[xUnit.net 00:00:01.40]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.40]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(587,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(String mode)&#xD;
+[xUnit.net 00:00:01.40]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(595,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(String mode)&#xD;
+[xUnit.net 00:00:01.40]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.22]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T14:49:17.8753864-07:00">
+        <Text>[xUnit.net 00:00:01.38]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(mode: "direct") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T14:49:17.8821780-07:00">
+        <Text>[xUnit.net 00:00:01.39]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(mode: "legacy") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T14:49:17.8896839-07:00">
+        <Text>[xUnit.net 00:00:01.40]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_ReplacedLifecycle_RejectsStaleWorkBeforeWriter(mode: "typed") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

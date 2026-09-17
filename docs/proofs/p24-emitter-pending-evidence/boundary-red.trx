@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="8c04899f-6842-4687-96aa-966b6323af19" name="malla@TIMMALLSTRIX 2026-09-17 14:48:07" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-17T14:48:07.7110203-07:00" queuing="2026-09-17T14:48:07.7110205-07:00" start="2026-09-17T14:48:06.3336973-07:00" finish="2026-09-17T14:48:07.7145067-07:00" />
+  <TestSettings name="default" id="9c2887b6-304a-4fdf-a665-079f4bdce020">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-17_14_48_07" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b045fea2-3fb4-441e-a943-cc221150afc1" testId="35e64b56-80ba-903f-294c-6e4d9c3b19d0" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(abandon: False)" computerName="TIMMALLSTRIX" duration="00:00:00.0037146" startTime="2026-09-17T14:48:07.6366701-07:00" endTime="2026-09-17T14:48:07.6367065-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b045fea2-3fb4-441e-a943-cc221150afc1">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: InFlight&#xD;
+Actual:   NoOp</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(Boolean abandon) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 131&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(Boolean abandon) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 140&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="94cefc52-4a97-434e-8296-163b1945b469" testId="5d65dbd4-e701-9c6a-5126-52feac2d0b3c" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity" computerName="TIMMALLSTRIX" duration="00:00:00.7346099" startTime="2026-09-17T14:48:06.8835963-07:00" endTime="2026-09-17T14:48:07.6279952-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94cefc52-4a97-434e-8296-163b1945b469">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Preparing&#xD;
+Actual:   AwaitingPreparation</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 50&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 58&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f0fe6116-1033-480f-a79b-c7327f988cf0" testId="a58fc875-5e0a-d408-610e-c0170377ad69" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_QuiescentFailedEnd_ReportsBusyWithoutChangingWire" computerName="TIMMALLSTRIX" duration="00:00:00.0070371" startTime="2026-09-17T14:48:07.6369719-07:00" endTime="2026-09-17T14:48:07.6421567-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f0fe6116-1033-480f-a79b-c7327f988cf0">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Busy&#xD;
+Actual:   Refused</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_QuiescentFailedEnd_ReportsBusyWithoutChangingWire() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 83&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="84ea00be-681f-419e-8fb4-6b3312259210" testId="1d852b39-870d-3db2-7dea-b91ec43a9a85" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(abandon: True)" computerName="TIMMALLSTRIX" duration="00:00:00.0018805" startTime="2026-09-17T14:48:07.6360580-07:00" endTime="2026-09-17T14:48:07.6361222-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="84ea00be-681f-419e-8fb4-6b3312259210">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: InFlight&#xD;
+Actual:   NoOp</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(Boolean abandon) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 131&#xD;
+   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(Boolean abandon) in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 140&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(abandon: True)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="1d852b39-870d-3db2-7dea-b91ec43a9a85">
+      <Execution id="84ea00be-681f-419e-8fb4-6b3312259210" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="Completion_ObserverStillRunning_RetainsStateUntilQuiescence" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="5d65dbd4-e701-9c6a-5126-52feac2d0b3c">
+      <Execution id="94cefc52-4a97-434e-8296-163b1945b469" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_QuiescentFailedEnd_ReportsBusyWithoutChangingWire" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a58fc875-5e0a-d408-610e-c0170377ad69">
+      <Execution id="f0fe6116-1033-480f-a79b-c7327f988cf0" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="HeartbeatAll_QuiescentFailedEnd_ReportsBusyWithoutChangingWire" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(abandon: False)" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="35e64b56-80ba-903f-294c-6e4d9c3b19d0">
+      <Execution id="b045fea2-3fb4-441e-a943-cc221150afc1" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="Completion_ObserverStillRunning_RetainsStateUntilQuiescence" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="35e64b56-80ba-903f-294c-6e4d9c3b19d0" executionId="b045fea2-3fb4-441e-a943-cc221150afc1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5d65dbd4-e701-9c6a-5126-52feac2d0b3c" executionId="94cefc52-4a97-434e-8296-163b1945b469" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a58fc875-5e0a-d408-610e-c0170377ad69" executionId="f0fe6116-1033-480f-a79b-c7327f988cf0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1d852b39-870d-3db2-7dea-b91ec43a9a85" executionId="84ea00be-681f-419e-8fb4-6b3312259210" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="4" executed="4" passed="0" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.24]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:01.02]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.02]       Expected: Preparing&#xD;
+[xUnit.net 00:00:01.02]       Actual:   AwaitingPreparation&#xD;
+[xUnit.net 00:00:01.02]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.02]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(50,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity()&#xD;
+[xUnit.net 00:00:01.02]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(58,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity()&#xD;
+[xUnit.net 00:00:01.02]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.02]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.02]       Expected: InFlight&#xD;
+[xUnit.net 00:00:01.02]       Actual:   NoOp&#xD;
+[xUnit.net 00:00:01.02]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.02]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(131,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(Boolean abandon)&#xD;
+[xUnit.net 00:00:01.02]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(140,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(Boolean abandon)&#xD;
+[xUnit.net 00:00:01.02]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.02]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.02]       Expected: InFlight&#xD;
+[xUnit.net 00:00:01.02]       Actual:   NoOp&#xD;
+[xUnit.net 00:00:01.02]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.02]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(131,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(Boolean abandon)&#xD;
+[xUnit.net 00:00:01.02]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(140,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(Boolean abandon)&#xD;
+[xUnit.net 00:00:01.02]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.03]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.03]       Expected: Busy&#xD;
+[xUnit.net 00:00:01.03]       Actual:   Refused&#xD;
+[xUnit.net 00:00:01.03]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.03]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(83,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_QuiescentFailedEnd_ReportsBusyWithoutChangingWire()&#xD;
+[xUnit.net 00:00:01.03]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.03]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T14:48:07.6297275-07:00">
+        <Text>[xUnit.net 00:00:01.02]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T14:48:07.6362773-07:00">
+        <Text>[xUnit.net 00:00:01.02]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(abandon: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T14:48:07.6368479-07:00">
+        <Text>[xUnit.net 00:00:01.02]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Completion_ObserverStillRunning_RetainsStateUntilQuiescence(abandon: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T14:48:07.6423298-07:00">
+        <Text>[xUnit.net 00:00:01.03]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_QuiescentFailedEnd_ReportsBusyWithoutChangingWire [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

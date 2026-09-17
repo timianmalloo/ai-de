@@ -91,7 +91,7 @@ internal sealed class CoordinationEmitterState(string session)
     internal string Session { get; } = session;
     internal bool Registered { get; set; }
     internal CoordinationEmitterOperation? Pending { get; set; }
-    internal CoordinationEmitterPhase Phase { get; set; } = CoordinationEmitterPhase.AwaitingPreparation;
+    internal CoordinationEmitterPhase Phase { get; set; } = CoordinationEmitterPhase.Preparing;
     internal Dictionary<string, string?>? Frozen { get; set; }
     internal PreparedWrite? Prepared { get; set; }
     internal string? BlockedCode { get; set; }

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T02:13:58Z",
+  "generated": "2026-09-17T21:53:50Z",
   "audit": [
     {
       "actor": null,
@@ -20949,6 +20949,40 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-09-17T01:47:34Z",
       "duration_seconds": 478.0
+    },
+    {
+      "id": "al-01M2RNS5RZB708GHQK5X2RFKEN",
+      "shortname": "producer-boundary-blocked-checkpoint",
+      "datetime": "2026-09-17T21:53:50Z",
+      "session": "xh-p2-producers-b0d0",
+      "prompt": "Bounded synchronous continuation of RETAINED producer role/worktree, MAX24TOOLS/context150k NOagents. Parent attempted exactretainedhandle7b32174b-b618-4e55-932c-11526b47d763 viawrite_agent; toolREFUSED sync-mode followup, noauthorstarted. This freshsyncinvocation continuesSAMErole/session/tree, notnewprogramme/owner. OwnC:\\Projects\\ai-de-feature-xh-p2-producers CLEANHEAD1f43127928f3e5cc185a3a7641a29f66727af1f6 (onlyauditderivedafterCODEc92f724c1ecfe8b4292774d1e2b016edfa8dc7b6); preservea855ancestor. FIRSTowncommand envAGENT_SESSION=xh-p2-producers-b0d0 AGENT_NAME=cross-harness-producer-author PYTHONIOENCODING=utf8;cdOWN;python docs\\ai-forward-pack\\scripts\\audit-log.py start --session xh-p2-producers-b0d0 --skill implement. Reopenownsessionofficialtool. No rosters/skillsreinjection/broadrediscovery.\nUserALLP0–P5approval remains, producer-first currentnode. PassedPrepared/global128 coremechanics already739cd; ABA capturedstateidentity/observercleanupc92independentPASS96, doNOTredo. CurrentSIXremainingfloors fromexistingdocs/design/cross-harness-native-producer.md: reserved-state phase; quiescent-End classification; stress/bounds; rootcontention; telemetry; fullqualification. THIS24callnode closesFIRSTTWOactualboundarygaps +precisecapacity/refusal/releaseevidence, notallproducer/notice/storage/P2/P3–5. ReaddirectcurrentEmitter/State/tests andrelevantremainingparagraphonly, notwholehistory/canonicalhugepack.\nRequiredbehavior/oracles: processGLOBAL128reservation/state count includesPreparingbeforeidentityfactory/copy/clock/Prepare; blockedfactoryaftercapacityreserve shouldshowPreparing/Reserved ratherthanNotFound; twoownersroots128+1refuse BEFOREanyfactory/Prepare/fileeffects; correctLiveCount (registerPendingnotregistered, heartbeat/endPendingregistered). ConcurrentEnd afterdurableappendbutbeforeAPI/controlcompletion mustnotfakeNoOp/quiescentretirement orloseinflightstate; stage semantics deriveactualapproved contract/testsnapshot notnewlivenessauthority. Releaseexactlyonce atprovenno-writeRegisterabandonment orAdmittedEnd withsafequiescence; UncertainPreparedneverexpired/GC released, identity-exactretryretained; state-object identityrevalidateafterwait againstEnd→Register, no string-onlyABA. Firstinspectifgapstillreal; existingproofcountsIfcoveredreusewithoutcodechurn.\nRED-first realcurrent-code controlledseamsTCS/barriers/boundedwaits(nofixedsleep), no missingAPI/setupfailred. Reverse reservationpublication/releaseclassification faultmustbreakSAMEstate/table/file assertions. Preserve91/96existing/writer77P1three-operationgatecontrols. CodeonlyC#EmitterState/SessionCoordinationEmitter/currentPendingTests/helpers +existingscopeddesign/ownaudit/rawproducerrecords. No storage/schemachange inthisnode; noticecapacity/durableNativeRegistrationData contractALREADYreviewedonP2branch separate; doNOT inventsecondstatus/acceptedcounterstore/coldrestartrecovery. ReturnexactsubfloorsDone/Blocked/unexecuted, notfullP2.\nSHAREDSEAMFREEZE: ENTIREdocs/ai-forward-pack/scripts/coord-core.py reservedforClaudeR125handoff—NO edits/copy/reimplementation/DC163changes. InvokePINNEDupdatedofficialCLI ABSOLUTE C:\\Projects\\ai-de-feature-xh-p1-responses\\docs\\ai-forward-pack\\scripts\\coord-core.py SHA256eda666970a695fb23b8594e7e540e6a9ab43203669e2d6578962834d11fa48ae fromOWNcwd/session. ClassifyEVERYEXACTrelativepath, claimONLYAUTHOREDTTL300duringedit; NEVERwildcard/derived/register(.auditJS/JSONL/index) claims. Releasebeforetests. No hookoverride,install/repoint/config/mainpush/force/amend/GUI/App/slots/liveDB/harness endpoints/observer/peers/upstream. Userreportedmain2a5coordmetadataONLY nofrozenpinrefresh/rebase. Don'tclaimsyntheticPreparedsourceModelconsumption/humanpermissions.\nUseexistingC#/testing/observability guidanceonlyneeded. ExistingdesigncapturerootsourceProofPackglobalonOTHERP2treedon'tedit; ownrawdocs/proofs/p24-emitter-pending-evidence andscopeddesign/audit sourcePins source/test/csproj/DLLactualworkingSHA+Gitblobseparate. NoextraProofPack. Canonicalpathsingularknownwillconsolidateparentafterreview. Actualstdoutstderr/exitsTRX notmetadata-onlytranscripts; oldrawrecordsunchanged. OrdinarycommitCopilottrailer stageownaudit-data.jswithJSONL after--rootOWNrenderverify NOCLAIMderived, no sitegen. FinishCLEANrepo/sessionended/leasesreleased beforehandingoff; if24cap/newblockerstopcoherentcode/evidencepoint preserveunfinishedstatehonestly no budgetincrease. FULLHASHvisiblegitrevparseavoidtruncation. IndependentreviewerMAX12next parent20checkpoint, no longnextphase. Report≤1200words concretetwo-gap result+testcountsredgreen/mutants+remaining4or6floors+nextsmallestnode.",
+      "summary": "BLOCKED qualification checkpoint at 24-call cap. Four boundary regressions red on original code; Preparing, failed-End Busy and observer-completion retention implemented. Initial fix 97/100 regressed identity-only queued leases; corrected 100/100. Composite reversal four matching failures. Restored 99/100: existing HeartbeatAll_StaleSnapshot_DoesNotHeartbeatEndedSession line 280 failed; cause unverified, no retry-to-green. All four new boundary cases and three ABA modes passed. Four broader floors remain. Source/test/csproj/DLL working SHA256 and Git blobs recorded. First red raw generation lacked leases; oversized orientation output consumed calls. No full producer/P2 PASS; independent review and canonical proof/defect consolidation remain parent-owned.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs\\design\\cross-harness-native-producer.md",
+        "docs\\proofs\\p24-emitter-pending-evidence\\boundary-restored.trx",
+        "docs\\proofs\\p24-emitter-pending-evidence\\boundary-provenance.json"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Close reserved-state and quiescent-End boundary gaps without touching storage or later phases.",
+      "done_when": "Boundary red/green and reversal evidence recorded; qualification must pass before integration; preserve a blocked checkpoint if a new failure or 24-call cap intervenes.",
+      "tier": "T2",
+      "main_calls": 24,
+      "main_budget": 24,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-17T21:44:29Z",
+      "duration_seconds": 561.0,
+      "git": {
+        "sha": "1f43127928f3e5cc185a3a7641a29f66727af1f6",
+        "short": "1f4312792",
+        "branch": "feature/xh-p2-producers",
+        "pushed": null
+      }
     }
   ],
   "changes": [

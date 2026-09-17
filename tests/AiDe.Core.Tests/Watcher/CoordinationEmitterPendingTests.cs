@@ -8,6 +8,146 @@ public sealed class CoordinationEmitterPendingTests
         new("synthetic-repo", "synthetic", "branch", "tree", "terminal", "agent");
 
     [Fact]
+    public async Task RegisterResult_BlockedFactory_PublishesPreparingWithinProductionCapacity()
+    {
+        using var first = new PendingDirectory();
+        using var second = new PendingDirectory();
+        using var excess = new PendingDirectory();
+        var a = new SessionCoordinationEmitter(new CoordContractWriter(first.Root));
+        var b = new SessionCoordinationEmitter(new CoordContractWriter(second.Root));
+        var c = new SessionCoordinationEmitter(new CoordContractWriter(excess.Root));
+        using var aLife = new EmitterTestLifetime(a);
+        using var bLife = new EmitterTestLifetime(b);
+        using var cLife = new EmitterTestLifetime(c);
+        for (var index = 0; index < 64; index++) a.Register("a" + index, Identity);
+        for (var index = 0; index < 63; index++) b.Register("b" + index, Identity);
+        using var entered = new ManualResetEventSlim();
+        using var release = new ManualResetEventSlim();
+        var registration = Task.Run(() => b.Reconcile(
+            new HashSet<string>(Enumerable.Range(0, 63).Select(index => "b" + index)) { "reserved" },
+            _ =>
+            {
+                entered.Set();
+                if (!release.Wait(TimeSpan.FromSeconds(10))) throw new TimeoutException("synthetic factory");
+                return Identity;
+            }));
+        try
+        {
+            Assert.True(entered.Wait(TimeSpan.FromSeconds(10)));
+            Assert.Equal(128, CoordinationEmitterBudget.Production.Occupied);
+            Assert.Equal(64, b.RetainedCount);
+            Assert.Equal(63, b.LiveCount);
+            Assert.False(File.Exists(second.Log("reserved")));
+            var calls = 0;
+            var refused = Assert.Throws<CoordinationEmitterException>(() =>
+                c.Reconcile(new HashSet<string> { "excess" }, _ => { calls++; return Identity; }));
+            Assert.Equal(CoordinationEmitterCodes.Capacity, refused.Result.Code);
+            Assert.Equal(0, calls);
+            Assert.Equal(0, c.RetainedCount);
+            Assert.False(Directory.Exists(excess.Root));
+            var snapshot = b.TryAbandonPending("reserved");
+            Assert.Equal(CoordinationEmitterOutcome.InFlight, snapshot.Outcome);
+            Assert.Equal(CoordinationEmitterPhase.Preparing, snapshot.Phase);
+            Assert.Equal(CoordinationEmitterMembership.PendingRegistration, snapshot.Membership);
+            Assert.False(b.TryRetire());
+        }
+        finally
+        {
+            release.Set();
+            await registration.WaitAsync(TimeSpan.FromSeconds(10));
+        }
+        Assert.Equal(64, b.LiveCount);
+        Assert.Single(File.ReadAllLines(second.Log("reserved")));
+        b.End("reserved");
+        Assert.Equal(127, CoordinationEmitterBudget.Production.Occupied);
+        Assert.Equal(0, GateReferences(b, "reserved"));
+        c.Register("excess", Identity);
+        Assert.Equal(128, CoordinationEmitterBudget.Production.Occupied);
+        Assert.Single(File.ReadAllLines(excess.Log("excess")));
+    }
+
+    [Fact]
+    public async Task HeartbeatAll_QuiescentFailedEnd_ReportsBusyWithoutChangingWire()
+    {
+        using var files = new PendingDirectory();
+        var budget = new CoordinationEmitterBudget();
+        var emitter = new SessionCoordinationEmitter(new CoordContractWriter(files.Root), budget);
+        using var lifetime = new EmitterTestLifetime(emitter);
+        emitter.Register("a", Identity);
+        var original = File.ReadAllBytes(files.Log("a"));
+        using (new FileStream(files.Log("a"), FileMode.Open, FileAccess.Read, FileShare.None))
+            Assert.Equal(CoordinationEmitterOutcome.Unavailable, emitter.EndResult("a").Outcome);
+        Assert.Equal(0, GateReferences(emitter, "a"));
+        var pending = Assert.Single(await emitter.HeartbeatAllResultsAsync());
+        Assert.Equal(CoordinationEmitterMembership.Live, pending.Membership);
+        Assert.Equal(CoordinationEmitterOutcome.Busy, pending.Outcome);
+        Assert.Equal(CoordinationEmitterCodes.Busy, pending.Code);
+        Assert.Equal(original, File.ReadAllBytes(files.Log("a")));
+        Assert.Equal(1, emitter.LiveCount);
+        Assert.Equal(1, budget.Occupied);
+        Assert.Equal(CoordinationEmitterOutcome.Admitted, emitter.RetryPending("a").Outcome);
+        Assert.Equal(0, emitter.LiveCount);
+        Assert.Equal(0, budget.Occupied);
+        Assert.Equal(2, File.ReadAllLines(files.Log("a")).Length);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Completion_ObserverStillRunning_RetainsStateUntilQuiescence(bool abandon)
+    {
+        using var files = new PendingDirectory();
+        var budget = new CoordinationEmitterBudget();
+        var emitter = new SessionCoordinationEmitter(new CoordContractWriter(files.Root), budget);
+        using var lifetime = new EmitterTestLifetime(emitter);
+        if (abandon)
+            Assert.Equal(CoordinationEmitterOutcome.Refused,
+                emitter.RegisterResult("a", new Dictionary<string, string?> { ["invalid"] = "value" }).Outcome);
+        else emitter.Register("a", Identity);
+        using var entered = new ManualResetEventSlim();
+        using var release = new ManualResetEventSlim();
+        void PauseCompletion(object? sender, System.Diagnostics.ActivityChangedEventArgs args)
+        {
+            if (args.Previous?.OperationName != "coordination.emitter" ||
+                args.Current?.OperationName != "synthetic-completion") return;
+            entered.Set();
+            if (!release.Wait(TimeSpan.FromSeconds(10))) throw new TimeoutException("synthetic completion");
+        }
+        System.Diagnostics.Activity.CurrentChanged += PauseCompletion;
+        var completion = Task.Run(() =>
+        {
+            using var parent = new System.Diagnostics.Activity("synthetic-completion").Start();
+            return abandon ? emitter.TryAbandonPending("a") : emitter.EndResult("a");
+        });
+        CoordinationEmitterResult result;
+        try
+        {
+            Assert.True(entered.Wait(TimeSpan.FromSeconds(10)));
+            Assert.False(completion.IsCompleted);
+            Assert.Equal(abandon ? 0 : 2, File.Exists(files.Log("a")) ? File.ReadAllLines(files.Log("a")).Length : 0);
+            Assert.Equal(0, emitter.LiveCount);
+            Assert.Equal(1, GateReferences(emitter, "a"));
+            Assert.False(emitter.TryRetire());
+            Assert.Equal(CoordinationEmitterOutcome.InFlight, emitter.EndResult("a").Outcome);
+            Assert.Equal(1, emitter.RetainedCount);
+            Assert.Equal(1, budget.Occupied);
+        }
+        finally
+        {
+            release.Set();
+            try { result = await completion.WaitAsync(TimeSpan.FromSeconds(10)); }
+            finally { System.Diagnostics.Activity.CurrentChanged -= PauseCompletion; }
+        }
+        Assert.Equal(abandon ? CoordinationEmitterOutcome.Abandoned : CoordinationEmitterOutcome.Admitted, result.Outcome);
+        Assert.Equal(0, GateReferences(emitter, "a"));
+        Assert.Equal(0, emitter.RetainedCount);
+        Assert.Equal(0, budget.Occupied);
+        Assert.Equal(CoordinationEmitterOutcome.NoOp, emitter.EndResult("a").Outcome);
+        Assert.Equal(0, budget.Occupied);
+        Assert.True(emitter.TryRetire());
+    }
+
+    [Fact]
     public void Register_LostCompleteAcknowledgement_RetryDoesNotDuplicate()
     {
         using var files = new PendingDirectory();
