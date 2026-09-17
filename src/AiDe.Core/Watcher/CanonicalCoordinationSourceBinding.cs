@@ -65,7 +65,6 @@ internal static class CanonicalCoordinationSourceBinding
             if (RepositoryIdentity.Canonicalise(checkout) != RepositoryIdentity.Canonicalise(primary))
             {
                 var dotGit = Path.Combine(checkout, ".git");
-                Guard(dotGit);
                 var pointer = ReadPointer(dotGit);
                 if (!pointer.StartsWith("gitdir:", StringComparison.Ordinal))
                     return Result(CanonicalBindingStatus.Unavailable, CoordinationBindingErrors.Invalid);
@@ -76,14 +75,15 @@ internal static class CanonicalCoordinationSourceBinding
                     return Result(CanonicalBindingStatus.Unbound, CoordinationBindingErrors.Mismatch);
                 Guard(gitdir);
                 var commonPointer = Path.Combine(gitdir, "commondir");
-                Guard(commonPointer);
                 if (RepositoryIdentity.Canonicalise(Path.GetFullPath(ReadPointer(commonPointer), gitdir))
                     != RepositoryIdentity.Canonicalise(common))
                     return Result(CanonicalBindingStatus.Unbound, CoordinationBindingErrors.Mismatch);
-                // Reuse the native provider only after the pointer is bounded and confined.
-                var located = new FileSystemRepositoryLocator().RepositoryFor(checkout);
-                if (located is null || RepositoryIdentity.Canonicalise(located) != RepositoryIdentity.Canonicalise(primary))
-                    return Result(CanonicalBindingStatus.Unavailable, CoordinationBindingErrors.Invalid);
+                // A copied forward pointer is not checkout membership; Git's admin backlink must agree.
+                var backlinkPath = Path.Combine(gitdir, "gitdir");
+                var backlink = Path.GetFullPath(ReadPointer(backlinkPath), gitdir);
+                if (!string.Equals(backlink, dotGit, PathComparison.ForThisFileSystem))
+                    return Result(CanonicalBindingStatus.Unbound, CoordinationBindingErrors.Mismatch);
+                Guard(dotGit);
             }
             var path = Path.Combine(primary, ".agents", "requests.jsonl");
             Guard(path);
@@ -102,13 +102,16 @@ internal static class CanonicalCoordinationSourceBinding
 
     private static string ReadPointer(string path)
     {
+        Guard(path);
         using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
         Span<byte> bytes = stackalloc byte[MaxPointer + 1];
         var count = 0;
         int read;
         while (count < bytes.Length && (read = stream.Read(bytes[count..])) > 0) count += read;
         if (count > MaxPointer) throw new IOException(CoordinationBindingErrors.Invalid);
-        return StrictUtf8.GetString(bytes[..count]).Trim();
+        var pointer = StrictUtf8.GetString(bytes[..count]).Trim();
+        if (pointer.Length == 0) throw new IOException(CoordinationBindingErrors.Invalid);
+        return pointer;
     }
 
     private static void Guard(string path)

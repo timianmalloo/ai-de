@@ -20,6 +20,88 @@ summary: >-
 
 # Proof Pack — P1/P2 candidates; independent code gate pending
 
+## Finite B1/B2 binding repair — 2026-09-17
+
+**Author evidence, not independent gate clearance.** Base:
+`f5e2fc17edbb758943b7e263e7fe31ea63fbfa8a`. The supplied independent
+Test/Data result had two counterexamples (142 checks, 140 passing).
+This repair closes those two behaviors in the snapshot binder only.
+It does not adopt the separately reviewed P1 timestamp candidate `9d82`.
+The byte corpus and 115 whole-body oracle stay pinned to
+`ebd4f1c8473b70934ec29d778419289719ef5481`.
+
+### Executed claims and falsification
+
+All receipt names below have prefix
+`spikes/canonical-coordination-contract/records/binding-fixes-`.
+The executable driver is `spikes/canonical-coordination-contract/binding-fixes.py`.
+Each native run retains separate stdout, stderr, TRX, result JSON, and 17-file
+before/after SHA-256 snapshots. Receipts are create-only: rerunning an existing
+name fails instead of overwriting evidence. Durations are measured per native run.
+
+| Claim | Oracle / observed result | Confidence and limit |
+|---|---|---|
+| A copied genuine linked `.git` pointer cannot select primary requests for an impostor | `red-exact.trx`: `Bind_CopiedLinkedPointer_RefusesImpostorWithoutSource` expected Unbound, actual Bound on unchanged base source. Final: Unbound/Mismatch, null source path/ID/scope; genuine primary and linked return the exact physical primary requests path and equal scope. Original admin backlink bytes remain unchanged | Verified real temporary Git metadata; not authentication against an actor controlling both directions |
+| Git-valid relative forward metadata remains eligible | Same red TRX: `Bind_GitValidRelativeForwardPointer_BindsPhysicalPrimaryAndSameScope` expected Bound, actual Unavailable. Before the focal call, actual Git `rev-parse --path-format=absolute --git-common-dir` equals physical primary `.git`. Final: exact official source path and same primary scope | Verified Windows/Git execution; no Linux execution claim |
+| A relative admin backlink uses the admin directory as its base | `Bind_RelativeBacklink_ResolvesAgainstAdminDirectory` passes using bounded synthetic metadata in a real Git fixture | Verified synthetic relative-backlink case, not every Git version |
+| Invalid metadata cannot fabricate a source | Eight theory cases cover missing, blank, NUL-malformed, 4,097-byte, invalid UTF-8, foreign nonexistent target, second-checkout swap, and actual reparse backlink. Each asserts stable Invalid/Mismatch error and null path/ID/scope | Verified listed cases; the nonexistent foreign target returns Unbound before target traversal |
+| Reciprocal membership is load-bearing in the actual binder | `guard-removed-executable`: B1 fails Unbound/Bound; `guard-reversed`: B1 and B2 fail Bound/Unbound; `legacy-root`: B2 fails Bound/Unavailable. All are real C# assertion failures with exit 1 | Verified three focal mutants, not a whole-code mutation score |
+| Restoration includes executable contents, not assembly-version labels | Each mutant has `premutation`, `before`, `after`, `source-restored`, restored-run before/after, and `rebuilt` 17-pin snapshots. Each `restoration.json` records all 17 comparisons true after rebuilding and running | Verified source/test/project/binary content equality, including explicit null for the intentionally absent old candidate |
+| Existing canonical behavior remains | `green-final` and all three `*-restored` runs: 47 executed, 47 passed, zero skipped/failed. Existing 36 tests are unchanged; 11 binding cases were added | Verified selected canonical suite, not all Core/App |
+| Parser and byte experiment were not changed | `probe-1.stdout.txt`: 12,538 numbers + 18 events + 12 invalid cases, zero valid-byte mismatches; `fullContractQualified=false`. Codec, parser, legacy correction helper, original corpus and whole-body oracle have no source diff | Verified byte-only experiment; complete reader remains unqualified |
+
+### Failed attempts retained, not promoted
+
+`red` failed at CS0051: the public theory exposed an internal enum.
+The public parameter now uses a string and parses the internal enum inside the test.
+`red-semantic` had the genuine B1 failure, but B2 failed while recreating Git's
+hidden `.git` file. The fixture now truncates the existing file through an open
+stream, preserving its attributes. Only `red-exact` establishes the exact two reds.
+
+The first `green` was 46/47: `Path.GetFullPath("", admin)` returned the admin
+directory rather than throwing. The reader now explicitly rejects a blank
+bounded pointer; the empty-pointer control was observed red before green.
+The first `guard-removed` mutant used a compile-time false branch and was
+rejected by CS0162. It is not a killed behavioral mutant. The replacement
+executes a false path-comparison predicate and fails the actual B1 assertion.
+Every original output remains available under its distinct name.
+
+### Change reach, classes and remaining gates
+
+Reach: trusted composition -> bounded forward pointer -> confined admin/common
+metadata -> bounded reciprocal backlink -> typed binding result -> tests.
+`ReadPointer` rechecks every path component and final entry for reparse points
+immediately before each bounded read. A backlink is resolved lexically against
+admin, compared with the supplied checkout `.git` using the existing
+`PathComparison.ForThisFileSystem`, then the allowed checkout path is rechecked.
+No mismatching target is traversed. No event repository ID or stream chooses a
+root, store or tool instruction. No fields, schema, stores, reducers or live
+source handles were added. Status/code and elapsed-time results remain the
+normal-path instrumentation; no payload/path logging was added.
+
+Class -> sweep -> derive -> prevent, recorded here under the allowed canonical
+artifact scope rather than editing the shared lesson register:
+
+* **One-way metadata mistaken for reciprocal membership:** swept the binder's
+  forward/common/checkout paths and its sole legacy-locator call. Derive both
+  directions from confined resolved metadata. Exact B1 and removed/reversed
+  guard mutants now fail on the defective shape.
+ **Resolved identity reinterpreted by lexical inference:** the correction
+  helper remains unchanged for old callers; only the binder stops invoking it.
+  Exact B2 plus the restored-legacy-inference mutant control this binder.
+* **CI-ENV / RIG-D fixture and boundary assumptions:** the enum accessibility,
+  hidden Git-file overwrite, empty-path resolution and compile-only mutant
+  failures above are retained. Compiler, real Git fixture, explicit blank-pointer
+  test, and TRX focal-assertion qualification are the corresponding controls.
+
+The independent reviewers were not respawned or self-cleared. Linux behavior,
+hostile concurrent filesystem replacement, held-handle live capture, origin-limit
+Data/DS storage admission, production capture/store, reducer, full P2 and P3-P5
+remain pending. No App/GUI, endpoint, live database, dependencies, hooks, config,
+main, other worktree, push or upstream changes were made. No AIDE session/log
+environment was supplied, so no invented episode event was written; this
+canonical Proof Pack is the evidence pointer.
+
 ## NativeNoticeN1 author unit — 2026-09-17
 
 **Candidate, not independent approval.** Base `0020e2066b0d073c5ed46eca9c860350268de2e7`.

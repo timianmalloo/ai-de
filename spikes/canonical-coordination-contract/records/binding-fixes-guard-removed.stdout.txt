@@ -1,0 +1,2 @@
+
+C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\CanonicalCoordinationSourceBinding.cs(85,21): error CS0162: Unreachable code detected [C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\AiDe.Core.csproj]

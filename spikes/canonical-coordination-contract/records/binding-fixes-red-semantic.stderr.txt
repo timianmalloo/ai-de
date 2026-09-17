@@ -1,0 +1,3 @@
+[xUnit.net 00:00:00.47]     AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_CopiedLinkedPointer_RefusesImpostorWithoutSource [FAIL]
+[xUnit.net 00:00:00.60]     AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_GitValidRelativeForwardPointer_BindsPhysicalPrimaryAndSameScope [FAIL]
+Test Run Failed.

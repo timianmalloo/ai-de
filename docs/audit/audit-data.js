@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T17:25:06Z",
+  "generated": "2026-09-17T17:51:13Z",
   "audit": [
     {
       "actor": null,
@@ -21433,6 +21433,62 @@ window.AUDIT_DATA = {
         "branch": "feature/xh-p2-projection",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2R7VW10EHEW35KY20PE2MPA",
+      "shortname": "implement-canonical-binding-b1-b2",
+      "datetime": "2026-09-17T17:50:38Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "WRITE-CAPABLE C# finite2bindingfixes <=28tools150k noagents. OwnregisteredP2treeC:\\Projects\\ai-de-feature-xh-p2-projection HEADf5e2fc17edbb758943b7e263e7fe31ea63fbfa8a sessionxh-p2-projection-b0d0 endedreopen. ExactTTL300/envsession-nameutf8/apply_patch/noheredoc/outputredirect/pipedgates. No otherworktree/main/push/force/amend/config/hooks/install/deps/GUI/App/liveDB/endpoints/upstream/liveobserver changes. AllP0–P5approved no newfeature/permission. DataDSoriginmigrationreviewparallelREADONLY no claims.\nIndependentTest/Datagate BINDINGBLOCK2counterexamples actualC#harness142checks140pass2fail; parser36PASSbyte12568probezeroValidmismatch stillfullReaderfalse. B1Blocker copied.gitpointer REALprimary+linked thenCOPYgenuineLinked/.git intoIMPOSTORdir; binder returnsBOUNDprimary.requests whileadmin/gitdir backpointerstilloriginalLinked. FixBOUNDEDREPARSE-CHECKED reciprocal admin gitdir pointer againstsuppliedcheckout/.git, notjustforward.git andcommondir. Two directionslinksameactualcheckoutmetadata; no .git filealoneownership/authentication. B2Major genuineRELATIVEforwardpointer gitdir:../primary/.git/worktrees/linked gitCLIvalidcommonRoot butbinderUnavailable becausepathresolvedthenlegacylexicalRepositoryCorrectionhelperre-inferswrongroot. UsealreadyRESOLVEDconfinedmetadatapaths; no reintroducelexicalparentinference. Existingprimary/absolute-linkedvalidfixturespreserved. AllnewfieldscomeTRUSTEDrepositorycomposition, eventRepoID/streamneverstoreselector. No neednewlocatorframework/FSAPI guess/nativeRootHashingchanges.\nSourceCanonicalCoordinationSourceBinding.cs69–85 andRepositoryCorrection.cshelper98–129 (doNOTchangebroadercorrectionhelper unlessnecessary; likelystopusingitslexicalrootinthisbinder only). Revalidateprefix/reparse/backlinkboundedlimits beforeMetadataRead; actualpathcomparisonOS contract (Windowscaseinsensitiveexistingnativeidentity; Linuxcase behaviornotclaimeduntested). PathbacklinkcanitselfRELATIVE resolveagainstADMINdirectory asgitcontract; usegitgeneratedorboundedsyntheticrealGitmetadatafixture no primarymetadata edits/hook/config. Brokenmissing/malformed/oversized/foreignbacklink explicitUnavailable/UnboundNOTfabricatedrepo, no traversaltooutsideallowlistroot; do notshowuntrustedpathasToolInstruction. DomainrepoactualRoot≠basename (existing collisioncaseskeep). No LiveSourceHandle/race-proofclaimorproductioncapture/storeyet.\nTDD reproduceEXACT2RED oldf5 withactualGit temporaryprimary/linked/impostor metadata, positivegitCLIcommonroot proofrelativevalid. NewstrongassertBoundphysicalprimaryRoot/officialexpectedfile/SameScope onlygenuine andErrornoSourcePathforimpostor. AddnegativebacklinkswapcaseIFneededboundednotbroadinfiniteattempts. Reciprocalguardreverse/importlegacyrootinference mutantsfocalrealasserts mustfail (notcompilehelpers). Current36tests+12568vectorcorpus/115wholebodyoraclePINebd4 unchanged, source/parserBODYsemanticsnotchanged. P1timestamp9d82candidateindependentlycodepassbutcorpusstillpinnedoldcontrolledlater; DON'Tauto-update.\nOWN SourceBinding.cs andtestsCanonicalCoordinationBindingTests/...actualexistingfile, canonicalProofPack/design/phaseplan+owndaudit/newrecords existingspike/records; no otherProofDoc/site.MetaOracle.SourceFlags actual. All17snapshotpins BEFOREmutant andrestore+after source/test/project/binfullSHA/contentpin notinfosVersiononly; actualstdout/stderr/TRX no quietgreenoverwrites. StageOWN audit-data.js withJSONL afterexplicitOWNrootrenderverifyordinaryhookneveroverride. CommitCopilottrailercleanreleasedended≤1100wordsexactcommitclosed2REDGREEN mutants plusLinux/liveFScapture/originstore/reducer/fullP2/P3–5stillpending. Ifprovidedsourceharnesssimplerreadonly fromsessionfiles/canonical-review notneeded importdata onlyauthorcanconstructownproperregression.",
+      "summary": "Closed B1/B2 in the bounded snapshot binder without changing parser/codec/correction-helper semantics. Exact original f5e2fc1 two-test red retained; Git CLI proves the relative forward pointer's common root. Final selected suite 47/47, including all existing 36. Added relative-backlink and eight invalid-backlink cases with null source provenance. Three executable focal mutants fail intended assertions (removed reciprocal guard 1, reversed guard 2, legacy inference 1); every restored full run 47/47 and all 17 content pins identical. Rebuilt 12568-vector probe has zero valid-byte mismatches and fullContractQualified=false; 115-case oracle remains ebd4 pinned. Four failed test/evidence attempts retained, never promoted: CS0051, hidden-file overwrite, blank-path resolution and CS0162. Classes and controls recorded in allowed canonical Proof Pack. No agents, dependency/config/hook/App/liveDB/endpoint/main/other-tree/upstream/push changes. Own-root audit render/verify and ordinary-hook local commit/release/end follow this precommit entry; independent reviewer clearance, Linux/live-filesystem capture/origin storage/reducer/full P2/P3-P5 remain pending. Manual 28-call ceiling is a declaration, not harness telemetry; durations are per-run measurements.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "copilot-xh-p2-projection",
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close B1 copied-pointer binding and B2 relative-pointer rejection in the registered P2 tree.",
+      "done_when": "Exact two original-source reds, restored green and focal mutant failures retained with all 17 pins, unchanged corpus/oracle, scoped commit, released leases and ended session.",
+      "tier": "T2",
+      "main_calls": 25,
+      "main_budget": 28,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-17T17:42:58Z",
+      "duration_seconds": 460.0,
+      "git": {
+        "sha": "f5e2fc17edbb758943b7e263e7fe31ea63fbfa8a",
+        "short": "f5e2fc17e",
+        "branch": "feature/xh-p2-projection",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2R7WXTV5B30R6088T614XNA",
+      "shortname": "optimize-graph-binding-b1-b2",
+      "datetime": "2026-09-17T17:51:13Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "{\n  \"shortname\": \"implement-canonical-binding-b1-b2\",\n  \"session\": \"xh-p2-projection-b0d0\",\n  \"skill\": \"implement\",\n  \"kind\": \"skill\",\n  \"actor\": \"copilot-xh-p2-projection\",\n  \"goal\": \"Close B1 copied-pointer binding and B2 relative-pointer rejection in the registered P2 tree.\",\n  \"done_when\": \"Exact two original-source reds, restored green and focal mutant failures retained with all 17 pins, unchanged corpus/oracle, scoped commit, released leases and ended session.\",\n  \"tier\": \"T2\",\n  \"fan_out\": 0,\n  \"main_budget\": \"28/28\",\n  \"outcome\": \"success\",\n  \"prompt\": \"WRITE-CAPABLE C# finite2bindingfixes <=28tools150k noagents. OwnregisteredP2treeC:\\\\Projects\\\\ai-de-feature-xh-p2-projection HEADf5e2fc17edbb758943b7e263e7fe31ea63fbfa8a sessionxh-p2-projection-b0d0 endedreopen. ExactTTL300/envsession-nameutf8/apply_patch/noheredoc/outputredirect/pipedgates. No otherworktree/main/push/force/amend/config/hooks/install/deps/GUI/App/liveDB/endpoints/upstream/liveobserver changes. AllP0–P5approved no newfeature/permission. DataDSoriginmigrationreviewparallelREADONLY no claims.\\nIndependentTest/Datagate BINDINGBLOCK2counterexamples actualC#harness142checks140pass2fail; parser36PASSbyte12568probezeroValidmismatch stillfullReaderfalse. B1Blocker copied.gitpointer REALprimary+linked thenCOPYgenuineLinked/.git intoIMPOSTORdir; binder returnsBOUNDprimary.requests whileadmin/gitdir backpointerstilloriginalLinked. FixBOUNDEDREPARSE-CHECKED reciprocal admin gitdir pointer againstsuppliedcheckout/.git, notjustforward.git andcommondir. Two directionslinksameactualcheckoutmetadata; no .git filealoneownership/authentication. B2Major genuineRELATIVEforwardpointer gitdir:../primary/.git/worktrees/linked gitCLIvalidcommonRoot butbinderUnavailable becausepathresolvedthenlegacylexicalRepositoryCorrectionhelperre-inferswrongroot. UsealreadyRESOLVEDconfinedmetadatapaths; no reintroducelexicalparentinference. Existingprimary/absolute-linkedvalidfixturespreserved. AllnewfieldscomeTRUSTEDrepositorycomposition, eventRepoID/streamneverstoreselector. No neednewlocatorframework/FSAPI guess/nativeRootHashingchanges.\\nSourceCanonicalCoordinationSourceBinding.cs69–85 andRepositoryCorrection.cshelper98–129 (doNOTchangebroadercorrectionhelper unlessnecessary; likelystopusingitslexicalrootinthisbinder only). Revalidateprefix/reparse/backlinkboundedlimits beforeMetadataRead; actualpathcomparisonOS contract (Windowscaseinsensitiveexistingnativeidentity; Linuxcase behaviornotclaimeduntested). PathbacklinkcanitselfRELATIVE resolveagainstADMINdirectory asgitcontract; usegitgeneratedorboundedsyntheticrealGitmetadatafixture no primarymetadata edits/hook/config. Brokenmissing/malformed/oversized/foreignbacklink explicitUnavailable/UnboundNOTfabricatedrepo, no traversaltooutsideallowlistroot; do notshowuntrustedpathasToolInstruction. DomainrepoactualRoot≠basename (existing collisioncaseskeep). No LiveSourceHandle/race-proofclaimorproductioncapture/storeyet.\\nTDD reproduceEXACT2RED oldf5 withactualGit temporaryprimary/linked/impostor metadata, positivegitCLIcommonroot proofrelativevalid. NewstrongassertBoundphysicalprimaryRoot/officialexpectedfile/SameScope onlygenuine andErrornoSourcePathforimpostor. AddnegativebacklinkswapcaseIFneededboundednotbroadinfiniteattempts. Reciprocalguardreverse/importlegacyrootinference mutantsfocalrealasserts mustfail (notcompilehelpers). Current36tests+12568vectorcorpus/115wholebodyoraclePINebd4 unchanged, source/parserBODYsemanticsnotchanged. P1timestamp9d82candidateindependentlycodepassbutcorpusstillpinnedoldcontrolledlater; DON'Tauto-update.\\nOWN SourceBinding.cs andtestsCanonicalCoordinationBindingTests/...actualexistingfile, canonicalProofPack/design/phaseplan+owndaudit/newrecords existingspike/records; no otherProofDoc/site.MetaOracle.SourceFlags actual. All17snapshotpins BEFOREmutant andrestore+after source/test/project/binfullSHA/contentpin notinfosVersiononly; actualstdout/stderr/TRX no quietgreenoverwrites. StageOWN audit-data.js withJSONL afterexplicitOWNrootrenderverifyordinaryhookneveroverride. CommitCopilottrailercleanreleasedended≤1100wordsexactcommitclosed2REDGREEN mutants plusLinux/liveFScapture/originstore/reducer/fullP2/P3–5stillpending. Ifprovidedsourceharnesssimplerreadonly fromsessionfiles/canonical-review notneeded importdata onlyauthorcanconstructownproperregression.\",\n  \"summary\": \"Closed B1/B2 in the bounded snapshot binder without changing parser/codec/correction-helper semantics. Exact original f5e2fc1 two-test red retained; Git CLI proves the relative forward pointer's common root. Final selected suite 47/47, including all existing 36. Added relative-backlink and eight invalid-backlink cases with null source provenance. Three executable focal mutants fail intended assertions (removed reciprocal guard 1, reversed guard 2, legacy inference 1); every restored full run 47/47 and all 17 content pins identical. Rebuilt 12568-vector probe has zero valid-byte mismatches and fullContractQualified=false; 115-case oracle remains ebd4 pinned. Four failed test/evidence attempts retained, never promoted: CS0051, hidden-file overwrite, blank-path resolution and CS0162. Classes and controls recorded in allowed canonical Proof Pack. No agents, dependency/config/hook/App/liveDB/endpoint/main/other-tree/upstream/push changes. Own-root audit render/verify and ordinary-hook local commit/release/end follow this precommit entry; independent reviewer clearance, Linux/live-filesystem capture/origin storage/reducer/full P2/P3-P5 remain pending. Manual 28-call ceiling is a declaration, not harness telemetry; durations are per-run measurements.\",\n  \"artifacts\": [\n    \"src/AiDe.Core/Watcher/CanonicalCoordinationSourceBinding.cs\",\n    \"tests/AiDe.Core.Tests/Watcher/CanonicalCoordinationBindingTests.cs\",\n    \"spikes/canonical-coordination-contract/binding-fixes.py\",\n    \"docs/proof/cross-harness-coordination-proof-pack.md\",\n    \"docs/design/cross-harness-coordination.md\",\n    \"docs/plans/cross-harness-coordination-phases.md\"\n  ]\n}",
+      "summary": "Five serial dependent nodes, no agents, 28-call ceiling. Exact B1/B2 red then 47 green, three focal mutants and full 17-pin restoration, unchanged byte corpus. Four evidence/fixture repairs retained. Native durations measured per receipt; tokens not measured. Full integration and independent review remain pending.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/cross-harness-coordination-phases.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Execute only the finite B1/B2 snapshot binding repairs",
+      "done_when": "Exact red/green and mutation evidence retained, scoped commit clean, leases released and session ended",
+      "tier": "T2",
+      "main_calls": 28,
+      "main_budget": 28,
+      "main_over_budget": false,
+      "fan_out": 0
     }
   ],
   "changes": [

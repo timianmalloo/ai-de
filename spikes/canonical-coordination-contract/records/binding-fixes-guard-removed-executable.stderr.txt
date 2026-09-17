@@ -1,0 +1,2 @@
+[xUnit.net 00:00:00.50]     AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_CopiedLinkedPointer_RefusesImpostorWithoutSource [FAIL]
+Test Run Failed.

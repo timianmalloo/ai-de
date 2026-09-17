@@ -1,0 +1,70 @@
+{
+  "command": [
+    "dotnet",
+    "test",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "--nologo",
+    "-v:minimal",
+    "--filter",
+    "FullyQualifiedName~Bind_CopiedLinkedPointer_RefusesImpostorWithoutSource|FullyQualifiedName~Bind_GitValidRelativeForwardPointer_BindsPhysicalPrimaryAndSameScope",
+    "--logger",
+    "console;verbosity=normal",
+    "--logger",
+    "trx;LogFileName=C:\\Projects\\ai-de-feature-xh-p2-projection\\spikes\\canonical-coordination-contract\\records\\binding-fixes-red-semantic.trx"
+  ],
+  "exit": 1,
+  "qualified": false,
+  "durationSeconds": 5.1837783999799285,
+  "evidence": {
+    "qualified": false,
+    "focalAssertions": {
+      "Bind_CopiedLinkedPointer_RefusesImpostorWithoutSource": true,
+      "Bind_GitValidRelativeForwardPointer_BindsPhysicalPrimaryAndSameScope": false
+    },
+    "counters": {
+      "total": "2",
+      "executed": "2",
+      "passed": "0",
+      "failed": "2",
+      "error": "0",
+      "timeout": "0",
+      "aborted": "0",
+      "inconclusive": "0",
+      "passedButRunAborted": "0",
+      "notRunnable": "0",
+      "notExecuted": "0",
+      "disconnected": "0",
+      "warning": "0",
+      "completed": "0",
+      "inProgress": "0",
+      "pending": "0"
+    },
+    "failures": [
+      {
+        "test": "AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_CopiedLinkedPointer_RefusesImpostorWithoutSource",
+        "message": "Assert.Equal() Failure: Values differ\r\nExpected: Unbound\r\nActual:   Bound"
+      },
+      {
+        "test": "AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_GitValidRelativeForwardPointer_BindsPhysicalPrimaryAndSameScope",
+        "message": "System.UnauthorizedAccessException : Access to the path 'C:\\Users\\malla\\AppData\\Local\\Temp\\canonical-reciprocal-1x1r2gsp.uix\\linked\\.git' is denied."
+      }
+    ]
+  },
+  "nonBinaryPinsUnchanged": {
+    "src/AiDe.Core/Watcher/CanonicalCoordinationCodec.cs": true,
+    "src/AiDe.Core/Watcher/CanonicalCoordinationRecord.cs": true,
+    "src/AiDe.Core/Watcher/CanonicalCoordinationSourceBinding.cs": true,
+    "src/AiDe.Core/AiDe.Core.csproj": true,
+    "spikes/canonical-coordination-contract/CanonicalCandidate.cs": true,
+    "spikes/canonical-coordination-contract/CanonicalProbe.csproj": true,
+    "spikes/canonical-coordination-contract/Program.cs": true,
+    "spikes/canonical-coordination-contract/validate.py": true,
+    "spikes/canonical-coordination-contract/records/validator-oracle.json": true,
+    "tests/AiDe.Core.Tests/Watcher/CanonicalCoordinationContractTests.cs": true,
+    "tests/AiDe.Core.Tests/Watcher/CanonicalCoordinationRecordTests.cs": true,
+    "tests/AiDe.Core.Tests/Watcher/CanonicalCoordinationBindingTests.cs": true,
+    "tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj": true,
+    "tests/AiDe.Core.Tests/Watcher/Fixtures/canonical-coordination-v1.json": true
+  }
+}

@@ -1026,3 +1026,36 @@ canonical Proof Pack's named raw records. More grounding/pagination and fixture
 repairs than planned consumed the call budget; no agents or integration work
 were added to compensate. Independent new-code acceptance and origin-qualified
 storage are still separate pending gates.
+
+### B1/B2 finite binding correction execution (2026-09-17)
+
+Goal: repair copied-pointer admission and Git-valid relative-pointer rejection.
+Done when: exact two original-source reds, restored green and focal mutant
+failures are retained with all 17 pins, unchanged corpus/oracle, scoped commit,
+released leases and ended `xh-p2-projection-b0d0`.
+Not in scope: other worktrees/main, parser semantics, P1 timestamp adoption,
+new authority, live capture/store/reducer or P3-P5.
+Tier T2, existing approved scope; fan-out zero; main-line budget 28, context 150k.
+
+| Node / capability | Dependency and exit |
+|---|---|
+| Ground / Reasoning | Supplied B1/B2 gate -> exact source, trusted composition and original pins established |
+| Red / Deterministic mechanics | Ground -> two named assertion failures on unchanged f5e2fc1 with real temporary Git |
+| Fix / Reasoning | Red -> reciprocal bounded backlink and resolved paths, no legacy locator re-inference |
+| Prove / Deterministic mechanics | Fix -> 47 canonical cases, three focal mutants/restorations, unchanged 12,568 vectors and 115-case oracle |
+| Seal / Deterministic mechanics | Prove -> canonical evidence, own-root audit render/verify, ordinary-hook commit/release/end |
+
+All edges are data or decision dependencies. Work/span are 5/5 equal-cost nodes
+(Inferred), width one, so parallelism offers no modeled gain. Fixed worklists:
+two focal reds, eleven added binding cases, three mutations; each decreases to
+zero. No agent work or review clearance was invented. Failed build/setup runs
+do not satisfy a red oracle. Remaining unqualified integration gates stay open.
+
+Actual execution needed four repairs to test/evidence assumptions: internal-enum
+public accessibility, hidden-file overwrite, empty-path interpretation and a
+compile-time unreachable mutant. Each original receipt is retained; exact
+assertion qualification prevents their promotion. Native execution durations
+are recorded per run; token usage is not measured here. Broad early read output
+spent avoidable calls; later reads were bounded. Final evidence: 47/47 after each
+mutation restore, all 17 restored pins equal, byte probe zero valid mismatches.
+No extra plan or Proof Pack was created. Full P2 and P3-P5 stay pending.

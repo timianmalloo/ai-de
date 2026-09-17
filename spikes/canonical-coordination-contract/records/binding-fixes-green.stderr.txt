@@ -1,0 +1,2 @@
+[xUnit.net 00:00:02.49]     AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_InvalidBacklink_RefusesWithoutSource(kind: "empty", expectedStatus: "Unavailable") [FAIL]
+Test Run Failed.

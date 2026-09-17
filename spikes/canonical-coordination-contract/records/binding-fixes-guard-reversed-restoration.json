@@ -1,0 +1,19 @@
+{
+  "src/AiDe.Core/Watcher/CanonicalCoordinationCodec.cs": true,
+  "src/AiDe.Core/Watcher/CanonicalCoordinationRecord.cs": true,
+  "src/AiDe.Core/Watcher/CanonicalCoordinationSourceBinding.cs": true,
+  "src/AiDe.Core/AiDe.Core.csproj": true,
+  "spikes/canonical-coordination-contract/CanonicalCandidate.cs": true,
+  "spikes/canonical-coordination-contract/CanonicalProbe.csproj": true,
+  "spikes/canonical-coordination-contract/Program.cs": true,
+  "spikes/canonical-coordination-contract/validate.py": true,
+  "spikes/canonical-coordination-contract/records/validator-oracle.json": true,
+  "spikes/canonical-coordination-contract/bin/Debug/net10.0/CanonicalProbe.dll": true,
+  "tests/AiDe.Core.Tests/Watcher/CanonicalCoordinationContractTests.cs": true,
+  "tests/AiDe.Core.Tests/Watcher/CanonicalCoordinationRecordTests.cs": true,
+  "tests/AiDe.Core.Tests/Watcher/CanonicalCoordinationBindingTests.cs": true,
+  "tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj": true,
+  "tests/AiDe.Core.Tests/bin/Debug/net10.0/AiDe.Core.Tests.dll": true,
+  "tests/AiDe.Core.Tests/bin/Debug/net10.0/AiDe.Core.dll": true,
+  "tests/AiDe.Core.Tests/Watcher/Fixtures/canonical-coordination-v1.json": true
+}

@@ -1,0 +1,11 @@
+{
+  "command": [
+    "dotnet",
+    "build",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\spikes\\canonical-coordination-contract\\CanonicalProbe.csproj",
+    "--no-restore",
+    "--nologo",
+    "-v:minimal"
+  ],
+  "exit": 0
+}

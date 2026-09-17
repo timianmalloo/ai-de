@@ -1,0 +1,8 @@
+{
+  "command": [
+    "dotnet",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\spikes\\canonical-coordination-contract\\bin\\Debug\\net10.0\\CanonicalProbe.dll",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\Watcher\\Fixtures\\canonical-coordination-v1.json"
+  ],
+  "exit": 0
+}

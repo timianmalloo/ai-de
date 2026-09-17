@@ -1,0 +1,2 @@
+[xUnit.net 00:00:00.65]     AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_GitValidRelativeForwardPointer_BindsPhysicalPrimaryAndSameScope [FAIL]
+Test Run Failed.

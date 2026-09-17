@@ -1,0 +1,23 @@
+{
+  "head": "f5e2fc17edbb758943b7e263e7fe31ea63fbfa8a",
+  "files": {
+    "src/AiDe.Core/Watcher/CanonicalCoordinationCodec.cs": "de7f3be675b566b006cb559820cd961f9b525ceb6f7394f2db3c601dc0db52c5",
+    "src/AiDe.Core/Watcher/CanonicalCoordinationRecord.cs": "e8e583718b6eb3513ddcd944ccb8b777d8675841caa357b277e92102cba7de4e",
+    "src/AiDe.Core/Watcher/CanonicalCoordinationSourceBinding.cs": "732252db50ea79756c4d97cdcff9b5f8722ce0cab91155f67516e3e3096fd1aa",
+    "src/AiDe.Core/AiDe.Core.csproj": "b63c41b97201dc3e1016b72b404a32411ac31e477231b281219dda64d0ad584a",
+    "spikes/canonical-coordination-contract/CanonicalCandidate.cs": null,
+    "spikes/canonical-coordination-contract/CanonicalProbe.csproj": "b54960d94236f20823f322f41128fbf350eab04076e675c52fe9217c9864b441",
+    "spikes/canonical-coordination-contract/Program.cs": "4cb2ae49d2d391de48489fbcc42408e1eb14fe9316efa8fea68fbf46b8160922",
+    "spikes/canonical-coordination-contract/validate.py": "1943480492839428741972638c68e195422c958863f2cda2d436ed3e84f8a611",
+    "spikes/canonical-coordination-contract/records/validator-oracle.json": "9b78fc19d3f0fbbdc99f55b7fd407c629d537f68d04b1a1e990caa57326641e2",
+    "spikes/canonical-coordination-contract/bin/Debug/net10.0/CanonicalProbe.dll": "87a45509d3ddfe8876f033b1d5a30fbe3bfb29ef15beb034f2db64fb2b5f6ebb",
+    "tests/AiDe.Core.Tests/Watcher/CanonicalCoordinationContractTests.cs": "43fdae23e2e47d54c8fcb1ad786cc469dd789a4176eccd0f8f038988fcf6703b",
+    "tests/AiDe.Core.Tests/Watcher/CanonicalCoordinationRecordTests.cs": "d6cca842a2e19b2348b17b28251ae80f92800085ec2e4b912da85c9b1c6ea00e",
+    "tests/AiDe.Core.Tests/Watcher/CanonicalCoordinationBindingTests.cs": "9fd3e929414df7a62102a88f6324066e50bb344ee55392a73795597b5cf218e9",
+    "tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj": "93e7b6f722edb65fad6e8f40d6b31921ea5a73998f6841bcc99a2ab4a7d827ff",
+    "tests/AiDe.Core.Tests/bin/Debug/net10.0/AiDe.Core.Tests.dll": "23bab4d990615e94bef050585ca3d0a9f9c8135d1a5d48676f280b6ba6dc3fca",
+    "tests/AiDe.Core.Tests/bin/Debug/net10.0/AiDe.Core.dll": "3c77e81529a89fbccbc8faf863a66f03a1b5e6a21265b0f6507ed5006660f100",
+    "tests/AiDe.Core.Tests/Watcher/Fixtures/canonical-coordination-v1.json": "da65af014026d69145a0a0dbd5eeebb1fe0cfcee8362bc093b8bb43c068ca603"
+  },
+  "runnerSha256": "8e9a868ded4324a5631938132e43bb068f9354c4cd6b30dd9aecfa6acd27fc98"
+}
