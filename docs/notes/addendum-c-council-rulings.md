@@ -2226,3 +2226,94 @@ current build; Ruling 79's "run on the frozen tree" superseded; Ruling 49 stands
 **CONDITIONS:** (i) Before the first edit, the conductor diffs the Atlas candidate head against its merge-base for the three named files and sends the Atlas integrator a seam notice naming the files and hunks; if Atlas does not modify them the notice says so, and whoever lands second reconciles by seam. (ii) The landing intent enumerates the expected post-landing failing set by name for the deterministic members (15 − 5 = 10) and labels the intermittent population as a population, not a list. (iii) The join's closing entry carries the landed SHA's Build run id and result (112(iii)/117(i)); "not recorded" keeps the join open. (iv) Each group its own commit, red-first evidence for the characterisation test.
 
 **RECORD AS:** Ruling 126 — main-red lane opens now for groups 1–2 (traits + new characterisation file, 118 gate may ride); groups 3–4 held until Atlas lands or 2026-09-18 21:00Z, then back to the Owner; seam notice with hunks before the first edit.
+
+
+---
+
+## Ruling 127 — landing autonomy
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17, Fable holding the seat). Prompted by the operator's instruction, verbatim: "you shouldnt need to block on me to say land the fix... that should be between the Owner and the Watcher (currently the GHCP session)."*
+
+**RULING:** Confirm, amended: a Claude landing needs no operator turn when (i) the change is inside a lane the Owner has already admitted, or the Owner has ruled it admissible; (ii) a `request-add` to the watcher carrying the candidate SHA and the `main` SHA it was gated against (Ruling 108 shape) precedes the push; (iii) the join's gates are green on a bare run whose exit status was observed; (iv) the landed SHA's CI run id and result are recorded in the closing entry (112(iii)/117(i)). The watcher's silence does not block; a watcher-raised competing writer or seam claim is resolved by Ruling 108's order before the push. The operator is informed in the closing table. Escalation to the human stays for a triggered hard veto, an irreversible/destructive action, or a floor trip; a **scope change goes to the Owner**, not the human.
+
+**BECAUSE:** Ruling 107 already fixed the shape (fetch-merge-gate-announce-push); 112(2) and 126 admitted the Claude repair lane, so "no product code" is already amended for that lane; the operator's instruction places the gate between the Owner and the Watcher. Scope is the Owner's seat by the card; sending it to the human would route around this seat.
+
+**CONFIDENCE:** Verified (107, 108, 112, 126 as filed; today's two join entries at `audit-log.jsonl:765–766`); Inferred (the operator's verbatim instruction — not on disk; logged with `prompt-log.py add` so the audit entry can cite it).
+
+**SCOPE EFFECT:** Admits: `1df6f34e` may be pushed now under (ii)–(iv). Freezes: 107's list of what Claude lands outside an admitted lane. Cuts: nothing.
+
+**CONDITIONS:** (a) A fix to a lane's own landed defect (the `53115a53` shape) is inside the lane's admission; anything touching a file outside the lane's named set returns to the Owner first. (b) (iii) means the gate line ran bare or to a file whose recorded exit code was read — never a harness-reported status (see Ruling 128). (c) If the landed SHA's CI result is red beyond the enumerated expected set (126(ii)), the join stays open and comes to the Owner.
+
+**RECORD AS:** Ruling 127 — a Claude landing needs no operator turn: admitted scope, SHA-bearing announcement to the watcher, bare gates with observed status, CI result recorded; scope changes to the Owner, floors and destructive actions to the human.
+
+---
+
+## Ruling 128 — the join whose last recorded step was 7
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17). The conductor had reported this as "a join tool that reports success while skipping the gate it exists to enforce" — **that report was wrong**, and the Owner opened the source to show why: step 8 is unconditional (`conductor-join.py:217–221`), `Join.run` raises `SystemExit(step)` on failure (`:126–129`), and `return 0` follows step 10 (`:237`), so the tool cannot return 0 with step 7 last. Stdout is reconfigured for encoding only (`:63–68`). Both runs were started in this harness's background-shell mode; what the harness reported for each, verbatim, was `[exited with code 0]`, and nothing was pushed. Whether the process itself exited 0 is **not recorded**.*
+
+**RULING:** Register the defect class, but as what the code shows it to be: **a long-running control run under a harness mode whose termination status is the harness's, not the tool's, with block-buffered output that misreports the last step** — DC-113's generalisation ("an exit code that has been through a pipe is a statement about the last program in the pipe"), recurrence 4, the pipe now being the background shell. Controls, in the Ruling 125 lane as its own commit at the pack's source of truth: (1) `conductor-join.py` flushes each log line (`line_buffering=True`) and writes a per-step record to a join-state file (`.agents/joins/<shortname>.json`: step, command, exit code, timestamp) with a terminal `complete` record — a state file without `complete` is an unfinished join, machine-readably; self-test case: a killed step leaves no `complete`. (2) Conductor rule, standing: a join is never run under a mode whose exit status is not observed; if it must be backgrounded, it runs to a file and the reader takes the recorded exit code and the `complete` record, never the harness's status (CT27 gains this line shape). Interim rule confirmed until (1) lands: gates re-run bare, push explicit.
+
+**BECAUSE:** The tool did not skip its gate; the observer stopped observing and read a status the tool never emitted. Registering it as "the tool reported success" would put the control in the wrong place.
+
+**CONFIDENCE:** Verified (the source's control flow and buffering, re-read by the conductor); Inferred (that the harness killed the process during step 8 — consistent with 518–544 s recounts against a 600 s foreground cap and nothing pushed, but not observed).
+
+**SCOPE EFFECT:** Admits (1) into the 125 lane; adds a CT27 line shape. Cuts: any change to what step 8 runs.
+
+**CONDITIONS:** (a) The class entry records what the harness actually reported for both runs (its status field verbatim, and whether the process was still alive) — "not recorded" where unknown; it does not say "exited 0" unless that was the process's code. (b) Red-first: the self-test plants a killed step and shows the state file lacks `complete`. (c) `1df6f34e`'s push under Ruling 127 cites the bare gate run's recorded exit code.
+
+**RECORD AS:** Ruling 128 — DC-113 recurrence 4: a join run under a harness background shell had its status read from the harness, not the tool; join-state file with a `complete` record and line-buffered output in the 125 lane; joins never run where their exit status is unobserved.
+
+---
+
+## Ruling 129 — a repo-wide gate blocked by another session's tree
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17). `verify-stranded-audit.py` failed in the primary because `C:\Projects\ai-de-integration-atlas-view-spikes` held four uncommitted `docs/audit/audit-log.jsonl` lines from sessions `codex-atlas-view-spikes-r124`, `…-evidence`, `…-capture-fix`, `codex-atlas-five-gates-integration`; the gate is fail-closed and repo-wide, and it stopped two Claude joins in one night. The conductor asked Codex to commit them and did not touch the tree.*
+
+**RULING:** (a) Confirmed: the conductor does not write in another session's tree while that tree is inside the gate's own 8-hour liveness window. (b) Once the tree is outside that window (which is the condition under which the gate fires at all) and a `request-add` naming the four session ids has stood **2 hours** without the owning session acting, the conductor may commit in that tree: path-scoped `git add -- docs/audit/audit-log.jsonl docs/audit/change-log.jsonl` only, on the tree's own branch, after `git diff --cached --quiet` shows no other staged work, message naming the session ids and that the conductor committed them to clear a repo-wide gate; never `-A`, never a push. (c) The design is a finding, and the gate is repo-owned (`tools/`, docstring `:11–15`), so this is a repo change, not a pack change: amend `verify-stranded-audit.py` to **fail** for the primary checkout and for any tree the running session is live in, and to **report** (named tree, session ids, last coord timestamp, the remedy) for a stale foreign tree without failing — its `--self-test` gains the foreign-stale case. Own commit in the Ruling 125 lane. Marked as extending the gate's design, not reading it.
+
+**BECAUSE:** The tree is registered (`codex-atlas-view-spikes-r124`, session-start 2026-09-16 22:13Z, 15 h before the 13:19Z join), so "nobody live" is the gate's 8-hour definition, not an absence of ownership. For a linked tree the gate is a detector, not a preventer: the loss path is `git checkout --` or a removal in that tree, which `coord worktree cleanup` already refuses on dirt; blocking every unrelated join does not close that path and has stopped two joins in one night, which is the muting pressure the docstring itself warns of (`:26–28`). Committing an append-only file is the non-destructive direction and is exactly what the gate's own message asks for (`:177`).
+
+**CONFIDENCE:** Verified (the gate's logic and window, the coord records, the artifact class); Inferred (that Codex's sessions are idle rather than silently working — the window is the only signal).
+
+**SCOPE EFFECT:** Admits the gate amendment into the 125 lane. Cuts: any `audit-log.py` change (the docstring's listed-artifact reason stands). Freezes: fail-closed for the primary.
+
+**CONDITIONS:** (a) A (b)-commit is announced to the watcher and to the owning session by `request-add` before and after. (b) If `git diff --cached` shows staged work or the index lock is present, stop and report — that is a live tree. (c) The foreign-stale report must print in the join's step-8 output and in `run-verify-gates.py`'s summary, so it is not a warning nobody reads.
+
+**RECORD AS:** Ruling 129 — stranded-audit: wait inside the 8-hour window; after a 2-hour standing request the conductor may path-scope-commit the append-only logs in the foreign tree; the gate fails for primary and own tree, reports foreign stale trees; repo change in the 125 lane.
+
+---
+
+## Ruling 130 — clean-machine evidence: a Ruling 104 amendment, UX lens first
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17). The operator's clean-machine build (2026-09-16) shows the New Session sheet listing all five accounts as "not configured (no adapter root — no provider file)" with the footer "No backend is ready", while `copilot` is installed and on PATH; the Configure sheet's Prerequisites block ticks node v24.15.0 and npm 11.12.1 with resolved paths and has **no row for `copilot` itself**, and the Install block asserts "copilot is not installed by the product". The operator: "copilot is installed and in path - i should not need to set up anything here - i should just have to log in."*
+
+**RULING:** The repair is an **amendment to Ruling 104**, not a new slice: (1)(a) is generalised from "`claude` on PATH" to "the engine's own command on PATH, as a row, for every catalog engine", and 104(3)'s state vocabulary gains the distinction the sheet currently collapses — *installed* (the command resolves, per DC-223's single `InstallRefusal` reading) is separate from *configured* (a `providers.json` entry exists) is separate from *ready* (signed in); a native engine on PATH with no file reads "installed — sign in", never "not configured", and the Install block never asserts "not installed" for a state it did not probe. The amendment must also state the native engine's analogue of 104(1)(c)–(e): what observation triggers the `providers.json` write when there is no install step (104 wrote it on install success, which does not exist for a native row) — that is the one genuine gap in 104, to be specified, not inferred by the coder. **Yes, the UX & Accessibility lens rules before code**, bounded: the state table (five accounts × installed/configured/ready/absent) and the exact strings for each cell, the footer, and the Install block's copy — not a full `ui-design` run.
+
+**BECAUSE:** 104(1)(a) already made the engine's own CLI a prerequisite row and its scope explicitly cut every non-claude engine from the flow; 105 then made copilot first in the account order, so the copilot sheet inherited node/npm rows without their analogue — the missing row is 104's pattern unapplied, which is an amendment's shape. The operator's complaint is about what the sheet asserts ("not installed by the product" while `copilot` is on PATH): copy that states an unprobed fact is the IO/E15 tell rendered as UI, and copy is the UX veto's domain.
+
+**CONFIDENCE:** Verified (104(1)(a), 104(3), 104's scope cut, 105's order, DC-223's control); Inferred (the screenshots — not opened by the Owner; the root cause is under investigation and this ruling does not depend on it).
+
+**SCOPE EFFECT:** Admits one amendment to 104 in the Sessions/AgentPlane lane. Cuts: a first-run page (104 stands); a health prober; any change to `EngineCatalog.ResolveLaunch`'s purity. Defers: nothing.
+
+**CONDITIONS:** (a) The sub-agent's root cause is filed before the amendment text is drafted; if the cause is a DC-223 recurrence (a second "installed" reading), the class entry is updated as recurrence, not a new class. (b) Red-first: the fresh-machine oracle (104 cond. 2) gains a case with a fake `copilot` on PATH and no file, asserting the row reads installed-needs-sign-in. (c) The operator's second-machine acceptance (104 cond. 4) is re-run and recorded with the observed `copilot --version`.
+
+**RECORD AS:** Ruling 130 — clean-machine first use: amend 104 — the engine's own command is a prerequisite row for every engine; installed / configured / ready are three states, never collapsed; native engines get a specified file-write trigger; UX lens rules the state table and copy before code.
+
+---
+
+## Ruling 131 — Ruling 125(i) amended on the currency evidence
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17). The conductor opened both copies of the script before building the control 125(i) admitted: the primary's `coord-core.py` refuses `register`-class claims (`COORD-CLAIM-REGISTER-CLASS`, shipped in pack revision 70 on 2026-09-14), while `C:/Projects/ai-de-atlas-e1-native-class-view/docs/ai-forward-pack/scripts/coord-core.py` contains **zero** occurrences of that code — so the lease that blocked a `main` join on 2026-09-16 was refused by a control that existed on `main` and did not exist in the tree that invoked it.*
+
+**RULING:** Amend 125(i): (a) the only claim change is a `derived`-class refusal beside the existing `COORD-CLAIM-REGISTER-CLASS`, with its own self-test; (b) the `site/*.html` instance is withdrawn from the register entry — `.agents/artifacts.yml:58–61` keeps them `authored` deliberately; (c) admit the **currency control as a refusal, not a warning**: `coord-core.py claim` and `run-verify-gates.py` compute, from the invoking tree, whether `origin/main` carries commits touching `docs/ai-forward-pack/scripts/` or `tools/` since the tree's merge-base with it (`git log merge-base..origin/main -- <paths>` non-empty ⇒ stale), and refuse with the one-line remedy (merge `origin/main`); the named escape is an absent `origin/main` ref, which prints "control currency: not recorded" and proceeds. Because a stale tree runs the stale script, the check cannot reach the trees that need it first: the same lane adds control currency per tree to `coord worktree list` run from `main`, so the watcher sees the fleet from a current copy. (d) Its own defect-class entry, highest severity of the four: **a control shipped as a checked-in file runs at the version of whichever tree invokes it, so a long-lived lane enforces the rules of the day it branched.**
+
+**BECAUSE:** Verified by opening both copies: the primary's script carries the register refusal; the atlas-e1 tree's copy carries `COORD-CLAIM-SELF` and zero occurrences of `COORD-CLAIM-REGISTER-CLASS`, so the 09-16 blocked join was a refusal that existed on `main` and did not fire in the invoking tree. A warning would be read only by sessions that run `doctor`, which are not the stale ones; a control that only warns is a memoir (CI6).
+
+**CONFIDENCE:** Verified (both script copies, the claim branch, artifacts.yml); Inferred (pack revision 70 at `0f553858`; 89 lanes / 133 worktrees — the conductor's counts, not opened).
+
+**SCOPE EFFECT:** Admits (a), (c) refusal + fleet report, (d) into the 125 lane; withdraws (b); cuts the `register` refusal from the lane's scope (it exists). 125(ii)–(v) and its conditions stand.
+
+**CONDITIONS:** (i) The comparison is direction-aware: a lane whose own edits to a tool are ahead of `main` is still stale if `main` moved the control set — it must merge. (ii) Self-test plants a tree behind `origin/main` on `tools/` and shows the refusal; plants no `origin/main` and shows the escape text. (iii) On landing, the conductor sends one fleet notice (`request-add`) naming the trees `coord worktree list` reports stale. (iv) Escape use is written into the claim event so it is countable.
+
+**RECORD AS:** Ruling 131 — 125(i) amended: derived-class claim refusal only (register refusal exists since rev 70), site/*.html withdrawn; control currency is a refusal in claim and the gate runner with a fleet view from main; new highest-severity class: a checked-in control runs at the invoking tree's version.

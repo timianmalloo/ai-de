@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T13:28:27Z",
+  "generated": "2026-09-17T13:45:25Z",
   "audit": [
     {
       "actor": null,
@@ -19846,152 +19846,289 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2P4TBCWP84Q6SGXHD7QBD5K",
-      "shortname": "rulings-122-126",
-      "datetime": "2026-09-16T22:18:54Z",
-      "session": "claude-conductor-watch-0915",
-      "prompt": "continue with the owed-by-this-seat and unassigned pieces, proactively coordinating with others",
-      "summary": "Five rulings filed: 122 (DeclaredDeploymentContext admitted as a specified read-only seam, filed a day late unchanged with a dated rider), 123 (the archetype grammar's duplicate Type keyword is a verified defect - the Color conflict is NOT, no signature in the repo writes it - Codex's x- facets admitted for serialization only, source fix is a Claude knowledge lane), 124 (Ruling 121's spike conditions met; manual Linux builds accepted because the coverage gate is Windows-only in CI; combined coverage run and a proof-doc frontmatter check required; the Atlas ordering LIFTED), 125 (four of the five dropped controls admitted as one Claude lane, Linux coverage deferred to a measurement), 126 (main-red lane opens now for groups 1-2 with groups 3-4 held to a dated 48h variant). Measured before acting: NEITHER Atlas candidate modifies any of the three red-test files (git diff --numstat 0 0 against each merge-base), so the collision I warned about was not real; notices sent to both Atlas programmes and the watcher.",
-      "kind": "skill",
-      "skill": "conductor-watch",
-      "tool": null,
       "actor": "claude-conductor",
       "artifacts": [
         "docs/notes/addendum-c-council-rulings.md"
       ],
+      "datetime": "2026-09-16T22:18:54Z",
+      "done_when": "122-126 filed on main and their requests resolved; lane/main-red-0915 open with the Atlas seam measured and notified; the dropped controls admitted as a lane",
+      "fan_out": 1,
+      "git": {
+        "branch": "conductor/watch-0915",
+        "pushed": null,
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc"
+      },
+      "goal": "Clear the Claude Owner seat's backlog (122, 123, 124) and take the unassigned work (the dropped controls, the main-red repair lane), coordinating each with the watcher and the affected programme before acting",
+      "id": "al-01M2P4TBCWP84Q6SGXHD7QBD5K",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "continue with the owed-by-this-seat and unassigned pieces, proactively coordinating with others",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "rulings-122-126",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "conductor-watch",
+      "summary": "Five rulings filed: 122 (DeclaredDeploymentContext admitted as a specified read-only seam, filed a day late unchanged with a dated rider), 123 (the archetype grammar's duplicate Type keyword is a verified defect - the Color conflict is NOT, no signature in the repo writes it - Codex's x- facets admitted for serialization only, source fix is a Claude knowledge lane), 124 (Ruling 121's spike conditions met; manual Linux builds accepted because the coverage gate is Windows-only in CI; combined coverage run and a proof-doc frontmatter check required; the Atlas ordering LIFTED), 125 (four of the five dropped controls admitted as one Claude lane, Linux coverage deferred to a measurement), 126 (main-red lane opens now for groups 1-2 with groups 3-4 held to a dated 48h variant). Measured before acting: NEITHER Atlas candidate modifies any of the three red-test files (git diff --numstat 0 0 against each merge-base), so the collision I warned about was not real; notices sent to both Atlas programmes and the watcher.",
       "tags": [
         "coordination",
         "main-red"
       ],
-      "outcome": "success",
-      "goal": "Clear the Claude Owner seat's backlog (122, 123, 124) and take the unassigned work (the dropped controls, the main-red repair lane), coordinating each with the watcher and the affected programme before acting",
-      "done_when": "122-126 filed on main and their requests resolved; lane/main-red-0915 open with the Atlas seam measured and notified; the dropped controls admitted as a lane",
       "tier": "T1",
-      "fan_out": 1,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "git": {
-        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
-        "short": "bcf4959bc",
-        "branch": "conductor/watch-0915",
-        "pushed": null
-      }
+      "tool": null
     },
     {
-      "id": "al-01M2P4V7C545S1VWKHA2TJAMP5",
-      "shortname": "join-rulings-122-126",
+      "actor": null,
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
       "datetime": "2026-09-16T22:19:22Z",
-      "session": "claude-conductor-watch-0915",
+      "done_when": "main carries 122-126; gates 38 green; pushed",
+      "duration_seconds": 0.0,
+      "fan_out": 0,
+      "goal": "Land the Owner seat's backlog so Codex, Atlas and the watcher are not waiting on decisions",
+      "id": "al-01M2P4V7C545S1VWKHA2TJAMP5",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of conductor/watch-0915 into main",
-      "summary": "Docs-only join: Rulings 122-126 filed after the Claude session's usage cap, with the three requests they answer resolved on the ledger (E2 seam, G6 grammar finding, Ruling 121 spike checkpoint). Measured before acting on 126: neither Atlas candidate modifies any of the three main-red test files. recount_seconds=0 (docs_only=True).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/notes/addendum-c-council-rulings.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land the Owner seat's backlog so Codex, Atlas and the watcher are not waiting on decisions",
-      "done_when": "main carries 122-126; gates 38 green; pushed",
-      "tier": "T1",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-09-16T22:19:22Z",
-      "duration_seconds": 0.0
-    },
-    {
-      "id": "al-01M2P5KS966691R0H9E87ER5HV",
+      "session": "claude-conductor-watch-0915",
       "shortname": "join-rulings-122-126",
-      "datetime": "2026-09-16T22:32:47Z",
-      "session": "claude-conductor-watch-0915",
-      "prompt": "the join of the resolved merge into main",
-      "summary": "Docs-only join: Rulings 122-126 filed after the Claude session's usage cap, with the three requests they answer resolved. The join's first attempt stopped at its gate line because the PRIMARY's test artifacts were from 2026-09-14 (every join since ran in a worktree); refreshed under an announced desktop slot - Core 2746, portable 2571, nonportable 175, App 1051, all baselines met, outcome Completed - and all fifteen CI-red tests passed here, a second confirmation of INV-0012. recount_seconds=0 (docs_only=True).",
-      "kind": "skill",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
       "skill": "execute-with-coordination",
-      "tool": null,
+      "started_at": "2026-09-16T22:19:22Z",
+      "summary": "Docs-only join: Rulings 122-126 filed after the Claude session's usage cap, with the three requests they answer resolved on the ledger (E2 seam, G6 grammar finding, Ruling 121 spike checkpoint). Measured before acting on 126: neither Atlas candidate modifies any of the three main-red test files. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
       "actor": null,
       "artifacts": [
         "docs/notes/addendum-c-council-rulings.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land the Owner seat's backlog so Codex, Atlas and the watcher are not waiting on decisions",
+      "datetime": "2026-09-16T22:32:47Z",
       "done_when": "main carries 122-126; gates 38 green; pushed",
-      "tier": "T1",
+      "duration_seconds": 1.0,
       "fan_out": 0,
+      "goal": "Land the Owner seat's backlog so Codex, Atlas and the watcher are not waiting on decisions",
+      "id": "al-01M2P5KS966691R0H9E87ER5HV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-rulings-122-126",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-09-16T22:32:46Z",
-      "duration_seconds": 1.0
+      "summary": "Docs-only join: Rulings 122-126 filed after the Claude session's usage cap, with the three requests they answer resolved. The join's first attempt stopped at its gate line because the PRIMARY's test artifacts were from 2026-09-14 (every join since ran in a worktree); refreshed under an announced desktop slot - Core 2746, portable 2571, nonportable 175, App 1051, all baselines met, outcome Completed - and all fifteen CI-red tests passed here, a second confirmation of INV-0012. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2P6A06BF6W87739HN2VSXT3",
-      "shortname": "join-main-red-groups-1-2",
-      "datetime": "2026-09-16T22:44:55Z",
-      "session": "claude-conductor-watch-0915",
-      "prompt": "the join of lane/main-red-0915 into main",
-      "summary": "The first repair of the tests that have kept main red since 2026-09-12. Method-level Platform=Windows traits on the four EngineCatalogTests locator tests and the purge test (class-level would have stripped Linux coverage from 16 passing tests), plus a new portable characterisation test pinning the Linux behaviour with its residual and trigger, proven able to fail by a swapped-arms mutant. Counts: 2567 portable + 180 nonportable = 2747 whole - nothing deleted or skipped. Neither Atlas candidate modifies these files (measured 0 0 against both merge-bases). Groups 3-4 remain held until the Atlas integration lands or 2026-09-18 21:00Z. recount_seconds=544 (docs_only=False).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "tests/AiDe.Core.Tests/AgentPlane/TheLocatorTellsShimFromExecutableOnlyByWindowsSuffixTests.cs",
         "docs/investigations/INV-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Remove the five Linux-only Core failures from main's red set without losing a test, and make the Linux behaviour a control instead of a memoir",
+      "datetime": "2026-09-16T22:44:55Z",
       "done_when": "main carries 7cd82133; recount and gates green in the primary; pushed; the closing entry carries the landed SHA's Build run id and result (Rulings 112 (iii)/117 (i))",
-      "tier": "T1",
+      "duration_seconds": 545.0,
       "fan_out": 0,
+      "goal": "Remove the five Linux-only Core failures from main's red set without losing a test, and make the Linux behaviour a control instead of a memoir",
+      "id": "al-01M2P6A06BF6W87739HN2VSXT3",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of lane/main-red-0915 into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-main-red-groups-1-2",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-09-16T22:35:50Z",
-      "duration_seconds": 545.0
+      "summary": "The first repair of the tests that have kept main red since 2026-09-12. Method-level Platform=Windows traits on the four EngineCatalogTests locator tests and the purge test (class-level would have stripped Linux coverage from 16 passing tests), plus a new portable characterisation test pinning the Linux behaviour with its residual and trigger, proven able to fail by a swapped-arms mutant. Counts: 2567 portable + 180 nonportable = 2747 whole - nothing deleted or skipped. Neither Atlas candidate modifies these files (measured 0 0 against both merge-bases). Groups 3-4 remain held until the Atlas integration lands or 2026-09-18 21:00Z. recount_seconds=544 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2QRVRJTTZVA0ZA5RYVPWB8T",
-      "shortname": "join-main-red-char-fix",
-      "datetime": "2026-09-17T13:28:26Z",
-      "session": "claude-conductor-watch-0915",
-      "prompt": "the join of lane/main-red-0915 into main",
-      "summary": "Fast follow to 2a5f1b2d: the new characterisation test asserted against FakePath.AddNpmShim's return (the script) instead of the shim, so its off-Windows arm was red on CI while green here - the platform-arm-nobody-observes-locally class INV-0012 diagnosed, reproduced by the test documenting it. Expected value now derived from the fixture's PATH entries, computed inside the off-Windows arm only. The same run confirmed groups 1-2 worked: the four EngineCatalogTests and the purge test left the portable half and pass on the nonportable half (180 executed, 0 failed). recount_seconds=518 (docs_only=False).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "tests/AiDe.Core.Tests/AgentPlane/TheLocatorTellsShimFromExecutableOnlyByWindowsSuffixTests.cs"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Restore CI's portable half to green - the only failure there is the test I landed",
+      "datetime": "2026-09-17T13:28:26Z",
       "done_when": "main carries 53115a53; recount and gates green; pushed; the landed SHA's Build result recorded",
-      "tier": "T1",
+      "duration_seconds": 520.0,
       "fan_out": 0,
+      "goal": "Restore CI's portable half to green - the only failure there is the test I landed",
+      "id": "al-01M2QRVRJTTZVA0ZA5RYVPWB8T",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of lane/main-red-0915 into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-main-red-char-fix",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-09-17T13:19:46Z",
-      "duration_seconds": 520.0
+      "summary": "Fast follow to 2a5f1b2d: the new characterisation test asserted against FakePath.AddNpmShim's return (the script) instead of the shim, so its off-Windows arm was red on CI while green here - the platform-arm-nobody-observes-locally class INV-0012 diagnosed, reproduced by the test documenting it. Expected value now derived from the fixture's PATH entries, computed inside the off-Windows arm only. The same run confirmed groups 1-2 worked: the four EngineCatalogTests and the purge test left the portable half and pass on the nonportable half (180 executed, 0 failed). recount_seconds=518 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-owner-d1-admission.md"
+      ],
+      "datetime": "2026-09-15T22:52:52Z",
+      "git": {
+        "branch": "understanding-views-d1",
+        "pushed": null,
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc"
+      },
+      "id": "al-01M2KMBV5ZEQPEFFD7708W28HA",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "re-admit D-1 now",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "owner-d1-admission",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "summary": "Owner ruling admits D-1 Entry-points only. Substrate query still absent; UV-0 is that query. D-2..D-4 keep-deferred. Branch understanding-views-d1 from main bcf4959b.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/entry-points.md"
+      ],
+      "datetime": "2026-09-16T16:48:46Z",
+      "git": {
+        "branch": "understanding-views-d1",
+        "pushed": true,
+        "sha": "aa9e16a81ece87ce7d9086458d3178f98f99b7a0",
+        "short": "aa9e16a81"
+      },
+      "id": "al-01M2NHXVG85NWR87JK2WJW4PAQ",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "keep going / what is blocking Live Open Sequence / who has to resolve mapping-unavailable",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "specify-d1-entry-points",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "summary": "Spec-entry-points draft: listing/unclassified/select-to-graph. Open Sequence blocked by UNASSIGNED mapper — Owner must admit a separate mapping contract; Grok and Codex cannot unilaterally enable it. N4 not self-cleared.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/entry-points.md"
+      ],
+      "datetime": "2026-09-17T13:38:37Z",
+      "done_when": "spec-entry-points draft committed",
+      "git": {
+        "branch": "understanding-views-d1",
+        "pushed": false,
+        "sha": "30d82c3b96190a9e1a2cbc458c80955a07b8a0d1",
+        "short": "30d82c3b9"
+      },
+      "goal": "Specify D-1 listing",
+      "id": "al-01M2QSED6HYQ40BCPVXVDTCDEH",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "AL5b supersede",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "specify-d1-al5b",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "summary": "Honest capture for specify-d1-entry-points",
+      "supersedes": "al-01M2NHXVG85NWR87JK2WJW4PAQ",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-owner-d1-admission.md"
+      ],
+      "datetime": "2026-09-17T13:38:37Z",
+      "done_when": "owner-d1-admission note committed",
+      "git": {
+        "branch": "understanding-views-d1",
+        "pushed": false,
+        "sha": "30d82c3b96190a9e1a2cbc458c80955a07b8a0d1",
+        "short": "30d82c3b9"
+      },
+      "goal": "Admit D-1",
+      "id": "al-01M2QSEDC3B5HADZ18C4ZCJDH6",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "AL5b supersede admission",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "owner-d1-al5b",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "summary": "Honest capture for D-1 admission",
+      "supersedes": "al-01M2KMBV5ZEQPEFFD7708W28HA",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M2QSQ8YFM4FTYZBYWXFDV0Q3",
+      "shortname": "keep going; also get back to the Owner (Fable) - Conductor (Opus) - Sub.…",
+      "datetime": "2026-09-17T13:43:27Z",
+      "session": "prompt-log",
+      "prompt": "keep going; also get back to the Owner (Fable) - Conductor (Opus) - Sub.Agent approach; you shouldnt need to block on me to say land the fix - that should be between the Owner and the Watcher (currently the GHCP session); once you land 125 lets review the backlog of To-Do's and see what can safely be done from this session; also here are screenshots (with issues as the title) for when i tried the latest build yesterday on a clean machine: C:\\Users\\malla\\Downloads\\AI-DE new issues; /investigate the issues; /ui-design elevate based on the screen shots and the feedback",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
