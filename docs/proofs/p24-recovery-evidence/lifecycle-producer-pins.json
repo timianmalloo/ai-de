@@ -1,0 +1,32 @@
+[
+  {
+    "gitBlob": "656e8dd4d33d9460573409cc0ca60aaa17cf7696",
+    "commit": "4c780db66d71a1fbf70c77faeef4a25070cb7616",
+    "path": "src/AiDe.Core/Watcher/SessionCoordinationEmitter.cs"
+  },
+  {
+    "gitBlob": "c0f6d21e9f54864d34cbc1aac6757b93615a92de",
+    "commit": "4c780db66d71a1fbf70c77faeef4a25070cb7616",
+    "path": "tests/AiDe.Core.Tests/Watcher/CoordinationProducerTests.cs"
+  },
+  {
+    "gitBlob": "eb4d83ca43bbf135667e8c3ab85b13b38e21b2cf",
+    "commit": "4c780db66d71a1fbf70c77faeef4a25070cb7616",
+    "path": "docs/audit/audit-log.jsonl"
+  },
+  {
+    "gitBlob": "656e8dd4d33d9460573409cc0ca60aaa17cf7696",
+    "commit": "ff73f62c071aaf16bd379b494d27df372ff2a7b5",
+    "path": "src/AiDe.Core/Watcher/SessionCoordinationEmitter.cs"
+  },
+  {
+    "gitBlob": "4e3b0beadc41bdb5a3ece3f6519a60e8b5da1a50",
+    "commit": "ff73f62c071aaf16bd379b494d27df372ff2a7b5",
+    "path": "tests/AiDe.Core.Tests/Watcher/CoordinationProducerTests.cs"
+  },
+  {
+    "gitBlob": "52cc95ecf9759d87e2ca18deb251f6fb14e5a6e1",
+    "commit": "ff73f62c071aaf16bd379b494d27df372ff2a7b5",
+    "path": "docs/audit/audit-log.jsonl"
+  }
+]

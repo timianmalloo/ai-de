@@ -1,0 +1,30 @@
+{
+  "expectedExit": 0,
+  "base": "eda167380704af1fbba62efbfea402fd0fa97104",
+  "pins": {
+    "docs\\proofs\\p24-recovery-evidence\\lifecycle-union-green.stderr.txt": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll": "56A3FC73D2046B2487883DA02617D2155913ECDA5F7550A5E4684F83513EAF3A",
+    "docs\\proofs\\p24-recovery-evidence\\lifecycle-union-green.stdout.txt": "7E2E0772EDFB9952B4A71C5EE140C447B6422970304F7570A19B7F7739EC3163",
+    "docs\\proofs\\p24-recovery-evidence\\lifecycle-union-green.trx": "3F0D4A5032FFD585B9B4976610BD81A85379CBC91942A33003BF84AFCF875C0C",
+    "src\\AiDe.Core\\Watcher\\CoordinationContractLog.cs": "EF21D2F99EF9EB712112116A840C246B9C6BE896F09E8D80C6BE60D3C74F29C6",
+    "src\\AiDe.Core\\AiDe.Core.csproj": "B63C41B97201DC3E1016B72B404A32411AC31E477231B281219DDA64D0AD584A",
+    "tests\\AiDe.Core.Tests\\Watcher\\CoordinationRecoveryTests.cs": "1949209769E4DE45FD1F665B73199F45A7003F0FDC75B7458A6605E33BD126EB",
+    "src\\AiDe.Core\\Watcher\\CoordinationRecovery.cs": "F72117B08DC25786E7A1A67B1352405363671A371B94EAFF5BDF3D8E2498A3C5",
+    "src\\AiDe.Core\\Watcher\\CoordinationProjection.cs": "C8D5C2BEDC02D405459A5E13CBB7B1A7FD692E022C0DCD43681D3D3487763B45",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj": "FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D",
+    "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.dll": "F840C069FCCF96DC5AAA21151A43C9A264C7283F2C4F1899ECBD9E5A9C26B46B"
+  },
+  "arguments": [
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-build",
+    "--no-restore",
+    "--filter",
+    "FullyQualifiedName~AiDe.Core.Tests.AgentPlane.TheCompileSessionIsPinnedTests|FullyQualifiedName~AiDe.Core.Tests.McpToolNamesAreDerivedTests|FullyQualifiedName~AiDe.Core.Tests.TelemetryTests|FullyQualifiedName~AiDe.Core.Tests.WalkingSkeletonTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.BoardOrderingTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.BoardPublisherTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.ContractBoardPostTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationContractLogTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationContractTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationFeedTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationProjectionBoundaryTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationProjectionRuntimeTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationProjectionTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationRecoveryBoundaryTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationRecoveryTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.CoordinationReliabilityTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.DaydreamPersistenceTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.IngestHostTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.McpConfigWriterTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.McpMatchesTheJsonlPathTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.McpSessionIdentityTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.MessageBoardTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.RestartDoesNotMultiplySessionsTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.SqliteAllocationOverlapTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.SqliteWatcherObservationStoreTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.TrustedRegistrarTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.WatcherHostTests|FullyQualifiedName~AiDe.Core.Tests.Watcher.WeaveScorerTests|FullyQualifiedName~AiDe.Core.Tests.Workbench.PerspectiveSetTests|FullyQualifiedName~AiDe.Core.Tests.WorkspaceDiagnosticsTests",
+    "--logger",
+    "trx;LogFileName=lifecycle-union-green.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p24-recovery-evidence"
+  ],
+  "logicalExit": 0
+}

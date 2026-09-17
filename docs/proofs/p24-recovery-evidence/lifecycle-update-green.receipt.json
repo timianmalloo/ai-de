@@ -1,0 +1,29 @@
+{
+  "expectedExit": 0,
+  "base": "eda167380704af1fbba62efbfea402fd0fa97104",
+  "pins": {
+    "docs\\proofs\\p24-recovery-evidence\\lifecycle-update-green.trx": "30F4BBD9CB7FE0EE06B1A1BD730F292175998F3857B8BB19BB1AFB8401213BEB",
+    "docs\\proofs\\p24-recovery-evidence\\lifecycle-update-green.stdout.txt": "E5FFA6D209855EC8E5D2DA92C99B17E8AB0F596C0AA1F0AD87BA9BD0822D6FA2",
+    "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll": "56A3FC73D2046B2487883DA02617D2155913ECDA5F7550A5E4684F83513EAF3A",
+    "docs\\proofs\\p24-recovery-evidence\\lifecycle-update-green.stderr.txt": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "src\\AiDe.Core\\Watcher\\CoordinationContractLog.cs": "EF21D2F99EF9EB712112116A840C246B9C6BE896F09E8D80C6BE60D3C74F29C6",
+    "src\\AiDe.Core\\AiDe.Core.csproj": "B63C41B97201DC3E1016B72B404A32411AC31E477231B281219DDA64D0AD584A",
+    "tests\\AiDe.Core.Tests\\Watcher\\CoordinationRecoveryTests.cs": "1949209769E4DE45FD1F665B73199F45A7003F0FDC75B7458A6605E33BD126EB",
+    "src\\AiDe.Core\\Watcher\\CoordinationRecovery.cs": "F72117B08DC25786E7A1A67B1352405363671A371B94EAFF5BDF3D8E2498A3C5",
+    "src\\AiDe.Core\\Watcher\\CoordinationProjection.cs": "C8D5C2BEDC02D405459A5E13CBB7B1A7FD692E022C0DCD43681D3D3487763B45",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj": "FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D",
+    "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.dll": "F840C069FCCF96DC5AAA21151A43C9A264C7283F2C4F1899ECBD9E5A9C26B46B"
+  },
+  "arguments": [
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "--filter",
+    "FullyQualifiedName~Pump_PendingUpdate_OriginalPayloadAppliesOnceAfterObservationRegistration|FullyQualifiedName~Pump_RegisteredUpdate_PreservesNativeIdentity",
+    "--logger",
+    "trx;LogFileName=lifecycle-update-green.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p24-recovery-evidence"
+  ],
+  "logicalExit": 0
+}

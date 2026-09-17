@@ -4,7 +4,7 @@ title: "Cross-harness coordination: P1 foundation and P2 native replay evidence"
 type: proof-pack
 status: draft
 owner: "@timianmalloo"
-phase: P1
+phase: P2
 tags: [coordination, proof-pack, confidence, pending]
 links:
   - { to: spec-cross-harness-coordination, rel: documents }
@@ -13,12 +13,130 @@ links:
   - { to: investigation-cross-harness-message-delivery, rel: depends-on }
 review-by: 2026-10-16
 summary: >-
-  Records dormant P1 four-finding repair RED/GREEN, actual CLI and killed-correlation-mutant
-  evidence with immutable source/test pins. Preserves historical P0 receipts and explicitly
-  pending independent re-review, runtime, authority and later-phase gates.
+  Consolidates P1 producer and bounded P2 projection evidence, including the isolated
+  pre-recovery measurement mutant and pending-update red/green receipts. Full lifecycle,
+  independent review, production authority and P3–P5 remain unqualified.
 ---
 
-# Proof Pack — dormant P1 candidate; independent code gate pending
+# Proof Pack — P1/P2 candidates; independent code gate pending
+
+## B5 qualification and bounded B6 update candidate — 2026-09-17
+
+**Partial author evidence, not approval.** This continuation starts from
+`eda167380704af1fbba62efbfea402fd0fa97104` in the assigned projection worktree.
+Production actor authority remains **FALSE/DENY**. No tool launch, live endpoint,
+schema, dependency, App, or producer-source change is included.
+
+### Actual process receipts replace an overstated transcript claim
+
+The earlier `recoveryB-finite-full-output.txt`,
+`recoveryB-finite-restored-full-output.txt` and
+`recoveryB-finite-mutants-output.txt` are retained unchanged. They are transcript
+metadata/commands, **not retained actual runner stdout/stderr**. The earlier
+paragraph calling them a full run transcript overstated the evidence. Their
+TRX and pins remain historical receipts; no chronological production failure
+is invented to repair that statement.
+
+All new `lifecycle-*` evidence resolves under
+`docs/proofs/p24-recovery-evidence/`. `qualify-lifecycle.ps1` invokes the installed
+.NET runner directly using `ProcessStartInfo`, drains both process streams, saves
+each separately, and records the actual process exit before checking it. Each
+`.receipt.json` records arguments and SHA-256 pins for available source, projects,
+test/Core binaries, TRX and both streams. The isolated mutant source/binary pins
+are distinct from the unchanged main-tree source/binary pins. Scratch copies are
+removed in `finally`; production source was never mutated for B5.
+
+| Claim / oracle | Actual evidence | Red observed / confidence | Limit |
+|---|---|---|---|
+| Pre-recovery failure is NotRecorded, not completed zero | `lifecycle-b5-baseline.trx`: 1 passed, exit 0; `lifecycle-b5-mutant.trx`: 1 failed, exit 1; `lifecycle-b5-restored.trx`: 1 passed, exit 0 | **Verified:** same retained `Pump_FailsBeforeRecovery_ReportsNotRecordedRatherThanCompletedZero` fails `Expected: NotRecorded; Actual: Completed` when only the default measurement status in isolated Core is changed | Not a production bug RED; not the previous partial-Failed mutant; no unrelated fixture failure |
+| An accepted pending UPDATE applies its original payload after a later observed registration | `lifecycle-update-red.trx`: 1 passed/1 failed, exit 1; `lifecycle-update-green.trx`: 2 passed, exit 0 | **Verified:** unchanged source left pending count 1 where 0 was required; removing only UPDATE from the skip list changes the result | Lost ACK and late identity/generation ambiguity for this new kind remain unqualified |
+| UPDATE preserves admission, retained original body, exact model/harness and replayed native record | `Pump_PendingUpdate_OriginalPayloadAppliesOnceAfterObservationRegistration`: admission 1 retained, original raw-byte hex unchanged, exact harness/model names and versions, generation 1, exactly one OBSERVED_UPDATE receipt; four pumps and four pumps after new-store construction | **Verified executed assertions:** source body equality also preserves its original serialized observation time; restart compares the entire `SessionRecord` | No separate explicit source-time-field oracle, no heartbeat/capability mint counter, no recovery-specific after-commit fault |
+| Already registered UPDATE changes only intended model fields | `Pump_RegisteredUpdate_PreservesNativeIdentity`: entire native record equals original with the explicit model replacement | **Verified** positive control passed even on baseline | Does not settle pending lifecycle identity ambiguity |
+| Prior selection preserved | `lifecycle-union-green.trx`: 504 executed/passed, zero failures/skips, exit 0 | **Verified:** runner checks all 502 predecessor occurrences by Ordinal multiset, not unique display names; the prior 488 are contained by the preserved predecessor receipt | Selected class union, not all Core or full P2 |
+
+The change reuses the existing `ApplyObservation` UPDATE SQL inside the existing
+IMMEDIATE recovery transaction. The resolved native repository comparison still
+precedes effects. It neither calls the live registrar nor increments generation,
+and introduces no source-timestamp ordering rule. The existing same-repository
+generation-2 controls were not changed. The original source body stays in the
+accepted event; admission/current-receipt linkage remains the existing model.
+Reach: native writer → immutable captured record → accepted pending event →
+recovery eligibility → inert native session update → receipt → reopened store.
+Recovery status/work/duration instrumentation remains the existing normal path.
+
+### Lifecycle matrix: do not promote one kind to B6 completion
+
+| Kind | Actual code disposition | Qualification |
+|---|---|---|
+| register | Still skipped by recovery. Initial `ApplyObservation` creates an observation session when unknown and returns OBSERVED_REGISTER when known | A valid admitted register has no REGISTRATION_REQUIRED return on that initial path. This is source inspection, **not N/A by assumption**; exceptional/deferred registration boundaries remain unqualified |
+| update | Newly allowed through existing inert writer after dependencies resolve | Native-source pending and already-registered cases red/green; original body, admission and restart assertions executed. Lost-ACK, explicit time-field, full no-authority counters, metadata GAP and ambiguity matrix **remain open** |
+| heartbeat | Still skipped | Existing initial SQL writes allocator heartbeat ticks, not source observation time. Enabling recovery as-is would refresh receiver-time liveness. **BLOCK/unqualified** |
+| session-end | Still skipped | Initial SQL inserts `session_ended`. Historical identity and once-only end semantics are not qualified. **BLOCK/unqualified** |
+
+**B6 remains BLOCK.** B2/B3/B7 and independent B8 retain their earlier finite
+obligations. In particular recovery-specific lost ACK for UPDATE, source GAP,
+exhausted-reference behavior and exact lifecycle authority effects are not
+covered by the new positive path. No mixed registration-notice recovery is
+included. B5 now has the missing isolated focal mutation receipt, subject to the
+independent Test reviewer. Full P2 and P3–P5 remain unmet.
+
+### Native producer P1: one canonical attachment, separate implementation branch
+
+Read-only integration source:
+`4c780db66d71a1fbf70c77faeef4a25070cb7616` in
+`C:\Projects\ai-de-feature-xh-p2-producers`. No file there was edited.
+`SessionCoordinationEmitter` writes register/end before changing membership,
+serializes a session through a referenced gate and counts waiters before releasing
+the lookup lock. This source inspection did **not** establish a current gate
+retirement defect. The prior independent 21-pass review is supplied by the task;
+this attachment is not the author's independent approval.
+
+| Producer receipt under `docs/proofs/` at the producer commit | Observed results | SHA-256 |
+|---|---|---|
+| `p24-producer-evidence-restored-green.trx` | 21 passed | `36E28B4CD1B0F64B8C93395DECA42878D89A624DC40BC17CE8FE031294BB6196` |
+| `p24-producer-evidence-green-with-bounds-red.trx` | 21 passed / 4 failed | `C00765067141A49699551CB8745DE97DD2DAB102F21CCA73201027C32683B887` |
+| `p24-producer-evidence-mutant-membership-before-write.trx` | Add/Remove-before-write mutants: 2 failed | `E2448CF2D3C849E6F4C6423E792AA68F5BCAE1CD576D10A0DAF0184855AB677D` |
+
+During this continuation, the parallel test author's new receipt became available
+at `ff73f62c071aaf16bd379b494d27df372ff2a7b5`, not at the earlier producer commit.
+`Register_FormerWaiterOwnsGate_ThirdOperationCannotOvertakeHeartbeat` supplies
+the requested three-operation test. The new retirement mutant fails on actual
+order: expected register/heartbeat/session-end, observed register/session-end/
+heartbeat. The restored focal receipt passes. These are read-back receipts,
+**not a rerun or independent review by this author**:
+
+| New producer receipt | Results | SHA-256 |
+|---|---|---|
+| `p24-producer-retirement-mutant-red.trx` | 1 failed | `4864F745BB237E31E9CE807A14B2B069864BADA78D16905537C3B541F2A6CE51` |
+| `p24-producer-retirement-restored-green.trx` | 1 passed | `1E6AEAC89426BE872441FDEF75EDF1D42C1C60B8C01A6787D12B232B11F35FA2` |
+| `p24-producer-retirement-whole-floor.trx` | 22 passed / 4 failed | `5288CB3CB767F75217F2928F1AFA6462CDC3CE4F730D39E6915CE67B458ABC32` |
+
+Independent review of the three-operation evidence remains pending.
+Prepared/global-128/notices bounds and producer Distributed Systems qualification
+are **not** cleared. Producer source/tests/audit are pinned by the two commits;
+the new local `lifecycle-producer-pins.json` records their git blob identities.
+The evidence stays on its producer branch until integration; no competing
+producer Proof Pack is created.
+
+### Class → sweep → derive → prevent and bounded close
+
+* **Accepted lifecycle work with no execution path:** sweep the four explicit
+  skips, retain unsafe/unqualified kinds, reuse the inert UPDATE writer.
+  The new pending-update oracle failed on the unchanged skip and passed after it
+  was narrowed. This is partial control, not a full lifecycle claim.
+* **Transcript metadata promoted to runtime evidence:** preserve old receipts,
+  classify them honestly, capture runner streams/exit directly, require nonzero
+  selected counts and focal assertion text. The isolated false-Completed mutant
+  proves the requested B5 control can fail.
+* **Execution-budget finding:** oversized combined reads consumed the bounded
+  tool budget without exposing their full output. Subsequent reads were narrowed.
+  This prevented completion of the broader new-kind qualification matrix; the cap
+  is not a proof of completion and has not been raised.
+
+Central defect-register/index regeneration belongs to the conductor under the
+explicit file ownership grant. No central gate is represented as passed here.
+Independent Data/Distributed Systems/Test review remains required; no author
+self-approval, deployment, upstream handoff or later phase completion is claimed.
 
 ## Recovery B finite-known-gap continuation — 2026-09-16
 

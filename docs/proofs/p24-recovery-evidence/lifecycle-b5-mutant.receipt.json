@@ -1,0 +1,28 @@
+{
+  "expectedExit": 1,
+  "pins": {
+    ".qualification-lifecycle\\test\\AiDe.Core.Tests.dll": "56A3FC73D2046B2487883DA02617D2155913ECDA5F7550A5E4684F83513EAF3A",
+    "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.dll": "E82F9BD07349BA6DD9232B02EBAFDF428D4ABB38EE0DC19097688B2479830CFC",
+    ".qualification-lifecycle\\src\\AiDe.Core\\Watcher\\CoordinationRecovery.cs": "F397016329E4458A03D37DD64B7BEA871991D2C10B25DD8CA4629366605EAE4B",
+    ".qualification-lifecycle\\test\\AiDe.Core.dll": "712C5AA1BDC157CEB32E3133C25646E3162CB3A6AC17E4E9019A0DEA6B0B42DD",
+    "docs\\proofs\\p24-recovery-evidence\\lifecycle-b5-mutant.stdout.txt": "09D543E1BF212963E51291B90BFE380A519D32EB140A26E5D44E2F91C6020BDF",
+    "docs\\proofs\\p24-recovery-evidence\\lifecycle-b5-mutant.trx": "023B22AA4BA6E0507EF23D299BB14C378A0B479EA6A32B385D3D5ADF416219BC",
+    "src\\AiDe.Core\\Watcher\\CoordinationContractLog.cs": "EF21D2F99EF9EB712112116A840C246B9C6BE896F09E8D80C6BE60D3C74F29C6",
+    "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll": "56A3FC73D2046B2487883DA02617D2155913ECDA5F7550A5E4684F83513EAF3A",
+    "src\\AiDe.Core\\Watcher\\CoordinationProjection.cs": "C8D5C2BEDC02D405459A5E13CBB7B1A7FD692E022C0DCD43681D3D3487763B45",
+    "tests\\AiDe.Core.Tests\\Watcher\\CoordinationRecoveryTests.cs": "1949209769E4DE45FD1F665B73199F45A7003F0FDC75B7458A6605E33BD126EB",
+    "src\\AiDe.Core\\AiDe.Core.csproj": "B63C41B97201DC3E1016B72B404A32411AC31E477231B281219DDA64D0AD584A",
+    "docs\\proofs\\p24-recovery-evidence\\lifecycle-b5-mutant.stderr.txt": "AA649B45324D1EFB2A437490AB9CA1D44891DABDCBAB1CBF1B7267A9604682ED",
+    "src\\AiDe.Core\\Watcher\\CoordinationRecovery.cs": "7DD120FD6154AF38C5D0DA26580229A7126E4151DA3B7347B15EFC7F33636B80",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj": "FFAD72D5B9D4E9F1D59FBCCDA771BBBAC648158F3C299FA5BCBC19497734136D"
+  },
+  "logicalExit": 1,
+  "arguments": [
+    "vstest",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\.qualification-lifecycle\\test\\AiDe.Core.Tests.dll",
+    "/TestCaseFilter:FullyQualifiedName~Pump_FailsBeforeRecovery_ReportsNotRecordedRatherThanCompletedZero",
+    "/Logger:trx;LogFileName=lifecycle-b5-mutant.trx",
+    "/ResultsDirectory:C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p24-recovery-evidence"
+  ],
+  "base": "eda167380704af1fbba62efbfea402fd0fa97104"
+}

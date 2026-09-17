@@ -382,6 +382,76 @@ public sealed class CoordinationRecoveryTests(Xunit.Abstractions.ITestOutputHelp
         Assert.Equal("COORD_PUMP_FAILED", pump.LastRun.Diagnostic);
     }
 
+    [Fact]
+    public void Pump_PendingUpdate_OriginalPayloadAppliesOnceAfterObservationRegistration()
+    {
+        using var files = new NativeRecovery();
+        SessionRecord applied;
+        long receipt;
+        string body;
+        using (var store = SqliteWatcherObservationStore.Open(files.Database))
+        {
+            var pump = files.Compose(store);
+            files.Writer.Write("update", Child, new Dictionary<string, string?>
+            {
+                [OtelAttributes.ServiceName] = "historical-harness",
+                [OtelAttributes.ServiceVersion] = "17",
+                [OtelAttributes.GenAiModel] = "historical-model",
+                [OtelAttributes.GenAiModelVersion] = "23",
+            });
+            pump.PumpOnce();
+            Assert.Empty(store.AllSessions());
+            Assert.Equal(1, files.PendingCount());
+            body = files.Text("SELECT hex(raw_bytes) FROM coord_projection_event WHERE first_receipt_n=1;");
+            files.Advance();
+            files.Register(Child);
+            files.Pump(pump, 4);
+
+            Assert.Equal(0, files.PendingCount());
+            applied = Assert.Single(store.AllSessions());
+            Assert.Equal(new HarnessIdentity("historical-harness", "17"), applied.Binding.Harness);
+            Assert.Equal(new ModelIdentity("historical-model", "23"), applied.Binding.Model);
+            Assert.Equal(new SessionGeneration(1), applied.Generation);
+            Assert.Equal(body, files.Text("SELECT hex(raw_bytes) FROM coord_projection_event WHERE first_receipt_n=1;"));
+            Assert.Equal(1, files.Number("SELECT COUNT(*) FROM coord_projection_feed WHERE admission_n=1 AND reason='OBSERVED_UPDATE';"));
+            receipt = files.Number("SELECT current_receipt_n FROM coord_projection_event WHERE first_receipt_n=1;");
+            Assert.True(receipt > 1);
+        }
+        using (var reopened = SqliteWatcherObservationStore.Open(files.Database))
+        {
+            files.Advance();
+            files.Pump(files.Compose(reopened), 4);
+            Assert.Equal(applied, Assert.Single(reopened.AllSessions()));
+            Assert.Equal(receipt, files.Number("SELECT current_receipt_n FROM coord_projection_event WHERE first_receipt_n=1;"));
+            Assert.Equal(body, files.Text("SELECT hex(raw_bytes) FROM coord_projection_event WHERE first_receipt_n=1;"));
+            Assert.Equal(1, files.Number("SELECT COUNT(*) FROM coord_projection_feed WHERE admission_n=1 AND reason='OBSERVED_UPDATE';"));
+        }
+    }
+
+    [Fact]
+    public void Pump_RegisteredUpdate_PreservesNativeIdentity()
+    {
+        using var files = new NativeRecovery();
+        using var store = SqliteWatcherObservationStore.Open(files.Database);
+        var pump = files.Compose(store);
+        files.Register(Child);
+        pump.PumpOnce();
+        var original = Assert.Single(store.AllSessions());
+        files.Writer.Write("update", Child, new Dictionary<string, string?>
+        {
+            [OtelAttributes.GenAiModel] = "updated-model",
+            [OtelAttributes.GenAiModelVersion] = "2",
+        });
+
+        files.Pump(pump, 2);
+
+        Assert.Equal(original with
+        {
+            Binding = original.Binding with { Model = new ModelIdentity("updated-model", "2") },
+        }, Assert.Single(store.AllSessions()));
+        Assert.Equal(0, files.PendingCount());
+    }
+
     private sealed class NativeRecovery : IDisposable
     {
         private readonly RecoveryClock _time = new();
@@ -472,6 +542,18 @@ public sealed class CoordinationRecoveryTests(Xunit.Abstractions.ITestOutputHelp
             using var command = connection.CreateCommand();
             command.CommandText = sql;
             return (long)command.ExecuteScalar()!;
+        }
+
+        public string Text(string sql)
+        {
+            using var connection = new SqliteConnection(new SqliteConnectionStringBuilder
+            {
+                DataSource = Database, Mode = SqliteOpenMode.ReadOnly, Pooling = false,
+            }.ToString());
+            connection.Open();
+            using var command = connection.CreateCommand();
+            command.CommandText = sql;
+            return (string)command.ExecuteScalar()!;
         }
 
         public void Execute(string sql)

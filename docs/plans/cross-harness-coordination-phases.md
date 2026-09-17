@@ -4,7 +4,7 @@ title: "Cross-harness coordination P0–P5 phase graph"
 type: doc
 status: draft
 owner: "@timianmalloo"
-phase: P1
+phase: P2
 tags: [coordination, phases, rollback, handoff]
 links:
   - { to: spec-cross-harness-coordination, rel: implements }
@@ -19,6 +19,48 @@ summary: >-
 ---
 
 # Durable phase graph
+
+## B5/B6 bounded continuation checkpoint — 2026-09-17
+
+Goal: qualify pre-recovery measurement absence, implement and test bounded
+pending UPDATE recovery, and attach producer P1 evidence to the one canonical
+Proof Pack. Done when focal receipts, original payload/native-record assertions,
+regression preservation and a reviewable commit exist. Not in scope: other
+branch edits, live authority, broader P2 closure or P3–P5.
+Tier T2; fan-out 0; main-line ceiling 35 calls; context ceiling 150k.
+
+| Node | Capability | Dependency | Actual exit |
+|---|---|---|---|
+| Ground finite B contract and actual recovery/writer | Reasoning | Existing canonical proof | Four lifecycle skips and inert UPDATE writer established; heartbeat receiver-time behavior excludes blanket enabling |
+| Qualify B5 isolated mutant | Deterministic mechanics | Grounding, unchanged retained test | Default false-Completed mutant: focal failure, restored pass; actual streams, logical exits, pins and TRX |
+| Pending UPDATE baseline → repair → proof | Reasoning + deterministic mechanics | Grounding; source edit only after focal RED | Pending count 1→0; original raw body/admission, native fields and reopened-store record checked |
+| Preserve selected regression union | Deterministic mechanics | Repair | 504 pass; all 502 predecessor occurrences retained |
+| Attach producer evidence | Reasoning | Read-only producer commits and receipts | P1 membership evidence plus newly available three-operation test consolidated in canonical pack |
+| Independent qualification | Independent review | Candidate commit | **Pending**; cannot be collapsed into author verification |
+
+No fan-out was used. Source mutation/build and native validation share exclusive
+build outputs, so their ordering is substantive. The isolated mutant used copied
+Core source and copied test binaries, never the main source. Work/span were not
+measured as a whole; no parallel speedup is claimed. Inferred serial bound:
+`T1 = T∞`, width 1. The script's recorded runner data are measurements, not an
+estimate of total session cost.
+
+The finite validation lists terminate when their named receipts and counters
+are read; the native oracle uses four pumps before and four after reopening.
+The 35-call cap was approached after repeated oversized evidence reads; it is an
+estimate failure, not a reason to erase unexecuted obligations. No independent
+gate has been self-cleared. See `proof-cross-harness-coordination` for source,
+project, test, binary and TRX pins and the lifecycle matrix.
+
+**Completed at author-evidence level:** isolated B5 missing mutation; pending
+UPDATE positive/replay candidate; original-body and native-record assertions;
+actual process-output capture; 504-result regression union; canonical producer
+attachment. **Still unmet:** new-kind lost ACK, explicit source-time assertion,
+heartbeat/end historical effects, registration edge cases, authority counters,
+GAP/ambiguity matrix, B2/B3/B7/B8, full P2 and P3–P5. The three-operation producer
+receipt exists at `ff73f62c071aaf16bd379b494d27df372ff2a7b5`; its independent review
+and four producer bounds remain pending. Next: independent review of this
+candidate, then finish the named lifecycle evidence before any B6 completion.
 
 ## Finite resolved-session / MCP-container repair — 2026-09-16
 

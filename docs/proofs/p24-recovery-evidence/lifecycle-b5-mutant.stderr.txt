@@ -1,0 +1,1 @@
+[xUnit.net 00:00:00.38]     AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_FailsBeforeRecovery_ReportsNotRecordedRatherThanCompletedZero [FAIL]

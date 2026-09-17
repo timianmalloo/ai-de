@@ -1,0 +1,1 @@
+[xUnit.net 00:00:00.39]     AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PendingUpdate_OriginalPayloadAppliesOnceAfterObservationRegistration [FAIL]

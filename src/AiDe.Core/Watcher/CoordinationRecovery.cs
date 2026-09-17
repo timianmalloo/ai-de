@@ -117,8 +117,8 @@ public sealed partial class SqliteWatcherObservationStore
                         transaction.Commit();
                         continue;
                     }
-                    // Recovery observes dependencies; it never replays a live registrar or lifecycle refresh.
-                    if (record.Event is ContractRegister or ContractHeartbeat or ContractSessionEnd or ContractUpdate)
+                    // Updates use the inert SQL observation writer; registration and liveness need separate qualification.
+                    if (record.Event is ContractRegister or ContractHeartbeat or ContractSessionEnd)
                     {
                         transaction.Commit();
                         continue;

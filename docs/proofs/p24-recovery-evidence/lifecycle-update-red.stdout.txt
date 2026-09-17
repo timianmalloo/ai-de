@@ -1,0 +1,15 @@
+
+Test run for C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+  Failed AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PendingUpdate_OriginalPayloadAppliesOnceAfterObservationRegistration [112 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   1
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CoordinationRecoveryTests.Pump_PendingUpdate_OriginalPayloadAppliesOnceAfterObservationRegistration() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CoordinationRecoveryTests.cs:line 410
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+Results File: C:\Projects\ai-de-feature-xh-p2-projection\docs\proofs\p24-recovery-evidence\lifecycle-update-red.trx
+
+Failed!  - Failed:     1, Passed:     1, Skipped:     0, Total:     2, Duration: 150 ms - AiDe.Core.Tests.dll (net10.0)
