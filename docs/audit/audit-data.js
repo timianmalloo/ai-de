@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T23:35:23Z",
+  "generated": "2026-09-17T23:57:12Z",
   "audit": [
     {
       "actor": null,
@@ -21814,6 +21814,38 @@ window.AUDIT_DATA = {
       "main_budget": 20,
       "main_over_budget": false,
       "fan_out": 2
+    },
+    {
+      "id": "al-01M2RWV2CYWQ8RRAEXQD9F3CFP",
+      "shortname": "xh-p2-physical-root-author-blocked",
+      "datetime": "2026-09-17T23:57:12Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "ONE BOUNDED TEST-ONLY P2 NODE. AUTHOR MAX17TOOLCALLS/context150k NOagents; parent+authorCOMBINED ceiling24, independentreviewer12separate. StartDIRECTknownfixture, no broadgrounding/rosters/skillreinjection/oldaliasrewrites. UserallP0–P5approvalONLYthisnodeactive; STOPaftercommit/evidenceorcauseblocker. OwntreeC:\\Projects\\ai-de-feature-xh-p2-projection CLEANHEAD7bcb909d556ce31d12128586b944f51a21c2e0f8. Parentcheckedknownpriorauthor70da...IDLE+officialexactpathsALLOW+noP2liveregistration. ReopenSAMEsessionxh-p2-projection-b0d0; no otherwriterstarted. Existingreceipt396892finitegatePASS79/79preservednotrepeatthatfix. Newtest/mutantNOspeculativePRODUCTIONchange. Ifrealbugorcontractcan'tsettle, commitfailingrepro BLOCK, doNOTwidentofix.\nCLAIMdiscipline: ABSOLUTEpinnedCLI C:\\Projects\\ai-de-feature-xh-p1-responses\\docs\\ai-forward-pack\\scripts\\coord-core.py SHA256eda666970a695fb23b8594e7e540e6a9ab43203669e2d6578962834d11fa48ae fromownCWD envAGENT_SESSION=xh-p2-projection-b0d0,AGENT_NAME=cross-harness-physical-root-author,PYTHONIOENCODING=utf8. Checkhash; officialsessionstart; classifyEXACTrepo pathsAUTHOREDonlyTTL300 duringedit, RELEASEbeforelongtests. NEVERclaimderived/register/wildcard. Coord-core.pyENTIREFILEFROZENClaudeR125 no edits. No primary/hooks/config/install/reset/stash/discard/amend/mainjoin/push/force/activation/observer/realharness/GUI/upstream. Existingignoredcompiler cachesretain; no processnamekill/unknowndelete. apply_patchmanualcode; no heredocprogram/pipedgateexit/outputredirection. AuditreuseofficialOWNrootrender, stageownaudit-dataWITHOUTclaim withJSONLordinaryhooks.\nKnownsource toreadONLYexactfixture/API signatures: tests/AiDe.Core.Tests/Watcher/CoordinationProjectionRuntimeTests.cs (nativeFixture helper, Pump_EquivalentRootAfterReopen...); tests/AiDe.Core.Tests/Watcher/CanonicalCoordinationProjectionRuntimeTests.cs (officialFixture/descriptor/readalltables/helper); nativeCapture/ProjectCoordination signatures onlyif needed. Parentcanonproof4109–4179prescribedthisfixture, notanothercontextpacket. Nativecheckpoint isOFFSET/DIGEST, NOTROOT-TOKEN. PagehasScope. Don'tinventmismatchAPI orassert everyvalid secondrooterror.\nREQUIREDphysicalcase: OWNtemporarysynthetic siblingDIRS wire andwire-other, IDENTICALrelativefilenames+LOG BYTES usingactualwriter-derived validregister/post frames; sharedREALSQLitefile/store plusnewcompositionreopen. RightfulnativeprojectionfromAthenB MUSThaveindependentMEANINGFULoriginaladmission/session/message/checkpoint identitieswhereactualcontractsupports2sources. RepeatandREOPENboth preserveeachoriginalstate,no growth, validBmustNOTbeblanketrefused. Assertfullscopedstoretable/state notonlyhashinequality. Useexistingdeterministicallocators/Session IDs notrandomexpectedguid; sourcebindingrepositorycanSAMEdeclaredrepo/externalsessionifinputidentical; rootseparatestransportidentity. IfcurrentAPIbycontractsharesnativeSession meaningneedestablishactualcontractandreport—notforceguessedcounts. Legitpositivecontrolsrequired.\nACTUALMISMATCHnegative: nativeoffset/digestexpectedcheckpointcontainsNOROOTsoequaloffset/digestfromB isn'tnecessarilyinvalid. UseexistingAPI-representable guard—e.gOFFICIALdescriptor/capture/expectedstate combination fromrealDISTINCTtempPRIMARYGitROOTS whennativeAPIdoesnotexpressit. Constructsame-basename/common-prefix siblingrealGitroots withidenticalrelative.requests payload, distincttrustedphysicalbindings; correctA/Bprojectindependently; pairA capture withB descriptor/expected whereactualsignaturepermits ->specifiedcode(refusal) andZEROrelevantFULLstoremutation/no originalreceiptborrow. LabelnativepositivevsOfficialnegative honestly—notlogicalstubdescriptoronly. IfexistingnativeAPIEXPLICITrootparam allowsrealwrongroot useit. DoNOTcreate newroot-bearing token/productiontest-onlybypass.\nORACLE: isolatedFAULT onexistingrootidentity/descriptor-comparison code, disposableexport/buildorcurrentexistingmutationharness. NativeRootKeyconstant/collapsewire-otherroot towire maycausevalidBborrowAadmissions; SAMEphysicalcaseassertion mustFAIL withmeaningfulstate/count/identity, notcompile/missingmember/setup. OrremoveactualguardmakesmismatchedDescriptoradmitted=>sameactualphysicalnegativeFAIL. ChooseSMALLESTfault first; don'tmutateproductionworkingtreepermanently. Restorebyteexact iftemporary, pinsBEFOREmutantandAFTER. AtleastONEappropriateinversefault asuserrequested; don'tinventrootbehaviorfrommutator. Existinghelpers/dependencies only, no additions. Characterizationallcurrentuntouchedalias/receiptcontrols selected79ifbudget, minimumnewcases+existingalias13/official49 combinedselectorsactualnonzero counts no0testpass. Holdnoeditlocks throughtests.\nOWN ONLYtwoEXISTINGruntime test fixtures above; requiredcanonicalproofdocs/proof/cross-harness-coordination-proof-pack.md+ownaudit/rawevidence(existingrecordsappropriate). No newproductioncode, no newProofPack/plan/field.PrivateCore.Infrastructure.Tool_Metadata filler. DocspackONEsingular; oldpluralrawdirallowedpreserveexistingreceipts. RecordworkingrunSHA vsGitblobclean conversionseparate; compareORDINALoccurrencecounts(class/method/testID/display) notdedupnames; no claimsidenticalrebuiltbinaries. FocalsemanticRED(mutant) followedrestoredGREEN notfalsehistoricalbugRED ifprodpasses. Originalreceipt53archive andindep79TRX untouched.SourcequalWindowslocalnoUNCShares/symlink/raceproofnewclaims.\nConvergeEARLY andsavecallsforordinarycommit/HEADread/release/sessionend. Avoidhugecombinedstdout dumps; parsedTRXsummaryandactualexit+storedfullartifact. Newsemanticcontrolsvalidatedor genuineBLOCKcommit. IncludeCopilottrailer; repo cleanexactleasesreleasedend. Return≤1000words exactSHA/diffscope,testcasepositiveA/B/refusedmismatch/mutantassertions/new+retainedcounts/sourcepins/rawpaths/remainingP2P3–5unqualified. Parentindependentreview12thenSTOP,nofollowonunit.",
+      "summary": "BLOCKED: no physical-root tests, failing reproduction, or mutant. Four oversized reads, unavailable shell rg and rejected classify/check argument shapes spent the budget. Canonical proof records author failure; source, fixtures, and historical evidence untouched. Audit start records only closing work, not the full author duration.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md"
+      ],
+      "tags": [],
+      "outcome": "blocked",
+      "goal": "Add physical-root isolation tests and a meaningful inverse-fault oracle",
+      "done_when": "Evidence is committed, or a failing reproduction establishes a blocker",
+      "tier": "T2",
+      "main_calls": 17,
+      "main_budget": 17,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-17T23:55:20Z",
+      "duration_seconds": 112.0,
+      "git": {
+        "sha": "7bcb909d556ce31d12128586b944f51a21c2e0f8",
+        "short": "7bcb909d5",
+        "branch": "feature/xh-p2-projection",
+        "pushed": null
+      }
     }
   ],
   "changes": [

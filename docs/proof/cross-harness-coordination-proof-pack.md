@@ -4235,3 +4235,54 @@ identity coverage, durable notice/cold-restart integration, full recovery B6 and
 other P2 floors are **not** cleared by this result. P3–P5 remain pending.
 The entire P1 `coord-core.py` edit seam stays frozen for Claude R125. No main
 merge, production activation, GUI run or upstream transfer occurred.
+
+### Physical-root author retry — blocked before test authoring, 2026-09-17
+
+This is an execution-budget checkpoint, **not additional qualification**.
+The bounded author reopened session `xh-p2-projection-b0d0` in
+`C:\Projects\ai-de-feature-xh-p2-projection` at clean HEAD
+`7bcb909d556ce31d12128586b944f51a21c2e0f8`. The coordination CLI was invoked by
+absolute path from the assigned worktree; its working-file SHA-256 was checked
+against `eda666970a695fb23b8594e7e540e6a9ab43203669e2d6578962834d11fa48ae`
+before session registration. That is a working-file hash, not a Git-blob hash.
+
+**GATE physical-root author · BLOCK:** no new test, native physical A/B
+projection, official physical mismatch, or inverse-fault run was produced.
+No failing production reproduction was established. The budget was spent before
+the capture/descriptor contracts could be fully read and the requested controls
+could be authored and executed. This is an author execution failure, not evidence
+of a defective production contract and not permission to broaden this node.
+
+The repeated failure mechanism was oversized combined command output: four reads
+returned only an oversized-output notice and preview instead of usable source
+context. A shell `rg` invocation also failed because that executable was
+unavailable. A later attempted `classify --path` command was rejected by the
+pinned CLI; its `claim --path` command did grant the exact proof-pack lease.
+These failed probes are not credited as source inspection or tests.
+
+The targeted fixture excerpts that were actually visible showed the native
+`Pipeline` writer, file-backed SQLite composition and replay example, and the
+official fixture's real Git setup and full-table snapshot helper. They did not
+settle all contracts needed for the new scenario. No root-bearing checkpoint
+token, assumed cross-root refusal, synthetic production bypass, or guessed
+session count was introduced to bridge that gap.
+
+The known oversized-grounding failure documented in the earlier root checkpoint
+recurred. Class: bounded work exhausted by unusable discovery output. Sweep:
+four oversized reads and the unavailable shell search in this retry. Derive:
+reuse the exact fixture locations rather than discover another context packet.
+Prevention remains **unverified**: a successor needs source reads with an
+explicit output-byte bound and reserved author/test/commit calls; no new
+automated control was built in this test-only node.
+
+Production and both runtime fixtures remain unchanged. No test runner or
+mutation runner executed, so new positive, mismatch and mutant counts are all
+**not run**, never zero-test passes. Existing 79/79 independent receipt evidence
+and the original archive were not rerun, modified, or promoted into evidence for
+the missing physical-root case. No rebuilt binary equality is claimed.
+
+Only this canonical proof-pack entry and its own audit/rendered-audit records
+are authored by this retry. The worktree is retained for the parent handoff.
+The physical-root gate, remaining P2 work and P3–P5 remain open. No production
+fix, publication, main join, push, activation, real-harness run, GUI run or
+upstream transfer occurred.
