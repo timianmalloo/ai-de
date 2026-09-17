@@ -1503,3 +1503,57 @@ The canonical Proof Pack records exact B1/B2 red/green, three focal mutants,
 Windows real-Git fixtures and unchanged pinned parser/corpus evidence.
 Independent acceptance, live capture, origin-qualified storage and full P2 remain
 separate pending gates.
+
+### Official store v10 admission contract — 2026-09-17
+
+The user's independent binding/codec and comparator clearances admit this dormant
+synthetic store work. They do not clear a new implementation. Comparison means
+validated canonical **bytes**, excluding only payloadDigest and recordedAt after
+validation, not their hash. The ebd4f1c oracle stays pinned.
+
+Add version 10 through the existing constructor migration from verified v9.
+Fresh creation composes the same migration. Do not rewrite v8, rebuild tables,
+delete rows, change the native 65,536-byte CHECK, or tighten native payload
+presence rules. Add event source_kind (native by default), official_raw_bytes,
+official_canonical_bytes and official_identity; checkpoint official_binding;
+feed occurrence_kind. These are additions to the existing three caches only.
+
+The existing v9 predicates admit inert terminal rows with absent native payload.
+Retain those predicates verbatim and conjoin new origin-partition guards; no
+replacement of existing triggers is necessary. Native rows have NULL official
+columns. Official events require a pre-existing bound checkpoint with matching
+scope/epoch, canonical origin and nonempty native repository, native payload
+presence zero, terminal applied/refused state, no recovery, attempts, eligibility,
+seen components, due time, native original-ID or requested parent. Official feed
+rows have no native session/generation/message/parent mapping. Initial receipts
+retain the old inert parent_application_state='applied'; occurrence diagnostics
+retain both parent columns NULL and never move the current receipt.
+
+Official raw bytes are complete LF frames: content at most 65,536 bytes, raw at
+most 65,537 with LF or 65,538 with CRLF, and exact end-minus-start length.
+Interpreted canonical bytes are BLOBs at most 65,536 bytes. Refused input may be
+raw-only; raw bytes are never a substitute for validated canonical bytes.
+Official payload, full identity, source kind and binding are immutable. Full
+tagged identity includes native repository/origin plus the complete protocol key,
+or a separate legacy/invalid physical-occurrence key. Uniqueness uses the full
+BLOB, not a hash. SQL checks structure/provenance association, not schema/digest
+validity or authentication of the composition that supplied a descriptor.
+
+One future descriptor contains native root, physical primary, fixed file, origin,
+codec/allowance versions and every allowed opaque pair sorted by encoded bytes.
+Scope/public ID derive from all descriptor bytes, with full-descriptor collision
+comparison; no NULL-to-bound upgrade. Actor payload cannot select that descriptor.
+The future ProjectOfficialPage must acquire IMMEDIATE before lookup, validate
+binding/CAS/captured-prefix/framing, create an empty checkpoint before admission,
+and atomically account contiguous occurrences before commit/return. Equal identity
+and comparison bytes reuse admission; unequal bytes emit a Conflict occurrence
+receipt without changing original state. Applied means ingested, not acceptance.
+No native allocator, admission, capability or recovery call is allowed.
+
+**Bounded checkpoint for this turn:** structural v10 partition/migration and
+metadata-only occurrence reader. Capture, full descriptor/key construction,
+ProjectOfficialPage, replay/conflict classification and 401-record projection
+remain unimplemented if the 45-call ceiling is reached. This is deliberately
+not a canonical bridge completion claim. Existing source binding remains
+snapshot-only and NotStorable. Official writing and privileged authority remain
+Unavailable/Denied; no live importer is connected.

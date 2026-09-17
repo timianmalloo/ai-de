@@ -325,3 +325,19 @@ interprets payload authority labels, equates project names with native physical
 identity, widens native raw limits, nor activates a store or Main reader.
 New-code review, origin-limit Data/DS qualification and complete fold/capture
 integration remain open; this note changes none of those gates.
+
+#### Official-origin v10 structural checkpoint — 2026-09-17
+
+Adopt the design's Official store v10 admission contract before source changes.
+Use an additive v9-to-v10 migration and the identical fresh composition; preserve
+every historical table and native v9 predicate. Conjoin origin-specific guards
+rather than replace native guards: v9 already permits terminal absent-payload
+rows. Reject widening the native raw CHECK or routing official records through
+native pending/admission/capacity code. Full tagged BLOB identity, not a digest,
+is the uniqueness key. Occurrence diagnostics retain the original admission and
+current receipt; a Conflict discriminator is metadata, not a state transition.
+
+This turn may close at the structural store/receipt-reader checkpoint. A schema
+fixture is not trusted capture, a comparator, a ProjectOfficialPage transaction,
+a full reader, or old-binary rollback evidence. Those remain explicit remaining
+P2 work; P3-P5 and activation are unchanged. No serialized issuer authority is added.

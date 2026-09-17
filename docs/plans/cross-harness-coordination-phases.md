@@ -1059,3 +1059,23 @@ are recorded per run; token usage is not measured here. Broad early read output
 spent avoidable calls; later reads were bounded. Final evidence: 47/47 after each
 mutation restore, all 17 restored pins equal, byte probe zero valid mismatches.
 No extra plan or Proof Pack was created. Full P2 and P3-P5 stay pending.
+
+### Official store v10 bounded execution — 2026-09-17
+
+Goal: dormant official-occurrence projection; terminal checkpoint if the 45-call
+ceiling intervenes: coherent structural store code and receipt metadata, with
+remaining integration explicitly unimplemented. No agents, live inputs or new
+dependencies. Surface: constructor -> three cache partitions -> receipt SELECT
+-> CoordinationFeedEntry -> existing BoardTools/MCP serialization.
+
+Graph (all data/decision edges, width one): inspect v9/contracts (Reasoning) ->
+commit design/ADR (Deterministic mechanics) -> real-SQLite red tests ->
+additive migration/metadata (Reasoning) -> retained tests/mutants
+(Deterministic mechanics) -> single proof/audit/commit/release
+(Deterministic mechanics). Six equal-cost nodes give modeled work/span 6/6
+(Inferred); no concurrency gain is claimed. Test oracles are actual schema
+version, full migration rollback snapshot, SQL constraint refusals and metadata
+serialization. Missing columns alone are not semantic red evidence.
+Fixed remaining-test worklist terminates at zero; the call cap reports partial
+work rather than weakening a floor. Existing independent design clearances are
+inputs, not author-issued implementation approval.
