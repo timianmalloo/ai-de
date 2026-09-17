@@ -1,0 +1,9 @@
+{
+  "checks": {
+    "semanticAssertion": true,
+    "missingTrxRefused": true,
+    "wrongAssertionRefused": true,
+    "malformedTrxRefused": true
+  },
+  "scope": "TRX classifier only; malformed XML fault injected via stdlib mock; no product boundary mocked"
+}

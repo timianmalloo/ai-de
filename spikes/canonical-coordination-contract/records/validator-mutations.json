@@ -1,0 +1,147 @@
+[
+  {
+    "mutation": "schema-guard",
+    "exit": 1,
+    "killed": true,
+    "command": [
+      "dotnet",
+      "test",
+      "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "--no-restore",
+      "--nologo",
+      "-v:minimal",
+      "--logger",
+      "console;verbosity=normal",
+      "--filter",
+      "FullyQualifiedName~CanonicalCoordination",
+      "--logger",
+      "trx;LogFileName=C:\\Projects\\ai-de-feature-xh-p2-projection\\spikes\\canonical-coordination-contract\\records\\validator-mutation-schema-guard.trx"
+    ],
+    "source": "src/AiDe.Core/Watcher/CanonicalCoordinationRecord.cs",
+    "original": "if (!legacy) Validate(body);",
+    "replacement": "if (!legacy) { }",
+    "originalSha256": "e8e583718b6eb3513ddcd944ccb8b777d8675841caa357b277e92102cba7de4e",
+    "mutantSha256": "9f92258bc071a818fa0e0243e2e26bbfc27d26fdcae2b3b56413cfadbff1e73b",
+    "durationSeconds": 3.3874353999854065,
+    "evidence": {
+      "qualified": true,
+      "focalAssertions": {
+        "Parse_UnsupportedVersionsAndIntegerBound_AreVisible": true
+      },
+      "counters": {
+        "total": "36",
+        "executed": "36",
+        "passed": "28",
+        "failed": "8",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [
+        {
+          "test": "AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_WholeBodies_MatchesPinnedPythonOracle",
+          "message": "missing-kind: OK"
+        },
+        {
+          "test": "AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: \"schema-float\")",
+          "message": "Assert.Equal() Failure: Strings differ\r\n              \u2193 (pos 3)\r\nExpected: \"XH.SCHEMA_INVALID\"\r\nActual:   \"XH.DIGEST_MISMATCH\"\r\n              \u2191 (pos 3)"
+        },
+        {
+          "test": "AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: \"timestamp-bool\")",
+          "message": "Assert.Equal() Failure: Strings differ\r\n              \u2193 (pos 3)\r\nExpected: \"XH.SCHEMA_INVALID\"\r\nActual:   \"XH.DIGEST_MISMATCH\"\r\n              \u2191 (pos 3)"
+        },
+        {
+          "test": "AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: \"huge-timestamp\")",
+          "message": "Assert.Equal() Failure: Strings differ\r\n              \u2193 (pos 3)\r\nExpected: \"XH.FIELD_INVALID\"\r\nActual:   \"XH.DIGEST_MISMATCH\"\r\n              \u2191 (pos 3)"
+        },
+        {
+          "test": "AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_ReceiptExcludedFromDigest_StillValidatesReceiptAndDigest",
+          "message": "Assert.Equal() Failure: Strings differ\r\n           \u2193 (pos 0)\r\nExpected: \"XH.SCHEMA_INVALID\"\r\nActual:   \"OK\"\r\n           \u2191 (pos 0)"
+        },
+        {
+          "test": "AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_UnsupportedVersionsAndIntegerBound_AreVisible",
+          "message": "Assert.Equal() Failure: Values differ\r\nExpected: Unsupported\r\nActual:   Valid"
+        },
+        {
+          "test": "AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: \"integer-generation\")",
+          "message": "Assert.Equal() Failure: Strings differ\r\n              \u2193 (pos 3)\r\nExpected: \"XH.SCHEMA_INVALID\"\r\nActual:   \"XH.DIGEST_MISMATCH\"\r\n              \u2191 (pos 3)"
+        },
+        {
+          "test": "AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: \"boolean-sequence\")",
+          "message": "Assert.Equal() Failure: Strings differ\r\n              \u2193 (pos 3)\r\nExpected: \"XH.SCHEMA_INVALID\"\r\nActual:   \"XH.DIGEST_MISMATCH\"\r\n              \u2191 (pos 3)"
+        }
+      ]
+    },
+    "restoredSha256": "e8e583718b6eb3513ddcd944ccb8b777d8675841caa357b277e92102cba7de4e"
+  },
+  {
+    "mutation": "binding-membership",
+    "exit": 1,
+    "killed": true,
+    "command": [
+      "dotnet",
+      "test",
+      "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "--no-restore",
+      "--nologo",
+      "-v:minimal",
+      "--logger",
+      "console;verbosity=normal",
+      "--filter",
+      "FullyQualifiedName~CanonicalCoordination",
+      "--logger",
+      "trx;LogFileName=C:\\Projects\\ai-de-feature-xh-p2-projection\\spikes\\canonical-coordination-contract\\records\\validator-mutation-binding-membership.trx"
+    ],
+    "source": "src/AiDe.Core/Watcher/CanonicalCoordinationSourceBinding.cs",
+    "original": "|| (!record.IsLegacy && !streams.Contains(new(record.RepositoryId!, record.StreamId!)))",
+    "replacement": "|| false",
+    "originalSha256": "b28a5c48af79595d6fba23cfa5e3cf8b080548ac63014930efd3ef3e8f31e8be",
+    "mutantSha256": "6330df71763a92d3747a774c55017a7e94c0337b21cd76ef43fc0cc4c73a1ee6",
+    "durationSeconds": 3.232316899986472,
+    "evidence": {
+      "qualified": true,
+      "focalAssertions": {
+        "Bind_IsolatedGitRepositoriesAndLinkedCheckout_BindsOnlyTrustedFullIdentity": true,
+        "Bind_UnknownMembership_DoesNotProbeInvalidFilesystemPaths": true
+      },
+      "counters": {
+        "total": "36",
+        "executed": "36",
+        "passed": "34",
+        "failed": "2",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [
+        {
+          "test": "AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_IsolatedGitRepositoriesAndLinkedCheckout_BindsOnlyTrustedFullIdentity",
+          "message": "Assert.Equal() Failure: Values differ\r\nExpected: Unbound\r\nActual:   Bound"
+        },
+        {
+          "test": "AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_UnknownMembership_DoesNotProbeInvalidFilesystemPaths",
+          "message": "Assert.Equal() Failure: Values differ\r\nExpected: Unbound\r\nActual:   Unavailable"
+        }
+      ]
+    },
+    "restoredSha256": "b28a5c48af79595d6fba23cfa5e3cf8b080548ac63014930efd3ef3e8f31e8be"
+  }
+]

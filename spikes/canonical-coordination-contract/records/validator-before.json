@@ -1,0 +1,19 @@
+{
+  "head": "7f9ab24b3d7cbd86771e5d65e8df1dd7149d9d4c",
+  "files": {
+    "src/AiDe.Core/Watcher/CanonicalCoordinationCodec.cs": null,
+    "src/AiDe.Core/Watcher/CanonicalCoordinationRecord.cs": null,
+    "src/AiDe.Core/Watcher/CanonicalCoordinationSourceBinding.cs": null,
+    "src/AiDe.Core/AiDe.Core.csproj": "b63c41b97201dc3e1016b72b404a32411ac31e477231b281219dda64d0ad584a",
+    "spikes/canonical-coordination-contract/CanonicalCandidate.cs": "663abd6121bd507ebc73d03fff84fc66170e2ac989134a87dec99247ba47db3a",
+    "spikes/canonical-coordination-contract/CanonicalProbe.csproj": "829236610053c720ce831e008e26ce8d184e04bc9912b4846dd9e0b8dd986229",
+    "spikes/canonical-coordination-contract/bin/Debug/net10.0/CanonicalProbe.dll": "416e6d86862fe68b9890db1ce1adba30a8d612d5f41cc056279308bd68276109",
+    "tests/AiDe.Core.Tests/Watcher/CanonicalCoordinationContractTests.cs": "ef5e4c9eaca99628af52a77b2c415451b9d2c5ce1d03841614fb6a5383b4806f",
+    "tests/AiDe.Core.Tests/Watcher/CanonicalCoordinationRecordTests.cs": "2a1a0f3a4834613c3b768048e666e4f210bdb84b5b80084f23336dfdac34338c",
+    "tests/AiDe.Core.Tests/Watcher/CanonicalCoordinationBindingTests.cs": null,
+    "tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj": "d61d667fbed1b0f4ada7ac2b68501b50015c66c1081f140ecfd0f6266a456f8c",
+    "tests/AiDe.Core.Tests/bin/Debug/net10.0/AiDe.Core.Tests.dll": "8b750dca587cdb74aea3e3adbd5f0b7af19f5a022afa110509e5bf518834aad9",
+    "tests/AiDe.Core.Tests/bin/Debug/net10.0/AiDe.Core.dll": "41460a29e9b0c906cbdfc6807f1f946cfa5e1d061df94b9deceab8e1b051d7ef",
+    "tests/AiDe.Core.Tests/Watcher/Fixtures/canonical-coordination-v1.json": "da65af014026d69145a0a0dbd5eeebb1fe0cfcee8362bc093b8bb43c068ca603"
+  }
+}

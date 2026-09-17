@@ -1,0 +1,12 @@
+[
+  {
+    "mutation": "schema-guard",
+    "exit": 1,
+    "killed": false
+  },
+  {
+    "mutation": "binding-membership",
+    "exit": 1,
+    "killed": false
+  }
+]

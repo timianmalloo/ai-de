@@ -1,0 +1,434 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="177bd95b-ed02-456c-a6e9-4ebc2e5c0233" name="malla@TIMMALLSTRIX 2026-09-17 10:20:20" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-17T10:20:20.7421130-07:00" queuing="2026-09-17T10:20:20.7421134-07:00" start="2026-09-17T10:20:20.0076029-07:00" finish="2026-09-17T10:20:21.3641260-07:00" />
+  <TestSettings name="default" id="2f9e71a0-f0c2-48ed-b23d-71fca841d045">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-17_10_20_20" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="929fccb5-2c44-4363-824a-68be48488ba4" testId="39aabce0-fdcd-96d7-fd05-62776254800e" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_OriginalGoldenEvents_PreservesFullBytesAndKeys" computerName="TIMMALLSTRIX" duration="00:00:00.0059349" startTime="2026-09-17T10:20:21.2823573-07:00" endTime="2026-09-17T10:20:21.2877482-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="929fccb5-2c44-4363-824a-68be48488ba4" />
+    <UnitTestResult executionId="fe0732b5-454c-47d5-aede-c6d2722e178f" testId="a88e60ed-87d9-b8ef-373b-adbe7250400a" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_WholeBodies_MatchesPinnedPythonOracle" computerName="TIMMALLSTRIX" duration="00:00:00.0026262" startTime="2026-09-17T10:20:21.2913213-07:00" endTime="2026-09-17T10:20:21.2938220-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fe0732b5-454c-47d5-aede-c6d2722e178f">
+      <Output>
+        <ErrorInfo>
+          <Message>missing-kind: OK</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_WholeBodies_MatchesPinnedPythonOracle() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs:line 42&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fb3dc277-0368-4649-b8e5-78d550f8721c" testId="c173687a-2cd6-f42b-dabd-4d44b6eeb9c4" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: &quot;null&quot;, code: &quot;XH.SCHEMA_INVALID&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0000074" startTime="2026-09-17T10:20:21.2821501-07:00" endTime="2026-09-17T10:20:21.2821682-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fb3dc277-0368-4649-b8e5-78d550f8721c" />
+    <UnitTestResult executionId="425028c5-6735-45fb-b071-65501aa0d2c5" testId="7cfadc48-d2fe-921e-1d58-4f99e45737a9" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Scope_RepositoryOriginPathEpochTuples_DoNotAlias" computerName="TIMMALLSTRIX" duration="00:00:00.0179946" startTime="2026-09-17T10:20:20.6897982-07:00" endTime="2026-09-17T10:20:20.7077325-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="425028c5-6735-45fb-b071-65501aa0d2c5" />
+    <UnitTestResult executionId="6f5f66a2-37bb-41df-9e8c-51b68e403dfe" testId="b610e3f6-397e-d562-4a84-a5f913a7add9" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: &quot;{\&quot;x\&quot;:1,\&quot;\\u0078\&quot;:2}&quot;, code: &quot;XH.DUPLICATE_KEY&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0000083" startTime="2026-09-17T10:20:21.2822961-07:00" endTime="2026-09-17T10:20:21.2823128-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6f5f66a2-37bb-41df-9e8c-51b68e403dfe" />
+    <UnitTestResult executionId="af4ba732-e280-4fec-b421-d347e7d39b1d" testId="a4d781d9-8aa2-634d-b958-1f6f61a40054" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: &quot;{\&quot;x\&quot;:\&quot;\\ud800\&quot;}&quot;, code: &quot;XH.SCHEMA_INVALID&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0000118" startTime="2026-09-17T10:20:21.2822492-07:00" endTime="2026-09-17T10:20:21.2822659-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="af4ba732-e280-4fec-b421-d347e7d39b1d" />
+    <UnitTestResult executionId="78b5b3b8-5be0-45d6-85e9-bc1d5f624202" testId="44e5fb0c-7519-01c9-1b22-27491633957c" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: &quot;{\&quot;x\&quot;:\&quot;\\udc00\&quot;}&quot;, code: &quot;XH.SCHEMA_INVALID&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0001015" startTime="2026-09-17T10:20:21.2822013-07:00" endTime="2026-09-17T10:20:21.2822190-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="78b5b3b8-5be0-45d6-85e9-bc1d5f624202" />
+    <UnitTestResult executionId="1b9fc19b-7d44-4cbf-815f-1fea8ad63ccb" testId="ae9b316d-64ee-b182-be40-c6b70ecca60d" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: &quot;schema-float&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0026892" startTime="2026-09-17T10:20:21.2781881-07:00" endTime="2026-09-17T10:20:21.2807222-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1b9fc19b-7d44-4cbf-815f-1fea8ad63ccb">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+              ↓ (pos 3)&#xD;
+Expected: "XH.SCHEMA_INVALID"&#xD;
+Actual:   "XH.DIGEST_MISMATCH"&#xD;
+              ↑ (pos 3)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs:line 28&#xD;
+   at InvokeStub_CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9e6c931b-4a11-4883-91f9-9f6d11855029" testId="be07135d-8c64-8a52-4da0-d89d549995ca" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Capture_CanonicalOriginLineEdges_ExposesNativeLfBound(contentSize: 65536, ending: &quot;\r\n&quot;, refuses: True)" computerName="TIMMALLSTRIX" duration="00:00:00.0182842" startTime="2026-09-17T10:20:20.6540408-07:00" endTime="2026-09-17T10:20:20.6722778-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9e6c931b-4a11-4883-91f9-9f6d11855029" />
+    <UnitTestResult executionId="1829a056-d366-4cd2-9401-fa65214a263f" testId="57aac093-ba68-9b32-801b-ac919bfe21f0" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_ExplicitLexicalErrors_MatchesPinnedP1Codes" computerName="TIMMALLSTRIX" duration="00:00:00.0098640" startTime="2026-09-17T10:20:20.7291005-07:00" endTime="2026-09-17T10:20:20.7388928-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1829a056-d366-4cd2-9401-fa65214a263f" />
+    <UnitTestResult executionId="86d43045-7880-465f-8700-33d05838a269" testId="50349b44-8834-dd59-e1b7-efc401071b90" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: &quot;timestamp-bool&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0028057" startTime="2026-09-17T10:20:21.2725335-07:00" endTime="2026-09-17T10:20:21.2752147-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="86d43045-7880-465f-8700-33d05838a269">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+              ↓ (pos 3)&#xD;
+Expected: "XH.SCHEMA_INVALID"&#xD;
+Actual:   "XH.DIGEST_MISMATCH"&#xD;
+              ↑ (pos 3)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs:line 28&#xD;
+   at InvokeStub_CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="282c7a22-5a0f-418a-81f6-acf36ac5f049" testId="a49d2048-4ad0-a94a-b93d-800aff780c06" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_IsolatedGitRepositoriesAndLinkedCheckout_BindsOnlyTrustedFullIdentity" computerName="TIMMALLSTRIX" duration="00:00:00.4482478" startTime="2026-09-17T10:20:20.7601382-07:00" endTime="2026-09-17T10:20:21.2082724-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="282c7a22-5a0f-418a-81f6-acf36ac5f049" />
+    <UnitTestResult executionId="f39e78e7-cf67-4614-97f0-96a83fe98ff4" testId="505dbf23-9ed9-8c4c-4289-a59582a16eb1" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_PinnedPythonEvents_MatchesBytesDigestAndFullKey" computerName="TIMMALLSTRIX" duration="00:00:00.0196344" startTime="2026-09-17T10:20:20.7390010-07:00" endTime="2026-09-17T10:20:20.7585832-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f39e78e7-cf67-4614-97f0-96a83fe98ff4" />
+    <UnitTestResult executionId="4fe742e9-b091-41ea-96bb-ebf7000a72e9" testId="a0dc747f-56b2-e88f-6d3a-f6aa511b63d8" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_InvalidJson_RejectsRatherThanCoerces(hex: &quot;7b2278223a22ff227d&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0001193" startTime="2026-09-17T10:20:20.5909275-07:00" endTime="2026-09-17T10:20:20.5909418-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4fe742e9-b091-41ea-96bb-ebf7000a72e9" />
+    <UnitTestResult executionId="f2efaba6-285b-4443-b2e2-dc84974047d6" testId="b6cead87-51ec-3442-64ab-6c494b51d7f5" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: &quot;huge-timestamp&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0032217" startTime="2026-09-17T10:20:21.2693677-07:00" endTime="2026-09-17T10:20:21.2723052-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f2efaba6-285b-4443-b2e2-dc84974047d6">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+              ↓ (pos 3)&#xD;
+Expected: "XH.FIELD_INVALID"&#xD;
+Actual:   "XH.DIGEST_MISMATCH"&#xD;
+              ↑ (pos 3)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs:line 28&#xD;
+   at InvokeStub_CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="90650a20-5d24-4ab3-bc24-114e378886a2" testId="ee25686a-87b3-1674-5d10-a5cfed5de658" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: &quot;{\&quot;x\&quot;:1e309}&quot;, code: &quot;XH.NONFINITE_JSON&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0001253" startTime="2026-09-17T10:20:21.2809335-07:00" endTime="2026-09-17T10:20:21.2809535-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="90650a20-5d24-4ab3-bc24-114e378886a2" />
+    <UnitTestResult executionId="30d7c52a-7432-4bf1-a2e8-98ae9f7d0b05" testId="fde9c9dc-ebd9-67c7-e8e1-fe231e3d080b" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_LineBoundary_CountsContentSeparately(content: 65537, ending: &quot;\r\n&quot;, valid: False)" computerName="TIMMALLSTRIX" duration="00:00:00.0030133" startTime="2026-09-17T10:20:21.2336763-07:00" endTime="2026-09-17T10:20:21.2366211-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="30d7c52a-7432-4bf1-a2e8-98ae9f7d0b05" />
+    <UnitTestResult executionId="cba99726-b2c8-4ced-afe7-afe85d6bd221" testId="c25b72c8-516f-ffa0-2d22-5f7d4bfb46c4" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_FullReserializedFactBoundary_IncludesReceiptHashAndSpaces" computerName="TIMMALLSTRIX" duration="00:00:00.0261789" startTime="2026-09-17T10:20:21.2940038-07:00" endTime="2026-09-17T10:20:21.3201286-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cba99726-b2c8-4ced-afe7-afe85d6bd221" />
+    <UnitTestResult executionId="4c8bbe1d-5d70-444b-9d29-6cf9278262d8" testId="3a1cad49-a065-3836-99d1-311dc1801a7b" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_LineBoundary_CountsContentSeparately(content: 65537, ending: &quot;\n&quot;, valid: False)" computerName="TIMMALLSTRIX" duration="00:00:00.0032724" startTime="2026-09-17T10:20:21.2302629-07:00" endTime="2026-09-17T10:20:21.2335940-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4c8bbe1d-5d70-444b-9d29-6cf9278262d8" />
+    <UnitTestResult executionId="5bd2ea1d-815b-4750-b662-279b15e44e6a" testId="77fbe380-4959-e7ec-b14c-a1b69e50d338" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_UnknownMembership_DoesNotProbeInvalidFilesystemPaths" computerName="TIMMALLSTRIX" duration="00:00:00.0051361" startTime="2026-09-17T10:20:21.2084771-07:00" endTime="2026-09-17T10:20:21.2134822-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5bd2ea1d-815b-4750-b662-279b15e44e6a" />
+    <UnitTestResult executionId="2f9ed1d1-9ab8-49ec-85c3-4a4663033892" testId="09681259-5b9d-2889-6325-b55dadd9c60c" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Capture_CanonicalOriginLineEdges_ExposesNativeLfBound(contentSize: 65536, ending: &quot;\n&quot;, refuses: True)" computerName="TIMMALLSTRIX" duration="00:00:00.0173045" startTime="2026-09-17T10:20:20.6723577-07:00" endTime="2026-09-17T10:20:20.6896354-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2f9ed1d1-9ab8-49ec-85c3-4a4663033892" />
+    <UnitTestResult executionId="35355047-8d2d-4dee-ae43-c0521bf870b4" testId="19a80946-c636-dc0f-79f5-391d1e65f78c" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_InvalidJson_RejectsRatherThanCoerces(hex: &quot;7b2278223a31653330397d&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0027620" startTime="2026-09-17T10:20:20.5787585-07:00" endTime="2026-09-17T10:20:20.5853885-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="35355047-8d2d-4dee-ae43-c0521bf870b4" />
+    <UnitTestResult executionId="d6b7489d-82d0-4816-a965-bd101e95f37d" testId="f74d8479-1767-9c92-7f10-7513def40daf" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_ReceiptExcludedFromDigest_StillValidatesReceiptAndDigest" computerName="TIMMALLSTRIX" duration="00:00:00.0032658" startTime="2026-09-17T10:20:21.2878291-07:00" endTime="2026-09-17T10:20:21.2910649-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d6b7489d-82d0-4816-a965-bd101e95f37d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+           ↓ (pos 0)&#xD;
+Expected: "XH.SCHEMA_INVALID"&#xD;
+Actual:   "OK"&#xD;
+           ↑ (pos 0)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_ReceiptExcludedFromDigest_StillValidatesReceiptAndDigest() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs:line 124&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2aa434c9-0b78-46e4-a1a5-1dbe814cf92f" testId="443acbfa-1f1b-92c0-e00c-5b47fba55d75" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_LineBoundary_CountsContentSeparately(content: 65536, ending: &quot;\r\n&quot;, valid: True)" computerName="TIMMALLSTRIX" duration="00:00:00.0036006" startTime="2026-09-17T10:20:21.2299391-07:00" endTime="2026-09-17T10:20:21.2302088-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2aa434c9-0b78-46e4-a1a5-1dbe814cf92f" />
+    <UnitTestResult executionId="d1de1de2-fc19-48a8-a43b-18fd0abbbbff" testId="572188c2-8d03-79ad-edca-6aa28772e4af" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Capture_CanonicalOriginLineEdges_ExposesNativeLfBound(contentSize: 65535, ending: &quot;\r\n&quot;, refuses: True)" computerName="TIMMALLSTRIX" duration="00:00:00.0468927" startTime="2026-09-17T10:20:20.5913684-07:00" endTime="2026-09-17T10:20:20.6330198-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d1de1de2-fc19-48a8-a43b-18fd0abbbbff" />
+    <UnitTestResult executionId="d9a65ff9-18ce-4040-8255-4b3f3890431a" testId="4b79040b-c5d7-bf5e-8583-15e0d9305a5f" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Number_FixedFiniteWorklist_MatchesEveryPythonString" computerName="TIMMALLSTRIX" duration="00:00:00.0210746" startTime="2026-09-17T10:20:20.7236173-07:00" endTime="2026-09-17T10:20:20.7288859-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d9a65ff9-18ce-4040-8255-4b3f3890431a" />
+    <UnitTestResult executionId="3df95ea0-89a8-4280-9781-af2d2419fcaa" testId="8d4f13ef-b788-7c36-2393-9767486cc235" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_ExpandedResponseBoundary_RejectsBeforeDigestComparison" computerName="TIMMALLSTRIX" duration="00:00:00.0241200" startTime="2026-09-17T10:20:21.2399027-07:00" endTime="2026-09-17T10:20:21.2640601-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3df95ea0-89a8-4280-9781-af2d2419fcaa" />
+    <UnitTestResult executionId="f3fa519d-d5a8-4bec-b2f0-79060c7c22b6" testId="b39d95a1-76de-8482-8c90-ea43b390283a" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: &quot;{\&quot;x\&quot;:NaN}&quot;, code: &quot;XH.NONFINITE_JSON&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0000239" startTime="2026-09-17T10:20:21.2820820-07:00" endTime="2026-09-17T10:20:21.2821079-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f3fa519d-d5a8-4bec-b2f0-79060c7c22b6" />
+    <UnitTestResult executionId="454f4c0a-3289-406f-a547-4e7a6cfb1048" testId="65797c2f-ca17-3649-8872-3ae91db0d68d" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_InvalidJson_RejectsRatherThanCoerces(hex: &quot;7b2278223a312c2278223a327d&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0001299" startTime="2026-09-17T10:20:20.5905512-07:00" endTime="2026-09-17T10:20:20.5905889-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="454f4c0a-3289-406f-a547-4e7a6cfb1048" />
+    <UnitTestResult executionId="b20ca456-8460-4bb2-ad8a-440a7635b0e4" testId="44aa8bfa-55d1-7d06-7fc9-bf710ec3b69e" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Capture_CanonicalOriginLineEdges_ExposesNativeLfBound(contentSize: 65535, ending: &quot;\n&quot;, refuses: False)" computerName="TIMMALLSTRIX" duration="00:00:00.0208723" startTime="2026-09-17T10:20:20.6331245-07:00" endTime="2026-09-17T10:20:20.6539496-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b20ca456-8460-4bb2-ad8a-440a7635b0e4" />
+    <UnitTestResult executionId="effcc97a-e828-4827-888c-75ffbf1acb90" testId="de040173-ae72-e606-c477-3b671f90e490" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_UnsupportedVersionsAndIntegerBound_AreVisible" computerName="TIMMALLSTRIX" duration="00:00:00.0085103" startTime="2026-09-17T10:20:21.2136795-07:00" endTime="2026-09-17T10:20:21.2269367-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="effcc97a-e828-4827-888c-75ffbf1acb90">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Unsupported&#xD;
+Actual:   Valid</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_UnsupportedVersionsAndIntegerBound_AreVisible() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs:line 108&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="66b24836-262a-4d65-ae5b-36d72041aac5" testId="38cf28a1-e247-950a-8c71-1d55de00197b" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_LineBoundary_CountsContentSeparately(content: 65536, ending: &quot;\n&quot;, valid: True)" computerName="TIMMALLSTRIX" duration="00:00:00.0031186" startTime="2026-09-17T10:20:21.2380050-07:00" endTime="2026-09-17T10:20:21.2398090-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="66b24836-262a-4d65-ae5b-36d72041aac5" />
+    <UnitTestResult executionId="08b3a9cd-e7e6-499d-b187-5e4ccbafff7f" testId="c9c0bbfd-b806-0aa7-d903-a8179f6b53d4" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_InvalidJson_RejectsRatherThanCoerces(hex: &quot;7b2278223a225c7564383030227d&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0002718" startTime="2026-09-17T10:20:20.5908713-07:00" endTime="2026-09-17T10:20:20.5908893-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="08b3a9cd-e7e6-499d-b187-5e4ccbafff7f" />
+    <UnitTestResult executionId="0060bf8b-e887-4f97-9606-7718e5376fdf" testId="cc15bfd1-3d60-e37c-1eb9-eb0019f99433" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: &quot;integer-generation&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0047268" startTime="2026-09-17T10:20:21.2641944-07:00" endTime="2026-09-17T10:20:21.2689541-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0060bf8b-e887-4f97-9606-7718e5376fdf">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+              ↓ (pos 3)&#xD;
+Expected: "XH.SCHEMA_INVALID"&#xD;
+Actual:   "XH.DIGEST_MISMATCH"&#xD;
+              ↑ (pos 3)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs:line 28&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="73c0ab20-2e3d-468d-8dc9-f0bf7d9e9b66" testId="26f3d22c-29f2-9ef9-ac7f-d96cb0abec8b" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: &quot;{\&quot;x\&quot;:Infinity}&quot;, code: &quot;XH.NONFINITE_JSON&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0006036" startTime="2026-09-17T10:20:21.2809964-07:00" endTime="2026-09-17T10:20:21.2815157-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="73c0ab20-2e3d-468d-8dc9-f0bf7d9e9b66" />
+    <UnitTestResult executionId="b3dd958c-f669-46e3-872e-1f0d2e369c1f" testId="0f3eb7b8-23d1-db61-72e3-1f5fe60f5ef5" testName="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: &quot;boolean-sequence&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0027369" startTime="2026-09-17T10:20:21.2755057-07:00" endTime="2026-09-17T10:20:21.2779725-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b3dd958c-f669-46e3-872e-1f0d2e369c1f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+              ↓ (pos 3)&#xD;
+Expected: "XH.SCHEMA_INVALID"&#xD;
+Actual:   "XH.DIGEST_MISMATCH"&#xD;
+              ↑ (pos 3)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs:line 28&#xD;
+   at InvokeStub_CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_ExplicitLexicalErrors_MatchesPinnedP1Codes" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="57aac093-ba68-9b32-801b-ac919bfe21f0">
+      <Execution id="1829a056-d366-4cd2-9401-fa65214a263f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests" name="Canonical_ExplicitLexicalErrors_MatchesPinnedP1Codes" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: &quot;huge-timestamp&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="b6cead87-51ec-3442-64ab-6c494b51d7f5">
+      <Execution id="f2efaba6-285b-4443-b2e2-dc84974047d6" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_CodecAcceptedBadEnvelope_RejectsSchema" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_LineBoundary_CountsContentSeparately(content: 65536, ending: &quot;\n&quot;, valid: True)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="38cf28a1-e247-950a-8c71-1d55de00197b">
+      <Execution id="66b24836-262a-4d65-ae5b-36d72041aac5" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_LineBoundary_CountsContentSeparately" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_UnsupportedVersionsAndIntegerBound_AreVisible" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="de040173-ae72-e606-c477-3b671f90e490">
+      <Execution id="effcc97a-e828-4827-888c-75ffbf1acb90" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_UnsupportedVersionsAndIntegerBound_AreVisible" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_LineBoundary_CountsContentSeparately(content: 65536, ending: &quot;\r\n&quot;, valid: True)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="443acbfa-1f1b-92c0-e00c-5b47fba55d75">
+      <Execution id="2aa434c9-0b78-46e4-a1a5-1dbe814cf92f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_LineBoundary_CountsContentSeparately" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: &quot;{\&quot;x\&quot;:1,\&quot;\\u0078\&quot;:2}&quot;, code: &quot;XH.DUPLICATE_KEY&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="b610e3f6-397e-d562-4a84-a5f913a7add9">
+      <Execution id="6f5f66a2-37bb-41df-9e8c-51b68e403dfe" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_InvalidLexicalForms_ReturnsStableCode" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_ReceiptExcludedFromDigest_StillValidatesReceiptAndDigest" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f74d8479-1767-9c92-7f10-7513def40daf">
+      <Execution id="d6b7489d-82d0-4816-a965-bd101e95f37d" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_ReceiptExcludedFromDigest_StillValidatesReceiptAndDigest" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_LineBoundary_CountsContentSeparately(content: 65537, ending: &quot;\n&quot;, valid: False)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="3a1cad49-a065-3836-99d1-311dc1801a7b">
+      <Execution id="4c8bbe1d-5d70-444b-9d29-6cf9278262d8" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_LineBoundary_CountsContentSeparately" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: &quot;{\&quot;x\&quot;:\&quot;\\ud800\&quot;}&quot;, code: &quot;XH.SCHEMA_INVALID&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a4d781d9-8aa2-634d-b958-1f6f61a40054">
+      <Execution id="af4ba732-e280-4fec-b421-d347e7d39b1d" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_InvalidLexicalForms_ReturnsStableCode" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_PinnedPythonEvents_MatchesBytesDigestAndFullKey" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="505dbf23-9ed9-8c4c-4289-a59582a16eb1">
+      <Execution id="f39e78e7-cf67-4614-97f0-96a83fe98ff4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests" name="Canonical_PinnedPythonEvents_MatchesBytesDigestAndFullKey" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: &quot;schema-float&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="ae9b316d-64ee-b182-be40-c6b70ecca60d">
+      <Execution id="1b9fc19b-7d44-4cbf-815f-1fea8ad63ccb" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_CodecAcceptedBadEnvelope_RejectsSchema" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: &quot;{\&quot;x\&quot;:1e309}&quot;, code: &quot;XH.NONFINITE_JSON&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="ee25686a-87b3-1674-5d10-a5cfed5de658">
+      <Execution id="90650a20-5d24-4ab3-bc24-114e378886a2" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_InvalidLexicalForms_ReturnsStableCode" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_OriginalGoldenEvents_PreservesFullBytesAndKeys" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="39aabce0-fdcd-96d7-fd05-62776254800e">
+      <Execution id="929fccb5-2c44-4363-824a-68be48488ba4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_OriginalGoldenEvents_PreservesFullBytesAndKeys" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: &quot;{\&quot;x\&quot;:\&quot;\\udc00\&quot;}&quot;, code: &quot;XH.SCHEMA_INVALID&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="44e5fb0c-7519-01c9-1b22-27491633957c">
+      <Execution id="78b5b3b8-5be0-45d6-85e9-bc1d5f624202" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_InvalidLexicalForms_ReturnsStableCode" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_InvalidJson_RejectsRatherThanCoerces(hex: &quot;7b2278223a312c2278223a327d&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="65797c2f-ca17-3649-8872-3ae91db0d68d">
+      <Execution id="454f4c0a-3289-406f-a547-4e7a6cfb1048" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests" name="Canonical_InvalidJson_RejectsRatherThanCoerces" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_UnknownMembership_DoesNotProbeInvalidFilesystemPaths" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="77fbe380-4959-e7ec-b14c-a1b69e50d338">
+      <Execution id="5bd2ea1d-815b-4750-b662-279b15e44e6a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests" name="Bind_UnknownMembership_DoesNotProbeInvalidFilesystemPaths" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Number_FixedFiniteWorklist_MatchesEveryPythonString" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="4b79040b-c5d7-bf5e-8583-15e0d9305a5f">
+      <Execution id="d9a65ff9-18ce-4040-8255-4b3f3890431a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests" name="Number_FixedFiniteWorklist_MatchesEveryPythonString" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Capture_CanonicalOriginLineEdges_ExposesNativeLfBound(contentSize: 65535, ending: &quot;\r\n&quot;, refuses: True)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="572188c2-8d03-79ad-edca-6aa28772e4af">
+      <Execution id="d1de1de2-fc19-48a8-a43b-18fd0abbbbff" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests" name="Capture_CanonicalOriginLineEdges_ExposesNativeLfBound" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: &quot;boolean-sequence&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="0f3eb7b8-23d1-db61-72e3-1f5fe60f5ef5">
+      <Execution id="b3dd958c-f669-46e3-872e-1f0d2e369c1f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_CodecAcceptedBadEnvelope_RejectsSchema" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_InvalidJson_RejectsRatherThanCoerces(hex: &quot;7b2278223a225c7564383030227d&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="c9c0bbfd-b806-0aa7-d903-a8179f6b53d4">
+      <Execution id="08b3a9cd-e7e6-499d-b187-5e4ccbafff7f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests" name="Canonical_InvalidJson_RejectsRatherThanCoerces" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Scope_RepositoryOriginPathEpochTuples_DoNotAlias" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="7cfadc48-d2fe-921e-1d58-4f99e45737a9">
+      <Execution id="425028c5-6735-45fb-b071-65501aa0d2c5" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests" name="Scope_RepositoryOriginPathEpochTuples_DoNotAlias" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Capture_CanonicalOriginLineEdges_ExposesNativeLfBound(contentSize: 65535, ending: &quot;\n&quot;, refuses: False)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="44aa8bfa-55d1-7d06-7fc9-bf710ec3b69e">
+      <Execution id="b20ca456-8460-4bb2-ad8a-440a7635b0e4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests" name="Capture_CanonicalOriginLineEdges_ExposesNativeLfBound" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: &quot;null&quot;, code: &quot;XH.SCHEMA_INVALID&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="c173687a-2cd6-f42b-dabd-4d44b6eeb9c4">
+      <Execution id="fb3dc277-0368-4649-b8e5-78d550f8721c" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_InvalidLexicalForms_ReturnsStableCode" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_FullReserializedFactBoundary_IncludesReceiptHashAndSpaces" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="c25b72c8-516f-ffa0-2d22-5f7d4bfb46c4">
+      <Execution id="cba99726-b2c8-4ced-afe7-afe85d6bd221" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_FullReserializedFactBoundary_IncludesReceiptHashAndSpaces" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_ExpandedResponseBoundary_RejectsBeforeDigestComparison" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="8d4f13ef-b788-7c36-2393-9767486cc235">
+      <Execution id="3df95ea0-89a8-4280-9781-af2d2419fcaa" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_ExpandedResponseBoundary_RejectsBeforeDigestComparison" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: &quot;integer-generation&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="cc15bfd1-3d60-e37c-1eb9-eb0019f99433">
+      <Execution id="0060bf8b-e887-4f97-9606-7718e5376fdf" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_CodecAcceptedBadEnvelope_RejectsSchema" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_InvalidJson_RejectsRatherThanCoerces(hex: &quot;7b2278223a31653330397d&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="19a80946-c636-dc0f-79f5-391d1e65f78c">
+      <Execution id="35355047-8d2d-4dee-ae43-c0521bf870b4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests" name="Canonical_InvalidJson_RejectsRatherThanCoerces" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_InvalidJson_RejectsRatherThanCoerces(hex: &quot;7b2278223a22ff227d&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a0dc747f-56b2-e88f-6d3a-f6aa511b63d8">
+      <Execution id="4fe742e9-b091-41ea-96bb-ebf7000a72e9" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests" name="Canonical_InvalidJson_RejectsRatherThanCoerces" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_IsolatedGitRepositoriesAndLinkedCheckout_BindsOnlyTrustedFullIdentity" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a49d2048-4ad0-a94a-b93d-800aff780c06">
+      <Execution id="282c7a22-5a0f-418a-81f6-acf36ac5f049" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests" name="Bind_IsolatedGitRepositoriesAndLinkedCheckout_BindsOnlyTrustedFullIdentity" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_WholeBodies_MatchesPinnedPythonOracle" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="a88e60ed-87d9-b8ef-373b-adbe7250400a">
+      <Execution id="fe0732b5-454c-47d5-aede-c6d2722e178f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_WholeBodies_MatchesPinnedPythonOracle" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Capture_CanonicalOriginLineEdges_ExposesNativeLfBound(contentSize: 65536, ending: &quot;\r\n&quot;, refuses: True)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="be07135d-8c64-8a52-4da0-d89d549995ca">
+      <Execution id="9e6c931b-4a11-4883-91f9-9f6d11855029" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests" name="Capture_CanonicalOriginLineEdges_ExposesNativeLfBound" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: &quot;timestamp-bool&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="50349b44-8834-dd59-e1b7-efc401071b90">
+      <Execution id="86d43045-7880-465f-8700-33d05838a269" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_CodecAcceptedBadEnvelope_RejectsSchema" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Capture_CanonicalOriginLineEdges_ExposesNativeLfBound(contentSize: 65536, ending: &quot;\n&quot;, refuses: True)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="09681259-5b9d-2889-6325-b55dadd9c60c">
+      <Execution id="2f9ed1d1-9ab8-49ec-85c3-4a4663033892" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests" name="Capture_CanonicalOriginLineEdges_ExposesNativeLfBound" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: &quot;{\&quot;x\&quot;:Infinity}&quot;, code: &quot;XH.NONFINITE_JSON&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="26f3d22c-29f2-9ef9-ac7f-d96cb0abec8b">
+      <Execution id="73c0ab20-2e3d-468d-8dc9-f0bf7d9e9b66" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_InvalidLexicalForms_ReturnsStableCode" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_LineBoundary_CountsContentSeparately(content: 65537, ending: &quot;\r\n&quot;, valid: False)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="fde9c9dc-ebd9-67c7-e8e1-fe231e3d080b">
+      <Execution id="30d7c52a-7432-4bf1-a2e8-98ae9f7d0b05" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_LineBoundary_CountsContentSeparately" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: &quot;{\&quot;x\&quot;:NaN}&quot;, code: &quot;XH.NONFINITE_JSON&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="b39d95a1-76de-8482-8c90-ea43b390283a">
+      <Execution id="f3fa519d-d5a8-4bec-b2f0-79060c7c22b6" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests" name="Parse_InvalidLexicalForms_ReturnsStableCode" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="39aabce0-fdcd-96d7-fd05-62776254800e" executionId="929fccb5-2c44-4363-824a-68be48488ba4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a88e60ed-87d9-b8ef-373b-adbe7250400a" executionId="fe0732b5-454c-47d5-aede-c6d2722e178f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c173687a-2cd6-f42b-dabd-4d44b6eeb9c4" executionId="fb3dc277-0368-4649-b8e5-78d550f8721c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7cfadc48-d2fe-921e-1d58-4f99e45737a9" executionId="425028c5-6735-45fb-b071-65501aa0d2c5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b610e3f6-397e-d562-4a84-a5f913a7add9" executionId="6f5f66a2-37bb-41df-9e8c-51b68e403dfe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a4d781d9-8aa2-634d-b958-1f6f61a40054" executionId="af4ba732-e280-4fec-b421-d347e7d39b1d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="44e5fb0c-7519-01c9-1b22-27491633957c" executionId="78b5b3b8-5be0-45d6-85e9-bc1d5f624202" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ae9b316d-64ee-b182-be40-c6b70ecca60d" executionId="1b9fc19b-7d44-4cbf-815f-1fea8ad63ccb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="be07135d-8c64-8a52-4da0-d89d549995ca" executionId="9e6c931b-4a11-4883-91f9-9f6d11855029" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="57aac093-ba68-9b32-801b-ac919bfe21f0" executionId="1829a056-d366-4cd2-9401-fa65214a263f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="50349b44-8834-dd59-e1b7-efc401071b90" executionId="86d43045-7880-465f-8700-33d05838a269" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a49d2048-4ad0-a94a-b93d-800aff780c06" executionId="282c7a22-5a0f-418a-81f6-acf36ac5f049" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="505dbf23-9ed9-8c4c-4289-a59582a16eb1" executionId="f39e78e7-cf67-4614-97f0-96a83fe98ff4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a0dc747f-56b2-e88f-6d3a-f6aa511b63d8" executionId="4fe742e9-b091-41ea-96bb-ebf7000a72e9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b6cead87-51ec-3442-64ab-6c494b51d7f5" executionId="f2efaba6-285b-4443-b2e2-dc84974047d6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ee25686a-87b3-1674-5d10-a5cfed5de658" executionId="90650a20-5d24-4ab3-bc24-114e378886a2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fde9c9dc-ebd9-67c7-e8e1-fe231e3d080b" executionId="30d7c52a-7432-4bf1-a2e8-98ae9f7d0b05" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c25b72c8-516f-ffa0-2d22-5f7d4bfb46c4" executionId="cba99726-b2c8-4ced-afe7-afe85d6bd221" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a1cad49-a065-3836-99d1-311dc1801a7b" executionId="4c8bbe1d-5d70-444b-9d29-6cf9278262d8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="77fbe380-4959-e7ec-b14c-a1b69e50d338" executionId="5bd2ea1d-815b-4750-b662-279b15e44e6a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="09681259-5b9d-2889-6325-b55dadd9c60c" executionId="2f9ed1d1-9ab8-49ec-85c3-4a4663033892" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="19a80946-c636-dc0f-79f5-391d1e65f78c" executionId="35355047-8d2d-4dee-ae43-c0521bf870b4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f74d8479-1767-9c92-7f10-7513def40daf" executionId="d6b7489d-82d0-4816-a965-bd101e95f37d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="443acbfa-1f1b-92c0-e00c-5b47fba55d75" executionId="2aa434c9-0b78-46e4-a1a5-1dbe814cf92f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="572188c2-8d03-79ad-edca-6aa28772e4af" executionId="d1de1de2-fc19-48a8-a43b-18fd0abbbbff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4b79040b-c5d7-bf5e-8583-15e0d9305a5f" executionId="d9a65ff9-18ce-4040-8255-4b3f3890431a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8d4f13ef-b788-7c36-2393-9767486cc235" executionId="3df95ea0-89a8-4280-9781-af2d2419fcaa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b39d95a1-76de-8482-8c90-ea43b390283a" executionId="f3fa519d-d5a8-4bec-b2f0-79060c7c22b6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="65797c2f-ca17-3649-8872-3ae91db0d68d" executionId="454f4c0a-3289-406f-a547-4e7a6cfb1048" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="44aa8bfa-55d1-7d06-7fc9-bf710ec3b69e" executionId="b20ca456-8460-4bb2-ad8a-440a7635b0e4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="de040173-ae72-e606-c477-3b671f90e490" executionId="effcc97a-e828-4827-888c-75ffbf1acb90" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="38cf28a1-e247-950a-8c71-1d55de00197b" executionId="66b24836-262a-4d65-ae5b-36d72041aac5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c9c0bbfd-b806-0aa7-d903-a8179f6b53d4" executionId="08b3a9cd-e7e6-499d-b187-5e4ccbafff7f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cc15bfd1-3d60-e37c-1eb9-eb0019f99433" executionId="0060bf8b-e887-4f97-9606-7718e5376fdf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="26f3d22c-29f2-9ef9-ac7f-d96cb0abec8b" executionId="73c0ab20-2e3d-468d-8dc9-f0bf7d9e9b66" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0f3eb7b8-23d1-db61-72e3-1f5fe60f5ef5" executionId="b3dd958c-f669-46e3-872e-1f0d2e369c1f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="36" executed="36" passed="28" failed="8" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.28]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.29]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.96]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.96]       Expected: Unsupported&#xD;
+[xUnit.net 00:00:00.96]       Actual:   Valid&#xD;
+[xUnit.net 00:00:00.96]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.96]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs(108,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_UnsupportedVersionsAndIntegerBound_AreVisible()&#xD;
+[xUnit.net 00:00:00.96]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.96]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.00]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:01.00]                     ↓ (pos 3)&#xD;
+[xUnit.net 00:00:01.00]       Expected: "XH.SCHEMA_INVALID"&#xD;
+[xUnit.net 00:00:01.00]       Actual:   "XH.DIGEST_MISMATCH"&#xD;
+[xUnit.net 00:00:01.00]                     ↑ (pos 3)&#xD;
+[xUnit.net 00:00:01.00]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.00]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs(28,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name)&#xD;
+[xUnit.net 00:00:01.00]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:01.00]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.00]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:01.00]                     ↓ (pos 3)&#xD;
+[xUnit.net 00:00:01.00]       Expected: "XH.FIELD_INVALID"&#xD;
+[xUnit.net 00:00:01.00]       Actual:   "XH.DIGEST_MISMATCH"&#xD;
+[xUnit.net 00:00:01.00]                     ↑ (pos 3)&#xD;
+[xUnit.net 00:00:01.00]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.00]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs(28,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name)&#xD;
+[xUnit.net 00:00:01.00]            at InvokeStub_CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.00]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.00]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:01.00]                     ↓ (pos 3)&#xD;
+[xUnit.net 00:00:01.00]       Expected: "XH.SCHEMA_INVALID"&#xD;
+[xUnit.net 00:00:01.00]       Actual:   "XH.DIGEST_MISMATCH"&#xD;
+[xUnit.net 00:00:01.00]                     ↑ (pos 3)&#xD;
+[xUnit.net 00:00:01.00]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.00]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs(28,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name)&#xD;
+[xUnit.net 00:00:01.00]            at InvokeStub_CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.00]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.01]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:01.01]                     ↓ (pos 3)&#xD;
+[xUnit.net 00:00:01.01]       Expected: "XH.SCHEMA_INVALID"&#xD;
+[xUnit.net 00:00:01.01]       Actual:   "XH.DIGEST_MISMATCH"&#xD;
+[xUnit.net 00:00:01.01]                     ↑ (pos 3)&#xD;
+[xUnit.net 00:00:01.01]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.01]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs(28,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name)&#xD;
+[xUnit.net 00:00:01.01]            at InvokeStub_CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.01]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.01]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:01.01]                     ↓ (pos 3)&#xD;
+[xUnit.net 00:00:01.01]       Expected: "XH.SCHEMA_INVALID"&#xD;
+[xUnit.net 00:00:01.01]       Actual:   "XH.DIGEST_MISMATCH"&#xD;
+[xUnit.net 00:00:01.01]                     ↑ (pos 3)&#xD;
+[xUnit.net 00:00:01.01]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.01]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs(28,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name)&#xD;
+[xUnit.net 00:00:01.01]            at InvokeStub_CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.01]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.02]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:01.02]                  ↓ (pos 0)&#xD;
+[xUnit.net 00:00:01.02]       Expected: "XH.SCHEMA_INVALID"&#xD;
+[xUnit.net 00:00:01.02]       Actual:   "OK"&#xD;
+[xUnit.net 00:00:01.02]                  ↑ (pos 0)&#xD;
+[xUnit.net 00:00:01.02]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.02]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs(124,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_ReceiptExcludedFromDigest_StillValidatesReceiptAndDigest()&#xD;
+[xUnit.net 00:00:01.02]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:01.02]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.02]       missing-kind: OK&#xD;
+[xUnit.net 00:00:01.02]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.02]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs(42,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_WholeBodies_MatchesPinnedPythonOracle()&#xD;
+[xUnit.net 00:00:01.02]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:01.02]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.05]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T10:20:21.2286415-07:00">
+        <Text>[xUnit.net 00:00:00.96]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_UnsupportedVersionsAndIntegerBound_AreVisible [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T10:20:21.2694172-07:00">
+        <Text>[xUnit.net 00:00:01.00]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "integer-generation") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T10:20:21.2725779-07:00">
+        <Text>[xUnit.net 00:00:01.00]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "huge-timestamp") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T10:20:21.2754083-07:00">
+        <Text>[xUnit.net 00:00:01.00]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "timestamp-bool") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T10:20:21.2780963-07:00">
+        <Text>[xUnit.net 00:00:01.01]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "boolean-sequence") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T10:20:21.2808907-07:00">
+        <Text>[xUnit.net 00:00:01.01]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "schema-float") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T10:20:21.2912576-07:00">
+        <Text>[xUnit.net 00:00:01.02]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_ReceiptExcludedFromDigest_StillValidatesReceiptAndDigest [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T10:20:21.2940719-07:00">
+        <Text>[xUnit.net 00:00:01.02]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_WholeBodies_MatchesPinnedPythonOracle [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

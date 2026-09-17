@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T16:43:39Z",
+  "generated": "2026-09-17T17:25:06Z",
   "audit": [
     {
       "actor": null,
@@ -21345,6 +21345,94 @@ window.AUDIT_DATA = {
       "done_when": "Finite execution graph and actual evidence captured without production implementation.",
       "tier": "T2",
       "fan_out": 0
+    },
+    {
+      "id": "al-01M2R6BE0FB7RVTQ23KD8TDPHR",
+      "shortname": "canonical-validator-semantic-closure",
+      "datetime": "2026-09-17T17:24:11Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "WRITE-CAPABLE continuation of SAMEcanonicalC#validator/bindingunit <=22tools150k noagents. OwnP2treeC:\\Projects\\ai-de-feature-xh-p2-projection hasDESIGNcommitted7f9ab24b(fullresolve) atopd8ce5a94; UNCOMMITTED CODE/tests frompriorauthor retained. Sessionxh-p2-projection-b0d0 NOTENDED, leasesNOTreleased(renewEXACTownpaths300ifneeded, nototherownedttlwait). DoNOT newworktree/index/reset/discarduncommitted. Parentexplicitcontinuation tofinishmutationqualification/audit/codeCOMMIT. No additionalfeature/code beyondcurrentunitunlessgenuinebug. No primary/P1/producer edits/hooks/config/install/main/push/force/amend/deps/GUI/App/liveDB/endpoints/upstream/observer. No hookoverride. Envsession/nameutf8eachshell apply_patchnoheredoc/outputredirect/pipedgates.\nPriorauthorreceipt: ONEsharedINTERNALproductioncodec promotedfromspike, boundedparser/fulltypedvalidator, physical-primary+opaqueRepo/stream binding; stableerrors/legacypreservation/explicitOriginBound. LastUNMODIFIEDsource36/36 testsGREEN incl115casePINNEDPythonwholebodyoracle ebd4f1c8473b70934ec29d778419289719ef5481. Two mutation runsEXIT1 butreceiptchecker killed=false; source editsrestoredBYTEEXACT. Mustinspectactualstderr/TRX/focalassertions: ifcompile/setupfailure countNOmutationproof; repairtargetedcontrol/harness thenactualsemanticRED &restoredGREEN. No greenwashingexit1. Rebuildrestoredsource +probe +tests +ownaudit/render/commit/release/end STILLUNFINISHED. Design/sourceexactfiles `git status` currentallowlistfrompriorunit, don'tinventnewproofdoc. CurrentcanonicalProofPackexistingholdsrecordsvalidator-*; earlyquietgreenstream overwritten (preserveknownprovenancegap neverrecreateasoriginal).\nP1timestampfix NOWcommittedelsewhere9d82c4e088dbdde69626749de625386a1492a9c8: stableXH.FIELD_INVALID hugeinttimestamps while1001digitpayloadsvalid, P1sourceSHAsknownrootreceipt; DO NOT silentlyupdateoracle/corpus inthisclosure. StayPINNEDebd4wholebody, documentknownstableerrorcorrectionlatercontract-controlledupdate. No sourcebridge/store/migrationcachesactive yet becausecanonicalraw65538vsnative65536 DataDSadmission pending. Physical/protocol identitydistinct samebasenameGitfixture falsegrant/rootselection; legacyrawfieldsneverfilledfromenhancedrow; productionauthorityDENY/unqualifiedtriage/endpointnotinparser. Newcodecbytesvalid12568vectors expectedcorpusunchanged exceptwirelinkproductiondefinition shared; no duplicatealgos.\nNeedactualbaselinefivebad-envelopefocalRED retained vs36GREEN, verifytwofaultmutants exactlywhichguards authorintended existingrecords+status. Clarifyproof claimsdeclaredunknowns; no staleMetrics.FullReaderQualified true frombytecodec. Schema/errors keyUTF8/depth/bigints/digests fieldlimits coversactualP1v1closedfields; filebindingROOT endpoints physicallyunderprimary andallowedopaqueRepo+streams fromtrustedcomposition, no rawdataresolvingotherrepo. Do not re-research wholeplan; thisisclosuremechanics+targetedoraclesremainingexistingcode. Readonlyneededcurrentrecords/codefewfiles guidealreadyactive no re-invocations/rosters.\nStageallOWNsource/test/spike/promotedfilesandcanonicaldesign/ADR/phaseplan/proof/audit (inspectexactdiff). Local `audit-log.py --rootOWNdocs render/verify` thenSTAGEaudit-data.js SAMEasJSONL beforeordinarycommit sohistoryderivedclean; NO coordregen primary/no sitebundle. Source/test/project/bin/corpusSHA currentgreen+mutants actualrecordedinexistingrecords. CommitCopilottrailer(s)plainordinaryhooknooverride cleanALLtrackedpaths, releaseallownedleases,end session. Ifcannotsealwithin22 stopEXACTblocker withrawproofstate butneverdiscard; goalcodecandidatecompleteforthindependentreview notfullP2. Return≤1100words fullHEADchange/newtestssemanticfail/pass/oraclepin/listscope andremainingactualbridge/P3–5.",
+      "summary": "Continued the existing validator/binding unit without production-code changes. Preserved original false-negative mutation receipts; both had actual semantic failures, not build/setup errors. Replaced quiet-console token matching with named TRX assertion qualification. Fresh schema mutation: 8 failed/28 passed; membership mutation: 2 failed/34 passed; exact source-byte restoration verified by SHA-256. Rebuilt restored suite: 36 passed. Rebuilt shared-codec probe: 12,568 vectors, zero valid-byte mismatches, fullContractQualified=false. Classifier checks reject absent/malformed TRX and wrong assertion fragments. Pinned 115-case oracle ebd4f1c and original corpus unchanged. Updated existing canonical Proof Pack and defect-class record. Original author request and pre-closure accounting remain in validator-audit.json; its earlier overwritten quiet-green stream remains a provenance gap. Supplied later P1 timestamp correction is documented, not imported. Oversized output consumed avoidable calls; this is a cost finding. Local commit/release/end follow this pre-commit audit; independent new-code review, Data/DS origin-limit admission, actual bridge/store/folding and P2/P3-P5 qualification remain open. No primary, P1, producer, App, database, endpoint, dependency, hook, config, push or upstream changes.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md",
+        "docs/design/cross-harness-coordination.md",
+        "docs/adr/adr-01M2NJ2PQS7X6GE3F559JC4TNP-cross-harness-canonical-stream.md",
+        "docs/plans/cross-harness-coordination-phases.md",
+        "docs/lessons/defect-classes.md",
+        "src/AiDe.Core/Watcher/CanonicalCoordinationCodec.cs",
+        "src/AiDe.Core/Watcher/CanonicalCoordinationRecord.cs",
+        "src/AiDe.Core/Watcher/CanonicalCoordinationSourceBinding.cs",
+        "spikes/canonical-coordination-contract/records/validator-audit.json",
+        "spikes/canonical-coordination-contract/records/validator-mutations.json",
+        "spikes/canonical-coordination-contract/records/validator-control.json",
+        "spikes/canonical-coordination-contract/records/validator-after.json",
+        "spikes/canonical-coordination-contract/records/validator-results.json",
+        "spikes/canonical-coordination-contract/records/validator-probe.json"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Seal the existing P2 codec candidate with semantic mutation evidence and a local commit.",
+      "done_when": "Restored tests pass, proof and audit records match observed results, owned changes are committed, leases released, session ended. Independent review and full P2 remain separate.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-17T17:19:07Z",
+      "duration_seconds": 304.0,
+      "git": {
+        "sha": "7f9ab24b3d7cbd86771e5d65e8df1dd7149d9d4c",
+        "short": "7f9ab24b3",
+        "branch": "feature/xh-p2-projection",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2R6D359ETBC2R8F4DBRK85N",
+      "shortname": "canonical-validator-semantic-closure",
+      "datetime": "2026-09-17T17:25:05Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "WRITE-CAPABLE continuation of SAMEcanonicalC#validator/bindingunit <=22tools150k noagents. OwnP2treeC:\\Projects\\ai-de-feature-xh-p2-projection hasDESIGNcommitted7f9ab24b(fullresolve) atopd8ce5a94; UNCOMMITTED CODE/tests frompriorauthor retained. Sessionxh-p2-projection-b0d0 NOTENDED, leasesNOTreleased(renewEXACTownpaths300ifneeded, nototherownedttlwait). DoNOT newworktree/index/reset/discarduncommitted. Parentexplicitcontinuation tofinishmutationqualification/audit/codeCOMMIT. No additionalfeature/code beyondcurrentunitunlessgenuinebug. No primary/P1/producer edits/hooks/config/install/main/push/force/amend/deps/GUI/App/liveDB/endpoints/upstream/observer. No hookoverride. Envsession/nameutf8eachshell apply_patchnoheredoc/outputredirect/pipedgates.\nPriorauthorreceipt: ONEsharedINTERNALproductioncodec promotedfromspike, boundedparser/fulltypedvalidator, physical-primary+opaqueRepo/stream binding; stableerrors/legacypreservation/explicitOriginBound. LastUNMODIFIEDsource36/36 testsGREEN incl115casePINNEDPythonwholebodyoracle ebd4f1c8473b70934ec29d778419289719ef5481. Two mutation runsEXIT1 butreceiptchecker killed=false; source editsrestoredBYTEEXACT. Mustinspectactualstderr/TRX/focalassertions: ifcompile/setupfailure countNOmutationproof; repairtargetedcontrol/harness thenactualsemanticRED &restoredGREEN. No greenwashingexit1. Rebuildrestoredsource +probe +tests +ownaudit/render/commit/release/end STILLUNFINISHED. Design/sourceexactfiles `git status` currentallowlistfrompriorunit, don'tinventnewproofdoc. CurrentcanonicalProofPackexistingholdsrecordsvalidator-*; earlyquietgreenstream overwritten (preserveknownprovenancegap neverrecreateasoriginal).\nP1timestampfix NOWcommittedelsewhere9d82c4e088dbdde69626749de625386a1492a9c8: stableXH.FIELD_INVALID hugeinttimestamps while1001digitpayloadsvalid, P1sourceSHAsknownrootreceipt; DO NOT silentlyupdateoracle/corpus inthisclosure. StayPINNEDebd4wholebody, documentknownstableerrorcorrectionlatercontract-controlledupdate. No sourcebridge/store/migrationcachesactive yet becausecanonicalraw65538vsnative65536 DataDSadmission pending. Physical/protocol identitydistinct samebasenameGitfixture falsegrant/rootselection; legacyrawfieldsneverfilledfromenhancedrow; productionauthorityDENY/unqualifiedtriage/endpointnotinparser. Newcodecbytesvalid12568vectors expectedcorpusunchanged exceptwirelinkproductiondefinition shared; no duplicatealgos.\nNeedactualbaselinefivebad-envelopefocalRED retained vs36GREEN, verifytwofaultmutants exactlywhichguards authorintended existingrecords+status. Clarifyproof claimsdeclaredunknowns; no staleMetrics.FullReaderQualified true frombytecodec. Schema/errors keyUTF8/depth/bigints/digests fieldlimits coversactualP1v1closedfields; filebindingROOT endpoints physicallyunderprimary andallowedopaqueRepo+streams fromtrustedcomposition, no rawdataresolvingotherrepo. Do not re-research wholeplan; thisisclosuremechanics+targetedoraclesremainingexistingcode. Readonlyneededcurrentrecords/codefewfiles guidealreadyactive no re-invocations/rosters.\nStageallOWNsource/test/spike/promotedfilesandcanonicaldesign/ADR/phaseplan/proof/audit (inspectexactdiff). Local `audit-log.py --rootOWNdocs render/verify` thenSTAGEaudit-data.js SAMEasJSONL beforeordinarycommit sohistoryderivedclean; NO coordregen primary/no sitebundle. Source/test/project/bin/corpusSHA currentgreen+mutants actualrecordedinexistingrecords. CommitCopilottrailer(s)plainordinaryhooknooverride cleanALLtrackedpaths, releaseallownedleases,end session. Ifcannotsealwithin22 stopEXACTblocker withrawproofstate butneverdiscard; goalcodecandidatecompleteforthindependentreview notfullP2. Return≤1100words fullHEADchange/newtestssemanticfail/pass/oraclepin/listscope andremainingactualbridge/P3–5.",
+      "summary": "Continued the existing validator/binding unit without production-code changes. Preserved original false-negative mutation receipts; both had actual semantic failures, not build/setup errors. Replaced quiet-console token matching with named TRX assertion qualification. Fresh schema mutation: 8 failed/28 passed; membership mutation: 2 failed/34 passed; exact source-byte restoration verified by SHA-256. Rebuilt restored suite: 36 passed. Rebuilt shared-codec probe: 12,568 vectors, zero valid-byte mismatches, fullContractQualified=false. Classifier checks reject absent/malformed TRX and wrong assertion fragments. Pinned 115-case oracle ebd4f1c and original corpus unchanged. Updated existing canonical Proof Pack and defect-class record. Original author request and pre-closure accounting remain in validator-audit.json; its earlier overwritten quiet-green stream remains a provenance gap. Supplied later P1 timestamp correction is documented, not imported. Oversized output consumed avoidable calls; this is a cost finding. Local commit/release/end follow this pre-commit audit; independent new-code review, Data/DS origin-limit admission, actual bridge/store/folding and P2/P3-P5 qualification remain open. No primary, P1, producer, App, database, endpoint, dependency, hook, config, push or upstream changes.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md",
+        "docs/design/cross-harness-coordination.md",
+        "docs/adr/adr-01M2NJ2PQS7X6GE3F559JC4TNP-cross-harness-canonical-stream.md",
+        "docs/plans/cross-harness-coordination-phases.md",
+        "docs/lessons/defect-classes.md",
+        "src/AiDe.Core/Watcher/CanonicalCoordinationCodec.cs",
+        "src/AiDe.Core/Watcher/CanonicalCoordinationRecord.cs",
+        "src/AiDe.Core/Watcher/CanonicalCoordinationSourceBinding.cs",
+        "spikes/canonical-coordination-contract/records/validator-audit.json",
+        "spikes/canonical-coordination-contract/records/validator-mutations.json",
+        "spikes/canonical-coordination-contract/records/validator-control.json",
+        "spikes/canonical-coordination-contract/records/validator-after.json",
+        "spikes/canonical-coordination-contract/records/validator-results.json",
+        "spikes/canonical-coordination-contract/records/validator-probe.json"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Seal the existing P2 codec candidate with semantic mutation evidence and a local commit.",
+      "done_when": "Restored tests pass, proof and audit records match observed results, owned changes are committed, leases released, session ended. Independent review and full P2 remain separate.",
+      "tier": "T2",
+      "main_calls": 22,
+      "main_budget": 22,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-17T17:19:07Z",
+      "duration_seconds": 358.0,
+      "supersedes": "al-01M2R6BE0FB7RVTQ23KD8TDPHR",
+      "git": {
+        "sha": "7f9ab24b3d7cbd86771e5d65e8df1dd7149d9d4c",
+        "short": "7f9ab24b3",
+        "branch": "feature/xh-p2-projection",
+        "pushed": null
+      }
     }
   ],
   "changes": [

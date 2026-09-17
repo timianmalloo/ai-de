@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\AiDe.Core\Watcher\CanonicalCoordinationCodec.cs" Link="CanonicalCoordinationCodec.cs" />
     <ProjectReference Include="..\..\src\AiDe.Core\AiDe.Core.csproj" />
   </ItemGroup>
 </Project>

@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
-    <Compile Include="..\..\spikes\canonical-coordination-contract\CanonicalCandidate.cs" Link="Watcher\CanonicalCandidate.cs" />
+    <None Include="..\..\spikes\canonical-coordination-contract\records\validator-oracle.json" Link="validator-oracle.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="Watcher\Fixtures\canonical-coordination-v1.json" Link="canonical-coordination-v1.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

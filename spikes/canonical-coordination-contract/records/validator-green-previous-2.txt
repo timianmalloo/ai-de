@@ -1,0 +1,72 @@
+
+  AiDe.Core -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.Core.Tests
+[xUnit.net 00:00:00.28]   Discovered:  AiDe.Core.Tests
+[xUnit.net 00:00:00.30]   Starting:    AiDe.Core.Tests
+[xUnit.net 00:00:00.51]       error: No such remote 'origin'
+
+[xUnit.net 00:00:00.51]       Stack Trace:
+[xUnit.net 00:00:00.51]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationBindingTests.cs(126,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Git(String directory, String[] args)
+[xUnit.net 00:00:00.51]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationBindingTests.cs(36,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_IsolatedGitRepositoriesAndLinkedCheckout_BindsOnlyTrustedFullIdentity()
+[xUnit.net 00:00:00.51]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.51]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_IsolatedGitRepositoriesAndLinkedCheckout_BindsOnlyTrustedFullIdentity [190 ms]
+  Error Message:
+   error: No such remote 'origin'
+
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Git(String directory, String[] args) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationBindingTests.cs:line 126
+   at AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_IsolatedGitRepositoriesAndLinkedCheckout_BindsOnlyTrustedFullIdentity() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationBindingTests.cs:line 36
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_UnknownMembership_DoesNotProbeInvalidFilesystemPaths [23 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_InvalidJson_RejectsRatherThanCoerces(hex: "7b2278223a31653330397d") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_InvalidJson_RejectsRatherThanCoerces(hex: "7b2278223a312c2278223a327d") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_InvalidJson_RejectsRatherThanCoerces(hex: "7b2278223a225c7564383030227d") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_InvalidJson_RejectsRatherThanCoerces(hex: "7b2278223a22ff227d") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Capture_CanonicalOriginLineEdges_ExposesNativeLfBound(contentSize: 65535, ending: "\r\n", refuses: True) [61 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Capture_CanonicalOriginLineEdges_ExposesNativeLfBound(contentSize: 65535, ending: "\n", refuses: False) [37 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Capture_CanonicalOriginLineEdges_ExposesNativeLfBound(contentSize: 65536, ending: "\r\n", refuses: True) [32 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Capture_CanonicalOriginLineEdges_ExposesNativeLfBound(contentSize: 65536, ending: "\n", refuses: True) [32 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Scope_RepositoryOriginPathEpochTuples_DoNotAlias [21 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Number_FixedFiniteWorklist_MatchesEveryPythonString [42 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_ExplicitLexicalErrors_MatchesPinnedP1Codes [9 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_PinnedPythonEvents_MatchesBytesDigestAndFullKey [14 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_UnsupportedVersionsAndIntegerBound_AreVisible [14 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_LineBoundary_CountsContentSeparately(content: 65536, ending: "\r\n", valid: True) [8 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_LineBoundary_CountsContentSeparately(content: 65537, ending: "\n", valid: False) [8 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_LineBoundary_CountsContentSeparately(content: 65537, ending: "\r\n", valid: False) [8 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_LineBoundary_CountsContentSeparately(content: 65536, ending: "\n", valid: True) [8 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_ExpandedResponseBoundary_RejectsBeforeDigestComparison [14 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "integer-generation") [9 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "huge-timestamp") [8 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "timestamp-bool") [8 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "boolean-sequence") [8 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "schema-float") [8 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: "{\"x\":1e309}", code: "XH.NONFINITE_JSON") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: "{\"x\":Infinity}", code: "XH.NONFINITE_JSON") [< 1 ms]
+[xUnit.net 00:00:00.98]   Finished:    AiDe.Core.Tests
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: "{\"x\":NaN}", code: "XH.NONFINITE_JSON") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: "null", code: "XH.SCHEMA_INVALID") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: "{\"x\":\"\\udc00\"}", code: "XH.SCHEMA_INVALID") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: "{\"x\":\"\\ud800\"}", code: "XH.SCHEMA_INVALID") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: "{\"x\":1,\"\\u0078\":2}", code: "XH.DUPLICATE_KEY") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_OriginalGoldenEvents_PreservesFullBytesAndKeys [29 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_ReceiptExcludedFromDigest_StillValidatesReceiptAndDigest [9 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_WholeBodies_MatchesPinnedPythonOracle [30 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_FullReserializedFactBoundary_IncludesReceiptHashAndSpaces [10 ms]
+
+Total tests: 36
+     Passed: 35
+     Failed: 1
+ Total time: 1.2967 Seconds
+[xUnit.net 00:00:00.51]     AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_IsolatedGitRepositoriesAndLinkedCheckout_BindsOnlyTrustedFullIdentity [FAIL]
+Test Run Failed.

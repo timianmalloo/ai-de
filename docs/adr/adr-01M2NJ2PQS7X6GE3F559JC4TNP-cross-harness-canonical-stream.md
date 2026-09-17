@@ -314,3 +314,14 @@ and owner check. Reject restoring path-based check-then-write, applying Windows
 UNC rules to a single-leading-slash Linux path, or treating notice publication
 as canonical completion. Other Unix ABIs remain explicitly unqualified;
 independent COMPAT review is pending.
+
+#### P2 internal canonical validator/binding unit
+
+The supplied independent CODEC-only PASS permits one internal production codec
+definition, shared by the spike and tests. The ebd4f1c oracle stays pinned while
+P1 evolves. An internal parser and synthetic source-membership adapter now
+implement the design's bounded contract. Neither creates a second writer,
+interprets payload authority labels, equates project names with native physical
+identity, widens native raw limits, nor activates a store or Main reader.
+New-code review, origin-limit Data/DS qualification and complete fold/capture
+integration remain open; this note changes none of those gates.

@@ -8144,3 +8144,46 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
 - **Sweep:** `NativeCommandLocator` (the engines lane's, `EngineCatalog.cs:115-160`) resolves with the same rule — read, and it probes extensions first on Windows.
 - **Control:** the named test; the rule for the next resolver: on Windows, `PATHEXT` candidates before the bare name.
 - **Status:** `controlled`.
+
+## Canonical validator unit: recurring test-fixture classes (2026-09-17)
+
+These are instances of the pack's existing **CI-ENV**, **RES-LEAK-TEST** and
+**RIG-D** classes, not new allocated defect IDs.
+
+- **Class:** a fixture borrows machine privileges, guesses temporary Git
+  semantics, or cannot delete resources it created. Cleanup exceptions hide
+  the earlier failure, and a guessed byte boundary can test the wrong side.
+- **Sweep:** the new canonical binding fixture, whole-fact boundary constructor,
+  subprocess runner, and pinned fixture generator. The old raw corpus and native
+  capture/store implementations were left unchanged.
+- **Derive:** whole-fact byte boundaries now come from the pinned Python
+  serializer; Git remote identity is read from real temporary remotes. Windows
+  reparse testing uses a junction instead of requiring symlink privilege.
+- **Prevent:** `CanonicalCoordinationBindingTests` clears read-only Git fixture
+  files before scoped teardown, asserts real remote values and the actual reparse
+  attribute; `Parse_FullReserializedFactBoundary_IncludesReceiptHashAndSpaces`
+  asserts Python and C# full sizes at exactly 65,536 and 65,537. The failures
+  preceding these changes are retained in the canonical validator run records.
+- **Evidence retention control:** the runner now archives each existing output
+  before writing another run. The initial quiet 32/32 stream was overwritten;
+  its exit record is retained, but the stream is not reconstructed.
+- **Status:** partially-controlled until the final receipts and independent
+  new-code review are accepted; no machine configuration or privilege was changed.
+
+### Canonical mutation receipt — console format mistaken for test semantics
+
+- **Class:** E2E-E / E2E-F instance. A verifier treats a console-summary token as
+  the result. It can misclassify executed assertions when verbosity changes.
+- **Sweep:** both canonical validator mutants used the same quiet-only
+  `Failed!` check despite requesting normal verbosity. Both had genuine focal
+  failures. Green/red/probe runners retain their output and are not labelled
+  mutation qualification.
+- **Derive:** read TRX test outcomes and error messages rather than duplicate
+  console formatting assumptions.
+- **Prevent:** `validate.py:mutation_evidence` requires the intended test names
+  and Expected/Actual assertion fragments; the caller also requires exit 1.
+  Missing or malformed TRX does not qualify a build/setup failure. The original
+  false-negative receipts are preserved, followed by fresh schema (8 failures)
+  and membership (2 failures) mutations and a restored 36/36 run.
+- **Status:** controlled for these two named mutants; not a whole-code mutation
+  score or an independent validator/binding approval.

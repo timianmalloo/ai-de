@@ -1,0 +1,6 @@
+Test run for C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Failed!  - Failed:     2, Passed:    34, Skipped:     0, Total:    36, Duration: 642 ms - AiDe.Core.Tests.dll (net10.0)
+[xUnit.net 00:00:00.78]     AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_IsolatedGitRepositoriesAndLinkedCheckout_BindsOnlyTrustedFullIdentity [FAIL]
+[xUnit.net 00:00:00.98]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_FullReserializedFactBoundary_IncludesReceiptHashAndSpaces [FAIL]

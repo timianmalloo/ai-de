@@ -1,0 +1,132 @@
+[
+  {
+    "stage": "red",
+    "command": [
+      "dotnet",
+      "test",
+      "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "--no-restore",
+      "--nologo",
+      "-v:q",
+      "--filter",
+      "FullyQualifiedName~CanonicalCoordination"
+    ],
+    "exit": 1,
+    "durationSeconds": 4.120349000004353
+  },
+  {
+    "stage": "green",
+    "command": [
+      "dotnet",
+      "test",
+      "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "--no-restore",
+      "--nologo",
+      "-v:q",
+      "--filter",
+      "FullyQualifiedName~CanonicalCoordination"
+    ],
+    "exit": 0,
+    "durationSeconds": 3.7400262000155635
+  },
+  {
+    "stage": "green",
+    "command": [
+      "dotnet",
+      "test",
+      "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "--no-restore",
+      "--nologo",
+      "-v:q",
+      "--filter",
+      "FullyQualifiedName~CanonicalCoordination"
+    ],
+    "exit": 1,
+    "durationSeconds": 4.067165300017223
+  },
+  {
+    "stage": "green",
+    "command": [
+      "dotnet",
+      "test",
+      "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "--no-restore",
+      "--nologo",
+      "-v:minimal",
+      "--logger",
+      "console;verbosity=normal",
+      "--filter",
+      "FullyQualifiedName~CanonicalCoordination"
+    ],
+    "exit": 1,
+    "durationSeconds": 2.53473829998984
+  },
+  {
+    "stage": "green",
+    "command": [
+      "dotnet",
+      "test",
+      "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "--no-restore",
+      "--nologo",
+      "-v:minimal",
+      "--logger",
+      "console;verbosity=normal",
+      "--filter",
+      "FullyQualifiedName~CanonicalCoordination"
+    ],
+    "exit": 1,
+    "durationSeconds": 3.5853347000083886
+  },
+  {
+    "stage": "green",
+    "command": [
+      "dotnet",
+      "test",
+      "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "--no-restore",
+      "--nologo",
+      "-v:minimal",
+      "--logger",
+      "console;verbosity=normal",
+      "--filter",
+      "FullyQualifiedName~CanonicalCoordination"
+    ],
+    "exit": 1,
+    "durationSeconds": 3.733043899992481
+  },
+  {
+    "stage": "green",
+    "command": [
+      "dotnet",
+      "test",
+      "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "--no-restore",
+      "--nologo",
+      "-v:minimal",
+      "--logger",
+      "console;verbosity=normal",
+      "--filter",
+      "FullyQualifiedName~CanonicalCoordination"
+    ],
+    "exit": 0,
+    "durationSeconds": 3.510191899986239
+  },
+  {
+    "stage": "green",
+    "command": [
+      "dotnet",
+      "test",
+      "C:\\Projects\\ai-de-feature-xh-p2-projection\\tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+      "--no-restore",
+      "--nologo",
+      "-v:minimal",
+      "--logger",
+      "console;verbosity=normal",
+      "--filter",
+      "FullyQualifiedName~CanonicalCoordination"
+    ],
+    "exit": 0,
+    "durationSeconds": 3.3640098000178114
+  }
+]

@@ -1,0 +1,9 @@
+Test run for C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Failed!  - Failed:     5, Passed:    12, Skipped:     0, Total:    17, Duration: 299 ms - AiDe.Core.Tests.dll (net10.0)
+[xUnit.net 00:00:00.58]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "integer-generation") [FAIL]
+[xUnit.net 00:00:00.59]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "huge-timestamp") [FAIL]
+[xUnit.net 00:00:00.60]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "timestamp-bool") [FAIL]
+[xUnit.net 00:00:00.61]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "boolean-sequence") [FAIL]
+[xUnit.net 00:00:00.62]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "schema-float") [FAIL]

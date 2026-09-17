@@ -1,0 +1,204 @@
+
+  AiDe.Core -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Daemon -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Mcp -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.Core.Tests
+[xUnit.net 00:00:00.28]   Discovered:  AiDe.Core.Tests
+[xUnit.net 00:00:00.29]   Starting:    AiDe.Core.Tests
+[xUnit.net 00:00:00.34]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:00.34]       Expected: Unsupported
+[xUnit.net 00:00:00.34]       Actual:   Valid
+[xUnit.net 00:00:00.34]       Stack Trace:
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs(108,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_UnsupportedVersionsAndIntegerBound_AreVisible()
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.41]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:00.41]                     ↓ (pos 3)
+[xUnit.net 00:00:00.41]       Expected: "XH.SCHEMA_INVALID"
+[xUnit.net 00:00:00.41]       Actual:   "XH.DIGEST_MISMATCH"
+[xUnit.net 00:00:00.41]                     ↑ (pos 3)
+[xUnit.net 00:00:00.41]       Stack Trace:
+[xUnit.net 00:00:00.41]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs(28,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name)
+[xUnit.net 00:00:00.41]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.41]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.42]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:00.42]                     ↓ (pos 3)
+[xUnit.net 00:00:00.42]       Expected: "XH.FIELD_INVALID"
+[xUnit.net 00:00:00.42]       Actual:   "XH.DIGEST_MISMATCH"
+[xUnit.net 00:00:00.42]                     ↑ (pos 3)
+[xUnit.net 00:00:00.42]       Stack Trace:
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs(28,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name)
+[xUnit.net 00:00:00.42]            at InvokeStub_CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(Object, Span`1)
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.42]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:00.42]                     ↓ (pos 3)
+[xUnit.net 00:00:00.42]       Expected: "XH.SCHEMA_INVALID"
+[xUnit.net 00:00:00.42]       Actual:   "XH.DIGEST_MISMATCH"
+[xUnit.net 00:00:00.42]                     ↑ (pos 3)
+[xUnit.net 00:00:00.42]       Stack Trace:
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs(28,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name)
+[xUnit.net 00:00:00.42]            at InvokeStub_CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(Object, Span`1)
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_UnsupportedVersionsAndIntegerBound_AreVisible [22 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Unsupported
+Actual:   Valid
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_UnsupportedVersionsAndIntegerBound_AreVisible() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs:line 108
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_LineBoundary_CountsContentSeparately(content: 65536, ending: "\r\n", valid: True) [10 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_LineBoundary_CountsContentSeparately(content: 65537, ending: "\n", valid: False) [8 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_LineBoundary_CountsContentSeparately(content: 65537, ending: "\r\n", valid: False) [8 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_LineBoundary_CountsContentSeparately(content: 65536, ending: "\n", valid: True) [8 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_ExpandedResponseBoundary_RejectsBeforeDigestComparison [22 ms]
+  Failed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "integer-generation") [10 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+              ↓ (pos 3)
+Expected: "XH.SCHEMA_INVALID"
+Actual:   "XH.DIGEST_MISMATCH"
+              ↑ (pos 3)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs:line 28
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "huge-timestamp") [9 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+              ↓ (pos 3)
+Expected: "XH.FIELD_INVALID"
+Actual:   "XH.DIGEST_MISMATCH"
+              ↑ (pos 3)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs:line 28
+   at InvokeStub_CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "timestamp-bool") [8 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+              ↓ (pos 3)
+Expected: "XH.SCHEMA_INVALID"
+Actual:   "XH.DIGEST_MISMATCH"
+              ↑ (pos 3)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs:line 28
+   at InvokeStub_CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.44]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:00.44]                     ↓ (pos 3)
+[xUnit.net 00:00:00.44]       Expected: "XH.SCHEMA_INVALID"
+[xUnit.net 00:00:00.44]       Actual:   "XH.DIGEST_MISMATCH"
+[xUnit.net 00:00:00.44]                     ↑ (pos 3)
+[xUnit.net 00:00:00.44]       Stack Trace:
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs(28,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name)
+[xUnit.net 00:00:00.44]            at InvokeStub_CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(Object, Span`1)
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.44]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:00.44]                     ↓ (pos 3)
+[xUnit.net 00:00:00.44]       Expected: "XH.SCHEMA_INVALID"
+[xUnit.net 00:00:00.44]       Actual:   "XH.DIGEST_MISMATCH"
+[xUnit.net 00:00:00.44]                     ↑ (pos 3)
+[xUnit.net 00:00:00.44]       Stack Trace:
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs(28,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name)
+[xUnit.net 00:00:00.44]            at InvokeStub_CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(Object, Span`1)
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "boolean-sequence") [8 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+              ↓ (pos 3)
+Expected: "XH.SCHEMA_INVALID"
+Actual:   "XH.DIGEST_MISMATCH"
+              ↑ (pos 3)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs:line 28
+   at InvokeStub_CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "schema-float") [8 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+              ↓ (pos 3)
+Expected: "XH.SCHEMA_INVALID"
+Actual:   "XH.DIGEST_MISMATCH"
+              ↑ (pos 3)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(String name) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs:line 28
+   at InvokeStub_CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: "{\"x\":1e309}", code: "XH.NONFINITE_JSON") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: "{\"x\":Infinity}", code: "XH.NONFINITE_JSON") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: "{\"x\":NaN}", code: "XH.NONFINITE_JSON") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: "null", code: "XH.SCHEMA_INVALID") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: "{\"x\":\"\\udc00\"}", code: "XH.SCHEMA_INVALID") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: "{\"x\":\"\\ud800\"}", code: "XH.SCHEMA_INVALID") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_InvalidLexicalForms_ReturnsStableCode(input: "{\"x\":1,\"\\u0078\":2}", code: "XH.DUPLICATE_KEY") [< 1 ms]
+[xUnit.net 00:00:00.47]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:00.47]                  ↓ (pos 0)
+[xUnit.net 00:00:00.47]       Expected: "XH.SCHEMA_INVALID"
+[xUnit.net 00:00:00.47]       Actual:   "OK"
+[xUnit.net 00:00:00.47]                  ↑ (pos 0)
+[xUnit.net 00:00:00.47]       Stack Trace:
+[xUnit.net 00:00:00.47]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs(124,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_ReceiptExcludedFromDigest_StillValidatesReceiptAndDigest()
+[xUnit.net 00:00:00.47]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.47]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.47]       missing-kind: OK
+[xUnit.net 00:00:00.47]       Stack Trace:
+[xUnit.net 00:00:00.47]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs(42,0): at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_WholeBodies_MatchesPinnedPythonOracle()
+[xUnit.net 00:00:00.47]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.47]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_OriginalGoldenEvents_PreservesFullBytesAndKeys [15 ms]
+  Failed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_ReceiptExcludedFromDigest_StillValidatesReceiptAndDigest [9 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "XH.SCHEMA_INVALID"
+Actual:   "OK"
+           ↑ (pos 0)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_ReceiptExcludedFromDigest_StillValidatesReceiptAndDigest() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs:line 124
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_WholeBodies_MatchesPinnedPythonOracle [3 ms]
+  Error Message:
+   missing-kind: OK
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_WholeBodies_MatchesPinnedPythonOracle() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\CanonicalCoordinationRecordTests.cs:line 42
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_FullReserializedFactBoundary_IncludesReceiptHashAndSpaces [26 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_InvalidJson_RejectsRatherThanCoerces(hex: "7b2278223a31653330397d") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_InvalidJson_RejectsRatherThanCoerces(hex: "7b2278223a312c2278223a327d") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_InvalidJson_RejectsRatherThanCoerces(hex: "7b2278223a225c7564383030227d") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_InvalidJson_RejectsRatherThanCoerces(hex: "7b2278223a22ff227d") [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Capture_CanonicalOriginLineEdges_ExposesNativeLfBound(contentSize: 65535, ending: "\r\n", refuses: True) [56 ms]
+[xUnit.net 00:00:01.14]   Finished:    AiDe.Core.Tests
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Capture_CanonicalOriginLineEdges_ExposesNativeLfBound(contentSize: 65535, ending: "\n", refuses: False) [28 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Capture_CanonicalOriginLineEdges_ExposesNativeLfBound(contentSize: 65536, ending: "\r\n", refuses: True) [31 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Capture_CanonicalOriginLineEdges_ExposesNativeLfBound(contentSize: 65536, ending: "\n", refuses: True) [27 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Scope_RepositoryOriginPathEpochTuples_DoNotAlias [2 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Number_FixedFiniteWorklist_MatchesEveryPythonString [18 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_ExplicitLexicalErrors_MatchesPinnedP1Codes [9 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationContractTests.Canonical_PinnedPythonEvents_MatchesBytesDigestAndFullKey [11 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_IsolatedGitRepositoriesAndLinkedCheckout_BindsOnlyTrustedFullIdentity [445 ms]
+  Passed AiDe.Core.Tests.Watcher.CanonicalCoordinationBindingTests.Bind_UnknownMembership_DoesNotProbeInvalidFilesystemPaths [9 ms]
+
+Total tests: 36
+     Passed: 28
+     Failed: 8
+ Total time: 1.4337 Seconds
+[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_UnsupportedVersionsAndIntegerBound_AreVisible [FAIL]
+[xUnit.net 00:00:00.41]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "integer-generation") [FAIL]
+[xUnit.net 00:00:00.42]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "huge-timestamp") [FAIL]
+[xUnit.net 00:00:00.42]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "timestamp-bool") [FAIL]
+[xUnit.net 00:00:00.44]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "boolean-sequence") [FAIL]
+[xUnit.net 00:00:00.44]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_CodecAcceptedBadEnvelope_RejectsSchema(name: "schema-float") [FAIL]
+[xUnit.net 00:00:00.47]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_ReceiptExcludedFromDigest_StillValidatesReceiptAndDigest [FAIL]
+[xUnit.net 00:00:00.47]     AiDe.Core.Tests.Watcher.CanonicalCoordinationRecordTests.Parse_WholeBodies_MatchesPinnedPythonOracle [FAIL]
+Test Run Failed.

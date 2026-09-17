@@ -3524,3 +3524,125 @@ The existing home `.pfx` metadata is dated **September 15**, before the
 it. The earlier first-run message alone cannot establish that cause. No private
 key was read or deleted. All previously stated platform and crash/recovery
 limits remain; this correction closes neither the new reader gate nor full P2.
+
+### P2 canonical validator and synthetic source binding (2026-09-17)
+
+Design-first commit: `7f9ab24b` (parent `d8ce5a94b8e5666bef36bcd887b89feab7f98683`).
+The supplied independent Domain/Test PASS applies to the earlier **CODEC scope**,
+not this parser/binder. The oracle remains
+`ebd4f1c8473b70934ec29d778419289719ef5481`; no moving P1 source was imported.
+The original 615,027-byte corpus remains SHA-256
+`da65af014026d69145a0a0dbd5eeebb1fe0cfcee8362bc093b8bb43c068ca603`.
+
+**Implemented:** one internal Core codec, actual System.Text.Json lexical/schema
+validation, immutable inert records, explicit Unsupported/Invalid outcomes,
+and a synthetic physical-source binding adapter. The spike links the same codec
+source; Core tests use the existing friend assembly, not a second algorithm.
+There is no new dependency, production Python invocation, store reader/writer,
+DDL, native Main change, full thread fold, or authority grant.
+
+| Claim / oracle | Evidence and red observation | Confidence / boundary |
+|---|---|---|
+| Five old codec-accepted envelopes are rejected | `validator-red.txt`: 5 failed / 12 passed; `Parse_CodecAcceptedBadEnvelope_RejectsSchema` now asserts stable codes | Verified in the initial 32/32 production run |
+| Exact whole-body schema and decimal source parsing | `validator-oracle.json`: 115 fixed cases, six source SHA pins, Python 3.12.10 and actual 4,300-digit limit; `Parse_WholeBodies_MatchesPinnedPythonOracle` | Verified; finite cases, not all binary64 decimal parses or runtimes |
+| Full fact size includes hash, recordedAt and spaces | Python-generated exact 65,536/65,537 full-byte bodies both have raw size below the raw cap; named full-size test compares measured Python and C# sizes and outcomes | Verified; response 32,768/32,769 cases are in the same whole-body oracle |
+| Input LF/CRLF has separate content/raw ceilings | Four `Parse_LineBoundary` cases; existing native-capture cases remain unchanged | Verified; native raw 65,536 is not widened |
+| Physical roots, not equal remote basenames, bind sources | `Bind_IsolatedGitRepositoriesAndLinkedCheckout_BindsOnlyTrustedFullIdentity`: real isolated Git remotes, primary/linked agreement, different-root separation, wrong stream, empty/duplicate mappings, legacy no synthesis, OriginBound | Assertions reached before the initial reparse-fixture privilege failure; final result is recorded in `validator-green.txt` |
+| Unknown repository membership cannot initiate path probes | `Bind_UnknownMembership_DoesNotProbeInvalidFilesystemPaths` uses invalid paths and requires Unbound, not filesystem Unavailable | Verified; no event-derived path is opened |
+| Reparse sources are refused | The Windows fixture uses an actual junction after symbolic-link creation reported missing privilege; final named test requires the reparse bit and Unavailable | Final executed status is in `validator-green.txt`; no live TOCTOU/held-handle guarantee |
+| Guard removal is observable | `validate.py mutate` removes schema validation and stream membership separately; qualification requires exit 1 and named TRX assertion failures, then exact source-byte restoration | Verified: schema guard 8 failed / 28 passed; membership guard 2 failed / 34 passed; retained TRX and complete `.txt` streams |
+
+All paths above are under `spikes/canonical-coordination-contract/records/`.
+`validator-results.json` records each logical test exit and elapsed duration;
+`validator-green-previous-*.txt` retain available failed-run streams, and
+`validator-green.txt` is the final full test stream. The initial 32/32 quiet-run
+stream was overwritten before archival was added: its exit/duration survive,
+but its complete stream is **not retained**. This is an evidence limitation,
+not a recreated receipt. `validator-probe.json` and `validator-probe-*.txt`
+record the rebuilt spike, keeping `fullContractQualified: false`.
+`validator-before.json` / `validator-after.json` name source/test/project and
+binary SHA-256 values (missing files are null, never invented hashes).
+
+The parser returns status, stable code, raw/canonical sizes and elapsed time;
+binding adds status, source identity/path/scope and its measured elapsed time.
+No payload text or model instructions are executed or logged. Issuer and
+generation qualification are always Unknown; authorization is Denied. All
+binding results remain NotStorable in this unit, with OriginBound distinguishing
+the valid canonical input that exceeds the old native raw cap.
+
+**Corrections observed in this unit:** a repeated `--path` claim selected only
+the last value (now claimed separately); register-class audit files reject
+leases by design; shell ripgrep was unavailable; an empty patch hunk was refused
+without changing files. Test assumptions were corrected at their source:
+full fact size now derives from measured Python bytes instead of an estimated
+reference count; actual temporary remotes replace `-c`-only remote assumptions;
+Windows Git read-only objects are cleared during scoped fixture cleanup; the
+reparse fixture uses a junction rather than requiring new machine privileges.
+The controls and original failing outputs remain with the code.
+
+**Remaining:** independent validator/binding review; Data/DS origin-limit
+approval and actual capture/cache admission; complete response/proposal folding;
+full P2 N1/N2/recovery/old-binary proof and actual canonical bridge; P3-P5 and
+upstream. Exact-expiry complete snapshots, wake/renewal and inverse cases remain
+recorded for P3/P5, not executed here. The source adapter is snapshot validation
+over trusted synthetic composition, not an atomic live-source reader.
+
+Plan accounting: six planned nodes, no agents. Grounding/tool-output pagination
+and fixture repair consumed more calls than estimated; stop at the declared
+45-tool ceiling with coherent source and its actual receipts, not more research.
+No broad compatibility or independent new-code PASS is claimed.
+
+#### Validator closure continuation — semantic mutation qualification
+
+The original mutation runs were real semantic failures, but their receipt
+checker required the quiet-console token `Failed!`. Normal console output used
+`Test Run Failed.` instead. The original `killed: false` receipt and both
+streams are preserved as `validator-mutations-previous-0.json` and
+`validator-mutation-*-previous-0.txt`. They are not rewritten as successes.
+The repaired harness reads TRX results and requires named assertions with the
+expected and actual values. Missing or malformed TRX and a missing focal
+assertion cannot qualify a mutation; a build exit alone is insufficient.
+`validator-control.json` records executed checks for semantic acceptance and
+missing-TRX, malformed-TRX and wrong-assertion refusal. The malformed-XML parser
+failure is injected with a stdlib mock; no production boundary is mocked.
+
+| Executed control | Observed result | Evidence / scope |
+|---|---|---|
+| Original bad-envelope baseline | Five focal failures: integer generation, huge timestamp, boolean timestamp, boolean sequence, float schema; 12 passed | Original `validator-red.txt` retained unchanged; not a new baseline run |
+| Remove `if (!legacy) Validate(body);` | 8 failed / 28 passed; `Parse_UnsupportedVersionsAndIntegerBound_AreVisible` reports Expected Unsupported / Actual Valid | `validator-mutation-schema-guard.trx`, `.txt`, `validator-mutations.json`; compilation succeeded and assertions ran |
+| Remove enhanced repository/stream membership predicate | 2 failed / 34 passed; wrong stream becomes Bound; unknown membership probes invalid paths and becomes Unavailable | `validator-mutation-binding-membership.trx`, `.txt`, `validator-mutations.json`; both expected Unbound assertions failed |
+| Restore exact source bytes and rebuild | 36 passed / 0 failed | `validator-green.txt`, latest `validator-results.json`; SHA-256 before/after restoration agrees per mutant |
+| Rebuild shared-codec spike | 12,538 number vectors, 18 events, 12 invalid inputs; zero valid-byte mismatches | `validator-probe.json`, `validator-probe-0.txt`, `validator-probe-1.txt`; **fullContractQualified=false** remains explicit |
+
+The 115-case whole-body oracle remains pinned to
+`ebd4f1c8473b70934ec29d778419289719ef5481`; its SHA-256 is
+`9b78fc19d3f0fbbdc99f55b7fd407c629d537f68d04b1a1e990caa57326641e2`.
+The original corpus SHA-256 remains
+`da65af014026d69145a0a0dbd5eeebb1fe0cfcee8362bc093b8bb43c068ca603`.
+Neither oracle nor corpus was regenerated in this continuation.
+`validator-after.json` records the restored source, tests, projects, harness,
+oracle, corpus and built assembly hashes; mutation receipts also carry command,
+elapsed time, changed guard and original/mutant/restored hashes.
+
+**Supplied P1 update, not imported or rerun:** commit
+`9d82c4e088dbdde69626749de625386a1492a9c8` corrects huge integer timestamps
+to stable `XH.FIELD_INVALID` while retaining valid 1,001-digit payload integers.
+The older pinned oracle's timestamp `OverflowError` observation remains intact.
+Its explicit expected-code mapping is not a claim that the old P1 contract
+already supplied a stable code. A later contract-controlled oracle update is
+still required; this closure does not silently rebase the evidence.
+
+**GATE validator candidate evidence · 2026-09-17 · author execution ·
+CONCERNS:** restored selected tests and two semantic mutants are demonstrated;
+independent new-code review is still required. No FullReaderQualified=true,
+authority grant, live-source safety or full P2 acceptance follows from byte
+parity. Physical source binding remains synthetic and snapshot-only;
+canonical raw 65,538 versus native raw 65,536 admission still awaits Data/DS.
+Legacy fields are not synthesized from enhanced rows. Actual bridge, store,
+capture, migration, folding, P2 N1/N2/recovery/old-binary proof and P3–P5 remain
+outside this candidate.
+
+Continuation accounting: no agents; the declared ceiling is 22 tool calls.
+Oversized diagnostic reads consumed avoidable calls and are an execution-cost
+finding, not evidence. The earlier overwritten quiet-green stream remains a
+provenance gap; no replacement is presented as its original.

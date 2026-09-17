@@ -3,7 +3,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using AiDe.Core.Watcher;
-using CanonicalCoordinationSpike;
+using CanonicalCandidate = AiDe.Core.Watcher.CanonicalCoordinationCodec;
+using CandidateInputException = AiDe.Core.Watcher.CanonicalInputException;
 
 namespace AiDe.Core.Tests.Watcher;
 

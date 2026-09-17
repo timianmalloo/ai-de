@@ -1018,3 +1018,11 @@ Each test corpus is a finite worklist; remaining cases decrease to zero. At the
 tool cap retain coherent code and report unexecuted proof rather than inventing
 qualification. Full folding, origin-limit Data/DS acceptance, store activation,
 P3-P5 exact-expiry snapshots and inverse wake/renewal cases remain deferred.
+
+Unit outcome: internal codec/validator/binder implemented; fixed 115-case
+whole-body Python oracle added without changing the original spike corpus.
+Focused runs, fault-injection outcomes and final binary hashes live in the
+canonical Proof Pack's named raw records. More grounding/pagination and fixture
+repairs than planned consumed the call budget; no agents or integration work
+were added to compensate. Independent new-code acceptance and origin-qualified
+storage are still separate pending gates.
