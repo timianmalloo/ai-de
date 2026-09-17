@@ -1,0 +1,1 @@
+Agent codex-astra-core-gates; session codex-atlas-core-gates; tree C:/Projects/ai-de-fix-atlas-core-gates; branch fix/atlas-core-gates; author unit complete, awaiting retained reviewer Owner B whole-file pin decision; 17/17 self-tests, normal30, three entry refusals; production unchanged, leases released; proof docs/proof/atlas-core-gate-repair.md.

@@ -1,0 +1,68 @@
+{"agent": "codex-astra-conductor", "at": 1789502474.091263, "kind": "session-start", "path": "-", "seq": 1, "session": "codex-atlas-e1-behavior", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-atlas-behavior-views"}
+{"agent": "codex-sol-e1", "at": 1789502833.970725, "kind": "claim", "path": "docs/design/atlas-behavior-views.md", "seq": 2, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-behavior-design"}
+{"agent": "codex-sol-e1", "at": 1789503109.9655192, "kind": "release", "path": "docs/design/atlas-behavior-views.md", "seq": 3, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789503138.8883603, "kind": "claim", "path": "docs/design/atlas-behavior-views.md", "seq": 4, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-behavior-discoverability-fix"}
+{"agent": "codex-sol-e1", "at": 1789503165.7009857, "kind": "release", "path": "docs/design/atlas-behavior-views.md", "seq": 5, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789503220.304975, "kind": "claim", "path": "docs/design/atlas-behavior-views.md", "seq": 6, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-review-corrections"}
+{"agent": "codex-sol-e1", "at": 1789503254.9730127, "kind": "release", "path": "docs/design/atlas-behavior-views.md", "seq": 7, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789503667.7968059, "kind": "claim", "path": "spikes/atlas-behavior-contract/AtlasBehaviorContractSpike.csproj", "seq": 8, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-behavior-contract-spike"}
+{"agent": "codex-sol-e1", "at": 1789503668.1081553, "kind": "claim", "path": "spikes/atlas-behavior-contract/Program.cs", "seq": 9, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-behavior-contract-spike"}
+{"agent": "codex-sol-e1", "at": 1789503668.4162939, "kind": "claim", "path": "spikes/atlas-behavior-contract/RESULT.md", "seq": 10, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-behavior-contract-spike"}
+{"agent": "codex-sol-e1", "at": 1789503788.6750548, "kind": "release", "path": "spikes/atlas-behavior-contract/AtlasBehaviorContractSpike.csproj", "seq": 11, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789503788.9896379, "kind": "release", "path": "spikes/atlas-behavior-contract/Program.cs", "seq": 12, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789503789.3193502, "kind": "release", "path": "spikes/atlas-behavior-contract/RESULT.md", "seq": 13, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789503806.6596375, "kind": "claim", "path": "spikes/atlas-behavior-contract/Program.cs", "seq": 14, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-behavior-contract-compile-fix"}
+{"agent": "codex-sol-e1", "at": 1789503824.310726, "kind": "release", "path": "spikes/atlas-behavior-contract/Program.cs", "seq": 15, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789503867.9742537, "kind": "claim", "path": "spikes/atlas-behavior-contract/Program.cs", "seq": 16, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-behavior-reflection-owner-correction"}
+{"agent": "codex-sol-e1", "at": 1789503868.2703981, "kind": "release", "path": "spikes/atlas-behavior-contract/Program.cs", "seq": 17, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789504193.2572815, "kind": "claim", "path": "spikes/atlas-behavior-contract/Program.cs", "seq": 18, "session": "codex-atlas-e1-behavior", "ttl": 180.0, "wi": "codex-atlas-e1-behavior"}
+{"agent": "codex-sol-e1", "at": 1789504207.5948906, "kind": "release", "path": "spikes/atlas-behavior-contract/Program.cs", "seq": 19, "session": "codex-atlas-e1-behavior", "wi": "codex-atlas-e1-behavior"}
+{"agent": "codex-sol-e1", "at": 1789504216.78812, "kind": "claim", "path": "spikes/atlas-behavior-contract/Program.cs", "seq": 20, "session": "codex-atlas-e1-behavior", "ttl": 180.0, "wi": "codex-atlas-e1-behavior"}
+{"agent": "codex-sol-e1", "at": 1789504228.1082926, "kind": "release", "path": "spikes/atlas-behavior-contract/Program.cs", "seq": 21, "session": "codex-atlas-e1-behavior", "wi": "codex-atlas-e1-behavior"}
+{"agent": "codex-sol-e1", "at": 1789504307.6462033, "kind": "claim", "path": "spikes/atlas-behavior-contract/Program.cs", "seq": 22, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-spike"}
+{"agent": "codex-sol-e1", "at": 1789504332.49086, "kind": "release", "path": "spikes/atlas-behavior-contract/Program.cs", "seq": 23, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789504392.5784874, "kind": "claim", "path": "spikes/atlas-behavior-contract/RESULT.md", "seq": 24, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-spike"}
+{"agent": "codex-sol-e1", "at": 1789504392.6471906, "kind": "claim", "path": "docs/proof/atlas-behavior-contract.md", "seq": 25, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-spike"}
+{"agent": "codex-sol-e1", "at": 1789504511.6564472, "kind": "release", "path": "spikes/atlas-behavior-contract/RESULT.md", "seq": 26, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789504511.7090235, "kind": "release", "path": "docs/proof/atlas-behavior-contract.md", "seq": 27, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789504511.8126533, "kind": "claim", "path": "docs/audit/audit-data.js", "seq": 28, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-spike"}
+{"agent": "codex-sol-e1", "at": 1789504616.5478144, "kind": "claim", "path": "spikes/atlas-behavior-contract/AtlasBehaviorContractSpike.csproj", "seq": 29, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-spike"}
+{"agent": "codex-sol-e1", "at": 1789504616.6146495, "kind": "claim", "path": "docs/proof/atlas-behavior-contract.md", "seq": 30, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-spike"}
+{"agent": "codex-sol-e1", "at": 1789504637.3797424, "kind": "release", "path": "docs/audit/audit-data.js", "seq": 31, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789504638.0704966, "kind": "release", "path": "docs/proof/atlas-behavior-contract.md", "seq": 32, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789504638.1241267, "kind": "release", "path": "spikes/atlas-behavior-contract/AtlasBehaviorContractSpike.csproj", "seq": 33, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789505077.3249042, "kind": "claim", "path": "docs/design/atlas-behavior-views.md", "seq": 34, "session": "codex-atlas-e1-behavior", "ttl": 600.0, "wi": "atlas-e1-design-revision"}
+{"agent": "codex-sol-e1", "at": 1789505571.7391396, "kind": "release", "path": "docs/design/atlas-behavior-views.md", "seq": 35, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789506530.0570502, "kind": "claim", "path": "spikes/atlas-behavior-contract/Program.cs", "seq": 36, "session": "codex-atlas-e1-behavior", "ttl": 600.0, "wi": "atlas-e1-structural-page"}
+{"agent": "codex-sol-e1", "at": 1789507030.70018, "kind": "claim", "path": "spikes/atlas-behavior-contract/RESULT.md", "seq": 37, "session": "codex-atlas-e1-behavior", "ttl": 600.0, "wi": "atlas-e1-structural-page"}
+{"agent": "codex-sol-e1", "at": 1789507030.769275, "kind": "claim", "path": "docs/proof/atlas-behavior-contract.md", "seq": 38, "session": "codex-atlas-e1-behavior", "ttl": 600.0, "wi": "atlas-e1-structural-page"}
+{"agent": "codex-sol-e1", "at": 1789507030.8363643, "kind": "release", "path": "spikes/atlas-behavior-contract/Program.cs", "seq": 39, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789507083.2609057, "kind": "claim", "path": "spikes/atlas-behavior-contract/Program.cs", "seq": 40, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-structural-page"}
+{"agent": "codex-sol-e1", "at": 1789507083.581657, "kind": "release", "path": "spikes/atlas-behavior-contract/Program.cs", "seq": 41, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789507221.7214627, "kind": "release", "path": "spikes/atlas-behavior-contract/RESULT.md", "seq": 42, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789507221.7770603, "kind": "release", "path": "docs/proof/atlas-behavior-contract.md", "seq": 43, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789507221.8331661, "kind": "claim", "path": "site/index.html", "seq": 44, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-structural-page"}
+{"agent": "codex-sol-e1", "at": 1789507221.9037554, "kind": "claim", "path": "site/collaboration.html", "seq": 45, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-structural-page"}
+{"agent": "codex-sol-e1", "at": 1789507269.043477, "kind": "release", "path": "site/index.html", "seq": 46, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789507269.0975344, "kind": "release", "path": "site/collaboration.html", "seq": 47, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789507655.728167, "kind": "claim", "path": "spikes/atlas-behavior-contract/RESULT.md", "seq": 48, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-order-claim"}
+{"agent": "codex-sol-e1", "at": 1789507655.7952259, "kind": "claim", "path": "docs/proof/atlas-behavior-contract.md", "seq": 49, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-order-claim"}
+{"agent": "codex-sol-e1", "at": 1789507688.8466516, "kind": "release", "path": "spikes/atlas-behavior-contract/RESULT.md", "seq": 50, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789507688.8992336, "kind": "release", "path": "docs/proof/atlas-behavior-contract.md", "seq": 51, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789507688.9548066, "kind": "claim", "path": "site/index.html", "seq": 52, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-order-claim"}
+{"agent": "codex-sol-e1", "at": 1789507689.0243742, "kind": "claim", "path": "site/collaboration.html", "seq": 53, "session": "codex-atlas-e1-behavior", "ttl": 300.0, "wi": "atlas-e1-order-claim"}
+{"agent": "codex-sol-e1", "at": 1789507710.667103, "kind": "release", "path": "site/index.html", "seq": 54, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789507710.721659, "kind": "release", "path": "site/collaboration.html", "seq": 55, "session": "codex-atlas-e1-behavior", "wi": "WI-0"}
+{"agent": "codex-sol-e1", "at": 1789508824.7764456, "kind": "claim", "path": "docs/mockups/atlas-behavior-views.html", "seq": 56, "session": "codex-atlas-e1-behavior", "ttl": 600.0, "wi": "atlas-e1-mock"}
+{"agent": "codex-sol-e1", "at": 1789509728.6913128, "kind": "claim", "path": "docs/mockups/atlas-behavior-views.html", "seq": 57, "session": "codex-atlas-e1-behavior", "ttl": 600.0, "wi": "atlas-e1-mock"}
+{"agent": "codex-sol-e1", "at": 1789509826.9746542, "kind": "claim", "path": "docs/design/atlas-behavior-views.md", "seq": 58, "session": "codex-atlas-e1-behavior", "ttl": 600.0, "wi": "atlas-e1-mock"}
+{"agent": "codex-sol-e1", "at": 1789509827.0428376, "kind": "claim", "path": "docs/proof/atlas-behavior-contract.md", "seq": 59, "session": "codex-atlas-e1-behavior", "ttl": 600.0, "wi": "atlas-e1-mock"}
+{"agent": "codex-sol-e1", "at": 1789510039.1030765, "kind": "claim", "path": "site/index.html", "seq": 60, "session": "codex-atlas-e1-behavior", "ttl": 180.0, "wi": "atlas-e1-mock"}
+{"agent": "codex-sol-e1", "at": 1789510039.1706388, "kind": "claim", "path": "site/collaboration.html", "seq": 61, "session": "codex-atlas-e1-behavior", "ttl": 180.0, "wi": "atlas-e1-mock"}
+{"agent": "codex-sol-e1", "at": 1789510055.3035588, "kind": "release", "path": "site/index.html", "seq": 62, "session": "codex-atlas-e1-behavior", "wi": "atlas-e1-mock"}
+{"agent": "codex-sol-e1", "at": 1789510055.3571467, "kind": "release", "path": "site/collaboration.html", "seq": 63, "session": "codex-atlas-e1-behavior", "wi": "atlas-e1-mock"}
+{"agent": "codex-sol-e1", "at": 1789510055.409198, "kind": "release", "path": "docs/mockups/atlas-behavior-views.html", "seq": 64, "session": "codex-atlas-e1-behavior", "wi": "atlas-e1-mock"}
+{"agent": "codex-sol-e1", "at": 1789510055.4647555, "kind": "release", "path": "docs/design/atlas-behavior-views.md", "seq": 65, "session": "codex-atlas-e1-behavior", "wi": "atlas-e1-mock"}
+{"agent": "codex-sol-e1", "at": 1789510055.5168087, "kind": "release", "path": "docs/proof/atlas-behavior-contract.md", "seq": 66, "session": "codex-atlas-e1-behavior", "wi": "atlas-e1-mock"}
+{"agent": "codex-sol-e1", "at": 1789510072.8338423, "kind": "claim", "path": "site/model.html", "seq": 67, "session": "codex-atlas-e1-behavior", "ttl": 180.0, "wi": "atlas-e1-mock"}
+{"agent": "codex-sol-e1", "at": 1789510072.9221053, "kind": "release", "path": "site/model.html", "seq": 68, "session": "codex-atlas-e1-behavior", "wi": "atlas-e1-mock"}

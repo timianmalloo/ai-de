@@ -1,0 +1,1 @@
+Agent codex-astra-d0-author; session codex-d0-atlas-independence; worktree C:/Projects/ai-de-fix-d0-atlas-independence; branch fix/d0-atlas-independence; author frozen, 20/20 headless semantic cases; exact test/proof leases released; independent review pending; no UI allocation.

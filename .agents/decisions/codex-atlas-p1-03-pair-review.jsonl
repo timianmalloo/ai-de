@@ -1,0 +1,10 @@
+{"agent": "codex-astra-pair-reviewer", "at": 1789593090.101535, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "codex-atlas-p1-03-pair-review", "wi": ""}
+{"agent": "codex-astra-pair-reviewer", "at": 1789593090.1175392, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "codex-atlas-p1-03-pair-review", "wi": ""}
+{"agent": "codex-astra-pair-reviewer", "at": 1789593090.1350539, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-atlas-p1-03-pair-review", "wi": ""}
+{"agent": "codex-astra-pair-reviewer", "at": 1789593090.151569, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-atlas-p1-03-pair-review", "wi": ""}
+{"agent": "codex-astra-pair-reviewer", "at": 1789593090.1685793, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "codex-atlas-p1-03-pair-review", "wi": ""}
+{"agent": "codex-astra-pair-reviewer", "at": 1789593090.1832716, "code": null, "kind": "allowed", "path": "docs/health-history.jsonl", "session": "codex-atlas-p1-03-pair-review", "wi": ""}
+{"agent": "codex-astra-pair-reviewer", "at": 1789593090.1992724, "code": null, "kind": "allowed", "path": "docs/proof/atlas-p1-03-pair-review.md", "session": "codex-atlas-p1-03-pair-review", "wi": ""}
+{"agent": "codex-astra-pair-reviewer", "at": 1789593090.216783, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-atlas-p1-03-pair-review", "wi": ""}
+{"agent": "codex-astra-pair-reviewer", "at": 1789593090.234046, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-atlas-p1-03-pair-review", "wi": ""}
+{"agent": "codex-astra-pair-reviewer", "at": 1789593090.25005, "code": null, "kind": "allowed", "path": "site/model.html", "session": "codex-atlas-p1-03-pair-review", "wi": ""}

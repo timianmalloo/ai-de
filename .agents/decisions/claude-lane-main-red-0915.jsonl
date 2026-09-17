@@ -1,0 +1,4 @@
+{"agent": "claude-lane-main-red", "at": 1789597116.8352504, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/EngineCatalogTests.cs", "session": "claude-lane-main-red-0915", "wi": ""}
+{"agent": "claude-lane-main-red", "at": 1789597116.8523088, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/TheLocatorTellsShimFromExecutableOnlyByWindowsSuffixTests.cs", "session": "claude-lane-main-red-0915", "wi": ""}
+{"agent": "claude-lane-main-red", "at": 1789597117.0743656, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Compilation/PurgeAndTheSessionDeleteCascadeTests.cs", "session": "claude-lane-main-red-0915", "wi": ""}
+{"agent": "claude-lane-main-red", "at": 1789597117.0922475, "code": null, "kind": "allowed", "path": "tools/expected-test-counts.json", "session": "claude-lane-main-red-0915", "wi": ""}

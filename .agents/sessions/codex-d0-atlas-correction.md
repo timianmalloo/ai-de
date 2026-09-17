@@ -1,0 +1,1 @@
+Agent codex-astra-d0-author; session codex-d0-atlas-correction; worktree C:/Projects/ai-de-fix-d0-atlas-correction; author frozen after16/16 correction cap plus authorized2-call UTF-8 closure recovery;37/37 headless results retained; exact leases released; independent BLOCK retained pending re-review; no UI allocation.

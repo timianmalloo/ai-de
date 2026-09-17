@@ -1,7 +1,21 @@
 # Atlas recovery coordinator
 
+## Current routing and status — 2026-09-15
+
+- The background closer `ed7d1cd1-d8e4-437a-83bc-f39eb926c352` failed after 94 turns because its model context window was exceeded. Do not send it requests or wait for its reply.
+- Foreground GHCP resumes its original coordination responsibility under `copilot-atlas-recovery-b0d0`. Use the shared request recipient with that name; foreground has no `write_agent` address.
+- Dedicated watcher: `copilot-main-watch-b0d0`, agent `17c3e0e9-f85b-4008-b138-7baca226fccb`. It handles watch/triage; no product-publication authority is transferred.
+- Verified local and advertised main: `bcf4959bc0e0e361736e6a179f05b69fcd0500f8`, including Grok D-0. The coordinator and original Atlas integration trees were clean at recovery readback.
+- Codex owns the user-approved five-gate closure. Its latest receipt reports the five component repairs independently cleared; combined current-main qualification and publication remain outstanding.
+- Native bounded qualification is complete at `46e2f266`; this is not native main acceptance. Grok D-1 and Codex E1/E2 remain user-admitted; their entry-point contract is still a proposal with consumer questions, not a frozen agreement.
+- Main publication remains held until the actual current-main candidate, required gates, Release, independent reviews, intent and history preservation are verified. No force, stash, discarded history or automatic new work transfer.
+- The original phase history below is superseded for routing and current status; durable evidence remains in the audit/proof records.
+
+## Historical checkpoint — not current routing or status
+
 - Agent: GitHub Copilot CLI / GPT-6 Astra
 - Session: copilot-atlas-recovery-b0d0
+- HUMAN POLICY (2026-09-15): watcher copilot-main-watch-b0d0 owns holistic task/priority/status and proposed-transfer tables across all programmes. ONLY the actual user approves a new work-area move; neither closer/watcher/Owner persona nor silence/quota/budget can approve it. Proposals remain AWAITING HUMAN REVIEW with no agent/worktree/code/ownership changes. Existing approved Codex E1/E2, Grok, and bounded Atlas closure continue unchanged. Minimize new GHCP implementation; further substantial areas are recommendations first.
 - Address: ed7d1cd1-d8e4-437a-83bc-f39eb926c352 (copilot-astra-atlas-recovery-closer)
 - Worktree: C:\Projects\ai-de-conductor-atlas-recovery
 - Branch: conductor/atlas-recovery

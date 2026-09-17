@@ -1,0 +1,9 @@
+{"agent": "codex-astra-pair-executor", "at": 1789595439.957791, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "codex-atlas-p1-03-pair-execution", "wi": ""}
+{"agent": "codex-astra-pair-executor", "at": 1789595439.9738035, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "codex-atlas-p1-03-pair-execution", "wi": ""}
+{"agent": "codex-astra-pair-executor", "at": 1789595439.989319, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-atlas-p1-03-pair-execution", "wi": ""}
+{"agent": "codex-astra-pair-executor", "at": 1789595440.0063505, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-atlas-p1-03-pair-execution", "wi": ""}
+{"agent": "codex-astra-pair-executor", "at": 1789595440.0218909, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "codex-atlas-p1-03-pair-execution", "wi": ""}
+{"agent": "codex-astra-pair-executor", "at": 1789595440.0364122, "code": null, "kind": "allowed", "path": "docs/proof/atlas-p1-03-pair-execution.md", "session": "codex-atlas-p1-03-pair-execution", "wi": ""}
+{"agent": "codex-astra-pair-executor", "at": 1789595440.0524223, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-atlas-p1-03-pair-execution", "wi": ""}
+{"agent": "codex-astra-pair-executor", "at": 1789595440.0689573, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-atlas-p1-03-pair-execution", "wi": ""}
+{"agent": "codex-astra-pair-executor", "at": 1789595440.085479, "code": null, "kind": "allowed", "path": "site/model.html", "session": "codex-atlas-p1-03-pair-execution", "wi": ""}

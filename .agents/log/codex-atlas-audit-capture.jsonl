@@ -1,0 +1,5 @@
+{"agent": "codex-astra-gate-conductor", "at": 1789512327.3064191, "kind": "session-start", "path": "-", "seq": 1, "session": "codex-atlas-audit-capture", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-fix-atlas-audit-capture"}
+{"agent": "codex-sol-audit-capture", "at": 1789512645.6158888, "kind": "session-start", "path": "-", "seq": 2, "session": "codex-atlas-audit-capture", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-fix-atlas-audit-capture"}
+{"agent": "codex-sol-audit-capture", "at": 1789512645.7285335, "kind": "claim", "path": "docs/proof/atlas-audit-capture-repair.md", "seq": 3, "session": "codex-atlas-audit-capture", "ttl": 300.0, "wi": "atlas-audit-capture"}
+{"agent": "codex-sol-audit-capture", "at": 1789512809.6392634, "kind": "release", "path": "docs/proof/atlas-audit-capture-repair.md", "seq": 4, "session": "codex-atlas-audit-capture", "wi": "WI-0"}
+{"agent": "codex-sol-audit-capture", "at": 1789512809.6923218, "kind": "session-end", "path": "-", "seq": 5, "session": "codex-atlas-audit-capture", "wi": "WI-0", "worktree": "C:/Projects/ai-de-fix-atlas-audit-capture"}

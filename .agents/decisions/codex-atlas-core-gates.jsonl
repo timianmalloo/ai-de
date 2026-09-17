@@ -1,0 +1,10 @@
+{"agent": "codex-astra-core-gates", "at": 1789512732.7552288, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Understanding/AtlasGitMembership.cs", "session": "codex-atlas-core-gates", "wi": ""}
+{"agent": "codex-astra-core-gates", "at": 1789512732.7682407, "code": null, "kind": "allowed", "path": "src/AiDe.Core/WorkspaceCore.cs", "session": "codex-atlas-core-gates", "wi": ""}
+{"agent": "codex-astra-core-gates", "at": 1789512732.7797482, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasGitMembershipTests.cs", "session": "codex-atlas-core-gates", "wi": ""}
+{"agent": "codex-astra-core-gates", "at": 1789512732.7929418, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Understanding/AtlasProductionAdmissionTests.cs", "session": "codex-atlas-core-gates", "wi": ""}
+{"agent": "codex-astra-core-gates", "at": 1789512732.8049607, "code": null, "kind": "allowed", "path": "tools/verify-bounds-are-enforced.py", "session": "codex-atlas-core-gates", "wi": ""}
+{"agent": "codex-astra-core-gates", "at": 1789512762.2880688, "code": null, "kind": "allowed", "path": "docs/proof/atlas-core-gate-repair.md", "session": "codex-atlas-core-gates", "wi": ""}
+{"agent": "codex-astra-core-gates", "at": 1789513155.5876503, "code": null, "kind": "allowed", "path": "docs/proof/atlas-core-gate-repair.md", "session": "codex-atlas-core-gates", "wi": ""}
+{"agent": "codex-astra-core-gates", "at": 1789513155.600154, "code": null, "kind": "allowed", "path": "tools/verify-bounds-are-enforced.py", "session": "codex-atlas-core-gates", "wi": ""}
+{"agent": "codex-astra-core-gates", "at": 1789513772.6876073, "code": null, "kind": "allowed", "path": "docs/proof/atlas-core-gate-repair.md", "session": "codex-atlas-core-gates", "wi": ""}
+{"agent": "codex-astra-core-gates", "at": 1789513772.7001166, "code": null, "kind": "allowed", "path": "tools/verify-bounds-are-enforced.py", "session": "codex-atlas-core-gates", "wi": ""}

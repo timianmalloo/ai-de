@@ -1,0 +1,3 @@
+{"agent": "codex-astra-gate-conductor", "at": 1789526354.2940087, "kind": "session-start", "path": "-", "seq": 1, "session": "codex-d0-atlas-conditional-review", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-review-d0-atlas-conditional-closure"}
+{"agent": "codex-astra-d0-review", "at": 1789527061.0139375, "kind": "claim", "path": "docs/proof/d0-atlas-conditional-review.md", "seq": 2, "session": "codex-d0-atlas-conditional-review", "ttl": 300.0, "wi": "d0-atlas-conditional-review"}
+{"agent": "codex-astra-d0-review", "at": 1789527061.5534217, "kind": "release", "path": "docs/proof/d0-atlas-conditional-review.md", "seq": 3, "session": "codex-d0-atlas-conditional-review", "wi": "WI-0"}

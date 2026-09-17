@@ -1,0 +1,2 @@
+{"agent": "codex-astra-d0-review", "at": 1789527061.4388404, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-d0-atlas-conditional-review", "wi": ""}
+{"agent": "codex-astra-d0-review", "at": 1789527061.4507577, "code": null, "kind": "allowed", "path": "docs/proof/d0-atlas-conditional-review.md", "session": "codex-d0-atlas-conditional-review", "wi": ""}

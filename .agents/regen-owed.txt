@@ -1,1 +1,6 @@
+docs/_meta.json
+docs/_site/index.html
+docs/api/AiDe.App.Workbench.md
+docs/api/AiDe.Core.Ipc.md
 docs/audit/audit-data.js
+docs/docs-index.js

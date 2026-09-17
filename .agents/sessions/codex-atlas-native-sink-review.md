@@ -1,0 +1,1 @@
+Agent codex-astra-native-sink-review; tree C:/Projects/ai-de-review-atlas-native-observer-sink; status FR-NO-001 CLEAR only; full observer view-state floor open; committed=True; exact lease release exit=0; evidence docs/proof/atlas-native-observer-sink-review.md.

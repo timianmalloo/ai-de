@@ -1,0 +1,16 @@
+{"agent": "codex-astra-pair-author", "at": 1789592474.0828626, "code": null, "kind": "allowed", "path": "docs/proof/records/atlas-p1-03-uia-transition/run_pair.py", "session": "codex-atlas-p1-03-pair-preparation", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789592474.229217, "code": null, "kind": "allowed", "path": "docs/proof/atlas-p1-03-pair-preparation.md", "session": "codex-atlas-p1-03-pair-preparation", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789592474.370443, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-atlas-p1-03-pair-preparation", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789592474.514708, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-atlas-p1-03-pair-preparation", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789592474.6619403, "code": null, "kind": "allowed", "path": "site/model.html", "session": "codex-atlas-p1-03-pair-preparation", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789592474.8030927, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-atlas-p1-03-pair-preparation", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789592513.5826519, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "codex-atlas-p1-03-pair-preparation", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789592513.5991714, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "codex-atlas-p1-03-pair-preparation", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789592513.6176906, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-atlas-p1-03-pair-preparation", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789592513.6346993, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-atlas-p1-03-pair-preparation", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789592513.6511009, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "codex-atlas-p1-03-pair-preparation", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789592513.6661122, "code": null, "kind": "allowed", "path": "docs/proof/atlas-p1-03-pair-preparation.md", "session": "codex-atlas-p1-03-pair-preparation", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789592513.6826503, "code": null, "kind": "allowed", "path": "docs/proof/records/atlas-p1-03-uia-transition/run_pair.py", "session": "codex-atlas-p1-03-pair-preparation", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789592513.6991665, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-atlas-p1-03-pair-preparation", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789592513.7141898, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-atlas-p1-03-pair-preparation", "wi": ""}
+{"agent": "codex-astra-pair-author", "at": 1789592513.732718, "code": null, "kind": "allowed", "path": "site/model.html", "session": "codex-atlas-p1-03-pair-preparation", "wi": ""}

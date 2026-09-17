@@ -187,6 +187,7 @@ public sealed class EngineCatalogTests
     /// (measured with <c>where copilot</c>, 2026-09-14), and only the executable's launch was observed.
     /// </summary>
     [Fact]
+    [Trait("Platform", "Windows")]   // Ruling 117: a Windows scenario by its own doc comment; the Linux truth is TheLocatorTellsShimFromExecutableOnlyByWindowsSuffixTests
     public void ADirectExecutableWinsOverAnNpmShimEarlierOnPath()
     {
         using var path = new FakePath();
@@ -221,6 +222,7 @@ public sealed class EngineCatalogTests
     /// in the spike record.
     /// </summary>
     [Fact]
+    [Trait("Platform", "Windows")]   // Ruling 117: a Windows scenario by its own doc comment; the Linux truth is TheLocatorTellsShimFromExecutableOnlyByWindowsSuffixTests
     public void AnNpmShimForACliWithNoObservedNpmLaunchIsRefusedRatherThanRunThroughAShell()
     {
         using var path = new FakePath();
@@ -246,6 +248,7 @@ public sealed class EngineCatalogTests
     /// so this is the pass every gemini launch on Windows takes.
     /// </remarks>
     [Fact]
+    [Trait("Platform", "Windows")]   // Ruling 117: a Windows scenario by its own doc comment; the Linux truth is TheLocatorTellsShimFromExecutableOnlyByWindowsSuffixTests
     public void TheNativeLaunchPathResolvesGeminiThroughTheNpmShimToItsScript()
     {
         using var path = new FakePath();
@@ -263,6 +266,7 @@ public sealed class EngineCatalogTests
     /// fail with "Cannot find module" after the lane has started.
     /// </summary>
     [Fact]
+    [Trait("Platform", "Windows")]   // Ruling 117: a Windows scenario by its own doc comment; the Linux truth is TheLocatorTellsShimFromExecutableOnlyByWindowsSuffixTests
     public void AnNpmShimWithoutItsScriptIsRefusedRatherThanHandedToNode()
     {
         using var path = new FakePath();
