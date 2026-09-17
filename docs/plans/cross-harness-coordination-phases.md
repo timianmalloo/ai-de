@@ -997,3 +997,24 @@ surfaces **before** canonical bridge implementation. Full P2 legacy N1/N2,
 canonical bridge, recovery, old-binary proof, P3-P5 and upstream remain pending.
 P3/P5 exact-expiry snapshots and their inverse cases stay deferred, not implemented
 as live observer coalescing in this spike.
+
+### P2 validator/binding bounded execution
+
+Budget: 45 tools, 150k context, zero agents. The source pin is ebd4f1c, not the
+moving P1 branch. Grounding follows design -> spec/ADR -> canonical Proof Pack.
+One coherent trace, no speculative parallel research:
+
+| Node / Capability | Exit | Dependency |
+|---|---|---|
+| Ground / Reasoning | Exact Python schema and trusted composition established | None |
+| Design / Reasoning | Finite validator/binding contract committed before code | Ground, decision |
+| Red / Deterministic mechanics | Whole-body bad envelopes fail against the old codec | Design, data |
+| Implement / Reasoning | One internal codec, parser and synthetic binding adapter | Red, decision |
+| Prove / Deterministic mechanics | Pinned goldens, boundaries, isolated Git and mutations recorded | Implement, data |
+| Seal / Deterministic mechanics | One updated Proof Pack, audit and code commit | Prove, data |
+
+Modeled work/span 6/6 equal-cost nodes, width 1 (Inferred). No agent fan-out.
+Each test corpus is a finite worklist; remaining cases decrease to zero. At the
+tool cap retain coherent code and report unexecuted proof rather than inventing
+qualification. Full folding, origin-limit Data/DS acceptance, store activation,
+P3-P5 exact-expiry snapshots and inverse wake/renewal cases remain deferred.

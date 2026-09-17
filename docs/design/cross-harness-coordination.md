@@ -1407,3 +1407,63 @@ Required bridge changes remain proposals:
 Independent review of the new generator, numeric normalization, parser and tests
 is next. The full Proof Pack records the byte evidence and remaining errors.
 No runtime clearance follows from this experiment.
+
+### P2 validator and synthetic binding unit (2026-09-17)
+
+The user supplied independent Domain/Test **CODEC-scope PASS** for `d8ce5a94`,
+not a full reader qualification. The oracle remains **ebd4f1c8473b70934ec29d778419289719ef5481**
+even if the P1 timestamp-fix branch advances. This supersedes only the preceding
+experimental-code placement: move the one codec definition into internal Core and
+link that source into the spike. Core tests use their existing friend assembly.
+There is no public arbitrary-JSON API and no runtime Python dependency.
+
+The finite contract for this unit is:
+
+* Input is one inert UTF-8 record. Check the 65,538 raw-byte ceiling before copying
+  or parsing, strip at most LF then CR, and check 65,536 content bytes. Reject
+  duplicate decoded keys, invalid UTF-8, unpaired surrogates, nonfinite numbers,
+  container depth over 16, and malformed JSON. A node ceiling of 65,536 is derived
+  from the byte ceiling (each JSON value occupies at least one input byte).
+* Use System.Text.Json lexing and the pinned `python-json-v1-dotnet-r-v1` codec:
+  scalar Unicode key order, no normalization, integer/float distinction, BigInteger,
+  negative zero. Python 3.12.10 here has a 4,300 decimal-integer digit limit.
+  Beyond that explicit adapter support boundary return Unsupported, not parity.
+* Validate the exact 23-field v1 envelope and each subtype against the pinned
+  Python functions. Endpoints carry two strings, never native integer generations.
+  Response references deliberately retain P1's loose authority-list contract;
+  fact references are exact text-valued shapes. This validates shape, not local
+  blob integrity, issuer identity, proposal authority, or recipient generation.
+  Those remain Unknown/Denied regardless of strings inside payloads.
+* Responses bound digest bytes to 32,768; facts bound full Python default-separator
+  reserialization, including digest and recordedAt, to 65,536. Only digest
+  construction excludes the two top-level fields; validation still checks them.
+  Timestamp integers outside finite binary64 return stable `XH.FIELD_INVALID`;
+  this deliberately handles the pinned P1 direct OverflowError defect, without
+  importing the parallel fix or changing the oracle.
+* Malformed records return typed Invalid with stable codes. Unknown string kinds,
+  event types and integer versions return visible Unsupported. Unversioned
+  request-add/request-resolve bodies retain their original fields and bytes:
+  source provenance is separate and cannot synthesize repository or generations.
+* Synthetic binding accepts the existing internal CoordinationSourceBinding plus
+  an explicit trusted primary path, checkout, public source ID and finite list of
+  opaque repository/stream pairs. Membership is checked before filesystem access.
+  Only the fixed primary `.agents/requests.jsonl` source is eligible. Resolve
+  checkout membership from isolated Git metadata; never select a root using event
+  fields or remote basenames. Reject reparses in the checked paths. This is
+  snapshot validation, not a race-free live-file read or a publication capability.
+* Return OriginBound/NotStorable when a valid canonical-origin record exceeds the
+  existing native raw ceiling. Do not widen the native cache, add DDL, call the
+  store or wire Main. Unknown or ambiguous source configuration is Unbound.
+
+Surface list: byte input -> lexical codec -> schema validator -> immutable inert
+record -> source membership/provenance -> typed admission result. Store, native
+Main, UI, authority resolver and full response/proposal fold are deliberately
+absent. Tests and the spike are the only consumers in this unit.
+
+Verification contract: old whole-envelope goldens and five codec-accepted bad
+envelopes; fresh whole-body Python positives/negatives; decimal parsing/full-byte
+edges; exact line and output bounds; two isolated physical repositories with
+equal remote basenames and a linked worktree; spoofed/unknown mappings and legacy
+no-synthesis. A finite guard/binding fault-injection pass must fail. Normal-path
+results expose status/code, raw/canonical sizes and duration without payload logs.
+New-code independent acceptance remains separate from the supplied CODEC PASS.
