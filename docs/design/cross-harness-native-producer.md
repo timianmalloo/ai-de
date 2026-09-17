@@ -1,6 +1,6 @@
 ---
 id: design-cross-harness-native-producer
-title: Cross-harness native producer — P2.P1 membership
+title: Cross-harness native producer — P2.P1 membership and P2.P2A writer
 type: design
 status: draft
 owner: "@timianmalloo"
@@ -10,10 +10,117 @@ links:
   - {to: design-cross-harness-coordination, rel: refines}
   - {to: proof-cross-harness-coordination, rel: tested-by}
 review-by: 2026-10-16
-summary: Records the accepted P2.P1 emitter membership contract before implementation. Writer admission bounds, prepared writes, registration notices and Data recovery remain unqualified.
+summary: Records the accepted membership and participating prepared-writer contracts. Global emitter state, registration notices, durable Data recovery and full P2 qualification remain separate pending work.
 ---
 
 # P2.P1 — accepted membership contract
+
+## P2.P2A — participating writer contract (recorded before code)
+
+The current task explicitly admits the writer portion of
+`CoordinationContractLog.cs`, a small `CoordinationNativeWrite.cs` helper and
+synthetic Core tests. Parent P2.P1 review reference:
+`184906558911f3f49115d44781781aa094adfa47`; local starting source:
+`ff73f62c071aaf16bd379b494d27df372ff2a7b5`. This section supersedes the earlier
+writer-pending statements only for this bounded implementation unit, not full P2.
+
+The native append stream remains the durable record: one complete encoded JSON
+line per event, retaining the existing session/sequence key and filenames.
+PreparedWrite is a process-local immutable value carrying bounded copied input,
+captured time, source identity, expected sequence/start, prefix fingerprint and
+exact append bytes. A private attempt marker distinguishes an actual attempted
+append from an identical but never-attempted preparation. No new wire nonce,
+acknowledgement database, pending file or accepted-log reservation is introduced.
+Restart cannot reconstruct this marker from an invented new object: recovery
+requires actual preparation and source evidence, otherwise remains uncertain.
+
+`Prepare(input)` returns Ready(PreparedWrite), Refused(code), or Unavailable(code).
+`Append(prepared)` returns Admitted(Admission), Refused, Unavailable, or
+Uncertain(code, prepared). Legacy void entry points remain; unsuccessful results
+throw IOException-derived CoordinationWriteException with Code and optional
+Prepared. The codes use `COORD_`: RECORD_BOUND, FILE_BOUND, ROOT_BOUND,
+SEQUENCE_CONFLICT, STALE_PREPARATION and IDENTITY_CONFLICT are refusals;
+WRITER_BUSY, SOURCE_UNAVAILABLE and ROOT_OVERRUN are unavailability only before
+candidate append is attempted; possible writes yield WRITE_UNCERTAIN.
+
+Input copying, bounded preflight and the caller's clock run outside the root
+guard. In particular a paused TimeProvider must not block another session before
+physical I/O. No arbitrary production callback executes under the root guard.
+Under the same normalized root gate across writer instances, and an empty
+FileShare.None `.coordlock` across participating processes, both operations
+validate sequence, quota and target identity. Target sharing excludes other
+writes. Append holds exclusion through write, Flush(true), and disposal;
+success is returned only after disposal. Gates are reference-counted and
+reclaimed, never keyed forever. Acquisition fails fast, without retry queues,
+PID ownership, leases or manual lockfile deletion. The empty lockfile is not a
+JSONL ledger and is excluded from quota.
+
+The complete encoded line including LF is at most 65,536 bytes. Preflight and
+output are bounded before giant allocation; encoder buffer reservation must not
+reject a valid exactly-65,536-byte ASCII or escaped-Unicode line. Scan matching
+top-level `*.jsonl` only, at most 129 entries, including empty files; allow at most
+128 files and 33,554,432 root bytes including any separator repair. Unknown
+truncated tails are refused, not completed automatically. A complete valid JSON
+tail without LF may be separated only with quota-accounted repair.
+
+Bounded sequence scanning preserves native nonempty-line counting and prevents
+duplicate native (session, sequence) keys. It makes no clock-ordering guarantee.
+Existing names remain unchanged, including the legacy four-byte digest for
+rewritten unsafe IDs. Existing target content must establish the same exact
+session identity; aliases and collisions are refused rather than renamed or
+deduplicated. Root normalization reuses the existing native helper. No untested
+symlink, UNC or cross-platform filesystem guarantee follows.
+
+A never-attempted stale preparation is refused even if another writer filled its
+range with identical bytes. An actually attempted preparation can reconcile only
+after its failed handle closes and root plus target exclusion is reacquired:
+unchanged prefix and complete exact range plus successful Flush(true) gives the
+same Admission; unchanged start permits the same exact bytes; matching partial
+prefix ending at EOF permits only its remaining suffix, with quota continuity.
+Different bytes, truncation, extra bytes after a partial record or unresolved
+flush remain Uncertain with no additional append. No silent rebase or new-ID
+retry is permitted.
+
+The quota guarantee covers participating writers only. Legacy writers do not
+obey the root guard. A detected external root overrun is unavailable and preserves
+history; this is not an old-client disablement or ownership claim.
+
+### Reach, verification and execution bounds
+
+Surfaces: copied input → bounded encoding → prepared source snapshot → exclusive
+append/flush → legacy void wrappers → unchanged native parser → existing emitter
+membership. No store, UI or wire extension is in this unit. Operator evidence is
+the structured outcome/code, encoded byte count and operation duration, without
+payload logging.
+
+Finite graph: source grounding (Reasoning) → this contract commit (Deterministic
+mechanics) → original four RED controls (Deterministic mechanics) → writer plus
+adversarial fixtures (Reasoning) → tests/mutants and raw TRX (Deterministic
+mechanics) → receipt commit (Deterministic mechanics). All edges are data or
+decision edges. One author, no agents; inferred work equals span, speedup ceiling
+one. Forty-five tool calls is the reporting checkpoint. Unresolved assertions
+decrease toward zero; budget exhaustion reports the exact remaining floors and
+does not grant acceptance. Independent review and canonical Proof Pack attachment
+belong to the parent conductor, not the author.
+
+Testing union: D0/D1/D2/D4/D6/D7. Keep the original four producer-bound controls
+unchanged, prove both exact-limit encodings, prepare/replay identity, injected
+partial-write/flush/dispose failures against real files, competing instances and
+processes, root aliases, malformed tails and legacy parser compatibility.
+Retain membership I/O-denial and three operation gate-retirement controls.
+
+Class → sweep → derive → prevent: bounds checked independently of exclusive
+append allow concurrent overflow; a reconstructed preparation borrowing another
+intent's identical bytes loses an independent event. The writer's register,
+heartbeat, end and general/board writes share one admission path. Its single
+typed outcome and immutable bytes remove duplicate policy producers. Boundary,
+staleness and physical fault controls are the prevention; their actual execution
+and remaining gaps will be recorded in the receipt, not presumed here.
+
+Still pending outside this unit: global 128 emitter prepared-state capacity,
+RegistrationNotice capacity, durable Data recovery, emitter retention of Prepared
+after unresolved IOException, canonical P2 consolidation, old-binary/mixed-writer
+qualification and P3–P5. No activation or full-producer PASS is authorized.
 
 The current-task DS code admission authorizes only
 `src/AiDe.Core/Watcher/SessionCoordinationEmitter.cs`. This is not approval of the
