@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Store: 10 types, 54 members, 70% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Store: 10 types, 56 members, 71% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Store`
 
-**10 public types · 54 public members · 70% documented.**
+**10 public types · 56 public members · 71% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -140,6 +140,8 @@ accident (spike S6).
 | `string? ScopeLocation(string scopeId)` | Where a scope's files live, relative to the workspace root, or null when it never said. |
 | `IReadOnlyList<(string ScopeId, string DeclaredAt)> AllScopeLocations()` | Every latest-generation `declared_at`, so coverage can join without a second walk. |
 | `(IReadOnlyList<(string NodeId, string Type)> Rows, int TotalMatched) KnowledgeNodes(` | The ids currently classified as knowledge.  The knowledge nodes a query asks for, with their declared type, and how many matched in all. |
+| `IReadOnlyList<(string NodeId, string TypeKind)> SourceHasTypeNodes()` | Latest-generation source `has_type` nodes (not knowledge). D-1 UV-0 listing input. Unbounded in SQL; the projection applies the listing cap so omitted count is honest. |
+| `IReadOnlyList<(string TypeNodeId, string Member)> SourceHasMembers()` | Latest-generation `has_member` facts. Listing display only — not Core observation ids (r5). |
 | `IReadOnlySet<string> KnowledgeNodeIds(int limit)` | **(gap)** |
 | `IReadOnlyList<StoredAssertion> AssertionsWithPredicate(string predicate, int limit)` | **(gap)** |
 | `IReadOnlyList<string> ReadDeclaredSubjects()` | Node identities matching a substring, with the total matched so omissions are reportable.  Subjects this workspace's own artifacts DECLARE — the things it owns. |

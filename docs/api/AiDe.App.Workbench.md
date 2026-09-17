@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 103 types, 463 members, 71% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 105 types, 471 members, 70% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**103 public types · 463 public members · 71% documented.**
+**105 public types · 471 public members · 70% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -553,6 +553,30 @@ Pure placement policy for reference-document surfaces, so it is verifiable headl
 | Member | Summary |
 |---|---|
 | `DocumentPlacement? Decide(Layout layout, string? activeSurfaceId)` | **(gap)** |
+
+## `EntryPointsSurface`
+
+*class* — `EntryPointsSurface.cs`
+
+Architecture Entry-points listing over `EntryPointsAsync`.
+Open Sequence is disabled (`mapping-unavailable`) until mapper r4 is frozen and implemented.
+
+| Member | Summary |
+|---|---|
+| `EntryPointsSurface(string? title = null)` | **(gap)** |
+| `string Title { get; }` | **(gap)** |
+| `bool NeedsInitialBind { get; private set; } = true` | **(gap)** |
+| `event EventHandler? RetryRequested` | **(gap)** |
+| `event EventHandler<EntryPointsActivate>? ActivateRequested` | **(gap)** |
+| `void Show(EntryPointsResult result)` | **(gap)** |
+| `void ShowNoWorkspace()` | **(gap)** |
+| `void ShowError(string message)` | **(gap)** |
+
+## `EntryPointsActivate`
+
+*record* — `EntryPointsSurface.cs`
+
+*No doc comment on this type.* **(gap)**
 
 ## `ExplorerNodeAction`
 

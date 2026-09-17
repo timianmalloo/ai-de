@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T13:34:12Z",
+  "generated": "2026-09-17T13:38:37Z",
   "audit": [
     {
       "actor": null,
@@ -20022,6 +20022,70 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M2QSED6HYQ40BCPVXVDTCDEH",
+      "shortname": "specify-d1-al5b",
+      "datetime": "2026-09-17T13:38:37Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "AL5b supersede",
+      "summary": "Honest capture for specify-d1-entry-points",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/entry-points.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Specify D-1 listing",
+      "done_when": "spec-entry-points draft committed",
+      "tier": "T2",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "supersedes": "al-01M2NHXVG85NWR87JK2WJW4PAQ",
+      "git": {
+        "sha": "30d82c3b96190a9e1a2cbc458c80955a07b8a0d1",
+        "short": "30d82c3b9",
+        "branch": "understanding-views-d1",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-01M2QSEDC3B5HADZ18C4ZCJDH6",
+      "shortname": "owner-d1-al5b",
+      "datetime": "2026-09-17T13:38:37Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "AL5b supersede admission",
+      "summary": "Honest capture for D-1 admission",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-owner-d1-admission.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Admit D-1",
+      "done_when": "owner-d1-admission note committed",
+      "tier": "T2",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": true
+      },
+      "supersedes": "al-01M2KMBV5ZEQPEFFD7708W28HA",
+      "git": {
+        "sha": "30d82c3b96190a9e1a2cbc458c80955a07b8a0d1",
+        "short": "30d82c3b9",
+        "branch": "understanding-views-d1",
+        "pushed": false
+      }
     }
   ],
   "changes": [
