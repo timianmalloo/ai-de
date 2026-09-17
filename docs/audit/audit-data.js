@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T03:25:39Z",
+  "generated": "2026-09-17T03:27:30Z",
   "audit": [
     {
       "actor": null,
@@ -20940,6 +20940,31 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-09-17T03:19:30Z",
       "duration_seconds": 369.0
+    },
+    {
+      "id": "al-01M2PPFD5H86899HTKHJAJX55G",
+      "shortname": "optimize-native-corrective-close",
+      "datetime": "2026-09-17T03:27:29Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "Native NOTICE corrective unit; original request capture explicitly abbreviated in al-01M2PNZ66E42669WDW0DS7GQZN.",
+      "summary": "Five serial nodes, zero delegates, inferred work/span 5/5; bounded partial fallback used. Dormant structural floor only, 71 structural tests pass and native N1/N2 remain RED. One repair pass fixed author-created Int32 narrowing. Postcommit actual 105/103/2; all 23 prior occurrences and 63 working-byte SHA256 pins read back. Oversized read outputs consumed avoidable budget. No independent gate or full P2 approval claimed.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/cross-harness-coordination-phases.md",
+        "docs/proof/cross-harness-coordination-proof-pack.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Correct native admission and retained notice delivery",
+      "done_when": "Actual N1/N2 green or precise committed partial stop with unmet gates",
+      "tier": "T2",
+      "main_calls": 40,
+      "main_budget": 45,
+      "main_over_budget": false,
+      "fan_out": 0
     }
   ],
   "changes": [

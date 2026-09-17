@@ -112,6 +112,41 @@ rendered-surface qualification remain later P5 work. Full prompt capture in the
 audit is explicitly abbreviated, not represented as verbatim. Docs Explorer/
 larger derived bundle and lessons reconciliation remain with the conductor.
 
+#### Postcommit qualification
+
+Executed against code commit
+`fca4c04f190b11817c5f27144dd68d9470efeeb7` with `--no-build`, using the binaries
+from the final build-backed run. `corrective-postcommit/` retains the complete
+actual process streams, TRX and receipt: **105 executed / 103 passed / 2 native
+failures**, structural **71/71**, actual dotnet exit **1**. A separate readback
+verified every one of the **63 SHA-256 pins** and preserved all **23 predecessor
+test occurrences** using an Ordinal name multiset. N1 still reports empty
+`Assert.Single`; N2 still reports native session rows 128 versus 129.
+
+| Postcommit evidence | SHA-256 of observed working bytes |
+|---|---|
+| `src/AiDe.Core/Watcher/SqliteWatcherObservationStore.RegistrationNotices.cs` | `70FF94BFDA0FD1526076C41004CCF2BC1A92F4C4B54BF3C1B49F2D41ED465254` |
+| `tests/AiDe.Core.Tests/Watcher/RegistrationAdmissionTests.cs` | `D69CA7EF419604CD1AE50A7E50FB96797CCAD11D451067877DDAF489639D41FF` |
+| Test output `AiDe.Core.Tests.dll` | `E4480609E388DE7B856F3D5EDD0AD7D2A8BE4B60383C974588A054E1F8D1C4FC` |
+| Test output `AiDe.Core.dll` | `FD5392A9283C927A5CC1D8EB7B870C9D393516422E094F662F4AA272436EAA3D` |
+| `corrective-postcommit/native-notice.trx` | `D1DBD3529D85465D097D609D421B316ED8E14CB323A23C36330121361E144ED1` |
+| `corrective-postcommit/stdout.txt` | `8952EBC3D63DFAEDF5C555FF33696A89A1692E0AB8197F2528E3D3CC1FBD9705` |
+| `corrective-postcommit/stderr.txt` | `8242E58A6BC1A86D8B667CC72EC84A282490E14C92C7FDC1BFE114BFBDB57086` |
+
+These are **working-byte** hashes, not hashes of Git's normalized text blobs.
+Git reported CRLF→LF normalization on text receipts/source when staging; a fresh
+checkout may have different line-ending bytes. The immutable code commit above
+pins the repository representation. Binary pins are recorded, not committed
+binaries. Complete source/project paths and hashes are in `receipt.json`.
+
+The bounded selfcheck found one **prior** goal-state gap (`p22-s1s6-request`) and
+seven prior budget gaps; both new substantive entries have goal-state and budget.
+No attempt was made to rewrite historical audit facts. `AIDE_SESSION` and
+`AIDE_CONTRACT_LOG` are both absent, so no fabricated episode-close or alternate
+transport was written. The canonical proof is the durable evidence pointer.
+The assigned worktree and previously locked compiler scratch are retained;
+no unknown process, other tree, live database, endpoint or GUI was touched.
+
 ## B5 qualification and bounded B6 update candidate — 2026-09-17
 
 **Partial author evidence, not approval.** This continuation starts from
