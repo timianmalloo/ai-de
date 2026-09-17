@@ -172,3 +172,141 @@ reported with their actual results in the final handoff.
 | Completed | Remaining | Best next action |
 | --- | --- | --- |
 | One attempt, stop/containment, raw inspection, executor lifecycle notices | Independent interpretation; watcher-owned release disposition | Review the captured refusal without retrying or treating absent oracle evidence as a result |
+
+## Pair03 execution addendum — 2026-09-17
+
+**Verified:** one new diagnostic attempt ran against frozen commit
+`41421c8e844942e0e23ad26e757d95da8ebf29d6` and ended with **runner exit 2**.
+The operational wrapper itself exited 0; that is not the experiment result.
+Arm A refused `PROCESS-IMAGE-MISSING`, followed by
+`PROCESS-CONTAINMENT-OR-IDENTITY`. Arm B never launched. Canonical P1-03 remains
+BLOCK. The preceding pair01 record and its metadata remain historical and intact.
+
+Goal: invoke the exact granted frozen pair once and preserve actual diagnostics,
+fixture/oracle/cleanup evidence, containment and watcher-release disposition.
+Done when it ends, raw results are inspected, lifecycle notices are recorded and a
+truthful Proof Pack is committed for independent interpretation. Tier T2; Astra;
+fan-out 0. No source, test, runner, manifest, filter, build or product change was
+authorized. The execution graph was grant/pins → one bounded attempt → raw
+inspection → append-only proof/audit → derived checks → commit. No retry loop.
+Surfaces: grant/identity, frozen inputs, runner lifecycle, raw process/native/TRX
+evidence, maintained proof, official audit, derived docs. No domain model changed.
+
+### Authority, preparation correction and invocation
+
+Actual resolved watcher grant `req-01M2QRBKYDEH29TW5DX1MBXF9V` admitted
+`SLOT-CODEX-UIA-PAIR-03`, issued 13:51:28.4990767 UTC and expiring
+14:06:28.4990767 UTC. The wrapper read the actual request immediately before
+invocation. Independent diagnostic-only review was `43a1099bd32723b70b4ac53aa0e0b021457d877d`.
+The owner promoted the candidate manifest by reference; its bytes stayed unchanged.
+Executor identity remained `codex-atlas-p1-03-pair-execution` /
+`codex-astra-pair-executor` in the original prepared tree and branch above.
+
+An ignored wrapper copied from pair01 initially required punctuation absent from
+the actual grant. Its preparation preflight stopped before any native launch.
+The conductor explicitly authorized replacing that assertion with an exact
+two-token comparison of `GRANTED` and the slot. The new03 wrapper alone changed;
+the frozen runner did not. Existing launch/output paths were checked absent.
+The wrapper enforced at least 420 seconds remaining before launch; actual outer
+START was 13:58:55.383750 UTC, about 453.1 seconds before expiry. This was one
+native invocation, not a retry. Old wrappers/output were not overwritten.
+
+Class → sweep → derive → prevent: the preparation defect was treating incidental
+prose punctuation as the authority contract. The wrapper's grant checks were
+inspected together; exact resolver/status/slot and expiry checks remain. The
+token comparison is the local fail-closed control. Central defect-register
+capture is a conductor follow-up because it is outside this track's allowed
+maintained files. No cause is assigned to the native refusal from adjacency.
+
+```text
+python -B docs/proof/records/atlas-p1-03-uia-transition/run_pair.py execute --manifest artifacts/atlas-pair-preparation/manifest-image-diagnostics-candidate.json --manifest-sha256 66ccb1a395d44e34818f21c24c2f0608605f539484452c42890e2c0abcd1ff3e --reviewed-commit 41421c8e844942e0e23ad26e757d95da8ebf29d6 --slot SLOT-CODEX-UIA-PAIR-03 --expires-utc 2026-09-17T14:06:28.4990767+00:00 --label atlas-uia-pair-03-41421c8e-20260917
+```
+
+Runner SHA256: `9615a47ac9b5acb7ce8c4fb09e23bdb0e99d4ebd62aedf804a97944ded86af2b`.
+HEAD was tracked-clean at launch. Full manifest PINS-BEFORE and PINS-AFTER events
+were emitted for A. Post-run `git diff` over `src`, `tests` and the runner against
+the frozen commit was empty. No tracked audit/proof write preceded run completion.
+
+### Measured lifecycle and evidence
+
+| Event | UTC / observed value |
+| --- | --- |
+| Outer START | 13:58:55.383750; PID 36300; creation FILETIME 134341271353806961 |
+| Pair BEGIN | 13:58:58.370243 |
+| A PINS-BEFORE | 13:59:01.270564 |
+| A process START / END | 13:59:01.271565 / 13:59:02.354455; elapsed 1.094 seconds |
+| A PINS-AFTER / pair END / runner RELEASE | 13:59:05.156792 |
+| Outer END | 13:59:05.169800; runner exit 2; elapsed 9.78605 seconds |
+| Tool session | 91006; operational wrapper completion exit 0 |
+
+PRE-SPAWN `req-01M2QTKJMCZ74ESEMCJ7J0Q2ND`, START
+`req-01M2QTKJP60TD3MXXWRPM0C9VS` and END/RELEASE
+`req-01M2QTKW86EBB1G32M5HQSRH3S` were emitted through official requests.
+At the 14:00:58 UTC saved inspection all three remained open. Runner RELEASE and
+executor END/RELEASE do not assert watcher release; the official request's later
+resolution controls that disposition. No desktop use continues during paperwork.
+
+A's gate exit was 124, forced=true, timed_out=false, contained=true,
+identities_complete=false, sampled_handles_exited=true. Job accounting recorded
+11 lifetime processes and zero active, with ten complete image identities.
+Direct child PID 8292 had creation FILETIME 134341271413329015. Browser
+observations were empty. The A native directory existed with zero files; its
+receipt and TRX were absent. B had no process, native directory, receipt or TRX.
+No fixture validity, original-name oracle result, lease/daemon cleanup receipt,
+shown publication, browser/profile use, UIA census or screenshot was established.
+Stdout reported one matching test **file**, not a completed Fact.
+
+### New diagnostic facts; interpretation boundary
+
+The primary diagnostic names `QueryFullProcessImageNameW` at `Job.sample`.
+Pending identity was PID **15424**, creation FILETIME **134341271423333958**;
+owned Job membership was true at monotonic tick **203262200632400**.
+
+| Observation | Recorded values |
+| --- | --- |
+| Image query | flags 0; capacity 32768; success false; native_error **5** |
+| Query timing | started_tick 203262200671800; ended_tick 203262200677600 |
+| Later exit observation | wait_result **258**; native_error null |
+| Later timing | started_tick 203262200678000; ended_tick 203262200680400 |
+| Secondary errors | Empty in native diagnostic and process record |
+
+These are separately timed observations, not simultaneous state. The pending
+process image is unknown. This diagnostic cannot reconstruct pair01's cause or
+establish a UIA/provider cause. Independent interpretation remains owed; this
+executor does not clear its own acceptance gate or propose another run.
+
+### Retained raw artifacts and capture limitation
+
+Paths below are relative to `C:/Projects/ai-de-test-atlas-p1-03-uia-pair`.
+Raw ignored artifacts are retained locally and do not travel with this commit.
+
+| Artifact | SHA256 / content |
+| --- | --- |
+| `artifacts/atlas-uia-pairs/atlas-uia-pair-03-41421c8e-20260917/state.json` | `9c906952a686c7c84caa066a492723c9cec530b5b494e0d19912d07fb556627b` |
+| Same pair `A/process.json` | `6f2b1fb74683ec3ff7c7513d065d0d6b810dd32a368737f7b15be73206fc84bb` |
+| Same pair `A/direct-child.json` | `4bb11c0dff3fafa521d29eff876ee8270726fb8f6bb91a9ec37498a7243bbdbe` |
+| Same pair `A/stdout.log` | `f07abae4606bd0426834d5d6d1a2bba29fae43ea53daa52dd6937a1daf12ff4f` |
+| Same pair `A/stderr.log` | Empty |
+| `artifacts/atlas-pair-preparation/execution03/result.json` | `34d455c7a9a31ca7577c8099c5bdf3479327cb6e0f9767597d6e95250e87411b` |
+| Same execution directory `outer.stdout.log`, `outer.stderr.log` | Empty stdout; refusal in stderr |
+| Same execution directory `tool-results.json` | Full launch/completion tool results, including session_id 91006 |
+| Same execution directory `inspection.json` | File hashes, actual native/TRX absence, source preservation, official lifecycle snapshot |
+| Same execution directory `current-requests.json`, `current-relevant.json` | Actual prelaunch grant and subsequent relevant requests |
+
+`AIDE_SESSION` and `AIDE_CONTRACT_LOG` were absent in the executor environment.
+No loomkeeper identity or destination was invented, and no episode-close delivery
+is claimed. This proof is the maintained verification path; conductor receives
+the capture-channel gap. Official coordination identity was present. Own liveness
+was appended after the run; its stale pair01 text had not been refreshed before
+launch, although the official session had already been registered by conductor.
+
+Planned budget was ten orchestration calls / twenty minutes, checkpoint six.
+At checkpoint six the actual preparation refusal was reported. Conductor revised
+the remaining documentation budget to eight additional calls, eighteen total,
+without admitting another execution. Audit records measured duration; token/spend
+cost is not recorded. Derived checks and commit are returned with their actual
+readback, not inferred from this narrative.
+
+| Completed | Remaining | Best next action |
+| --- | --- | --- |
+| One invocation, raw diagnostic inspection, forced owned containment, lifecycle notices, appended evidence | Independent interpretation and watcher-owned release disposition; central preparation-defect capture | Review exact raw records; retain canonical BLOCK and no retry |

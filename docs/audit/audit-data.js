@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T22:30:32Z",
+  "generated": "2026-09-17T14:03:11Z",
   "audit": [
     {
       "actor": null,
@@ -26549,6 +26549,50 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "f8ad3323c1989855916115b3b343c4fee99566b8",
         "short": "f8ad3323c",
+        "branch": "test/atlas-p1-03-uia-pair",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2QTVC4NJ94J08XPD8GMSJAP",
+      "shortname": "atlas-pair03-assignment",
+      "datetime": "2026-09-17T14:03:10Z",
+      "session": "codex-atlas-p1-03-pair-execution",
+      "prompt": "# Conditional native execution assignment\n\nDo not execute without a fresh, unexpired, exact watcher grant for request\n`req-01M2QRBKYDEH29TW5DX1MBXF9V`. Conductor supplies and inspects the grant before\ndispatch. Re-read current request state immediately before invocation. A request,\nnotice, previous slot or expired grant is not authority.\n\nFirst after dispatch: set AGENT_SESSION=codex-atlas-p1-03-pair-execution and\nAGENT_NAME=codex-astra-pair-executor; run the official audit start marker for\nexecute-with-coordination, then resume the same registered bounded experiment\nsession in C:/Projects/ai-de-test-atlas-p1-03-uia-pair. Preserve prior ended-attempt\nrecords. Publish truthful own liveness. Do not call EnterWorktree.\n\nGoal: invoke the exact granted frozen pair once and preserve actual diagnostics,\nfixture/oracle/cleanup evidence, containment and watcher-release disposition.\nDone when it ends, raw results are inspected, lifecycle notices are recorded and\na truthful Proof Pack is committed for independent interpretation. A refused run\nis an outcome; it is not permission to retry or repair.\n\nTier T2; model Astra; fan-out0. Budget10 orchestration calls/20minutes,\ncheckpoint6; context ceiling120000tokens. Grant expiry is independently hard.\nBefore launch require enough remaining grant for preflight plus420seconds.\nConductor handles review/join decisions. No subagents.\n\nFrozen HEAD41421c8e844942e0e23ad26e757d95da8ebf29d6 must remain clean through run.\nRunner docs/proof/records/atlas-p1-03-uia-transition/run_pair.py SHA256\n9615a47ac9b5acb7ce8c4fb09e23bdb0e99d4ebd62aedf804a97944ded86af2b.\nManifest artifacts/atlas-pair-preparation/manifest-image-diagnostics-candidate.json\nSHA25666ccb1a395d44e34818f21c24c2f0608605f539484452c42890e2c0abcd1ff3e.\nIndependent review43a1099bd32723b70b4ac53aa0e0b021457d877d clears diagnostic delta only.\nOwner promotion is by reference; never rewrite manifest status/bytes.\n\nProposed slot SLOT-CODEX-UIA-PAIR-03; use only actual granted value and expiry.\nUnique label atlas-uia-pair-03-41421c8e-20260917. OneA then oneB through the existing\nrunner only, unchanged Debug/no-build/no-restore selectors,180s/arm+30s containment.\nOnly existing validity gates permitB. Preserve negative oracle results as negative.\nChanged pins, expiry, identity/population/evidence failure or forced cleanup stops.\n\nReuse operational pattern from artifacts/atlas-pair-preparation/execute-once.py\nby writing a NEW ignored wrapper/destination for03; never run or overwrite old01\nwrapper/result. Persist exact invocation/grant/argv/PID/creation/start/full streams/\nend/exit; retain full tool result and session_id. Emit PRE-SPAWN, START and END/RELEASE\nvia official requests. Read every nested result before dependent operations.\nDo not kill by name, touch unrelated processes or invent cleanup success.\n\nAllowed maintained output AFTER runner ends: append-only execution section in\ndocs/proof/atlas-p1-03-pair-execution.md plus official own audit and derived files.\nExact short proof/site leases for edit minutes only; release before waiting.\nNo source, test, runner, manifest, shared policy or product changes. No rebuild,\ncoverage, full suite, extra GUI probes, canonical join or push.\n\nRead actual state.json, process.json, primary/secondary native diagnostics, TRX and\nnative receipts if present. Name absent evidence explicitly. Existing fixedROOT\nwrites all execution evidence into this original prepared tree. Do not rerun selftest\nor overwrite containment-control.json. Preserve old UUID diagnostic records.\n\nUse existing repo instructions and workflow; audit writes precede own-tree\ntools/regenerate-derived.py and graph validation. Do not use coord regen. Commit only\nthe proof/official records after source preservation and actual derived checks.\nReturn exact commit/artifacts, actual run exit/time/population/containment, watcher\nnotice IDs/release state, residual risks and required independent interpretation.\nIf a step refuses, report actual state to Conductor; no automatic alternate command.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2QTVC8AFD0JDY5RNKES0752",
+      "shortname": "atlas-pair03-execution",
+      "datetime": "2026-09-17T14:03:10Z",
+      "session": "codex-atlas-p1-03-pair-execution",
+      "prompt": "# Conditional native execution assignment\n\nDo not execute without a fresh, unexpired, exact watcher grant for request\n`req-01M2QRBKYDEH29TW5DX1MBXF9V`. Conductor supplies and inspects the grant before\ndispatch. Re-read current request state immediately before invocation. A request,\nnotice, previous slot or expired grant is not authority.\n\nFirst after dispatch: set AGENT_SESSION=codex-atlas-p1-03-pair-execution and\nAGENT_NAME=codex-astra-pair-executor; run the official audit start marker for\nexecute-with-coordination, then resume the same registered bounded experiment\nsession in C:/Projects/ai-de-test-atlas-p1-03-uia-pair. Preserve prior ended-attempt\nrecords. Publish truthful own liveness. Do not call EnterWorktree.\n\nGoal: invoke the exact granted frozen pair once and preserve actual diagnostics,\nfixture/oracle/cleanup evidence, containment and watcher-release disposition.\nDone when it ends, raw results are inspected, lifecycle notices are recorded and\na truthful Proof Pack is committed for independent interpretation. A refused run\nis an outcome; it is not permission to retry or repair.\n\nTier T2; model Astra; fan-out0. Budget10 orchestration calls/20minutes,\ncheckpoint6; context ceiling120000tokens. Grant expiry is independently hard.\nBefore launch require enough remaining grant for preflight plus420seconds.\nConductor handles review/join decisions. No subagents.\n\nFrozen HEAD41421c8e844942e0e23ad26e757d95da8ebf29d6 must remain clean through run.\nRunner docs/proof/records/atlas-p1-03-uia-transition/run_pair.py SHA256\n9615a47ac9b5acb7ce8c4fb09e23bdb0e99d4ebd62aedf804a97944ded86af2b.\nManifest artifacts/atlas-pair-preparation/manifest-image-diagnostics-candidate.json\nSHA25666ccb1a395d44e34818f21c24c2f0608605f539484452c42890e2c0abcd1ff3e.\nIndependent review43a1099bd32723b70b4ac53aa0e0b021457d877d clears diagnostic delta only.\nOwner promotion is by reference; never rewrite manifest status/bytes.\n\nProposed slot SLOT-CODEX-UIA-PAIR-03; use only actual granted value and expiry.\nUnique label atlas-uia-pair-03-41421c8e-20260917. OneA then oneB through the existing\nrunner only, unchanged Debug/no-build/no-restore selectors,180s/arm+30s containment.\nOnly existing validity gates permitB. Preserve negative oracle results as negative.\nChanged pins, expiry, identity/population/evidence failure or forced cleanup stops.\n\nReuse operational pattern from artifacts/atlas-pair-preparation/execute-once.py\nby writing a NEW ignored wrapper/destination for03; never run or overwrite old01\nwrapper/result. Persist exact invocation/grant/argv/PID/creation/start/full streams/\nend/exit; retain full tool result and session_id. Emit PRE-SPAWN, START and END/RELEASE\nvia official requests. Read every nested result before dependent operations.\nDo not kill by name, touch unrelated processes or invent cleanup success.\n\nAllowed maintained output AFTER runner ends: append-only execution section in\ndocs/proof/atlas-p1-03-pair-execution.md plus official own audit and derived files.\nExact short proof/site leases for edit minutes only; release before waiting.\nNo source, test, runner, manifest, shared policy or product changes. No rebuild,\ncoverage, full suite, extra GUI probes, canonical join or push.\n\nRead actual state.json, process.json, primary/secondary native diagnostics, TRX and\nnative receipts if present. Name absent evidence explicitly. Existing fixedROOT\nwrites all execution evidence into this original prepared tree. Do not rerun selftest\nor overwrite containment-control.json. Preserve old UUID diagnostic records.\n\nUse existing repo instructions and workflow; audit writes precede own-tree\ntools/regenerate-derived.py and graph validation. Do not use coord regen. Commit only\nthe proof/official records after source preservation and actual derived checks.\nReturn exact commit/artifacts, actual run exit/time/population/containment, watcher\nnotice IDs/release state, residual risks and required independent interpretation.\nIf a step refuses, report actual state to Conductor; no automatic alternate command.",
+      "summary": "One frozen pair03 invocation: runner exit2, wrapper exit0; A PROCESS-IMAGE-MISSING/PROCESS-CONTAINMENT-OR-IDENTITY, forced owned Job containment active0 total11 images10, B absent. Native diagnostic query error5 and later wait258 preserved. No TRX/native receipt/oracle. Preflight punctuation assertion corrected with explicit conductor disposition before first native invocation. Watcher release separately owned; canonical BLOCK. Raw tool session91006 retained. Initial10call budget revised by conductor to18 after checkpoint6; fanout0. AIDE capture env absent.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": "codex-astra-pair-executor",
+      "artifacts": [
+        "docs/proof/atlas-p1-03-pair-execution.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Invoke the exact granted frozen pair once and preserve actual diagnostics, fixture/oracle/cleanup evidence, containment and watcher-release disposition.",
+      "done_when": "The runner ends, raw results are inspected, lifecycle notices are recorded and a truthful Proof Pack is committed for independent interpretation.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-17T13:57:58Z",
+      "duration_seconds": 312.0,
+      "git": {
+        "sha": "41421c8e844942e0e23ad26e757d95da8ebf29d6",
+        "short": "41421c8e8",
         "branch": "test/atlas-p1-03-uia-pair",
         "pushed": null
       }
