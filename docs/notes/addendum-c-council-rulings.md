@@ -2317,3 +2317,270 @@ current build; Ruling 79's "run on the frozen tree" superseded; Ruling 49 stands
 **CONDITIONS:** (i) The comparison is direction-aware: a lane whose own edits to a tool are ahead of `main` is still stale if `main` moved the control set — it must merge. (ii) Self-test plants a tree behind `origin/main` on `tools/` and shows the refusal; plants no `origin/main` and shows the escape text. (iii) On landing, the conductor sends one fleet notice (`request-add`) naming the trees `coord worktree list` reports stale. (iv) Escape use is written into the claim event so it is countable.
 
 **RECORD AS:** Ruling 131 — 125(i) amended: derived-class claim refusal only (register refusal exists since rev 70), site/*.html withdrawn; control currency is a refusal in claim and the gate runner with a fleet view from main; new highest-severity class: a checked-in control runs at the invoking tree's version.
+
+---
+
+## Ruling 132 — P2-Repairs: one queue, two concurrent streams, class controls not deferred
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17), on the evidence of INV-0013,
+INV-0014, DC-226–DC-230 and Rulings 105, 112, 126, 127, 128–130. The Owner opened the code sites
+before ruling: `NewSessionSheetViewModel.cs:399-407`, `TheSheetListsAccountsWithDerivedStatesTests.cs:44-61`,
+`EngineCatalog.cs:375-381`, `FirstUse.cs:210-213`, `ProviderConfiguration.cs:40-99`, `CanvasPage.cs:28-72`,
+`TypeScriptExtractor.cs:769-785`, `PythonExtractor.cs:398-405`. One correction to the conductor's brief
+was made before the rulings: INV-0014's P2 is **not** "two lines" — `Fact(...)` in both extractors takes
+no path argument, so the fix adds a parameter and reaches every call site (16 in TS, 14 in Python by grep
+count, Inferred as call sites). Bounded, headless, but the commit must say so.*
+
+**RULING:** Execute as two concurrent streams on the conductor's lane, each phase its own commit, and
+overturn the conductor's proposal in three places. **Stream X (Explore, headless Core):** P0a (provenance
+oracle over every extractor) + P2 → P4 → P3 → P0b (canvas contract test) + P1 → P5. **Stream Y
+(Sessions):** convene the UX lens now (Ruling 130's state table + copy) → phase 0 → 1 → 2 → 3 → 4 → 6;
+phase 5 deferred per Ruling 135. Overturns: (a) the class controls (INV-0014 P0, INV-0013 phase 6) are
+**not** "the rest, own ruling" — they are the CI6 floor for DC-228/229/230 and land with their stream;
+(b) P4 lands immediately after P2, same session, because P2 without P4 leaves the silent-skip shape
+unobservable — the field that made it wrong for an unknown span; (c) P3 is admitted now under Ruling
+133's D&P condition, because without it the operator's own store keeps `typescript:…` and P2 reads as
+"you didn't fix it" (INV-0014 §6.1). Streams X and Y touch disjoint files (`Extraction/**`, `Facts/**`,
+`Projection/**`, `Workbench/CanvasPage.cs` vs `Presentation/Sessions/**`, `Workbench/ConfigureProviderDialog.cs`,
+`MainWindow.xaml.cs`) and may run concurrently; the **desktop slot is the one serial resource** — used
+once per landing and batched: P1 before/after measurement, `min-height` validation, frame time at 1,500
+nodes, the STA render of S2–S5, and the App recount.
+
+**BECAUSE:** The UX lens is on Stream Y's critical path (130: copy before code) and nothing else is, so
+convening it first shortens `T∞`; phase 0 has no behaviour change and may start before the lens returns.
+Phase 1 must also sweep S6 (`MainWindow.xaml.cs:374`, same config-presence shape) — CI sweeps the class,
+not the line.
+
+**CONFIDENCE:** Verified (both investigations, the three code sites, 130's UX-first condition); Inferred
+(file disjointness beyond the sites the Owner opened).
+
+**SCOPE EFFECT:** Admits INV-0014 P0–P4 and INV-0013 phases 0–4 + 6 now; admits P5 only to its confirming
+query (result returns to the Owner with the chosen fix — dedupe-at-write vs outermost-scope is a
+data-model choice); defers INV-0013 phase 5 (Ruling 135). Cuts: any LOD/density work before P1 is
+measured; any `ResolveLaunch` purity change (130 stands).
+
+**CONDITIONS:** (a) Red-first per phase, red seen and recorded before the fix. (b) P0a's oracle names the
+three scope-summary producers as an explicit allowed shape, never a skip. (c) Before the first edit in
+`Workbench/**` or `Extraction/**`, the conductor checks whether any in-flight candidate (Atlas E1, Grok
+views) modifies those files and sends a seam notice in the 126(i) shape.
+
+**RECORD AS:** Ruling 132 — P2-Repairs order: Explore stream P0a+P2 → P4 → P3 → P0b+P1 → P5(query only);
+Sessions stream UX lens → 0 → 1(+S6) → 2 → 3 → 4 → 6; streams concurrent, one batched desktop slot per
+landing; class controls land with their stream, not deferred.
+
+**CONDUCTOR'S RETURN ON 132(c) (2026-09-17, measured):** no in-flight candidate touches three of the four
+files. `git log --all --since=2026-09-10` names **no** commit on any branch touching `CanvasPage.cs`,
+`TypeScriptExtractor.cs` or `PythonExtractor.cs`; `ExplorerSurface.cs` was last touched by `6cb99e6c`
+(2026-09-14, Ruling 93), already on `main`. Uncommitted work in foreign trees is **not recorded** — the
+lease check could not run from the primary (`AGENT_SESSION` unset; `coord check` correctly refused rather
+than passing). The seam notice is therefore sent as an announcement, not a negotiation.
+
+---
+
+## Ruling 133 — who implements, and which personas rule before code
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17).*
+
+**RULING:** The conductor authors directly (Peer Mode) — no per-phase `csharp-developer` dispatch; the
+**Test Architect in Adversary Mode is a separate sub-agent** run once per stream landing over the batch's
+red-first evidence, never the conductor clearing its own veto. Personas before code, bounded: **UX &
+Accessibility** rules Stream Y's state table (five accounts × installed/configured/ready/absent), the exact
+cell strings, the footer and the Install-block copy (130 as filed) — phases 1–4 do not start until that
+table is filed; **Data & Persistence Architect** rules P3 before code, scope: what the write path does to
+an existing `AssertionId` whose `Provenance` changed (overwrite / append / ignore — fetch this fact from
+the store writer, do not assume), the re-extraction trigger (an extractor-version stamp compare,
+"1.0.0" → "1.1.0", is the smallest candidate), and before/after row counts recorded; if the design needs a
+schema change it is expand-migrate-contract and comes back to the Owner; **SRE** states the canvas budget
+on P1 as an acceptance number (frame time at 1,500 nodes at the enlarged stage; stage height at 3840×2160,
+1440×900, and stacked <760 px) before the desktop slot, "not recorded" until measured.
+
+**BECAUSE:** Every phase is small, headless where it can be, and the context cost of a fresh sub-agent per
+phase exceeds the code; the rigor the floors require is the adversarial reviewer's independence, not the
+author's identity. P3 is the phase INV-0014 names as most likely to fail in the field and the one with an
+unopened fact (write-path semantics).
+
+**CONFIDENCE:** Verified (130's UX condition; INV-0014 §5–§6; the `Fact` signatures); Inferred (write-path
+behaviour — not opened by the Owner or, per the report, by the investigator).
+
+**SCOPE EFFECT:** Cuts a per-phase developer fan-out; admits three bounded persona rulings. None is a full
+`ui-design`, ADR or spike.
+
+**CONDITIONS:** (a) The Test Architect's report is filed as evidence, not authority — the landing receipt
+cites the observed red and green, not the review. (b) `min-height: 240px` ships only with the measured
+value or an inline `simplify:` marker carrying the measurement it awaits (INV-0014 §6.3).
+
+**RECORD AS:** Ruling 133 — conductor authors, Test Architect adversary as a separate sub-agent per stream
+landing; UX lens table before Sessions phases 1–4; D&P Architect rules P3's re-extraction design before
+code; SRE states the P1 canvas budget before the slot.
+
+**CONDUCTOR'S RETURN ON THE P3 FACT (2026-09-17, opened and measured — it is none of the three):** the write
+path **raises**. `StoreWriter.cs:87-100` is a plain `INSERT INTO evidence_assertion_fact`; there is **no**
+`ON CONFLICT`, no `UPDATE`, no `REPLACE` and **no `DELETE` anywhere in `StoreWriter.cs`**.
+`WorkspaceSchema.cs:104` makes `assertion_id` the PRIMARY KEY and `:120` adds
+`ux_assertion_natural (scope_id, artifact_revision, subject, predicate, object, extractor_id)` — **exactly
+the tuple `AssertionId` hashes** (`EvidenceAssertion.cs:49-58`). So re-committing an unchanged artifact with
+corrected `Provenance` is a constraint violation, not an overwrite, an append or an ignore.
+
+Two consequences for P3, both correcting the ruling's own named candidate:
+
+1. **`ExtractorVersion` is not in the identity tuple.** Bumping the stamp "1.0.0" → "1.1.0" changes no
+   `AssertionId`, so the stamp compare alone does not avoid the collision — it only tells you a
+   re-extraction is owed.
+2. **The only path that clears the stale rows is a generation bump plus compaction.**
+   `StoreCompactor.cs:165` — `DELETE FROM evidence_assertion_fact WHERE scope_id = $s AND generation < $g`
+   — is the single delete in the codebase, and `generation` is a column, not part of either key. So the
+   re-extraction design is: stamp compare detects the owed re-extraction → desired generation bump →
+   re-extract → compact. The D&P Architect rules that shape, and it is a behaviour change to the
+   compaction trigger, not a schema change.
+
+---
+
+## Ruling 134 — `ready` is an observation the product recorded; no prober, no ambient inference
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17), answering INV-0013 §9.2.*
+
+**RULING:** Keep `ProviderConfiguration.cs:53-56` as written: `ready` requires a sign-in **observed and
+recorded by the product**, and the footer stays until then. The observation is the engine's own sign-in
+gesture run through Configure… → Sign in (for github, `FirstUse.cs:212`'s `copilot login` line); an
+already-logged-in CLI makes that gesture a no-op confirmation, which is still an observation and is
+recorded as `ready`. **Refused:** "installed + a CLI that is logged in elsewhere ⇒ ready" with no gesture
+in the product. Marked as **extending** 105 (the no-op-confirmation reading), not reading it.
+
+**BECAUSE:** The file's own reason stands — a defaulted `ready` is indistinguishable afterwards from an
+observed one — and both Ruling 105 and Ruling 130 cut a health prober; reading the CLI's auth files is a
+prober by another name. The operator's words, "I should just have to log in", describe exactly one gesture,
+which is what stands after Stream Y phase 3.
+
+**CONFIDENCE:** Verified (the comment, 105's and 130's scope cuts, the copilot gesture line).
+
+**SCOPE EFFECT:** Freezes "health is the operator's record"; cuts a prober and any ambient auth inference.
+The UX lens owns the footer and the "installed — sign in" cell copy so the state reads as one step, not as
+a fault.
+
+**CONDITIONS:** Phase 3's red-first test: a github account under an installed launch and `needs-login`
+health renders *needs sign-in*, and a recorded sign-in outcome flips it to *ready* — through the product,
+not through a hand-edited file.
+
+**RECORD AS:** Ruling 134 — `ready` stays an observed, product-recorded sign-in; an already-logged-in CLI
+satisfies it through the product's own sign-in gesture as a no-op confirmation; no prober, no ambient
+inference.
+
+---
+
+## Ruling 135 — the unobserved `copilot` artefact: build for both, and let the product observe it
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17), answering INV-0013 §9.1 and §9.4.*
+
+**RULING:** Accept the conductor's proposal: build for both. Stream Y phase 4 renders the catalog's own
+shim refusal verbatim when `InstallRefusal` returns it, so an npm-installed copilot is a correct,
+actionable state before any spike; phase 5 stays deferred with a named trigger — it fires when the
+operator's `where copilot` shows only a `.cmd` shim, or when any sheet-open telemetry records the shim
+refusal. Nothing waits on the operator's answer. Admit INV-0013 §9.4's telemetry into phase 4: one
+structured record per engine per sheet-open (`engine.id`, `acp.mode`, `probe.pass`, `resolved.path` or
+"not recorded", `provider_file.present`), on the normal path, no flag.
+
+**BECAUSE:** The two artefacts differ only in which of two already-written refusal sentences the operator
+sees; phase 4 makes either true. The question is one the product can answer on its next run — asking the
+operator for a fact the product should record is the IO tell.
+
+**CONFIDENCE:** Verified (INV-0013 §2's probe host resolved both `copilot.exe` and `copilot.cmd`); Inferred
+(the shim refusals at `EngineCatalog.cs:464-495` per the investigation — not opened by the Owner).
+
+**SCOPE EFFECT:** Admits the sheet-open telemetry into phase 4; defers phase 5 with a trigger; cuts guessing
+the npm entry module (the investigation's own rule).
+
+**CONDITIONS:** The telemetry record never carries the operator's PATH beyond the one resolved path; "not
+recorded" is a value, never omitted.
+
+**RECORD AS:** Ruling 135 — copilot artefact unobserved: phase 4 renders the shim refusal verbatim so both
+cases are correct; phase 5 deferred on a named trigger; sheet-open telemetry records what was probed.
+
+---
+
+## Ruling 136 — landing shape for product code under Ruling 127
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17).*
+
+**RULING:** (1) Each phase its own commit; landings batched **per stream** (Explore, Sessions), each landing
+one desktop slot announced on the ledger before the recount, each landing a Ruling 108-shape `request-add`
+with candidate and gated-against SHAs. (2) Expected failing set under 112(1)/126(ii): the four
+`Shell.CodingsLeftExtentTests` **by name** as listed in Ruling 112 plus the intermittent App population
+labelled as a population — **re-enumerated from the CI run of the current `main` tip** per 112(iv), the run
+id cited; the Owner has not seen that run, so the conductor states it from the last landing's closing entry,
+and anything beyond that set is 127(c) and returns to the Owner. (3) **Yes:** P1 changes the canvas, so its
+desktop slot runs the four extent tests before and after P1 on the same machine and records each failure
+text verbatim; the landing receipt shows the after-text bit-identical to the before-text. A changed text is
+a new failure, not the expected set — P1 does not land and comes back.
+
+**BECAUSE:** The stage's height lives in CSS inside a WebView the WPF extent tests do not measure, so P1
+*should* not move them — and "should" is the tell; the measurement costs nothing extra in a slot the recount
+already needs. Batching per stream keeps the serial desktop resource at two uses instead of twelve.
+
+**CONFIDENCE:** Verified (112's named set; 126(ii)'s population rule; 127's four conditions); Inferred (that
+Core is now green and the App red is "four + intermittent" — the conductor's claim, unopened by the Owner).
+
+**SCOPE EFFECT:** Freezes: no phase lands outside its stream's batch; no App test is edited by these streams
+(126's groups 3–4 hold stands untouched). Admits: the new headless contract tests (P0a, P0b, phase 6) as new
+files.
+
+**CONDITIONS:** (a) Bare gate runs with observed exit status (128). (b) The closing entry carries the landed
+SHA's CI run id and result; "not recorded" keeps the join open. (c) P3's before/after row counts and P1's
+before/after stage measurements are in the receipt as numbers, not adjectives.
+
+**RECORD AS:** Ruling 136 — P2-Repairs land per stream under 127: one announced desktop slot per landing;
+expected red = the four CodingsLeftExtentTests by name + the intermittent population, re-enumerated from
+main's tip; P1's slot re-measures the four extent tests before/after and requires bit-identical failure
+text.
+
+**CONDUCTOR'S RETURN ON 136(2) — THE RE-ENUMERATION REFUTES THE ASSUMED SET; THIS IS A 127(c) RETURN.**
+Measured at `main`'s tip `f009b6f6`, CI **run 35228503081** (workflow *Build*, 2026-09-17T13:39:56Z), all
+three jobs `failure`:
+
+| Job | Suite | Executed | Expected baseline | Failed |
+|---|---|---|---|---|
+| `build` | `AiDe.App.Tests` | 1053 | 1051 | **11** |
+| `core-tests` | `AiDe.Core.Tests.portable` (`Platform!=Windows`) | 2575 | 2567 | **1** |
+| `gates` | — | — | — | gate failures (docs-graph gaps, summary drift) |
+
+Three facts the Owner's (2) did not have:
+
+1. **The App red is 11, not four.** Ruling 112's named set is four `Shell.CodingsLeftExtentTests` plus an
+   intermittent population. Eleven is beyond the enumerated set, so under 127(c) **this returns to the
+   Owner before any product code lands** — the P2-Repairs streams cannot state an expected failing set they
+   have not enumerated.
+2. **`AiDe.Core.Tests.portable` is red by one**, and the conductor's own claim that "Core is now green" —
+   which Ruling 136's CONFIDENCE line records as Inferred — is **false at `main`'s tip**. The Core half was
+   green in run 35182393790 on the character-fix candidate; it is not green at `f009b6f6`.
+3. **Both suites executed more tests than the baseline expects** (App 1053 vs 1051, Core 2575 vs 2567), so
+   at least two landings added tests without updating `tools/expected-test-counts.json`. The count drift is
+   itself a control failure: the baseline no longer describes the suite.
+
+The failing test **names** are not in the CI log — `verify-test-run.py` prints only the counts and the
+outcome, so the run that fails the gate does not say what failed. That is a control gap in its own right
+(DC-227's neighbour: a gate that reports a verdict without the evidence).
+
+**The Core name, enumerated locally at `f009b6f6` and reproducing CI exactly** (2,575 executed, 1 failed,
+2,573 passed, 1 skipped, 44 s — the same arithmetic as run 35228503081):
+
+```
+AiDe.Core.Tests.EveryOperationFitsTheFrameTests.NoOperationCanBuildAResponseTheTransportWouldRefuse
+  these responses cannot cross the 1,048,576-byte frame: EntryPointsAsync = 2,191,570 bytes
+  at tests/AiDe.Core.Tests/EveryOperationFitsTheFrameTests.cs:172
+```
+
+**This is a product defect, not a platform-trait artefact, and it is not in any expected set.** An MCP
+operation now builds a response **2.09× the transport's 1 MiB frame**, so `EntryPointsAsync` cannot be
+answered at all over the wire; the test is the contract that says so and it is doing its job. `f009b6f6`
+is `merge(understanding-views-d1): D-1 listing onto main`, so the candidate that turned it red is the D-1
+listing landing — the same bound INV-0003 was written about. Announced to the watcher and to the owning
+session; it is theirs to repair, and Ruling 112(1) makes it the block on every join until it is green.
+
+The **App names** (11) still need the desktop slot Ruling 136(1) batches; they are **not recorded** until
+that slot runs.
+
+*Method note — DC-227, fourth instance, observed while enumerating this very set:* the harness reported
+`[exited with code 0]` for the `dotnet test` run whose own last line reads `Failed! - Failed: 1, Passed:
+2573`. The counts were read from the tool's output, never from the harness's status, which is the standing
+rule 128 records — and the rule earned its keep inside the measurement that was checking a different rule.
+
+---
