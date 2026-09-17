@@ -1207,3 +1207,62 @@ Legacy N1/N2 remain labeled diagnostics; new opt-in N2 is distinct.
 Claim/Complete/Requeue and hardened N1 publication are deferred as a complete
 transport unit; no old Publish success marks the new delivery row Published.
 Canonical primary.requests emission stays disabled. No UserAuthority DTO field.
+
+### NativeNoticeN1 transport contract — 2026-09-17, before implementation
+
+This bounded unit implements native correction publication, not the canonical
+coordination stream. One existing delivery row is one accepted admission's
+immutable native notice. No new table, queue, consumed file, or status authority.
+The v1 publication bytes already frozen by admission are the wire version; they
+are never reconstructed using a retry time or a new ID. The v1 shape retains
+generatedBy, noticeId, sessionId, repositorySent, repositoryUsed and fixed reason.
+The existing schema_version=1 selects this codec. Admission history is unchanged.
+
+Immutable files are `registration/notices/n-<32 lowercase hex NoticeID>.json`.
+The ID is validated before concatenation. Each attempt exclusively creates a
+random temporary file in the same directory, flushes to disk, then installs by
+atomic no-overwrite move. Existing full bytes AND digest equal means replay;
+unequal means COORD_NOTICE_CONFLICT, preserving both target and source. Publication
+roots come only from internal trusted composition, never caller notice prose.
+Validate bounds and local absolute paths before filesystem access. Reject UNC,
+device/traversal forms, `.git` components and reparse ancestors. Pin publication
+directories against rename during the effect on Windows. This does not mint
+authentication or a capability from a path; hostile ACL/root enrollment remains
+the production binder's unqualified responsibility.
+
+The session-keyed JSON stays a derived latest projection, never an acknowledgement.
+Choose its bytes from the current notice and already Published admissions for the
+same session and root, ordered by generation. Serialize publishers per enrolled
+physical store; an older retry cannot replace a newer known publication. Install
+the compatibility projection with a unique exclusive temporary and atomic replace.
+TransportPublished requires confirmed immutable bytes and confirmed selected
+latest bytes. It does not mean model arrival, triage, acceptance, or grant.
+
+Reuse the Windows physical-file enrollment lock and a per-enrollment publication
+mutex. Pending -> InFlight increments attempt and ownership_version; completion
+and requeue compare notice ID, owner, attempt and ownership_version. No TTL proves
+death. Recovery runs only while holding the enrollment's OS owner lock and
+publication mutex: a previous worker in that enrollment is then quiescent, and
+a previous process cannot own the OS lock. Recovery preserves bytes/ID and advances
+the row version. A bounded snapshot of up to 32 candidates, ordered by attempt then
+due time and ID, prevents one poison item from monopolizing retries. Cancellation,
+file failure and lost database acknowledgement leave Pending or recoverable
+InFlight. Reopen a real store and reconcile exact file bytes; never re-register.
+
+Global capacity remains reserved + Pending + InFlight across retained enrollments.
+Only successful publication acknowledgement removes an obligation from that count.
+The retained read-only counter observes Published; quiescent retirement then closes
+its reader and OS owner handle. Read failure is Uncertain, not zero. Publish attempts
+emit status, attempt count, elapsed milliseconds and aggregate counts without raw
+paths or prose. A default public IngestHost worker call is explicitly Unavailable;
+an internal enrolled worker overload is executable by synthetic composition only.
+No actual MCP/UI activation is claimed; legacy Drain retains its documented loss
+semantics and its two RED diagnostics. No App helper or GUI is introduced merely
+to make unavailable composition look reachable.
+
+New cross-harness requests/dispositions must use the official primary.requests API.
+Native success never completes an unqualified canonical target; canonical writing
+remains disabled. Rejected alternatives: callback-as-durable-ACK, serialized
+callbacks, destructive drain, TTL reclamation, per-session immutable filenames,
+overwrite-on-conflict, and a second status store. Independent Test/Data/Security
+review follows this author unit; full P2 recovery/binder/retention and P3-P5 remain.

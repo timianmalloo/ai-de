@@ -292,3 +292,15 @@ fabricated. Reject treating legacy N2 as enhanced qualification, deriving
 human authority from harness labels, or completing delivery from old Publish.
 Native transport/claim worker, real binder, released-binary and independent
 implementation qualification remain outside this commit.
+
+#### NativeNoticeN1 bounded transport decision
+
+The design's 2026-09-17 NativeNoticeN1 contract governs the next source unit:
+reuse v9 delivery CAS and physical-store enrollment; frozen immutable notice files
+plus a derived latest session document; no-overwrite/full-byte conflict handling;
+bounded fair retry under enrolled-owner/quiescence evidence, never TTL. Capacity
+is released by confirmed publication and database acknowledgement, not disposal.
+No custom canonical writer, new DDL, callback-backed restart promise or production
+binder activation. Existing destructive Drain remains explicitly unqualified.
+This replaces the earlier transport deferral only for the internal synthetic
+composition. Independent implementation gates and all broader P2 gates remain open.

@@ -890,3 +890,22 @@ Canonical proof contains all pins, controls, limitations and the merged S1-S3
 history. Real enrollment, native transport/worker/N1, canonical bridge,
 independent implementation gates, released binaries, P3-P5 and upstream remain
 pending; the default enhanced writer is unavailable. No site/API regeneration.
+
+### NativeNoticeN1 author execution graph (2026-09-17)
+
+| Node | Capability | Input / exit | Dependency |
+|---|---|---|---|
+| Contract | Reasoning | v9 + accepted Data/Security rules / bounded design committed | none |
+| Red | Deterministic mechanics | contract + real SQLite/files / falsifying retry tests executed | Contract (decision) |
+| Source | Reasoning | red evidence / frozen publication + CAS worker | Red (data) |
+| Proof | Deterministic mechanics | source / selected new controls and prior 226 classified | Source (data) |
+| Close | Deterministic mechanics | proof / canonical pack + audit committed, leases released | Proof (data) |
+| Independent gates | Independent review | committed source/evidence / Test/Data/Security verdict | Close (data; parent) |
+
+Author budget 45 tools, 150k context, no agents, one sequential build at a time.
+Inferred work/span: five author nodes on one dependency chain, T1=T∞; width
+adds no gain. No measured duration forecast. Variant: remaining named transport
+counterexamples, floor zero; budget exhaustion reports a finding, not a waiver.
+Oracles: denial loses retry; collision overwrites; stale CAS changes a row;
+lost ACK duplicates admission; old retry regresses latest; publication fails to
+release global quota. Rigor floors remain; no actual activation or GUI proof.
