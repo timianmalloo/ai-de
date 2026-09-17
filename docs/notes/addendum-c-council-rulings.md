@@ -2663,6 +2663,35 @@ batch; the Explore candidate re-merges it (137(c)).
 test): EntryPoints row ceiling derived from the frame test's bytes, frame size untouched, Grok told;
 D-1 landing receipt fetched before the class entry.
 
+**CONDUCTOR'S RETURN ON 138(a) — THE RECEIPT DOES NOT EXIST. FILED AS A 127(iv) BREACH AND AN
+INV-0005-CLASS RECURRENCE.** The audit log was searched for every entry naming `f009b6f6`,
+`understanding-views-d1` or a D-1 join — 13 entries match. The last two for
+`grok-understanding-views-conductor` are `al-01M2QSED6HYQ40BCPVXVDTCDEH` and
+`al-01M2QSEDC3B5HADZ18C4ZCJDH6`, both at `30d82c3b` — the **pre-merge consume**, not the landing —
+one of them `outcome: partial` with `acceptance_met: false`, and **both** with
+`verification_executed: false` and `pushed: false`.
+
+**The merge commit `f009b6f6` itself carries no audit entry at all.** No closing entry, no CI run id,
+no CI result, no expected-failing set. So the answer to 138(a) is the second branch, not the first:
+the receipt did not assert something unobserved — **there is no receipt**. Under 138(a) that is a
+Ruling 127(iv) breach, and it is the INV-0005 class recurring: a landing whose verification is
+recorded nowhere, so nobody downstream can tell a green trunk from a red one without re-running it
+themselves. This session did re-run it, which is how the frame defect was found at all.
+
+The cost is measurable and was paid today: `main` was red for the whole working day with a
+deterministic product defect in it, and the first session to notice had to enumerate the failing test
+locally because neither the landing receipt nor the CI log named it.
+
+Two controls already in flight answer the two halves, and neither existed when this landing happened:
+Ruling 139(5)'s failing-name printing closes the CI-log half, and DC-227's join-state file
+(`.agents/joins/<shortname>.json`, landed on `lane/dropped-controls`) closes the "did the join even
+finish?" half — a join that stops before step 8 now leaves a machine-readable record saying so
+instead of nothing. The remaining gap is the one 127(iv) already names and nothing enforces: **a
+closing entry with the landed SHA's CI run id and result is owed by the lander, and no control
+refuses a landing that omits it.** That is the control this instance argues for, and it is filed as
+owed rather than built here.
+
+
 ---
 
 ## Ruling 139 — the baseline is repaired first from measured counts at main's tip; `verify-test-run.py` names failures now
