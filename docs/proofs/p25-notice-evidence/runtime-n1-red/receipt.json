@@ -1,0 +1,103 @@
+{
+  "phase": "n1-red",
+  "head": "302f48670529be42e1c92faa8adbb16f82760f0a",
+  "command": [
+    "dotnet",
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "-p:UseSharedCompilation=false",
+    "-m:1",
+    "-nodeReuse:false",
+    "--filter",
+    "FullyQualifiedName~NativeNoticePublicationTests",
+    "--logger",
+    "trx;LogFileName=notice.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p25-notice-evidence\\runtime-n1-red",
+    "--verbosity",
+    "minimal"
+  ],
+  "startedUtc": "2026-09-17T14:54:07.1581506+00:00",
+  "endedUtc": "2026-09-17T14:54:17.3845092+00:00",
+  "durationSeconds": 10.2263586,
+  "actualExit": 1,
+  "total": 13,
+  "passed": 0,
+  "failures": [
+    {
+      "message": "Assert.Equal() Failure: Strings differ\r\n                        ↓ (pos 13)\r\nExpected: \"COORD_NATIVE_CONTEXT\"\r\nActual:   \"COORD_NATIVE_UNAVAILABLE\"\r\n                        ↑ (pos 13)",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: \"\\\\\\\\server\\\\private\")"
+    },
+    {
+      "message": "Assert.Equal() Failure: Strings differ\r\n                        ↓ (pos 13)\r\nExpected: \"COORD_NATIVE_CONTEXT\"\r\nActual:   \"COORD_NATIVE_UNAVAILABLE\"\r\n                        ↑ (pos 13)",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: \"C:\\\\private\\\\.git\\\\escape\")"
+    },
+    {
+      "message": "Assert.Equal() Failure: Strings differ\r\n                        ↓ (pos 13)\r\nExpected: \"COORD_NATIVE_CONTEXT\"\r\nActual:   \"COORD_NATIVE_UNAVAILABLE\"\r\n                        ↑ (pos 13)",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: \"C:\\\\private\\\\..\\\\escape\")"
+    },
+    {
+      "message": "AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_CancelledAfterAdmission_RetainsObligationAndEmitsPrivateSafeCounts"
+    },
+    {
+      "message": "AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_OlderRetryAfterNewer_DerivedLatestDoesNotRegress"
+    },
+    {
+      "message": "Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'synthetic'.",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FileSucceededDatabaseAckFailed_ReopensAndReconciles"
+    },
+    {
+      "message": "AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite"
+    },
+    {
+      "message": "AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_PoisonFirstCandidate_FairBoundedBatchReachesNext"
+    },
+    {
+      "message": "AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FullGlobalQuota_ActualPublicationReleasesCapacity"
+    },
+    {
+      "message": "Assert.Equal() Failure: Strings differ\r\n                        ↓ (pos 13)\r\nExpected: \"COORD_NATIVE_CONTEXT\"\r\nActual:   \"COORD_NATIVE_UNAVAILABLE\"\r\n                        ↑ (pos 13)",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: \"C:\\\\private\\\\CON\")"
+    },
+    {
+      "message": "AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps"
+    },
+    {
+      "message": "Assert.Equal() Failure: Strings differ\r\n                        ↓ (pos 13)\r\nExpected: \"COORD_NATIVE_CONTEXT\"\r\nActual:   \"COORD_NATIVE_UNAVAILABLE\"\r\n                        ↑ (pos 13)",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: \"\\\\\\\\?\\\\C:\\\\private\")"
+    },
+    {
+      "message": "AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_DeniedThenRetried_PreservesFrozenAdmissionAndBytes"
+    }
+  ],
+  "evidencePins": [
+    {
+      "file": "after-pins.json",
+      "sha256": "AC5887FEFDFEE6AE58816A4EC7DB96059314B842B1638F21AC09BD1E0BE960DB"
+    },
+    {
+      "file": "before-pins.json",
+      "sha256": "2181F89640FBDF68247159F7FE2464B933084456809A6A9965B5773692A9FFC2"
+    },
+    {
+      "file": "notice.trx",
+      "sha256": "BDC4B20FC8AE8A317ECFC550AA32412CF22204767945F54485513F574B63B8F7"
+    },
+    {
+      "file": "stderr.txt",
+      "sha256": "27361E77AE247CDE60DE48B2EC74865F612025D71C73F6CEFFB97EACA24AB3B2"
+    },
+    {
+      "file": "stdout.txt",
+      "sha256": "6860781238BDC0DE2E911A066D18508C5C81D65E5B14A29E7106E5F9E58DCBEF"
+    }
+  ]
+}

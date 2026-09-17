@@ -1,0 +1,63 @@
+{
+  "phase": "n1-mutant",
+  "head": "302f48670529be42e1c92faa8adbb16f82760f0a",
+  "command": [
+    "dotnet",
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "-p:UseSharedCompilation=false",
+    "-m:1",
+    "-nodeReuse:false",
+    "--filter",
+    "FullyQualifiedName~NativeNoticePublicationTests.Complete_WrongOwnerOrStaleVersion|FullyQualifiedName~NativeNoticePublicationTests.Publish_SameIdDifferentBytes|FullyQualifiedName~NativeNoticePublicationTests.Publish_NewAcceptedPendingNotice",
+    "--logger",
+    "trx;LogFileName=notice.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p25-notice-evidence\\runtime-n1-mutant",
+    "--verbosity",
+    "minimal"
+  ],
+  "startedUtc": "2026-09-17T14:59:22.5820664+00:00",
+  "endedUtc": "2026-09-17T14:59:28.7688929+00:00",
+  "durationSeconds": 6.1868265,
+  "actualExit": 1,
+  "total": 3,
+  "passed": 0,
+  "failures": [
+    {
+      "message": "Assert.False() Failure\r\nExpected: False\r\nActual:   True",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Complete_WrongOwnerOrStaleVersion_CannotChangeNewAttempt"
+    },
+    {
+      "message": "Assert.Equal() Failure: Collections differ\r\n                        ↓ (pos 58)\r\nExpected: [···, 58, 34, 48, 52, 102, ···]\r\nActual:   [···, 58, 34, 97, 49, 53, ···]\r\n                        ↑ (pos 58)",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt"
+    },
+    {
+      "message": "Assert.Equal() Failure: Strings differ\r\nExpected: \"COORD_NOTICE_CONFLICT\"\r\nActual:   null",
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite"
+    }
+  ],
+  "evidencePins": [
+    {
+      "file": "after-pins.json",
+      "sha256": "5503FF589945679EAB0DDDDB91491B0FB0B2B4D8E39026CA2566CD840EFA8A68"
+    },
+    {
+      "file": "before-pins.json",
+      "sha256": "F4437E3F38B303ED44A641BB6B3C88F55AD6E379165780F56AF6C81016DC07F0"
+    },
+    {
+      "file": "notice.trx",
+      "sha256": "CAA4EB57C9E80EE1DD63F3FDD26732C98D95313A000E9037098E0107E977F8F9"
+    },
+    {
+      "file": "stderr.txt",
+      "sha256": "2A7A1AA2E841215A83818ED43B3F756E329AC735A3E71024604745D635BEAEFA"
+    },
+    {
+      "file": "stdout.txt",
+      "sha256": "BDA3B9BA888398B3DE23C7A4E4648D15E1CA350B770404B8FD7E42A22D745129"
+    }
+  ]
+}

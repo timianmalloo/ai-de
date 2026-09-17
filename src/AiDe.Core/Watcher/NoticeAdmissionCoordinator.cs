@@ -24,6 +24,8 @@ internal sealed class NoticeAdmissionCoordinator : IDisposable
         internal SqliteWatcherObservationStore Reader { get; } = reader;
         internal List<NoticeAdmissionCoordinator> Handles { get; } = [];
         internal int Operations { get; set; }
+        internal object PublicationGate { get; } = new();
+        internal string PublicationOwner { get; } = Guid.NewGuid().ToString("N");
 
         internal long Pending()
         {
@@ -89,6 +91,15 @@ internal sealed class NoticeAdmissionCoordinator : IDisposable
     {
         if (_running) throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Busy);
     }
+
+    // The OS lock excludes other enrolled processes; this mutex proves prior local workers
+    // quiescent. Holding both, not elapsed time, qualifies recovery of an abandoned attempt.
+    internal T RunPublication<T>(Func<string, T> operation) => Run(_ =>
+    {
+        Enrollment enrollment;
+        lock (Gate) enrollment = Enrollments[_identity];
+        lock (enrollment.PublicationGate) return operation(enrollment.PublicationOwner);
+    });
 
     private IDisposable Reserve(long localPending, bool correction)
     {

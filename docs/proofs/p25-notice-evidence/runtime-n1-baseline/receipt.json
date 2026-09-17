@@ -1,0 +1,60 @@
+{
+  "phase": "n1-baseline",
+  "head": "302f48670529be42e1c92faa8adbb16f82760f0a",
+  "command": [
+    "dotnet",
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "-p:UseSharedCompilation=false",
+    "-m:1",
+    "-nodeReuse:false",
+    "--filter",
+    "FullyQualifiedName~RegistrationAdmissionTests|FullyQualifiedName~RegistrationNoticeReliabilityTests|FullyQualifiedName~AWorktreeRegistrationIsCorrectedAndSaidSoTests|FullyQualifiedName~TrustedRegistrarTests|FullyQualifiedName~SqliteWatcherObservationStoreTests|FullyQualifiedName~NativeAdmissionRuntimeTests",
+    "--logger",
+    "trx;LogFileName=notice.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p25-notice-evidence\\runtime-n1-baseline",
+    "--verbosity",
+    "minimal",
+    "--no-build"
+  ],
+  "startedUtc": "2026-09-17T14:52:28.7181733+00:00",
+  "endedUtc": "2026-09-17T14:52:39.9082644+00:00",
+  "durationSeconds": 11.1900911,
+  "actualExit": 1,
+  "total": 226,
+  "passed": 224,
+  "failures": [
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.Register_TwoHostsHave128OutstandingCorrections_RefusesBeforeNativeMutation",
+      "message": "Assert.Equal() Failure: Strings differ\r\n                            ↓ (pos 17)\r\nExpected: \"{\"sessionRows\":128,\"firstCapabilities\":64\"···\r\nActual:   \"{\"sessionRows\":129,\"firstCapabilities\":64\"···\r\n                            ↑ (pos 17)"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.DrainRegistrationNotices_PublicationFails_RetryRetainsOriginalCorrection",
+      "message": "Assert.Single() Failure: The collection was empty"
+    }
+  ],
+  "evidencePins": [
+    {
+      "file": "after-pins.json",
+      "sha256": "074702D8D13880E39500BD93F86C308092216B9659576FC5FB8E707AAECDB792"
+    },
+    {
+      "file": "before-pins.json",
+      "sha256": "074702D8D13880E39500BD93F86C308092216B9659576FC5FB8E707AAECDB792"
+    },
+    {
+      "file": "notice.trx",
+      "sha256": "4EBB05FE273053F13D0B9F4C96DBDD7A8CD58D674891B9278A38395CBBD840D5"
+    },
+    {
+      "file": "stderr.txt",
+      "sha256": "28947E5D06D3C5D209716906F030FF3ADE987249B44A4186B2EE100BB41CB6C2"
+    },
+    {
+      "file": "stdout.txt",
+      "sha256": "22823516233A8869CCD91E86129F7591225D641BEF2143ACD624D6A117E62BF1"
+    }
+  ]
+}

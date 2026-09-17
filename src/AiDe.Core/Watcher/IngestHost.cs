@@ -145,6 +145,16 @@ public sealed class IngestHost
     public RegistrationAdmissionResult RegisterNative(string operationId, HarnessRegistration registration) =>
         throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Unavailable);
 
+    /// <summary>No production trusted publication enrollment is installed; never reports false emptiness.</summary>
+    public NativeNoticeBatch PublishNativeNotices(int maximum = 16, CancellationToken cancellationToken = default) =>
+        throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Unavailable);
+
+    internal NativeNoticeBatch PublishNativeNotices(
+        NativeNoticeWorker worker, int maximum = 16, CancellationToken cancellationToken = default) =>
+        worker.Owns(_store)
+            ? worker.Run(maximum, _time.GetUtcNow().ToUnixTimeMilliseconds(), cancellationToken)
+            : throw NativeAdmissionErrors.Error(NativeAdmissionErrors.ContextMismatch);
+
     internal RegistrationAdmissionResult RegisterNative(
         NativeRegistrationAdmissionRoot root, string operationId, HarnessRegistration registration,
         NativeRegistrationContext context) =>

@@ -20,6 +20,143 @@ summary: >-
 
 # Proof Pack — P1/P2 candidates; independent code gate pending
 
+## NativeNoticeN1 author unit — 2026-09-17
+
+**Candidate, not independent approval.** Base `0020e2066b0d073c5ed46eca9c860350268de2e7`.
+Contract committed before code at `302f4867`. Native correction notices are
+product projections, not canonical coordination events. This unit adds no DDL.
+The existing frozen v1 bytes and NoticeID survive retry. The canonical stream is
+not written. The public production worker remains `COORD_NATIVE_UNAVAILABLE`;
+the actual internal IngestHost overload is exercised with synthetic enrollment.
+WorkbenchShell's destructive legacy drain is unchanged and explicitly unqualified.
+
+### Executed evidence and exact timeline
+
+All paths below are under `docs/proofs/p25-notice-evidence/`. Each run used the
+existing `run-native.ps1`: `before-pins.json` precedes the test/build invocation;
+`after-pins.json` follows it. These record SHA-256 for actual watcher sources,
+test sources, project/build inputs and Core/test binaries, not merely assembly
+informational versions. The native stdout, stderr, TRX and receipt remain separate.
+Only synthetic SQLite/files were used. TEMP/TMP were explicitly redirected to
+this worktree's ignored test-bin scratch; existing locked scratch was retained.
+
+| Run | Observed execution | Receipt SHA-256 |
+|---|---|---|
+| `runtime-n1-baseline` | 226 executed, 224 pass, unchanged legacy N1/N2 RED; actual exit 1; 11.1900911 s | `A27E011EDAB6163BB4E10F421E1ADC39A389CA92F5944CFA7348990DBFF19543` |
+| `runtime-n1-red` | 13 executed, 0 pass; actual exit 1; 10.2263586 s | `B6355A9DC4DFBFEF73C5AF708ACE8730CB0BA9BFADF7FF2E85899861BD881338` |
+| `runtime-n1-green` | 13 executed, 12 pass, concurrent rename RED; actual exit 1; 10.9917597 s | `F51D6A1825810CC4B2E2F9B7277F50362E636808F618DFA3B948F651A270B092` |
+| `runtime-n1-green2` | 19 executed, 19 pass; actual exit 0; 7.3143006 s | `5ACEED18229DBED1907EFFFDEF76D758DC5057648311DCDFA67344BAEC2F3C64` |
+| `runtime-n1-mutant` | three focal tests, all RED; actual exit 1; 6.1868265 s | `6634E5C8A430A07E095B15EA26A8AED0542701723B8FC1B3451F324CF598CC2B` |
+| `runtime-n1-final` | 245 executed, 243 pass, only unchanged legacy N1/N2 RED; actual exit 1; 14.6324602 s | `FF3AF1DEF89F99A90D6AD140A3761B593FD873A22DE4A133F0EE07C1E167EC39` |
+| `runtime-n1-final2` | 247 executed, 244 pass, legacy N1/N2 plus poison-fixture ordering failure; actual exit 1; 17.1458978 s | `9E6093268787537472091C64C291A39E1A6CF64FD4D093FC044C620BC3E31060` |
+| `runtime-n1-final3` | 247 executed, 245 pass, only unchanged legacy N1/N2 RED; actual exit 1; 14.6662061 s | `8CCE822EF35C41C0BEAAAED19D3AC679D0E64F09AA4C57580140D704CE6AD810` |
+
+`runtime-n1-red` is an executable unavailable-worker stub, not thirteen independent
+behavioral mutants. Its lost-ACK case was additionally masked by the test cleanup
+trigger; that red is **not** transport proof. Cleanup now drops only that
+synthetic trigger before teardown. All nineteen enhanced tests pass after
+restoring the three deliberate source mutants. The wrapper's exit 0 means its
+expected result shape matched; the table retains the actual dotnet exit.
+
+### Claim / oracle / confidence
+
+Tests live in `tests/AiDe.Core.Tests/Watcher/NativeNoticePublicationTests.cs`.
+
+| Claim | Executed oracle and red evidence | Confidence / residual |
+|---|---|---|
+| Denied publication retains same ID/bytes and native history | `Publish_DeniedThenRetried...`: real destination-directory denial, Pending retained, unblock, exact bytes, unchanged four-table state/generation | Verified synthetic OS/files; unavailable-stub red only |
+| Existing same-length unequal bytes conflict without overwrite | `Publish_SameIdDifferentBytes...`: change byte 0 while retaining length; length-only verifier mutant returned success and failed test | Verified red/green |
+| Concurrent identical attempts use exclusive unique temporaries | Eight real concurrent publishes; one immutable file and no remaining temporary files | Verified; actual first implementation RED, equality reconciliation green |
+| File succeeds before database ACK fails; new composition reconciles | `Publish_FileSucceededDatabaseAckFailed...`: SQLite trigger rejects Published; bytes read back, close original store, open new store, one immutable file, no new admission/native state | Verified executed fault injection; not process-kill/power-loss proof |
+| Publication releases global quota, not root disposal | `Publish_FullGlobalQuota...`: 128 accepted facts, root retired, admission refused; publish one, 129th total admission allowed; original 128 facts remain; publish remainder, OS owner lock reacquired | Verified producer-driven release; fixture teardown is not cited as publication |
+| Late older retry does not regress latest known accepted notice | `Publish_OlderRetryAfterNewer...` and `Publish_NewAcceptedPendingNotice...`; delivery-state-based latest mutant regressed bytes | Verified red/green; latest is a derived accepted-fact projection, not acknowledgement |
+| Wrong owner and stale attempt cannot complete/requeue current attempt | `Complete_WrongOwnerOrStaleVersion...`; owner-predicate mutant accepted wrong owner and failed | Verified owner mutation; stale-version scenario executed, separate version-only mutant not run |
+| Cancellation after admission cannot lose obligation | `Publish_CancelledAfterAdmission...`: cancelled batch, original native state/Pending retained, subsequent publication succeeds | Verified; cancellation injected before worker attempt, not in every filesystem instruction |
+| Fair bounded candidate selection avoids poison-first starvation | `Publish_PoisonFirstCandidate...`: max=1; denied first attempt, next batch publishes second | Verified synthetic two-item case |
+| Path/ID bounds precede publication and errors omit private input | Five invalid local/UNC/device/traversal/.git root cases; two invalid IDs; output directory stays empty; stable errors | Verified listed examples; hostile reparse swap and ACL attacker qualification not executed |
+| Unavailable composition is not empty; read failure is Uncertain | `Publish_DefaultComposition...`, `Publish_StoreReadFails...`: public call refuses, disposed store reports Uncertain and SQL obligation remains | Verified; retained counter-reader-specific fault injection remains unverified |
+| Telemetry carries counts/status/elapsed without payload | Activity listener observes successful publication tag and absence of PRIVATE_MARKER in tags; batch returns actual counts/elapsed | Verified local emitted activities; deployed exporter/retention not qualified |
+
+### Reach, invariants and instrumentation
+
+* Existing admission fact -> `publication_bytes`/digest -> `ReadNativeDelivery`
+  revalidation -> claimed owner/attempt/version -> native immutable file -> derived
+  session document -> CAS Published -> retained read-only quota counter -> owner
+  retirement. No fact, original input, session, heartbeat, end marker or capability
+  is rewritten by the worker.
+* Internal `IngestHost.PublishNativeNotices(worker,...)` checks the worker's store
+  identity. Default public overload is unavailable. This is executable synthetic
+  composition, **not a claim that the feature is reachable in the running App/MCP**.
+* Recovery holds the enrolled physical database's OS owner lock and its
+  publication mutex. Quiescence, not TTL, permits InFlight requeue. CAS includes
+  owner, attempt and ownership version. No persisted callback or re-registration.
+* One batch takes at most 32 candidates. Attempt ordering supplies fairness;
+  finite snapshots bound work. No shared global coordination lock encloses file I/O.
+* Questions “how many / which result / how long / failure?” have named sources:
+  `NativeNoticeBatch` plus `AiDe.NativeNotice` batch/attempt activities and stable
+  `COORD_NOTICE_*` codes. No model spend exists in this deterministic worker.
+  Exporter availability and whole-production latency remain unmeasured.
+
+### Defect classes and corrections within the allowed canonical pack
+
+**Concurrent rename completion mistaken for failure.** Class: an independently
+completed equal file effect can race the caller's atomic install. Sweep:
+immutable and latest installs share `InstallNativeBytes`; legacy shared `.tmp`
+is outside enhanced guarantees and unchanged. Derive: reconcile using one
+full-byte/digest verifier. Prevent: concurrent eight-attempt test, observed RED
+on the first real implementation, then green.
+
+**Delivery status used as latest-content authority.** Class: a lost transport ACK
+can hide a newer already-rendered accepted fact. Sweep: latest query was the sole
+new selection site. Derive latest from accepted facts regardless of Pending/
+InFlight/Published. Prevent: targeted latest-status mutant fails exact bytes.
+The design preserves the correction and explains why pending latest is not ACK.
+
+**Test cleanup obscures the focal failure.** Class: a fault trigger survives into
+teardown and replaces the failure being measured. Sweep: the new test's only
+synthetic trigger. Derive teardown's trigger removal before obligation cleanup.
+Its initial masked result is disclosed above rather than promoted as semantic RED.
+The shared lesson register was not edited under this task's file allowlist.
+
+### Remaining gates and bounded close
+
+Final `runtime-n1-final3`: all **21** new controls pass; the earlier 226 still
+have exactly two legacy failures. The two added reserved-name cases reject
+`CON`/`LPT1` legacy filenames before creating publication directories.
+They are executed boundary cases, not independently mutated controls.
+This does **not** clear all P2 or all old callers. Independent Test/Data/Security
+and NativeDesktop review, actual binder/root enrollment, hostile-root races,
+retention/erasure, real process-crash recovery, released old-binary behavior,
+canonical primary.requests bridge, production scheduling, P3–P5 and upstream
+remain open. New cross-harness request/disposition emission must use the official
+primary.requests API; no C# dual writer or native success-to-canonical completion.
+
+Plan: five serial author nodes, zero delegates. Actual: contract, stub red,
+implementation, one rename correction, expanded controls, three source mutants,
+final selected suite, canonical close. Oversized initial read batches and an
+unavailable shell `rg` command spent avoidable calls; narrower reads and native
+PowerShell search corrected the execution shape. No hooks were overridden.
+One failed patch matched the wrong tail and changed nothing. No dependency install,
+App/GUI launch, live database, actual endpoint, main-branch edit or push.
+No AIDE_SESSION/AIDE_CONTRACT_LOG was supplied; no fictitious episode event was
+written. The evidence pointer for the parent episode is this canonical pack.
+
+**Final verification correction.** The last filename-source read showed that
+legacy sanitization removes invalid characters but not Windows device names.
+The enhanced path now validates that derived filename before any filesystem
+operation. The subsequent `runtime-n1-final2` also exposed a test ordering
+assumption: random fixture paths change NoticeID digests, so two equal-attempt
+rows do not necessarily run in creation order. The poison test now observes the
+first failed attempt before admitting its competitor; the second batch must
+prefer that unattempted competitor. Class: incidental hash order mistaken for
+semantic creation order. Sweep: new batch tests; only this test assumed the
+first equal-priority candidate. Prevent: explicit causal setup, final suite
+executed after correction. The failed TRX and pins remain, not overwritten.
+Earlier audit figures are historical checkpoints, superseded by the final close.
+The audit main-budget value is the manual declaration, not harness request telemetry.
+Legacy filename aliasing across distinct sanitized session IDs remains an
+unqualified compatibility limitation; immutable NoticeID history is unaffected.
+
 ## Native NOTICE corrective contract checkpoint — 2026-09-17
 
 Source: `d0c3afd38fa9bd3fb6b3a6980338a61c389324fc`, containing diagnostic source

@@ -1,0 +1,3 @@
+[xUnit.net 00:00:00.37]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite [FAIL]
+[xUnit.net 00:00:00.41]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt [FAIL]
+[xUnit.net 00:00:00.43]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Complete_WrongOwnerOrStaleVersion_CannotChangeNewAttempt [FAIL]

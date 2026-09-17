@@ -26,6 +26,9 @@ internal static class NativeAdmissionErrors
     internal const string Stale = "COORD_NATIVE_STALE";
     internal const string Owner = "COORD_NATIVE_OWNER";
     internal const string Integrity = "COORD_NATIVE_INTEGRITY";
+    internal const string NoticeConflict = "COORD_NOTICE_CONFLICT";
+    internal const string NoticeIo = "COORD_NOTICE_IO";
+    internal const string NoticeCancelled = "COORD_NOTICE_CANCELLED";
 
     internal static WatcherException Error(string code) => new(code, code);
 }
@@ -137,7 +140,7 @@ internal static class NativeAdmissionCodec
         RejectReparseAncestors(input.PublicationRoot);
     }
 
-    private static void ValidateLocalPath(string path)
+    internal static void ValidateLocalPath(string path)
     {
         Text(path, 4096);
         if (!Path.IsPathFullyQualified(path) || path.StartsWith(@"\\", StringComparison.Ordinal)
@@ -147,7 +150,8 @@ internal static class NativeAdmissionCodec
         foreach (var segment in segments.Skip(1))
         {
             var stem = segment.Split('.')[0].ToUpperInvariant();
-            if (segment is "." or ".." || segment.EndsWith('.') || segment.EndsWith(' ')
+            if (segment is "." or ".." || segment.Equals(".git", StringComparison.OrdinalIgnoreCase)
+                || segment.EndsWith('.') || segment.EndsWith(' ')
                 || segment.Contains(':') || stem is "CON" or "PRN" or "AUX" or "NUL"
                 || (stem.Length == 4 && (stem.StartsWith("COM", StringComparison.Ordinal)
                     || stem.StartsWith("LPT", StringComparison.Ordinal)) && char.IsAsciiDigit(stem[3])))

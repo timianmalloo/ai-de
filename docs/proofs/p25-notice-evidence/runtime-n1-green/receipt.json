@@ -1,0 +1,55 @@
+{
+  "phase": "n1-green",
+  "head": "302f48670529be42e1c92faa8adbb16f82760f0a",
+  "command": [
+    "dotnet",
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "-p:UseSharedCompilation=false",
+    "-m:1",
+    "-nodeReuse:false",
+    "--filter",
+    "FullyQualifiedName~NativeNoticePublicationTests",
+    "--logger",
+    "trx;LogFileName=notice.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p25-notice-evidence\\runtime-n1-green",
+    "--verbosity",
+    "minimal"
+  ],
+  "startedUtc": "2026-09-17T14:56:09.8066963+00:00",
+  "endedUtc": "2026-09-17T14:56:20.7984560+00:00",
+  "durationSeconds": 10.9917597,
+  "actualExit": 1,
+  "total": 13,
+  "passed": 12,
+  "failures": [
+    {
+      "name": "AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps",
+      "message": "AiDe.Core.Watcher.WatcherException : COORD_NOTICE_IO"
+    }
+  ],
+  "evidencePins": [
+    {
+      "sha256": "EF6CE16B2A41599D36258FC6E9EBB44290137844E0955416F1AB19425DD9F5BD",
+      "file": "after-pins.json"
+    },
+    {
+      "sha256": "FC9FEBBAF39A03D13006FF4B2E31C35F93D43EAA72BFD6FE983A46DF76BADED1",
+      "file": "before-pins.json"
+    },
+    {
+      "sha256": "7D33A69D66540F2FA7171B5E65DAEA7A6BC0BAFE109A0AF0AF19DDC3DA0B9CC2",
+      "file": "notice.trx"
+    },
+    {
+      "sha256": "D87EC7D7547E979BEB5840D87268B9F21C8A834D6B9488DDD16E92A37CE95178",
+      "file": "stderr.txt"
+    },
+    {
+      "sha256": "A59BAFC74D5D9013A160997D60CC891CA7872031958DA9117DF2FDAAF5BE182F",
+      "file": "stdout.txt"
+    }
+  ]
+}

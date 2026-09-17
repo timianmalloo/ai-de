@@ -1,0 +1,25 @@
+
+  AiDe.Core -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Mcp -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+  Failed AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps [28 ms]
+  Error Message:
+   AiDe.Core.Watcher.WatcherException : COORD_NOTICE_IO
+  Stack Trace:
+     at AiDe.Core.Watcher.RegistrationPublisher.PublishNative(NativeNoticeDelivery notice, Byte[] latestBytes) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs:line 168
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.<>c__DisplayClass5_0.<Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps>b__1() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 131
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 130
+--- End of stack trace from previous location ---
+Results File: C:\Projects\ai-de-feature-xh-p2-projection\docs\proofs\p25-notice-evidence\runtime-n1-green\notice.trx
+
+Failed!  - Failed:     1, Passed:    12, Skipped:     0, Total:    13, Duration: 1 s - AiDe.Core.Tests.dll (net10.0)

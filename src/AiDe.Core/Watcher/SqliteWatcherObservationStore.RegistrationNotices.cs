@@ -4,6 +4,133 @@ namespace AiDe.Core.Watcher;
 
 public sealed partial class SqliteWatcherObservationStore
 {
+    internal void RecoverNativeNotices()
+    {
+        lock (_gate)
+            ExecuteNonQuery(_connection, """
+                UPDATE registration_notice_delivery
+                SET state='Pending',owner_id=NULL,ownership_version=ownership_version+1
+                WHERE notice_id IN (SELECT notice_id FROM registration_notice_delivery
+                    WHERE state='InFlight' LIMIT 128);
+                """);
+    }
+
+    internal IReadOnlyList<string> PendingNativeNoticeIds(int maximum)
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText = """
+                SELECT notice_id FROM registration_notice_delivery WHERE state='Pending'
+                ORDER BY attempt,due_at_ms,notice_id LIMIT $maximum;
+                """;
+            command.Parameters.AddWithValue("$maximum", maximum);
+            using var reader = command.ExecuteReader();
+            var result = new List<string>();
+            while (reader.Read()) result.Add(reader.GetString(0));
+            return result;
+        }
+    }
+
+    internal NativeNoticeDelivery? ClaimNativeNotice(string noticeId, string owner)
+    {
+        lock (_gate)
+        {
+            using var transaction = _connection.BeginTransaction(deferred: false);
+            using var command = _connection.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandText = """
+                UPDATE registration_notice_delivery SET state='InFlight',owner_id=$owner,
+                    attempt=attempt+1,ownership_version=ownership_version+1
+                WHERE notice_id=$id AND state='Pending' AND attempt<2147483647;
+                """;
+            command.Parameters.AddWithValue("$owner", owner);
+            command.Parameters.AddWithValue("$id", noticeId);
+            if (1 != command.ExecuteNonQuery()) return null;
+            var notice = ReadNativeDelivery(noticeId, transaction);
+            transaction.Commit();
+            return notice;
+        }
+    }
+
+    private NativeNoticeDelivery ReadNativeDelivery(string id, SqliteTransaction transaction)
+    {
+        using var command = _connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = """
+            SELECT n.operation_id,n.target_root,n.publication_bytes,n.publication_digest,a.session_id,
+                   n.owner_id,n.attempt,n.ownership_version
+            FROM registration_notice_delivery n JOIN native_registration_admission_fact a USING(operation_id)
+            WHERE notice_id=$id AND target_kind='native-file';
+            """;
+        command.Parameters.AddWithValue("$id", id);
+        NativeNoticeDelivery notice;
+        using (var reader = command.ExecuteReader())
+        {
+            if (!reader.Read()) throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Integrity);
+            notice = new(id, reader.GetString(0), reader.GetString(1), (byte[])reader[2],
+                reader.GetString(3), reader.GetString(4), reader.IsDBNull(5) ? string.Empty : reader.GetString(5),
+                reader.GetInt64(6), reader.GetInt64(7));
+        }
+        var admission = ReadNativeAdmission(notice.OperationId, transaction)
+            ?? throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Integrity);
+        if (admission.DecisionDigest[..32] != id)
+            throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Integrity);
+        NativeAdmissionCodec.RequireNotice(admission, notice.Bytes, notice.Digest);
+        return notice;
+    }
+
+    internal byte[] LatestNativeNoticeBytes(NativeNoticeDelivery notice)
+    {
+        lock (_gate)
+        {
+            using var transaction = _connection.BeginTransaction(deferred: false);
+            using var command = _connection.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandText = """
+                SELECT n.notice_id FROM registration_notice_delivery n
+                JOIN native_registration_admission_fact a USING(operation_id)
+                WHERE a.session_id=$session AND n.target_root=$root
+                ORDER BY a.generation DESC LIMIT 1;
+                """;
+            command.Parameters.AddWithValue("$session", notice.SessionId);
+            command.Parameters.AddWithValue("$root", notice.Root);
+            var id = (string?)command.ExecuteScalar()
+                ?? throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Integrity);
+            var bytes = ReadNativeDelivery(id, transaction).Bytes;
+            transaction.Commit();
+            return bytes;
+        }
+    }
+
+    internal bool CompleteNativeNotice(NativeNoticeDelivery notice, long now) =>
+        TransitionNativeNotice(notice, "Published", now);
+
+    internal bool RequeueNativeNotice(NativeNoticeDelivery notice, long now) =>
+        TransitionNativeNotice(notice, "Pending", now);
+
+    private bool TransitionNativeNotice(NativeNoticeDelivery notice, string state, long now)
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText = """
+                UPDATE registration_notice_delivery SET state=$state,owner_id=NULL,
+                    published_at_ms=CASE WHEN $state='Published' THEN $now ELSE NULL END,
+                    due_at_ms=$now,ownership_version=ownership_version+1
+                WHERE notice_id=$id AND state='InFlight' AND owner_id=$owner
+                    AND attempt=$attempt AND ownership_version=$version;
+                """;
+            command.Parameters.AddWithValue("$state", state);
+            command.Parameters.AddWithValue("$now", now);
+            command.Parameters.AddWithValue("$id", notice.NoticeId);
+            command.Parameters.AddWithValue("$owner", notice.Owner);
+            command.Parameters.AddWithValue("$attempt", notice.Attempt);
+            command.Parameters.AddWithValue("$version", notice.Version);
+            return 1 == command.ExecuteNonQuery();
+        }
+    }
+
     internal long PendingNativeNoticeCount()
     {
         lock (_gate) return PendingNativeNoticeCount(null);
@@ -196,9 +323,8 @@ public sealed partial class SqliteWatcherObservationStore
             ON CONFLICT(session_id) DO UPDATE SET monotonic_ticks=$ticks;
             """, transaction, ("$id", sessionId), ("$ticks", ticks));
 
-    // Dormant storage floor only: no enhanced ingress or worker is enabled by this migration.
-    // Pattern: Transactional Outbox. Admission/native effects and derived-byte validation still
-    // require the protected writer; DDL cannot establish content digests or trusted filesystem roots.
+    // Pattern: Transactional Outbox. The internal admission/transport composition uses this floor;
+    // DDL alone cannot establish content digests, qualified roots or production enrollment.
     private const string NativeRegistrationSchemaSql = """
         CREATE TABLE native_registration_admission_fact (
             operation_id TEXT NOT NULL PRIMARY KEY

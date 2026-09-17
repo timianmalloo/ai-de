@@ -1225,14 +1225,16 @@ atomic no-overwrite move. Existing full bytes AND digest equal means replay;
 unequal means COORD_NOTICE_CONFLICT, preserving both target and source. Publication
 roots come only from internal trusted composition, never caller notice prose.
 Validate bounds and local absolute paths before filesystem access. Reject UNC,
-device/traversal forms, `.git` components and reparse ancestors. Pin publication
-directories against rename during the effect on Windows. This does not mint
+device/traversal forms, `.git` components and reparse ancestors. Validate the
+derived legacy filename too, before any filesystem operation: sanitizing
+characters does not remove Windows device names. Pin publication directories
+against rename during the effect on Windows. This does not mint
 authentication or a capability from a path; hostile ACL/root enrollment remains
 the production binder's unqualified responsibility.
 
 The session-keyed JSON stays a derived latest projection, never an acknowledgement.
-Choose its bytes from the current notice and already Published admissions for the
-same session and root, ordered by generation. Serialize publishers per enrolled
+Choose its bytes from all accepted notices for the same session and root, ordered
+by generation, including pending notices. Serialize publishers per enrolled
 physical store; an older retry cannot replace a newer known publication. Install
 the compatibility projection with a unique exclusive temporary and atomic replace.
 TransportPublished requires confirmed immutable bytes and confirmed selected
@@ -1266,3 +1268,9 @@ remains disabled. Rejected alternatives: callback-as-durable-ACK, serialized
 callbacks, destructive drain, TTL reclamation, per-session immutable filenames,
 overwrite-on-conflict, and a second status store. Independent Test/Data/Security
 review follows this author unit; full P2 recovery/binder/retention and P3-P5 remain.
+
+Correction during implementation: limiting latest selection to Published plus
+current could regress a newer file whose database ACK was lost. Accepted facts,
+not delivery status or a filesystem document, now select latest. A pending
+newer accepted correction may therefore appear in the compatibility document;
+that appearance is not an acknowledgement of its immutable transport.

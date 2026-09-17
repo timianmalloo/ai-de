@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="af1f067b-c940-4cd3-b6b5-17be8c7800e0" name="malla@TIMMALLSTRIX 2026-09-17 07:59:28" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-17T07:59:28.7197965-07:00" queuing="2026-09-17T07:59:28.7197967-07:00" start="2026-09-17T07:59:27.9663460-07:00" finish="2026-09-17T07:59:28.7227923-07:00" />
+  <TestSettings name="default" id="779b8684-02d0-4428-87ec-a9ffde3fb223">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-17_07_59_28" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ef7d17bf-5c59-448b-a8aa-486860c195a2" testId="d3771490-cb63-b683-61b1-699305041f17" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Complete_WrongOwnerOrStaleVersion_CannotChangeNewAttempt" computerName="TIMMALLSTRIX" duration="00:00:00.0170144" startTime="2026-09-17T07:59:28.6288586-07:00" endTime="2026-09-17T07:59:28.6453728-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ef7d17bf-5c59-448b-a8aa-486860c195a2">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Complete_WrongOwnerOrStaleVersion_CannotChangeNewAttempt() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 211&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fe2ccf34-2126-4625-b6ea-f639eca2bcaa" testId="f00efb91-b6de-83e0-52f0-33459151fbc4" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt" computerName="TIMMALLSTRIX" duration="00:00:00.0416174" startTime="2026-09-17T07:59:28.5948039-07:00" endTime="2026-09-17T07:59:28.6282327-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fe2ccf34-2126-4625-b6ea-f639eca2bcaa">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Collections differ&#xD;
+                        ↓ (pos 58)&#xD;
+Expected: [···, 58, 34, 48, 52, 102, ···]&#xD;
+Actual:   [···, 58, 34, 97, 49, 53, ···]&#xD;
+                        ↑ (pos 58)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 242&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3a5f9d34-1fa4-433d-8a17-c9ede1d126a0" testId="baf69ccb-1d64-9cb3-66f6-9cc7d51d8fc7" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite" computerName="TIMMALLSTRIX" duration="00:00:00.0850342" startTime="2026-09-17T07:59:28.4938432-07:00" endTime="2026-09-17T07:59:28.5866991-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3a5f9d34-1fa4-433d-8a17-c9ede1d126a0">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+Expected: "COORD_NOTICE_CONFLICT"&#xD;
+Actual:   null</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 49&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="f00efb91-b6de-83e0-52f0-33459151fbc4">
+      <Execution id="fe2ccf34-2126-4625-b6ea-f639eca2bcaa" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="baf69ccb-1d64-9cb3-66f6-9cc7d51d8fc7">
+      <Execution id="3a5f9d34-1fa4-433d-8a17-c9ede1d126a0" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Complete_WrongOwnerOrStaleVersion_CannotChangeNewAttempt" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d3771490-cb63-b683-61b1-699305041f17">
+      <Execution id="ef7d17bf-5c59-448b-a8aa-486860c195a2" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Complete_WrongOwnerOrStaleVersion_CannotChangeNewAttempt" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d3771490-cb63-b683-61b1-699305041f17" executionId="ef7d17bf-5c59-448b-a8aa-486860c195a2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f00efb91-b6de-83e0-52f0-33459151fbc4" executionId="fe2ccf34-2126-4625-b6ea-f639eca2bcaa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="baf69ccb-1d64-9cb3-66f6-9cc7d51d8fc7" executionId="3a5f9d34-1fa4-433d-8a17-c9ede1d126a0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="0" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.25]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.37]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.37]       Expected: "COORD_NOTICE_CONFLICT"&#xD;
+[xUnit.net 00:00:00.37]       Actual:   null&#xD;
+[xUnit.net 00:00:00.37]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.37]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(49,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite()&#xD;
+[xUnit.net 00:00:00.37]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.37]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.41]       Assert.Equal() Failure: Collections differ&#xD;
+[xUnit.net 00:00:00.41]                               ↓ (pos 58)&#xD;
+[xUnit.net 00:00:00.41]       Expected: [···, 58, 34, 48, 52, 102, ···]&#xD;
+[xUnit.net 00:00:00.41]       Actual:   [···, 58, 34, 97, 49, 53, ···]&#xD;
+[xUnit.net 00:00:00.41]                               ↑ (pos 58)&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(242,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt()&#xD;
+[xUnit.net 00:00:00.41]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.41]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.43]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.43]       Expected: False&#xD;
+[xUnit.net 00:00:00.43]       Actual:   True&#xD;
+[xUnit.net 00:00:00.43]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.43]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(211,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Complete_WrongOwnerOrStaleVersion_CannotChangeNewAttempt()&#xD;
+[xUnit.net 00:00:00.43]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.43]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.43]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:59:28.5881972-07:00">
+        <Text>[xUnit.net 00:00:00.37]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:59:28.6285732-07:00">
+        <Text>[xUnit.net 00:00:00.41]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_NewAcceptedPendingNotice_LatestSurvivesOlderAttempt [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:59:28.6456686-07:00">
+        <Text>[xUnit.net 00:00:00.43]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Complete_WrongOwnerOrStaleVersion_CannotChangeNewAttempt [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

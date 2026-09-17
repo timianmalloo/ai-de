@@ -909,3 +909,15 @@ counterexamples, floor zero; budget exhaustion reports a finding, not a waiver.
 Oracles: denial loses retry; collision overwrites; stale CAS changes a row;
 lost ACK duplicates admission; old retry regresses latest; publication fails to
 release global quota. Rigor floors remain; no actual activation or GUI proof.
+
+Author result: design-first `302f4867`, internal native worker and hardened publisher,
+21 enhanced transport controls passing; selected final 247 executed/245 pass with
+only the two unchanged legacy REDs. Three targeted mutants each fail their focal
+oracle. Actual publication (not synthetic cleanup) now releases quota and permits
+retained-enrollment retirement. The canonical proof records source/test/project/
+binary pins, raw streams/TRX, the concurrent rename correction and the latest
+accepted-fact correction. No new proof pack, DDL, App surface or canonical writer.
+Independent gates and production binder/activation remain the next checkpoint.
+The final reserved-filename checks and deterministic poison-test correction are
+recorded in `runtime-n1-final2` (failed) and `runtime-n1-final3` (only legacy REDs);
+the earlier 19-control/245-test checkpoint is retained as historical evidence.

@@ -1,6 +1,10 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using Microsoft.Data.Sqlite;
+using Microsoft.Win32.SafeHandles;
 
 namespace AiDe.Core.Watcher;
 
@@ -9,6 +13,98 @@ namespace AiDe.Core.Watcher;
 /// </summary>
 public sealed record RegistrationNotice(
     string SessionId, string RepositorySent, string RepositoryUsed, string Reason);
+
+internal sealed record NativeNoticeDelivery(
+    string NoticeId, string OperationId, string Root, byte[] Bytes, string Digest,
+    string SessionId, string Owner, long Attempt, long Version);
+
+/// <summary>Transport counts only; not arrival, acknowledgement by a model, or authority.</summary>
+public sealed record NativeNoticeBatch(int Attempted, int Published, int Failed, string? ErrorCode, double ElapsedMilliseconds);
+
+internal sealed class NativeNoticeWorker(SqliteWatcherObservationStore store)
+{
+    private static readonly ActivitySource Activities = new("AiDe.NativeNotice");
+    internal bool Owns(IWatcherObservationStore candidate) => ReferenceEquals(store, candidate);
+
+    internal NativeNoticeBatch Run(int maximum, long now, CancellationToken cancellationToken = default)
+    {
+        if (maximum is < 1 or > 32) throw NativeAdmissionErrors.Error(NativeAdmissionErrors.InvalidInput);
+        using var activity = Activities.StartActivity("native.notice.batch");
+        var started = Stopwatch.GetTimestamp();
+        var attempted = 0;
+        var published = 0;
+        string? error = null;
+        try
+        {
+            using var coordinator = new NoticeAdmissionCoordinator(store);
+            coordinator.RunPublication(owner =>
+            {
+                store.RecoverNativeNotices();
+                foreach (var id in store.PendingNativeNoticeIds(maximum))
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        error = NativeAdmissionErrors.NoticeCancelled;
+                        break;
+                    }
+                    var notice = store.ClaimNativeNotice(id, owner);
+                    if (null == notice) continue;
+                    attempted++;
+                    using var attempt = Activities.StartActivity("native.notice.attempt");
+                    var attemptStarted = Stopwatch.GetTimestamp();
+                    attempt?.SetTag("native.notice.attempt", notice.Attempt);
+                    try
+                    {
+                        RegistrationPublisher.PublishNative(notice, store.LatestNativeNoticeBytes(notice));
+                        // Once the file effect happened, cancellation does not discard its acknowledgement.
+                        if (!store.CompleteNativeNotice(notice, now))
+                            throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Stale);
+                        published++;
+                        attempt?.SetTag("native.notice.status", "Published");
+                    }
+                    catch (WatcherException exception)
+                    {
+                        error = exception.Code;
+                        attempt?.SetTag("error.type", error);
+                        attempt?.SetTag("native.notice.status", "Pending");
+                        attempt?.SetStatus(ActivityStatusCode.Error);
+                        if (!store.RequeueNativeNotice(notice, now))
+                            error = NativeAdmissionErrors.Stale;
+                    }
+                    catch (SqliteException)
+                    {
+                        // Lost ACK is deliberately left InFlight, with the same immutable bytes.
+                        error = NativeAdmissionErrors.Uncertain;
+                        attempt?.SetTag("error.type", error);
+                        attempt?.SetTag("native.notice.status", "InFlight");
+                        attempt?.SetStatus(ActivityStatusCode.Error);
+                    }
+                    finally
+                    {
+                        attempt?.SetTag("native.notice.duration_ms", Stopwatch.GetElapsedTime(attemptStarted).TotalMilliseconds);
+                    }
+                }
+                return 0;
+            });
+        }
+        catch (SqliteException) { error = NativeAdmissionErrors.Uncertain; }
+        catch (InvalidOperationException) { error = NativeAdmissionErrors.Uncertain; }
+        catch (IOException) { error = NativeAdmissionErrors.Uncertain; }
+        catch (UnauthorizedAccessException) { error = NativeAdmissionErrors.Uncertain; }
+        catch (WatcherException exception) { error = exception.Code; }
+        var elapsed = Stopwatch.GetElapsedTime(started).TotalMilliseconds;
+        activity?.SetTag("native.notice.attempted", attempted);
+        activity?.SetTag("native.notice.published", published);
+        activity?.SetTag("native.notice.failed", attempted - published);
+        activity?.SetTag("native.notice.duration_ms", elapsed);
+        if (null != error)
+        {
+            activity?.SetTag("error.type", error);
+            activity?.SetStatus(ActivityStatusCode.Error);
+        }
+        return new(attempted, published, attempted - published, error, elapsed);
+    }
+}
 
 /// <summary>
 /// Delivers a registration correction to the agent, as a file beside the contract log.
@@ -34,13 +130,116 @@ public sealed record RegistrationNotice(
 /// with corruption that was not corruption. Both properties, the extension and the depth, are
 /// asserted by tests rather than assumed.</para>
 ///
-/// <para><b>Rewritten, never appended.</b> This is a machine-written directory holding a
+/// <para><b>Legacy Publish only: rewritten, never appended.</b> This is a machine-written directory holding a
 /// machine-read document, and the current state of a session's registration is one fact, not a
 /// history. The line agreed with the concurrent session: <i>rewrite what the product alone reads;
 /// append to, or leave alone, what a person may edit.</i></para>
 /// </remarks>
 public static class RegistrationPublisher
 {
+    internal static void PublishNative(NativeNoticeDelivery notice, byte[] latestBytes)
+    {
+        NativeAdmissionCodec.ValidateLocalPath(notice.Root);
+        NativeAdmissionCodec.Text(notice.SessionId, 512);
+        if (notice.NoticeId.Length != 32 || notice.NoticeId.Any(character => !char.IsAsciiHexDigitLower(character))
+            || notice.Bytes.Length is < 1 or > 65536 || latestBytes.Length is < 1 or > 65536
+            || NativeAdmissionCodec.Digest(notice.Bytes) != notice.Digest)
+            throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Integrity);
+        if (!OperatingSystem.IsWindows()) throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Unavailable);
+        var latestName = StandingPublisher.FileNameFor(notice.SessionId);
+        NativeAdmissionCodec.Text(latestName, 255);
+        var latest = Path.Combine(notice.Root, DirectoryName, latestName);
+        NativeAdmissionCodec.ValidateLocalPath(latest);
+        var pins = new List<SafeFileHandle>();
+        try
+        {
+            var ancestors = new Stack<string>();
+            for (var directory = new DirectoryInfo(notice.Root); null != directory; directory = directory.Parent)
+                ancestors.Push(directory.FullName);
+            foreach (var ancestor in ancestors) pins.Add(OpenNativePath(ancestor, directory: true));
+            var registration = Path.Combine(notice.Root, DirectoryName);
+            Directory.CreateDirectory(registration);
+            pins.Add(OpenNativePath(registration, directory: true));
+            var history = Path.Combine(registration, "notices");
+            Directory.CreateDirectory(history);
+            pins.Add(OpenNativePath(history, directory: true));
+            var target = Path.Combine(history, $"n-{notice.NoticeId}.json");
+            InstallNativeBytes(target, notice.Bytes, immutable: true);
+            RequireNativeBytes(target, notice.Bytes);
+            InstallNativeBytes(latest, latestBytes, immutable: false);
+            RequireNativeBytes(latest, latestBytes);
+        }
+        catch (IOException) { throw NativeAdmissionErrors.Error(NativeAdmissionErrors.NoticeIo); }
+        catch (UnauthorizedAccessException) { throw NativeAdmissionErrors.Error(NativeAdmissionErrors.NoticeIo); }
+        finally { foreach (var pin in pins) pin.Dispose(); }
+    }
+
+    private static void InstallNativeBytes(string target, byte[] bytes, bool immutable)
+    {
+        if (File.Exists(target))
+        {
+            if (immutable) { RequireNativeBytes(target, bytes); return; }
+            using var existing = OpenNativePath(target, directory: false);
+        }
+        var temporary = Path.Combine(Path.GetDirectoryName(target)!, $".notice-{Guid.NewGuid():N}.tmp");
+        try
+        {
+            using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            {
+                stream.Write(bytes);
+                stream.Flush(flushToDisk: true);
+            }
+            try { File.Move(temporary, target, overwrite: !immutable); }
+            catch (IOException) when (File.Exists(target)) { RequireNativeBytes(target, bytes); }
+            catch (UnauthorizedAccessException) when (File.Exists(target)) { RequireNativeBytes(target, bytes); }
+        }
+        finally { if (File.Exists(temporary)) File.Delete(temporary); }
+    }
+
+    private static void RequireNativeBytes(string target, byte[] expected)
+    {
+        using var handle = OpenNativePath(target, directory: false);
+        using var stream = new FileStream(handle, FileAccess.Read);
+        if (stream.Length != expected.Length) throw NativeAdmissionErrors.Error(NativeAdmissionErrors.NoticeConflict);
+        var actual = new byte[expected.Length];
+        stream.ReadExactly(actual);
+        if (!actual.AsSpan().SequenceEqual(expected)
+            || NativeAdmissionCodec.Digest(actual) != NativeAdmissionCodec.Digest(expected))
+            throw NativeAdmissionErrors.Error(NativeAdmissionErrors.NoticeConflict);
+    }
+
+    private static SafeFileHandle OpenNativePath(string path, bool directory)
+    {
+        // OPEN_REPARSE_POINT never follows the final component. Ancestors are already pinned.
+        // Directories omit FILE_SHARE_DELETE, preventing renames while publication is in progress.
+        var handle = CreateFile(path, directory ? 0u : 0x80000000u, directory ? 3u : 7u,
+            IntPtr.Zero, 3, 0x02200000, IntPtr.Zero);
+        if (handle.IsInvalid)
+        {
+            handle.Dispose();
+            throw NativeAdmissionErrors.Error(NativeAdmissionErrors.NoticeIo);
+        }
+        if (!GetFileInformationByHandleEx(handle, 9, out var info, 8)
+            || (info.Attributes & 0x400) != 0 || (directory && (info.Attributes & 0x10) == 0))
+        {
+            handle.Dispose();
+            throw NativeAdmissionErrors.Error(NativeAdmissionErrors.ContextMismatch);
+        }
+        return handle;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct AttributeTagInformation { internal uint Attributes, ReparseTag; }
+
+    [DllImport("kernel32.dll", EntryPoint = "CreateFileW", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern SafeFileHandle CreateFile(string path, uint access, uint share,
+        IntPtr security, uint creation, uint flags, IntPtr template);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetFileInformationByHandleEx(
+        SafeFileHandle handle, int informationClass, out AttributeTagInformation information, uint size);
+
     /// <summary>The subdirectory of the coordination log that carries registration notices.</summary>
     public const string DirectoryName = "registration";
 

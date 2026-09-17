@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="3e23e3d3-5693-4021-b296-9ec99815e4d1" name="malla@TIMMALLSTRIX 2026-09-17 07:56:20" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-17T07:56:20.6290030-07:00" queuing="2026-09-17T07:56:20.6290032-07:00" start="2026-09-17T07:56:19.1520944-07:00" finish="2026-09-17T07:56:20.7517616-07:00" />
+  <TestSettings name="default" id="f2c9f70b-02b7-4f19-a92b-d8a180489dd6">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-17_07_56_20" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="90bba8f9-07c9-46f1-bebb-215443d7036f" testId="6110639f-e776-7c28-8b7d-8cdcfaf35b6c" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;C:\\private\\CON&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0150170" startTime="2026-09-17T07:56:19.8681995-07:00" endTime="2026-09-17T07:56:19.8831875-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="90bba8f9-07c9-46f1-bebb-215443d7036f" />
+    <UnitTestResult executionId="a5679a9a-43ab-4c3b-893a-4fb5d3c1b96d" testId="16a27ac5-5e25-e2a0-9aaf-1e6e83848e2f" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FullGlobalQuota_ActualPublicationReleasesCapacity" computerName="TIMMALLSTRIX" duration="00:00:00.6589130" startTime="2026-09-17T07:56:19.9249330-07:00" endTime="2026-09-17T07:56:20.5838906-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a5679a9a-43ab-4c3b-893a-4fb5d3c1b96d" />
+    <UnitTestResult executionId="04e1a395-c2dd-4ad1-9f59-5162c2877c5a" testId="6ece8969-ad5e-d820-a8c4-744a30deff58" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FileSucceededDatabaseAckFailed_ReopensAndReconciles" computerName="TIMMALLSTRIX" duration="00:00:00.0313575" startTime="2026-09-17T07:56:20.6153177-07:00" endTime="2026-09-17T07:56:20.6463852-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="04e1a395-c2dd-4ad1-9f59-5162c2877c5a" />
+    <UnitTestResult executionId="88b892a9-4718-48ba-bbd9-3e13e245b0f2" testId="603049b5-11b5-f58d-216f-b477b0b8378c" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;C:\\private\\..\\escape&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0160888" startTime="2026-09-17T07:56:19.8205822-07:00" endTime="2026-09-17T07:56:19.8362802-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="88b892a9-4718-48ba-bbd9-3e13e245b0f2" />
+    <UnitTestResult executionId="555791ac-2653-43fb-816a-f4975e1e2a9a" testId="6c48084a-2e10-fe52-5cd1-ca7ab6fe1daa" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_OlderRetryAfterNewer_DerivedLatestDoesNotRegress" computerName="TIMMALLSTRIX" duration="00:00:00.0309782" startTime="2026-09-17T07:56:20.6013585-07:00" endTime="2026-09-17T07:56:20.6150134-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="555791ac-2653-43fb-816a-f4975e1e2a9a" />
+    <UnitTestResult executionId="533ac059-56c3-4d8f-a5d7-8bd171e49a49" testId="baf69ccb-1d64-9cb3-66f6-9cc7d51d8fc7" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite" computerName="TIMMALLSTRIX" duration="00:00:00.0197001" startTime="2026-09-17T07:56:19.8057391-07:00" endTime="2026-09-17T07:56:19.8201563-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="533ac059-56c3-4d8f-a5d7-8bd171e49a49" />
+    <UnitTestResult executionId="efd7232c-ce99-426a-8780-70d6aeb61241" testId="06c5bee7-1be4-d304-c10e-e78543b462c2" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_DeniedThenRetried_PreservesFrozenAdmissionAndBytes" computerName="TIMMALLSTRIX" duration="00:00:00.1009703" startTime="2026-09-17T07:56:19.6953353-07:00" endTime="2026-09-17T07:56:19.8004338-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="efd7232c-ce99-426a-8780-70d6aeb61241" />
+    <UnitTestResult executionId="577b2291-4685-4b79-8e21-236036c5977d" testId="9a0ef95b-4535-1e0e-d80b-9d3dd14ec023" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_PoisonFirstCandidate_FairBoundedBatchReachesNext" computerName="TIMMALLSTRIX" duration="00:00:00.0265740" startTime="2026-09-17T07:56:20.6850230-07:00" endTime="2026-09-17T07:56:20.7093169-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="577b2291-4685-4b79-8e21-236036c5977d" />
+    <UnitTestResult executionId="d7ea9f8b-a928-4e51-991b-ded86fe2350f" testId="d176f7a0-60fd-421f-fc91-b0b881583c40" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;\\\\server\\private&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0159340" startTime="2026-09-17T07:56:19.8522111-07:00" endTime="2026-09-17T07:56:19.8681307-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7ea9f8b-a928-4e51-991b-ded86fe2350f" />
+    <UnitTestResult executionId="8d262647-4f47-4dc7-91a5-0c654465d33c" testId="45006253-792a-6894-574b-216d9e866df3" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;\\\\?\\C:\\private&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0164376" startTime="2026-09-17T07:56:19.8832442-07:00" endTime="2026-09-17T07:56:19.8997085-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8d262647-4f47-4dc7-91a5-0c654465d33c" />
+    <UnitTestResult executionId="0f1f4ef6-52bc-49f3-a13e-f10bc62265b5" testId="7790004a-a851-5418-4014-64cf480f0c5a" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps" computerName="TIMMALLSTRIX" duration="00:00:00.0288059" startTime="2026-09-17T07:56:20.6465090-07:00" endTime="2026-09-17T07:56:20.6821207-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0f1f4ef6-52bc-49f3-a13e-f10bc62265b5">
+      <Output>
+        <ErrorInfo>
+          <Message>AiDe.Core.Watcher.WatcherException : COORD_NOTICE_IO</Message>
+          <StackTrace>   at AiDe.Core.Watcher.RegistrationPublisher.PublishNative(NativeNoticeDelivery notice, Byte[] latestBytes) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs:line 168&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.&lt;&gt;c__DisplayClass5_0.&lt;Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps&gt;b__1() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 131&#xD;
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 130&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d33a1893-7e43-4696-b6b6-fc88427c5809" testId="062e8fdc-222c-c032-4a31-eb87a75ec11a" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;C:\\private\\.git\\escape&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0158358" startTime="2026-09-17T07:56:19.8363378-07:00" endTime="2026-09-17T07:56:19.8521530-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d33a1893-7e43-4696-b6b6-fc88427c5809" />
+    <UnitTestResult executionId="d94c8a70-5c61-4f6d-9531-73f3e3de5fec" testId="ee533909-5573-44a9-4e9c-9f79d48532d9" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_CancelledAfterAdmission_RetainsObligationAndEmitsPrivateSafeCounts" computerName="TIMMALLSTRIX" duration="00:00:00.0250742" startTime="2026-09-17T07:56:19.8998152-07:00" endTime="2026-09-17T07:56:19.9248407-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d94c8a70-5c61-4f6d-9531-73f3e3de5fec" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;C:\\private\\..\\escape&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="603049b5-11b5-f58d-216f-b477b0b8378c">
+      <Execution id="88b892a9-4718-48ba-bbd9-3e13e245b0f2" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;C:\\private\\CON&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6110639f-e776-7c28-8b7d-8cdcfaf35b6c">
+      <Execution id="90bba8f9-07c9-46f1-bebb-215443d7036f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;\\\\?\\C:\\private&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="45006253-792a-6894-574b-216d9e866df3">
+      <Execution id="8d262647-4f47-4dc7-91a5-0c654465d33c" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="baf69ccb-1d64-9cb3-66f6-9cc7d51d8fc7">
+      <Execution id="533ac059-56c3-4d8f-a5d7-8bd171e49a49" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_CancelledAfterAdmission_RetainsObligationAndEmitsPrivateSafeCounts" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="ee533909-5573-44a9-4e9c-9f79d48532d9">
+      <Execution id="d94c8a70-5c61-4f6d-9531-73f3e3de5fec" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_CancelledAfterAdmission_RetainsObligationAndEmitsPrivateSafeCounts" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FileSucceededDatabaseAckFailed_ReopensAndReconciles" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6ece8969-ad5e-d820-a8c4-744a30deff58">
+      <Execution id="04e1a395-c2dd-4ad1-9f59-5162c2877c5a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_FileSucceededDatabaseAckFailed_ReopensAndReconciles" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="7790004a-a851-5418-4014-64cf480f0c5a">
+      <Execution id="0f1f4ef6-52bc-49f3-a13e-f10bc62265b5" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_OlderRetryAfterNewer_DerivedLatestDoesNotRegress" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6c48084a-2e10-fe52-5cd1-ca7ab6fe1daa">
+      <Execution id="555791ac-2653-43fb-816a-f4975e1e2a9a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_OlderRetryAfterNewer_DerivedLatestDoesNotRegress" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;C:\\private\\.git\\escape&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="062e8fdc-222c-c032-4a31-eb87a75ec11a">
+      <Execution id="d33a1893-7e43-4696-b6b6-fc88427c5809" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_PoisonFirstCandidate_FairBoundedBatchReachesNext" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="9a0ef95b-4535-1e0e-d80b-9d3dd14ec023">
+      <Execution id="577b2291-4685-4b79-8e21-236036c5977d" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_PoisonFirstCandidate_FairBoundedBatchReachesNext" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;\\\\server\\private&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d176f7a0-60fd-421f-fc91-b0b881583c40">
+      <Execution id="d7ea9f8b-a928-4e51-991b-ded86fe2350f" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FullGlobalQuota_ActualPublicationReleasesCapacity" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="16a27ac5-5e25-e2a0-9aaf-1e6e83848e2f">
+      <Execution id="a5679a9a-43ab-4c3b-893a-4fb5d3c1b96d" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_FullGlobalQuota_ActualPublicationReleasesCapacity" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_DeniedThenRetried_PreservesFrozenAdmissionAndBytes" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="06c5bee7-1be4-d304-c10e-e78543b462c2">
+      <Execution id="efd7232c-ce99-426a-8780-70d6aeb61241" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_DeniedThenRetried_PreservesFrozenAdmissionAndBytes" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="6110639f-e776-7c28-8b7d-8cdcfaf35b6c" executionId="90bba8f9-07c9-46f1-bebb-215443d7036f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="16a27ac5-5e25-e2a0-9aaf-1e6e83848e2f" executionId="a5679a9a-43ab-4c3b-893a-4fb5d3c1b96d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6ece8969-ad5e-d820-a8c4-744a30deff58" executionId="04e1a395-c2dd-4ad1-9f59-5162c2877c5a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="603049b5-11b5-f58d-216f-b477b0b8378c" executionId="88b892a9-4718-48ba-bbd9-3e13e245b0f2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6c48084a-2e10-fe52-5cd1-ca7ab6fe1daa" executionId="555791ac-2653-43fb-816a-f4975e1e2a9a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="baf69ccb-1d64-9cb3-66f6-9cc7d51d8fc7" executionId="533ac059-56c3-4d8f-a5d7-8bd171e49a49" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="06c5bee7-1be4-d304-c10e-e78543b462c2" executionId="efd7232c-ce99-426a-8780-70d6aeb61241" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9a0ef95b-4535-1e0e-d80b-9d3dd14ec023" executionId="577b2291-4685-4b79-8e21-236036c5977d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d176f7a0-60fd-421f-fc91-b0b881583c40" executionId="d7ea9f8b-a928-4e51-991b-ded86fe2350f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="45006253-792a-6894-574b-216d9e866df3" executionId="8d262647-4f47-4dc7-91a5-0c654465d33c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7790004a-a851-5418-4014-64cf480f0c5a" executionId="0f1f4ef6-52bc-49f3-a13e-f10bc62265b5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="062e8fdc-222c-c032-4a31-eb87a75ec11a" executionId="d33a1893-7e43-4696-b6b6-fc88427c5809" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ee533909-5573-44a9-4e9c-9f79d48532d9" executionId="d94c8a70-5c61-4f6d-9531-73f3e3de5fec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="13" executed="13" passed="12" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.28]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:01.28]       AiDe.Core.Watcher.WatcherException : COORD_NOTICE_IO&#xD;
+[xUnit.net 00:00:01.28]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.28]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs(168,0): at AiDe.Core.Watcher.RegistrationPublisher.PublishNative(NativeNoticeDelivery notice, Byte[] latestBytes)&#xD;
+[xUnit.net 00:00:01.28]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(131,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.&lt;&gt;c__DisplayClass5_0.&lt;Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps&gt;b__1()&#xD;
+[xUnit.net 00:00:01.28]            at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+[xUnit.net 00:00:01.28]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.28]            at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+[xUnit.net 00:00:01.28]            at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)&#xD;
+[xUnit.net 00:00:01.28]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.28]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(130,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps()&#xD;
+[xUnit.net 00:00:01.28]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.31]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:56:20.6836787-07:00">
+        <Text>[xUnit.net 00:00:01.28]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,417 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="eb0906ee-71ff-4d4c-967f-3358e0712b26" name="malla@TIMMALLSTRIX 2026-09-17 07:54:17" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-17T07:54:17.2509814-07:00" queuing="2026-09-17T07:54:17.2509819-07:00" start="2026-09-17T07:54:16.2890714-07:00" finish="2026-09-17T07:54:17.3379288-07:00" />
+  <TestSettings name="default" id="e86c5ca6-f048-496e-8eff-9dbfcd523357">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-17_07_54_17" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c02a5949-3c26-40cb-bfde-1da3d15e4412" testId="d176f7a0-60fd-421f-fc91-b0b881583c40" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;\\\\server\\private&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0157676" startTime="2026-09-17T07:54:16.9818893-07:00" endTime="2026-09-17T07:54:16.9974357-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c02a5949-3c26-40cb-bfde-1da3d15e4412">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+                        ↓ (pos 13)&#xD;
+Expected: "COORD_NATIVE_CONTEXT"&#xD;
+Actual:   "COORD_NATIVE_UNAVAILABLE"&#xD;
+                        ↑ (pos 13)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(String root) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 152&#xD;
+   at InvokeStub_NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0067fc3e-310b-4291-9342-0d5c07400e86" testId="062e8fdc-222c-c032-4a31-eb87a75ec11a" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;C:\\private\\.git\\escape&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0169356" startTime="2026-09-17T07:54:16.9647576-07:00" endTime="2026-09-17T07:54:16.9815912-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0067fc3e-310b-4291-9342-0d5c07400e86">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+                        ↓ (pos 13)&#xD;
+Expected: "COORD_NATIVE_CONTEXT"&#xD;
+Actual:   "COORD_NATIVE_UNAVAILABLE"&#xD;
+                        ↑ (pos 13)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(String root) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 152&#xD;
+   at InvokeStub_NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ddb7ffbd-2805-4c6c-af56-a49bbf1c49f1" testId="603049b5-11b5-f58d-216f-b477b0b8378c" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;C:\\private\\..\\escape&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0178905" startTime="2026-09-17T07:54:16.9457251-07:00" endTime="2026-09-17T07:54:16.9644627-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ddb7ffbd-2805-4c6c-af56-a49bbf1c49f1">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+                        ↓ (pos 13)&#xD;
+Expected: "COORD_NATIVE_CONTEXT"&#xD;
+Actual:   "COORD_NATIVE_UNAVAILABLE"&#xD;
+                        ↑ (pos 13)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(String root) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 152&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="90bcc967-1a9c-4fdb-a294-9f97921cc9e2" testId="ee533909-5573-44a9-4e9c-9f79d48532d9" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_CancelledAfterAdmission_RetainsObligationAndEmitsPrivateSafeCounts" computerName="TIMMALLSTRIX" duration="00:00:00.0166345" startTime="2026-09-17T07:54:17.0294481-07:00" endTime="2026-09-17T07:54:17.0459234-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="90bcc967-1a9c-4fdb-a294-9f97921cc9e2">
+      <Output>
+        <ErrorInfo>
+          <Message>AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE</Message>
+          <StackTrace>   at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs:line 25&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_CancelledAfterAdmission_RetainsObligationAndEmitsPrivateSafeCounts() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 174&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="47061130-cb66-4a3b-a9ce-36609fb2f16d" testId="6c48084a-2e10-fe52-5cd1-ca7ab6fe1daa" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_OlderRetryAfterNewer_DerivedLatestDoesNotRegress" computerName="TIMMALLSTRIX" duration="00:00:00.0192155" startTime="2026-09-17T07:54:17.2240734-07:00" endTime="2026-09-17T07:54:17.2270457-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="47061130-cb66-4a3b-a9ce-36609fb2f16d">
+      <Output>
+        <ErrorInfo>
+          <Message>AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE</Message>
+          <StackTrace>   at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs:line 25&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Run(Int32 maximum) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 229&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_OlderRetryAfterNewer_DerivedLatestDoesNotRegress() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 113&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9d774e14-d30b-4a11-b509-a7eaaaaa92ed" testId="6ece8969-ad5e-d820-a8c4-744a30deff58" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FileSucceededDatabaseAckFailed_ReopensAndReconciles" computerName="TIMMALLSTRIX" duration="00:00:00.0139066" startTime="2026-09-17T07:54:17.2274499-07:00" endTime="2026-09-17T07:54:17.2411753-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9d774e14-d30b-4a11-b509-a7eaaaaa92ed">
+      <Output>
+        <ErrorInfo>
+          <Message>Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'synthetic'.</Message>
+          <StackTrace>   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Sql(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 258&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Dispose() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 285&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FileSucceededDatabaseAckFailed_ReopensAndReconciles() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 80&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="02e26df8-f137-4a1a-906b-ee8e2f00f1e1" testId="baf69ccb-1d64-9cb3-66f6-9cc7d51d8fc7" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite" computerName="TIMMALLSTRIX" duration="00:00:00.0189088" startTime="2026-09-17T07:54:16.9334472-07:00" endTime="2026-09-17T07:54:16.9451708-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="02e26df8-f137-4a1a-906b-ee8e2f00f1e1">
+      <Output>
+        <ErrorInfo>
+          <Message>AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE</Message>
+          <StackTrace>   at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs:line 25&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Run(Int32 maximum) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 229&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 45&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3feb0288-01a8-4cf1-984c-b94cb82892d1" testId="9a0ef95b-4535-1e0e-d80b-9d3dd14ec023" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_PoisonFirstCandidate_FairBoundedBatchReachesNext" computerName="TIMMALLSTRIX" duration="00:00:00.0191568" startTime="2026-09-17T07:54:17.2646175-07:00" endTime="2026-09-17T07:54:17.2838907-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3feb0288-01a8-4cf1-984c-b94cb82892d1">
+      <Output>
+        <ErrorInfo>
+          <Message>AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE</Message>
+          <StackTrace>   at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs:line 25&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Run(Int32 maximum) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 229&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_PoisonFirstCandidate_FairBoundedBatchReachesNext() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 193&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f3d0657d-c58a-4ff9-839f-8bc3feb28e2d" testId="16a27ac5-5e25-e2a0-9aaf-1e6e83848e2f" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FullGlobalQuota_ActualPublicationReleasesCapacity" computerName="TIMMALLSTRIX" duration="00:00:00.1616179" startTime="2026-09-17T07:54:17.0461616-07:00" endTime="2026-09-17T07:54:17.2077368-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f3d0657d-c58a-4ff9-839f-8bc3feb28e2d">
+      <Output>
+        <ErrorInfo>
+          <Message>AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE</Message>
+          <StackTrace>   at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs:line 25&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Run(Int32 maximum) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 229&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FullGlobalQuota_ActualPublicationReleasesCapacity() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 92&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ca0f3e2d-b0b5-4baa-a6c8-7537fd7c2ba9" testId="6110639f-e776-7c28-8b7d-8cdcfaf35b6c" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;C:\\private\\CON&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0157101" startTime="2026-09-17T07:54:16.9976736-07:00" endTime="2026-09-17T07:54:17.0132036-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ca0f3e2d-b0b5-4baa-a6c8-7537fd7c2ba9">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+                        ↓ (pos 13)&#xD;
+Expected: "COORD_NATIVE_CONTEXT"&#xD;
+Actual:   "COORD_NATIVE_UNAVAILABLE"&#xD;
+                        ↑ (pos 13)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(String root) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 152&#xD;
+   at InvokeStub_NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="259f6f10-5e8b-4708-b7e1-6839a9424325" testId="7790004a-a851-5418-4014-64cf480f0c5a" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps" computerName="TIMMALLSTRIX" duration="00:00:00.0205263" startTime="2026-09-17T07:54:17.2416796-07:00" endTime="2026-09-17T07:54:17.2638953-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="259f6f10-5e8b-4708-b7e1-6839a9424325">
+      <Output>
+        <ErrorInfo>
+          <Message>AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE</Message>
+          <StackTrace>   at AiDe.Core.Watcher.RegistrationPublisher.PublishNative(NativeNoticeDelivery notice, Byte[] latestBytes) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs:line 61&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.&lt;&gt;c__DisplayClass5_0.&lt;Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps&gt;b__1() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 131&#xD;
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 130&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e3bb63f1-cae8-4005-8790-d2c10329c8e4" testId="45006253-792a-6894-574b-216d9e866df3" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;\\\\?\\C:\\private&quot;)" computerName="TIMMALLSTRIX" duration="00:00:00.0159085" startTime="2026-09-17T07:54:17.0134231-07:00" endTime="2026-09-17T07:54:17.0291943-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e3bb63f1-cae8-4005-8790-d2c10329c8e4">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+                        ↓ (pos 13)&#xD;
+Expected: "COORD_NATIVE_CONTEXT"&#xD;
+Actual:   "COORD_NATIVE_UNAVAILABLE"&#xD;
+                        ↑ (pos 13)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(String root) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 152&#xD;
+   at InvokeStub_NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="12abcca1-dc18-4122-b855-283e665f156a" testId="06c5bee7-1be4-d304-c10e-e78543b462c2" testName="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_DeniedThenRetried_PreservesFrozenAdmissionAndBytes" computerName="TIMMALLSTRIX" duration="00:00:00.0810597" startTime="2026-09-17T07:54:16.8378619-07:00" endTime="2026-09-17T07:54:16.9261799-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="12abcca1-dc18-4122-b855-283e665f156a">
+      <Output>
+        <ErrorInfo>
+          <Message>AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE</Message>
+          <StackTrace>   at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs:line 25&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Run(Int32 maximum) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 229&#xD;
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_DeniedThenRetried_PreservesFrozenAdmissionAndBytes() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 22&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;C:\\private\\..\\escape&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="603049b5-11b5-f58d-216f-b477b0b8378c">
+      <Execution id="ddb7ffbd-2805-4c6c-af56-a49bbf1c49f1" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;C:\\private\\CON&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6110639f-e776-7c28-8b7d-8cdcfaf35b6c">
+      <Execution id="ca0f3e2d-b0b5-4baa-a6c8-7537fd7c2ba9" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;\\\\?\\C:\\private&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="45006253-792a-6894-574b-216d9e866df3">
+      <Execution id="e3bb63f1-cae8-4005-8790-d2c10329c8e4" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="baf69ccb-1d64-9cb3-66f6-9cc7d51d8fc7">
+      <Execution id="02e26df8-f137-4a1a-906b-ee8e2f00f1e1" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_CancelledAfterAdmission_RetainsObligationAndEmitsPrivateSafeCounts" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="ee533909-5573-44a9-4e9c-9f79d48532d9">
+      <Execution id="90bcc967-1a9c-4fdb-a294-9f97921cc9e2" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_CancelledAfterAdmission_RetainsObligationAndEmitsPrivateSafeCounts" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FileSucceededDatabaseAckFailed_ReopensAndReconciles" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6ece8969-ad5e-d820-a8c4-744a30deff58">
+      <Execution id="9d774e14-d30b-4a11-b509-a7eaaaaa92ed" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_FileSucceededDatabaseAckFailed_ReopensAndReconciles" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="7790004a-a851-5418-4014-64cf480f0c5a">
+      <Execution id="259f6f10-5e8b-4708-b7e1-6839a9424325" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_OlderRetryAfterNewer_DerivedLatestDoesNotRegress" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="6c48084a-2e10-fe52-5cd1-ca7ab6fe1daa">
+      <Execution id="47061130-cb66-4a3b-a9ce-36609fb2f16d" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_OlderRetryAfterNewer_DerivedLatestDoesNotRegress" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;C:\\private\\.git\\escape&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="062e8fdc-222c-c032-4a31-eb87a75ec11a">
+      <Execution id="0067fc3e-310b-4291-9342-0d5c07400e86" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_PoisonFirstCandidate_FairBoundedBatchReachesNext" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="9a0ef95b-4535-1e0e-d80b-9d3dd14ec023">
+      <Execution id="3feb0288-01a8-4cf1-984c-b94cb82892d1" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_PoisonFirstCandidate_FairBoundedBatchReachesNext" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: &quot;\\\\server\\private&quot;)" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="d176f7a0-60fd-421f-fc91-b0b881583c40">
+      <Execution id="c02a5949-3c26-40cb-bfde-1da3d15e4412" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FullGlobalQuota_ActualPublicationReleasesCapacity" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="16a27ac5-5e25-e2a0-9aaf-1e6e83848e2f">
+      <Execution id="f3d0657d-c58a-4ff9-839f-8bc3feb28e2d" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_FullGlobalQuota_ActualPublicationReleasesCapacity" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_DeniedThenRetried_PreservesFrozenAdmissionAndBytes" storage="c:\projects\ai-de-feature-xh-p2-projection\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="06c5bee7-1be4-d304-c10e-e78543b462c2">
+      <Execution id="12abcca1-dc18-4122-b855-283e665f156a" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.NativeNoticePublicationTests" name="Publish_DeniedThenRetried_PreservesFrozenAdmissionAndBytes" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d176f7a0-60fd-421f-fc91-b0b881583c40" executionId="c02a5949-3c26-40cb-bfde-1da3d15e4412" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="062e8fdc-222c-c032-4a31-eb87a75ec11a" executionId="0067fc3e-310b-4291-9342-0d5c07400e86" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="603049b5-11b5-f58d-216f-b477b0b8378c" executionId="ddb7ffbd-2805-4c6c-af56-a49bbf1c49f1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ee533909-5573-44a9-4e9c-9f79d48532d9" executionId="90bcc967-1a9c-4fdb-a294-9f97921cc9e2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6c48084a-2e10-fe52-5cd1-ca7ab6fe1daa" executionId="47061130-cb66-4a3b-a9ce-36609fb2f16d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6ece8969-ad5e-d820-a8c4-744a30deff58" executionId="9d774e14-d30b-4a11-b509-a7eaaaaa92ed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="baf69ccb-1d64-9cb3-66f6-9cc7d51d8fc7" executionId="02e26df8-f137-4a1a-906b-ee8e2f00f1e1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9a0ef95b-4535-1e0e-d80b-9d3dd14ec023" executionId="3feb0288-01a8-4cf1-984c-b94cb82892d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="16a27ac5-5e25-e2a0-9aaf-1e6e83848e2f" executionId="f3d0657d-c58a-4ff9-839f-8bc3feb28e2d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6110639f-e776-7c28-8b7d-8cdcfaf35b6c" executionId="ca0f3e2d-b0b5-4baa-a6c8-7537fd7c2ba9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7790004a-a851-5418-4014-64cf480f0c5a" executionId="259f6f10-5e8b-4708-b7e1-6839a9424325" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="45006253-792a-6894-574b-216d9e866df3" executionId="e3bb63f1-cae8-4005-8790-d2c10329c8e4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="06c5bee7-1be4-d304-c10e-e78543b462c2" executionId="12abcca1-dc18-4122-b855-283e665f156a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="13" executed="13" passed="0" failed="13" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.28]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.38]       AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE&#xD;
+[xUnit.net 00:00:00.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs(25,0): at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(229,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Run(Int32 maximum)&#xD;
+[xUnit.net 00:00:00.38]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(22,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_DeniedThenRetried_PreservesFrozenAdmissionAndBytes()&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.38]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.40]       AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE&#xD;
+[xUnit.net 00:00:00.40]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.40]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs(25,0): at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.40]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(229,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Run(Int32 maximum)&#xD;
+[xUnit.net 00:00:00.40]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(45,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite()&#xD;
+[xUnit.net 00:00:00.40]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.40]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.42]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.42]                               ↓ (pos 13)&#xD;
+[xUnit.net 00:00:00.42]       Expected: "COORD_NATIVE_CONTEXT"&#xD;
+[xUnit.net 00:00:00.42]       Actual:   "COORD_NATIVE_UNAVAILABLE"&#xD;
+[xUnit.net 00:00:00.42]                               ↑ (pos 13)&#xD;
+[xUnit.net 00:00:00.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.42]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(152,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(String root)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.43]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.43]                               ↓ (pos 13)&#xD;
+[xUnit.net 00:00:00.43]       Expected: "COORD_NATIVE_CONTEXT"&#xD;
+[xUnit.net 00:00:00.43]       Actual:   "COORD_NATIVE_UNAVAILABLE"&#xD;
+[xUnit.net 00:00:00.43]                               ↑ (pos 13)&#xD;
+[xUnit.net 00:00:00.43]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.43]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(152,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(String root)&#xD;
+[xUnit.net 00:00:00.43]            at InvokeStub_NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.43]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.45]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.45]                               ↓ (pos 13)&#xD;
+[xUnit.net 00:00:00.45]       Expected: "COORD_NATIVE_CONTEXT"&#xD;
+[xUnit.net 00:00:00.45]       Actual:   "COORD_NATIVE_UNAVAILABLE"&#xD;
+[xUnit.net 00:00:00.45]                               ↑ (pos 13)&#xD;
+[xUnit.net 00:00:00.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.45]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(152,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(String root)&#xD;
+[xUnit.net 00:00:00.45]            at InvokeStub_NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.45]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.46]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.46]                               ↓ (pos 13)&#xD;
+[xUnit.net 00:00:00.46]       Expected: "COORD_NATIVE_CONTEXT"&#xD;
+[xUnit.net 00:00:00.46]       Actual:   "COORD_NATIVE_UNAVAILABLE"&#xD;
+[xUnit.net 00:00:00.46]                               ↑ (pos 13)&#xD;
+[xUnit.net 00:00:00.46]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.46]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(152,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(String root)&#xD;
+[xUnit.net 00:00:00.46]            at InvokeStub_NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.46]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.48]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:00.48]                               ↓ (pos 13)&#xD;
+[xUnit.net 00:00:00.48]       Expected: "COORD_NATIVE_CONTEXT"&#xD;
+[xUnit.net 00:00:00.48]       Actual:   "COORD_NATIVE_UNAVAILABLE"&#xD;
+[xUnit.net 00:00:00.48]                               ↑ (pos 13)&#xD;
+[xUnit.net 00:00:00.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.48]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(152,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(String root)&#xD;
+[xUnit.net 00:00:00.48]            at InvokeStub_NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.48]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.50]       AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE&#xD;
+[xUnit.net 00:00:00.50]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.50]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs(25,0): at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.50]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(174,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_CancelledAfterAdmission_RetainsObligationAndEmitsPrivateSafeCounts()&#xD;
+[xUnit.net 00:00:00.50]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.50]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.66]       AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE&#xD;
+[xUnit.net 00:00:00.66]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.66]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs(25,0): at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.66]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(229,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Run(Int32 maximum)&#xD;
+[xUnit.net 00:00:00.66]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(92,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FullGlobalQuota_ActualPublicationReleasesCapacity()&#xD;
+[xUnit.net 00:00:00.66]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.66]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.68]       AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE&#xD;
+[xUnit.net 00:00:00.68]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.68]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs(25,0): at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.68]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(229,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Run(Int32 maximum)&#xD;
+[xUnit.net 00:00:00.68]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(113,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_OlderRetryAfterNewer_DerivedLatestDoesNotRegress()&#xD;
+[xUnit.net 00:00:00.68]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.68]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.69]       Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'synthetic'.&#xD;
+[xUnit.net 00:00:00.69]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.69]            at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)&#xD;
+[xUnit.net 00:00:00.69]            at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()&#xD;
+[xUnit.net 00:00:00.69]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)&#xD;
+[xUnit.net 00:00:00.69]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()&#xD;
+[xUnit.net 00:00:00.69]            at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()&#xD;
+[xUnit.net 00:00:00.69]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(258,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Sql(String sql)&#xD;
+[xUnit.net 00:00:00.69]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(285,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Dispose()&#xD;
+[xUnit.net 00:00:00.69]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(80,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FileSucceededDatabaseAckFailed_ReopensAndReconciles()&#xD;
+[xUnit.net 00:00:00.69]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.69]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.71]       AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE&#xD;
+[xUnit.net 00:00:00.71]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.71]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs(61,0): at AiDe.Core.Watcher.RegistrationPublisher.PublishNative(NativeNoticeDelivery notice, Byte[] latestBytes)&#xD;
+[xUnit.net 00:00:00.71]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(131,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.&lt;&gt;c__DisplayClass5_0.&lt;Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps&gt;b__1()&#xD;
+[xUnit.net 00:00:00.71]            at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+[xUnit.net 00:00:00.71]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.71]            at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+[xUnit.net 00:00:00.71]            at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)&#xD;
+[xUnit.net 00:00:00.71]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.71]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(130,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps()&#xD;
+[xUnit.net 00:00:00.71]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.75]       AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE&#xD;
+[xUnit.net 00:00:00.75]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.75]         C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs(25,0): at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.75]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(229,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Run(Int32 maximum)&#xD;
+[xUnit.net 00:00:00.75]         C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs(193,0): at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_PoisonFirstCandidate_FairBoundedBatchReachesNext()&#xD;
+[xUnit.net 00:00:00.75]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.75]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.75]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:54:16.9277044-07:00">
+        <Text>[xUnit.net 00:00:00.38]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_DeniedThenRetried_PreservesFrozenAdmissionAndBytes [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:54:16.9454148-07:00">
+        <Text>[xUnit.net 00:00:00.40]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:54:16.9648602-07:00">
+        <Text>[xUnit.net 00:00:00.42]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: "C:\\private\\..\\escape") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:54:16.9818805-07:00">
+        <Text>[xUnit.net 00:00:00.43]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: "C:\\private\\.git\\escape") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:54:16.9976005-07:00">
+        <Text>[xUnit.net 00:00:00.45]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: "\\\\server\\private") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:54:17.0133767-07:00">
+        <Text>[xUnit.net 00:00:00.46]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: "C:\\private\\CON") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:54:17.0294869-07:00">
+        <Text>[xUnit.net 00:00:00.48]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: "\\\\?\\C:\\private") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:54:17.0461105-07:00">
+        <Text>[xUnit.net 00:00:00.50]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_CancelledAfterAdmission_RetainsObligationAndEmitsPrivateSafeCounts [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:54:17.2080527-07:00">
+        <Text>[xUnit.net 00:00:00.66]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FullGlobalQuota_ActualPublicationReleasesCapacity [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:54:17.2547603-07:00">
+        <Text>[xUnit.net 00:00:00.68]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_OlderRetryAfterNewer_DerivedLatestDoesNotRegress [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:54:17.2547800-07:00">
+        <Text>[xUnit.net 00:00:00.69]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FileSucceededDatabaseAckFailed_ReopensAndReconciles [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:54:17.2641468-07:00">
+        <Text>[xUnit.net 00:00:00.71]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-17T07:54:17.2964822-07:00">
+        <Text>[xUnit.net 00:00:00.75]     AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_PoisonFirstCandidate_FairBoundedBatchReachesNext [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

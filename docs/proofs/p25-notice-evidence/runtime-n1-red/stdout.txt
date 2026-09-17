@@ -1,0 +1,147 @@
+
+  AiDe.Core -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Mcp -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+  Failed AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_DeniedThenRetried_PreservesFrozenAdmissionAndBytes [81 ms]
+  Error Message:
+   AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE
+  Stack Trace:
+     at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs:line 25
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Run(Int32 maximum) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 229
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_DeniedThenRetried_PreservesFrozenAdmissionAndBytes() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 22
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite [18 ms]
+  Error Message:
+   AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE
+  Stack Trace:
+     at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs:line 25
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Run(Int32 maximum) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 229
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_SameIdDifferentBytes_ConflictsWithoutOverwrite() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 45
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: "C:\\private\\..\\escape") [17 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                        ↓ (pos 13)
+Expected: "COORD_NATIVE_CONTEXT"
+Actual:   "COORD_NATIVE_UNAVAILABLE"
+                        ↑ (pos 13)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(String root) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 152
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: "C:\\private\\.git\\escape") [16 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                        ↓ (pos 13)
+Expected: "COORD_NATIVE_CONTEXT"
+Actual:   "COORD_NATIVE_UNAVAILABLE"
+                        ↑ (pos 13)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(String root) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 152
+   at InvokeStub_NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: "\\\\server\\private") [15 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                        ↓ (pos 13)
+Expected: "COORD_NATIVE_CONTEXT"
+Actual:   "COORD_NATIVE_UNAVAILABLE"
+                        ↑ (pos 13)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(String root) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 152
+   at InvokeStub_NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: "C:\\private\\CON") [15 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                        ↓ (pos 13)
+Expected: "COORD_NATIVE_CONTEXT"
+Actual:   "COORD_NATIVE_UNAVAILABLE"
+                        ↑ (pos 13)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(String root) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 152
+   at InvokeStub_NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(root: "\\\\?\\C:\\private") [15 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                        ↓ (pos 13)
+Expected: "COORD_NATIVE_CONTEXT"
+Actual:   "COORD_NATIVE_UNAVAILABLE"
+                        ↑ (pos 13)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(String root) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 152
+   at InvokeStub_NativeNoticePublicationTests.Publish_InvalidRoot_RejectsBeforeFilesWithoutPrivateErrors(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_CancelledAfterAdmission_RetainsObligationAndEmitsPrivateSafeCounts [16 ms]
+  Error Message:
+   AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE
+  Stack Trace:
+     at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs:line 25
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_CancelledAfterAdmission_RetainsObligationAndEmitsPrivateSafeCounts() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 174
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FullGlobalQuota_ActualPublicationReleasesCapacity [161 ms]
+  Error Message:
+   AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE
+  Stack Trace:
+     at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs:line 25
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Run(Int32 maximum) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 229
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FullGlobalQuota_ActualPublicationReleasesCapacity() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 92
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_OlderRetryAfterNewer_DerivedLatestDoesNotRegress [19 ms]
+  Error Message:
+   AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE
+  Stack Trace:
+     at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs:line 25
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Run(Int32 maximum) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 229
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_OlderRetryAfterNewer_DerivedLatestDoesNotRegress() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 113
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FileSucceededDatabaseAckFailed_ReopensAndReconciles [13 ms]
+  Error Message:
+   Microsoft.Data.Sqlite.SqliteException : SQLite Error 19: 'synthetic'.
+  Stack Trace:
+     at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Sql(String sql) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 258
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Dispose() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 285
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_FileSucceededDatabaseAckFailed_ReopensAndReconciles() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 80
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps [20 ms]
+  Error Message:
+   AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE
+  Stack Trace:
+     at AiDe.Core.Watcher.RegistrationPublisher.PublishNative(NativeNoticeDelivery notice, Byte[] latestBytes) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs:line 61
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.<>c__DisplayClass5_0.<Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps>b__1() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 131
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_ConcurrentIdenticalAttempts_OneImmutableFileNoSharedTemps() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 130
+--- End of stack trace from previous location ---
+  Failed AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_PoisonFirstCandidate_FairBoundedBatchReachesNext [19 ms]
+  Error Message:
+   AiDe.Core.Watcher.WatcherException : COORD_NATIVE_UNAVAILABLE
+  Stack Trace:
+     at AiDe.Core.Watcher.NativeNoticeWorker.Run(Int32 maximum, Int64 now, CancellationToken cancellationToken) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\RegistrationPublisher.cs:line 25
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Fixture.Run(Int32 maximum) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 229
+   at AiDe.Core.Tests.Watcher.NativeNoticePublicationTests.Publish_PoisonFirstCandidate_FairBoundedBatchReachesNext() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeNoticePublicationTests.cs:line 193
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+Results File: C:\Projects\ai-de-feature-xh-p2-projection\docs\proofs\p25-notice-evidence\runtime-n1-red\notice.trx
+
+Failed!  - Failed:    13, Passed:     0, Skipped:     0, Total:    13, Duration: 446 ms - AiDe.Core.Tests.dll (net10.0)
