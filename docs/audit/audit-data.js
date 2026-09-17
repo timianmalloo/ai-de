@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T22:30:16Z",
+  "generated": "2026-09-17T14:35:26Z",
   "audit": [
     {
       "actor": null,
@@ -19844,6 +19844,122 @@ window.AUDIT_DATA = {
       "summary": "Verified code/proof publication; identified twelve original Owner/reviewer audit rows still local and requested an audit-only serialized Core handoff.",
       "tags": [],
       "tool": null
+    },
+    {
+      "id": "al-01M2QVN1Z6ET9B4ABCJ59JRTC6",
+      "shortname": "r124-isolated-preparation-refused",
+      "datetime": "2026-09-17T14:17:12Z",
+      "session": "codex-atlas-view-spikes-isolated-verification",
+      "prompt": "Prepare and run ONE already-authorized replacement combined E1/E2 coverage in the isolated exact-input worktree; preserve all evidence and do not retry coverage.",
+      "summary": "Interrupted Sol unit stopped11/6 actualtoolcalls. GuessedcoordstorelookupthenwrongAIDEidentitycausedfirstlease refusalbeforepopulation. ActualConductorreadbackcleantreebcf,noartifacts,sessionclaimsnone; workerhandback confirmsno population,wrapper,coverage,dotnetoractiveprocess. OwneradmitsseparateexplicitConductor recovery same tree, notsilentbudgetextension.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Prepare and run one exact-input combined E1/E2 coverage verification.",
+      "done_when": "Exact pins and durable actual coverage result are inspected.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-17T14:10:48Z",
+      "duration_seconds": 384.0,
+      "git": {
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc",
+        "branch": "verify/atlas-view-spikes",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2QVTHK4DRE4QSEW0PHV0XC0",
+      "shortname": "r124-recovery-doctor-debt-stop",
+      "datetime": "2026-09-17T14:20:12Z",
+      "session": "codex-atlas-view-spikes-isolated-verification",
+      "prompt": "Prepare and run ONE already-authorized replacement combined E1/E2 coverage in the isolated exact-input worktree; preserve all evidence and do not retry coverage.",
+      "summary": "Recovery8-callunitpartial beforepopulationorcoverage. Firstauditcallmissingpromptrefusedbeforewrite; correctedargumentunderstrictbefore-onlyresumeguard. Officialdoctorcompletedexit1 reportingregistry11ok/driverseffective/sixregenowed; broadcallerexitguardstoppedpopulation. SeparateOwnerreadcmd_doctor confirmsregendebtincrementsproblemcounterandisnotalonecoverageprohibition. Removeunsupportedblanketedge,preservefulltoolresult/owedobligations,no doctorrerunorprimaryregen. Separate6-call15mincontinuationadmitted; exactonecoverageinvocationstillunused. Rootactualstateaudit-only; worker11/6defectalreadyrecorded.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Prepare and run one exact-input combined E1/E2 coverage verification.",
+      "done_when": "Exact pins and durable actual coverage result are inspected.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-17T14:17:12Z",
+      "duration_seconds": 180.0,
+      "git": {
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc",
+        "branch": "verify/atlas-view-spikes",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2QWDWZ0NWE9PSGJTK35SM53",
+      "shortname": "r124-isolated-combined-compilation-complete",
+      "datetime": "2026-09-17T14:30:46Z",
+      "session": "codex-atlas-view-spikes-isolated-verification",
+      "prompt": "keep going; actively coordinate with the watcher; lets stop blocking so much",
+      "summary": "Bounded sourcecompilation complete: exactbcfbase/nineblobs andwrapper matched, ONEreplacementcaptured28.656s exit0/PID23164;43tracked/19solution/24outside/0exempt,24outsidebuilt. Doesnotbuild19solutionprojects or qualifyruntime/native/main. IndependentSol3calls62.18s CLEARresultcapture/population; finalaggregate3callsCLEAR afterwithdrawnLinuxfindingandcorrectedunsupportedCLIflag; separateAstraOwneracceptscorrectedexpectedcountswithoutnewapprovalgate. OriginalUNKNOWNpreserved. NewtreeisolatesClaudeold-auditrescue; oldtreeuntouched. Solpreparation11/6failedidentity/lookuprecorded, Conductor8callrecovery stoppedonbroaddoctorregendebtguard, separate6callcontinuationcompleted6/6. Doctorregistry/driverseffectivebut6regendebtitemsremainrecorded, no primaryregen. Ninefrozenfilesunchanged, aggregateproofplatform/CIlimitscorrected. Personalproofreview/R108/currentmainreconciliation/publicationremain. Ownauditconservedbythiscandidatecommit; no mainpublication.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": "codex-astra-gate-conductor",
+      "artifacts": [
+        "docs/proof/atlas-view-spikes-combined-verification.md",
+        "docs/proof/atlas-behavior-contract.md",
+        "docs/proof/atlas-architecture-contract.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Capture one combined E1/E2 coverage result for the frozen candidate and hand off its exact evidence.",
+      "done_when": "Exact inputs and actual result are inspected, independent claim review is returned, and candidate/evidence packet is delivered for personal proof review and integration.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-17T14:20:12Z",
+      "duration_seconds": 634.0,
+      "git": {
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc",
+        "branch": "verify/atlas-view-spikes",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2QWPD9PC636HR4SKNBM1SKQ",
+      "shortname": "r124-candidate-graph-provenance-close",
+      "datetime": "2026-09-17T14:35:25Z",
+      "session": "codex-atlas-view-spikes-isolated-verification",
+      "prompt": "keep going; actively coordinate with the watcher; lets stop blocking so much",
+      "summary": "Bounded sourcecompilation complete: exactbcfbase/nineblobs andwrapper matched atONEreplacement28.656s exit0/PID23164;43tracked/19solution/24outside/0exempt,24outsidebuilt. Notfresh19solutionbuild/runtime/native/mainproof. Independentresult/population3calls62.18sCLEAR; aggregate3callsCLEAR afterwithdrawnLinuxfindingandcorrectedCLIflag. Initialdocsgraphfoundtwoabsentbranchdesignlinks. Owneradmittedtwoproofmetadata/provenancecorrection; seven sourceblobsremainbyteexact; originalnineinputmanifestandfinalproofOIDspreserved. IndependentmetadataonecallCLEAR. OriginalUNKNOWNpreserved. OldClaudeauditrescuetreeuntouched. Solprep11/6failure,8callrecoverydoctordebtstop,6/6coveragecontinuationrecorded. Closing8callestimateexceededthroughreviewreworkandgraphfinding, separatereviewedmetadataunitadmitted; no capcomplianceclaim. Sixowedcoordregenitemsretained; own-treeactualderivechecksrequired. Personalproof/R108/currentmain/publicationremain. No sourceedit/buildrerun/mainpublication.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": "codex-astra-gate-conductor",
+      "artifacts": [
+        "docs/proof/atlas-view-spikes-combined-verification.md",
+        "docs/proof/atlas-behavior-contract.md",
+        "docs/proof/atlas-architecture-contract.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Capture one combined E1/E2 coverage result for the frozen candidate and hand off its exact evidence.",
+      "done_when": "Exact inputs and actual result are inspected, independent claim review is returned, and candidate/evidence packet is delivered for personal proof review and integration.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-17T14:33:21Z",
+      "duration_seconds": 124.0,
+      "git": {
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc",
+        "branch": "verify/atlas-view-spikes",
+        "pushed": null
+      }
     }
   ],
   "changes": [

@@ -11219,6 +11219,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "2c0e0bbdcecc72079f6b8a801b7777b95b6c28834d8623bbe6aa2998ecb44925"
     },
     {
+      "id": "proof-atlas-architecture-contract",
+      "path": "docs/proof/atlas-architecture-contract.md",
+      "title": "Atlas E2 carrier and resource identity spike evidence",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "28 repaired Windows contract checks plus three rejected subject faults; deployment equality unresolved.",
+      "tags": [
+        "atlas",
+        "proof",
+        "spike",
+        "domain",
+        "azure"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-view-spikes-combined-verification",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "419e85e36f92392fce795ef4a4a710c592372db5f5af79d2dea1a0305ed90d48"
+    },
+    {
       "id": "proof-pack-phase-1-walking-skeleton",
       "path": "docs/design/phase-1-proof-pack.md",
       "title": "Phase 1 walking skeleton — Proof Pack",
@@ -16323,6 +16350,67 @@ window.DOCS_INDEX = {
       "sourceSha256": "56dcbfeec074ea753ff0b3a0cc893aa0d3623122c7ac156afdce54071768f6fa"
     },
     {
+      "id": "proof-atlas-behavior-contract",
+      "path": "docs/proof/atlas-behavior-contract.md",
+      "title": "Atlas behavior contract spike evidence",
+      "type": "proof-pack",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Author evidence for six synthetic Roslyn contract fixtures, retained negative controls, and explicit limits; independent acceptance pending.",
+      "tags": [
+        "atlas",
+        "e1",
+        "proof",
+        "roslyn"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-view-spikes-combined-verification",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "00fe7d82b5c172b0ce2a9d002f09d7ba637f8186127c9ce18a9f3c1aafa0bc29"
+    },
+    {
+      "id": "proof-atlas-view-spikes-combined-verification",
+      "path": "docs/proof/atlas-view-spikes-combined-verification.md",
+      "title": "Atlas E1/E2 combined compilation verification and R124 handoff",
+      "type": "proof-pack",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "One captured replacement built 24 outside-solution projects at the exact frozen candidate. Independent result review CLEAR; personal proof review and publication remain.",
+      "tags": [
+        "atlas",
+        "e1",
+        "e2",
+        "proof",
+        "compilation"
+      ],
+      "links": [
+        {
+          "to": "proof-atlas-behavior-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-atlas-architecture-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "30085ee59b48e7e17309604263519167d1d0b116a2d9de77b9903dc99765b726"
+    },
+    {
       "id": "proof-audit-gate-plan-review",
       "path": "docs/proof/audit-gate-plan-review.md",
       "title": "Independent plan review: audit gate self-test",
@@ -20478,5 +20566,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d835155d07f75e4983887e0f6cd3d7b7716282d981e68c8c5d55b097de52f2cb"
+  "graphSha256": "7fde7bb5830679eb656b06c686bc0c51754ed67d14c26de5b8ccf2b5b3c215e4"
 };
