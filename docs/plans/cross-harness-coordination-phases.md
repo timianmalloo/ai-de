@@ -13,14 +13,41 @@ links:
   - { to: proof-cross-harness-coordination, rel: tested-by }
 review-by: 2026-10-16
 summary: >-
-  Preserves every approved P0–P5 repair floor and records the bounded P1 mechanics
-  candidate with 49 passing tests and nine killed selected guard mutants. Production
-  authorization and enhanced append remain disabled; independent code review is next.
+  Preserves every approved P0–P5 floor. Current P1 source passes 71 tests and kills
+  20 selected semantic mutants; full P1 remains blocked on qualified boundaries.
+  The separate P2 staged candidate is not merged here and is not reset to not-started.
 ---
 
 # Durable phase graph
 
-## Current checkpoint — bounded P1 mechanics candidate
+## Current checkpoint — full P1 definition gate, 2026-09-17
+
+The [canonical Proof Pack](../proof/cross-harness-coordination-proof-pack.md) records
+the complete O01–O10 matrix at `9d82c4e088dbdde69626749de625386a1492a9c8`.
+The four f410 fixes and later independently cleared mechanics remain resolved.
+Current execution: **71 tests GREEN; 20/20 semantic mutants killed; zero errors**.
+No source changes or new authority/provider are needed to restate that evidence.
+
+| Milestone | Current state and exact remaining gate |
+|---|---|
+| P0 | Retained limited independent admission for dormant P1; actual-user P0–P5 implementation approval unchanged |
+| P1 | Acceptance, consumption, immutable references/supersession, scoped proposals, full operation keys and response semantics pass synthetic oracles. **Full P1 BLOCK**: authenticated scoped positive, admitted-append original receipt, unchanged MIXEDCLIENT contention/complete-record/conflict safety, and current-pin cross-language qualification remain unproved. Enhanced append stays disabled |
+| P2 | Conductor reports real SQLite/Data/DS staged candidate and 311-green receipt-recovery work atop `e3330489`; not merged into this branch and not inspected or changed here. Its owner retains remaining qualification/landing work |
+| P3 | Qualified registrar-generation and authenticated decision-channel integration remain external work. Real installed foreground/background arrival/consumption/wake positives remain explicit, not replaced by synthetic P1 policy |
+| P4 | Actual-human transfer and qualified launcher/run binding remain external; no grant or launch activation here |
+| P5 | Same-corpus surfaces, hard states and measured SLIs remain with their owners; no new claim from this Python run |
+
+Smallest next handoff: independent Test re-gate of the committed matrix, then the existing
+writer-admission/DS owner resolves the MIXEDCLIENT positive seam and the Security/P3/P4
+owner qualifies the human channel/generation source. This is **not a fresh user approval
+request**. Do not invent an endpoint registry or admitted writer in a P1 fixture.
+
+The serial receipt graph is grounding → current suite/mutations → mechanical path/matrix
+correction → independent handoff. Author budget 30 tools, context 150k, fan-out zero.
+The source stays pinned; the finite exit is an exact PASS/BLOCK matrix, not full runtime
+activation. The sections below are retained historical checkpoints, not current status.
+
+## Historical checkpoint — bounded P1 mechanics candidate
 
 All **M0–M5 remain the approved programme goal**. This increment implements C02's
 deterministic acceptance/consumption/proposal/reference mechanics without claiming C08

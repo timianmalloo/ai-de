@@ -1,6 +1,6 @@
 ---
 id: proof-cross-harness-coordination
-title: "Cross-harness coordination: dormant P1 repair evidence and pending runtime gates"
+title: "Cross-harness coordination: full P1 gate and dormant mechanics evidence"
 type: proof-pack
 status: draft
 owner: "@timianmalloo"
@@ -13,14 +13,160 @@ links:
   - { to: investigation-cross-harness-message-delivery, rel: depends-on }
 review-by: 2026-10-16
 summary: >-
-  Records bounded P1 proposal, acceptance, consumption and local-reference mechanics:
-  failing-first controls, 49 passing tests and nine killed guard mutations. Production
-  authority and enhanced append remain disabled; independent code gates remain pending.
+  Records the full P1 gate at 9d82c4e0: 71 tests pass and 20 semantic mutants are killed.
+  Dormant mechanics pass their oracles; authenticated authority, shared-language
+  qualification and unchanged mixed-writer admission remain blocked. Full P1 is BLOCK.
 ---
 
-# Proof Pack — dormant P1 candidate; independent code gate pending
+# Proof Pack — full P1 BLOCK; dormant mechanics evidence
 
-## Current receipt — bounded P1 mechanics, 2026-09-16, Python peer author
+## Current full-P1 gate — 2026-09-17
+
+**Full P1 is BLOCK, not four repairs awaiting reimplementation.** This receipt evaluates
+the approved definition against unchanged source at
+`9d82c4e088dbdde69626749de625386a1492a9c8`, in
+`C:\Projects\ai-de-feature-xh-p1-responses`, branch `feature/xh-p1-responses`.
+It changes evidence and links only. It does not add a provider, permission, schema,
+ledger, endpoint, live message, or activation switch.
+
+Actual-human P0–P5 implementation approval remains in force. It is not automatically
+an authenticated runtime grant for users. The four fixes at
+`f4109e144d4c56d16b4548013e948d0ba1f50e36` and the later mechanics/collision reviews
+remain **pre-existing independent evidence**, not newly self-certified reviews.
+The supplied later 1f7/535b independent PASS is retained as a conductor report;
+this episode does not reproduce that reviewer or extend its verdict to a new gate.
+
+### Current execution and immutable pins
+
+Shell **2370** ran, without output pipes:
+
+```
+python -B -m unittest discover -s docs\ai-forward-pack\scripts\tests -p "test_coord_*.py" -q
+python -B docs\ai-forward-pack\scripts\tests\test_coord_protocol.py --mutations
+```
+
+Observed: **71 tests, 25.084 seconds, zero failures/errors, exit 0**;
+**20/20 selected semantic mutants killed, zero errors, exit 0**.
+Each mutant selected one test method. Assertion-failure counts, in runner order:
+issuer 1; authorization 1; revocation 1; artifact-hash 1; required-peer-contract 1;
+generation 1; consumption-digest 1; all-peers 1; ambiguity 2; question-rejected 2;
+consumption-as-acceptance 10; deferred-obligation-dropped 2;
+global-proposal-invalidation 3; cross-scope-supersession-authorization 2;
+checked-source-key 16; standalone-namespace 1; untrusted-anchor 5;
+publication-bucket 2; timestamp-overflow-ResponseTests 4;
+timestamp-overflow-ProtocolTests 16. These are assertion failures, not setup,
+launcher, encoding or missing-API errors. This is not a whole-module mutation score.
+
+Runtime: **Python 3.12.10; Git 2.55.0.windows.2**, Windows, UTF-8 launcher environment.
+The 71-test run includes both current timestamp CLI cases; their exit-4/field-error
+assertions pass here. Prior independent CLI launcher-encoding errors are not semantic
+RED; the retained direct/reader RED and these current assertions remain distinct.
+All fixtures are synthetic and repository-local, with test cleanup; no live stream
+or observer state is used. The existing linked-tree test creates one synthetic primary
+request stream and uses the actual pinned unenrolled old client.
+
+All paths below are under `docs/ai-forward-pack/scripts/`. Shell 2371 read the executed
+working-byte SHA-256 and committed Git blobs. This receipt changes none of these files.
+
+| File | Executed-byte SHA-256 | Git blob at 9d82c4e0 |
+|---|---|---|
+| `coord-core.py` | `e93b4c078a49e93339bb25216b3eeec906d0614759b65495ad166cd20f3358f3` | `400bbbaaada0cd4d0302219d1a483ff36c81fd25` |
+| `coord_protocol.py` | `31b00a85985cb91430a184b4a45c4d68cb497949782997369c9d9d2441113bdc` | `873a85deb64e8aaa5e6af12121d023fce597d0aa` |
+| `tests/test_coord_responses.py` | `93f8d6dad15e04205448fd292b9ba0d5599b1fa03e4402646bfbde698d276127` | `1c0d2a30f23ff4cfdfb9cac976b465b1790b1e08` |
+| `tests/test_coord_protocol.py` | `453d3bb3bb70c2a893da6c14d00ab7a55366e2517d754d0f653bbc0c728fdd19` | `eb3f9442e35c5f5c6ebf2a9dac911e519f3ae686` |
+
+### Four requested controls — already resolved, currently exercised
+
+`R` means `tests/test_coord_responses.py`; paths and source pin are in the table above.
+Every named test below ran in the 71-test current GREEN. The independent pre-fix RED
+is **retained**, not rerun: 27 cases, 21 semantic assertion failures, zero errors on
+`ec85de0be8713bbd20d2b2035df2c4c5bf4c8126`, supplied receipts 722/726.
+
+| Resolved fault / source | Current oracle | RED / confidence / limit |
+|---|---|---|
+| Typed nested JSON equality; `coord-core.py:560` | R `test_Fold_NestedJsonTypes_ConflictingAddsRefusedInEitherOrder` rejects bool/int/float collisions; reordered-object positive remains equal | Retained semantic RED; current GREEN. Verified Python JSON semantics, not another language's canonicalizer |
+| Exact reserved discriminator; `coord-core.py:418` | R `test_ReadAndFold_ReservedMarkers_ExplicitSchemaRefusal`, `test_Append_ReservedMarkers_RejectBeforeFilesystemEffects`; unversioned legacy-extension positive remains tolerant | Retained semantic RED; current GREEN. Invalid enhanced shapes do not become legacy rows |
+| Collaborate JSON/text failure surface; `coord-core.py:1967` | R `test_Cli_CollaborateConflictingAdds_ExplicitFailureWithoutPartialState`, `test_Cli_CollaborateUnsupportedEnvelope_ExplicitFailureWithoutPartialState` | Retained semantic RED; current GREEN. No partial success-shaped summary |
+| Five separate correlation guards; `coord-core.py:618` | R `test_Fold_EachCorrelationMismatch_RetainsReplyWithoutAnswering` | Retained full-guard mutant: 10 failures; repository/stream/thread/obligation/causation mutants: 2 each, zero errors. Current GREEN; no newly claimed independent review |
+
+### Full P1 floor matrix — actual oracles, not blanket acceptance
+
+`P` means `tests/test_coord_protocol.py`. PASS below is bounded to its stated surface.
+The O01–O10 clauses remain those in the retained oracle catalogue, not rewritten
+to fit what happens to pass. Source references share the immutable pin above.
+
+| Criterion / claim | Actual source and falsifying oracle | RED and current evidence | Gate / confidence / limit |
+|---|---|---|---|
+| O01–O03 correlated replies, all-status by-ID, replay/reordering without reopening | `coord-core.py:532,560,618,2024`; R `test_Fold_CorrelatedReply_AnswersWithoutAcceptance`, `test_Cli_AllStatusById_ReadsHistoryWithoutAuthority`, duplicate/permutation tests | Retained semantic RED; 2370 GREEN | **PASS dormant mechanics**. Production generation qualification is not supplied by the fixture |
+| O04 exact all-required-peer acceptance; no ACK/prose or executable rights | `coord_protocol.py:230`; P `test_Fold_AllRequiredPeers_AcceptsWithoutRightsOrResponse`, `test_Fold_OnePeerDuplicateAndAck_NotAccepted`, required-peer substitution test | Current all-peers/required-peer mutants killed; all permutations and duplicate positive pass | **PASS synthetic mechanics only**. Accepted=true never sets execution/ownership/run/transfer/START rights |
+| O05 immutable full reference and explicit supersession, not time order | `coord_protocol.py:193,222,230`; P integrity-substitution, old-acceptance-historical, cycle/fork tests | Current artifact-hash/ambiguity mutants killed; H2 needs its own exact peer acceptances | **PASS local integrity/fold**. No authenticated human decision follows from a matching Git hash |
+| Separate proposal scopes survive unrelated notices; cross-scope supersession denied | P `test_Fold_SeparateMapperNotice_PreservesExactListingAcceptance`, mapper supersession and mapper-authority-for-listing tests | Current global-proposal-invalidation/cross-scope mutants killed | **PASS synthetic policy mechanics**. Authority is supplied by the test context, not user prose |
+| O06 exact consumed target, digest, recipient and generation; no arrival/understanding/acceptance conflation | `coord_protocol.py:230`; P exact-consumption, wrong-digest/attester/restart, unknown-recipient/generation and response-consumption tests | Current generation/consumption-digest/consumption-as-acceptance mutants killed | **PASS synthetic attestation mechanics**. Qualified endpoint generation and actual recipient consumption remain unproved externally |
+| Full operation key `(repositoryId, streamId, eventId)` through every fact consumer | `coord_protocol.py:226,230`; P `test_Fold_SourceKeyCollisions_AllFactConsumersDenied`, namespace/poison/trusted-anchor cases | Current checked-source-key mutant: 16 failures/0 errors; namespace/anchor/bucket mutants killed | **PASS** against cross-repository/stream collision and both input orders; no caller-prose override |
+| Questions/deferred facts preserve remaining work; ACK title cannot grant; typo closure is not a reply | `coord-core.py:618`; P question-under-ACK, stale-caller-reason, receipt-words tests; R routing-correction test | Current question-rejected/deferred-obligation mutants killed; actual CLI closure test GREEN | **PASS** typed semantics. No phantom reply or invented acceptance |
+| O07 unqualified production refuses privileged effects; integrity/issuer/authorization/revocation distinct | `coord_protocol.py:53,71,193,230`; `coord-core.py:2024`; P production-composition and actual CLI synthetic-provider refusal tests | Current issuer/authorization/revocation mutants killed; zero-rights positives GREEN | **PASS denial**, **BLOCK authenticated scoped positive**. No production `TrustedContext`, authenticated immutable human-decision resolver or qualified generation source |
+| O08 unchanged unenrolled legacy client and rollback | R `test_Cli_PinnedUnenrolledLegacy_ActualLinkedTreeAndRollback:533`; original `94ec9036dd0b72aa5b759badcf21a9e3aba6659b`, source SHA-256 `f73185a306f7a5b63184cd0cc759569030d29bf7115ad8bd30adf6c19f8bdacf` | 2370 runs real linked-tree add→resolve→list twice and compares IDs/payloads before/after rollback | **PASS** unchanged client, one synthetic primary stream. This sequential compatibility proof is not mixed-writer qualification |
+| O09 same-key read conflict/replay; admitted append returns original receipt without extra effect | `coord-core.py:389,516`; R same-event-key-changed-payload and duplicate tests | Retained conflict RED/current GREEN; source has no enabled enhanced admission or original-receipt return path | **PASS read/fold conflict**, **BLOCK admitted-append receipt oracle**. Must not substitute all-writers-rejected for admitted idempotency |
+| O10 short/torn write, disk/malformed JSON/UTF-8 failures and rollback; mixed-client enhanced activation | `coord-core.py:389,532`; R short-write, disk-failure, invalid-UTF8, malformed-object, rollback tests | Current GREEN plus retained semantic failure controls; append explicitly raises `XH.ENHANCED_DISABLED` before filesystem effects | **PASS bounded failure/legacy controls**, **BLOCK MIXEDCLIENT**. No actual enhanced-writer admission seam accepts a record alongside the unchanged unlocked old writer |
+| Limits, timestamps, canonical bytes and cross-language agreement | `coord_protocol.py:82,95,112,130,193`; exact-limit/limit+1, finite timestamp and golden-byte tests | 2370 GREEN; both overflow mutants killed; exact 1001-digit payload integer remains intact | **PASS Python boundary contract**, **BLOCK current-pin cross-language qualification**. No 9d82 C# shared-vector run here; prior ebd4-pinned work is not silently repinned |
+
+### Real vetoes and smallest handoff
+
+**Test / Distributed Systems MIXEDCLIENT veto:** the actual production writer admission
+seam is `append_record`, not a missing test selector. It rejects every enhanced record.
+Consequently there is no accepted enhanced write with which to demonstrate O09's original
+receipt or O10's contention/complete-record/conflict safety against the unmodified unlocked
+client. Removing denial or substituting an upgraded shim would change the safety contract,
+not complete this receipt. Keep enhanced writes disabled. The smallest next handoff is an
+independently reviewed writer-admission/compatibility contract and its isolated admitted
+positive plus hostile-interleaving oracles; no live activation is authorized by this result.
+
+**Security authority veto:** `TrustedContext` accepts a composition-supplied policy
+callback, but production `cmd_request` supplies none. A local Git object/hash check and a
+synthetic `Verification` result do not establish actual human consent, exact current
+scope or qualified caller/generation. Hand off the authenticated immutable human-decision
+resolver/channel and registrar-generation qualification to their existing P3/P4 owner;
+do not invent a P3 endpoint registry or fake provider in P1. Remaining C# qualification
+must explicitly compare this source/test pin. Real endpoint/wake/launcher proof is future
+P3/P4 work, not an invitation to widen this author task.
+
+> GATE full-P1 · 2026-09-17 · author evidence assessment for independent Test/DS/Security ·
+> exit criteria: every P1 row above plus qualified positive boundaries · verdict **BLOCK** ·
+> vetoes: authenticated authority positive unavailable; enhanced admitted-append/MIXEDCLIENT
+> unavailable; current-pin cross-language qualification unperformed. Independent re-gate is
+> a separate handoff. No hard veto is self-cleared.
+
+**Other branches:** the conductor reports a real P2 SQLite/Data/DS staged candidate and
+311-green receipt-recovery work atop `e3330489`, unmerged into this P1 branch. That is
+supplied context, not independently inspected evidence here. This work preserves the
+entire other-branch state; it does not reset P2 to “not started” or claim its remaining
+qualification is complete.
+
+**Capture and record integrity:** this branch now has one canonical stable-id pack at
+`docs/proof/cross-harness-coordination-proof-pack.md`. Historic plural receipt directories,
+audit strings and prior observations below remain history. Same-depth relative links and
+the ADR pointer are maintained; graph-id links do not change. The old plural pack is moved,
+not duplicated. `AIDE_CONTRACT_LOG` is absent (2371); no episode-close is fabricated.
+The singular file fixes path eligibility, not missing runtime capture or independent scoring.
+Global site/Docs Explorer regeneration remains with the conductor; only this branch's own
+audit view is rendered.
+
+Audit readback (2373/2374): the substantive skill entry contains the full prompt, goal,
+done-when, T2/fan-out-zero budget and a measured 540-second duration. The separate
+`prompt-log.py` entry has no goal/budget fields and `selfcheck` flags it alongside older
+session gaps. That warning is retained, not reported as a clean selfcheck; the paired
+skill entry's fields were read back explicitly. The audit view contains that entry and
+passes `node --check`. No audit-tool behavior is changed by this receipt.
+
+Execution shape: inspect/ground → current deterministic suite/mutations → bounded matrix
+and mechanical move → independent re-gate handoff. No new skill injection or agents.
+Shared source/evidence dependencies keep width one; normalized work/span 4/4 is **Inferred**,
+not elapsed-time telemetry. The audit start records duration. Three oversized inspection
+batches required narrower source reads; they are overhead, not evidence or new scope.
+No source fix was justified by the verified gaps: the blockers require qualified boundaries,
+not another implementation of the already-cleared four repairs.
+
+## Historical receipt — bounded P1 mechanics, 2026-09-16, Python peer author
 
 **Candidate, not full P1 acceptance.** Baseline:
 `f4109e144d4c56d16b4548013e948d0ba1f50e36`; same registered worktree/branch/session.
@@ -562,7 +708,7 @@ conductor-owned and pending, as are security/privacy rollup backlinks.
 No runtime red/green result is implied by a static finding. Hard veto applies to
 invariant-violating live reuse or an unsafe migration, not to publishing this draft.
 
-## 4. Oracle catalogue — ALL PENDING, unless explicitly BLOCKED
+## 4. Original oracle catalogue — historical status; current matrix above
 
 Synthetic fixtures only; approved real-endpoint tests are separate. The test names below
 are **specified future tests**, not files already written or passing tests selected by a filter.

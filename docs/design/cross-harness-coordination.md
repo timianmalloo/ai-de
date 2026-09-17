@@ -4,7 +4,7 @@ title: "Cross-harness coordination: canonical facts and fail-closed projection"
 type: design
 status: draft
 owner: "@timianmalloo"
-phase: P0
+phase: P1
 tags: [coordination, data-model, identity, replay, migration]
 links:
   - { to: spec-cross-harness-coordination, rel: implements }
@@ -22,7 +22,13 @@ summary: >-
 
 # Canonical facts, not another approval database
 
-**T2 / P0 CORRECTED DRAFT. GATE P0-delta pending independent review; no self-clearance.**
+**T2 / retained blueprint. Full P1 BLOCK; no runtime or authority self-clearance.**
+The [current full-P1 matrix](../proof/cross-harness-coordination-proof-pack.md)
+supersedes the historical pending-code labels below: 71 current Python tests pass,
+20 semantic mutants are killed, and the four original repairs remain resolved.
+Authenticated authority positives, admitted-append/MIXEDCLIENT safety and current-pin
+cross-language qualification are still open. This branch applies no P2 schema; the
+conductor's separate staged SQLite/Data/DS candidate is unmerged here and untouched.
 Conceptual model first: [spec Part A](../specs/cross-harness-coordination.md#2-part-a--conceptual-domain-model).
 No executable schema is chosen or applied. P2 is bounded to additive caches behind the
 existing watcher observation-store seam in existing `watcher.db` used by WatcherHost/MCP.
@@ -171,7 +177,7 @@ prose stays inert; neither a matching hash nor an injection scanner promotes it 
 
 ## 3. Data & Persistence co-authored P2 floor
 
-### P1 deterministic contract delta (2026-09-16; independent code gate pending)
+### P1 deterministic contract delta (2026-09-16; historical admission boundary)
 
 C02 mechanics do not depend on C08 endpoint qualification. The supplied Security peer
 contract establishes that `TrustedRegistrar.Register/RegisterNextGeneration/Verify` are
