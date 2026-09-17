@@ -760,3 +760,41 @@ The canonical pack defines each remaining obligation and retains all prior
 receipt paths/hashes. Independent Data/DS/Test approval is BLOCK, particularly
 pending lifecycle liveness B-6. All six upstream phase approvals remain pending
 execution in their approved order; this is neither full finite B nor full P2.
+
+### Native NOTICE P2 diagnostic-only graph — 2026-09-16
+
+Goal: prove current native-notice loss and missing shared admission bound.
+Done when: real C# N1/N2 semantic REDs, positive controls, raw TRX/output/source
+hashes and this single canonical Proof Pack are committed.
+Not in scope: production/schema changes, other trees, peer actions, UI, live
+data, enhanced admission, recovery, activation, merge or push.
+Tier T2; fan-out zero; main-line budget 28 tools; context ceiling 150k.
+
+| Node | Capability | Input → exit | Dependency |
+|---|---|---|---|
+| N-1 | Reasoning | Assigned source/test contracts → real failure oracles and surface list | None |
+| N-2 | Reasoning | Existing fixtures → five tests using real SQLite/registrar/host/publisher | N-1 data |
+| N-3 | Deterministic mechanics | Tests → semantic RED receipt plus existing positive controls | N-2 data |
+| N-4 | Deterministic mechanics | Exact receipts → canonical proof, append-only audit, commit and session release | N-3 data |
+
+Surface list: synthetic registration attributes → repository correction → real
+registrar capability/lifecycle writes → real SQLite native rows → actual host
+notice queue → drain → publisher filesystem rename → parsed native JSON.
+UI and cross-harness canonical writer are excluded, not simulated.
+D0/D4/D6/D7 apply: fixed clock, real engine/filesystem, typed JSON assertions and
+real-locator fidelity pairing. No model-backed path or new contract is implemented.
+
+Serial width one, inferred T1=T∞=four work units, parallel saving zero.
+The tests share context and build outputs; no fan-out. Fixed 128-case admission
+loop terminates at zero remaining registrations; no retry-to-green loop.
+One fixture correction was needed (Windows refusal type). Initial evidence is
+preserved, explicitly excluded from N1 semantic proof. Source-read output
+truncation caused avoidable repeated probes; later reads used explicit character
+bounds. No source inference was promoted from truncated output.
+
+Observed final result: **23 executed / 21 pass / two semantic RED**, dotnet exit
+1, 3.7772216 seconds. Receipt runner verifies the *content* of each failure.
+This checkpoint is RED/UNSHIPPABLE and clears no production hard veto.
+Next: Data/DS/Security design acceptance for native durable admission/delivery,
+then implementation and recovery proof. Producers, canonical bridge, legacy/
+released-binary compatibility, P3–P5 and upstream-after-all-six remain pending.

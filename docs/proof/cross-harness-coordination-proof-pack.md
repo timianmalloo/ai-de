@@ -2479,3 +2479,69 @@ or claimed. Actual released-v7 binary rollback remains later qualification.
 evidence surfaces. Recovery eligibility/counter-domain clarification precedes B.
 Full P2 producers/canonical bridge, rollback, P3/P4/P5 and upstream-after-all-six
 verification remain open. Retain this worktree for review; no merge or push.
+
+### Native NOTICE P2 — current-failure evidence, 2026-09-16
+
+**RED / UNSHIPPABLE.** Source base:
+`184906558911f3f49115d44781781aa094adfa47`. This addition contains tests and
+evidence only. No production C#, schema, App/UI, endpoint, dependency, hook,
+configuration, live database or other producer tree was changed.
+
+| Claim / oracle | Executed evidence | Confidence / boundary |
+|---|---|---|
+| N1: after accepting one corrected registration, failed publication must leave the exact original correction available for one retry without another registration | `RegistrationNoticeReliabilityTests.DrainRegistrationNotices_PublicationFails_RetryRetainsOriginalCorrection`: actual `Publish` writes `.tmp`, then its final rename hits an owned destination directory. Windows raises `UnauthorizedAccessException`; after removing the obstruction, the real next drain returns **0**, failing `Assert.Single` | **Verified failure**, not successful recovery. Original session ID, sent/used repositories and reason were checked before delivery. No stable notice ID exists in the current record, so equality is original record value, not invented ID semantics. Retry publication assertions after `Assert.Single` were not reached |
+| N1 retry must not re-register, rotate authority or change lifecycle | Real SQLite row count, generation, heartbeat, ended state and registrar capability count agree before failure and after retry. The original capability still verifies; the session was explicitly ended and the clock advanced before retry | **Verified on this run**. One `Register` call only. No cold-restart or external authority claim |
+| N2: 128 outstanding corrections shared across two hosts/store handles must refuse number 129 before native mutation | Two real SQLite handles on the same owned `watcher.db`, two real registrars, 64 notices in each real host queue. `Register` number 129 succeeds: native dimension rows **128→129**, capability entries **128→129**, pending corrections **128→129**. Full before/after generation, heartbeat and ended snapshots are in TRX/receipt. Fails `Assert.Equal(before, after)` | **Verified legacy-path diagnostic**. This is not an unqualified promise that the future enhanced entry point uses the same API. No destructive drain is used to count quota; read-only reflection inspects the actual `_notices` and capability dictionaries |
+| Ordinary publication and identical retry preserve existing native projection | Positive case checks original fields/provenance, session-keyed filename, one JSON document, identical SHA-256 bytes on repeat `Publish`, unchanged native state and no root JSONL | **Verified**. Proves existing overwrite behavior, not immutable notice-ID retention or canonical cross-harness delivery |
+| Non-correction produces no notice | Canonical repository registration creates one real native session and zero queued/published notices | **Verified** |
+| Locator substitution has fidelity | Known-root test compares the substituted `IRepositoryLocator` with `FileSystemRepositoryLocator` over owned synthetic git-marker directories, canonical roots and unknown paths | **Verified**. No private checkout or arbitrary user filesystem lookup |
+
+**Final finite run:** 23 executed, **21 passed / 2 failed**, dotnet logical exit
+**1**, measured **3.7772216 seconds**. Five new cases (three positive, two semantic
+REDs); seven existing `AWorktreeRegistrationIsCorrectedAndSaidSoTests` and eleven
+`TrustedRegistrarTests` passed. No zero-selection proof or skipped new case.
+The receipt checker returning success means the expected-failure evidence was
+validated; it does **not** turn the test command green.
+
+Raw artifacts, all in `docs/proofs/p25-notice-evidence/`:
+
+* `semantic-red/native-notice.trx` — authoritative executed assertions and output.
+* `semantic-red/console.txt` — full invocation, build/test output and logical exit.
+* `semantic-red/receipt.json` — named results, measured duration and SHA-256 for
+  actual watcher source, new test source, project/build inputs and built Core/test DLLs.
+* `run.ps1` — finite, fail-closed receipt runner; requires the two named semantic
+  assertions **and** their diagnostic values, not merely two failing method names.
+* Root `native-notice.trx`, `console.txt`, `receipt.json` preserve the **first
+  attempt**, which is **not N1 semantic evidence**: an over-specific `IOException`
+  expectation stopped at Windows' `UnauthorizedAccessException`.
+* `prompt.txt` — verbatim task for the append-only audit entry.
+
+**Class → sweep → derive → prevent.** Two production failure shapes remain
+unfixed: destructive dequeue before side-effect success, and admission bounds
+applied nowhere before authority/state mutation. The scoped source sweep covered
+`IngestHost.Register`, its real notice queue/drain, `TrustedRegistrar.Issue`,
+SQLite native state and `RegistrationPublisher.Publish`. No second notice
+producer was added. Future authoritative admission/delivery must derive from one
+durable source rather than synchronization of unbounded host queues. N1/N2 are
+the observed-failing controls. The fixture correction exposed a third shape:
+**counting expected failing names as semantic proof**. The runner now rejects
+setup/exception-type failures and requires the semantic assertion and diagnostic
+state. Register integration belongs to the conductor; no out-of-ownership
+lesson-register edit was made.
+
+**Scope/review gates remain closed.** These tests do not implement the proposed
+two native append-fact/delivery tables in the same `watcher.db`, shared
+reserved/in-flight/hydrated quota, recovery, canonical notice publication,
+immutable identity, ACK handling or old-client fencing. Data/Distributed Systems/
+Security design acceptance is required before that production/schema work.
+Legacy clients cannot be fenced by claiming new APIs or adding triggers to old
+writes; compatibility and actual released-binary qualification remain separate.
+No additional agents or self-cleared hard veto. Operator evidence here is the
+normal test output/TRX; production observability remains pending.
+
+P0–P5 remain **approved for execution**, not verified complete. Production
+producer, recovery B, canonical bridge, old-binary qualification and P3–P5 remain
+open. Cross-harness obligations must later use official canonical requests.
+Routing-typo/triage vectors stay backlog items; no peer research or reply action
+was taken. Upstream transfer waits for verified completion of all six phases.
+Keep this isolated branch for review; do not merge or ship its intentional REDs.
