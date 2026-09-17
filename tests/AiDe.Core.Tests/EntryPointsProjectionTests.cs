@@ -65,7 +65,7 @@ public sealed class EntryPointsProjectionTests
     }
 
     [Fact]
-    public void HasMember_MainIsCli_WithoutGraphNodeId()
+    public void HasMember_MainIsCli_GraphIdIsDeclaringType()
     {
         using var workspace = TestWorkspace.Create();
         workspace.CommitSnapshot(
@@ -76,7 +76,7 @@ public sealed class EntryPointsProjectionTests
         var result = projections.EntryPoints(new EntryPointsQuery());
         var main = Assert.Single(result.Rows, r => r.Display.EndsWith(".Main", StringComparison.Ordinal));
         Assert.Equal(EntryPointKind.Cli, main.Kind);
-        Assert.Null(main.NodeId);
+        Assert.Equal("App.Program", main.NodeId);
     }
 
     [Fact]

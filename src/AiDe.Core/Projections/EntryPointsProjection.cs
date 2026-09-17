@@ -60,7 +60,7 @@ public static class EntryPointsListing
 
                 built.Add(new EntryPointRow(
                     kind,
-                    NodeId: null,
+                    NodeId: typeId,
                     display,
                     kind == EntryPointKind.Unclassified
                         ? EntryPointsProjection.UnclassifiedReasonPendingClassifier
