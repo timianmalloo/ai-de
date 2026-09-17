@@ -1,0 +1,141 @@
+Test run for C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests
+[xUnit.net 00:00:00.25]   Discovered:  AiDe.Core.Tests
+[xUnit.net 00:00:00.27]   Starting:    AiDe.Core.Tests
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_Register_MintsSessionInTheStore_WithVerifiedTrust [9 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_SessionEnd_ForgetsTheMapping_SoALaterHeartbeatIsUnknown [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_DuplicateRegister_IsIgnoredAndCounted [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.EndToEnd_JsonlRegisterThenHeartbeat_SessionIsAlive_ThenGoesStale [20 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_HeartbeatForRegisteredSession_RefreshesLivenessToAlive [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_OutOfOrderLines_AreSortedByAtThenSeq [2 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_RegisterWithoutHarnessName_IsAssertedTrust [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_BlankAndLogALeadingNewlineAndCrlf_AreTolerated [1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_HeartbeatForUnregisteredSession_IsDroppedAndCounted [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.ContractVersion_IsPinned [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_RegisterMissingRequiredIdentity_IsQuarantined_AndTheStreamSurvives [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_WrongContractVersion_IsRejectedAndCounted [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_MalformedLine_IsSkippedAndCounted_OthersSurvive [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_UnknownKindWithValidVersion_IsSilentlySkipped_NotMalformed [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_RegisterAndHeartbeat_ReturnsBothSortedByAt [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.Apply_DuplicateRegister_DiscardsTheSecondAttributes_ItDoesNotMerge [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractTests.Parse_RealCoordCoreByteShape_GoldenFixture [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractLogTests.Writer_AssignsIncrementingSeq [11 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractLogTests.WriterAndPump_RegisterThenHeartbeat_SessionIsAliveInTheStore [4 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractLogTests.Pump_ReRun_IsIdempotent_NoDoubleRegister [2 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractLogTests.Writer_KeepsEachRecordOnItsOwnLine_EvenAfterAnUnterminatedFile_LOGA [3 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractLogTests.Writer_TwoSessions_WriteSeparateFiles_BothRead [3 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractLogTests.ReadDirectory_MissingDirectory_ReturnsEmpty [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationContractLogTests.Writer_WritesRegister_ReaderParsesItBack [2 ms]
+  Passed AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.Register_ThenPump_SessionAppearsLiveInTheStore [47 ms]
+  Passed AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.CreateEmitter_UsesTheHostsCoordDirectory [8 ms]
+  Passed AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.ToAttributes_OmitsAbsentHarnessAndModel [< 1 ms]
+[xUnit.net 00:00:00.44]       AiDe.Core.Watcher.CoordinationEmitterBatchException : COORD_EMITTER_BATCH_INCOMPLETE
+[xUnit.net 00:00:00.44]       Stack Trace:
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-producers\src\AiDe.Core\Watcher\SessionCoordinationEmitter.cs(157,0): at AiDe.Core.Watcher.SessionCoordinationEmitter.HeartbeatAll()
+[xUnit.net 00:00:00.44]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\SessionCoordinationEmitterTests.cs(112,0): at AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.HeartbeatAll_KeepsEveryLiveSessionAlive()
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.44]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.49]       AiDe.Core.Watcher.CoordinationEmitterException : COORD_INPUT_CONFLICT
+[xUnit.net 00:00:00.49]       Stack Trace:
+[xUnit.net 00:00:00.49]         C:\Projects\ai-de-feature-xh-p2-producers\src\AiDe.Core\Watcher\SessionCoordinationEmitter.cs(420,0): at AiDe.Core.Watcher.SessionCoordinationEmitter.ThrowIfFailed(CoordinationEmitterResult result)
+[xUnit.net 00:00:00.49]         C:\Projects\ai-de-feature-xh-p2-producers\src\AiDe.Core\Watcher\SessionCoordinationEmitter.cs(147,0): at AiDe.Core.Watcher.SessionCoordinationEmitter.End(String externalSessionId)
+[xUnit.net 00:00:00.49]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(49,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_FirstSourceDenied_HealthySourceStillWritten()
+[xUnit.net 00:00:00.49]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.49]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.Register_IsIdempotent_OneSessionAfterPump [11 ms]
+  Failed AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.HeartbeatAll_KeepsEveryLiveSessionAlive [13 ms]
+  Error Message:
+   AiDe.Core.Watcher.CoordinationEmitterBatchException : COORD_EMITTER_BATCH_INCOMPLETE
+  Stack Trace:
+     at AiDe.Core.Watcher.SessionCoordinationEmitter.HeartbeatAll() in C:\Projects\ai-de-feature-xh-p2-producers\src\AiDe.Core\Watcher\SessionCoordinationEmitter.cs:line 157
+   at AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.HeartbeatAll_KeepsEveryLiveSessionAlive() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\SessionCoordinationEmitterTests.cs:line 112
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.Heartbeat_ForAnUnknownSession_IsANoOp [8 ms]
+  Passed AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.Reconcile_Registers_Heartbeats_AndEnds_FromASnapshot [22 ms]
+  Passed AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.End_WritesSessionEnd_AndStopsTracking [13 ms]
+  Passed AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.ToAttributes_MapsTheIdentity [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Register_LostCompleteAcknowledgement_RetryDoesNotDuplicate [5 ms]
+  Failed AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_FirstSourceDenied_HealthySourceStillWritten [4 ms]
+  Error Message:
+   AiDe.Core.Watcher.CoordinationEmitterException : COORD_INPUT_CONFLICT
+  Stack Trace:
+     at AiDe.Core.Watcher.SessionCoordinationEmitter.ThrowIfFailed(CoordinationEmitterResult result) in C:\Projects\ai-de-feature-xh-p2-producers\src\AiDe.Core\Watcher\SessionCoordinationEmitter.cs:line 420
+   at AiDe.Core.Watcher.SessionCoordinationEmitter.End(String externalSessionId) in C:\Projects\ai-de-feature-xh-p2-producers\src\AiDe.Core\Watcher\SessionCoordinationEmitter.cs:line 147
+   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_FirstSourceDenied_HealthySourceStillWritten() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 49
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Passed AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(glyph: 'A') [4 ms]
+[xUnit.net 00:00:00.52]       System.ArgumentNullException : Value cannot be null. (Parameter 'source')
+[xUnit.net 00:00:00.52]       Stack Trace:
+[xUnit.net 00:00:00.52]            at System.Linq.ThrowHelper.ThrowArgumentNullException(ExceptionArgument argument)
+[xUnit.net 00:00:00.52]            at System.Linq.Enumerable.TryGetLast[TSource](IEnumerable`1 source, Boolean& found)
+[xUnit.net 00:00:00.52]            at System.Linq.Enumerable.Last[TSource](IEnumerable`1 source)
+[xUnit.net 00:00:00.52]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationProducerTests.cs(251,0): at AiDe.Core.Tests.Watcher.CoordinationProducerTests.HeartbeatAll_StaleSnapshot_DoesNotHeartbeatEndedSession()
+[xUnit.net 00:00:00.52]         --- End of stack trace from previous location ---
+  Passed AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLine64KiBPlusOne_RefusesWithoutAcceptedBytes(glyph: 'é') [3 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_PausedInsideWriter_IndependentSessionCompletes [14 ms]
+  Failed AiDe.Core.Tests.Watcher.CoordinationProducerTests.HeartbeatAll_StaleSnapshot_DoesNotHeartbeatEndedSession [3 ms]
+  Error Message:
+   System.ArgumentNullException : Value cannot be null. (Parameter 'source')
+  Stack Trace:
+     at System.Linq.ThrowHelper.ThrowArgumentNullException(ExceptionArgument argument)
+   at System.Linq.Enumerable.TryGetLast[TSource](IEnumerable`1 source, Boolean& found)
+   at System.Linq.Enumerable.Last[TSource](IEnumerable`1 source)
+   at AiDe.Core.Tests.Watcher.CoordinationProducerTests.HeartbeatAll_StaleSnapshot_DoesNotHeartbeatEndedSession() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationProducerTests.cs:line 251
+--- End of stack trace from previous location ---
+  Passed AiDe.Core.Tests.Watcher.CoordinationProducerTests.End_AppendDeniedThenRetried_DurablyEndsExactlyOnceAndKeepsRegistration [6 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLineAt64KiB_AcceptsExactlyTheBound(glyph: 'é') [21 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationProducerTests.Write_CompleteEncodedLineAt64KiB_AcceptsExactlyTheBound(glyph: 'A') [4 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_RepeatedFailedFirstRegistrations_ReclaimsEverySessionGate [30 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_PausedAppend_EndWaitsForDurableRegistration [4 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_PausedAppend_ConcurrentDuplicateRegistersOnce [6 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationProducerTests.HeartbeatAll_PausedAppend_ConcurrentEndCannotPrecedeHeartbeat [17 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationProducerTests.WriteHeartbeat_RootAlreadyHas128Files_RefusesFile129 [23 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_AppendDeniedThenRetried_DurablyRegistersExactlyOnce [2 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationProducerTests.WriteHeartbeat_RootAlreadyHas32MiB_RefusesWithoutChangingExistingBytes [47 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_OtherSessionAppendDenied_IndependentSessionStillCompletes [4 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_OrdinaryLifecycle_RecordsOneRegisterHeartbeatAndEnd [5 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationProducerTests.Register_FormerWaiterOwnsGate_ThirdOperationCannotOvertakeHeartbeat [9 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_UnsafeFilenameCollidesWithSafeId_RefusesExistingContentIdentity [2 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_LegacyNonemptyLinesAndGappedSequence_PreservesNativeCount(newline: "\r\n") [3 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_LegacyNonemptyLinesAndGappedSequence_PreservesNativeCount(newline: "\n") [1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_LegacyNonemptyLinesAndGappedSequence_PreservesNativeCount(newline: "\r") [1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.PrepareAndAppend_ExternalOsRootLockBusy_ReclaimsLocalEntryAndPreservesHolder [8 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_TwoParticipatingProcesses_OnlyOneCanClaimFinalCapacityOrSequence(race: "bytes") [348 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_TwoParticipatingProcesses_OnlyOneCanClaimFinalCapacityOrSequence(race: "quota") [189 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_TwoParticipatingProcesses_OnlyOneCanClaimFinalCapacityOrSequence(race: "sequence") [160 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_SourceChangedAfterPartialWrite_RemainsUncertainWithoutFurtherAppend(mutation: "extra") [11 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_SourceChangedAfterPartialWrite_RemainsUncertainWithoutFurtherAppend(mutation: "different") [3 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_SourceChangedAfterPartialWrite_RemainsUncertainWithoutFurtherAppend(mutation: "truncate") [2 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_RecordRefusalAndAdmission_EmitMeasuredOutcomeWithoutPayload [4 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_PrefixWrittenThenIOException_RetriesOnlyMissingExactSuffix(prefix: 1) [3 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_PrefixWrittenThenIOException_RetriesOnlyMissingExactSuffix(prefix: 19) [2 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_PrefixWrittenThenIOException_RetriesOnlyMissingExactSuffix(prefix: 0) [2 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_FullBytesButLostDurabilityAcknowledgement_ReconcilesSameAdmission(fault: "flush") [2 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_FullBytesButLostDurabilityAcknowledgement_ReconcilesSameAdmission(fault: "dispose") [2 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_HeldThroughFlush_NormalizedAliasWriterFailsFastAndGateReclaims [4 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_CompleteTailRepairAtRootLimit_CountsSeparatorAndPreservesUnknownTail [3 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_CallerMutatesAttributesAndClock_ExactFrozenBytesAreAppended [2 ms]
+[xUnit.net 00:00:01.56]   Finished:    AiDe.Core.Tests
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_ExternalRootOverrun_PreservesHistoryAndReportsUnavailable [47 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_WindowsCaseAlias_RefusesDifferentExactSession [2 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_UnresolvedFlushThenOutage_PreservesPreparationUntilRecovery [2 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Write_LegacyVoidFailure_ContainsExactUncertainPreparation [2 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Prepare_ExistingSequenceWouldDuplicate_RefusesRatherThanRenumbering [< 1 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_IdenticalNeverAttemptedPreparation_CannotBorrowAdmission [2 ms]
+  Passed AiDe.Core.Tests.Watcher.CoordinationPreparedWriteTests.Append_QuotaFilledSincePreparation_RefusesWithoutCreatingFile129 [22 ms]
+Results File: C:\Projects\ai-de-feature-xh-p2-producers\docs\proofs\p24-emitter-pending-evidence\first-green.trx
+
+Total tests: 79
+     Passed: 76
+     Failed: 3
+ Total time: 1.8594 Seconds
+
+STDERR:
+[xUnit.net 00:00:00.44]     AiDe.Core.Tests.Watcher.SessionCoordinationEmitterTests.HeartbeatAll_KeepsEveryLiveSessionAlive [FAIL]
+[xUnit.net 00:00:00.49]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_FirstSourceDenied_HealthySourceStillWritten [FAIL]
+[xUnit.net 00:00:00.52]     AiDe.Core.Tests.Watcher.CoordinationProducerTests.HeartbeatAll_StaleSnapshot_DoesNotHeartbeatEndedSession [FAIL]
+Test Run Failed.

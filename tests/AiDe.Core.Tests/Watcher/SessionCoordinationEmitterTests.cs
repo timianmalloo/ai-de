@@ -61,7 +61,8 @@ public sealed class SessionCoordinationEmitterTests
         using var data = new TempDir();
         using var coord = new TempDir();
         using var host = WatcherHost.Open(data.Path, coord.Path, new FixedTimeProvider(At), new FakeMonotonicClock());
-        var emitter = host.CreateEmitter();
+        using var lifetime = new EmitterTestLifetime(host.CreateEmitter());
+        var emitter = lifetime.Emitter;
 
         emitter.Register("ext-term-1", Identity());
         emitter.Heartbeat("ext-term-1");
@@ -89,7 +90,8 @@ public sealed class SessionCoordinationEmitterTests
         using var data = new TempDir();
         using var coord = new TempDir();
         using var host = WatcherHost.Open(data.Path, coord.Path, new FixedTimeProvider(At), new FakeMonotonicClock());
-        var emitter = host.CreateEmitter();
+        using var lifetime = new EmitterTestLifetime(host.CreateEmitter());
+        var emitter = lifetime.Emitter;
 
         emitter.Register("ext-1", Identity());
         emitter.Register("ext-1", Identity()); // same id again - must not re-register
@@ -105,7 +107,8 @@ public sealed class SessionCoordinationEmitterTests
         using var data = new TempDir();
         using var coord = new TempDir();
         using var host = WatcherHost.Open(data.Path, coord.Path, new FixedTimeProvider(At), new FakeMonotonicClock());
-        var emitter = host.CreateEmitter();
+        using var lifetime = new EmitterTestLifetime(host.CreateEmitter());
+        var emitter = lifetime.Emitter;
         emitter.Register("ext-a", Identity(terminal: "term-a"));
         emitter.Register("ext-b", Identity(terminal: "term-b"));
 
@@ -122,7 +125,8 @@ public sealed class SessionCoordinationEmitterTests
         using var data = new TempDir();
         using var coord = new TempDir();
         using var host = WatcherHost.Open(data.Path, coord.Path, new FixedTimeProvider(At), new FakeMonotonicClock());
-        var emitter = host.CreateEmitter();
+        using var lifetime = new EmitterTestLifetime(host.CreateEmitter());
+        var emitter = lifetime.Emitter;
         emitter.Register("ext-1", Identity());
         host.PumpOnce();
         var sessionId = host.Store.AllSessions()[0].SessionId;
@@ -140,7 +144,8 @@ public sealed class SessionCoordinationEmitterTests
         using var data = new TempDir();
         using var coord = new TempDir();
         using var host = WatcherHost.Open(data.Path, coord.Path, new FixedTimeProvider(At), new FakeMonotonicClock());
-        var emitter = host.CreateEmitter();
+        using var lifetime = new EmitterTestLifetime(host.CreateEmitter());
+        var emitter = lifetime.Emitter;
 
         emitter.Heartbeat("never-registered"); // must not throw, must not create anything
         host.PumpOnce();
@@ -156,7 +161,8 @@ public sealed class SessionCoordinationEmitterTests
         using var data = new TempDir();
         using var coord = new TempDir();
         using var host = WatcherHost.Open(data.Path, coord.Path, new FixedTimeProvider(At), new FakeMonotonicClock());
-        var emitter = host.CreateEmitter();
+        using var lifetime = new EmitterTestLifetime(host.CreateEmitter());
+        var emitter = lifetime.Emitter;
 
         // First snapshot: two terminals exist -> both register.
         emitter.Reconcile(new HashSet<string> { "term-a", "term-b" }, t => Identity(t));

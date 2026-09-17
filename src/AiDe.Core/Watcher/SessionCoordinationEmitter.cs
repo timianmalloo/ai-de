@@ -61,119 +61,395 @@ public sealed record SessionCoordinationIdentity(
 /// is keyed by external id), so a duplicate register is harmless; the emitter still guards against
 /// re-registering an id it already tracks, to keep the log clean.</para>
 /// </remarks>
-public sealed class SessionCoordinationEmitter(CoordContractWriter writer)
+public sealed class SessionCoordinationEmitter : IDisposable
 {
-    private readonly CoordContractWriter _writer = writer ?? throw new ArgumentNullException(nameof(writer));
-    private readonly HashSet<string> _live = new(StringComparer.Ordinal);
+    private readonly CoordContractWriter _writer;
+    private readonly CoordinationEmitterBudget _budget;
+    private readonly Dictionary<string, CoordinationEmitterState> _states = new(StringComparer.Ordinal);
     private readonly object _gate = new();
     private readonly Dictionary<string, SessionGate> _sessionGates = new(StringComparer.Ordinal);
+    private bool _retired;
+    private bool _batch;
 
-    /// <summary>The number of sessions currently registered and not yet ended.</summary>
+    public SessionCoordinationEmitter(CoordContractWriter writer)
+        : this(writer, CoordinationEmitterBudget.Production) { }
+
+    internal SessionCoordinationEmitter(CoordContractWriter writer, CoordinationEmitterBudget budget)
+    {
+        _writer = writer ?? throw new ArgumentNullException(nameof(writer));
+        _budget = budget;
+    }
+
+    /// <summary>Committed membership only; pending registrations are excluded.</summary>
     public int LiveCount
     {
-        get { lock (_gate) { return _live.Count; } }
+        get { lock (_gate) { return _states.Values.Count(state => state.Registered); } }
     }
 
-    /// <summary>Registers a session (once) and writes its register event with the identity's attributes.</summary>
-    public void Register(string externalSessionId, SessionCoordinationIdentity identity)
+    public int RetainedCount { get { lock (_gate) { return _states.Count; } } }
+    internal string[] OwnedSessionIds { get { lock (_gate) { return [.. _states.Keys]; } } }
+
+    /// <summary>Payload, UTF-16 input/metadata and fingerprint bytes; excludes fixed CLR object overhead.</summary>
+    public long RetainedDataBytes
     {
-        ArgumentException.ThrowIfNullOrEmpty(externalSessionId);
+        get { lock (_gate) { return _states.Values.Sum(state => state.RetainedDataBytes); } }
+    }
+
+    public CoordinationEmitterResult RegisterResult(string session, SessionCoordinationIdentity identity)
+    {
         ArgumentNullException.ThrowIfNull(identity);
-        ForSession(externalSessionId, () =>
-        {
-            if (IsLive(externalSessionId))
-            {
-                return; // already registered - the register event is idempotent, but do not re-write it
-            }
-
-            _writer.WriteRegister(externalSessionId, identity.ToAttributes());
-            lock (_gate) { _live.Add(externalSessionId); }
-        });
+        return RegisterCore(session, () => identity.ToAttributes());
     }
 
-    /// <summary>Writes a heartbeat for one registered session; a no-op for an unknown/ended session.</summary>
-    public void Heartbeat(string externalSessionId)
+    public CoordinationEmitterResult RegisterResult(string session, IReadOnlyDictionary<string, string?> attributes)
     {
-        ArgumentException.ThrowIfNullOrEmpty(externalSessionId);
-        ForSession(externalSessionId, () =>
-        {
-            if (IsLive(externalSessionId))
-            {
-                _writer.WriteHeartbeat(externalSessionId);
-            }
-        });
+        ArgumentNullException.ThrowIfNull(attributes);
+        return RegisterCore(session, () => attributes);
     }
 
-    /// <summary>Heartbeats every live session - the shell calls this on its refresh tick.</summary>
+    private CoordinationEmitterResult RegisterCore(string session, Func<IReadOnlyDictionary<string, string?>> input) =>
+        ForSession(session, CoordinationEmitterOperation.Register, state =>
+        {
+            if (state.Registered && state.Pending is null) return Result(state, CoordinationEmitterOutcome.NoOp);
+            if (state.Pending is not null && state.Pending != CoordinationEmitterOperation.Register)
+                return Result(state, CoordinationEmitterOutcome.Refused, CoordinationEmitterCodes.InputConflict);
+            var frozen = CoordinationEmitterState.Freeze(session, input());
+            if (state.Pending is not null &&
+                (state.Pending != CoordinationEmitterOperation.Register || !state.SameInput(frozen)))
+            {
+                return Result(state, CoordinationEmitterOutcome.Refused, CoordinationEmitterCodes.InputConflict);
+            }
+            if (state.Pending is null) Start(state, CoordinationEmitterOperation.Register, frozen);
+            return Execute(state);
+        });
+
+    public CoordinationEmitterResult HeartbeatResult(string session) => Control(session, CoordinationEmitterOperation.Heartbeat);
+    public CoordinationEmitterResult EndResult(string session) => Control(session, CoordinationEmitterOperation.End);
+    public CoordinationEmitterResult RetryPending(string session) =>
+        ForSession(session, CoordinationEmitterOperation.Retry, state => state.Pending is null
+            ? Result(state, CoordinationEmitterOutcome.NoOp) : Execute(state));
+
+    public CoordinationEmitterResult TryAbandonPending(string session) =>
+        ForSession(session, CoordinationEmitterOperation.Abandon, state =>
+        {
+            if (state.Pending is null) return Result(state, CoordinationEmitterOutcome.NoOp);
+            if (!state.ProvenNoWrite || state.Prepared?.Attempted == true)
+                return Result(state, CoordinationEmitterOutcome.Uncertain, CoordinationEmitterCodes.WriteUncertain);
+            lock (_gate)
+            {
+                state.ClearPending();
+                if (!state.Registered) Release(state);
+                return Result(state, CoordinationEmitterOutcome.Abandoned);
+            }
+        }, wait: false);
+
+    public void Register(string externalSessionId, SessionCoordinationIdentity identity) =>
+        ThrowIfFailed(RegisterResult(externalSessionId, identity));
+    public void Heartbeat(string externalSessionId) => ThrowIfFailed(HeartbeatResult(externalSessionId));
+    public void End(string externalSessionId) => ThrowIfFailed(EndResult(externalSessionId));
+
+    /// <summary>
+    /// Blocking compatibility bridge, not a UI-safe deadline. Workers never capture the caller's
+    /// context and every asynchronous join uses ConfigureAwait(false).
+    /// </summary>
     public void HeartbeatAll()
     {
-        string[] ids;
-        lock (_gate)
-        {
-            ids = [.. _live];
-        }
-
-        foreach (var id in ids)
-        {
-            Heartbeat(id);
-        }
+        var results = HeartbeatAllResultsAsync().ConfigureAwait(false).GetAwaiter().GetResult().ToArray();
+        // A single serial reconciliation of root contention preserves the old ordinary void path.
+        // It never rebases an assigned preparation, and does not retry transport uncertainty.
+        for (var index = 0; index < results.Length; index++)
+            if (results[index].Code == CoordinationWriteCodes.WriterBusy)
+                results[index] = ForSession(results[index].Session, CoordinationEmitterOperation.Heartbeat,
+                    state => PerformControl(state, CoordinationEmitterOperation.Heartbeat), wait: false);
+        var failed = results.Where(result => !result.Succeeded).ToArray();
+        if (failed.Length > 0) throw new CoordinationEmitterBatchException(failed);
     }
 
-    /// <summary>Writes a session-end for a session and stops tracking it; a no-op if unknown.</summary>
-    public void End(string externalSessionId)
+    public async Task<IReadOnlyList<CoordinationEmitterResult>> HeartbeatAllResultsAsync(
+        CancellationToken cancellationToken = default)
     {
-        ArgumentException.ThrowIfNullOrEmpty(externalSessionId);
-        ForSession(externalSessionId, () =>
+        string[] sessions;
+        lock (_gate)
         {
-            if (!IsLive(externalSessionId))
+            if (_batch)
+                return [new("", CoordinationEmitterMembership.Unknown, CoordinationEmitterOutcome.Busy,
+                    CoordinationEmitterCodes.Busy)];
+            if (_retired)
+                return [new("", CoordinationEmitterMembership.Unknown, CoordinationEmitterOutcome.Refused,
+                    CoordinationEmitterCodes.Retired)];
+            _batch = true;
+            sessions = [.. _states.Values.Where(state => state.Registered).Select(state => state.Session)];
+        }
+        var work = new List<Task<CoordinationEmitterResult>>(sessions.Length);
+        foreach (var session in sessions)
+        {
+            if (cancellationToken.IsCancellationRequested)
             {
-                return;
+                work.Add(Task.FromResult(SnapshotResult(session, CoordinationEmitterOutcome.Busy,
+                    CoordinationEmitterCodes.Cancelled)));
+                continue;
             }
-
-            _writer.WriteSessionEnd(externalSessionId);
-            lock (_gate) { _live.Remove(externalSessionId); }
-        });
+            var lease = Acquire(session, CoordinationEmitterOperation.Heartbeat, false, out var failure);
+            work.Add(lease is null ? Task.FromResult(failure!) :
+                Task.Run(() => RunLease(session, lease, CoordinationEmitterOperation.Heartbeat,
+                    state => PerformControl(state, CoordinationEmitterOperation.Heartbeat))));
+        }
+        var completion = FinishBatch(work);
+        try { return await completion.WaitAsync(cancellationToken).ConfigureAwait(false); }
+        catch (OperationCanceledException)
+        {
+            // The join continues owning _batch and leases. Cancellation is not an I/O acknowledgement.
+            return work.Select((task, index) => task.IsCompletedSuccessfully
+                ? task.GetAwaiter().GetResult()
+                : SnapshotResult(sessions[index], CoordinationEmitterOutcome.InFlight,
+                    CoordinationEmitterCodes.InFlight)).ToArray();
+        }
     }
 
-    private bool IsLive(string session)
+    private async Task<IReadOnlyList<CoordinationEmitterResult>> FinishBatch(
+        List<Task<CoordinationEmitterResult>> work)
     {
-        lock (_gate) { return _live.Contains(session); }
+        try { return await Task.WhenAll(work).ConfigureAwait(false); }
+        finally { lock (_gate) { _batch = false; } }
     }
 
-    private void ForSession(string session, Action operation)
+    public bool TryRetire()
     {
-        SessionGate gate;
         lock (_gate)
         {
-            if (!_sessionGates.TryGetValue(session, out gate!))
+            if (_states.Count != 0 || _sessionGates.Count != 0 || _batch) return false;
+            _retired = true;
+            return true;
+        }
+    }
+
+    public void Dispose()
+    {
+        if (!TryRetire()) throw new CoordinationEmitterException(
+            new("", CoordinationEmitterMembership.Unknown, CoordinationEmitterOutcome.Busy,
+                CoordinationEmitterCodes.Obligations));
+    }
+
+    private CoordinationEmitterResult Control(string session, CoordinationEmitterOperation operation) =>
+        ForSession(session, operation, state => PerformControl(state, operation));
+
+    private CoordinationEmitterResult PerformControl(CoordinationEmitterState state, CoordinationEmitterOperation operation)
+    {
+        if (state.Pending is not null && state.Pending != operation)
+            return Result(state, CoordinationEmitterOutcome.Refused, CoordinationEmitterCodes.InputConflict);
+        if (!state.Registered) return Result(state, CoordinationEmitterOutcome.NoOp);
+        if (state.Pending is null) Start(state, operation, null);
+        return Execute(state);
+    }
+
+    private void Start(CoordinationEmitterState state, CoordinationEmitterOperation operation,
+        Dictionary<string, string?>? input)
+    {
+        lock (_gate) { state.Pending = operation; state.Frozen = input; state.ProvenNoWrite = true; }
+    }
+
+    private CoordinationEmitterResult Execute(CoordinationEmitterState state)
+    {
+        if (state.BlockedCode is not null) return Result(state, CoordinationEmitterOutcome.Refused, state.BlockedCode);
+        if (state.Prepared is null)
+        {
+            if (state.Phase == CoordinationEmitterPhase.Uncertain)
+                return Result(state, CoordinationEmitterOutcome.Uncertain, CoordinationEmitterCodes.RecoveryRequired);
+            lock (_gate) { state.Phase = CoordinationEmitterPhase.Preparing; state.ProvenNoWrite = false; }
+            var preparation = _writer.Prepare(state.Kind, state.Session, state.Frozen);
+            lock (_gate)
+            {
+                // Capture the object before any append; a failure result may carry no Prepared at all.
+                if (preparation.Prepared is not null)
+                {
+                    state.Prepared = preparation.Prepared;
+                    state.Frozen = null;
+                }
+                state.ProvenNoWrite = preparation.Status != CoordinationWriteStatus.Uncertain;
+                state.Phase = state.Prepared is null
+                    ? CoordinationEmitterPhase.AwaitingPreparation : CoordinationEmitterPhase.Ready;
+            }
+            if (preparation.Status != CoordinationWriteStatus.Ready)
+                return FromWrite(state, preparation);
+        }
+        var prepared = state.Prepared!;
+        if (prepared.Admission.ByteCount > CoordContractWriter.MaximumLineBytes ||
+            state.MetadataCodeUnits > CoordinationEmitterState.MaximumCodeUnits)
+        {
+            lock (_gate)
+            {
+                state.Prepared = null;
+                state.BlockedCode = CoordinationEmitterCodes.RetentionBound;
+                state.ProvenNoWrite = true;
+            }
+            return Result(state, CoordinationEmitterOutcome.Refused, CoordinationEmitterCodes.RetentionBound);
+        }
+        lock (_gate) { state.Phase = CoordinationEmitterPhase.Appending; state.ProvenNoWrite = false; }
+        var appended = _writer.Append(prepared);
+        lock (_gate)
+        {
+            state.ProvenNoWrite = !prepared.Attempted && appended.Status != CoordinationWriteStatus.Uncertain;
+            state.Phase = appended.Status == CoordinationWriteStatus.Uncertain
+                ? CoordinationEmitterPhase.Uncertain : CoordinationEmitterPhase.Ready;
+            if (appended.Status == CoordinationWriteStatus.Admitted)
+            {
+                var ending = state.Pending == CoordinationEmitterOperation.End;
+                state.Registered = !ending;
+                state.ClearPending();
+                if (ending) Release(state);
+            }
+            return FromWrite(state, appended);
+        }
+    }
+
+    private CoordinationEmitterResult ForSession(string session, CoordinationEmitterOperation operation,
+        Func<CoordinationEmitterState, CoordinationEmitterResult> action, bool wait = true)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(session);
+        var lease = Acquire(session, operation, wait, out var failure);
+        return lease is null ? failure! : RunLease(session, lease, operation, action);
+    }
+
+    private SessionGate? Acquire(string session, CoordinationEmitterOperation operation, bool wait,
+        out CoordinationEmitterResult? failure)
+    {
+        lock (_gate)
+        {
+            failure = null;
+            if (_retired) failure = SnapshotResult(session, CoordinationEmitterOutcome.Refused, CoordinationEmitterCodes.Retired);
+            else if (!_states.ContainsKey(session))
+            {
+                if (operation != CoordinationEmitterOperation.Register)
+                    failure = SnapshotResult(session, operation == CoordinationEmitterOperation.Retry
+                        ? CoordinationEmitterOutcome.Uncertain : CoordinationEmitterOutcome.NoOp,
+                        operation == CoordinationEmitterOperation.Retry ? CoordinationEmitterCodes.RecoveryRequired : null);
+                else if (session.Length > CoordinationEmitterState.MaximumCodeUnits)
+                    failure = SnapshotResult("", CoordinationEmitterOutcome.Refused, CoordinationEmitterCodes.RetentionBound);
+                else if (!_budget.TryReserve(this))
+                    failure = SnapshotResult(session, CoordinationEmitterOutcome.Refused, CoordinationEmitterCodes.Capacity);
+                else _states.Add(session, new(session));
+            }
+            if (failure is not null) return null;
+            if (!_sessionGates.TryGetValue(session, out var gate))
             {
                 gate = new SessionGate();
                 _sessionGates.Add(session, gate);
             }
+            if (gate.References >= 2 || (!wait && gate.References > 0) ||
+                (operation == CoordinationEmitterOperation.Heartbeat && gate.EndReferences > 0))
+            {
+                failure = SnapshotResult(session, !wait && gate.References > 0
+                    ? CoordinationEmitterOutcome.InFlight : CoordinationEmitterOutcome.Busy, CoordinationEmitterCodes.Busy);
+                return null;
+            }
             gate.References++;
+            if (operation == CoordinationEmitterOperation.End) gate.EndReferences++;
+            return gate;
         }
+    }
 
-        // Count waiters before releasing the lookup lock, so a gate cannot be replaced beneath them.
-        // Never wait or perform I/O under the emitter-wide membership lock.
+    private CoordinationEmitterResult RunLease(string session, SessionGate gate,
+        CoordinationEmitterOperation operation, Func<CoordinationEmitterState, CoordinationEmitterResult> action)
+    {
+        using var activity = new System.Diagnostics.Activity("coordination.emitter").Start();
+        var started = System.Diagnostics.Stopwatch.GetTimestamp();
+        gate.Semaphore.Wait();
+        CoordinationEmitterResult result;
         try
         {
-            lock (gate) { operation(); }
+            CoordinationEmitterState? state;
+            lock (_gate)
+            {
+                _states.TryGetValue(session, out state);
+                if (state is null && operation == CoordinationEmitterOperation.Register && _budget.TryReserve(this))
+                {
+                    state = new(session);
+                    _states.Add(session, state);
+                }
+            }
+            result = state is null ? SnapshotResult(session, operation == CoordinationEmitterOperation.Register
+                ? CoordinationEmitterOutcome.Refused : CoordinationEmitterOutcome.NoOp,
+                operation == CoordinationEmitterOperation.Register ? CoordinationEmitterCodes.Capacity : null) : action(state);
         }
-        finally
+        catch (CoordinationEmitterInputException)
         {
             lock (_gate)
             {
-                if (0 == --gate.References)
+                if (_states.TryGetValue(session, out var state) && state.Pending is null && !state.Registered)
                 {
-                    _sessionGates.Remove(session);
+                    state.Pending = CoordinationEmitterOperation.Register;
+                    state.BlockedCode = CoordinationEmitterCodes.RetentionBound;
                 }
             }
+            result = SnapshotResult(session, CoordinationEmitterOutcome.Refused, CoordinationEmitterCodes.RetentionBound);
         }
+        catch (Exception)
+        {
+            lock (_gate)
+            {
+                if (_states.TryGetValue(session, out var state))
+                {
+                    state.Pending ??= operation;
+                    state.ProvenNoWrite = false;
+                    state.Phase = CoordinationEmitterPhase.Uncertain;
+                }
+            }
+            result = SnapshotResult(session, CoordinationEmitterOutcome.Uncertain, CoordinationEmitterCodes.WriteUncertain);
+        }
+        finally
+        {
+            gate.Semaphore.Release();
+            lock (_gate)
+            {
+                if (operation == CoordinationEmitterOperation.End) gate.EndReferences--;
+                if (--gate.References == 0) { _sessionGates.Remove(session); gate.Semaphore.Dispose(); }
+            }
+        }
+        activity.SetTag("coordination.outcome", result.Outcome.ToString());
+        activity.SetTag("coordination.membership", result.Membership.ToString());
+        activity.SetTag("coordination.retained", RetainedCount);
+        activity.SetTag("coordination.duration_ms", System.Diagnostics.Stopwatch.GetElapsedTime(started).TotalMilliseconds);
+        activity.SetTag("error.type", result.Code);
+        return result;
+    }
+
+    private void Release(CoordinationEmitterState state)
+    {
+        _states.Remove(state.Session);
+        _budget.Release(this);
+    }
+
+    private CoordinationEmitterResult SnapshotResult(string session, CoordinationEmitterOutcome outcome, string? code = null)
+    {
+        lock (_gate) { return _states.TryGetValue(session, out var state) ? Result(state, outcome, code)
+            : new(session, CoordinationEmitterMembership.Unknown, outcome, code); }
+    }
+
+    private static CoordinationEmitterResult Result(CoordinationEmitterState state,
+        CoordinationEmitterOutcome outcome, string? code = null, CoordinationAdmission? admission = null) =>
+        new(state.Session, state.Registered ? CoordinationEmitterMembership.Live :
+            state.Pending is not null ? CoordinationEmitterMembership.PendingRegistration : CoordinationEmitterMembership.Unknown,
+            outcome, code, admission, state.Prepared, state.Phase);
+
+    private static CoordinationEmitterResult FromWrite(CoordinationEmitterState state, CoordinationWriteResult result) =>
+        Result(state, result.Status switch
+        {
+            CoordinationWriteStatus.Admitted => CoordinationEmitterOutcome.Admitted,
+            CoordinationWriteStatus.Refused => CoordinationEmitterOutcome.Refused,
+            CoordinationWriteStatus.Unavailable => CoordinationEmitterOutcome.Unavailable,
+            _ => CoordinationEmitterOutcome.Uncertain
+        }, result.Code, result.Admission);
+
+    private static void ThrowIfFailed(CoordinationEmitterResult result)
+    {
+        if (!result.Succeeded) throw new CoordinationEmitterException(result);
     }
 
     private sealed class SessionGate
     {
         public int References;
+        public int EndReferences;
+        public SemaphoreSlim Semaphore { get; } = new(1, 1);
     }
 
     /// <summary>
@@ -190,27 +466,18 @@ public sealed class SessionCoordinationEmitter(CoordContractWriter writer)
 
         foreach (var id in currentSessionIds)
         {
-            bool isLive;
-            lock (_gate)
-            {
-                isLive = _live.Contains(id);
-            }
-
-            if (isLive)
-            {
-                Heartbeat(id);
-            }
-            else
-            {
-                Register(id, identityFor(id));
-            }
+            bool live;
+            lock (_gate) { live = _states.TryGetValue(id, out var state) && state.Registered; }
+            if (live) Heartbeat(id);
+            else ThrowIfFailed(RegisterCore(id, () => identityFor(id).ToAttributes()));
         }
 
         // End any tracked session that is no longer present.
         string[] gone;
         lock (_gate)
         {
-            gone = [.. _live.Where(id => !currentSessionIds.Contains(id))];
+            gone = [.. _states.Values.Where(state => state.Registered && !currentSessionIds.Contains(state.Session))
+                .Select(state => state.Session)];
         }
 
         foreach (var id in gone)

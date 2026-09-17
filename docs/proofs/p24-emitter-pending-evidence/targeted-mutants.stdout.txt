@@ -1,0 +1,85 @@
+Test run for C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.08]   Discovering: AiDe.Core.Tests
+[xUnit.net 00:00:00.27]   Discovered:  AiDe.Core.Tests
+[xUnit.net 00:00:00.28]   Starting:    AiDe.Core.Tests
+[xUnit.net 00:00:00.32]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:00.32]                        ↓ (pos 6)
+[xUnit.net 00:00:00.32]       Expected: "COORD_EMITTER_RETENTION_BOUND"
+[xUnit.net 00:00:00.32]       Actual:   "COORD_RECORD_BOUND"
+[xUnit.net 00:00:00.32]                        ↑ (pos 6)
+[xUnit.net 00:00:00.32]       Stack Trace:
+[xUnit.net 00:00:00.32]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(270,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_InputBound_CountsUtf16AndDoesNotRetainOversize()
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.90]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.90]       Expected: typeof(AiDe.Core.Watcher.CoordinationEmitterException)
+[xUnit.net 00:00:00.90]       Stack Trace:
+[xUnit.net 00:00:00.90]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(170,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ProductionGlobalAcrossRoots_RefusesBeforeFactoryAndReadmitsAfterEnd()
+[xUnit.net 00:00:00.90]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.90]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.90]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:00.90]       Expected: Uncertain
+[xUnit.net 00:00:00.90]       Actual:   Abandoned
+[xUnit.net 00:00:00.90]       Stack Trace:
+[xUnit.net 00:00:00.90]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(77,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RetryPending_UncertainRegister_PreservesActualPreparationAndAdmission()
+[xUnit.net 00:00:00.90]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.90]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.90]       Assert.IsType() Failure: Value is null
+[xUnit.net 00:00:00.90]       Expected: typeof(AiDe.Core.Watcher.PreparedWrite)
+[xUnit.net 00:00:00.90]       Actual:   null
+[xUnit.net 00:00:00.90]       Stack Trace:
+[xUnit.net 00:00:00.90]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(326,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_AppendUnavailableWithNullFailurePrepared_RetainsReadyObjectForRetry()
+[xUnit.net 00:00:00.90]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+[xUnit.net 00:00:00.90]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.91]   Finished:    AiDe.Core.Tests
+  Failed AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_InputBound_CountsUtf16AndDoesNotRetainOversize [11 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+                 ↓ (pos 6)
+Expected: "COORD_EMITTER_RETENTION_BOUND"
+Actual:   "COORD_RECORD_BOUND"
+                 ↑ (pos 6)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_InputBound_CountsUtf16AndDoesNotRetainOversize() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 270
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ProductionGlobalAcrossRoots_RefusesBeforeFactoryAndReadmitsAfterEnd [580 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(AiDe.Core.Watcher.CoordinationEmitterException)
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ProductionGlobalAcrossRoots_RefusesBeforeFactoryAndReadmitsAfterEnd() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 170
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RetryPending_UncertainRegister_PreservesActualPreparationAndAdmission [5 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Uncertain
+Actual:   Abandoned
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RetryPending_UncertainRegister_PreservesActualPreparationAndAdmission() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 77
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_AppendUnavailableWithNullFailurePrepared_RetainsReadyObjectForRetry [1 ms]
+  Error Message:
+   Assert.IsType() Failure: Value is null
+Expected: typeof(AiDe.Core.Watcher.PreparedWrite)
+Actual:   null
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_AppendUnavailableWithNullFailurePrepared_RetainsReadyObjectForRetry() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 326
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+Results File: C:\Projects\ai-de-feature-xh-p2-producers\docs\proofs\p24-emitter-pending-evidence\targeted-mutants.trx
+
+Total tests: 4
+     Failed: 4
+ Total time: 1.2165 Seconds
+
+STDERR:
+[xUnit.net 00:00:00.32]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_InputBound_CountsUtf16AndDoesNotRetainOversize [FAIL]
+[xUnit.net 00:00:00.90]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_ProductionGlobalAcrossRoots_RefusesBeforeFactoryAndReadmitsAfterEnd [FAIL]
+[xUnit.net 00:00:00.90]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RetryPending_UncertainRegister_PreservesActualPreparationAndAdmission [FAIL]
+[xUnit.net 00:00:00.90]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.RegisterResult_AppendUnavailableWithNullFailurePrepared_RetainsReadyObjectForRetry [FAIL]
+Test Run Failed.

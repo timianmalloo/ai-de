@@ -20,7 +20,8 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
     public void Register_AppendDeniedThenRetried_DurablyRegistersExactlyOnce()
     {
         using var files = new ProducerDirectory();
-        var emitter = new SessionCoordinationEmitter(files.Writer);
+        using var lifetime = new EmitterTestLifetime(new SessionCoordinationEmitter(files.Writer));
+        var emitter = lifetime.Emitter;
         using (files.DenyAppend(Subject))
         {
             Assert.IsAssignableFrom<IOException>(
@@ -44,7 +45,8 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
     public void End_AppendDeniedThenRetried_DurablyEndsExactlyOnceAndKeepsRegistration()
     {
         using var files = new ProducerDirectory();
-        var emitter = new SessionCoordinationEmitter(files.Writer);
+        using var lifetime = new EmitterTestLifetime(new SessionCoordinationEmitter(files.Writer));
+        var emitter = lifetime.Emitter;
         emitter.Register(Subject, Identity());
         var registration = File.ReadAllBytes(files.Log(Subject));
         using (files.DenyAppend(Subject))
@@ -74,7 +76,8 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
     {
         using var time = new PausedTime();
         using var files = new ProducerDirectory(time);
-        var emitter = new SessionCoordinationEmitter(files.Writer);
+        using var lifetime = new EmitterTestLifetime(new SessionCoordinationEmitter(files.Writer));
+        var emitter = lifetime.Emitter;
         const string other = "synthetic-independent";
         Task? independent = null;
 
@@ -101,7 +104,8 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
     {
         using var time = new PausedTime();
         using var files = new ProducerDirectory(time);
-        var emitter = new SessionCoordinationEmitter(files.Writer);
+        using var lifetime = new EmitterTestLifetime(new SessionCoordinationEmitter(files.Writer));
+        var emitter = lifetime.Emitter;
         Task? duplicate = null;
 
         await WhileWritePaused(time, () => emitter.Register(Subject, Identity()), () =>
@@ -122,7 +126,8 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
     {
         using var time = new ThreeOperationTime();
         using var files = new ProducerDirectory(time);
-        var emitter = new SessionCoordinationEmitter(files.Writer);
+        using var lifetime = new EmitterTestLifetime(new SessionCoordinationEmitter(files.Writer));
+        var emitter = lifetime.Emitter;
         var owner = Task.Run(() => emitter.Register(Subject, Identity()));
         Task? waiter = null;
         Task? third = null;
@@ -199,7 +204,8 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
     {
         using var time = new PausedTime();
         using var files = new ProducerDirectory(time);
-        var emitter = new SessionCoordinationEmitter(files.Writer);
+        using var lifetime = new EmitterTestLifetime(new SessionCoordinationEmitter(files.Writer));
+        var emitter = lifetime.Emitter;
         Task? end = null;
 
         await WhileWritePaused(time, () => emitter.Register(Subject, Identity()), () =>
@@ -219,7 +225,8 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
     {
         using var time = new PausedTime();
         using var files = new ProducerDirectory(time);
-        var emitter = new SessionCoordinationEmitter(files.Writer);
+        using var lifetime = new EmitterTestLifetime(new SessionCoordinationEmitter(files.Writer));
+        var emitter = lifetime.Emitter;
         emitter.Register(Subject, Identity());
         Task? end = null;
 
@@ -243,22 +250,44 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
     {
         using var time = new PausedTime();
         using var files = new ProducerDirectory(time);
-        var emitter = new SessionCoordinationEmitter(files.Writer);
+        using var lifetime = new EmitterTestLifetime(new SessionCoordinationEmitter(files.Writer));
+        var emitter = lifetime.Emitter;
         emitter.Register(Subject, Identity());
         emitter.Register("synthetic-second", Identity());
-        // Read the actual snapshot order, not an assumed HashSet enumeration contract.
-        var live = (IEnumerable<string>)PrivateField(emitter, "_live")!;
-        var ended = live.Last();
+        // P2 dispatches independently, not in HashSet order. Either session may heartbeat
+        // before End, but neither can heartbeat after its admitted End.
+        var ended = "synthetic-second";
         Task? end = null;
 
-        await WhileWritePaused(time, emitter.HeartbeatAll, async () =>
+        await WhileWritePaused(time, () =>
         {
-            end = Task.Run(() => emitter.End(ended));
-            await end.WaitAsync(WaitBound);
-            Assert.Equal(new[] { "register", "session-end" }, Kinds(files, ended));
+            var error = Record.Exception(emitter.HeartbeatAll);
+            if (error is not null)
+            {
+                var batchError = Assert.IsType<CoordinationEmitterBatchException>(error);
+                Assert.All(batchError.Results, result => Assert.False(result.Succeeded));
+            }
+        }, async () =>
+        {
+            end = Task.Run(() =>
+            {
+                var result = emitter.EndResult(ended);
+                if (result.Code == CoordinationEmitterCodes.InputConflict)
+                {
+                    Assert.True(emitter.TryAbandonPending(ended).Succeeded);
+                    emitter.End(ended);
+                }
+                else Assert.True(result.Succeeded);
+            });
+            WaitForContender(emitter, end, ended);
+            await Task.CompletedTask;
         }, () => end);
 
-        Assert.Equal(new[] { "register", "session-end" }, Kinds(files, ended));
+        var endedKinds = Kinds(files, ended);
+        Assert.Equal("session-end", endedKinds[^1]);
+        Assert.Single(endedKinds, kind => kind == "session-end");
+        emitter.Heartbeat(ended);
+        Assert.Equal(endedKinds, Kinds(files, ended));
         Assert.Equal(1, emitter.LiveCount);
         Assert.Equal(0, GateCount(emitter));
     }
@@ -267,7 +296,8 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
     public void Register_RepeatedFailedFirstRegistrations_ReclaimsEverySessionGate()
     {
         using var files = new ProducerDirectory();
-        var emitter = new SessionCoordinationEmitter(files.Writer);
+        using var lifetime = new EmitterTestLifetime(new SessionCoordinationEmitter(files.Writer));
+        var emitter = lifetime.Emitter;
         for (var index = 0; index < 32; index++)
         {
             var session = $"synthetic-denied-{index}";
@@ -283,7 +313,8 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
     public void Register_OrdinaryLifecycle_RecordsOneRegisterHeartbeatAndEnd()
     {
         using var files = new ProducerDirectory();
-        var emitter = new SessionCoordinationEmitter(files.Writer);
+        using var lifetime = new EmitterTestLifetime(new SessionCoordinationEmitter(files.Writer));
+        var emitter = lifetime.Emitter;
 
         emitter.Register(Subject, Identity());
         emitter.Register(Subject, Identity());
@@ -306,7 +337,8 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
     public void Register_OtherSessionAppendDenied_IndependentSessionStillCompletes()
     {
         using var files = new ProducerDirectory();
-        var emitter = new SessionCoordinationEmitter(files.Writer);
+        using var lifetime = new EmitterTestLifetime(new SessionCoordinationEmitter(files.Writer));
+        var emitter = lifetime.Emitter;
         using var denied = files.DenyAppend(Subject);
         const string other = "synthetic-other";
 
@@ -487,14 +519,14 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
         }
     }
 
-    private static void WaitForContender(SessionCoordinationEmitter emitter, Task contender)
+    private static void WaitForContender(SessionCoordinationEmitter emitter, Task contender, string session = Subject)
     {
         Assert.True(SpinWait.SpinUntil(() =>
         {
             lock (PrivateField(emitter, "_gate")!)
             {
                 var gates = PrivateField(emitter, "_sessionGates") as System.Collections.IDictionary;
-                var gate = gates?[Subject];
+                var gate = gates?[session];
                 var references = gate?.GetType().GetField("References")?.GetValue(gate) as int?;
                 return contender.IsCompleted || references >= 2;
             }

@@ -106,6 +106,136 @@ replay, pre-callback capacity and unsafe-abandonment controls are the prevention
 Any incomplete floor is recorded in this receipt for parent consolidation, not
 silently promoted into the canonical Proof Pack or site.
 
+### P2.P2B author receipt — bounded partial, not a qualification PASS
+
+Contract-first commit: `3889d326`. Production source is confined to
+`SessionCoordinationEmitter.cs` and `CoordinationEmitterState.cs`; the P2.P2A writer,
+wire shape, App and runtime activation are unchanged. This is executable author
+work, not a replacement proposal. Independent Test/DS/Security review remains
+required before the parent can grant any P2.P2B or whole-programme acceptance.
+
+Observed evidence directory: `docs/proofs/p24-emitter-pending-evidence/`.
+`baseline-red.trx` has two executed failures against the original void methods:
+lost acknowledgement duplicated a complete register; a failed first heartbeat
+prevented a healthy second heartbeat. `complete-selected.trx` has 91/91 PASS:
+the previous 77-case selector plus 14 new logical cases. `targeted-mutants.trx`
+has four executed failures: per-emitter instead of production-global capacity,
+unsafe uncertain abandonment, replacing retained Prepared with nullable append
+failure metadata, and increasing the UTF-16 bound. These are combined targeted
+mutants, not a full mutation score. `final-restored.trx`, its complete child
+stdout and SHA-256 pins record the rebuilt restored source separately. Failed
+intermediate runs are retained as failures, never relabelled as proof.
+
+Each run's `.pins.json` contains the exact command, logical TRX counters, elapsed
+seconds and SHA-256 for coordination sources, tests, project and Core/test
+binaries. `verify.py` uses the existing test runner without installing anything.
+This directory is raw evidence, **not** the parent's canonical Proof Pack.
+
+Implemented and exercised:
+
+- A single static production budget owns a fixed-128 SemaphoreSlim and strongly
+  retains emitter owners; an internal fixed-128 fixture budget cannot be supplied
+  through a public constructor. Cross-root live capacity, refusal before
+  Reconcile's identity factory, absence of the refused directory, and readmission
+  after End are observed. The reservation test observes 127 live plus one paused
+  registration, with an excess emitter unable to create its root.
+- One retained operation, exact actual PreparedWrite reuse, frozen-input retry
+  after preparation unavailability, ordinal input conflict and mutable-dictionary
+  isolation. The real Activity exit seam holds the OS root lock after Prepare,
+  producing Append's null-Prepared failure; the emitter still retains the original
+  object and later obtains its exact Admission. A real complete write with lost
+  acknowledgement remains uncertain until retry and cannot be abandoned/disposed.
+- Failed heartbeat/end preparation preserves Live and its slot. Proven-no-write
+  abandonment clears only the pending operation; admitted End releases capacity.
+  Unknown heartbeat/end allocate nothing; unknown Retry reports canonical-pull
+  recovery required instead of inventing a cold preparation.
+- Input UTF-16 accounting, repair-LF packet refusal before append, and metadata/
+  fingerprint accounting. Ready state does not retain the redundant frozen
+  dictionary or a copied byte cache. A never-attempted over-bound preparation is
+  discarded into a bounded sticky refusal, requiring explicit abandonment.
+- One waiter per occupied session; 200 excess heartbeat calls return Busy.
+  Existing three-operation gate-reference retirement assertions pass. A paused
+  heartbeat allows a healthy peer to write before the pause releases.
+  Cancellation reports InFlight, retains slots and the batch, and refuses
+  retirement. The compatibility bridge is tested under a context that rejects
+  Post, without claiming an unconditional scheduling or I/O deadline.
+
+**Exact remaining P2.P2B floors / qualification limits:**
+
+1. **Reserved-state publication is incomplete.** A newly reserved state has null
+   Pending and AwaitingPreparation until its input is frozen. It consumes a
+   global slot and is not Live, but the requested explicit Preparing/Register
+   publication before the identity callback is not yet represented. A Busy
+   result in that interval can report Unknown membership. This requires code and
+   a blocked-factory result assertion, not a wording change.
+2. **End-pending batch classification is incomplete.** Waiting/running End
+   suppresses new batch work through gate references. A *quiescent failed* End,
+   however, reaches the generic operation-conflict path and reports
+   Refused/INPUT_CONFLICT, not the requested Busy/InFlight batch classification.
+   No write is attempted. This needs a narrow batch-admission correction/test.
+3. **The full stress/boundary union is not proven.** The suite does not run 128
+   simultaneously blocked registrations across production roots; it runs 128
+   live globally and 127 live plus one reserved in a fixture scope. It lacks
+   GC/strong-owner retention observation, irrecoverable heartbeat/end uncertainty,
+   eleven fixed attributes and adversarial enumerator controls. Metadata boundary
+   arithmetic is synthetic; an actual Windows path at that boundary is not
+   exercised. The UTF-16 exact boundary is checked through Freeze, while the
+   public oversized path and exact packet-plus-repair refusal are exercised.
+4. **Batch transport contention remains visible, not solved.** Independent tasks
+   can contend on the existing writer's fail-fast root guard. The typed batch
+   reports those individual Unavailable outcomes. The legacy bridge performs
+   at most one serial retry of WriterBusy results after the parallel join; it
+   never retries uncertainty or rebases a Prepared. That compatibility policy
+   needs DS review. There is no dedicated failed-plus-healthy typed-result test,
+   nor a full stressed scheduling/End/cancellation matrix.
+5. **Instrumentation proof is incomplete.** Executed leases emit Activity
+   outcome/code/membership/count/duration without payloads. Capacity/Busy/unknown
+   early returns expose typed codes but do not emit that Activity, and emitted
+   emitter telemetry has not been captured in a dedicated assertion. The writer
+   telemetry controls still pass; they do not establish emitter telemetry.
+6. **Independent gates and programme work remain open.** No author-cleared
+   Test/DS/Security gate, canonical Proof Pack, notice/Data recovery qualification,
+   cross-platform claim, P3–P5 completion or activation follows. Raw evidence
+   stays in the assigned tree for the parent's separate consolidation. No site,
+   docs index, canonical register or public status claims were regenerated.
+
+Fixture changes are part of the memory fix: original emitter/producer fixtures
+now End or prove-no-write-abandon and retire before deleting their files. The
+former stale-snapshot test reflected the removed `_live` HashSet and assumed
+serial batch dispatch. Its revised assertion permits an admitted heartbeat
+before End, verifies End is final and unique, and verifies a later heartbeat
+cannot append; explicit batch failures are not disguised as admission. This
+adaptation is disclosed rather than calling all 77 test bodies unchanged.
+
+Corrections for the parent-owned class register (class → sweep → derive → prevent):
+
+- **Self-contention introduced by parallel dispatch:** the ordinary legacy
+  HeartbeatAll test went red because two tasks can hit the writer's root guard.
+  Sweep: all batch dispatch and legacy joins. Derive: preserve typed outcomes,
+  then one bounded compatibility retry only for root Busy; no retry of uncertain
+  writes. Prevent: original ordinary batch test and denied-first/healthy control.
+  Broader contention qualification remains item 4, not silently certified.
+- **Test fixture coupled to private collection shape:** the former snapshot
+  test failed on `_live` removal before reaching its behavioral oracle. Sweep:
+  the single `_live` reflection; gate reflection remains intentional to observe
+  references and bounded waiters. Derive: durable end ordering rather than
+  HashSet order. Prevent: final End plus post-End no-write assertions.
+- **Concurrent read fixture violates transport sharing:** polling ReadAllLines
+  while the writer owns its real handle raised IOException in the new test.
+  Sweep: new progress polls. Derive: observe gate quiescence before reading the
+  completed healthy file. Prevent: paused/cancelled batch test; no sleep/retry
+  that hides a production error.
+- **Helper lexical scope/analyzer errors:** the first cleanup helper landed
+  nested in the new test class, and predicate assertions triggered xUnit2031.
+  Sweep: all new helper callers and new Single assertions. Derive: one namespace
+  helper, built-in predicate overload. Prevent: the unchanged compiler/analyzers;
+  the failed `extended.stdout.txt` is retained, with null TRX counts.
+
+Planned graph and actual work used one author and no agents. Full token usage is
+not recorded; no inferred token cost is presented as measured. The 45-call bound
+is a handoff checkpoint: this is a coherent, tested partial implementation with
+the six floors above still binding, not authority to mark the whole goal done.
+
 ## P2.P2A — participating writer contract (recorded before code)
 
 The current task explicitly admits the writer portion of

@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="877de25d-a75a-4794-8772-78d124515541" name="malla@TIMMALLSTRIX 2026-09-16 18:17:37" runUser="TIMMALLSTRIX\malla" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-16T18:17:37.6956717-07:00" queuing="2026-09-16T18:17:37.6956719-07:00" start="2026-09-16T18:17:37.0366738-07:00" finish="2026-09-16T18:17:37.6986259-07:00" />
+  <TestSettings name="default" id="73dddbdf-a1f7-426b-8a4a-537102c0afda">
+    <Deployment runDeploymentRoot="malla_TIMMALLSTRIX_2026-09-16_18_17_37" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="feb745bf-a36a-4445-b12c-1c9a50da7541" testId="35247a77-0490-a292-a890-f3ae5d8f3e56" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_FirstSourceDenied_HealthySourceStillWritten" computerName="TIMMALLSTRIX" duration="00:00:00.0074075" startTime="2026-09-16T18:17:37.6313026-07:00" endTime="2026-09-16T18:17:37.6313493-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="feb745bf-a36a-4445-b12c-1c9a50da7541">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 2&#xD;
+Actual:   1</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_FirstSourceDenied_HealthySourceStillWritten() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 47&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d20c33a8-f381-4fc5-8c7a-6b7100273fa7" testId="eff6e1cb-28e5-9d47-d816-0b865cd1a3ac" testName="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Register_LostCompleteAcknowledgement_RetryDoesNotDuplicate" computerName="TIMMALLSTRIX" duration="00:00:00.0370901" startTime="2026-09-16T18:17:37.5783264-07:00" endTime="2026-09-16T18:17:37.6236754-07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d20c33a8-f381-4fc5-8c7a-6b7100273fa7">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Collections differ&#xD;
+Expected: [···, 125, 10]&#xD;
+Actual:   [···, 125, 10, 123, 34, 107, ···]&#xD;
+                         ↑ (pos 265)</Message>
+          <StackTrace>   at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Register_LostCompleteAcknowledgement_RetryDoesNotDuplicate() in C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs:line 30&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Register_LostCompleteAcknowledgement_RetryDoesNotDuplicate" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="eff6e1cb-28e5-9d47-d816-0b865cd1a3ac">
+      <Execution id="d20c33a8-f381-4fc5-8c7a-6b7100273fa7" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="Register_LostCompleteAcknowledgement_RetryDoesNotDuplicate" />
+    </UnitTest>
+    <UnitTest name="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_FirstSourceDenied_HealthySourceStillWritten" storage="c:\projects\ai-de-feature-xh-p2-producers\tests\aide.core.tests\bin\debug\net10.0\aide.core.tests.dll" id="35247a77-0490-a292-a890-f3ae5d8f3e56">
+      <Execution id="feb745bf-a36a-4445-b12c-1c9a50da7541" />
+      <TestMethod codeBase="C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests" name="HeartbeatAll_FirstSourceDenied_HealthySourceStillWritten" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="35247a77-0490-a292-a890-f3ae5d8f3e56" executionId="feb745bf-a36a-4445-b12c-1c9a50da7541" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eff6e1cb-28e5-9d47-d816-0b865cd1a3ac" executionId="d20c33a8-f381-4fc5-8c7a-6b7100273fa7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]   Discovered:  AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.27]   Starting:    AiDe.Core.Tests&#xD;
+[xUnit.net 00:00:00.33]       Assert.Equal() Failure: Collections differ&#xD;
+[xUnit.net 00:00:00.33]       Expected: [···, 125, 10]&#xD;
+[xUnit.net 00:00:00.33]       Actual:   [···, 125, 10, 123, 34, 107, ···]&#xD;
+[xUnit.net 00:00:00.33]                                ↑ (pos 265)&#xD;
+[xUnit.net 00:00:00.33]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.33]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(30,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Register_LostCompleteAcknowledgement_RetryDoesNotDuplicate()&#xD;
+[xUnit.net 00:00:00.33]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.33]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.34]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.34]       Expected: 2&#xD;
+[xUnit.net 00:00:00.34]       Actual:   1&#xD;
+[xUnit.net 00:00:00.34]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.34]         C:\Projects\ai-de-feature-xh-p2-producers\tests\AiDe.Core.Tests\Watcher\CoordinationEmitterPendingTests.cs(47,0): at AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_FirstSourceDenied_HealthySourceStillWritten()&#xD;
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.34]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.34]   Finished:    AiDe.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T18:17:37.6252178-07:00">
+        <Text>[xUnit.net 00:00:00.33]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.Register_LostCompleteAcknowledgement_RetryDoesNotDuplicate [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIMMALLSTRIX" outcome="Error" timestamp="2026-09-16T18:17:37.6316380-07:00">
+        <Text>[xUnit.net 00:00:00.34]     AiDe.Core.Tests.Watcher.CoordinationEmitterPendingTests.HeartbeatAll_FirstSourceDenied_HealthySourceStillWritten [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
