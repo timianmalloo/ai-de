@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generator": "docs-graph.py derive",
+  "generator": "docs-graph.py derive (n4-entry-points)",
   "rootId": "architecture",
   "artifactTypes": [
     "knowledge",
@@ -7009,6 +7009,58 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "5fa1011362f424dbe1caf1d90556e592360a2ee8443fbf8d39c55b3604e85060"
+    },
+    {
+      "id": "note-understanding-views-n4-entry-points",
+      "path": "docs/notes/understanding-views-n4-entry-points.md",
+      "title": "N4 Test Architect BLOCK for D-1 listing spec — grain still Flagged; Open Sequence stays mapping-unavailable",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2027-03-16",
+      "reviewSuggested": [],
+      "summary": "Test Architect (Adversary) N4 BLOCK on docs/specs/entry-points.md. Grain still Flagged in the spec while tests pin member NodeId = declaring type. F-EP is unnamed. Candidate set is unnamed. Open Sequence stays mapping-unavailable. Spec status stays draft. Authors do not self-clear. This reviewer did not author the spec and does not mark it accepted.",
+      "tags": [
+        "decision-note",
+        "understanding-views",
+        "N4",
+        "D-1",
+        "entry-points",
+        "test-architect"
+      ],
+      "links": [
+        {
+          "to": "spec-entry-points",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-n1-inventory",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r3",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r5",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r6",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-d1-listing-query-architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-n4-pass",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5fc03f78820bb4539967f03062554249cef65e003e4d1cd3bbff5a6d4215873b"
     },
     {
       "id": "note-understanding-views-n4-pass",
@@ -21064,5 +21116,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "39595cca30c7d96a68764df4851384934c345b7a53b99cf0da8221bcdcba1d0a"
+  "graphSha256": "c10648b91c91f6eb3234b6a07ae7c7730d8dc0cf8a6afa6046d4e68841a2f75a"
 };

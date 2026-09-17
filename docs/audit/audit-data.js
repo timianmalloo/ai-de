@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T13:38:37Z",
+  "generated": "2026-09-17T13:53:57Z",
   "audit": [
     {
       "actor": null,
@@ -20085,6 +20085,43 @@ window.AUDIT_DATA = {
         "short": "30d82c3b9",
         "branch": "understanding-views-d1",
         "pushed": false
+      }
+    },
+    {
+      "id": "al-01M2QTAG26MGBF40F2F0MTJJ2Y",
+      "shortname": "n4-d1-entry-points-block",
+      "datetime": "2026-09-17T13:53:57Z",
+      "session": "test-architect-d1-n4-entry-points",
+      "prompt": "You are Test Architect (Adversary) for D-1 listing spec. Do NOT implement src/. Do NOT mark the spec Accepted yourself if you also authored it — you did not author it. Verdict PASS / PASS-WITH-CONDITIONS / BLOCK. Write docs/notes/understanding-views-n4-entry-points.md with evidence opened. Open Sequence must stay mapping-unavailable. Grain: member rows now use declaring type node_id for graph/source. Commit the note if you can. Return verdict + gaps.",
+      "summary": "N4 Test Architect BLOCK on spec-entry-points (blob 77f8861d). Grain still Flagged in spec while tests at e61e6aa7 pin member NodeId = declaring type. F-EP uncomposed; candidate set unnamed; extractor has_member shape != test Main. Open Sequence stays mapping-unavailable (US-L4 held). Spec stays draft; not marked accepted. Receipt: docs/notes/understanding-views-n4-entry-points.md.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "grok",
+      "actor": "test-architect",
+      "artifacts": [
+        "docs/notes/understanding-views-n4-entry-points.md",
+        "docs/specs/entry-points.md"
+      ],
+      "tags": [
+        "D-1",
+        "N4",
+        "entry-points"
+      ],
+      "outcome": "blocked",
+      "goal": "Test Architect (Adversary) N4 verdict on D-1 listing spec; write the receipt note; do not implement src/ or mark the spec accepted.",
+      "done_when": "Verdict PASS | PASS-WITH-CONDITIONS | BLOCK recorded in docs/notes/understanding-views-n4-entry-points.md with opened evidence; Open Sequence remains mapping-unavailable; grain evaluated as declaring-type node_id for graph/source; note committed if git allows; spec not marked accepted.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "e1589d016d82e8405592989cf30b40922db59f01",
+        "short": "e1589d016",
+        "branch": "understanding-views-d1",
+        "pushed": true
       }
     }
   ],
