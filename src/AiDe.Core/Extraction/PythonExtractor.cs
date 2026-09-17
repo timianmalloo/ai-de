@@ -114,8 +114,9 @@ public sealed class PythonExtractor : IExtractor
         var standardLibrary = 0;
         var nestedDeclarations = 0;
 
-        assertions.Add(Fact(
-            request, ScopeNode(request.ScopeId), "discloses", Disclosures.DynamicImportsNotAnalysed));
+        assertions.Add(ScopeFact(
+            request, directory, ScopeNode(request.ScopeId), "discloses",
+            Disclosures.DynamicImportsNotAnalysed));
 
         foreach (var file in Files(directory))
         {
@@ -134,12 +135,13 @@ public sealed class PythonExtractor : IExtractor
             text = SourceText.WithoutPythonComments(text);
 
             var module = ModuleNaming.Qualify(prefix, ModuleName(directory, file));
-            assertions.Add(Fact(request, module, "has_type", "python-module"));
+            var relativePath = ArtifactPath(directory, file);
+            assertions.Add(Fact(request, relativePath, module, "has_type", "python-module"));
 
             foreach (var name in Names(TopLevelClass, text))
             {
-                assertions.Add(Fact(request, $"{module}.{name}", "has_type", "python-class"));
-                assertions.Add(Fact(request, $"{module}.{name}", "declared_in", module));
+                assertions.Add(Fact(request, relativePath, $"{module}.{name}", "has_type", "python-class"));
+                assertions.Add(Fact(request, relativePath, $"{module}.{name}", "declared_in", module));
             }
 
             // A CLASS'S METHODS, as members.
@@ -156,15 +158,15 @@ public sealed class PythonExtractor : IExtractor
 
             foreach (var (owner, method) in methods)
             {
-                assertions.Add(Fact(request, $"{module}.{owner}", "has_member", method));
+                assertions.Add(Fact(request, relativePath, $"{module}.{owner}", "has_member", method));
             }
 
             nestedDeclarations += nested;
 
             foreach (var name in Names(TopLevelDef, text))
             {
-                assertions.Add(Fact(request, $"{module}.{name}", "has_type", "python-function"));
-                assertions.Add(Fact(request, $"{module}.{name}", "declared_in", module));
+                assertions.Add(Fact(request, relativePath, $"{module}.{name}", "has_type", "python-function"));
+                assertions.Add(Fact(request, relativePath, $"{module}.{name}", "declared_in", module));
             }
 
             // INFERRED, and labelled: the target is the module path as written. Whether it resolves
@@ -206,8 +208,8 @@ public sealed class PythonExtractor : IExtractor
                     // Unresolved stays INFERRED and keeps the name as written: it may be a package,
                     // a module in another scope, or nothing. Asserting which would be the guess
                     // DC-022 is about.
-                    ? Fact(request, module, "imports", target, VerificationStatus.Inferred)
-                    : Fact(request, module, "imports", resolved, VerificationStatus.Verified));
+                    ? Fact(request, relativePath, module, "imports", target, VerificationStatus.Inferred)
+                    : Fact(request, relativePath, module, "imports", resolved, VerificationStatus.Verified));
             }
         }
 
@@ -215,7 +217,7 @@ public sealed class PythonExtractor : IExtractor
         {
             // Counted, because "imports are not resolved" and "31 of 330 imports point outside this
             // scope" are different statements about how much of the graph is a guess.
-            assertions.Add(Fact(request, ScopeNode(request.ScopeId), "discloses",
+            assertions.Add(ScopeFact(request, directory, ScopeNode(request.ScopeId), "discloses",
                 $"{Disclosures.ImportsNotResolved} ({unresolved:N0} import(s) name something this " +
                 "scope does not contain)"));
         }
@@ -225,7 +227,7 @@ public sealed class PythonExtractor : IExtractor
             // Conditional now, and counted. It used to fire on every scope whether or not anything
             // was nested, which trains a reader to skip disclosures (DC-025) — and it said nothing
             // about size, which is what decides whether the gap is worth closing.
-            assertions.Add(Fact(request, ScopeNode(request.ScopeId), "discloses",
+            assertions.Add(ScopeFact(request, directory, ScopeNode(request.ScopeId), "discloses",
                 $"{Disclosures.NestedDeclarationsNotAnalysed} ({nestedDeclarations:N0} declaration(s) " +
                 "are nested inside a function or a method and cannot be reached by an importer)"));
         }
@@ -235,14 +237,14 @@ public sealed class PythonExtractor : IExtractor
             // Said plainly, and separately from the unknowns. "The standard library is not indexed"
             // is a boundary of this product; "31 imports name something nobody can identify" is a
             // gap in it. Reporting them as one number made the second invisible inside the first.
-            assertions.Add(Fact(request, ScopeNode(request.ScopeId), "discloses",
+            assertions.Add(ScopeFact(request, directory, ScopeNode(request.ScopeId), "discloses",
                 $"{Disclosures.StandardLibraryNotIndexed} ({standardLibrary:N0} import(s) name the " +
                 "Python standard library, which this product does not index)"));
         }
 
         if (unreadable.Count > 0)
         {
-            assertions.Add(Fact(request, ScopeNode(request.ScopeId), "discloses",
+            assertions.Add(ScopeFact(request, directory, ScopeNode(request.ScopeId), "discloses",
                 $"python-source-unreadable ({unreadable.Count:N0} file(s))"));
         }
 
@@ -396,12 +398,55 @@ public sealed class PythonExtractor : IExtractor
 
     private static string ScopeNode(string scopeId) => scopeId;
 
+    /// <summary>A file's path relative to the scope, in the form a reader can open.</summary>
+    /// <remarks>
+    /// Separate from <see cref="ModuleName"/>, which drops the extension because a module id is not
+    /// a path. Conflating the two is how <c>Provenance.ArtifactPathId</c> came to hold a scope id.
+    /// Forward slashes, so a value written on one platform resolves on the other.
+    /// </remarks>
+    private static string ArtifactPath(string directory, string file) =>
+        Path.GetRelativePath(directory, file)
+            .Replace(Path.DirectorySeparatorChar, '/')
+            .Replace(Path.AltDirectorySeparatorChar, '/');
+
+    /// <summary>
+    /// A fact about one file, citing that file.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>DC-229.</b> <paramref name="artifactPath"/> is required and positional on purpose:
+    /// this helper used to derive the citation itself, from <c>request.ScopeId</c>, so every one of
+    /// its callers emitted a value that names no file — and the compiler had nothing to object to.
+    /// The same two lines in the TypeScript reader produced the same defect, which is what made it a
+    /// class rather than a slip.</para>
+    ///
+    /// <para><c>simplify: SourceLocation stays null here; <see cref="Names"/> and
+    /// <see cref="Methods"/> return names rather than matches, so no line number is in hand at the
+    /// call site. The path resolves, which is what View source and content search need; upgrade
+    /// trigger = a consumer needs to jump to the declaration rather than open the file.</c></para>
+    /// </remarks>
     private static EvidenceAssertion Fact(
-        ExtractionRequest request, string subject, string predicate, string obj,
+        ExtractionRequest request, string artifactPath, string subject, string predicate, string obj,
+        VerificationStatus status = VerificationStatus.Verified, string? sourceLocation = null) =>
+        new(request.ScopeId, request.ArtifactRevision, subject, predicate, obj,
+            EvidenceOrigin.Static, status,
+            new Provenance(artifactPath, sourceLocation, "python-extractor", "1.0.0", DateTimeOffset.UtcNow));
+
+    /// <summary>
+    /// A fact about the scope as a whole — a disclosure — citing the scope's own directory.
+    /// </summary>
+    /// <remarks>
+    /// The shape the EF-schema, SQL and knowledge readers already use for their scope rows: the
+    /// directory's leaf name, which resolves as the scope root. A disclosure belongs to no single
+    /// file, and naming one would be a citation that misleads rather than one that is merely absent.
+    /// </remarks>
+    private static EvidenceAssertion ScopeFact(
+        ExtractionRequest request, string directory, string subject, string predicate, string obj,
         VerificationStatus status = VerificationStatus.Verified) =>
         new(request.ScopeId, request.ArtifactRevision, subject, predicate, obj,
             EvidenceOrigin.Static, status,
-            new Provenance(request.ScopeId, null, "python-extractor", "1.0.0", DateTimeOffset.UtcNow));
+            new Provenance(
+                Path.GetFileName(Path.TrimEndingDirectorySeparator(directory)), "1:1",
+                "python-extractor", "1.0.0", DateTimeOffset.UtcNow));
 
     /// <summary>Python files directly under the scope, and under its packages.</summary>
     private static IEnumerable<string> Files(string directory)
