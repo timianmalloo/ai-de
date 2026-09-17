@@ -41,6 +41,11 @@ state/admission; fixtures prove it never moves the original event.
 
 Raw receipts and hashes:
 `spikes/canonical-coordination-contract/records/official-v10/`.
+Code checkpoint: `be06af651d5bdb6cfe712019b7efe5b190c2c8c2`.
+`raw-receipts.zip` preserves the original bytes; `manifest.json` hashes its
+members, not Git's line-ending-normalized text copies beside the archive.
+This distinction was recorded after Git warned that CRLF receipts normalize
+on commit. Archive members are checked against every manifest digest.
 The original session copies remain under session `b0d0c445-0dbc-47cb-8e51-19bfe9427c29`,
 `files/official-v10/`. Result JSONs retain exact commands, exit codes, elapsed
 seconds and TRX counters; stdout/stderr/TRX and source/test/project/corpus SHA-256

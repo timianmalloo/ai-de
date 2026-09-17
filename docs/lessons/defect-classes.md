@@ -8209,3 +8209,16 @@ These are instances of the pack's existing **CI-ENV**, **RES-LEAK-TEST** and
   success-path disposal mutation was not executed.
 - **Status:** partially-controlled; do not count a cleanup error as the
   behavioral RED of the migration.
+
+### Evidence byte preservation — text checkout normalization changes raw receipts
+
+- **Class:** REC-A provenance instance: a raw-byte manifest is committed beside
+  text that Git normalizes, so a fresh checkout need not match the raw digest.
+- **Sweep:** all 21 v10 raw receipts/manifests are affected by the same storage
+  boundary; source/test hashes still describe the measured working files.
+- **Derive:** preserve the original files in one binary archive. The manifest
+  describes archive members; adjacent text is a browsable normalized view.
+- **Control:** closure verifies each archived member's SHA-256 against the
+  original manifest. Git's explicit CRLF-normalization warnings are retained as
+  the detection evidence; no repository configuration or attributes were changed.
+- **Status:** controlled for this evidence bundle; not a repository-wide gate.
