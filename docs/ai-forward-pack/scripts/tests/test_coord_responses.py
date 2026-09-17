@@ -409,6 +409,50 @@ class ResponseTests(unittest.TestCase):
         self.assertFalse(payload["requests"][0]["execution_eligible"])
         self.assertGreaterEqual(payload["duration_seconds"], 0)
 
+    def test_Cli_RoutingCorrection_ClosesTypoOnlyWithoutAcknowledgement(self) -> None:
+        old = question()
+        old.update(id="delivery-typo", to="reviewre",
+                   recipient={"session": "reviewre", "generation": "g1"})
+        corrected = question()
+        corrected.update(id="delivery-corrected", at=3)
+        closure = {"kind": "request-resolve", "id": old["id"], "at": 2,
+                   "resolution": "SUPERSEDED ROUTING ERROR"}
+        self.write_events([old, closure, corrected])
+        original = (self.root / "requests.jsonl").read_bytes()
+
+        for status in ("all", "open"):
+            with self.subTest(status=status):
+                output = io.StringIO()
+                with patch.object(coord.os, "getcwd", return_value=str(self.root)), \
+                        patch.dict(os.environ, {"COORD_ROOT": str(self.root)}), \
+                        contextlib.redirect_stdout(output):
+                    result = coord.main(["request", "list", "--status", status,
+                                         "--actionable", "--json"])
+                self.assertEqual(0, result)
+                payload = json.loads(output.getvalue())
+                rows = {row["id"]: row for row in payload["requests"]}
+                expected_ids = {old["id"], corrected["id"]} if status == "all" else {corrected["id"]}
+                self.assertEqual(expected_ids, set(rows))
+                current = rows[corrected["id"]]
+                self.assertEqual("reviewer", current["to"])
+                self.assertEqual("open", current["status"])
+                self.assertTrue(current["unanswered"])
+                self.assertTrue(current["remaining"])
+                for row in rows.values():
+                    self.assertFalse(row["accepted"])
+                    self.assertEqual([], row["acceptances"])
+                    self.assertEqual([], row["consumptions"])
+                    self.assertFalse(any(row[k] for k in (
+                        "execution_eligible", "ownership_granted", "run_granted",
+                        "transfer_granted", "start_granted")))
+                if status == "all":
+                    historical = rows[old["id"]]
+                    self.assertEqual("reviewre", historical["to"])
+                    self.assertEqual(old["recipient"], historical["recipient"])
+                    self.assertEqual("resolved", historical["status"])
+                    self.assertEqual(closure["resolution"], historical["resolution"])
+                self.assertEqual(original, (self.root / "requests.jsonl").read_bytes())
+
     def test_Cli_PinnedUnenrolledLegacy_ActualLinkedTreeAndRollback(self) -> None:
         primary, old, upgraded = (self.root / p for p in ("primary", "old", "upgraded"))
         primary.mkdir()

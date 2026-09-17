@@ -397,6 +397,105 @@ class ProtocolTests(unittest.TestCase):
         self.assertFalse(row["accepted"])
         self.assertNotIn("understood", row)
 
+    def test_Fold_UnknownRecipientOrGeneration_ExplicitNegativeWithoutCorrection(self):
+        cases = (
+            ({"session": "reviewre", "generation": "g1"}, self.generations,
+             "XH.GENERATION_UNKNOWN"),
+            ({"session": "reviewer", "generation": "unregistered"}, self.generations,
+             "XH.GENERATION_MISMATCH"),
+            ({"session": "reviewer", "generation": "g1"},
+             {k: v for k, v in self.generations.items() if k != "reviewer"},
+             "XH.GENERATION_UNKNOWN"),
+        )
+        for recipient, generations, code in cases:
+            with self.subTest(recipient=recipient, code=code):
+                self.generations = generations
+                self.q["recipient"] = copy.deepcopy(recipient)
+                self.q["to"] = recipient["session"]
+                publication = self.event(recipient=copy.deepcopy(recipient))
+                before = copy.deepcopy([self.q, publication])
+
+                row = self.folded([publication])
+
+                self.assertEqual(recipient, row["recipient"])
+                self.assertEqual([{"repositoryId": "repo", "streamId": "stream",
+                                   "eventId": publication["eventId"], "code": code}],
+                                 row["protocol_errors"])
+                self.assertIsNone(row["current_proposal"])
+                self.assertFalse(row["accepted"])
+                self.assertEqual([], row["consumptions"])
+                self.assertEqual([], row["acceptances"])
+                self.assertEqual(before, [self.q, publication])
+                self.assertEqual([], self.calls)
+
+    def test_Fold_StaleCallerReasonAndAckTitle_TypedOutcomesRemainDistinct(self):
+        self.q.update(contract="ACK", reason="awaiting triage")
+        target = self.event(producerAt=2)
+        consumed = self.consumed(target, producerAt=3)
+        for disposition in ("changes-requested", "rejected", "needs-human", "unable", "deferred"):
+            payload = {"text": "Synthetic response: clarification remains."}
+            if disposition == "deferred":
+                payload.update(nextActor="reviewer", checkpoint="after-boundary-review")
+            reply = response(proposal=self.ref, disposition=disposition,
+                             producerAt=4, payload=payload)
+            history = [target, consumed, reply]
+            before = copy.deepcopy([self.q, *history])
+            for order in (history, list(reversed(history))):
+                with self.subTest(disposition=disposition,
+                                  order=[e["eventId"] for e in order]):
+                    row = self.folded([*order, consumed, reply])
+
+                    self.assertEqual("ACK", row["contract"])
+                    self.assertEqual("awaiting triage", row["reason"])
+                    self.assertEqual([consumed], row["consumptions"])
+                    verification = next(v for v in row["verification"]
+                                        if v["eventId"] == consumed["eventId"])
+                    self.assertEqual("verified", verification["authorization"])
+                    self.assertEqual([], row["protocol_errors"])
+                    self.assertEqual([], row["response_errors"])
+                    self.assertEqual([reply], row["responses"])
+                    self.assertFalse(row["unanswered"])
+                    self.assertEqual(disposition, row["latest_disposition"])
+                    self.assertEqual(disposition in ("deferred", "needs-human"), row["remaining"])
+                    self.assertEqual(payload if disposition == "deferred" else None, row["next"])
+                    self.assertEqual([], row["acceptances"])
+                    self.assertFalse(row["accepted"])
+                    self.assertFalse(any(row[k] for k in (
+                        "execution_eligible", "ownership_granted", "run_granted",
+                        "transfer_granted", "start_granted")))
+                    self.assertEqual(before, [self.q, *history])
+
+    def test_Fold_ReceiptWordsWithoutAttestation_DoNotCreateTrustedFacts(self):
+        self.q.update(contract="ACK", reason="RECEIVED / TRIAGED / ACK approved")
+
+        row = self.folded([self.event()])
+
+        self.assertTrue(row["unanswered"])
+        self.assertEqual([], row["consumptions"])
+        self.assertEqual([], row["responses"])
+        self.assertEqual([], row["acceptances"])
+        self.assertFalse(row["accepted"])
+        self.assertFalse(any(row[k] for k in (
+            "execution_eligible", "ownership_granted", "run_granted",
+            "transfer_granted", "start_granted")))
+
+    def test_Fold_QuestionUnderAckTitle_PreservesQuestionWithoutAcceptance(self):
+        """UNSHIPPABLE P0/P1 semantic floor: question must not be coerced to answer."""
+        self.q.update(contract="ACK", reason="awaiting triage")
+        reply = response(proposal=self.ref, disposition="question",
+                         payload={"text": "Which synthetic boundary needs review?"})
+
+        row = self.folded([self.event(), reply])
+
+        self.assertEqual([reply], row["responses"])
+        self.assertEqual("question", row["latest_disposition"])
+        self.assertEqual([], row["response_errors"])
+        self.assertEqual([], row["acceptances"])
+        self.assertFalse(row["accepted"])
+        self.assertFalse(any(row[k] for k in (
+            "execution_eligible", "ownership_granted", "run_granted",
+            "transfer_granted", "start_granted")))
+
     def test_Fold_ConsumptionWrongDigestAttesterRestart_Denied(self):
         for field in ("eventId", "eventDigest", "sender", "restart"):
             with self.subTest(field=field):
@@ -708,6 +807,15 @@ def mutation_receipt() -> int:
                         "errors": len(result.errors),
                         "killed": bool(result.failures) and not result.errors})
     repairs = (
+        ("consumption-as-acceptance", "protocol",
+         (('row["accepted"] = all((current, peer) in accepted for peer in peers[current])',
+           'row["accepted"] = bool(row["consumptions"]) or '
+           'all((current, peer) in accepted for peer in peers[current])'),),
+         "test_Fold_StaleCallerReasonAndAckTitle_TypedOutcomesRemainDistinct"),
+        ("deferred-obligation-dropped", "core",
+         (('remaining=disposition in ("deferred", "needs-human")',
+           'remaining=disposition == "needs-human"'),),
+         "test_Fold_StaleCallerReasonAndAckTitle_TypedOutcomesRemainDistinct"),
         ("global-proposal-invalidation", "protocol",
          (('e["inReplyTo"] == row["id"]', "True"),
           ('all(event[k] == row["id"] for k in', "all(True for k in")),
