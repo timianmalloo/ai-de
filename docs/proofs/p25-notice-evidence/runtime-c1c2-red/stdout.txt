@@ -1,0 +1,7 @@
+
+  AiDe.Core -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Mcp -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs(150,65): error CS8619: Nullability of reference types in value of type 'Task<Exception>' doesn't match target type 'Task<Exception?>'. [C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj]

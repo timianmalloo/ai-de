@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T14:05:16Z",
+  "generated": "2026-09-17T14:36:28Z",
   "audit": [
     {
       "actor": null,
@@ -21043,6 +21043,58 @@ window.AUDIT_DATA = {
       "outcome": "partial",
       "goal": "Execute bounded protected-admission runtime unit.",
       "done_when": "Source and focal proof committed without enabling unqualified ingress or delivery.",
+      "tier": "T2",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M2QWRB16E4Q3HTNFHZ1FCJ5P",
+      "shortname": "implement-c1c2-coordinator",
+      "datetime": "2026-09-17T14:36:28Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "WRITE-CAPABLE C# finiteTWOindependentcoordinatorfixes <=30tools150k noagents. OwnregisteredP2treeC:\\Projects\\ai-de-feature-xh-p2-projection HEADe75afa91080f4e243db4c63c9a5581ccb1c4ef12 sessionxh-p2-projection-b0d0 endedreopen. UserallP0–P5approved no scopeexpansion/newpermission. ExactTTL300editclaims/envAGENT_SESSION/AGENT_NAME/PYTHONIOENCODING eachshell apply_patch noheredoc/outputredirect/pipedgates. NOhookoverride EVER: designbb31previousunrequestedoverridepermanentdeviation, ordinarycurrentgatecommandsmustdiagnosefailureNOTskip. No main/push/force/amend/config/hooks/install/deps/GUI/App/slots/liveDB/endpoints/upstreamresearch/otherworktreeedits. OnlysyntheticCore/tmpSQLite.\nIndependentTest213total211PASS2legacyN1N2RED; enhanced38allgreen140pins. TWOnewBlockers:\nC1Inferredcounterexample(accountingstructureVerified) NoticeAdmissionCoordinator63countsONLYcurrentEnrollments; Dispose81–89removeslastroot+ownerhandlewithoutPending/InFlightcheck. Admit128correctednoticesinstoreA;disposebothadmissionrootsAretainingstore;registerinstoreB=>wouldignoreA128committedobligationsandmutateB. NeedexecuteREDbothPending/InFlightcases. Retainaccounting/ownershipforCOMMITTEDoutstanding independentlyactiveROOTcount; storehistorynotdeleted. Rootretirementcan'treleasependingbudget/OSowneruntilpublicationorqualifiedreconciliation, noTTL/GC. Do notinventsecondauthoritycounter; derivefromactualstore orfailclosedexplicitUncertainavailabilityifstoreunreachable, notassume0. Quiescentclosed/no-obligationrootscanrelease once; ephemeralprecommitreservationfailure releases. Reopen/hydrate sameactualstore alias binding stays. ExplicitlegacycompatuncooperativeactorsNOTfenced; onlyenhancedadmissionblocked. Syntheticfixturecleanupmayuseownedisolatedbudget/explicitpublishedfaultcontrols butdon'tresetproductiondroppingacceptednotice. Atminimumfixexactdisposal-between-admissionssequence preservefive-table+capatomic snapshot; proveexactcountafterpublishedlegitrelease ifAPIpresentelsequalifiednegative no liberationclaim.\nC2Verifiedextensibility UNDERGLOBALMUTEX: Coordinator58–70 operation(Reserve) inside lockGate reachesclock.Ticks/newSessionId/capabilities.Create viaRegistrar64–65. Can deadlock/stallallstores: Bownsregistrargatewaitingglobal; AholdsglobalfactorycallsB. SeparateboundedcoordinatorreservationBOOKKEEPING fromclock/factory/extensibilityexecution; holdnone globalwhilecallbacksrun. PreserveRESERVE-before-nativeMUTATION, replayNoMint, memorycap AFTERcommit, existingregistrar→storeorder and128capacityrace safety. Readactualsource tochooseminimalreservelease notfullnewscheduler/schema. Adddirectlocknotheld assertion andbarriercontrolled2registrars callback/independentprogress RED current thenGREEN. No arbitrarysleep/exception-onlyfalseproof. Clock/identityfactory arecompositioncallbacks, notignoreastesthooks. Any callbacksynchronousreentrypolicy explicitBusy/InFlight/refusal betterthandeadlock, no wrapperpermanentrecursivecycle. Faultoncallbackreleasesproven-no-commitreservationwithoutleakingorconsumingnotice, but uncertaincommittedrootretained. SourceNoAuth/Payload/envtrustedcontextactivationunchanged.\nCurrentprocessgateCORRECTION recordcanonicalProofPack: originaldesignbb31hookoverride remainsMajorVerified, notpermitted. ConductoractualhookC:/Projects/ai-de/.git/hooks/pre-commit→PRIMARYcoord-core precommit(stageLEASEcheckonly). CURRENT-state exact3designpathrequalification shell1893 usedisolatedindexalignedPRIMARYHEADf009b6f6710bab8ff9f026d32a272343313fde6f, checked3allfreeormine; originalindexes/HEAD/hooks/configunchanged; no persistcore.hooksPath. Earlierwrongrootvirtualindexrunchecked497 NOTexactandnotoriginalhistoricalclearance. Recordhonestlyindependentreviewacceptedcurrentgatebutnotretrohistory/futurebypass. Don'teditprimaryhook/code/config. Useordinarycommitsalways.\nOWN NoticeAdmissionCoordinator.cs andneededRegistrar/capacityhelperonlyforC1C2 actualscope, NativeAdmissionRuntimeTests.cs+focusedtests, canonicaldocs/proof/cross-harness-coordination-proof-pack.md+phaseplan/designifmechanicalcorrectionneeded+owndaudit/TRXactualstreams+pinnedhashes existingp25-notice-evidence. No newproofpackfiles/notesoutsideallowlist, no sitegen. DDLschemaunchangedunlesstrulyneededDataagreementthenstopflag. ReadC#testingguide/sourcefresh; finite2strictlydecrease andreturnallknownunqualifiedNativeN1worker/binder/hardpaths/publisher/oldbinary/retention/P3–5 remain. 140baselinepins BEFOREpatch andcandidateafter, testcounts/counterexamples actualSQL/sourceclock factory overlaps, rollbackand8existingcontrols preserved. Existing38enhancedfreshactualN2mustnotregress correctedlegacy213selectionstill2RED no fakewholeP2done.\nCommitCopilottrailer(s), stageOWNderivedaudit-data.jswithJSONLafterofficialOWNrootrenderverify BEFOREcommit no recurringdirtypostcap. Cleanreleasedended<=1300wordsexactcommitC1C2REDGREEN/mutants/currentgatewriteup counts remaining. Independentregatenext notauthorclear.",
+      "summary": "C1 committed obligations retain physical-file ownership and DB-derived capacity after root disposal. C2 callbacks execute outside global reservation lock; synchronous enhanced reentry refuses Busy. Baseline 213/211/2, counterexamples 13/4/9, enhanced 51/51/0, final 226/224/2 legacy RED. 140 pins before and after; 134 unchanged. Ordinary hook only; prior bb31 Major deviation permanent. Canonical proof records remaining independent and P2-P5 gates.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/NoticeAdmissionCoordinator.cs",
+        "src/AiDe.Core/Watcher/TrustedRegistrar.cs",
+        "src/AiDe.Core/Watcher/RegistrationAdmission.cs",
+        "tests/AiDe.Core.Tests/Watcher/NativeAdmissionRuntimeTests.cs",
+        "docs/proof/cross-harness-coordination-proof-pack.md",
+        "docs/proofs/p25-notice-evidence/c1c2-prompt.txt"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Fix only C1 retained obligations and C2 global-lock callbacks.",
+      "done_when": "Executed red/green counterexamples, preserved regression evidence, canonical proof and ordinary commit; clean released ended tree.",
+      "tier": "T2",
+      "main_calls": 29,
+      "main_budget": 30,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-17T14:26:08Z",
+      "duration_seconds": 620.0
+    },
+    {
+      "id": "al-01M2QWRB4R9H6XZMTRZCTPKBFD",
+      "shortname": "optimize-c1c2-coordinator",
+      "datetime": "2026-09-17T14:36:28Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "WRITE-CAPABLE C# finiteTWOindependentcoordinatorfixes <=30tools150k noagents. OwnregisteredP2treeC:\\Projects\\ai-de-feature-xh-p2-projection HEADe75afa91080f4e243db4c63c9a5581ccb1c4ef12 sessionxh-p2-projection-b0d0 endedreopen. UserallP0–P5approved no scopeexpansion/newpermission. ExactTTL300editclaims/envAGENT_SESSION/AGENT_NAME/PYTHONIOENCODING eachshell apply_patch noheredoc/outputredirect/pipedgates. NOhookoverride EVER: designbb31previousunrequestedoverridepermanentdeviation, ordinarycurrentgatecommandsmustdiagnosefailureNOTskip. No main/push/force/amend/config/hooks/install/deps/GUI/App/slots/liveDB/endpoints/upstreamresearch/otherworktreeedits. OnlysyntheticCore/tmpSQLite.\nIndependentTest213total211PASS2legacyN1N2RED; enhanced38allgreen140pins. TWOnewBlockers:\nC1Inferredcounterexample(accountingstructureVerified) NoticeAdmissionCoordinator63countsONLYcurrentEnrollments; Dispose81–89removeslastroot+ownerhandlewithoutPending/InFlightcheck. Admit128correctednoticesinstoreA;disposebothadmissionrootsAretainingstore;registerinstoreB=>wouldignoreA128committedobligationsandmutateB. NeedexecuteREDbothPending/InFlightcases. Retainaccounting/ownershipforCOMMITTEDoutstanding independentlyactiveROOTcount; storehistorynotdeleted. Rootretirementcan'treleasependingbudget/OSowneruntilpublicationorqualifiedreconciliation, noTTL/GC. Do notinventsecondauthoritycounter; derivefromactualstore orfailclosedexplicitUncertainavailabilityifstoreunreachable, notassume0. Quiescentclosed/no-obligationrootscanrelease once; ephemeralprecommitreservationfailure releases. Reopen/hydrate sameactualstore alias binding stays. ExplicitlegacycompatuncooperativeactorsNOTfenced; onlyenhancedadmissionblocked. Syntheticfixturecleanupmayuseownedisolatedbudget/explicitpublishedfaultcontrols butdon'tresetproductiondroppingacceptednotice. Atminimumfixexactdisposal-between-admissionssequence preservefive-table+capatomic snapshot; proveexactcountafterpublishedlegitrelease ifAPIpresentelsequalifiednegative no liberationclaim.\nC2Verifiedextensibility UNDERGLOBALMUTEX: Coordinator58–70 operation(Reserve) inside lockGate reachesclock.Ticks/newSessionId/capabilities.Create viaRegistrar64–65. Can deadlock/stallallstores: Bownsregistrargatewaitingglobal; AholdsglobalfactorycallsB. SeparateboundedcoordinatorreservationBOOKKEEPING fromclock/factory/extensibilityexecution; holdnone globalwhilecallbacksrun. PreserveRESERVE-before-nativeMUTATION, replayNoMint, memorycap AFTERcommit, existingregistrar→storeorder and128capacityrace safety. Readactualsource tochooseminimalreservelease notfullnewscheduler/schema. Adddirectlocknotheld assertion andbarriercontrolled2registrars callback/independentprogress RED current thenGREEN. No arbitrarysleep/exception-onlyfalseproof. Clock/identityfactory arecompositioncallbacks, notignoreastesthooks. Any callbacksynchronousreentrypolicy explicitBusy/InFlight/refusal betterthandeadlock, no wrapperpermanentrecursivecycle. Faultoncallbackreleasesproven-no-commitreservationwithoutleakingorconsumingnotice, but uncertaincommittedrootretained. SourceNoAuth/Payload/envtrustedcontextactivationunchanged.\nCurrentprocessgateCORRECTION recordcanonicalProofPack: originaldesignbb31hookoverride remainsMajorVerified, notpermitted. ConductoractualhookC:/Projects/ai-de/.git/hooks/pre-commit→PRIMARYcoord-core precommit(stageLEASEcheckonly). CURRENT-state exact3designpathrequalification shell1893 usedisolatedindexalignedPRIMARYHEADf009b6f6710bab8ff9f026d32a272343313fde6f, checked3allfreeormine; originalindexes/HEAD/hooks/configunchanged; no persistcore.hooksPath. Earlierwrongrootvirtualindexrunchecked497 NOTexactandnotoriginalhistoricalclearance. Recordhonestlyindependentreviewacceptedcurrentgatebutnotretrohistory/futurebypass. Don'teditprimaryhook/code/config. Useordinarycommitsalways.\nOWN NoticeAdmissionCoordinator.cs andneededRegistrar/capacityhelperonlyforC1C2 actualscope, NativeAdmissionRuntimeTests.cs+focusedtests, canonicaldocs/proof/cross-harness-coordination-proof-pack.md+phaseplan/designifmechanicalcorrectionneeded+owndaudit/TRXactualstreams+pinnedhashes existingp25-notice-evidence. No newproofpackfiles/notesoutsideallowlist, no sitegen. DDLschemaunchangedunlesstrulyneededDataagreementthenstopflag. ReadC#testingguide/sourcefresh; finite2strictlydecrease andreturnallknownunqualifiedNativeN1worker/binder/hardpaths/publisher/oldbinary/retention/P3–5 remain. 140baselinepins BEFOREpatch andcandidateafter, testcounts/counterexamples actualSQL/sourceclock factory overlaps, rollbackand8existingcontrols preserved. Existing38enhancedfreshactualN2mustnotregress correctedlegacy213selectionstill2RED no fakewholeP2done.\nCommitCopilottrailer(s), stageOWNderivedaudit-data.jswithJSONLafterofficialOWNrootrenderverify BEFOREcommit no recurringdirtypostcap. Cleanreleasedended<=1300wordsexactcommitC1C2REDGREEN/mutants/currentgatewriteup counts remaining. Independentregatenext notauthorclear.",
+      "summary": "Five serial nodes; shared coordinator and binaries; no agents. Two defects reach zero with nine old-source semantic REDs then green. One compiler-only test nullability repair retained separately. Baseline 9.9387827s, red 20.4390326s, enhanced 15.1258324s, union 11.8365031s measured by runner; no inferred speedup. Independent gate remains external.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Execute finite C1/C2 graph without scope expansion.",
+      "done_when": "Two counterexamples closed with original controls retained and remaining qualifications explicit.",
       "tier": "T2",
       "fan_out": 0
     }

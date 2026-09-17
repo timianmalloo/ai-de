@@ -1,31 +1,41 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using Microsoft.Data.Sqlite;
 using Microsoft.Win32.SafeHandles;
 
 namespace AiDe.Core.Watcher;
 
-// Pattern: bounded reservation + disposable enrollment. Counts are refreshed from the database,
-// not persisted here. This lock never calls a registrar: the order is registrar -> coordinator -> store.
+// Pattern: bounded reservation + retained enrollment. Committed obligations belong to the
+// owner-locked file, not its roots. The global lock never runs composition callbacks or takes
+// an admission store lock; each enrollment has an independent, read-only WAL connection.
 internal sealed class NoticeAdmissionCoordinator : IDisposable
 {
     internal const int Limit = 128;
     internal static readonly object Gate = new();
     private static readonly Dictionary<string, Enrollment> Enrollments = new(StringComparer.Ordinal);
     private static int _reserved;
+    [ThreadStatic] private static bool _running;
     private readonly string _identity;
-    private readonly SqliteWatcherObservationStore _store;
     private bool _disposed;
 
-    private sealed class Enrollment(FileStream owner)
+    private sealed class Enrollment(FileStream owner, SqliteWatcherObservationStore reader)
     {
         internal FileStream Owner { get; } = owner;
+        internal SqliteWatcherObservationStore Reader { get; } = reader;
         internal List<NoticeAdmissionCoordinator> Handles { get; } = [];
+        internal int Operations { get; set; }
+
+        internal long Pending()
+        {
+            try { return Reader.PendingNativeNoticeCount(); }
+            catch (SqliteException) { throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Uncertain); }
+            catch (InvalidOperationException) { throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Uncertain); }
+        }
     }
 
     internal NoticeAdmissionCoordinator(SqliteWatcherObservationStore store)
     {
         if (!OperatingSystem.IsWindows()) throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Unavailable);
-        _store = store;
         var file = new FileStream(store.DatabasePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
         try
         {
@@ -39,7 +49,7 @@ internal sealed class NoticeAdmissionCoordinator : IDisposable
                     if (Enrollments.Count >= Limit) throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Capacity);
                     try { file.Lock(long.MaxValue - 1, 1); }
                     catch (IOException) { throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Owner); }
-                    enrollment = new Enrollment(file);
+                    enrollment = new Enrollment(file, SqliteWatcherObservationStore.OpenReadOnly(store.DatabasePath));
                     Enrollments.Add(_identity, enrollment);
                 }
                 else file.Dispose();
@@ -55,25 +65,55 @@ internal sealed class NoticeAdmissionCoordinator : IDisposable
 
     internal T Run<T>(Func<Func<long, bool, IDisposable>, T> operation)
     {
+        RequireNonReentrant();
         lock (Gate)
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
-            IDisposable Reserve(long localPending, bool correction)
+            Enrollments[_identity].Operations++;
+        }
+        _running = true;
+        try { return operation(Reserve); }
+        finally
+        {
+            _running = false;
+            lock (Gate)
             {
-                var pending = Enrollments.Sum(pair => pair.Key == _identity
-                    ? localPending : pair.Value.Handles[0]._store.PendingNativeNoticeCount());
-                if (pending + _reserved + (correction ? 1 : 0) > Limit)
-                    throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Capacity);
-                if (correction) _reserved++;
-                return new Reservation(() => { if (correction) _reserved--; });
+                var enrollment = Enrollments[_identity];
+                enrollment.Operations--;
+                RetireIfQuiescent(enrollment);
             }
-            return operation(Reserve);
         }
     }
 
-    private sealed class Reservation(Action release) : IDisposable
+    internal static void RequireNonReentrant()
     {
-        public void Dispose() => release();
+        if (_running) throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Busy);
+    }
+
+    private IDisposable Reserve(long localPending, bool correction)
+    {
+        lock (Gate)
+        {
+            var pending = Enrollments.Sum(pair => pair.Key == _identity ? localPending : pair.Value.Pending());
+            if (pending + _reserved + (correction ? 1 : 0) > Limit)
+                throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Capacity);
+            if (correction) _reserved++;
+            return new Reservation(correction);
+        }
+    }
+
+    private sealed class Reservation(bool correction) : IDisposable
+    {
+        private bool _released;
+        public void Dispose()
+        {
+            lock (Gate)
+            {
+                if (_released) return;
+                _released = true;
+                if (correction) _reserved--;
+            }
+        }
     }
 
     public void Dispose()
@@ -84,10 +124,16 @@ internal sealed class NoticeAdmissionCoordinator : IDisposable
             _disposed = true;
             var enrollment = Enrollments[_identity];
             enrollment.Handles.Remove(this);
-            if (enrollment.Handles.Count != 0) return;
-            Enrollments.Remove(_identity);
-            enrollment.Owner.Dispose();
+            RetireIfQuiescent(enrollment);
         }
+    }
+
+    private void RetireIfQuiescent(Enrollment enrollment)
+    {
+        if (0 != enrollment.Handles.Count || 0 != enrollment.Operations || 0 != enrollment.Pending()) return;
+        Enrollments.Remove(_identity);
+        enrollment.Reader.Dispose();
+        enrollment.Owner.Dispose();
     }
 
     [StructLayout(LayoutKind.Sequential)]

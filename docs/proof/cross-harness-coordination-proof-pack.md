@@ -2884,3 +2884,128 @@ remain external-branch references, not integrated here.
 The only canonical proof authority is this file. Shared lesson-register and
 site/API bundle regeneration are deferred under the user's exact allowlist.
 Only the own-root audit projection is rendered at close.
+
+### C1/C2 bounded coordinator correction (2026-09-17)
+
+Goal: repair retired-root accounting and callback/global-lock coupling only.
+Done when: pinned baseline, executed counterexamples, candidate and regression
+receipts, ordinary commit and clean released tree. T2; no agents; 30 main-line
+tool calls; 150k context ceiling. Independent re-gating is the next authority,
+not an author-cleared gate. No schema, activation, publisher, or site changes.
+
+The serial graph is baseline -> red -> C1/C2 -> regression -> record/commit.
+Nodes respectively use deterministic mechanics, deterministic mechanics,
+reasoning, deterministic mechanics, deterministic mechanics. All edges carry
+data; the shared coordinator and binaries prohibit concurrent edits/builds.
+Modeled work=span=5 units; width=1; no speedup is claimed. The finite defect
+worklist starts at two and decreases only on observed counterexample closure.
+D0/D1/D4/D6/D7 remain floors; production/independent gates remain unqualified.
+
+Surface list before implementation: root disposal -> physical-file enrollment
+and OS owner -> actual SQLite Pending/InFlight reader -> process reservation ->
+registrar clock/identity/capability -> store transaction -> five tables and
+postcommit capability maps -> existing outcome/duration activity. SourceNoAuth,
+payload binding, trusted-context activation, schema and published semantics are
+unchanged. One committed notice is still one durable delivery obligation.
+
+C1 design: retain a physical-file enrollment independently of active roots,
+with its own read-only connection to the same owner-locked file. Derive counts
+from that store, never from an accepted-notice counter. Retire only after no
+roots, no running operations and an observed zero outstanding count. A failed
+read retains ownership and refuses enhanced admission explicitly as uncertain.
+No TTL, GC, history deletion, or legacy-writer fencing.
+
+C2 design: Run tracks an operation lifetime under the global mutex, but executes
+the operation and composition callbacks outside it. Reserve alone serializes
+actual committed counts plus ephemeral precommit reservations. Independent WAL
+read connections avoid registrar/store lock inversion while another store's
+callback is blocked. Brief postcommit overlap may conservatively double-count
+a reservation, never undercount it. Synchronous enhanced callback reentry is
+explicitly Busy before another registrar lock, not a recursive wrapper.
+Quiescent retirement checks and reservation releases are idempotent.
+Synthetic fixture teardown uses explicit legal delivery transitions only in
+owned disposable databases; it is not evidence that a real publisher exists.
+
+**Process correction, not retroactive clearance:** the original design commit
+`bb31d5a164a4c33e126a38bafaf6d3575e23a2f6` used an unrequested hook override.
+This remains **Major / Verified**, a permanent deviation, never permission.
+The conductor's actual pre-commit hook invokes the PRIMARY `coord-core.py`
+precommit staged-lease check. Per the supplied independent review, shell 1893
+requalified exactly three current design paths using an isolated index aligned
+to PRIMARY HEAD `f009b6f6710bab8ff9f026d32a272343313fde6f`; all three were free or
+owned. Original indexes, HEADs, hooks and config were unchanged. The earlier
+wrong-root virtual index examined 497 paths, not that exact set and not the
+historical commit. Independent review accepted the current gate, not historical
+clearance or future bypass. This episode must use ordinary commits and diagnose
+any present gate failure without disabling it.
+
+#### Executed C1/C2 evidence
+
+All directories below are under `docs/proofs/p25-notice-evidence/`. The
+unchanged `run-native.ps1` records actual stdout/stderr, TRX, input/binary pins,
+logical dotnet exit, timestamps and receipt hashes. It does not convert an
+expected failing union into a green union.
+
+| Directory | Observed result | Receipt SHA-256 |
+|---|---|---|
+| `runtime-c1c2-baseline` | 213 executed, 211 pass, 2 legacy RED; exit 1; 9.9387827 s | `E107F466395EF7D4B2B1F4319705AB2061FA1DB322F63BE4CF7B0407D2A210FF` |
+| `runtime-c1c2-red` | Build-only CS8619 task nullability failure; no executed tests and no semantic RED claim | No TRX/receipt; before/after pins and both streams retained |
+| `runtime-c1c2-red-executed` | 13 executed, 4 pass, 9 RED; exit 1; 20.4390326 s | `976DF67A6D0160F3FBB496D8152D893443EEF165DC4D7C06112F0122F8C2CE65` |
+| `runtime-c1c2-green` | 51 enhanced cases pass, including all prior 38; exit 0; 15.1258324 s | `06BBB44E1897165FEC8FA0521BA45EE5F1CC3FA8188E84565143E83A6E2C0612` |
+| `runtime-c1c2-final` | 226 executed, 224 pass, only unchanged legacy N1/N2 RED; exit 1; 11.8365031 s | `BC69570CE467E45A41E690C57B1270904219138FC8FD5C98AA78D18BF8CB32A1` |
+
+**Pins:** 140 baseline inputs were captured before the first patch and 140
+candidate inputs after execution. 134 are byte-identical. The six changed
+inputs are the coordinator, registrar, error registry, runtime test file, and
+the actual Core/test DLLs. In particular all existing schema, admission,
+legacy reliability, registrar and SQLite-store test sources, project pins,
+store writer/DDL and the evidence runner are unchanged.
+
+| Claim / focal runtime test suffix | Oracle and observed RED | Candidate / residual boundary |
+|---|---|---|
+| `C1RetiredRoots_KeepCommittedBudgetAndOwner` (Pending, InFlight) | Admit 128 into A, dispose both roots, then admit into B. Old source returned success instead of refusal in both cases. | Verified: COORD_NOTICE_CAPACITY; A and B five-table/cap snapshots unchanged, A SQL count exactly 128, B factory count zero. OS owner still excludes a competitor; reopened alias replays the same receipt without mint. |
+| `C2CompositionCallback_GlobalLockNotHeld` (clock, identity, capability) | Each actual composition callback asserts `Monitor.IsEntered(Gate)==false`; all three observed true on old source. | Verified: all three run once without the global lock; one resulting SQL obligation each. |
+| `C2BlockedCallback_IndependentRegistrarCommits` (same three callbacks) | A callback waits on a barrier. B must commit before A's resume signal. Old source times out in all three; finally releases and joins tasks. | Verified: B SQL fact/notice and capability exist while A is still blocked. No arbitrary sleep and no exception-only success oracle. |
+| `C2SynchronousReentry_ExplicitlyRefusesWithoutNestedMint` | Nested enhanced call previously reaches the wrong pending-transaction path, not the required refusal. | Verified COORD_NATIVE_BUSY before entering another registrar; B unchanged/no mint, outer A commits. Cross-thread arbitrary user callback cycles are not claimed safe. |
+| `C2CallbackFault_LeavesNoCommitOrReservation` (three callbacks) | Inject a composition exception; compare full before/after snapshot, clear the fault and fill all 128 slots. | All three pass on old and candidate code; preserved precommit-failure control, not newly killed mutants. |
+| `C2CapacityRace_OnlyOneLastSlotCommits` | Two stores/registrars race at 127 via a barrier. Exactly one succeeds; one receives Capacity; SQL total is 128. | Pass on old and candidate. Conservative transient overcount is possible during commit/release overlap; undercount is not accepted. |
+
+The existing six transaction rollback faults, commit/lost-return replay,
+postcommit capability visibility, stale-generation barriers, raw-claim/notice
+digest checks, alias/quota/excess-backlog, trusted-context refusal and telemetry
+controls all remain in the fresh 51-case green run. Previous mutation receipts
+remain unchanged. The nine new REDs are executed old-source counterexamples;
+**no new deliberate candidate mutant run or blanket mutation score is claimed.**
+
+**Class -> sweep -> derive -> prevent:** C1 is ownership lifetime inferred from
+active handles rather than committed work. The coordinator's only enrollment
+retirement path was swept; actual-file read-only accounting now survives root
+disposal and is exercised by both state counterexamples. C2 is externally
+supplied code executed inside a shared bookkeeping mutex. The single Run caller
+and its clock, identity and capability paths were traced; callbacks now run
+outside that mutex, protected by ephemeral reservations and an explicit
+synchronous-reentry refusal. Existing lifecycle callbacks do not acquire this
+global lock and are not represented as newly redesigned. The test author also
+created one generic-task nullability mismatch; explicit nullable generic task
+typing corrected it, and the compiler is its control. These class records stay
+here under the user's allowlist; the shared lesson register is not edited.
+
+**Qualified negative:** there is still no Claim/Complete/Requeue publication
+API in this source. Consequently no legitimate transport-driven budget
+liberation or publisher completion is claimed. Fixture cleanup transitions only
+owned synthetic rows Pending -> InFlight -> Published before closing the
+enrollment; it neither deletes accepted history nor resets production state.
+The existing zero-obligation owner-release test passes. Failed count reads map
+to COORD_NOTICE_UNCERTAIN and leave ownership retained by source inspection;
+actual unavailable-reader fault injection is **unverified**, not called zero
+and not claimed as executed proof. An idle retired enrollment with obligations
+can retain resources until qualified reconciliation/re-enrollment; no TTL/GC
+release is introduced. Uncooperative legacy actors are not fenced.
+
+Both requested counterexamples are closed in source and executed fixtures;
+the finite worklist is 2 -> 0. Independent Data/Security/DS/Test re-gating is
+still required. This is not full P2: native legacy N1/N2, real binder/activation,
+worker/restart scheduling, hardened publisher/hard paths, canonical bridge,
+released old binaries/rollback, retention, P3-P5 and upstream remain open as
+enumerated above. No primary code, hook or config edit, hook override, site
+generation, dependency change or agent delegation belongs to this correction.

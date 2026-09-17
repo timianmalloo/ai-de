@@ -1,0 +1,50 @@
+{
+  "phase": "c1c2-green",
+  "head": "e75afa91080f4e243db4c63c9a5581ccb1c4ef12",
+  "command": [
+    "dotnet",
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "-p:UseSharedCompilation=false",
+    "-m:1",
+    "-nodeReuse:false",
+    "--filter",
+    "FullyQualifiedName~NativeAdmissionRuntimeTests",
+    "--logger",
+    "trx;LogFileName=notice.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p25-notice-evidence\\runtime-c1c2-green",
+    "--verbosity",
+    "minimal"
+  ],
+  "startedUtc": "2026-09-17T14:32:31.9614474+00:00",
+  "endedUtc": "2026-09-17T14:32:47.0872798+00:00",
+  "durationSeconds": 15.1258324,
+  "actualExit": 0,
+  "total": 51,
+  "passed": 51,
+  "failures": [],
+  "evidencePins": [
+    {
+      "file": "after-pins.json",
+      "sha256": "074702D8D13880E39500BD93F86C308092216B9659576FC5FB8E707AAECDB792"
+    },
+    {
+      "file": "before-pins.json",
+      "sha256": "0B18E546FA2D70D9CE01A120A82F1EFF1AF70A7A137E51D64C29B83D15318AD7"
+    },
+    {
+      "file": "notice.trx",
+      "sha256": "FF46FE58A3B3A04A8A2423B7EA24B73B1F225F3C6C82DA71A1C516B22F2A62BA"
+    },
+    {
+      "file": "stderr.txt",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "file": "stdout.txt",
+      "sha256": "2886667635C0B3C442B6B75E26147A98D8DC7B6457E46166BEF52DBA5C8CC639"
+    }
+  ]
+}

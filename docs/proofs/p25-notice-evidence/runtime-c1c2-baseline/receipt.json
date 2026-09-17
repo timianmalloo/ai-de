@@ -1,0 +1,60 @@
+{
+  "phase": "c1c2-baseline",
+  "head": "e75afa91080f4e243db4c63c9a5581ccb1c4ef12",
+  "command": [
+    "dotnet",
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "-p:UseSharedCompilation=false",
+    "-m:1",
+    "-nodeReuse:false",
+    "--filter",
+    "FullyQualifiedName~RegistrationAdmissionTests|FullyQualifiedName~RegistrationNoticeReliabilityTests|FullyQualifiedName~AWorktreeRegistrationIsCorrectedAndSaidSoTests|FullyQualifiedName~TrustedRegistrarTests|FullyQualifiedName~SqliteWatcherObservationStoreTests|FullyQualifiedName~NativeAdmissionRuntimeTests",
+    "--logger",
+    "trx;LogFileName=notice.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p25-notice-evidence\\runtime-c1c2-baseline",
+    "--verbosity",
+    "minimal",
+    "--no-build"
+  ],
+  "startedUtc": "2026-09-17T14:26:58.6425149+00:00",
+  "endedUtc": "2026-09-17T14:27:08.5812976+00:00",
+  "durationSeconds": 9.9387827,
+  "actualExit": 1,
+  "total": 213,
+  "passed": 211,
+  "failures": [
+    {
+      "message": "Assert.Single() Failure: The collection was empty",
+      "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.DrainRegistrationNotices_PublicationFails_RetryRetainsOriginalCorrection"
+    },
+    {
+      "message": "Assert.Equal() Failure: Strings differ\r\n                            ↓ (pos 17)\r\nExpected: \"{\"sessionRows\":128,\"firstCapabilities\":64\"···\r\nActual:   \"{\"sessionRows\":129,\"firstCapabilities\":64\"···\r\n                            ↑ (pos 17)",
+      "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.Register_TwoHostsHave128OutstandingCorrections_RefusesBeforeNativeMutation"
+    }
+  ],
+  "evidencePins": [
+    {
+      "file": "after-pins.json",
+      "sha256": "8472F493B1F25E06335755D96A2402779E9D366609A3EA2C8C702FBBAFC19C94"
+    },
+    {
+      "file": "before-pins.json",
+      "sha256": "8472F493B1F25E06335755D96A2402779E9D366609A3EA2C8C702FBBAFC19C94"
+    },
+    {
+      "file": "notice.trx",
+      "sha256": "17308CEDCDE2FAEB98DFB14C95E86BB154FC49606ACC425B3D82D7757D2516DF"
+    },
+    {
+      "file": "stderr.txt",
+      "sha256": "3D08BDF2523A80CC42D4ED9694FAEF8DABFD249189AA3C6299D79AB83517D5D2"
+    },
+    {
+      "file": "stdout.txt",
+      "sha256": "43CE9DE9C423C781AB7FEB5BEBCB70069616EF21DE7E29929222AB1AF7F33F58"
+    }
+  ]
+}

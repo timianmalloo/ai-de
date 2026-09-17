@@ -1,0 +1,60 @@
+{
+  "phase": "c1c2-final",
+  "head": "e75afa91080f4e243db4c63c9a5581ccb1c4ef12",
+  "command": [
+    "dotnet",
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "-p:UseSharedCompilation=false",
+    "-m:1",
+    "-nodeReuse:false",
+    "--filter",
+    "FullyQualifiedName~RegistrationAdmissionTests|FullyQualifiedName~RegistrationNoticeReliabilityTests|FullyQualifiedName~AWorktreeRegistrationIsCorrectedAndSaidSoTests|FullyQualifiedName~TrustedRegistrarTests|FullyQualifiedName~SqliteWatcherObservationStoreTests|FullyQualifiedName~NativeAdmissionRuntimeTests",
+    "--logger",
+    "trx;LogFileName=notice.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p25-notice-evidence\\runtime-c1c2-final",
+    "--verbosity",
+    "minimal",
+    "--no-build"
+  ],
+  "startedUtc": "2026-09-17T14:32:47.2417054+00:00",
+  "endedUtc": "2026-09-17T14:32:59.0782085+00:00",
+  "durationSeconds": 11.8365031,
+  "actualExit": 1,
+  "total": 226,
+  "passed": 224,
+  "failures": [
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.Register_TwoHostsHave128OutstandingCorrections_RefusesBeforeNativeMutation",
+      "message": "Assert.Equal() Failure: Strings differ\r\n                            ↓ (pos 17)\r\nExpected: \"{\"sessionRows\":128,\"firstCapabilities\":64\"···\r\nActual:   \"{\"sessionRows\":129,\"firstCapabilities\":64\"···\r\n                            ↑ (pos 17)"
+    },
+    {
+      "name": "AiDe.Core.Tests.Watcher.RegistrationNoticeReliabilityTests.DrainRegistrationNotices_PublicationFails_RetryRetainsOriginalCorrection",
+      "message": "Assert.Single() Failure: The collection was empty"
+    }
+  ],
+  "evidencePins": [
+    {
+      "file": "after-pins.json",
+      "sha256": "074702D8D13880E39500BD93F86C308092216B9659576FC5FB8E707AAECDB792"
+    },
+    {
+      "file": "before-pins.json",
+      "sha256": "074702D8D13880E39500BD93F86C308092216B9659576FC5FB8E707AAECDB792"
+    },
+    {
+      "file": "notice.trx",
+      "sha256": "912F78753D7AD5900A018836190837B733D8BEC93A03BF54274E72FAE5E230EC"
+    },
+    {
+      "file": "stderr.txt",
+      "sha256": "DB865E660AD4E187A2D37C96E20B8E31DE19FD88C1A6E5E62E18A0D249B0B74F"
+    },
+    {
+      "file": "stdout.txt",
+      "sha256": "39CD01C19D252895A9359A24278520761C5375CB15F291C6B7CDAC92D429E800"
+    }
+  ]
+}

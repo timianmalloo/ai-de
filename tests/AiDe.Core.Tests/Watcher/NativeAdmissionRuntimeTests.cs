@@ -13,6 +13,156 @@ namespace AiDe.Core.Tests.Watcher;
 public sealed class NativeAdmissionRuntimeTests(ITestOutputHelper output)
 {
     [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void RegisterNative_C1RetiredRoots_KeepCommittedBudgetAndOwner(bool inFlight)
+    {
+        using var first = new Fixture();
+        using var second = new Fixture();
+        for (var index = 0; index < 128; index++) first.Admit(index % 2, $"a-{index}", $"a-{index}");
+        if (inFlight) first.MarkInFlight();
+        var firstBefore = first.Snapshot();
+        var secondBefore = second.Snapshot();
+        first.FirstRoot.Dispose();
+        first.SecondRoot.Dispose();
+
+        var failure = Record.Exception(() => second.Admit(0, "overflow", "overflow"));
+
+        Assert.Equal(NativeAdmissionErrors.Capacity, Assert.IsType<WatcherException>(failure).Code);
+        Assert.Equal(firstBefore, first.Snapshot());
+        Assert.Equal(secondBefore, second.Snapshot());
+        Assert.Equal(128, first.FirstStore.PendingNativeNoticeCount());
+        Assert.Equal(0, second.FirstFactory.Count);
+        using var competitor = new FileStream(first.FirstStore.DatabasePath, FileMode.Open,
+            FileAccess.ReadWrite, FileShare.ReadWrite);
+        Assert.Throws<IOException>(() => competitor.Lock(long.MaxValue - 1, 1));
+        using var reopened = new NativeRegistrationAdmissionRoot(first.SecondStore);
+        var replay = first.SecondHost.RegisterNative(reopened, "a-0", first.Registration("a-0"), first.Context("a-0"));
+        Assert.True(replay.Replayed);
+        Assert.Null(replay.Capability);
+        Assert.Equal(firstBefore, first.Snapshot());
+        output.WriteLine($"C1 state={(inFlight ? "InFlight" : "Pending")}: SQL outstanding=128; both five-table/cap snapshots unchanged; owner retained; alias replay no mint.");
+    }
+
+    [Theory]
+    [InlineData("clock")]
+    [InlineData("identity")]
+    [InlineData("capability")]
+    public void RegisterNative_C2CompositionCallback_GlobalLockNotHeld(string kind)
+    {
+        using var fixture = new Fixture();
+        var calls = 0;
+        fixture.Callback(kind, () =>
+        {
+            calls++;
+            Assert.False(Monitor.IsEntered(NoticeAdmissionCoordinator.Gate));
+        });
+
+        fixture.Admit(0, "one", "terminal");
+
+        Assert.Equal(1, calls);
+        Assert.Equal(1, fixture.FirstStore.PendingNativeNoticeCount());
+        output.WriteLine($"C2 {kind}: Monitor.IsEntered(global)=false; callback executed once.");
+    }
+
+    [Theory]
+    [InlineData("clock")]
+    [InlineData("identity")]
+    [InlineData("capability")]
+    public async Task RegisterNative_C2BlockedCallback_IndependentRegistrarCommits(string kind)
+    {
+        using var first = new Fixture();
+        using var second = new Fixture();
+        using var entered = new ManualResetEventSlim();
+        using var resume = new ManualResetEventSlim();
+        first.Callback(kind, () =>
+        {
+            entered.Set();
+            Assert.True(resume.Wait(TimeSpan.FromSeconds(15)));
+        });
+        var held = Task.Run(() => first.Admit(0, "held", "held"));
+        Task<RegistrationAdmissionResult>? independent = null;
+        try
+        {
+            Assert.True(entered.Wait(TimeSpan.FromSeconds(15)));
+            independent = Task.Run(() => second.Admit(0, "independent", "independent"));
+            var accepted = await independent.WaitAsync(TimeSpan.FromSeconds(5));
+
+            Assert.False(resume.IsSet);
+            Assert.NotNull(accepted.Capability);
+            Assert.Equal(1, second.FirstStore.PendingNativeNoticeCount());
+            Assert.Equal(1, second.Count("native_registration_admission_fact"));
+            output.WriteLine($"C2 {kind}: independent SQL commit observed while first callback remained blocked.");
+        }
+        finally
+        {
+            resume.Set();
+            await held;
+            if (independent is not null) await independent;
+        }
+    }
+
+    [Theory]
+    [InlineData("clock")]
+    [InlineData("identity")]
+    [InlineData("capability")]
+    public void RegisterNative_C2CallbackFault_LeavesNoCommitOrReservation(string kind)
+    {
+        using var fixture = new Fixture();
+        var before = fixture.Snapshot();
+        fixture.Callback(kind, () => throw new InjectedFaultException());
+
+        Assert.Throws<InjectedFaultException>(() => fixture.Admit(0, "failed", "terminal"));
+
+        Assert.Equal(before, fixture.Snapshot());
+        fixture.Callback(kind, null);
+        for (var index = 0; index < 128; index++) fixture.Admit(1, $"fill-{index}", $"fill-{index}");
+        Assert.Equal(128, fixture.FirstStore.PendingNativeNoticeCount());
+        Assert.Equal(128, fixture.Count("native_registration_admission_fact"));
+    }
+
+    [Fact]
+    public void RegisterNative_C2SynchronousReentry_ExplicitlyRefusesWithoutNestedMint()
+    {
+        using var first = new Fixture();
+        using var second = new Fixture();
+        var before = second.Snapshot();
+        first.Callback("capability", () =>
+        {
+            var failure = Assert.Throws<WatcherException>(() => second.Admit(0, "nested", "nested"));
+            Assert.Equal("COORD_NATIVE_BUSY", failure.Code);
+        });
+
+        first.Admit(0, "outer", "outer");
+
+        Assert.Equal(before, second.Snapshot());
+        Assert.Equal(0, second.FirstFactory.Count);
+        Assert.Equal(1, first.FirstStore.PendingNativeNoticeCount());
+    }
+
+    [Fact]
+    public async Task RegisterNative_C2CapacityRace_OnlyOneLastSlotCommits()
+    {
+        using var first = new Fixture();
+        using var second = new Fixture();
+        for (var index = 0; index < 127; index++) first.Admit(0, $"fill-{index}", $"fill-{index}");
+        using var start = new Barrier(2);
+        Task<Exception?> Attempt(Fixture fixture, string id) => Task.Run<Exception?>(() =>
+        {
+            Assert.True(start.SignalAndWait(TimeSpan.FromSeconds(15)));
+            return Record.Exception(() => fixture.Admit(1, id, id));
+        });
+
+        var results = await Task.WhenAll(Attempt(first, "last-a"), Attempt(second, "last-b"));
+
+        Assert.Single(results, exception => exception is null);
+        Assert.Equal(NativeAdmissionErrors.Capacity, Assert.IsType<WatcherException>(
+            Assert.Single(results, exception => exception is not null)).Code);
+        Assert.Equal(128, first.FirstStore.PendingNativeNoticeCount() + second.FirstStore.PendingNativeNoticeCount());
+        Assert.Equal(128, first.Count("native_registration_admission_fact") + second.Count("native_registration_admission_fact"));
+    }
+
+    [Theory]
     [InlineData(false, false)]
     [InlineData(true, false)]
     [InlineData(false, true)]
@@ -460,13 +610,23 @@ public sealed class NativeAdmissionRuntimeTests(ITestOutputHelper output)
     internal sealed class CountingFactory : ICapabilityFactory
     {
         private readonly SequentialCapabilityFactory _inner = new();
+        internal Action? OnCreate { get; set; }
         internal int Count { get; private set; }
-        public SessionCapability Create() { Count++; return _inner.Create(); }
+        public SessionCapability Create() { OnCreate?.Invoke(); Count++; return _inner.Create(); }
+    }
+
+    private sealed class CallbackClock(FakeMonotonicClock clock) : IMonotonicClock
+    {
+        internal Action? OnRead { get; set; }
+        public long Ticks { get { OnRead?.Invoke(); return clock.Ticks; } }
+        public long TicksPerSecond => clock.TicksPerSecond;
     }
 
     private sealed class Fixture : IDisposable
     {
         private int _firstId, _secondId;
+        private readonly CallbackClock _callbackClock;
+        private Action? _onId;
         internal string Root { get; }
         internal string Worktree { get; }
         internal string Output { get; }
@@ -498,7 +658,12 @@ public sealed class NativeAdmissionRuntimeTests(ITestOutputHelper output)
             SecondStore = SqliteWatcherObservationStore.Open(Path.Combine(Root, ".", "watcher.db"));
             FirstRoot = new(FirstStore);
             SecondRoot = new(SecondStore);
-            FirstRegistrar = new(FirstStore, FirstFactory, Clock, () => $"first-{++_firstId}");
+            _callbackClock = new(Clock);
+            FirstRegistrar = new(FirstStore, FirstFactory, _callbackClock, () =>
+            {
+                _onId?.Invoke();
+                return $"first-{++_firstId}";
+            });
             SecondRegistrar = new(SecondStore, SecondFactory, Clock, () => $"second-{++_secondId}");
             var time = new FixedTimeProvider(DateTimeOffset.UnixEpoch);
             FirstHost = new(FirstStore, FirstRegistrar, time, locator: Locator);
@@ -524,6 +689,17 @@ public sealed class NativeAdmissionRuntimeTests(ITestOutputHelper output)
         internal RegistrationAdmissionResult Admit(int host, string operation, string terminal, bool canonical = false) =>
             (0 == host ? FirstHost : SecondHost).RegisterNative(0 == host ? FirstRoot : SecondRoot,
                 operation, Registration(terminal, canonical), Context(terminal));
+
+        internal void Callback(string kind, Action? callback)
+        {
+            switch (kind)
+            {
+                case "clock": _callbackClock.OnRead = callback; break;
+                case "identity": _onId = callback; break;
+                case "capability": FirstFactory.OnCreate = callback; break;
+                default: throw new ArgumentOutOfRangeException(nameof(kind));
+            }
+        }
 
         internal void Lifecycle(TrustedRegistrar registrar, RegistrationAdmissionResult result, string operation)
         {
@@ -626,8 +802,21 @@ public sealed class NativeAdmissionRuntimeTests(ITestOutputHelper output)
 
         public void Dispose()
         {
+            // Synthetic teardown only, not a publisher or a production obligation reset.
+            using (var connection = Open())
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = """
+                    UPDATE registration_notice_delivery SET state='InFlight',owner_id='synthetic-cleanup',
+                        attempt=attempt+1,ownership_version=ownership_version+1 WHERE state='Pending';
+                    UPDATE registration_notice_delivery SET state='Published',owner_id=NULL,
+                        published_at_ms=0,ownership_version=ownership_version+1 WHERE state='InFlight';
+                    """;
+                command.ExecuteNonQuery();
+            }
             SecondRoot.Dispose();
             FirstRoot.Dispose();
+            using (var reconciled = new NativeRegistrationAdmissionRoot(FirstStore)) { }
             SecondStore.Dispose();
             FirstStore.Dispose();
             Directory.Delete(Root, recursive: true);

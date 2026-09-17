@@ -58,6 +58,7 @@ public sealed class TrustedRegistrar : ITrustedRegistrar
         BoundNativeRegistration input, long recordedAtMilliseconds, Action<NativeAdmissionFaultPoint>? fault)
     {
         if (!ReferenceEquals(_store, store)) throw NativeAdmissionErrors.Error(NativeAdmissionErrors.Unavailable);
+        NoticeAdmissionCoordinator.RequireNonReentrant();
         lock (_gate)
         {
             SessionCapability? prepared = null;

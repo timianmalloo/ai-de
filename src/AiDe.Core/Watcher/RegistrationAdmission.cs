@@ -17,6 +17,8 @@ public sealed record RegistrationAdmissionResult(
 internal static class NativeAdmissionErrors
 {
     internal const string Unavailable = "COORD_NATIVE_UNAVAILABLE";
+    internal const string Uncertain = "COORD_NOTICE_UNCERTAIN";
+    internal const string Busy = "COORD_NATIVE_BUSY";
     internal const string InvalidInput = "COORD_NATIVE_INPUT";
     internal const string ContextMismatch = "COORD_NATIVE_CONTEXT";
     internal const string OperationConflict = "COORD_NATIVE_OPERATION_CONFLICT";

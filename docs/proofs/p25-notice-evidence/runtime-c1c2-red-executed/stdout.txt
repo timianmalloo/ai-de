@@ -1,0 +1,141 @@
+
+  AiDe.Core -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\bin\Debug\net10.0\AiDe.Core.dll
+  AiDe.Daemon -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Daemon\bin\Debug\net10.0-windows\AiDe.Daemon.dll
+  AiDe.Core.TerminalHost -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.Core.TerminalHost.dll
+  AiDe.Core.AcpProbe -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.AcpProbe\bin\Debug\net10.0\AiDe.Core.AcpProbe.dll
+  AiDe.Mcp -> C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Mcp\bin\Debug\net10.0\AiDe.Mcp.dll
+  AiDe.Core.Tests -> C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll
+Test run for C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\bin\Debug\net10.0\AiDe.Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2CompositionCallback_GlobalLockNotHeld(kind: "capability") [82 ms]
+  Error Message:
+   Assert.False() Failure
+Expected: False
+Actual:   True
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.<>c__DisplayClass3_0.<RegisterNative_C2CompositionCallback_GlobalLockNotHeld>b__0() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 58
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.CountingFactory.Create() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 615
+   at AiDe.Core.Watcher.TrustedRegistrar.<>c__DisplayClass11_1.<AdmitNative>b__1() in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs:line 65
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.AdmitNative(BoundNativeRegistration input, Int64 recordedAtMilliseconds, Int64 ticks, Func`1 newSessionId, Action prepareCapability, Func`3 reserve, Action`1 fault) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.RegistrationNotices.cs:line 54
+   at AiDe.Core.Watcher.TrustedRegistrar.<>c__DisplayClass11_1.<AdmitNative>b__0(Func`3 reserve) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs:line 64
+   at AiDe.Core.Watcher.NoticeAdmissionCoordinator.Run[T](Func`2 operation) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NoticeAdmissionCoordinator.cs:line 70
+   at AiDe.Core.Watcher.TrustedRegistrar.AdmitNative(SqliteWatcherObservationStore store, NoticeAdmissionCoordinator coordinator, BoundNativeRegistration input, Int64 recordedAtMilliseconds, Action`1 fault) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs:line 64
+   at AiDe.Core.Watcher.NativeRegistrationAdmissionRoot.Admit(TrustedRegistrar registrar, String operationId, HarnessRegistration registration, NativeRegistrationContext context, Int64 recordedAtMilliseconds) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NativeRegistrationAdmissionRoot.cs:line 28
+   at AiDe.Core.Watcher.IngestHost.RegisterNative(NativeRegistrationAdmissionRoot root, String operationId, HarnessRegistration registration, NativeRegistrationContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\IngestHost.cs:line 151
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Fixture.Admit(Int32 host, String operation, String terminal, Boolean canonical) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 690
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2CompositionCallback_GlobalLockNotHeld(String kind) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 61
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2CompositionCallback_GlobalLockNotHeld(kind: "identity") [23 ms]
+  Error Message:
+   Assert.False() Failure
+Expected: False
+Actual:   True
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.<>c__DisplayClass3_0.<RegisterNative_C2CompositionCallback_GlobalLockNotHeld>b__0() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 58
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Fixture.<.ctor>b__54_0() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 664
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.AdmitNative(BoundNativeRegistration input, Int64 recordedAtMilliseconds, Int64 ticks, Func`1 newSessionId, Action prepareCapability, Func`3 reserve, Action`1 fault) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.RegistrationNotices.cs:line 46
+   at AiDe.Core.Watcher.TrustedRegistrar.<>c__DisplayClass11_1.<AdmitNative>b__0(Func`3 reserve) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs:line 64
+   at AiDe.Core.Watcher.NoticeAdmissionCoordinator.Run[T](Func`2 operation) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NoticeAdmissionCoordinator.cs:line 70
+   at AiDe.Core.Watcher.TrustedRegistrar.AdmitNative(SqliteWatcherObservationStore store, NoticeAdmissionCoordinator coordinator, BoundNativeRegistration input, Int64 recordedAtMilliseconds, Action`1 fault) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs:line 64
+   at AiDe.Core.Watcher.NativeRegistrationAdmissionRoot.Admit(TrustedRegistrar registrar, String operationId, HarnessRegistration registration, NativeRegistrationContext context, Int64 recordedAtMilliseconds) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NativeRegistrationAdmissionRoot.cs:line 28
+   at AiDe.Core.Watcher.IngestHost.RegisterNative(NativeRegistrationAdmissionRoot root, String operationId, HarnessRegistration registration, NativeRegistrationContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\IngestHost.cs:line 151
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Fixture.Admit(Int32 host, String operation, String terminal, Boolean canonical) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 690
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2CompositionCallback_GlobalLockNotHeld(String kind) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 61
+   at InvokeStub_NativeAdmissionRuntimeTests.RegisterNative_C2CompositionCallback_GlobalLockNotHeld(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2CompositionCallback_GlobalLockNotHeld(kind: "clock") [20 ms]
+  Error Message:
+   Assert.False() Failure
+Expected: False
+Actual:   True
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.<>c__DisplayClass3_0.<RegisterNative_C2CompositionCallback_GlobalLockNotHeld>b__0() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 58
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.CallbackClock.get_Ticks() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 621
+   at AiDe.Core.Watcher.TrustedRegistrar.<>c__DisplayClass11_1.<AdmitNative>b__0(Func`3 reserve) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs:line 64
+   at AiDe.Core.Watcher.NoticeAdmissionCoordinator.Run[T](Func`2 operation) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NoticeAdmissionCoordinator.cs:line 70
+   at AiDe.Core.Watcher.TrustedRegistrar.AdmitNative(SqliteWatcherObservationStore store, NoticeAdmissionCoordinator coordinator, BoundNativeRegistration input, Int64 recordedAtMilliseconds, Action`1 fault) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs:line 64
+   at AiDe.Core.Watcher.NativeRegistrationAdmissionRoot.Admit(TrustedRegistrar registrar, String operationId, HarnessRegistration registration, NativeRegistrationContext context, Int64 recordedAtMilliseconds) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NativeRegistrationAdmissionRoot.cs:line 28
+   at AiDe.Core.Watcher.IngestHost.RegisterNative(NativeRegistrationAdmissionRoot root, String operationId, HarnessRegistration registration, NativeRegistrationContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\IngestHost.cs:line 151
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Fixture.Admit(Int32 host, String operation, String terminal, Boolean canonical) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 690
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2CompositionCallback_GlobalLockNotHeld(String kind) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 61
+   at InvokeStub_NativeAdmissionRuntimeTests.RegisterNative_C2CompositionCallback_GlobalLockNotHeld(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C1RetiredRoots_KeepCommittedBudgetAndOwner(inFlight: True) [218 ms]
+  Error Message:
+   Assert.IsType() Failure: Value is null
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+Actual:   null
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C1RetiredRoots_KeepCommittedBudgetAndOwner(Boolean inFlight) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 31
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C1RetiredRoots_KeepCommittedBudgetAndOwner(inFlight: False) [214 ms]
+  Error Message:
+   Assert.IsType() Failure: Value is null
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+Actual:   null
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C1RetiredRoots_KeepCommittedBudgetAndOwner(Boolean inFlight) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 31
+   at InvokeStub_NativeAdmissionRuntimeTests.RegisterNative_C1RetiredRoots_KeepCommittedBudgetAndOwner(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2BlockedCallback_IndependentRegistrarCommits(kind: "identity") [5 s]
+  Error Message:
+   System.TimeoutException : The operation has timed out.
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2BlockedCallback_IndependentRegistrarCommits(String kind) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 89
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2BlockedCallback_IndependentRegistrarCommits(String kind) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 102
+--- End of stack trace from previous location ---
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2BlockedCallback_IndependentRegistrarCommits(kind: "capability") [5 s]
+  Error Message:
+   System.TimeoutException : The operation has timed out.
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2BlockedCallback_IndependentRegistrarCommits(String kind) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 89
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2BlockedCallback_IndependentRegistrarCommits(String kind) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 102
+--- End of stack trace from previous location ---
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2BlockedCallback_IndependentRegistrarCommits(kind: "clock") [5 s]
+  Error Message:
+   System.TimeoutException : The operation has timed out.
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2BlockedCallback_IndependentRegistrarCommits(String kind) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 89
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2BlockedCallback_IndependentRegistrarCommits(String kind) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 102
+--- End of stack trace from previous location ---
+  Failed AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2SynchronousReentry_ExplicitlyRefusesWithoutNestedMint [41 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(AiDe.Core.Watcher.WatcherException)
+Actual:   typeof(System.InvalidOperationException)
+---- System.InvalidOperationException : Execute requires the command to have a transaction object when the connection assigned to the command is in a pending local transaction.  The Transaction property of the command has not been initialized.
+  Stack Trace:
+     at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.<>c__DisplayClass6_0.<RegisterNative_C2SynchronousReentry_ExplicitlyRefusesWithoutNestedMint>b__0() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 132
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.CountingFactory.Create() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 615
+   at AiDe.Core.Watcher.TrustedRegistrar.<>c__DisplayClass11_1.<AdmitNative>b__1() in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs:line 65
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.AdmitNative(BoundNativeRegistration input, Int64 recordedAtMilliseconds, Int64 ticks, Func`1 newSessionId, Action prepareCapability, Func`3 reserve, Action`1 fault) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.RegistrationNotices.cs:line 54
+   at AiDe.Core.Watcher.TrustedRegistrar.<>c__DisplayClass11_1.<AdmitNative>b__0(Func`3 reserve) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs:line 64
+   at AiDe.Core.Watcher.NoticeAdmissionCoordinator.Run[T](Func`2 operation) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NoticeAdmissionCoordinator.cs:line 70
+   at AiDe.Core.Watcher.TrustedRegistrar.AdmitNative(SqliteWatcherObservationStore store, NoticeAdmissionCoordinator coordinator, BoundNativeRegistration input, Int64 recordedAtMilliseconds, Action`1 fault) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs:line 64
+   at AiDe.Core.Watcher.NativeRegistrationAdmissionRoot.Admit(TrustedRegistrar registrar, String operationId, HarnessRegistration registration, NativeRegistrationContext context, Int64 recordedAtMilliseconds) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NativeRegistrationAdmissionRoot.cs:line 28
+   at AiDe.Core.Watcher.IngestHost.RegisterNative(NativeRegistrationAdmissionRoot root, String operationId, HarnessRegistration registration, NativeRegistrationContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\IngestHost.cs:line 151
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Fixture.Admit(Int32 host, String operation, String terminal, Boolean canonical) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 690
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2SynchronousReentry_ExplicitlyRefusesWithoutNestedMint() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 136
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+----- Inner Stack Trace -----
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteScalar()
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.PendingNativeNoticeCount(SqliteTransaction transaction) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.RegistrationNotices.cs:line 22
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.PendingNativeNoticeCount() in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.RegistrationNotices.cs:line 9
+   at AiDe.Core.Watcher.NoticeAdmissionCoordinator.<>c__DisplayClass9_0`1.<Run>b__1(KeyValuePair`2 pair) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NoticeAdmissionCoordinator.cs:line 63
+   at System.Linq.Enumerable.Sum[TSource,TResult,TAccumulator](IEnumerable`1 source, Func`2 selector)
+   at System.Linq.Enumerable.Sum[TSource](IEnumerable`1 source, Func`2 selector)
+   at AiDe.Core.Watcher.NoticeAdmissionCoordinator.<Run>g__Reserve|9_0[T](Int64 localPending, Boolean correction) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NoticeAdmissionCoordinator.cs:line 63
+   at AiDe.Core.Watcher.SqliteWatcherObservationStore.AdmitNative(BoundNativeRegistration input, Int64 recordedAtMilliseconds, Int64 ticks, Func`1 newSessionId, Action prepareCapability, Func`3 reserve, Action`1 fault) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\SqliteWatcherObservationStore.RegistrationNotices.cs:line 42
+   at AiDe.Core.Watcher.TrustedRegistrar.<>c__DisplayClass11_1.<AdmitNative>b__0(Func`3 reserve) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs:line 64
+   at AiDe.Core.Watcher.NoticeAdmissionCoordinator.Run[T](Func`2 operation) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NoticeAdmissionCoordinator.cs:line 70
+   at AiDe.Core.Watcher.TrustedRegistrar.AdmitNative(SqliteWatcherObservationStore store, NoticeAdmissionCoordinator coordinator, BoundNativeRegistration input, Int64 recordedAtMilliseconds, Action`1 fault) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\TrustedRegistrar.cs:line 64
+   at AiDe.Core.Watcher.NativeRegistrationAdmissionRoot.Admit(TrustedRegistrar registrar, String operationId, HarnessRegistration registration, NativeRegistrationContext context, Int64 recordedAtMilliseconds) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\NativeRegistrationAdmissionRoot.cs:line 28
+   at AiDe.Core.Watcher.IngestHost.RegisterNative(NativeRegistrationAdmissionRoot root, String operationId, HarnessRegistration registration, NativeRegistrationContext context) in C:\Projects\ai-de-feature-xh-p2-projection\src\AiDe.Core\Watcher\IngestHost.cs:line 151
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.Fixture.Admit(Int32 host, String operation, String terminal, Boolean canonical) in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 690
+   at AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.<>c__DisplayClass6_0.<RegisterNative_C2SynchronousReentry_ExplicitlyRefusesWithoutNestedMint>b__1() in C:\Projects\ai-de-feature-xh-p2-projection\tests\AiDe.Core.Tests\Watcher\NativeAdmissionRuntimeTests.cs:line 132
+Results File: C:\Projects\ai-de-feature-xh-p2-projection\docs\proofs\p25-notice-evidence\runtime-c1c2-red-executed\notice.trx
+
+Failed!  - Failed:     9, Passed:     4, Skipped:     0, Total:    13, Duration: 16 s - AiDe.Core.Tests.dll (net10.0)

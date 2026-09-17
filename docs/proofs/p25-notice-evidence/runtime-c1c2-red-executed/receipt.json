@@ -1,0 +1,87 @@
+{
+  "phase": "c1c2-red-executed",
+  "head": "e75afa91080f4e243db4c63c9a5581ccb1c4ef12",
+  "command": [
+    "dotnet",
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "-p:UseSharedCompilation=false",
+    "-m:1",
+    "-nodeReuse:false",
+    "--filter",
+    "FullyQualifiedName~RegisterNative_C1|FullyQualifiedName~RegisterNative_C2",
+    "--logger",
+    "trx;LogFileName=notice.trx",
+    "--results-directory",
+    "C:\\Projects\\ai-de-feature-xh-p2-projection\\docs\\proofs\\p25-notice-evidence\\runtime-c1c2-red-executed",
+    "--verbosity",
+    "minimal"
+  ],
+  "startedUtc": "2026-09-17T14:31:12.5223644+00:00",
+  "endedUtc": "2026-09-17T14:31:32.9613970+00:00",
+  "durationSeconds": 20.4390326,
+  "actualExit": 1,
+  "total": 13,
+  "passed": 4,
+  "failures": [
+    {
+      "message": "System.TimeoutException : The operation has timed out.",
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2BlockedCallback_IndependentRegistrarCommits(kind: \"identity\")"
+    },
+    {
+      "message": "Assert.IsType() Failure: Value is null\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)\r\nActual:   null",
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C1RetiredRoots_KeepCommittedBudgetAndOwner(inFlight: True)"
+    },
+    {
+      "message": "System.TimeoutException : The operation has timed out.",
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2BlockedCallback_IndependentRegistrarCommits(kind: \"clock\")"
+    },
+    {
+      "message": "Assert.False() Failure\r\nExpected: False\r\nActual:   True",
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2CompositionCallback_GlobalLockNotHeld(kind: \"identity\")"
+    },
+    {
+      "message": "Assert.False() Failure\r\nExpected: False\r\nActual:   True",
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2CompositionCallback_GlobalLockNotHeld(kind: \"clock\")"
+    },
+    {
+      "message": "Assert.IsType() Failure: Value is null\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)\r\nActual:   null",
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C1RetiredRoots_KeepCommittedBudgetAndOwner(inFlight: False)"
+    },
+    {
+      "message": "Assert.False() Failure\r\nExpected: False\r\nActual:   True",
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2CompositionCallback_GlobalLockNotHeld(kind: \"capability\")"
+    },
+    {
+      "message": "Assert.Throws() Failure: Exception type was not an exact match\r\nExpected: typeof(AiDe.Core.Watcher.WatcherException)\r\nActual:   typeof(System.InvalidOperationException)\r\n---- System.InvalidOperationException : Execute requires the command to have a transaction object when the connection assigned to the command is in a pending local transaction.  The Transaction property of the command has not been initialized.",
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2SynchronousReentry_ExplicitlyRefusesWithoutNestedMint"
+    },
+    {
+      "message": "System.TimeoutException : The operation has timed out.",
+      "name": "AiDe.Core.Tests.Watcher.NativeAdmissionRuntimeTests.RegisterNative_C2BlockedCallback_IndependentRegistrarCommits(kind: \"capability\")"
+    }
+  ],
+  "evidencePins": [
+    {
+      "sha256": "7ABF475DC4C1E300909A449AFCF20C6B574B85C0D9BA9C7B237CA68663E40623",
+      "file": "after-pins.json"
+    },
+    {
+      "sha256": "6F2EE98ADF48B13FB91EF14F328809AEC3479FD1AE4028A34FE82198CBCD0D5B",
+      "file": "before-pins.json"
+    },
+    {
+      "sha256": "E97C64720FCC33930B5D9E4AA85A734F4580AAC34230BA0880D43587770BF765",
+      "file": "notice.trx"
+    },
+    {
+      "sha256": "4E225AC464790CE436C0856ABBC30B2FAF8AD656A3776C5526D345A5D5F1DF74",
+      "file": "stderr.txt"
+    },
+    {
+      "sha256": "218A206EB4A849CA98CC59B21AE83DD767BA770DEF0C5BB47533835CAB6B8E32",
+      "file": "stdout.txt"
+    }
+  ]
+}
