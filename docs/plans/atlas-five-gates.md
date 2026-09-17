@@ -14,6 +14,17 @@ summary: "Repair the five frozen Atlas integration failures before main publicat
 
 # Current state: reviewed diagnostic handoff; R124 replacement pending
 
+## September 17 readiness update
+
+Pair02 was never invoked by this Conductor and expired while the thread was inactive.
+Full frozen native PINS-MATCH now verified. Corrected enforced-identity fresh request
+req-01M2QRBKYDEH29TW5DX1MBXF9V is pending; no native run. R124 replacement/base request
+req-01M2P6J5SDEYEY6A9CKRNXJ9CE remains pending. Independent read-only overlap review is
+complete: no nine-path overlap or central-build/coverage-control change against
+explicitoriginmain2a5f1b2d; expected test counts changed. Stale platform/proof wording
+needs truthful final aggregation. Programme Proof Pack records Owner graph, actual
+identity control, expired-window attestation, costs, exact requests and limitations.
+
 ## Current disposition: reviewed diagnostics and R124 handoff
 
 Goal: record the reviewed diagnostic identity and send exact bounded execution requests.

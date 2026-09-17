@@ -743,3 +743,103 @@ At checkpoint5 the helper stopped after creating/saving requests: it incorrectly
 parsed the lease command's plain-text output as JSON. No programme document had
 been changed. Correction preserves/reuses the exact saved packets and checks every
 command exit; no duplicate request or lease refusal was treated as success.
+
+## September 17: resumed readiness, expired slot and current-base handoff
+
+**Verified action history:** Conductor ended the prior turn around22:51Z and
+dispatched no pair02 executor or execute command. The later reservation expired
+at23:15:03.9208252Z while the thread was inactive. This is Conductor attestation;
+the watcher's absence-of-process/files observation is not independent proof of
+non-invocation. Expiry notice req-01M2P84HMHBBP5XJ2FNSPHDRF6 was explicitly answered.
+Old slot02 and label remain closed and preserved. No native result is invented.
+
+At13:16Z the resumed Conductor directly ran the reviewed runner's verify command
+against manifest66ccb1a3 in the original prepared tree. Actual exit0/PINS-MATCH,
+clean HEAD41421c8e and unchanged exact manifest were observed. No native command
+or build ran. Native request req-01M2QRBKYDEH29TW5DX1MBXF9V now names fresh03 label
+atlas-uia-pair-03-41421c8e-20260917 and the corrected enforced execution identity.
+
+**DC-116 recurrence:** the unconsumed02 request proposed an invented new session
+identity. Opening execute at run_pair.py607 showed fixed requirements:
+codex-atlas-p1-03-pair-execution / codex-astra-pair-executor. Astra Owner explicitly
+confirmed resuming this same bounded experiment identity with a new audit marker,
+preserving the prior ended attempt. No runner/input edit is admitted. Local control
+artifacts/atlas-five-gates/pair-handoff/validate_pair03_identity.py extracts the two
+requirements from the frozen execute AST, rejects the recorded02 request and accepts
+the exact03 request. Its actual receipt is pair03-identity-control.json. This is
+a finite dispatch control; no global prevention or native-runtime claim is made.
+
+### Owner-confirmed graph and execution boundaries
+
+Goal: complete bounded verification and the evidence-based integration handoff.
+Done when authorized checks have inspected results, required independent gates clear,
+and the publisher acknowledges exact candidate and evidence. TierT2; fan-out cap4
+including Astra Owner/Conductor, at most one native executor. No source, rebuild,
+automatic retry, ungranted coverage invocation or main-publication expansion.
+
+| Node | Dependency and oracle | Prospective budget |
+| --- | --- | --- |
+| Readiness/request | Exact identity/pins and fresh watcher disposition |8calls/12min; checkpoint5|
+| One native execution | Actual grant, sufficient preflight+420s; raw result and containment/release |10calls/20min; checkpoint6|
+| Independent interpretation | Actual native/raw evidence; Test/SRE clear or concrete missing proof |6calls/12min; checkpoint4|
+| Documentary handoff | Exact outcome, limits and publisher acknowledgment |6calls/10min; checkpoint4|
+| R124 read-only preparation | Exact nine-path/current-main overlap and proof references |4calls/8min; completed|
+| R124 replacement | Claude's explicit ONE replacement and base disposition |Not admitted until reply|
+
+```mermaid
+flowchart LR
+  P[Readiness and exact request] --> G[Fresh watcher grant]
+  G --> E[One frozen pair]
+  E --> I[Independent actual interpretation]
+  I --> H[Coordinated evidence handoff]
+  B[Read-only current-base receipt] --> C[Claude replacement and base decision]
+  C --> V[One granted combined coverage]
+  V --> R[Independent candidate and Claude proof reviews]
+  R --> H
+```
+
+Reuse existing specs, architecture, design, runner and independent diagnostics
+review. The material changes are expired reservation and corrected identity;
+no product design artifact is needed. Native and R124 have separate inputs and
+grants; shared desktop and derivative writes remain serial. Scope/pin/review/
+coverage/personal-proof/audit/join floors are unchanged. Variants are outstanding
+required evidence/decision receipts, never elapsed wait time. Unanswered requests
+remain dependencies, not consent. No retry loop follows a refusal. A cap firing
+is a planning defect; it cannot waive containment, release or review obligations.
+
+Readiness8call estimate was exceeded by ground-state recovery, identity correction,
+extra narrowed reads and one invalid worktree-list --json argument. The latter
+exited2; documented help was read and plain list was saved afterward. No support
+for that flag or budget compliance is claimed. Root marker started13:16:49Z,
+after initial read-only coordination grounding; this timing limitation is explicit.
+The independent4call Sol/high unit completed in approximately106.21seconds per its
+clock receipt. Owner decision4/4calls; no executor has been dispatched. Cost ceilings
+above are Inferred, not runtime predictions; tokens/spend not recorded.
+
+### R124 base facts and remaining proof packaging
+
+Independent read-only agent compared basebcf4959b to explicit currentoriginmain
+2a5f1b2df078cbc2ccbe0c6b0d05e3f9c8d14fd0. Conductor independently repeated the
+relevant path diff. All nine authored candidate paths have zero overlap. Central
+Directory.Build.props, Directory.Packages.props, global.json, coverage script and
+build.yml are unchanged. tools/expected-test-counts.json changed with Core's landing.
+An empty authored overlap is not current-base qualification. In the spike checkout
+local main resolves23e523a8 while origin/main is2a5f1b2d; use explicit commit identity,
+never a local branch name as evidence of the publication base. No ref was rewritten.
+
+Both Proof Packs still contain author-era Linux/coverage/review obligations. R124's
+separate accepted manual-Linux and prior-review records need truthful aggregation
+with the eventual combined result. Architecture RESULT.md204 incorrectly describes
+project coverage on both operating systems; workflow build.yml649 invokes it within
+the Windows job. Behavior Proof Pack111-112 correctly distinguishes manual Linux.
+Architecture proof type:doc versus behavior type:proof-pack is recorded as a metadata
+consistency finding, not a newly invented gate. Source/RESULT/proof files were not
+edited during the read-only unit. Capture03 remains normal controlled-completion
+evidence only; it does not resolve the original UNKNOWN coverage invocation.
+
+Canonical Claude request req-01M2P6J5SDEYEY6A9CKRNXJ9CE remains open. Watcher relay
+P6J5Y and ready/base-evidence request req-01M2QRNQ8MQWT5PXD23W5QQC4S seek actual
+acknowledgment/disposition. No notice counts as peer ACK, frozen execution grant,
+coverage success or main-readiness. Native canonical qualification remainsBLOCK.
+Prepared executor packet is retained at artifacts/atlas-five-gates/pair-handoff/
+pair03-execution-assignment.md; it is conditional, not a dispatched executor.

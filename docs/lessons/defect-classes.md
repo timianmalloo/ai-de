@@ -4953,6 +4953,17 @@ for both or split.*
 
 ---
 
+- **Recurrence (2026-09-17, invented executor identity in a request):** the
+  Conductor proposed a new session/agent name without opening the frozen runner's
+  hardcoded identity predicate. The slot expired unused; no execution was admitted
+  on the wrong identity. Class -> sweep -> derive -> prevent: reuse DC-116; sweep
+  both required environment identities and request/dispatch fields; read execute;
+  compare its AST literals against the exact saved request. The local executable
+  validate_pair03_identity.py rejects old02 and accepts corrected03, with retained
+  JSON receipt under artifacts/atlas-five-gates/pair-handoff. Existing standing
+  no-guessing guidance applies; this finite control is not a global linter. Evidence:
+  docs/proof/atlas-p1-03-transition-design-review.md. Frozen runner bytes unchanged.
+
 ### DC-117 — A GUI test suite that drives shell integration cannot complete under a console-less tool host
 
 - **Shape:** a suite spawns real shells to exercise shell-integration behaviour. Under an

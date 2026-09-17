@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T22:50:24Z",
+  "generated": "2026-09-17T13:30:03Z",
   "audit": [
     {
       "actor": null,
@@ -26821,6 +26821,52 @@ window.AUDIT_DATA = {
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2QR6G8VS8B27TN8RFNS37F0",
+      "shortname": "keep going ... lets get the bounded verification and integration handoff…",
+      "datetime": "2026-09-17T13:16:49Z",
+      "session": "prompt-log",
+      "prompt": "keep going ... lets get the bounded verification and integration handoff complete",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2QRYPF40SQVDZJT200PBQWG",
+      "shortname": "atlas-resumed-readiness-peer-dispositions-pending",
+      "datetime": "2026-09-17T13:30:02Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going ... lets get the bounded verification and integration handoff complete",
+      "summary": "Partial: native full frozen PINS-MATCH on clean41421c8e; pair02 never-invoked action-history attested and expiry consumed. Opened enforcedidentity, corrected unconsumedrequest mismatch; AST comparison rejects02 and accepts03. Fresh request QRBK pending, no native executor dispatched. Independent read-only R124 four-call base/proof inspection completed; exactninepath/centralbuild/coverage no overlap againstorigin2a5f1b2d spotchecked; Core expectedcounts changed, linkedcheckout localmain stale, platform/proof wording findings recorded. ExistingClaude replacement/base request P6J5S and watcherACK request QRNQ remainopen. Owner conditional10call execution/6call review admitted only after freshgrant; no coverage/native/main execution. Readiness8call estimate exceeded during recovery/contract correction and tool-help recovery; aggregate main call cost is not harness-instrumented, no capcompliance claimed. Owner4/4 calls, independentread-only4/4 approximately106.21seconds. Source/specs/architecture reused; actual runtime qualification remainsBLOCK. Finite next obligations remain recorded, not waived.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md",
+        "docs/plans/atlas-five-gates.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Complete bounded verification and the evidence-based integration handoff.",
+      "done_when": "Authorized checks have inspected results, required independent gates clear, and publisher acknowledges exact candidate and evidence.",
+      "tier": "T2",
+      "fan_out": 4,
+      "started_at": "2026-09-17T13:16:49Z",
+      "duration_seconds": 793.0,
+      "change": "cl-01M2QRSN93M3J1ZSJFZTS8J0CQ",
+      "git": {
+        "sha": "ea8d1a8671c07a733ed37ca93c159ec1c7457e8b",
+        "short": "ea8d1a867",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -31658,6 +31704,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "8eebf72b29b692b8496fd0453f6445fe7d7d84ea",
         "after": "8eebf72b29b692b8496fd0453f6445fe7d7d84ea",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2QRSN93M3J1ZSJFZTS8J0CQ",
+      "datetime": "2026-09-17T13:27:17Z",
+      "session": "codex-atlas-five-gates-integration",
+      "kind": "decision",
+      "skill": "optimize-graph",
+      "title": "Resume exact native identity after unused slot expiry; keep R124 behind its decision",
+      "prompt": "keep going ... lets get the bounded verification and integration handoff complete",
+      "summary": "Owner confirms same enforced executor identity and conditional one-pair execution after fresh watcher grant; independent actual interpretation remains. Previous02 never invoked, oldslot preserved. Read-only R124 current-base overlap receipt complete; replacement/base grant stillpending. No source/input refresh.",
+      "rationale": "Expired reservation and opened hardcoded identity materially change readiness; no execution grant follows from prior notice or elapsed time.",
+      "artifacts": [
+        "docs/proof/atlas-p1-03-transition-design-review.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "ea8d1a8671c07a733ed37ca93c159ec1c7457e8b",
+        "after": "ea8d1a8671c07a733ed37ca93c159ec1c7457e8b",
         "branch": "integration/atlas-five-gates",
         "pushed": null,
         "commits": []

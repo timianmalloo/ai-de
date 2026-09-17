@@ -9540,7 +9540,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  C[Truthful partial close] --> O[Owner promotion by reference]\n  O --> N[Exact native slot request]\n  C --> R[Claude replacement and base decision request]\n  N --> H[Record and commit handoffs]\n  R --> H"
         }
       ],
-      "sourceSha256": "78447dbc8f19f39d124de5e456138732f7b134391917dce3af13350e272d5cf2"
+      "sourceSha256": "cf1c9f86dce9478856acdfdc476d0251db58578a77cea23174a746bceab05c08"
     },
     {
       "id": "coordination-code-atlas",
@@ -9728,7 +9728,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3d6f056917e8a0635f75de3f20555ee8cb42d2350d705aaff8c60fe9536272c2"
+      "sourceSha256": "4f92c799fcdd70eb6b2bcf053c883378ebcc5ca1daf90cc08504b0c4ad43dabf"
     },
     {
       "id": "design-session-profiler",
@@ -12124,7 +12124,7 @@ window.DOCS_INDEX = {
           "mermaid": "graph TD\n R1-->R2-->R3-->R5-->R6\n R1-->R4-->R5"
         }
       ],
-      "sourceSha256": "3ddf39f06393369c98d003463993d5dc062742596f099ac56d2bf42c145da75d"
+      "sourceSha256": "994cea058f0064eb25353f71cae986b2cf431ff7ab7d1dab01c4eb8121c1ba81"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -13028,9 +13028,14 @@ window.DOCS_INDEX = {
           "kind": "flowchart",
           "title": "Material graph, floors and cost",
           "mermaid": "flowchart LR\n  C[Truthful partial close] --> O[Owner promotion by reference]\n  O --> N[Exact native slot request]\n  C --> R[Claude replacement and base decision request]\n  N --> H[Record and commit handoffs]\n  R --> H"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Owner-confirmed graph and execution boundaries",
+          "mermaid": "flowchart LR\n  P[Readiness and exact request] --> G[Fresh watcher grant]\n  G --> E[One frozen pair]\n  E --> I[Independent actual interpretation]\n  I --> H[Coordinated evidence handoff]\n  B[Read-only current-base receipt] --> C[Claude replacement and base decision]\n  C --> V[One granted combined coverage]\n  V --> R[Independent candidate and Claude proof reviews]\n  R --> H"
         }
       ],
-      "sourceSha256": "36cb4b1d4d8150f241c9ea645e549b93c41f6152280a0142acc814c115787d16"
+      "sourceSha256": "2c63f81584b7cd20435f03f3fb3fe26722c26393db3a46baf2d8420eb3d3fa89"
     },
     {
       "id": "proof-atlas-peer-review-transport",
@@ -23433,5 +23438,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c215e7aa3d0562e13667f176fdf4e46a4705a927e98efa4ef79fac66baab5faf"
+  "graphSha256": "74712c19b77ca3ae01216e4f25b6b1673932c3b096eb8e1b603f39aae8fca922"
 };
