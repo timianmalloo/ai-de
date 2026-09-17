@@ -35,11 +35,24 @@ public sealed class EntryPointsProjectionTests
             TestWorkspace.Assertion("Domain.Order", "has_type", "class"));
         var projections = new ProjectionService(workspace.Store, Path.GetDirectoryName(workspace.DatabasePath)!);
         var result = projections.EntryPoints(new EntryPointsQuery());
-        Assert.Equal(EntryPointKind.Api, result.Rows.Single(r => r.Display == "Orders.OrdersController").Kind);
-        Assert.Equal(EntryPointKind.Ux, result.Rows.Single(r => r.Display == "Shell.MainWindow").Kind);
-        Assert.Equal(EntryPointKind.Cli, result.Rows.Single(r => r.Display.Contains("Main()", StringComparison.Ordinal)).Kind);
+        Assert.Equal(5, result.Rows.Count);
+        Assert.Equal(
+            (EntryPointKind.Api, "Orders.OrdersController"),
+            (result.Rows.Single(r => r.Display == "Orders.OrdersController").Kind,
+             result.Rows.Single(r => r.Display == "Orders.OrdersController").NodeId));
+        Assert.Equal(
+            (EntryPointKind.Ux, "Shell.MainWindow"),
+            (result.Rows.Single(r => r.Display == "Shell.MainWindow").Kind,
+             result.Rows.Single(r => r.Display == "Shell.MainWindow").NodeId));
+        var program = result.Rows.Single(r => r.Display == "App.Program");
+        Assert.Equal(EntryPointKind.Cli, program.Kind);
+        Assert.Equal("App.Program", program.NodeId);
+        var main = result.Rows.Single(r => r.Display.Contains("Main()", StringComparison.Ordinal));
+        Assert.Equal(EntryPointKind.Cli, main.Kind);
+        Assert.Equal("App.Program", main.NodeId);
         var order = result.Rows.Single(r => r.Display == "Domain.Order");
         Assert.Equal(EntryPointKind.Unclassified, order.Kind);
+        Assert.Equal("Domain.Order", order.NodeId);
         Assert.Equal(EntryPointsProjection.UnclassifiedReasonPendingClassifier, order.UnclassifiedReason);
         Assert.Equal(0, result.OmittedByCap);
     }
@@ -83,6 +96,19 @@ public sealed class EntryPointsProjectionTests
         var main = Assert.Single(result.Rows, r => r.Display.Contains("Main()", StringComparison.Ordinal));
         Assert.Equal(EntryPointKind.Cli, main.Kind);
         Assert.Equal("App.Program", main.NodeId);
+    }
+
+    [Fact]
+    public void MembersTruncated_DisclosesFortyCap()
+    {
+        using var workspace = TestWorkspace.Create();
+        workspace.CommitSnapshot(
+            "fixture", 1, "rev-1",
+            TestWorkspace.Assertion("Huge", "has_type", "class"),
+            TestWorkspace.Assertion("Huge", "members_truncated", "300"));
+        var projections = new ProjectionService(workspace.Store, Path.GetDirectoryName(workspace.DatabasePath)!);
+        var result = projections.EntryPoints(new EntryPointsQuery());
+        Assert.Contains(result.Disclosures, d => d.Contains("40 members", StringComparison.Ordinal));
     }
 
     [Fact]

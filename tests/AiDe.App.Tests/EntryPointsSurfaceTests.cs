@@ -69,6 +69,39 @@ public sealed class EntryPointsSurfaceTests
         });
     }
 
+    [Fact]
+    public void ShowNoWorkspace_AndShowError_HaveSpecifiedCopy()
+    {
+        OnSta(() =>
+        {
+            var surface = new EntryPointsSurface();
+            var window = new Window
+            {
+                Content = surface,
+                Width = 480,
+                Height = 240,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Left = -10000,
+                Top = -10000,
+                ShowInTaskbar = false,
+                ShowActivated = false,
+            };
+            window.Show();
+            try
+            {
+                surface.ShowNoWorkspace();
+                Assert.Contains("Open a workspace to see entry points.", VisibleText(surface), StringComparison.Ordinal);
+                surface.ShowError("boom");
+                Assert.Contains("boom", VisibleText(surface), StringComparison.Ordinal);
+                Assert.False(surface.OpenSequenceEnabled);
+            }
+            finally
+            {
+                window.Close();
+            }
+        });
+    }
+
     private static void OnSta(Action body) => Sta.Run(body, 60);
 
     private static Button FindSequence(DependencyObject root)

@@ -20508,7 +20508,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  open[Open Entry-points] --> list{Listing}\n  list -->|ok| groups[API / UX / CLI / Unclassified]\n  list -->|error| err[Could not read entry points + Retry]\n  list -->|empty index| empty[Specified empty]\n  groups --> sel[Select classified row]\n  sel -->|has node_id| graph[Scope Architecture graph]\n  sel -->|no node_id| nog[Reason: no graph id]\n  groups --> src[View source]\n  src -->|has node_id| reader[NodeContentAsync]\n  src -->|no node_id| nos[Unavailable]\n  groups --> seq[Open Sequence]\n  seq --> dark[Disabled mapping-unavailable]"
         }
       ],
-      "sourceSha256": "aafee923ad8556331757633a54687e89fab1524ac463e1f4087b4bfc24397141"
+      "sourceSha256": "26da4240aaaecaa146a1e9efbc466761ef8c94c080a0f0cb1d349a67e46ed56d"
     },
     {
       "id": "spec-gemini-cli-agent-session",
@@ -21175,5 +21175,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "9618aa8493233826b09837e08c03720fb3e0babb2864afca63eab837c0671f17"
+  "graphSha256": "bd256cc8fd8b0ffcee44aa46950212dd6e3a811f6ed8d9e7c77f76709a21a974"
 };

@@ -39,7 +39,8 @@ public static class EntryPointsListing
         IReadOnlyList<(string NodeId, string TypeKind)> candidates,
         int maxRows,
         string sourceRevision,
-        IReadOnlyList<(string TypeNodeId, string Member)>? members = null)
+        IReadOnlyList<(string TypeNodeId, string Member)>? members = null,
+        IReadOnlyList<string>? membersTruncatedTypes = null)
     {
         var built = new List<EntryPointRow>();
         foreach (var c in candidates)
@@ -72,9 +73,16 @@ public static class EntryPointsListing
         var omitted = Math.Max(0, built.Count - cap);
         var rows = built.Take(cap).ToList();
 
-        IReadOnlyList<string> disclosures = omitted > 0
-            ? [$"Omitted ({omitted})"]
-            : [];
+        var disclosures = new List<string>();
+        if (omitted > 0)
+        {
+            disclosures.Add($"Omitted ({omitted})");
+        }
+
+        if (membersTruncatedTypes is { Count: > 0 })
+        {
+            disclosures.Add("Some types list at most 40 members");
+        }
 
         return new EntryPointsResult(rows, omitted, disclosures, sourceRevision);
     }

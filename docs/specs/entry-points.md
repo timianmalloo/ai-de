@@ -99,7 +99,7 @@ Workspace is indexed. Operator opens Entry-points. Every API, UX, and CLI entry 
 ### User stories
 
 **US-L1 — Open listing.** As an operator, I want every indexed API, UX, and CLI entry point listed with kind so I can start from invocable surfaces.
-- **Given** fixture F-EP (composed: `Orders.OrdersController` has_type class; `Shell.MainWindow` has_type class; `App.Program` has_type class and has_member `+ Main()`; `Domain.Order` has_type class) **When** the listing query runs **Then** Controller is `api`, MainWindow is `ux`, `+ Main()` member row is `cli`, Order is `unclassified` with a reason
+- **Given** fixture F-EP (five rows: `Orders.OrdersController` has_type class → api, NodeId=self; `Shell.MainWindow` has_type class → ux, NodeId=self; `App.Program` has_type class → cli, NodeId=self; `App.Program` has_member `+ Main()` → cli, NodeId=`App.Program`, Display contains `+ Main()`; `Domain.Order` has_type class → unclassified with reason) **When** the listing query runs **Then** those five Displays/Kinds/NodeIds match
 - **Given** an occurrence the classifier cannot assign **When** the listing query runs **Then** it appears under `unclassified` with a reason, never omitted (unless cap-omitted and disclosed)
 
 **US-L2 — Select scopes graph.** As an operator, I want selecting a classified row to scope the Architecture graph to that neighbourhood.
@@ -121,6 +121,7 @@ Workspace is indexed. Operator opens Entry-points. Every API, UX, and CLI entry 
 **US-L5 — Caps disclose.** As an operator, I want truncation to look like truncation.
 - **Given** candidates exceed the listing cap **When** the query returns **Then** omitted count / denominator class is disclosed (D-0 skip-count family)
 - **Given** a truncated listing **When** E1 has a valid partial receipt of its own **Then** that receipt remains valid (r3 §4) — D-1 must not claim E1 completeness
+- **Given** a `members_truncated` fact **When** the listing query runs **Then** chrome discloses that some types list at most 40 members
 
 **US-T13 — Explore unchanged.** Switching to Explore leaves ADR-0017 graph+reader. Entry-points is Architecture-only.
 
@@ -196,11 +197,11 @@ N8-level glyphs: architecture/design-slice (kind word required even if glyph def
 ## Gate record
 
 - **Simplifier:** Open Sequence and mapper out of this spec — recorded, not gold-plated into UV-0.
-- **Test Architect:** US-L1–L5 Gherkin is falsifiable; grain Flagged until architecture mints member identity. **Authors do not self-clear.** N4 required.
+- **Test Architect:** N4 re-review PASS-WITH-CONDITIONS (`note-understanding-views-n4-entry-points-rereview`). Grain closed (declaring-type borrow, not mint). **Authors do not self-clear** spec `status`.
 - **Data:** listing aggregate + invariant stated; durable representation is architecture.
 - **UX/IA:** flows cover disabled Sequence and missing `node_id`. N4 required.
 - **Security:** DC-022 named.
 
 **Residual risk:** name-heuristic classifier is not extractor-precise (Flagged). Caps Inferred. N4 BLOCK repair in this file; **authors do not self-clear** — different Test Architect re-reviews. Grain is closed as declaring-type `node_id` for members.
 
-**Handoff:** `/define-architecture` for the listing query + identity minting; UV-1 kind only after UV-0 red-green.
+**Handoff:** N5 implements **declaring-type borrow**, not member-node mint. UV-1 kind already on the branch. Open Sequence stays dark until r6 ACK **and** Core observation API.

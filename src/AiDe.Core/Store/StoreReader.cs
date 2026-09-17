@@ -416,6 +416,27 @@ public sealed class StoreReader : IDisposable
         return all;
     }
 
+    /// <summary>Types whose extractor hit the 40-member compartment cap (<c>members_truncated</c>).</summary>
+    public IReadOnlyList<string> SourceMembersTruncated()
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT DISTINCT a.subject
+            FROM evidence_assertion_fact a
+            JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+            WHERE a.predicate = 'members_truncated'
+            ORDER BY a.subject;
+            """);
+        using var reader = command.ExecuteReader();
+        var all = new List<string>();
+        while (reader.Read())
+        {
+            all.Add(reader.GetString(0));
+        }
+
+        return all;
+    }
+
     public IReadOnlySet<string> KnowledgeNodeIds(int limit)
     {
         using var command = Command(
