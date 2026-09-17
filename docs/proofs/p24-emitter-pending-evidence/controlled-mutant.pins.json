@@ -1,0 +1,72 @@
+{
+  "command": [
+    "dotnet",
+    "test",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj",
+    "--no-restore",
+    "--filter",
+    "FullyQualifiedName~HeartbeatAll_StaleSnapshot_DoesNotHeartbeatEndedSession",
+    "--logger",
+    "trx;LogFileName=controlled-mutant.trx",
+    "--logger",
+    "console;verbosity=normal",
+    "--results-directory",
+    "C:\\Users\\malla\\.copilot\\session-state\\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\\files\\controlled-lifecycle\\records",
+    "--verbosity",
+    "quiet"
+  ],
+  "root": "C:\\Users\\malla\\.copilot\\session-state\\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\\files\\controlled-lifecycle\\mutant",
+  "exit": 1,
+  "counts": {
+    "total": "1",
+    "executed": "1",
+    "passed": "0",
+    "failed": "1",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "failures": [
+    {
+      "test": "AiDe.Core.Tests.Watcher.CoordinationProducerTests.HeartbeatAll_StaleSnapshot_DoesNotHeartbeatEndedSession",
+      "output": "\n      \n        {\"stage\":\"end-before-stale-release\",\"Session\":\"synthetic-second\",\"Succeeded\":true,\"outcome\":\"Admitted\",\"Code\":null,\"membership\":\"Unknown\",\"phase\":\"AwaitingPreparation\",\"Admission\":{\"Session\":\"synthetic-second\",\"Sequence\":2,\"Start\":325,\"ByteCount\":93},\"preparedIdentity\":null,\"preparedAdmission\":null,\"preparedBytes\":null,\"capturedIdentity\":58467792,\"sameState\":false,\"pending\":null,\"currentPhase\":null,\"LiveCount\":0,\"RetainedCount\":0,\"nativeJsonl\":{\"synthetic-second.jsonl\":\"{\\u0022kind\\u0022:\\u0022register\\u0022,\\u0022contract\\u0022:\\u0022loomkeeper/1\\u0022,\\u0022session\\u0022:\\u0022synthetic-second\\u0022,\\u0022at\\u0022:0,\\u0022seq\\u0022:1,\\u0022attrs\\u0022:{\\u0022repo.canonical_path\\u0022:\\u0022synthetic-repository\\u0022,\\u0022repo.display_name\\u0022:\\u0022synthetic-project\\u0022,\\u0022worktree.branch\\u0022:\\u0022synthetic-branch\\u0022,\\u0022worktree.path\\u0022:\\u0022synthetic-worktree\\u0022,\\u0022terminal.id\\u0022:\\u0022synthetic-terminal\\u0022,\\u0022agent.name\\u0022:\\u0022synthetic-agent\\u0022}}\\n{\\u0022kind\\u0022:\\u0022session-end\\u0022,\\u0022contract\\u0022:\\u0022loomkeeper/1\\u0022,\\u0022session\\u0022:\\u0022synthetic-second\\u0022,\\u0022at\\u0022:0,\\u0022seq\\u0022:2}\\n\",\"synthetic-subject.jsonl\":\"{\\u0022kind\\u0022:\\u0022register\\u0022,\\u0022contract\\u0022:\\u0022loomkeeper/1\\u0022,\\u0022session\\u0022:\\u0022synthetic-subject\\u0022,\\u0022at\\u0022:0,\\u0022seq\\u0022:1,\\u0022attrs\\u0022:{\\u0022repo.canonical_path\\u0022:\\u0022synthetic-repository\\u0022,\\u0022repo.display_name\\u0022:\\u0022synthetic-project\\u0022,\\u0022worktree.branch\\u0022:\\u0022synthetic-branch\\u0022,\\u0022worktree.path\\u0022:\\u0022synthetic-worktree\\u0022,\\u0022terminal.id\\u0022:\\u0022synthetic-terminal\\u0022,\\u0022agent.name\\u0022:\\u0022synthetic-agent\\u0022}}\\n{\\u0022kind\\u0022:\\u0022heartbeat\\u0022,\\u0022contract\\u0022:\\u0022loomkeeper/1\\u0022,\\u0022session\\u0022:\\u0022synthetic-subject\\u0022,\\u0022at\\u0022:0,\\u0022seq\\u0022:2}\\n{\\u0022kind\\u0022:\\u0022session-end\\u0022,\\u0022contract\\u0022:\\u0022loomkeeper/1\\u0022,\\u0022session\\u0022:\\u0022synthetic-subject\\u0022,\\u0022at\\u0022:0,\\u0022seq\\u0022:3}\\n\"}}\r\n{\"stage\":\"released-stale-target\",\"Session\":\"synthetic-second\",\"Succeeded\":true,\"outcome\":\"NoOp\",\"Code\":null,\"membership\":\"Unknown\",\"phase\":\"AwaitingPreparation\",\"Admission\":null,\"preparedIdentity\":null,\"preparedAdmission\":null,\"preparedBytes\":null,\"capturedIdentity\":58467792,\"sameState\":false,\"pending\":null,\"currentPhase\":null,\"LiveCount\":0,\"RetainedCount\":0,\"nativeJsonl\":{\"synthetic-second.jsonl\":\"{\\u0022kind\\u0022:\\u0022register\\u0022,\\u0022contract\\u0022:\\u0022loomkeeper/1\\u0022,\\u0022session\\u0022:\\u0022synthetic-second\\u0022,\\u0022at\\u0022:0,\\u0022seq\\u0022:1,\\u0022attrs\\u0022:{\\u0022repo.canonical_path\\u0022:\\u0022synthetic-repository\\u0022,\\u0022repo.display_name\\u0022:\\u0022synthetic-project\\u0022,\\u0022worktree.branch\\u0022:\\u0022synthetic-branch\\u0022,\\u0022worktree.path\\u0022:\\u0022synthetic-worktree\\u0022,\\u0022terminal.id\\u0022:\\u0022synthetic-terminal\\u0022,\\u0022agent.name\\u0022:\\u0022synthetic-agent\\u0022}}\\n{\\u0022kind\\u0022:\\u0022session-end\\u0022,\\u0022contract\\u0022:\\u0022loomkeeper/1\\u0022,\\u0022session\\u0022:\\u0022synthetic-second\\u0022,\\u0022at\\u0022:0,\\u0022seq\\u0022:2}\\n\",\"synthetic-subject.jsonl\":\"{\\u0022kind\\u0022:\\u0022register\\u0022,\\u0022contract\\u0022:\\u0022loomkeeper/1\\u0022,\\u0022session\\u0022:\\u0022synthetic-subject\\u0022,\\u0022at\\u0022:0,\\u0022seq\\u0022:1,\\u0022attrs\\u0022:{\\u0022repo.canonical_path\\u0022:\\u0022synthetic-repository\\u0022,\\u0022repo.display_name\\u0022:\\u0022synthetic-project\\u0022,\\u0022worktree.branch\\u0022:\\u0022synthetic-branch\\u0022,\\u0022worktree.path\\u0022:\\u0022synthetic-worktree\\u0022,\\u0022terminal.id\\u0022:\\u0022synthetic-terminal\\u0022,\\u0022agent.name\\u0022:\\u0022synthetic-agent\\u0022}}\\n{\\u0022kind\\u0022:\\u0022heartbeat\\u0022,\\u0022contract\\u0022:\\u0022loomkeeper/1\\u0022,\\u0022session\\u0022:\\u0022synthetic-subject\\u0022,\\u0022at\\u0022:0,\\u0022seq\\u0022:2}\\n{\\u0022kind\\u0022:\\u0022session-end\\u0022,\\u0022contract\\u0022:\\u0022loomkeeper/1\\u0022,\\u0022session\\u0022:\\u0022synthetic-subject\\u0022,\\u0022at\\u0022:0,\\u0022seq\\u0022:3}\\n\"}}\n        \n          Assert.Equal() Failure: Values differ\r\nExpected: Refused\r\nActual:   NoOp\n             at AiDe.Core.Tests.Watcher.CoordinationProducerTests.HeartbeatAll_StaleSnapshot_DoesNotHeartbeatEndedSession() in C:\\Users\\malla\\.copilot\\session-state\\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\\files\\controlled-lifecycle\\mutant\\tests\\AiDe.Core.Tests\\Watcher\\CoordinationProducerTests.cs:line 302\r\n--- End of stack trace from previous location ---\n        \n      \n    "
+    }
+  ],
+  "duration_seconds": 7.078000000008615,
+  "pins": {
+    "src\\AiDe.Core\\Watcher\\CoordinationContract.cs": "623c9bc5cf8c8b74951d60b7c1a4dc24ee9d04b417a54229dfd6058d4e43775e",
+    "src\\AiDe.Core\\Watcher\\CoordinationContractLog.cs": "f2bd4cad5dbcde4f5574bd6b90ba82a42855caf18b2b9b37d11b6634035e08b6",
+    "src\\AiDe.Core\\Watcher\\CoordinationEmitterState.cs": "e1c60a74a4298c7d264318fa6d51c71a369bd30b704bb043a6d2d96958dd1d80",
+    "src\\AiDe.Core\\Watcher\\CoordinationNativeWrite.cs": "bdc9539fd7697ec3e217cb87a9a20192a8f267ac02b62d798c0b739b6762930b",
+    "src\\AiDe.Core\\Watcher\\CoordinationProjection.cs": "baecce371782d692df5f8e76c27e0520631750f4f6d681265aeacf16fa826ad1",
+    "src\\AiDe.Core\\Watcher\\CoordinationRead.cs": "339a82896e54eff48cb8dee5ccd0fbe7a0c8d4196f7dcc52b22ad1a75d4d64fa",
+    "src\\AiDe.Core\\Watcher\\CoordinationSourceCapture.cs": "f8f21d5c65765d06b857c28658a5738c42378c85576d9363bd5d9f07c9b713af",
+    "src\\AiDe.Core\\Watcher\\SessionCoordinationEmitter.cs": "2abfb58022e4ea98b560242ef6a3518dc8dd5fc9cbfc2e6b38d4cca86a66c4d5",
+    "src\\AiDe.Core\\Watcher\\SqliteWatcherObservationStore.Coordination.cs": "9897c38e48bd9554a84ae0567a6fcfa2e85bc76bdb3e7036de574c1b99525570",
+    "tests\\AiDe.Core.Tests\\Watcher\\CoordinationContractLogTests.cs": "2143353263caa13157e41c4581c35c05260b4f68aa2a8cd6f1131d63d6989c94",
+    "tests\\AiDe.Core.Tests\\Watcher\\CoordinationContractTests.cs": "70a76c069b9ed3b3308721deeb9024096d2ddb228beb23a1a3f26ea232d51136",
+    "tests\\AiDe.Core.Tests\\Watcher\\CoordinationEmitterPendingTests.cs": "8305f8f0ffe661a8800fd0e80e514cf9e6cd58f16b97ec8127d1fa3791e1ab9d",
+    "tests\\AiDe.Core.Tests\\Watcher\\CoordinationFeedTests.cs": "b28df3f329728b1c74cff00d1ae41fadd0d7f17269aa9a073be187fed9f36357",
+    "tests\\AiDe.Core.Tests\\Watcher\\CoordinationPreparedWriteTests.cs": "1c5018feb372379a5a502c5b8610b842b020b1ebcc642506301434765ae56414",
+    "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProducerTests.cs": "02714aea2e55cdd75256015727f05b866e19e12ae5d21a9b049b4ba19034df7d",
+    "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionBoundaryTests.cs": "5f247466afd12cf039afcc65046aa00b4d7744b630e96e2bd2cd335f0ab69e61",
+    "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionEvidence.cs": "7e3dd24e5985e56c47bad372b372a31e7339a4f0ff9b99505ae61e937f9c26b0",
+    "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionRuntimeTests.cs": "ffcbf7ddddbe399be743f39cf6056f4bbb8557e688f287c1359457b3db3eee97",
+    "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProjectionTests.cs": "c6d208e7f815e3783dc7bf6eb0460d383a534f2f1a0c7688c183b9471b15abee",
+    "tests\\AiDe.Core.Tests\\Watcher\\CoordinationRecoveryTests.cs": "03258d062653f7244158d888ecc44fc38fb0ca3cb8e5095acc642e6ea8bc6f5a",
+    "tests\\AiDe.Core.Tests\\Watcher\\CoordinationReliabilityTests.cs": "6b21812318fb5d2aeb39f004c27debab7e80fd75f7f530e7e0b850dbe99222f2",
+    "tests\\AiDe.Core.Tests\\Watcher\\SessionCoordinationEmitterTests.cs": "50e6a8f444c7e11b6fc9a5ae02315ae3d4ca98529cd06b7ce35d6a91542ea2fd",
+    "tests\\AiDe.Core.Tests\\AiDe.Core.Tests.csproj": "ba67064e1adad5265b45f2803eb4d1168d1e1d93af8fcb4a9cfee2360d02cf52",
+    "src\\AiDe.Core\\bin\\Debug\\net10.0\\AiDe.Core.dll": "43cc0425df05c261ff7fd5c9b3d93ae7dfc4ff902d7081833717144aab0f1241",
+    "tests\\AiDe.Core.Tests\\bin\\Debug\\net10.0\\AiDe.Core.Tests.dll": "44fbf3bbeba7748d9d7669f50069055214ef1c0333f51206cb622a83fdb2cf8a"
+  }
+}

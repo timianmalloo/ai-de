@@ -1,0 +1,9 @@
+
+  Determining projects to restore...
+  Restored C:\Users\malla\.copilot\session-state\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\files\controlled-lifecycle\mutant\tests\AiDe.Core.AcpProbe\AiDe.Core.AcpProbe.csproj (in 142 ms).
+  Restored C:\Users\malla\.copilot\session-state\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\files\controlled-lifecycle\mutant\tests\AiDe.Core.TerminalHost\AiDe.Core.TerminalHost.csproj (in 142 ms).
+  Restored C:\Users\malla\.copilot\session-state\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\files\controlled-lifecycle\mutant\src\AiDe.Daemon\AiDe.Daemon.csproj (in 142 ms).
+  Restored C:\Users\malla\.copilot\session-state\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\files\controlled-lifecycle\mutant\tests\AiDe.Core.NativeWriterProbe\AiDe.Core.NativeWriterProbe.csproj (in 142 ms).
+  Restored C:\Users\malla\.copilot\session-state\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\files\controlled-lifecycle\mutant\src\AiDe.Core\AiDe.Core.csproj (in 142 ms).
+  Restored C:\Users\malla\.copilot\session-state\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\files\controlled-lifecycle\mutant\src\AiDe.Mcp\AiDe.Mcp.csproj (in 142 ms).
+  Restored C:\Users\malla\.copilot\session-state\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\files\controlled-lifecycle\mutant\tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj (in 142 ms).

@@ -248,48 +248,133 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
     [Fact]
     public async Task HeartbeatAll_StaleSnapshot_DoesNotHeartbeatEndedSession()
     {
-        using var time = new PausedTime();
-        using var files = new ProducerDirectory(time);
-        using var lifetime = new EmitterTestLifetime(new SessionCoordinationEmitter(files.Writer));
+        using var files = new ProducerDirectory();
+        var budget = new CoordinationEmitterBudget();
+        using var lifetime = new EmitterTestLifetime(new SessionCoordinationEmitter(files.Writer, budget));
+        var emitter = lifetime.Emitter;
+        const string ended = "synthetic-second";
+        emitter.Register(ended, Identity());
+        var captured = State(emitter, ended);
+        using var entered = new ManualResetEventSlim();
+        using var release = new ManualResetEventSlim();
+        using var parent = new System.Diagnostics.Activity("synthetic-target-batch").Start();
+        var arrivals = 0;
+        void PauseTarget(object? sender, System.Diagnostics.ActivityChangedEventArgs args)
+        {
+            if (!ReferenceEquals(args.Previous, parent) ||
+                args.Current?.OperationName != "coordination.emitter") return;
+            Interlocked.Increment(ref arrivals);
+            entered.Set();
+            if (!release.Wait(WaitBound)) throw new TimeoutException("Target lifecycle barrier was not released.");
+        }
+        System.Diagnostics.Activity.CurrentChanged += PauseTarget;
+        var batch = Task.Run(() => emitter.HeartbeatAllResultsAsync());
+        IReadOnlyList<CoordinationEmitterResult> results;
+        try
+        {
+            Assert.True(entered.Wait(WaitBound), "The sole captured target did not reach Activity.Start.");
+            Assert.Same(captured, State(emitter, ended));
+            // This lifecycle is created after capture, so only the target batch worker is paused.
+            using var independent = new System.Diagnostics.Activity("synthetic-independent-work").Start();
+            emitter.Register(Subject, Identity());
+            emitter.Heartbeat(Subject);
+            emitter.End(Subject);
+            Assert.Equal(new[] { "register", "heartbeat", "session-end" }, Kinds(files, Subject));
+
+            var end = emitter.EndResult(ended);
+            var receipt = Receipt("end-before-stale-release", end, emitter, files, ended, captured);
+            Assert.True(end.Succeeded, receipt);
+            Assert.Equal(CoordinationEmitterOutcome.Admitted, end.Outcome);
+            Assert.Equal(new[] { "register", "session-end" }, Kinds(files, ended));
+            Assert.Null(State(emitter, ended));
+        }
+        finally
+        {
+            release.Set();
+            try { results = await batch.WaitAsync(WaitBound); }
+            finally { System.Diagnostics.Activity.CurrentChanged -= PauseTarget; }
+        }
+
+        var stale = Assert.Single(results);
+        Receipt("released-stale-target", stale, emitter, files, ended, captured);
+        Assert.Equal(1, arrivals);
+        Assert.Equal(ended, stale.Session);
+        Assert.Equal(CoordinationEmitterOutcome.Refused, stale.Outcome);
+        Assert.Equal(CoordinationEmitterCodes.StaleLifecycle, stale.Code);
+        Assert.Null(stale.Prepared);
+        Assert.Equal(new[] { "register", "session-end" }, Kinds(files, ended));
+        Assert.Equal(new[] { 1, 2 }, files.Read(ended).Select(row => row.GetProperty("seq").GetInt32()));
+        using var followup = new System.Diagnostics.Activity("synthetic-followup").Start();
+        Assert.Equal(CoordinationEmitterOutcome.NoOp, emitter.HeartbeatResult(ended).Outcome);
+        Assert.Equal(new[] { "register", "session-end" }, Kinds(files, ended));
+        Assert.Equal(0, emitter.LiveCount);
+        Assert.Equal(0, GateCount(emitter));
+        Assert.Equal(0, budget.Occupied);
+    }
+
+    [Fact]
+    public async Task End_RootHeldThroughFlush_RetainsIntentForOneExplicitRetry()
+    {
+        using var files = new ProducerDirectory();
+        var budget = new CoordinationEmitterBudget();
+        using var lifetime = new EmitterTestLifetime(new SessionCoordinationEmitter(files.Writer, budget));
         var emitter = lifetime.Emitter;
         emitter.Register(Subject, Identity());
-        emitter.Register("synthetic-second", Identity());
-        // P2 dispatches independently, not in HashSet order. Either session may heartbeat
-        // before End, but neither can heartbeat after its admitted End.
-        var ended = "synthetic-second";
-        Task? end = null;
-
-        await WhileWritePaused(time, () =>
+        var original = File.ReadAllBytes(files.Log(Subject));
+        var intent = Assert.IsType<CoordinationEmitterState>(State(emitter, Subject));
+        using var entered = new ManualResetEventSlim();
+        using var release = new ManualResetEventSlim();
+        var holder = new CoordContractWriter(files.Root, new EpochTime())
         {
-            var error = Record.Exception(emitter.HeartbeatAll);
-            if (error is not null)
+            FlushFault = stream =>
             {
-                var batchError = Assert.IsType<CoordinationEmitterBatchException>(error);
-                Assert.All(batchError.Results, result => Assert.False(result.Succeeded));
+                stream.Flush(flushToDisk: true);
+                entered.Set();
+                if (!release.Wait(WaitBound)) throw new TimeoutException("Root flush holder was not released.");
             }
-        }, async () =>
+        };
+        var holding = Task.Run(() => holder.WriteHeartbeat("synthetic-holder"));
+        try
         {
-            end = Task.Run(() =>
-            {
-                var result = emitter.EndResult(ended);
-                if (result.Code == CoordinationEmitterCodes.InputConflict)
-                {
-                    Assert.True(emitter.TryAbandonPending(ended).Succeeded);
-                    emitter.End(ended);
-                }
-                else Assert.True(result.Succeeded);
-            });
-            WaitForContender(emitter, end, ended);
-            await Task.CompletedTask;
-        }, () => end);
+            Assert.True(entered.Wait(WaitBound), "The real writer never reached flush under root exclusion.");
+            var unavailable = emitter.EndResult(Subject);
+            Receipt("root-held-end", unavailable, emitter, files, Subject, intent);
+            Assert.Equal(CoordinationWriteCodes.WriterBusy, unavailable.Code);
+            Assert.Equal(CoordinationEmitterOutcome.Unavailable, unavailable.Outcome);
+            Assert.Equal(CoordinationEmitterMembership.Live, unavailable.Membership);
+            Assert.Equal(CoordinationEmitterPhase.AwaitingPreparation, unavailable.Phase);
+            Assert.Null(unavailable.Admission);
+            Assert.Null(unavailable.Prepared);
+            Assert.Equal(original, File.ReadAllBytes(files.Log(Subject)));
+            Assert.Same(intent, State(emitter, Subject));
+            Assert.Equal(CoordinationEmitterOperation.End, intent.Pending);
+            Assert.Equal(1, emitter.LiveCount);
+            Assert.Equal(1, emitter.RetainedCount);
+            Assert.Equal(1, budget.Occupied);
+            Assert.False(holding.IsCompleted);
+        }
+        finally
+        {
+            release.Set();
+            await holding.WaitAsync(WaitBound);
+        }
 
-        var endedKinds = Kinds(files, ended);
-        Assert.Equal("session-end", endedKinds[^1]);
-        Assert.Single(endedKinds, kind => kind == "session-end");
-        emitter.Heartbeat(ended);
-        Assert.Equal(endedKinds, Kinds(files, ended));
-        Assert.Equal(1, emitter.LiveCount);
+        var retried = emitter.RetryPending(Subject);
+        var receipt = Receipt("one-explicit-end-retry", retried, emitter, files, Subject, intent);
+        Assert.True(retried.Succeeded, receipt);
+        Assert.Equal(CoordinationEmitterOutcome.Admitted, retried.Outcome);
+        Assert.Equal(2, retried.Admission?.Sequence);
+        Assert.Equal(Subject, retried.Admission?.Session);
+        Assert.Equal(original.Length, retried.Admission?.Start);
+        Assert.Equal(new[] { "register", "session-end" }, Kinds(files, Subject));
+        Assert.Equal(original, File.ReadAllBytes(files.Log(Subject))[..original.Length]);
+        Assert.Equal(new[] { "heartbeat" }, Kinds(files, "synthetic-holder"));
+        Assert.Null(intent.Pending);
+        Assert.Null(State(emitter, Subject));
+        Assert.Equal(0, emitter.LiveCount);
+        Assert.Equal(0, emitter.RetainedCount);
         Assert.Equal(0, GateCount(emitter));
+        Assert.Equal(0, budget.Occupied);
     }
 
     [Fact]
@@ -508,6 +593,46 @@ public sealed class CoordinationProducerTests(ITestOutputHelper output)
     private static object? PrivateField(object instance, string name) =>
         instance.GetType().GetField(name,
             System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)?.GetValue(instance);
+
+    private static CoordinationEmitterState? State(SessionCoordinationEmitter emitter, string session)
+    {
+        lock (PrivateField(emitter, "_gate")!)
+        {
+            var states = Assert.IsType<Dictionary<string, CoordinationEmitterState>>(PrivateField(emitter, "_states"));
+            return states.GetValueOrDefault(session);
+        }
+    }
+
+    private string Receipt(string stage, CoordinationEmitterResult result, SessionCoordinationEmitter emitter,
+        ProducerDirectory files, string session, CoordinationEmitterState? captured)
+    {
+        var current = State(emitter, session);
+        var receipt = JsonSerializer.Serialize(new
+        {
+            stage, result.Session, result.Succeeded, outcome = result.Outcome.ToString(), result.Code,
+            membership = result.Membership.ToString(), phase = result.Phase?.ToString(), result.Admission,
+            preparedIdentity = result.Prepared is null ? (int?)null :
+                System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(result.Prepared),
+            preparedAdmission = result.Prepared?.Admission,
+            preparedBytes = result.Prepared?.CopyBytes(),
+            capturedIdentity = captured is null ? (int?)null :
+                System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(captured),
+            sameState = ReferenceEquals(captured, current),
+            pending = current?.Pending?.ToString(), currentPhase = current?.Phase.ToString(),
+            emitter.LiveCount, emitter.RetainedCount,
+            nativeJsonl = Directory.GetFiles(files.Root, "*.jsonl").Order(StringComparer.Ordinal)
+                .ToDictionary(path => Path.GetFileName(path), ReadWire)
+        });
+        output.WriteLine(receipt);
+        return receipt;
+    }
+
+    private static string ReadWire(string path)
+    {
+        using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+        using var reader = new StreamReader(stream, Encoding.UTF8);
+        return reader.ReadToEnd();
+    }
 
     private static int GateCount(SessionCoordinationEmitter emitter)
     {

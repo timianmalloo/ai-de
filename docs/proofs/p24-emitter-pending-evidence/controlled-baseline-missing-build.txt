@@ -1,0 +1,9 @@
+C:\Program Files\dotnet\sdk\10.0.303\Sdks\Microsoft.NET.Sdk\targets\Microsoft.PackageDependencyResolution.targets(266,5): error NETSDK1004: Assets file 'C:\Users\malla\.copilot\session-state\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\files\controlled-lifecycle\baseline\tests\AiDe.Core.Tests\obj\project.assets.json' not found. Run a NuGet package restore to generate this file. [C:\Users\malla\.copilot\session-state\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\files\controlled-lifecycle\baseline\tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj]
+
+Build FAILED.
+
+C:\Program Files\dotnet\sdk\10.0.303\Sdks\Microsoft.NET.Sdk\targets\Microsoft.PackageDependencyResolution.targets(266,5): error NETSDK1004: Assets file 'C:\Users\malla\.copilot\session-state\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\files\controlled-lifecycle\baseline\tests\AiDe.Core.Tests\obj\project.assets.json' not found. Run a NuGet package restore to generate this file. [C:\Users\malla\.copilot\session-state\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\files\controlled-lifecycle\baseline\tests\AiDe.Core.Tests\AiDe.Core.Tests.csproj]
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:00.22

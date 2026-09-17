@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T21:53:50Z",
+  "generated": "2026-09-17T22:11:12Z",
   "audit": [
     {
       "actor": null,
@@ -20983,6 +20983,34 @@ window.AUDIT_DATA = {
         "branch": "feature/xh-p2-producers",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2RPRZGB7ACJ24B72KN5VYYP",
+      "shortname": "controlled-lifecycle-continuation",
+      "datetime": "2026-09-17T22:11:12Z",
+      "session": "xh-p2-producers-b0d0",
+      "prompt": "Retained producer-role continuation(syncAPIcannotfollowupexacthandle; sameOWNtree/session), NEWFINITE nextnode MAX24TOOLS/context150k NOagents. HEAD38e6d6233335a919551bc9e4c9a6cd8b76bf524e CLEAN inC:\\Projects\\ai-de-feature-xh-p2-producers, sessionxh-p2-producers-b0d0 endedreopen. UserALLP0–P5approved no freshpermission; no blindbudgetraise. Firstownauditstartimplement/envsession-nameutf8/cwd. SourceR125coord-core.pyENTIREFILEFROZEN no edits; usepinnedabsoluteP1CLI SHAeda666970... andclassifyEXACTpaths authoredonlyTTL300,releaseBEFOREtests, neverderived/register/wildcardclaims.\nREVIEWER12callsRootCauseStatus: restored99/100 failed atCoordinationProducerTests.cs280 Assert.True(result.Succeeded) afterEndResult('synthetic-second'); InputConflictbranchNOTtaken. Actualfailedcode/phase/admission/nativewire were NOTrecorded. This isstillUNVERIFIEDhistoricalcause; don'tassertitwasBusy. VerifiedFIXTUREdefect: PausedTime clockpausesWHICHEVERheartbeatconsumesarm, beforewriterAcquireRoot; WaitForContender acceptsEITHERtaskcomplete ORrefs>=2, provingneitherwhichsourceheldnorEndwriterposition, thenWhileWritePausedreleasesclock. Possibleindependentnativewriteoverlap→failfastCOORD_WRITER_BUSY is source-supportedhypothesis, notverifiedhistoricalcause. Writerandthisproducer-testfileunchangedfrompriorbaseline1f431; new4statecontrolsallPASS. DoNOT rerununchangeduntilgreen oracceptBusyassuccess.\nTHISNODE TEST/DIAGNOSTIC FIRST minimalfinitefix:\n1 CaptureCOMPLETEEnd result/code/outcome/phase/membership/admissionseq/retainedPreparedidentityandnativeJSONL/orderBEFOREcleanup infailureassertion/structuredreceipt. Neverfillunknownoriginalrunfactsretroactively.\n2 ReplaceambiguousClock/referencecountfixture forHeartbeatAll_StaleSnapshot_DoesNotHeartbeatEndedSession withEXPLICITtargetcaptured-state lifecyclebarrier. ReuseexistingABAscheduling/testseam: holdtargetbatchworkbeforeaction, ensureunrelatednativeworkFINISHES, admitEnd(successdurable), THENreleasestaleheartbeat. Assertcapturedstateidentityrefusal/exactly1end/NOheartbeatafterend forTHATlifecycle. No blanketdistinctsourceblocking/no changesproducer codeunlessactualdefectfound. Task.Delayfixedsleepsfororderingforbidden; TCS/barriers/boundedprogresspredicateyes. End→Registerreplacementoldtestsremain. Strongoraclesactualwire rowsnotmerelyreflectmembers.\n3 SeparatelyforceGENUINErootcontention usingexistingREALwriterfaultseamheldrootlock(ClockpausesBEFORElocknotthisoracle). WhileanotherSessionholdsrootthroughFlush, calltargetEnd; recordexactCOORD_WRITER_BUSY/unavailable, unchangedtargetbytes, retainedONEEndintent+LiveCount remainsregistered. Releaseholder, performONEexplicitRetryPending andverifyoriginalintent/no extraend/exactmembership/slotrelease. Thisprovescontentionbehaviorwithoutpretendingitexplainsunrecordedhistoricalfailure. Don'tswallowBusy/retryuntilgreen.\n4 Executecontrollednewtests againstCURRENT38e andISOLATEDbaseline1f431/c92 source (readnotreset/liveedit); comparemeaningfuloldnew behavior. GenuinebugREDfromcurrenttrace vsstrengthenedoraclefailsmutant(e.gstaleidentityguardremoved) distinct; ifbaselinefixturealsoambiguousdon'tclaimobservedrootcauseunlesscaptured. Full100previous+newselected mustPASSrestoredatend, no flakyretry. SourceScope4newcontrols Preparing/failedEndBusy/observercompletionabandon0/1 retainedallpassed100exceptoldtest; preservethem. Pin-countmetadataaggregate26vs25restoremanifest CORRECTwithactualcountseparateifextra artifact, don'tclaimall26matched. Actualallsource/test/project/binarysha beforemutant/after, eventrecordsmetadatabeforecleanup.\nOWN tests/AiDe.Core.Tests/Watcher/CoordinationProducerTests.cs andexistingEmitterPendingTests/fixtures only +scopedNativeProducerdesign/owndaudit/rawboundaryrecords; sourceEmitter.cs/StateONLYifaCURRENTverifiedbugrequiresminimumfixthenrecordcausalitynotguess. No storage/migration/newpolicy/otherworktrees/no mainpush/newGUI/liveDB/endpoints/observer/upstream. NativeNoticeDataRecoveryreviewedseparately unchanged allremainingP2B6/fairness/canonical/oldbinary/P3–5 pending. No extraProofPack; canonicalconsolidationparentlater. Scopeleasestateactualsession idnotdisplayactor.\nOrdinaryhooksNOoverride. AuditOWNrootrenderverify/stageaudit-data.jswithJSONLWITHOUTCLAIM; no sitegen. CommitCopilottrailercoherentevenifBLOCKEDbutrecordactualremainingnextcounterexample, cleanleasesreleasedsessionended beforehandoff. Output≤1300words exactcommitcontrolledfixture+rootcontentionactualoutcomes BASEvsCANDIDATE/mutant/finalcounts/nooriginalhistoricalcauseinvention. Independentreviewer12after; no longnextphase.",
+      "summary": "Controlled fixture continuation: candidate={'total': '2', 'executed': '2', 'passed': '2', 'failed': '0', 'error': '0', 'timeout': '0', 'aborted': '0', 'inconclusive': '0', 'passedButRunAborted': '0', 'notRunnable': '0', 'notExecuted': '0', 'disconnected': '0', 'warning': '0', 'completed': '0', 'inProgress': '0', 'pending': '0'}; isolated baseline={'total': '2', 'executed': '2', 'passed': '2', 'failed': '0', 'error': '0', 'timeout': '0', 'aborted': '0', 'inconclusive': '0', 'passedButRunAborted': '0', 'notRunnable': '0', 'notExecuted': '0', 'disconnected': '0', 'warning': '0', 'completed': '0', 'inProgress': '0', 'pending': '0'}; isolated stale-guard mutant={'total': '1', 'executed': '1', 'passed': '0', 'failed': '1', 'error': '0', 'timeout': '0', 'aborted': '0', 'inconclusive': '0', 'passedButRunAborted': '0', 'notRunnable': '0', 'notExecuted': '0', 'disconnected': '0', 'warning': '0', 'completed': '0', 'inProgress': '0', 'pending': '0'}; restored={'total': '101', 'executed': '101', 'passed': '101', 'failed': '0', 'error': '0', 'timeout': '0', 'aborted': '0', 'inconclusive': '0', 'passedButRunAborted': '0', 'notRunnable': '0', 'notExecuted': '0', 'disconnected': '0', 'warning': '0', 'completed': '0', 'inProgress': '0', 'pending': '0'}; matrix-qualified=True. No production edits. Original historical cause remains unverified. Initial isolated commands ran no tests; explicit build/asset diagnosis and counted reruns are separate evidence, not flaky retries. Manifest has 25 entries: 23 source/test/project and 2 actual DLLs, not 26 matched sources. Oversized orientation output consumed the finite 24-tool budget; no agents or budget increase. Independent reviewer12, canonical consolidation and remaining P2/P3-P5 floors remain pending.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests\\AiDe.Core.Tests\\Watcher\\CoordinationProducerTests.cs",
+        "docs\\design\\cross-harness-native-producer.md",
+        "docs\\proofs\\p24-emitter-pending-evidence\\controlled-provenance.json"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Replace ambiguous lifecycle fixture and prove real root contention without inventing historical cause",
+      "done_when": "Counted candidate/baseline/mutant/restored receipts, scoped commit, released leases and ended session",
+      "tier": "T2",
+      "main_calls": 24,
+      "main_budget": 24,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-17T22:02:37Z",
+      "duration_seconds": 515.0
     }
   ],
   "changes": [

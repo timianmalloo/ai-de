@@ -1,0 +1,14 @@
+diff --git "a/C:\\Projects\\ai-de-feature-xh-p2-producers\\src\\AiDe.Core\\Watcher\\SessionCoordinationEmitter.cs" "b/C:\\Users\\malla\\.copilot\\session-state\\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\\files\\controlled-lifecycle\\mutant\\src\\AiDe.Core\\Watcher\\SessionCoordinationEmitter.cs"
+index 6d81c7b9..ddeff873 100644
+--- "a/C:\\Projects\\ai-de-feature-xh-p2-producers\\src\\AiDe.Core\\Watcher\\SessionCoordinationEmitter.cs"
++++ "b/C:\\Users\\malla\\.copilot\\session-state\\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\\files\\controlled-lifecycle\\mutant\\src\\AiDe.Core\\Watcher\\SessionCoordinationEmitter.cs"
+@@ -426,7 +426,7 @@ public sealed class SessionCoordinationEmitter : IDisposable
+             lock (_gate)
+             {
+                 _states.TryGetValue(session, out state);
+-                if (!ReferenceEquals(state, expected))
++                if (!ReferenceEquals(state, expected) && state is not null)
+                     return Result(expected, CoordinationEmitterOutcome.Refused, CoordinationEmitterCodes.StaleLifecycle);
+             }
+             return action(expected);
+warning: in the working copy of 'C:\Users\malla\.copilot\session-state\b0d0c445-0dbc-47cb-8e51-19bfe9427c29\files\controlled-lifecycle\mutant\src\AiDe.Core\Watcher\SessionCoordinationEmitter.cs', CRLF will be replaced by LF the next time Git touches it

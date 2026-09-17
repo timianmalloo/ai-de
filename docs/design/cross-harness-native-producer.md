@@ -15,6 +15,56 @@ summary: Records the accepted membership and participating prepared-writer contr
 
 # P2.P1 — accepted membership contract
 
+## Controlled lifecycle fixture continuation (2026-09-17)
+
+The historical `boundary-restored` failure at producer-test line 280 remains
+unverified. Its End code, phase and native ordering were not recorded. Root
+WriterBusy is a source-supported hypothesis, not a recovered historical fact.
+
+The fixture correction pauses the sole captured target at Activity.Start, before
+its semaphore/action. A separate lifecycle is created after capture and completes
+all native writes before target End. Successful durable End precedes release of
+the stale worker. The oracle requires the exact stale-lifecycle refusal and
+register/end-only native rows for that lifecycle. Existing End/Register
+replacement controls and all four boundary state controls remain unchanged.
+
+A separate real writer holds root exclusion through its FlushFault seam. End
+must return WriterBusy/Unavailable without changing target bytes or membership.
+At this preparation boundary no Prepared identity or admission exists; null is
+recorded, never reconstructed. One explicit RetryPending after holder completion
+must consume the same retained End intent and release its one state reservation.
+
+Change reach: test scheduling and failure receipts -> real emitter -> unchanged
+native writer -> synthetic JSONL assertions. No production source, durable model,
+policy, UI or recovery change is authorized by these tests. Testing union:
+D0/D1/D4/D6/D7; real filesystem and writer, existing Activity and FlushFault seams.
+
+Finite graph: inspect -> fixture/diagnostics -> candidate + isolated baseline +
+isolated guard mutant -> restored selected suite -> audit/commit. Shared build
+outputs serialize runs. Inferred work equals span at width one; no timing claim.
+The original 24-tool budget is unchanged. Independent review, canonical defect
+and Proof Pack consolidation, P2 B6/fairness/canonical/old-binary and P3-P5 remain
+parent-owned and pending.
+
+Class -> sweep -> derive -> prevent: an unspecified worker can consume a clock
+arm, while a reference-count-or-completed predicate proves no writer ordering.
+The replaced stale-snapshot fixture had both shapes. Other clock fixtures assert
+different pre-lock/gate behavior and remain unchanged; their green results do
+not prove root contention. The new controls derive order from target capture
+and actual flush entry, and emit complete typed results and native rows before
+cleanup. The isolated stale-identity mutant is a strengthened-oracle test, not
+a claim of a current production defect or of the old run's cause.
+
+The first controlled candidate ran 2/2 and the selected restored suite ran
+101/101. The first exported baseline and mutant commands returned exit zero
+without a TRX or counters: neither is a test result. The finite runner therefore
+requires an explicit missing-assets build diagnosis, restoration, and counted
+results for each export. `controlled-provenance.json` and its per-run receipts
+record the actual final disposition. The pinned historical manifest contains
+25 entries (23 source/test/project files and two DLLs), not 26 matched files.
+This no-test-success wrapper shape is captured here for parent-owned canonical
+defect consolidation; the final qualification predicate rejects missing counts.
+
 ## P2.P2B — emitter corrective contract (recorded before code)
 
 This unit implements the DS-admitted corrective contract supplied on 2026-09-16,
