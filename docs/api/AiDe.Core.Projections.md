@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Projections: 55 types, 71 members, 63% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Projections: 61 types, 77 members, 62% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Projections`
 
-**55 public types · 71 public members · 63% documented.**
+**61 public types · 77 public members · 62% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -142,6 +142,53 @@ convention for.
 | Member | Summary |
 |---|---|
 | `ContextMapView Compute()` | **(gap)** |
+
+## `EntryPointsQuery`
+
+*record* — `EntryPointsProjection.cs`
+
+How many listing rows a query asks for.
+
+## `EntryPointKind`
+
+*enum* — `EntryPointsProjection.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `EntryPointRow`
+
+*record* — `EntryPointsProjection.cs`
+
+One row is one entry-point candidate occurrence in the current snapshot.
+
+## `EntryPointsResult`
+
+*record* — `EntryPointsProjection.cs`
+
+*No doc comment on this type.* **(gap)**
+
+## `EntryPointsProjection`
+
+*class* — `EntryPointsProjection.cs`
+
+UV-0 listing: every latest-generation `has_type` source node is a row.
+Name heuristics classify api/ux/cli; otherwise unclassified (never silent-drop).
+Open Sequence is not this query (mapper r5: authorship only, Sequence still disabled).
+
+| Member | Summary |
+|---|---|
+| `int DefaultMaxRows = 5_000` | Inferred until measured. Same order as graph node default. |
+| `string UnclassifiedReasonPendingClassifier = "classifier-not-admitted"` | **(gap)** |
+
+## `EntryPointsListing`
+
+*class* — `EntryPointsProjection.cs`
+
+Store-facing listing. Lives next to the DTO so tests can name the query without IPC.
+
+| Member | Summary |
+|---|---|
+| `EntryPointsResult FromHasType(` | **(gap)** |
 
 ## `EvidenceRead`
 
@@ -569,6 +616,7 @@ is not there.
 | `Task<PathResult> PathsAsync(PathQuery query, CancellationToken cancellationToken)` | **(gap)** |
 | `Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken cancellationToken)` | **(gap)** |
 | `Task<SolutionTreeResult> SolutionTreeAsync(` | **(gap)** |
+| `Task<EntryPointsResult> EntryPointsAsync(` | **(gap)** |
 
 ## `InteractionMessage`
 
@@ -793,6 +841,8 @@ content, so a count-only cap still admits an unbounded payload.
 | `WorkspaceGraph Graph(int maxNodes)` | The whole workspace as a graph. |
 | `WorkspaceGraph Graph(GraphQuery query)` | The graph the query asks for — filtered before the cap applies. |
 | `SolutionTreeResult SolutionTree(SolutionTreeQuery query)` | Census join of disk-now folders and latest-generation file-artifacts. |
+| `EntryPointsResult EntryPoints(EntryPointsQuery query)` | D-1 UV-0 listing. Classification pending; all rows unclassified. No Open Sequence. |
+| `EntryPointsResult EntryPoints(EntryPointsQuery query, CancellationToken cancellationToken)` | **(gap)** |
 | `SolutionTreeResult SolutionTree(SolutionTreeQuery query, CancellationToken cancellationToken)` | **(gap)** |
 | `WorkspaceOverview Overview(OverviewQuery query)` | The workspace at a distance: groups rather than nodes, for a graph too large to draw. |
 | `PathResult Paths(PathQuery query)` | How one node reaches another, within the graph the query names. |

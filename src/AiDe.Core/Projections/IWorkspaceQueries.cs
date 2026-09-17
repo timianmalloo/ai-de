@@ -113,6 +113,11 @@ public interface IWorkspaceQueries
     /// on this seam.
     /// </remarks>
     Task<SolutionTreeResult> SolutionTreeAsync(SolutionTreeQuery query, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Indexed entry-point candidates (API/UX/CLI/unclassified). UV-0 lists <c>has_type</c> nodes as unclassified.
+    /// </summary>
+    Task<EntryPointsResult> EntryPointsAsync(EntryPointsQuery query, CancellationToken cancellationToken);
 }
 
 /// <summary>The read surface answered by a <see cref="ProjectionService"/> in this process.</summary>
@@ -166,4 +171,8 @@ public sealed class LocalWorkspaceQueries(ProjectionService projections) : IWork
     public Task<SolutionTreeResult> SolutionTreeAsync(
         SolutionTreeQuery query, CancellationToken cancellationToken) =>
         Task.FromResult(projections.SolutionTree(query, cancellationToken));
+
+    public Task<EntryPointsResult> EntryPointsAsync(
+        EntryPointsQuery query, CancellationToken cancellationToken) =>
+        Task.FromResult(projections.EntryPoints(query, cancellationToken));
 }

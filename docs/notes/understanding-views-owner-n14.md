@@ -20,6 +20,7 @@ review-by: 2027-03-14
 review-suggested:
   - { by: spec-understanding-views, on: 2026-09-15, reason: "N14 stop; D-1…D-4 remain quoted §A5 deferred; spec stays draft" }
   - { by: plan-understanding-views, on: 2026-09-15, reason: "N14 loop exit; variant 4→0" }
+  - { by: note-understanding-views-owner-d1-admission, on: 2026-09-15, reason: "Successor ruling admits D-1; N14 horizon stays closed" }
 summary: >-
   N14 stops this horizon. D-1…D-4 are keep-deferred with §A5 admitted-when intact.
   Blast radius: no next view, no D-1 kind, no main; D-0 chrome may finish on

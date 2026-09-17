@@ -118,6 +118,7 @@ public sealed class TelemetryTests : IDisposable
             session);
         core.Projections.Describe("Order", 50);
         core.Projections.SolutionTree(new SolutionTreeQuery());
+        core.Projections.EntryPoints(new EntryPointsQuery());
 
         foreach (var activity in _captured)
         {

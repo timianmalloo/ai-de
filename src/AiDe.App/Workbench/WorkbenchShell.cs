@@ -998,6 +998,7 @@ public sealed class WorkbenchShell : IDisposable
         BindClassDiagrams();
 
         BindSolutionTrees();
+        BindEntryPoints();
 
         // Code viewers show node source (a labelled sample until Core's content query ships).
         BindCodeViewers();
@@ -1883,6 +1884,7 @@ public sealed class WorkbenchShell : IDisposable
         BindJoins();
         BindClassDiagrams();
         BindSolutionTrees();
+        BindEntryPoints();
         BindCodeViewers();
         BindDiagnostics();
         BindSearchSurfaces();
@@ -2133,6 +2135,100 @@ public sealed class WorkbenchShell : IDisposable
         if (surfaces.Count == 0) { return; }
 
         _ = PopulateClassDiagramsAsync(surfaces);
+    }
+
+    internal void BindEntryPoints()
+    {
+        var all = SurfaceContents<EntryPointsSurface>("entry-points").ToList();
+        foreach (var pane in all)
+        {
+            pane.RetryRequested -= OnEntryPointsRetryRequested;
+            pane.RetryRequested += OnEntryPointsRetryRequested;
+            pane.ActivateRequested -= OnEntryPointsActivateRequested;
+            pane.ActivateRequested += OnEntryPointsActivateRequested;
+        }
+
+        if (_queries is null)
+        {
+            foreach (var pane in all.Where(s => s.NeedsInitialBind))
+            {
+                pane.ShowNoWorkspace();
+            }
+
+            return;
+        }
+
+        var toLoad = all.Where(s => s.NeedsInitialBind).ToList();
+        if (toLoad.Count == 0)
+        {
+            return;
+        }
+
+        _ = PopulateEntryPointsAsync(toLoad);
+    }
+
+    private void OnEntryPointsActivateRequested(object? sender, EntryPointsActivate request)
+    {
+        if (string.IsNullOrEmpty(request.NodeId))
+        {
+            return;
+        }
+
+        switch (request.Kind)
+        {
+            case NodeViewKind.Source:
+            case NodeViewKind.Read:
+                _lastSelectedNodeId = request.NodeId;
+                Announcer.Announce(OpenKind(Architecture, "codeviewer", false));
+                _ = ShowNodeInCodeViewersAsync(request.NodeId, OpenCodeViewers());
+                break;
+            case NodeViewKind.GraphNeighbourhood:
+                Announcer.Announce(OpenKind(Architecture, "canvas", showExisting: true));
+                var canvas = OpenCanvas();
+                if (canvas is not null)
+                {
+                    _ = CentreOnAsync(canvas, request.NodeId, request.NodeId);
+                }
+
+                break;
+        }
+    }
+
+    private async void OnEntryPointsRetryRequested(object? sender, EventArgs e)
+    {
+        if (sender is EntryPointsSurface pane)
+        {
+            await PopulateEntryPointsAsync([pane]);
+        }
+    }
+
+    private async Task PopulateEntryPointsAsync(IReadOnlyList<EntryPointsSurface> panes)
+    {
+        if (_queries is null)
+        {
+            foreach (var pane in panes)
+            {
+                pane.ShowNoWorkspace();
+            }
+
+            return;
+        }
+
+        try
+        {
+            var result = await _queries.EntryPointsAsync(new EntryPointsQuery(), CancellationToken.None);
+            foreach (var pane in panes)
+            {
+                pane.Show(result);
+            }
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            foreach (var pane in panes)
+            {
+                pane.ShowError(ex.Message);
+            }
+        }
     }
 
     internal void BindSolutionTrees()

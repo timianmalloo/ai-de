@@ -126,6 +126,9 @@ public sealed class EveryOperationFitsTheFrameTests : IDisposable
 
         [nameof(IWorkspaceQueries.SolutionTreeAsync)] =
             (p, _) => p.SolutionTree(new SolutionTreeQuery()),
+
+        [nameof(IWorkspaceQueries.EntryPointsAsync)] =
+            (p, _) => p.EntryPoints(new EntryPointsQuery()),
     };
 
     [Fact]

@@ -36,7 +36,8 @@ public sealed class DaemonOperationsTests : IDisposable
             TestWorkspace.Assertion("Service.Orders", "depends_on", "Service.Billing"),
             TestWorkspace.Assertion("Service.Orders", "depends_on", "Service.Catalog"),
             TestWorkspace.Assertion("Service.Billing", "depends_on", "Service.Ledger"),
-            TestWorkspace.Assertion("Service.Unrelated", "depends_on", "Service.Isolated"));
+            TestWorkspace.Assertion("Service.Unrelated", "depends_on", "Service.Isolated"),
+            TestWorkspace.Assertion("Service.Orders", "has_type", "class"));
 
         var root = Path.GetDirectoryName(_workspace.DatabasePath)!;
         Directory.CreateDirectory(Path.Combine(root, "unindexed_probe"));
@@ -144,6 +145,22 @@ public sealed class DaemonOperationsTests : IDisposable
             Assert.Equal(expected.OmittedByCap, actual.OmittedByCap);
             Assert.Equal(expected.SourceRevision, actual.SourceRevision);
             Assert.Equal(expected.Nodes, actual.Nodes);
+            Assert.Equal(expected.Disclosures, actual.Disclosures);
+        });
+    }
+
+    [Fact]
+    public async Task EntryPoints_AgreesWithTheInProcessProjection()
+    {
+        var expected = _projections.EntryPoints(new EntryPointsQuery());
+        Assert.NotEmpty(expected.Rows);
+
+        await WithDaemon(async client =>
+        {
+            var actual = await client.EntryPointsAsync(new EntryPointsQuery(), CancellationToken.None);
+            Assert.Equal(expected.OmittedByCap, actual.OmittedByCap);
+            Assert.Equal(expected.SourceRevision, actual.SourceRevision);
+            Assert.Equal(expected.Rows, actual.Rows);
             Assert.Equal(expected.Disclosures, actual.Disclosures);
         });
     }

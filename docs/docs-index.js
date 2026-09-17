@@ -2068,7 +2068,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 103 types, 463 members, 71% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 105 types, 471 members, 70% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2081,7 +2081,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f41d04141e472c3d5b270717fa41e4b074d1f8e99f9ca35a4e3042cee200f21e"
+      "sourceSha256": "73c9c8def2bd6576b9cbdbd77ee9c7f8af7bd1ab4465758c7bbf0fe416ac238f"
     },
     {
       "id": "api-aide-app-workbench-composer",
@@ -2293,7 +2293,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Ipc: 51 types, 122 members, 64% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Ipc: 51 types, 124 members, 64% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2306,7 +2306,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "20140e09bbfea5cdb03ae8749198c7674a77952c8fc213d073050a68a1318759"
+      "sourceSha256": "9253a94460004af3afb15b6a7a35cfd4b1b33534bbac6483a18c1b865632ac8d"
     },
     {
       "id": "api-aide-core-mcp",
@@ -2418,7 +2418,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Projections: 55 types, 71 members, 63% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Projections: 61 types, 77 members, 62% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2431,7 +2431,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d4283ca09dd9e1aa340b44062fc92973caef82941e66427d1689271532d02387"
+      "sourceSha256": "8da981119c695cd2c33dc79c8ffdadab28f197c5d0cec02f372e74aa0855ecdb"
     },
     {
       "id": "api-aide-core-promptcompilation",
@@ -2493,7 +2493,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Store: 10 types, 54 members, 70% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Store: 10 types, 56 members, 71% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2506,7 +2506,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0d469cef4f0065f4b03dbcdcce3bed5089b47061a95d4bbfc9bcac2e3995d3ac"
+      "sourceSha256": "4980cf344022f8e39525950ba3f967174f4c2305cb9db74c7b0d273bb5be1ee5"
     },
     {
       "id": "api-aide-core-terminal",
@@ -5492,6 +5492,385 @@ window.DOCS_INDEX = {
       "sourceSha256": "4cfedc5859c7e42721b0262e7e521f3343c578a617f8ff2864e2afa485cb726f"
     },
     {
+      "id": "note-d1-codex-entry-point-handshake",
+      "path": "docs/notes/d1-codex-entry-point-handshake.md",
+      "title": "D-1 ↔ Codex E1/E2 entry-point handshake (proposed; not frozen)",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Grok's proposed bilateral contract for D-1 Entry-points vs Codex E1 Sequence/Activity and E2. Status is proposed until Codex ACKs this file at a pinned SHA. Notice-sent is not peer-ACK and not frozen.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "entry-points",
+        "atlas-e1",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-d1-admission",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-atlas-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "af85cdadb1ef2c942a16aed8c5cacb2fdb770d63d32d423bbfee35934d662f3e"
+    },
+    {
+      "id": "note-d1-codex-entry-point-handshake-r2",
+      "path": "docs/notes/d1-codex-entry-point-handshake-r2.md",
+      "title": "D-1 ↔ Codex handshake r2 — answers to five-gates questions; still not frozen",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Producer answers to Codex five-gates questions against blob 661c92a3. Withdraws node_id→InteractionAsync as the E1 contract. Freeze still requires Codex ACK of this revision. No DTOs invented. No shared implementation.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "entry-points",
+        "atlas-e1",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake",
+          "rel": "supersedes"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-admission",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3e860fbf0e6932ec762c4cf6910fd9f05e23415c9033b98228febc8544cfba3b"
+    },
+    {
+      "id": "note-d1-codex-entry-point-handshake-r3",
+      "path": "docs/notes/d1-codex-entry-point-handshake-r3.md",
+      "title": "D-1 ↔ Codex handshake r3 — non-consuming boundary; mapper unassigned",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Exact r3 corrections from Codex five-gates (req-01M2KSD1JQG5WEBJVSDNYEH54J). Non-consuming boundary. Mapper unassigned. No live Open Sequence from D-1. Freeze only after both peers ACK this blob SHA.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "entry-points",
+        "atlas-e1",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake-r2",
+          "rel": "supersedes"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-admission",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e9d58e3992b3d806992144fa09759060fcc31e0757216bf5c6b86fb8944baaf6"
+    },
+    {
+      "id": "note-d1-codex-entry-point-handshake-r4",
+      "path": "docs/notes/d1-codex-entry-point-handshake-r4.md",
+      "title": "D-1 mapper contract r4 — Grok produces D-1-row → Core observation; Open Sequence after freeze",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "Proposed mapping contract. Does not rewrite r3 blob e448383a. Grok owns the mapper. Output is Core method-observation identity E1 already selects — not a D-1 listing row. Freeze after Codex same-blob ACK. Until then Open Sequence stays dark.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "mapper"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake-r3",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-mapper",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-entry-points",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "402c3dc5757dfb7516205cab2e78c73597c56feb5a0fce45e0042593291492c5"
+    },
+    {
+      "id": "note-d1-codex-entry-point-handshake-r5",
+      "path": "docs/notes/d1-codex-entry-point-handshake-r5.md",
+      "title": "D-1 mapper r5 — Grok authors the proposal only; Open Sequence still disabled",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "Consumes Codex CHANGES REQUIRED on r4 (NKJGBAWR / NS19CKPE). Freezes authorship only: Grok writes the mapper proposal. Identity, API, cardinality, and activation stay unadmitted. Open Sequence stays disabled. r3 listing freeze unchanged.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "mapper"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake-r4",
+          "rel": "supersedes"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r3",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-mapper",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-entry-points",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "26eb70ced8c90c9308a06544582b6ad8f2fd5fc657acea6766be292766baa6ea"
+    },
+    {
+      "id": "note-d1-codex-entry-point-handshake-r6",
+      "path": "docs/notes/d1-codex-entry-point-handshake-r6.md",
+      "title": "D-1 mapping-implementation r6 — admitted; Sequence still dark until this blob is ACKed and E1 observation API exists",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "Implementation contract. Does not rewrite r5 a3cb0d63 or r3 e448383a. Grok implements the mapper when Core observation identity is pinned. Open Sequence stays disabled until this blob is ACKed AND that Core API is admitted (r5 §4).",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "mapper"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake-r5",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-mapping-impl",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b50a136df4e300dbf1143ed4f36240904bc2850e40bc0c758b03e646a57c21bf"
+    },
+    {
+      "id": "note-d1-listing-query-architecture",
+      "path": "docs/notes/d1-listing-query-architecture.md",
+      "title": "D-1 listing query architecture (draft) — EntryPointsAsync; identity minting",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "Listing query lives on IWorkspaceQueries. Grain: one row per candidate occurrence. Member identity is not node_id today. Open Sequence is not this query.",
+      "tags": [
+        "decision-note",
+        "D-1",
+        "architecture"
+      ],
+      "links": [
+        {
+          "to": "spec-entry-points",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-n1-inventory",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r3",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "40fedb8fb92815a195e43ee11e8d713bc4843acb7dd33ff850d85089e0577868"
+    },
+    {
+      "id": "note-d1-n1-inventory",
+      "path": "docs/notes/d1-n1-inventory.md",
+      "title": "D-1 N1 inventory — existing store and queries (facts; handshake not frozen)",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Opened-code inventory for D-1. Does not freeze listing/classification/E1 mapping. Handshake r2 remains NOTICE SENT. No IWorkspaceQueries change.",
+      "tags": [
+        "decision-note",
+        "D-1",
+        "inventory",
+        "N1"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-d1-admission",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r2",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0a13d513ce222e1f4e323e155969cc9eb348d9fe88dd6e1dc703774566aa494d"
+    },
+    {
+      "id": "note-d1-r3-producer-ack",
+      "path": "docs/notes/d1-r3-producer-ack.md",
+      "title": "D-1 handshake r3 PRODUCER ACK — contract frozen at blob e448383a",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-15",
+      "reviewSuggested": [],
+      "summary": "Producer ACK of the immutable r3 snapshot. Does not rewrite that blob. CONTRACT FROZEN. Implemented remains separate.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "freeze"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake-r3",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-admission",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d3a012d57cafc9f45733ac2e093a0b281760112c8a0ac92febc40e318b559f97"
+    },
+    {
+      "id": "note-d1-r4-ack-card",
+      "path": "docs/notes/d1-r4-ack-card.md",
+      "title": "Copy-paste ACK card for Codex five-gates — r4 mapper blob a8c05bc7",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "Exact ledger reply Codex must send. Prior r4 notice had no consumer ACK. Silence is not ACK. Only five-gates-integration may ACK.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "ack-card"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake-r4",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b363db9792257ac7fcc9e28f9a5e77266ae38b224cf73eb6ff2c7fc8aae232c5"
+    },
+    {
+      "id": "note-d1-r5-producer-ack",
+      "path": "docs/notes/d1-r5-producer-ack.md",
+      "title": "D-1 handshake r5 PRODUCER ACK — authorship boundary frozen at blob a3cb0d63",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-16",
+      "reviewSuggested": [],
+      "summary": "Producer ACK of immutable r5. Does not rewrite that blob. Authorship-only freeze. Open Sequence remains disabled. Mapper implementation unadmitted.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "freeze"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake-r5",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-r3-producer-ack",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0c3cc4e97f026d5b2e21aa3be2a434e717486eb8ce5780f6dd117f429402292b"
+    },
+    {
       "id": "note-dc-115-evidence-in-a-lanes-own-checkout",
       "path": "docs/notes/dc-115-evidence-in-a-lanes-own-checkout.md",
       "title": "DC-115 — verifying a lane's evidence in the checkout it committed it in",
@@ -6713,6 +7092,138 @@ window.DOCS_INDEX = {
       "sourceSha256": "54995978c362c7d4388ece73d264d03af8cec27c29f02b1347cc768c407c6445"
     },
     {
+      "id": "note-understanding-views-owner-d1-admission",
+      "path": "docs/notes/understanding-views-owner-d1-admission.md",
+      "title": "Admit D-1 Entry-points this cycle; D-2…D-4 stay keep-deferred; first slice is the substrate query",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2027-03-15",
+      "reviewSuggested": [
+        {
+          "by": "spec-understanding-views",
+          "on": "2026-09-15",
+          "reason": "D-1 admitted; §A5 admitted-when is now this cycle's DoD"
+        },
+        {
+          "by": "plan-understanding-views",
+          "on": "2026-09-15",
+          "reason": "New N14-successor cycle; one view in flight"
+        }
+      ],
+      "summary": "Operator re-admits D-1 Entry-points only. D-2…D-4 remain keep-deferred. The listing query and API/UX/CLI/unclassified classification do not exist yet — UV-0 is that substrate; the Architecture kind is added only in the slice that builds it (AR3).",
+      "tags": [
+        "decision-note",
+        "addendum-c",
+        "understanding-views",
+        "owner",
+        "D-1",
+        "entry-points"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-n14",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-ruling",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "plan-understanding-views",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "69a9635958af3ebb9abff1c875b5b7792850ad017ab70362f8b76badc6dc870d"
+    },
+    {
+      "id": "note-understanding-views-owner-d1-mapper",
+      "path": "docs/notes/understanding-views-owner-d1-mapper.md",
+      "title": "Admit D-1 mapper to Grok; Codex E1 does not own D-1→observation mapping",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2027-03-16",
+      "reviewSuggested": [],
+      "summary": "Operator: claim the mapper unless Codex E1 already does it. E1 does not: r3 freeze forbids E1 consuming D-1 rows. Grok is producer of the mapping contract. Live Open Sequence stays dark until that contract is peer-ACK frozen (r4).",
+      "tags": [
+        "decision-note",
+        "owner",
+        "D-1",
+        "mapper"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-d1-admission",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r3",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-d1-r3-producer-ack",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-entry-points",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3af30f9d2841323f18356bc5ad0c2dc4e4640593a923448245ebcb6c3c9ac246"
+    },
+    {
+      "id": "note-understanding-views-owner-d1-mapping-impl",
+      "path": "docs/notes/understanding-views-owner-d1-mapping-impl.md",
+      "title": "Admit D-1 mapping implementation; 108 land listing on main; do not block listing on the human",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2027-03-17",
+      "reviewSuggested": [],
+      "summary": "Operator 2026-09-17: admit mapping-impl; 108 granted; stop blocking keep-going on the human. Owner persona + conductor execute. Codex same-blob ACK remains the watcher track, not a human gate.",
+      "tags": [
+        "decision-note",
+        "owner",
+        "D-1",
+        "mapper",
+        "ruling-108"
+      ],
+      "links": [
+        {
+          "to": "note-understanding-views-owner-d1-mapper",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r5",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-entry-points",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2318e20f0b29fe7fdee38f7fe6cda81b6d7a75013e865fa13f3cd3d0e7ac89b7"
+    },
+    {
       "id": "note-understanding-views-owner-n1-disposition",
       "path": "docs/notes/understanding-views-owner-n1-disposition.md",
       "title": "Admit a query-time Core census as D-0 unindexed substrate; skip-list omitted; Python/TS file grain disclosed not rewritten; specify may proceed",
@@ -6770,6 +7281,11 @@ window.DOCS_INDEX = {
           "by": "plan-understanding-views",
           "on": "2026-09-15",
           "reason": "N14 loop exit; variant 4→0"
+        },
+        {
+          "by": "note-understanding-views-owner-d1-admission",
+          "on": "2026-09-15",
+          "reason": "Successor ruling admits D-1; N14 horizon stays closed"
         }
       ],
       "summary": "N14 stops this horizon. D-1…D-4 are keep-deferred with §A5 admitted-when intact. Blast radius: no next view, no D-1 kind, no main; D-0 chrome may finish on understanding-views without reopening the N14 loop.",
@@ -6819,7 +7335,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ef1d9bd958372f12eccdac3df9ce7c87c64acfc1499717760e4c9d9bff5a9297"
+      "sourceSha256": "ebf96534009d857c20ef0dc3d36ef4612d022c45d746ab15640fafa3d16758cc"
     },
     {
       "id": "note-understanding-views-owner-ruling",
@@ -8970,7 +9486,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8e686fb31673a73a95410bc8bc7e9d5ff7fac4c6275bd01521e8a63505cf0f57"
+      "sourceSha256": "5249e9f953f707bf64185f3404afc011ab4e92f5232cd934f3fb315df8839fb0"
     },
     {
       "id": "coordination-understanding-views-kickoff",
@@ -11742,7 +12258,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4e0c3f3532d0a8e0ddddad82477d0d42f2a943a2768710354de1be7bcba8280f"
+      "sourceSha256": "5c4126d8798dbb471b1f6e1a9aef4ae1ffde2ee79602248b4bd7f0f86fdcad9c"
     },
     {
       "id": "session-profiles",
@@ -19819,6 +20335,71 @@ window.DOCS_INDEX = {
       "sourceSha256": "5060300c7c21d12f9a30ef6c50bf965174fb0fe1f6b8e16415641847615f388c"
     },
     {
+      "id": "spec-entry-points",
+      "path": "docs/specs/entry-points.md",
+      "title": "Understanding views — D-1 Entry-points listing (spec)",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2027-03-16",
+      "reviewSuggested": [],
+      "summary": "Admits D-1 Entry-points as an Architecture listing of API, UX, and CLI entry points plus unclassified. Select scopes the existing Architecture graph. Open Sequence is out: mapper UNASSIGNED (handshake r3 frozen). Status draft; N4 not self-cleared.",
+      "tags": [
+        "understanding-views",
+        "D-1",
+        "entry-points",
+        "architecture",
+        "addendum-c"
+      ],
+      "links": [
+        {
+          "to": "spec-addendum-c-perspectives",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-understanding-views",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-admission",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r3",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-r3-producer-ack",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-n1-inventory",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0030-perspective-registry-and-allow-lists",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "conceptual-model-ai-native-ide",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Part B — UX specification",
+          "mermaid": "flowchart TD\n  open[Open Entry-points] --> list{Listing}\n  list -->|ok| groups[API / UX / CLI / Unclassified]\n  list -->|error| err[Could not read entry points + Retry]\n  list -->|empty index| empty[Specified empty]\n  groups --> sel[Select classified row]\n  sel -->|has node_id| graph[Scope Architecture graph]\n  sel -->|no node_id| nog[Reason: no graph id]\n  groups --> src[View source]\n  src -->|has node_id| reader[NodeContentAsync]\n  src -->|no node_id| nos[Unavailable]\n  groups --> seq[Open Sequence]\n  seq --> dark[Disabled mapping-unavailable]"
+        }
+      ],
+      "sourceSha256": "4a3bffa833770562733b47c5c947a5d0342a0f426f28285cb3c5b7b9b030f1b4"
+    },
+    {
       "id": "spec-gemini-cli-agent-session",
       "path": "docs/specs/gemini-cli-agent-session.md",
       "title": "A Gemini CLI agent session, on par with Claude Code and GitHub Copilot (spec)",
@@ -20113,6 +20694,11 @@ window.DOCS_INDEX = {
           "by": "note-understanding-views-n4-pass",
           "on": "2026-09-15",
           "reason": "N4 gate record for D-0 spec"
+        },
+        {
+          "by": "note-understanding-views-owner-d1-admission",
+          "on": "2026-09-15",
+          "reason": "D-1 admitted this cycle; §A5 D-1 is now DoD; do not thin"
         }
       ],
       "summary": "Admits D-0 Solution tree this horizon: Architecture-pane navigator of (path, kind) nodes, kind ∈ {file-artifact, census-folder}. Coverage is indexed-parent | unindexed only; not-recorded is Disclosure. D-1…D-6 stay named-and-deferred with §A5 quoted. N4 repair: grain closed, US-T5 split, fixture F*. N4 PASS recorded by conductor from non-author receipts (note-understanding-views-n4-pass). Status remains draft.",
@@ -20183,7 +20769,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  start([Operator in Architecture]) --> ws{Workspace open?}\n  ws -->|no| nows[No-workspace: Open a workspace to see its solution tree.]\n  nows --> openWs[Operator opens a workspace]\n  openWs --> ws\n  ws -->|yes| prior{Prior payload?}\n  prior -->|no| load[Loading: Reading the workspace tree…]\n  prior -->|yes| stale[Rows stay, marked Stale]\n  load --> q{Census plus join}\n  stale --> q\n  q -->|IPC or daemon error| err[Error: Could not read the workspace tree.]\n  err --> retry[Retry]\n  retry --> load\n  q -->|zero nodes and no Disclosure| empty[Empty copy]\n  empty --> showG[Show Graph]\n  q -->|payload| tree[Tree of path-kind nodes plus chrome Disclosures]\n  tree --> skipDisc[N skip-listed directories omitted if N greater than 0]\n  tree --> py{Python/TS scopes present?}\n  py -->|yes| disc[Exact US-T6 copy]\n  py -->|no| nodes\n  disc --> nodes[For each node]\n  nodes --> kind{kind}\n  kind -->|census-folder unindexed| unidx[Unindexed leaf — no children]\n  kind -->|census-folder indexed-parent| parent[Expand or collapse]\n  kind -->|file-artifact| art[Kind glyph plus name]\n  art --> act{Activate}\n  act -->|Enter View source| src[NodeContentAsync then codeviewer]\n  act -->|Ctrl+Enter Reveal in graph| graph[GraphAsync / DescribeAsync]\n  src -->|error| srcErr[Could not open source]\n  srcErr --> srcRetry[Retry] --> src\n  graph -->|error| graphErr[Could not reveal in graph]\n  graphErr --> graphRetry[Retry] --> graph\n  src -->|ok| done([Goal: understand this artifact])\n  graph -->|ok| done\n  unidx --> done2([Goal: coverage is honest])\n  skipDisc --> done2"
         }
       ],
-      "sourceSha256": "b7c3cef292938edaac48bed3d58b43df104e51361b642e04133997ead2e9ca45"
+      "sourceSha256": "29d73fe7c19ee59e55722eb9d7d2eef209527a98f1fea809cce4ba7392c52be9"
     },
     {
       "id": "threat-model-ai-native-ide",
@@ -20478,5 +21064,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6f87a2918a7c01257f52360ef1d6452943a545ed52b9c84e00fd3b01feedd503"
+  "graphSha256": "39595cca30c7d96a68764df4851384934c345b7a53b99cf0da8221bcdcba1d0a"
 };
