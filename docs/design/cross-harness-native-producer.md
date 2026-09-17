@@ -15,6 +15,97 @@ summary: Records the accepted membership and participating prepared-writer contr
 
 # P2.P1 — accepted membership contract
 
+## P2.P2B — emitter corrective contract (recorded before code)
+
+This unit implements the DS-admitted corrective contract supplied on 2026-09-16,
+against `a855e1ad64258b47c08a378da3ec4a8c3ff2b62f`. Earlier pending statements below
+are historical receipts, not a claim that the already admitted P2.P2A writer is
+still absent. P0–P5 remain the programme goal; this is only the P2.P2B author lane.
+
+The aggregate is one emitter-object identity plus one ordinal external session
+id. Its invariant is one committed-membership flag and at most one pending
+Register, Heartbeat or End. Phases are Preparing, AwaitingPreparation, Ready,
+Appending and Uncertain. Register admission creates live membership; heartbeat
+and end failures preserve live membership; only admitted End releases it.
+The native append log is still the durable truth. There is no new persisted
+shape, status database, wire field, reconstructed preparation or restart claim.
+Without the actual preparation, restart recovery is uncertain and requires the
+separately governed canonical pull.
+
+One production static SemaphoreSlim(128,128), acquired with Wait(0), bounds all
+live/reserved/pending/uncertain states across roots and emitter instances. A
+strong owner registry retains obligations; no GC eviction, TTL or Dispose reset
+is allowed. A fixture-only internal scope may supply another fixed-128 budget.
+Reserve before identity callbacks, input copying, clock or Prepare; session 129
+returns COORD_EMITTER_CAPACITY without calling those paths or creating files.
+The writer binding is immutable. Unknown heartbeat/end allocate no slot.
+Retirement requires empty and quiescent state. Disposal reports obligations and
+does not invent an End. Release is only admitted End or quiescent proven-no-write
+Register abandonment; abandonment of heartbeat/end preserves live membership.
+
+Retain the actual Ready PreparedWrite before Append. Never overwrite it with a
+failure result's nullable Prepared. RetryPending takes no payload and reuses the
+same object, bytes, timestamp, sequence, prefix and range. Known Prepare
+unavailability without an object retains frozen bounded input and can prepare
+again because no identity was assigned. Different effective input or operation
+while pending is COORD_INPUT_CONFLICT, with no preparation or append. Generic
+exceptions and uncertainty never constitute proof of no write. A retained
+preparation is abandonable only if it was never attempted.
+
+Frozen input is at most ten fixed identity attributes and 65,536 UTF-16 code
+units in total, counting session, keys and values. Do not retain caller
+dictionaries or factories. Ready state discards its frozen dictionary; equality
+uses the prepared payload, not a cached CopyBytes allocation. Prepared metadata
+is separately bounded at 65,536 UTF-16 units. Retention accounting includes
+UTF-16 storage, metadata, hash and packet rather than claiming 128 packets as the
+whole bound. Admission.ByteCount, including a repair LF, is checked at 65,536
+before append. Constructor path normalization alone creates no directory.
+
+Per-session gates retain P1 reference-counted lifetime, with at most one waiting
+control call; a third call returns Busy, not another waiter. No arrival FIFO
+promise is made. Waiting End suppresses new heartbeat work. The short owner
+lock never covers callbacks, I/O or waiting. HeartbeatAllResultsAsync snapshots
+at most 128 states and revalidates each; one batch per owner and one in-flight
+work item per state. Dispatch all independently eligible items before joining,
+so a paused clock cannot block a healthy source. No timer queue or general
+scheduler is added. Cancellation stops scheduling/waiting, not synchronous I/O:
+in-flight state and budget remain owned until the work actually finishes.
+Legacy void HeartbeatAll joins context-independent work and aggregates all
+non-success outcomes in an IOException-derived typed exception, not stop-first.
+Its blocking bridge is not a UI-safe or unconditional-deadline claim.
+
+Reach: identity/factory → bounded owner state → existing Prepare/Append →
+membership/result → legacy individual and batch wrappers → unchanged native
+parser. No App, live store, endpoints or runtime activation. Structured outcome,
+code, membership, retained-state count and duration answer operator questions;
+no raw input or absolute root enters logs.
+
+Finite execution graph (all edges data/decision): ground contracts (Reasoning)
+→ commit this contract (Deterministic mechanics) → baseline behavioral RED
+(Deterministic mechanics) → bounded state and tests (Reasoning) → selected suite,
+mutants, stdout/TRX and pins (Deterministic mechanics) → receipt/commit
+(Deterministic mechanics). No delegates; inferred work equals span, width one,
+parallel speedup ceiling one. Forty-five calls is the reporting checkpoint, not
+permission to label missing floors complete. Test/DS/Security independent review
+and canonical Proof Pack consolidation are the parent's next gates.
+
+Testing union: D0/D1/D2/D4/D6/D7. Real files and existing writer fault seams cover
+lost complete-write acknowledgement, prewrite retry, mutation/conflict, failed
+heartbeat/end, unsafe abandonment/disposal, global cross-root live and reserved
+capacity, input/metadata/repair bounds, bounded contention/gate retirement,
+paused/failed alongside healthy batch progress and cancellation retention.
+Existing 77-case evidence remains the regression floor. New APIs missing on the
+baseline are not called semantic RED; baseline void counterexamples and targeted
+restored-source mutants provide separate falsifying evidence.
+
+Class → sweep → derive → prevent: dropping preparation after ambiguous I/O loses
+operation identity; counting only one emitter's live set loses global capacity.
+The three operation paths and Reconcile are the sibling sweep. One retained
+operation executor and one production budget derive these rules once. Exact
+replay, pre-callback capacity and unsafe-abandonment controls are the prevention.
+Any incomplete floor is recorded in this receipt for parent consolidation, not
+silently promoted into the canonical Proof Pack or site.
+
 ## P2.P2A — participating writer contract (recorded before code)
 
 The current task explicitly admits the writer portion of
