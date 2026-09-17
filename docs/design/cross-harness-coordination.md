@@ -1557,3 +1557,104 @@ remain unimplemented if the 45-call ceiling is reached. This is deliberately
 not a canonical bridge completion claim. Existing source binding remains
 snapshot-only and NotStorable. Official writing and privileged authority remain
 Unavailable/Denied; no live importer is connected.
+
+### Official capture and ProjectOfficialPage runtime unit - 2026-09-17
+
+This unit implements the preceding accepted v10 contract, not another schema
+checkpoint. No DDL change is planned. The bounded context is official source
+ingestion. An event fact is one validated full identity; an occurrence is one
+complete physical frame, identified by physical source, offset and raw digest.
+Receipt numbers and offsets are monotonic, not counts of accepted proposals.
+Applied means ingestion only. Thread causality, acceptance, consumption, trusted
+actors and execution eligibility belong to the subsequent P1 fold.
+
+**Inputs and provenance.** Only internal trusted composition can acquire an
+OfficialDescriptorAcquisition. It validates the native repository against the
+physical primary and reciprocal linked-worktree metadata before opening or
+parsing request content, including empty and malformed input. No public
+constructor, JSON flag, event path, reader repository override or basename can
+construct this capability. The old CanonicalBindingResult remains NotStorable.
+The versioned XHB1 descriptor encodes native physical root, physical primary,
+fixed primary `.agents/requests.jsonl`, origin, codec version, allowance version
+and all allowed opaque repository/stream pairs sorted by UTF-8 bytes. At most
+16 distinct pairs, each field at most 512 Unicode scalars, and a 65,536-byte
+descriptor ceiling are pilot bounds. Scope is a hash-derived ASCII value under
+4,096 bytes; public source ID is 64 hex characters. Both derive from every
+descriptor byte. Full BLOB comparison, not hash equality, checks collisions.
+The physical-source portion has its own full key. Reconfiguration of an already
+bound physical source, even with a different allowance hash, is unsupported;
+no cross-scope reuse or duplicate copy of old history is permitted.
+
+**Capture.** One FileStream opens the fixed path after reparse/root checks and
+captures at most 32 MiB into privately owned immutable memory. Metadata is
+revalidated after the read. This is optimistic per-pass accepted-prefix
+validation, not linearizability, a held-root TOCTOU guarantee or ABA detection.
+An absent never-accepted source is Unavailable, not Empty; an empty existing file
+is Empty. The reader never creates a source file. After a checkpoint exists,
+disappearance, truncation or a changed accepted prefix is COORD_SOURCE_GAP with
+old history and checkpoint preserved, never an automatic new incarnation.
+
+Complete LF frames retain LF/CRLF in raw bytes, offsets and raw hashes. Content
+is at most 65,536 bytes; raw limits are 65,537 LF / 65,538 CRLF. Pages contain at
+most 128 frames and 4 MiB raw bytes (63 maximum CRLF frames fit; 64 do not).
+Every admissible complete frame makes progress. Incomplete tails are deferred,
+never checkpointed; unlike the manual P1 reader, an EOF line without LF is not
+accepted by transport. No source write reconciles this intentional difference.
+Capture/content bound failures are typed refusals and do not advance history.
+
+Blank byte-whitespace frames and unversioned unknown objects follow P1's ignored
+semantics and receive explicit ignored interpretation accounting, not an invented
+question or reply obligation. Legacy request-add/resolve share a request ID, not
+an event ID; XHL1 identities are tagged physical occurrences. Invalid UTF-8,
+invalid schema/digest and unsupported enhanced versions use XHI1 raw-only
+accounting with a stable interpretation reason. v10 requires raw-only rows to be
+terminal refused: the reason distinguishes ignored from invalid; this storage
+sentinel is not a semantic rejection. Enhanced XHE1 identities contain the full
+native repository/origin and `(repositoryId,streamId,eventId)` encoded injectively.
+Raw/canonical bytes and full identity are separate. Canonical legacy content
+excludes framing; validated enhanced comparison bytes exclude only recordedAt
+and payloadDigest. Response 32,768 and fact full-serialization 65,536 bounds
+remain enforced by the pinned parser before comparison.
+
+**Transaction and failure rules.** ProjectOfficialPage begins IMMEDIATE before
+binding lookup, checkpoint lookup, identity lookup or admission. Validate the
+complete acquisition, scope, epoch, expected offset/prefix and page continuity.
+Create the fully bound zero-offset checkpoint with the empty digest inside this
+transaction before the first event. Never retrobind an unbound/native checkpoint.
+Validate the captured bytes against the current accepted prefix. A stale page
+may recover a lost post-commit acknowledgement only when its expected start and
+the complete accounted prefix still match and every physical occurrence is
+already accounted; it returns the original admission and current state, without
+appending. A changed stale snapshot is refused.
+
+New identity appends a terminal official fact and initial receipt. Existing
+full identity with equal validated comparison bytes retains original admission
+and current state; a new physical occurrence appends the existing
+duplicate-occurrence-accounted outcome with occurrence_kind=equal. Different
+validated bytes append occurrence_kind=conflict/XH.EVENT_CONFLICT and a raw
+reference; original identity, payload and current receipt remain untouched.
+Compact event-key collisions compare full identities and refuse explicitly.
+All frames are accounted contiguously before checkpoint advance and commit.
+BeforeCommit injection leaves zero partial writes; AfterCommit injection leaves
+durable replayable admissions. Official code never enters ProjectRecord,
+ApplyObservation, native allocators, capabilities, recovery, heartbeat or end
+writes. Native parent_application_state retains its inert applied sentinel with
+no parent key. Existing v10 tables and constraints remain unchanged.
+
+**Surface and instrumentation.** Internal bounded RunOnce composes acquisition
+-> immutable capture -> parser -> ProjectOfficialPage -> existing
+ReadCoordination receipt API for a configured synthetic repository. No loop
+recaptures unboundedly. Results carry status, stable reason, frames, bytes,
+replays/refusals and elapsed duration; Activity tags carry counts/codes only.
+The existing MCP receipt DTO already carries Equal/Conflict without raw export.
+Production binder remains unavailable, response actions remain official API
+Unavailable without native BoardPost fallback, and full fold/MCP/UI same-corpus
+P5 qualification is not implied by ingestion.
+
+Errors: COORD_OFFICIAL_DESCRIPTOR, COORD_OFFICIAL_REBIND,
+COORD_OFFICIAL_KEY_COLLISION, COORD_SOURCE_GAP, COORD_STALE_SNAPSHOT and
+COORD_SOURCE_BOUND refuse the transaction/capture; parser codes describe
+accounted raw-only interpretations. Unknown authorization is always Denied.
+Synthetic real-Git/SQLite tests and focal fault injection are required. Prior
+binding/codec/schema clearances do not self-certify this new runtime; independent
+runtime review remains mandatory before activation.

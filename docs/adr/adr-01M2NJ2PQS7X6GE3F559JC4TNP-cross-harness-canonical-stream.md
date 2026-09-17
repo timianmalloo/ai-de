@@ -341,3 +341,20 @@ This turn may close at the structural store/receipt-reader checkpoint. A schema
 fixture is not trusted capture, a comparator, a ProjectOfficialPage transaction,
 a full reader, or old-binary rollback evidence. Those remain explicit remaining
 P2 work; P3-P5 and activation are unchanged. No serialized issuer authority is added.
+
+#### Official capture/projection runtime decision - 2026-09-17
+
+Implement the accepted design's runtime unit against unchanged v10 guards.
+Private-construction trusted acquisition and immutable bounded captured pages
+replace neither the old snapshot binder nor native admission. Full versioned
+descriptor and physical-source comparisons forbid rebinding; full tagged event
+identity and validated comparison bytes govern equality/conflict. Reuse the
+existing transaction owner, receipt feed, fault seam and reader rather than
+introduce another store or authority channel. Record ignored physical frames
+with a distinct interpretation reason using v10's raw-only refused sentinel.
+Defer EOF tails intentionally, unlike the compatible manual P1 reader.
+Reject actor-supplied paths, unbound checkpoint upgrades, hash-only identity,
+native effects and treating ingestion as acceptance. One bounded internal pump
+is permitted; production enrollment and independent runtime qualification remain
+unavailable/pending. The detailed input/error/invariant contract is recorded in
+the design before implementation.

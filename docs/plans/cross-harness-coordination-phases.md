@@ -1060,6 +1060,27 @@ spent avoidable calls; later reads were bounded. Final evidence: 47/47 after eac
 mutation restore, all 17 restored pins equal, byte probe zero valid mismatches.
 No extra plan or Proof Pack was created. Full P2 and P3-P5 stay pending.
 
+### Official runtime execution - 2026-09-17
+
+Goal: implement trusted bounded capture -> transactional official projection ->
+receipt API with no native effects. Done when synthetic executed evidence and
+local commits persist the runtime unit. No agents, production activation, DDL,
+full P1 fold, P3-P5 or push. Budget 45 tool calls / 150k tokens.
+
+Serial graph: establish existing contracts (Reasoning) -> record runtime
+inputs/errors/invariants in accepted design/ADR (Deterministic mechanics) ->
+semantic runtime red (Deterministic mechanics) -> capture/project/pump
+(Reasoning) -> exact synthetic SQLite/Git cases and focal mutants
+(Deterministic mechanics) -> canonical proof/audit/ordinary commit/release
+(Deterministic mechanics). All edges are data/decision edges. Equal-node model
+has work/span 6/6, Inferred; width one offers no parallel gain. Capture decreases
+remaining bytes; projection decreases remaining frames; each stops at zero or
+an explicit refusal. No recapture loop. Test/fault worklists are finite.
+Native regression, source bounds, full identities, CAS, immutable receipts and
+provenance are floors, not tradeable for the call budget. If the ceiling fires,
+retain a coherent implemented runtime increment and list uncovered oracles.
+Independent runtime review is an external next gate, not author-issued PASS.
+
 ### Official store v10 bounded execution — 2026-09-17
 
 Goal: dormant official-occurrence projection; terminal checkpoint if the 45-call
