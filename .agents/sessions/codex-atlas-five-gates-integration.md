@@ -1,15 +1,20 @@
 # Codex Atlas five-gate integration
 
+## Current availability — supersedes historical sections below
+
 - Agent: codex-astra-gate-conductor (Astra)
 - Session: codex-atlas-five-gates-integration
 - Worktree: C:/Projects/ai-de-integration-atlas-five-gates
 - Branch: integration/atlas-five-gates
-- Status: ACTIVE resumed Sep17; root ea8d1a86; native pair02 explicitly never invoked, expired slot preserved. Fresh corrected-identity request req-01M2QRBKYDEH29TW5DX1MBXF9V pending; no native run. R124 replacement/base request P6J5S pending; independent read-only current-main overlap check active. Full frozen native PINS-MATCH verified13:16Z; local and origin main2a5f1b2d. No publication grant.
-- Doing: Corrected runnerd679e1567e2d74fa2ef85f1eddae6c44b6d5b758 independently CLEAR8e60f415cbb12e3fa15ffe6d315b3b1d5f656e71. Root read fullreceipt,16/16 controls+nineindependentrefusals, actual CIM6tick mismatch via same liveownedhandle, saved malformed failure/zeroopenhandles. Directmanifestcomparison11624oldnonrunnerinputsunchanged/fiveGitadditions and full correctedPINS-MATCH verified. Author16/16calls/audit984s,review8/8/audit346s; bothsessionsended,leasesreleased. Exactslot request req-01M2P2GATJDFH40ZF6QNCFG1X7 to foregroundcopilot-main-watch remains OPEN at21:39:32Z. Proposed SLOT-CODEX-UIA-PAIR-01, candidate d679e156, labelatlas-uia-pair-01-d679e156-20260916, existing isolated pairtree. No dotnet test/native/GUI execution has run.
-- Peer handshake: R5 authorship-only bilateral freeze VERIFIED at a3cb0d63b911e85fb357e4273854ed7923f9b06a. Grok resolved original consumer req-01M2NSZB4T6B28MH44DKJSPXE6 with producer ACK; notice req-01M2NWCK30GVH41K2S18V7FAV4 consumed. No remaining Codex ACK blocker. Grok writes proposal; mapper implementation/identity/API and Sequence activation remain unadmitted.
-- Dependencies: Preparation and independent runner gates complete; fresh checked watcher execution grant still required. Runner SHA26567e7b408430ef29d4a44e6c60a1792cb2ddae9b23dd01393e1cc6ea3a3daa; manifest-corrected SHAa58c5993e2a8ce0c30ca3ea38339da0f2faf5943a7d891d7b3cf6a42b51ba23c. ExactlyAthenB/separatefreshprocesses/no-build/no-restore/noretry;180seconds+30ownedcontainment each, actualprofile/treatment/cleanup/pins mandatory. New execution sessioncodex-atlas-p1-03-pair-execution/codex-astra-pair-executor will start only under actualgrant. No human reply awaited; no silence-as-consent. GHCP retains mainpublication and experimental source stays isolated.
-- Evidence: docs/proof/atlas-p1-03-transition-design-review.md; docs/plans/atlas-five-gates.md; docs/proof/codex-d1-r5-consumer-review.md; docs/proof/atlas-p1-03.md. Root snapshots artifacts/atlas-five-gates/transition-source-handoff/ and pair-handoff/ include inspected raw evidence and execution-request.json. Root metadata604artifacts/0defects/0orphans/0drift,74existing suggestions; regeneration999audit+190change/225classes/14figures inspected. Clearance audit al-01M2P2BNPJYG6WM44B713KB4J8 closed prior marker; execution-handoff marker21:39:32active and excludes request-preparation time. Watcher anonymouscheck query req-01M2P0PZJWAFSG343QCD8TH127 attributed from actualcheck-only transcript/resolved; originalanonhistorypreserved. Historical outgoingr4notice resolvedsupersededbyr5,neverr4ACK. Retain worktrees/raw evidence for execution/review/handoff; no peer cleanup.
-- Ownership authority remains session-contracts section2. This record creates no path grant.
+- Status: ACTIVE publication follow-through, 2026-09-18T00:10:37.899034+00:00.
+- Objective: obtain the existing publisher's actual R124 proof/rescue/join disposition for candidate a63de46c. Frozen compilation is complete and watcher QWRKSC acknowledged it.
+- Current action: watcher request req-01M2RXKMV57T4JHRS526QQBXYX routes existing Claude landing intent QWRKQN and accepted rescue QST5/completion-or-handback QTKPAR. Separate Astra Owner checks exact R137-139 applicability; independent Sol reviewer checks candidate/main overlap. Both read-only.
+- Dependencies: actual Claude personal proof inspection; audit conservation or explicit handback; applicable current-base join checks and serialized publication. No invented all-green-main requirement. Notice is not ACK, silence is not a transfer.
+- Boundaries: no source/build/native/main work. Pair03 phase remains closed refused/inconclusive; canonical Atlas qualification BLOCK. Original rescue tree untouched. Grok r6 one-clause correction pending independently; admitted empty stub/listing unheld.
+- Evidence: candidate a63de46c three proofs; root docs/proof/atlas-p1-03-transition-design-review.md; docs/plans/atlas-five-gates.md; artifacts/atlas-five-gates/pair-handoff/r124-publication-followthrough.json.
+- Ownership authority remains session-contracts section 2. This record creates no grant.
+
+## Historical receipts
 
 ## Current execution handoff — supersedes the earlier open-request status
 

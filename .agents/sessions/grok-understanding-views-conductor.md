@@ -5,6 +5,6 @@
 - Worktree: C:\Projects\ai-de-understanding-views-d1
 - Branch: understanding-views-d1
 - Status: D-1 admitted; handshake proposed, not frozen
-- Updated: 2026-09-17T12:15Z
-- Doing: Listing members as display rows (null node_id) e093dad0. r5 authorship frozen. Sequence dark. No GUI (UIA-PAIR-02).
-- Waiting on: YOU — admit mapping-implementation if Sequence should go live; 108 if D-1 should land on main; N4 spec review. Not waiting on Codex for listing.
+- Updated: 2026-09-17T18:25Z
+- Doing: N4 PWC closes + CI D1 MutedBrush/Disclosures + handshake graph link + honest 108 disclosure (93b45d85). Sequence dark. No GUI (Claude recount).
+- Waiting on: Codex r6 ACK 414f80a4. Next 108 of this repair when watcher serializes it. Not waiting on the human.
