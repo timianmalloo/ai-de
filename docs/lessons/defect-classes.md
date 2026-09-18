@@ -7483,6 +7483,20 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   you record a residue as expected, your oracle must expect it.
 - **Status:** `controlled`.
 
+- **Recurrence (Atlas audit preservation, 2026-09-17):** the Conductor described a recorded
+  Git-path-order manifest as "sorted lines". The preflight sorted whole mode/OID/stage/path
+  lines instead, so the unchanged nine identities produced a different hash. The assertion
+  stopped before any register union or original write; the measured canonical order was right,
+  and the brief's serialization description was wrong.
+- **Class -> sweep -> derive -> prevent:** same class: an oracle contradicts its recorded input.
+  Swept only this unit's prior preflight entries, captured full-line ordering and live Git
+  manifest. All nine identities matched; path order with LF and final LF is the contract.
+  The maintained [manifest verifier](../proof/records/atlas-audit-manifest-verifier.py) and
+  independent [nine-entry fixture](../proof/records/atlas-audit-manifest.fixture.json) require
+  both exact identities and canonical order/bytes. Observed canonical input exits 0; the
+  full-line-sorted input exits 1 despite an equal identity set. See
+  [conservation proof](../proof/atlas-audit-preservation.md). No new class ID or CI integration.
+
 ### DC-179 — A fixture-sized constructor default reaches the one real production call site because the real caller passes none
 
 - **Filed by:** X-3 a (placeholder — the conductor allocates the final number/status).
