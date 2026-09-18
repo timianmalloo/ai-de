@@ -7617,6 +7617,47 @@ window.DOCS_INDEX = {
       "sourceSha256": "97d517658252e65e6cf51a7392d73986c9eb96aa4d78d91569aaeeead093e21e"
     },
     {
+      "id": "design-first-use-account-states",
+      "path": "docs/design/first-use-account-states.md",
+      "title": "Ruling 130's deliverable: the first-use account state table and its exact strings — three axes, not one enum",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-watch-0915",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "The state table and exact cell strings Ruling 130 requires before any Sessions code, and Ruling 133 makes a precondition on phases 1-4. Authored by the UX & Accessibility lens; recovered to disk after an accessibility adversary found it had never been filed, because the lens had no tool to write it and the conductor's hub note asserted it was filed when it was not.",
+      "tags": [
+        "ui-design",
+        "first-use",
+        "accounts",
+        "engine-catalog",
+        "ruling-130",
+        "ruling-134",
+        "dc-228"
+      ],
+      "links": [
+        {
+          "to": "inv-0013-the-sheet-asks-the-config-not-the-machine",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-first-use-accounts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c3d8667e9cc3bd23723562c930f311189a7ee589398f03c2bbbd22ddf7bd89b4"
+    },
+    {
       "id": "design-knowledge-explorer-mode",
       "path": "docs/design/knowledge-explorer-mode.md",
       "title": "Knowledge Explorer mode — component design (Phase 1 walking skeleton)",
@@ -10354,7 +10395,7 @@ window.DOCS_INDEX = {
     {
       "id": "mockup-first-use-accounts",
       "path": "docs/mockups/first-use-accounts.md",
-      "title": "First-use accounts — the New Session sheet and Configure dialog, with the state table Ruling 130 requires before any code",
+      "title": "First-use accounts — the New Session sheet and Configure dialog, blocked by an accessibility adversary",
       "type": "doc",
       "status": "draft",
       "owner": "@timianmalloo",
@@ -10391,7 +10432,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d11261276149cf86568e6f154b9328c750e32f83d31f51aeb3c82409847ff866"
+      "sourceSha256": "61c879c69606a53259bab681a6338ead0d81f7019c96bd7a1a4c5e15cf3dfdce"
     },
     {
       "id": "mockup-graph-canvas",
@@ -21410,5 +21451,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "57a4bb621bf6d9a627dac6dfeb5448e253505c688ce01c5620569299f9792016"
+  "graphSha256": "4821b00ccd93e034ab7f71a53c5d00dac372befe91ddc8c415c12c020b4eece0"
 };

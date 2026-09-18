@@ -1,6 +1,6 @@
 ---
 id: mockup-first-use-accounts
-title: "First-use accounts — the New Session sheet and Configure dialog, with the state table Ruling 130 requires before any code"
+title: "First-use accounts — the New Session sheet and Configure dialog, blocked by an accessibility adversary"
 type: doc
 status: draft
 owner: "@timianmalloo"
@@ -87,6 +87,42 @@ Ruling 147(a) requires a **separate** UX & Accessibility instance in Adversary m
 to clear the veto against this gate output; the authoring lens does not clear its own
 work, and that clearance is not yet on disk.
 
+## BLOCKED — and this note was part of the reason
+
+**Ruling 147(a)'s adversary refused to clear this mockup.** Its verdict is NOT CLEARED, four Blockers,
+and the first one is about this note:
+
+> *A repo-wide search for the cell strings returns exactly one file: `first-use-accounts.html`.
+> Neither that file nor `first-use-accounts.md` contains a table. `first-use-accounts.md:93-96`
+> describes one … and "Owed" does not list it as owed — so the note asserts a filed artifact that does
+> not exist.*
+
+It was right. The lens authored the state table; the lens had no Write tool; the conductor extracted
+only §5 (this HTML) and then wrote a note whose own **title** claimed the table was filed. The
+deliverable existed solely inside a transcript for a day, and the note is what stopped anyone
+noticing. It is now recovered verbatim to `docs/design/first-use-account-states.md`.
+
+That is this session's own defect class, committed in its own prose: **an artifact asserting a fact
+nobody observed.** The same shape as the product sentence the whole investigation is about.
+
+The other three Blockers are the adversary's and stand against the design itself:
+
+| Blocker | What |
+|---|---|
+| Status announcement | One accessible-name trace for fourteen rows, and **no `role="status"` anywhere on the accounts surface** — which changes asynchronously. WCAG 4.1.3 fails. The design demonstrably knows the live-region pattern and applied it only to the Configure sheet. |
+| The mixed footer | *"No account is signed in for github, google or xai"* — where google is **not installed** and xai is **not launchable**. It reports the *ready* axis for two rows whose blocking axis is *install*, which is structurally the sentence Ruling 130 was filed against. |
+| The operator's own cell | Ruling 130 names the string *"installed — sign in"*. The mockup renders *"installed — not set up here"* with a **Set up…** button behind which sit four gestures, including a required free-text label. The departure from a ruling's named string has **no rationale on disk**. |
+
+Majors worth carrying: `.why code` runs 11px on 59-character file paths, leaning on the *detector's*
+`code` exemption to override the *design system's* rule — two different instruments, and the artifact
+leaned on the looser one. And enabled-vs-disabled is conveyed by text colour alone, identically in
+the high-contrast theme.
+
+What the adversary confirmed is genuinely right, computed by hand rather than trusted: contrast passes
+in both themes at every pairing; colour is the third signal behind glyph and word; reduced motion is
+respected; the loading state is shaped like the row it replaces; and the *"couldn't check"* state
+degrades to "not recorded" rather than to a plausible wrong claim — *"the best thing in the file."*
+
 ## What this is for
 
 Stream Y (the Sessions repairs) cannot start phases 1–4 until the state table and the exact cell
@@ -104,6 +140,8 @@ resolved here.
 ## Owed
 
 - The rubric critique and ranked plan as a committed `docs/reviews/` artifact — the lens produced both
-  and could not write them.
+  and could not write them. **The same failure that lost the state table**; whoever writes them should
+  extract from the transcript rather than summarise.
+- The four Blockers above, each with a cheap clearing condition the adversary names.
 - A second pass by a reviewer who is not the author: the lens states explicitly that it does not clear
   its own accessibility veto.
