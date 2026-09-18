@@ -1,7 +1,7 @@
 ---
 id: review-ui-explore-graph-and-tree
 title: "UI review — the Explore/Architecture right-side views: the graph is confidently wrong before it is small, and the Tree the operator asked for is 80% already built"
-type: review
+type: doc
 status: accepted
 owner: "@timianmalloo"
 phase: "conductor-watch-0915"

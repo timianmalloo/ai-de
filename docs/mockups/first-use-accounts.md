@@ -1,7 +1,7 @@
 ---
 id: mockup-first-use-accounts
 title: "First-use accounts — the New Session sheet and Configure dialog, with the state table Ruling 130 requires before any code"
-type: mockup
+type: doc
 status: draft
 owner: "@timianmalloo"
 phase: "conductor-watch-0915"

@@ -2231,7 +2231,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "46c2dc197d63a0829f2ef9e48a307ddf4f75996c0430b44ed21a597da9f194ff"
+      "sourceSha256": "94ba0d0ddbc3b018c2c067cf8c7a2dae1f659673351532ff8682a70ecef20955"
     },
     {
       "id": "api-aide-core-facts",
@@ -2418,7 +2418,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Projections: 61 types, 77 members, 62% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Projections: 62 types, 86 members, 65% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -2431,7 +2431,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "294f78c6f5ba02abbd38deb395713be63f7065b0383af508f9be1939f04c691d"
+      "sourceSha256": "6d5a9682c181596f77cd5c434de0f9ed76afbf46194d3a4ed54d2ddf9cd9beaa"
     },
     {
       "id": "api-aide-core-promptcompilation",
@@ -6890,7 +6890,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3766b1af9dd680b874988ee28f0a57eaf9b3d0e179279e0df8e2b2a4205bdb90"
+      "sourceSha256": "e3328747be62a2a9270c3b16e7c99350ad2a8a4875d6aaab791b5117e65dc63b"
     },
     {
       "id": "note-understanding-views-n10-patterns",
@@ -10245,6 +10245,49 @@ window.DOCS_INDEX = {
       "sourceSha256": "c571f814ec5e7af24935f32fb241ea3f06992a1822094380b1613043b37b438b"
     },
     {
+      "id": "mockup-explore-graph-and-tree",
+      "path": "docs/mockups/explore-graph-and-tree.md",
+      "title": "Explore: Graph and Tree as peer views — the operator's two clean-machine issues, designed against the fixes already ruled",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "conductor-watch-0915",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "The Explore pane with Graph and Tree as peer tabs over one selection, per Ruling 140's amendment to Ruling 94. Renders the fixes already ruled rather than the surface as it ships: a flex-remainder stage instead of a fixed height, provenance on every edge in dash and glyph and word, chips reading drawn-of-declared, and a bounded-result banner that names nodes rather than edges. Craft gate exit 0 with one advisory Minor.",
+      "tags": [
+        "ui-design",
+        "explore",
+        "graph-canvas",
+        "solution-tree",
+        "provenance",
+        "wcag",
+        "ruling-140",
+        "ruling-141",
+        "dc-230"
+      ],
+      "links": [
+        {
+          "to": "review-ui-explore-graph-and-tree",
+          "rel": "refines"
+        },
+        {
+          "to": "inv-0014-the-graph-stage-is-capped-and-typescript-provenance-is-a-scope-id",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-first-use-accounts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f17822ae41edcafb6f9016e3c47b9449936978beac797830de59b001b1a3e9cc"
+    },
+    {
       "id": "mockup-facelift-elevate",
       "path": "docs/mockups/facelift-elevate.md",
       "title": "Facelift elevate proposals — visualization",
@@ -10275,6 +10318,48 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "972566ded69ae803c0c7d0db809c589dc7e8c8dca6ce4594ccd2bbe0b3ae500b"
+    },
+    {
+      "id": "mockup-first-use-accounts",
+      "path": "docs/mockups/first-use-accounts.md",
+      "title": "First-use accounts — the New Session sheet and Configure dialog, with the state table Ruling 130 requires before any code",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "conductor-watch-0915",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "The UX & Accessibility lens's state table, exact copy and mockup for the New Session accounts block and the Configure sheet, authored under /ui-design elevate to discharge Ruling 130's condition that the lens rules the copy before any code is written. The mockup renders nine scenarios with a review harness. The craft gate now exits 0 with six advisory Minors: Ruling 147 found that the two tiny-text Blockers were this file applying the 11px keystroke-label token to running text, not a conflict in the design system as the conductor first reported. Not approved — a separate accessibility adversary still owes the clearance.",
+      "tags": [
+        "ui-design",
+        "first-use",
+        "accounts",
+        "engine-catalog",
+        "wcag",
+        "ruling-130",
+        "ruling-134",
+        "dc-228"
+      ],
+      "links": [
+        {
+          "to": "inv-0013-the-sheet-asks-the-config-not-the-machine",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "review-ui-explore-graph-and-tree",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d11261276149cf86568e6f154b9328c750e32f83d31f51aeb3c82409847ff866"
     },
     {
       "id": "mockup-graph-canvas",
@@ -12000,6 +12085,49 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "fd6b4c07e2846f67caa6bda77ac88bb1c17067770990b372966d73c5abb417c4"
+    },
+    {
+      "id": "review-ui-explore-graph-and-tree",
+      "path": "docs/reviews/ui-explore-graph-and-tree.md",
+      "title": "UI review — the Explore/Architecture right-side views: the graph is confidently wrong before it is small, and the Tree the operator asked for is 80% already built",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-watch-0915",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "The KG-visualization UX lens reviewed the Explore/Architecture right-side views against the operator's two clean-machine issues. It found the container defect INV-0014 measured is not the worst problem on the surface: every non-join edge is rendered without its provenance while the status is already on the wire, the layout pins node position to ordinal so a one-node change re-scatters the view, the force pass runs exactly one iteration at the default size, and two counters on screen report numbers that are false. The Tree the operator asked for already exists as SolutionTreeSurface and needs placement and a selection seam, not a build.",
+      "tags": [
+        "ui-design",
+        "explore",
+        "graph-canvas",
+        "solution-tree",
+        "provenance",
+        "accessibility",
+        "clean-machine",
+        "ruling-94",
+        "ruling-132"
+      ],
+      "links": [
+        {
+          "to": "inv-0014-the-graph-stage-is-capped-and-typescript-provenance-is-a-scope-id",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "25db83bb4f12e216f01b409512e4772b8d5ba6f8baf8bebb2025e9695c341a93"
     },
     {
       "id": "review-ui-facelift",
@@ -21087,14 +21215,16 @@ window.DOCS_INDEX = {
       "path": "docs/mockups/explore-graph-and-tree.html",
       "title": "AI-DE — Explore: Graph and Tree",
       "kind": "knowledge-tool",
-      "description": "Open an interactive knowledge artifact."
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-explore-graph-and-tree"
     },
     {
       "id": "surface-mockups-first-use-accounts",
       "path": "docs/mockups/first-use-accounts.html",
       "title": "AI-DE — first-use accounts mockup",
       "kind": "knowledge-tool",
-      "description": "Open an interactive knowledge artifact."
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-first-use-accounts"
     },
     {
       "id": "surface-mockups-solution-tree",
@@ -21217,5 +21347,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d210c57b76aae9ae4eacbf7d22e067b461a6ea1e6b43f98aab5b4fe1cfe57828"
+  "graphSha256": "c92e9ca3764c9d4ae093f7259ea9a5e566841e0cb5ac05922038d193d66e1db0"
 };

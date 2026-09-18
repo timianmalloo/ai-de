@@ -1,7 +1,7 @@
 ---
 id: mockup-explore-graph-and-tree
 title: "Explore: Graph and Tree as peer views — the operator's two clean-machine issues, designed against the fixes already ruled"
-type: mockup
+type: doc
 status: draft
 owner: "@timianmalloo"
 phase: "conductor-watch-0915"
