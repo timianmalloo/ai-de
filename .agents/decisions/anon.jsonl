@@ -129,3 +129,4 @@
 {"agent": "anon", "at": 1789240933.9883525, "code": "COORD-NOT-CHECKED-IDENTITY", "kind": "not_checked", "path": "docs/lessons/defect-classes.md", "session": "anon", "wi": ""}
 {"agent": "anon", "at": 1789580280.013657, "code": "COORD-NOT-CHECKED-IDENTITY", "kind": "not_checked", "path": "docs/proof/codex-d1-r4-consumer-review.md", "session": "anon", "wi": ""}
 {"agent": "anon", "at": 1789592618.1313648, "code": "COORD-NOT-CHECKED-IDENTITY", "kind": "not_checked", "path": "docs/lessons/defect-classes.md", "session": "anon", "wi": ""}
+{"agent": "anon", "at": 1789663125.226028, "code": "COORD-NOT-CHECKED-IDENTITY", "kind": "not_checked", "path": "src/AiDe.App/Workbench/CanvasPage.cs", "session": "anon", "wi": ""}

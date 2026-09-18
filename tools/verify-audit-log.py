@@ -19,12 +19,23 @@ This checks, for each log:
   2. no id present in the committed version has DISAPPEARED
   3. ids parse as <prefix>-<number> or <prefix>-<ULID> (the pack rev-59 allocator)
   4. every line is valid JSON with an id at all
+  5. a log git TRACKS has not gone missing from the working tree
+  6. every line that decodes is a JSON OBJECT, and the scan continues past one that is not
 
 (1) is the class. (2) is the hole (1) left, and it cost a real entry: resolving a merge by unioning
 keyed on id silently dropped one side, and THIS GATE STAYED GREEN — because uniqueness was satisfied
 precisely by the removal. A control that only counts duplicates cannot see a deletion, and an
 append-only log has no legitimate reason to shrink (DC-026). The rest are cheap neighbours worth
 having while the file is open.
+
+(5) and (6) are the two findings Codex made while giving this file its --self-test and correctly kept
+out of that scope; the Owner admitted them as policy in Ruling 125 (iii). They are the same defect at
+two scales. (2) refuses the loss of a LINE from a committed log; until (5) the loss of the whole FILE
+read as "OK", because absence was accepted without asking whether git was tracking it — so the one
+state where every entry is gone was the one state the gate called clean. (6) is the shape guard (2)
+and (4) both assumed: a line may be valid JSON and still not be a record, and `[1, 2, 3]` reached
+`entry.get` and took the whole scan down with an AttributeError — one stray paste hiding every
+finding after it, including a duplicate id.
 
 Usage
   python tools/verify-audit-log.py                     check the committed logs
@@ -71,6 +82,17 @@ DEFAULT_LOGS = [
 # a checker.
 ID = re.compile(r"^([a-z]+)-(\d+|[0-9A-HJKMNP-TV-Z]{26})$")
 
+# The remedy for a line that decodes and is still not a record. Named here rather than written inline
+# so the refusal reads the same wherever it is raised, and so the mutation table has ONE append to
+# disable when it proves this guard can fail.
+NOT_AN_OBJECT = (
+    "a JSONL log is one JSON OBJECT per line. A bare array, string or number decodes cleanly and "
+    "then reaches entry.get, which raises AttributeError and takes the whole scan down instead of "
+    "reporting one line. Re-write it as an object carrying an id, or delete it if it was a stray "
+    "paste — the scan CONTINUES past this line, so any further finding in this file is reported in "
+    "the same run."
+)
+
 # Windows consoles default to cp1252 and cannot encode the glyphs below.
 for _stream in (sys.stdout, sys.stderr):
     if hasattr(_stream, "reconfigure"):
@@ -109,6 +131,30 @@ def committed_ids(path: Path) -> set[str] | None:
     return found
 
 
+def is_tracked(path: Path) -> bool:
+    """Does git have this path in the index?
+
+    The question the absence branch below never asked. `git ls-files` is the only thing that can
+    tell an optional log that has never existed from a committed log that has DISAPPEARED, and the
+    two deserve opposite answers: the first is how a young project looks, the second is the entire
+    file's worth of the deletion this gate already refuses line by line.
+
+    A path outside the repository, or no git at all, is reported untracked — the same fail-soft as
+    `committed_ids`: a gate that cannot consult git degrades to the behaviour it had before this
+    check existed, and never to a confident finding it cannot support (IO12).
+    """
+    try:
+        # ABSOLUTE, because git runs below with cwd=REPO: a relative argument would be resolved
+        # against the repo root here and against the CALLER's cwd by path.exists(), so the two
+        # halves of this decision could be about two different files.
+        result = subprocess.run(["git", "ls-files", "--error-unmatch", "--", str(path.resolve())],
+                                cwd=REPO, capture_output=True, timeout=30, check=False)
+    except (OSError, subprocess.SubprocessError):
+        return False
+
+    return result.returncode == 0
+
+
 def check_no_entry_vanished(path: Path, present: set[str]) -> list[str]:
     """
     An append-only log may grow. It may not shrink.
@@ -134,6 +180,22 @@ def check_no_entry_vanished(path: Path, present: set[str]) -> list[str]:
 
 def check(path: Path) -> list[str]:
     if not path.exists():
+        # TRACKED AND ABSENT IS A FINDING (Ruling 125 (iii)). A committed log that is gone from the
+        # working tree is not an absence, it is a deletion — every entry it carried at HEAD is
+        # missing at once, which is check_no_entry_vanished's whole subject arriving as one file
+        # rather than one line. Before this branch that state printed "(absent)" and the gate exited
+        # 0, so the loudest possible version of DC-026 was the one reading it could not see.
+        if is_tracked(path):
+            print(f"{path.name:<24} (absent — TRACKED)")
+            return [
+                f"{path.name}: git tracks this log but it is absent from the working tree — every "
+                "id it carried at HEAD is missing at once (DC-026). Restore it in THIS tree "
+                f"(`git restore -- {_display(path)}`, or `git checkout -- {_display(path)}`) before "
+                "anything appends to a fresh one, and check no session has already written entries "
+                "into a replacement. If the log was retired deliberately, remove it from the index "
+                "in the same commit so it is untracked and this line reads (absent) again."
+            ]
+
         # A missing change log is normal early in a project; a missing audit log is not, but that is
         # the Audit Mandate's business rather than this gate's.
         print(f"{path.name:<24} (absent)")
@@ -149,6 +211,14 @@ def check(path: Path) -> list[str]:
             entry = json.loads(line)
         except json.JSONDecodeError as error:
             findings.append(f"{path.name}:{number}: not valid JSON — {error.msg}")
+            continue
+
+        # A SHAPE GUARD BEFORE entry.get. json.loads happily returns a list, a string or a
+        # number, none of which has .get — so without this the next line raises and the scan dies
+        # at the first stray paste, reporting nothing at all about a file that may also hold a
+        # duplicate id. Reported and CONTINUED, never raised: one bad line is one finding.
+        if not isinstance(entry, dict):
+            findings.append(f"{path.name}:{number}: not an object — {NOT_AN_OBJECT}")
             continue
 
         identifier = entry.get("id")
@@ -173,18 +243,26 @@ def check(path: Path) -> list[str]:
     findings.extend(check_no_entry_vanished(path, {
         str(json.loads(line).get("id"))
         for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip() and _parses(line)
+        if line.strip() and _is_record(line)
     }))
 
     return findings
 
 
-def _parses(line: str) -> bool:
+def _is_record(line: str) -> bool:
+    """Valid JSON AND an object. The second half is not decoration: this predicate guards a `.get`."""
     try:
-        json.loads(line)
-        return True
+        return isinstance(json.loads(line), dict)
     except json.JSONDecodeError:
         return False
+
+
+def _display(path: Path) -> str:
+    """The path as an operator would type it: repo-relative when it is inside the repo."""
+    try:
+        return path.resolve().relative_to(REPO).as_posix()
+    except ValueError:
+        return str(path)
 
 
 def main(argv: list[str]) -> int:
@@ -321,8 +399,13 @@ def _self_test(run_mutants: bool) -> int:
         baseline_audit = [{"id": "al-0001"}, {"id": ulid}]
         baseline_change = [{"id": "cl-0001"}]
         write_log(audit, baseline_audit)
-        write_log(change, baseline_change)
 
+        # The change log is deliberately NOT in the baseline commit. "A missing optional log is
+        # accepted" means precisely "a missing UNTRACKED log is accepted": once a TRACKED log that
+        # has gone missing is a finding, a fixture that commits the change log and then deletes it
+        # would be asserting the opposite of the policy it is meant to prove. Committing only the
+        # audit log gives the suite both shapes — one tracked log to delete (a finding) and one
+        # untracked log to delete (the "(absent)" line, unchanged).
         setup = [git(root, "init"), git(root, "add", "tools", "docs"),
                  git(root, "commit", "--no-gpg-sign", "-m", "fixture baseline")]
         setup_output = "".join(result.stdout + result.stderr for result in setup)
@@ -377,6 +460,20 @@ def _self_test(run_mutants: bool) -> int:
         observe("invalid id rejected", run_gate(root, str(audit)), 1,
                 ("id 'bad id' is neither <prefix>-<number> nor <prefix>-<ULID>",))
 
+        # A line that decodes to something that is not a record. The SECOND diagnostic is the point:
+        # the scan must CONTINUE past the bad line, so the invalid id on the following line is still
+        # reported. A guard that returned early would hide every finding after the first paste error.
+        write_log(audit, baseline_audit + ["[1, 2, 3]", {"id": "bad id"}])
+        observe("non-object line rejected", run_gate(root, str(audit)), 1,
+                ("audit-log.jsonl:3: not an object",
+                 "id 'bad id' is neither <prefix>-<number> nor <prefix>-<ULID>"))
+
+        # The tracked log has gone missing. Committed, then absent: the file that carries the work.
+        write_log(audit, None)
+        observe("tracked absent log rejected", run_gate(root, str(audit)), 1,
+                ("git tracks this log but it is absent from the working tree",
+                 "git restore -- docs/audit/audit-log.jsonl"))
+
     mutations = {
             "duplicate guard disabled": (
                 "duplicates = " + "{i: n for i, n in Counter(ids).items() if n > 1}",
@@ -399,6 +496,16 @@ def _self_test(run_mutants: bool) -> int:
                 "if not ID.match(" + "str(identifier)):",
                 "if False and not ID.match(" + "str(identifier)):",
                 "invalid id rejected"),
+            "tracked-absent guard disabled": (
+                "        if " + "is_tracked(path):",
+                "        if " + "False and is_tracked(path):",
+                "tracked absent log rejected"),
+            "non-object guard disabled": (
+                "            findings.append(" +
+                'f"{path.name}:{number}: not an object — {NOT_AN_OBJECT}")',
+                "            if False:\n                findings.append(" +
+                'f"{path.name}:{number}: not an object — {NOT_AN_OBJECT}")',
+                "non-object line rejected"),
             "normal CLI forced green": (
                 "    if findings:\n        print(\"verify-audit-log: FAILED\")",
                 "    if False and findings:\n        print(\"verify-audit-log: FAILED\")",

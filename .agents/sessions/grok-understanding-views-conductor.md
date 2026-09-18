@@ -5,6 +5,6 @@
 - Worktree: C:\Projects\ai-de-understanding-views-d1
 - Branch: understanding-views-d1
 - Status: D-1 admitted; handshake proposed, not frozen
-- Updated: 2026-09-17T12:15Z
-- Doing: Listing members as display rows (null node_id) e093dad0. r5 authorship frozen. Sequence dark. No GUI (UIA-PAIR-02).
-- Waiting on: YOU — admit mapping-implementation if Sequence should go live; 108 if D-1 should land on main; N4 spec review. Not waiting on Codex for listing.
+- Updated: 2026-09-17T19:15Z
+- Doing: Merged main e0 (R138 cap 1254). Clamped MaxRows. Truncation chrome already green. r7 NOTICE SENT. Sequence dark. No GUI.
+- Waiting on: Codex CONSUMER ACK AS WRITTEN: r7 blob 703264e39931f35ca15795b0a8e4fded1f2f41e1 (not you).

@@ -14,23 +14,97 @@
     "arguments (verify-test-run --no-run; verify-front-door-exit-evidence --self-test until the record lands)."
   ],
   "checks": [
-    ["python", "tools/verify-defect-register.py", "--fix-counts"],
-    ["python", "tools/verify-defect-register.py"]
+    [
+      "python",
+      "tools/verify-defect-register.py",
+      "--fix-counts"
+    ],
+    [
+      "python",
+      "tools/verify-defect-register.py"
+    ]
   ],
   "recount": [
-    ["python", "tools/verify-test-run.py", "--update"],
-    ["python", "tools/verify-test-run.py", "--update", "--only", "AiDe.Core.Tests", "--filter", "Platform!=Windows", "--key", "AiDe.Core.Tests.portable"],
-    ["python", "tools/verify-test-run.py", "--update", "--only", "AiDe.Core.Tests", "--filter", "Platform=Windows", "--key", "AiDe.Core.Tests.nonportable"],
-    ["python", "tools/verify-test-run.py", "--no-run"]
+    [
+      "python",
+      "tools/verify-test-run.py",
+      "--update"
+    ],
+    [
+      "python",
+      "tools/verify-test-run.py",
+      "--update",
+      "--only",
+      "AiDe.Core.Tests",
+      "--filter",
+      "Platform!=Windows",
+      "--key",
+      "AiDe.Core.Tests.portable"
+    ],
+    [
+      "python",
+      "tools/verify-test-run.py",
+      "--update",
+      "--only",
+      "AiDe.Core.Tests",
+      "--filter",
+      "Platform=Windows",
+      "--key",
+      "AiDe.Core.Tests.nonportable"
+    ],
+    [
+      "python",
+      "tools/verify-test-run.py",
+      "--no-run",
+      "--refuse-upward-drift",
+      "HEAD^1"
+    ],
+    [
+      "python",
+      "tools/verify-test-run.py",
+      "--no-run",
+      "--only",
+      "AiDe.Core.Tests",
+      "--key",
+      "AiDe.Core.Tests.portable",
+      "--refuse-upward-drift",
+      "HEAD^1"
+    ],
+    [
+      "python",
+      "tools/verify-test-run.py",
+      "--no-run",
+      "--only",
+      "AiDe.Core.Tests",
+      "--key",
+      "AiDe.Core.Tests.nonportable",
+      "--refuse-upward-drift",
+      "HEAD^1"
+    ]
   ],
   "regenerate": [
-    ["python", "tools/regenerate-derived.py"]
+    [
+      "python",
+      "tools/regenerate-derived.py"
+    ]
   ],
   "gates": [
-    ["python", "tools/run-verify-gates.py"]
+    [
+      "python",
+      "tools/run-verify-gates.py"
+    ]
   ],
   "build": [
-    ["dotnet", "build", "src/AiDe.App/AiDe.App.csproj", "-c", "Release", "-nologo", "-v", "q"]
+    [
+      "dotnet",
+      "build",
+      "src/AiDe.App/AiDe.App.csproj",
+      "-c",
+      "Release",
+      "-nologo",
+      "-v",
+      "q"
+    ]
   ],
   "push_remote": "origin",
   "trailer_file": "docs/coordination/commit-trailer.txt"

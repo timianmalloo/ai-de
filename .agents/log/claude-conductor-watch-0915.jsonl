@@ -32,3 +32,7 @@
 {"agent": "claude-conductor", "at": 1789503479.1244397, "kind": "release", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 32, "session": "claude-conductor-watch-0915", "wi": "WI-0"}
 {"agent": "claude-conductor", "at": 1789596517.4871237, "kind": "claim", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 33, "session": "claude-conductor-watch-0915", "ttl": 900.0, "wi": "rulings-122-126"}
 {"agent": "claude-conductor", "at": 1789597148.5800056, "kind": "release", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 34, "session": "claude-conductor-watch-0915", "wi": "WI-0"}
+{"agent": "claude-conductor", "at": 1789652607.5281165, "kind": "claim", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 35, "session": "claude-conductor-watch-0915", "ttl": 600.0, "wi": "rulings-127-131"}
+{"agent": "claude-conductor", "at": 1789652729.5113037, "kind": "release", "path": "docs/notes/addendum-c-council-rulings.md", "seq": 36, "session": "claude-conductor-watch-0915", "wi": "WI-0"}
+{"agent": "claude-conductor", "at": 1789652870.690732, "kind": "claim", "path": "docs/lessons/defect-classes.md", "seq": 37, "session": "claude-conductor-watch-0915", "ttl": 900.0, "wi": "classes-226-230"}
+{"agent": "claude-conductor", "at": 1789653065.94585, "kind": "release", "path": "docs/lessons/defect-classes.md", "seq": 38, "session": "claude-conductor-watch-0915", "wi": "WI-0"}
