@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-18T19:47:30Z",
+  "generated": "2026-09-18T19:53:41Z",
   "audit": [
     {
       "actor": null,
@@ -20790,6 +20790,41 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-18T19:22:02Z",
       "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2V19J6D5PFZVEADASW69P7P",
+      "shortname": "join-main-green",
+      "datetime": "2026-09-18T19:53:30Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "keep going",
+      "summary": "MAIN IS GREEN. CI run 35379686294 at b82862c5: core-tests SUCCESS, gates SUCCESS, build SUCCESS - all\nthree jobs, no expected-failing set required. main had been red since 2026-09-12.\n\nWhat closed it, in order:\n\n  the frame bound   EntryPointsAsync built a response 2.09x the transport frame, so the operation\n                    could not be answered over the wire at all. The row ceiling is derived from the\n                    frame test's own measured bytes - 730.78 B per hostile row against\n                    MaxResponseBytes 917,504, largest cap that fits = 1,254 - and MaxFrameBytes was\n                    not touched. Ruling 138's own arithmetic was wrong (it assumed 5,000 rows at 438\n                    B/row when the fixture builds 3,001 and the cap never bound); the ruling's\n                    instruction to DERIVE rather than pick is what caught its own premise.\n  the clamp         EntryPoints was the only bounded projection that did not clamp the caller's\n                    value, so 1,254 bounded the App and bounded nothing for an MCP caller. The frame\n                    test now invokes every operation at int.MaxValue, because invoking at the DEFAULT\n                    - which is what it did - proved the defaults fit and proved no clamp existed\n                    anywhere.\n  the two App reds  MutedBrush was one word from the declared key with 26 of 26 siblings correct, so\n                    that chrome line had been unthemed in every build, invisibly. And\n                    EntryPointsResult.Disclosures was rendered off OmittedByCap, a counter that\n                    merely correlates, so a disclosure the cap did not raise was dropped with no\n                    trace. Neither was silenced; the second was entered in `covered`, not `Allowed`.\n  the floor         --update lowered a floor silently and the join ran it three times before its own\n                    check, so the floor was re-set by whichever machine joined. Now refused without\n                    --allow-lower <reason>, which the join never passes. The floor moved from\n                    `executed` to `total` because executed varies by environment and total does not -\n                    measured, CI against local, on every key.\n\nTHE RECEIPT THIS ENTRY IS. Ruling 127(iv) requires the landed SHA's CI run id and result, and \"not\nrecorded\" keeps the join open. Yesterday I filed the D-1 landing as a 127(iv) breach for having no\nclosing entry at all, and then wrote one of my own that named the wrong failing step. This one is\nwritten against GitHub's job record rather than against a test summary.\n\nThe CI queue was blocked for roughly two hours BY ME: pushing 101 branches to preserve work that\nexisted nowhere else triggered a workflow run on each, 39 of them occupying the runners and starving\nthis very run. The preservation was right and the trigger cost was not priced. Cancelled the 39 on the\npreserved branches, spared main, and this run started immediately. A bulk preservation push is an\noutward-facing action; the shape that avoids it is pushing with CI suppressed or in batches.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/EntryPointsProjection.cs",
+        "tools/verify-test-run.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Close main's red for the first time since 2026-09-12 and record the CI result as Ruling 127(iv) requires",
+      "done_when": "CI at the landed SHA reports success on every job, cited by run id from GitHub's own job record",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-18T00:26:39Z",
+      "duration_seconds": 70011.0,
+      "git": {
+        "sha": "e398c1e4caae72804dbcfc7d28621f1c793a6dda",
+        "short": "e398c1e4c",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [
