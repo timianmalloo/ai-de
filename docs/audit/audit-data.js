@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-18T18:04:09Z",
+  "generated": "2026-09-18T18:17:52Z",
   "audit": [
     {
       "actor": null,
@@ -20536,6 +20536,41 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M2TVSHY3F7BR9A5GFBXH27F7",
+      "shortname": "conserve-atlas-audit-records",
+      "datetime": "2026-09-18T18:17:23Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "we should reset and re-base on outstanding tasks, clean up work trees and get to a common known good before federating work out further",
+      "summary": "CAPTURE SUPERSEDE for al-01M2P5Z1CX15WPDS1F1ZZZPFT3, which it does not replace and does not judge.\n\nThat entry arrived on main with 53306e9e, the conservation of seven Atlas audit records from a Codex\nsession the operator stood down. It is episode-shaped and carries a goal, an outcome and named\nartifacts - but no `signals` object, and its artifacts sit under `artifacts/` rather than `docs/proof/`,\nso verify-audit-capture scores it Not Scored for want of a verification path and the gate fails.\n\nI turned that gate red by landing the conservation, so it is mine to clear - but NOT by editing a\npreserved record. Codex's own wind-down request was explicit that journal history must not be\ndiscarded, and rewriting someone else's receipt to satisfy a gate is precisely the muting this\nregister exists to prevent. The gate's own rule admits the honest path instead: an entry is compliant\nif a LATER, fully compliant entry supersedes it. This is that entry.\n\nWHAT I CAN ATTEST, and nothing beyond it: the conservation itself. Twelve files landed, docs only,\nzero behind main, carrying seven audit rows and a manifest verifier with its fixture. The authoring\nsession reported it VERIFIED at 53306e9e (req-01M2S2P2THHNBJ81YN) before it ended. I re-ran nothing\nof theirs and re-derived nothing.\n\nWHAT I CANNOT ATTEST: whether the original run's verification actually executed. Its goal was \"Prove\nlive and completed direct-file capture without changing the staged candidate\" and it names evidence\nfiles, so a verification path plainly existed - but the session that ran it has ended, its signals\nwere never captured at the time, and they cannot be reconstructed now without asserting something I\ndid not observe. The signals on THIS entry are mine, about the conservation, and they are not a\nrestatement of theirs.\n\nThe lesson is the gate's own: silence is not capture. A run that records its goal and its artifacts\nbut not its signals cannot be scored afterwards by anyone, including the session that ran it - and\nthis one closed before anybody noticed. The cost lands on whoever inherits the workstream.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-audit-preservation.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Conserve a wound-down session's audit records on main without rewriting them, and clear the capture gate I turned red by landing them",
+      "done_when": "the seven records are on main unaltered; verify-audit-capture exits 0; no preserved entry is edited",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-18T01:00:31Z",
+      "duration_seconds": 62212.0,
+      "supersedes": "al-01M2P5Z1CX15WPDS1F1ZZZPFT3",
+      "git": {
+        "sha": "48483dc56fe2754d7225d4f9b74453f572cb2fb1",
+        "short": "48483dc56",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [
