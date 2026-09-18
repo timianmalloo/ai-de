@@ -213,3 +213,7 @@
 {"agent": "grok-understanding-views-conductor", "at": 1789691424.431937, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/EntryPointsSurfaceTests.cs", "session": "grok-understanding-views-conductor", "wi": ""}
 {"agent": "grok-understanding-views-conductor", "at": 1789693265.207196, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "grok-understanding-views-conductor", "wi": ""}
 {"agent": "grok-understanding-views-conductor", "at": 1789693265.2287269, "code": null, "kind": "allowed", "path": "docs/notes/d1-r7-producer-ack.md", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789754662.8802004, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789754662.9012723, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789754662.9228806, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789754662.9434006, "code": null, "kind": "allowed", "path": "docs/notes/understanding-views-d1-session-stop.md", "session": "grok-understanding-views-conductor", "wi": ""}

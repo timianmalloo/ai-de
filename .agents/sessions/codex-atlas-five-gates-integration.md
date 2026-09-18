@@ -1,5 +1,15 @@
 # Codex Atlas five-gate integration
 
+## TERMINAL RECEIPT — user STOP completed, 2026-09-18
+
+- ENDED. No active product worker or pending Owner turn. The bounded shutdown safety reviewer has completed; no further Codex implementation, reviews, joins or cleanup writes are scheduled.
+- Shutdown checkpoint: 9dd44b50305b0f8fe3e7bdb386fedbf6f0d37a4f, pushed to origin/docs/atlas-audit-preservation with equal remote OID. C:/Projects/ai-de-docs-atlas-audit-preservation is clean, no staged or untracked changes; codex-atlas-shutdown session ended and exact leases released. Retain this worktree for the administrative handoff.
+- TODOs: docs/plans/atlas-session-shutdown.md. Evidence: docs/proof/atlas-session-shutdown.md. R124 a63de46c personal proof/publication and E2 39de7428 formal D&P conditions remain; source work does not resume automatically.
+- Main advanced to remote-verified 48483dc5, including conservation merge9fb249ff and tracked-journal test fix52462b64. No new CI result or full product qualification is inferred. Original physical-tree rescue remains a publisher disposition.
+- Six exact Codex cleanup candidates independently CLEAR after all41 protected ignored files (16485364bytes) were archived and hash-verified. Archive: C:/Projects/ai-de-session-evidence/2026-09-18-codex-shutdown/manifest.json, SHA256500a1e0e3643feb01d24a36f51953efd11300466a14c32ee7b1f1f54c272106c. Independent receipts are beside it. No original/evidence deletion was performed by Codex.
+- GHCP fleet wind-down owns actual fresh-check cleanup and final primary journal conservation, per TTPDS and explicit transfer TTRVV. No competing deletion. Peer/unmerged/raw-evidence trees remain held; no force/stash/reset/discard.
+- Final coordination receipt resolves req-01M2TTPDSDPTJJQX4WK77CGB2P. After that receipt Codex makes no further repository writes, allowing the serialized publisher to close main cleanly. Main clean status must be observed, not inferred from this END.
+
 ## User-requested shutdown — 2026-09-18
 
 - Product work is STOPPED. Pending Owner turn interrupted; all other programme workers were already completed. No native, source or implementation work will resume in this session.
