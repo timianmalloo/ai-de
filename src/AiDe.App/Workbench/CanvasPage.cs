@@ -30,7 +30,12 @@ internal static class CanvasPage
         <head><meta charset="utf-8"><title>Graph canvas</title>
         <style>
           :root { color-scheme: dark; }
-          body { font: 14px system-ui, sans-serif; margin: 0; padding: 12px 16px; background: #12151A; color: #E4E9EF; }
+          /* The page fills the pane, so the stage below can be the remainder rather than a fixed
+             extent (DC-230). The same full-height chain composer.html:28 already uses; border-box
+             keeps the body's own 12/16 padding inside the viewport instead of overflowing it. */
+          html, body { height: 100%; }
+          body { font: 14px system-ui, sans-serif; margin: 0; padding: 12px 16px; background: #12151A; color: #E4E9EF;
+                 box-sizing: border-box; display: flex; flex-direction: column; }
           header { display: flex; align-items: baseline; gap: 12px; }
           h1 { font-size: 15px; margin: 0; }
           button.chrome { font: inherit; background: #1A1F26; color: #E4E9EF; border: 1px solid #2A313B;
@@ -62,7 +67,17 @@ internal static class CanvasPage
           #warn summary::before { content: '\25B8'; display: inline-block; margin-right: 5px; font-size: 11px; transition: transform .12s ease; }
           #warn[open] summary::before { transform: rotate(90deg); }
           #warndetail { color: #B99A5E; font-size: 12.5px; margin: 4px 0 0 16px; line-height: 1.45; }
-          #stage { position: relative; height: 440px; margin-top: 10px; border-radius: 10px;
+          /* The stage is the pane's primary content and takes what the column above it has left.
+             A fixed 440px gave the operator a 1624x437 stage inside a 1661x2002 pane — 21.8% of the
+             height, ~72 px2 per drawn node (DC-230 instance A, INV-0014 s1). Measured after this
+             change, stage against page viewport in CSS px: 2011/2160 at a 3840x2160 dock (440/2160
+             before), 696/863 at the 1440x900 startup size, 315/519 stacked at 720x900. The chrome
+             above and below measures 149-204px depending on width; the stage is the rest.
+             THE FLOOR IS 0 AND THAT IS THE MEASURED VALUE (Ruling 133(b)). 240px was measured
+             putting a 240px stage inside a 200px pane at the stacked row's own MinHeight
+             (ExplorerSurface.cs:198), forcing a scrollbar; no positive floor fits there, because the
+             chrome alone already exceeds that pane. Same idiom as composer.html:41. */
+          #stage { position: relative; flex: 1 1 auto; min-height: 0; margin-top: 10px; border-radius: 10px;
                    background: #0D1014; overflow: hidden; }
           #stage.grab { cursor: grab; }
           #stage.grabbing { cursor: grabbing; }
