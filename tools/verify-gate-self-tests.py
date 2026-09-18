@@ -174,9 +174,180 @@ def plant_test_run_fixture(root: Path, sandbox: Path, trx: str, baseline: dict) 
     return tool
 
 
-def write_fixture_baseline(sandbox: Path, baseline: dict) -> None:
+def write_fixture_baseline(sandbox: Path, baseline: dict, skips: list[str] | None = None) -> None:
     (sandbox / "tools" / "expected-test-counts.json").write_bytes(
-        (json.dumps({"minimumExecuted": baseline, "splits": {}}, indent=2) + "\n").encode("utf-8"))
+        (json.dumps({"minimumTotal": baseline, "expectedSkips": skips or [], "splits": {}},
+                    indent=2) + "\n").encode("utf-8"))
+
+
+def git_fixture(root: Path, sandbox: Path, trx: str, baseline: dict,
+                skips: list[str] | None = None) -> Path:
+    """plant_test_run_fixture, then COMMIT it — for the checks that compare against HEAD.
+
+    `--update`'s refusal to lower reads the baseline as git has it, not as the working tree has it,
+    so a fixture that is never committed cannot exercise it: an uncommitted baseline has no
+    committed value to be below.
+    """
+    sandbox.mkdir(parents=True, exist_ok=True)
+    tool = plant_test_run_fixture(root, sandbox, trx, baseline)
+    write_fixture_baseline(sandbox, baseline, skips)
+    for command in (("init", "-q", "-b", "main"),
+                    ("config", "user.email", "gate@example.invalid"),
+                    ("config", "user.name", "gate"),
+                    ("add", "-A"),
+                    ("commit", "-qm", "the committed baseline")):
+        done = _run(["git", *command], sandbox)
+        if done.returncode != 0:
+            raise RuntimeError(f"fixture setup: git {' '.join(command)} exited "
+                               f"{done.returncode}: {done.stdout}{done.stderr}")
+    return tool
+
+
+def baseline_value(sandbox: Path, key: str) -> int | None:
+    document = json.loads(
+        (sandbox / "tools" / "expected-test-counts.json").read_text(encoding="utf-8"))
+    return document.get("minimumTotal", {}).get(key)
+
+
+def test_run_refuses_a_lowered_baseline(root: Path) -> list[str]:
+    """DIRECTION 5: `--update` may not write a key BELOW its committed value unsaid.
+
+    The defect, measured 2026-09-17: `--update` merged `observed` over the baseline with no
+    comparison at all, and the join runs it three times before the check. Whichever machine joined
+    last silently re-set the floor to its own run — so a control meant to detect a silently-aborted
+    test run quietly gave away its margin, and the baseline sat 8 Core and 2 App tests below reality
+    with nothing firing.
+    """
+    problems: list[str] = []
+    with tempfile.TemporaryDirectory() as tmp:
+        sandbox = Path(tmp) / "repo"
+        trx = TRX.format(results="", outcome="Completed", total=8, executed=8, passed=8, failed=0)
+        tool = git_fixture(root, sandbox, trx, {"Fixture.Tests": 10})
+
+        refused = _run([sys.executable, str(tool), "--update", "--no-run"], sandbox)
+        output = refused.stdout + refused.stderr
+        if refused.returncode != 1:
+            problems.append(
+                f"--update wrote a key from 10 down to 8 and exited {refused.returncode}, not 1 — "
+                f"the silent re-baseline is exactly the defect:\n{output}")
+        for token in ("Fixture.Tests", "10", "8", "--allow-lower"):
+            if token not in output:
+                problems.append(
+                    f"the refusal did not print '{token}'. A refusal that does not name the key, "
+                    f"its old value and its new value cannot be acted on:\n{output}")
+        if baseline_value(sandbox, "Fixture.Tests") != 10:
+            problems.append("the baseline was REWRITTEN by a run that refused — a refusal that "
+                            "still writes is not a refusal")
+
+        # An empty reason is not a reason. `--allow-lower ""` would otherwise satisfy the flag
+        # while recording nothing, which is the flag existing and the control not.
+        empty = _run([sys.executable, str(tool), "--update", "--no-run", "--allow-lower", ""],
+                     sandbox)
+        if empty.returncode != 1:
+            problems.append(
+                f"--allow-lower with an EMPTY reason exited {empty.returncode}, not 1:\n"
+                f"{empty.stdout}{empty.stderr}")
+
+        # The other half of the ratchet. A refusal that can never be satisfied is a wall, and the
+        # legitimate case — tests genuinely removed — has to have a way through that is written down.
+        allowed = _run([sys.executable, str(tool), "--update", "--no-run",
+                        "--allow-lower", "two tests were deleted in this candidate"], sandbox)
+        if allowed.returncode != 0:
+            problems.append(
+                f"--allow-lower with a reason was still refused (exit {allowed.returncode}):\n"
+                f"{allowed.stdout}{allowed.stderr}")
+        elif baseline_value(sandbox, "Fixture.Tests") != 8:
+            problems.append(
+                f"--allow-lower was accepted but the baseline is "
+                f"{baseline_value(sandbox, 'Fixture.Tests')}, not the observed 8")
+    return problems
+
+
+def test_run_floors_on_total_not_executed(root: Path) -> list[str]:
+    """DIRECTION 6: the floor is `total`, which does not vary by operating system.
+
+    MEASURED on CI run 35228503081's own .trx artefacts against local runs at the same tree:
+    `total` is equal on every key (App 1053, portable 2575, nonportable 181) while `executed`
+    differs on two — CI's nonportable run executes 177 of 181 and local executes 181 of 181. The
+    delta is exactly the dynamically-skipped tests, which a .trx records as NotExecuted: INSIDE
+    total, OUTSIDE executed. A crashed host writes fewer results, so `total` still drops on the
+    DC-012 shape it exists to catch. Flooring on `executed` put two keys above anything CI could
+    produce; flooring on `total` is both stronger and meetable everywhere.
+    """
+    problems: list[str] = []
+    skipped = "Fixture.Tests.DynamicallySkipped"
+    with tempfile.TemporaryDirectory() as tmp:
+        sandbox = Path(tmp) / "repo"
+        # The CI shape: four of ten did not execute, all of them named in the committed list.
+        results = "".join(
+            TRX_RESULT.format(name=f"{skipped}{n}", outcome="NotExecuted", message="skipped")
+            for n in range(4))
+        trx = TRX.format(results=results, outcome="Completed",
+                         total=10, executed=6, passed=6, failed=0)
+        tool = git_fixture(root, sandbox, trx, {"Fixture.Tests": 10},
+                           skips=[f"{skipped}{n}" for n in range(4)])
+
+        met = _run([sys.executable, str(tool), "--no-run"], sandbox)
+        if met.returncode != 0:
+            problems.append(
+                f"total 10 against a floor of 10, with executed 6, exited {met.returncode} — the "
+                f"floor is still reading `executed`, which no CI run of this shape can meet:\n"
+                f"{met.stdout}{met.stderr}")
+
+        # And it still catches the thing it exists for: a host that died writes fewer RESULTS, so
+        # total itself drops.
+        (sandbox / "artifacts" / "test-results" / "Fixture.Tests.trx").write_bytes(
+            TRX.format(results="", outcome="Completed",
+                       total=9, executed=9, passed=9, failed=0).encode("utf-8"))
+        short = _run([sys.executable, str(tool), "--no-run"], sandbox)
+        output = short.stdout + short.stderr
+        if short.returncode != 1 or "missing from the results" not in output:
+            problems.append(
+                f"total 9 against a floor of 10 exited {short.returncode} and was not reported as "
+                f"a shortfall:\n{output}")
+    return problems
+
+
+def test_run_refuses_an_uncommitted_skip(root: Path) -> list[str]:
+    """DIRECTION 7: every NotExecuted name must appear in the committed expectedSkips list.
+
+    THE CHECK THE DOCSTRING ALREADY CLAIMED. verify-test-run.py's own list of what it checks said
+    "no test was skipped unexpectedly" at :16 and the code performed no such check — a control
+    documented and not built, which reads to a reviewer exactly like one that works. It is also what
+    makes the move to `total` safe: `total >= floor` alone would pass a run that skipped a hundred
+    tests dynamically. `total >= floor` PLUS `NotExecuted subset of expectedSkips` is strictly
+    stronger than the `executed >= floor` it replaces.
+    """
+    problems: list[str] = []
+    known = "Fixture.Tests.SkippedOnPurpose"
+    surprise = "Fixture.Tests.SkippedWithNobodyWatching"
+    with tempfile.TemporaryDirectory() as tmp:
+        sandbox = Path(tmp) / "repo"
+        results = (TRX_RESULT.format(name=known, outcome="NotExecuted", message="by design")
+                   + TRX_RESULT.format(name=surprise, outcome="NotExecuted", message="who knows"))
+        trx = TRX.format(results=results, outcome="Completed",
+                         total=10, executed=8, passed=8, failed=0)
+        tool = git_fixture(root, sandbox, trx, {"Fixture.Tests": 10}, skips=[known])
+
+        refused = _run([sys.executable, str(tool), "--no-run"], sandbox)
+        output = refused.stdout + refused.stderr
+        if refused.returncode != 1:
+            problems.append(
+                f"a NotExecuted result absent from expectedSkips exited {refused.returncode}, "
+                f"not 1:\n{output}")
+        if surprise not in output:
+            problems.append(f"the unlisted skip was not NAMED:\n{output}")
+        if refused.returncode == 1 and output.count(known) and "expectedSkips" not in output:
+            problems.append(f"the finding did not say which list the name is missing from:\n{output}")
+
+        # The other half: a skip that IS on the list is not news.
+        write_fixture_baseline(sandbox, {"Fixture.Tests": 10}, skips=[known, surprise])
+        accepted = _run([sys.executable, str(tool), "--no-run"], sandbox)
+        if accepted.returncode != 0:
+            problems.append(
+                f"both skips were committed to expectedSkips and the run was still refused "
+                f"(exit {accepted.returncode}):\n{accepted.stdout}{accepted.stderr}")
+    return problems
 
 
 def test_run_names_its_failures(root: Path) -> list[str]:
@@ -301,20 +472,25 @@ def self_test(root: Path) -> int:
         print("self-test FAILED: a stale frozen entry was not reported", file=sys.stderr)
         return 1
 
-    # DIRECTIONS 3 AND 4 belong to verify-test-run.py, which is frozen above and therefore cannot
+    # DIRECTIONS 3 TO 7 belong to verify-test-run.py, which is frozen above and therefore cannot
     # carry its own --self-test without falsifying this gate's own list. They are proven here, from
     # the outside, against a copy of that tool in a throwaway tree.
-    # Both are evaluated before either is reported: stopping at the first would hide the second
-    # red, and two fixtures planted in one run are two pieces of evidence, not one.
-    test_run = test_run_names_its_failures(root) + test_run_refuses_upward_drift(root)
+    # ALL are evaluated before ANY is reported: stopping at the first would hide the rest, and five
+    # fixtures planted in one run are five pieces of evidence, not one.
+    test_run = (test_run_names_its_failures(root)
+                + test_run_refuses_upward_drift(root)
+                + test_run_refuses_a_lowered_baseline(root)
+                + test_run_floors_on_total_not_executed(root)
+                + test_run_refuses_an_uncommitted_skip(root))
     if test_run:
         for finding in test_run:
             print(f"self-test FAILED: verify-test-run.py: {finding}", file=sys.stderr)
         return 1
 
     print("self-test OK — new debt is refused, a stale frozen entry is reported, verify-test-run "
-          "names the failures it counts, and an unmoved baseline under a higher executed count is "
-          "refused at the join")
+          "names the failures it counts, an unmoved baseline under a higher count is refused at the "
+          "join, --update refuses to lower a committed floor unsaid, the floor reads `total` rather "
+          "than `executed`, and an unlisted NotExecuted result is a finding")
     return 0
 
 

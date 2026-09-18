@@ -1,11 +1,19 @@
 {
-  "_comment": "Minimum tests that must EXECUTE per project. The control for defect class DC-012: a crashed test host reports success with a smaller count, and nothing else notices. Raise these with `python tools/verify-test-run.py --update` when you add tests; never lower one to make a run pass. Keys with a suffix are HALVES of a project run on one OS; `splits` says which halves must account for which whole.",
-  "minimumExecuted": {
+  "_comment": "Minimum tests that must be COUNTED per project \u2014 the .trx `total`, which includes dynamically skipped tests and so does not vary by operating system; `executed` does. The control for defect class DC-012: a crashed test host reports success with a smaller count, and nothing else notices. Every NotExecuted result must also be named in `expectedSkips`, or a skip inside `total` is a hole in the floor. Raise these with `python tools/verify-test-run.py --update` when you add tests; lowering one needs --allow-lower \"<reason>\" and is refused otherwise. Keys with a suffix are HALVES of a project run on one OS; `splits` says which halves must account for which whole.",
+  "minimumTotal": {
     "AiDe.App.Tests": 1053,
-    "AiDe.Core.Tests": 2752,
+    "AiDe.Core.Tests": 2756,
     "AiDe.Core.Tests.portable": 2575,
-    "AiDe.Core.Tests.nonportable": 177
+    "AiDe.Core.Tests.nonportable": 181
   },
+  "_expectedSkips_comment": "Tests a .trx may record as NotExecuted \u2014 inside `total`, outside `executed`. Read from real result files, never written from memory. The four AgentPlane entries are CI's Windows nonportable job (181 total, 177 executed); the symlink entry is any Windows run of the portable half, where creating a symlink needs a privilege the runner lacks. An unlisted NotExecuted result is a finding, because a skip the floor cannot see is a hole in the floor exactly that wide.",
+  "expectedSkips": [
+    "AiDe.Core.Tests.AgentPlane.TheEnginesAnswerInitializeOnTheWireTests.CodexAnswersInitializeWithProtocolVersionOne",
+    "AiDe.Core.Tests.AgentPlane.TheEnginesAnswerInitializeOnTheWireTests.CopilotAnswersInitializeWithProtocolVersionOne",
+    "AiDe.Core.Tests.AgentPlane.TheEnginesAnswerInitializeOnTheWireTests.GeminiAnswersInitializeWithProtocolVersionOne",
+    "AiDe.Core.Tests.AgentPlane.TheEnginesAnswerInitializeOnTheWireTests.GrokAnswersInitializeWithProtocolVersionOne",
+    "AiDe.Core.Tests.PromptCompilation.PurgeAndTheSessionDeleteCascadeTests.PurgeOfASymlinkedEnvelopeFileIsRefusedBeforeAnyFileIsTouched"
+  ],
   "splits": {
     "AiDe.Core.Tests": [
       "AiDe.Core.Tests.portable",
