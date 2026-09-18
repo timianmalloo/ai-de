@@ -42,49 +42,48 @@ conductor wrote the file to disk verbatim and ran the gate.
 That division matters when reading what follows: **the design is the lens's, the gate result is
 measured, and the two disagree.**
 
-## The craft gate — run, and NOT passed
+## The craft gate — run, and now clean at the floor
 
 ```
-python docs/ai-forward-pack/scripts/ui-craft-gate.py --a11y-obligation --gate \
-    docs/mockups/first-use-accounts.html
-→ exit 1 · Blocker 2 · Minor 6
+python docs/ai-forward-pack/scripts/ui-craft-gate.py --a11y-obligation --gate     docs/mockups/first-use-accounts.html
+→ exit 0 · Minor 6 (advisory: em-dash density, repeated container text across the
+  nine scenarios, a thin-border/wide-shadow tell, flat type hierarchy)
 ```
 
-| Severity | Finding | Disposition |
-|---|---|---|
-| **Blocker** ×2 | `tiny-text` | **Open. Not this file's defect — see below.** |
-| Minor ×3 | `repeated-container-text` | Expected: nine scenarios of the same surface repeat by design. |
-| Minor | `em-dash-overuse` | Open, in the copy. |
-| Minor | `gpt-thin-border-wide-shadow` | Open. |
-| Minor | `flat-type-hierarchy` | Open; the lens's own rubric names hierarchy too. |
+**It did not start there, and the route is worth recording because the conductor got
+the diagnosis wrong first.**
 
-Five `design-system-color` **Majors** were raised on the first run and are **fixed**: the review
-harness chrome restated nine colours as raw hex. It is scaffolding, but it ships inside the committed
-artifact, and a review harness that fails the craft floor undermines the review it hosts. It now uses
-the same tokens the surface does.
+The first run was `exit 1 · Blocker 2 · Major 5`. The five `design-system-color`
+Majors were the review harness restating nine colours as raw hex — scaffolding, but
+it ships inside the committed artifact, and a harness that fails the craft floor
+undermines the review it hosts. Fixed: it now uses the same tokens the surface does.
 
-### The two Blockers are a finding against `DESIGN.md`, not against this mockup
+The two `tiny-text` Blockers the conductor **filed as a conflict between two
+committed controls** — the design system saying 11px is the intended floor, the
+detector saying 11px under an accessibility obligation is a Blocker — and routed to
+the Owner as unresolvable from here.
 
-The mockup mirrors the committed token scale verbatim. `DESIGN.md:84` reads:
+**Ruling 147 found there was no conflict.** The detector's `tiny-text` fires only on
+text **over 20 characters below 12px, outside `kbd` / `code` / `label` contexts**,
+and its companion `undersized-ui-text` floors at 11px. A keystroke label is short and
+`kbd`-shaped and clears both. `DESIGN.md:750` and `:1101` already said 11px is for
+key labels and keystrokes — so the design system's stated use and the detector agree
+by construction, and always did.
 
-```yaml
-scale: [11px, 12px, 13px, 15px, 18px, 22px]
-```
+What actually happened is that **this mockup applied `--t-xs` to running text**: a
+provenance note and a screen-reader trace, neither of them a keystroke label. Moving
+them to 12px is not editing the mockup off the design system; it is bringing it onto
+it. `.why code` keeps `--t-xs`, because `code` is exempt.
 
-and `:750` and `:1101` document 11px deliberately — key labels such as `Ctrl+Enter`, and the event
-lines derived under a session turn. The mockup binds that to `--t-xs:11px` and uses it twice in
-visible text (`.why code`, `.prov-note`). The detector, run with `--a11y-obligation` as `CD12`
-requires, calls each of those a Blocker.
+Ruling 147 also added the constraint to `DESIGN.md:84` as a clause on the scale
+itself, so it travels with the tokens instead of sitting two hundred lines away in
+prose.
 
-So **two committed controls disagree**: the design system says 11px is the intended floor, and the
-deterministic craft detector says 11px under an accessibility obligation is a Blocker. Editing the
-mockup off the design system would make the number green and settle nothing — the same conflict would
-still be live in the product, wherever `--t-xs` is used.
-
-It is therefore recorded here as open and routed: the **UX & Accessibility lens holds the WCAG veto**
-and did not clear its own work, and the type scale is the Owner's to amend if it changes. **This
-mockup is not approved.** A clean gate run would have been a floor, never a verdict; a failing one is
-not even that.
+**Still not approved.** The gate is a floor, never a verdict — it cannot see whether
+the archetype fits, whether the state table is right, or whether the copy is true.
+Ruling 147(a) requires a **separate** UX & Accessibility instance in Adversary mode
+to clear the veto against this gate output; the authoring lens does not clear its own
+work, and that clearance is not yet on disk.
 
 ## What this is for
 
@@ -104,6 +103,5 @@ resolved here.
 
 - The rubric critique and ranked plan as a committed `docs/reviews/` artifact — the lens produced both
   and could not write them.
-- The two `tiny-text` Blockers, routed above.
 - A second pass by a reviewer who is not the author: the lens states explicitly that it does not clear
   its own accessibility veto.

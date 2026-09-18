@@ -82,6 +82,13 @@ typography:
   ui: "Segoe UI Variable Text, Segoe UI, system-ui, sans-serif"
   mono: "Cascadia Mono, Consolas, ui-monospace, monospace"
   scale: [11px, 12px, 13px, 15px, 18px, 22px]
+  # 11px is the KEYSTROKE-LABEL step only - `<kbd>`-shaped, at most 20 characters - never
+  # running text. Ruling 147 added this clause; it states what :750 and :1101 already said
+  # in prose, so that the constraint travels with the scale rather than sitting two
+  # hundred lines away. The craft detector agrees by construction: `tiny-text` fires on
+  # text over 20 characters below 12px outside kbd/code/label contexts, and
+  # `undersized-ui-text` floors at 11px - so a keystroke label clears both, and a
+  # paragraph at 11px does not. Running chrome text starts at 12px.
   weight-normal: 400
   weight-medium: 600
 rounded: { sm: 4px, md: 6px, lg: 10px, island: 12px }
