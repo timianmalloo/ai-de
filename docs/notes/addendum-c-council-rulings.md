@@ -3005,6 +3005,55 @@ decision note says so plainly.
 bytes) before further change; byte budget admitted in `Evidence`'s row-accumulation shape,
 conductor-authored, own commit, `Omitted (n)` covers both bounds.
 
+**CONDUCTOR'S RETURN ON 145(1) — PARTIAL, AND THE PART THAT IS MEASURED CHANGES THE PICTURE.** Read
+from the largest built workspace db on this machine (`aide.31abcd25…`, 28.6 MB, 64 scopes, 34,279
+assertion rows), current generation only, using the `latest` CTE copied from `StoreReader.cs:57-62` so
+the census counts the rows the product actually reads:
+
+| predicate | rows, current generation |
+|---|---|
+| `has_type` | **2,993** |
+| `has_member` | **9,876** |
+
+So the row universe `FromHasType` draws from on a real repository is **12,869**, against a
+`MaxRowsCeiling` of 1,254. The conductor's earlier claim that "the cap will bind on real
+repositories" was labelled Inferred; it is now **Verified, and larger than the inference** — and
+Ruling 144's finding sharpens it further: because `built.Take(cap)` takes type rows first and there
+are 2,993 of those, a capped listing on this repository returns **type rows only and not one member**.
+
+**Still owed, and named rather than estimated:** this is the *predicate universe*, not the
+projection's output — `FromHasType` filters candidates, so the true `returned.rows` and
+`omitted.by_cap` are bounded above by these numbers and not equal to them. `WireBytes` on a real call
+is **not recorded**. The projection-level call is what 145(1) actually asks for and it remains owed.
+
+---
+
+## The DC-229 census on a real store — P3's receipt, before
+
+*Recorded by the conductor (2026-09-17) under Ruling 133's condition 3, from the same workspace db.
+This is the "before" moment; the "after" is taken once the bumped generation has been indexed and one
+further daemon restart has let compaction run.*
+
+| extractor | rows, current generation | citing a scope id |
+|---|---|---|
+| `csharp-extractor` | 27,769 | **0** |
+| `knowledge-extractor` | 4,307 | **0** |
+| **`python-extractor`** | **1,056** | **1,056** |
+| `ef-schema-extractor` | 760 | **0** |
+| `bicep-extractor` | 207 | **0** |
+| **`typescript-extractor`** | **116** | **116** |
+| `workspace-core` | 64 | **0** |
+
+**One hundred per cent of both extractors' output, and zero of every other extractor's.** 1,172 rows
+of 34,279 on this store cite a value that names no file — which is exactly the shape INV-0014
+described and the oracle's red predicted, now counted on the operator's own data rather than on a
+fixture. The comparison is equality against `scope_id`, not a `LIKE '%:%'` pattern, because the bad
+value was `request.ScopeId` verbatim.
+
+`rows_citing_a_scope_id` must reach **0** for both extractors, with `rows_current > 0`, after P3's
+generation bump is indexed. Anything else means the bump did not reach the sidecar.
+
+
 ---
 
 ## Ruling 146 — the floor keys on the environment-independent counter if it is one; `--update` refuses to lower any key without an explicit reasoned flag, and the join never passes it
