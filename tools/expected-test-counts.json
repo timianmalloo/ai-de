@@ -1,8 +1,8 @@
 {
   "_comment": "Minimum tests that must be COUNTED per project \u2014 the .trx `total`, which includes dynamically skipped tests and so does not vary by operating system; `executed` does. The control for defect class DC-012: a crashed test host reports success with a smaller count, and nothing else notices. Every NotExecuted result must also be named in `expectedSkips`, or a skip inside `total` is a hole in the floor. Raise these with `python tools/verify-test-run.py --update` when you add tests; lowering one needs --allow-lower \"<reason>\" and is refused otherwise. Keys with a suffix are HALVES of a project run on one OS; `splits` says which halves must account for which whole.",
   "minimumTotal": {
-    "AiDe.App.Tests": 1054,
-    "AiDe.Core.Tests": 2756,
+    "AiDe.App.Tests": 1057,
+    "AiDe.Core.Tests": 2781,
     "AiDe.Core.Tests.portable": 2575,
     "AiDe.Core.Tests.nonportable": 181
   },

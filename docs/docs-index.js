@@ -2431,7 +2431,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8da981119c695cd2c33dc79c8ffdadab28f197c5d0cec02f372e74aa0855ecdb"
+      "sourceSha256": "294f78c6f5ba02abbd38deb395713be63f7065b0383af508f9be1939f04c691d"
     },
     {
       "id": "api-aide-core-promptcompilation",
@@ -5524,10 +5524,6 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         },
         {
-          "to": "plan-atlas-views",
-          "rel": "relates-to"
-        },
-        {
           "to": "adr-0018-node-content-reader-contract",
           "rel": "depends-on"
         },
@@ -5537,7 +5533,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "af85cdadb1ef2c942a16aed8c5cacb2fdb770d63d32d423bbfee35934d662f3e"
+      "sourceSha256": "901ce3ff8811cd55d354906d2834019484e0790115b6e045baf0735c5e1d6c12"
     },
     {
       "id": "note-d1-codex-entry-point-handshake-r2",
@@ -6010,6 +6006,37 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "5e5bff60adaec37785cdb98839d05d517b48f8a1677a75745e7c83f7a64069ec"
+    },
+    {
+      "id": "note-explore-lane-not-landable",
+      "path": "docs/notes/explore-lane-not-landable.md",
+      "title": "lane/p2-repairs-explore is not landable: Ruling 140 changed a product default and sixteen App tests assert the old one",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-watch-0915",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "The Explore lane carries P0a, P2, P3, P4, P6, Ruling 140's default change and two mockups, and its Core suite is green at 2,781. It cannot land: Ruling 140 moved Architecture's default to Center = [Graph, Tree] with Left empty, and sixteen App tests assert the previous default. The recount found them; nothing else would have.",
+      "tags": [
+        "landing",
+        "ruling-140",
+        "architecture-default",
+        "app-tests",
+        "wind-down"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8e2e4db6c4c49cb38d954f376fd14ed1fa5c400c812ed7a1abd09dff9b3b60da"
     },
     {
       "id": "note-front-door-council-rulings",
@@ -9550,7 +9577,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ca1c9fa5828cf6d1c8c551fb565e4d4de9685e4619e1aea53967269a1bfb53c0"
+      "sourceSha256": "65dc8f3fbe4a3a85ab8b59eb5b041c1f8b421e4d1f56793e17e7ebf8f236d8fd"
     },
     {
       "id": "design-session-profiler",
@@ -10812,7 +10839,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7daf60ac6f255937a8ee823492a46e3a9f7bced92ba0874046b86a2e14061f8d"
+      "sourceSha256": "b109644c7950bd29a0f1fa330151c2368078a846886d6ffebced198d38831988"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -13302,6 +13329,82 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "f7f512919b02fcbbc3adca4c48c208d1351022658d11bd9adfa68975b79d3fae"
+    },
+    {
+      "id": "inv-0013-the-sheet-asks-the-config-not-the-machine",
+      "path": "docs/investigations/INV-0013-the-sheet-asks-the-config-not-the-machine.md",
+      "title": "A native CLI on PATH reads as \\\"not configured\\\" — the New Session sheet answers \\\"can this engine launch here?\\\" from the product's own config file, short-circuiting the one installed-reading DC-223 created",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-watch-0915",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "The operator's clean-machine build reported all five accounts as \"not configured (no adapter root — no provider file)\" with copilot installed and on PATH. Verified necessary and sufficient by a headless probe: NewSessionSheetViewModel.LaunchRefusal returns that sentence whenever ~/.aide/providers.json is absent, short-circuiting EngineCatalog.InstallRefusal — the single installed-reading DC-223 created — so the engine's command is never probed on a clean machine. Four confirmed siblings compound it, including a sign-in path hardcoded to claude-code that makes \"ready\" unreachable for github through the product, and a test that asserts the defect as the spec.",
+      "tags": [
+        "first-use",
+        "engine-catalog",
+        "accounts",
+        "clean-machine",
+        "dc-223",
+        "cap-p",
+        "ruling-104",
+        "ruling-130"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "inv-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c23dfa914ef2c5ede9bda6aa2115a724b534d00452d7098e78bc0c61541b48c4"
+    },
+    {
+      "id": "inv-0014-the-graph-stage-is-capped-and-typescript-provenance-is-a-scope-id",
+      "path": "docs/investigations/INV-0014-the-graph-stage-is-capped-and-typescript-provenance-is-a-scope-id.md",
+      "title": "Two Explore defects: the graph stage is capped at 440 CSS px inside a full-height pane, and the TypeScript/Python extractors write a scope id where the artifact path belongs — which also makes content search return silently wrong \\\"no matches\\\"",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-watch-0915",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "From the operator's clean-machine build. (1) The Explore graph fills 21.8% of its pane's height because CanvasPage's #stage carries a fixed height:440px inside a full-height WPF pane — measured 1624x437 in a 1661x2002 pane, with fit()'s own arithmetic predicting the drawn disc to 1px. (2) \"View source\" returns a shortfall for every TypeScript node because TypeScriptExtractor and PythonExtractor pass request.ScopeId into Provenance.ArtifactPathId; the same field feeds content search, so every TS and Python file in every workspace is silently skipped and a search returns \"no matches\" rather than \"I could not open these files\". The view renders the projection faithfully; the projection is wrong.",
+      "tags": [
+        "explore",
+        "graph-canvas",
+        "provenance",
+        "typescript",
+        "python",
+        "content-search",
+        "telemetry",
+        "clean-machine"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "inv-0013-the-sheet-asks-the-config-not-the-machine",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "886b084e9d2ad0821d846b17ea88983a01551c4799df3e052e10ac624f4469b8"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -16837,6 +16940,42 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "56dcbfeec074ea753ff0b3a0cc893aa0d3623122c7ac156afdce54071768f6fa"
+    },
+    {
+      "id": "proof-atlas-audit-preservation",
+      "path": "docs/proof/atlas-audit-preservation.md",
+      "title": "Atlas audit conservation: seven exact additions, originals untouched",
+      "type": "proof-pack",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "Independent Astra review CLEAR: seven exact additions conserved, original trees unchanged, durable ordering negative observed; own-branch handoff follows normal controls.",
+      "tags": [
+        "proof",
+        "atlas",
+        "audit",
+        "conservation"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Execution graph and model",
+          "mermaid": "flowchart LR\n  G[Ground current controls] -->|data| C[Capture originals and seven additions]\n  C -->|data| U[Official register union]\n  U -->|data| O[Exact row and original-state oracles]\n  O -->|data| P[Proof, audit and derived checks]\n  P -->|decision| R[Independent review]\n  R -->|decision| H[Commit and publisher handoff]"
+        }
+      ],
+      "sourceSha256": "d62e69ad4f88ca8373edd77be8691ba0aba0862fefd3fb72c40d6f38bdbe9ef0"
     },
     {
       "id": "proof-audit-gate-plan-review",
@@ -21078,5 +21217,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "39595cca30c7d96a68764df4851384934c345b7a53b99cf0da8221bcdcba1d0a"
+  "graphSha256": "d210c57b76aae9ae4eacbf7d22e067b461a6ea1e6b43f98aab5b4fe1cfe57828"
 };
