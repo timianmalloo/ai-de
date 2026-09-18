@@ -6867,6 +6867,49 @@ window.DOCS_INDEX = {
       "sourceSha256": "1019c9d98b854b04b2fc784cada4bdea68e34249dba7f30ffe4979e750f397b4"
     },
     {
+      "id": "note-understanding-views-d1-session-stop",
+      "path": "docs/notes/understanding-views-d1-session-stop.md",
+      "title": "Grok understanding-views conductor session stop — 2026-09-18 TODOs and first resume",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2027-03-18",
+      "reviewSuggested": [],
+      "summary": "Operator stopped the Grok conductor. Durable TODOs and first resume action for the successor. Does not land on main. Does not activate Sequence.",
+      "tags": [
+        "decision-note",
+        "session-stop",
+        "D-1",
+        "handshake",
+        "understanding-views"
+      ],
+      "links": [
+        {
+          "to": "note-d1-r7-producer-ack",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-108-landing-disclosure",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-admission",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-n4-entry-points-rereview",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-entry-points",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d70ffc20d53b4a2d2fb5b5a8ee3387a7aa815a73eadb990cb462cf7a743df7f7"
+    },
+    {
       "id": "note-understanding-views-n1-inventory",
       "path": "docs/notes/understanding-views-n1-inventory.md",
       "title": "N1 inventory — D-0 Solution/tree substrate (Architecture kinds, artifact_path_id, unindexed folders)",
@@ -21265,5 +21308,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a18eeddf74c82ad2e62ac11c2191adfb29da6e225aeda6d82393b0b7b7ad9ce4"
+  "graphSha256": "cefc3c12a21086c265dbb1fa10ec051cd332d0cb46d23affe819df5331f16cef"
 };

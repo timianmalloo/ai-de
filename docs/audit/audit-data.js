@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T14:09:49Z",
+  "generated": "2026-09-18T18:04:07Z",
   "audit": [
     {
       "actor": null,
@@ -20024,139 +20024,202 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2QSED6HYQ40BCPVXVDTCDEH",
-      "shortname": "specify-d1-al5b",
-      "datetime": "2026-09-17T13:38:37Z",
-      "session": "grok-understanding-views-conductor",
-      "prompt": "AL5b supersede",
-      "summary": "Honest capture for specify-d1-entry-points",
-      "kind": "skill",
-      "skill": "specify",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/specs/entry-points.md"
       ],
-      "tags": [],
-      "outcome": "partial",
-      "goal": "Specify D-1 listing",
+      "datetime": "2026-09-17T13:38:37Z",
       "done_when": "spec-entry-points draft committed",
-      "tier": "T2",
-      "signals": {
-        "verification_path": true,
-        "verification_executed": false,
-        "acceptance_met": false
-      },
-      "supersedes": "al-01M2NHXVG85NWR87JK2WJW4PAQ",
       "git": {
-        "sha": "30d82c3b96190a9e1a2cbc458c80955a07b8a0d1",
-        "short": "30d82c3b9",
         "branch": "understanding-views-d1",
-        "pushed": false
-      }
+        "pushed": false,
+        "sha": "30d82c3b96190a9e1a2cbc458c80955a07b8a0d1",
+        "short": "30d82c3b9"
+      },
+      "goal": "Specify D-1 listing",
+      "id": "al-01M2QSED6HYQ40BCPVXVDTCDEH",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "AL5b supersede",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "specify-d1-al5b",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "summary": "Honest capture for specify-d1-entry-points",
+      "supersedes": "al-01M2NHXVG85NWR87JK2WJW4PAQ",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2QSEDC3B5HADZ18C4ZCJDH6",
-      "shortname": "owner-d1-al5b",
-      "datetime": "2026-09-17T13:38:37Z",
-      "session": "grok-understanding-views-conductor",
-      "prompt": "AL5b supersede admission",
-      "summary": "Honest capture for D-1 admission",
-      "kind": "skill",
-      "skill": "specify",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "docs/notes/understanding-views-owner-d1-admission.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Admit D-1",
+      "datetime": "2026-09-17T13:38:37Z",
       "done_when": "owner-d1-admission note committed",
-      "tier": "T2",
-      "signals": {
-        "verification_path": true,
-        "verification_executed": false,
-        "acceptance_met": true
-      },
-      "supersedes": "al-01M2KMBV5ZEQPEFFD7708W28HA",
       "git": {
-        "sha": "30d82c3b96190a9e1a2cbc458c80955a07b8a0d1",
-        "short": "30d82c3b9",
         "branch": "understanding-views-d1",
-        "pushed": false
-      }
+        "pushed": false,
+        "sha": "30d82c3b96190a9e1a2cbc458c80955a07b8a0d1",
+        "short": "30d82c3b9"
+      },
+      "goal": "Admit D-1",
+      "id": "al-01M2QSEDC3B5HADZ18C4ZCJDH6",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "AL5b supersede admission",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "owner-d1-al5b",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "summary": "Honest capture for D-1 admission",
+      "supersedes": "al-01M2KMBV5ZEQPEFFD7708W28HA",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
     },
     {
-      "id": "al-01M2QTAG26MGBF40F2F0MTJJ2Y",
-      "shortname": "n4-d1-entry-points-block",
-      "datetime": "2026-09-17T13:53:57Z",
-      "session": "test-architect-d1-n4-entry-points",
-      "prompt": "You are Test Architect (Adversary) for D-1 listing spec. Do NOT implement src/. Do NOT mark the spec Accepted yourself if you also authored it — you did not author it. Verdict PASS / PASS-WITH-CONDITIONS / BLOCK. Write docs/notes/understanding-views-n4-entry-points.md with evidence opened. Open Sequence must stay mapping-unavailable. Grain: member rows now use declaring type node_id for graph/source. Commit the note if you can. Return verdict + gaps.",
-      "summary": "N4 Test Architect BLOCK on spec-entry-points (blob 77f8861d). Grain still Flagged in spec while tests at e61e6aa7 pin member NodeId = declaring type. F-EP uncomposed; candidate set unnamed; extractor has_member shape != test Main. Open Sequence stays mapping-unavailable (US-L4 held). Spec stays draft; not marked accepted. Receipt: docs/notes/understanding-views-n4-entry-points.md.",
-      "kind": "manual",
-      "skill": null,
-      "tool": "grok",
       "actor": "test-architect",
       "artifacts": [
         "docs/notes/understanding-views-n4-entry-points.md",
         "docs/specs/entry-points.md"
       ],
+      "datetime": "2026-09-17T13:53:57Z",
+      "done_when": "Verdict PASS | PASS-WITH-CONDITIONS | BLOCK recorded in docs/notes/understanding-views-n4-entry-points.md with opened evidence; Open Sequence remains mapping-unavailable; grain evaluated as declaring-type node_id for graph/source; note committed if git allows; spec not marked accepted.",
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-d1",
+        "pushed": true,
+        "sha": "e1589d016d82e8405592989cf30b40922db59f01",
+        "short": "e1589d016"
+      },
+      "goal": "Test Architect (Adversary) N4 verdict on D-1 listing spec; write the receipt note; do not implement src/ or mark the spec accepted.",
+      "id": "al-01M2QTAG26MGBF40F2F0MTJJ2Y",
+      "kind": "manual",
+      "outcome": "blocked",
+      "prompt": "You are Test Architect (Adversary) for D-1 listing spec. Do NOT implement src/. Do NOT mark the spec Accepted yourself if you also authored it — you did not author it. Verdict PASS / PASS-WITH-CONDITIONS / BLOCK. Write docs/notes/understanding-views-n4-entry-points.md with evidence opened. Open Sequence must stay mapping-unavailable. Grain: member rows now use declaring type node_id for graph/source. Commit the note if you can. Return verdict + gaps.",
+      "session": "test-architect-d1-n4-entry-points",
+      "shortname": "n4-d1-entry-points-block",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "N4 Test Architect BLOCK on spec-entry-points (blob 77f8861d). Grain still Flagged in spec while tests at e61e6aa7 pin member NodeId = declaring type. F-EP uncomposed; candidate set unnamed; extractor has_member shape != test Main. Open Sequence stays mapping-unavailable (US-L4 held). Spec stays draft; not marked accepted. Receipt: docs/notes/understanding-views-n4-entry-points.md.",
       "tags": [
         "D-1",
         "N4",
         "entry-points"
       ],
-      "outcome": "blocked",
-      "goal": "Test Architect (Adversary) N4 verdict on D-1 listing spec; write the receipt note; do not implement src/ or mark the spec accepted.",
-      "done_when": "Verdict PASS | PASS-WITH-CONDITIONS | BLOCK recorded in docs/notes/understanding-views-n4-entry-points.md with opened evidence; Open Sequence remains mapping-unavailable; grain evaluated as declaring-type node_id for graph/source; note committed if git allows; spec not marked accepted.",
       "tier": "T2",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "git": {
-        "sha": "e1589d016d82e8405592989cf30b40922db59f01",
-        "short": "e1589d016",
-        "branch": "understanding-views-d1",
-        "pushed": true
-      }
+      "tool": "grok"
     },
     {
-      "id": "al-01M2QV7H7KJJM4W7S85F02V324",
-      "shortname": "n4-d1-entry-points-rereview",
-      "datetime": "2026-09-17T14:09:49Z",
-      "session": "test-architect-d1-n4-entry-points-rereview",
-      "prompt": "You are Test Architect (Adversary) for D-1 listing spec RE-REVIEW after a BLOCK. You did NOT author the spec or the repair. You do NOT clear your own veto — the prior BLOCK was another reviewer (note-understanding-views-n4-entry-points, commit b256f184). Read: docs/specs/entry-points.md (grain now closed; F-EP composed; candidate set named); docs/notes/understanding-views-n4-entry-points.md (the BLOCK); docs/notes/d1-listing-query-architecture.md; tests/AiDe.Core.Tests/EntryPointsProjectionTests.cs (Fep_ComposedOracle, + Main()); src/AiDe.Core/Projections/EntryPointsProjection.cs (MemberBareName). Verdict PASS / PASS-WITH-CONDITIONS / BLOCK. Write docs/notes/understanding-views-n4-entry-points-rereview.md. Spec stays draft unless PASS and you are not the author (you are not). Open Sequence must stay mapping-unavailable. Cwd: C:\\Projects\\ai-de-understanding-views-d1. python not python3. Commit the note if you can. Return verdict.",
-      "summary": "N4 Test Architect re-review PASS-WITH-CONDITIONS on spec-entry-points (blob 6945c5bc, repair 82f1710b). Prior four Blockers closed (grain closed, F-EP composed with + Main(), candidate set named). Open Sequence stays mapping-unavailable. Spec stays draft; not marked accepted. Conditions: N5 implements declaring-type borrow (not mint); F-EP Then/oracle pin all five rows; members_truncated Then or named residual; US-L0 surface oracles. Receipt: docs/notes/understanding-views-n4-entry-points-rereview.md.",
-      "kind": "manual",
-      "skill": null,
-      "tool": "grok",
       "actor": "test-architect",
       "artifacts": [
         "docs/notes/understanding-views-n4-entry-points-rereview.md",
         "docs/specs/entry-points.md"
       ],
+      "datetime": "2026-09-17T14:09:49Z",
+      "done_when": "Verdict PASS | PASS-WITH-CONDITIONS | BLOCK recorded in docs/notes/understanding-views-n4-entry-points-rereview.md; Open Sequence remains mapping-unavailable; spec stays draft; note committed if git allows.",
+      "fan_out": 0,
+      "git": {
+        "branch": "understanding-views-d1",
+        "pushed": true,
+        "sha": "82f1710b38fff13b084782b654187ce5235fe75e",
+        "short": "82f1710b3"
+      },
+      "goal": "Test Architect (Adversary) N4 re-review of D-1 listing spec after BLOCK; write the receipt; do not implement src/ or mark the spec accepted.",
+      "id": "al-01M2QV7H7KJJM4W7S85F02V324",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "You are Test Architect (Adversary) for D-1 listing spec RE-REVIEW after a BLOCK. You did NOT author the spec or the repair. You do NOT clear your own veto — the prior BLOCK was another reviewer (note-understanding-views-n4-entry-points, commit b256f184). Read: docs/specs/entry-points.md (grain now closed; F-EP composed; candidate set named); docs/notes/understanding-views-n4-entry-points.md (the BLOCK); docs/notes/d1-listing-query-architecture.md; tests/AiDe.Core.Tests/EntryPointsProjectionTests.cs (Fep_ComposedOracle, + Main()); src/AiDe.Core/Projections/EntryPointsProjection.cs (MemberBareName). Verdict PASS / PASS-WITH-CONDITIONS / BLOCK. Write docs/notes/understanding-views-n4-entry-points-rereview.md. Spec stays draft unless PASS and you are not the author (you are not). Open Sequence must stay mapping-unavailable. Cwd: C:\\Projects\\ai-de-understanding-views-d1. python not python3. Commit the note if you can. Return verdict.",
+      "session": "test-architect-d1-n4-entry-points-rereview",
+      "shortname": "n4-d1-entry-points-rereview",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "N4 Test Architect re-review PASS-WITH-CONDITIONS on spec-entry-points (blob 6945c5bc, repair 82f1710b). Prior four Blockers closed (grain closed, F-EP composed with + Main(), candidate set named). Open Sequence stays mapping-unavailable. Spec stays draft; not marked accepted. Conditions: N5 implements declaring-type borrow (not mint); F-EP Then/oracle pin all five rows; members_truncated Then or named residual; US-L0 surface oracles. Receipt: docs/notes/understanding-views-n4-entry-points-rereview.md.",
       "tags": [
         "D-1",
         "N4",
         "entry-points"
       ],
-      "outcome": "success",
-      "goal": "Test Architect (Adversary) N4 re-review of D-1 listing spec after BLOCK; write the receipt; do not implement src/ or mark the spec accepted.",
-      "done_when": "Verdict PASS | PASS-WITH-CONDITIONS | BLOCK recorded in docs/notes/understanding-views-n4-entry-points-rereview.md; Open Sequence remains mapping-unavailable; spec stays draft; note committed if git allows.",
       "tier": "T2",
+      "tool": "grok"
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/AgentPlane/TheLocatorTellsShimFromExecutableOnlyByWindowsSuffixTests.cs"
+      ],
+      "datetime": "2026-09-17T13:28:26Z",
+      "done_when": "main carries 53115a53; recount and gates green; pushed; the landed SHA's Build result recorded",
+      "duration_seconds": 520.0,
+      "fan_out": 0,
+      "goal": "Restore CI's portable half to green - the only failure there is the test I landed",
+      "id": "al-01M2QRVRJTTZVA0ZA5RYVPWB8T",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of lane/main-red-0915 into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-main-red-char-fix",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-17T13:19:46Z",
+      "summary": "Fast follow to 2a5f1b2d: the new characterisation test asserted against FakePath.AddNpmShim's return (the script) instead of the shim, so its off-Windows arm was red on CI while green here - the platform-arm-nobody-observes-locally class INV-0012 diagnosed, reproduced by the test documenting it. Expected value now derived from the fixture's PATH entries, computed inside the off-Windows arm only. The same run confirmed groups 1-2 worked: the four EngineCatalogTests and the purge test left the portable half and pass on the nonportable half (180 executed, 0 failed). recount_seconds=518 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "id": "al-01M2TV18R72VW9HCYXYZ1NDY2H",
+      "shortname": "grok-uv-session-stop",
+      "datetime": "2026-09-18T18:04:07Z",
+      "session": "grok-understanding-views-conductor",
+      "prompt": "We need to stop this session wind down anything that is in flight and capture to dos clean up stale worktrees and collaborate with the other sessions to make sure main is clean",
+      "summary": "Operator stop. Checkpoint TODOs on understanding-views-d1. r7 freeze stands (blob 703264e3); Sequence still mapping-unavailable; no new 108. Keep d1 (unique commits). Primary product dirt (DesktopHold, audit) is Claude's and was left intact. Ledger .agents left uncommitted for the wind-down executor.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-d1-session-stop.md"
+      ],
+      "tags": [
+        "session-stop",
+        "D-1"
+      ],
+      "outcome": "success",
+      "goal": "Stop the Grok understanding-views conductor: wind down, capture TODOs, fail-safe-remove only our SAFE trees, leave main product dirt to its owners",
+      "done_when": "TODOs committed on understanding-views-d1; SAFE Grok trees removed or reported; peers given a terminal receipt; primary product files not committed or reverted by this seat",
+      "tier": "T0",
       "fan_out": 0,
       "signals": {
         "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
+        "verification_executed": false,
+        "acceptance_met": false
       },
       "git": {
-        "sha": "82f1710b38fff13b084782b654187ce5235fe75e",
-        "short": "82f1710b3",
+        "sha": "c1b09dc250cea5a374da3439b8ea629743e42acd",
+        "short": "c1b09dc25",
         "branch": "understanding-views-d1",
         "pushed": true
       }
