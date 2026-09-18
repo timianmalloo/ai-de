@@ -37,10 +37,18 @@ public sealed class EveryOperationFitsTheFrameTests : IDisposable
         try { Directory.Delete(_dir, recursive: true); } catch (IOException) { }
     }
 
+    /// <remarks>
+    /// <para><b>Members are part of the row universe, so they are part of the fixture.</b>
+    /// <c>EntryPointsListing.FromHasType</c> appends one row per <c>has_member</c> fact beside the
+    /// one row per <c>has_type</c> subject. A fixture that writes only <c>has_type</c> under-counts
+    /// the rows the operation can build, which is the same defect shape as weighing an operation at
+    /// its default: the number is real, and it is not the worst case.</para>
+    /// </remarks>
     private ProjectionService Hostile()
     {
         var store = WorkspaceStore.Open(Path.Combine(_dir, "facts.db"));
         var padding = new string('N', 300);
+        var member = new string('M', 300);
         var facts = new List<EvidenceAssertion>();
 
         for (var i = 0; i < 3_000; i++)
@@ -57,10 +65,21 @@ public sealed class EveryOperationFitsTheFrameTests : IDisposable
                 "scope", "rev-1", subject, "depends_on", $"Long.Namespace.{padding}.Hub",
                 EvidenceOrigin.Static, VerificationStatus.Verified,
                 new Provenance($"src/{padding}/File{i}.cs", "1:1", "test", "1.0.0", DateTimeOffset.UnixEpoch)));
+
+            // One member per type: a listing row the has_type-only fixture never counted.
+            facts.Add(new EvidenceAssertion(
+                "scope", "rev-1", subject, "has_member", $"{member}{i}",
+                EvidenceOrigin.Static, VerificationStatus.Verified,
+                new Provenance($"src/{padding}/File{i}.cs", "1:1", "test", "1.0.0", DateTimeOffset.UnixEpoch)));
         }
 
         facts.Add(new EvidenceAssertion(
             "scope", "rev-1", $"Long.Namespace.{padding}.Hub", "has_type", "class",
+            EvidenceOrigin.Static, VerificationStatus.Verified,
+            new Provenance("src/Hub.cs", "1:1", "test", "1.0.0", DateTimeOffset.UnixEpoch)));
+
+        facts.Add(new EvidenceAssertion(
+            "scope", "rev-1", $"Long.Namespace.{padding}.Hub", "has_member", $"{member}Hub",
             EvidenceOrigin.Static, VerificationStatus.Verified,
             new Provenance("src/Hub.cs", "1:1", "test", "1.0.0", DateTimeOffset.UnixEpoch)));
 
@@ -81,26 +100,37 @@ public sealed class EveryOperationFitsTheFrameTests : IDisposable
                 new System.Text.Json.JsonSerializerOptions(
                     System.Text.Json.JsonSerializerDefaults.Web)));
 
-    /// <summary>Each operation invoked at its most expensive legal request.</summary>
+    /// <summary>
+    /// Each operation invoked ABOVE every count it declares — <see cref="int.MaxValue"/> everywhere.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why not the named ceiling.</b> Invoking at the ceiling constant proves the ceiling
+    /// fits; invoking at the DEFAULT proves only that the default fits. Neither proves a clamp
+    /// exists, because neither asks for more than the operation was already going to give. This
+    /// table asked <c>EntryPoints</c> and <c>Graph</c> at their defaults and so could not see that
+    /// <c>EntryPoints</c> passed <c>MaxRows</c> straight through to the listing, which floors at 1
+    /// and ceils at nothing (INV-0003's shape, one operation later). Passing
+    /// <see cref="int.MaxValue"/> is the only request that proves a caller cannot exceed the bound.</para>
+    /// </remarks>
     private static Dictionary<string, Func<ProjectionService, string, object>> AtCeiling() => new(StringComparer.Ordinal)
     {
         [nameof(IWorkspaceQueries.EvidenceAsync)] =
-            (p, _) => p.Evidence(null, ProjectionService.MaxEvidencePageCeiling),
+            (p, _) => p.Evidence(null, int.MaxValue),
 
         [nameof(IWorkspaceQueries.FindAsync)] =
-            (p, _) => p.Find("Type", ProjectionService.MaxSearchResultsCeiling),
+            (p, _) => p.Find("Type", int.MaxValue),
 
         [nameof(IWorkspaceQueries.KnowledgeAsync)] =
-            (p, _) => p.Knowledge(new KnowledgeQuery(null, null, ProjectionService.MaxNeighborsCeiling)),
+            (p, _) => p.Knowledge(new KnowledgeQuery(null, null, int.MaxValue)),
 
         [nameof(IWorkspaceQueries.DescribeAsync)] =
-            (p, hub) => p.Describe(hub, ProjectionService.MaxNeighborsCeiling),
+            (p, hub) => p.Describe(hub, int.MaxValue),
 
         [nameof(IWorkspaceQueries.ImpactAsync)] =
-            (p, hub) => p.Impact(hub, ProjectionService.MaxNodesCeiling, ProjectionService.MaxEdgesCeiling),
+            (p, hub) => p.Impact(hub, int.MaxValue, int.MaxValue),
 
         [nameof(IWorkspaceQueries.GraphAsync)] =
-            (p, _) => p.Graph(new GraphQuery(GraphProjection.DefaultMaxNodes)),
+            (p, _) => p.Graph(new GraphQuery(int.MaxValue)),
 
         // The two operations here whose size comes from FILES rather than from the fact table, which
         // is exactly why they need weighing: repository content is unbounded and a frame is not.
@@ -111,24 +141,26 @@ public sealed class EveryOperationFitsTheFrameTests : IDisposable
         // them and may match every line of each. Weighed at both ceilings at once, because a bound
         // that is only ever exercised one at a time is not the shape that overflows a frame.
         [nameof(IWorkspaceQueries.SearchContentAsync)] =
-            (p, _) => p.SearchContent("e", ProjectionService.MaxContentMatches),
+            (p, _) => p.SearchContent("e", int.MaxValue),
 
         // A caller's whole outgoing sequence. Weighed at the ceiling because the bound is on
         // MESSAGES, and a message carries two type ids — the widest rows in the store.
         [nameof(IWorkspaceQueries.InteractionAsync)] =
-            (p, hub) => p.Interaction(hub, ProjectionService.MaxInteractionMessages),
+            (p, hub) => p.Interaction(hub, int.MaxValue),
 
         [nameof(IWorkspaceQueries.PathsAsync)] =
-            (p, hub) => p.Paths(new PathQuery(hub, hub, ProjectionService.MaxPathsCeiling, ProjectionService.MaxPathLengthCeiling)),
+            (p, hub) => p.Paths(new PathQuery(hub, hub, int.MaxValue, int.MaxValue)),
 
+        // Depth stays 1 — it is a grouping GRAIN, not a count of returned things, and the count
+        // beside it is the one that bounds the response.
         [nameof(IWorkspaceQueries.OverviewAsync)] =
-            (p, _) => p.Overview(new OverviewQuery(1, ProjectionService.MaxClustersCeiling)),
+            (p, _) => p.Overview(new OverviewQuery(1, int.MaxValue)),
 
         [nameof(IWorkspaceQueries.SolutionTreeAsync)] =
-            (p, _) => p.SolutionTree(new SolutionTreeQuery()),
+            (p, _) => p.SolutionTree(new SolutionTreeQuery(int.MaxValue, int.MaxValue)),
 
         [nameof(IWorkspaceQueries.EntryPointsAsync)] =
-            (p, _) => p.EntryPoints(new EntryPointsQuery()),
+            (p, _) => p.EntryPoints(new EntryPointsQuery(int.MaxValue)),
     };
 
     [Fact]

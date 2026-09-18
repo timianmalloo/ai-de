@@ -1,7 +1,12 @@
 namespace AiDe.Core.Projections;
 
 /// <summary>How many listing rows a query asks for.</summary>
-public sealed record EntryPointsQuery(int MaxRows = EntryPointsProjection.DefaultMaxRows);
+/// <remarks>
+/// The default is the ceiling: one constant in two roles, so a caller who asks for nothing and a
+/// caller who asks for everything land on the same bound. <c>GraphQuery.MaxNodes</c> is shaped the
+/// same way against <c>GraphProjection.DefaultMaxNodes</c>.
+/// </remarks>
+public sealed record EntryPointsQuery(int MaxRows = EntryPointsProjection.MaxRowsCeiling);
 
 public enum EntryPointKind { Api, Ux, Cli, Unclassified }
 
@@ -27,7 +32,8 @@ public sealed record EntryPointsResult(
 public static class EntryPointsProjection
 {
     /// <summary>
-    /// How many rows a listing may return, so the response still crosses one IPC frame.
+    /// The most rows a listing may return, so the response still crosses one IPC frame — the
+    /// query's default and the ceiling <c>ProjectionService.EntryPoints</c> clamps to.
     /// </summary>
     /// <remarks>
     /// <para><b>MEASURED, not chosen.</b> The first value here was 5_000 — "inferred until measured,
@@ -57,8 +63,29 @@ public static class EntryPointsProjection
     /// overflows the frame at this cap too. The durable fix is the byte budget every other
     /// projection carries; this is the cap the evidence supports today, and the listing's
     /// <c>Omitted (n)</c> disclosure keeps it honest on the surface rather than silent.</para>
+    ///
+    /// <para><b>A count is only a bound where something clamps it.</b> Until this was renamed it was
+    /// <c>DefaultMaxRows</c> and it was only a default: <c>ProjectionService.EntryPoints</c> passed
+    /// <c>query.MaxRows</c> straight through, and <c>EntryPointsListing.FromHasType</c> floors
+    /// at 1 and ceils at nothing — so any caller naming a number owned the frame. The frame test
+    /// could not see it, because it invoked the operation at its DEFAULT, which is the one request
+    /// that can never exceed the bound. It now invokes every operation at
+    /// <c>int.MaxValue</c>, and the service clamps.</para>
+    ///
+    /// <para><b>Re-derived against a fixture that counts members.</b> The measuring fixture wrote
+    /// only <c>has_type</c> facts while <c>EntryPointsListing.FromHasType</c> also appends one
+    /// row per <c>has_member</c>, so it under-counted the row universe; it now writes one
+    /// 300-character member per type, making that universe 3,001 types + 3,001 members = 6,002 rows.
+    /// MEASURED on the widened fixture: at <c>int.MaxValue</c> the response is
+    /// <b>4,332,058</b> bytes (2,191,570 before the widening), 4.13x the frame. The arithmetic above
+    /// did not move: the widened fixture measures 730,850 bytes at 1,000 rows and 1,461,628 at 2,000
+    /// — byte for byte what the has_type-only fixture measured — because rows are taken types-first
+    /// and the first 3,001 are the same rows. A member row measures
+    /// <c>(2,905,355 - 2,191,589) / 1,000</c> = <b>713.77</b> bytes, NARROWER than a type row's
+    /// 730.78, so counting members cannot loosen a cap derived from the wider row. 1,254 stands,
+    /// measured rather than assumed.</para>
     /// </remarks>
-    public const int DefaultMaxRows = 1_254;
+    public const int MaxRowsCeiling = 1_254;
 
     public const string UnclassifiedReasonPendingClassifier = "classifier-not-admitted";
 }
