@@ -196,7 +196,10 @@ internal static class CanvasPage
               return 'code';
             }
 
-            function buildFilters(counts) {
+            // `declared` is what the WORKSPACE holds, `counts` is what got drawn. They differ on any
+            // capped view, and the chips used to show only the second while reading as the first —
+            // "Knowledge 0" on a workspace with 878 knowledge nodes, because the cap kept none.
+            function buildFilters(counts, declared) {
               filtersEl.innerHTML = '';
               var lab = document.createElement('span');
               lab.className = 'flabel';
@@ -204,15 +207,18 @@ internal static class CanvasPage
               filtersEl.appendChild(lab);
               CATS.forEach(function (c) {
                 var n = counts[c.id] || 0;
+                var d = (declared && declared[c.id]) || 0;
+                var capped = d > n;
                 var b = document.createElement('button');
                 b.type = 'button';
                 b.className = 'fchip';
                 function label() {
-                  return c.label + ', ' + n + ' node(s), ' + (activeCats[c.id] ? 'shown' : 'hidden');
+                  return c.label + ', ' + (capped ? n + ' of ' + d + ' node(s) drawn' : n + ' node(s)')
+                    + ', ' + (activeCats[c.id] ? 'shown' : 'hidden');
                 }
                 b.setAttribute('aria-pressed', activeCats[c.id] ? 'true' : 'false');
                 b.innerHTML = '<span class="dot" style="background:' + c.color + '"></span>'
-                  + c.label + ' ' + n;
+                  + c.label + ' ' + (capped ? n + ' of ' + d : String(n));
                 b.setAttribute('aria-label', label());
                 b.addEventListener('click', function () {
                   activeCats[c.id] = !activeCats[c.id];
@@ -770,7 +776,16 @@ internal static class CanvasPage
               // Category filter chips, with a live per-category count, then apply the current filter.
               var catCounts = {};
               records.forEach(function (r) { catCounts[r.cat] = (catCounts[r.cat] || 0) + 1; });
-              buildFilters(catCounts);
+
+              // Declared totals folded through the SAME categoryOf the drawn nodes use — a
+              // declaredByKind entry carries `kind` and `isKnowledge`, which is exactly what that
+              // function reads, so there is no second mapping that could disagree with the first.
+              var declaredCats = {};
+              (graph.declaredByKind || []).forEach(function (t) {
+                var c = categoryOf(t);
+                declaredCats[c] = (declaredCats[c] || 0) + (t.declared || 0);
+              });
+              buildFilters(catCounts, declaredCats);
               applyFilter();
 
               var legend = document.getElementById('legend');
@@ -823,7 +838,11 @@ internal static class CanvasPage
               } else {
                 warn.hidden = false;
                 var sum = [];
-                if (omitted > 0) { sum.push(omitted + ' edge(s) omitted by the result bound'); }
+                // NODES, not edges. GraphProjection defines Omitted as "Nodes present in the evidence and
+              // not returned, because a cap applied" — the status bar had it right and this line had
+              // it wrong, on the same integer. A separate edge shortfall does exist
+              // (Bounds.OmittedEdges), which is why the wrong word looked plausible.
+              if (omitted > 0) { sum.push(omitted + ' node(s) not drawn — the result bound'); }
                 if (discl.length) { sum.push(discl.length + ' analysis boundary note(s)'); }
                 warnsum.textContent = '\u26A0 ' + sum.join('  \u00B7  ');
                 var detail = [];

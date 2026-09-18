@@ -41,12 +41,17 @@ public sealed record CanvasEdge(string From, string To, string Predicate, string
 /// What the canvas renders, including what it could not show.
 /// </summary>
 /// <param name="Omitted">
-/// Edges the bounded projection left out. Carried into the page, because a graph that quietly drops
-/// half its edges looks like a small graph rather than a truncated one.
+/// NODES the bounded projection left out — <c>GraphProjection</c>'s own definition: "Nodes present
+/// in the evidence and not returned, because a cap applied". Carried into the page, because a graph
+/// that quietly drops half its nodes looks like a small graph rather than a truncated one.
+/// <para>This doc said <i>edges</i> for as long as it existed, and so did the page's banner, while
+/// the status bar said nodes. One integer, three sentences, at most one true. The edge shortfall is
+/// a real and separate quantity (<c>Bounds.OmittedEdges</c>), which is exactly why the wrong word
+/// survived reading.</para>
 /// </param>
 /// <param name="Disclosures">
 /// What the extractor could not analyse for the scopes behind this view. Distinct from
-/// <paramref name="Omitted"/>: those edges exist and were not returned, these were never extracted.
+/// <paramref name="Omitted"/>: those nodes exist and were not returned, these were never extracted.
 /// </param>
 public sealed record CanvasGraph(
     IReadOnlyList<CanvasNode> Nodes,

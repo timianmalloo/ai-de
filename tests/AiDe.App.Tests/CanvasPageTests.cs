@@ -303,4 +303,49 @@ public sealed class CanvasPageTests
         Assert.True(File.Exists(path), $"the sweep names {page}, and there is no such file at {path}");
         return File.ReadAllText(path);
     }
+
+    /// <summary>The bounded-result banner names the quantity the projection actually carries.</summary>
+    /// <remarks>
+    /// <para><b>One integer, three sentences, and at most one of them true.</b>
+    /// <c>GraphProjection.cs:120</c> defines <c>Omitted</c> as <i>"Nodes present in the evidence and
+    /// not returned, because a cap applied"</i>. The status bar renders it as <c>node(s)</c> and was
+    /// right; this page rendered the same integer as <c>edge(s) omitted by the result bound</c> and
+    /// was wrong. The operator's screenshot showed both reading <b>8,280</b>, and 9,780 − 1,500 =
+    /// 8,280 settles which one it is.</para>
+    ///
+    /// <para>The confusion was available because a separate edge shortfall genuinely exists
+    /// (<c>Bounds.OmittedEdges</c>), so the page named a real quantity — just not the one it was
+    /// holding. A bounded view whose own bound-disclosure is false is worse than no disclosure: it
+    /// is confidently wrong about the thing it exists to be honest about.</para>
+    /// </remarks>
+    [Fact]
+    public void BoundedResultBanner_NamesNodes_BecauseThatIsWhatOmittedCounts()
+    {
+        var css = CanvasPage.Html;
+
+        Assert.DoesNotContain("edge(s) omitted by the result bound", css, StringComparison.Ordinal);
+        Assert.Contains("node(s) not drawn", css, StringComparison.Ordinal);
+    }
+
+    /// <summary>The facet chips count what the workspace declares, not only what got drawn.</summary>
+    /// <remarks>
+    /// <para><b>"Knowledge 0" on a workspace with 878 knowledge nodes.</b> The chips were built from
+    /// <c>records</c> — the drawn nodes — so on a capped view they described the sample and read as a
+    /// statement about the workspace. The operator's screenshot showed <c>Knowledge 0</c> and
+    /// <c>Specs 0</c> while 8,280 nodes were undrawn, and the chips summed to exactly 1,500: the
+    /// drawn count.</para>
+    ///
+    /// <para><c>CanvasGraph.DeclaredByKind</c> exists expressly to fix this and the page referenced
+    /// it <b>zero times</b>. Its entries carry <c>kind</c> and <c>isKnowledge</c> — the two fields
+    /// <c>categoryOf</c> reads — so the declared totals fold through the same mapping the drawn
+    /// nodes use, rather than a second one that could disagree.</para>
+    /// </remarks>
+    [Fact]
+    public void FacetChips_CountWhatIsDeclared_NotOnlyWhatWasDrawn()
+    {
+        var css = CanvasPage.Html;
+
+        Assert.Contains("declaredByKind", css, StringComparison.Ordinal);
+        Assert.Contains("of ", css, StringComparison.Ordinal);
+    }
 }
