@@ -5524,10 +5524,6 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         },
         {
-          "to": "plan-atlas-views",
-          "rel": "relates-to"
-        },
-        {
           "to": "adr-0018-node-content-reader-contract",
           "rel": "depends-on"
         },
@@ -5537,7 +5533,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "af85cdadb1ef2c942a16aed8c5cacb2fdb770d63d32d423bbfee35934d662f3e"
+      "sourceSha256": "901ce3ff8811cd55d354906d2834019484e0790115b6e045baf0735c5e1d6c12"
     },
     {
       "id": "note-d1-codex-entry-point-handshake-r2",
@@ -21064,5 +21060,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "fdb5e3ed02c95461ee7ac3f3284a5664896268006ac25d13e8d713b30cba093c"
+  "graphSha256": "d7fde000c46c79d92a186df1a4ebd77231e8b3919c7ee3817cad9a9bfe16155d"
 };
