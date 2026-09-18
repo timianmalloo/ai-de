@@ -74,7 +74,7 @@ public sealed class EntryPointsSurfaceTests
     /// about rather than a counter that happens to move with it.
     /// </summary>
     /// <remarks>
-    /// <para><b>Why this matters now.</b> <see cref="EntryPointsProjection.DefaultMaxRows"/> was
+    /// <para><b>Why this matters now.</b> <see cref="EntryPointsProjection.MaxRowsCeiling"/> was
     /// lowered from 5,000 to 1,254 — measured against the IPC frame, not chosen — so
     /// <c>Omitted (n)</c> fires on real repositories where it previously never did. A listing that
     /// shows its rows and never says how many it dropped reads as the whole answer.</para>
