@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-18T18:45:00Z",
+  "generated": "2026-09-18T19:22:04Z",
   "audit": [
     {
       "actor": null,
@@ -20731,6 +20731,64 @@ window.AUDIT_DATA = {
         "acceptance_met": true
       },
       "started_at": "2026-09-18T18:44:58Z",
+      "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2TZFXS4X8PPQ1TBCXK2MDFZ",
+      "shortname": "winddown-join-correction",
+      "datetime": "2026-09-18T19:22:01Z",
+      "session": "copilot-winddown-seal-b0d0",
+      "prompt": "Finish only the remaining shutdown closure.",
+      "summary": "The first documentation-only join stopped at step8; its automatic pre-gate acceptance signal was premature. The actual failure was stale retained test counts plus a dangling typed link to a branch-only note. Original entry is preserved and superseded. The source link is corrected without importing unqualified Explore work. One fresh unchanged-product run now counts App1054/Core2756, bothCompleted andonlyexistingexpectedSkips; no baseline lowered or tests changed. Final all-gate resume and push remain pending in this correction.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-winddown-2026-09-18.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close the already-merged documentation handoff honestly",
+      "done_when": "Final gates and clean synchronized main are observed, without new feature work",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-18T18:48:45Z",
+      "duration_seconds": 1996.0,
+      "supersedes": "al-01M2TXC3PB4WQYBY6N5NWVABBW"
+    },
+    {
+      "id": "al-01M2TZFYX8P5EBYDF287Q8TE4G",
+      "shortname": "session-winddown-seal",
+      "datetime": "2026-09-18T19:22:03Z",
+      "session": "copilot-winddown-seal-b0d0",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "Resume an already-merged docs/audit-only closure after exact stale-result and graph-link corrections; no merge conflict, product change, lowered floor or skipped gate. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-winddown-2026-09-18.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Seal the resumable shutdown handoff and preserved operational history",
+      "done_when": "All repository gates and docs graph pass; final records conserved; push and cleanliness read back separately",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-18T19:22:02Z",
       "duration_seconds": 1.0
     }
   ],

@@ -9,7 +9,6 @@ tags: [wind-down, watcher, worktrees, workstreams, coordination, known-good]
 links:
   - { to: note-addendum-c-council-rulings, rel: relates-to }
   - { to: defect-classes, rel: relates-to }
-  - { to: note-explore-lane-not-landable, rel: relates-to }
 review-by: 2026-12-18
 summary: >-
   The operator stood every session down and asked for a common known good before work is federated
@@ -77,7 +76,9 @@ run of this effort.
 `lane/p2-repairs-explore` carries P0a, P2, P3, P4, P6, Ruling 140's default change and two mockups.
 **Core is green at 2,781. App fails 16**, every one a consequence of Ruling 140 deliberately changing
 what the product opens with. Landing it would widen `main`'s red set by sixteen, which Ruling 112
-forbids. Full diagnosis and what is owed: `note-explore-lane-not-landable`.
+forbids. Full diagnosis and what is owed: `note-explore-lane-not-landable`,
+retained with the unlanded Explore lane. It is not an artifact on `main`, so
+this note does not declare a main-graph link to it.
 
 ## The ten workstreams, and the next action for each
 

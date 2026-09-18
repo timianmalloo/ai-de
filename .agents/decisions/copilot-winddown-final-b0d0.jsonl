@@ -1,0 +1,12 @@
+{"agent": "copilot-winddown-final", "at": 1789757104.1267927, "code": null, "kind": "allowed", "path": ".agents/decisions/copilot-winddown-b0d0.jsonl", "session": "copilot-winddown-final-b0d0", "wi": ""}
+{"agent": "copilot-winddown-final", "at": 1789757104.1503043, "code": null, "kind": "allowed", "path": ".agents/log/copilot-winddown-b0d0.jsonl", "session": "copilot-winddown-final-b0d0", "wi": ""}
+{"agent": "copilot-winddown-final", "at": 1789757104.1768155, "code": null, "kind": "allowed", "path": ".agents/log/copilot-winddown-final-b0d0.jsonl", "session": "copilot-winddown-final-b0d0", "wi": ""}
+{"agent": "copilot-winddown-final", "at": 1789757104.203327, "code": null, "kind": "allowed", "path": ".agents/requests.jsonl", "session": "copilot-winddown-final-b0d0", "wi": ""}
+{"agent": "copilot-winddown-final", "at": 1789757104.228346, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "copilot-winddown-final-b0d0", "wi": ""}
+{"agent": "copilot-winddown-final", "at": 1789757104.2528582, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "copilot-winddown-final-b0d0", "wi": ""}
+{"agent": "copilot-winddown-final", "at": 1789757104.2773702, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "copilot-winddown-final-b0d0", "wi": ""}
+{"agent": "copilot-winddown-final", "at": 1789757104.3008816, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "copilot-winddown-final-b0d0", "wi": ""}
+{"agent": "copilot-winddown-final", "at": 1789757104.3244069, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "copilot-winddown-final-b0d0", "wi": ""}
+{"agent": "copilot-winddown-final", "at": 1789757104.3489184, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "copilot-winddown-final-b0d0", "wi": ""}
+{"agent": "copilot-winddown-final", "at": 1789757104.373428, "code": null, "kind": "allowed", "path": "site/index.html", "session": "copilot-winddown-final-b0d0", "wi": ""}
+{"agent": "copilot-winddown-final", "at": 1789757104.396942, "code": null, "kind": "allowed", "path": "site/model.html", "session": "copilot-winddown-final-b0d0", "wi": ""}

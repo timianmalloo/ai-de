@@ -149,6 +149,14 @@ about absent-file contents, removal-time checks or the deleting actor. Names
 alone establish neither personal data nor unique-data loss. No new deletion
 is authorized by retrospective snapshot review.
 
+The later read-only removal-delta comparison found 82 recorded paths outside
+that bin/obj classification. Twenty-one match the supplied archive manifest;
+61 do not: 13 audit-marker, 19 fixture/bare-repository, 19 execution-marker and
+10 TRX paths. "Unmatched in this manifest" is not proof of data loss or absence
+of another copy. The exact lists remain in the session's
+`winddown-archive-coverage.json`. This is a deferred preservation-disposition
+follow-up, not permission for further cleanup or a new implementation task.
+
 Dirty, unmerged, held or unknown-data trees are retained. No branch is considered
 merged merely because it was pushed. Cleanup must recheck actual default-main
 ancestry, exact path and HEAD, dirt, holders and ignored-data preservation.

@@ -1,1 +1,4 @@
 {"agent": "copilot-winddown-final", "at": 1789757098.1709626, "kind": "session-start", "path": "-", "seq": 1, "session": "copilot-winddown-final-b0d0", "tree": "primary", "wi": "WI-0", "worktree": "C:/Projects/ai-de"}
+{"agent": "copilot-winddown-final", "at": 1789757751.2055333, "kind": "claim", "path": "docs/notes/wind-down-state-2026-09-18.md", "seq": 2, "session": "copilot-winddown-final-b0d0", "ttl": 300.0, "wi": "final-doc-link-correction"}
+{"agent": "copilot-winddown-final", "at": 1789759321.4609375, "kind": "release", "path": "docs/notes/wind-down-state-2026-09-18.md", "seq": 3, "session": "copilot-winddown-final-b0d0", "wi": "WI-0"}
+{"agent": "copilot-winddown-final", "at": 1789759321.5230737, "kind": "session-end", "path": "-", "seq": 4, "session": "copilot-winddown-final-b0d0", "wi": "WI-0", "worktree": "C:/Projects/ai-de"}
