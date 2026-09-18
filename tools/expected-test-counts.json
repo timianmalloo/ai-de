@@ -3,8 +3,8 @@
   "minimumTotal": {
     "AiDe.App.Tests": 1057,
     "AiDe.Core.Tests": 2781,
-    "AiDe.Core.Tests.portable": 2575,
-    "AiDe.Core.Tests.nonportable": 181
+    "AiDe.Core.Tests.portable": 2598,
+    "AiDe.Core.Tests.nonportable": 183
   },
   "_expectedSkips_comment": "Tests a .trx may record as NotExecuted \u2014 inside `total`, outside `executed`. Read from real result files, never written from memory. The four AgentPlane entries are CI's Windows nonportable job (181 total, 177 executed); the symlink entry is any Windows run of the portable half, where creating a symlink needs a privilege the runner lacks. An unlisted NotExecuted result is a finding, because a skip the floor cannot see is a hole in the floor exactly that wide.",
   "expectedSkips": [

@@ -58,10 +58,21 @@ public sealed class WorkbenchShellTests
         Assert.DoesNotContain("Terminal sessions", coding);   // Ruling 84: the Loomkeeper kinds left Coding
         Assert.DoesNotContain("Graph", coding);
 
+        // Ruling 140: Architecture's default Center is Graph (active) then Tree, and the Graph has
+        // exactly one home — the Left retired its copy with the amendment.
         Assert.Contains("Graph", architecture);
+        Assert.Contains("Tree", architecture);
         Assert.DoesNotContain("Provenance", architecture);   // Ruling 94: the provenance tab is eliminated
         Assert.DoesNotContain("Evidence", architecture);     // Ruling 94: admitted, not in the default
-        Assert.Contains("Contexts", architecture);
+        // Contexts and Domain take the role Evidence has held since Ruling 94, and the Tree has just
+        // left: out of the DEFAULT, still admitted — one View-menu gesture away. Absence from the
+        // composed default is the claim; absence from admission would be an envelope drop.
+        Assert.DoesNotContain("Contexts", architecture);
+        Assert.DoesNotContain("Domain", architecture);
+        var admitted = DockHost.AdmissionFor(PerspectiveSet.Architecture);
+        Assert.True(admitted.Admits("contexts"));
+        Assert.True(admitted.Admits("classdiagram"));
+        Assert.True(admitted.Admits("solution-tree"));
         Assert.DoesNotContain("Terminal — pwsh", architecture);
 
         Assert.Contains("Terminal sessions", coordination);   // Ruling 62's caption, on its new bench

@@ -234,14 +234,17 @@ public sealed record WorkbenchLayout(
     }
 
     /// <summary>
-    /// Architecture's default (Ruling 94, amending Rulings 59/61 — the operator: <i>"this is the
-    /// default layout i want … AND we should eliminate the provenance tab"</i>): <b>Left = the
-    /// Graph</b> at <see cref="ArchitectureLeftExtent"/> · <b>Center = Contexts (active), Domain</b>
-    /// (the class model — Ruling 55d's re-pointing off the Evidence list) · <b>Right = empty,
-    /// collapsed</b> · <b>Bottom = empty, collapsed</b>. Evidence (<c>view</c>) leaves the default
-    /// and stays admitted — one View-menu gesture away; its selected row carries its own provenance
-    /// line, so the pair Ruling 61 split Left/Right is one master now and the <c>inspector</c> kind
-    /// is retired from the product.
+    /// Architecture's default (<b>Ruling 140</b>, amending Ruling 94 — the operator: <i>"the
+    /// right-side-views for the architecture explorer need to be Graph and Tree, where tree is the
+    /// more familiar dev view like in vs code"</i>): <b>Center = Graph (active), Tree</b> at extent
+    /// 1.0 · <b>Left, Right and Bottom = empty, collapsed</b>.
+    /// <para><b>Contexts and Domain leave the default and stay admitted</b> — one View-menu gesture
+    /// away, their kinds still restorable, exactly as Evidence (<c>view</c>) did under Ruling 94.
+    /// Absence from the default is the claim; absence from admission would be the envelope drop the
+    /// ruling forbids. The <c>inspector</c> kind is retired from the product (Ruling 94).</para>
+    /// <para>The Graph leaves Left with this amendment, so Ruling 94 condition (3)'s header-strip
+    /// overflow finding becomes <b>moot rather than fixed</b>: the strip overflowed because the Graph
+    /// sat in a 0.22-width zone, and it no longer does.</para>
     /// </summary>
     /// <remarks>
     /// <para>Left · Center · Bottom are the operator's saved slot (their

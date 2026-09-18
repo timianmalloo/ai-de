@@ -536,6 +536,41 @@ public sealed class SolutionTreeSurfaceTests
         });
     }
 
+    /// <summary>
+    /// Shows the Tree and hands back its surface, bound to the workspace queries.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Ruling 140</b> makes the Tree a DEFAULT Architecture tab (Center = Graph active,
+    /// Tree), so <c>surface.show.solution-tree</c> no longer OPENS one — it activates the one the
+    /// default already holds (<c>Instances.One</c>; <c>WorkbenchShell.OpenKind</c>'s showExisting
+    /// branch). That branch is asserted on the way through, because it IS the new contract: the
+    /// show activates the default tab and adds no second Tree.</para>
+    /// <para><b>Why the bind is called.</b> Opening a surface is what used to bind it to the
+    /// workspace queries (<c>OpenReferenceDocument</c> → <c>BindSolutionTrees</c>). A DEFAULT tab is
+    /// bound by <c>AttachWorkspace</c> instead, which runs the same <c>BindSolutionTrees</c> after
+    /// its render — and these fixtures do not attach a workspace, they hand the shell its queries
+    /// directly. So the product's own bind is called here rather than these facts asserting over a
+    /// tab nothing ever populated.</para>
+    /// </remarks>
+    private static SolutionTreeSurface ShowTheDefaultTree(WorkbenchShell shell)
+    {
+        var tree = Assert.Single(shell.Architecture.Service.Zones.AllSurfaces(), s => s.Kind == "solution-tree");
+        Assert.Equal("tree", tree.SurfaceId);
+
+        Assert.True(shell.Execute("surface.show.solution-tree"));
+
+        var center = Assert.IsType<AiDe.Core.Workbench.ZoneStack>(
+            shell.Architecture.Service.Zones.Zone(AiDe.Core.Workbench.ZoneId.Center).Content);
+        Assert.Equal(tree.SurfaceId, center.Active.SurfaceId);
+        Assert.Single(shell.Architecture.Service.Zones.AllSurfaces(), s => s.Kind == "solution-tree");
+
+        shell.BindSolutionTrees();
+
+        var surface = shell.Architecture.Adapter.SurfaceContent<SolutionTreeSurface>(tree.SurfaceId);
+        Assert.NotNull(surface);
+        return surface!;
+    }
+
     [Fact]
     public void Binder_CallsSolutionTreeAsync_NotGraphAsync_AndShowsOmitSetDto()
     {
@@ -564,16 +599,12 @@ public sealed class SolutionTreeSurfaceTests
             try
             {
                 mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Architecture, "test");
-                Assert.True(shell.Execute("surface.show.solution-tree"));
+                var surface = ShowTheDefaultTree(shell);
                 Assert.Equal(1, queries.TreeCalls);
                 Assert.NotNull(queries.LastQuery);
                 Assert.Null(typeof(SolutionTreeQuery).GetProperty("DropRelativePaths"));
 
-                var id = shell.Architecture.Service.Zones.AllSurfaces()
-                    .Single(s => s.Kind == "solution-tree").SurfaceId;
-                var surface = shell.Architecture.Adapter.SurfaceContent<SolutionTreeSurface>(id);
-                Assert.NotNull(surface);
-                var text = VisibleText(surface!);
+                var text = VisibleText(surface);
                 Assert.Contains("Omitted (2)", text, StringComparison.Ordinal);
                 Assert.DoesNotContain("omit_probe", text, StringComparison.Ordinal);
             }
@@ -612,15 +643,18 @@ public sealed class SolutionTreeSurfaceTests
             try
             {
                 mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Architecture, "test");
-                Assert.True(shell.Execute("surface.show.solution-tree"));
-                var id = shell.Architecture.Service.Zones.AllSurfaces()
-                    .Single(s => s.Kind == "solution-tree").SurfaceId;
-                var surface = shell.Architecture.Adapter.SurfaceContent<SolutionTreeSurface>(id);
-                Assert.NotNull(surface);
-                ClickNamed(surface!, "Show Graph");
-                Assert.Contains(
-                    shell.Architecture.Service.Zones.AllSurfaces(),
-                    s => s.Kind == "canvas");
+                var surface = ShowTheDefaultTree(shell);
+                ClickNamed(surface, "Show Graph");
+
+                // Ruling 140: the Graph IS the default's first Center tab, so Show Graph activates
+                // the one canvas rather than opening a second (Instances.One) — which is what the
+                // 'existing' in this test's name now means. The Tree was the active tab a line ago,
+                // so the Center's active tab is what tells a real show from a no-op.
+                var canvas = Assert.Single(shell.Architecture.Service.Zones.AllSurfaces(), s => s.Kind == "canvas");
+                Assert.Equal("graph", canvas.SurfaceId);
+                var center = Assert.IsType<AiDe.Core.Workbench.ZoneStack>(
+                    shell.Architecture.Service.Zones.Zone(AiDe.Core.Workbench.ZoneId.Center).Content);
+                Assert.Equal("graph", center.Active.SurfaceId);
             }
             finally
             {
@@ -705,12 +739,8 @@ public sealed class SolutionTreeSurfaceTests
             try
             {
                 mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Architecture, "test");
-                Assert.True(shell.Execute("surface.show.solution-tree"));
-                var id = shell.Architecture.Service.Zones.AllSurfaces()
-                    .Single(s => s.Kind == "solution-tree").SurfaceId;
-                var surface = shell.Architecture.Adapter.SurfaceContent<SolutionTreeSurface>(id);
-                Assert.NotNull(surface);
-                surface!.Measure(new Size(480, 360));
+                var surface = ShowTheDefaultTree(shell);
+                surface.Measure(new Size(480, 360));
                 surface.Arrange(new Rect(0, 0, 480, 360));
                 surface.UpdateLayout();
                 ExpandIndexed(surface.Tree);
@@ -771,17 +801,13 @@ public sealed class SolutionTreeSurfaceTests
             try
             {
                 mode.Activate(AiDe.Core.Workbench.PerspectiveSet.Architecture, "test");
-                Assert.True(shell.Execute("surface.show.solution-tree"));
-                var id = shell.Architecture.Service.Zones.AllSurfaces()
-                    .Single(s => s.Kind == "solution-tree").SurfaceId;
-                var surface = shell.Architecture.Adapter.SurfaceContent<SolutionTreeSurface>(id);
-                Assert.NotNull(surface);
+                var surface = ShowTheDefaultTree(shell);
                 PumpUntil(() => queries.TreeCalls >= 1, timeoutMs: 2000);
 
-                shell.RetrySolutionTreePopulate(surface!);
+                shell.RetrySolutionTreePopulate(surface);
                 PumpUntil(() => queries.TreeCalls >= 2, timeoutMs: 2000);
                 PumpUntil(
-                    () => VisibleText(surface!).Contains("7 skip-listed directories omitted", StringComparison.Ordinal),
+                    () => VisibleText(surface).Contains("7 skip-listed directories omitted", StringComparison.Ordinal),
                     timeoutMs: 2000);
 
                 Assert.True(hold.TrySetResult(StarDto() with { SkipListedDirectoriesOmitted = 1 }));
@@ -794,11 +820,11 @@ public sealed class SolutionTreeSurfaceTests
 
                 Assert.Contains(
                     "7 skip-listed directories omitted",
-                    VisibleText(surface!),
+                    VisibleText(surface),
                     StringComparison.Ordinal);
                 Assert.DoesNotContain(
                     "1 skip-listed directories omitted",
-                    VisibleText(surface!),
+                    VisibleText(surface),
                     StringComparison.Ordinal);
             }
             finally
