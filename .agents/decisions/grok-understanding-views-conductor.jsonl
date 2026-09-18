@@ -206,3 +206,8 @@
 {"agent": "grok-understanding-views-conductor", "at": 1789689983.8109386, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/EntryPointsSurface.cs", "session": "grok-understanding-views-conductor", "wi": ""}
 {"agent": "grok-understanding-views-conductor", "at": 1789689983.8338175, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/BoundsReachTheSurfaceTests.cs", "session": "grok-understanding-views-conductor", "wi": ""}
 {"agent": "grok-understanding-views-conductor", "at": 1789689983.8548653, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/EntryPointsSurfaceTests.cs", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789691424.3358974, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789691424.362464, "code": null, "kind": "allowed", "path": "docs/notes/d1-codex-entry-point-handshake-r7.md", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789691424.3863957, "code": null, "kind": "allowed", "path": "docs/notes/d1-codex-entry-point-handshake.md", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789691424.4089167, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/EntryPointsSurface.cs", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789691424.431937, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/EntryPointsSurfaceTests.cs", "session": "grok-understanding-views-conductor", "wi": ""}

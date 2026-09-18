@@ -1,18 +1,18 @@
 # Codex Atlas five-gate integration
 
-## Current availability — supersedes historical sections below
+## Current availability — authoritative over historical sections
 
 - Agent: codex-astra-gate-conductor (Astra)
 - Session: codex-atlas-five-gates-integration
 - Worktree: C:/Projects/ai-de-integration-atlas-five-gates
 - Branch: integration/atlas-five-gates
-- Status: ACTIVE publication follow-through, 2026-09-18T00:10:37.899034+00:00.
-- Objective: obtain the existing publisher's actual R124 proof/rescue/join disposition for candidate a63de46c. Frozen compilation is complete and watcher QWRKSC acknowledged it.
-- Current action: watcher request req-01M2RXKMV57T4JHRS526QQBXYX routes existing Claude landing intent QWRKQN and accepted rescue QST5/completion-or-handback QTKPAR. Separate Astra Owner checks exact R137-139 applicability; independent Sol reviewer checks candidate/main overlap. Both read-only.
-- Dependencies: actual Claude personal proof inspection; audit conservation or explicit handback; applicable current-base join checks and serialized publication. No invented all-green-main requirement. Notice is not ACK, silence is not a transfer.
-- Boundaries: no source/build/native/main work. Pair03 phase remains closed refused/inconclusive; canonical Atlas qualification BLOCK. Original rescue tree untouched. Grok r6 one-clause correction pending independently; admitted empty stub/listing unheld.
-- Evidence: candidate a63de46c three proofs; root docs/proof/atlas-p1-03-transition-design-review.md; docs/plans/atlas-five-gates.md; artifacts/atlas-five-gates/pair-handoff/r124-publication-followthrough.json.
-- Ownership authority remains session-contracts section 2. This record creates no grant.
+- Status: ENDED bounded R122 design and publication-follow-through unit; records committed 3ae5c37e714a6e2b1606aa93f8fae6d6c65384c1. Tracked clean; pre-existing untracked .artifacts retained. No live author/execution from this unit.
+- Completed: R124 watcher receipt consumed; exact current-main overlap checked at e0a9c116 (8 support overlaps, no spike/proof collision,774 audit union before oldrescue). Watcher RXKMV actually routed existing publisher actions. R-M d69323b5 already clears E1/E2 synthetic mocks; no duplicate review. E2 R122 design completed at 39de7428c00ea61cffa9a4a149e81afc44ea5ba9 in design/atlas-e2-deployment-context; independent readiness CLEAR at85a14fd6; reviewed design blob e48d7f4a1d67603447deee97cdd865d116d66edf unchanged by official V16 historical-proof flag.
+- Current dependencies: Claude-convened Data & Persistence request req-01M2RYPK39TN21SY9NQ4TB7SVV remains open; finalpin and exactmodel checklist supplied. Completed-work watcher receipt req-01M2RYPK521P6KCS2BMZP4EBPY sent, not acceptance. Existing Claude QWRKQN personalproof/publication and QST5/QTKPAR auditconservation-or-explicit-handback remain open. No generic watcherACK or fresh approval blocks completed design; no silent rescue takeover.
+- Boundaries: formal D&P, foundation, producer/home/implementation, bounds/positivefixture and US-E8.b stay open. Pair03 native phase closed refused/inconclusive; canonical Atlas BLOCK. Grok r6 correction remains separate; no Sequence activation. No main publication by this session; remote e0a9c116 observed at close.
+- Evidence: docs/proof/atlas-p1-03-transition-design-review.md; docs/plans/atlas-five-gates.md; new E2 tree docs/design/atlas-architecture-views.md section4.1; artifacts/atlas-five-gates/pair-handoff/r122-completed-handoff.json and r124-overlap-e0a9c116.json. Root audit al-01M2RYPKX19KG3WMQ6N0Z236HD; graph605/zero defects,orphans,drift;1015audit/197change,225classes,14sitefigures inspected. New E2 tree clean/retained, source and proofbody preserved.
+- Retain original E1/E2, new E2 design, R124 candidate, original rescue and native evidence trees for exact-pin review/integration; no peer cleanup.
+- Ownership authority remains session-contracts section2. This record creates no grant.
 
 ## Historical receipts
 
