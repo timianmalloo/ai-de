@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "concepts": [
+    { "id": "order", "label": "Order", "role": "entity", "anchor": "a" },
+    { "id": "money", "label": "Money", "role": "value-object", "anchor": "a" },
+    { "id": "orders", "label": "Orders", "role": "aggregate", "anchor": "a", "root": "order", "members": ["order", "money"], "invariants": ["positive"] }
+  ],
+  "invariants": [
+    { "id": "positive", "statement": "Declared invariant: order total is positive", "anchor": "a" }
+  ],
+  "layers": [
+    { "id": "domain", "label": "Domain", "kind": "layer", "dimension": "logical", "state": "current", "members": ["order", "money"], "anchor": "a" },
+    { "id": "storage", "label": "Storage", "kind": "component", "dimension": "deployment", "state": "target", "members": ["order"], "anchor": "a" }
+  ],
+  "anchors": [
+    { "id": "a", "target": "synthetic:abc", "scope": "fixture", "hash": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad", "start": 0, "length": 3 },
+    { "id": "b", "target": "synthetic:abc", "scope": "fixture", "hash": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad", "start": 0, "length": 3 }
+  ],
+  "resources": [
+    { "id": "resource-a", "workspace": "fixture", "scope": "file:a", "file": "a.bicep", "symbol": "store", "anchor": "a" },
+    { "id": "resource-b", "workspace": "fixture", "scope": "file:b", "file": "a.bicep", "symbol": "store", "anchor": "a" }
+  ],
+  "aliases": [
+    { "id": "alias-a", "label": "Primary", "rootRef": "resource-a", "anchor": "a" },
+    { "id": "alias-b", "label": "Archive", "rootRef": "resource-a", "anchor": "b" }
+  ]
+}
