@@ -5,6 +5,6 @@
 - Worktree: C:\Projects\ai-de-understanding-views-d1
 - Branch: understanding-views-d1
 - Status: D-1 admitted; handshake proposed, not frozen
-- Updated: 2026-09-17T19:15Z
-- Doing: Merged main e0 (R138 cap 1254). Clamped MaxRows. Truncation chrome already green. r7 NOTICE SENT. Sequence dark. No GUI.
-- Waiting on: Codex CONSUMER ACK AS WRITTEN: r7 blob 703264e39931f35ca15795b0a8e4fded1f2f41e1 (not you).
+- Updated: 2026-09-17T19:40Z
+- Doing: r7 FROZEN empty-stub (producer ACK 0069bfc1; blob 703264e3 unchanged). Sequence still mapping-unavailable. Listing independent. No GUI.
+- Waiting on: later mapping contract for Sequence (not r7). Not Codex r7 ACK. Not the human.
