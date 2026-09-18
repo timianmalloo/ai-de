@@ -7445,6 +7445,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "c20b395a9957338b90358af9b8af08d35c4cb32863c8b29e530c097d41878c78"
     },
     {
+      "id": "note-wind-down-state-2026-09-18",
+      "path": "docs/notes/wind-down-state-2026-09-18.md",
+      "title": "Wind-down state, 2026-09-18: what landed, what is preserved, what every workstream owes next",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-watch-0915",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "The operator stood every session down and asked for a common known good before work is federated again. This is that state: what reached main, what is preserved and where, which lane cannot land and why, and the next action for each of ten workstreams. Nothing was deleted that held work, and no work exists in only one place.",
+      "tags": [
+        "wind-down",
+        "watcher",
+        "worktrees",
+        "workstreams",
+        "coordination",
+        "known-good"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-explore-lane-not-landable",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "721d2c31a27295f617d1d1bf6058b1c0ada466e5e32f6ff9ba3645f31435e2b9"
+    },
+    {
       "id": "note-workspace-open-layout-restore",
       "path": "docs/notes/workspace-open-layout-restore.md",
       "title": "Decision note — workspace-open layout restore semantics",
@@ -21172,5 +21208,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "96d461c5e9b976a30dbcbea107d8b3e2ef1233e9aced9c9a08811a43c89b71d0"
+  "graphSha256": "a9b1d211e66390e9d056757d0de5ebc028b4ba5ea0b12c2fbc65adb916808c4d"
 };
