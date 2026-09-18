@@ -199,4 +199,108 @@ public sealed class CanvasPageTests
 
         Assert.Equal(palette, found);
     }
+
+    // DC-230's CONTROL (Ruling 142(i)): THE PANE'S PRIMARY CONTENT CONSUMES THE PANE.
+    //
+    // `#stage { height: 440px }` sat inside a full-height Explore pane for as long as the canvas
+    // existed. It survived because of its MEDIUM, not its value: a page authored inside a C# raw
+    // string is invisible to `design-lint.py` (which reads the design docs) and to
+    // `ui-craft-gate.py` (which reads the built source), and the XAML extent tests measure a
+    // composed visual tree, which a WebView's CSS is not in. Measured on the operator's machine:
+    // a 1624x437 stage inside a 1661x2002 pane — 21.8% of the height, 3.6% of the pane's area,
+    // ~72 px2 per drawn node. The content was correctly filling a wrongly-small container.
+    //
+    // WHY THIS IS THE CONTROL AND NOT THE FIX. Token injection at navigate time (DESIGN.md TC5) is
+    // the fix for DC-230's other instance, the restated palette, and lands with the "Explore
+    // truthfulness" slice. Injection does not fail when somebody types the next `height: 440px` —
+    // this assertion does, and CI6 says the control is the thing that fails on recurrence. Per
+    // Ruling 142 it does NOT widen to hex literals yet: widening ahead of the fix would be a
+    // permanently red gate, which is not red-first.
+    //
+    // WHAT IT CAN AND CANNOT PROVE. It reads the authored page text with no browser, so it proves
+    // the declarations are present and no cap is declared — not that the rendered stage is tall.
+    // The rendered proof is the desktop slot's measurement of `stage.clientHeight` against the
+    // pane. Deterministic: no window, no WebView2, no rendering.
+    [Theory]
+    [MemberData(nameof(InlinedPages))]
+    public void PrimaryContentRegion_ConsumesThePane_RatherThanCarryingAFixedExtent(
+        string page, string region, string idiom)
+    {
+        var css = PageSource(page);
+
+        // Exactly one rule, not the first of several: a second `#stage { … }` further down wins the
+        // cascade, so a control that read only the first would be reading a rule the browser does
+        // not apply. Compound selectors (`#stage.grab`) style a state and are not the region's rule.
+        var rules = Regex.Matches(css, Regex.Escape(region) + @"\s*\{([^}]*)\}");
+        Assert.True(
+            rules.Count == 1,
+            $"{page}: expected exactly one `{region} {{ … }}` rule; found {rules.Count}. The control "
+            + "cannot say which one the cascade applies.");
+
+        var block = rules[0].Groups[1].Value;
+
+        // 1. NO ABSOLUTE EXTENT. `min-height` is a floor and is required below; `height` and
+        //    `max-height` in px are caps, and a cap on the one region whose job is to consume the
+        //    pane is the defect itself.
+        var cap = Regex.Match(block, @"(?<![-\w])(?:max-)?height\s*:\s*[0-9.]+px");
+        Assert.False(
+            cap.Success,
+            $"{page}: `{region}` declares `{cap.Value.Trim()}` — an absolute extent on the region "
+            + "that is the pane's primary content. The pane grows and the content does not "
+            + "(DC-230). Use a flex remainder with a min-height.");
+
+        // 2. THE REGION NEEDS SOMETHING TO BE THE REMAINDER OF. Every inlined page declares the
+        //    full-height root chain; without it a percentage or flex height resolves against a
+        //    content-sized body and the region collapses to its content.
+        Assert.Matches(@"html\s*,\s*body\s*\{[^}]*(?<![-\w])height\s*:\s*100%", css);
+
+        // 3. THE REMAINDER IDIOM THE REGION IS PINNED TO. Two idioms are in use and each is named
+        //    per page rather than allowed generally, so a new page states which one it uses.
+        if (idiom == FlexRemainder)
+        {
+            Assert.Matches(@"flex\s*:\s*1\s+1\s+(auto|0)", block);
+            Assert.Matches(@"(?<![-\w])min-height\s*:", block);
+            Assert.Matches(@"flex-direction\s*:\s*column", css);
+        }
+        else
+        {
+            Assert.Matches(@"(?<![-\w])height\s*:\s*100%", block);
+        }
+    }
+
+    /// <summary>The region fills what the flex column above it has left, and declares its own floor.</summary>
+    private const string FlexRemainder = "flex remainder";
+
+    /// <summary>The region is the page's only content and takes the full-height chain directly.</summary>
+    private const string FullHeightChain = "full-height chain";
+
+    /// <summary>
+    /// Every inlined page string this repository ships, with the region that is the pane's primary
+    /// content and the remainder idiom it is pinned to. The sweep is DC-230's own
+    /// (`SurfaceContentFactory.cs:661` and `:831` are deliberate caps and floors on lists, and were
+    /// ruled out); a fourth page added to `src/AiDe.App` without a row here is the gap re-opening.
+    /// </summary>
+    public static TheoryData<string, string, string> InlinedPages => new()
+    {
+        { "CanvasPage.Html", "#stage", FlexRemainder },
+        { "Web/composer.html", "#fields", FlexRemainder },
+        { "Web/composer-host.html", "#composer", FullHeightChain },
+    };
+
+    /// <summary>The authored text of an inlined page — the C# raw string, or the .html beside it.</summary>
+    private static string PageSource(string page)
+    {
+        if (page == "CanvasPage.Html") { return CanvasPage.Html; }
+
+        var here = new DirectoryInfo(AppContext.BaseDirectory);
+        while (here is not null && !File.Exists(Path.Combine(here.FullName, "AiDe.sln")))
+        {
+            here = here.Parent;
+        }
+
+        Assert.NotNull(here);
+        var path = Path.Combine(here!.FullName, "src", "AiDe.App", page.Replace('/', Path.DirectorySeparatorChar));
+        Assert.True(File.Exists(path), $"the sweep names {page}, and there is no such file at {path}");
+        return File.ReadAllText(path);
+    }
 }

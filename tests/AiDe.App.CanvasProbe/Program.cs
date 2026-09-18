@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Threading;
 using AiDe.App.Workbench;
 using AiDe.Core.Presentation;
@@ -36,11 +37,28 @@ internal static class Program
     private const int Crashed = 6;
 
     [STAThread]
-    private static int Main()
+    private static int Main(string[] args)
     {
         try
         {
-            return Run();
+            // `--measure <width> <height> [nodes]` reports the stage against its pane at a given
+            // window size, and the cost of one fit()+place() at that size. It is a MEASUREMENT mode,
+            // not an assertion: it prints numbers and exits 0, because the numbers are the evidence
+            // and a pass/fail here would be the probe deciding what the budget is. With no arguments
+            // this is the P2-FOCUS-03 keyboard-trap probe, unchanged.
+            return args switch
+            {
+                ["--measure", var w, var h, ..] => Measure(
+                    int.Parse(w), int.Parse(h), args.Length > 3 ? int.Parse(args[3]) : 0, dock: false),
+
+                // `--dock` sizes the Explorer itself rather than the window, because Windows clamps
+                // a window to the work area and this machine's display is smaller than the operator's
+                // — measured: a requested 3840x2160 window came back as a 1709x1047 DIP Explorer.
+                ["--dock", var w, var h, ..] => Measure(
+                    int.Parse(w), int.Parse(h), args.Length > 3 ? int.Parse(args[3]) : 0, dock: true),
+
+                _ => Run(),
+            };
         }
         catch (Exception ex)
         {
@@ -193,6 +211,198 @@ internal static class Program
         }
 
         Console.Out.WriteLine($"focus left the canvas: {reported.Value}");
+        return Ok;
+    }
+
+    /// <summary>
+    /// <b>The P1 measurement</b> (Ruling 133's SRE condition, INV-0014 §1). Hosts the canvas in the
+    /// real <see cref="ExplorerSurface"/> at a given window size and reports the stage's extent
+    /// against its pane's — the numbers the investigation took off a screenshot, taken off the
+    /// product instead. It prints and exits <see cref="Ok"/>: the numbers are the evidence, and a
+    /// pass/fail here would be the probe deciding the budget.
+    /// </summary>
+    private static int Measure(int width, int height, int nodes, bool dock)
+    {
+        var canvas = new CanvasSurface("canvas-measure", "Graph");
+        canvas.GraphSource = (_, _) => Task.FromResult(Graph(Math.Max(nodes, 3)));
+
+        var explorer = new ExplorerSurface(canvas, new NodeReaderView());
+        object content = explorer;
+
+        if (dock)
+        {
+            // The Explorer is laid out at the requested size inside an unconstraining panel, so the
+            // dock can be larger than this display. The windowed WebView2's own HWND is sized to the
+            // element, so the page's viewport is the dock's — the part off-screen is clipped by the
+            // window, not shrunk.
+            explorer.Width = width;
+            explorer.Height = height;
+            var host = new Canvas();
+            host.Children.Add(explorer);
+            content = host;
+        }
+
+        var window = new Window
+        {
+            Title = "AiDe canvas measure",
+            Content = content,
+            Width = dock ? 1200 : width,
+            Height = dock ? 800 : height,
+            WindowStartupLocation = WindowStartupLocation.Manual,
+            Left = 0,
+            Top = 0,
+        };
+
+        var result = Crashed;
+        window.Loaded += async (_, _) =>
+        {
+            result = await MeasureAsync(window, canvas, explorer, width, height, nodes);
+            window.Close();
+        };
+
+        window.Show();
+        SetForegroundWindow(new WindowInteropHelper(window).Handle);
+
+        var frame = new DispatcherFrame();
+        window.Closed += (_, _) => frame.Continue = false;
+        var guard = new DispatcherTimer(
+            TimeSpan.FromSeconds(180), DispatcherPriority.Normal,
+            (_, _) => { frame.Continue = false; }, Dispatcher.CurrentDispatcher);
+        guard.Start();
+
+        Dispatcher.PushFrame(frame);
+        guard.Stop();
+        canvas.Dispose();
+        return result;
+    }
+
+    /// <summary>A graph of <paramref name="count"/> nodes, a third of the edges inferred.</summary>
+    private static CanvasGraph Graph(int count)
+    {
+        var nodes = new List<CanvasNode>(count);
+        var edges = new List<CanvasEdge>(Math.Max(count - 1, 0));
+        for (var i = 0; i < count; i++)
+        {
+            nodes.Add(new CanvasNode($"Node.{i:D5}", $"Node {i}", "source", IsRoot: i == 0));
+            if (i > 0)
+            {
+                edges.Add(new CanvasEdge(
+                    $"Node.{i:D5}", $"Node.{i / 2:D5}", "depends_on", i % 3 == 0 ? "Inferred" : "Verified"));
+            }
+        }
+
+        return new CanvasGraph(nodes, edges, "Node.00000", 0, [], null, DeclaredByKind: null);
+    }
+
+    private static async Task<int> MeasureAsync(
+        Window window, CanvasSurface canvas, ExplorerSurface explorer, int width, int height, int nodes)
+    {
+        var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(90);
+        while (!canvas.Ready && DateTime.UtcNow < deadline)
+        {
+            await Task.Delay(50);
+        }
+
+        if (!canvas.Ready)
+        {
+            Console.Error.WriteLine("the canvas page never finished loading");
+            return CanvasNeverLoaded;
+        }
+
+        // The graph is drawn after the page loads, so measuring straight away would report a stage
+        // whose layout has not run. Non-vacuity: a measurement over zero nodes says nothing.
+        var drawn = "0";
+        while (DateTime.UtcNow < deadline)
+        {
+            drawn = (await canvas.EvaluateAsync("String(document.querySelectorAll('.node').length)")).Trim('"');
+            if (drawn is not ("0" or "")) { break; }
+            await Task.Delay(100);
+        }
+
+        if (drawn is "0" or "" || drawn.StartsWith("(evaluate failed", StringComparison.Ordinal))
+        {
+            Console.Error.WriteLine($"the canvas rendered no nodes ({drawn}) — nothing below would be measured");
+            return CanvasNeverLoaded;
+        }
+
+        var dpi = VisualTreeHelper.GetDpi(window);
+        var page = await canvas.EvaluateAsync(
+            "JSON.stringify({"
+            + "stageH: document.getElementById('stage').clientHeight,"
+            + "stageW: document.getElementById('stage').clientWidth,"
+            + "viewportH: document.documentElement.clientHeight,"
+            + "viewportW: document.documentElement.clientWidth,"
+            + "bodyH: document.body.clientHeight,"
+            + "dpr: window.devicePixelRatio,"
+            + "nodes: document.querySelectorAll('.node').length})");
+
+        Console.Out.WriteLine($"window {width}x{height} | layout {explorer.Layout} | dpiScale {dpi.DpiScaleX}");
+        Console.Out.WriteLine(
+            $"pane (WPF DIPs) {canvas.ActualWidth:F1}x{canvas.ActualHeight:F1} | "
+            + $"explorer {explorer.ActualWidth:F1}x{explorer.ActualHeight:F1}");
+        Console.Out.WriteLine($"page {page}");
+
+        // RULING 141(a): P6's proof is rendered in this slot. The page string test can only see the
+        // encoding; this reads what actually reached the SVG for a NON-JOIN edge of each class, so
+        // an inferred edge cannot be rendered pixel-identical to an extracted one unnoticed.
+        var provenance = await canvas.EvaluateAsync(
+            "JSON.stringify([].slice.call(document.querySelectorAll('#edges line')).map(function (l) {"
+            + " var t = l.querySelector('title');"
+            + " return { title: t ? t.textContent : null, dash: l.getAttribute('stroke-dasharray'),"
+            + " stroke: l.getAttribute('stroke') }; })"
+            + ".filter(function (e, i, a) { return a.findIndex(function (x) { return x.title === e.title; }) === i; })"
+            + ".slice(0, 6))");
+        Console.Out.WriteLine($"edge provenance as rendered {provenance}");
+
+        // The operator's actual complaint: not the stage, the DRAWN GRAPH. `fit()` scales to the
+        // stage minus a 50px margin, so this is the number the stage's height decides.
+        var drawnExtent = await canvas.EvaluateAsync(
+            "(function(){ var s = document.getElementById('stage').getBoundingClientRect();"
+            + " var ns = document.querySelectorAll('.node'); if (!ns.length) { return JSON.stringify({nodes:0}); }"
+            + " var x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;"
+            + " for (var i=0;i<ns.length;i++){ var r = ns[i].getBoundingClientRect();"
+            + " if (r.left-s.left<x0) x0=r.left-s.left; if (r.top-s.top<y0) y0=r.top-s.top;"
+            + " if (r.right-s.left>x1) x1=r.right-s.left; if (r.bottom-s.top>y1) y1=r.bottom-s.top; }"
+            + " return JSON.stringify({nodes:ns.length, drawnW:Math.round(x1-x0), drawnH:Math.round(y1-y0)}); })()");
+        Console.Out.WriteLine($"drawn graph extent inside the stage {drawnExtent}");
+
+        if (nodes >= 1000)
+        {
+            // The cost of the resize path itself: `fit()` re-frames and `place()` repositions, which
+            // is exactly what the ResizeObserver runs on a splitter drag — never `layout2d`.
+            var cost = await canvas.EvaluateAsync(
+                "(function(){"
+                + " if (typeof fit !== 'function' || typeof place !== 'function')"
+                + " { return JSON.stringify({error:'fit/place are not reachable from the page scope'}); }"
+                + " var t=[]; for (var i=0;i<21;i++){ var s=performance.now(); fit(); place(); t.push(performance.now()-s); }"
+                + " t.sort(function(a,b){return a-b;});"
+                + " return JSON.stringify({samples:t.length, medianMs:Math.round(t[10]*100)/100,"
+                + " p90Ms:Math.round(t[18]*100)/100, maxMs:Math.round(t[20]*100)/100}); })()");
+            Console.Out.WriteLine($"fit()+place() at {drawn} nodes {cost}");
+
+            // And the frame the user actually sees: place() driven from requestAnimationFrame, so
+            // the interval includes the browser's own style, layout and paint — not just the script.
+            await canvas.EvaluateAsync(
+                "(function(){ window.__frameResult = null; var d=[], last=performance.now(), n=0;"
+                + " function step(){ var now=performance.now(); d.push(now-last); last=now; place();"
+                + " if (++n < 41) { requestAnimationFrame(step); }"
+                + " else { d.sort(function(a,b){return a-b;});"
+                + " window.__frameResult = JSON.stringify({frames:d.length, medianMs:Math.round(d[20]*100)/100,"
+                + " maxMs:Math.round(d[40]*100)/100}); } }"
+                + " requestAnimationFrame(step); })()");
+
+            var frames = "null";
+            var until = DateTime.UtcNow + TimeSpan.FromSeconds(60);
+            while (DateTime.UtcNow < until)
+            {
+                frames = (await canvas.EvaluateAsync("window.__frameResult")).Trim();
+                if (frames is not ("null" or "")) { break; }
+                await Task.Delay(100);
+            }
+
+            Console.Out.WriteLine($"rAF place() interval at {drawn} nodes {frames}");
+        }
+
         return Ok;
     }
 
