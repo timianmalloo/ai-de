@@ -700,22 +700,49 @@ internal static class CanvasPage
                   cat: categoryOf(n) });
               });
 
-              var joins = 0, inferred = 0;
+              // PROVENANCE IS A CORRECTNESS RULE, NOT DECORATION (DESIGN.md:311-324).
+              //
+              // Every edge says how it was established, in three channels — the dash, the glyph and
+              // the word — because an edge a convention guessed at, drawn identically to one a
+              // compiler resolved, is GRAPH-PROVENANCE-LAUNDERED: the reader cannot tell the fact from
+              // the hypothesis, and nothing on screen says there is anything to tell apart. This ran
+              // only inside `if (edge.isJoin)`, while `status` is on the wire for EVERY edge.
+              //
+              // Colour is the THIRD signal, never the only one: this stroke measures ~1.45:1 against
+              // the stage, so the encoding has to survive the hue going unread. Joins keep the
+              // brighter pair and the 2px weight — that encodes what is a JOIN, not what is VERIFIED,
+              // and an unverified join no longer borrows the declared blue.
+              //
+              // Every hex below is already in this page's palette. A sixteenth colour would deepen
+              // DC-230: this string is invisible to ui-craft-gate.py and design-lint.py, so nothing
+              // would ever see it again (Ruling 141(c)).
+              var PROVENANCE = {
+                Verified: { word: 'Verified', glyph: '\u2713', dash: '',    join: '#5B9DD9', plain: '#2A313B' },
+                Inferred: { word: 'Inferred', glyph: '~',      dash: '5 4', join: '#D8A650', plain: '#B99A5E' },
+                Flagged:  { word: 'Flagged',  glyph: '?',      dash: '2 3', join: '#E0955F', plain: '#E0955F' }
+              };
+
+              // 'Unverified' is the wire's third word (VerificationStatus); 'Flagged' is what the
+              // design system calls it. Anything unrecognised is flagged, never drawn as a fact.
+              function provenanceOf(edge) {
+                var s = edge.status;
+                return PROVENANCE[s === 'Verified' || s === 'Inferred' ? s : 'Flagged'];
+              }
+
+              var joins = 0, inferred = 0, flagged = 0;
 
               (graph.edges || []).forEach(function (edge) {
                 var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                var prov = provenanceOf(edge);
 
-                if (edge.isJoin) {
-                  joins++;
-                  line.setAttribute('stroke', edge.isInferred ? '#D8A650' : '#5B9DD9');
-                  line.setAttribute('stroke-width', '2');
-                  if (edge.isInferred) { line.setAttribute('stroke-dasharray', '5 4'); inferred++; }
-                  var title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-                  title.textContent = edge.predicate + ' (' + edge.status + ')';
-                  line.appendChild(title);
-                } else {
-                  line.setAttribute('stroke', '#2A313B');
-                }
+                line.setAttribute('stroke', edge.isJoin ? prov.join : prov.plain);
+                if (edge.isJoin) { joins++; line.setAttribute('stroke-width', '2'); }
+                if (prov.dash) { line.setAttribute('stroke-dasharray', prov.dash); }
+                if (prov.word === 'Inferred') { inferred++; } else if (prov.word === 'Flagged') { flagged++; }
+
+                var title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+                title.textContent = edge.predicate + ' (' + prov.glyph + ' ' + prov.word + ')';
+                line.appendChild(title);
 
                 svg.appendChild(line);
                 edgeRecs.push({ from: edge.from, to: edge.to, line: line });
@@ -741,12 +768,27 @@ internal static class CanvasPage
                   + (uncovered > 0 ? ' &middot; ' + uncovered + ' node(s) in no declared context' : '')
                   + '<br>';
 
-              legend.innerHTML = contextLegend + (joins === 0
+              // The legend covers all three provenance classes over ALL edges. It used to appear only
+              // when the graph held a join, and then counted inferred joins out of joins — so a graph
+              // with no joins said nothing about provenance at all, and one with joins described a
+              // subset as though it were the picture.
+              var edgeTotal = (graph.edges || []).length;
+              var provenanceLegend = edgeTotal === 0
                 ? ''
-                : joins + ' join(s) across artifact types: '
-                  + '<b style="color:#5B9DD9">solid blue</b> = declared, '
-                  + '<b style="color:#D8A650">dashed amber</b> = inferred from a convention ('
-                  + inferred + ' of ' + joins + '). Hover a line for its basis.');
+                : 'edges by basis: <b>' + PROVENANCE.Verified.glyph + ' Verified</b> solid ('
+                  + (edgeTotal - inferred - flagged) + '), '
+                  + '<b style="color:#B99A5E">' + PROVENANCE.Inferred.glyph + ' Inferred</b> dashed ('
+                  + inferred + '), '
+                  + '<b style="color:#E0955F">' + PROVENANCE.Flagged.glyph + ' Flagged</b> dotted ('
+                  + flagged + ')'
+                  + (joins === 0
+                      ? ''
+                      : ' &middot; ' + joins + ' join(s) across artifact types, drawn thicker: '
+                        + '<b style="color:#5B9DD9">blue</b> when verified, '
+                        + '<b style="color:#D8A650">amber</b> when not')
+                  + '. Hover a line for its basis.';
+
+              legend.innerHTML = contextLegend + provenanceLegend;
 
               caption.textContent = graph.message
                 ? graph.message

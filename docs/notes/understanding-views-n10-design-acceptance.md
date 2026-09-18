@@ -43,7 +43,7 @@ This receipt is **Test Architect (hard veto) + Simplifier (soft veto)** only. Pl
 | `docs/adr/0038-d0-solution-tree-census-and-kind.md` | Decision; kind row; T5c off the wire | authority |
 | `docs/notes/understanding-views-owner-n14.md` | §5 `:103-108`; spec stays draft `:94`; do not admit D-1 `:56` | stop |
 | `tests/AiDe.App.Tests/SolutionTreeSurfaceTests.cs` | T3/T5c/B6/T6/hard states/Enter/HandleKey(Control)/glyphs/double-click/menu/stale/binder/FactoryRow | visual-tree |
-| `tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs` | `TheArchitectureDefault_IsLeftGraph_…` `:400-411` | zone freeze |
+| `tests/AiDe.App.Tests/PerspectiveLayoutSlotTests.cs` | `TheArchitectureDefault_IsCenterGraphThenTree_…` (was `…_IsLeftGraph_…`; renamed under Ruling 140) | zone freeze, **superseded** |
 | `src/AiDe.App/Workbench/SolutionTreeSurface.cs` | glyphs `:152-176`; HandleKey `:342-374`; PreviewKeyDown `:455-466`; double-click `:486-525`; menu `:245-259`; stale brushes `:540-568` | surface |
 | `src/AiDe.App/Workbench/SurfaceContentFactory.cs` | `solution-tree` row `:179-182` | kind |
 | `src/AiDe.Core/Workbench/ZoneLayout.cs` | `ArchitectureDefault` `:257-276` — no `solution-tree` | default |
@@ -86,7 +86,8 @@ Previous N10 Test Architect BLOCK (`docs/design/solution-tree.md` `:673`; audit 
 | Stale chrome glyph + word | `MarkStale_ChromeCarriesStaleWordAndGlyph` | **Verified** (word + `staleGlyph` Data). Token is **not** `{colors.stale}` — see C7 |
 | File double-click = View source; unindexed double-click swallowed | `EnterOnFileArtifact_RequestsViewSource_UnindexedDoubleClickDoesNotExpand` | **Verified** |
 | Dual-activate node menu: View source · Reveal in graph only | `FileArtifact_NodeMenu_IsViewSourceAndReveal_UnindexedHasNone` | **Verified** |
-| Zone frozen View-menu-only; not in `ArchitectureDefault`; Ruling 94 Left stays Graph | `TheArchitectureDefault_IsLeftGraph_…` `:409-411`; `ArchitectureDefault()` has no `solution-tree`; `FactoryRow_IsArchitectureOne_DerivedView` `Assert.Null(row.Zone)`; `DockHost.AdmissionFor(Architecture).Admits("solution-tree")` | **Verified** |
+| ~~Zone frozen View-menu-only; not in `ArchitectureDefault`; Ruling 94 Left stays Graph~~ | ~~`TheArchitectureDefault_IsLeftGraph_…`~~ | **SUPERSEDED by Ruling 140** |
+| The Tree **is** a default tab: `Center = [Graph (active), Tree]`, Left empty; Contexts and Domain leave the default and stay admitted | `TheArchitectureDefault_IsCenterGraphThenTree_LeftRightAndBottomEmptyAndCollapsed`; `TheArchitectureDefaultIsGraphAndTreeTests` (headless, Core); `DockHost.AdmissionFor(Architecture).Admits("contexts"/"classdiagram"/"solution-tree")` | **Verified** |
 | Physical Ctrl+Enter | `HandleKey(Key.Return, ModifierKeys.Control)` tested; `PreviewKeyDown` reads `Keyboard.Modifiers`; RaiseEvent is not the chord | **Flagged** (design `:635`; native pack `:44`) |
 
 ### Test Architect

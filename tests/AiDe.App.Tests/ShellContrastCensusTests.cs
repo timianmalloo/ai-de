@@ -3,6 +3,8 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using AiDe.App.Workbench;
+using AiDe.Core.Workbench;
 using Xunit.Abstractions;
 
 namespace AiDe.App.Tests;
@@ -68,12 +70,40 @@ public sealed class ShellContrastCensusTests(ITestOutputHelper output)
                      ("the Message board pane's status text", s => s.Surface == "Message board"),
                      ("the Terminal sessions pane's status text", s => s.Surface == "Terminal sessions"),
                      ("the status strip while Coordination is the body", s => s.Text == "Coordination perspective"),
-                     // Host B's, for the same reason (the seam request X-1 never took).
-                     ("the Domain tab in Architecture's Center", s => s.Surface == "tab: Domain"),
+                     // Host B's, for the same reason (the seam request X-1 never took). Ruling 140
+                     // moved the Graph and the Tree into Architecture's default Center and moved
+                     // Contexts and Domain out of it, so these four are the DEFAULT half and the
+                     // ADMITTED half of the same perspective, anchored together on purpose.
+                     ("the Graph tab in Architecture's Center (Ruling 140's default, active)", s => s.Surface == "tab: Graph"),
+                     ("the Tree tab in Architecture's Center (Ruling 140's default)", s => s.Surface == "tab: Tree"),
+                     ("the Domain kind, admitted but no longer defaulted (Ruling 140)", s => s.Surface == "tab: Census classdiagram"),
+                     ("the Contexts kind, admitted but no longer defaulted (Ruling 140)", s => s.Surface == "tab: Census contexts"),
                  })
         {
             Assert.True(wpf.Any(site), $"the census did not walk {anchor}; the sites it saw: {string.Join(" | ", wpf.Select(s => s.Text).Distinct().Take(80))}");
         }
+
+        // The rule those four are instances of, so the next default change cannot quietly shrink
+        // this walk. Ruling 140 took Domain out of Architecture's default, and the anchor that named
+        // its tab caption had exactly two repairs: narrow the census to whatever the default now
+        // holds — coverage lost for a reason unrelated to risk — or walk the UNION of each
+        // perspective's default AND admitted surfaces. A contrast defect in an admitted surface is
+        // just as unreadable for the operator who opens it from the View menu, so the union is the
+        // population. The probe already composes it (ShellContrastCensus step 2 on host A, step 2b
+        // on every other docking host); this asserts that it did, kind by kind, from the same row
+        // set the probe reads — so a kind that stops being activated goes red instead of silently
+        // leaving the census with the default that used to carry it.
+        var unwalked = (
+            from row in PerspectiveSet.All.Where(p => p.Body == PerspectiveBody.DockHost)
+            from kind in SurfaceContentFactory.Kinds.Where(k => k.Perspectives.Contains(row))
+            where !census.Log.Any(line => line.Contains("activate ", StringComparison.Ordinal)
+                                          && line.Contains($"({kind.Kind}):", StringComparison.Ordinal))
+            select $"{row.Id}/{kind.Kind}").Distinct(StringComparer.Ordinal).ToList();
+
+        Assert.True(unwalked.Count == 0,
+            "the census did not walk every surface its perspectives admit — these kinds are admitted "
+            + "by a docking perspective and were never activated: " + string.Join(", ", unwalked)
+            + Environment.NewLine + string.Join(Environment.NewLine, census.Log));
 
         Assert.Contains(wpf, s => s.Surface.StartsWith("tab:", StringComparison.Ordinal));
         Assert.Contains(wpf, s => s.Text == "File" && s.Element.Contains("AccessText", StringComparison.Ordinal));

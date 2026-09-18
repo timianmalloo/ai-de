@@ -377,7 +377,7 @@ public sealed class TypeScriptExtractor : IExtractor
         // reader's own generated-file filter applied: 5 dynamic imports across 3 of TheTerrace's 6
         // hand-written files, and ZERO anywhere in this repository — where it had been firing on
         // every scope regardless (DC-025).
-        assertions.Add(Fact(request, request.ScopeId, "discloses", Disclosures.TypesNotChecked));
+        assertions.Add(ScopeFact(request, directory, request.ScopeId, "discloses", Disclosures.TypesNotChecked));
 
         foreach (var file in files)
         {
@@ -392,7 +392,8 @@ public sealed class TypeScriptExtractor : IExtractor
             text = SourceText.WithoutCComments(text);
 
             var module = ModuleNaming.Qualify(prefix, ModuleName(directory, file));
-            assertions.Add(Fact(request, module, "has_type", "typescript-module"));
+            var relativePath = ArtifactPath(directory, file);
+            assertions.Add(Fact(request, relativePath, module, "has_type", "typescript-module"));
 
             var declarations = Declaration.Matches(text);
 
@@ -412,14 +413,14 @@ public sealed class TypeScriptExtractor : IExtractor
 
                 if (!exported && ValueBindings.Contains(kind)) continue;
 
-                assertions.Add(Fact(request, $"{module}.{name}", "has_type", "typescript-" + kind));
-                assertions.Add(Fact(request, $"{module}.{name}", "declared_in", module));
+                assertions.Add(Fact(request, relativePath, $"{module}.{name}", "has_type", "typescript-" + kind, sourceLocation: LineAt(text, match.Index)));
+                assertions.Add(Fact(request, relativePath, $"{module}.{name}", "declared_in", module, sourceLocation: LineAt(text, match.Index)));
 
                 // An ATTRIBUTE, not a relation: a property OF the declaration rather than a link to
                 // another thing, so it is registered in EvidencePredicates.Attributes and is never
                 // drawn. It exists because widening the reader must not cost the one answer the
                 // narrow reader could give — which of these is the module's public surface.
-                assertions.Add(Fact(request, $"{module}.{name}", "is_exported",
+                assertions.Add(Fact(request, relativePath, $"{module}.{name}", "is_exported",
                     exported ? "true" : "false"));
             }
 
@@ -454,7 +455,7 @@ public sealed class TypeScriptExtractor : IExtractor
 
             foreach (var (owner, member) in members)
             {
-                assertions.Add(Fact(request, $"{module}.{owner}", "has_member", member));
+                assertions.Add(Fact(request, relativePath, $"{module}.{owner}", "has_member", member));
             }
 
             var specifiers = FromSpecifier.Matches(text).Select(m => m.Groups[2].Value)
@@ -466,7 +467,7 @@ public sealed class TypeScriptExtractor : IExtractor
                 // Resolved means a file this scope contains and read.
                 if (Resolve(specifier, module, everywhere) is { } resolved)
                 {
-                    assertions.Add(Fact(request, module, "imports", resolved, VerificationStatus.Verified));
+                    assertions.Add(Fact(request, relativePath, module, "imports", resolved, VerificationStatus.Verified));
                     continue;
                 }
 
@@ -483,7 +484,7 @@ public sealed class TypeScriptExtractor : IExtractor
                 // specifier as written, because asserting which of those it is would be the guess
                 // DC-022 is about.
                 unresolved++;
-                assertions.Add(Fact(request, module, "imports", specifier, VerificationStatus.Inferred));
+                assertions.Add(Fact(request, relativePath, module, "imports", specifier, VerificationStatus.Inferred));
             }
         }
 
@@ -491,7 +492,7 @@ public sealed class TypeScriptExtractor : IExtractor
         {
             // Not "some exports were missed" but "31 of them were". A count is what turns a known
             // limitation into something somebody can decide about.
-            assertions.Add(Fact(request, request.ScopeId, "discloses",
+            assertions.Add(ScopeFact(request, directory, request.ScopeId, "discloses",
                 $"{Disclosures.ExportsNotRecognised} ({unrecognisedExports:N0} export(s) whose " +
                 "declaration form this reader does not recognise)"));
         }
@@ -504,21 +505,21 @@ public sealed class TypeScriptExtractor : IExtractor
         // when nothing was hidden teaches a reader to skip disclosures.
         if (unresolved > 0)
         {
-            assertions.Add(Fact(request, request.ScopeId, "discloses",
+            assertions.Add(ScopeFact(request, directory, request.ScopeId, "discloses",
                 $"{Disclosures.ImportsNotResolved} ({unresolved:N0} specifier(s) name something this " +
                 "scope does not contain)"));
         }
 
         if (nodeBuiltins > 0)
         {
-            assertions.Add(Fact(request, request.ScopeId, "discloses",
+            assertions.Add(ScopeFact(request, directory, request.ScopeId, "discloses",
                 $"{Disclosures.NodeBuiltinsNotIndexed} ({nodeBuiltins:N0} import(s) name a Node.js " +
                 "builtin module, which this product does not index)"));
         }
 
         if (packages > 0)
         {
-            assertions.Add(Fact(request, request.ScopeId, "discloses",
+            assertions.Add(ScopeFact(request, directory, request.ScopeId, "discloses",
                 $"{Disclosures.PackagesNotIndexed} ({packages:N0} import(s) name an npm package, " +
                 "which this product does not index)"));
         }
@@ -530,7 +531,7 @@ public sealed class TypeScriptExtractor : IExtractor
             // whole body sits inside a factory function, and which currently contributes one
             // `typescript-module` fact and nothing else. That is a specific, sized, actionable
             // statement; "nested declarations are not analysed", fired on all 13 scopes, was not.
-            assertions.Add(Fact(request, request.ScopeId, "discloses",
+            assertions.Add(ScopeFact(request, directory, request.ScopeId, "discloses",
                 $"{Disclosures.NestedDeclarationsNotAnalysed} ({nestedDeclarations:N0} declaration(s) " +
                 "are nested inside a function, a method or a namespace block and cannot be reached " +
                 "by an importer)"));
@@ -543,7 +544,7 @@ public sealed class TypeScriptExtractor : IExtractor
             // figure here is zero: a disclosure that fires when nothing is hidden is indistinguishable
             // from one that fires when something is (DC-025), and a disclosure with no number says
             // nothing about whether the gap is worth closing (DC-050).
-            assertions.Add(Fact(request, request.ScopeId, "discloses",
+            assertions.Add(ScopeFact(request, directory, request.ScopeId, "discloses",
                 $"{Disclosures.DynamicImportsNotAnalysed} ({dynamicImports:N0} call(s) to " +
                 "`import(...)` or `require(...)` name their module at run time, so the edge cannot " +
                 "be drawn)"));
@@ -551,7 +552,7 @@ public sealed class TypeScriptExtractor : IExtractor
 
         if (generated > 0)
         {
-            assertions.Add(Fact(request, request.ScopeId, "discloses",
+            assertions.Add(ScopeFact(request, directory, request.ScopeId, "discloses",
                 $"{Disclosures.GeneratedSourceNotRead} ({generated:N0} file(s) are minified or " +
                 "generated and were not read)"));
         }
@@ -777,12 +778,55 @@ public sealed class TypeScriptExtractor : IExtractor
             .Replace(Path.AltDirectorySeparatorChar, '/');
     }
 
+    /// <summary>A file's path relative to the scope, in the form a reader can open.</summary>
+    /// <remarks>
+    /// Separate from <see cref="ModuleName"/>, which drops the extension because a module id is not
+    /// a path. Conflating the two is how <c>Provenance.ArtifactPathId</c> came to hold a scope id:
+    /// this reader had a relative path in hand at every call site and passed the scope's identity
+    /// instead. Forward slashes, so a value written on one platform resolves on the other.
+    /// </remarks>
+    private static string ArtifactPath(string directory, string file) =>
+        Path.GetRelativePath(directory, file)
+            .Replace(Path.DirectorySeparatorChar, '/')
+            .Replace(Path.AltDirectorySeparatorChar, '/');
+
+    /// <summary>The 1-based line a match starts on, so a citation can be jumped to.</summary>
+    private static string LineAt(string text, int index) =>
+        $"{text.AsSpan(0, index).Count('\n') + 1}:1";
+
+    /// <summary>
+    /// A fact about one file, citing that file.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>DC-229.</b> <paramref name="artifactPath"/> is required and positional on purpose:
+    /// this helper used to derive the citation itself, from <c>request.ScopeId</c>, so every one of
+    /// its callers emitted a value that names no file — and the compiler had nothing to object to.
+    /// Making each caller say which artifact it is talking about is what turns the next omission
+    /// into a build error rather than a silent skip in content search.</para>
+    /// </remarks>
     private static EvidenceAssertion Fact(
-        ExtractionRequest request, string subject, string predicate, string obj,
+        ExtractionRequest request, string artifactPath, string subject, string predicate, string obj,
+        VerificationStatus status = VerificationStatus.Verified, string? sourceLocation = null) =>
+        new(request.ScopeId, request.ArtifactRevision, subject, predicate, obj,
+            EvidenceOrigin.Static, status,
+            new Provenance(artifactPath, sourceLocation, "typescript-extractor", "1.0.0", DateTimeOffset.UtcNow));
+
+    /// <summary>
+    /// A fact about the scope as a whole — a disclosure — citing the scope's own directory.
+    /// </summary>
+    /// <remarks>
+    /// The shape the EF-schema, SQL and knowledge readers already use for their scope rows: the
+    /// directory's leaf name, which resolves as the scope root. A disclosure belongs to no single
+    /// file, and naming one would be a citation that misleads rather than one that is merely absent.
+    /// </remarks>
+    private static EvidenceAssertion ScopeFact(
+        ExtractionRequest request, string directory, string subject, string predicate, string obj,
         VerificationStatus status = VerificationStatus.Verified) =>
         new(request.ScopeId, request.ArtifactRevision, subject, predicate, obj,
             EvidenceOrigin.Static, status,
-            new Provenance(request.ScopeId, null, "typescript-extractor", "1.0.0", DateTimeOffset.UtcNow));
+            new Provenance(
+                Path.GetFileName(Path.TrimEndingDirectorySeparator(directory)), "1:1",
+                "typescript-extractor", "1.0.0", DateTimeOffset.UtcNow));
 
     /// <summary>
     /// Whether a file is a bundle or a generated artifact rather than something a person wrote.

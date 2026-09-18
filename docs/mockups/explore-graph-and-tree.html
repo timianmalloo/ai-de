@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-density="compact" data-view="graph" data-state="ok" data-viewport="desktop">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI-DE — Explore: Graph and Tree</title>
+<style>
+:root{
+  --surface:#12151A; --surface-raised:#1A1F26; --surface-sunken:#0D1014; --border:#2A313B;
+  --text:#E4E9EF; --text-muted:#98A3B2; --text-disabled:#7C8896;
+  --accent:#5B9DD9; --accent-contrast:#0D1014; --border-strong:#7C8896;
+  --verified:#5FB98F; --inferred:#D8A650; --unverified:#98A3B2; --danger:#E07A6F; --focus:#8FC0EA;
+  --font-ui:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --font-mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+  --t-xs:11px; --t-sm:12px; --t-md:13px; --t-lg:15px; --t-xl:18px;
+  --w-normal:400; --w-medium:600;
+  --s-1:2px; --s-2:4px; --s-3:6px; --s-4:8px; --s-5:12px; --s-6:16px; --s-7:24px; --s-8:32px;
+  --r-sm:4px; --r-md:6px; --r-lg:10px;
+  --m-fast:150ms; --m-ease:cubic-bezier(0.2,0,0,1);
+  /* The edge stroke is NOT --border. DESIGN.md:648 records --border at 1.39:1 with the
+     disposition "the border is decorative and spacing carries the grouping". In a graph the
+     edge IS the content, so SC 1.4.11 wants 3:1. This is the stand-in for the token the
+     review asks UX & Accessibility to rule; it is not a decision, it is a placeholder that
+     does not pretend the old value was adequate. */
+  --edge:var(--border-strong);
+}
+[data-theme="light"]{
+  --surface:#F4F6F8; --surface-raised:#FFFFFF; --surface-sunken:#E7EBEF; --border:#C7CFD8;
+  --text:#1A1F26; --text-muted:#55606E; --text-disabled:#5F6977;
+  --accent:#27649A; --accent-contrast:#FFFFFF; --border-strong:#5F6977;
+  --verified:#1C724A; --inferred:#7D5900; --unverified:#55606E; --danger:#A8372B; --focus:#1B4F7E;
+  --edge:var(--border-strong);
+}
+[data-theme="contrast"]{
+  --surface:#000; --surface-raised:#000; --surface-sunken:#000; --border:#FFF;
+  --text:#FFF; --text-muted:#FFF; --text-disabled:#FFF;
+  --accent:#FFFF00; --accent-contrast:#000; --border-strong:#FFF;
+  --verified:#00FF00; --inferred:#FFFF00; --unverified:#FFF; --danger:#FF6E6E; --focus:#FFFF00;
+  --edge:var(--border-strong);
+}
+[data-density="comfortable"]{ --s-1:4px; --s-2:6px; --s-3:8px; --s-5:16px; --s-6:20px; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface);color:var(--text);font:var(--t-md)/1.5 var(--font-ui)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+/* ---------- review harness ---------- */
+.harness{position:sticky;top:0;z-index:99;display:flex;flex-wrap:wrap;gap:var(--s-3) var(--s-6);
+  align-items:center;padding:var(--s-4) var(--s-5);background:var(--surface-sunken);color:var(--text);
+  border-bottom:2px solid var(--border);font-size:var(--t-sm)}
+.harness strong{letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);font-size:var(--t-sm)}
+.harness label{display:flex;gap:var(--s-3);align-items:center}
+.harness select{background:var(--surface-raised);color:var(--text);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:var(--s-2) var(--s-3);font:inherit;min-height:26px}
+.harness .spacer{flex:1}
+.harness .verdict{font-family:var(--font-mono)}
+.pass{color:var(--verified)}.fail{color:var(--danger)}
+
+/* ---------- pane ---------- */
+.pane{margin:var(--s-6) auto;max-width:1180px;background:var(--surface-raised);
+  border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;
+  display:flex;flex-direction:column;height:640px}
+[data-viewport="uhd"] .pane{max-width:1600px;height:860px}
+[data-viewport="startup"] .pane{max-width:900px;height:520px}
+[data-viewport="stacked"] .pane{max-width:520px;height:560px}
+
+/* Tab strip is WPF in the product and sits OUTSIDE the WebView2 rect — UI-T4 airspace.
+   Modelled here so the review can see it, flagged in the note as host chrome. */
+.tabs{display:flex;gap:var(--s-2);padding:var(--s-3) var(--s-4) 0;background:var(--surface-sunken);
+  border-bottom:1px solid var(--border)}
+.tab{appearance:none;background:none;border:1px solid transparent;border-bottom:none;color:var(--text-muted);
+  font:var(--w-medium) var(--t-md)/1 var(--font-ui);padding:var(--s-4) var(--s-6);cursor:pointer;
+  border-radius:var(--r-sm) var(--r-sm) 0 0}
+.tab[aria-selected="true"]{background:var(--surface-raised);border-color:var(--border);color:var(--text)}
+
+.bar{display:flex;flex-wrap:wrap;gap:var(--s-3);align-items:center;padding:var(--s-3) var(--s-5);
+  background:var(--surface-sunken);border-bottom:1px solid var(--border);font-size:var(--t-sm);
+  color:var(--text-muted)}
+.chip{border:1px solid var(--border);border-radius:999px;padding:var(--s-1) var(--s-4);
+  background:none;color:var(--text-muted);font:var(--t-sm)/1.6 var(--font-ui);cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--border-strong);color:var(--text)}
+.chip .of{font-family:var(--font-mono);color:var(--text-muted)}
+
+.body{flex:1 1 auto;min-height:0;position:relative;display:flex}
+.stage{flex:1 1 auto;min-height:240px;background:var(--surface-sunken);position:relative;padding:var(--s-5)}
+[data-view="tree"] .graphwrap{display:none}
+[data-view="graph"] .treewrap{display:none}
+.graphwrap,.treewrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+
+/* ---------- graph ---------- */
+svg{width:100%;height:100%;display:block}
+.edge{stroke:var(--edge);stroke-width:1.5;fill:none}
+.edge.inferred{stroke:var(--inferred);stroke-width:1;stroke-dasharray:4 3}
+.edge.flagged{stroke:var(--unverified);stroke-width:1;stroke-dasharray:1 3}
+.node circle{fill:var(--surface-raised);stroke:var(--border-strong);stroke-width:1.5}
+.node.sel circle{stroke:var(--accent);stroke-width:2.5}
+.node text{fill:var(--text);font:var(--t-xs)/1 var(--font-ui);text-anchor:middle}
+.legend{display:flex;gap:var(--s-6);padding:var(--s-3) var(--s-5);border-top:1px solid var(--border);
+  font-size:var(--t-sm);color:var(--text-muted);flex-wrap:wrap;background:var(--surface-raised)}
+.legend span{display:flex;gap:var(--s-3);align-items:center}
+.swatch{width:26px;height:0;border-top:2px solid var(--edge)}
+.swatch.inferred{border-top:1px dashed var(--inferred)}
+.swatch.flagged{border-top:1px dotted var(--unverified)}
+.gly{font-family:var(--font-mono);color:var(--text)}
+
+/* ---------- tree ---------- */
+.tree{margin:0;padding:var(--s-4) 0;overflow:auto;flex:1 1 auto;min-height:0;list-style:none}
+.tree ul{list-style:none;margin:0;padding:0 0 0 var(--s-7)}
+.row{display:flex;gap:var(--s-3);align-items:center;padding:var(--s-2) var(--s-5);cursor:default}
+.row:hover{background:var(--surface-sunken)}
+.row[aria-selected="true"]{background:var(--surface-sunken);box-shadow:inset 2px 0 0 var(--accent)}
+.tw{width:12px;color:var(--text-muted);font-family:var(--font-mono)}
+.ic{font-family:var(--font-mono);color:var(--text-muted)}
+.nm{color:var(--text)}
+.cov{margin-left:auto;font-size:var(--t-sm);color:var(--text-muted);font-family:var(--font-mono)}
+.row.unindexed .nm{color:var(--text-muted)}
+.row.unindexed .cov{color:var(--inferred)}
+
+/* ---------- states ---------- */
+.state{display:none;flex:1 1 auto;align-items:center;justify-content:center;padding:var(--s-8);
+  text-align:center;flex-direction:column;gap:var(--s-4)}
+.state h3{margin:0;font:var(--w-medium) var(--t-lg)/1.4 var(--font-ui);color:var(--text)}
+.state p{margin:0;color:var(--text-muted);max-width:52ch}
+.state .act{display:flex;gap:var(--s-4)}
+.btn{min-height:28px;padding:0 var(--s-6);border-radius:var(--r-sm);border:1px solid var(--border-strong);
+  background:var(--surface-raised);color:var(--text);font:var(--w-medium) var(--t-sm)/26px var(--font-ui);cursor:pointer}
+.btn.primary{background:var(--accent);color:var(--accent-contrast);border-color:var(--accent)}
+.btn:hover{background:var(--surface-sunken)}
+.btn.primary:hover{background:var(--accent);color:var(--accent-contrast);filter:brightness(1.08)}
+@media (prefers-reduced-motion: reduce){ .btn{transition:none} }
+[data-motion="reduced"] .btn{transition:none}
+
+body[data-state="empty"]    .s-empty,
+body[data-state="loading"]  .s-loading,
+body[data-state="bounded"]  .s-bounded,
+body[data-state="shortfall"].s-shortfall,
+body[data-state="single"]   .s-single,
+body[data-state="error"]    .s-error,
+body[data-state="filtered"] .s-filtered,
+body[data-state="unindexed"].s-unindexed{display:flex}
+body[data-state="empty"] .body,
+body[data-state="loading"] .body,
+body[data-state="error"] .body,
+body[data-state="filtered"] .body{display:none}
+
+.banner{display:none;gap:var(--s-4);align-items:flex-start;padding:var(--s-4) var(--s-5);
+  background:var(--surface-sunken);border-bottom:1px solid var(--border);font-size:var(--t-sm);
+  color:var(--text);flex-wrap:wrap}
+body[data-state="bounded"] .banner{display:flex}
+.banner .num{font-family:var(--font-mono);color:var(--text)}
+.banner .act{margin-left:auto;display:flex;gap:var(--s-3)}
+
+.note{max-width:1180px;margin:0 auto var(--s-8);padding:0 var(--s-5);color:var(--text-muted);font-size:var(--t-sm)}
+.note h4{color:var(--text);font:var(--w-medium) var(--t-md)/1.4 var(--font-ui);margin:var(--s-6) 0 var(--s-2)}
+.note code{font-family:var(--font-mono);color:var(--text)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+</head>
+<body>
+
+<div class="harness" role="region" aria-label="Review harness">
+  <strong>Harness</strong>
+  <label>View
+    <select id="h-view"><option value="graph">Graph</option><option value="tree">Tree</option></select>
+  </label>
+  <label>State
+    <select id="h-state">
+      <option value="ok">ok</option><option value="bounded">bounded result</option>
+      <option value="loading">still extracting</option><option value="empty">no workspace</option>
+      <option value="shortfall">source not locatable</option><option value="single">single node</option>
+      <option value="filtered">filtered to empty</option><option value="unindexed">unindexed folder</option>
+      <option value="error">error</option>
+    </select>
+  </label>
+  <label>Viewport
+    <select id="h-vp">
+      <option value="desktop">1180 desktop</option><option value="uhd">3840×2160</option>
+      <option value="startup">1440×900 startup</option><option value="stacked">&lt;760 stacked</option>
+    </select>
+  </label>
+  <label>Theme
+    <select id="h-theme"><option value="dark">dark</option><option value="light">light</option><option value="contrast">high contrast</option></select>
+  </label>
+  <label>Density
+    <select id="h-den"><option value="compact">compact</option><option value="comfortable">comfortable</option></select>
+  </label>
+  <label>Motion
+    <select id="h-motion"><option value="system">system</option><option value="reduced">reduced</option></select>
+  </label>
+  <span class="spacer"></span>
+  <span class="verdict" id="verdict">page box: —</span>
+</div>
+
+<div class="pane">
+  <div class="tabs" role="tablist" aria-label="Explore views">
+    <button class="tab" role="tab" id="tab-graph" aria-selected="true" aria-controls="p-graph">Graph</button>
+    <button class="tab" role="tab" id="tab-tree" aria-selected="false" aria-controls="p-tree">Tree</button>
+  </div>
+
+  <div class="bar">
+    <span>Show</span>
+    <button class="chip" aria-pressed="true">Code <span class="of">575 of 1,203</span></button>
+    <button class="chip" aria-pressed="true">Knowledge <span class="of">0 of 878</span></button>
+    <button class="chip" aria-pressed="true">Specs <span class="of">0 of 141</span></button>
+    <button class="chip" aria-pressed="true">Infra <span class="of">925 of 1,015</span></button>
+  </div>
+
+  <div class="banner" role="status">
+    <div>
+      Showing <span class="num">1,500</span> of <span class="num">≥ 9,780</span> nodes (capped), ranked by
+      connection count. <strong>8,280</strong> nodes are not drawn.
+    </div>
+    <div class="act">
+      <button class="btn primary">Focus a node</button>
+      <button class="btn">Show groups</button>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="graphwrap" id="p-graph" role="tabpanel" aria-labelledby="tab-graph">
+      <div class="stage">
+        <svg viewBox="0 0 900 420" role="application" tabindex="0"
+             aria-roledescription="code graph"
+             aria-label="Code graph. 6 nodes shown. Arrow keys move to the nearest neighbour by edge. Enter centres. Bracket keys cycle this node's edges.">
+          <g>
+            <line class="edge"          x1="180" y1="210" x2="390" y2="120"><title>declared_in (Verified)</title></line>
+            <line class="edge"          x1="180" y1="210" x2="390" y2="300"><title>declared_in (Verified)</title></line>
+            <line class="edge inferred" x1="390" y1="120" x2="640" y2="180"><title>imports (Inferred)</title></line>
+            <line class="edge inferred" x1="390" y1="300" x2="640" y2="330"><title>calls (Inferred)</title></line>
+            <line class="edge flagged"  x1="640" y1="180" x2="760" y2="260"><title>maps_to (Flagged)</title></line>
+          </g>
+          <g class="node sel"><circle cx="180" cy="210" r="17"></circle><text x="180" y="248">OrderService</text></g>
+          <g class="node"><circle cx="390" cy="120" r="13"></circle><text x="390" y="154">Repository</text></g>
+          <g class="node"><circle cx="390" cy="300" r="13"></circle><text x="390" y="334">OrderMap</text></g>
+          <g class="node"><circle cx="640" cy="180" r="11"></circle><text x="640" y="212">http</text></g>
+          <g class="node"><circle cx="640" cy="330" r="11"></circle><text x="640" y="362">audit</text></g>
+          <g class="node"><circle cx="760" cy="260" r="11"></circle><text x="760" y="292">orders_tbl</text></g>
+        </svg>
+        <p class="sr" role="status">Focused OrderService. 2 edges: 2 Verified, 0 Inferred.</p>
+      </div>
+      <div class="legend">
+        <span><i class="swatch"></i> <span class="gly">✓</span> Verified — extracted</span>
+        <span><i class="swatch inferred"></i> <span class="gly">~</span> Inferred — not proven</span>
+        <span><i class="swatch flagged"></i> <span class="gly">?</span> Flagged — ambiguous</span>
+      </div>
+    </div>
+
+    <div class="treewrap" id="p-tree" role="tabpanel" aria-labelledby="tab-tree">
+      <ul class="tree" role="tree" aria-label="Solution tree">
+        <li role="treeitem" aria-expanded="true" aria-selected="false">
+          <div class="row"><span class="tw">▾</span><span class="ic">▸</span><span class="nm">src</span><span class="cov">1,203 indexed</span></div>
+          <ul role="group">
+            <li role="treeitem" aria-expanded="true" aria-selected="false">
+              <div class="row"><span class="tw">▾</span><span class="ic">▸</span><span class="nm">AiDe.Core</span><span class="cov">840 indexed</span></div>
+              <ul role="group">
+                <li role="treeitem" aria-selected="true">
+                  <div class="row" aria-selected="true"><span class="tw"></span><span class="ic">≡</span><span class="nm">OrderService.cs</span><span class="cov">indexed</span></div>
+                </li>
+                <li role="treeitem" aria-selected="false">
+                  <div class="row"><span class="tw"></span><span class="ic">≡</span><span class="nm">Repository.cs</span><span class="cov">indexed</span></div>
+                </li>
+              </ul>
+            </li>
+            <li role="treeitem" aria-expanded="false" aria-selected="false">
+              <div class="row unindexed"><span class="tw">▸</span><span class="ic">▸</span><span class="nm">vendor</span><span class="cov">not indexed</span></div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="state s-shortfall">
+      <h3>The source for this node could not be located</h3>
+      <p>The projection recorded <code>typescript:src/frontend</code> as this node's artifact path, and no
+         file is named that. The view is rendering what the projection said.</p>
+      <div class="act"><button class="btn">Reveal in tree</button><button class="btn">Copy node id</button></div>
+    </div>
+    <div class="state s-single">
+      <h3>No linked artifacts</h3>
+      <p>Nothing in this workspace links to or from <code>OrderService</code> within 2 hops.</p>
+      <div class="act"><button class="btn">Show what links here</button></div>
+    </div>
+    <div class="state s-unindexed">
+      <h3>Not indexed — nothing here has been read</h3>
+      <p>This folder was skipped by the census walk, so it is not empty; it is unread.</p>
+      <div class="act"><button class="btn primary">Index this folder</button></div>
+    </div>
+  </div>
+
+  <div class="state s-empty"><h3>Open a workspace to see its graph</h3>
+    <p>Explore reads a workspace that has been indexed at least once.</p>
+    <div class="act"><button class="btn primary">Open workspace…</button></div></div>
+  <div class="state s-loading"><h3>Reading the workspace tree…</h3>
+    <p>1,203 of about 9,780 artifacts read. The graph appears when the first scope completes.</p></div>
+  <div class="state s-filtered"><h3>No categories shown</h3>
+    <p>Every category is turned off in <strong>Show</strong>. This is not an empty workspace.</p>
+    <div class="act"><button class="btn primary">Turn on Code</button></div></div>
+  <div class="state s-error"><h3>Could not read the workspace tree</h3>
+    <p>The projection service did not answer. Nothing has been changed.</p>
+    <div class="act"><button class="btn primary">Retry</button></div></div>
+</div>
+
+<div class="note">
+  <h4>What this mockup asserts, and what it does not</h4>
+  <p>The stage is a <strong>flex remainder with a <code>min-height</code></strong>, never a fixed
+  <code>px</code> height — which is INV-0014's P1 and DC-230's class, shown rather than described.
+  Every edge carries a dash pattern, a glyph and a word, so provenance survives without colour
+  (P6, Ruling 141). The tree spans by <strong>path containment only</strong>: no
+  <code>calls</code> or <code>imports</code> edge is ever a tree child, because a tree child implies
+  a containment the graph does not assert. The <code>--edge</code> token is a
+  <strong>stand-in</strong>, not a decision. <code>--border</code> measures about 1.45:1 on the sunken
+  ground, and SC 1.4.11 wants 3:1 for a graphic that carries meaning; UX &amp; Accessibility rules the
+  real value. Chips read <em>drawn of declared</em>, so "Knowledge 0 of 878" can never be misread as
+  "this workspace has no knowledge".</p>
+</div>
+
+<script>
+const b = document.body, $ = id => document.getElementById(id);
+const bind = (id, attr) => $(id).addEventListener('change', e => {
+  b.dataset[attr] = e.target.value;
+  if (attr === 'view') {
+    const g = e.target.value === 'graph';
+    $('tab-graph').setAttribute('aria-selected', g);
+    $('tab-tree').setAttribute('aria-selected', !g);
+  }
+  measure();
+});
+bind('h-view','view'); bind('h-state','state'); bind('h-vp','viewport');
+bind('h-theme','theme'); bind('h-den','density'); bind('h-motion','motion');
+$('tab-graph').addEventListener('click', () => { $('h-view').value='graph'; $('h-view').dispatchEvent(new Event('change')); });
+$('tab-tree').addEventListener('click',  () => { $('h-view').value='tree';  $('h-view').dispatchEvent(new Event('change')); });
+
+// DC-200: assert the page box before any contrast or layout claim is read off this file.
+function measure(){
+  const over = document.documentElement.scrollWidth > document.documentElement.clientWidth;
+  const v = $('verdict');
+  v.textContent = over ? 'page box: HORIZONTAL OVERFLOW' : 'page box: no horizontal overflow';
+  v.className = 'verdict ' + (over ? 'fail' : 'pass');
+}
+addEventListener('resize', measure); measure();
+</script>
+</body>
+</html>

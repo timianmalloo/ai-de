@@ -143,7 +143,7 @@ public sealed class PerspectiveShellTests
             f.B.Adapter.Render();
             f.C.Adapter.Render();
 
-            Assert.Equal("contexts", PerspectiveShell.LandingSurfaceFor(f.B));   // Ruling 94: the Center's active tab is Contexts
+            Assert.Equal("graph", PerspectiveShell.LandingSurfaceFor(f.B));     // Ruling 140: the Center's active tab is the Graph
             Assert.Equal("sessions", PerspectiveShell.LandingSurfaceFor(f.C));
 
             // Coding (SH-4.2): the Left's active document when one is open, else the Center's
@@ -158,9 +158,10 @@ public sealed class PerspectiveShellTests
             Assert.Equal(ZoneId.Left, f.A.Row.Landing);
 
             // The landing follows the zone's ACTIVE tab, not its first: activate the second Center
-            // tab in Architecture and the landing moves with it.
-            Assert.True(f.B.Service.Apply(new LayoutOperation.ActivateSurface("domain")).Applied);
-            Assert.Equal("domain", PerspectiveShell.LandingSurfaceFor(f.B));
+            // tab in Architecture and the landing moves with it. Ruling 140 makes that second tab
+            // the Tree, where Ruling 94 made it Domain.
+            Assert.True(f.B.Service.Apply(new LayoutOperation.ActivateSurface("tree")).Applied);
+            Assert.Equal("tree", PerspectiveShell.LandingSurfaceFor(f.B));
 
             // A collapsed landing zone falls back to the Center's active tab — the ledger the
             // operator activated, literally, never the collapsed Left's tab (the guard's falsifier).

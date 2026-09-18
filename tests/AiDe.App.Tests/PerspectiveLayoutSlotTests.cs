@@ -147,7 +147,15 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         Assert.True(a2.Zones.Zone(ZoneId.Left).Collapsed);
         Assert.Equal(ZoneId.Right, b2.Zones.FindZoneOf("seq#1"));
         Assert.DoesNotContain(a2.Zones.AllSurfaces(), s => s.Kind == "sequence");   // A never took B's surface
-        Assert.False(b2.Zones.Zone(ZoneId.Left).Collapsed);                          // B's arrangement is its own
+        Assert.True(a2.Zones.Zone(ZoneId.Center).IsEmpty);                           // nor B's Center (Ruling 140: Graph + Tree)
+
+        // B's Left is B's own. Ruling 140 collapses Architecture's Left by default, so `Collapsed`
+        // can no longer tell A's collapse from B's default — the EXTENT still can: a zone is one
+        // record in the slot, so A's Left arriving in B's would bring A's extent with it.
+        Assert.Equal(WorkbenchLayout.ArchitectureLeftExtent, b2.Zones.Zone(ZoneId.Left).Extent, precision: 3);
+        Assert.Equal(WorkbenchLayout.CodingLeftExtent, a2.Zones.Zone(ZoneId.Left).Extent, precision: 3);
+        Assert.NotEqual(a2.Zones.Zone(ZoneId.Left).Extent, b2.Zones.Zone(ZoneId.Left).Extent, precision: 3);
+        Assert.Equal(["graph", "tree"], b2.Zones.Zone(ZoneId.Center).Surfaces().Select(s => s.SurfaceId));
     }
 
     // Test 5 — dropped surfaces are not carried into another slot: after a Coding-era restore the
@@ -390,30 +398,50 @@ public sealed class PerspectiveLayoutSlotTests : IDisposable
         Assert.Empty(Host(PerspectiveSet.Coordination).DefaultDropped);   // Ruling 84: host C seeds from its own table too
     }
 
-    // Ruling 94 (F-C) — the operator: "this is the default layout i want … AND we should eliminate
-    // the provenance tab." Architecture's default is Left = Graph at the extent the operator's own
-    // saved slot holds (0.22, read from layout.architecture.zones.json — the proof doc records it)
-    // · Center = Contexts (active), Domain · Right empty and COLLAPSED (the ruling wins over the
-    // file's `collapsed: false` for the Right) · Bottom empty and collapsed. Evidence leaves the
-    // default and stays admitted (the View menu); the `inspector` kind is retired from the product.
+    // Ruling 140, amending Ruling 94 (F-C) — the operator: "the right-side-views for the
+    // architecture explorer need to be Graph and Tree - where tree is the more familiar dev view
+    // like in vs code." Architecture's default is Center = Graph (active), Tree at extent 1.0 · Left
+    // EMPTY and collapsed, because the Graph has exactly one home · Right and Bottom empty and
+    // collapsed, unchanged from Ruling 94. Contexts and Domain leave the default and stay admitted,
+    // exactly as Evidence does under 94; the `inspector` kind is still retired from the product.
+    //
+    // The pair matters more than either half: this asserts absence from the DEFAULT and presence in
+    // ADMISSION for every kind that moved, because a saved slot carrying one must still reconcile.
+    // Dropping the kind would be the envelope drop Ruling 140 forbids.
     [Fact]
-    public void TheArchitectureDefault_IsLeftGraph_CenterContextsThenDomain_RightAndBottomEmptyAndCollapsed()
+    public void TheArchitectureDefault_IsCenterGraphThenTree_LeftRightAndBottomEmptyAndCollapsed()
     {
         var layout = WorkbenchLayout.Default(PerspectiveSet.Architecture);
+        var admitted = DockHost.AdmissionFor(PerspectiveSet.Architecture);
 
-        Assert.Equal("Left:[graph@0]|Right:-/collapsed|Bottom:-/collapsed|Center:[contexts+domain@0]|float:", layout.Shape());
-        Assert.Equal(0.22, layout.Zone(ZoneId.Left).Extent, precision: 3);
-        Assert.Equal("canvas", layout.Zone(ZoneId.Left).Surfaces().Single().Kind);
-        Assert.Equal(["contexts", "classdiagram"], layout.Zone(ZoneId.Center).Surfaces().Select(s => s.Kind));
+        Assert.Equal("Left:-/collapsed|Right:-/collapsed|Bottom:-/collapsed|Center:[graph+tree@0]|float:", layout.Shape());
+        Assert.Equal(1.0, layout.Zone(ZoneId.Center).Extent, precision: 3);
+        Assert.Equal(["canvas", "solution-tree"], layout.Zone(ZoneId.Center).Surfaces().Select(s => s.Kind));
+        Assert.Equal("graph", Assert.IsType<ZoneStack>(layout.Zone(ZoneId.Center).Content).Active.SurfaceId);
+
+        // One Graph, one home: the Left holds nothing and keeps the rail width the operator's own
+        // saved slot recorded, for when it is expanded again.
+        Assert.True(layout.Zone(ZoneId.Left).IsEmpty);
+        Assert.Equal(WorkbenchLayout.ArchitectureLeftExtent, layout.Zone(ZoneId.Left).Extent, precision: 3);
+        Assert.Single(layout.AllSurfaces(), s => s.Kind == "canvas");
+
+        // Ruling 140 reverses the D-0 freeze this test used to pin: the Tree is a DEFAULT tab now,
+        // and admitted as it always was.
+        Assert.Contains(layout.AllSurfaces(), s => s.Kind == "solution-tree");
+        Assert.True(admitted.Admits("solution-tree"));
+
+        // Contexts and Domain take the role the Tree left — out of the default, still restorable.
+        Assert.DoesNotContain(layout.AllSurfaces(), s => s.Kind == "contexts");
+        Assert.True(admitted.Admits("contexts"));
+        Assert.DoesNotContain(layout.AllSurfaces(), s => s.Kind == "classdiagram");
+        Assert.True(admitted.Admits("classdiagram"));
+
         Assert.DoesNotContain(layout.AllSurfaces(), s => s.Kind is "view" or "inspector");
-        // D-0 freeze (Owner N14 + Ruling 94): admitted, View-menu-only, not a default tab.
-        Assert.DoesNotContain(layout.AllSurfaces(), s => s.Kind == "solution-tree");
-        Assert.True(DockHost.AdmissionFor(PerspectiveSet.Architecture).Admits("solution-tree"));
         Assert.DoesNotContain(layout.AllSurfaces(), s => s.Kind == "entry-points");
-        Assert.True(DockHost.AdmissionFor(PerspectiveSet.Architecture).Admits("entry-points"));
+        Assert.True(admitted.Admits("entry-points"));
 
         // Evidence is one View-menu gesture away, not gone; Provenance is gone from the product.
-        Assert.True(DockHost.AdmissionFor(PerspectiveSet.Architecture).Admits("view"));
+        Assert.True(admitted.Admits("view"));
         Assert.All(PerspectiveSet.All, p => Assert.False(DockHost.AdmissionFor(p).Admits("inspector"), $"{p.Title} still admits 'inspector'"));
         Assert.DoesNotContain("inspector", SurfaceContentFactory.KnownKinds);
     }

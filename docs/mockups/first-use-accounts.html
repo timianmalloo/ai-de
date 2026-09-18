@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-density="compact" data-surface="accounts" data-scenario="mixed" data-persona="operator" data-viewport="desktop">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI-DE — first-use accounts mockup</title>
+<!--
+  MOCKUP + REVIEW HARNESS. /ui-design elevate, Ruling 130. Authority: ui-design-craft.md DX8-DX11.
+  Tokens mirrored from DESIGN.md frontmatter (dark = operator default). Harness never ships.
+  Every user-facing sentence here is canonical copy: DESIGN.md quotes it, oracles quote DESIGN.md (DC-196).
+  MEDIUM IS WPF (UI-T4). This file is DIRECTION EVIDENCE ONLY and cannot clear native PASS:
+  no UIA tree, no real focus order, no DPI, no high-contrast system-brush mapping is proven here.
+-->
+<style>
+:root{
+  --surface:#12151A; --surface-raised:#1A1F26; --surface-sunken:#0D1014; --border:#2A313B;
+  --text:#E4E9EF; --text-muted:#98A3B2; --text-disabled:#7C8896;
+  --accent:#5B9DD9; --accent-contrast:#0D1014; --border-strong:#7C8896;
+  --verified:#5FB98F; --inferred:#D8A650; --unverified:#98A3B2; --danger:#E07A6F; --focus:#8FC0EA;
+  --font-ui:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --font-mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+  --t-xs:11px; --t-sm:12px; --t-md:13px; --t-lg:15px; --t-xl:18px;
+  --w-normal:400; --w-medium:600;
+  --s-1:2px; --s-2:4px; --s-3:6px; --s-4:8px; --s-5:12px; --s-6:16px; --s-7:24px; --s-8:32px;
+  --r-sm:4px; --r-md:6px; --r-lg:10px;
+  --el-dialog:0 8px 24px rgba(0,0,0,0.5);
+  --m-fast:150ms; --m-base:200ms; --m-ease:cubic-bezier(0.2,0,0,1);
+}
+[data-theme="light"]{
+  --surface:#F4F6F8; --surface-raised:#FFFFFF; --surface-sunken:#E7EBEF; --border:#C7CFD8;
+  --text:#1A1F26; --text-muted:#55606E; --text-disabled:#5F6977;
+  --accent:#27649A; --accent-contrast:#FFFFFF; --border-strong:#5F6977;
+  --verified:#1C724A; --inferred:#7D5900; --unverified:#55606E; --danger:#A8372B; --focus:#1B4F7E;
+}
+/* Windows High Contrast: DESIGN.md maps roles to system brushes by rule and declares no values.
+   This is the reviewable stand-in, NOT the proof — the real mapping is a WPF resource dictionary. */
+[data-theme="contrast"]{
+  --surface:#000; --surface-raised:#000; --surface-sunken:#000; --border:#FFF;
+  --text:#FFF; --text-muted:#FFF; --text-disabled:#FFF;
+  --accent:#FFFF00; --accent-contrast:#000; --border-strong:#FFF;
+  --verified:#00FF00; --inferred:#FFFF00; --unverified:#FFF; --danger:#FF6E6E; --focus:#FFFF00;
+}
+[data-density="comfortable"]{ --s-1:4px; --s-2:6px; --s-3:8px; --s-5:16px; --s-6:20px; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface);color:var(--text);font:var(--t-md)/1.5 var(--font-ui)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+[data-motion="reduced"] *{animation:none!important;transition:none!important}
+
+/* ---- HARNESS (chrome; never ships) ---- */
+.harness{position:sticky;top:0;z-index:99;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;
+  padding:8px 12px;background:var(--surface-sunken);color:var(--text);border-bottom:2px solid var(--border);font-size:var(--t-sm)}
+.harness strong{letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);font-size:var(--t-sm)}
+.harness label{display:flex;gap:5px;align-items:center;color:var(--text)}
+.harness select,.harness button{background:var(--surface-raised);color:var(--text);border:1px solid var(--border);border-radius:6px;
+  padding:3px 6px;font:inherit;min-height:24px;cursor:pointer}
+.harness .spacer{flex:1}
+.harness .verdict{font-family:var(--font-mono)}
+.pass{color:var(--verified)}.fail{color:var(--danger)}
+
+.frame{margin:0 auto;padding:var(--s-7) var(--s-5)}
+[data-viewport="narrow"] .frame{max-width:420px}
+[data-viewport="desktop"] .frame{max-width:640px}
+[data-viewport="wide"] .frame{max-width:920px}
+
+/* ---- DESIGN REGION ---- */
+.window{background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--r-lg);
+  box-shadow:var(--el-dialog);overflow:hidden}
+.titlebar{display:flex;align-items:center;justify-content:space-between;padding:var(--s-4) var(--s-5);
+  background:var(--surface-sunken);border-bottom:1px solid var(--border);color:var(--text-muted);font-size:var(--t-sm)}
+.body{padding:var(--s-6)}
+h2.section{font-size:var(--t-md);font-weight:var(--w-medium);margin:var(--s-6) 0 var(--s-3);color:var(--text)}
+h2.section:first-child{margin-top:0}
+
+/* A row is ONE object: 2px inside, 12px between. Spacing-as-grouping (DX14) — the defect being
+   repaired is that today all three lines sit at 2px and the engine id floats free. */
+.acct{padding:var(--s-1) 0 var(--s-5)}
+.acct+.acct{border-top:1px solid var(--border)}
+.acct-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-5);padding-top:var(--s-5)}
+.prov{font-size:var(--t-md);font-weight:var(--w-medium);color:var(--text)}
+.state{font-size:var(--t-md);margin:var(--s-1) 0 0;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+.eng{font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text-muted)}
+.word{font-weight:var(--w-medium)}
+.glyph{font-size:var(--t-sm)}
+/* Glyph + WORD + colour, in that order. Colour is the third signal, never the first
+   (DESIGN.md principle 2 / WCAG 1.4.1). */
+.st-ready  .word,.st-ready  .glyph{color:var(--verified)}
+.st-attn   .word,.st-attn   .glyph{color:var(--inferred)}
+.st-off    .word,.st-off    .glyph{color:var(--text-muted)}
+.st-unknown .word,.st-unknown .glyph{color:var(--text-muted)}
+.why{font-size:var(--t-sm);color:var(--text-muted);margin:var(--s-2) 0 0;max-width:62ch;
+  overflow-wrap:anywhere}
+.why code{font-family:var(--font-mono);font-size:var(--t-xs);color:var(--text)}
+
+.btn{min-height:28px;min-width:96px;padding:0 var(--s-5);border-radius:var(--r-sm);font:var(--w-medium) var(--t-sm)/26px var(--font-ui);
+  cursor:pointer;background:transparent;color:var(--text);border:1px solid var(--border-strong);
+  transition:background var(--m-fast) var(--m-ease)}
+.btn:hover{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.btn.primary{background:var(--accent);color:var(--accent-contrast);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn[disabled]{color:var(--text-disabled);border-color:var(--text-disabled);cursor:not-allowed;background:transparent}
+
+.footer{margin-top:var(--s-6);padding-top:var(--s-5);border-top:1px solid var(--border);
+  font-size:var(--t-sm);color:var(--inferred);max-width:64ch}
+.actions{display:flex;justify-content:flex-end;gap:var(--s-4);margin-top:var(--s-6)}
+
+.cmd{display:flex;align-items:center;gap:var(--s-4);margin:var(--s-3) 0;padding:var(--s-3) var(--s-4);
+  background:var(--surface-sunken);border:1px solid var(--border);border-radius:var(--r-sm)}
+.cmd code{font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text);flex:1;overflow-wrap:anywhere}
+.cmd .btn{min-width:64px}
+.note{font-size:var(--t-sm);color:var(--text-muted);margin:var(--s-2) 0;max-width:64ch}
+.prov-note{font-size:var(--t-sm);color:var(--text-muted);margin:var(--s-2) 0 0}
+.field{width:100%;padding:var(--s-3) var(--s-4);background:var(--surface-sunken);color:var(--text);
+  border:1px solid var(--border-strong);border-radius:var(--r-sm);font:var(--t-md) var(--font-ui);min-height:28px}
+.field:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+label.f{display:block;font-size:var(--t-md);font-weight:var(--w-medium);margin:var(--s-5) 0 var(--s-2)}
+.check{display:flex;gap:var(--s-4);align-items:flex-start;margin:var(--s-4) 0;font-size:var(--t-md)}
+.check input{min-width:16px;min-height:16px;margin-top:3px;accent-color:var(--accent)}
+.log{width:100%;min-height:96px;background:var(--surface-sunken);color:var(--text);border:1px solid var(--border);
+  border-radius:var(--r-sm);font:var(--t-sm) var(--font-mono);padding:var(--s-4);white-space:pre}
+.skel{background:linear-gradient(90deg,var(--surface-sunken),var(--border),var(--surface-sunken));
+  background-size:200% 100%;animation:sh 1.2s linear infinite;border-radius:3px;height:12px;display:inline-block}
+@keyframes sh{to{background-position:-200% 0}}
+
+/* DC-200: gating selectors are scoped to .window, NEVER to <body>, so a gating rule can never
+   hide the page while the audit still computes and reports a false pass. */
+.window [data-show]{display:none}
+[data-surface="accounts"] .window [data-show~="accounts"],
+[data-surface="configure"] .window [data-show~="configure"]{display:block}
+.window [data-sc]{display:none}
+[data-scenario="cli-present"]  .window [data-sc~="cli-present"],
+[data-scenario="nothing"]      .window [data-sc~="nothing"],
+[data-scenario="shim"]         .window [data-sc~="shim"],
+[data-scenario="signed-out"]   .window [data-sc~="signed-out"],
+[data-scenario="ready"]        .window [data-sc~="ready"],
+[data-scenario="mixed"]        .window [data-sc~="mixed"],
+[data-scenario="checking"]     .window [data-sc~="checking"],
+[data-scenario="probe-failed"] .window [data-sc~="probe-failed"],
+[data-scenario="overflow"]     .window [data-sc~="overflow"]{display:block}
+[data-persona="screenreader"] .window{outline:2px dashed var(--accent);outline-offset:4px}
+[data-persona="screenreader"] .sr-trace{display:block!important}
+.sr-trace{display:none;font:var(--t-sm)/1.4 var(--font-mono);color:var(--accent);margin:var(--s-2) 0 0}
+
+.audit{max-width:920px;margin:var(--s-8) auto 0;padding:var(--s-5);font-size:var(--t-sm);
+  border-top:1px dashed var(--border)}
+.audit table{border-collapse:collapse;width:100%}
+.audit th,.audit td{text-align:left;padding:4px 8px;border-bottom:1px solid var(--border)}
+.audit code{font-family:var(--font-mono)}
+</style>
+</head>
+<body>
+
+<header class="harness" role="region" aria-label="Review harness">
+  <strong>Review</strong>
+  <label>Surface <select id="h-surface">
+    <option value="accounts">New Session — Accounts</option>
+    <option value="configure">Configure github</option></select></label>
+  <label>Scenario <select id="h-scenario">
+    <option value="mixed" selected>mixed — all five differ</option>
+    <option value="cli-present">fresh machine, CLI present (S1)</option>
+    <option value="nothing">fresh machine, nothing present (S2)</option>
+    <option value="shim">npm shim, refused (S3)</option>
+    <option value="signed-out">configured, signed out (S4)</option>
+    <option value="ready">ready (S5)</option>
+    <option value="checking">checking (loading)</option>
+    <option value="probe-failed">couldn't check (S9)</option>
+    <option value="overflow">overflow — longest real content</option></select></label>
+  <label>Persona <select id="h-persona">
+    <option value="operator">Operator (sighted)</option>
+    <option value="screenreader">Screen reader (show name trace)</option></select></label>
+  <label>Viewport <select id="h-viewport"><option>narrow</option><option selected>desktop</option><option>wide</option></select></label>
+  <label>Theme <select id="h-theme"><option selected>dark</option><option>light</option><option value="contrast">high-contrast</option></select></label>
+  <label>Density <select id="h-density"><option selected>compact</option><option>comfortable</option></select></label>
+  <label><input type="checkbox" id="h-motion"> Reduced motion</label>
+  <span class="spacer"></span>
+  <span class="verdict" id="h-verdict">audit —</span>
+</header>
+
+<div class="frame">
+<main class="window">
+
+<!-- ======================= SURFACE A — ACCOUNTS BLOCK ======================= -->
+<div data-show="accounts">
+  <div class="titlebar"><span>New session</span><span aria-hidden="true">×</span></div>
+  <div class="body">
+    <h2 class="section" id="acct-h">Accounts</h2>
+    <div role="list" aria-labelledby="acct-h">
+
+      <!-- MIXED — the vocabulary in one screen; five rows, five different sentences -->
+      <div data-sc="mixed">
+        <div class="acct" role="listitem">
+          <div class="acct-head"><span class="prov">anthropic</span><button class="btn">Edit…</button></div>
+          <p class="state st-ready"><span class="eng">claude-code</span><span class="glyph" aria-hidden="true">✓</span><span class="word">ready</span></p>
+          <p class="why">Account "work". Signed in: yes, as you recorded it on 2026-09-16 — not probed.</p>
+          <p class="sr-trace">name: "anthropic, claude-code, ready. Account work. Signed in: yes, as you recorded it on 2026-09-16 — not probed." · role: listitem</p>
+        </div>
+        <div class="acct" role="listitem">
+          <div class="acct-head"><span class="prov">openai</span><button class="btn">Edit…</button></div>
+          <p class="state st-ready"><span class="eng">codex</span><span class="glyph" aria-hidden="true">✓</span><span class="word">ready — quota degraded</span></p>
+          <p class="why">Account "personal". Signed in: yes, quota degraded, as you recorded it on 2026-09-11 — not probed. Runs still bind.</p>
+        </div>
+        <div class="acct" role="listitem">
+          <div class="acct-head"><span class="prov">github</span><button class="btn primary">Set up…</button></div>
+          <p class="state st-attn"><span class="eng">copilot</span><span class="glyph" aria-hidden="true">●</span><span class="word">installed — not set up here</span></p>
+          <p class="why">Found copilot at <code>C:\Users\timmall\AppData\Local\Programs\copilot\copilot.exe</code>. Add an account to use it.</p>
+        </div>
+        <div class="acct" role="listitem">
+          <div class="acct-head"><span class="prov">google</span><button class="btn">Set up…</button></div>
+          <p class="state st-off"><span class="eng">gemini</span><span class="glyph" aria-hidden="true">○</span><span class="word">not installed</span></p>
+          <p class="why">engine 'gemini': 'gemini' is not on PATH and '@google/gemini-cli' is not installed under 'C:\Users\timmall\.aide\adapters'; install it: <code>npm install -g @google/gemini-cli</code> (then set GEMINI_API_KEY, from https://aistudio.google.com/apikey, in the environment the product launches with)</p>
+        </div>
+        <div class="acct" role="listitem">
+          <div class="acct-head"><span class="prov">xai</span><button class="btn">Set up…</button></div>
+          <p class="state st-attn"><span class="eng">grok</span><span class="glyph" aria-hidden="true">●</span><span class="word">installed, not launchable</span></p>
+          <p class="why">engine 'grok': PATH carries 'C:\Users\timmall\AppData\Roaming\npm\grok.cmd', an npm shim that needs a shell to run, and the catalog records no observed npm launch for 'grok'; install the observed form instead: <code>irm https://x.ai/cli/install.ps1 | iex</code></p>
+        </div>
+        <p class="footer">No account is signed in for github, google or xai. The session will open; two accounts are ready and a run can start.</p>
+      </div>
+
+      <!-- S1 — fresh machine, the CLI is present. THE OPERATOR'S CASE. -->
+      <div data-sc="cli-present">
+        <div class="acct" role="listitem">
+          <div class="acct-head"><span class="prov">github</span><button class="btn primary">Set up…</button></div>
+          <p class="state st-attn"><span class="eng">copilot</span><span class="glyph" aria-hidden="true">●</span><span class="word">installed — not set up here</span></p>
+          <p class="why">Found copilot at <code>C:\Users\timmall\AppData\Local\Programs\copilot\copilot.exe</code>. Add an account to use it.</p>
+        </div>
+        <div class="acct" role="listitem">
+          <div class="acct-head"><span class="prov">google</span><button class="btn">Set up…</button></div>
+          <p class="state st-off"><span class="eng">gemini</span><span class="glyph" aria-hidden="true">○</span><span class="word">not installed</span></p>
+          <p class="why">engine 'gemini': 'gemini' is not on PATH and '@google/gemini-cli' is not installed under 'C:\Users\timmall\.aide\adapters'; install it: <code>npm install -g @google/gemini-cli</code></p>
+        </div>
+        <p class="footer">copilot is installed on this machine but has no account here yet. The session will open; set it up above and a run can start. Nothing has been written to C:\Users\timmall\.aide\providers.json.</p>
+      </div>
+
+      <!-- S2 — fresh machine, nothing present -->
+      <div data-sc="nothing">
+        <div class="acct" role="listitem">
+          <div class="acct-head"><span class="prov">github</span><button class="btn">Set up…</button></div>
+          <p class="state st-off"><span class="eng">copilot</span><span class="glyph" aria-hidden="true">○</span><span class="word">not installed</span></p>
+          <p class="why">engine 'copilot': 'copilot' is not on PATH; install it: <code>winget install GitHub.Copilot</code> (or: npm install -g @github/copilot; then: copilot login, or copilot login --host https://&lt;tenant&gt;.ghe.com)</p>
+        </div>
+        <div class="acct" role="listitem">
+          <div class="acct-head"><span class="prov">anthropic</span><button class="btn">Set up…</button></div>
+          <p class="state st-off"><span class="eng">claude-code</span><span class="glyph" aria-hidden="true">○</span><span class="word">not installed</span></p>
+          <p class="why">adapter not installed: <code>C:\Users\timmall\.aide\adapters\node_modules\@zed-industries\claude-code-acp\dist\index.js</code> is not on disk</p>
+        </div>
+        <p class="footer">No agent CLI was found on this machine. The session will open; a run needs one of the engines above installed. Nothing has been written to C:\Users\timmall\.aide\providers.json.</p>
+      </div>
+
+      <!-- S3 — npm shim, refused -->
+      <div data-sc="shim">
+        <div class="acct" role="listitem">
+          <div class="acct-head"><span class="prov">github</span><button class="btn primary">Set up…</button></div>
+          <p class="state st-attn"><span class="eng">copilot</span><span class="glyph" aria-hidden="true">●</span><span class="word">installed, not launchable</span></p>
+          <p class="why">engine 'copilot': PATH carries 'C:\Users\timmall\AppData\Roaming\npm\copilot.cmd', an npm shim that needs a shell to run, and the catalog records no observed npm launch for 'copilot'; install the observed form instead: <code>winget install GitHub.Copilot</code> (or: npm install -g @github/copilot; then: copilot login, or copilot login --host https://&lt;tenant&gt;.ghe.com)</p>
+        </div>
+        <p class="footer">No agent CLI on this machine can be launched as installed. The session will open; a run needs the install fixed above. Nothing has been written to C:\Users\timmall\.aide\providers.json.</p>
+      </div>
+
+      <!-- S4 — configured, signed out -->
+      <div data-sc="signed-out">
+        <div class="acct" role="listitem">
+          <div class="acct-head"><span class="prov">github</span><button class="btn primary">Sign in…</button></div>
+          <p class="state st-attn"><span class="eng">copilot</span><span class="glyph" aria-hidden="true">●</span><span class="word">set up — sign in to use</span></p>
+          <p class="why">Account "work". Signed in: no, as you recorded it — not probed.</p>
+        </div>
+        <p class="footer">No account is signed in. The session will open; sign in above — or, if you have already signed in with the CLI, mark it signed in — and a run can start.</p>
+      </div>
+
+      <!-- S5 — ready -->
+      <div data-sc="ready">
+        <div class="acct" role="listitem">
+          <div class="acct-head"><span class="prov">github</span><button class="btn">Edit…</button></div>
+          <p class="state st-ready"><span class="eng">copilot</span><span class="glyph" aria-hidden="true">✓</span><span class="word">ready</span></p>
+          <p class="why">Account "work". Signed in: yes, as you recorded it on 2026-09-16 — not probed.</p>
+        </div>
+      </div>
+
+      <!-- LOADING — skeleton shaped like the row it replaces; no layout shift on arrival -->
+      <div data-sc="checking" aria-busy="true">
+        <div class="acct" role="listitem">
+          <div class="acct-head"><span class="prov">github</span><span class="skel" style="width:96px;height:26px"></span></div>
+          <p class="state"><span class="skel" style="width:52px"></span><span class="skel" style="width:150px"></span></p>
+          <p class="why"><span class="skel" style="width:340px"></span></p>
+        </div>
+        <div class="acct" role="listitem">
+          <div class="acct-head"><span class="prov">google</span><span class="skel" style="width:96px;height:26px"></span></div>
+          <p class="state"><span class="skel" style="width:48px"></span><span class="skel" style="width:110px"></span></p>
+          <p class="why"><span class="skel" style="width:280px"></span></p>
+        </div>
+        <p class="footer">Checking this machine…</p>
+      </div>
+
+      <!-- S9 — degrades to "not recorded", never to a plausible wrong claim -->
+      <div data-sc="probe-failed">
+        <div class="acct" role="listitem">
+          <div class="acct-head"><span class="prov">anthropic</span><button class="btn">Re-check</button></div>
+          <p class="state st-unknown"><span class="eng">claude-code</span><span class="glyph" aria-hidden="true">—</span><span class="word">couldn't check</span></p>
+          <p class="why">The check for 'claude' did not finish — not recorded. Nothing was changed.</p>
+        </div>
+        <p class="footer">AI-DE could not check this machine — not recorded. The session will open. Re-check above.</p>
+      </div>
+
+      <!-- OVERFLOW — longest real content: a deep path, a long label, a full install instruction -->
+      <div data-sc="overflow">
+        <div class="acct" role="listitem">
+          <div class="acct-head"><span class="prov">xai</span><button class="btn">Set up…</button></div>
+          <p class="state st-attn"><span class="eng">grok</span><span class="glyph" aria-hidden="true">●</span><span class="word">set up here, but not launchable now</span></p>
+          <p class="why">engine 'grok': 'grok' is not on PATH and '@xai-official/grok' is not installed under 'C:\Users\timmall\AppData\Local\Packages\AI-DE.Workspace_8wekyb3d8bbwe\LocalCache\Roaming\.aide\adapters'; install it: <code>irm https://x.ai/cli/install.ps1 | iex</code> (Windows PowerShell; macOS/Linux: curl -fsSL https://x.ai/cli/install.sh | bash) — or: npm install -g @xai-official/grok@1.0.30; then: grok login, or set XAI_API_KEY in the environment the product launches with. Account "enterprise-shared-billing-eu-west-primary" is untouched — nothing was removed.</p>
+        </div>
+        <p class="footer">The accounts in C:\Users\timmall\AppData\Local\Packages\AI-DE.Workspace_8wekyb3d8bbwe\LocalCache\Roaming\.aide\providers.json are set up, but their CLIs cannot be launched from here. The session will open; a run needs the install fixed above.</p>
+      </div>
+
+    </div>
+    <div class="actions"><button class="btn primary">Create session</button><button class="btn">Cancel</button></div>
+  </div>
+</div>
+
+<!-- ======================= SURFACE B — CONFIGURE SHEET ======================= -->
+<div data-show="configure">
+  <div class="titlebar"><span>Configure github</span><span aria-hidden="true">×</span></div>
+  <div class="body">
+
+    <h2 class="section">Prerequisites</h2>
+    <div data-sc="cli-present ready signed-out mixed">
+      <p class="state st-ready"><span class="glyph" aria-hidden="true">✓</span><span class="word">copilot</span><span class="why" style="margin:0">found at <code>C:\Users\timmall\AppData\Local\Programs\copilot\copilot.exe</code></span></p>
+    </div>
+    <div data-sc="nothing">
+      <p class="state st-attn"><span class="glyph" aria-hidden="true">⚠</span><span class="word">copilot</span><span class="why" style="margin:0">not found. engine 'copilot': 'copilot' is not on PATH; install it: winget install GitHub.Copilot</span></p>
+    </div>
+    <div data-sc="shim overflow">
+      <p class="state st-attn"><span class="glyph" aria-hidden="true">⚠</span><span class="word">copilot</span><span class="why" style="margin:0">found, but not launchable. engine 'copilot': PATH carries 'C:\Users\timmall\AppData\Roaming\npm\copilot.cmd', an npm shim that needs a shell to run, and the catalog records no observed npm launch for 'copilot'; install the observed form instead: winget install GitHub.Copilot</span></p>
+    </div>
+    <div data-sc="probe-failed checking">
+      <p class="state st-unknown"><span class="glyph" aria-hidden="true">—</span><span class="word">copilot</span><span class="why" style="margin:0">not recorded. The PATH check did not finish; nothing was changed.</span></p>
+    </div>
+
+    <h2 class="section">Install</h2>
+    <div data-sc="cli-present ready signed-out mixed">
+      <p class="note">Already installed. copilot is on PATH at <code>C:\Users\timmall\AppData\Local\Programs\copilot\copilot.exe</code> — there is nothing to install here. Go to Sign in below.</p>
+      <button class="btn">Re-check</button>
+      <p class="sr-trace">No Install button in this state. A control that no action can enable is ABSENT, not disabled (U9).</p>
+    </div>
+    <div data-sc="nothing shim overflow probe-failed checking">
+      <p class="note">AI-DE does not install copilot. Run this once in a terminal, then re-check:</p>
+      <div class="cmd"><code>winget install GitHub.Copilot</code><button class="btn">Copy</button></div>
+      <p class="note">Alternative: <code>npm install -g @github/copilot</code></p>
+      <p class="note">Needs an active GitHub Copilot subscription; on Windows, PowerShell v6 or higher.</p>
+      <p class="prov-note">Source: docs/spikes/engine-backends-2026-09-14.md §1; https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli<br>Install line: Verified (handshake, login help) · Inferred (install page).</p>
+      <button class="btn primary">Re-check</button>
+      <p class="sr-trace">No install log region here — it renders only when there is output (U9: an empty 96px box is not an empty state).</p>
+    </div>
+
+    <h2 class="section">Sign in</h2>
+    <p class="note">Sign in with the engine's own CLI — AI-DE never handles your credentials. Run:</p>
+    <div class="cmd"><code>copilot login</code><button class="btn">Copy</button></div>
+    <p class="note">Enterprise Cloud: <code>copilot login --host https://&lt;tenant&gt;.ghe.com</code> · Headless: <code>copilot login --device-code</code></p>
+    <p class="note">AI-DE then launches <code>copilot --acp</code>.</p>
+    <p class="prov-note">Source: docs/spikes/engine-backends-2026-09-14.md §1 · Verified (handshake, login help) · Inferred (install page).</p>
+    <label class="check"><input type="checkbox" id="signed"> <span>I have signed in with <code>copilot login</code> on this machine</span></label>
+    <p class="note" id="signed-state" aria-live="polite">Signed in: not recorded. AI-DE does not probe; it records what you tell it. providers.json will be written with health: needs-login.</p>
+
+    <label class="f" for="acct-label">Account label</label>
+    <p class="note" id="acct-help">A name for this account, used on the session sheet and in providers.json — e.g. work or personal. Yours to choose; AI-DE never reads it.</p>
+    <input class="field" id="acct-label" placeholder="work" aria-describedby="acct-help">
+
+    <div style="display:flex;gap:var(--s-5);align-items:center;margin-top:var(--s-6);flex-wrap:wrap">
+      <button class="btn primary" id="write" disabled>Write providers.json</button>
+      <span class="note" id="write-why" style="margin:0;color:var(--inferred)" aria-live="polite">Enter an account label to write providers.json.</span>
+    </div>
+    <p class="note">Writes <code>C:\Users\timmall\.aide\providers.json</code>. The file is yours to edit; AI-DE re-reads it when this sheet closes.</p>
+  </div>
+</div>
+
+</main>
+</div>
+
+<section class="audit" aria-label="Mechanical audit">
+  <table><thead><tr><th>Pairing (token on token)</th><th>Ratio</th><th>Needs</th><th>AA</th></tr></thead>
+  <tbody id="audit-rows"></tbody></table>
+  <p id="audit-targets" class="note"></p>
+  <p class="note">Computed live from the rendered tokens — a measurement, not a claim. WCAG 2.2 AA: 4.5:1 body text, 3:1 large text and UI component boundaries (1.4.3 / 1.4.11); 24×24 CSS px targets (2.5.8).</p>
+  <p class="note"><strong>This artifact cannot clear native PASS.</strong> The medium is WPF (UI-T4). UIA tree, real focus order, DPI scaling and the Windows High-Contrast system-brush mapping are unproven here.</p>
+</section>
+
+<script>
+(function(){
+  var d=document.documentElement;
+  function bind(id,attr){var e=document.getElementById(id);e.addEventListener('change',function(){
+    d.setAttribute(attr,e.value);audit();});}
+  bind('h-surface','data-surface');bind('h-scenario','data-scenario');bind('h-persona','data-persona');
+  bind('h-viewport','data-viewport');bind('h-theme','data-theme');bind('h-density','data-density');
+  document.getElementById('h-motion').addEventListener('change',function(e){
+    d.setAttribute('data-motion',e.target.checked?'reduced':'normal');});
+
+  var signed=document.getElementById('signed');
+  if(signed)signed.addEventListener('change',function(){
+    document.getElementById('signed-state').textContent = signed.checked
+      ? 'Signed in: yes, as you recorded it just now. providers.json will be written with health: ready.'
+      : 'Signed in: not recorded. AI-DE does not probe; it records what you tell it. providers.json will be written with health: needs-login.';});
+  var lbl=document.getElementById('acct-label'),wr=document.getElementById('write'),wy=document.getElementById('write-why');
+  if(lbl)lbl.addEventListener('input',function(){var ok=lbl.value.trim().length>0;
+    wr.disabled=!ok; wy.textContent = ok ? '' : 'Enter an account label to write providers.json.';});
+
+  function lum(c){var m=c.match(/\d+(\.\d+)?/g);if(!m)return 0;
+    var v=[m[0],m[1],m[2]].map(function(x){x=x/255;return x<=0.03928?x/12.92:Math.pow((x+0.055)/1.055,2.4);});
+    return 0.2126*v[0]+0.7152*v[1]+0.0722*v[2];}
+  function px(t){var e=document.createElement('span');e.style.color=t;document.body.appendChild(e);
+    var c=getComputedStyle(e).color;e.remove();return c;}
+  function ratio(a,b){var x=lum(px(a)),y=lum(px(b));var hi=Math.max(x,y),lo=Math.min(x,y);
+    return (hi+0.05)/(lo+0.05);}
+
+  var PAIRS=[
+    ['text on surface-raised','--text','--surface-raised',4.5],
+    ['text-muted on surface-raised','--text-muted','--surface-raised',4.5],
+    ['text-muted on surface-sunken','--text-muted','--surface-sunken',4.5],
+    ['inferred on surface-raised (footer)','--inferred','--surface-raised',4.5],
+    ['verified on surface-raised','--verified','--surface-raised',4.5],
+    ['danger on surface-raised','--danger','--surface-raised',4.5],
+    ['accent-contrast on accent (primary button)','--accent-contrast','--accent',4.5],
+    ['border-strong on surface-raised (control boundary)','--border-strong','--surface-raised',3],
+    ['focus on surface-raised','--focus','--surface-raised',3],
+    ['text-disabled on surface-raised (exempt 1.4.3; measured anyway)','--text-disabled','--surface-raised',3]
+  ];
+
+  function audit(){
+    // DC-200: the page box is asserted FIRST. A gating selector that hid the frame would make every
+    // ratio below meaningless while still printing a verdict; this refuses to print one.
+    var box=document.querySelector('.window').getBoundingClientRect();
+    var v=document.getElementById('h-verdict');
+    if(box.width===0||box.height===0){v.textContent='page not rendered — audit refused';v.className='verdict fail';return;}
+
+    var cs=getComputedStyle(d),rows='',fails=0;
+    PAIRS.forEach(function(p){
+      var r=ratio(cs.getPropertyValue(p[1]).trim(),cs.getPropertyValue(p[2]).trim());
+      var ok=r>=p[3];if(!ok)fails++;
+      rows+='<tr><td>'+p[0]+'</td><td><code>'+r.toFixed(2)+':1</code></td><td>'+p[3]+':1</td><td class="'+(ok?'pass':'fail')+'">'+(ok?'PASS':'FAIL')+'</td></tr>';});
+    document.getElementById('audit-rows').innerHTML=rows;
+
+    var small=[],all=document.querySelectorAll('.window button, .window input, .window .field');
+    all.forEach(function(el){var b=el.getBoundingClientRect();
+      if(b.width>0&&(b.width<24||b.height<24))small.push((el.textContent||el.id||el.tagName).trim().slice(0,28)+' '+Math.round(b.width)+'×'+Math.round(b.height));});
+    document.getElementById('audit-targets').innerHTML = small.length
+      ? '<span class="fail">2.5.8 target size — '+small.length+' under 24px: '+small.join(' · ')+'</span>'
+      : '<span class="pass">2.5.8 target size — '+all.length+' interactive targets, all ≥ 24×24 px.</span>';
+
+    var bad=fails+small.length;
+    v.textContent='audit '+(bad?('FAIL ('+bad+')'):'PASS')+' · frame '+Math.round(box.width)+'×'+Math.round(box.height);
+    v.className='verdict '+(bad?'fail':'pass');
+  }
+  audit();window.addEventListener('resize',audit);
+})();
+</script>
+</body>
+</html>

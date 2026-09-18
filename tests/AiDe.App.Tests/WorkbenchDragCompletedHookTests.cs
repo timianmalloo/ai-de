@@ -24,10 +24,11 @@ public sealed class WorkbenchDragCompletedHookTests
 {
     /// <summary>
     /// The host under the drag is <b>host B (Architecture)</b>: the kinds these drags move — the
-    /// graph, the evidence views, contexts — are Architecture's by ADR-0030's allow-list, and the
+    /// tree, the evidence views, joins, contexts — are Architecture's by ADR-0030's allow-list, and the
     /// hook is wired per host (ADR-0031), so driving host B proves the wiring the second host got.
-    /// Host B's default (Ruling 94, §B4): Left: graph — Center: contexts · domain (classdiagram) —
-    /// Right: empty, collapsed.
+    /// Host B's default (Ruling 140 amending Ruling 94, §B4): Center: graph (active) · tree — Left,
+    /// Right and Bottom: empty, collapsed. ONE populated zone, so every cross-zone drag below opens
+    /// its own second zone first — see <see cref="OpenInTheRight"/>.
     /// </summary>
     private sealed record Harness(WorkbenchShell Shell, Window Window)
     {
@@ -80,19 +81,29 @@ public sealed class WorkbenchDragCompletedHookTests
     /// its old zone minutes after the drag, because nothing told it.
     /// </summary>
     [Theory]
-    [InlineData("architecture", "graph", "contexts", ZoneId.Left, ZoneId.Center)]
-    [InlineData("coordination", "sessions", "ledger", ZoneId.Left, ZoneId.Center)]
+    [InlineData("architecture", "evidence", "graph", ZoneId.Right, ZoneId.Center, true)]
+    [InlineData("coordination", "sessions", "ledger", ZoneId.Left, ZoneId.Center, false)]
     public void ANativeDrag_ReachesTheModelImmediately_WithoutWaitingForAnUnrelatedCommand(
-        string perspective, string dragged, string onto, ZoneId expectedBefore, ZoneId expectedAfter)
+        string perspective, string dragged, string onto, ZoneId expectedBefore, ZoneId expectedAfter,
+        bool openEvidenceInTheRight)
     {
         // Two of the three hosts here: the hook is wired per host (ADR-0031), so INV-0006 F1 is
         // proven for host B and host C alike, each with a pair its own allow-list admits. Host A's
         // default holds no pair (its Left is empty until a session opens, Ruling 83); its row is
         // InCoding_TheSessionDraggedIntoTheCenterAndBack_… below, over a session it opens first.
+        //
+        // Ruling 140 put host B in the same position as host A: its default populates the Center
+        // alone, so this row opens Evidence in the Right and drags THAT into the Center. Still a
+        // cross-zone drag — the direction reversed, the assertion unchanged.
         var (zoneBefore, zoneAfter) = WithRealizedWorkbench(h =>
         {
             var host = h.Shell.Hosts.Single(x => x.Row.Id == perspective);
             var hh = h with { HostOverride = host };
+            if (openEvidenceInTheRight)
+            {
+                OpenInTheRight(hh, Evidence());
+            }
+
             var before = host.Service.Zones.FindZoneOf(dragged);
             DragDocumentIntoPane(hh, dragged, onto);
             return (before, host.Service.Zones.FindZoneOf(dragged));
@@ -110,13 +121,18 @@ public sealed class WorkbenchDragCompletedHookTests
     {
         var (before, after) = WithRealizedWorkbench(h =>
         {
+            // Ruling 140: the Center holds Graph and Tree, so the Tree is the Center tab dragged out
+            // of its zone — where Ruling 94's Contexts was. The Graph and Evidence are the bystanders.
+            OpenInTheRight(h, Evidence());
             var start = ZoneOfEverySurface(h.Zones);
-            DragDocumentIntoPane(h, "contexts", "graph");
+            DragDocumentIntoPane(h, "tree", "evidence");
             return (start, ZoneOfEverySurface(h.Zones));
         });
 
         var moved = before.Keys.Where(id => before[id] != after[id]).OrderBy(id => id, StringComparer.Ordinal).ToList();
-        Assert.Equal(["contexts"], moved);
+        Assert.Equal(["tree"], moved);
+        Assert.Equal(ZoneId.Right, after["tree"]);
+        Assert.Equal(ZoneId.Center, after["graph"]);
     }
 
     /// <summary>
@@ -129,16 +145,19 @@ public sealed class WorkbenchDragCompletedHookTests
     {
         var (before, after) = WithRealizedWorkbench(h =>
         {
+            // Ruling 140: the two tabs dragged one after the other come from the Right now and land
+            // on the Graph in the Center — the same two-drag sequence, the direction reversed.
+            OpenInTheRight(h, Evidence(), Joins());
             var start = ZoneOfEverySurface(h.Zones);
-            DragDocumentIntoPane(h, "contexts", "graph");
-            DragDocumentIntoPane(h, "domain", "graph");
+            DragDocumentIntoPane(h, "evidence", "graph");
+            DragDocumentIntoPane(h, "joins", "graph");
             return (start, ZoneOfEverySurface(h.Zones));
         });
 
         var moved = before.Keys.Where(id => before[id] != after[id]).OrderBy(id => id, StringComparer.Ordinal).ToList();
-        Assert.Equal(["contexts", "domain"], moved);
-        Assert.Equal(ZoneId.Left, after["contexts"]);
-        Assert.Equal(ZoneId.Left, after["domain"]);
+        Assert.Equal(["evidence", "joins"], moved);
+        Assert.Equal(ZoneId.Center, after["evidence"]);
+        Assert.Equal(ZoneId.Center, after["joins"]);
     }
 
     /// <summary>
@@ -186,12 +205,16 @@ public sealed class WorkbenchDragCompletedHookTests
     {
         var (dockingUpdates, wpfLayoutPasses) = WithRealizedWorkbench(h =>
         {
+            // The second zone is opened and settled BEFORE the counters are attached: opening a pane
+            // is a render, and what this measures is what a DRAG raises.
+            OpenInTheRight(h, Evidence());
+
             var docking = 0;
             var wpf = 0;
             h.Adapter.Manager.Layout.Updated += (_, _) => docking++;
             h.Adapter.Manager.LayoutUpdated += (_, _) => wpf++;
 
-            DragDocumentIntoPane(h, "contexts", "graph");
+            DragDocumentIntoPane(h, "evidence", "graph");
             return (docking, wpf);
         });
 
@@ -209,7 +232,8 @@ public sealed class WorkbenchDragCompletedHookTests
     {
         var records = CapturingDiagnostics(() => WithRealizedWorkbench(h =>
         {
-            DragDocumentIntoPane(h, "contexts", "graph");
+            OpenInTheRight(h, Evidence());
+            DragDocumentIntoPane(h, "evidence", "graph");
             return 0;
         }));
 
@@ -227,9 +251,10 @@ public sealed class WorkbenchDragCompletedHookTests
 
         // The pair is the point: either half alone cannot separate a correct reconcile from a
         // whole-column relabel, which is the distinction the original report could not be answered on.
-        Assert.Contains("Center:[contexts", before, StringComparison.Ordinal);
-        Assert.Contains("Left:[contexts+graph", after, StringComparison.Ordinal);   // dropped first in the pane
-        Assert.Equal(["contexts"], moved);
+        // Ruling 140: the Graph's home is the Center, so the drag reads Right → Center.
+        Assert.Contains("Right:[evidence", before, StringComparison.Ordinal);
+        Assert.Contains("Center:[evidence+graph", after, StringComparison.Ordinal);   // dropped first in the pane
+        Assert.Equal(["evidence"], moved);
     }
 
     /// <summary>
@@ -250,17 +275,24 @@ public sealed class WorkbenchDragCompletedHookTests
             try
             {
                 // Right gets two panes (opened, which expands it) so a drag out of it leaves it
-                // rendered; Left stays collapsed while still holding two (the graph and contexts).
-                // The drag goes Right -> Center, both rendered.
+                // rendered; Left stays collapsed while still holding two. The drag goes Right ->
+                // Center, both rendered.
+                //
+                // Ruling 140 emptied the Left, so the rail is GIVEN its two panes the way an operator
+                // would: Contexts opened from the View menu — a kind that left the default and stayed
+                // admitted, which is the half of the ruling worth exercising here — and the Tree
+                // dragged out of the Center beside it. Opening into an empty tool zone EXPANDS it
+                // (ZoneLayoutService.OpenPane), so the collapse is applied last and is what holds.
                 h.Zones.Apply(new LayoutOperation.AddSurface(ZonesToTree.RightStackId, new Surface("evidence", "view", "Evidence")));
                 h.Zones.Apply(new LayoutOperation.AddSurface(ZonesToTree.RightStackId, new Surface("joins", "joins", "Joins")));
-                h.Zones.Apply(new LayoutOperation.MoveSurface("contexts", new DropTarget(ZonesToTree.LeftStackId, DropKind.JoinStack)));
+                h.Zones.Apply(new LayoutOperation.AddSurface(ZonesToTree.LeftStackId, new Surface("contexts", "contexts", "Contexts")));
+                h.Zones.Apply(new LayoutOperation.MoveSurface("tree", new DropTarget(ZonesToTree.LeftStackId, DropKind.JoinStack)));
                 h.Zones.Apply(new LayoutOperation.SetStackState(ZonesToTree.LeftStackId, StackState.Collapsed));
                 h.Adapter.Render();
                 Settle(h.Window, h.Adapter.Manager);
                 var heldBefore = h.Zones.Zones.Zone(ZoneId.Left).Surfaces().Select(s => s.SurfaceId).ToList();
 
-                DragDocumentIntoPane(h, "evidence", "domain");
+                DragDocumentIntoPane(h, "evidence", "graph");
                 return (
                     h.Shell.Announcer.Last,
                     records.Count(r => r.Contains("\"placement\":\"refused\"", StringComparison.Ordinal)),
@@ -501,7 +533,9 @@ public sealed class WorkbenchDragCompletedHookTests
                 window.Show();
                 Settle(window, shell.Architecture.Manager);
 
-                DragDocumentIntoPane(new Harness(shell, window), "contexts", "graph");
+                var harness = new Harness(shell, window);
+                OpenInTheRight(harness, Evidence());
+                DragDocumentIntoPane(harness, "evidence", "graph");
                 var afterDrag = shell.Architecture.Service.Zones.Shape();
                 shell.Architecture.Persistence!.SaveNow();
                 window.Close();
@@ -510,7 +544,7 @@ public sealed class WorkbenchDragCompletedHookTests
                 return (afterDrag, next.Architecture.Service.Zones.Shape());
             }, 60);
 
-            Assert.Contains("Left:[contexts+graph", onScreen, StringComparison.Ordinal);   // Ruling 94: the graph's home is the Left
+            Assert.Contains("Center:[evidence+graph", onScreen, StringComparison.Ordinal);   // Ruling 140: the graph's home is the Center
             Assert.Equal(onScreen, reopened);
         }
         finally
@@ -528,6 +562,37 @@ public sealed class WorkbenchDragCompletedHookTests
         finally { WorkbenchDiagnostics.Sink = previous; }
 
         return lines;
+    }
+
+    // ── Ruling 140's second zone ──────────────────────────────────────────────────────────
+
+    /// <summary>Evidence — admitted to Architecture since Ruling 94, one View-menu gesture away.</summary>
+    private static Surface Evidence() => new("evidence", "view", "Evidence");
+
+    /// <summary>Joins — admitted to Architecture by Ruling 59, left out of the default pending SH-3.</summary>
+    private static Surface Joins() => new("joins", "joins", "Joins");
+
+    /// <summary>
+    /// Opens panes in the Right zone, the way the View menu does, and settles the host.
+    /// </summary>
+    /// <remarks>
+    /// Ruling 140 left Architecture's default with ONE populated zone — Center = Graph (active),
+    /// Tree — so a CROSS-ZONE drag has nowhere to start until a second zone holds something. None
+    /// of these facts is about which surface starts where; each is about the docking host telling
+    /// the zone model that a pane moved. So the drags that used to start in Ruling 94's Left start
+    /// in a Right the test opens first: still cross-zone, never a same-zone drag collapsed to fit.
+    /// Opening into an empty tool zone expands it (<c>ZoneLayoutService.OpenPane</c>), so the pane
+    /// is rendered and AvalonDock has a real <c>LayoutDocument</c> to move.
+    /// </remarks>
+    private static void OpenInTheRight(Harness h, params Surface[] surfaces)
+    {
+        foreach (var surface in surfaces)
+        {
+            Assert.True(h.Zones.Apply(new LayoutOperation.AddSurface(ZonesToTree.RightStackId, surface)).Applied);
+        }
+
+        h.Adapter.Render();
+        Settle(h.Window, h.Adapter.Manager);
     }
 
     // ── driving the docking host ────────────────────────────────────────────────────────────

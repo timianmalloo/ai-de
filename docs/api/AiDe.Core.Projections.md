@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Projections: 61 types, 77 members, 62% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Projections: 62 types, 86 members, 65% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Projections`
 
-**61 public types · 77 public members · 62% documented.**
+**62 public types · 86 public members · 65% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -744,6 +744,33 @@ same assertions every other projection reads.
 |---|---|
 | `JoinResult Compute()` | **(gap)** |
 
+## `NodeContentOutcome`
+
+*class* — `NodeContent.cs`
+
+What a `NodeContent` query actually did — the value of the `content.outcome`
+span tag.
+
+**Remarks.** **INV-0014 P4.** `Shortfall` tells one reader what to show;
+this tells an operator what happened, and it is the only one of the two that can be aggregated
+across a workspace. The span carried no outcome at all, which is why "wrong for two whole
+languages" was a screenshot rather than a signal.
+
+
+
+
+
+Constants rather than literals at the call site: these names travel into saved searches
+and dashboards, so renaming one is a breaking change and should read like one.
+
+| Member | Summary |
+|---|---|
+| `string Located = "located"` | The file was found, opened and returned. The only outcome with no error code. |
+| `string NoDeclaration = "no-declaration"` | No assertion names a source artifact for this node. |
+| `string Unresolvable = "unresolvable"` | A recorded artifact path that does not name a file inside the workspace. |
+| `string Unreadable = "unreadable"` | The file is there and could not be opened. |
+| `string NotRendered = "not-rendered"` | A real file whose extension this reader does not render inline. |
+
 ## `NodeContentKind`
 
 *enum* — `NodeContent.cs`
@@ -784,6 +811,10 @@ answers to nothing.
 |---|---|
 | `string LimitExceeded = "AIDE-MCP-LIMIT-EXCEEDED"` | **(gap)** |
 | `string NodeUnknown = "AIDE-PROJECTION-NODE-UNKNOWN"` | **(gap)** |
+| `string ContentNoDeclaration = "AIDE-PROJECTION-CONTENT-NO-DECLARATION"` | No assertion names a source artifact for the node at all. |
+| `string ContentUnresolvable = "AIDE-PROJECTION-CONTENT-UNRESOLVABLE"` | A recorded artifact path that does not name a file inside the workspace. |
+| `string ContentUnreadable = "AIDE-PROJECTION-CONTENT-UNREADABLE"` | The file is there and could not be opened. |
+| `string ContentNotRendered = "AIDE-PROJECTION-CONTENT-NOT-RENDERED"` | A real file whose extension this reader does not render inline. |
 
 ## `ResultBounds`
 

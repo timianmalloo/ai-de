@@ -94,7 +94,19 @@ public sealed class ScopeFingerprints
     // a pre-Ruling-85 store needs to leave `rev-1` behind, so the guard and the generation agree.
     // 2026-09-15.1 — `UnanalysedLanguages.Skip` visibility `private` → `internal` so UV-0 census
     // consumes the same instance (ADR-0038). Members unchanged; the gate keys off the file.
-    public const string ExtractorGeneration = "2026-09-15.1";
+    // 2026-09-17.1 — REAL OUTPUT CHANGE, and the one that most needs this gate. The TypeScript and
+    // Python readers passed `request.ScopeId` into `Provenance.ArtifactPathId`, so every assertion
+    // they have ever written cites a value that names no file (INV-0014 §2, DC-229). One consumer
+    // told the operator — "the source for this node could not be located (`typescript:src/frontend`)"
+    // — and the other, content search, counted it as a skip and returned "no matches" over every
+    // TypeScript and Python file in every workspace, for an unknown span of time. Both readers now
+    // cite the file. NO STORE FIXES ITSELF UNTIL THIS MOVES: `Provenance` is outside `AssertionId`,
+    // so the corrected fact hashes to the same id as the wrong one and a re-commit would collide on
+    // `ux_assertion_natural` rather than overwrite. The generation is what changes the id, through
+    // `SourceRevision`'s suffix into `artifact_revision`, which IS in the hash — so this bump is the
+    // whole of the repair's store half, and `extractor_version` could not have been (it is in
+    // neither key, and putting it there would be a schema change).
+    public const string ExtractorGeneration = "2026-09-17.1";
 
     private const string FileName = "scope-fingerprints.json";
 
