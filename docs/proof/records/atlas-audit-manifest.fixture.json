@@ -1,0 +1,17 @@
+{
+  "source": "preflight.json recorded 2026-09-17T14:20:13.560035+00:00, verify/atlas-view-spikes",
+  "source_head": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+  "serialization": "Git path order; UTF-8; LF; final LF",
+  "sha256": "b0c4d40948c0a4e165280c45a26169bd4b1051479e0fadf6fde1086f5280eb35",
+  "entries": [
+    "100644 752581355a2ea0536ad4d371daffc3f59e536792 0\tdocs/proof/atlas-architecture-contract.md",
+    "100644 111029036ca75f760deafe9fde7b6b4bd3394299 0\tdocs/proof/atlas-behavior-contract.md",
+    "100644 f19d2902f528ed16947a708208eabdf7e6b78166 0\tspikes/atlas-architecture-contract/AtlasArchitectureContractSpike.csproj",
+    "100644 79eb15e11fe54a859b578eb74a96c672a1cdd998 0\tspikes/atlas-architecture-contract/Program.cs",
+    "100644 ca0ea6155f80a766e9c0f72541681e5fa86c7c3c 0\tspikes/atlas-architecture-contract/RESULT.md",
+    "100644 a2c2b24ffc31d82d8724cc0e9ac8bfe5816d12d6 0\tspikes/atlas-architecture-contract/architecture.fixture.json",
+    "100644 e469a3d2aafe0ba1e25a1415d3ebfe92f27fb9ae 0\tspikes/atlas-behavior-contract/AtlasBehaviorContractSpike.csproj",
+    "100644 f4f60f1e41976286e082348569e09ffccab5936d 0\tspikes/atlas-behavior-contract/Program.cs",
+    "100644 e03edb9bd2c275fc5b2e01ff9f607954d206e91d 0\tspikes/atlas-behavior-contract/RESULT.md"
+  ]
+}

@@ -1,18 +1,47 @@
 # Codex Atlas five-gate integration
 
-## Current availability — supersedes historical sections below
+## User-requested shutdown — 2026-09-18
+
+- Product work is STOPPED. Pending Owner turn interrupted; all other programme workers were already completed. No native, source or implementation work will resume in this session.
+- Administrative close only: codex-atlas-shutdown / codex-astra-shutdown is recording final TODOs in the existing own docs/atlas-audit-preservation worktree. A read-only cleanup safety review checks only ended Codex trees; no peer tree removal or unmerged-work deletion.
+- Primary has shared coordination-record dirt, no product-file dirt observed. Serialized preservation and a clean-main receipt are requested from the active watcher in req-01M2TTE4DQ1NVTMJWH970W3MP4. No writer handback or main publication is inferred.
+- Grok stop/handoff notice: req-01M2TTJRFCJWBC0KSN7SSVBKW6. Exact r7 freeze is complete, no Codex ACK owed.
+- Watcher conservation verification S2P2 and conditional R122 review routing S31X are consumed and resolved. Final TODO record will retain R124 a63de46c publication, R122 39de7428 review conditions, docs53306e9e integration and protected original-tree evidence.
+
+## Completed conservation and exact handoff — 2026-09-18
+
+- Status: ENDED local conservation close; no active Conductor tree writer. Root integration/atlas-five-gates remains at 7fb4d510 with its original dirty audit files and pre-existing artifacts preserved.
+- Published candidate: 53306e9e828648228f90c9d9cc5405f6d9acfcf6, origin/docs/atlas-audit-preservation. Conductor independently verified remote OID and clean C:/Projects/ai-de-docs-atlas-audit-preservation. Its author session ended and leases released; retain the tree for publisher review and evidence.
+- Verified: seven target records conserved once with full content; all 771 destination objects retained; four task/closing records yield 782 rows. Original A/B HEAD, status, staged manifest and audit hashes unchanged. Independent Astra CLEAR; canonical manifest exits 0, wrong-order same-identity case exits 1; final regeneration passes, graph 535 with zero problems/stale and 75 suggestions. Proof: docs/proof/atlas-audit-preservation.md on the published candidate.
+- Exact handoff delivered to Claude: req-01M2S2FDDWRN35E8CCGCGTDVWX; watcher: req-01M2S2FDFZX2M1TZAAPJBQEBS8. Both were open at delivery; receipt/publication is not inferred. Original accepted in-place rescue remains Claude-owned and was not performed by this unit.
+- Next external actions: R124 a63de46c personal proof inspection/publication; R122 39de7428 formal D&P. Foreign stale audit reports are not another blanket R124 gate. Main last inspected 62e3ed29; no Codex main publication.
+- Grok r7 producer freeze is observed and incoming Codex requests are resolved. Only empty stub admitted; Sequence remains unavailable. Native Pair03 stays closed refused/inconclusive.
+- No human reply is requested. All prior worktrees and dirty records remain intact. Ownership authority remains session-contracts section 2.
+
+## Current continuation — supersedes earlier availability
+
+- Agent: codex-astra-gate-conductor (Astra); session: codex-atlas-five-gates-integration.
+- Status: ACTIVE coordination only; old integration/atlas-five-gates worktree registration released. No original-tree writer is active in this Conductor.
+- Delegated preservation: codex-atlas-audit-preservation, C:/Projects/ai-de-docs-atlas-audit-preservation, branch docs/atlas-audit-preservation, exact main base 62e3ed2999251ed02d179e365b833d724aa47885. Six historical audit records and one prompt row only, official union, original hashes and index preserved, independent review before commit.
+- Owner corrected earlier stale-control assessment: current main reports foreign stale audit dirt; it does not make it a universal publication blocker. Primary/current-session classification still applies. Original Claude in-place rescue remains assigned and untouched. Preservation is not another R124 publication gate.
+- R124 a63de46c personal proof inspection/publication and R122 39de7428 formal D&P review remain Claude's open actions. Watcher START/correction: req-01M2S0XS9007S06NB0NFF33DEA.
+- Grok r7: producer RECEIVED/FROZEN observed on RYYJ4; committed receipt note blob ec05eb1a9029c94fb452ab65de1bab53fa08f43d read; incoming S0G3J acknowledged. Always-empty stub only, no Sequence activation. No r7 ACK remains owed by Codex.
+- Native Pair03 remains closed refused/inconclusive; no native rerun, product scope or main publication in this unit.
+- This liveness record creates no ownership grant. Keep all original worktrees and their dirty files intact.
+
+## Current availability — authoritative over historical sections
 
 - Agent: codex-astra-gate-conductor (Astra)
 - Session: codex-atlas-five-gates-integration
 - Worktree: C:/Projects/ai-de-integration-atlas-five-gates
 - Branch: integration/atlas-five-gates
-- Status: ACTIVE publication follow-through, 2026-09-18T00:10:37.899034+00:00.
-- Objective: obtain the existing publisher's actual R124 proof/rescue/join disposition for candidate a63de46c. Frozen compilation is complete and watcher QWRKSC acknowledged it.
-- Current action: watcher request req-01M2RXKMV57T4JHRS526QQBXYX routes existing Claude landing intent QWRKQN and accepted rescue QST5/completion-or-handback QTKPAR. Separate Astra Owner checks exact R137-139 applicability; independent Sol reviewer checks candidate/main overlap. Both read-only.
-- Dependencies: actual Claude personal proof inspection; audit conservation or explicit handback; applicable current-base join checks and serialized publication. No invented all-green-main requirement. Notice is not ACK, silence is not a transfer.
-- Boundaries: no source/build/native/main work. Pair03 phase remains closed refused/inconclusive; canonical Atlas qualification BLOCK. Original rescue tree untouched. Grok r6 one-clause correction pending independently; admitted empty stub/listing unheld.
-- Evidence: candidate a63de46c three proofs; root docs/proof/atlas-p1-03-transition-design-review.md; docs/plans/atlas-five-gates.md; artifacts/atlas-five-gates/pair-handoff/r124-publication-followthrough.json.
-- Ownership authority remains session-contracts section 2. This record creates no grant.
+- Status: ENDED bounded r7 exact-consumer-ACK unit; root 7fb4d510939258d6b7d53ed09d8fb03b60f6ab92, tracked clean, pre-existing .artifacts retained, own leases released.
+- Completed: exact r7 blob703264e39931f35ca15795b0a8e4fded1f2f41e1 at48ff227d inspected; independent Astra CLEAR3calls and separateOwnerapproval2calls. Actual ACK delivered directly inRYYJ4 and originalRYRD; repeatRZ0S resolved identically. WatcherRZ87 routes existing receipt; no human or genericwatcherACK gate. Directrequest status open; producerreceipt/freeze not invented. r5unchanged/r6unaccepted; Sequence mapping-unavailable; only always-empty stub covered.
+- E2: clean final39de7428, designblobe48d7f4a, localreadinessCLEAR. FormalD&P requestRYPK39 remainsopen, actualwatcherroutingacknowledged. Foundation/producer/home/bounds/US-E8.b open, no productadmission.
+- R124: candidatea63de46c compiled and watcherACKed; currentmainoverlap checked ate0a9c116, no7spike/3proofcollision,774auditunion. ClaudeQWRKQN proofread/publication andQST5/QTKPAR acceptedrescue/completion-or-handback remainopen. Originaltreeuntouched. No newapproval or frozenbuild rerun requested.
+- Nativepair03 closed refused/inconclusive; canonicalAtlasBLOCK. No newsource/native/mainoperation. Retain all programme trees for exact-pin review/evidence/integration; no cleanup.
+- Evidence: docs/proof/codex-d1-r7-consumer-review.md; docs/proof/atlas-p1-03-transition-design-review.md; docs/plans/atlas-five-gates.md; artifacts/atlas-five-gates/pair-handoff/r7-consumer-ack.json and r7-delivery-close.json. Own graph606/zero defects,orphans,drift and derived/audit checks inspected; audital-01M2RZAY78QNTK3FD6HJBAMYZQ.
+- Ownership authority remains session-contracts section2. This record creates no grant.
 
 ## Historical receipts
 

@@ -5,6 +5,6 @@
 - Worktree: C:\Projects\ai-de-understanding-views-d1
 - Branch: understanding-views-d1
 - Status: D-1 admitted; handshake proposed, not frozen
-- Updated: 2026-09-17T18:25Z
-- Doing: N4 PWC closes + CI D1 MutedBrush/Disclosures + handshake graph link + honest 108 disclosure (93b45d85). Sequence dark. No GUI (Claude recount).
-- Waiting on: Codex r6 ACK 414f80a4. Next 108 of this repair when watcher serializes it. Not waiting on the human.
+- Updated: 2026-09-17T19:40Z
+- Doing: r7 FROZEN empty-stub (producer ACK 0069bfc1; blob 703264e3 unchanged). Sequence still mapping-unavailable. Listing independent. No GUI.
+- Waiting on: later mapping contract for Sequence (not r7). Not Codex r7 ACK. Not the human.
