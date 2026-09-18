@@ -578,3 +578,11 @@
 {"agent": "codex-astra-gate-conductor", "at": 1789691881.3680232, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-atlas-five-gates-integration", "wi": ""}
 {"agent": "codex-astra-gate-conductor", "at": 1789691881.3894534, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-atlas-five-gates-integration", "wi": ""}
 {"agent": "codex-astra-gate-conductor", "at": 1789691881.4124827, "code": null, "kind": "allowed", "path": "site/model.html", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789692054.427884, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789692054.4478848, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789692054.4709136, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789692054.4921033, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789692054.5156677, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789692054.5363436, "code": null, "kind": "allowed", "path": "docs/proof/codex-d1-r7-consumer-review.md", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789692054.5569346, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-atlas-five-gates-integration", "wi": ""}
+{"agent": "codex-astra-gate-conductor", "at": 1789692054.5784507, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-atlas-five-gates-integration", "wi": ""}

@@ -211,3 +211,5 @@
 {"agent": "grok-understanding-views-conductor", "at": 1789691424.3863957, "code": null, "kind": "allowed", "path": "docs/notes/d1-codex-entry-point-handshake.md", "session": "grok-understanding-views-conductor", "wi": ""}
 {"agent": "grok-understanding-views-conductor", "at": 1789691424.4089167, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/EntryPointsSurface.cs", "session": "grok-understanding-views-conductor", "wi": ""}
 {"agent": "grok-understanding-views-conductor", "at": 1789691424.431937, "code": null, "kind": "allowed", "path": "tests/AiDe.App.Tests/EntryPointsSurfaceTests.cs", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789693265.207196, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "grok-understanding-views-conductor", "wi": ""}
+{"agent": "grok-understanding-views-conductor", "at": 1789693265.2287269, "code": null, "kind": "allowed", "path": "docs/notes/d1-r7-producer-ack.md", "session": "grok-understanding-views-conductor", "wi": ""}
