@@ -46,6 +46,8 @@ Watcher track: **NOTICE SENT** (this artifact + direct `request-add` to `codex-a
 | UML/sequence spec | `docs/specs/uml-erm-surfaces.md` |
 | Codex E1/E2 plan | Codex-tree `docs/plans/atlas-views.md` (`plan-atlas-views`) — **not on `main`**; not a typed graph link from this note |
 
+> The typed frontmatter edge to `plan-atlas-views` was removed so `docs-graph.py validate` (Ruling 125) does not refuse joins. Restore that edge in the same change that lands the plan. This historical r1 note stays **proposed**, not accepted.
+
 ## Producer / owner
 
 | Concern | Owner |

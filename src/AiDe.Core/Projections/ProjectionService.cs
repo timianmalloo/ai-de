@@ -697,8 +697,9 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
             var candidates = reader.SourceHasTypeNodes();
             var members = reader.SourceHasMembers();
             var truncated = reader.SourceMembersTruncated();
+            var maxRows = Clamp(query.MaxRows, 1, EntryPointsProjection.DefaultMaxRows);
             var result = EntryPointsListing.FromHasType(
-                candidates, query.MaxRows, reader.CurrentSourceRevision(), members, truncated);
+                candidates, maxRows, reader.CurrentSourceRevision(), members, truncated);
             activity?.SetTag("returned.rows", result.Rows.Count);
             activity?.SetTag("omitted.by_cap", result.OmittedByCap);
             activity?.SetTag("outcome", "ok");

@@ -35,7 +35,7 @@ public sealed class EntryPointsProjectionTests
             TestWorkspace.Assertion("Domain.Order", "has_type", "class"));
         var projections = new ProjectionService(workspace.Store, Path.GetDirectoryName(workspace.DatabasePath)!);
         var result = projections.EntryPoints(new EntryPointsQuery());
-        Assert.Equal(5, result.Rows.Count);
+        Assert.Equal(5, result.Rows.Count); // F-EP five-row oracle (N4 PWC)
         Assert.Equal(
             (EntryPointKind.Api, "Orders.OrdersController"),
             (result.Rows.Single(r => r.Display == "Orders.OrdersController").Kind,
@@ -55,6 +55,20 @@ public sealed class EntryPointsProjectionTests
         Assert.Equal("Domain.Order", order.NodeId);
         Assert.Equal(EntryPointsProjection.UnclassifiedReasonPendingClassifier, order.UnclassifiedReason);
         Assert.Equal(0, result.OmittedByCap);
+    }
+
+    [Fact]
+    public void CallerMaxRows_IsClampedToDefaultCeiling()
+    {
+        using var workspace = TestWorkspace.Create();
+        workspace.CommitSnapshot(
+            "fixture", 1, "rev-1",
+            TestWorkspace.Assertion("A", "has_type", "class"),
+            TestWorkspace.Assertion("B", "has_type", "class"));
+        var projections = new ProjectionService(workspace.Store, Path.GetDirectoryName(workspace.DatabasePath)!);
+        var huge = projections.EntryPoints(new EntryPointsQuery(MaxRows: 100_000));
+        Assert.True(huge.Rows.Count <= EntryPointsProjection.DefaultMaxRows);
+        Assert.Equal(0, huge.OmittedByCap);
     }
 
     [Fact]
