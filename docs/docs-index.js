@@ -9550,7 +9550,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  P[Provision isolated exact base] --> M[Verify nine blobs and wrapper]\n  M --> V[One durable combined coverage]\n  V --> I[Inspect actual population and result]\n  I --> R[Independent evidence review]\n  R --> H[Exact candidate and evidence handoff]\n  A[Claude conserves original audit] --> J[Serialized integration]\n  H --> J\n  J --> C[Claude personal proof review and R108 gates]"
         }
       ],
-      "sourceSha256": "57f4c1374f6b14ec0a08866323c731ded77325bd6b6f4cff9b0cf84e7a291ed5"
+      "sourceSha256": "59c4c14bff4065bca23626922247fde05371e27ed358cd4e1bdd413705bbcbe6"
     },
     {
       "id": "coordination-code-atlas",
@@ -12149,7 +12149,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  P[Provision isolated exact base] --> M[Verify nine blobs and wrapper]\n  M --> V[One durable combined coverage]\n  V --> I[Inspect actual population and result]\n  I --> R[Independent evidence review]\n  R --> H[Exact candidate and evidence handoff]\n  A[Claude conserves original audit] --> J[Serialized integration]\n  H --> J\n  J --> C[Claude personal proof review and R108 gates]"
         }
       ],
-      "sourceSha256": "401960de84755db55b72b37f7f332391e843efc920c91978a4b815ec8f53b496"
+      "sourceSha256": "4a78f72eb7b14d48d2a2802ff3fa9883e116b3fa86e5187bfb4a3d1d39153b7a"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -19372,6 +19372,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "de7423b4f574197db3c61ec959af29abf49deec2ff1bd19fae76521109471bdb"
     },
     {
+      "id": "proof-codex-d1-r7-consumer-review",
+      "path": "docs/proof/codex-d1-r7-consumer-review.md",
+      "title": "D1 r7: exact consumer ACK, empty stub only",
+      "type": "proof-pack",
+      "status": "completed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "Independent review and separate Owner disposition clear the exact r7 wording; consumer ACK delivered. Runtime and activation remain unqualified.",
+      "tags": [
+        "proof",
+        "atlas",
+        "d1",
+        "contract-review"
+      ],
+      "links": [
+        {
+          "to": "proof-codex-d1-r6-consumer-review",
+          "rel": "depends-on"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Graph, method and evidence limits",
+          "mermaid": "flowchart LR\n  P[Fetch and verify exact pins] --> R[Independent semantic review]\n  P --> O[Separate Owner decision]\n  R --> A[Exact consumer ACK]\n  O --> A\n  A --> C[Proof audit derive and commit]"
+        }
+      ],
+      "sourceSha256": "d6240283282a81b12e41013f44a4c64f0f9223a53fd989833d9812169aa00aa6"
+    },
+    {
       "id": "proof-coding-recut-left-dock",
       "path": "docs/proof/coding-recut-left-dock.md",
       "title": "Proof Pack: SH-4.2 — Coding's re-cut and the left dock",
@@ -23498,5 +23534,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "86e7335aabf7bf2bd2e281d38abd0baa06b94e4b394073e554155d8ef043af11"
+  "graphSha256": "d74ff4ec7fb621cfada225bc96a72d755a6eab4cc0f67feffe6c65290df2c6c9"
 };
