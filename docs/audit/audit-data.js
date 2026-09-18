@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-18T00:40:34Z",
+  "generated": "2026-09-18T17:56:28Z",
   "audit": [
     {
       "actor": null,
@@ -20147,6 +20147,41 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "e0a9c116391b625ff534a4d4e9a5d5b4ce30d0c8",
         "short": "e0a9c1163",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M2TTK8HVW7ERBX1FWQZ1JP0E",
+      "shortname": "correct-join-main-red-0915",
+      "datetime": "2026-09-18T17:56:28Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "CI e0 FAILED: mutation replay did not start because tracked requests journal was dirty (req-01M2RZF99JPPZ01YKZADWEVDX1, req-01M2RZSWZ18KZYT6ZB6QQYDKJA)",
+      "summary": "FORWARD CORRECTION of al-01M2RZA9ATJQNC48P6B05CADRV, which it supersedes. The original stands\nunaltered; this entry says what it got wrong and why that matters.\n\nWHAT THE ORIGINAL SAID: \"The build job's failure is the App suite, and it is the expected set.\"\n\nWHAT IS TRUE, verified from GitHub's own job record rather than from the test output:\nCI run 35290247518, job 105431315889 (build), failedSteps = [\"Mutation replay - the controls can\nactually fail\"] - step 11, NOT the test step. The raw log:\n\n    mutation-replay --self-test: every guard fires, and the scope check is quiet when clean.\n    mutation-replay: REFUSING TO START - the tree is dirty.\n    M .agents/requests.jsonl\n\nSo the mutation set NEVER EXECUTED. No mutant outcome was observed, and nothing about the controls'\nstrength was measured at this SHA. The App step did also fail (1053/1053, 12 results that did not\npass) and that half of the original entry stands - but it is NOT what the job failed on, and citing\nit as \"the failure\" described a known, accepted population while a control silently did not run.\n\nThat is the exact reading error this session spent the day repairing, committed by me in a receipt\nwritten to close it: a gate's reported status taken as a statement about its contents. DC-227's shape,\none level out - there the harness's exit code stood in for the tool's; here the test step's failure\nstood in for the job's.\n\nROOT CAUSE, reproduced by reading rather than inferred:\ntests/AiDe.App.Tests/DesktopHold.cs:98 writes Ruling 115's desktop-hold announcements into\nPrimaryRoot()/.agents/requests.jsonl - a TRACKED file - as a side effect of running App tests.\nPrimaryRoot() resolves through `git rev-parse --git-common-dir`, so on a developer machine with\nlinked worktrees the write lands in the PRIMARY checkout while the lane under test stays clean. That\nis why this never appeared in any local run. CI has exactly one checkout, so the App test step\ndirties its own tree, and the next step's clean-tree guard refuses to start.\n\nThe watcher's lead (R7688) named this helper as a suspected cause and recorded causality as not yet\nreproduced. It is reproduced now, by topology: same write, different tree layout.\n\nA second defect in the same file, separate and not the cause of this: AnnounceStart hard-codes\n`session grok-understanding-views-conductor` in its reason string, so every desktop hold any session\ntakes is attributed to Grok.\n\nDISPOSITION: the mutation control is NOT green and NOT red at e0a9c116 - it is unexecuted, and that\nis recorded as such. It is not an accepted App population. No journal was deleted or reset, no dirty\nguard bypassed, and the original CI evidence is preserved.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/DesktopHold.cs"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Correct the closing receipt: the build job failed at an unexecuted control, not at the App set",
+      "done_when": "the failing step is named from GitHub's job record; the mutation set is recorded as unexecuted, not as an accepted population",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-18T01:00:56Z",
+      "duration_seconds": 60932.0,
+      "supersedes": "al-01M2RZA9ATJQNC48P6B05CADRV",
+      "git": {
+        "sha": "62e3ed2999251ed02d179e365b833d724aa47885",
+        "short": "62e3ed299",
         "branch": "main",
         "pushed": true
       }
