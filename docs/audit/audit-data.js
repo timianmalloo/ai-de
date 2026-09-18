@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T23:57:12Z",
+  "generated": "2026-09-18T00:33:22Z",
   "audit": [
     {
       "actor": null,
@@ -21846,6 +21846,33 @@ window.AUDIT_DATA = {
         "branch": "feature/xh-p2-projection",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M2RYX9N9WR19989BKY3R1SQN",
+      "shortname": "official-physical-siblings",
+      "datetime": "2026-09-18T00:33:22Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "The prior finite P2 receipt-recovery closure is satisfied; DO NOT repeat it. This replanned narrower unit qualifies the OFFICIAL-STREAM sibling-directory positive and mismatched-capture negative within the existing all-P0-P5 approval. Use owned wire and wire-other Git roots with identical .agents/requests.jsonl bytes; preserve independent official admissions/read/checkpoint state, refuse the API-representable wrong descriptor/page without mutation, and prove an isolated inverse fault. Native session/message-root coverage is separate. Existing dependencies only, no production redesign, live roots/harnesses, GUI, activation, frozen coord-core.py changes, producer merge, main push or upstream. Source packet and full operator prompt are retained in this session; this audit prompt is explicitly a bounded summary, not claimed verbatim.",
+      "summary": "Direct supplied-packet implementation; no production change. Candidate2/2PASS, isolateddescriptor-throw-to-pop one-bytefault1/1FAIL at No exception was thrown, originalbinary81/81PASS preservesall79 prior testID/name occurrences. FullSQLite snapshots/reopen/originaladmissions/filebytes/nativeabsence checked. Working andGit-clean pins separate. Native-root session/message qualification remainsopen; independentofficialscope review follows.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md",
+        "spikes/canonical-coordination-contract/records/official-runtime/official-siblings-evidence.zip"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Qualify only official-stream physical sibling-directory isolation on the existing typed API.",
+      "done_when": "Two real-directory controls and a focal isolated mutation have counted evidence, an ordinary commit and an independent scoped disposition or exact blocker.",
+      "tier": "T2",
+      "main_calls": 16,
+      "main_budget": 24,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "started_at": "2026-09-18T00:17:23Z",
+      "duration_seconds": 959.0
     }
   ],
   "changes": [

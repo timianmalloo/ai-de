@@ -4286,3 +4286,37 @@ are authored by this retry. The worktree is retained for the parent handoff.
 The physical-root gate, remaining P2 work and P3–P5 remain open. No production
 fix, publication, main join, push, activation, real-harness run, GUI run or
 upstream transfer occurred.
+
+### Official-stream physical sibling-root qualification — 2026-09-17
+
+This narrower node starts from `f03df1a02a2ce89f51b44f8373f17fb33f464d0b`.
+It adds only two tests and a local fixture helper to
+`CanonicalCoordinationProjectionRuntimeTests.cs`. Production source is unchanged.
+The separate native-root session/message oracle is not covered or waived.
+
+Both tests create real Git repositories named `wire` and `wire-other` beneath
+the existing fixture's owned temporary directory. Each has identical bytes at
+the identical relative name `.agents/requests.jsonl`. Each descriptor and reader
+comes from its own real repository binding, and both project into one actual
+SQLite store.
+
+| Oracle | Observed result |
+|---|---|
+| `RunOnce_PhysicalSiblingSources_ReopenPreservesSeparateOfficialState` | Both rightful sources are Available/applied with distinct original admissions, source IDs and scoped checkpoints. Two event/checkpoint rows persist. Repeated projection after reopening and direct old-page replay retain each original admission/read state and full table snapshot. Native table state and source bytes remain unchanged. |
+| `ProjectOfficialPage_PhysicalSiblingCapture_RefusesOtherRootWithoutMutation` | Pairing A's actual page with B's actual descriptor, and the inverse direction, returns `COORD_OFFICIAL_DESCRIPTOR`. Full table contents and both files remain unchanged. No root-bearing native checkpoint token is invented. |
+| Isolated descriptor-rejection fault | In a disposable copy of the actual Core DLL, the first `ProjectOfficialPage` throw associated with `COORD_OFFICIAL_DESCRIPTOR` changes to pop. The same physical mismatch test fails because **no exception is thrown**, not because setup or compilation failed. |
+| Original binary after fault | Both new cases passed before the fault; the untouched original binary then passed the complete 81-case runtime selection. All 79 prior test-ID/name occurrences remain; two new occurrences were added. |
+
+The mutation changes one byte at file offset 141171, method token 100665214,
+IL offset 103. The metadata-driven mutation source, raw TRXs, original/mutant
+binary SHA-256 values and exact working/Git-clean source identities are retained
+in `spikes/canonical-coordination-contract/records/official-runtime/official-siblings-evidence.zip`
+and `official-siblings-manifest.json`. Production source and the original Core
+binary were never mutated; "restored" names the rerun of that original binary.
+
+This is observed inverse-fault RED followed by original-code GREEN, not a claim
+that ordinary production code had this defect. It proves official-stream
+directory isolation and refusal in the tested Windows-local scenario, not native
+root session/message identity, live roots, filesystem-race immunity, endpoint
+conformance, full ROOT/P2 acceptance, or any P3–P5 floor.
+Independent scoped Test/Data/DS disposition remains required.

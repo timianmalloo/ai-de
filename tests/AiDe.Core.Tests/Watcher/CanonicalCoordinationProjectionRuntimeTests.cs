@@ -57,6 +57,112 @@ public sealed class CanonicalCoordinationProjectionRuntimeTests : IDisposable
         OfficialDescriptorAcquisition.Acquire(Binding, Primary, Primary, streams ?? Streams, mode);
 
     [Fact]
+    public void RunOnce_PhysicalSiblingSources_ReopenPreservesSeparateOfficialState()
+    {
+        var left = CreateSiblingSource("wire");
+        var right = CreateSiblingSource("wire-other");
+        Assert.Equal(File.ReadAllBytes(left.Source), File.ReadAllBytes(right.Source));
+        string state;
+        string leftEntries;
+        string rightEntries;
+        OfficialCheckpoint? leftCheckpoint;
+        OfficialCheckpoint? rightCheckpoint;
+        long leftAdmission;
+        long rightAdmission;
+
+        using (var store = SqliteWatcherObservationStore.Open(Database))
+        {
+            var native = NativeSnapshot();
+            var first = CanonicalCoordinationOfficialRuntime.RunOnce(left.Descriptor, store, left.Reader);
+            var second = CanonicalCoordinationOfficialRuntime.RunOnce(right.Descriptor, store, right.Reader);
+
+            Assert.Null(first.Stats.Diagnostic);
+            Assert.Null(second.Stats.Diagnostic);
+            Assert.Equal(CoordinationReadStatus.Available, first.Read.Status);
+            Assert.Equal(CoordinationReadStatus.Available, second.Read.Status);
+            Assert.Equal("applied", Assert.Single(first.Read.Entries).State);
+            Assert.Equal("applied", Assert.Single(second.Read.Entries).State);
+            leftAdmission = Assert.Single(first.Admissions).Admission;
+            rightAdmission = Assert.Single(second.Admissions).Admission;
+            Assert.NotEqual(leftAdmission, rightAdmission);
+            Assert.NotEqual(left.Descriptor.SourceId, right.Descriptor.SourceId);
+            Assert.Equal(2, Number("SELECT count(*) FROM coord_projection_event"));
+            Assert.Equal(2, Number("SELECT count(*) FROM coord_projection_checkpoint"));
+            Assert.Equal(0, Number("SELECT count(*) FROM board_message_fact"));
+            Assert.Equal(0, Number("SELECT count(*) FROM session_heartbeat"));
+            Assert.Equal(native, NativeSnapshot());
+            leftEntries = JsonSerializer.Serialize(first.Read.Entries);
+            rightEntries = JsonSerializer.Serialize(second.Read.Entries);
+            leftCheckpoint = store.ReadOfficialCheckpoint(left.Descriptor);
+            rightCheckpoint = store.ReadOfficialCheckpoint(right.Descriptor);
+            Assert.NotNull(leftCheckpoint);
+            Assert.NotNull(rightCheckpoint);
+            Assert.NotEqual(leftCheckpoint.Scope, rightCheckpoint.Scope);
+            state = AllTablesSnapshot();
+        }
+
+        using var reopened = SqliteWatcherObservationStore.Open(Database);
+        foreach (var source in new[] { left, right })
+        {
+            var replay = CanonicalCoordinationOfficialRuntime.RunOnce(source.Descriptor, reopened, source.Reader);
+            Assert.Null(replay.Stats.Diagnostic);
+            Assert.Equal(CoordinationReadStatus.Available, replay.Read.Status);
+            Assert.Equal(source == left ? leftEntries : rightEntries, JsonSerializer.Serialize(replay.Read.Entries));
+            var page = Assert.Single(OfficialCapturedPage.Capture(source.Descriptor).Pages);
+            var receipt = Assert.Single(reopened.ProjectOfficialPage(source.Descriptor, page, null).Admissions);
+            Assert.Equal(source == left ? leftAdmission : rightAdmission, receipt.Admission);
+            Assert.True(receipt.Replayed);
+            Assert.Equal(state, AllTablesSnapshot());
+        }
+        Assert.Equal(leftCheckpoint, reopened.ReadOfficialCheckpoint(left.Descriptor));
+        Assert.Equal(rightCheckpoint, reopened.ReadOfficialCheckpoint(right.Descriptor));
+        Assert.Equal(File.ReadAllBytes(left.Source), File.ReadAllBytes(right.Source));
+    }
+
+    [Fact]
+    public void ProjectOfficialPage_PhysicalSiblingCapture_RefusesOtherRootWithoutMutation()
+    {
+        var left = CreateSiblingSource("wire");
+        var right = CreateSiblingSource("wire-other");
+        using var store = SqliteWatcherObservationStore.Open(Database);
+        CanonicalCoordinationOfficialRuntime.RunOnce(left.Descriptor, store, left.Reader);
+        CanonicalCoordinationOfficialRuntime.RunOnce(right.Descriptor, store, right.Reader);
+        var state = AllTablesSnapshot();
+        var leftBytes = File.ReadAllBytes(left.Source);
+        var rightBytes = File.ReadAllBytes(right.Source);
+
+        foreach (var (source, destination) in new[] { (left, right), (right, left) })
+        {
+            var page = Assert.Single(OfficialCapturedPage.Capture(source.Descriptor).Pages);
+            var error = Assert.Throws<CoordinationSourceException>(
+                () => store.ProjectOfficialPage(destination.Descriptor, page, null));
+
+            Assert.Equal(OfficialCoordinationErrors.Descriptor, error.Code);
+            Assert.Equal(state, AllTablesSnapshot());
+            Assert.Equal(leftBytes, File.ReadAllBytes(left.Source));
+            Assert.Equal(rightBytes, File.ReadAllBytes(right.Source));
+        }
+    }
+
+    private (OfficialDescriptorAcquisition Descriptor, SessionRecord Reader, string Source)
+        CreateSiblingSource(string name)
+    {
+        var primary = Path.Combine(_root.FullName, name);
+        Directory.CreateDirectory(primary);
+        Git(primary, "init", "--quiet");
+        Git(primary, "commit", "--quiet", "--allow-empty", "-m", "synthetic");
+        var source = Path.Combine(primary, ".agents", "requests.jsonl");
+        Directory.CreateDirectory(Path.GetDirectoryName(source)!);
+        File.WriteAllBytes(source, Legacy("request-add", "identical-request"));
+        var binding = new CoordinationSourceBinding(new(primary, "Synthetic"), CanonicalCoordinationSourceBinding.Origin);
+        var reader = new SessionRecord("reader-" + name, new(1), new(binding.Repository,
+            new(binding.Repository, "synthetic", primary), new("terminal"), new("agent"),
+            null, null, TrustClassification.Asserted));
+        var descriptor = OfficialDescriptorAcquisition.Acquire(binding, primary, primary, Streams);
+        return (descriptor, reader, source);
+    }
+
+    [Fact]
     public void RunOnce_AbsentThenEmpty_DistinguishesUnavailableWithoutCreatingSource()
     {
         using var store = SqliteWatcherObservationStore.Open(Database);
