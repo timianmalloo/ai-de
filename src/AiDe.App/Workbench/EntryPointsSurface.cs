@@ -28,7 +28,7 @@ public sealed class EntryPointsSurface : ContentControl
             HorizontalAlignment = HorizontalAlignment.Left,
         };
         AutomationProperties.SetName(_openSequence, "Open Sequence mapping-unavailable");
-        _chrome.SetResourceReference(TextBlock.ForegroundProperty, "MutedBrush");
+        _chrome.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
         _body.Children.Add(_chrome);
         _body.Children.Add(_openSequence);
         _body.Children.Add(_list);

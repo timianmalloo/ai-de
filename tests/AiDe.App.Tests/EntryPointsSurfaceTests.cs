@@ -70,6 +70,40 @@ public sealed class EntryPointsSurfaceTests
     }
 
     [Fact]
+    public void Show_DisclosuresReachChrome()
+    {
+        OnSta(() =>
+        {
+            var surface = new EntryPointsSurface();
+            var window = new Window
+            {
+                Content = surface,
+                Width = 480,
+                Height = 240,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Left = -10000,
+                Top = -10000,
+                ShowInTaskbar = false,
+                ShowActivated = false,
+            };
+            window.Show();
+            try
+            {
+                surface.Show(new EntryPointsResult(
+                    [new EntryPointRow(EntryPointKind.Api, "C", "C", null)],
+                    3,
+                    ["Omitted (3)"],
+                    "rev-1"));
+                Assert.Contains("Omitted (3)", VisibleText(surface), StringComparison.Ordinal);
+            }
+            finally
+            {
+                window.Close();
+            }
+        });
+    }
+
+    [Fact]
     public void ShowNoWorkspace_AndShowError_HaveSpecifiedCopy()
     {
         OnSta(() =>

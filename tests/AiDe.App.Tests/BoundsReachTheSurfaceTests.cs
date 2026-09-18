@@ -382,6 +382,7 @@ public sealed class BoundsReachTheSurfaceTests
             "ContextMapView.IsDeclared",        // ContextMapSurface.cs:77
             "SolutionTreeResult.Disclosures",   // SolutionTreeSurface.cs:427-439
             "SolutionTreeDisclosure.Message",   // chrome TextBlock; SolutionTreeSurfaceTests T5c/T6
+            "EntryPointsResult.Disclosures",    // EntryPointsSurface.cs chrome; omitted/members_truncated copy
             // RENDERED AND ASSERTED, not read: TheComposerRendersItsFieldLevelErrorsTests walks the
             // composer's own tree and finds the spawn contract's verbatim sentence on screen. It is
             // listed here rather than in Allowed because it is closed, not tolerated.

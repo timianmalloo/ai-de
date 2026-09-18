@@ -5492,6 +5492,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "4cfedc5859c7e42721b0262e7e521f3343c578a617f8ff2864e2afa485cb726f"
     },
     {
+      "id": "note-d1-108-landing-disclosure",
+      "path": "docs/notes/d1-108-landing-disclosure.md",
+      "title": "Present-time disclosure: D-1 108 merge f009b6f6 — what was recorded vs not",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2027-03-17",
+      "reviewSuggested": [],
+      "summary": "Honest 2026-09-17 disclosure. Does not backdate a closing receipt. Distinguishes git facts from unrecorded gate steps. Does not claim CI green.",
+      "tags": [
+        "decision-note",
+        "ruling-108",
+        "D-1",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "spec-entry-points",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-mapping-impl",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d3767143deeeecd6e3455f3b27ab58ab1631e4f21ee17969874277a47c73cef5"
+    },
+    {
       "id": "note-d1-codex-entry-point-handshake",
       "path": "docs/notes/d1-codex-entry-point-handshake.md",
       "title": "D-1 ↔ Codex E1/E2 entry-point handshake (proposed; not frozen)",
@@ -5524,10 +5554,6 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         },
         {
-          "to": "plan-atlas-views",
-          "rel": "relates-to"
-        },
-        {
           "to": "adr-0018-node-content-reader-contract",
           "rel": "depends-on"
         },
@@ -5537,7 +5563,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "af85cdadb1ef2c942a16aed8c5cacb2fdb770d63d32d423bbfee35934d662f3e"
+      "sourceSha256": "227b0bb80ee756552cf18cfa72b6ca2d3f8bed875a3ea1d66d7040d0c9625364"
     },
     {
       "id": "note-d1-codex-entry-point-handshake-r2",
@@ -21175,5 +21201,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "bd256cc8fd8b0ffcee44aa46950212dd6e3a811f6ed8d9e7c77f76709a21a974"
+  "graphSha256": "ad339799a1899e02552f98e1d1e2954575030633e0d8fea6f2547614f770d3fe"
 };

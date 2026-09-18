@@ -10,7 +10,6 @@ links:
   - { to: note-understanding-views-owner-d1-admission, rel: depends-on }
   - { to: spec-addendum-c-perspectives, rel: relates-to }
   - { to: spec-uml-erm-surfaces, rel: relates-to }
-  - { to: plan-atlas-views, rel: relates-to }
   - { to: adr-0018-node-content-reader-contract, rel: depends-on }
   - { to: adr-0030-perspective-registry-and-allow-lists, rel: depends-on }
 review-by: 2026-12-15
@@ -46,7 +45,7 @@ Watcher track: **NOTICE SENT** (this artifact + direct `request-add` to `codex-a
 |---|---|
 | E1/E2 plan | `docs/plans/atlas-views.md` (`plan-atlas-views`) — E1 Sequence/Activity, E2 domain/layer/Azure |
 | UML/sequence spec | `docs/specs/uml-erm-surfaces.md` |
-| Codex mock/design | their frozen mockups on Atlas trees (Codex cites exact SHA in ACK) |
+| Codex E1/E2 plan | Codex-tree `docs/plans/atlas-views.md` (`plan-atlas-views`) — **not on `main`**; not a typed graph link from this note |
 
 ## Producer / owner
 
