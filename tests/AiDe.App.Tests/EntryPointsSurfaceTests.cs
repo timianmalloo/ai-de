@@ -95,6 +95,16 @@ public sealed class EntryPointsSurfaceTests
                     ["Omitted (3)"],
                     "rev-1"));
                 Assert.Contains("Omitted (3)", VisibleText(surface), StringComparison.Ordinal);
+
+                surface.Show(new EntryPointsResult(
+                    [new EntryPointRow(EntryPointKind.Api, "Huge", "Huge", null)],
+                    0,
+                    ["Some types list at most 40 members"],
+                    "rev-1"));
+                Assert.Contains(
+                    "Some types list at most 40 members",
+                    VisibleText(surface),
+                    StringComparison.Ordinal);
             }
             finally
             {

@@ -43,7 +43,6 @@ Watcher track: **NOTICE SENT** (this artifact + direct `request-add` to `codex-a
 
 | Pin | Value Grok reads today |
 |---|---|
-| E1/E2 plan | `docs/plans/atlas-views.md` (`plan-atlas-views`) — E1 Sequence/Activity, E2 domain/layer/Azure |
 | UML/sequence spec | `docs/specs/uml-erm-surfaces.md` |
 | Codex E1/E2 plan | Codex-tree `docs/plans/atlas-views.md` (`plan-atlas-views`) — **not on `main`**; not a typed graph link from this note |
 

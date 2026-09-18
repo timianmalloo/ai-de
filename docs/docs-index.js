@@ -5563,7 +5563,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "227b0bb80ee756552cf18cfa72b6ca2d3f8bed875a3ea1d66d7040d0c9625364"
+      "sourceSha256": "482e4d4712febd7a255982d194921c9ba7e379429828956aafeb4ac4bba572dc"
     },
     {
       "id": "note-d1-codex-entry-point-handshake-r2",
@@ -5746,6 +5746,40 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "b50a136df4e300dbf1143ed4f36240904bc2850e40bc0c758b03e646a57c21bf"
+    },
+    {
+      "id": "note-d1-codex-entry-point-handshake-r7",
+      "path": "docs/notes/d1-codex-entry-point-handshake-r7.md",
+      "title": "D-1 mapping r7 — always-empty stub only; Sequence not enabled by Core API or non-empty map",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "Consumes Codex ONE activation-wording delta on r6 (QSEH344E). r5 a3cb0d63 unchanged. Freeze admits only the always-empty mapper stub. Sequence stays mapping-unavailable.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "mapper"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake-r6",
+          "rel": "supersedes"
+        },
+        {
+          "to": "note-d1-codex-entry-point-handshake-r5",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-understanding-views-owner-d1-mapping-impl",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f9e46b2eea3ce1233fb05485c1c3686a6dc02d9a07b2981b7ad005a50f928099"
     },
     {
       "id": "note-d1-listing-query-architecture",
@@ -21201,5 +21235,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ad339799a1899e02552f98e1d1e2954575030633e0d8fea6f2547614f770d3fe"
+  "graphSha256": "7dd248cb14cf52bb5818589df9c7a9328ec2d9fcd6b523d6fcd3d76640e246fb"
 };

@@ -93,9 +93,10 @@ public sealed class EntryPointsSurface : ContentControl
         var ux = result.Rows.Count(r => r.Kind == EntryPointKind.Ux);
         var cli = result.Rows.Count(r => r.Kind == EntryPointKind.Cli);
         var unc = result.Rows.Count(r => r.Kind == EntryPointKind.Unclassified);
-        _chrome.Text = result.OmittedByCap > 0
-            ? string.Join(" · ", result.Disclosures)
-            : $"{api} api · {ux} ux · {cli} cli · {unc} unclassified";
+        var counts = $"{api} api · {ux} ux · {cli} cli · {unc} unclassified";
+        _chrome.Text = result.Disclosures.Count > 0
+            ? counts + " · " + string.Join(" · ", result.Disclosures)
+            : counts;
         _openSequence.IsEnabled = false;
     }
 
