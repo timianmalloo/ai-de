@@ -4302,7 +4302,7 @@ SQLite store.
 
 | Oracle | Observed result |
 |---|---|
-| `RunOnce_PhysicalSiblingSources_ReopenPreservesSeparateOfficialState` | Both rightful sources are Available/applied with distinct original admissions, source IDs and scoped checkpoints. Two event/checkpoint rows persist. Repeated projection after reopening and direct old-page replay retain each original admission/read state and full table snapshot. Native table state and source bytes remain unchanged. |
+| `RunOnce_PhysicalSiblingSources_ReopenPreservesSeparateOfficialState` | Both rightful sources are Available/applied with distinct original admissions, source IDs and scoped checkpoints. Two event/checkpoint rows persist. Repeated projection after reopening and direct old-page replay retain each original admission/read state and full table snapshot. Native table state remains unchanged; source files remain byte-equal to each other. This positive test does not compare them against saved original bytes. |
 | `ProjectOfficialPage_PhysicalSiblingCapture_RefusesOtherRootWithoutMutation` | Pairing A's actual page with B's actual descriptor, and the inverse direction, returns `COORD_OFFICIAL_DESCRIPTOR`. Full table contents and both files remain unchanged. No root-bearing native checkpoint token is invented. |
 | Isolated descriptor-rejection fault | In a disposable copy of the actual Core DLL, the first `ProjectOfficialPage` throw associated with `COORD_OFFICIAL_DESCRIPTOR` changes to pop. The same physical mismatch test fails because **no exception is thrown**, not because setup or compilation failed. |
 | Original binary after fault | Both new cases passed before the fault; the untouched original binary then passed the complete 81-case runtime selection. All 79 prior test-ID/name occurrences remain; two new occurrences were added. |
@@ -4319,4 +4319,41 @@ that ordinary production code had this defect. It proves official-stream
 directory isolation and refusal in the tested Windows-local scenario, not native
 root session/message identity, live roots, filesystem-race immunity, endpoint
 conformance, full ROOT/P2 acceptance, or any P3–P5 floor.
-Independent scoped Test/Data/DS disposition remains required.
+At the author commit, independent scoped Test/Data/DS disposition remained required;
+the subsequent result is recorded below.
+
+#### Independent official-sibling disposition
+
+**GATE official-stream physical sibling subset · Test/Data/DS · PASS.**
+Reviewed `25843919125ae2854d3a84619794035d70ac1afb` against
+`f03df1a02a2ce89f51b44f8373f17fb33f464d0b`. The reviewer independently executed
+2/2 focused and 81/81 runtime cases, zero failures/skips, both exits 0.
+Both test-ID/name multisets exactly match their respective archived runs.
+The reviewer checked all five ZIP members, eight working/Git-clean source pins,
+unchanged original binaries, production-source equality and clean Git state.
+
+The inverse fault's raw assertion and metadata-driven mutator were independently
+inspected, not regenerated or executed by the reviewer. The claim is retained
+focal RED plus independently replayed original-code GREEN, not a second mutant
+execution. The positive source-file wording above was narrowed in response to
+the review; the negative test does compare both files against original bytes.
+
+Independent receipts are retained in the session's
+`files/official-siblings-independent/`:
+
+| Receipt | SHA-256 |
+|---|---|
+| `independent-focused.trx` | `7FA026AF128B5770244ABC1CD5C2F2521B610757CD8E8CF043F1C7BFBB7EC9C8` |
+| `independent-full81.trx` | `626C06A9AE56499D327D252BF7DB140D8F8A17D4F744B36DC25B3364AC49B962` |
+
+The committed evidence ZIP SHA-256 is
+`E5585FDC68751B47FE85A18B4C9A0BD23BBF47DC4FC5F56504F0A15185801E8E`.
+The test's Git-clean/committed blob is
+`24045aee366f10991da048931b0eb216a8b84290`; executed working-byte SHA-256 is
+`58326D19944798227511FD6AC36C1261511D827029B3AB9E9892AEE618B55AA1`.
+These byte domains remain distinct.
+
+This closes only the newly authorized official-stream physical scenario.
+Native physical-root coverage remains separately open. Full ROOT, full P2,
+P3–P5, production binder/authority, actual old-binary rollback and upstream
+qualification remain unclosed. No next node is started by this disposition.

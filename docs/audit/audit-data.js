@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-18T00:33:22Z",
+  "generated": "2026-09-18T00:48:07Z",
   "audit": [
     {
       "actor": null,
@@ -21873,6 +21873,31 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-09-18T00:17:23Z",
       "duration_seconds": 959.0
+    },
+    {
+      "id": "al-01M2RZRA2SHPAKJ0J99J0RCHE9",
+      "shortname": "official-sibling-independent-disposition",
+      "datetime": "2026-09-18T00:48:07Z",
+      "session": "xh-p2-projection-b0d0",
+      "prompt": "Record the independent Test/Data/DS disposition for the explicitly narrowed official-stream sibling-root node; do not start another node or promote native/full-phase qualification.",
+      "summary": "Independent official-stream subsetPASS:2/2focused81/81runtimeexit0, working/Gitclean/source/binary/5archive-memberpinsmatch; historicalone-bytefaultsemanticREDinspectednotreexecuted. Positive-filewordingcorrectedto byte-equaltoeachother, notsaved-originalimmutability. Nativephysicalroot/FULLROOT/FULLP2/P3P5remainopen; no productionchange, liveoperation, mainpush, observerorupstream.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/cross-harness-coordination-proof-pack.md",
+        "spikes/canonical-coordination-contract/records/official-runtime/official-siblings-evidence.zip"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close only the official-stream physical sibling-root qualification and stop.",
+      "done_when": "Independent scoped verdict and exact proof limits are committed, with clean index and released authored lease.",
+      "tier": "T2",
+      "main_calls": 21,
+      "main_budget": 24,
+      "main_over_budget": false,
+      "fan_out": 1
     }
   ],
   "changes": [
