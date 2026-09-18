@@ -114,6 +114,36 @@ public sealed class UpgradingTheExtractorReExtractsTests : IDisposable
         Assert.Equal("rev-1", SourceRevision.Base("rev-1"));
     }
 
+    [Fact]
+    public async Task ChangingTheExtractorWithoutBumpingTheGenerationWritesNothing()
+    {
+        // THE TRAP P3 WALKED UP TO. A reader's output changes; the generation is not bumped; every
+        // guard downstream is still correct and the store keeps the old answer, because the stamped
+        // revision is unchanged and the natural key has no room for "a different reader said it".
+        //
+        // It matters because the obvious alternative to a generation bump is to re-index harder —
+        // and that does not work: `force` skips the fingerprint sidecar but not this guard, so a
+        // forced full re-index on an unbumped generation prints "Indexed 66 of 66 scope(s): 0
+        // assertion(s)" and writes nothing. That sentence is DC-044 verbatim.
+        //
+        // Asserted here as a red test rather than left as a live surprise, so the next person who
+        // proposes "just force a re-index" finds out in CI (Ruling 133, the Data & Persistence
+        // Architect's condition on P3).
+        var extractor = new UpgradeableExtractor { Facts = 2 };
+        using var core = Open(extractor);
+
+        await core.RefreshScopeAsync("scope", "rev-1");
+        Assert.Equal(2, Count(core));
+
+        // The reader improves — the exact shape of P2, where two extractors began citing the file
+        // instead of the scope id. Nothing else changes.
+        extractor.Facts = 5;
+        var again = await core.RefreshScopeAsync("scope", "rev-1");
+
+        Assert.Empty(again.Assertions);
+        Assert.Equal(2, Count(core));
+    }
+
     /// <summary>Commits a snapshot the way a build with no revision stamp did.</summary>
     private static void WriteAsAnOlderBuild(WorkspaceCore core, string scopeId, string revision)
     {
