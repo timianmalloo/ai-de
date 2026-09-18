@@ -16,9 +16,10 @@ summary: >-
   The UX & Accessibility lens's state table, exact copy and mockup for the New Session accounts block
   and the Configure sheet, authored under /ui-design elevate to discharge Ruling 130's condition that
   the lens rules the copy before any code is written. The mockup renders nine scenarios with a review
-  harness. The deterministic craft gate has been run against it and it does NOT pass: two tiny-text
-  Blockers remain, and they are findings against DESIGN.md's own type scale rather than against this
-  file.
+  harness. The craft gate now exits 0 with six advisory Minors: Ruling 147 found that the two tiny-text
+  Blockers were this file applying the 11px keystroke-label token to running text, not a conflict in
+  the design system as the conductor first reported. Not approved — a separate accessibility adversary
+  still owes the clearance.
 ---
 
 # First-use accounts
@@ -39,8 +40,9 @@ Write or Edit** — it could not create a worktree, write a file, or run the cra
 complete file body as text and said so plainly rather than reporting work it had not done. The
 conductor wrote the file to disk verbatim and ran the gate.
 
-That division matters when reading what follows: **the design is the lens's, the gate result is
-measured, and the two disagree.**
+That division matters when reading what follows: **the design is the lens's and the gate result is
+measured** — and the first reading of that measurement, recorded below, was the conductor's and was
+wrong.
 
 ## The craft gate — run, and now clean at the floor
 
