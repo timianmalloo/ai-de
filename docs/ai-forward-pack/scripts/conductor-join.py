@@ -30,6 +30,20 @@ Steps, in order, stop on the first red (the exit status is the failing step's nu
   9. git push <remote> <branch>       only if 8 passed; --no-push skips
  10. build                            `build` from join.json, optional; --no-build skips
 
+Every step is ALSO recorded, as it runs, in `.agents/joins/<audit-shortname>.json` - step
+number, command, exit code, timestamps - with a terminal `complete` record written only after
+the last step of the run returns. **A state file without `complete` is an unfinished join**,
+machine-readably; a record still `running` names the step the process was inside when it
+stopped. That is DC-227 (Ruling 128): on 2026-09-17 this script was started twice for real
+joins under a harness background-shell mode; both captured logs ended at `== step 7: commit`,
+what the harness reported for each, verbatim, was `[exited with code 0]`, and nothing was
+pushed - whether the process itself exited 0 is NOT recorded. The tool skipped nothing and
+reported nothing; the observer stopped observing and read a status the tool never emitted, off
+a log that lagged because stdout was block-buffered. Both halves are fixed here: the log is
+line-buffered (`:77-82`) and the state file says what the log cannot. The file is evidence,
+not a gate - with no writable `.agents/` the join runs unchanged and the record degrades to
+"not recorded". `.agents/joins/` writes its own `.gitignore`; see `JoinState`.
+
 join.json (default docs/coordination/join.json; --join <path> overrides; absent = defaults):
   { "checks":     [["python3", "tools/verify-register.py", "--fix-counts"]],
     "recount":    [["python3", "tools/verify-test-run.py", "--update"]],
@@ -63,7 +77,7 @@ from pathlib import Path
 for _stream in (sys.stdout, sys.stderr):
     if hasattr(_stream, "reconfigure"):
         try:
-            _stream.reconfigure(encoding="utf-8", errors="replace")
+            _stream.reconfigure(encoding="utf-8", errors="replace", line_buffering=True)
         except (ValueError, OSError):
             pass
 
@@ -110,16 +124,186 @@ def load_join(root: Path, path: str | None) -> dict:
     return data
 
 
+JOIN_STATE_GITIGNORE = (
+    "# Written by conductor-join.py. A join-state file is ONE PROCESS'S progress record,\n"
+    "# rewritten in place as that join runs. It is not `register` (append-only, merged by\n"
+    "# union) and not `derived` (regenerable) - the two classes under which .agents/ content\n"
+    "# is committed here (.agents/artifacts.yml). It is also out of phase with its own\n"
+    "# commit: step 7 IS the commit, so the only version a join could ever commit is one with\n"
+    "# no `complete`, and the completed version would land in a later commit or in none. In\n"
+    "# the case this file exists for - a join killed before step 7 - nothing is committed at\n"
+    "# all. The durable record of a join that finished is its step-5 audit entry; this file\n"
+    "# is the record of one that did not. DC-227 / Ruling 128.\n"
+    "*\n")
+
+
+class JoinState:
+    """The join's own progress record, machine-readable: `.agents/joins/<shortname>.json`.
+
+    The control for DC-227 (Ruling 128 (1)). Measured instance, 2026-09-17: this script was
+    started twice for real joins under a harness's background-shell mode. Both captured logs
+    ended at `== step 7: commit`; what the harness reported for each, verbatim, was `[exited
+    with code 0]`; nothing was pushed. Whether the process itself exited 0 is NOT recorded.
+    The tool skipped nothing and reported nothing - the observer stopped observing and read a
+    status the tool never emitted, off a log several steps behind because stdout was
+    block-buffered.
+
+    So the join writes down what it is doing while it does it, and the answer a reader needs is
+    the ABSENCE of a key: one record per step invocation (step, what, command, exit code,
+    timestamps) and a terminal `complete` record written only after the last step of the run
+    returns. **A state file with no `complete` is an unfinished join** - no prose to parse. A
+    record still `running` names the step the process was inside when it stopped, which is the
+    question that was unanswerable on 2026-09-17.
+
+    Evidence, never a gate (IO11). With no `.agents/` directory, or one that cannot be written,
+    the join runs exactly as before and the record degrades to "not recorded" - it never
+    degrades to a plausible wrong record. The directory is joined, never installed: a repo with
+    no coordination layer gets no `.agents/`.
+    """
+
+    STAMP = "%Y-%m-%dT%H:%M:%SZ"
+
+    def __init__(self, root: Path, shortname: str, log=print):
+        self.root = root
+        self.log = log
+        self.path = None
+        self.data = {}
+        safe = "".join(c if (c.isalnum() or c in "._-") else "-" for c in (shortname or ""))
+        self.name = safe.strip("-.") or "join"
+
+    @classmethod
+    def _now(cls) -> str:
+        return time.strftime(cls.STAMP, time.gmtime())
+
+    def begin(self, session: str, branch: str, merging) -> None:
+        """Open the record for THIS run. The directory work happens here, not in __init__, so a
+        join that never starts (a detached HEAD) leaves nothing behind."""
+        base = self.root / ".agents"
+        if not base.is_dir():
+            self.log("   join state: not recorded (no .agents/ directory)")
+            return
+        directory = base / "joins"
+        try:
+            directory.mkdir(exist_ok=True)
+            marker = directory / ".gitignore"
+            if not marker.exists():
+                marker.write_text(JOIN_STATE_GITIGNORE, encoding="utf-8")
+        except OSError as error:
+            self.log("   join state: not recorded ({0})".format(error))
+            return
+        self.path = directory / (self.name + ".json")
+        previous = self._preserve()
+        self.data = {"shortname": self.name, "session": session, "branch": branch,
+                     "merging": merging, "pid": os.getpid(), "started": self._now(), "steps": []}
+        if previous:
+            self.data["previous"] = previous
+        self._write()
+        if self.path is not None:
+            self.log("   join state: {0}{1}".format(
+                Path(".agents") / "joins" / self.path.name,
+                " (the earlier attempt is at {0})".format(previous) if previous else ""))
+
+    def _preserve(self):
+        """A second run under one shortname - a `--continue`, or a re-run after a fix - never
+        overwrites the first attempt. One record is one process, because "did THAT process
+        finish?" is the only question this file answers; so the earlier file moves aside under
+        its own start stamp and the new one names it in `previous`, leaving the chain walkable
+        and `<shortname>.json` always the current attempt."""
+        if self.path is None or not self.path.exists():
+            return None
+        try:
+            stamp = str(json.loads(self.path.read_text(encoding="utf-8")).get("started") or "")
+        except (OSError, ValueError):
+            stamp = ""
+        if not stamp:
+            try:
+                stamp = time.strftime(self.STAMP, time.gmtime(self.path.stat().st_mtime))
+            except OSError:
+                stamp = self._now()
+        stamp = "".join(c for c in stamp if c.isalnum())
+        for n in range(1000):
+            name = "{0}.{1}{2}.json".format(self.name, stamp, "" if n == 0 else "-{0}".format(n))
+            target = self.path.parent / name
+            if not target.exists():
+                try:
+                    os.replace(str(self.path), str(target))
+                except OSError as error:
+                    self.log("   join state: the earlier attempt could not be preserved "
+                             "({0})".format(error))
+                    return None
+                return name
+        return None
+
+    def starting(self, step: int, what: str, command) -> None:
+        if self.path is None:
+            return
+        self.data.setdefault("steps", []).append(
+            {"step": step, "what": what, "command": [str(c) for c in command],
+             "status": "running", "started": self._now(), "exit_code": None, "ended": None})
+        self._write()
+
+    def finished(self, exit_code: int, ok: bool) -> None:
+        if self.path is None or not self.data.get("steps"):
+            return
+        record = self.data["steps"][-1]
+        record["exit_code"] = exit_code
+        record["status"] = "ok" if ok else "failed"
+        record["ended"] = self._now()
+        self._write()
+
+    def step(self, step: int, what: str, command, exit_code: int, ok: bool) -> None:
+        """A step the join runs itself rather than through `Join.run` - the merge."""
+        self.starting(step, what, command)
+        self.finished(exit_code, ok)
+
+    def skipped(self, step: int, what: str, why: str) -> None:
+        """A step that did not run is recorded as skipped, not omitted: a file whose records
+        stop at 8 must mean the process stopped at 8, never "9 and 10 were switched off"."""
+        if self.path is None:
+            return
+        now = self._now()
+        self.data.setdefault("steps", []).append(
+            {"step": step, "what": what, "command": [], "status": "skipped", "why": why,
+             "started": now, "exit_code": None, "ended": now})
+        self._write()
+
+    def complete(self, **fields) -> None:
+        """Written ONLY after the last step of the run returns. Its absence is the finding."""
+        if self.path is None:
+            return
+        fields["at"] = self._now()
+        self.data["complete"] = fields
+        self._write()
+
+    def _write(self) -> None:
+        """Whole file, then `os.replace` - atomic, so a process terminated mid-write leaves the
+        previous record rather than a truncated one no reader can parse."""
+        if self.path is None:
+            return
+        temporary = self.path.with_name(self.path.name + ".writing")
+        try:
+            temporary.write_text(json.dumps(self.data, indent=2) + "\n", encoding="utf-8")
+            os.replace(str(temporary), str(self.path))
+        except OSError as error:
+            self.log("   join state: not recorded ({0})".format(error))
+            self.path = None
+
+
 class Join:
-    def __init__(self, root: Path, env: dict, log=print):
+    def __init__(self, root: Path, env: dict, log=print, state: JoinState | None = None):
         self.root = root
         self.env = env
         self.log = log
+        self.state = state
 
     def run(self, step: int, what: str, command: list[str], allow=(0,)) -> subprocess.CompletedProcess:
         self.log("\n== step {0}: {1}\n   $ {2}".format(step, what, " ".join(command)))
+        if self.state is not None:
+            self.state.starting(step, what, command)
         completed = subprocess.run(command, cwd=str(self.root), env=self.env, text=True,
                                    encoding="utf-8", errors="replace", capture_output=True)
+        if self.state is not None:
+            self.state.finished(completed.returncode, completed.returncode in allow)
         tail = (completed.stdout + completed.stderr).strip().splitlines()
         for line in tail[-8:]:
             self.log("   | " + line[:200])
@@ -140,12 +324,14 @@ def join(args, root: Path, contract: dict, log=print) -> int:
     session = args.session or env.get("AGENT_SESSION") or contract.get("session") or "conductor"
     env["AGENT_SESSION"] = session
     env.setdefault("AGENT_NAME", session)
-    j = Join(root, env, log)
+    state = JoinState(root, args.audit_shortname, log)
+    j = Join(root, env, log, state)
 
     branch_now = j.git("branch", "--show-current").stdout.strip()
     if not branch_now:
         log("conductor-join: run from a checkout on a branch (HEAD is detached)")
         return 2
+    state.begin(session, branch_now, args.branch if not args.cont else None)
 
     trailer = ""
     trailer_file = args.trailer_file or contract.get("trailer_file")
@@ -167,9 +353,13 @@ def join(args, root: Path, contract: dict, log=print) -> int:
                 "re-run with --continue:")
             for c in conflicts:
                 log("   - " + c)
+            state.step(1, "merge", ["git", "merge", "--no-ff", args.branch],
+                       merge.returncode, False)
             return 1
+        state.step(1, "merge", ["git", "merge", "--no-ff", args.branch], merge.returncode, True)
     else:
         log("\n== step 1: --continue (the merge was resolved by hand)")
+        state.skipped(1, "merge", "--continue (resolved by hand)")
 
     # The join's own marker (F-22): one marker measures one join (AL4a), keyed to the skill
     # so a prompt logged meanwhile cannot consume it.
@@ -183,8 +373,10 @@ def join(args, root: Path, contract: dict, log=print) -> int:
     recount = contract.get("recount") or []
     if args.docs_only:
         log("\n== step 4: recount skipped (--docs-only)")
+        state.skipped(4, "recount", "--docs-only")
     elif not recount:
         log("\n== step 4: no recount configured (join.json `recount` is empty)")
+        state.skipped(4, "recount", "join.json `recount` is empty")
     else:
         for command in recount:
             j.run(4, "recount", _interp(command))
@@ -222,26 +414,34 @@ def join(args, root: Path, contract: dict, log=print) -> int:
 
     if args.no_push:
         log("\n== step 9: push skipped (--no-push)")
+        state.skipped(9, "push", "--no-push")
     else:
         j.run(9, "push", ["git", "push", contract.get("push_remote") or "origin", branch_now])
 
     sha = j.git("rev-parse", "--short", "HEAD").stdout.strip()
     build = contract.get("build") or []
     if args.no_build or not build:
-        log("\n== step 10: build skipped ({0}); {1} at {2}".format(
-            "--no-build" if args.no_build else "none configured", branch_now, sha))
+        why = "--no-build" if args.no_build else "none configured"
+        log("\n== step 10: build skipped ({0}); {1} at {2}".format(why, branch_now, sha))
+        state.skipped(10, "build", why)
     else:
         for command in build:
             j.run(10, "build", _interp(command))
         log("\nconductor-join: complete - {0} at {1}; build ran".format(branch_now, sha))
+    # Only here - after the LAST step of the run returned. Every earlier exit, red or killed,
+    # leaves the file without this key, which is the whole signal (DC-227).
+    state.complete(status="ok", branch=branch_now, head=sha, pushed=not args.no_push,
+                   built=bool(build) and not args.no_build)
     return 0
 
 
 def self_test() -> int:
-    """Two joins in a throwaway repository, both with --no-push --docs-only and no gates:
+    """Joins in throwaway repositories, all with --no-push --docs-only:
     (a) a clean branch completes, and the audit entry carries tier T1, fan_out 0 and a
-    measured duration; (b) a branch that commits a file with a conflict marker - DC-136's
-    shape, a hand-resolved file - stops at step 3 with NO join commit."""
+    measured duration, and the state file carries `complete`; (b) a branch that commits a file
+    with a conflict marker - DC-136's shape, a hand-resolved file - stops at step 3 with NO
+    join commit; (c) DC-227: a join KILLED at step 8 leaves a captured log that reached step 8
+    and a state file with no `complete`, over a preserved earlier attempt."""
     def git(cwd, *a):
         done = subprocess.run(["git", *a], cwd=str(cwd), capture_output=True, text=True)
         if done.returncode != 0:
@@ -256,6 +456,7 @@ def self_test() -> int:
         git(repo, "config", "user.email", "join@example.invalid")
         git(repo, "config", "user.name", "join")
         (repo / "docs" / "audit").mkdir(parents=True)
+        (repo / ".agents").mkdir()
         (repo / "README.md").write_text("base\n", encoding="utf-8")
         git(repo, "add", "-A")
         git(repo, "commit", "-qm", "init")
@@ -294,6 +495,12 @@ def self_test() -> int:
                 problems.append("the join entry carries no measured duration")
             if "recount_seconds=" not in entry.get("summary", ""):
                 problems.append("the join entry does not record recount_seconds")
+            state_path = repo / ".agents" / "joins" / "join-clean.json"
+            if not state_path.is_file():
+                problems.append("a clean join wrote no state file at .agents/joins/join-clean.json")
+            elif not json.loads(state_path.read_text(encoding="utf-8")).get("complete"):
+                problems.append("a clean join's state file carries no complete record: {0}".format(
+                    state_path.read_text(encoding="utf-8")[:400]))
 
         # (b) the hand-resolved file carrying a marker
         git(repo, "checkout", "-q", "-b", "feature/markers")
@@ -320,11 +527,79 @@ def self_test() -> int:
             problems.append("a join commit was made over a conflict marker")
         if git(repo, "rev-parse", "HEAD").strip() == before:
             problems.append("precondition: the merge itself should have landed before the gate")
+
+    # (c) DC-227 / Ruling 128 (b): a KILLED step. Its own repository and its own subprocess,
+    # because the question is what an externally terminated process leaves behind, which an
+    # in-process call cannot answer - the join must really die mid-step, as it did on
+    # 2026-09-17, when two real joins were started under this harness's background-shell mode,
+    # both captured logs ended at `== step 7: commit`, the harness reported `[exited with code
+    # 0]` for each, verbatim, and nothing was pushed. Whether the process itself exited 0 is
+    # NOT recorded. Here a child of the join terminates the join at step 8, and the run proves
+    # both halves of the control: the captured log reaches the step that was really running,
+    # and the state file left behind carries no `complete`. Run twice under one shortname, so
+    # a second attempt is also shown not to erase the first.
+    with tempfile.TemporaryDirectory() as tmp:
+        repo = Path(tmp) / "repo"
+        repo.mkdir()
+        git(tmp, "init", "-q", "-b", "main", str(repo))
+        git(repo, "config", "user.email", "join@example.invalid")
+        git(repo, "config", "user.name", "join")
+        (repo / "docs" / "audit").mkdir(parents=True)
+        (repo / ".agents").mkdir()
+        (repo / "README.md").write_text("base\n", encoding="utf-8")
+        killer = {"regenerate": [], "checks": [], "gates": [
+            ["python3", "-c", "import os, signal; os.kill(os.getppid(), signal.SIGTERM)"]]}
+        (repo / "join.json").write_text(json.dumps(killer), encoding="utf-8")
+        git(repo, "add", "-A")
+        git(repo, "commit", "-qm", "init")
+
+        killed = None
+        for n in (1, 2):
+            branch = "feature/killed-{0}".format(n)
+            git(repo, "checkout", "-q", "-b", branch)
+            (repo / "killed-{0}.txt".format(n)).write_text("work\n", encoding="utf-8")
+            git(repo, "add", "-A")
+            git(repo, "commit", "-qm", "work {0}".format(n))
+            git(repo, "checkout", "-q", "main")
+            killed = subprocess.run(
+                [PY, str(Path(__file__).resolve()), branch, "--title", "merge killed",
+                 "--audit-shortname", "join-killed", "--audit-summary", "s", "--audit-goal", "g",
+                 "--audit-done-when", "d", "--no-push", "--docs-only",
+                 "--join", str(repo / "join.json"), "--session", "selftest"],
+                cwd=str(repo), capture_output=True, text=True, encoding="utf-8", errors="replace")
+        if killed.returncode == 0:
+            problems.append("the killed join exited 0 - the planted kill did not land")
+        if "== step 8" not in (killed.stdout or ""):
+            tail = (killed.stdout or "").strip().splitlines()[-1:]
+            problems.append("a terminated join's captured log never reaches step 8 (last "
+                            "captured line {0!r}) - the log is block-buffered".format(
+                                tail[0] if tail else ""))
+        joins_dir = repo / ".agents" / "joins"
+        state_path = joins_dir / "join-killed.json"
+        if not state_path.is_file():
+            problems.append("a terminated join wrote no state file at .agents/joins/join-killed.json")
+        else:
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            if "complete" in state:
+                problems.append("a terminated join's state file carries a complete record")
+            running = [s for s in state.get("steps", []) if s.get("status") == "running"]
+            if not running or running[-1].get("step") != 8:
+                problems.append("a terminated join's state file does not name step 8 as the "
+                                "step that was running: {0}".format(state.get("steps")))
+            first = state.get("previous")
+            if not first or not (joins_dir / first).is_file():
+                problems.append("a second run of the same shortname did not preserve the first "
+                                "attempt (previous={0!r}, dir={1})".format(
+                                    first, sorted(x.name for x in joins_dir.iterdir())))
+            elif "complete" in json.loads((joins_dir / first).read_text(encoding="utf-8")):
+                problems.append("the preserved first attempt carries a complete record")
     if problems:
         print("conductor-join --self-test: FAILED - " + "; ".join(problems))
         return 1
-    print("conductor-join --self-test: OK - a clean join completes with a measured T1 entry; "
-          "a merge carrying a conflict marker stops at step 3 with no join commit")
+    print("conductor-join --self-test: OK - a clean join completes with a measured T1 entry "
+          "and a state file carrying `complete`; a merge carrying a conflict marker stops at "
+          "step 3 with no join commit; a join killed at step 8 leaves a log flushed to step 8 "
+          "and a state file with no `complete`, over a preserved first attempt")
     return 0
 
 
@@ -346,7 +621,8 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--join", help="the join contract (default docs/coordination/join.json)")
     parser.add_argument("--session", help="audit session id (default $AGENT_SESSION, then join.json, then 'conductor')")
     parser.add_argument("--trailer-file", dest="trailer_file", help="text appended to every commit message")
-    parser.add_argument("--self-test", action="store_true", help="prove a red step stops the join")
+    parser.add_argument("--self-test", action="store_true",
+                        help="prove a red step stops the join and a killed one leaves no `complete`")
     return parser
 
 
