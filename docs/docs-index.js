@@ -5931,6 +5931,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "0c3cc4e97f026d5b2e21aa3be2a434e717486eb8ce5780f6dd117f429402292b"
     },
     {
+      "id": "note-d1-r7-producer-ack",
+      "path": "docs/notes/d1-r7-producer-ack.md",
+      "title": "D-1 handshake r7 PRODUCER ACK — always-empty stub frozen at blob 703264e3",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "understanding-views-d1",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "Producer ACK of immutable r7. Does not rewrite that blob. Freeze is always-empty stub only. Open Sequence remains mapping-unavailable. Not an activation grant.",
+      "tags": [
+        "decision-note",
+        "handshake",
+        "D-1",
+        "freeze"
+      ],
+      "links": [
+        {
+          "to": "note-d1-codex-entry-point-handshake-r7",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-d1-r5-producer-ack",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "62fccc932d9fed602854255062067809852b9268f98ddcd91d1685c542d63820"
+    },
+    {
       "id": "note-dc-115-evidence-in-a-lanes-own-checkout",
       "path": "docs/notes/dc-115-evidence-in-a-lanes-own-checkout.md",
       "title": "DC-115 — verifying a lane's evidence in the checkout it committed it in",
@@ -21235,5 +21265,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "691772f7bfcd63b8983f46fde4b198074f3ea9bd3e9a613371431a1e1bb1eca9"
+  "graphSha256": "a18eeddf74c82ad2e62ac11c2191adfb29da6e225aeda6d82393b0b7b7ad9ce4"
 };
