@@ -25,8 +25,10 @@ This session assumed the watcher role and produced the state below.
 
 ## The one-line answer
 
-**`main` is `b82862c5`, every repository gate passes, and no work anywhere exists in only one place.**
-One lane is deliberately unlanded, for a reason written down and owned.
+**`main` is green on CI — run 35379686294, `core-tests` · `gates` · `build` all success — and no work
+anywhere exists in only one place.** `main` had been red since 2026-09-12. Both lanes have since
+landed; the Explore lane's sixteen App tests were rewritten to Ruling 140's default rather than
+weakened, and its receipt is `al-01M2V19J6D5PFZVEADASW69P7P`.
 
 ## What reached `main`
 
@@ -55,9 +57,27 @@ run of this effort.
 
 | | Before | After |
 |---|---|---|
-| Worktrees | 148 | **125** |
+| Worktrees | 148 | **34** |
 | Local branches absent from the remote | **101** | **0** |
 | Remote branches | ~92 | **193** |
+
+The second cleanup pass ran only **after** every branch was on the remote and every peer session had
+terminated, because until both were true a worktree could still be the only copy of something. 91
+further trees were removed — all clean, all with their commits preserved on `origin` — including one
+carrying 258 commits not on `main`. A worktree is a checkout; the work is the branch, and every
+branch survives.
+
+**A near-miss worth recording.** The dry run listed the *live* canvas lane as removable — "clean,
+merged, unheld" — because its agent had not committed yet. With every peer session terminated,
+**zero sessions were registered, so every tree read as unheld**, including one with work in flight.
+The fail-safe rule protects committed work and uncommitted tracked changes; it cannot protect a tree
+nobody has claimed. A `coord session start` on that lane moved it to KEEP and the set dropped 92 → 91.
+The hold should have been taken before the first dry run, not after it.
+
+The **34 that remain** are held for reasons the tool can state: 32 carry uncommitted changes, 1 is the
+live lane, 1 is the primary. None holds product work — 11 are dirty only with untracked build output,
+and 21 carry stale `docs/audit` copies whose canonical state is far ahead on `main`. They are reported
+rather than removed, because the rule that refuses them is the same rule that saved the spikes.
 
 - **23 worktrees removed** — every one clean, merged into `main`, and unheld. The fail-safe path;
   nothing else was touched.
@@ -66,10 +86,8 @@ run of this effort.
 - **Two complete Atlas contract spikes recovered** — 1,172 insertions across 9 files, fully staged and
   never committed, on a branch 0 commits ahead of `main`, in a tree queued for cleanup. They would
   have been destroyed silently. Committed exactly as their author staged them, judged in no way.
-- **125 worktrees remain held**, and correctly: 48 carry commits not on `main`, 43 carried commits
-  that existed nowhere else (now pushed), 32 carry uncommitted changes, 1 is live, 1 is the primary.
-  Across all of them, **no product or tool file is uncommitted** — the dirt is build output and
-  coordination ledgers.
+- Across every tree examined, **no product or tool file was uncommitted** — the dirt is build output
+  and coordination ledgers.
 
 ## The lane that cannot land
 
