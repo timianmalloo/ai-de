@@ -9546,7 +9546,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ca1c9fa5828cf6d1c8c551fb565e4d4de9685e4619e1aea53967269a1bfb53c0"
+      "sourceSha256": "3154e1d46047898959843cef3378de71e346bf4c0d6c1289b0c36e8f91fe3bf6"
     },
     {
       "id": "design-session-profiler",
@@ -10808,7 +10808,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7daf60ac6f255937a8ee823492a46e3a9f7bced92ba0874046b86a2e14061f8d"
+      "sourceSha256": "c653c18c49decbb7ad5d90198e8e93dfffaa71df93ae2791253dc0342009a966"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -13298,6 +13298,82 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "f7f512919b02fcbbc3adca4c48c208d1351022658d11bd9adfa68975b79d3fae"
+    },
+    {
+      "id": "inv-0013-the-sheet-asks-the-config-not-the-machine",
+      "path": "docs/investigations/INV-0013-the-sheet-asks-the-config-not-the-machine.md",
+      "title": "A native CLI on PATH reads as \\\"not configured\\\" — the New Session sheet answers \\\"can this engine launch here?\\\" from the product's own config file, short-circuiting the one installed-reading DC-223 created",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-watch-0915",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "The operator's clean-machine build reported all five accounts as \"not configured (no adapter root — no provider file)\" with copilot installed and on PATH. Verified necessary and sufficient by a headless probe: NewSessionSheetViewModel.LaunchRefusal returns that sentence whenever ~/.aide/providers.json is absent, short-circuiting EngineCatalog.InstallRefusal — the single installed-reading DC-223 created — so the engine's command is never probed on a clean machine. Four confirmed siblings compound it, including a sign-in path hardcoded to claude-code that makes \"ready\" unreachable for github through the product, and a test that asserts the defect as the spec.",
+      "tags": [
+        "first-use",
+        "engine-catalog",
+        "accounts",
+        "clean-machine",
+        "dc-223",
+        "cap-p",
+        "ruling-104",
+        "ruling-130"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "inv-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c23dfa914ef2c5ede9bda6aa2115a724b534d00452d7098e78bc0c61541b48c4"
+    },
+    {
+      "id": "inv-0014-the-graph-stage-is-capped-and-typescript-provenance-is-a-scope-id",
+      "path": "docs/investigations/INV-0014-the-graph-stage-is-capped-and-typescript-provenance-is-a-scope-id.md",
+      "title": "Two Explore defects: the graph stage is capped at 440 CSS px inside a full-height pane, and the TypeScript/Python extractors write a scope id where the artifact path belongs — which also makes content search return silently wrong \\\"no matches\\\"",
+      "type": "investigation",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-watch-0915",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "From the operator's clean-machine build. (1) The Explore graph fills 21.8% of its pane's height because CanvasPage's #stage carries a fixed height:440px inside a full-height WPF pane — measured 1624x437 in a 1661x2002 pane, with fit()'s own arithmetic predicting the drawn disc to 1px. (2) \"View source\" returns a shortfall for every TypeScript node because TypeScriptExtractor and PythonExtractor pass request.ScopeId into Provenance.ArtifactPathId; the same field feeds content search, so every TS and Python file in every workspace is silently skipped and a search returns \"no matches\" rather than \"I could not open these files\". The view renders the projection faithfully; the projection is wrong.",
+      "tags": [
+        "explore",
+        "graph-canvas",
+        "provenance",
+        "typescript",
+        "python",
+        "content-search",
+        "telemetry",
+        "clean-machine"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "inv-0013-the-sheet-asks-the-config-not-the-machine",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "886b084e9d2ad0821d846b17ea88983a01551c4799df3e052e10ac624f4469b8"
     },
     {
       "id": "inv-knowledge-chip-reads-zero-again",
@@ -21060,5 +21136,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d7fde000c46c79d92a186df1a4ebd77231e8b3919c7ee3817cad9a9bfe16155d"
+  "graphSha256": "5afa16c48d17cad0bc009afb49e5b037c51d3c7e7d38fe36e83f16f853b5d676"
 };

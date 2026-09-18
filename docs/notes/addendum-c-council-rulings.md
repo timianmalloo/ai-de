@@ -2226,3 +2226,956 @@ current build; Ruling 79's "run on the frozen tree" superseded; Ruling 49 stands
 **CONDITIONS:** (i) Before the first edit, the conductor diffs the Atlas candidate head against its merge-base for the three named files and sends the Atlas integrator a seam notice naming the files and hunks; if Atlas does not modify them the notice says so, and whoever lands second reconciles by seam. (ii) The landing intent enumerates the expected post-landing failing set by name for the deterministic members (15 − 5 = 10) and labels the intermittent population as a population, not a list. (iii) The join's closing entry carries the landed SHA's Build run id and result (112(iii)/117(i)); "not recorded" keeps the join open. (iv) Each group its own commit, red-first evidence for the characterisation test.
 
 **RECORD AS:** Ruling 126 — main-red lane opens now for groups 1–2 (traits + new characterisation file, 118 gate may ride); groups 3–4 held until Atlas lands or 2026-09-18 21:00Z, then back to the Owner; seam notice with hunks before the first edit.
+
+
+---
+
+## Ruling 127 — landing autonomy
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17, Fable holding the seat). Prompted by the operator's instruction, verbatim: "you shouldnt need to block on me to say land the fix... that should be between the Owner and the Watcher (currently the GHCP session)."*
+
+**RULING:** Confirm, amended: a Claude landing needs no operator turn when (i) the change is inside a lane the Owner has already admitted, or the Owner has ruled it admissible; (ii) a `request-add` to the watcher carrying the candidate SHA and the `main` SHA it was gated against (Ruling 108 shape) precedes the push; (iii) the join's gates are green on a bare run whose exit status was observed; (iv) the landed SHA's CI run id and result are recorded in the closing entry (112(iii)/117(i)). The watcher's silence does not block; a watcher-raised competing writer or seam claim is resolved by Ruling 108's order before the push. The operator is informed in the closing table. Escalation to the human stays for a triggered hard veto, an irreversible/destructive action, or a floor trip; a **scope change goes to the Owner**, not the human.
+
+**BECAUSE:** Ruling 107 already fixed the shape (fetch-merge-gate-announce-push); 112(2) and 126 admitted the Claude repair lane, so "no product code" is already amended for that lane; the operator's instruction places the gate between the Owner and the Watcher. Scope is the Owner's seat by the card; sending it to the human would route around this seat.
+
+**CONFIDENCE:** Verified (107, 108, 112, 126 as filed; today's two join entries at `audit-log.jsonl:765–766`); Inferred (the operator's verbatim instruction — not on disk; logged with `prompt-log.py add` so the audit entry can cite it).
+
+**SCOPE EFFECT:** Admits: `1df6f34e` may be pushed now under (ii)–(iv). Freezes: 107's list of what Claude lands outside an admitted lane. Cuts: nothing.
+
+**CONDITIONS:** (a) A fix to a lane's own landed defect (the `53115a53` shape) is inside the lane's admission; anything touching a file outside the lane's named set returns to the Owner first. (b) (iii) means the gate line ran bare or to a file whose recorded exit code was read — never a harness-reported status (see Ruling 128). (c) If the landed SHA's CI result is red beyond the enumerated expected set (126(ii)), the join stays open and comes to the Owner.
+
+**RECORD AS:** Ruling 127 — a Claude landing needs no operator turn: admitted scope, SHA-bearing announcement to the watcher, bare gates with observed status, CI result recorded; scope changes to the Owner, floors and destructive actions to the human.
+
+---
+
+## Ruling 128 — the join whose last recorded step was 7
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17). The conductor had reported this as "a join tool that reports success while skipping the gate it exists to enforce" — **that report was wrong**, and the Owner opened the source to show why: step 8 is unconditional (`conductor-join.py:217–221`), `Join.run` raises `SystemExit(step)` on failure (`:126–129`), and `return 0` follows step 10 (`:237`), so the tool cannot return 0 with step 7 last. Stdout is reconfigured for encoding only (`:63–68`). Both runs were started in this harness's background-shell mode; what the harness reported for each, verbatim, was `[exited with code 0]`, and nothing was pushed. Whether the process itself exited 0 is **not recorded**.*
+
+**RULING:** Register the defect class, but as what the code shows it to be: **a long-running control run under a harness mode whose termination status is the harness's, not the tool's, with block-buffered output that misreports the last step** — DC-113's generalisation ("an exit code that has been through a pipe is a statement about the last program in the pipe"), recurrence 4, the pipe now being the background shell. Controls, in the Ruling 125 lane as its own commit at the pack's source of truth: (1) `conductor-join.py` flushes each log line (`line_buffering=True`) and writes a per-step record to a join-state file (`.agents/joins/<shortname>.json`: step, command, exit code, timestamp) with a terminal `complete` record — a state file without `complete` is an unfinished join, machine-readably; self-test case: a killed step leaves no `complete`. (2) Conductor rule, standing: a join is never run under a mode whose exit status is not observed; if it must be backgrounded, it runs to a file and the reader takes the recorded exit code and the `complete` record, never the harness's status (CT27 gains this line shape). Interim rule confirmed until (1) lands: gates re-run bare, push explicit.
+
+**BECAUSE:** The tool did not skip its gate; the observer stopped observing and read a status the tool never emitted. Registering it as "the tool reported success" would put the control in the wrong place.
+
+**CONFIDENCE:** Verified (the source's control flow and buffering, re-read by the conductor); Inferred (that the harness killed the process during step 8 — consistent with 518–544 s recounts against a 600 s foreground cap and nothing pushed, but not observed).
+
+**SCOPE EFFECT:** Admits (1) into the 125 lane; adds a CT27 line shape. Cuts: any change to what step 8 runs.
+
+**CONDITIONS:** (a) The class entry records what the harness actually reported for both runs (its status field verbatim, and whether the process was still alive) — "not recorded" where unknown; it does not say "exited 0" unless that was the process's code. (b) Red-first: the self-test plants a killed step and shows the state file lacks `complete`. (c) `1df6f34e`'s push under Ruling 127 cites the bare gate run's recorded exit code.
+
+**RECORD AS:** Ruling 128 — DC-113 recurrence 4: a join run under a harness background shell had its status read from the harness, not the tool; join-state file with a `complete` record and line-buffered output in the 125 lane; joins never run where their exit status is unobserved.
+
+---
+
+## Ruling 129 — a repo-wide gate blocked by another session's tree
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17). `verify-stranded-audit.py` failed in the primary because `C:\Projects\ai-de-integration-atlas-view-spikes` held four uncommitted `docs/audit/audit-log.jsonl` lines from sessions `codex-atlas-view-spikes-r124`, `…-evidence`, `…-capture-fix`, `codex-atlas-five-gates-integration`; the gate is fail-closed and repo-wide, and it stopped two Claude joins in one night. The conductor asked Codex to commit them and did not touch the tree.*
+
+**RULING:** (a) Confirmed: the conductor does not write in another session's tree while that tree is inside the gate's own 8-hour liveness window. (b) Once the tree is outside that window (which is the condition under which the gate fires at all) and a `request-add` naming the four session ids has stood **2 hours** without the owning session acting, the conductor may commit in that tree: path-scoped `git add -- docs/audit/audit-log.jsonl docs/audit/change-log.jsonl` only, on the tree's own branch, after `git diff --cached --quiet` shows no other staged work, message naming the session ids and that the conductor committed them to clear a repo-wide gate; never `-A`, never a push. (c) The design is a finding, and the gate is repo-owned (`tools/`, docstring `:11–15`), so this is a repo change, not a pack change: amend `verify-stranded-audit.py` to **fail** for the primary checkout and for any tree the running session is live in, and to **report** (named tree, session ids, last coord timestamp, the remedy) for a stale foreign tree without failing — its `--self-test` gains the foreign-stale case. Own commit in the Ruling 125 lane. Marked as extending the gate's design, not reading it.
+
+**BECAUSE:** The tree is registered (`codex-atlas-view-spikes-r124`, session-start 2026-09-16 22:13Z, 15 h before the 13:19Z join), so "nobody live" is the gate's 8-hour definition, not an absence of ownership. For a linked tree the gate is a detector, not a preventer: the loss path is `git checkout --` or a removal in that tree, which `coord worktree cleanup` already refuses on dirt; blocking every unrelated join does not close that path and has stopped two joins in one night, which is the muting pressure the docstring itself warns of (`:26–28`). Committing an append-only file is the non-destructive direction and is exactly what the gate's own message asks for (`:177`).
+
+**CONFIDENCE:** Verified (the gate's logic and window, the coord records, the artifact class); Inferred (that Codex's sessions are idle rather than silently working — the window is the only signal).
+
+**SCOPE EFFECT:** Admits the gate amendment into the 125 lane. Cuts: any `audit-log.py` change (the docstring's listed-artifact reason stands). Freezes: fail-closed for the primary.
+
+**CONDITIONS:** (a) A (b)-commit is announced to the watcher and to the owning session by `request-add` before and after. (b) If `git diff --cached` shows staged work or the index lock is present, stop and report — that is a live tree. (c) The foreign-stale report must print in the join's step-8 output and in `run-verify-gates.py`'s summary, so it is not a warning nobody reads.
+
+**RECORD AS:** Ruling 129 — stranded-audit: wait inside the 8-hour window; after a 2-hour standing request the conductor may path-scope-commit the append-only logs in the foreign tree; the gate fails for primary and own tree, reports foreign stale trees; repo change in the 125 lane.
+
+---
+
+## Ruling 130 — clean-machine evidence: a Ruling 104 amendment, UX lens first
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17). The operator's clean-machine build (2026-09-16) shows the New Session sheet listing all five accounts as "not configured (no adapter root — no provider file)" with the footer "No backend is ready", while `copilot` is installed and on PATH; the Configure sheet's Prerequisites block ticks node v24.15.0 and npm 11.12.1 with resolved paths and has **no row for `copilot` itself**, and the Install block asserts "copilot is not installed by the product". The operator: "copilot is installed and in path - i should not need to set up anything here - i should just have to log in."*
+
+**RULING:** The repair is an **amendment to Ruling 104**, not a new slice: (1)(a) is generalised from "`claude` on PATH" to "the engine's own command on PATH, as a row, for every catalog engine", and 104(3)'s state vocabulary gains the distinction the sheet currently collapses — *installed* (the command resolves, per DC-223's single `InstallRefusal` reading) is separate from *configured* (a `providers.json` entry exists) is separate from *ready* (signed in); a native engine on PATH with no file reads "installed — sign in", never "not configured", and the Install block never asserts "not installed" for a state it did not probe. The amendment must also state the native engine's analogue of 104(1)(c)–(e): what observation triggers the `providers.json` write when there is no install step (104 wrote it on install success, which does not exist for a native row) — that is the one genuine gap in 104, to be specified, not inferred by the coder. **Yes, the UX & Accessibility lens rules before code**, bounded: the state table (five accounts × installed/configured/ready/absent) and the exact strings for each cell, the footer, and the Install block's copy — not a full `ui-design` run.
+
+**BECAUSE:** 104(1)(a) already made the engine's own CLI a prerequisite row and its scope explicitly cut every non-claude engine from the flow; 105 then made copilot first in the account order, so the copilot sheet inherited node/npm rows without their analogue — the missing row is 104's pattern unapplied, which is an amendment's shape. The operator's complaint is about what the sheet asserts ("not installed by the product" while `copilot` is on PATH): copy that states an unprobed fact is the IO/E15 tell rendered as UI, and copy is the UX veto's domain.
+
+**CONFIDENCE:** Verified (104(1)(a), 104(3), 104's scope cut, 105's order, DC-223's control); Inferred (the screenshots — not opened by the Owner; the root cause is under investigation and this ruling does not depend on it).
+
+**SCOPE EFFECT:** Admits one amendment to 104 in the Sessions/AgentPlane lane. Cuts: a first-run page (104 stands); a health prober; any change to `EngineCatalog.ResolveLaunch`'s purity. Defers: nothing.
+
+**CONDITIONS:** (a) The sub-agent's root cause is filed before the amendment text is drafted; if the cause is a DC-223 recurrence (a second "installed" reading), the class entry is updated as recurrence, not a new class. (b) Red-first: the fresh-machine oracle (104 cond. 2) gains a case with a fake `copilot` on PATH and no file, asserting the row reads installed-needs-sign-in. (c) The operator's second-machine acceptance (104 cond. 4) is re-run and recorded with the observed `copilot --version`.
+
+**RECORD AS:** Ruling 130 — clean-machine first use: amend 104 — the engine's own command is a prerequisite row for every engine; installed / configured / ready are three states, never collapsed; native engines get a specified file-write trigger; UX lens rules the state table and copy before code.
+
+---
+
+## Ruling 131 — Ruling 125(i) amended on the currency evidence
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17). The conductor opened both copies of the script before building the control 125(i) admitted: the primary's `coord-core.py` refuses `register`-class claims (`COORD-CLAIM-REGISTER-CLASS`, shipped in pack revision 70 on 2026-09-14), while `C:/Projects/ai-de-atlas-e1-native-class-view/docs/ai-forward-pack/scripts/coord-core.py` contains **zero** occurrences of that code — so the lease that blocked a `main` join on 2026-09-16 was refused by a control that existed on `main` and did not exist in the tree that invoked it.*
+
+**RULING:** Amend 125(i): (a) the only claim change is a `derived`-class refusal beside the existing `COORD-CLAIM-REGISTER-CLASS`, with its own self-test; (b) the `site/*.html` instance is withdrawn from the register entry — `.agents/artifacts.yml:58–61` keeps them `authored` deliberately; (c) admit the **currency control as a refusal, not a warning**: `coord-core.py claim` and `run-verify-gates.py` compute, from the invoking tree, whether `origin/main` carries commits touching `docs/ai-forward-pack/scripts/` or `tools/` since the tree's merge-base with it (`git log merge-base..origin/main -- <paths>` non-empty ⇒ stale), and refuse with the one-line remedy (merge `origin/main`); the named escape is an absent `origin/main` ref, which prints "control currency: not recorded" and proceeds. Because a stale tree runs the stale script, the check cannot reach the trees that need it first: the same lane adds control currency per tree to `coord worktree list` run from `main`, so the watcher sees the fleet from a current copy. (d) Its own defect-class entry, highest severity of the four: **a control shipped as a checked-in file runs at the version of whichever tree invokes it, so a long-lived lane enforces the rules of the day it branched.**
+
+**BECAUSE:** Verified by opening both copies: the primary's script carries the register refusal; the atlas-e1 tree's copy carries `COORD-CLAIM-SELF` and zero occurrences of `COORD-CLAIM-REGISTER-CLASS`, so the 09-16 blocked join was a refusal that existed on `main` and did not fire in the invoking tree. A warning would be read only by sessions that run `doctor`, which are not the stale ones; a control that only warns is a memoir (CI6).
+
+**CONFIDENCE:** Verified (both script copies, the claim branch, artifacts.yml); Inferred (pack revision 70 at `0f553858`; 89 lanes / 133 worktrees — the conductor's counts, not opened).
+
+**SCOPE EFFECT:** Admits (a), (c) refusal + fleet report, (d) into the 125 lane; withdraws (b); cuts the `register` refusal from the lane's scope (it exists). 125(ii)–(v) and its conditions stand.
+
+**CONDITIONS:** (i) The comparison is direction-aware: a lane whose own edits to a tool are ahead of `main` is still stale if `main` moved the control set — it must merge. (ii) Self-test plants a tree behind `origin/main` on `tools/` and shows the refusal; plants no `origin/main` and shows the escape text. (iii) On landing, the conductor sends one fleet notice (`request-add`) naming the trees `coord worktree list` reports stale. (iv) Escape use is written into the claim event so it is countable.
+
+**RECORD AS:** Ruling 131 — 125(i) amended: derived-class claim refusal only (register refusal exists since rev 70), site/*.html withdrawn; control currency is a refusal in claim and the gate runner with a fleet view from main; new highest-severity class: a checked-in control runs at the invoking tree's version.
+
+---
+
+## Ruling 132 — P2-Repairs: one queue, two concurrent streams, class controls not deferred
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17), on the evidence of INV-0013,
+INV-0014, DC-226–DC-230 and Rulings 105, 112, 126, 127, 128–130. The Owner opened the code sites
+before ruling: `NewSessionSheetViewModel.cs:399-407`, `TheSheetListsAccountsWithDerivedStatesTests.cs:44-61`,
+`EngineCatalog.cs:375-381`, `FirstUse.cs:210-213`, `ProviderConfiguration.cs:40-99`, `CanvasPage.cs:28-72`,
+`TypeScriptExtractor.cs:769-785`, `PythonExtractor.cs:398-405`. One correction to the conductor's brief
+was made before the rulings: INV-0014's P2 is **not** "two lines" — `Fact(...)` in both extractors takes
+no path argument, so the fix adds a parameter and reaches every call site (16 in TS, 14 in Python by grep
+count, Inferred as call sites). Bounded, headless, but the commit must say so.*
+
+**RULING:** Execute as two concurrent streams on the conductor's lane, each phase its own commit, and
+overturn the conductor's proposal in three places. **Stream X (Explore, headless Core):** P0a (provenance
+oracle over every extractor) + P2 → P4 → P3 → P0b (canvas contract test) + P1 → P5. **Stream Y
+(Sessions):** convene the UX lens now (Ruling 130's state table + copy) → phase 0 → 1 → 2 → 3 → 4 → 6;
+phase 5 deferred per Ruling 135. Overturns: (a) the class controls (INV-0014 P0, INV-0013 phase 6) are
+**not** "the rest, own ruling" — they are the CI6 floor for DC-228/229/230 and land with their stream;
+(b) P4 lands immediately after P2, same session, because P2 without P4 leaves the silent-skip shape
+unobservable — the field that made it wrong for an unknown span; (c) P3 is admitted now under Ruling
+133's D&P condition, because without it the operator's own store keeps `typescript:…` and P2 reads as
+"you didn't fix it" (INV-0014 §6.1). Streams X and Y touch disjoint files (`Extraction/**`, `Facts/**`,
+`Projection/**`, `Workbench/CanvasPage.cs` vs `Presentation/Sessions/**`, `Workbench/ConfigureProviderDialog.cs`,
+`MainWindow.xaml.cs`) and may run concurrently; the **desktop slot is the one serial resource** — used
+once per landing and batched: P1 before/after measurement, `min-height` validation, frame time at 1,500
+nodes, the STA render of S2–S5, and the App recount.
+
+**BECAUSE:** The UX lens is on Stream Y's critical path (130: copy before code) and nothing else is, so
+convening it first shortens `T∞`; phase 0 has no behaviour change and may start before the lens returns.
+Phase 1 must also sweep S6 (`MainWindow.xaml.cs:374`, same config-presence shape) — CI sweeps the class,
+not the line.
+
+**CONFIDENCE:** Verified (both investigations, the three code sites, 130's UX-first condition); Inferred
+(file disjointness beyond the sites the Owner opened).
+
+**SCOPE EFFECT:** Admits INV-0014 P0–P4 and INV-0013 phases 0–4 + 6 now; admits P5 only to its confirming
+query (result returns to the Owner with the chosen fix — dedupe-at-write vs outermost-scope is a
+data-model choice); defers INV-0013 phase 5 (Ruling 135). Cuts: any LOD/density work before P1 is
+measured; any `ResolveLaunch` purity change (130 stands).
+
+**CONDITIONS:** (a) Red-first per phase, red seen and recorded before the fix. (b) P0a's oracle names the
+three scope-summary producers as an explicit allowed shape, never a skip. (c) Before the first edit in
+`Workbench/**` or `Extraction/**`, the conductor checks whether any in-flight candidate (Atlas E1, Grok
+views) modifies those files and sends a seam notice in the 126(i) shape.
+
+**RECORD AS:** Ruling 132 — P2-Repairs order: Explore stream P0a+P2 → P4 → P3 → P0b+P1 → P5(query only);
+Sessions stream UX lens → 0 → 1(+S6) → 2 → 3 → 4 → 6; streams concurrent, one batched desktop slot per
+landing; class controls land with their stream, not deferred.
+
+**CONDUCTOR'S RETURN ON 132(c) (2026-09-17, measured):** no in-flight candidate touches three of the four
+files. `git log --all --since=2026-09-10` names **no** commit on any branch touching `CanvasPage.cs`,
+`TypeScriptExtractor.cs` or `PythonExtractor.cs`; `ExplorerSurface.cs` was last touched by `6cb99e6c`
+(2026-09-14, Ruling 93), already on `main`. Uncommitted work in foreign trees is **not recorded** — the
+lease check could not run from the primary (`AGENT_SESSION` unset; `coord check` correctly refused rather
+than passing). The seam notice is therefore sent as an announcement, not a negotiation.
+
+---
+
+## Ruling 133 — who implements, and which personas rule before code
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17).*
+
+**RULING:** The conductor authors directly (Peer Mode) — no per-phase `csharp-developer` dispatch; the
+**Test Architect in Adversary Mode is a separate sub-agent** run once per stream landing over the batch's
+red-first evidence, never the conductor clearing its own veto. Personas before code, bounded: **UX &
+Accessibility** rules Stream Y's state table (five accounts × installed/configured/ready/absent), the exact
+cell strings, the footer and the Install-block copy (130 as filed) — phases 1–4 do not start until that
+table is filed; **Data & Persistence Architect** rules P3 before code, scope: what the write path does to
+an existing `AssertionId` whose `Provenance` changed (overwrite / append / ignore — fetch this fact from
+the store writer, do not assume), the re-extraction trigger (an extractor-version stamp compare,
+"1.0.0" → "1.1.0", is the smallest candidate), and before/after row counts recorded; if the design needs a
+schema change it is expand-migrate-contract and comes back to the Owner; **SRE** states the canvas budget
+on P1 as an acceptance number (frame time at 1,500 nodes at the enlarged stage; stage height at 3840×2160,
+1440×900, and stacked <760 px) before the desktop slot, "not recorded" until measured.
+
+**BECAUSE:** Every phase is small, headless where it can be, and the context cost of a fresh sub-agent per
+phase exceeds the code; the rigor the floors require is the adversarial reviewer's independence, not the
+author's identity. P3 is the phase INV-0014 names as most likely to fail in the field and the one with an
+unopened fact (write-path semantics).
+
+**CONFIDENCE:** Verified (130's UX condition; INV-0014 §5–§6; the `Fact` signatures); Inferred (write-path
+behaviour — not opened by the Owner or, per the report, by the investigator).
+
+**SCOPE EFFECT:** Cuts a per-phase developer fan-out; admits three bounded persona rulings. None is a full
+`ui-design`, ADR or spike.
+
+**CONDITIONS:** (a) The Test Architect's report is filed as evidence, not authority — the landing receipt
+cites the observed red and green, not the review. (b) `min-height: 240px` ships only with the measured
+value or an inline `simplify:` marker carrying the measurement it awaits (INV-0014 §6.3).
+
+**RECORD AS:** Ruling 133 — conductor authors, Test Architect adversary as a separate sub-agent per stream
+landing; UX lens table before Sessions phases 1–4; D&P Architect rules P3's re-extraction design before
+code; SRE states the P1 canvas budget before the slot.
+
+**CONDUCTOR'S RETURN ON THE P3 FACT (2026-09-17, opened and measured — it is none of the three):** the write
+path **raises**. `StoreWriter.cs:87-100` is a plain `INSERT INTO evidence_assertion_fact`; there is **no**
+`ON CONFLICT`, no `UPDATE`, no `REPLACE` and **no `DELETE` anywhere in `StoreWriter.cs`**.
+`WorkspaceSchema.cs:104` makes `assertion_id` the PRIMARY KEY and `:120` adds
+`ux_assertion_natural (scope_id, artifact_revision, subject, predicate, object, extractor_id)` — **exactly
+the tuple `AssertionId` hashes** (`EvidenceAssertion.cs:49-58`). So re-committing an unchanged artifact with
+corrected `Provenance` is a constraint violation, not an overwrite, an append or an ignore.
+
+Two consequences for P3, both correcting the ruling's own named candidate:
+
+1. **`ExtractorVersion` is not in the identity tuple.** Bumping the stamp "1.0.0" → "1.1.0" changes no
+   `AssertionId`, so the stamp compare alone does not avoid the collision — it only tells you a
+   re-extraction is owed.
+2. **The only path that clears the stale rows is a generation bump plus compaction.**
+   `StoreCompactor.cs:165` — `DELETE FROM evidence_assertion_fact WHERE scope_id = $s AND generation < $g`
+   — is the single delete in the codebase, and `generation` is a column, not part of either key. So the
+   re-extraction design is: stamp compare detects the owed re-extraction → desired generation bump →
+   re-extract → compact. The D&P Architect rules that shape, and it is a behaviour change to the
+   compaction trigger, not a schema change.
+
+---
+
+## Ruling 134 — `ready` is an observation the product recorded; no prober, no ambient inference
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17), answering INV-0013 §9.2.*
+
+**RULING:** Keep `ProviderConfiguration.cs:53-56` as written: `ready` requires a sign-in **observed and
+recorded by the product**, and the footer stays until then. The observation is the engine's own sign-in
+gesture run through Configure… → Sign in (for github, `FirstUse.cs:212`'s `copilot login` line); an
+already-logged-in CLI makes that gesture a no-op confirmation, which is still an observation and is
+recorded as `ready`. **Refused:** "installed + a CLI that is logged in elsewhere ⇒ ready" with no gesture
+in the product. Marked as **extending** 105 (the no-op-confirmation reading), not reading it.
+
+**BECAUSE:** The file's own reason stands — a defaulted `ready` is indistinguishable afterwards from an
+observed one — and both Ruling 105 and Ruling 130 cut a health prober; reading the CLI's auth files is a
+prober by another name. The operator's words, "I should just have to log in", describe exactly one gesture,
+which is what stands after Stream Y phase 3.
+
+**CONFIDENCE:** Verified (the comment, 105's and 130's scope cuts, the copilot gesture line).
+
+**SCOPE EFFECT:** Freezes "health is the operator's record"; cuts a prober and any ambient auth inference.
+The UX lens owns the footer and the "installed — sign in" cell copy so the state reads as one step, not as
+a fault.
+
+**CONDITIONS:** Phase 3's red-first test: a github account under an installed launch and `needs-login`
+health renders *needs sign-in*, and a recorded sign-in outcome flips it to *ready* — through the product,
+not through a hand-edited file.
+
+**RECORD AS:** Ruling 134 — `ready` stays an observed, product-recorded sign-in; an already-logged-in CLI
+satisfies it through the product's own sign-in gesture as a no-op confirmation; no prober, no ambient
+inference.
+
+---
+
+## Ruling 135 — the unobserved `copilot` artefact: build for both, and let the product observe it
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17), answering INV-0013 §9.1 and §9.4.*
+
+**RULING:** Accept the conductor's proposal: build for both. Stream Y phase 4 renders the catalog's own
+shim refusal verbatim when `InstallRefusal` returns it, so an npm-installed copilot is a correct,
+actionable state before any spike; phase 5 stays deferred with a named trigger — it fires when the
+operator's `where copilot` shows only a `.cmd` shim, or when any sheet-open telemetry records the shim
+refusal. Nothing waits on the operator's answer. Admit INV-0013 §9.4's telemetry into phase 4: one
+structured record per engine per sheet-open (`engine.id`, `acp.mode`, `probe.pass`, `resolved.path` or
+"not recorded", `provider_file.present`), on the normal path, no flag.
+
+**BECAUSE:** The two artefacts differ only in which of two already-written refusal sentences the operator
+sees; phase 4 makes either true. The question is one the product can answer on its next run — asking the
+operator for a fact the product should record is the IO tell.
+
+**CONFIDENCE:** Verified (INV-0013 §2's probe host resolved both `copilot.exe` and `copilot.cmd`); Inferred
+(the shim refusals at `EngineCatalog.cs:464-495` per the investigation — not opened by the Owner).
+
+**SCOPE EFFECT:** Admits the sheet-open telemetry into phase 4; defers phase 5 with a trigger; cuts guessing
+the npm entry module (the investigation's own rule).
+
+**CONDITIONS:** The telemetry record never carries the operator's PATH beyond the one resolved path; "not
+recorded" is a value, never omitted.
+
+**RECORD AS:** Ruling 135 — copilot artefact unobserved: phase 4 renders the shim refusal verbatim so both
+cases are correct; phase 5 deferred on a named trigger; sheet-open telemetry records what was probed.
+
+---
+
+## Ruling 136 — landing shape for product code under Ruling 127
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17).*
+
+**RULING:** (1) Each phase its own commit; landings batched **per stream** (Explore, Sessions), each landing
+one desktop slot announced on the ledger before the recount, each landing a Ruling 108-shape `request-add`
+with candidate and gated-against SHAs. (2) Expected failing set under 112(1)/126(ii): the four
+`Shell.CodingsLeftExtentTests` **by name** as listed in Ruling 112 plus the intermittent App population
+labelled as a population — **re-enumerated from the CI run of the current `main` tip** per 112(iv), the run
+id cited; the Owner has not seen that run, so the conductor states it from the last landing's closing entry,
+and anything beyond that set is 127(c) and returns to the Owner. (3) **Yes:** P1 changes the canvas, so its
+desktop slot runs the four extent tests before and after P1 on the same machine and records each failure
+text verbatim; the landing receipt shows the after-text bit-identical to the before-text. A changed text is
+a new failure, not the expected set — P1 does not land and comes back.
+
+**BECAUSE:** The stage's height lives in CSS inside a WebView the WPF extent tests do not measure, so P1
+*should* not move them — and "should" is the tell; the measurement costs nothing extra in a slot the recount
+already needs. Batching per stream keeps the serial desktop resource at two uses instead of twelve.
+
+**CONFIDENCE:** Verified (112's named set; 126(ii)'s population rule; 127's four conditions); Inferred (that
+Core is now green and the App red is "four + intermittent" — the conductor's claim, unopened by the Owner).
+
+**SCOPE EFFECT:** Freezes: no phase lands outside its stream's batch; no App test is edited by these streams
+(126's groups 3–4 hold stands untouched). Admits: the new headless contract tests (P0a, P0b, phase 6) as new
+files.
+
+**CONDITIONS:** (a) Bare gate runs with observed exit status (128). (b) The closing entry carries the landed
+SHA's CI run id and result; "not recorded" keeps the join open. (c) P3's before/after row counts and P1's
+before/after stage measurements are in the receipt as numbers, not adjectives.
+
+**RECORD AS:** Ruling 136 — P2-Repairs land per stream under 127: one announced desktop slot per landing;
+expected red = the four CodingsLeftExtentTests by name + the intermittent population, re-enumerated from
+main's tip; P1's slot re-measures the four extent tests before/after and requires bit-identical failure
+text.
+
+**CONDUCTOR'S RETURN ON 136(2) — THE RE-ENUMERATION REFUTES THE ASSUMED SET; THIS IS A 127(c) RETURN.**
+Measured at `main`'s tip `f009b6f6`, CI **run 35228503081** (workflow *Build*, 2026-09-17T13:39:56Z), all
+three jobs `failure`:
+
+| Job | Suite | Executed | Expected baseline | Failed |
+|---|---|---|---|---|
+| `build` | `AiDe.App.Tests` | 1053 | 1051 | **11** |
+| `core-tests` | `AiDe.Core.Tests.portable` (`Platform!=Windows`) | 2575 | 2567 | **1** |
+| `gates` | — | — | — | gate failures (docs-graph gaps, summary drift) |
+
+Three facts the Owner's (2) did not have:
+
+1. **The App red is 11, not four.** Ruling 112's named set is four `Shell.CodingsLeftExtentTests` plus an
+   intermittent population. Eleven is beyond the enumerated set, so under 127(c) **this returns to the
+   Owner before any product code lands** — the P2-Repairs streams cannot state an expected failing set they
+   have not enumerated.
+2. **`AiDe.Core.Tests.portable` is red by one**, and the conductor's own claim that "Core is now green" —
+   which Ruling 136's CONFIDENCE line records as Inferred — is **false at `main`'s tip**. The Core half was
+   green in run 35182393790 on the character-fix candidate; it is not green at `f009b6f6`.
+3. **Both suites executed more tests than the baseline expects** (App 1053 vs 1051, Core 2575 vs 2567), so
+   at least two landings added tests without updating `tools/expected-test-counts.json`. The count drift is
+   itself a control failure: the baseline no longer describes the suite.
+
+The failing test **names** are not in the CI log — `verify-test-run.py` prints only the counts and the
+outcome, so the run that fails the gate does not say what failed. That is a control gap in its own right
+(DC-227's neighbour: a gate that reports a verdict without the evidence).
+
+**The Core name, enumerated locally at `f009b6f6` and reproducing CI exactly** (2,575 executed, 1 failed,
+2,573 passed, 1 skipped, 44 s — the same arithmetic as run 35228503081):
+
+```
+AiDe.Core.Tests.EveryOperationFitsTheFrameTests.NoOperationCanBuildAResponseTheTransportWouldRefuse
+  these responses cannot cross the 1,048,576-byte frame: EntryPointsAsync = 2,191,570 bytes
+  at tests/AiDe.Core.Tests/EveryOperationFitsTheFrameTests.cs:172
+```
+
+**This is a product defect, not a platform-trait artefact, and it is not in any expected set.** An MCP
+operation now builds a response **2.09× the transport's 1 MiB frame**, so `EntryPointsAsync` cannot be
+answered at all over the wire; the test is the contract that says so and it is doing its job. `f009b6f6`
+is `merge(understanding-views-d1): D-1 listing onto main`, so the candidate that turned it red is the D-1
+listing landing — the same bound INV-0003 was written about. Announced to the watcher and to the owning
+session; it is theirs to repair, and Ruling 112(1) makes it the block on every join until it is green.
+
+The **App names** (11) still need the desktop slot Ruling 136(1) batches; they are **not recorded** until
+that slot runs.
+
+*Method note — DC-227, fourth instance, observed while enumerating this very set:* the harness reported
+`[exited with code 0]` for the `dotnet test` run whose own last line reads `Failed! - Failed: 1, Passed:
+2573`. The counts were read from the tool's output, never from the harness's status, which is the standing
+rule 128 records — and the rule earned its keep inside the measurement that was checking a different rule.
+
+---
+
+---
+
+## Ruling 137 — 112(1) does not block; the expected set is one named Core test plus an App set that is "not recorded" until the slot names it
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17), answering the 127(c) return
+appended under Ruling 136. **The Owner corrected the conductor's premise before ruling:** the return
+under 136 said "Ruling 112(1) makes it the block on every join until it is green." That is a
+misreading. 112(1) was written so candidates can land on a red trunk **without widening or hiding the
+red set**; it never required `main` green. The block is the unnamed App 11, not the named Core 1.*
+
+**RULING:** Land P0a+P2 (and the rest of the Stream X batch) under 112(1) once the expected set is
+enumerated at `main`'s tip: **Core** = exactly
+`AiDe.Core.Tests.EveryOperationFitsTheFrameTests.NoOperationCanBuildAResponseTheTransportWouldRefuse`,
+cited by name **and** by its failure text (`EntryPointsAsync = 2,191,570 bytes`); **App** = the 11
+named from the `.trx` of the desktop slot 136(1) already requires — deterministic members by name, the
+intermittent population labelled as a population. No product code lands until that slot has run, and
+the same enumeration serves every landing until `main` moves.
+
+**BECAUSE:** 112(1) as filed is a subset-and-still-executes rule with a receipt naming both sets,
+re-enumerated per 112(iv); the frame test is named, deterministic, reproduced with CI's arithmetic, and
+the candidate reproduces it untouched, so it satisfies the rule. The App 11 cannot be *cited* because
+nothing has named them, and 126(ii) requires names for deterministic members. The slot is not a new
+cost — 136(1) already batches it for the Explore landing.
+
+**CONFIDENCE:** Verified (112(1)/(iv), 126(ii), 136(1)–(3); the test at `EveryOperationFitsTheFrameTests.cs:155-175`);
+Inferred (the CI counts and the candidate's 2,764/1 — the conductor's, not opened).
+
+**SCOPE EFFECT:** Freezes: **no landing receipt may cite "11 App failures" as a count — a count is not
+an enumeration.** Admits: once Ruling 138 lands and is merged in, the candidate's Core set is empty and
+the receipt says so.
+
+**CONDITIONS:** (a) The receipt states the platform filter the candidate ran (whole Core vs
+`Platform!=Windows`) so the subset check is like-for-like with CI's job — **2,764 vs 2,575 is not
+comparable as written**. (b) The App enumeration comes from the `.trx`, not the console. (c) The
+candidate re-merges `main` after Ruling 138 lands (Ruling 107's shape) so its Core set is empty at push.
+
+**RECORD AS:** Ruling 137 — 112(1) does not block P2-Repairs on the frame defect; expected set = the
+one named Core frame test + the 11 App failures enumerated by name from the batched desktop slot at
+main's tip; nothing lands on a count.
+
+**CONDUCTOR'S RETURN ON 137 — THE ENUMERATED SET AT `main`'s TIP `f009b6f6`.** The desktop slot ran
+(announced as `req-01M2R57CR7T0GNCNG57PXT5T9S`). The names below are read from **CI run 35228503081's
+own `.trx` artefacts** (`test-results`, `test-results-linux`) per condition (b), not from a console.
+**This is the set every landing receipt cites until `main` moves.**
+
+**Core — `AiDe.Core.Tests.portable` (`Platform!=Windows`), 1 deterministic:**
+
+| Test | Failure text |
+|---|---|
+| `EveryOperationFitsTheFrameTests.NoOperationCanBuildAResponseTheTransportWouldRefuse` | `these responses cannot cross the 1,048,576-byte frame: EntryPointsAsync = 2,191,570 bytes` |
+
+Ruling 138's repair removes it; after that lands, an Explore candidate that re-merges `main` (137(c))
+has an **empty** Core set and its receipt says so.
+
+**App — `AiDe.App.Tests`, 11, which is three groups and not one:**
+
+| Group | n | Members | Reading |
+|---|---|---|---|
+| `Shell.CodingsLeftExtentTests` | 4 | `AtStartupSize…WithTheEditorAt280(1440×900, "five", ≥1)`, same `(…, "prose", ≥1)`, `CodingsLeftExtent_HoldsThe96chMeasureAtEveryViewportTheDisplayGives(1440×900)`, `CodingsLeftExtent_HoldsThe96chMeasureAtStartupSize` | **Ruling 112's named four.** Text: *"the words' column (451) cannot hold 96ch (673)"*. Ruling 126 groups 3–4 hold. |
+| `Sessions.Thread.TheThreadIsChatLikeTests` | 5 | `ARunningTurnShowsItsLastFourLines…`, `AnAppendWhilePinned…`, `AtRest_TheThreadRendersUnderTheAppTheme…`, `TheEditorsTopEdgeIsEqualAt1_5_40Turns…(1440×600, structureOpen:False)`, same `(800×600, structureOpen:True)` | **The intermittent population**, labelled as one per 126(ii). Every member fails with *"the STA thread did not finish within 60s"* — a timeout, not an assertion. |
+| **New, deterministic, in no expected set** | 2 | `BoundsReachTheSurfaceTests.EveryBoundCarryingFieldIsCoveredOrAllowed` — *"Core publishes bound-carrying field(s) that no surface assertion covers and no allowance explains"*; `TokenDisciplineTests.EveryResourceKeyTheAppNames_IsDeclared` — *"these resource keys are named and never declared in App.xaml. A reference to a missing key fails SILENTLY"* | **Both reproduce locally at the same SHA**, so neither is a runner artefact. Neither is in Ruling 112's set and neither is intermittent. They are the two reds that were hiding inside the number "11". |
+
+**Why the enumeration had to come from the `.trx` and not from a local run — measured.** The same
+suite run locally at `f009b6f6` produced **3** failures, not 11: the two new deterministic ones, plus
+`SolutionTreeChordTests.CtrlEnter_OnAFileArtifact_RequestsRevealInGraph` (*"foreground not held;
+SendInput would prove another window"*), which is an artefact of this machine having other windows up
+and is **not** in CI's set. The four extent tests and the five STA timeouts all **passed** locally. So
+a local run would have produced a set that is wrong in both directions — it invents one member and
+drops nine. Condition (b) earned its keep on its first use.
+
+**The two new reds are unassigned.** They are App-surface, outside both P2-Repairs streams and outside
+Ruling 126's held groups, and they are announced to the watcher rather than taken by this lane.
+
+**Counts, for 139(4).** App 1,053 · portable 2,575 · nonportable 181 · whole Core 2,756 (the two halves,
+and the invariant is the check). Note that `verify-test-run.py` compares the `.trx` **total**, not its
+`passed` or its `executed` attribute: the CI nonportable file reads `total=181, passed=177`, and
+recording 177 would have set a floor the gate can never meet.
+
+
+---
+
+## Ruling 138 — the conductor repairs the frame bound in `lane/main-red-0915`, on the Core-owned projection; the frame is not raised
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17).*
+
+**RULING:** The conductor authors the repair as its own commit in `lane/main-red-0915` (112(2)'s scope
+amended by this one named test), bounding `EntryPointsProjection`'s row ceiling so the hostile-ceiling
+response fits `IpcFraming.MaxFrameBytes` with the margin INV-0003 used for the other operations; the
+number is **derived from the test's own `WireBytes` measurement and recorded in the commit, never
+picked**; `IpcFraming.MaxFrameBytes` is **not** touched; Grok is told by `request-add` before and after.
+
+**BECAUSE:** `src/AiDe.Core/Projections/*.cs` is Core-owned under `session-contracts.md:184` ("Core
+edits; Design requests"), so this is not Grok's file to repair and no grant is needed; the owning
+session is dark and 112(1) makes an unnamed-or-unrepaired red a cost on every join. The test is already
+red on `main`, so **red-first is satisfied by `main` itself**. `DefaultMaxRows = 5_000` at ~438 bytes
+per hostile row is the arithmetic of the failure, and the listing's `Omitted (n)` disclosure already
+keeps a lower cap honest on the surface. Raising the frame would trade a bounded response for an
+unbounded one — INV-0003's own rule.
+
+**CONFIDENCE:** Verified (`session-contracts.md:184`, the test, `EntryPointsProjection.cs:30` and `:76`);
+Inferred (that `f009b6f6` introduced the red — the conductor's reading of run history; not needed for
+the fix, needed for the class entry).
+
+**SCOPE EFFECT:** Amends 112(2) by one named test. Cuts: pagination or a query-level ceiling redesign (a
+finding for the D-1 lane if they need more than the cap); any App or `EntryPointsSurface.cs` change.
+
+**CONDITIONS:** (a) **Before filing the class entry, the conductor fetches the D-1 landing's closing
+entry (`f009b6f6`) and its recorded CI run id/result. If it recorded Core green at that SHA, that is a
+receipt asserting something not observed — bring it to the Owner as an integrity finding; if it
+recorded nothing, it is a 127(iv) breach and an INV-0005-class recurrence, filed as such.** (b) The
+commit records the measured hostile bytes per row and the resulting cap. (c) Lands before the Explore
+batch; the Explore candidate re-merges it (137(c)).
+
+**RECORD AS:** Ruling 138 — frame bound repaired by the conductor in lane/main-red-0915 (112(2) +1
+test): EntryPoints row ceiling derived from the frame test's bytes, frame size untouched, Grok told;
+D-1 landing receipt fetched before the class entry.
+
+**CONDUCTOR'S RETURN ON 138(a) — THE RECEIPT DOES NOT EXIST. FILED AS A 127(iv) BREACH AND AN
+INV-0005-CLASS RECURRENCE.** The audit log was searched for every entry naming `f009b6f6`,
+`understanding-views-d1` or a D-1 join — 13 entries match. The last two for
+`grok-understanding-views-conductor` are `al-01M2QSED6HYQ40BCPVXVDTCDEH` and
+`al-01M2QSEDC3B5HADZ18C4ZCJDH6`, both at `30d82c3b` — the **pre-merge consume**, not the landing —
+one of them `outcome: partial` with `acceptance_met: false`, and **both** with
+`verification_executed: false` and `pushed: false`.
+
+**The merge commit `f009b6f6` itself carries no audit entry at all.** No closing entry, no CI run id,
+no CI result, no expected-failing set. So the answer to 138(a) is the second branch, not the first:
+the receipt did not assert something unobserved — **there is no receipt**. Under 138(a) that is a
+Ruling 127(iv) breach, and it is the INV-0005 class recurring: a landing whose verification is
+recorded nowhere, so nobody downstream can tell a green trunk from a red one without re-running it
+themselves. This session did re-run it, which is how the frame defect was found at all.
+
+The cost is measurable and was paid today: `main` was red for the whole working day with a
+deterministic product defect in it, and the first session to notice had to enumerate the failing test
+locally because neither the landing receipt nor the CI log named it.
+
+Two controls already in flight answer the two halves, and neither existed when this landing happened:
+Ruling 139(5)'s failing-name printing closes the CI-log half, and DC-227's join-state file
+(`.agents/joins/<shortname>.json`, landed on `lane/dropped-controls`) closes the "did the join even
+finish?" half — a join that stops before step 8 now leaves a machine-readable record saying so
+instead of nothing. The remaining gap is the one 127(iv) already names and nothing enforces: **a
+closing entry with the landed SHA's CI run id and result is owed by the lander, and no control
+refuses a landing that omits it.** That is the control this instance argues for, and it is filed as
+owed rather than built here.
+
+
+---
+
+## Ruling 139 — the baseline is repaired first from measured counts at main's tip; `verify-test-run.py` names failures now
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17).*
+
+**RULING:** **(4)** Yes — the conductor repairs `tools/expected-test-counts.json` as the **first commit**
+in `lane/main-red-0915`, from counts measured at `main`'s tip (App and portable from run 35228503081's
+`.trx`, nonportable and whole measured locally at the same SHA, split invariant holding), **never from a
+candidate's run**; thereafter every landing that adds tests raises it in the same candidate. **(5)**
+Admitted now, same lane, own commit: `verify-test-run.py` prints each non-passed `UnitTestResult` (name
++ first line of its error message) under its FAILED output; exit semantics unchanged. The upward-drift
+class — *a floor-only baseline drifts up silently and lowers the abort-detection margin* — is registered
+with the join-side control: **the join refuses a candidate whose executed count exceeds the baseline
+without the baseline moving in the same candidate**; CI's floor semantics unchanged.
+
+**BECAUSE:** The gate fails only on `executed < expected` (`verify-test-run.py:302`), so two landings
+added eight Core and two App tests and nothing fired — the baseline is now 8 below reality and a silent
+abort of up to 8 tests is invisible. The gate **already parses the `.trx`** (`:205`) and reads only the
+summary counters; the cost of the enumeration this round was a local reproduction plus a desktop slot,
+which is exactly what naming at the gate would have saved. Both are controls, and 132(a) says class
+controls land with their stream, not deferred.
+
+**CONFIDENCE:** Verified (the tool, the baseline file); Inferred (the CI counts).
+
+**SCOPE EFFECT:** Admits three commits into `lane/main-red-0915` (baseline, names, drift control) ahead
+of or beside the frame fix — none gates the Explore landing except the baseline. Cuts: any change to the
+split invariant or to `--update` semantics; any filtering of which failures print.
+
+**CONDITIONS:** (a) Red-first for (5): `verify-gate-self-tests.py` plants a `.trx` with one failed
+result and shows the name printed; plants an executed-over-baseline result and shows the join refusal.
+(b) The baseline commit message states the measured numbers and the run id they came from.
+
+**RECORD AS:** Ruling 139 — expected-test-counts.json repaired first from measured counts at main's
+tip; verify-test-run.py prints failing test names now; upward baseline drift becomes a join refusal; all
+in lane/main-red-0915.
+
+---
+
+## Ruling 140 — Ruling 94 amended to the operator's words: Center = [Graph (active), Tree]; Left retires its Graph
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17), on the KG-visualization lens's
+finding that the operator's "right-side views" are Ruling 94's **Center** pane.*
+
+**RULING:** Option (a). `ArchitectureDefault()` becomes **Left = empty, collapsed; Center =
+`[Graph (active), Tree]` at extent 1.0**; Right and Bottom unchanged. **Contexts and Domain leave the
+default and stay admitted via the View menu**, their kinds remaining restorable (no envelope drop). This
+is an amendment to Ruling 94's layout line; 94's `inspector` retirement, Evidence fold and conditions
+(2)–(3) stand. The **placement** (one change to `ZoneLayout.cs:257-273` plus its default-layout test) is
+admitted into Stream X as its own commit now; the **bidirectional seam** (Reveal in tree,
+folder-to-group, expansion persisted by path, facet carry, Shift+F10 on the tree menu) is **deferred to
+its own slice** after Stream X lands.
+
+**BECAUSE:** The operator's words are a full statement of the default ("need to be Graph and Tree"), and
+94's own reasoning for Evidence applies — a surface not in the operator's stated default leaves the
+default and nothing more. **Option (b) keeps two surfaces the operator did not name in the strip, which
+is the lens preserving its own prior ruling rather than reading the instruction**; (c) leaves issue 1
+unanswered. The Tree is a built, tested surface with one-way Tree→Graph navigation already
+(`SolutionTreeSurface.cs:277`), so placement alone delivers the VS Code idiom today; the seam is a T1
+slice with STA tests and is not a placement. With Graph leaving Left @0.22, the header-strip overflow
+finding (94 cond. 3) becomes **moot rather than fixed** — record it as such.
+
+**CONFIDENCE:** Verified (94 as filed, `ArchitectureDefault` as coded, the Tree's menu); Inferred (that
+"right-side views" is 94's Center — the lens's reading of the screenshot, which the Owner did not open;
+the operator's verbatim words, quoted only by the review).
+
+**SCOPE EFFECT:** Amends 94. Admits one Shell-file commit into Stream X (`ZoneLayout.cs` + its test).
+Defers the seam slice with a name ("Explore Tree seam"). Cuts: option (b)'s four-tab strip; any split
+pane.
+
+**CONDITIONS:** (a) The Tree's surface kind id is **fetched** from the allow-lists /
+`SurfaceContentFactory`, not invented; if `SolutionTreeSurface` is not yet a restorable kind, that is a
+scope change and returns to the Owner before the commit. (b) 132(c)/126(i) seam check on `ZoneLayout.cs`
+against the Atlas E1 and Grok candidates before the edit — the conductor's 132(c) return did not cover
+this file. (c) The operator's saved slot (`layout.architecture.zones.json`) still restores as saved — the
+amendment changes the default, not the reconciliation. (d) The conductor logs the operator's verbatim
+instruction with `prompt-log.py add` so the note can cite it.
+
+**RECORD AS:** Ruling 140 — 94 amended to the operator's words: Architecture default Center = [Graph
+(active), Tree], Left empty; Contexts/Domain leave the default, stay admitted; Tree placement admitted
+into Stream X now, the Graph↔Tree seam is its own next slice.
+
+---
+
+## Ruling 141 — Stream X re-ordered: provenance on every edge ahead of P1; `fit()`-only rides in the P1 commit; seed-by-stable-id is its own commit
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17), on the KG lens's three canvas
+Blockers.*
+
+**RULING:** Stream X becomes P0a+P2 (built) → P4 → P3 → **P6: provenance on every edge**
+(`CanvasPage.cs:716-718`, the `else` branch gains the same dash/`<title>` encoding as the join branch,
+using the page's existing inferred colour) → P0b + P1 (**the P1 commit's resize handler calls `fit()` +
+`place()` only, never `layout2d`**) → **P7: seed by stable id** (own commit) → P5 query. **P1 does not
+land in a batch that lacks P6.** Not admitted into Stream X: the banner word and `DeclaredByKind` chips,
+the edge-stroke contrast token, the layout settle, the keyboard grammar, the metric overlay, token
+injection — filed as the named next slice **"Explore truthfulness"** with the review as its evidence.
+
+**BECAUSE:** `CanvasPage.cs:708-718` applies the encoding only to join edges while `edge.status` /
+`isInferred` are on every edge, and `DESIGN.md:322-324` names that exact shape a correctness rule with a
+hard escalation — the committed design system already rules it, so the Owner is admitting the fix, not
+waiving anything. **The lens's "same commit" argument for seeding is refuted by its own item 3:**
+re-scatter on splitter drag is prevented by `fit()`-only (`fit()` at `:527-544` is pure re-framing), so
+seeding addresses a different trigger (a data change) and gets its own commit and evidence under 136(1).
+Built commits are not reordered.
+
+**CONFIDENCE:** Verified (the three code sites, the design tokens, 136(1)); Inferred (the "~10 lines"
+estimate; `CanvasPage.cs:769` and `DeclaredByKind` — not opened).
+
+**SCOPE EFFECT:** Admits P6 and P7 into Stream X; adds one rule to the P1 commit. Cuts everything else in
+the review's plan from Stream X **by name**. Defers the "Explore truthfulness" slice; its first item is
+the two false numbers.
+
+**CONDITIONS:** (a) P6's proof is rendered in the P1 desktop slot: one inferred and one extracted
+non-join edge screenshotted with the `<title>` text, in the receipt. (b) **P7's test statement is
+honest**: seed position is a function of id; settled position still depends on the set at one iteration
+— full US-K8 waits on the settle work. (c) P6 uses colours already present in the page string; **no new
+hex literal enters** (DC-230's medium).
+
+**RECORD AS:** Ruling 141 — Stream X: … → P3 → P6 provenance on every edge → P0b+P1 (fit()-only resize)
+→ P7 seed-by-stable-id → P5; P1 never lands without P6; the rest of the review is the next slice
+"Explore truthfulness".
+
+---
+
+## Ruling 142 — DC-230 sharpened as the lens states, with the control amended: the injection is the fix, the contract test is the control
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17).*
+
+**RULING:** Amend DC-230's class statement to the lens's form — *"a C# raw-string literal is invisible to
+both `ui-craft-gate.py` and `design-lint.py`"* — with `height: 440px` and the page's raw hex colours as
+**two instances of one blind spot**. Amend the control, do not replace it: (i) the headless contract test
+over inlined page strings (P0b, as 132 admitted) **stays the control** and is the thing that fails on
+recurrence; (ii) token injection at navigate time (TC5) is **the fix** that lets (i) later assert "no hex
+literal in the page string", and lands in the "Explore truthfulness" slice, at which point P0b widens to
+that assertion. **P0b does not widen now.**
+
+**BECAUSE:** A control is something that fails when the shape recurs (CI6); injection alone does not fail
+on the next `height: 440px` typed into the string — the assertion does. Widening P0b to hex literals now
+would make it red with no fix in the batch, which is not red-first, it is **a permanently red gate**. The
+lens's class statement is the correct generalisation: DC-230's own "why it survived" already says the
+blind spot is *between* two gates.
+
+**CONFIDENCE:** Verified (DC-230 as filed, three hex literals at `CanvasPage.cs:710,717`); Inferred (the
+count of fifteen; TC5 at `DESIGN.md:546` — not opened).
+
+**SCOPE EFFECT:** Amends the DC-230 entry text now (own hygiene commit in Stream X); defers the injection
+and the widened assertion to the named slice; status stays `uncontrolled` until P0b lands.
+
+**CONDITIONS:** The entry names both controls with which one is owed by which slice, and records the
+hex-literal count **as measured from the string**, not the lens's figure.
+
+**RECORD AS:** Ruling 142 — DC-230 sharpened: a C# raw-string literal is invisible to both lints; P0b's
+contract test is the control, token injection is the fix and lands with the truthfulness slice, after
+which P0b asserts no hex literals.
+
+---
+
+---
+
+## Ruling 143 — the clamp is admitted now; the frame test invokes every count parameter at `int.MaxValue`, which is the control that fails when a clamp is missing
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17), on the finding the Ruling 138
+implementer raised and did not fix because 138 authorised one number.*
+
+**RULING:** The conductor lands, as one Core-owned commit under Ruling 138's authority,
+`Clamp(query.MaxRows, 1, EntryPointsProjection.MaxRowsCeiling)` in `ProjectionService.EntryPoints`
+(`:699-700`), with `DefaultMaxRows` renamed **`MaxRowsCeiling`** and the query default pointing at it
+(the one-constant-two-roles shape `Graph` already uses at `:595`); in the same commit
+`EveryOperationFitsTheFrameTests.AtCeiling()` passes **`int.MaxValue`** for every count parameter of
+every operation — not the named ceiling constant and not the default.
+
+**BECAUSE:** `ProjectionService.cs:699-700` passes `query.MaxRows` straight through and
+`EntryPointsProjection.cs:102` floors at 1 only, while every other operation clamps (`:363`,
+`:422-423`, `:516`, `:595`, `:885`, `:912-913`, `:927`, `:996`, `:1139`, `:1195` via `Clamp` at
+`:1615`) — verified. **The test at `:131` invokes `new EntryPointsQuery()` and at `:103` invokes
+`Graph` at its default too, so the table never proves a clamp exists for *any* operation**; invoking
+at the named ceiling proves the ceiling fits, and invoking *above* it is the only thing that proves
+the caller cannot exceed it. On the current hostile fixture `EntryPoints(int.MaxValue)` builds 3,001
+rows ≈ 2.19 MB, so the test change is red on `main` before the clamp lands — **red-first is satisfied
+by the test change itself.** Severity Major stands rather than Blocker: `IpcServer.cs:355-360` returns
+`PayloadTooLarge` with the byte count, so the failure is a clean structured error rather than
+INV-0003's hang.
+
+**CONFIDENCE:** Verified.
+
+**SCOPE EFFECT:** Admits one commit (clamp + rename + the test table at `int.MaxValue`). Cuts: any
+change to `IpcFraming.MaxFrameBytes`; any App or `EntryPointsSurface.cs` change; any pagination.
+
+**CONDITIONS:** (a) The test change is committed and shown red **before** the clamp is committed — two
+commits, or a recorded red run. (b) Grok told by `request-add` before and after, as 138 required.
+(c) Lands in the same lane as 144 and 145, ahead of them.
+
+**RECORD AS:** Ruling 143 — EntryPoints MaxRows clamped at the ProjectionService boundary
+(`MaxRowsCeiling`); the frame test now invokes every count parameter at `int.MaxValue`, so a missing
+clamp is red rather than a default that happens to fit.
+
+---
+
+## Ruling 144 — the hostile fixture gains `has_member` facts at the same hostility, in 143's commit; the ceiling is re-derived only if 145's byte budget does not land
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17).*
+
+**RULING:** Widen `EveryOperationFitsTheFrameTests.Hostile()` with `has_member` facts — **one
+300-character member per type, at minimum** — so the fixture's row universe is types **+** members as
+`FromHasType` builds it; record in the commit the measured `WireBytes` at `int.MaxValue` and **the
+per-row cost of a member row beside the type row's 730.78**. Re-derive `MaxRowsCeiling` against the
+widened fixture **only if** Ruling 145's byte budget has not landed when the lane closes; if it has,
+the byte budget is the bound and the count ceiling is no longer load-bearing for the frame.
+
+**BECAUSE:** `Hostile()` at `:46-65` writes only `has_type` and `depends_on`; `FromHasType` at
+`:81-100` appends one row per member — verified, the fixture under-counts. **But `built.Take(cap)` at
+`:104` takes type rows first**, so with 3,001 types the first 1,254 rows never include a member and
+the measured bytes do not move; what the widening buys is an honest count and a measured member-row
+width, and the arithmetic in the constant's remark (`:40-53`) must cite it. Ordering the fixture
+change with 143's test change keeps one red run for both.
+
+**CONFIDENCE:** Verified (the fixture, `FromHasType`, the `Take` order). **Inferred: that a 300-char
+member row is narrower than a type row** — the commit's measurement replaces this inference; do not
+carry it forward.
+
+**SCOPE EFFECT:** Admits the fixture widening into 143's commit. **Defers to D-1 as a finding, not
+ruled here:** `Take(cap)` drops members before types, so under any count cap **members are always what
+is omitted** — a UV-0 semantic question for the owning lane.
+
+**CONDITIONS:** Termination variant on the re-derivation: if 145 has not landed by the lane's close
+(or 48 h from this ruling, whichever is first), the conductor re-derives the constant from the widened
+fixture and records the arithmetic in the commit; otherwise the re-derivation is not done.
+
+**RECORD AS:** Ruling 144 — frame fixture widened with `has_member` rows at 300-char hostility,
+measured in the commit; ceiling re-derived only if the byte budget (145) does not land in the lane.
+
+---
+
+## Ruling 145 — the measurement is owed first and is one call; the byte budget is admitted, in the row-accumulation shape the listing's siblings already use, not Graph's shrink loop
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17).*
+
+**RULING:** (1) Before any further EntryPoints code, the conductor records **one `EntryPoints` call
+against a built workspace db of this repository** — `returned.rows`, `omitted.by_cap` and the
+response's `WireBytes` — in the decision note; the emitting source already exists
+(`ProjectionService.cs:701-702`), so this is a **read, not a build**. (2) The byte budget is admitted,
+conductor-authored under 138's Core-owned precedent, as its own commit in the same lane: rows
+accumulate against `MaxResponseBytes` in the shape **`Evidence` uses at `:540`**
+(`bytes + size > MaxResponseBytes` → stop, count the rest as omitted), with `Omitted (n)` covering
+rows dropped by either bound; `MaxRowsCeiling` remains as the count ceiling. **Graph's shrink-to-fit
+loop (`:618-665`) is not the reuse target** — it exists for a non-linear structure where bytes do not
+fall with count, and a listing is linear.
+
+**BECAUSE:** The class is count-versus-bytes, and the constant's own remark
+(`EntryPointsProjection.cs:55-59`) already names the byte budget as the durable fix; `Find` (`:967`),
+`Interaction` (`:1161`), `SearchContent` (`:1276`) and `Evidence` (`:540`) all carry it, so this is
+reuse-in-codebase, one rung above YAGNI. **Whether the cap binds today on this repository is not
+recorded** — the conductor's "will bind on real repositories" is an inference from identifier length,
+not a measurement — and that fact decides urgency, not admission.
+
+**CONFIDENCE:** Verified (the four accumulation sites, the shrink loop, the activity tags, the
+remark). **Not recorded:** this repo's `has_type + has_member` row count. **Inferred** (the
+conductor's, not the Owner's): that the cap truncates real data.
+
+**SCOPE EFFECT:** Admits the measurement and one byte-budget commit. Cuts: pagination; any change to
+the wire field names; any App change — but the E7 surface list is written before the commit, and the
+App reader of `OmittedByCap` / `Disclosures` (`EntryPointsSurface.cs`) is **opened and read**, not
+changed, to confirm `Omitted (n)` renders the union.
+
+**CONDITIONS:** (a) Red-first: a test whose rows carry identifiers wide enough that `MaxRowsCeiling`
+rows overflow `MaxResponseBytes` is shown red before the budget lands. (b) Test Architect adversary as
+a separate sub-agent (Ruling 133's shape). (c) If the measurement in (1) shows `omitted.by_cap = 0` on
+this repository, the commit still lands — the class is bounded, not closed, regardless — but the
+decision note says so plainly.
+
+**RECORD AS:** Ruling 145 — EntryPoints measured once against this repo's workspace db (rows, omitted,
+bytes) before further change; byte budget admitted in `Evidence`'s row-accumulation shape,
+conductor-authored, own commit, `Omitted (n)` covers both bounds.
+
+**CONDUCTOR'S RETURN ON 145(1) — PARTIAL, AND THE PART THAT IS MEASURED CHANGES THE PICTURE.** Read
+from the largest built workspace db on this machine (`aide.31abcd25…`, 28.6 MB, 64 scopes, 34,279
+assertion rows), current generation only, using the `latest` CTE copied from `StoreReader.cs:57-62` so
+the census counts the rows the product actually reads:
+
+| predicate | rows, current generation |
+|---|---|
+| `has_type` | **2,993** |
+| `has_member` | **9,876** |
+
+So the row universe `FromHasType` draws from on a real repository is **12,869**, against a
+`MaxRowsCeiling` of 1,254. The conductor's earlier claim that "the cap will bind on real
+repositories" was labelled Inferred; it is now **Verified, and larger than the inference** — and
+Ruling 144's finding sharpens it further: because `built.Take(cap)` takes type rows first and there
+are 2,993 of those, a capped listing on this repository returns **type rows only and not one member**.
+
+**Still owed, and named rather than estimated:** this is the *predicate universe*, not the
+projection's output — `FromHasType` filters candidates, so the true `returned.rows` and
+`omitted.by_cap` are bounded above by these numbers and not equal to them. `WireBytes` on a real call
+is **not recorded**. The projection-level call is what 145(1) actually asks for and it remains owed.
+
+---
+
+## The DC-229 census on a real store — P3's receipt, before
+
+*Recorded by the conductor (2026-09-17) under Ruling 133's condition 3, from the same workspace db.
+This is the "before" moment; the "after" is taken once the bumped generation has been indexed and one
+further daemon restart has let compaction run.*
+
+| extractor | rows, current generation | citing a scope id |
+|---|---|---|
+| `csharp-extractor` | 27,769 | **0** |
+| `knowledge-extractor` | 4,307 | **0** |
+| **`python-extractor`** | **1,056** | **1,056** |
+| `ef-schema-extractor` | 760 | **0** |
+| `bicep-extractor` | 207 | **0** |
+| **`typescript-extractor`** | **116** | **116** |
+| `workspace-core` | 64 | **0** |
+
+**One hundred per cent of both extractors' output, and zero of every other extractor's.** 1,172 rows
+of 34,279 on this store cite a value that names no file — which is exactly the shape INV-0014
+described and the oracle's red predicted, now counted on the operator's own data rather than on a
+fixture. The comparison is equality against `scope_id`, not a `LIKE '%:%'` pattern, because the bad
+value was `request.ScopeId` verbatim.
+
+`rows_citing_a_scope_id` must reach **0** for both extractors, with `rows_current > 0`, after P3's
+generation bump is indexed. Anything else means the bump did not reach the sidecar.
+
+
+---
+
+## Ruling 146 — the floor keys on the environment-independent counter if it is one; `--update` refuses to lower any key without an explicit reasoned flag, and the join never passes it
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17), on the conductor's own
+measurement and its own error.*
+
+**RULING:** **(1) Unconditionally:** `verify-test-run.py --update` refuses to write any key **below**
+its committed value unless `--allow-lower "<reason>"` is given, printing key, old and new;
+`docs/coordination/join.json` does **not** pass the flag; red-first via `verify-gate-self-tests.py`
+planting a baseline above the observed count and showing the refusal. **(2) Conditionally:** the
+conductor fetches `total` per key from CI run 35228503081's `.trx` and from this machine's `.trx`. If
+`total` is equal per key across both, the floor moves from `executed` to **`total`** (the gate at
+`:416` reads `executed`; the file's key stays `minimumExecuted` only if renamed — **rename it**), and
+the gate gains the check its own docstring already claims at `:16` but the code does not perform:
+**every `NotExecuted` result's name must appear in a committed `expectedSkips` list**, else it is a
+finding. If `total` is **not** equal, fall back to per-environment keys (`<key>@linux`,
+`<key>@windows`) selected by `platform.system()`.
+
+**BECAUSE:** `--update` at `:453-475` merges `observed` over the baseline with no comparison — **it
+lowers silently**, verified — and the join runs it three times before the `--no-run` check, so the
+floor is re-set by whichever machine joined; `--refuse-upward-drift` (`:435-444`) fires only on
+`executed > expected`. The environment delta the conductor measured is exactly the
+dynamically-skipped tests, which a `.trx` records as `NotExecuted` — **inside `total`, outside
+`executed`** — so `total` is the counter that should not vary by OS, and a crashed host writes fewer
+results so `total` still drops on the DC-012 shape. That makes `total ≥ floor` **plus**
+`NotExecuted ⊆ expectedSkips` strictly stronger than `executed ≥ floor` and meetable everywhere; a
+min-across-environments floor would leave an 8-test blind spot on Linux and make upward-drift fire
+falsely on any Linux join. The docstring's item 3 is **a control claiming a check it does not do** —
+`:421-428` checks outcome, failed, error, aborted and timeout only.
+
+**CONFIDENCE:** Verified (the `--update` path, the join contract, `:416`, the absence of a skip
+check). **Not opened by the Owner:** the CI/local counts table — the conductor's report. **The
+deciding fact, `total` equality across environments, was not verified by the Owner** — which is why
+(2) is conditional.
+
+**SCOPE EFFECT:** Admits (1) now; admits (2) once the fact is fetched. Cuts: any change to CI's floor
+semantics (`build.yml` still runs without the drift flag); any change to the split invariant.
+
+**CONDITIONS:** (a) The `total` comparison is recorded with both run ids. (b) If (2)'s primary branch
+is taken, the `expectedSkips` list is populated **from the names the local and CI `.trx` files
+actually carry, not from memory**. (c) The docstring at `:16` is corrected to match the code in
+whichever branch lands.
+
+**RECORD AS:** Ruling 146 — `verify-test-run.py --update` refuses to lower a floor without
+`--allow-lower <reason>`; floor re-keyed to the environment-independent `total` plus a named
+`expectedSkips` list if `total` is equal across CI and local, else per-environment keys.
+
+**CONDUCTOR'S RETURN ON 146(2) — THE FACT IS FETCHED AND THE PRIMARY BRANCH IS SELECTED.** `total` per
+key, from CI run **35228503081**'s own `.trx` artefacts and from local runs at the same SHA
+`f009b6f6`:
+
+| key | CI `total` | local `total` | equal? | CI `executed` | local `executed` |
+|---|---|---|---|---|---|
+| `AiDe.App.Tests` | 1053 | 1053 | **yes** | 1053 | 1053 |
+| `AiDe.Core.Tests.portable` | 2575 | 2575 | **yes** | 2575 | **2574** |
+| `AiDe.Core.Tests.nonportable` | 181 | 181 | **yes** | **177** | 181 |
+
+**`total` is equal on every key; `executed` differs on two, in opposite directions.** The Owner's
+reasoning is confirmed by measurement: the delta is exactly the dynamically-skipped tests, which the
+`.trx` counts in `total` and not in `executed` — four of them on CI's Windows runner, one on the
+Linux portable half, and a different one locally. So the floor moves to `total`, the four CI skips
+become the seed of `expectedSkips`, and the per-environment fallback is **not** taken.
+
+This ruling also closes the conductor's own error of earlier today: the baseline was first set from
+`total` while the gate read `executed`, putting two keys above anything CI could produce. Under 146
+the two finally mean the same thing.
+
+---
+
+## Ruling 147 — the type scale does not change and the detector's threshold does not change; 11px is a bounded exemption for keystroke labels only, and the mockup misapplied the token
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17). **This ruling corrects the
+conductor**, who reported the finding as a conflict between two committed controls and routed it up as
+unresolvable from the lane.*
+
+**RULING:** Keep `scale: [11px, …]` and keep the detector as it is. Amend `DESIGN.md:84` with one
+clause: **11px is for keystroke labels only (`<kbd>`-shaped, ≤ 20 characters), never running text** —
+which is what `:750` ("11px key labels") and `:1101` ("11px only for a keystroke") already state. The
+mockup's `.prov-note` and `.sr-trace` move to `--t-sm`; `.why code` stays, as `code` is exempt. The
+conductor applies the change, re-runs `ui-craft-gate.py --a11y-obligation --gate`, and a **separate**
+UX & Accessibility instance in Adversary mode clears the veto on that output (Ruling 133's shape); the
+authoring instance does not clear it.
+
+**BECAUSE:** Impeccable's `tiny-text` (`checks.mjs:3366-3375`) fires only on direct text **over 20
+characters at under 12px**, outside `kbd`/`code`/`label`/`meta` contexts; `undersized-ui-text`
+(`:3410-3428`) has an **11px floor**, so 11px passes it. A keystroke label is short and `kbd`-shaped
+and is exempt from both — **so the design system's stated 11px use and the detector under
+`--a11y-obligation` do not disagree, and never did.** The mockup applies `--t-xs` to a provenance note
+and a screen-reader trace, which are running text and outside the design system's own constraint;
+editing them is not "editing the mockup off the design system", **it is bringing it onto it**.
+`docs/reviews/ui-workbench.md:44` already settled the same question the same way. WCAG 2.2 AA sets no
+pixel floor, so no success criterion is being waived — the exemption is against the pack's CD12 floor,
+and it is bounded by the detector's own exemption logic, so it cannot be widened without the gate
+noticing.
+
+**CONFIDENCE:** Verified (`DESIGN.md:84/:750/:1101`, both detector rules, the mockup's four `--t-xs`
+sites, the persona's veto and D3 clauses, `ui-workbench.md:44`). **Inferred:** that the two Blockers
+are `.prov-note` and `.sr-trace` — the Owner did not run the gate; the conductor fetches the two
+Blocker snippets and confirms each is over 20 characters of non-`kbd` text before applying the fix.
+
+**SCOPE EFFECT:** Admits one `DESIGN.md` clause, two CSS token changes, one gate re-run, one adversary
+clearance. Cuts: any change to the detector; any change to CD12; any retuning of the scale.
+**Finding, not ruled:** `docs/reviews/ui-mockups-craft-gate.md:41` dispositions 7 `tiny-text` findings
+as "deliberate IDE density" with **no a11y-lens clearance recorded** — CD12 does not permit that
+disposition; filed for the next review pass.
+
+**CONDITIONS:** (a) The mockup stays "not approved" until the adversary clearance is on disk citing
+the gate output at 0 accessibility-cluster findings. (b) The `sr-trace` change is verified in the
+`screenreader` persona, since it is `display:none` otherwise.
+
+**RECORD AS:** Ruling 147 — 11px stays on the scale as a keystroke-label-only step (`DESIGN.md` clause
+added); detector unchanged; the first-use mockup's `prov-note` and `sr-trace` move to 12px; a separate
+UX & Accessibility adversary clears on the re-run gate output.
+
+**CONDUCTOR'S RETURN ON 147 — CONFIRMED AND APPLIED.** The gate's JSON gives the evidence as
+`Tiny body text - 11px body text` for both Blockers, and the mockup had exactly three `--t-xs` uses of
+which one (`.why code`) is exempt — so two non-exempt uses, two Blockers, matching the Owner's
+inference by count and by the detector's own wording. Applied: `.prov-note` and `.sr-trace` to
+`--t-sm`; the clause added at `DESIGN.md:84` naming why the detector agrees. Re-run:
+`ui-craft-gate.py --a11y-obligation --gate` → **exit 0**, six advisory Minors. The hub note was
+rewritten to record the wrong diagnosis and how it was caught, not only the outcome. The mockup
+remains **not approved**: condition (a)'s adversary clearance is not on disk.
+
+---
