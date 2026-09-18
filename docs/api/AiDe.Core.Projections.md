@@ -180,6 +180,50 @@ Open Sequence is not this query (mapper r5: authorship only, Sequence still disa
 | `int DefaultMaxRows = 1_254` | How many rows a listing may return, so the response still crosses one IPC frame. |
 | `string UnclassifiedReasonPendingClassifier = "classifier-not-admitted"` | **(gap)** |
 
+### `int DefaultMaxRows = 1_254`
+
+How many rows a listing may return, so the response still crosses one IPC frame.
+
+**Remarks.** **MEASURED, not chosen.** The first value here was 5_000 — "inferred until measured,
+same order as graph node default" — and it was the arithmetic of INV-0003:
+`EveryOperationFitsTheFrameTests` built a 2,191,570-byte response, 2.09x the
+1,048,576-byte frame, so `EntryPointsAsync` could not be answered over the wire at all.
+A count borrowed from another projection is not a byte bound; rows carry node ids, and node
+ids come from repository content.
+
+
+
+
+
+**The measurement.** That test's own `WireBytes` over its hostile fixture
+(300-character identifiers), at two caps so the per-row cost separates from the envelope:
+1,000 rows = 730,850 bytes, 2,000 rows = 1,461,628 bytes, so one row costs
+(1,461,628 - 730,850) / 1,000 = **730.78 bytes**. Confirmed on a second pair: 1,100 rows =
+803,928 and 2,100 rows = 1,534,704, the same 730.78. A row serialised alone is 720-730 bytes,
+so **731** bounds it from above once the array's separating comma is counted. The envelope
+around the rows measured 72-78 bytes; **512** is allowed for it, which covers a real
+40-character source revision and the `Omitted (n)` disclosure with room over.
+
+
+
+
+
+**The arithmetic.** The budget is `ProjectionService.MaxResponseBytes` =
+896 KiB = 917,504 bytes — the frame less 128 KiB, which is the margin every other operation
+is weighed against, and the one INV-0003 settled on. So
+`floor((917,504 - 512) / 731) = floor(916,992 / 731) = 1,254`. It is the largest cap that
+fits: 1,254 x 731 + 512 = 917,186 (inside), 1,255 x 731 + 512 = 917,917 (outside).
+
+
+
+
+
+**What this bound is not.** It is a count, and the transport limit is in bytes, so it
+holds only while a row stays under 731 bytes — an identifier twice the fixture's length
+overflows the frame at this cap too. The durable fix is the byte budget every other
+projection carries; this is the cap the evidence supports today, and the listing's
+`Omitted (n)` disclosure keeps it honest on the surface rather than silent.
+
 ## `EntryPointsListing`
 
 *class* — `EntryPointsProjection.cs`
