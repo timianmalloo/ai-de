@@ -9546,7 +9546,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3154e1d46047898959843cef3378de71e346bf4c0d6c1289b0c36e8f91fe3bf6"
+      "sourceSha256": "65dc8f3fbe4a3a85ab8b59eb5b041c1f8b421e4d1f56793e17e7ebf8f236d8fd"
     },
     {
       "id": "design-session-profiler",
@@ -10808,7 +10808,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c653c18c49decbb7ad5d90198e8e93dfffaa71df93ae2791253dc0342009a966"
+      "sourceSha256": "b109644c7950bd29a0f1fa330151c2368078a846886d6ffebced198d38831988"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -16911,6 +16911,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "56dcbfeec074ea753ff0b3a0cc893aa0d3623122c7ac156afdce54071768f6fa"
     },
     {
+      "id": "proof-atlas-audit-preservation",
+      "path": "docs/proof/atlas-audit-preservation.md",
+      "title": "Atlas audit conservation: seven exact additions, originals untouched",
+      "type": "proof-pack",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "Independent Astra review CLEAR: seven exact additions conserved, original trees unchanged, durable ordering negative observed; own-branch handoff follows normal controls.",
+      "tags": [
+        "proof",
+        "atlas",
+        "audit",
+        "conservation"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Execution graph and model",
+          "mermaid": "flowchart LR\n  G[Ground current controls] -->|data| C[Capture originals and seven additions]\n  C -->|data| U[Official register union]\n  U -->|data| O[Exact row and original-state oracles]\n  O -->|data| P[Proof, audit and derived checks]\n  P -->|decision| R[Independent review]\n  R -->|decision| H[Commit and publisher handoff]"
+        }
+      ],
+      "sourceSha256": "d62e69ad4f88ca8373edd77be8691ba0aba0862fefd3fb72c40d6f38bdbe9ef0"
+    },
+    {
       "id": "proof-audit-gate-plan-review",
       "path": "docs/proof/audit-gate-plan-review.md",
       "title": "Independent plan review: audit gate self-test",
@@ -21136,5 +21172,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "5afa16c48d17cad0bc009afb49e5b037c51d3c7e7d38fe36e83f16f853b5d676"
+  "graphSha256": "f206f72c7a01af080f29b65368402fd2fd43a0f702d8089904f249d863c59a50"
 };
