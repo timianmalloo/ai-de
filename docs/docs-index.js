@@ -7655,7 +7655,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c3d8667e9cc3bd23723562c930f311189a7ee589398f03c2bbbd22ddf7bd89b4"
+      "sourceSha256": "87f53268ef831dbd45f76ddbf16ba88c9394e959e6725adf40c0e62dfd30378e"
     },
     {
       "id": "design-knowledge-explorer-mode",
@@ -10402,7 +10402,7 @@ window.DOCS_INDEX = {
       "phase": "conductor-watch-0915",
       "reviewBy": "2026-12-17",
       "reviewSuggested": [],
-      "summary": "The UX & Accessibility lens's state table, exact copy and mockup for the New Session accounts block and the Configure sheet, authored under /ui-design elevate to discharge Ruling 130's condition that the lens rules the copy before any code is written. The mockup renders nine scenarios with a review harness. The craft gate now exits 0 with six advisory Minors: Ruling 147 found that the two tiny-text Blockers were this file applying the 11px keystroke-label token to running text, not a conflict in the design system as the conductor first reported. Not approved — a separate accessibility adversary still owes the clearance.",
+      "summary": "The UX & Accessibility lens's state table, exact copy and mockup for the New Session accounts block and the Configure sheet, authored under /ui-design elevate to discharge Ruling 130's condition that the lens rules the copy before any code is written. The mockup renders nine scenarios with a review harness. The craft gate now exits 0 with three advisory Minors: Ruling 147 found that the two tiny-text Blockers were this file applying the 11px keystroke-label token to running text, not a conflict in the design system as the conductor first reported. Not approved — a separate accessibility adversary still owes the clearance.",
       "tags": [
         "ui-design",
         "first-use",
@@ -10427,12 +10427,16 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         },
         {
+          "to": "design-first-use-account-states",
+          "rel": "refines"
+        },
+        {
           "to": "review-ui-explore-graph-and-tree",
           "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "61c879c69606a53259bab681a6338ead0d81f7019c96bd7a1a4c5e15cf3dfdce"
+      "sourceSha256": "1458c632ba54bcab8b4993dba07e1fc404b4712dd8e21c0c7349b9ec344f29fe"
     },
     {
       "id": "mockup-graph-canvas",
@@ -21451,5 +21455,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "4821b00ccd93e034ab7f71a53c5d00dac372befe91ddc8c415c12c020b4eece0"
+  "graphSha256": "c3dd40964d5c7185def7b4c05afa3d90050b32d27ed1e6f367e277793988d4f1"
 };

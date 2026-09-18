@@ -7,7 +7,7 @@
 <!--
   MOCKUP + REVIEW HARNESS. /ui-design elevate, Ruling 130. Authority: ui-design-craft.md DX8-DX11.
   Tokens mirrored from DESIGN.md frontmatter (dark = operator default). Harness never ships.
-  Every user-facing sentence here is canonical copy: DESIGN.md quotes it, oracles quote DESIGN.md (DC-196).
+  The canonical copy is docs/design/first-use-account-states.md, not this file (DC-196). This page RENDERS those strings so they can be seen in context; where the two ever disagree the table wins, and the disagreement is the defect. Two artifacts each claiming canonicity over one set of strings is how the operator-facing cell drifted once already.
   MEDIUM IS WPF (UI-T4). This file is DIRECTION EVIDENCE ONLY and cannot clear native PASS:
   no UIA tree, no real focus order, no DPI, no high-contrast system-brush mapping is proven here.
 -->
@@ -184,7 +184,7 @@ label.f{display:block;font-size:var(--t-md);font-weight:var(--w-medium);margin:v
   <div class="titlebar"><span>New session</span><span aria-hidden="true">×</span></div>
   <div class="body">
     <h2 class="section" id="acct-h">Accounts</h2>
-    <div role="list" aria-labelledby="acct-h">
+    <div role="list" aria-labelledby="acct-h" data-listwrap>
 
       <!-- MIXED — the vocabulary in one screen; five rows, five different sentences -->
       <div data-sc="mixed">
@@ -250,7 +250,7 @@ label.f{display:block;font-size:var(--t-md);font-weight:var(--w-medium);margin:v
       <!-- S3 — npm shim, refused -->
       <div data-sc="shim">
         <div class="acct" role="listitem">
-          <div class="acct-head"><span class="prov">github</span><button class="btn primary">Sign in…</button></div>
+          <div class="acct-head"><span class="prov">github</span><button class="btn primary">Set up…</button></div>
           <p class="state st-attn"><span class="eng">copilot</span><span class="glyph" aria-hidden="true">●</span><span class="word">installed, not launchable</span></p>
           <p class="why">engine 'copilot': PATH carries 'C:\Users\timmall\AppData\Roaming\npm\copilot.cmd', an npm shim that needs a shell to run, and the catalog records no observed npm launch for 'copilot'; install the observed form instead: <code>winget install GitHub.Copilot</code> (or: npm install -g @github/copilot; then: copilot login, or copilot login --host https://&lt;tenant&gt;.ghe.com)</p>
         </div>
@@ -362,10 +362,10 @@ label.f{display:block;font-size:var(--t-md);font-weight:var(--w-medium);margin:v
 
     <label class="f" for="acct-label">Account label</label>
     <p class="note" id="acct-help">A name for this account, used on the session sheet and in providers.json — e.g. work or personal. Yours to choose; AI-DE never interprets it.</p>
-    <input class="field" id="acct-label" value="work" placeholder="work" aria-describedby="acct-help">
+    <input class="field" id="acct-label" placeholder="work" aria-describedby="acct-help">
 
     <div style="display:flex;gap:var(--s-5);align-items:center;margin-top:var(--s-6);flex-wrap:wrap">
-      <button class="btn primary" id="write">Write providers.json</button>
+      <button class="btn primary" id="write" disabled>Write providers.json</button>
       <span class="note" id="write-why" style="margin:0;color:var(--inferred)" aria-live="polite">Confirm the sign-in above to write providers.json.</span>
     </div>
     <p class="note">Writes <code>C:\Users\timmall\.aide\providers.json</code>. The file is yours to edit; AI-DE re-reads it when this sheet closes.</p>
@@ -395,14 +395,30 @@ label.f{display:block;font-size:var(--t-md);font-weight:var(--w-medium);margin:v
   document.getElementById('h-motion').addEventListener('change',function(e){
     d.setAttribute('data-motion',e.target.checked?'reduced':'normal');});
 
+  // THE REASON MUST TRAVEL WITH THE BUTTON, and it did not. The sign-in handler updated only its
+  // own line, while the LABEL handler cleared the message asking for a sign-in — so after the
+  // operator did the one thing the message asked, it still read "Confirm the sign-in above",
+  // permanently, inside a live region that therefore announced nothing. The success state of the
+  // fix was the one state the fix did not render (U9). Both inputs now drive one gate.
   var signed=document.getElementById('signed');
+  var lbl=document.getElementById('acct-label'),wr=document.getElementById('write'),wy=document.getElementById('write-why');
+  function gate(){
+    if(!wr) return;
+    var hasLabel = lbl && lbl.value.trim().length>0;
+    var hasSignIn = signed && signed.checked;
+    wr.disabled = !(hasLabel && hasSignIn);
+    wy.textContent = hasSignIn
+      ? (hasLabel ? '' : 'Enter an account label to write providers.json.')
+      : (hasLabel ? 'Confirm the sign-in above to write providers.json.'
+                  : 'Confirm the sign-in above and enter an account label to write providers.json.');
+  }
   if(signed)signed.addEventListener('change',function(){
     document.getElementById('signed-state').textContent = signed.checked
       ? 'Signed in: yes, as you recorded it just now. providers.json will be written with health: ready.'
-      : 'Signed in: not recorded. AI-DE does not probe; it records what you tell it. providers.json will be written with health: needs-login.';});
-  var lbl=document.getElementById('acct-label'),wr=document.getElementById('write'),wy=document.getElementById('write-why');
-  if(lbl)lbl.addEventListener('input',function(){var ok=lbl.value.trim().length>0;
-    wr.disabled=!ok; wy.textContent = ok ? '' : 'Enter an account label to write providers.json.';});
+      : 'Signed in: not recorded. AI-DE does not probe; it records what you tell it. providers.json will be written with health: needs-login.';
+    gate();});
+  if(lbl)lbl.addEventListener('input',gate);
+  gate();
 
   function lum(c){var m=c.match(/\d+(\.\d+)?/g);if(!m)return 0;
     var v=[m[0],m[1],m[2]].map(function(x){x=x/255;return x<=0.03928?x/12.92:Math.pow((x+0.055)/1.055,2.4);});

@@ -68,7 +68,7 @@ Every cell gives: the row's three lines, and the one action offered. `‹…›`
 
 | # | installed | cfg | health | Line 1 | **Line 2 — state** | Line 3 — reason | Action |
 |---|---|---|---|---|---|---|---|
-| **S1** | installed | no | — | `github` | `copilot · installed — not set up here` | `Found copilot at ‹C:\Users\timmall\AppData\Local\Programs\copilot\copilot.exe›. Add an account to use it.` | **`Set up…`** (primary) |
+| **S1** | installed | no | — | `github` | `copilot · installed — sign in` | `Found copilot at ‹C:\Users\timmall\AppData\Local\Programs\copilot\copilot.exe›. Sign in to use it.` | **`Sign in…`** (primary) |
 | **S2** | absent | no | — | `google` | `gemini · not installed` | **verbatim** `engine 'gemini': 'gemini' is not on PATH and '@google/gemini-cli' is not installed under '‹root›'; install it: npm install -g @google/gemini-cli  (then set GEMINI_API_KEY, from https://aistudio.google.com/apikey, in the environment the product launches with)` | `Set up…` |
 | **S3** | refused | no | — | `github` | `copilot · installed, not launchable` | **verbatim** `engine 'copilot': PATH carries '‹…\npm\copilot.cmd›', an npm shim that needs a shell to run, and the catalog records no observed npm launch for 'copilot'; install the observed form instead: winget install GitHub.Copilot  (or: npm install -g @github/copilot; then: copilot login, or copilot login --host https://<tenant>.ghe.com)` | `Set up…` |
 | **S4** | installed | yes | needs-login | `github` | `copilot · set up — sign in to use` | `Account "‹work›". Signed in: no, as you recorded it — not probed.` | **`Sign in…`** (primary) |
@@ -85,7 +85,17 @@ Every cell gives: the row's three lines, and the one action offered. `‹…›`
 3. **"no account — Configure…" is deleted** (`NewSessionSheetViewModel.cs:42`). The fake affordance goes; `no account` is expressed by the state word, and the real button is the only `Configure…`-shaped thing on screen. `AccountLabel` becomes `Account?.Label` and the zero-account case renders no quotes.
 4. **`DisplayLabel`'s `label · state (reason)` single-string shape is retired** (`:56`). A parenthetical reason inside an accessible name produces a 90-character name for a `CheckBox`; three separate `TextBlock`s with the state on its own line is both readable and announceable.
 5. **"no adapter root — no provider file" ceases to be a row state.** The absence of `providers.json` is one fact about one file and belongs in the footer once, not restated five times as if it were five facts about five engines.
-6. **Ordering:** rows sort `ready` → `quota-degraded` → `set up — sign in` → `installed — not set up here` → `not launchable` → `not installed` → `couldn't check`. The row the operator can act on soonest is first. Provider grouping is preserved inside that order.
+6. **Ordering:** rows sort by these **eight** words, spelled exactly as the cells above spell them:
+   `ready` → `ready — quota degraded` → `set up — sign in to use` → `installed — sign in` →
+   `set up here, but not launchable now` → `installed, not launchable` → `not installed` →
+   `couldn't check`. The row the operator can act on soonest is first, and provider grouping is
+   preserved inside that order.
+   <br>*This rule previously ordered seven and named `not launchable`, which matches neither
+   `installed, not launchable` (S3) nor `set up here, but not launchable now` (S7/S8) — so an
+   implementer had to guess whether a configured-but-unlaunchable row sorts above or below an
+   unconfigured one, on a rule whose own justification is that the actionable row comes first.
+   A configured row sorts above an unconfigured one at the same launch state, because the
+   operator is one gesture closer on it.*
 
 ## 3.3 The `ready`-requires-a-gesture constraint — I accept the rule and reject its current consequence
 
@@ -122,9 +132,11 @@ The footer must name the **nearest remedy for the best row present**, and always
 
 | # | Condition | String |
 |---|---|---|
-| **F0** | ≥1 row is `ready` (incl. quota-degraded) | *(no footer — unchanged)* |
-| **F1** | no row installed (all S2/S3/S9) | `No agent CLI was found on this machine. The session will open; a run needs one of the engines above installed. Nothing has been written to ‹C:\Users\timmall\.aide\providers.json›.` |
-| **F2** | ≥1 row S1, none configured **← the operator's case** | `‹copilot› is installed on this machine but has no account here yet. The session will open; set it up above and a run can start. Nothing has been written to ‹C:\Users\timmall\.aide\providers.json›.` |
+| **F0** | every row is `ready` (incl. quota-degraded) | *(no footer — there is nothing outstanding to say)* |
+| **F0b** | ≥1 row `ready` **and** ≥1 row not | **one clause per blocking axis, in row order.** e.g. `Two accounts are ready. github needs a sign-in; google is not installed; xai is installed but not launchable. The session will open, and a run can start on the two that are ready.` The ready count first, then each outstanding row named with **its own** blocking axis — never the sign-in axis for a row blocked on install, which is the sentence Ruling 130 was filed against. |
+| **F1** | no row installed, none of them a shim (all S2/S9) | `None of these engines was found on this machine. The session will open; a run needs one of the engines above installed. Nothing has been written to ‹C:\Users\timmall\.aide\providers.json›.` |
+| **F1b** | no row launchable and at least one is a shim (S3 present) | `No agent CLI on this machine can be launched as installed. The session will open; install an observed form of one of the engines above.` — F1's wording is false here: the shim **was** found, on PATH, and cannot be launched. |
+| **F2** | ≥1 row S1, none configured **← the operator's case** | `‹copilot› is installed on this machine and needs a sign-in. The session will open; sign in above and a run can start. Nothing has been written to ‹C:\Users\timmall\.aide\providers.json›.` |
 | **F3** | ≥1 row S4, none ready | `No account is signed in. The session will open; sign in above — or, if you have already signed in with the CLI, mark it signed in — and a run can start.` |
 | **F4** | ≥1 row S7/S8, none ready | `The accounts in ‹C:\Users\timmall\.aide\providers.json› are set up, but their CLIs cannot be launched from here. The session will open; a run needs the install fixed above.` |
 | **F5** | every row S9 | `AI-DE could not check this machine — not recorded. The session will open. Re-check above.` |
@@ -190,7 +202,7 @@ Failure copy:
 - Replaces `not signed in from here (health will be written as needs-login)` (`:128`) — accurate but written from the file's point of view, and it appears *below* a button it explains.
 
 **Account label.**
-- Help, above the field: `A name for this account, used on the session sheet and in providers.json — e.g. work or personal. Yours to choose; AI-DE never reads it.`
+- Help, above the field: `A name for this account, used on the session sheet and in providers.json — e.g. work or personal. Yours to choose; AI-DE never interprets it.`
 - Placeholder: `work`
 - Empty + Write focused/attempted: `Enter an account label to write providers.json.` — rendered **beside the Write button**, in `{colors.inferred}`, `aria-live="polite"`. (RQ5's own rule, already stated at `NewSessionSheetDialog.cs:177-179`: *the reason travels with the button*. This sheet does not follow it.)
 
