@@ -9546,7 +9546,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ca1c9fa5828cf6d1c8c551fb565e4d4de9685e4619e1aea53967269a1bfb53c0"
+      "sourceSha256": "6521bd1662ad7f488a423beddc223496ed884969e9f055f0ff68125b74dcbb70"
     },
     {
       "id": "design-session-profiler",
@@ -16835,6 +16835,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "56dcbfeec074ea753ff0b3a0cc893aa0d3623122c7ac156afdce54071768f6fa"
     },
     {
+      "id": "proof-atlas-audit-preservation",
+      "path": "docs/proof/atlas-audit-preservation.md",
+      "title": "Atlas audit conservation: seven exact additions, originals untouched",
+      "type": "proof-pack",
+      "status": "review",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-17",
+      "reviewSuggested": [],
+      "summary": "Independent Astra review CLEAR: seven exact additions conserved, original trees unchanged, durable ordering negative observed; own-branch handoff follows normal controls.",
+      "tags": [
+        "proof",
+        "atlas",
+        "audit",
+        "conservation"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Execution graph and model",
+          "mermaid": "flowchart LR\n  G[Ground current controls] -->|data| C[Capture originals and seven additions]\n  C -->|data| U[Official register union]\n  U -->|data| O[Exact row and original-state oracles]\n  O -->|data| P[Proof, audit and derived checks]\n  P -->|decision| R[Independent review]\n  R -->|decision| H[Commit and publisher handoff]"
+        }
+      ],
+      "sourceSha256": "d62e69ad4f88ca8373edd77be8691ba0aba0862fefd3fb72c40d6f38bdbe9ef0"
+    },
+    {
       "id": "proof-audit-gate-plan-review",
       "path": "docs/proof/audit-gate-plan-review.md",
       "title": "Independent plan review: audit gate self-test",
@@ -21060,5 +21096,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d7fde000c46c79d92a186df1a4ebd77231e8b3919c7ee3817cad9a9bfe16155d"
+  "graphSha256": "375491343c954cd25bfd48645d75019ddb594ca7da789b1e047d007b456aa86b"
 };
