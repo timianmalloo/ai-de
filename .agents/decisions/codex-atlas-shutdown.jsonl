@@ -1,0 +1,10 @@
+{"agent": "codex-astra-shutdown", "at": 1789754720.7357624, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "codex-atlas-shutdown", "wi": ""}
+{"agent": "codex-astra-shutdown", "at": 1789754720.7598171, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "codex-atlas-shutdown", "wi": ""}
+{"agent": "codex-astra-shutdown", "at": 1789754720.783349, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "codex-atlas-shutdown", "wi": ""}
+{"agent": "codex-astra-shutdown", "at": 1789754720.8063767, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "codex-atlas-shutdown", "wi": ""}
+{"agent": "codex-astra-shutdown", "at": 1789754720.831388, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "codex-atlas-shutdown", "wi": ""}
+{"agent": "codex-astra-shutdown", "at": 1789754720.85535, "code": null, "kind": "allowed", "path": "docs/plans/atlas-session-shutdown.md", "session": "codex-atlas-shutdown", "wi": ""}
+{"agent": "codex-astra-shutdown", "at": 1789754720.8778574, "code": null, "kind": "allowed", "path": "docs/proof/atlas-session-shutdown.md", "session": "codex-atlas-shutdown", "wi": ""}
+{"agent": "codex-astra-shutdown", "at": 1789754720.9015937, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "codex-atlas-shutdown", "wi": ""}
+{"agent": "codex-astra-shutdown", "at": 1789754720.9251113, "code": null, "kind": "allowed", "path": "site/index.html", "session": "codex-atlas-shutdown", "wi": ""}
+{"agent": "codex-astra-shutdown", "at": 1789754720.9491353, "code": null, "kind": "allowed", "path": "site/model.html", "session": "codex-atlas-shutdown", "wi": ""}

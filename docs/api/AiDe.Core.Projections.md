@@ -149,6 +149,10 @@ convention for.
 
 How many listing rows a query asks for.
 
+**Remarks.** The default is the ceiling: one constant in two roles, so a caller who asks for nothing and a
+caller who asks for everything land on the same bound. `GraphQuery.MaxNodes` is shaped the
+same way against `GraphProjection.DefaultMaxNodes`.
+
 ## `EntryPointKind`
 
 *enum* — `EntryPointsProjection.cs`
@@ -177,12 +181,13 @@ Open Sequence is not this query (mapper r5: authorship only, Sequence still disa
 
 | Member | Summary |
 |---|---|
-| `int DefaultMaxRows = 1_254` | How many rows a listing may return, so the response still crosses one IPC frame. |
+| `int MaxRowsCeiling = 1_254` | The most rows a listing may return, so the response still crosses one IPC frame — the query's default and the ceiling `ProjectionService.EntryPoints` clamps to. |
 | `string UnclassifiedReasonPendingClassifier = "classifier-not-admitted"` | **(gap)** |
 
-### `int DefaultMaxRows = 1_254`
+### `int MaxRowsCeiling = 1_254`
 
-How many rows a listing may return, so the response still crosses one IPC frame.
+The most rows a listing may return, so the response still crosses one IPC frame — the
+query's default and the ceiling `ProjectionService.EntryPoints` clamps to.
 
 **Remarks.** **MEASURED, not chosen.** The first value here was 5_000 — "inferred until measured,
 same order as graph node default" — and it was the arithmetic of INV-0003:
@@ -223,6 +228,35 @@ holds only while a row stays under 731 bytes — an identifier twice the fixture
 overflows the frame at this cap too. The durable fix is the byte budget every other
 projection carries; this is the cap the evidence supports today, and the listing's
 `Omitted (n)` disclosure keeps it honest on the surface rather than silent.
+
+
+
+
+
+**A count is only a bound where something clamps it.** Until this was renamed it was
+`DefaultMaxRows` and it was only a default: `ProjectionService.EntryPoints` passed
+`query.MaxRows` straight through, and `EntryPointsListing.FromHasType` floors
+at 1 and ceils at nothing — so any caller naming a number owned the frame. The frame test
+could not see it, because it invoked the operation at its DEFAULT, which is the one request
+that can never exceed the bound. It now invokes every operation at
+`int.MaxValue`, and the service clamps.
+
+
+
+
+
+**Re-derived against a fixture that counts members.** The measuring fixture wrote
+only `has_type` facts while `EntryPointsListing.FromHasType` also appends one
+row per `has_member`, so it under-counted the row universe; it now writes one
+300-character member per type, making that universe 3,001 types + 3,001 members = 6,002 rows.
+MEASURED on the widened fixture: at `int.MaxValue` the response is
+**4,332,058** bytes (2,191,570 before the widening), 4.13x the frame. The arithmetic above
+did not move: the widened fixture measures 730,850 bytes at 1,000 rows and 1,461,628 at 2,000
+— byte for byte what the has_type-only fixture measured — because rows are taken types-first
+and the first 3,001 are the same rows. A member row measures
+`(2,905,355 - 2,191,589) / 1,000` = **713.77** bytes, NARROWER than a type row's
+730.78, so counting members cannot loosen a cap derived from the wider row. 1,254 stands,
+measured rather than assumed.
 
 ## `EntryPointsListing`
 

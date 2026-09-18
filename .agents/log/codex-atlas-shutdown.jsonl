@@ -1,0 +1,22 @@
+{"agent": "codex-astra-shutdown", "at": 1789754054.0364196, "kind": "session-start", "path": "-", "seq": 1, "session": "codex-atlas-shutdown", "tree": "worktree", "wi": "WI-0", "worktree": "C:/Projects/ai-de-docs-atlas-audit-preservation"}
+{"agent": "codex-astra-shutdown", "at": 1789754547.7343, "kind": "claim", "path": "docs/plans/atlas-session-shutdown.md", "seq": 2, "session": "codex-atlas-shutdown", "ttl": 300.0, "wi": "atlas-session-shutdown"}
+{"agent": "codex-astra-shutdown", "at": 1789754547.8890274, "kind": "claim", "path": "docs/proof/atlas-session-shutdown.md", "seq": 3, "session": "codex-atlas-shutdown", "ttl": 300.0, "wi": "atlas-session-shutdown"}
+{"agent": "codex-astra-shutdown", "at": 1789754548.0386875, "kind": "claim", "path": "site/index.html", "seq": 4, "session": "codex-atlas-shutdown", "ttl": 300.0, "wi": "atlas-session-shutdown"}
+{"agent": "codex-astra-shutdown", "at": 1789754548.1806302, "kind": "claim", "path": "site/collaboration.html", "seq": 5, "session": "codex-atlas-shutdown", "ttl": 300.0, "wi": "atlas-session-shutdown"}
+{"agent": "codex-astra-shutdown", "at": 1789754548.3143258, "kind": "claim", "path": "site/model.html", "seq": 6, "session": "codex-atlas-shutdown", "ttl": 300.0, "wi": "atlas-session-shutdown"}
+{"agent": "codex-astra-shutdown", "at": 1789754552.5314744, "kind": "release", "path": "docs/plans/atlas-session-shutdown.md", "seq": 7, "session": "codex-atlas-shutdown", "wi": "WI-0"}
+{"agent": "codex-astra-shutdown", "at": 1789754552.584206, "kind": "release", "path": "docs/proof/atlas-session-shutdown.md", "seq": 8, "session": "codex-atlas-shutdown", "wi": "WI-0"}
+{"agent": "codex-astra-shutdown", "at": 1789754552.6387916, "kind": "release", "path": "site/index.html", "seq": 9, "session": "codex-atlas-shutdown", "wi": "WI-0"}
+{"agent": "codex-astra-shutdown", "at": 1789754552.690214, "kind": "release", "path": "site/collaboration.html", "seq": 10, "session": "codex-atlas-shutdown", "wi": "WI-0"}
+{"agent": "codex-astra-shutdown", "at": 1789754552.7439024, "kind": "release", "path": "site/model.html", "seq": 11, "session": "codex-atlas-shutdown", "wi": "WI-0"}
+{"agent": "codex-astra-shutdown", "at": 1789754715.5054917, "kind": "claim", "path": "docs/plans/atlas-session-shutdown.md", "seq": 12, "session": "codex-atlas-shutdown", "ttl": 300.0, "wi": "atlas-session-shutdown"}
+{"agent": "codex-astra-shutdown", "at": 1789754715.663156, "kind": "claim", "path": "docs/proof/atlas-session-shutdown.md", "seq": 13, "session": "codex-atlas-shutdown", "ttl": 300.0, "wi": "atlas-session-shutdown"}
+{"agent": "codex-astra-shutdown", "at": 1789754715.8312614, "kind": "claim", "path": "site/index.html", "seq": 14, "session": "codex-atlas-shutdown", "ttl": 300.0, "wi": "atlas-session-shutdown"}
+{"agent": "codex-astra-shutdown", "at": 1789754715.9699087, "kind": "claim", "path": "site/model.html", "seq": 15, "session": "codex-atlas-shutdown", "ttl": 300.0, "wi": "atlas-session-shutdown"}
+{"agent": "codex-astra-shutdown", "at": 1789754716.1052597, "kind": "claim", "path": "site/collaboration.html", "seq": 16, "session": "codex-atlas-shutdown", "ttl": 300.0, "wi": "atlas-session-shutdown"}
+{"agent": "codex-astra-shutdown", "at": 1789754723.9137838, "kind": "release", "path": "docs/plans/atlas-session-shutdown.md", "seq": 17, "session": "codex-atlas-shutdown", "wi": "WI-0"}
+{"agent": "codex-astra-shutdown", "at": 1789754723.968417, "kind": "release", "path": "docs/proof/atlas-session-shutdown.md", "seq": 18, "session": "codex-atlas-shutdown", "wi": "WI-0"}
+{"agent": "codex-astra-shutdown", "at": 1789754724.02366, "kind": "release", "path": "site/index.html", "seq": 19, "session": "codex-atlas-shutdown", "wi": "WI-0"}
+{"agent": "codex-astra-shutdown", "at": 1789754724.0766995, "kind": "release", "path": "site/model.html", "seq": 20, "session": "codex-atlas-shutdown", "wi": "WI-0"}
+{"agent": "codex-astra-shutdown", "at": 1789754724.134095, "kind": "release", "path": "site/collaboration.html", "seq": 21, "session": "codex-atlas-shutdown", "wi": "WI-0"}
+{"agent": "codex-astra-shutdown", "at": 1789754724.1891625, "kind": "session-end", "path": "-", "seq": 22, "session": "codex-atlas-shutdown", "wi": "WI-0", "worktree": "C:/Projects/ai-de-docs-atlas-audit-preservation"}
