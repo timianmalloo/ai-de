@@ -382,6 +382,15 @@ public sealed class BoundsReachTheSurfaceTests
             "ContextMapView.IsDeclared",        // ContextMapSurface.cs:77
             "SolutionTreeResult.Disclosures",   // SolutionTreeSurface.cs:427-439
             "SolutionTreeDisclosure.Message",   // chrome TextBlock; SolutionTreeSurfaceTests T5c/T6
+            // EntryPointsSurface.cs:96-101 puts the disclosures in the chrome TextBlock. ASSERTED,
+            // not read: EntryPointsSurfaceTests.Show_RendersItsDisclosures_NotAProxyForThem walks
+            // the surface's own tree for the text. It was observed RED on the shipped surface,
+            // which keyed the chrome off OmittedByCap — a counter that tracks Disclosures only by
+            // the construction of the single producer (EntryPointsListing.FromHasType:102-110), so
+            // a disclosure the cap did not raise rendered as the kind summary and vanished. Now
+            // keyed off the list. It belongs here rather than in Allowed because it is closed.
+            // Live: DefaultMaxRows fell 5,000 -> 1,254 (6a4656e6), so Omitted (n) now fires.
+            "EntryPointsResult.Disclosures",
             // RENDERED AND ASSERTED, not read: TheComposerRendersItsFieldLevelErrorsTests walks the
             // composer's own tree and finds the spawn contract's verbatim sentence on screen. It is
             // listed here rather than in Allowed because it is closed, not tolerated.

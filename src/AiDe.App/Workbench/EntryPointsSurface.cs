@@ -28,7 +28,7 @@ public sealed class EntryPointsSurface : ContentControl
             HorizontalAlignment = HorizontalAlignment.Left,
         };
         AutomationProperties.SetName(_openSequence, "Open Sequence mapping-unavailable");
-        _chrome.SetResourceReference(TextBlock.ForegroundProperty, "MutedBrush");
+        _chrome.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
         _body.Children.Add(_chrome);
         _body.Children.Add(_openSequence);
         _body.Children.Add(_list);
@@ -93,7 +93,11 @@ public sealed class EntryPointsSurface : ContentControl
         var ux = result.Rows.Count(r => r.Kind == EntryPointKind.Ux);
         var cli = result.Rows.Count(r => r.Kind == EntryPointKind.Cli);
         var unc = result.Rows.Count(r => r.Kind == EntryPointKind.Unclassified);
-        _chrome.Text = result.OmittedByCap > 0
+        // The disclosures are the bound; the counts are a summary of what IS on screen. Key the
+        // caveat off the list itself, never off OmittedByCap: the two move together only by the
+        // construction of today's single producer, so a disclosure the cap did not raise would be
+        // dropped with no trace (session-contracts §8.3a).
+        _chrome.Text = result.Disclosures.Count > 0
             ? string.Join(" · ", result.Disclosures)
             : $"{api} api · {ux} ux · {cli} cli · {unc} unclassified";
         _openSequence.IsEnabled = false;

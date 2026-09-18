@@ -69,6 +69,48 @@ public sealed class EntryPointsSurfaceTests
         });
     }
 
+    /// <summary>
+    /// The listing's bound reaches the screen, and it does so by reading the field the contract is
+    /// about rather than a counter that happens to move with it.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why this matters now.</b> <see cref="EntryPointsProjection.DefaultMaxRows"/> was
+    /// lowered from 5,000 to 1,254 — measured against the IPC frame, not chosen — so
+    /// <c>Omitted (n)</c> fires on real repositories where it previously never did. A listing that
+    /// shows its rows and never says how many it dropped reads as the whole answer.</para>
+    /// <para><b>The second case was red.</b> The chrome line was keyed off
+    /// <c>OmittedByCap &gt; 0</c>. That counter tracks <c>Disclosures</c> only by the construction
+    /// of today's single producer (<c>EntryPointsListing.FromHasType</c>), and nothing in the
+    /// contract says a disclosure must come from the cap — so any disclosure the cap did not raise
+    /// was dropped with no trace, which is the session-contracts §8.3a shape exactly.</para>
+    /// </remarks>
+    [Fact]
+    public void Show_RendersItsDisclosures_NotAProxyForThem()
+    {
+        OnSta(() =>
+        {
+            var surface = new EntryPointsSurface();
+
+            // The live path: the cap fired, and the count is legible.
+            surface.Show(new EntryPointsResult([ApiRow], 46, ["Omitted (46)"], "rev-1"));
+            Assert.Contains("Omitted (46)", VisibleText(surface), StringComparison.Ordinal);
+
+            // A disclosure the cap did not raise. A surface that reads the counter drops this one.
+            surface.Show(new EntryPointsResult([ApiRow], 0, ["Not analysed: vendor/"], "rev-1"));
+            Assert.Contains("Not analysed: vendor/", VisibleText(surface), StringComparison.Ordinal);
+
+            // Nothing was hidden: the kind summary is the chrome and no caveat fires. A caveat that
+            // shows when nothing was hidden trains a reader to skip caveats (DC-025's second half).
+            surface.Show(new EntryPointsResult([ApiRow], 0, [], "rev-1"));
+            var quiet = VisibleText(surface);
+            Assert.Contains("1 api", quiet, StringComparison.Ordinal);
+            Assert.DoesNotContain("Omitted", quiet, StringComparison.Ordinal);
+        });
+    }
+
+    private static readonly EntryPointRow ApiRow =
+        new(EntryPointKind.Api, "Orders.OrdersController", "Orders.OrdersController", null);
+
     private static void OnSta(Action body) => Sta.Run(body, 60);
 
     private static Button FindSequence(DependencyObject root)
