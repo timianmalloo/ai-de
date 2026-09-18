@@ -361,14 +361,24 @@ public sealed class NewSessionSheetViewModel
     /// re-derivation of its rule — or the resolved entry module is not on disk; <i>needs sign-in</i>
     /// when launch observed and health is <c>needs-login</c> or there is no account; <i>ready</i> otherwise.
     /// </summary>
-    public static IReadOnlyList<AccountRow> RowsOf(ProviderRegistry registry, string? adapterInstallRoot)
+    public static IReadOnlyList<AccountRow> RowsOf(
+        ProviderRegistry registry, string? adapterInstallRoot, NativeCommandLocator? locator = null)
     {
         ArgumentNullException.ThrowIfNull(registry);
+
+        // THE SEAM, and its absence is why INV-0013 shipped. The PATH lookup stopped at
+        // EngineCatalog: locator-taking overloads existed, but every caller above them used the
+        // no-locator one, so NO TEST ABOVE THE CATALOG COULD CONTROL WHAT PATH SAYS. A defect about
+        // what the product believes is installed was therefore unreachable from the only place that
+        // renders that belief. Defaulting to FromEnvironment() keeps every existing caller and every
+        // existing behaviour exactly as it was — this phase changes nothing a user can see, and is
+        // the prerequisite for the phase that does.
+        locator ??= NativeCommandLocator.FromEnvironment();
 
         var rows = new List<AccountRow>();
         foreach (var engine in EngineCatalog.Rows)
         {
-            var launch = LaunchRefusal(engine.Id, adapterInstallRoot);
+            var launch = LaunchRefusal(engine.Id, adapterInstallRoot, locator);
             var accounts = registry.Rows
                 .Where(r => string.Equals(r.ProviderId, engine.Provider, StringComparison.Ordinal))
                 .SelectMany(r => r.Accounts)
@@ -401,10 +411,26 @@ public sealed class NewSessionSheetViewModel
     /// (<see cref="EngineCatalog.InstallRefusal(string, string)"/>; DC-223: this sheet once read
     /// <c>Arguments[0]</c> as the entry, which for a native row is <c>--acp</c>).
     /// </summary>
-    private static string? LaunchRefusal(string engineId, string? adapterInstallRoot)
-        => adapterInstallRoot is null
-            ? "no adapter root — no provider file"
-            : EngineCatalog.InstallRefusal(engineId, adapterInstallRoot);
+    private static string? LaunchRefusal(
+        string engineId, string? adapterInstallRoot, NativeCommandLocator locator)
+        // ASK THE MACHINE, NOT THE CONFIG FILE (INV-0013, DC-228). This branch used to return
+        // "no adapter root — no provider file" whenever ~/.aide/providers.json was absent, which
+        // short-circuited EngineCatalog.InstallRefusal — the single installed-reading DC-223
+        // created — so the engine's command on PATH was NEVER PROBED for any engine. On a clean
+        // machine the file is always absent, so every row read "not configured" while copilot sat
+        // on PATH. The comment three lines above already stated the correct rule ("ResolveLaunch's
+        // own refusal is the input, NOT a re-derivation of its rule"); this line was exactly such a
+        // re-derivation, and code disagreed with its own contract in adjacent lines.
+        //
+        // An absent file is not an absent root: Ruling 104 (2) already defines what an absent
+        // adapterInstallRoot MEANS — the adapters directory beside the provider file. So the
+        // absence is resolved to that default and the catalog is asked, which is the whole point of
+        // there being one installed-reading. A native row like copilot needs no adapter root at all
+        // and now says so.
+        => EngineCatalog.InstallRefusal(
+            engineId,
+            adapterInstallRoot ?? ProviderConfiguration.DefaultAdapterInstallRoot(ProviderConfiguration.DefaultPath),
+            locator);
 
     /// <summary>
     /// What the sheet says about the lease. <b>A sentence, never a <c>Lease</c></b> (Ruling 42;
