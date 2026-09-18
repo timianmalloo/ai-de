@@ -2887,3 +2887,246 @@ contract test is the control, token injection is the fix and lands with the trut
 which P0b asserts no hex literals.
 
 ---
+
+---
+
+## Ruling 143 — the clamp is admitted now; the frame test invokes every count parameter at `int.MaxValue`, which is the control that fails when a clamp is missing
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17), on the finding the Ruling 138
+implementer raised and did not fix because 138 authorised one number.*
+
+**RULING:** The conductor lands, as one Core-owned commit under Ruling 138's authority,
+`Clamp(query.MaxRows, 1, EntryPointsProjection.MaxRowsCeiling)` in `ProjectionService.EntryPoints`
+(`:699-700`), with `DefaultMaxRows` renamed **`MaxRowsCeiling`** and the query default pointing at it
+(the one-constant-two-roles shape `Graph` already uses at `:595`); in the same commit
+`EveryOperationFitsTheFrameTests.AtCeiling()` passes **`int.MaxValue`** for every count parameter of
+every operation — not the named ceiling constant and not the default.
+
+**BECAUSE:** `ProjectionService.cs:699-700` passes `query.MaxRows` straight through and
+`EntryPointsProjection.cs:102` floors at 1 only, while every other operation clamps (`:363`,
+`:422-423`, `:516`, `:595`, `:885`, `:912-913`, `:927`, `:996`, `:1139`, `:1195` via `Clamp` at
+`:1615`) — verified. **The test at `:131` invokes `new EntryPointsQuery()` and at `:103` invokes
+`Graph` at its default too, so the table never proves a clamp exists for *any* operation**; invoking
+at the named ceiling proves the ceiling fits, and invoking *above* it is the only thing that proves
+the caller cannot exceed it. On the current hostile fixture `EntryPoints(int.MaxValue)` builds 3,001
+rows ≈ 2.19 MB, so the test change is red on `main` before the clamp lands — **red-first is satisfied
+by the test change itself.** Severity Major stands rather than Blocker: `IpcServer.cs:355-360` returns
+`PayloadTooLarge` with the byte count, so the failure is a clean structured error rather than
+INV-0003's hang.
+
+**CONFIDENCE:** Verified.
+
+**SCOPE EFFECT:** Admits one commit (clamp + rename + the test table at `int.MaxValue`). Cuts: any
+change to `IpcFraming.MaxFrameBytes`; any App or `EntryPointsSurface.cs` change; any pagination.
+
+**CONDITIONS:** (a) The test change is committed and shown red **before** the clamp is committed — two
+commits, or a recorded red run. (b) Grok told by `request-add` before and after, as 138 required.
+(c) Lands in the same lane as 144 and 145, ahead of them.
+
+**RECORD AS:** Ruling 143 — EntryPoints MaxRows clamped at the ProjectionService boundary
+(`MaxRowsCeiling`); the frame test now invokes every count parameter at `int.MaxValue`, so a missing
+clamp is red rather than a default that happens to fit.
+
+---
+
+## Ruling 144 — the hostile fixture gains `has_member` facts at the same hostility, in 143's commit; the ceiling is re-derived only if 145's byte budget does not land
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17).*
+
+**RULING:** Widen `EveryOperationFitsTheFrameTests.Hostile()` with `has_member` facts — **one
+300-character member per type, at minimum** — so the fixture's row universe is types **+** members as
+`FromHasType` builds it; record in the commit the measured `WireBytes` at `int.MaxValue` and **the
+per-row cost of a member row beside the type row's 730.78**. Re-derive `MaxRowsCeiling` against the
+widened fixture **only if** Ruling 145's byte budget has not landed when the lane closes; if it has,
+the byte budget is the bound and the count ceiling is no longer load-bearing for the frame.
+
+**BECAUSE:** `Hostile()` at `:46-65` writes only `has_type` and `depends_on`; `FromHasType` at
+`:81-100` appends one row per member — verified, the fixture under-counts. **But `built.Take(cap)` at
+`:104` takes type rows first**, so with 3,001 types the first 1,254 rows never include a member and
+the measured bytes do not move; what the widening buys is an honest count and a measured member-row
+width, and the arithmetic in the constant's remark (`:40-53`) must cite it. Ordering the fixture
+change with 143's test change keeps one red run for both.
+
+**CONFIDENCE:** Verified (the fixture, `FromHasType`, the `Take` order). **Inferred: that a 300-char
+member row is narrower than a type row** — the commit's measurement replaces this inference; do not
+carry it forward.
+
+**SCOPE EFFECT:** Admits the fixture widening into 143's commit. **Defers to D-1 as a finding, not
+ruled here:** `Take(cap)` drops members before types, so under any count cap **members are always what
+is omitted** — a UV-0 semantic question for the owning lane.
+
+**CONDITIONS:** Termination variant on the re-derivation: if 145 has not landed by the lane's close
+(or 48 h from this ruling, whichever is first), the conductor re-derives the constant from the widened
+fixture and records the arithmetic in the commit; otherwise the re-derivation is not done.
+
+**RECORD AS:** Ruling 144 — frame fixture widened with `has_member` rows at 300-char hostility,
+measured in the commit; ceiling re-derived only if the byte budget (145) does not land in the lane.
+
+---
+
+## Ruling 145 — the measurement is owed first and is one call; the byte budget is admitted, in the row-accumulation shape the listing's siblings already use, not Graph's shrink loop
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17).*
+
+**RULING:** (1) Before any further EntryPoints code, the conductor records **one `EntryPoints` call
+against a built workspace db of this repository** — `returned.rows`, `omitted.by_cap` and the
+response's `WireBytes` — in the decision note; the emitting source already exists
+(`ProjectionService.cs:701-702`), so this is a **read, not a build**. (2) The byte budget is admitted,
+conductor-authored under 138's Core-owned precedent, as its own commit in the same lane: rows
+accumulate against `MaxResponseBytes` in the shape **`Evidence` uses at `:540`**
+(`bytes + size > MaxResponseBytes` → stop, count the rest as omitted), with `Omitted (n)` covering
+rows dropped by either bound; `MaxRowsCeiling` remains as the count ceiling. **Graph's shrink-to-fit
+loop (`:618-665`) is not the reuse target** — it exists for a non-linear structure where bytes do not
+fall with count, and a listing is linear.
+
+**BECAUSE:** The class is count-versus-bytes, and the constant's own remark
+(`EntryPointsProjection.cs:55-59`) already names the byte budget as the durable fix; `Find` (`:967`),
+`Interaction` (`:1161`), `SearchContent` (`:1276`) and `Evidence` (`:540`) all carry it, so this is
+reuse-in-codebase, one rung above YAGNI. **Whether the cap binds today on this repository is not
+recorded** — the conductor's "will bind on real repositories" is an inference from identifier length,
+not a measurement — and that fact decides urgency, not admission.
+
+**CONFIDENCE:** Verified (the four accumulation sites, the shrink loop, the activity tags, the
+remark). **Not recorded:** this repo's `has_type + has_member` row count. **Inferred** (the
+conductor's, not the Owner's): that the cap truncates real data.
+
+**SCOPE EFFECT:** Admits the measurement and one byte-budget commit. Cuts: pagination; any change to
+the wire field names; any App change — but the E7 surface list is written before the commit, and the
+App reader of `OmittedByCap` / `Disclosures` (`EntryPointsSurface.cs`) is **opened and read**, not
+changed, to confirm `Omitted (n)` renders the union.
+
+**CONDITIONS:** (a) Red-first: a test whose rows carry identifiers wide enough that `MaxRowsCeiling`
+rows overflow `MaxResponseBytes` is shown red before the budget lands. (b) Test Architect adversary as
+a separate sub-agent (Ruling 133's shape). (c) If the measurement in (1) shows `omitted.by_cap = 0` on
+this repository, the commit still lands — the class is bounded, not closed, regardless — but the
+decision note says so plainly.
+
+**RECORD AS:** Ruling 145 — EntryPoints measured once against this repo's workspace db (rows, omitted,
+bytes) before further change; byte budget admitted in `Evidence`'s row-accumulation shape,
+conductor-authored, own commit, `Omitted (n)` covers both bounds.
+
+---
+
+## Ruling 146 — the floor keys on the environment-independent counter if it is one; `--update` refuses to lower any key without an explicit reasoned flag, and the join never passes it
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17), on the conductor's own
+measurement and its own error.*
+
+**RULING:** **(1) Unconditionally:** `verify-test-run.py --update` refuses to write any key **below**
+its committed value unless `--allow-lower "<reason>"` is given, printing key, old and new;
+`docs/coordination/join.json` does **not** pass the flag; red-first via `verify-gate-self-tests.py`
+planting a baseline above the observed count and showing the refusal. **(2) Conditionally:** the
+conductor fetches `total` per key from CI run 35228503081's `.trx` and from this machine's `.trx`. If
+`total` is equal per key across both, the floor moves from `executed` to **`total`** (the gate at
+`:416` reads `executed`; the file's key stays `minimumExecuted` only if renamed — **rename it**), and
+the gate gains the check its own docstring already claims at `:16` but the code does not perform:
+**every `NotExecuted` result's name must appear in a committed `expectedSkips` list**, else it is a
+finding. If `total` is **not** equal, fall back to per-environment keys (`<key>@linux`,
+`<key>@windows`) selected by `platform.system()`.
+
+**BECAUSE:** `--update` at `:453-475` merges `observed` over the baseline with no comparison — **it
+lowers silently**, verified — and the join runs it three times before the `--no-run` check, so the
+floor is re-set by whichever machine joined; `--refuse-upward-drift` (`:435-444`) fires only on
+`executed > expected`. The environment delta the conductor measured is exactly the
+dynamically-skipped tests, which a `.trx` records as `NotExecuted` — **inside `total`, outside
+`executed`** — so `total` is the counter that should not vary by OS, and a crashed host writes fewer
+results so `total` still drops on the DC-012 shape. That makes `total ≥ floor` **plus**
+`NotExecuted ⊆ expectedSkips` strictly stronger than `executed ≥ floor` and meetable everywhere; a
+min-across-environments floor would leave an 8-test blind spot on Linux and make upward-drift fire
+falsely on any Linux join. The docstring's item 3 is **a control claiming a check it does not do** —
+`:421-428` checks outcome, failed, error, aborted and timeout only.
+
+**CONFIDENCE:** Verified (the `--update` path, the join contract, `:416`, the absence of a skip
+check). **Not opened by the Owner:** the CI/local counts table — the conductor's report. **The
+deciding fact, `total` equality across environments, was not verified by the Owner** — which is why
+(2) is conditional.
+
+**SCOPE EFFECT:** Admits (1) now; admits (2) once the fact is fetched. Cuts: any change to CI's floor
+semantics (`build.yml` still runs without the drift flag); any change to the split invariant.
+
+**CONDITIONS:** (a) The `total` comparison is recorded with both run ids. (b) If (2)'s primary branch
+is taken, the `expectedSkips` list is populated **from the names the local and CI `.trx` files
+actually carry, not from memory**. (c) The docstring at `:16` is corrected to match the code in
+whichever branch lands.
+
+**RECORD AS:** Ruling 146 — `verify-test-run.py --update` refuses to lower a floor without
+`--allow-lower <reason>`; floor re-keyed to the environment-independent `total` plus a named
+`expectedSkips` list if `total` is equal across CI and local, else per-environment keys.
+
+**CONDUCTOR'S RETURN ON 146(2) — THE FACT IS FETCHED AND THE PRIMARY BRANCH IS SELECTED.** `total` per
+key, from CI run **35228503081**'s own `.trx` artefacts and from local runs at the same SHA
+`f009b6f6`:
+
+| key | CI `total` | local `total` | equal? | CI `executed` | local `executed` |
+|---|---|---|---|---|---|
+| `AiDe.App.Tests` | 1053 | 1053 | **yes** | 1053 | 1053 |
+| `AiDe.Core.Tests.portable` | 2575 | 2575 | **yes** | 2575 | **2574** |
+| `AiDe.Core.Tests.nonportable` | 181 | 181 | **yes** | **177** | 181 |
+
+**`total` is equal on every key; `executed` differs on two, in opposite directions.** The Owner's
+reasoning is confirmed by measurement: the delta is exactly the dynamically-skipped tests, which the
+`.trx` counts in `total` and not in `executed` — four of them on CI's Windows runner, one on the
+Linux portable half, and a different one locally. So the floor moves to `total`, the four CI skips
+become the seed of `expectedSkips`, and the per-environment fallback is **not** taken.
+
+This ruling also closes the conductor's own error of earlier today: the baseline was first set from
+`total` while the gate read `executed`, putting two keys above anything CI could produce. Under 146
+the two finally mean the same thing.
+
+---
+
+## Ruling 147 — the type scale does not change and the detector's threshold does not change; 11px is a bounded exemption for keystroke labels only, and the mockup misapplied the token
+
+*Filed by the conductor verbatim from the Owner's return (2026-09-17). **This ruling corrects the
+conductor**, who reported the finding as a conflict between two committed controls and routed it up as
+unresolvable from the lane.*
+
+**RULING:** Keep `scale: [11px, …]` and keep the detector as it is. Amend `DESIGN.md:84` with one
+clause: **11px is for keystroke labels only (`<kbd>`-shaped, ≤ 20 characters), never running text** —
+which is what `:750` ("11px key labels") and `:1101` ("11px only for a keystroke") already state. The
+mockup's `.prov-note` and `.sr-trace` move to `--t-sm`; `.why code` stays, as `code` is exempt. The
+conductor applies the change, re-runs `ui-craft-gate.py --a11y-obligation --gate`, and a **separate**
+UX & Accessibility instance in Adversary mode clears the veto on that output (Ruling 133's shape); the
+authoring instance does not clear it.
+
+**BECAUSE:** Impeccable's `tiny-text` (`checks.mjs:3366-3375`) fires only on direct text **over 20
+characters at under 12px**, outside `kbd`/`code`/`label`/`meta` contexts; `undersized-ui-text`
+(`:3410-3428`) has an **11px floor**, so 11px passes it. A keystroke label is short and `kbd`-shaped
+and is exempt from both — **so the design system's stated 11px use and the detector under
+`--a11y-obligation` do not disagree, and never did.** The mockup applies `--t-xs` to a provenance note
+and a screen-reader trace, which are running text and outside the design system's own constraint;
+editing them is not "editing the mockup off the design system", **it is bringing it onto it**.
+`docs/reviews/ui-workbench.md:44` already settled the same question the same way. WCAG 2.2 AA sets no
+pixel floor, so no success criterion is being waived — the exemption is against the pack's CD12 floor,
+and it is bounded by the detector's own exemption logic, so it cannot be widened without the gate
+noticing.
+
+**CONFIDENCE:** Verified (`DESIGN.md:84/:750/:1101`, both detector rules, the mockup's four `--t-xs`
+sites, the persona's veto and D3 clauses, `ui-workbench.md:44`). **Inferred:** that the two Blockers
+are `.prov-note` and `.sr-trace` — the Owner did not run the gate; the conductor fetches the two
+Blocker snippets and confirms each is over 20 characters of non-`kbd` text before applying the fix.
+
+**SCOPE EFFECT:** Admits one `DESIGN.md` clause, two CSS token changes, one gate re-run, one adversary
+clearance. Cuts: any change to the detector; any change to CD12; any retuning of the scale.
+**Finding, not ruled:** `docs/reviews/ui-mockups-craft-gate.md:41` dispositions 7 `tiny-text` findings
+as "deliberate IDE density" with **no a11y-lens clearance recorded** — CD12 does not permit that
+disposition; filed for the next review pass.
+
+**CONDITIONS:** (a) The mockup stays "not approved" until the adversary clearance is on disk citing
+the gate output at 0 accessibility-cluster findings. (b) The `sr-trace` change is verified in the
+`screenreader` persona, since it is `display:none` otherwise.
+
+**RECORD AS:** Ruling 147 — 11px stays on the scale as a keystroke-label-only step (`DESIGN.md` clause
+added); detector unchanged; the first-use mockup's `prov-note` and `sr-trace` move to 12px; a separate
+UX & Accessibility adversary clears on the re-run gate output.
+
+**CONDUCTOR'S RETURN ON 147 — CONFIRMED AND APPLIED.** The gate's JSON gives the evidence as
+`Tiny body text - 11px body text` for both Blockers, and the mockup had exactly three `--t-xs` uses of
+which one (`.why code`) is exempt — so two non-exempt uses, two Blockers, matching the Owner's
+inference by count and by the detector's own wording. Applied: `.prov-note` and `.sr-trace` to
+`--t-sm`; the clause added at `DESIGN.md:84` naming why the detector agrees. Re-run:
+`ui-craft-gate.py --a11y-obligation --gate` → **exit 0**, six advisory Minors. The hub note was
+rewritten to record the wrong diagnosis and how it was caught, not only the outcome. The mockup
+remains **not approved**: condition (a)'s adversary clearance is not on disk.
+
+---

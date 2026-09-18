@@ -2431,7 +2431,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8da981119c695cd2c33dc79c8ffdadab28f197c5d0cec02f372e74aa0855ecdb"
+      "sourceSha256": "0e70254642aa93a9db489f0155c9002c047b1ff7d7866f03d776e427ffa3b2bb"
     },
     {
       "id": "api-aide-core-promptcompilation",
@@ -5524,10 +5524,6 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         },
         {
-          "to": "plan-atlas-views",
-          "rel": "relates-to"
-        },
-        {
           "to": "adr-0018-node-content-reader-contract",
           "rel": "depends-on"
         },
@@ -5537,7 +5533,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "af85cdadb1ef2c942a16aed8c5cacb2fdb770d63d32d423bbfee35934d662f3e"
+      "sourceSha256": "901ce3ff8811cd55d354906d2834019484e0790115b6e045baf0735c5e1d6c12"
     },
     {
       "id": "note-d1-codex-entry-point-handshake-r2",
@@ -9550,7 +9546,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f9361c97425fc948d1eddc954b3a855fe5117494a02408a79301c0c15f421aaa"
+      "sourceSha256": "3154e1d46047898959843cef3378de71e346bf4c0d6c1289b0c36e8f91fe3bf6"
     },
     {
       "id": "design-session-profiler",
@@ -10812,7 +10808,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4373e6470bdb7bb01145cc03f71f33bf538d5dde9f1b9feb5711bb132343c7de"
+      "sourceSha256": "c653c18c49decbb7ad5d90198e8e93dfffaa71df93ae2791253dc0342009a966"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -21140,5 +21136,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "bec0e917990a005d0e5b279545b13349a6ed3a2b2c69cb5d63ef51125134232a"
+  "graphSha256": "5afa16c48d17cad0bc009afb49e5b037c51d3c7e7d38fe36e83f16f853b5d676"
 };
