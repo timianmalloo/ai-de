@@ -712,8 +712,13 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
             using var reader = store.BeginRead();
             var candidates = reader.SourceHasTypeNodes();
             var members = reader.SourceHasMembers();
+            // Clamp, not trust: the listing floors at 1 and ceils at nothing, so an unclamped
+            // MaxRows hands the frame budget to the caller. Every other operation here clamps.
             var result = EntryPointsListing.FromHasType(
-                candidates, query.MaxRows, reader.CurrentSourceRevision(), members);
+                candidates,
+                Clamp(query.MaxRows, 1, EntryPointsProjection.MaxRowsCeiling),
+                reader.CurrentSourceRevision(),
+                members);
             activity?.SetTag("returned.rows", result.Rows.Count);
             activity?.SetTag("omitted.by_cap", result.OmittedByCap);
             activity?.SetTag("outcome", "ok");

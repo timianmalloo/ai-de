@@ -28,7 +28,7 @@ public sealed class EntryPointsSurface : ContentControl
             HorizontalAlignment = HorizontalAlignment.Left,
         };
         AutomationProperties.SetName(_openSequence, "Open Sequence mapping-unavailable");
-        _chrome.SetResourceReference(TextBlock.ForegroundProperty, "MutedBrush");
+        _chrome.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
         _body.Children.Add(_chrome);
         _body.Children.Add(_openSequence);
         _body.Children.Add(_list);
@@ -93,9 +93,19 @@ public sealed class EntryPointsSurface : ContentControl
         var ux = result.Rows.Count(r => r.Kind == EntryPointKind.Ux);
         var cli = result.Rows.Count(r => r.Kind == EntryPointKind.Cli);
         var unc = result.Rows.Count(r => r.Kind == EntryPointKind.Unclassified);
-        _chrome.Text = result.OmittedByCap > 0
-            ? string.Join(" · ", result.Disclosures)
-            : $"{api} api · {ux} ux · {cli} cli · {unc} unclassified";
+        // The disclosures are the bound; the counts are a summary of what IS on screen. Key the
+        // caveat off the list itself, never off OmittedByCap: the two move together only by the
+        // construction of today's single producer, so a disclosure the cap did not raise would be
+        // dropped with no trace (session-contracts §8.3a).
+        // AND, not either/or — Grok's resolution (48ff227d), adopted here at the seam. This session
+        // found the same proxy defect independently and deliberately left the counts/disclosure
+        // question to the UX lens; Grok had already answered it, and better. When a disclosure fires
+        // the listing is INCOMPLETE, which is exactly when a reader most needs the shape mix — so
+        // dropping the counts to make room for the caveat hides the thing the caveat is about.
+        var counts = $"{api} api · {ux} ux · {cli} cli · {unc} unclassified";
+        _chrome.Text = result.Disclosures.Count > 0
+            ? counts + " · " + string.Join(" · ", result.Disclosures)
+            : counts;
         _openSequence.IsEnabled = false;
     }
 

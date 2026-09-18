@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-17T13:28:27Z",
+  "generated": "2026-09-18T18:17:52Z",
   "audit": [
     {
       "actor": null,
@@ -19846,152 +19846,731 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2P4TBCWP84Q6SGXHD7QBD5K",
-      "shortname": "rulings-122-126",
-      "datetime": "2026-09-16T22:18:54Z",
-      "session": "claude-conductor-watch-0915",
-      "prompt": "continue with the owed-by-this-seat and unassigned pieces, proactively coordinating with others",
-      "summary": "Five rulings filed: 122 (DeclaredDeploymentContext admitted as a specified read-only seam, filed a day late unchanged with a dated rider), 123 (the archetype grammar's duplicate Type keyword is a verified defect - the Color conflict is NOT, no signature in the repo writes it - Codex's x- facets admitted for serialization only, source fix is a Claude knowledge lane), 124 (Ruling 121's spike conditions met; manual Linux builds accepted because the coverage gate is Windows-only in CI; combined coverage run and a proof-doc frontmatter check required; the Atlas ordering LIFTED), 125 (four of the five dropped controls admitted as one Claude lane, Linux coverage deferred to a measurement), 126 (main-red lane opens now for groups 1-2 with groups 3-4 held to a dated 48h variant). Measured before acting: NEITHER Atlas candidate modifies any of the three red-test files (git diff --numstat 0 0 against each merge-base), so the collision I warned about was not real; notices sent to both Atlas programmes and the watcher.",
-      "kind": "skill",
-      "skill": "conductor-watch",
-      "tool": null,
       "actor": "claude-conductor",
       "artifacts": [
         "docs/notes/addendum-c-council-rulings.md"
       ],
+      "datetime": "2026-09-16T22:18:54Z",
+      "done_when": "122-126 filed on main and their requests resolved; lane/main-red-0915 open with the Atlas seam measured and notified; the dropped controls admitted as a lane",
+      "fan_out": 1,
+      "git": {
+        "branch": "conductor/watch-0915",
+        "pushed": null,
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc"
+      },
+      "goal": "Clear the Claude Owner seat's backlog (122, 123, 124) and take the unassigned work (the dropped controls, the main-red repair lane), coordinating each with the watcher and the affected programme before acting",
+      "id": "al-01M2P4TBCWP84Q6SGXHD7QBD5K",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "continue with the owed-by-this-seat and unassigned pieces, proactively coordinating with others",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "rulings-122-126",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "conductor-watch",
+      "summary": "Five rulings filed: 122 (DeclaredDeploymentContext admitted as a specified read-only seam, filed a day late unchanged with a dated rider), 123 (the archetype grammar's duplicate Type keyword is a verified defect - the Color conflict is NOT, no signature in the repo writes it - Codex's x- facets admitted for serialization only, source fix is a Claude knowledge lane), 124 (Ruling 121's spike conditions met; manual Linux builds accepted because the coverage gate is Windows-only in CI; combined coverage run and a proof-doc frontmatter check required; the Atlas ordering LIFTED), 125 (four of the five dropped controls admitted as one Claude lane, Linux coverage deferred to a measurement), 126 (main-red lane opens now for groups 1-2 with groups 3-4 held to a dated 48h variant). Measured before acting: NEITHER Atlas candidate modifies any of the three red-test files (git diff --numstat 0 0 against each merge-base), so the collision I warned about was not real; notices sent to both Atlas programmes and the watcher.",
       "tags": [
         "coordination",
         "main-red"
       ],
-      "outcome": "success",
-      "goal": "Clear the Claude Owner seat's backlog (122, 123, 124) and take the unassigned work (the dropped controls, the main-red repair lane), coordinating each with the watcher and the affected programme before acting",
-      "done_when": "122-126 filed on main and their requests resolved; lane/main-red-0915 open with the Atlas seam measured and notified; the dropped controls admitted as a lane",
       "tier": "T1",
-      "fan_out": 1,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "git": {
-        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
-        "short": "bcf4959bc",
-        "branch": "conductor/watch-0915",
-        "pushed": null
-      }
+      "tool": null
     },
     {
-      "id": "al-01M2P4V7C545S1VWKHA2TJAMP5",
-      "shortname": "join-rulings-122-126",
+      "actor": null,
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
       "datetime": "2026-09-16T22:19:22Z",
-      "session": "claude-conductor-watch-0915",
+      "done_when": "main carries 122-126; gates 38 green; pushed",
+      "duration_seconds": 0.0,
+      "fan_out": 0,
+      "goal": "Land the Owner seat's backlog so Codex, Atlas and the watcher are not waiting on decisions",
+      "id": "al-01M2P4V7C545S1VWKHA2TJAMP5",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of conductor/watch-0915 into main",
-      "summary": "Docs-only join: Rulings 122-126 filed after the Claude session's usage cap, with the three requests they answer resolved on the ledger (E2 seam, G6 grammar finding, Ruling 121 spike checkpoint). Measured before acting on 126: neither Atlas candidate modifies any of the three main-red test files. recount_seconds=0 (docs_only=True).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/notes/addendum-c-council-rulings.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land the Owner seat's backlog so Codex, Atlas and the watcher are not waiting on decisions",
-      "done_when": "main carries 122-126; gates 38 green; pushed",
-      "tier": "T1",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      },
-      "started_at": "2026-09-16T22:19:22Z",
-      "duration_seconds": 0.0
-    },
-    {
-      "id": "al-01M2P5KS966691R0H9E87ER5HV",
+      "session": "claude-conductor-watch-0915",
       "shortname": "join-rulings-122-126",
-      "datetime": "2026-09-16T22:32:47Z",
-      "session": "claude-conductor-watch-0915",
-      "prompt": "the join of the resolved merge into main",
-      "summary": "Docs-only join: Rulings 122-126 filed after the Claude session's usage cap, with the three requests they answer resolved. The join's first attempt stopped at its gate line because the PRIMARY's test artifacts were from 2026-09-14 (every join since ran in a worktree); refreshed under an announced desktop slot - Core 2746, portable 2571, nonportable 175, App 1051, all baselines met, outcome Completed - and all fifteen CI-red tests passed here, a second confirmation of INV-0012. recount_seconds=0 (docs_only=True).",
-      "kind": "skill",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
       "skill": "execute-with-coordination",
-      "tool": null,
+      "started_at": "2026-09-16T22:19:22Z",
+      "summary": "Docs-only join: Rulings 122-126 filed after the Claude session's usage cap, with the three requests they answer resolved on the ledger (E2 seam, G6 grammar finding, Ruling 121 spike checkpoint). Measured before acting on 126: neither Atlas candidate modifies any of the three main-red test files. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
       "actor": null,
       "artifacts": [
         "docs/notes/addendum-c-council-rulings.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Land the Owner seat's backlog so Codex, Atlas and the watcher are not waiting on decisions",
+      "datetime": "2026-09-16T22:32:47Z",
       "done_when": "main carries 122-126; gates 38 green; pushed",
-      "tier": "T1",
+      "duration_seconds": 1.0,
       "fan_out": 0,
+      "goal": "Land the Owner seat's backlog so Codex, Atlas and the watcher are not waiting on decisions",
+      "id": "al-01M2P5KS966691R0H9E87ER5HV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of the resolved merge into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-rulings-122-126",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-09-16T22:32:46Z",
-      "duration_seconds": 1.0
+      "summary": "Docs-only join: Rulings 122-126 filed after the Claude session's usage cap, with the three requests they answer resolved. The join's first attempt stopped at its gate line because the PRIMARY's test artifacts were from 2026-09-14 (every join since ran in a worktree); refreshed under an announced desktop slot - Core 2746, portable 2571, nonportable 175, App 1051, all baselines met, outcome Completed - and all fifteen CI-red tests passed here, a second confirmation of INV-0012. recount_seconds=0 (docs_only=True).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2P6A06BF6W87739HN2VSXT3",
-      "shortname": "join-main-red-groups-1-2",
-      "datetime": "2026-09-16T22:44:55Z",
-      "session": "claude-conductor-watch-0915",
-      "prompt": "the join of lane/main-red-0915 into main",
-      "summary": "The first repair of the tests that have kept main red since 2026-09-12. Method-level Platform=Windows traits on the four EngineCatalogTests locator tests and the purge test (class-level would have stripped Linux coverage from 16 passing tests), plus a new portable characterisation test pinning the Linux behaviour with its residual and trigger, proven able to fail by a swapped-arms mutant. Counts: 2567 portable + 180 nonportable = 2747 whole - nothing deleted or skipped. Neither Atlas candidate modifies these files (measured 0 0 against both merge-bases). Groups 3-4 remain held until the Atlas integration lands or 2026-09-18 21:00Z. recount_seconds=544 (docs_only=False).",
-      "kind": "skill",
-      "skill": "execute-with-coordination",
-      "tool": null,
       "actor": null,
       "artifacts": [
         "tests/AiDe.Core.Tests/AgentPlane/TheLocatorTellsShimFromExecutableOnlyByWindowsSuffixTests.cs",
         "docs/investigations/INV-0012-main-red-since-09-12-thirteen-tests-born-red-at-three-joins.md"
       ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Remove the five Linux-only Core failures from main's red set without losing a test, and make the Linux behaviour a control instead of a memoir",
+      "datetime": "2026-09-16T22:44:55Z",
       "done_when": "main carries 7cd82133; recount and gates green in the primary; pushed; the closing entry carries the landed SHA's Build run id and result (Rulings 112 (iii)/117 (i))",
-      "tier": "T1",
+      "duration_seconds": 545.0,
       "fan_out": 0,
+      "goal": "Remove the five Linux-only Core failures from main's red set without losing a test, and make the Linux behaviour a control instead of a memoir",
+      "id": "al-01M2P6A06BF6W87739HN2VSXT3",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "the join of lane/main-red-0915 into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-main-red-groups-1-2",
       "signals": {
-        "verification_path": true,
+        "acceptance_met": true,
         "verification_executed": true,
-        "acceptance_met": true
+        "verification_path": true
       },
+      "skill": "execute-with-coordination",
       "started_at": "2026-09-16T22:35:50Z",
-      "duration_seconds": 545.0
+      "summary": "The first repair of the tests that have kept main red since 2026-09-12. Method-level Platform=Windows traits on the four EngineCatalogTests locator tests and the purge test (class-level would have stripped Linux coverage from 16 passing tests), plus a new portable characterisation test pinning the Linux behaviour with its residual and trigger, proven able to fail by a swapped-arms mutant. Counts: 2567 portable + 180 nonportable = 2747 whole - nothing deleted or skipped. Neither Atlas candidate modifies these files (measured 0 0 against both merge-bases). Groups 3-4 remain held until the Atlas integration lands or 2026-09-18 21:00Z. recount_seconds=544 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
     },
     {
-      "id": "al-01M2QRVRJTTZVA0ZA5RYVPWB8T",
-      "shortname": "join-main-red-char-fix",
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/AgentPlane/TheLocatorTellsShimFromExecutableOnlyByWindowsSuffixTests.cs"
+      ],
       "datetime": "2026-09-17T13:28:26Z",
-      "session": "claude-conductor-watch-0915",
+      "done_when": "main carries 53115a53; recount and gates green; pushed; the landed SHA's Build result recorded",
+      "duration_seconds": 520.0,
+      "fan_out": 0,
+      "goal": "Restore CI's portable half to green - the only failure there is the test I landed",
+      "id": "al-01M2QRVRJTTZVA0ZA5RYVPWB8T",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "the join of lane/main-red-0915 into main",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-main-red-char-fix",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-17T13:19:46Z",
       "summary": "Fast follow to 2a5f1b2d: the new characterisation test asserted against FakePath.AddNpmShim's return (the script) instead of the shim, so its off-Windows arm was red on CI while green here - the platform-arm-nobody-observes-locally class INV-0012 diagnosed, reproduced by the test documenting it. Expected value now derived from the fixture's PATH entries, computed inside the off-Windows arm only. The same run confirmed groups 1-2 worked: the four EngineCatalogTests and the purge test left the portable half and pass on the nonportable half (180 executed, 0 failed). recount_seconds=518 (docs_only=False).",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-owner-d1-admission.md"
+      ],
+      "datetime": "2026-09-15T22:52:52Z",
+      "git": {
+        "branch": "understanding-views-d1",
+        "pushed": null,
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc"
+      },
+      "id": "al-01M2KMBV5ZEQPEFFD7708W28HA",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "re-admit D-1 now",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "owner-d1-admission",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "summary": "Owner ruling admits D-1 Entry-points only. Substrate query still absent; UV-0 is that query. D-2..D-4 keep-deferred. Branch understanding-views-d1 from main bcf4959b.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/entry-points.md"
+      ],
+      "datetime": "2026-09-16T16:48:46Z",
+      "git": {
+        "branch": "understanding-views-d1",
+        "pushed": true,
+        "sha": "aa9e16a81ece87ce7d9086458d3178f98f99b7a0",
+        "short": "aa9e16a81"
+      },
+      "id": "al-01M2NHXVG85NWR87JK2WJW4PAQ",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "keep going / what is blocking Live Open Sequence / who has to resolve mapping-unavailable",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "specify-d1-entry-points",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "summary": "Spec-entry-points draft: listing/unclassified/select-to-graph. Open Sequence blocked by UNASSIGNED mapper — Owner must admit a separate mapping contract; Grok and Codex cannot unilaterally enable it. N4 not self-cleared.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/specs/entry-points.md"
+      ],
+      "datetime": "2026-09-17T13:38:37Z",
+      "done_when": "spec-entry-points draft committed",
+      "git": {
+        "branch": "understanding-views-d1",
+        "pushed": false,
+        "sha": "30d82c3b96190a9e1a2cbc458c80955a07b8a0d1",
+        "short": "30d82c3b9"
+      },
+      "goal": "Specify D-1 listing",
+      "id": "al-01M2QSED6HYQ40BCPVXVDTCDEH",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "AL5b supersede",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "specify-d1-al5b",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "summary": "Honest capture for specify-d1-entry-points",
+      "supersedes": "al-01M2NHXVG85NWR87JK2WJW4PAQ",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/notes/understanding-views-owner-d1-admission.md"
+      ],
+      "datetime": "2026-09-17T13:38:37Z",
+      "done_when": "owner-d1-admission note committed",
+      "git": {
+        "branch": "understanding-views-d1",
+        "pushed": false,
+        "sha": "30d82c3b96190a9e1a2cbc458c80955a07b8a0d1",
+        "short": "30d82c3b9"
+      },
+      "goal": "Admit D-1",
+      "id": "al-01M2QSEDC3B5HADZ18C4ZCJDH6",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "AL5b supersede admission",
+      "session": "grok-understanding-views-conductor",
+      "shortname": "owner-d1-al5b",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": false,
+        "verification_path": true
+      },
+      "skill": "specify",
+      "summary": "Honest capture for D-1 admission",
+      "supersedes": "al-01M2KMBV5ZEQPEFFD7708W28HA",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/EntryPointsProjection.cs",
+        "tools/expected-test-counts.json",
+        "tools/verify-test-run.py"
+      ],
+      "datetime": "2026-09-18T00:40:28Z",
+      "done_when": "main carries the frame fix; CI run id and result recorded; expected failing set enumerated by name, not by count",
+      "duration_seconds": 782.0,
+      "duration_source": "session-start-hook",
+      "git": {
+        "branch": "main",
+        "pushed": true,
+        "sha": "e0a9c116391b625ff534a4d4e9a5d5b4ce30d0c8",
+        "short": "e0a9c1163"
+      },
+      "goal": "Close main's Core red and land the controls that were blocking the fleet",
+      "id": "al-01M2RZA9ATJQNC48P6B05CADRV",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "keep going",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "join-main-red-0915",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-18T00:27:26Z",
+      "summary": "LANDED main f009b6f6 -> e0a9c116, candidate b1fd6ce5, gated against 22572b93.\n\nCI run 35290247518 (Build) at the landed SHA: gates SUCCESS, core-tests SUCCESS, build FAILURE.\nCore's red is CLOSED: EntryPointsAsync built a response 2.09x the transport frame and could not be\nanswered over the wire at all; the row ceiling is now derived from the frame test's own measured\nbytes (730.78 B/row against MaxResponseBytes 917,504, largest cap that fits = 1,254), with\nMaxFrameBytes untouched.\n\nThe build job's failure is the App suite, and it is the expected set - with one correction to the\nenumeration this session filed under Ruling 137.\n\nDETERMINISTIC, 6, unchanged from main's tip:\n  Shell.CodingsLeftExtentTests x4 (Ruling 112's named four; Ruling 126 groups 3-4 hold)\n  BoundsReachTheSurfaceTests.EveryBoundCarryingFieldIsCoveredOrAllowed\n  TokenDisciplineTests.EveryResourceKeyTheAppNames_IsDeclared\nThe last two are repaired on lane/main-red-0915 (9c206784) and drop when it lands.\n\nPOPULATION, 6 at this SHA, 5 at main's tip, membership varies:\n  every member fails with \"the STA thread did not finish within 30s\" or \"within 60s\".\n  At e0a9c116 the members are 3x TheThreadIsChatLikeTests, 2x CodeViewerFollowsSelectionTests and\n  1x DiagnosticsSurfaceTests.\n\nTHE CORRECTION. Ruling 137's return enumerated the population as \"5 x\nSessions.Thread.TheThreadIsChatLikeTests\". That attached a varying population to one class. It is\nnot class-bound: it is STA-timeout failures across the App suite whose membership changes run to\nrun. So the App total moving 11 -> 12 is the population fluctuating by one, NOT the set widening,\nand the deterministic half is bit-for-bit the same six. Ruling 126(ii) requires an intermittent\npopulation be labelled as a population and not by name; the correction is that the label must not\ncarry a class either.\n\nBoundsReachTheSurfaceTests' failure text was checked bit-identical against main's tip before the\nmerge, so the candidate did not widen it even though it edits the same projection.\n\nCARRIED: the EntryPoints ceiling (Ruling 138); the test-count baseline repaired from CI's executed\ncounters, and corrected once after I first read the trx `total` and set two floors no environment\ncould meet; verify-test-run.py naming the failures it counts and refusing upward drift at the join,\nwired PER KEY because the single closing check was blind to the halves; DC-226 control currency in\ncoord claim plus the fleet view (140 of 144 trees stale, max 72 commits behind); DC-227 the join's\nline buffering and per-step state file; the stranded-audit blast radius narrowed to what the running\nsession can act on - the gate that had been refusing joins on another session's dirt; docs-graph\nvalidate wired fail-closed, and main's one dangling edge removed so it does not refuse every join.\n\nGate line before the merge: 37 of 38 green, run bare with its exit status observed (Ruling 128).\n\nFINDINGS RAISED NOT FIXED, now ruled as 143-147: EntryPoints has no caller clamp so 1,254 is a\ndefault and not a ceiling (143 admits the clamp, and the frame test moves to int.MaxValue so a\nmissing clamp is red); the hostile fixture writes no has_member rows (144); the byte budget replaces\nthe count cap (145, measurement owed first); --update lowers a floor silently and the floor is\nenvironment-dependent (146); and 11px was never a conflict - the mockup applied the keystroke token\nto running text (147).\n\nRuling 138(a), answered: the D-1 landing f009b6f6 carries NO closing entry at all - no CI run id, no\nresult. Filed as a 127(iv) breach and an INV-0005 recurrence. This entry is the thing its absence\ncost: main sat red for a working day and the first session to notice had to enumerate the failing\ntest locally.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/DesktopHold.cs"
+      ],
+      "datetime": "2026-09-18T17:56:28Z",
+      "done_when": "the failing step is named from GitHub's job record; the mutation set is recorded as unexecuted, not as an accepted population",
+      "duration_seconds": 60932.0,
+      "duration_source": "session-start-hook",
+      "git": {
+        "branch": "main",
+        "pushed": true,
+        "sha": "62e3ed2999251ed02d179e365b833d724aa47885",
+        "short": "62e3ed299"
+      },
+      "goal": "Correct the closing receipt: the build job failed at an unexecuted control, not at the App set",
+      "id": "al-01M2TTK8HVW7ERBX1FWQZ1JP0E",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "CI e0 FAILED: mutation replay did not start because tracked requests journal was dirty (req-01M2RZF99JPPZ01YKZADWEVDX1, req-01M2RZSWZ18KZYT6ZB6QQYDKJA)",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "correct-join-main-red-0915",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-18T01:00:56Z",
+      "summary": "FORWARD CORRECTION of al-01M2RZA9ATJQNC48P6B05CADRV, which it supersedes. The original stands\nunaltered; this entry says what it got wrong and why that matters.\n\nWHAT THE ORIGINAL SAID: \"The build job's failure is the App suite, and it is the expected set.\"\n\nWHAT IS TRUE, verified from GitHub's own job record rather than from the test output:\nCI run 35290247518, job 105431315889 (build), failedSteps = [\"Mutation replay - the controls can\nactually fail\"] - step 11, NOT the test step. The raw log:\n\n    mutation-replay --self-test: every guard fires, and the scope check is quiet when clean.\n    mutation-replay: REFUSING TO START - the tree is dirty.\n    M .agents/requests.jsonl\n\nSo the mutation set NEVER EXECUTED. No mutant outcome was observed, and nothing about the controls'\nstrength was measured at this SHA. The App step did also fail (1053/1053, 12 results that did not\npass) and that half of the original entry stands - but it is NOT what the job failed on, and citing\nit as \"the failure\" described a known, accepted population while a control silently did not run.\n\nThat is the exact reading error this session spent the day repairing, committed by me in a receipt\nwritten to close it: a gate's reported status taken as a statement about its contents. DC-227's shape,\none level out - there the harness's exit code stood in for the tool's; here the test step's failure\nstood in for the job's.\n\nROOT CAUSE, reproduced by reading rather than inferred:\ntests/AiDe.App.Tests/DesktopHold.cs:98 writes Ruling 115's desktop-hold announcements into\nPrimaryRoot()/.agents/requests.jsonl - a TRACKED file - as a side effect of running App tests.\nPrimaryRoot() resolves through `git rev-parse --git-common-dir`, so on a developer machine with\nlinked worktrees the write lands in the PRIMARY checkout while the lane under test stays clean. That\nis why this never appeared in any local run. CI has exactly one checkout, so the App test step\ndirties its own tree, and the next step's clean-tree guard refuses to start.\n\nThe watcher's lead (R7688) named this helper as a suspected cause and recorded causality as not yet\nreproduced. It is reproduced now, by topology: same write, different tree layout.\n\nA second defect in the same file, separate and not the cause of this: AnnounceStart hard-codes\n`session grok-understanding-views-conductor` in its reason string, so every desktop hold any session\ntakes is attributed to Grok.\n\nDISPOSITION: the mutation control is NOT green and NOT red at e0a9c116 - it is unexecuted, and that\nis recorded as such. It is not an accepted App population. No journal was deleted or reset, no dirty\nguard bypassed, and the original CI evidence is preserved.",
+      "supersedes": "al-01M2RZA9ATJQNC48P6B05CADRV",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-17T13:43:27Z",
+      "id": "al-01M2QSQ8YFM4FTYZBYWXFDV0Q3",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "keep going; also get back to the Owner (Fable) - Conductor (Opus) - Sub.Agent approach; you shouldnt need to block on me to say land the fix - that should be between the Owner and the Watcher (currently the GHCP session); once you land 125 lets review the backlog of To-Do's and see what can safely be done from this session; also here are screenshots (with issues as the title) for when i tried the latest build yesterday on a clean machine: C:\\Users\\malla\\Downloads\\AI-DE new issues; /investigate the issues; /ui-design elevate based on the screen shots and the feedback",
+      "session": "prompt-log",
+      "shortname": "keep going; also get back to the Owner (Fable) - Conductor (Opus) - Sub.…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": "claude-conductor",
+      "artifacts": [
+        "docs/investigations/INV-0013-the-sheet-asks-the-config-not-the-machine.md",
+        "docs/investigations/INV-0014-the-graph-stage-is-capped-and-typescript-provenance-is-a-scope-id.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "datetime": "2026-09-17T13:50:30Z",
+      "done_when": "INV-0013 and INV-0014 on main with necessary+sufficient proof per cause; the classes registered with controls; the phases ruled by the Owner; no implementation started",
+      "fan_out": 3,
+      "git": {
+        "branch": "conductor/watch-0915",
+        "pushed": null,
+        "sha": "d74874c7daa48fd28d66ae2c83573bff1e29a606",
+        "short": "d74874c7d"
+      },
+      "goal": "Find the verified root cause of each reported issue, generalise to the failure class, sweep for siblings, and produce a phased repair plan — stopping at the report",
+      "id": "al-01M2QT45J7V3WF9R59AHD0AF6K",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "/investigate the issues — five operator-reported issues from a clean-machine build test on 2026-09-16, screenshots in C:\\Users\\malla\\Downloads\\AI-DE new issues",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "investigate-clean-machine-issues",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "investigate",
+      "summary": "Three verified root causes, none where the symptom pointed. (1) The New Session sheet answers 'can this engine launch here?' from the product's own config file, short-circuiting EngineCatalog.InstallRefusal whenever providers.json is absent - so a native CLI on PATH reads 'not configured'; proven necessary and sufficient by a headless probe, with four confirmed siblings including a sign-in path hardcoded to claude-code that makes 'ready' unreachable for github, and a test that asserts the defect as the spec. (2) The Explore graph fills 21.8% of its pane because CanvasPage's #stage carries height:440px; fit()'s own arithmetic predicts the drawn disc to 1px. (3) TypeScript and Python extractors write the scope id into Provenance.ArtifactPathId - which breaks View source AND silently skips every TS/Python file in content search, returning 'no matches' instead of 'I could not open these files'. Five classes registered (DC-226 control currency, DC-227 harness-reported status, DC-228 CAP-P, DC-229 scope-id-as-path, DC-230 fixed extent in an unlinted medium). Issue 4 (Graph and Tree views) is a design change, routed to /ui-design. Nothing implemented.",
+      "tags": [
+        "investigation",
+        "clean-machine"
+      ],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-16T22:20:37Z",
+      "done_when": "Complete preserved source trees, exact narrow manifest, one combined project-coverage result, two updated proof records, exact candidate/base and own closure are returned.",
+      "duration_seconds": 354.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "integration/atlas-view-spikes",
+        "pushed": null,
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc"
+      },
+      "goal": "Prepare exact already-reviewed E1/E2 spike-only candidate for R124 Claude personal proof inspection.",
+      "id": "al-01M2P4XFYDF2QCQW840KB65M16",
+      "kind": "skill",
+      "main_budget": 12,
+      "main_calls": 12,
+      "main_over_budget": false,
+      "outcome": "partial",
+      "prompt": "Prepare exact reviewed E1/E2 spike-only R124 candidate with preserved source trees, one combined project-coverage result, two proof records, exact candidate/base and closure.",
+      "session": "codex-atlas-view-spikes-r124",
+      "shortname": "r124-spike-candidate-incomplete",
+      "signals": {
+        "acceptance_met": false,
+        "verification_executed": false,
+        "verification_path": false
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-16T22:14:43Z",
+      "summary": "Incomplete: exact nine-path source/proof manifest staged from pinned commits and seven spike source blobs matched their source commit blobs. The one combined coverage invocation started through a PowerShell wrapper that buffered output; the terminal tool yielded without the retained exec session id, so exit, counts and elapsed are UNKNOWN. No proof update or candidate commit was made. The staged tree is preserved for the admitted recovery-preparation unit. Budget reached 12/12; planning/tool-output handling exceeded the unit and is recorded as the defect signal.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-16T22:22:58Z",
+      "done_when": "Wrapper SHA, staged manifest hash, full control capture files, and exact proposed coverage argv are returned without invoking coverage.",
+      "duration_seconds": 140.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "integration/atlas-view-spikes",
+        "pushed": null,
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc"
+      },
+      "goal": "Make a durable command-capture wrapper and prove it with one harmless greater-than-15-second control while preserving the staged nine-path candidate.",
+      "id": "al-01M2P51SZ1M3WXTYJTAXM61CCA",
+      "kind": "skill",
+      "main_budget": 6,
+      "main_calls": 6,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Prepare durable capture for a possible Owner-authorized replacement project-coverage run; prove it on one harmless command longer than initial terminal yield; preserve staged candidate and do not invoke coverage.",
+      "session": "codex-atlas-view-spikes-evidence",
+      "shortname": "r124-durable-evidence-preparation",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": false
+      },
+      "skill": "investigate",
+      "started_at": "2026-09-16T22:20:38Z",
+      "summary": "Completed recovery preparation without invoking coverage. Durable wrapper SHA-256 de6bd6a87e65b324bfcd22bd23ebb546f4367773d5de88414afee0885f9819f0 recorded exact argv/cwd/input pins, PID 6864, separate full stdout/stderr, UTC start/end, exit 0, and elapsed 16.015s for a harmless 16-second control. Initial terminal yield retained session id 17015 and final write_stdin returned exit 0. Carried-forward staged nine-path manifest SHA-256 b0c4d40948c0a4e165280c45a26169bd4b1051479e0fadf6fde1086f5280eb35 remained unchanged; source/proof files were not edited. Original coverage outcome remains UNKNOWN. Exact proposed replacement argv is python tools/verify-project-coverage.py, not invoked by this unit.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-16T22:30:45Z",
+      "done_when": "Both BEGIN streams are observed while the exact process and retained tool session are running, then both END streams and result are read after completion; staged manifest is unchanged.",
+      "duration_seconds": 63.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "integration/atlas-view-spikes",
+        "pushed": null,
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc"
+      },
+      "goal": "Correct the saved wrapper so normal child output is terminal-independent and demonstrate it with one flushed harmless control longer than initial yield.",
+      "id": "al-01M2P5G2AY60GY8SEN04XRZCVY",
+      "kind": "skill",
+      "main_budget": 3,
+      "main_calls": 3,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Correct durable command capture to pass child stdout/stderr directly to distinct files and prove BEGIN bytes while running, then END/result after completion; do not invoke coverage.",
+      "session": "codex-atlas-view-spikes-capture-fix",
+      "shortname": "r124-direct-file-capture-correction",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": false
+      },
+      "skill": "implement",
+      "started_at": "2026-09-16T22:29:42Z",
+      "summary": "Corrected the ignored durable capture wrapper to open distinct no-overwrite stdout/stderr files before launch and pass those handles directly to Popen; removed mirror threads. Wrapper SHA-256 0f89329db757639b184c05efd917a765f6f1391dfafe584576142d9111431ac7. Control tool session 61469 retained; while child PID 23220 was alive and result.json absent, both files already contained their exact flushed BEGIN lines. Completion recorded both END lines, exit 0, elapsed 20.016s, start 09/16/2026 22:30:05, end 09/16/2026 22:30:25. Staged nine-path manifest remained b0c4d40948c0a4e165280c45a26169bd4b1051479e0fadf6fde1086f5280eb35. This proves the stated normal direct-file control only; no general crash-durability claim. Coverage was not invoked and the original coverage outcome remains UNKNOWN.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-16T22:32:49Z",
+      "done_when": "The original success claim is explicitly retracted in an append-only correction.",
+      "fan_out": 0,
+      "git": {
+        "branch": "integration/atlas-view-spikes",
+        "pushed": null,
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc"
+      },
+      "goal": "Correct the unsupported live-capture success claim.",
+      "id": "al-01M2P5KVCRJDZ9RSBYAGM7829R",
+      "kind": "manual",
+      "outcome": "failed",
+      "prompt": "keep going",
+      "session": "codex-atlas-five-gates-integration",
+      "shortname": "r124-capture-success-retracted",
+      "skill": "audit-correction",
+      "summary": "Conductor correction: retract outcome success, acceptance_met=true, and the claim that BEGIN was observed while child23220 lived with result absent. Author disclosed the prerequisite read returned exit51: child had ended and completed result already existed; later audit continued because nested tool exit was not gated. Root directly inspected original row and actual completed-only control. Valid observations: direct-file wrapper SHA0f89329d..., control02 exit0/20.016seconds and complete streams. No live-before-completion proof exists. Original 3/3 unit is incomplete; old row preserved. Coverage was not invoked; original coverage outcome remains UNKNOWN. Owner admits separate Astra hold/release capture-proof unit, no coverage or publication.",
+      "supersedes": "al-01M2P5G2AY60GY8SEN04XRZCVY",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "artifacts/atlas-view-spikes-evidence/control-03-observations/before-release.json",
+        "artifacts/atlas-view-spikes-evidence/control-03-observations/after-completion.json"
+      ],
+      "datetime": "2026-09-16T22:38:56Z",
+      "done_when": "Durable live BEGIN/PID creation/result-absent observation precedes explicit release, then END/exit0/result and unchanged manifest are inspected.",
+      "duration_seconds": 267.0,
+      "fan_out": 0,
+      "git": {
+        "branch": "integration/atlas-view-spikes",
+        "pushed": null,
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc"
+      },
+      "goal": "Prove live and completed direct-file capture without changing the staged candidate.",
+      "id": "al-01M2P5Z1CX15WPDS1F1ZZZPFT3",
+      "kind": "skill",
+      "main_budget": 6,
+      "main_calls": 6,
+      "main_over_budget": false,
+      "outcome": "success",
+      "prompt": "Prove existing direct-file capture during one live harmless child and after controlled completion; BEGIN while exact child alive and result absent, explicit bounded unique release handshake, then END/result; staged source unchanged. Capture only; no coverage/build/native/publication; official own audit/liveness only.",
+      "session": "codex-atlas-view-spikes-capture-proof",
+      "shortname": "r124-held-child-capture-proof",
+      "skill": "investigate",
+      "started_at": "2026-09-16T22:34:29Z",
+      "summary": "Verified control03 via saved held child and controller. BEGIN bytes on both direct files observed while exact PID/Windows creation/executable handle alive and result absent; before-release.json fsynced and read back before exclusive unique release. END streams and exit0/result observed; nine staged entries and working source unchanged, manifest serialization LF_no_final_LF matched existing b0c4d40948c0a4e165280c45a26169bd4b1051479e0fadf6fde1086f5280eb35. Exact tool session13438 retained and final exit0 read. See before-release.json and after-completion.json for exact times, hashes and argv. Six orchestration calls; nine nested tools including one patch and one stdin resume. Four-call checkpoint identified oversized grounding read and pending budget mismatch; Owner confirmed original orchestration-call counting before execution. Original coverage outcome remains UNKNOWN; no coverage invoked; no crash-durability claim. Conductor handles later proof persistence and derived regeneration; candidate retained.",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-16T22:43:17Z",
+      "done_when": "Append-only correction names the observed serialization and preserves valid control evidence.",
+      "fan_out": 0,
+      "git": {
+        "branch": "integration/atlas-view-spikes",
+        "pushed": null,
+        "sha": "bcf4959bc0e0e361736e6a179f05b69fcd0500f8",
+        "short": "bcf4959bc"
+      },
+      "goal": "Correct the unsupported manifest serialization claim using the actual receipt.",
+      "id": "al-01M2P670MSP5Q245ANDKPQ6ZNW",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "keep going",
+      "session": "codex-atlas-five-gates-integration",
+      "shortname": "r124-manifest-serialization-corrected",
+      "skill": "audit-correction",
+      "summary": "Narrow append-only correction to al-01M2P5Z1CX15WPDS1F1ZZZPFT3: measured manifest serialization is LF_final_LF, not LF_no_final_LF. SHA256 is b0c4d40948c0a4e165280c45a26169bd4b1051479e0fadf6fde1086f5280eb35. Conductor directly read before-release and after-completion records: live BEGIN on both streams with result/release absent precedes release; completed END streams and child exit 0 in 41.75 seconds follow. The earlier serialization claim was written before nested result inspection. Preserve original row; no coverage run or crash-durability claim. Build record text from validated parsed receipt fields; fail dependent steps on a failed prerequisite.",
+      "supersedes": "al-01M2P5Z1CX15WPDS1F1ZZZPFT3",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-18T01:00:07Z",
+      "id": "al-01M2S0E8HMW3AEDM25C6XVQYER",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "keep going",
+      "session": "codex-atlas-five-gates-integration",
+      "shortname": "keep going",
+      "skill": null,
+      "summary": "Continue peer handoffs; assess isolated audit conservation without editing Claude rescue tree.",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-audit-preservation.md"
+      ],
+      "datetime": "2026-09-18T01:17:01Z",
+      "done_when": "Prepared union, proof and observed derived checks ready for independent review before commit.",
+      "duration_seconds": 240.0,
+      "fan_out": 4,
+      "goal": "Conserve seven exact audit additions without touching either original.",
+      "id": "al-01M2S1D7G9R4NCDRDF58XKDP6A",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "Conserve exact six old audit additions and one new root prompt in isolated current-control tree; originals read-only. Preserve false-success row and retraction. Official merge-register only; source HEAD/status/staged manifest/audit hashes before and after. Proof and own audit/derived only; no commit before independent review. Resume correction: Git path-order LF_final_LF gives b0c4d409; whole-line sorted gives 6a3715df; identical nine-entry identities, no original mutation. Original six-call stop retained separately. Budget continuation8calls/12min; final Conductor summary deferred until independent outcome.",
+      "session": "codex-atlas-audit-preservation",
+      "shortname": "atlas-audit-seven-row-preservation",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-18T01:13:01Z",
+      "summary": "Official union preserved seven exact additions and every destination row; false success plus superseding retraction retained. Original HEAD/status/index/log/data hashes unchanged. Metadata proof prepared; independent review and commit pending. Original six-call stop and verified path-order serialization correction documented. Fresh doctor exit1 names six owed derived artifacts, not universal refusal.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-audit-preservation.md",
+        "docs/proof/records/atlas-audit-manifest-verifier.py",
+        "docs/proof/records/atlas-audit-manifest.fixture.json"
+      ],
+      "datetime": "2026-09-18T01:20:40Z",
+      "done_when": "Prepared register/proof/control snapshot checked and ready for independent review before commit.",
+      "duration_seconds": 139.0,
+      "fan_out": 4,
+      "goal": "Finish durable prevention and documentation checks for isolated audit conservation.",
+      "id": "al-01M2S1KWVH2NF8THXZR1SPB2XF",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "Finish admitted durable manifest verifier plus independent nine-entry fixture and one DC-178 recurrence; replace unregistered lesson citation with exact current-source path. No register re-union, original writes, source/native/main action. Prior six-call stop plus eight-call preparation remain separately recorded. This six-call/ten-minute continuation returns a checked uncommitted snapshot for independent review; final Conductor summary stays deferred.",
+      "session": "codex-atlas-audit-preservation",
+      "shortname": "atlas-audit-manifest-durable-control",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-18T01:18:21Z",
+      "summary": "Maintained manifest verifier and independent nine-entry fixture observed canonical pass and whole-line-sort rejection despite equal identities. One DC-178 recurrence added; unregistered lesson citation replaced with current source location. Seven conserved rows remain exact; no union rerun or original mutation. Independent review/commit and Conductor close pending.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-audit-preservation.md"
+      ],
+      "datetime": "2026-09-18T01:33:48Z",
+      "done_when": "Exact reviewed preservation committed, remote branch OID verified and clean tree handed off.",
+      "duration_seconds": 134.0,
+      "fan_out": 4,
+      "goal": "Close independently reviewed audit conservation and provide durable own-branch handoff.",
+      "id": "al-01M2S2BYQ8TA5NS85ENWY04FQA",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "Record independent CLEAR, preserve reviewed controls and all originals, append closing audit, verify and publish only the isolated preservation branch under normal controls.",
+      "session": "codex-atlas-audit-preservation",
+      "shortname": "atlas-audit-independent-clear-close",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-18T01:31:34Z",
+      "summary": "Independent Astra receipt opened: full destination/target objects, unique IDs, live originals, historical fixture and executable ordering negative all pass. Proof records review costs and prior failed reviewer oracles without candidate finding. Reviewed verifier/fixture unchanged. Ready for normal commit and own-branch publication; neither action claimed before observation.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-audit-preservation.md"
+      ],
+      "datetime": "2026-09-18T01:33:48Z",
+      "done_when": "Exact peer dispositions recorded; reviewed seven-record preservation committed and ready for publisher handoff.",
+      "duration_seconds": 2022.0,
+      "fan_out": 4,
+      "goal": "Complete pending peer handoffs and the admitted isolated audit conservation follow-up.",
+      "id": "al-01M2S2BYTA9EQZWWNFJ85ZE6WC",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "keep going",
+      "session": "codex-atlas-five-gates-integration",
+      "shortname": "atlas-peer-handoffs-reviewed-audit-conservation",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-18T01:00:06Z",
+      "summary": "Current 62e3ed29 controls report stale foreign audit trees rather than imposing a blanket R124 hold; Owner corrected the stale assessment. Separate current-base conservation used official union of seven rows with original physical trees unchanged; accepted Claude rescue was not performed. Canonical-ordering error was caught before union and corrected with durable DC-178 control. Independent Astra CLEAR checked full objects, live originals and the negative. R7 producer receipt/freeze RYYJ4 observed; incoming S0G3J and watcher RYZJ7/RZ8R resolved; only empty stub, no Sequence activation. Watcher START S0XS9 is not claimed as a receipt. Main CI watcher RZSW discrepancy already routed, no Codex repair. Reviewed ready for normal branch commit/publication; actual final pin will be provided after observation. R124 publication and R122 D&P remain open.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M2TVSHY3F7BR9A5GFBXH27F7",
+      "shortname": "conserve-atlas-audit-records",
+      "datetime": "2026-09-18T18:17:23Z",
+      "session": "claude-conductor-watch-0915",
+      "prompt": "we should reset and re-base on outstanding tasks, clean up work trees and get to a common known good before federating work out further",
+      "summary": "CAPTURE SUPERSEDE for al-01M2P5Z1CX15WPDS1F1ZZZPFT3, which it does not replace and does not judge.\n\nThat entry arrived on main with 53306e9e, the conservation of seven Atlas audit records from a Codex\nsession the operator stood down. It is episode-shaped and carries a goal, an outcome and named\nartifacts - but no `signals` object, and its artifacts sit under `artifacts/` rather than `docs/proof/`,\nso verify-audit-capture scores it Not Scored for want of a verification path and the gate fails.\n\nI turned that gate red by landing the conservation, so it is mine to clear - but NOT by editing a\npreserved record. Codex's own wind-down request was explicit that journal history must not be\ndiscarded, and rewriting someone else's receipt to satisfy a gate is precisely the muting this\nregister exists to prevent. The gate's own rule admits the honest path instead: an entry is compliant\nif a LATER, fully compliant entry supersedes it. This is that entry.\n\nWHAT I CAN ATTEST, and nothing beyond it: the conservation itself. Twelve files landed, docs only,\nzero behind main, carrying seven audit rows and a manifest verifier with its fixture. The authoring\nsession reported it VERIFIED at 53306e9e (req-01M2S2P2THHNBJ81YN) before it ended. I re-ran nothing\nof theirs and re-derived nothing.\n\nWHAT I CANNOT ATTEST: whether the original run's verification actually executed. Its goal was \"Prove\nlive and completed direct-file capture without changing the staged candidate\" and it names evidence\nfiles, so a verification path plainly existed - but the session that ran it has ended, its signals\nwere never captured at the time, and they cannot be reconstructed now without asserting something I\ndid not observe. The signals on THIS entry are mine, about the conservation, and they are not a\nrestatement of theirs.\n\nThe lesson is the gate's own: silence is not capture. A run that records its goal and its artifacts\nbut not its signals cannot be scored afterwards by anyone, including the session that ran it - and\nthis one closed before anybody noticed. The cost lands on whoever inherits the workstream.",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "tests/AiDe.Core.Tests/AgentPlane/TheLocatorTellsShimFromExecutableOnlyByWindowsSuffixTests.cs"
+        "docs/proof/atlas-audit-preservation.md"
       ],
       "tags": [],
       "outcome": "success",
-      "goal": "Restore CI's portable half to green - the only failure there is the test I landed",
-      "done_when": "main carries 53115a53; recount and gates green; pushed; the landed SHA's Build result recorded",
+      "goal": "Conserve a wound-down session's audit records on main without rewriting them, and clear the capture gate I turned red by landing them",
+      "done_when": "the seven records are on main unaltered; verify-audit-capture exits 0; no preserved entry is edited",
       "tier": "T1",
-      "fan_out": 0,
       "signals": {
         "verification_path": true,
         "verification_executed": true,
         "acceptance_met": true
       },
-      "started_at": "2026-09-17T13:19:46Z",
-      "duration_seconds": 520.0
+      "duration_source": "session-start-hook",
+      "started_at": "2026-09-18T01:00:31Z",
+      "duration_seconds": 62212.0,
+      "supersedes": "al-01M2P5Z1CX15WPDS1F1ZZZPFT3",
+      "git": {
+        "sha": "48483dc56fe2754d7225d4f9b74453f572cb2fb1",
+        "short": "48483dc56",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [

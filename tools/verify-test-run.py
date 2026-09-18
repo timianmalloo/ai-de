@@ -13,16 +13,50 @@ This asserts on the negative. For each test project it checks:
 
   1. a result file exists at all              — a host that died early writes none
   2. the run reports itself Completed         — not Aborted / Failed-to-complete
-  3. no test was skipped unexpectedly
-  4. the executed count is >= the committed baseline
+  3. every NotExecuted result is NAMED in the committed `expectedSkips` list
+  4. the TOTAL count is >= the committed baseline
 
 (4) is what catches the silent-abort case, because an aborted run's counters are *internally
 consistent* — they just describe fewer tests than exist.
+
+`total`, NOT `executed`, AND WHY THAT IS THE STRONGER FLOOR. Measured on CI run 35228503081's own
+.trx artefacts against local runs of the same tree: `total` is equal on every key (App 1,053,
+portable 2,575, nonportable 181) while `executed` differs on two — CI's nonportable job executes 177
+of 181, local executes 181 of 181. The whole delta is the *dynamically skipped* tests, which a .trx
+records as NotExecuted: **inside `total`, outside `executed`**. So `executed` varies with the
+operating system and `total` does not, and a floor set from one machine's `executed` is unmeetable on
+the other — which is what happened: two keys sat above anything CI could produce. `total` still falls
+on the defect this gate exists for, because a host that dies partway writes fewer *results*. And
+`total >= floor` alone would pass a run that skipped everything dynamically, so (3) closes that:
+`total >= floor` PLUS `NotExecuted ⊆ expectedSkips` is strictly stronger than the `executed >= floor`
+it replaces, and it is meetable on every machine.
+
+`--update` REFUSES TO LOWER. Merging the observed counts over the baseline with no comparison is how
+the floor was lost: the join runs `--update` three times before its check, so whichever machine
+joined last silently re-set the floor to its own run. On 2026-09-17 the baseline sat 8 Core and 2 App
+tests below reality and nothing fired. `--update` now refuses any key below its **committed** value
+and prints the key, the old value and the new; `--allow-lower "<reason>"` is the written-down way
+through, for the case where tests were genuinely removed. docs/coordination/join.json deliberately
+does NOT pass it.
+
+A FAILED report NAMES the tests it counted: every non-passed result in the .trx, with the first
+line of its error message. Measured cost of not doing so: this gate was red on main for a day
+saying only "1 failed", and recovering the name took a full local test run — from a file this tool
+had already opened and parsed.
+
+`--refuse-upward-drift BASE` adds the join's half of the same defect class: a floor-only baseline
+drifts UP silently (executed 2,575 against an expected 2,567, because two landings added tests
+without raising the floor) and every test of that gap is a silent abort nobody can see. CI's floor
+semantics are deliberately unchanged — see the comment on `baseline_in`.
 
 Usage
   python tools/verify-test-run.py                 run the suite and verify it
   python tools/verify-test-run.py --update        re-baseline after adding tests
   python tools/verify-test-run.py --no-run        verify result files already produced
+  python tools/verify-test-run.py --update --allow-lower "REASON"
+                                                  re-baseline DOWN, saying why
+  python tools/verify-test-run.py --no-run --refuse-upward-drift HEAD^1
+                                                  the join's line: also refuse an unmoved baseline
 
 Exit 0 clean, 1 on any finding.
 """
@@ -82,7 +116,7 @@ def split_invariant(document: dict) -> list[str]:
     nobody watching. This asserts the halves still account for the whole, so the split can be
     re-balanced but the coverage cannot shrink without saying so out loud.
     """
-    minimums = document.get("minimumExecuted", {})
+    minimums = document.get("minimumTotal", {})
     findings = []
 
     for whole, parts in document.get("splits", {}).items():
@@ -196,8 +230,41 @@ def retire_build_servers() -> None:
                    cwd=REPO, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
 
 
-def read_counts(project_name: str) -> tuple[dict[str, int], str] | None:
-    """Return (counters, outcome) for a project's result file, or None when it produced none."""
+def non_passed(root: ET.Element) -> list[tuple[str, str, str]]:
+    """Every UnitTestResult that did not pass: (test name, outcome, first line of its message).
+
+    THE NAME IS ALREADY IN THE FILE. This tool opens the .trx to read seven summary counters and
+    then throws the rest away, so a red gate reported "1 failed, 0 errored, 0 aborted, 0 timed out"
+    and nothing else — and the name cost a full local test run to recover. A count a reader cannot
+    act on is a control that reports without informing.
+
+    NOT FILTERED to outcome == "Failed". A skipped result (NotExecuted) carries the reason it was
+    skipped in the same Message element, and deciding for the reader which non-passes are
+    interesting is how the name was lost in the first place. The outcome is printed beside each one
+    so the distinction is the reader's.
+
+    THE FIRST LINE ONLY. The Message of an assertion failure is followed by expected/actual blocks
+    and, in an exception, a stack trace; in a CI log that buries the one line that says what broke.
+    """
+    named: list[tuple[str, str, str]] = []
+    for result in root.iter(f"{{{NS['t']}}}UnitTestResult"):
+        outcome = result.get("outcome", "Unknown")
+        if outcome == "Passed":
+            continue
+        message = result.find("t:Output/t:ErrorInfo/t:Message", NS)
+        text = (message.text or "").strip() if message is not None else ""
+        lines = [line for line in text.splitlines() if line.strip()]
+        named.append((result.get("testName", "(unnamed result)"), outcome,
+                      lines[0].strip() if lines else "(the .trx carries no message for this result)"))
+    return named
+
+
+def read_counts(project_name: str) -> tuple[dict[str, int], str, list[tuple[str, str, str]]] | None:
+    """Return (counters, outcome, non-passed results) for a project's result file, or None.
+
+    One parse, three answers. The portable half's .trx is a multi-megabyte file with 2,568 results
+    in it; opening it a second time to read the names would be paying for the same I/O twice.
+    """
     trx = RESULTS / f"{project_name}.trx"
     if not trx.exists():
         return None
@@ -212,13 +279,69 @@ def read_counts(project_name: str) -> tuple[dict[str, int], str] | None:
         return None
 
     wanted = ("total", "executed", "passed", "failed", "error", "aborted", "timeout")
-    return ({k: int(counters.get(k, 0)) for k in wanted}, summary.get("outcome", "Unknown"))
+    return ({k: int(counters.get(k, 0)) for k in wanted},
+            summary.get("outcome", "Unknown"),
+            non_passed(root))
+
+
+def git(*args: str) -> tuple[int, str]:
+    done = subprocess.run(["git", *args], cwd=REPO, capture_output=True, text=True,
+                          encoding="utf-8", errors="replace", check=False)
+    return done.returncode, done.stdout
+
+
+def baseline_in(rev: str) -> dict[str, int] | None:
+    """The committed baseline as of `rev`, or None when that rev carried no baseline file at all.
+
+    WHERE "THE JOIN" IS, AND WHY THE REFUSAL IS A FLAG HERE RATHER THAN A STEP THERE. Both files
+    were read before choosing. `conductor-join.py` is the PACK's join script
+    (docs/ai-forward-pack/scripts/), shipped to every repository that installs the pack; it knows
+    nothing about tools/expected-test-counts.json, which is this repository's own artifact. A
+    baseline rule written into it would import this repo's convention into every consumer's join,
+    and would still need per-repo configuration to be usable at all. The join's designed extension
+    point is the repo-local contract docs/coordination/join.json, whose `recount` list already ends
+    with ["python", "tools/verify-test-run.py", "--no-run"] — a CHECK-mode run after the three
+    `--update` runs. That line is the slot: the rule lives here, behind a flag, and the join opts in.
+
+    THE BASE IS A REQUIRED PARAMETER BECAUSE THE JOIN DOES NOT HOLD ONE. conductor-join.py captures
+    no pre-merge SHA — its only `rev-parse` is at step 9/10, for a log line. What it has is the
+    SHAPE of step 1, `git merge --no-ff <branch>`: at step 4 HEAD is therefore a merge commit and
+    HEAD^1 is the tip the candidate is landing on, on both the normal and the `--continue` path.
+    That is the join's fact to assert in its own contract, not this tool's to assume, so BASE is
+    required, is passed as a rev EXPRESSION that git resolves at run time, and a base that does not
+    resolve is a refusal rather than a guess.
+
+    PER KEY, NOT PER FILE. `git diff BASE -- tools/expected-test-counts.json` is the obvious reading
+    of "the baseline moved", and it passes a candidate that raised some OTHER project's floor while
+    the drifting one stayed put — the same silence with one more step in front of it. Comparing the
+    key's own value costs one `git show`.
+
+    AGAINST THE WORKING TREE, NOT HEAD. The candidate is what the join is about to commit at step 7,
+    which includes the rewrite `--update` left uncommitted at step 4. So the comparison is BASE's
+    committed value against the baseline this run loaded from disk.
+
+    CI IS UNCHANGED, DELIBERATELY. .github/workflows/build.yml (:583, :641-642) runs this tool
+    without the flag, so CI still fails only on executed < expected: CI runs a tree that may
+    legitimately be behind the baseline, and refusing that would fail branches for a floor they
+    were never asked to raise.
+    """
+    status, text = git("show", f"{rev}:{BASELINE.relative_to(REPO).as_posix()}")
+    if status != 0:
+        return None
+    try:
+        document = json.loads(text)
+    except ValueError:
+        return None
+    return document.get("minimumTotal", {})
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--update", action="store_true",
                         help="re-baseline the expected counts from this run")
+    parser.add_argument("--allow-lower", dest="allow_lower", metavar="REASON",
+                        help="permit --update to write a key BELOW its committed value, for the "
+                             "stated reason. Without it such a write is refused.")
     parser.add_argument("--no-run", action="store_true",
                         help="verify existing result files instead of running the suite")
     parser.add_argument("--only", metavar="PROJECT",
@@ -228,12 +351,49 @@ def main() -> int:
     parser.add_argument("--key", metavar="NAME",
                         help="baseline key and result-file name for a filtered half "
                              "(e.g. AiDe.Core.Tests.portable)")
+    parser.add_argument("--refuse-upward-drift", dest="drift_base", metavar="BASE",
+                        help="the join's line: also refuse a candidate whose executed count EXCEEDS "
+                             "its baseline while that key's baseline did not move between BASE and "
+                             "this tree (BASE is a rev, e.g. HEAD^1). Not for CI.")
     args = parser.parse_args()
 
     if args.filter_expr and not args.key:
         print("verify-test-run: --filter needs --key, or the half would be measured against the "
               "whole project's baseline and a shortfall would read as success")
         return 1
+
+    if args.drift_base and args.update:
+        print("verify-test-run: --refuse-upward-drift cannot be combined with --update. --update "
+              "moves the baseline by construction, so the refusal would be satisfied by the same "
+              "run that made it necessary. Run --update first, then this check.")
+        return 1
+
+    if args.allow_lower is not None and not args.update:
+        print("verify-test-run: --allow-lower only means anything with --update — it is permission "
+              "to WRITE a lower floor, and a check-mode run writes nothing. Refusing rather than "
+              "accepting a flag that would have no effect.")
+        return 1
+
+    if args.allow_lower is not None and not args.allow_lower.strip():
+        print("verify-test-run: --allow-lower needs a REASON, and an empty one is not a reason. "
+              "The whole value of the flag is that lowering a floor leaves a sentence behind "
+              "saying why; a blank string satisfies the flag and records nothing.")
+        return 1
+
+    drift_at_base: dict[str, int] | None = None
+    if args.drift_base:
+        # Fail CLOSED on a base that is not a commit. `git show <rev>:<path>` cannot tell an
+        # unresolvable rev from an absent file, and the absent-file answer is "the baseline is new
+        # in this candidate, so it moved" — which is exactly the wrong answer to give a typo.
+        resolved, _ = git("rev-parse", "--verify", "--quiet", f"{args.drift_base}^{{commit}}")
+        if resolved != 0:
+            print("verify-test-run: FAILED")
+            print(f"  - --refuse-upward-drift was given '{args.drift_base}', which does not resolve "
+                  "to a commit in this checkout. The check needs the candidate's BASE to say "
+                  "whether the baseline moved in this candidate; it will not invent one, and it "
+                  "will not pass a run it could not check.")
+            return 1
+        drift_at_base = baseline_in(args.drift_base)
 
     projects = discover_projects()
 
@@ -251,7 +411,11 @@ def main() -> int:
     document: dict = {}
     if BASELINE.exists():
         document = json.loads(BASELINE.read_text(encoding="utf-8"))
-    baseline: dict[str, int] = document.get("minimumExecuted", {})
+    baseline: dict[str, int] = document.get("minimumTotal", {})
+    # A SET, and a committed one. Membership is the whole question, and the list is authored by a
+    # human reading real .trx files — `--update` never appends to it, because a control that adds the
+    # surprises it finds to its own list of expected surprises has stopped being a control.
+    expected_skips: set[str] = set(document.get("expectedSkips", []))
 
     # Checked on every invocation, including a filtered half: the halves must still account for the
     # whole, whichever side is running.
@@ -269,9 +433,12 @@ def main() -> int:
 
     findings: list[str] = []
     observed: dict[str, int] = {}
+    # Per project, the non-passed results to print UNDER its findings — populated only for projects
+    # that actually produced a finding, so a green run's expected skip is not reported as news.
+    named: dict[str, list[tuple[str, str, str]]] = {}
 
     print()
-    print(f"{'project':<28}{'executed':>10}{'expected':>10}{'outcome':>14}")
+    print(f"{'project':<28}{'total':>10}{'expected':>10}{'outcome':>14}")
     print("-" * 62)
 
     for project in projects:
@@ -286,10 +453,11 @@ def main() -> int:
                 f"{name}: produced no usable result file — the test host almost certainly crashed")
             continue
 
-        counters, outcome = result
-        executed = counters["executed"]
+        counters, outcome, results = result
+        total = counters["total"]
         expected = baseline.get(name)
-        observed[name] = executed
+        observed[name] = total
+        before = len(findings)
 
         flag = outcome
         if outcome != "Completed":
@@ -299,37 +467,110 @@ def main() -> int:
             findings.append(
                 f"{name}: {counters['failed']} failed, {counters['error']} errored, "
                 f"{counters['aborted']} aborted, {counters['timeout']} timed out")
-        if expected is not None and executed < expected:
-            findings.append(
-                f"{name}: executed {executed} tests but the baseline expects at least {expected} — "
-                f"{expected - executed} test(s) did not run. This is the silent-abort signature: "
-                f"the counters are self-consistent, they just describe fewer tests than exist.")
-            flag = "**SHORTFALL**"
 
-        print(f"{name:<28}{executed:>10}{str(expected) if expected is not None else '—':>10}{flag:>14}")
+        # (3), the check the docstring above has always claimed. `total - executed` is the
+        # dynamically-skipped tests; unexplained, it is a hole in the floor exactly that wide.
+        surprises = sorted({test for test, test_outcome, _ in results
+                            if test_outcome == "NotExecuted" and test not in expected_skips})
+        if surprises:
+            findings.append(
+                f"{name}: {len(surprises)} test(s) were skipped (NotExecuted) that no committed "
+                f"`expectedSkips` entry accounts for: {', '.join(surprises)}. A skip inside `total` "
+                f"and outside `executed` is invisible to the floor, so an unlisted one is a hole in "
+                f"the floor that wide. Either the skip is deliberate — add the name to "
+                f"`expectedSkips` in {BASELINE.relative_to(REPO).as_posix()} — or a test stopped "
+                f"running and this is the notice.")
+            flag = "**SKIPPED**"
+
+        if expected is not None and total < expected:
+            findings.append(
+                f"{name}: the run counted {total} tests but the baseline expects at least "
+                f"{expected} — {expected - total} test(s) are missing from the results entirely. "
+                f"This is the silent-abort signature: the counters are self-consistent, they just "
+                f"describe fewer tests than exist.")
+            flag = "**SHORTFALL**"
+        elif (args.drift_base and expected is not None and total > expected
+              and drift_at_base is not None and drift_at_base.get(name) == expected):
+            findings.append(
+                f"{name}: counted {total} tests against a baseline of {expected}, and that "
+                f"baseline did not move in this candidate (it is still {drift_at_base.get(name)} at "
+                f"{args.drift_base}). A floor-only baseline drifts UP silently: {total - expected} "
+                f"test(s) now run that the floor does not know about, so a silent abort of up to "
+                f"{total - expected} test(s) would pass this gate. Re-baseline IN THIS CANDIDATE "
+                f"— python tools/verify-test-run.py --update — so the floor lands with the tests.")
+            flag = "**DRIFT**"
+
+        if len(findings) > before and results:
+            named[name] = results
+
+        print(f"{name:<28}{total:>10}{str(expected) if expected is not None else '—':>10}{flag:>14}")
 
     print()
 
     if args.update:
+        # AGAINST THE COMMITTED VALUE, NOT THE ONE ON DISK. The join runs `--update` three times in
+        # a row before its check, and each run loads what the previous one wrote. Comparing against
+        # the working tree would let the first of those three lower a floor and the rest agree with
+        # it — the laundering step is free. `git show HEAD:<baseline>` is the value a reviewer would
+        # see in the diff, which is the value the refusal is about.
+        #
+        # FAIL LOUD, NOT OPEN, when HEAD cannot be read: a comparison that silently does not happen
+        # is the defect this refusal exists for, wearing the refusal's clothes. The working tree's
+        # own baseline is the fallback and the message says so, so the run is never unchecked.
+        committed = baseline_in("HEAD")
+        source = "HEAD"
+        if committed is None:
+            committed = baseline
+            source = "the working tree's baseline file (HEAD carries none)"
+
+        lowered = sorted((name, committed[name], count) for name, count in observed.items()
+                         if name in committed and count < committed[name])
+
+        if lowered and not args.allow_lower:
+            print("verify-test-run: REFUSED — this --update would LOWER a committed floor:")
+            for name, old, new in lowered:
+                print(f"  - {name}: {old} → {new}  ({old - new} fewer, measured against {source})")
+            print("  Nothing was written. A floor that can be lowered by whichever machine ran last "
+                  "is not a floor: that is how this baseline came to sit 8 Core and 2 App tests "
+                  "below reality with nothing firing (2026-09-17). If the tests were genuinely "
+                  "removed, say so: --allow-lower \"<reason>\". If they were not, this run did not "
+                  "see them, which is the defect this gate exists to catch.")
+            return 1
+
         BASELINE.parent.mkdir(parents=True, exist_ok=True)
         # MERGED, not replaced. A filtered run only observes its own half, and writing `observed`
         # wholesale would delete every key this invocation did not measure — including the whole
         # project's total, which is the one the split invariant is checked against.
         merged = dict(baseline)
         merged.update(observed)
-        BASELINE.write_text(json.dumps({
+        # BYTES, not write_text: on Windows text mode rewrites every LF to CRLF, which turns a
+        # one-key change into a whole-file diff and hides what actually moved.
+        BASELINE.write_bytes((json.dumps({
             "_comment": (
-                "Minimum tests that must EXECUTE per project. The control for defect class DC-012: "
-                "a crashed test host reports success with a smaller count, and nothing else notices. "
+                "Minimum tests that must be COUNTED per project — the .trx `total`, which includes "
+                "dynamically skipped tests and so does not vary by operating system; `executed` "
+                "does. The control for defect class DC-012: a crashed test host reports success "
+                "with a smaller count, and nothing else notices. Every NotExecuted result must "
+                "also be named in `expectedSkips`, or a skip inside `total` is a hole in the floor. "
                 "Raise these with `python tools/verify-test-run.py --update` when you add tests; "
-                "never lower one to make a run pass. Keys with a suffix are HALVES of a project run "
-                "on one OS; `splits` says which halves must account for which whole."
+                "lowering one needs --allow-lower \"<reason>\" and is refused otherwise. Keys with "
+                "a suffix are HALVES of a project run on one OS; `splits` says which halves must "
+                "account for which whole."
             ),
-            "minimumExecuted": merged,
+            "minimumTotal": merged,
+            # CARRIED THROUGH UNTOUCHED, comment included. --update recounts; it never decides that
+            # a test which stopped running was supposed to. The key order here must match the file's
+            # or every --update reorders it and the diff stops showing what moved.
+            "_expectedSkips_comment": document.get("_expectedSkips_comment", ""),
+            "expectedSkips": document.get("expectedSkips", []),
             "splits": document.get("splits", {}),
-        }, indent=2) + "\n", encoding="utf-8")
+        }, indent=2) + "\n").encode("utf-8"))
         observed = merged
         print(f"verify-test-run: baseline updated → {BASELINE.relative_to(REPO)}")
+        if lowered:
+            print(f"  LOWERED, on the stated reason: {args.allow_lower}")
+            for name, old, new in lowered:
+                print(f"    {name}: {old} → {new}  (measured against {source})")
         for name, count in sorted(observed.items()):
             print(f"  {name}: {count}")
         return 0
@@ -338,11 +579,21 @@ def main() -> int:
         print("verify-test-run: FAILED")
         for finding in findings:
             print(f"  - {finding}")
+
+        # THE NAMES, under the counts they belong to. Without this the whole report of a red run is
+        # "1 failed, 0 errored" and the next reader spends a full test run recovering a string that
+        # was in the .trx all along.
+        for project_name, results in named.items():
+            print()
+            print(f"  {project_name} — {len(results)} result(s) that did not pass:")
+            for test, test_outcome, message in results:
+                print(f"      [{test_outcome}] {test}")
+                print(f"        {message}")
         return 1
 
-    total = sum(observed.values())
-    print(f"verify-test-run: OK — {total} tests executed across {len(observed)} project(s), "
-          f"every project met its baseline.")
+    counted = sum(observed.values())
+    print(f"verify-test-run: OK — {counted} tests counted across {len(observed)} project(s), "
+          f"every project met its baseline and every skip was one the baseline names.")
     return 0
 
 

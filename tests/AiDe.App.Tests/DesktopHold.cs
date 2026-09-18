@@ -33,30 +33,57 @@ internal static class DesktopHold
     {
         Append(
             contract: $"R115 desktop {run} START",
-            reason: $"ActualPID{pid};start{IsoNow()};session grok-understanding-views-conductor");
+            reason: $"ActualPID{pid};start{IsoNow()}");
     }
 
     public static void AnnounceEnd(string run, int pid, int exitCode)
     {
         Append(
             contract: $"R115 desktop {run} END RELEASED",
-            reason: $"ActualPID{pid};end{IsoNow()};exit{exitCode};desktopRELEASED;session grok-understanding-views-conductor");
+            reason: $"ActualPID{pid};end{IsoNow()};exit{exitCode};desktopRELEASED");
+    }
+
+    private static string? Session()
+    {
+        var session = Environment.GetEnvironmentVariable("AGENT_SESSION");
+        return string.IsNullOrWhiteSpace(session) ? null : session.Trim();
     }
 
     private static void Append(string contract, string reason)
     {
+        // NO SESSION IDENTITY, NO WRITE — the rule `coord` itself uses.
+        //
+        // This helper announces into the PRIMARY checkout's .agents/requests.jsonl, which is
+        // TRACKED. On a developer machine with linked worktrees the write lands in the primary while
+        // the lane under test stays clean, so it was invisible locally for as long as it existed.
+        // CI has exactly one checkout: the App test step dirtied its own tree, and the next step —
+        // mutation-replay, whose first act is a clean-tree check — REFUSED TO START. The control did
+        // not fail; it never ran, and the job reported a failure at a step that executed nothing
+        // (CI run 35290247518, job 105431315889, step 11).
+        //
+        // A desktop hold serializes a fleet. Where there is no fleet there is nothing to serialize
+        // and nothing to announce, and AGENT_SESSION is unset in CI.
+        if (Session() is not { } session)
+        {
+            return;
+        }
+
+        var watcher = Environment.GetEnvironmentVariable("AIDE_FLEET_WATCHER");
         var record = new Dictionary<string, object?>
         {
-            ["agent"] = "grok-understanding-views-conductor",
+            ["agent"] = session,
             ["at"] = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0,
             ["contract"] = contract,
-            ["from"] = "grok-understanding-views-conductor",
-            ["id"] = "req-grok-" + Guid.NewGuid().ToString("N")[..16],
+            ["from"] = session,
+            ["id"] = "req-desktop-" + Guid.NewGuid().ToString("N")[..16],
             ["kind"] = "request-add",
-            ["path"] = "tests/AiDe.App.SolutionTreeProbe/Program.cs",
             ["reason"] = reason,
-            ["session"] = "grok-understanding-views-conductor",
-            ["to"] = "claude-conductor-watch-0915",
+            ["session"] = session,
+            // Every field above was hard-coded to one session, so a hold taken by ANY programme
+            // was recorded as Grok's and addressed to one named peer. An announcement that
+            // misattributes itself is worse than none: this ledger is what a peer reads to find out
+            // who holds the desktop.
+            ["to"] = string.IsNullOrWhiteSpace(watcher) ? "fleet" : watcher.Trim(),
         };
         var line = JsonSerializer.Serialize(record) + "\n";
         File.AppendAllText(RequestsPath(), line);

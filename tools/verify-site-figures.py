@@ -70,7 +70,7 @@ def count_lines(path: Path) -> int:
 
 def test_floor() -> int:
     data = json.loads(_text(ROOT / 'tools' / 'expected-test-counts.json'))
-    return sum(data['minimumExecuted'].values())
+    return sum(data['minimumTotal'].values())
 
 
 def run_json(args: list[str]) -> dict:
