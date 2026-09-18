@@ -12282,6 +12282,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "fbf372e37e6df30d58ad671051def9d2f9fd7848f0c02db8b3af8ba41cc69df7"
     },
     {
+      "id": "session-winddown-2026-09-18",
+      "path": "docs/collaboration/session-winddown-2026-09-18.md",
+      "title": "Session wind-down and resume map - 2026-09-18",
+      "type": "doc",
+      "status": "active",
+      "owner": "@timianmalloo",
+      "phase": "paused",
+      "reviewBy": "2026-10-18",
+      "reviewSuggested": [],
+      "summary": "The operator stopped implementation and asked for graceful checkpoints, a relinquished GHCP watcher, safe cleanup and a clean main. This record separates completed finite evidence from unfinished delivery and preserves exact resume pins.",
+      "tags": [
+        "coordination",
+        "wind-down",
+        "handoff",
+        "todo",
+        "preservation"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f984d67070254a1e17a101bd1e35d47a46f233b7d322a1492049dbad1e554fc7"
+    },
+    {
       "id": "spike-d0-tree-toolkit",
       "path": "docs/spikes/d0-tree-toolkit/RESULT.md",
       "title": "Spike — D-0 Solution tree toolkit (WPF TreeView)",
@@ -21172,5 +21203,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "96d461c5e9b976a30dbcbea107d8b3e2ef1233e9aced9c9a08811a43c89b71d0"
+  "graphSha256": "bb8bd263b179da4a7e7b7b928d06c886b38388506c5bbe3bf61f12c86d94a80d"
 };
