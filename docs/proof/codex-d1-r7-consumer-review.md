@@ -111,3 +111,23 @@ this continuation's grounding. Original rescue and all peer trees remain untouch
 Raw local receipt: artifacts/atlas-five-gates/pair-handoff/r7-consumer-ack.json.
 Review durations in audit entries measure marker-to-record intervals; they are not
 claimed to be active CPU time. No AIDE contract destination was supplied at grounding.
+
+## Duplicate notice disposition and close
+
+Grok's repeat `req-01M2RZ0SW5VG55JTNA71DCH8RR` arrived while the existing
+direct ACK was already in the shared register. Conductor resolved it with the
+identical exact r7 ACK, citing direct request`req-01M2RYYJ4X3THCJ1V7YH64HCHJ`
+and committed proof`b52703f6`. No review or decision was repeated.
+Watcher action`req-01M2RZ87XKHHAKRDW2G484J0B6` asks for delivery to the active
+Grok identity and actual receipt/freeze record; it adds no approval requirement.
+
+At this close the direct request is **open**. Its recorded
+resolution is: not recorded.
+The delivery-recovery request is **open**. A sent consumer
+ACK is not silently promoted to producer receipt or implementation.
+
+E2 formal D&P request is **open**; R124 publisher intent is
+**open** and audit-rescue handback is **open**.
+These are the existing exact peer actions, not new human decisions. Raw current
+records: artifacts/atlas-five-gates/pair-handoff/r7-delivery-close.json.
+No source, native or main operation ran. Own tree retained for evidence/handoff.

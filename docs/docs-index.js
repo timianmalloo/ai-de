@@ -19405,7 +19405,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  P[Fetch and verify exact pins] --> R[Independent semantic review]\n  P --> O[Separate Owner decision]\n  R --> A[Exact consumer ACK]\n  O --> A\n  A --> C[Proof audit derive and commit]"
         }
       ],
-      "sourceSha256": "d6240283282a81b12e41013f44a4c64f0f9223a53fd989833d9812169aa00aa6"
+      "sourceSha256": "d94a706be6981b7bd1b915b03989f8f3477b7f65426e59f4e698f250781a1745"
     },
     {
       "id": "proof-coding-recut-left-dock",
@@ -23534,5 +23534,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d74ff4ec7fb621cfada225bc96a72d755a6eab4cc0f67feffe6c65290df2c6c9"
+  "graphSha256": "0c7450e5bcd277ab98b9867687cb20cd97a75aee8096f49a7ad92ec633f3f1a8"
 };

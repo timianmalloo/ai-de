@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-18T00:37:57Z",
+  "generated": "2026-09-18T00:40:50Z",
   "audit": [
     {
       "actor": null,
@@ -27237,6 +27237,35 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "3ae5c37e714a6e2b1606aa93f8fae6d6c65384c1",
         "short": "3ae5c37e7",
+        "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2RZAY78QNTK3FD6HJBAMYZQ",
+      "shortname": "atlas-r7-repeat-notice-delivery-close",
+      "datetime": "2026-09-18T00:40:49Z",
+      "session": "codex-atlas-five-gates-integration",
+      "prompt": "keep going",
+      "summary": "\n\n## Duplicate notice disposition and close\n\nGrok's repeat `req-01M2RZ0SW5VG55JTNA71DCH8RR` arrived while the existing\ndirect ACK was already in the shared register. Conductor resolved it with the\nidentical exact r7 ACK, citing direct request`req-01M2RYYJ4X3THCJ1V7YH64HCHJ`\nand committed proof`b52703f6`. No review or decision was repeated.\nWatcher action`req-01M2RZ87XKHHAKRDW2G484J0B6` asks for delivery to the active\nGrok identity and actual receipt/freeze record; it adds no approval requirement.\n\nAt this close the direct request is **open**. Its recorded\nresolution is: not recorded.\nThe delivery-recovery request is **open**. A sent consumer\nACK is not silently promoted to producer receipt or implementation.\n\nE2 formal D&P request is **open**; R124 publisher intent is\n**open** and audit-rescue handback is **open**.\nThese are the existing exact peer actions, not new human decisions. Raw current\nrecords: artifacts/atlas-five-gates/pair-handoff/r7-delivery-close.json.\nNo source, native or main operation ran. Own tree retained for evidence/handoff.\n",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/codex-d1-r7-consumer-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Resolve the repeat exact-r7 notice against the existing consumer ACK and route its receipt.",
+      "done_when": "Repeat resolved with same blob, actual watcher delivery action recorded, current peer dispositions preserved.",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-09-18T00:39:21Z",
+      "duration_seconds": 88.0,
+      "git": {
+        "sha": "b52703f62e1022a224d7cd43d1a6bfbc9c825c0d",
+        "short": "b52703f62",
         "branch": "integration/atlas-five-gates",
         "pushed": null
       }
