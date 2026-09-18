@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-15T21:59:22Z",
+  "generated": "2026-09-18T00:21:57Z",
   "audit": [
     {
       "actor": null,
@@ -18687,6 +18687,48 @@ window.AUDIT_DATA = {
       },
       "started_at": "2026-09-15T21:46:14Z",
       "duration_seconds": 788.0
+    },
+    {
+      "id": "al-01M2RY8BG25K62DR4TQEM6M47R",
+      "shortname": "r122-e2-design-assignment",
+      "datetime": "2026-09-18T00:21:56Z",
+      "session": "codex-atlas-e2-deployment-context",
+      "prompt": "Owner atlas_owner_close admits existing R122 design obligation in new isolated tree C:/Projects/ai-de-design-atlas-e2-deployment-context, branch design/atlas-e2-deployment-context, base27642bf89b687f1e78bc33f11f977cd753baf7cf. Allowed authored path only docs/design/atlas-architecture-views.md plus mandatory own audit/derived and exact site figure leases. Add declaration bounded context, aggregate invariant, grain, per-attribute history, derived quantities, template/declaration manifest/hash, provenance/source spans, closed missing/conflicting/expression states and first named negative fixtures anchored in existing spike. Proposed only; US-E8.b open; no new producer/home/API/source/schema/mock or cloud/native work. Preserve existing design and exact unresolved seams. Astra author8calls/15minutes/checkpoint5; independent readiness3calls/5minutes follows frozen change. Then Claude-convened D&P request per R122 conditionii; local reviewer cannot substitute. Stop at committed narrow design+actual doc checks or precise unresolved decision; do not expand. Existing R124 publication and accepted original audit rescue remain independent.",
+      "summary": "Official bounded R122 document assignment; no implementation scope.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Specify R122 declaration aggregate, grain, history, provenance and refusal contract.",
+      "done_when": "Exact narrow design committed and document checks inspected; implementation/home/D&P gates remain open.",
+      "tier": "T2",
+      "fan_out": 0
+    },
+    {
+      "id": "al-01M2RY8BK0K126H11AWZ8624SS",
+      "shortname": "r122-e2-declared-context",
+      "datetime": "2026-09-18T00:21:56Z",
+      "session": "codex-atlas-e2-deployment-context",
+      "prompt": "Owner atlas_owner_close admits existing R122 design obligation in new isolated tree C:/Projects/ai-de-design-atlas-e2-deployment-context, branch design/atlas-e2-deployment-context, base27642bf89b687f1e78bc33f11f977cd753baf7cf. Allowed authored path only docs/design/atlas-architecture-views.md plus mandatory own audit/derived and exact site figure leases. Add declaration bounded context, aggregate invariant, grain, per-attribute history, derived quantities, template/declaration manifest/hash, provenance/source spans, closed missing/conflicting/expression states and first named negative fixtures anchored in existing spike. Proposed only; US-E8.b open; no new producer/home/API/source/schema/mock or cloud/native work. Preserve existing design and exact unresolved seams. Astra author8calls/15minutes/checkpoint5; independent readiness3calls/5minutes follows frozen change. Then Claude-convened D&P request per R122 conditionii; local reviewer cannot substitute. Stop at committed narrow design+actual doc checks or precise unresolved decision; do not expand. Existing R124 publication and accepted original audit rescue remain independent.",
+      "summary": "Added proposed declaration aggregate, per-attribute history, closed unresolved vocabulary, source-bound identity, derived equality and anchored negative tests. No execution or acceptance claim. Documentation whitespace checked; graph validation captured separately. Initial read output truncation required bounded replanning; original budget insufficient for required floors.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/atlas-architecture-views.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Satisfy R122 data-model documentation floor.",
+      "done_when": "Narrow design committed with observed document checks and all implementation gates retained.",
+      "tier": "T2",
+      "fan_out": 0,
+      "started_at": "2026-09-18T00:17:58Z",
+      "duration_seconds": 238.0
     }
   ],
   "changes": [
@@ -22525,6 +22567,28 @@ window.AUDIT_DATA = {
         "before": "a9d86fc1350ac4c74d5d8ff39e9f39685b890f14",
         "after": "a9d86fc1350ac4c74d5d8ff39e9f39685b890f14",
         "branch": "atlas/architecture-views",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M2RY8BQM4GVJBTFBF93YQ2WP",
+      "datetime": "2026-09-18T00:21:56Z",
+      "session": "codex-atlas-e2-deployment-context",
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "Specify R122 declared deployment context at declaration grain",
+      "prompt": "Owner atlas_owner_close admits existing R122 design obligation in new isolated tree C:/Projects/ai-de-design-atlas-e2-deployment-context, branch design/atlas-e2-deployment-context, base27642bf89b687f1e78bc33f11f977cd753baf7cf. Allowed authored path only docs/design/atlas-architecture-views.md plus mandatory own audit/derived and exact site figure leases. Add declaration bounded context, aggregate invariant, grain, per-attribute history, derived quantities, template/declaration manifest/hash, provenance/source spans, closed missing/conflicting/expression states and first named negative fixtures anchored in existing spike. Proposed only; US-E8.b open; no new producer/home/API/source/schema/mock or cloud/native work. Preserve existing design and exact unresolved seams. Astra author8calls/15minutes/checkpoint5; independent readiness3calls/5minutes follows frozen change. Then Claude-convened D&P request per R122 conditionii; local reviewer cannot substitute. Stop at committed narrow design+actual doc checks or precise unresolved decision; do not expand. Existing R124 publication and accepted original audit rescue remain independent.",
+      "summary": "Section 4.1 specifies immutable declaration observations and derived evidenced equality; no store, extractor or implementation change.",
+      "rationale": "R122 requires explicit domain, grain, per-attribute history and first named negative tests before Claude-convened D&P review.",
+      "artifacts": [
+        "docs/design/atlas-architecture-views.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "27642bf89b687f1e78bc33f11f977cd753baf7cf",
+        "after": "27642bf89b687f1e78bc33f11f977cd753baf7cf",
+        "branch": "design/atlas-e2-deployment-context",
         "pushed": null,
         "commits": []
       }

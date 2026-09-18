@@ -127,6 +127,146 @@ pages/alias sets are non-additive. Snapshot counts across time are semi-additive
 over time). Confidence, coverage ratios and authority are non-additive; unknown denominators
 stay unknown. Derive totals from authoritative bounded results; do not count aliases as roots.
 
+### 4.1 R122: proposed DeclaredDeploymentContext
+
+**Authority and confidence.** Ruling 122 at `e0e0ddfc`, in
+`docs/notes/addendum-c-council-rulings.md`, admits this read-only Core contract **for
+specification only**. The statements below are normative proposals, not existing APIs,
+implemented producers or measured deployment behavior. The producer reads the existing Bicep
+extractor's output; it neither changes extraction nor evaluates source. No new store, graph,
+cloud call, credentials or execution is admitted. The implementation home remains undecided.
+
+**Conceptual model.** The bounded context is **repository understanding**, with a declared
+configuration identity vocabulary: *declaration* means one source resource declaration;
+*template observation* means exact template content under a pinned manifest; *scope kind*
+means the declared scope category, while *scope value* identifies the explicitly declared
+target; *parameter binding* means a source-backed explicit input, never a default assumed
+to be an input. None of these terms means an observed deployment or deployed inventory.
+
+The declaration is the entity and aggregate root. Its one invariant is: **every identity
+component belongs to this exact declaration/template observation and is either explicitly
+source-bound or typed unresolved; no component from another observation can silently complete
+it**. Scope identity, chain segments, parameter bindings and source spans are immutable value
+objects inside that boundary. Parent declarations and other aggregates are referenced only by
+identity, not embedded mutable roots. The architecture snapshot in section 4 is a read
+projection over those references, not a larger transactional aggregate.
+
+**Grain, before attributes:** one row is exactly one declared resource within one template
+hash, as read in one pinned observation. This is declaration grain, never one deployed instance;
+loops do not manufacture instance rows. The stable declaration key remains the exact
+workspace/scope/file/resource-symbol key in section 5. Template content hash and manifest
+identify an observation, not a replacement stable key. A changed input manifest gives a new
+observation of that declaration even when template bytes are unchanged; it cannot overwrite
+or multiply a declaration within that observation. Multiple candidate contexts without an
+explicit binding are conflicting, not a choice of whichever was read last.
+
+**Logical attributes and history.** This seam adds no durable representation. Existing retained
+facts and exact source manifests remain the records; the proposed output is immutable derived
+data. Type-2 below means retain meaning by a new versioned observation, never edit a past one;
+it does not grant a dimension table, mutable current flag, timestamp interval or migration.
+No attribute uses Type-1 overwrite. Any future persistence requires a separate decision.
+
+| Proposed attribute | Meaning and input obligation | History rule |
+|---|---|---|
+| `declarationKey` | Exact workspace, analysis scope, file and resource symbol; not a deployment ID | Type 0 within the entity; changing any component creates a distinct declaration, with no inferred rename/merge |
+| `templateManifest`, `templateContentHash`, `declarationAnchor` | Exact admitted template observation and declaration span; anchor binds target, analysis scope, revision/hash, start and length | Type-2 observation; changed manifest, bytes or span retains prior binding and never retargets it |
+| `scopeKind` | Explicit deployment-scope category with its own source span | Type-2; changed category or unresolved disposition creates a new observation |
+| `scopeValue` | Explicit declared scope identity, or typed unresolved; analysis/file scope is not a substitute | Type-2; changed value, reason or supporting source creates a new observation |
+| `parentTypeNameChain` | Ordered complete provider/type/name and parent chain, with one binding per segment; parent declaration references by identity | Type-2; changed order, segment, parent binding or completeness creates a new observation |
+| `parameterBindings` | For each referenced parameter: exact name, explicit value or unresolved state, declaration span and binding span/manifest/hash | Type-2 even if template bytes do not change; changed input/binding retains the old input observation |
+| `valueProvenance` | Per-value source target, analysis scope, revision/content hash and span; producer/rule identity and version; supplied origin/confidence remain separate | Type-2 on any changed provenance or producer rule; no source span or confidence promotion in place |
+| `unresolvedReason`, `rawExpression` | Closed reason per affected component and verbatim expression where present; all candidate spans retained for conflicts | Type-2 when reason, expression or candidate evidence changes; resolution produces a new observation |
+| `identityLabel` | Always **Declared configuration identity** | Type 0 contract meaning; never changes to observed deployment because a tuple becomes complete |
+
+**Per-value refusal contract.** Every scope kind/value, chain segment and parameter binding is
+`Known(value, source-span evidence)` or `Unresolved(reason, source-span evidence)`; these are
+logical alternatives, not admitted DTO signatures. The closed unresolved vocabulary is
+**missing | conflicting | expression**. Missing has the exact enclosing declaration or
+parameter-reference span showing where the input was required, and means **not recorded**;
+it never invents a span for an absent token. Conflicting retains each candidate's span, with
+no precedence/default selection. Expression retains the exact source expression and span,
+never evaluation, interpolation, parameter-default substitution or guessed normalization.
+If that enclosing source itself cannot bind, the existing `EvidenceBinding` state records
+Missing/Stale/Denied/Unsupported; it does not add a fourth identity reason or mint a Source token.
+
+The producer may expose only values actually yielded by admitted inputs. A required scope
+value, full chain or explicit binding absent from existing output stays missing. An unresolved
+module binding or unenumerated loop instance cannot be inferred from a local symbol; a present
+expression stays expression. These cases refuse equality. `targetScope = 'resourceGroup'`
+can establish scope kind only; it cannot supply a subscription/resource-group identity.
+
+**Derived quantities and consumers.** Identity completeness, equality candidates, equality
+decisions, unresolved counts and display grouping are computed from the pinned inputs.
+Cross-declaration equality is a **derived, evidenced relation**, never a stored merge or
+rewritten declaration key. Its grain is one candidate declaration pair in the pinned
+observation; a supported result requires complete exact scope kind/value, provider/type and
+parent/name chains plus every required explicit parameter binding, with independently bound
+per-value evidence. Unknown scope, expression, module or loop refuses equality. Exact
+representation only: no case folding, ARM-ID normalization or transitive inference is
+qualified. F1 aliases still attach to one declaration and retain every anchor; an owner alias
+cannot prove equality between separate declarations. Both declaration identities survive
+even a future supported equality relation.
+
+Declaration and unresolved-component counts are additive only across disjoint rows/components
+within one observation, and semi-additive across observation time (never summed over time).
+Distinct identity/group counts, equality decisions and completeness ratios are non-additive;
+unknown denominators remain unknown. Do not store a second definition of these quantities.
+No materialized cache or cache-rebuild claim is introduced here.
+
+The surface list is: existing declaration facts plus exact manifest inputs -> immutable
+declaration identity/history -> derived equality/refusal -> proposed section 5 projection/wire
+-> the same client/graph/list/inspector unknown and provenance states -> independently bound
+Source/Back -> named tests below -> D&P review. The proposed producer writes only its read
+result; the equality reader consumes every required identity component and binding, while
+Source consumes only separately admitted source tokens. A changed manifest invalidates the
+derived relation and preserves the old readable observation as stale, under the existing
+request-sequence/cancellation rules. Truncation or cancellation never proves completeness.
+Existing section 7 bounds and normal-path latency/volume/failure counters apply; a missing
+measurement remains not recorded. There is no new telemetry or execution claim in this edit.
+
+**First named tests and evidence boundary.** The following source anchors are at design base
+`27642bf8`. Verified here means the named source and recorded output were opened, not that a
+test was rerun. `RESULT.md:156-225` records the repaired spike's historical 28-check result;
+its full-identity positive remains unresolved (`RESULT.md:297-326`). The frozen `90189411`
+spike does not qualify the later relation collection in section 5.1 or this proposed producer.
+
+| First contract test | Existing source anchor | Existing observation / proposed extension |
+|---|---|---|
+| `partial-identity-refused` | `spikes/atlas-architecture-contract/Program.cs:98` | Recorded refusal when literal type/name lacks concrete scope; first negative for scope kind being mistaken for scope value |
+| `expression-name-unresolved` | `spikes/atlas-architecture-contract/Program.cs:99` | Recorded expression refusal; future extension must retain verbatim expression and its span for every identity component |
+| `stale-anchor`, `missing-target`, `out-of-scope` | `spikes/atlas-architecture-contract/Program.cs:51-62` | Recorded synthetic unresolved bindings; future per-value binding tests must refuse equality and Source on stale/missing/foreign evidence |
+| `equal-symbols-distinct-scopes` | `spikes/atlas-architecture-contract/Program.cs:68-69` | Recorded separate roots when only analysis scope differs; does not prove deployment scope equality |
+| `alias-not-declaration`, `missing-root-produces-no-groups` | `spikes/atlas-architecture-contract/Program.cs:50,70-74` | Recorded invalid root refusal with no partial groups; aliases cannot designate aliases as declaration roots |
+| `different-root-not-collapsed`, `two-aliases-one-produced-root` | `spikes/atlas-architecture-contract/Program.cs:75-89` | Recorded distinct roots and complete alias anchors; no cross-declaration merge proof |
+
+Additional **proposed, unexecuted** oracles: `ContextObservationHashMismatch` (reject mixed
+template/declaration/binding hashes); `ContextMissingValueIsNotRecorded` (no default value);
+`ContextConflictingValuesRetainAllSpans` (no selected winner); `ContextParameterDefaultIsNotInput`
+(no default promoted to explicit binding); `ContextIncompleteParentModuleLoopRefusesEquality`
+(no supported equality on an incomplete chain); `ContextHistoryRetainsOldBinding` (changed
+external binding with unchanged template hash leaves the old observation unchanged);
+`ContextEqualityPreservesDeclarations` (supported pair never removes either declaration);
+and `ContextFullyKnownDeclaredPositive` (an admitted source-bound positive, still owed).
+Unknown enum, hostile text and byte/depth/row/cancellation tests remain the section 5/7 duties;
+the existing 64 KiB carrier limit is not evidence that this new producer has been bounded.
+Its concrete input/output limits must be settled before implementation, with no unbounded
+chain, parameter or candidate-pair traversal. No fixture execution was needed for this edit.
+
+**Peer reasoning and open gates.** Patterns Expert: an immutable read contract fits the
+existing projection boundary. Simplifier: reuse the extractor and exact bindings; no second
+store or resolver. Data & Persistence lens: keep the declaration aggregate and observation
+history distinct from derived equality. Test Architect: the named negatives precede the owed
+positive; historical spike output cannot qualify new behavior. These are author-side lenses,
+not independent acceptance or a cleared veto.
+
+**US-E8.b stays open.** Before implementation, the accepted Atlas foundation must land; the
+Claude conductor must convene the D&P Architect on a Codex `request-add` and record accept,
+amend or veto; and a second implementation request must propose the seam's home
+(`Core/Projections/` versus a new context) for the Owner's ruling. Local readiness review is
+not that D&P review. No implementation request, home choice or producer grant follows from
+this documentation. R122 condition (iv), resolution of the original request by the conductor,
+remains conductor-owned; this author resolves only its document assignment.
+
 ## 5. Proposed contract and exact seams
 
 Names below are proposals, not existing types or granted implementation paths.
@@ -298,7 +438,7 @@ because a human accepts a claim; acceptance is a separate attributable reference
 | Validated F1 carrier with bound anchor | ExplicitDeclaration, declared role/membership/invariant | No enforcement or accepted-authority inference |
 | Existing Bicep literal facts | StaticExtraction, source declaration/type/name and direct dependsOn | Not deployed state; folded defaults retain Inferred status |
 | F1 alias | ExplicitDeclaration, alias of one exact declaration | Cannot certify equality of two declarations |
-| Future fully evidenced identity producer | StaticExtraction plus its version and source-bound deployment context | Not admitted; no equality from partial tuple |
+| Proposed DeclaredDeploymentContext (R122, section 4.1) | Source-backed declared configuration identity with per-value provenance; never observed deployment | Design seam admitted only; implementation/home/D&P gates open; no equality from partial tuple |
 | Runtime-use observation | RuntimeObservation only from admitted observed trace | Outside declaration-only scope, capability unavailable |
 | Parent/config/network/grant | Separate typed producer and evidence contract | Initial capability unavailable; no lookup/comment-derived counts or grants |
 
