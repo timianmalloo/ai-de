@@ -89,7 +89,7 @@ h2.section:first-child{margin-top:0}
 .st-unknown .word,.st-unknown .glyph{color:var(--text-muted)}
 .why{font-size:var(--t-sm);color:var(--text-muted);margin:var(--s-2) 0 0;max-width:62ch;
   overflow-wrap:anywhere}
-.why code{font-family:var(--font-mono);font-size:var(--t-xs);color:var(--text)}
+.why code{font-family:var(--font-mono);font-size:var(--t-sm);color:var(--text)}
 
 .btn{min-height:28px;min-width:96px;padding:0 var(--s-5);border-radius:var(--r-sm);font:var(--w-medium) var(--t-sm)/26px var(--font-ui);
   cursor:pointer;background:transparent;color:var(--text);border:1px solid var(--border-strong);
@@ -200,9 +200,9 @@ label.f{display:block;font-size:var(--t-md);font-weight:var(--w-medium);margin:v
           <p class="why">Account "personal". Signed in: yes, quota degraded, as you recorded it on 2026-09-11 — not probed. Runs still bind.</p>
         </div>
         <div class="acct" role="listitem">
-          <div class="acct-head"><span class="prov">github</span><button class="btn primary">Set up…</button></div>
-          <p class="state st-attn"><span class="eng">copilot</span><span class="glyph" aria-hidden="true">●</span><span class="word">installed — not set up here</span></p>
-          <p class="why">Found copilot at <code>C:\Users\timmall\AppData\Local\Programs\copilot\copilot.exe</code>. Add an account to use it.</p>
+          <div class="acct-head"><span class="prov">github</span><button class="btn primary">Sign in…</button></div>
+          <p class="state st-attn"><span class="eng">copilot</span><span class="glyph" aria-hidden="true">●</span><span class="word">installed — sign in</span></p>
+          <p class="why">Found copilot at <code>C:\Users\timmall\AppData\Local\Programs\copilot\copilot.exe</code>. Sign in to use it.</p>
         </div>
         <div class="acct" role="listitem">
           <div class="acct-head"><span class="prov">google</span><button class="btn">Set up…</button></div>
@@ -214,22 +214,22 @@ label.f{display:block;font-size:var(--t-md);font-weight:var(--w-medium);margin:v
           <p class="state st-attn"><span class="eng">grok</span><span class="glyph" aria-hidden="true">●</span><span class="word">installed, not launchable</span></p>
           <p class="why">engine 'grok': PATH carries 'C:\Users\timmall\AppData\Roaming\npm\grok.cmd', an npm shim that needs a shell to run, and the catalog records no observed npm launch for 'grok'; install the observed form instead: <code>irm https://x.ai/cli/install.ps1 | iex</code></p>
         </div>
-        <p class="footer">No account is signed in for github, google or xai. The session will open; two accounts are ready and a run can start.</p>
+        <p class="footer" role="status">Two accounts are ready. github needs a sign-in; google is not installed; xai is installed but not launchable. The session will open, and a run can start on the two that are ready.</p>
       </div>
 
       <!-- S1 — fresh machine, the CLI is present. THE OPERATOR'S CASE. -->
       <div data-sc="cli-present">
         <div class="acct" role="listitem">
-          <div class="acct-head"><span class="prov">github</span><button class="btn primary">Set up…</button></div>
-          <p class="state st-attn"><span class="eng">copilot</span><span class="glyph" aria-hidden="true">●</span><span class="word">installed — not set up here</span></p>
-          <p class="why">Found copilot at <code>C:\Users\timmall\AppData\Local\Programs\copilot\copilot.exe</code>. Add an account to use it.</p>
+          <div class="acct-head"><span class="prov">github</span><button class="btn primary">Sign in…</button></div>
+          <p class="state st-attn"><span class="eng">copilot</span><span class="glyph" aria-hidden="true">●</span><span class="word">installed — sign in</span></p>
+          <p class="why">Found copilot at <code>C:\Users\timmall\AppData\Local\Programs\copilot\copilot.exe</code>. Sign in to use it.</p>
         </div>
         <div class="acct" role="listitem">
           <div class="acct-head"><span class="prov">google</span><button class="btn">Set up…</button></div>
           <p class="state st-off"><span class="eng">gemini</span><span class="glyph" aria-hidden="true">○</span><span class="word">not installed</span></p>
           <p class="why">engine 'gemini': 'gemini' is not on PATH and '@google/gemini-cli' is not installed under 'C:\Users\timmall\.aide\adapters'; install it: <code>npm install -g @google/gemini-cli</code></p>
         </div>
-        <p class="footer">copilot is installed on this machine but has no account here yet. The session will open; set it up above and a run can start. Nothing has been written to C:\Users\timmall\.aide\providers.json.</p>
+        <p class="footer" role="status">copilot is installed on this machine and needs a sign-in. The session will open; sign in above and a run can start. Nothing has been written to C:\Users\timmall\.aide\providers.json.</p>
       </div>
 
       <!-- S2 — fresh machine, nothing present -->
@@ -244,17 +244,17 @@ label.f{display:block;font-size:var(--t-md);font-weight:var(--w-medium);margin:v
           <p class="state st-off"><span class="eng">claude-code</span><span class="glyph" aria-hidden="true">○</span><span class="word">not installed</span></p>
           <p class="why">adapter not installed: <code>C:\Users\timmall\.aide\adapters\node_modules\@zed-industries\claude-code-acp\dist\index.js</code> is not on disk</p>
         </div>
-        <p class="footer">No agent CLI was found on this machine. The session will open; a run needs one of the engines above installed. Nothing has been written to C:\Users\timmall\.aide\providers.json.</p>
+        <p class="footer" role="status">No agent CLI was found on this machine. The session will open; a run needs one of the engines above installed. Nothing has been written to C:\Users\timmall\.aide\providers.json.</p>
       </div>
 
       <!-- S3 — npm shim, refused -->
       <div data-sc="shim">
         <div class="acct" role="listitem">
-          <div class="acct-head"><span class="prov">github</span><button class="btn primary">Set up…</button></div>
+          <div class="acct-head"><span class="prov">github</span><button class="btn primary">Sign in…</button></div>
           <p class="state st-attn"><span class="eng">copilot</span><span class="glyph" aria-hidden="true">●</span><span class="word">installed, not launchable</span></p>
           <p class="why">engine 'copilot': PATH carries 'C:\Users\timmall\AppData\Roaming\npm\copilot.cmd', an npm shim that needs a shell to run, and the catalog records no observed npm launch for 'copilot'; install the observed form instead: <code>winget install GitHub.Copilot</code> (or: npm install -g @github/copilot; then: copilot login, or copilot login --host https://&lt;tenant&gt;.ghe.com)</p>
         </div>
-        <p class="footer">No agent CLI on this machine can be launched as installed. The session will open; a run needs the install fixed above. Nothing has been written to C:\Users\timmall\.aide\providers.json.</p>
+        <p class="footer" role="status">No agent CLI on this machine can be launched as installed. The session will open; a run needs the install fixed above. Nothing has been written to C:\Users\timmall\.aide\providers.json.</p>
       </div>
 
       <!-- S4 — configured, signed out -->
@@ -264,7 +264,7 @@ label.f{display:block;font-size:var(--t-md);font-weight:var(--w-medium);margin:v
           <p class="state st-attn"><span class="eng">copilot</span><span class="glyph" aria-hidden="true">●</span><span class="word">set up — sign in to use</span></p>
           <p class="why">Account "work". Signed in: no, as you recorded it — not probed.</p>
         </div>
-        <p class="footer">No account is signed in. The session will open; sign in above — or, if you have already signed in with the CLI, mark it signed in — and a run can start.</p>
+        <p class="footer" role="status">No account is signed in. The session will open; sign in above — or, if you have already signed in with the CLI, mark it signed in — and a run can start.</p>
       </div>
 
       <!-- S5 — ready -->
@@ -288,7 +288,7 @@ label.f{display:block;font-size:var(--t-md);font-weight:var(--w-medium);margin:v
           <p class="state"><span class="skel" style="width:48px"></span><span class="skel" style="width:110px"></span></p>
           <p class="why"><span class="skel" style="width:280px"></span></p>
         </div>
-        <p class="footer">Checking this machine…</p>
+        <p class="footer" role="status">Checking this machine…</p>
       </div>
 
       <!-- S9 — degrades to "not recorded", never to a plausible wrong claim -->
@@ -298,7 +298,7 @@ label.f{display:block;font-size:var(--t-md);font-weight:var(--w-medium);margin:v
           <p class="state st-unknown"><span class="eng">claude-code</span><span class="glyph" aria-hidden="true">—</span><span class="word">couldn't check</span></p>
           <p class="why">The check for 'claude' did not finish — not recorded. Nothing was changed.</p>
         </div>
-        <p class="footer">AI-DE could not check this machine — not recorded. The session will open. Re-check above.</p>
+        <p class="footer" role="status">AI-DE could not check this machine — not recorded. The session will open. Re-check above.</p>
       </div>
 
       <!-- OVERFLOW — longest real content: a deep path, a long label, a full install instruction -->
@@ -308,7 +308,7 @@ label.f{display:block;font-size:var(--t-md);font-weight:var(--w-medium);margin:v
           <p class="state st-attn"><span class="eng">grok</span><span class="glyph" aria-hidden="true">●</span><span class="word">set up here, but not launchable now</span></p>
           <p class="why">engine 'grok': 'grok' is not on PATH and '@xai-official/grok' is not installed under 'C:\Users\timmall\AppData\Local\Packages\AI-DE.Workspace_8wekyb3d8bbwe\LocalCache\Roaming\.aide\adapters'; install it: <code>irm https://x.ai/cli/install.ps1 | iex</code> (Windows PowerShell; macOS/Linux: curl -fsSL https://x.ai/cli/install.sh | bash) — or: npm install -g @xai-official/grok@1.0.30; then: grok login, or set XAI_API_KEY in the environment the product launches with. Account "enterprise-shared-billing-eu-west-primary" is untouched — nothing was removed.</p>
         </div>
-        <p class="footer">The accounts in C:\Users\timmall\AppData\Local\Packages\AI-DE.Workspace_8wekyb3d8bbwe\LocalCache\Roaming\.aide\providers.json are set up, but their CLIs cannot be launched from here. The session will open; a run needs the install fixed above.</p>
+        <p class="footer" role="status">The accounts in C:\Users\timmall\AppData\Local\Packages\AI-DE.Workspace_8wekyb3d8bbwe\LocalCache\Roaming\.aide\providers.json are set up, but their CLIs cannot be launched from here. The session will open; a run needs the install fixed above.</p>
       </div>
 
     </div>
@@ -361,14 +361,16 @@ label.f{display:block;font-size:var(--t-md);font-weight:var(--w-medium);margin:v
     <p class="note" id="signed-state" aria-live="polite">Signed in: not recorded. AI-DE does not probe; it records what you tell it. providers.json will be written with health: needs-login.</p>
 
     <label class="f" for="acct-label">Account label</label>
-    <p class="note" id="acct-help">A name for this account, used on the session sheet and in providers.json — e.g. work or personal. Yours to choose; AI-DE never reads it.</p>
-    <input class="field" id="acct-label" placeholder="work" aria-describedby="acct-help">
+    <p class="note" id="acct-help">A name for this account, used on the session sheet and in providers.json — e.g. work or personal. Yours to choose; AI-DE never interprets it.</p>
+    <input class="field" id="acct-label" value="work" placeholder="work" aria-describedby="acct-help">
 
     <div style="display:flex;gap:var(--s-5);align-items:center;margin-top:var(--s-6);flex-wrap:wrap">
-      <button class="btn primary" id="write" disabled>Write providers.json</button>
-      <span class="note" id="write-why" style="margin:0;color:var(--inferred)" aria-live="polite">Enter an account label to write providers.json.</span>
+      <button class="btn primary" id="write">Write providers.json</button>
+      <span class="note" id="write-why" style="margin:0;color:var(--inferred)" aria-live="polite">Confirm the sign-in above to write providers.json.</span>
     </div>
     <p class="note">Writes <code>C:\Users\timmall\.aide\providers.json</code>. The file is yours to edit; AI-DE re-reads it when this sheet closes.</p>
+    <p class="note" role="status" data-outcome="written" hidden>Written. github · work · needs-login. The Accounts list has been updated.</p>
+    <p class="note" role="status" data-outcome="failed" hidden>Could not write the file: access is denied. Nothing was changed.</p>
   </div>
 </div>
 
