@@ -91,13 +91,20 @@ public sealed class EntryPointsSurfaceTests
         {
             var surface = new EntryPointsSurface();
 
-            // The live path: the cap fired, and the count is legible.
+            // The live path: the cap fired, and the count is legible. BOTH are asserted, because a
+            // disclosure fires exactly when the listing is INCOMPLETE — which is when a reader most
+            // needs the shape mix. An either/or chrome line hides the thing the caveat is about, and
+            // Contains() on the disclosure alone would not notice the regression.
             surface.Show(new EntryPointsResult([ApiRow], 46, ["Omitted (46)"], "rev-1"));
-            Assert.Contains("Omitted (46)", VisibleText(surface), StringComparison.Ordinal);
+            var capped = VisibleText(surface);
+            Assert.Contains("Omitted (46)", capped, StringComparison.Ordinal);
+            Assert.Contains("1 api", capped, StringComparison.Ordinal);
 
             // A disclosure the cap did not raise. A surface that reads the counter drops this one.
             surface.Show(new EntryPointsResult([ApiRow], 0, ["Not analysed: vendor/"], "rev-1"));
-            Assert.Contains("Not analysed: vendor/", VisibleText(surface), StringComparison.Ordinal);
+            var uncapped = VisibleText(surface);
+            Assert.Contains("Not analysed: vendor/", uncapped, StringComparison.Ordinal);
+            Assert.Contains("1 api", uncapped, StringComparison.Ordinal);
 
             // Nothing was hidden: the kind summary is the chrome and no caveat fires. A caveat that
             // shows when nothing was hidden trains a reader to skip caveats (DC-025's second half).
