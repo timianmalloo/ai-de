@@ -10,7 +10,6 @@ links:
   - { to: note-understanding-views-owner-d1-admission, rel: depends-on }
   - { to: spec-addendum-c-perspectives, rel: relates-to }
   - { to: spec-uml-erm-surfaces, rel: relates-to }
-  - { to: plan-atlas-views, rel: relates-to }
   - { to: adr-0018-node-content-reader-contract, rel: depends-on }
   - { to: adr-0030-perspective-registry-and-allow-lists, rel: depends-on }
 review-by: 2026-12-15
@@ -45,6 +44,16 @@ Watcher track: **NOTICE SENT** (this artifact + direct `request-add` to `codex-a
 | Pin | Value Grok reads today |
 |---|---|
 | E1/E2 plan | `docs/plans/atlas-views.md` (`plan-atlas-views`) — E1 Sequence/Activity, E2 domain/layer/Azure |
+
+> **The typed frontmatter edge to `plan-atlas-views` was removed on 2026-09-17, and only that edge.**
+> The row above still names the intended path and id, so nothing is lost. The plan does not exist
+> under any id — `docs/plans/atlas-views.md` is absent and no artifact declares `plan-atlas-views`,
+> so this was a link to something that has not landed rather than a rename. It became load-bearing
+> the moment `docs-graph.py validate` was wired into the gate line (Ruling 125(ii)): a dangling
+> target now refuses every join on `main`, and this was the only one in the repository. Restore the
+> edge in the same change that lands the plan. Raised with the owning session as
+> `req-01M2R4S88SJ6YKGJYFB4DXE41R`; edited here rather than left because that session is not in the
+> live window and the gate blocks the fleet, not just this lane.
 | UML/sequence spec | `docs/specs/uml-erm-surfaces.md` |
 | Codex mock/design | their frozen mockups on Atlas trees (Codex cites exact SHA in ACK) |
 

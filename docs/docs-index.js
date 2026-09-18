@@ -2431,7 +2431,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8da981119c695cd2c33dc79c8ffdadab28f197c5d0cec02f372e74aa0855ecdb"
+      "sourceSha256": "0e70254642aa93a9db489f0155c9002c047b1ff7d7866f03d776e427ffa3b2bb"
     },
     {
       "id": "api-aide-core-promptcompilation",
@@ -5524,10 +5524,6 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         },
         {
-          "to": "plan-atlas-views",
-          "rel": "relates-to"
-        },
-        {
           "to": "adr-0018-node-content-reader-contract",
           "rel": "depends-on"
         },
@@ -5537,7 +5533,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "af85cdadb1ef2c942a16aed8c5cacb2fdb770d63d32d423bbfee35934d662f3e"
+      "sourceSha256": "901ce3ff8811cd55d354906d2834019484e0790115b6e045baf0735c5e1d6c12"
     },
     {
       "id": "note-d1-codex-entry-point-handshake-r2",
@@ -21064,5 +21060,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "39595cca30c7d96a68764df4851384934c345b7a53b99cf0da8221bcdcba1d0a"
+  "graphSha256": "d7fde000c46c79d92a186df1a4ebd77231e8b3919c7ee3817cad9a9bfe16155d"
 };
