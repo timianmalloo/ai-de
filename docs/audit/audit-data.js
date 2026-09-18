@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-18T19:40:15Z",
+  "generated": "2026-09-18T19:44:33Z",
   "audit": [
     {
       "actor": null,
@@ -20153,6 +20153,78 @@ window.AUDIT_DATA = {
     },
     {
       "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-18T18:00:32Z",
+      "id": "al-01M2TTTPX92RY73VTMH2WA1QCM",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "we need to wind down this work gracefully end sessions and mark complete and todo so we can pick up in the future relinquish the watcher role clean up outstanding worktrees and get main to clean and up to date",
+      "session": "prompt-log",
+      "shortname": "we need to wind down this work gracefully end sessions and mark complete…",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-18T00:17:22Z",
+      "id": "al-01M2RXZZYAXNPX0CVGD0FBTJED",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "continue with the areas you own and proactively kick the other sessions to ensure we are making progress",
+      "session": "prompt-log",
+      "shortname": "continue with the areas you own and proactively kick the other sessions …",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-18T01:01:10Z",
+      "id": "al-01M2S0G686NZEZ4CBHMWSDSH0J",
+      "kind": "prompt",
+      "outcome": "success",
+      "prompt": "continue with the areas you own and proactively kick the other sessions to ensure we are making progress",
+      "session": "prompt-log",
+      "shortname": "continue with the areas you own and proactively kick the other sessions …",
+      "skill": null,
+      "summary": "prompt logged for reuse",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": null,
+      "artifacts": [],
+      "datetime": "2026-09-18T01:01:10Z",
+      "done_when": "Owned bounded evidence or exact blocker returned; peer next actions and remaining gates explicit",
+      "duration_seconds": 3045.0,
+      "fan_out": 2,
+      "git": {
+        "branch": "conductor/main-watch-takeover",
+        "pushed": null,
+        "sha": "c46e112a924a8a0a4c86e4552af1f0e30bfa851c",
+        "short": "c46e112a9"
+      },
+      "goal": "Advance owned qualification and obtain concrete existing-scope peer actions",
+      "id": "al-01M2S1CC86GE3JBPF0RN8Z1B5C",
+      "kind": "skill",
+      "outcome": "partial",
+      "prompt": "continue with the areas you own and proactively kick the other sessions to ensure we are making progress",
+      "session": "copilot-main-watch-b0d0",
+      "shortname": "coordinated-progress-checkpoint",
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-18T00:10:25Z",
+      "summary": "Bounded coordination checkpoint: official-stream sibling-root subset committed and independently cleared at P2 b7cb3262; retained raw positive/mutant/restored receipts and archive hash checked, no full P2 claim. Main product/control merge e0 and closing record62 observed; exact CI failed mutation-set startup on dirty requests journal, not merely expected App failures, correction requested. Codex committed E2 design39de with formal D&P still pending. Grok returned D1 fixes and r7; actual consumer ACK verified, producer consumption then outstanding at this boundary. Exact publisher/rescue/reconciliation requests sent, not counted as execution. Narrower source-packet approach produced tests after prior read-only failure. Remaining native/control and full-phase gates preserved. This entry closes the prior run using its observed start and the next-run marker boundary; no test runtime or agent cost is invented.",
+      "tags": [],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": null,
       "artifacts": [
         "tests/AiDe.App.Tests/DesktopHold.cs"
       ],
@@ -20538,39 +20610,186 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M2TVSHY3F7BR9A5GFBXH27F7",
-      "shortname": "conserve-atlas-audit-records",
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-audit-preservation.md"
+      ],
       "datetime": "2026-09-18T18:17:23Z",
-      "session": "claude-conductor-watch-0915",
+      "done_when": "the seven records are on main unaltered; verify-audit-capture exits 0; no preserved entry is edited",
+      "duration_seconds": 62212.0,
+      "duration_source": "session-start-hook",
+      "git": {
+        "branch": "main",
+        "pushed": true,
+        "sha": "48483dc56fe2754d7225d4f9b74453f572cb2fb1",
+        "short": "48483dc56"
+      },
+      "goal": "Conserve a wound-down session's audit records on main without rewriting them, and clear the capture gate I turned red by landing them",
+      "id": "al-01M2TVSHY3F7BR9A5GFBXH27F7",
+      "kind": "skill",
+      "outcome": "success",
       "prompt": "we should reset and re-base on outstanding tasks, clean up work trees and get to a common known good before federating work out further",
+      "session": "claude-conductor-watch-0915",
+      "shortname": "conserve-atlas-audit-records",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "execute-with-coordination",
+      "started_at": "2026-09-18T01:00:31Z",
       "summary": "CAPTURE SUPERSEDE for al-01M2P5Z1CX15WPDS1F1ZZZPFT3, which it does not replace and does not judge.\n\nThat entry arrived on main with 53306e9e, the conservation of seven Atlas audit records from a Codex\nsession the operator stood down. It is episode-shaped and carries a goal, an outcome and named\nartifacts - but no `signals` object, and its artifacts sit under `artifacts/` rather than `docs/proof/`,\nso verify-audit-capture scores it Not Scored for want of a verification path and the gate fails.\n\nI turned that gate red by landing the conservation, so it is mine to clear - but NOT by editing a\npreserved record. Codex's own wind-down request was explicit that journal history must not be\ndiscarded, and rewriting someone else's receipt to satisfy a gate is precisely the muting this\nregister exists to prevent. The gate's own rule admits the honest path instead: an entry is compliant\nif a LATER, fully compliant entry supersedes it. This is that entry.\n\nWHAT I CAN ATTEST, and nothing beyond it: the conservation itself. Twelve files landed, docs only,\nzero behind main, carrying seven audit rows and a manifest verifier with its fixture. The authoring\nsession reported it VERIFIED at 53306e9e (req-01M2S2P2THHNBJ81YN) before it ended. I re-ran nothing\nof theirs and re-derived nothing.\n\nWHAT I CANNOT ATTEST: whether the original run's verification actually executed. Its goal was \"Prove\nlive and completed direct-file capture without changing the staged candidate\" and it names evidence\nfiles, so a verification path plainly existed - but the session that ran it has ended, its signals\nwere never captured at the time, and they cannot be reconstructed now without asserting something I\ndid not observe. The signals on THIS entry are mine, about the conservation, and they are not a\nrestatement of theirs.\n\nThe lesson is the gate's own: silence is not capture. A run that records its goal and its artifacts\nbut not its signals cannot be scored afterwards by anyone, including the session that ran it - and\nthis one closed before anybody noticed. The cost lands on whoever inherits the workstream.",
+      "supersedes": "al-01M2P5Z1CX15WPDS1F1ZZZPFT3",
+      "tags": [],
+      "tier": "T1",
+      "tool": null
+    },
+    {
+      "id": "al-01M2TWH89NVQRR80QCW79JVX82",
+      "shortname": "preserve-watcher-checkpoint",
+      "datetime": "2026-09-18T18:30:19Z",
+      "session": "copilot-winddown-b0d0",
+      "prompt": "Preserve prior watcher audit records during the user-requested wind-down.",
+      "summary": "The three old watcher additions were compared with the exact c46e112a committed prefix and conserved through the official register union. This superseding entry attests conservation, not the historical run verification or full programme acceptance. Original records remain unchanged. The resume map distinguishes completed finite evidence from TODOs and records cleanup uncertainty.",
       "kind": "skill",
       "skill": "execute-with-coordination",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/proof/atlas-audit-preservation.md"
+        "docs/collaboration/session-winddown-2026-09-18.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Preserve the prior watcher checkpoint without rewriting history",
+      "done_when": "All three original objects survive and the honest resume map is recorded",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-18T18:00:32Z",
+      "duration_seconds": 1787.0,
+      "supersedes": "al-01M2S1CC86GE3JBPF0RN8Z1B5C"
+    },
+    {
+      "id": "al-01M2TWQQ4G4HFTJBRK8PN77RKS",
+      "shortname": "session-winddown-resume-map",
+      "datetime": "2026-09-18T18:33:51Z",
+      "session": "copilot-winddown-b0d0",
+      "prompt": "we need to wind down this work gracefully end sessions and mark complete and todo so we can pick up in the future relinquish the watcher role clean up outstanding worktrees and get main to clean and up to date",
+      "summary": "GHCP watcher stopped and relinquished; P0-P5 coordinator returned terminal idle/clean checkpoints, no automatic continuation. Completed finite evidence and TODOs recorded in the resume map; unfinished features are not accepted or merged by this task. Three unique old watcher audit objects conserved via official union, with honest superseding capture. Independent inventory/review observed 23 trees disappearing during another actor wind-down; GHCP performed zero removals. 41 archive files verified, and the separate 40-path bin/obj allowance objection independently resolved without certifying contents or deletion-time behavior. Current main publication and final journal conservation remain with the serialized publisher; private maintenance handoff is ready for its final pin and checks.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-winddown-2026-09-18.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Gracefully stop work and preserve exact completed/TODO resume state without losing unique data",
+      "done_when": "Watcher is off, owned workers stopped, checkpoints and cleanup evidence recorded, and final main state read back",
+      "tier": "T2",
+      "fan_out": 2,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "git": {
+        "sha": "857ae7397e00402fa2611ae665598a6134e6a3f8",
+        "short": "857ae7397",
+        "branch": "maintenance/session-winddown-2026-09-18",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2TXC3PB4WQYBY6N5NWVABBW",
+      "shortname": "session-winddown-final",
+      "datetime": "2026-09-18T18:44:59Z",
+      "session": "copilot-winddown-final-b0d0",
+      "prompt": "the join of maintenance/session-winddown-2026-09-18 into main",
+      "summary": "Docs/audit-only closure, preserved unique watcher rows and exact TODO checkpoints. No unfinished feature is accepted. Product code is unchanged from the current published main. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-winddown-2026-09-18.md"
       ],
       "tags": [],
       "outcome": "success",
-      "goal": "Conserve a wound-down session's audit records on main without rewriting them, and clear the capture gate I turned red by landing them",
-      "done_when": "the seven records are on main unaltered; verify-audit-capture exits 0; no preserved entry is edited",
+      "goal": "Conserve the wind-down handoff and operational history on main without losing unfinished work",
+      "done_when": "The handoff is on main, applicable documentation gates pass, and final metadata is conserved; product TODOs remain explicit",
       "tier": "T1",
+      "fan_out": 0,
       "signals": {
         "verification_path": true,
         "verification_executed": true,
         "acceptance_met": true
       },
+      "started_at": "2026-09-18T18:44:58Z",
+      "duration_seconds": 1.0
+    },
+    {
+      "id": "al-01M2TZFXS4X8PPQ1TBCXK2MDFZ",
+      "shortname": "winddown-join-correction",
+      "datetime": "2026-09-18T19:22:01Z",
+      "session": "copilot-winddown-seal-b0d0",
+      "prompt": "Finish only the remaining shutdown closure.",
+      "summary": "The first documentation-only join stopped at step8; its automatic pre-gate acceptance signal was premature. The actual failure was stale retained test counts plus a dangling typed link to a branch-only note. Original entry is preserved and superseded. The source link is corrected without importing unqualified Explore work. One fresh unchanged-product run now counts App1054/Core2756, bothCompleted andonlyexistingexpectedSkips; no baseline lowered or tests changed. Final all-gate resume and push remain pending in this correction.",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-winddown-2026-09-18.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Close the already-merged documentation handoff honestly",
+      "done_when": "Final gates and clean synchronized main are observed, without new feature work",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
       "duration_source": "session-start-hook",
-      "started_at": "2026-09-18T01:00:31Z",
-      "duration_seconds": 62212.0,
-      "supersedes": "al-01M2P5Z1CX15WPDS1F1ZZZPFT3",
-      "git": {
-        "sha": "48483dc56fe2754d7225d4f9b74453f572cb2fb1",
-        "short": "48483dc56",
-        "branch": "main",
-        "pushed": true
-      }
+      "started_at": "2026-09-18T18:48:45Z",
+      "duration_seconds": 1996.0,
+      "supersedes": "al-01M2TXC3PB4WQYBY6N5NWVABBW"
+    },
+    {
+      "id": "al-01M2TZFYX8P5EBYDF287Q8TE4G",
+      "shortname": "session-winddown-seal",
+      "datetime": "2026-09-18T19:22:03Z",
+      "session": "copilot-winddown-seal-b0d0",
+      "prompt": "the join of the resolved merge into main",
+      "summary": "Resume an already-merged docs/audit-only closure after exact stale-result and graph-link corrections; no merge conflict, product change, lowered floor or skipped gate. recount_seconds=0 (docs_only=True).",
+      "kind": "skill",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-winddown-2026-09-18.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Seal the resumable shutdown handoff and preserved operational history",
+      "done_when": "All repository gates and docs graph pass; final records conserved; push and cleanliness read back separately",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-18T19:22:02Z",
+      "duration_seconds": 1.0
     }
   ],
   "changes": [

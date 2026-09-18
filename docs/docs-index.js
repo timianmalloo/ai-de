@@ -7476,6 +7476,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "c20b395a9957338b90358af9b8af08d35c4cb32863c8b29e530c097d41878c78"
     },
     {
+      "id": "note-wind-down-state-2026-09-18",
+      "path": "docs/notes/wind-down-state-2026-09-18.md",
+      "title": "Wind-down state, 2026-09-18: what landed, what is preserved, what every workstream owes next",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "conductor-watch-0915",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "The operator stood every session down and asked for a common known good before work is federated again. This is that state: what reached main, what is preserved and where, which lane cannot land and why, and the next action for each of ten workstreams. Nothing was deleted that held work, and no work exists in only one place.",
+      "tags": [
+        "wind-down",
+        "watcher",
+        "worktrees",
+        "workstreams",
+        "coordination",
+        "known-good"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "aa7b9eb7b6f253ed59d01f2063c3325b11ac702fd330ad827eac55c3952d0f5d"
+    },
+    {
       "id": "note-workspace-open-layout-restore",
       "path": "docs/notes/workspace-open-layout-restore.md",
       "title": "Decision note — workspace-open layout restore semantics",
@@ -12439,6 +12471,37 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "fbf372e37e6df30d58ad671051def9d2f9fd7848f0c02db8b3af8ba41cc69df7"
+    },
+    {
+      "id": "session-winddown-2026-09-18",
+      "path": "docs/collaboration/session-winddown-2026-09-18.md",
+      "title": "Session wind-down and resume map - 2026-09-18",
+      "type": "doc",
+      "status": "active",
+      "owner": "@timianmalloo",
+      "phase": "paused",
+      "reviewBy": "2026-10-18",
+      "reviewSuggested": [],
+      "summary": "The operator stopped implementation and asked for graceful checkpoints, a relinquished GHCP watcher, safe cleanup and a clean main. This record separates completed finite evidence from unfinished delivery and preserves exact resume pins.",
+      "tags": [
+        "coordination",
+        "wind-down",
+        "handoff",
+        "todo",
+        "preservation"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-c-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "521fae1602bdf551a64dfd290cb052b4db424e0dcedd8b17b6a9961bf90b8785"
     },
     {
       "id": "spike-d0-tree-toolkit",
@@ -21347,5 +21410,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c92e9ca3764c9d4ae093f7259ea9a5e566841e0cb5ac05922038d193d66e1db0"
+  "graphSha256": "2e48f87c564b63be13cab2865dec8d2edb3e9397c2f63983cece836e3f0b38cc"
 };
