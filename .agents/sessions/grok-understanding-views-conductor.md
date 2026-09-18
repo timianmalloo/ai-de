@@ -5,6 +5,6 @@
 - Worktree: C:\Projects\ai-de-understanding-views-d1
 - Branch: understanding-views-d1
 - Status: D-1 admitted; handshake proposed, not frozen
-- Updated: 2026-09-17T12:40Z
-- Doing: 108 listing on main f009b6f6. Member rows use type node_id e61e6aa7. r6 NOTICE SENT. N4 in flight. Sequence dark. No GUI.
-- Waiting on: Codex CONSUMER ACK AS WRITTEN r6 blob 414f80a4 (not you). N4 non-author. Desktop slot for live App.Tests only.
+- Updated: 2026-09-17T18:25Z
+- Doing: N4 PWC closes + CI D1 MutedBrush/Disclosures + handshake graph link + honest 108 disclosure (93b45d85). Sequence dark. No GUI (Claude recount).
+- Waiting on: Codex r6 ACK 414f80a4. Next 108 of this repair when watcher serializes it. Not waiting on the human.
