@@ -9536,6 +9536,11 @@ window.DOCS_INDEX = {
       "diagrams": [
         {
           "kind": "flowchart",
+          "title": "Active E1/E2 next node — R122, 2026-09-18",
+          "mermaid": "flowchart LR\n  A[Exact R122 design delta] --> R[Independent readiness review]\n  R --> D[Claude-convened D&P request]\n  D --> H[Return exact evidence and open decision]\n  P[Existing R124 publisher actions]"
+        },
+        {
+          "kind": "flowchart",
           "title": "Material graph, floors and cost",
           "mermaid": "flowchart LR\n  C[Truthful partial close] --> O[Owner promotion by reference]\n  O --> N[Exact native slot request]\n  C --> R[Claude replacement and base decision request]\n  N --> H[Record and commit handoffs]\n  R --> H"
         },
@@ -9545,7 +9550,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  P[Provision isolated exact base] --> M[Verify nine blobs and wrapper]\n  M --> V[One durable combined coverage]\n  V --> I[Inspect actual population and result]\n  I --> R[Independent evidence review]\n  R --> H[Exact candidate and evidence handoff]\n  A[Claude conserves original audit] --> J[Serialized integration]\n  H --> J\n  J --> C[Claude personal proof review and R108 gates]"
         }
       ],
-      "sourceSha256": "3fe873cf6c741a6e9ef6ad67fd4260c7dec1965a2e0e9b62549b32a6646a7ff3"
+      "sourceSha256": "57f4c1374f6b14ec0a08866323c731ded77325bd6b6f4cff9b0cf84e7a291ed5"
     },
     {
       "id": "coordination-code-atlas",
@@ -9733,7 +9738,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e35e09d214ec1eda64629d5946f9c947287a118bdf793306195dbe03055c5866"
+      "sourceSha256": "0ffbf05fb273b5c1ba75f329c62cdde1c2b592f355cbf4af39323d3f2a0c5d3d"
     },
     {
       "id": "design-session-profiler",
@@ -12100,6 +12105,16 @@ window.DOCS_INDEX = {
       "diagrams": [
         {
           "kind": "flowchart",
+          "title": "Active E1/E2 next node — R122, 2026-09-18",
+          "mermaid": "flowchart LR\n  A[Exact R122 design delta] --> R[Independent readiness review]\n  R --> D[Claude-convened D&P request]\n  D --> H[Return exact evidence and open decision]\n  P[Existing R124 publisher actions]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Publication follow-through graph — 2026-09-18",
+          "mermaid": "flowchart LR\n  O[Owner scope decision] --> P[Publisher disposition]\n  J[Independent overlap review] --> P\n  P --> C[Evidence and documentary close]"
+        },
+        {
+          "kind": "flowchart",
           "title": "Material graph, floors and cost",
           "mermaid": "flowchart LR\n  C[Truthful partial close] --> O[Owner promotion by reference]\n  O --> N[Exact native slot request]\n  C --> R[Claude replacement and base decision request]\n  N --> H[Record and commit handoffs]\n  R --> H"
         },
@@ -12134,7 +12149,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  P[Provision isolated exact base] --> M[Verify nine blobs and wrapper]\n  M --> V[One durable combined coverage]\n  V --> I[Inspect actual population and result]\n  I --> R[Independent evidence review]\n  R --> H[Exact candidate and evidence handoff]\n  A[Claude conserves original audit] --> J[Serialized integration]\n  H --> J\n  J --> C[Claude personal proof review and R108 gates]"
         }
       ],
-      "sourceSha256": "965c0704003428560f872998e566e8a675448351eafcd82c9bf7fc1b139b2479"
+      "sourceSha256": "401960de84755db55b72b37f7f332391e843efc920c91978a4b815ec8f53b496"
     },
     {
       "id": "plan-audit-gate-self-test",
@@ -13043,9 +13058,14 @@ window.DOCS_INDEX = {
           "kind": "flowchart",
           "title": "Owner-confirmed graph and execution boundaries",
           "mermaid": "flowchart LR\n  P[Readiness and exact request] --> G[Fresh watcher grant]\n  G --> E[One frozen pair]\n  E --> I[Independent actual interpretation]\n  I --> H[Coordinated evidence handoff]\n  B[Read-only current-base receipt] --> C[Claude replacement and base decision]\n  C --> V[One granted combined coverage]\n  V --> R[Independent candidate and Claude proof reviews]\n  R --> H"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Active E1/E2 next node — R122, 2026-09-18",
+          "mermaid": "flowchart LR\n  A[Exact R122 design delta] --> R[Independent readiness review]\n  R --> D[Claude-convened D&P request]\n  D --> H[Return exact evidence and open decision]\n  P[Existing R124 publisher actions]"
         }
       ],
-      "sourceSha256": "ec9c32abc1d109967c406fd3f16f0cfed9332e4264da68686782e4c1c56da782"
+      "sourceSha256": "a11b13afb62d11621217f95775deb1b70f2024771d23c17ffaf814c116e74ae9"
     },
     {
       "id": "proof-atlas-peer-review-transport",
@@ -23478,5 +23498,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "649b4c5a1c73ab2dc6bc026e167acfe70af7d6c69cf028ab9ba48813f62b7a8f"
+  "graphSha256": "86e7335aabf7bf2bd2e281d38abd0baa06b94e4b394073e554155d8ef043af11"
 };

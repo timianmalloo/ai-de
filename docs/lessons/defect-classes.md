@@ -8602,3 +8602,23 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   ownership, byte-identity and capture failures still stop. No primary-targeting
   regeneration ran. The one actual coverage result and separate final own-tree
   derivation prove this scoped path, not general coordination health.
+
+
+- **DC-116 recurrence, R124/R122 continuation (2026-09-18):** guessed watcher,
+  join/config and change-log paths, an unsupported coord status command, and absolute
+  path matching that selected the worktree name caused read failures/truncated output.
+  **Class → sweep → derive → prevent:** discover filenames relative to the intended
+  tree, read actual CLI/source signatures, and set both coordination identity variables
+  on every fresh shell. The continuation's executable helpers assert exact tool/config
+  existence, fixed candidate/base and saved-request nonduplication before mutation;
+  subprocess failures stop dependent steps. Root's direct audit prefix/ID assertions
+  independently checked774-row conservation. These local controls do not claim to
+  prevent every future interactive lookup mistake. The failed lookups supplied no
+  qualification evidence; no source/test/gate was changed to hide them.
+- **DC-116 recurrence, superseded status as next-work input (2026-09-18):** an
+  inventory recommended repeating mock review from older author documents and described
+  the old E2 spike too broadly. **Class → sweep → derive → prevent:** read the newer
+  exact R-M receipt and the design's explicit spike exclusion, correct both E1/E2 rows,
+  and retain the narrower claims. record_r122_dispatch.py asserts the frozen review
+  SHA and scoped CLEAR text before recording or dispatching the dependent node. This
+  is a local dispatch control; native/production gates and newer relation oracles stay open.
