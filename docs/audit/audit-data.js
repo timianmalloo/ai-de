@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-18T00:21:57Z",
+  "generated": "2026-09-18T00:27:14Z",
   "audit": [
     {
       "actor": null,
@@ -18729,6 +18729,29 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-09-18T00:17:58Z",
       "duration_seconds": 238.0
+    },
+    {
+      "id": "al-01M2RYJ19AWG8WZEGM5YBK37D2",
+      "shortname": "r122-proof-review-metadata",
+      "datetime": "2026-09-18T00:27:13Z",
+      "session": "codex-atlas-e2-deployment-context",
+      "prompt": "Owner admits one routine metadata close, separate bounded unit 4 tool calls/8 min, no design/body/source change. Resume SAME session/tree identity. Required V16: use docs-graph.py flag --changed design-atlas-architecture-views --reason New R122 contract proposal is not qualified by historical spike; review identity/history/equality claims against section4.1. Proceed ONLY if sole authored affected path docs/proof/atlas-architecture-contract.md. Metadata only plus own audit/derived/site figures; short exact leases, no register lease. Preserve proof body, reviewed design blob git85a:docs/design/atlas-architecture-views.md and all src/tests/spikes bytes. New graph flag is review-suggested, NEVER independent acceptance. Official audit after edit then own-tree regenerate, affected graph check/diff inspection and commit normal controls. End session/release.",
+      "summary": "Official graph flag affected only the proof frontmatter. Proof body, reviewed design blob, and tracked src/tests/spikes SHA256 set unchanged. Graph validation has no problems or stale artifacts; proof is review-suggested, not accepted.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/atlas-architecture-contract.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Apply V16 review-suggested to the sole inbound proof metadata.",
+      "done_when": "Metadata-only commit with unchanged proof body/design/source bytes and checked derived views; no acceptance claim.",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-09-18T00:25:41Z",
+      "duration_seconds": 92.0
     }
   ],
   "changes": [

@@ -9,6 +9,8 @@ links:
   - { to: design-atlas-architecture-views, rel: relates-to }
 review-by: 2026-12-15
 summary: "57 Windows synthetic checks and eight rejected faults; complete expected relation semantics are compared."
+review-suggested:
+  - { by: design-atlas-architecture-views, on: 2026-09-17, reason: "New R122 contract proposal is not qualified by historical spike; review identity/history/equality claims against section4.1." }
 ---
 
 # Bounded E2 contract evidence

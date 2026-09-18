@@ -10368,7 +10368,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-12-15",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "design-atlas-architecture-views",
+          "on": "2026-09-17",
+          "reason": "New R122 contract proposal is not qualified by historical spike; review identity/history/equality claims against section4.1."
+        }
+      ],
       "summary": "57 Windows synthetic checks and eight rejected faults; complete expected relation semantics are compared.",
       "tags": [
         "atlas",
@@ -10384,7 +10390,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1615fde399ac382c0068bf5bc58a6203c0c61bbc1563bf250eb4c5db3ef2f409"
+      "sourceSha256": "34d991ce63e1c2f328720790fa39c6e3d1305340eb99626cf1b27ec5614796fe"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -19367,5 +19373,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3bbbebe85c9205b224e7d7709105feae78e18dcc69edc291f8aac7a4eb6b7172"
+  "graphSha256": "2eff9251821207bf4d60fff984dc7bb95ed5c77ee96b7e11a90fb40e395838b6"
 };
