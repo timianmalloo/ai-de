@@ -11199,6 +11199,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "1e69075fe508c573e0487e1a1ae1973dbedc4331d09eecd65d4981e8cac3a590"
     },
     {
+      "id": "plan-atlas-session-shutdown",
+      "path": "docs/plans/atlas-session-shutdown.md",
+      "title": "Codex Atlas session shutdown and resume queue",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "Stop product work, retain exact candidates, preserve cleanup evidence, and transfer remaining publication/review actions.",
+      "tags": [
+        "plan",
+        "coordination",
+        "atlas",
+        "shutdown"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-atlas-audit-preservation",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Optimized shutdown graph",
+          "mermaid": "flowchart LR\n  S[Stop and inventory] --> T[Capture TODOs]\n  S --> C[Safety review and evidence archive]\n  T --> H[Checkpoint and terminal handoff]\n  C --> H\n  H --> P[GHCP fleet cleanup and clean-main receipt]"
+        }
+      ],
+      "sourceSha256": "937281d924fdc3ba0a3fd45e3fa5f98c0445046d06881de2ed6948e503fc8f56"
+    },
+    {
       "id": "plan-audit-gate-self-test",
       "path": "docs/plans/audit-gate-self-test.md",
       "title": "Audit verifier self-test: bounded execution graph",
@@ -16871,6 +16907,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "d62e69ad4f88ca8373edd77be8691ba0aba0862fefd3fb72c40d6f38bdbe9ef0"
     },
     {
+      "id": "proof-atlas-session-shutdown",
+      "path": "docs/proof/atlas-session-shutdown.md",
+      "title": "Codex Atlas shutdown: preserved evidence and terminal handoff",
+      "type": "proof-pack",
+      "status": "recorded",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-18",
+      "reviewSuggested": [],
+      "summary": "Product work stopped; exact remaining tasks captured; ignored cleanup evidence archived; fleet cleanup and clean-main receipt remain external.",
+      "tags": [
+        "proof",
+        "atlas",
+        "shutdown",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "plan-atlas-session-shutdown",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-atlas-audit-preservation",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e58abd097b94975776b963a4c9499d34f3feb8e5af47f06f9cea7bd305211669"
+    },
+    {
       "id": "proof-audit-gate-plan-review",
       "path": "docs/proof/audit-gate-plan-review.md",
       "title": "Independent plan review: audit gate self-test",
@@ -21096,5 +21162,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "375491343c954cd25bfd48645d75019ddb594ca7da789b1e047d007b456aa86b"
+  "graphSha256": "16c5c628d987c77e3edf8e6a942ac9fb9d8c357fd27e5b6769dea25ee01be5db"
 };

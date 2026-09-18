@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-18T01:33:49Z",
+  "generated": "2026-09-18T18:05:16Z",
   "audit": [
     {
       "actor": null,
@@ -20449,6 +20449,45 @@ window.AUDIT_DATA = {
       "fan_out": 4,
       "started_at": "2026-09-18T01:00:06Z",
       "duration_seconds": 2022.0
+    },
+    {
+      "id": "al-01M2TTF5KMKFRVC4MKFKHEC39Q",
+      "shortname": "We need to stop this session; wind down anything that is in flight and c…",
+      "datetime": "2026-09-18T17:54:14Z",
+      "session": "prompt-log",
+      "prompt": "We need to stop this session; wind down anything that is in flight and capture to dos; clean up stale worktrees and collaborate with the other sessions to make sure main is clean",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2TTY88K45634V66D98JS7RF",
+      "shortname": "atlas-session-shutdown",
+      "datetime": "2026-09-18T18:02:28Z",
+      "session": "codex-atlas-shutdown",
+      "prompt": "We need to stop this session\nwind down anything that is in flight and capture to dos\nclean up stale worktrees and collaborate with the other sessions to make sure main is clean",
+      "summary": "User STOP honored. Pending Owner interrupted and product workers ended. Exact resume queue captured. Six own merged trees independently screened; all41 protected ignored files archived and verified before any removal. GHCP fleetwinddown owns actualcleanup to avoid competingdeletion. Primary has only sharedcoordination dirt; preservation/clean-main receipt requested, not completed or guessed. No implementation/native/main action. Normal branchcheckpoint follows actual docs checks.",
+      "kind": "manual",
+      "skill": "execute-with-coordination",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/atlas-session-shutdown.md",
+        "docs/proof/atlas-session-shutdown.md"
+      ],
+      "tags": [],
+      "outcome": "partial",
+      "goal": "Stop safely, preserve work, capture TODOs and coordinate safe cleanup and clean main.",
+      "done_when": "Workers stopped; TODOs checkpointed; eligible cleanup safely executed or explicitly handed off; actual main status reported.",
+      "tier": "T1",
+      "fan_out": 2,
+      "started_at": "2026-09-18T17:54:14Z",
+      "duration_seconds": 494.0
     }
   ],
   "changes": [
