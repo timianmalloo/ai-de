@@ -9844,10 +9844,14 @@ window.DOCS_INDEX = {
         {
           "to": "knowledge-hub",
           "rel": "relates-to"
+        },
+        {
+          "to": "journey-case-study",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9ef93d917274bbd16bfec3f5a910b86cc650b9d9bb2bd76966ea0573b2f874dd"
+      "sourceSha256": "39a9a5853783867eac17156a5d626b0a93fecfff787b0314a1deeb1557b2f4f6"
     },
     {
       "id": "domain-experts",
@@ -9992,6 +9996,56 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "9639568f02c25923e0a708cf46869fa2d1a2a68b844949f035afa761f5f79498"
+    },
+    {
+      "id": "journey-case-study",
+      "path": "docs/journey/index.md",
+      "title": "Journey case study — specification to implementation",
+      "type": "doc",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-03-26",
+      "reviewSuggested": [],
+      "summary": "A shareable reading of how AI-DE went from a design sketch to a built workbench between 23 August and 18 September 2026, using the audit log and the AI-Forward skills as the spine. The essay is the HTML page.",
+      "tags": [
+        "case-study",
+        "ai-forward",
+        "audit-log",
+        "onboarding"
+      ],
+      "links": [
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "audit-log",
+          "rel": "depends-on"
+        },
+        {
+          "to": "seed-ai-native-ide-sketch",
+          "rel": "relates-to"
+        },
+        {
+          "to": "docs-map-of-content",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-journey-case-study",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-journey-case-study",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7be066404d19482dea8022c10a4af5d544ed84ede7bf1a8e97097b30bd5b298a"
     },
     {
       "id": "lens-code-doc-join",
@@ -11570,6 +11624,50 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "62577cd18a0caecf5aa001fb22370aa7cca8608829123d3a4f3742a4537037ef"
+    },
+    {
+      "id": "plan-journey-case-study",
+      "path": "docs/plans/journey-case-study.md",
+      "title": "Execution graph — journey case study",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-03-26",
+      "reviewSuggested": [],
+      "summary": "The graph for a shareable case study of how AI-DE moved from sketch to implementation with the AI-Forward pack. The full /document regeneration is not on the path: the bundle already exists, and the page cites it without claiming a fresh doc-to-code pass.",
+      "tags": [
+        "execution-graph",
+        "case-study",
+        "audit-log",
+        "documentation"
+      ],
+      "links": [
+        {
+          "to": "journey-case-study",
+          "rel": "relates-to"
+        },
+        {
+          "to": "audit-log",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Optimized graph",
+          "mermaid": "flowchart LR\n  census[N1 census T0] --> read[N2 spine reads]\n  read --> decide[N3 document decision]\n  decide --> page[N6 case study]\n  wt[N4 worktree] --> plan[N5 plan file]\n  plan --> page\n  page --> links[N7 link oracle]\n  links --> derive[N8 derive plus freshness]\n  derive --> audit[N9 audit and figures]"
+        }
+      ],
+      "sourceSha256": "2ff600deb7a5f6ff4b6f4cc1233ea76b486c47c2a0a2527e6683e87baa5192a8"
     },
     {
       "id": "plan-ownership-qualification",
@@ -18152,6 +18250,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "4a15a8ae4342546bf837f9d1a48dee8b71ecdb2f4a8eb2fdd0660ac0bb895e4d"
     },
     {
+      "id": "proof-journey-case-study",
+      "path": "docs/proof/journey-case-study.md",
+      "title": "Proof note — journey case study",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-03-26",
+      "reviewSuggested": [],
+      "summary": "How the journey case study’s counts were produced, which links were checked, and which claims were deliberately not re-measured.",
+      "tags": [
+        "proof-pack",
+        "case-study",
+        "audit-log",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "journey-case-study",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-journey-case-study",
+          "rel": "depends-on"
+        },
+        {
+          "to": "audit-log",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6c88d32a99f9f1f4893e17fbfa7135b7f1e5de368fecc161e57817c4f613c9b8"
+    },
+    {
       "id": "proof-lane-pin-ruling-71",
       "path": "docs/proof/lane-pin-ruling-71.md",
       "title": "Proof Pack — Ruling 71's lane pin: the governed lane's session/new carries disallowedTools [\\\"Bash\\\"]",
@@ -21290,6 +21422,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-first-use-accounts"
     },
     {
+      "id": "surface-journey-index",
+      "path": "docs/journey/index.html",
+      "title": "AI-DE — from specification to implementation",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "journey-case-study"
+    },
+    {
       "id": "surface-mockups-solution-tree",
       "path": "docs/mockups/solution-tree.html",
       "title": "AI-DE — Solution tree mockup",
@@ -21410,5 +21550,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "57a4bb621bf6d9a627dac6dfeb5448e253505c688ce01c5620569299f9792016"
+  "graphSha256": "f0f60d3ad1b5cf0957bae8b2ae1fca805ee932275e8c248f0d06880fc2ed6335"
 };

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-18T21:07:50Z",
+  "generated": "2026-09-26T15:06:06Z",
   "audit": [
     {
       "actor": null,
@@ -20824,6 +20824,58 @@ window.AUDIT_DATA = {
         "short": "e398c1e4c",
         "branch": "main",
         "pushed": true
+      }
+    },
+    {
+      "id": "al-01M3F3HQYCF6FGK8XA5BQMH2ST",
+      "shortname": "journey case study",
+      "datetime": "2026-09-26T14:57:44Z",
+      "session": "grok-journey-case-study",
+      "prompt": "analyze this repo\n  review the audit log, session history\n  create an html document that uses my history of prompts and the overall intention of the project as a \"case-study\" for how I use ai-forward and my approach to coding\n  think of this as a way for me to share the \"journey from specification to implementation\" using the pack capabilities\n  we dont need every little interaction but enough to frame the application of the capabilities and how it can be used\n  feel free to incorporate images, links to specs, architectures and mockups etc as part of the journey\n  also feel free to do things like using the documentation skill to actually build docs that can then be referenced as part of this \"case study\"",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M3F412065SY7159SFHJC7J9A",
+      "shortname": "journey-case-study",
+      "datetime": "2026-09-26T15:06:06Z",
+      "session": "grok-journey-case-study",
+      "prompt": "analyze this repo\n  review the audit log, session history\n  create an html document that uses my history of prompts and the overall intention of the project as a \"case-study\" for how I use ai-forward and my approach to coding\n  think of this as a way for me to share the \"journey from specification to implementation\" using the pack capabilities\n  we dont need every little interaction but enough to frame the application of the capabilities and how it can be used\n  feel free to incorporate images, links to specs, architectures and mockups etc as part of the journey\n  also feel free to do things like using the documentation skill to actually build docs that can then be referenced as part of this \"case study\"",
+      "summary": "Case study at docs/journey/index.html, drawn from the committed ledger at 88e0c33f: 796 audit entries, 155 change entries, 132 prompt entries, 71 distinct prompt strings. /document was not re-run; the existing API, diagrams, and Docs Explorer are linked. Link check: 105 relative references, 0 missing. docs-graph validate: 546 artifacts, 0 defects, 0 stale, 0 orphans, 75 pre-existing review-suggested flags. Naive graph included a full documentation regeneration; the executed graph has 9 nodes and keeps the worktree, census, link oracle, derive, and audit floors.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/journey/index.html",
+        "docs/journey/index.md",
+        "docs/proof/journey-case-study.md",
+        "docs/plans/journey-case-study.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "A shareable HTML case study of this repo’s journey from specification to implementation, grounded in the audit log, prompt history, and the pack capabilities that were actually used.",
+      "done_when": "The narrative is sourced from the audit log, prompt history, and existing specs, architecture, and mockups. The HTML stands alone as something that can be shared, with links into those artifacts. Supporting docs built for the case study are real files the page points at. The page frames how the capabilities were applied, without a transcript of every interaction.",
+      "tier": "T1",
+      "fan_out": 4,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-26T14:57:44Z",
+      "duration_seconds": 502.0,
+      "git": {
+        "sha": "88e0c33f0b7c419b1e64d87686987374285292d8",
+        "short": "88e0c33f0",
+        "branch": "feature/journey-case-study",
+        "pushed": null
       }
     }
   ],

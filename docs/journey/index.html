@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-DE — from specification to implementation</title>
+<meta name="description" content="A case study of how AI-DE was specified and built with the AI-Forward pack, drawn from the project's audit log between 23 August and 18 September 2026.">
+<style>
+  :root {
+    --surface: #12151A;
+    --surface-raised: #1A1F26;
+    --surface-sunken: #0D1014;
+    --border: #2A313B;
+    --text: #E4E9EF;
+    --text-muted: #98A3B2;
+    --accent: #5B9DD9;
+    --accent-contrast: #0D1014;
+    --focus: #8FC0EA;
+    --verified: #5FB98F;
+    --inferred: #D8A650;
+    --danger: #E07A6F;
+    --font-ui: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+    --font-mono: "Cascadia Mono", Consolas, ui-monospace, monospace;
+    color-scheme: dark;
+  }
+  :root[data-theme="light"] {
+    --surface: #F4F6F8;
+    --surface-raised: #FFFFFF;
+    --surface-sunken: #E7EBEF;
+    --border: #C7CFD8;
+    --text: #1A1F26;
+    --text-muted: #55606E;
+    --accent: #27649A;
+    --accent-contrast: #FFFFFF;
+    --focus: #1B4F7E;
+    --verified: #1C724A;
+    --inferred: #7D5900;
+    --danger: #A8372B;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--surface);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+  }
+  a { color: var(--accent); text-underline-offset: 0.18em; }
+  a:hover { text-decoration-thickness: 2px; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+  .skip {
+    position: absolute; left: 1rem; top: -4rem;
+    background: var(--accent); color: var(--accent-contrast);
+    padding: 0.4rem 0.7rem; z-index: 2;
+  }
+  .skip:focus { top: 0.5rem; }
+  header.top {
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-sunken);
+  }
+  .wrap { width: min(1120px, calc(100% - 2rem)); margin: 0 auto; }
+  .top .wrap, footer .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 3.25rem; }
+  .brand { color: var(--text); text-decoration: none; font-weight: 650; letter-spacing: 0.01em; }
+  .brand span { color: var(--accent); }
+  button.theme {
+    background: var(--surface-raised);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font: inherit;
+    font-size: 0.875rem;
+    padding: 0.35rem 0.7rem;
+    cursor: pointer;
+  }
+  main { padding: 2.5rem 0 4rem; }
+  .prose { max-width: 68ch; }
+  h1 { font-size: clamp(1.8rem, 3vw, 2.5rem); line-height: 1.15; font-weight: 650; letter-spacing: -0.02em; margin: 0 0 0.8rem; }
+  h2 { font-size: 1.45rem; line-height: 1.25; margin: 2.6rem 0 0.7rem; font-weight: 650; }
+  h3 { font-size: 1.05rem; margin: 1.4rem 0 0.4rem; }
+  p, li { margin: 0.7rem 0; }
+  .lede { font-size: 1.15rem; color: var(--text); }
+  .meta { color: var(--text-muted); font-size: 0.92rem; }
+  blockquote {
+    margin: 1rem 0;
+    padding: 0.2rem 0 0.2rem 1rem;
+    border-left: 3px solid var(--accent);
+    color: var(--text);
+  }
+  blockquote p { margin: 0.35rem 0; }
+  code, .mono { font-family: var(--font-mono); font-size: 0.88em; }
+  .toc { list-style: none; padding: 0; margin: 1.2rem 0 0; columns: 2; }
+  .toc li { margin: 0.25rem 0; break-inside: avoid; }
+  .toc a { text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin: 1rem 0 1.4rem; }
+  th, td { text-align: left; padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--text-muted); font-weight: 600; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--font-mono); font-size: 0.88em; }
+  .scroll { overflow-x: auto; }
+  .frames { display: grid; grid-template-columns: 1fr; gap: 1.25rem; margin: 1.2rem 0; }
+  figure { margin: 0; background: var(--surface-raised); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  figure iframe { display: block; width: 100%; height: 440px; border: 0; background: var(--surface-sunken); }
+  figcaption { padding: 0.7rem 0.9rem 0.85rem; font-size: 0.92rem; }
+  figcaption strong { display: block; }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1rem 0; }
+  .chip {
+    font-family: var(--font-mono); font-size: 0.75rem;
+    border: 1px solid var(--border); border-radius: 99px;
+    padding: 0.15rem 0.55rem; color: var(--text-muted);
+  }
+  .note {
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+  }
+  footer { border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.88rem; }
+  @media (max-width: 720px) {
+    .toc { columns: 1; }
+    figure iframe { height: 280px; }
+    .top .wrap { flex-wrap: wrap; padding: 0.6rem 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+  @media print {
+    header.top, .theme, .skip { display: none; }
+    body { background: #fff; color: #111; }
+    a { color: #111; }
+    figure iframe { display: none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../../site/index.html">AI-DE <span>/ journey</span></a>
+    <button class="theme" type="button" data-theme-toggle aria-pressed="false">Light background</button>
+  </div>
+</header>
+<main id="main">
+<div class="wrap">
+
+<p class="meta">Case study · ledger 23 Aug 2026 – 18 Sep 2026 · commit <code>88e0c33f</code></p>
+<h1>From a sketch to a workbench, with the method written down</h1>
+<div class="prose">
+  <p class="lede">AI-DE was specified, argued with, and built by running the AI-Forward pack as the engineering process. This page is the route through that month: the prompts that changed direction, the skill that answered each one, and the file you can open to see the result.</p>
+  <p>It is a reading of the <a href="../audit/index.html">audit and change ledger</a>, not a transcript. The committed log holds 796 audit entries and 155 change entries. 132 of the audit entries are prompts, and 71 of those strings are distinct. One sentence accounts for 32 of the August prompt entries. September is the other shape: 54 prompt entries, 49 distinct texts.</p>
+</div>
+
+<h2>Contents</h2>
+<ol class="toc">
+  <li><a href="#intention">The intention</a></li>
+  <li><a href="#record">What this page is made from</a></li>
+  <li><a href="#install">Install the method first</a></li>
+  <li><a href="#research">Research that changed the sketch</a></li>
+  <li><a href="#specify">The specification</a></li>
+  <li><a href="#architecture">An architecture that failed its review</a></li>
+  <li><a href="#skeleton">A walking skeleton the same day</a></li>
+  <li><a href="#workbench">The workbench, from one sentence</a></li>
+  <li><a href="#spikes">Spikes allowed to veto the plan</a></li>
+  <li><a href="#instrument">The product as the instrument</a></li>
+  <li><a href="#contract">Two sessions, one contract</a></li>
+  <li><a href="#loomkeeper">Loomkeeper</a></li>
+  <li><a href="#docs">Docs for a reader who was not there</a></li>
+  <li><a href="#stopped">A design that stopped</a></li>
+  <li><a href="#perspectives">Perspectives and the compile step</a></li>
+  <li><a href="#fleet">A fleet, then a wind-down</a></li>
+  <li><a href="#understanding">Left in draft on purpose</a></li>
+  <li><a href="#prompts">How the prompts were actually used</a></li>
+  <li><a href="#capabilities">Which skill fired</a></li>
+  <li><a href="#open">Where to open the work</a></li>
+</ol>
+
+<h2 id="intention">The intention</h2>
+<div class="prose">
+  <p>The originating sketch, working name Atlas, states the product in one place.</p>
+  <blockquote>
+    <p>Code is transient; the models are the product. Everything visual is a derived view over one graph, never hand-drawn. The shell is a thin host. Cross-session context flows through the graph, exposed to agents via MCP.</p>
+  </blockquote>
+  <p>That paragraph is from the <a href="../knowledge/seed-material/ai-native-ide-architecture-sketch.md">seed sketch</a>. The <a href="../specs/ai-native-ide.md">product specification</a> keeps the boundary and drops the parts the research could not support. The <a href="../../site/index.html">public site</a> says the same thesis in the form meant for a visitor: the repository is the model, and code is one surface over it.</p>
+  <p>The repository <a href="../../README.md">README</a> still describes an earlier object: a small WPF starter for spec-first, test-first agent experiments. The specification, the architecture, and the site describe the product that was actually pursued. Both documents are in the tree. They are not the same claim.</p>
+</div>
+
+<h2 id="record">What this page is made from</h2>
+<div class="prose">
+  <p>Every count below was read out of the committed files at <code>88e0c33f</code> on 26 September 2026, before this page was added. The method is in the <a href="../proof/journey-case-study.md">proof note</a>. A ledger summary of a benchmark is quoted as a ledger summary. Those runs were not repeated for this page.</p>
+</div>
+<div class="scroll">
+<table>
+  <thead><tr><th>Record</th><th class="num">Count</th><th>Span</th></tr></thead>
+  <tbody>
+    <tr><td>Audit entries</td><td class="num">796</td><td>23 Aug 2026 19:13Z – 18 Sep 2026 19:53Z</td></tr>
+    <tr><td>Change entries</td><td class="num">155</td><td>architecture 68, design 51, decision 17, knowledge 15, spec 4</td></tr>
+    <tr><td>Prompt entries</td><td class="num">132</td><td>71 distinct strings</td></tr>
+    <tr><td>Session ids on audit entries</td><td class="num">130</td><td>several harnesses, one ledger</td></tr>
+    <tr><td>ADRs</td><td class="num">38</td><td><a href="../adr/0001-derived-evidence-views.md">0001</a> through <a href="../adr/0038-d0-solution-tree-census-and-kind.md">0038</a></td></tr>
+    <tr><td>Mockups</td><td class="num">20</td><td>self-contained HTML in <a href="../mockups/workbench.html">docs/mockups</a></td></tr>
+    <tr><td>Proof notes</td><td class="num">74</td><td><code>docs/proof/*.md</code></td></tr>
+    <tr><td>Investigations</td><td class="num">14</td><td>INV-0001 through INV-0014</td></tr>
+  </tbody>
+</table>
+</div>
+<div class="prose">
+  <p>The main branch tip at the time of writing is that same commit, a merge on 18 September 2026 whose subject is <code>merge(canvas-p1): the two false numbers on the canvas</code>. The ledger’s last line is earlier the same day. This page does not describe work that lives only on other branches.</p>
+</div>
+
+<h2 id="install">Install the method first</h2>
+<div class="prose">
+  <p>The first ledger line, 23 August, is <code>addpacktorepo</code>. The pack goes in before the product has a daemon, a store, or a terminal. The next line is <code>adopt</code>. Its summary records a public repository, a source-backed architecture of the starter, a four-term glossary, and a Docs Explorer. It also names an adoption proof. The proof file and the glossary file are not in commit <code>88e0c33f</code>. What that bootstrap recovered, and what the next two days then rewrote, is the <a href="../architecture.md">architecture</a>.</p>
+  <p>The order is the approach. The agent does not invent a process beside the repository. The process is installed into the repository, and from then on the ledger is how a later session finds out what happened.</p>
+</div>
+
+<h2 id="research">Research that changed the sketch</h2>
+<div class="prose">
+  <p>The same evening, <code>collectknowledge</code> built a sourced knowledge base. The ledger summary names four findings that invalidate assumptions in the sketch. Three of them are visible in the knowledge hub’s own framing and in the specification’s evidence section: the graph database named in the sketch had been archived, the MCP version under consideration was stateless, and a coordination lease without a fencing token is advice rather than mutual exclusion.</p>
+  <p>The specification records those as constraints, with the grounding path written at the top of <a href="../specs/ai-native-ide.md">docs/specs/ai-native-ide.md</a>. The knowledge base itself is <a href="../knowledge/index.md">docs/knowledge/index.md</a>. Fifteen topic indexes are in that tree now. The first run’s summary said ten topics and 71 artifacts. Later runs added WPF styling, operational dashboards, graph experience, editor surfaces, and the comparables for the solution tree. Research was not a preface. It was re-opened when a new surface needed comparables.</p>
+</div>
+
+<h2 id="specify">The specification</h2>
+<div class="prose">
+  <p>On 24 August, <code>specify</code> produced the product specification, an HTML reader of the same document, a privacy review, and an execution plan. The change log titles it “Specify AI-native IDE product boundary and user experience”.</p>
+  <p>Open the <a href="../specs/ai-native-ide.html">rendered specification</a> or the <a href="../specs/ai-native-ide.md">markdown</a>. The boundary that matters for everything after it is already in the evidence section: views are derived, relationships carry provenance, and coordination claims are not locks. The <a href="../security/ai-native-ide-privacy-review.md">privacy review</a> is a sibling of the spec, not a follow-up someone might remember to write.</p>
+</div>
+
+<h2 id="architecture">An architecture that failed its review</h2>
+<div class="prose">
+  <p>On 25 August, <code>define-architecture</code> merged the specification and wrote the architecture, seven ADRs, the conceptual model, and the threat, privacy, and release plans. The next morning the operator did not accept it.</p>
+  <blockquote>
+    <p>step back / /define-architecture ai-ide-arch-v2 — use the spec, the original architecture.md and your findings as input; redo the architecture to meet your bar</p>
+  </blockquote>
+  <p>That prompt is in the ledger twice, as <code>al-0007</code> and <code>al-0196</code>. The rerun summary says the 25 August draft was superseded: three spikes made re-runnable, ADR-0008 through ADR-0011, a write-ahead dispatch receipt, an in-process-first daemon, and an MCP egress binding. It records three hard vetoes and two soft vetoes closed. The document that carries the result is <a href="../architecture.md">docs/architecture.md</a>, which still says the baseline starter had none of those components, and that the architecture is the target shape.</p>
+  <p>The habit is in the prompt, not in the skill name. “Step back” means the previous artifact is input, and the skill runs again against a bar the operator is willing to say was missed.</p>
+</div>
+
+<h2 id="skeleton">A walking skeleton the same day</h2>
+<div class="prose">
+  <p>The v2 architecture, the Phase-1 design, and the Phase-1 implementation are three ledger lines on 26 August, between 00:36Z and 01:10Z. <code>design</code> wrote the grains, the contracts, and the failure modes. <code>implement</code> built the walking skeleton red-first: a SQLite fact store, the write-ahead two-phase dispatch, a fixture extractor, and bounded projections.</p>
+  <p>The design is <a href="../design/phase-1-walking-skeleton.md">phase-1-walking-skeleton.md</a>. The proof pack is <a href="../design/phase-1-proof-pack.md">phase-1-proof-pack.md</a>. The store decision is <a href="../adr/0002-workspace-fact-store.md">ADR-0002</a>. The dispatch receipt is <a href="../adr/0010-two-phase-dispatch-receipt.md">ADR-0010</a>.</p>
+  <p>A benchmark entry the same morning, <code>al-0011</code>, records that the first run failed 5 of 8 budgets because a projection materialized the corpus, and that pushing the filter into SQL changed the describe query by 69×. That number is the ledger’s record of the run. It was not re-measured for this page. The write-up is <a href="../design/phase-1-perf-results.md">phase-1-perf-results.md</a>.</p>
+</div>
+
+<h2 id="workbench">The workbench, from one sentence</h2>
+<div class="prose">
+  <p>The same afternoon, one prompt named the missing product behavior and named the three skills to run.</p>
+  <blockquote>
+    <p>the tooling should allow resize of panes and docking of elements like eclipse or vs code or photoshop/premiere. step back and make sure this is part of the spec. Consider exemplars in multi-pane, resize, hide, dock, move. /specify these capabilities, then /ui-design, then /define-architecture</p>
+  </blockquote>
+  <p>At 13:39Z the ledger has three entries with the same summary: <code>specify</code>, <code>ui-design</code>, and <code>define-architecture</code>. The spec gained the exemplar matrix. The mockup is below. The docking decision is <a href="../adr/0012-docking-shell-library.md">ADR-0012</a>, and layout persistence is <a href="../adr/0013-layout-persistence-envelope.md">ADR-0013</a>.</p>
+  <p>Implementation followed as a series of small <code>implement</code> entries the same day: a headless layout model, an AvalonDock adapter, a keyboard command catalog, drop targets, the shell, and the command palette. A spike found that a version field on the layout envelope had no migration, so the first rename of a surface would have reset every saved layout. That is the pack’s spike protocol used as a tripwire during implementation, not as a research phase that had already closed.</p>
+</div>
+
+<figure>
+  <iframe title="Workbench mockup, 26 August" src="../mockups/workbench.html" loading="lazy"></iframe>
+  <figcaption>
+    <strong>Workbench mockup</strong>
+    The review harness is part of the file. <a href="../mockups/workbench.html">Open it</a>. The note beside it is <a href="../mockups/workbench.md">workbench.md</a>.
+  </figcaption>
+</figure>
+
+<h2 id="spikes">Spikes allowed to veto the plan</h2>
+<div class="prose">
+  <p>Component 1 of the extraction plan depended on the compiler hosting the repository’s own build. A spike recorded that a real solution loads, and that repository-authored generator code executes inside the extractor’s process. The change log then says, in two titles: the spike blocks Component 1, and the adopted strategy is that extraction never runs repository code.</p>
+  <p>The spike write-up is <a href="../../spikes/roslyn-msbuild-workspace/RESULT.md">spikes/roslyn-msbuild-workspace/RESULT.md</a>. The architecture change is the 28 August entry “Component 1 adopts Strategy 1”. The pattern is the same as the architecture rerun. Evidence is allowed to retire a component that the plan was fond of.</p>
+  <p>Other spikes in that week chose a terminal renderer, kept WebView2 for the canvas and handled overlap by snapshot swap, and later froze WPF <code>TreeView</code> for the solution tree only after a read-and-run probe. Results live under <a href="../../spikes/README.md">spikes/</a> and <a href="../spikes/d0-tree-toolkit/RESULT.md">docs/spikes/d0-tree-toolkit/</a>.</p>
+</div>
+
+<h2 id="instrument">The product as the instrument</h2>
+<div class="prose">
+  <p>From 28 August the prompts change register. They are no longer “write the spec”. They are what the operator saw while using the build.</p>
+  <p>One list starts with illegible menu type, dead icons, and a default layout: console on the bottom, workspace on the left, graph and domain on the right. Another, pointed at a real repository called TheTerrace, says the tool is showing two nodes where Obsidian shows a graph. A later one says the knowledge count is zero while the code count is large, and then states the rule the operator wants enforced:</p>
+  <blockquote>
+    <p>do not infer… the graph should only be on observable links/relationships</p>
+  </blockquote>
+  <p>Those prompts become investigations and change-log titles rather than a fresh specification. “The graph surface had never shown a graph: two nodes of 2,813.” “INV-0003: the graph could not fit through the pipe.” “Knowledge was zero because nothing ever looked.” The write-ups are <a href="../investigations/INV-0003-graph-exceeds-ipc-frame-cap.md">INV-0003</a> and <a href="../investigations/INV-0004-graph-kind-taxonomy-and-knowledge.md">INV-0004</a>.</p>
+  <p>This is the coding approach in practice. The specification stays authoritative for what the product is. The running build is the instrument that finds where the specification is not yet true. The operator’s phrasing is allowed to become a constraint — “do not infer” — and the change log records the constraint as an architecture decision: a matcher that invents facts is worse than one that misses them.</p>
+</div>
+
+<h2 id="contract">Two sessions, one contract</h2>
+<div class="prose">
+  <p>On 29 August the work stopped fitting in one session. The prompt assigns the split out loud.</p>
+  <blockquote>
+    <p>there are two sessions working in two different worktrees your sessions need to be collaborative with each other one session, the claude code session, will work on the core capabilities</p>
+  </blockquote>
+  <p>The same day a prompt points out that a session had written into the primary checkout, names the worktree rule, and tells that session to correct it. The change log records “A written contract between the core and design sessions”. The register that contract became is <a href="../collaboration/session-contracts.md">docs/collaboration/session-contracts.md</a>.</p>
+  <p><code>adddomainexperts</code> ran once, adding three domain lenses — graph visualization, WPF styling, UML and ERM modelling — and <a href="../domain-experts.md">docs/domain-experts.md</a>. The mockups that followed are part of the same split: the design session could see a facelift, a knowledge explorer, and UML/ERM surfaces while the core session kept extracting. <a href="../mockups/app-facelift.html">app-facelift.html</a>, <a href="../mockups/knowledge-explorer.html">knowledge-explorer.html</a>, <a href="../mockups/uml-erm-surfaces.html">uml-erm-surfaces.html</a>.</p>
+</div>
+
+<h2 id="loomkeeper">Loomkeeper</h2>
+<div class="prose">
+  <p>At the end of August the second idea in the site’s thesis gets its own specification: an agentic watcher that scores collaboration on evidence. The change log on 30 August says “Specify Loomkeeper and the Weave Score authority split”, and the design entry the same day says the observatory direction was adopted.</p>
+  <p>The spec is <a href="../specs/agentic-watcher-substrate.md">agentic-watcher-substrate.md</a> (<a href="../specs/agentic-watcher-substrate.html">rendered</a>). The architecture is <a href="../architecture/loomkeeper.md">architecture/loomkeeper.md</a>. The plan that scheduled the work is <a href="../plans/agentic-watcher-substrate.md">plans/agentic-watcher-substrate.md</a>, an <code>optimize-graph</code> artifact. Implementation then shows up as numbered slices in the change log: an append-only observation store, an ingest wire, a sessions surface, a work-episode vocabulary shared with the pack’s goal state, a message board, a dispute that appends a fact instead of overwriting a score.</p>
+  <p>The daydream — the online half of “what keeps recurring becomes a lesson” — is specified and, in the map of content’s own words, not built. That sentence is left standing in <a href="../index.md">docs/index.md</a>. A 3 September prompt says “Core reported the Not-Scored prediction refuted; verify independently and act on it.” The approach is to distrust a green story from the other session until it has been checked.</p>
+</div>
+
+<figure>
+  <iframe title="Loomkeeper observatory mockup" src="../mockups/watcher-observatory.html" loading="lazy"></iframe>
+  <figcaption>
+    <strong>Observatory mockup</strong>
+    Sessions, scores, and the board as a review surface. <a href="../mockups/watcher-observatory.html">Open it</a>.
+  </figcaption>
+</figure>
+
+<h2 id="docs">Docs for a reader who was not there</h2>
+<div class="prose">
+  <p>On 2 September <code>document</code> built the public site and an API reference extracted from the C# doc comments, with undocumented members listed as gaps. Later document entries covered the daydream’s status against the code — specified, and absent from <code>src/</code> — and a conductor pass that recorded a clean docs-graph validation.</p>
+  <p>This case study links that bundle. It does not regenerate it. A fresh <code>/document</code> run would re-walk the public surface, redraw the four diagram families from the code, and rebuild the explorer index. Those files already exist:</p>
+  <ul>
+    <li><a href="../index.html">Docs Explorer</a> and the <a href="../index.md">map of content</a></li>
+    <li><a href="../_site/index.html">Documentation close-up</a></li>
+    <li><a href="../api/AiDe.Core.md">API reference</a>, starting at <code>AiDe.Core</code></li>
+    <li><a href="../diagrams/layers.md">Layers</a>, <a href="../diagrams/component.md">components</a>, <a href="../diagrams/sequence.md">sequence</a>, <a href="../diagrams/class.md">classes</a></li>
+    <li><a href="../design/conceptual-model.md">Conceptual model</a></li>
+  </ul>
+  <p>Whether that bundle still matches the code at <code>88e0c33f</code> is a freshness question. The proof note records what <code>docs-graph.py freshness</code> said when this page was written. A passing graph check is not a claim that every doc comment was re-read.</p>
+</div>
+
+<h2 id="stopped">A design that stopped</h2>
+<div class="prose">
+  <p>On 4 September <code>design-slice</code> for an MCP path stopped at grounding. The ledger says ADR-0011 bound MCP authorization to a session processing class, and the session model had no such field. The skill’s instruction in that situation is to stop and write the gap down, which is what the entry records. The note is <a href="../notes/note-20260903-the-control-under-mcp-has-no-input.md">note-20260903-the-control-under-mcp-has-no-input.md</a>.</p>
+  <p>A later design, <a href="../design/mcp-enlightened-path.md">mcp-enlightened-path.md</a>, is the slice that did proceed. Its summary says the slice adds no durable state, because the board post already appends the same ledger the humans use. Stopping is part of the method. So is the next design being smaller than the one that could not be grounded.</p>
+</div>
+
+<h2 id="perspectives">Perspectives and the compile step</h2>
+<div class="prose">
+  <p>By 11 September the operator is using a build and refusing the information architecture.</p>
+  <blockquote>
+    <p>I think the experience is very cluttered (rapidly) because it is mixing use cases in a common set of docks. We need to clean up and refactor the entire user experience and tighten up what can be done where and when.</p>
+  </blockquote>
+  <p>That prompt is the start of Addendum C. Use cases become perspectives: a session is the primary object for agentic coding, and the docks are no longer a single shared junk drawer. The same day, a separate line of prompts decides that tier should fall out of compiling the prompt, and then enumerates the contexts a compile needs: model family, conversation, repository standards. The operator accepts Addendum D, the compile step as its own bounded context.</p>
+  <p>The specs are <a href="../specs/addendum-c-perspectives.md">addendum-c-perspectives.md</a> and <a href="../specs/addendum-d-compile-step.md">addendum-d-compile-step.md</a>. The architecture block is ADR-0030 through ADR-0037, linked from <a href="../architecture.md">docs/architecture.md</a>. The coordination plan that split the build into lanes is <a href="../coordination/addendum-cd.md">addendum-cd.md</a> (<a href="../coordination/addendum-cd.html">HTML</a>).</p>
+  <p>Prompts over the next two days are operator notes from the build: the composer fields were squeezed into a short region, contrast failed, a session should take the whole window, budgets should default to the subscription rather than a cap the operator has to invent, and a first-use machine with no agent backend had been missed. The mockups that absorb those notes include <a href="../mockups/conversation-composer.html">conversation-composer.html</a>, <a href="../mockups/perspective-shell.html">perspective-shell.html</a>, <a href="../mockups/session-front-door.html">session-front-door.html</a>, and <a href="../mockups/first-use-accounts.html">first-use-accounts.html</a>. Screenshot folders named in the prompts stay on the operator’s machine. They were not copied into the repository. The mockups and the ADRs are the durable copy.</p>
+</div>
+
+<figure>
+  <iframe title="Perspective shell mockup" src="../mockups/perspective-shell.html" loading="lazy"></iframe>
+  <figcaption>
+    <strong>Perspective shell</strong>
+    Coding, Explore, Architecture, Coordination. <a href="../mockups/perspective-shell.html">Open it</a>.
+  </figcaption>
+</figure>
+
+<h2 id="fleet">A fleet, then a wind-down</h2>
+<div class="prose">
+  <p><code>execute-with-coordination</code> is the second-largest skill in the ledger, 93 entries, almost all of them in September. <code>prepare-for-coordination</code> wrote the lane plan. The prompts name the roles the operator wanted in the room: an Owner, a Conductor, sub-agents in their own worktrees, and a watcher on another harness. One prompt says the Conductor should not block on the human to land a fix. Another says to kick the other sessions so the work keeps moving.</p>
+  <p>The join entries are the readable layer. <code>al-01M2BHJNQVJ1P3K02B0FD0JRE1</code> records CV-1 and X-2 merged. <code>al-01M2V19J6D5PFZVEADASW69P7P</code> records main green on 18 September and says the branch had been red since 12 September. That is the ledger’s account of a CI run. This page did not re-query the run.</p>
+  <p>The last operator prompt in the committed log is the stop.</p>
+  <blockquote>
+    <p>we need to wind down this work gracefully end sessions and mark complete and todo so we can pick up in the future relinquish the watcher role clean up outstanding worktrees and get main to clean and up to date</p>
+  </blockquote>
+  <p>The resume map is <a href="../collaboration/session-winddown-2026-09-18.md">session-winddown-2026-09-18.md</a>. It separates finished evidence from unfinished delivery and says the handoff does not re-arm implementation. The fleet is part of the method, and so is an explicit end. “Keep going” is a real prompt in this log. It is not the last word.</p>
+</div>
+
+<h2 id="understanding">Left in draft on purpose</h2>
+<div class="prose">
+  <p>On 15 September a prompt starts the deferred “understanding views”, with a Grok owner, a conductor, and the coordination skills named in the ask. The ledger sequence for D-0, the solution tree, is the pack in miniature:</p>
+  <ol>
+    <li><code>collectknowledge</code> — six named comparables, written up in <a href="../notes/understanding-views-n2-comparables.md">understanding-views-n2-comparables.md</a>.</li>
+    <li><code>define-architecture</code> — <a href="../adr/0038-d0-solution-tree-census-and-kind.md">ADR-0038</a>, one Architecture kind, a query-time census, no second store. A security block is repaired in a follow-up entry.</li>
+    <li>A spike freezes WPF <code>TreeView</code> only after a read-and-run probe. <a href="../spikes/d0-tree-toolkit/RESULT.md">RESULT.md</a>.</li>
+    <li><code>ui-design</code> produces the mockup below.</li>
+    <li>The design review ends PASS-WITH-CONDITIONS, and the change log says the design stays draft.</li>
+  </ol>
+  <p>The design file is <a href="../design/solution-tree.md">solution-tree.md</a>. The coordination plan is <a href="../coordination/understanding-views.md">understanding-views.md</a>. Nothing in that chain declares the tree shipped because the mockup exists.</p>
+</div>
+
+<figure>
+  <iframe title="Solution tree mockup" src="../mockups/solution-tree.html" loading="lazy"></iframe>
+  <figcaption>
+    <strong>Solution tree, still a direction</strong>
+    <a href="../mockups/solution-tree.html">Open the mockup</a>. The native proof was flagged until the view was bound to the spike’s toolkit.
+  </figcaption>
+</figure>
+
+<h2 id="prompts">How the prompts were actually used</h2>
+<div class="prose">
+  <p>The 71 distinct prompt strings are not 71 ideas. The histogram of the 132 entries is 50 strings once, 16 twice, three strings four times, one string six times, and one string 32 times.</p>
+  <p>The 32-count sentence, all of it inside the August block, is:</p>
+  <blockquote>
+    <p>do the next steps you have listed provide the standard status and next steps tables afterwards</p>
+  </blockquote>
+  <p>August holds 78 prompt entries and only 22 distinct strings. A large share of that month is a cadence: the agent proposes the next steps, the operator says to do them, and the status comes back as a table. Alongside it, four entries say to commit, push, merge, and leave main clean so the operator can test the build while the session continues. September holds 54 prompt entries and 49 distinct strings. “do next steps” appears four times. Almost everything else is a specific steer: a defect seen in the client, a role assignment, a ruling, or a stop.</p>
+  <p>Some August prompts are stored twice, under two id sequences, and at least one pair differs by a damaged dash character. Seventy-one is a count of strings in the file. It is an upper bound on the number of distinct asks, not a count of decisions.</p>
+  <p>Read that way, the approach has five moves.</p>
+  <ol>
+    <li><strong>Install the pack, then talk to it by skill name.</strong> The directional prompts say <code>/specify</code>, <code>/ui-design</code>, <code>/define-architecture</code>, <code>/investigate</code>. The skill is the unit of work.</li>
+    <li><strong>Send the previous artifact back in.</strong> “Step back” plus the path of the thing that missed the bar. The architecture v2 run is the clearest case.</li>
+    <li><strong>Once a plan exists, run the cadence.</strong> The repeated sentence is the operator refusing to re-derive the plan every turn, and refusing to accept a turn that does not end in a status table.</li>
+    <li><strong>Use the product, and let that replace speculation.</strong> Menu contrast, two graph nodes, a blank composer, zombie terminal hosts, a machine with no agent backend. Several of those became investigations with numbers in the filename.</li>
+    <li><strong>Split sessions on purpose, and end them on purpose.</strong> A written contract, an owner and a conductor, worktrees, and then a wind-down that marks what is done and what is only a resume pin.</li>
+  </ol>
+</div>
+
+<h2 id="capabilities">Which skill fired, and what it left</h2>
+<div class="prose">
+  <p>Counts are the <code>skill</code> field on the 796 committed audit entries. A prompt with no skill is not in this table. The links are representative artifacts, not the full set.</p>
+</div>
+<div class="scroll">
+<table>
+  <thead>
+    <tr><th>Skill</th><th class="num">Entries</th><th>What to open</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>implement</code></td><td class="num">290</td><td><a href="../design/phase-1-proof-pack.md">Phase-1 proof pack</a></td></tr>
+    <tr><td><code>execute-with-coordination</code></td><td class="num">93</td><td><a href="../coordination/addendum-cd.md">Addenda C and D plan</a></td></tr>
+    <tr><td><code>investigate</code></td><td class="num">68</td><td><a href="../investigations/INV-0003-graph-exceeds-ipc-frame-cap.md">INV-0003</a></td></tr>
+    <tr><td><code>ui-design</code></td><td class="num">32</td><td><a href="../mockups/workbench.html">Mockups</a></td></tr>
+    <tr><td><code>specify</code></td><td class="num">19</td><td><a href="../specs/ai-native-ide.html">Specification</a></td></tr>
+    <tr><td><code>define-architecture</code></td><td class="num">17</td><td><a href="../architecture.md">Architecture</a></td></tr>
+    <tr><td><code>design-slice</code></td><td class="num">14</td><td><a href="../design/mcp-enlightened-path.md">MCP enlightened path</a></td></tr>
+    <tr><td><code>optimize-graph</code></td><td class="num">12</td><td><a href="../plans/conductor-programme.md">Conductor programme plan</a></td></tr>
+    <tr><td><code>dream</code></td><td class="num">11</td><td><a href="../lessons/mitigations.jsonl">Mitigations</a></td></tr>
+    <tr><td><code>collectknowledge</code></td><td class="num">6</td><td><a href="../knowledge/index.md">Knowledge hub</a></td></tr>
+    <tr><td><code>document</code></td><td class="num">5</td><td><a href="../index.html">Docs Explorer</a></td></tr>
+    <tr><td><code>prepare-for-coordination</code></td><td class="num">4</td><td><a href="../coordination/understanding-views.html">Understanding-views plan</a></td></tr>
+    <tr><td><code>adddomainexperts</code></td><td class="num">1</td><td><a href="../domain-experts.md">Domain experts</a></td></tr>
+    <tr><td><code>adopt</code></td><td class="num">1</td><td><a href="../audit/index.html">Ledger, 23 August</a></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="open">Where to open the work</h2>
+<div class="prose">
+  <p>The four frames above are the visuals that carry the four turns of the product: a dockable shell, a scored collaboration surface, perspectives instead of one dock soup, and a solution tree that was deliberately left as a direction. The other mockups are the same kind of file.</p>
+</div>
+<div class="chips">
+  <a class="chip" href="../mockups/graph-canvas.html">Graph canvas</a>
+  <a class="chip" href="../mockups/knowledge-explorer-mode.html">Knowledge explorer</a>
+  <a class="chip" href="../mockups/named-dock-zones.html">Named dock zones</a>
+  <a class="chip" href="../mockups/session-conversation.html">Session conversation</a>
+  <a class="chip" href="../mockups/conversation-composer.html">Composer</a>
+  <a class="chip" href="../mockups/new-session-sheet.html">New session</a>
+  <a class="chip" href="../mockups/first-use-accounts.html">First use</a>
+  <a class="chip" href="../mockups/editor-surfaces.html">Editor surfaces</a>
+  <a class="chip" href="../mockups/uml-erm-surfaces.html">UML and ERM</a>
+  <a class="chip" href="../mockups/app-facelift.html">Facelift</a>
+</div>
+<div class="prose">
+  <p>For the argument rather than the picture, start with the <a href="../specs/ai-native-ide.html">specification</a>, the <a href="../architecture.md">architecture</a>, and the <a href="../audit/index.html">ledger</a>. The <a href="../../site/index.html">public site</a> is the two-idea version of the same repository. The <a href="../plans/journey-case-study.md">execution graph</a> for this page records why the documentation bundle was cited instead of rebuilt.</p>
+  <div class="note">
+    <p>On GitHub Pages the site is served at the root and this folder at <code>/docs/</code>. Links to specifications, mockups, and the ledger are relative and resolve in both layouts. The link back to the site home uses the repository layout (<code>site/index.html</code>). In the published layout that home is <code>/index.html</code>.</p>
+  </div>
+</div>
+
+</div>
+</main>
+<footer>
+  <div class="wrap">
+    <p>Tokens copied by value from <code>DESIGN.md</code>. Counts from the committed ledger at <code>88e0c33f</code>.</p>
+  </div>
+</footer>
+<script>
+(function () {
+  var root = document.documentElement;
+  var key = "aide-journey-theme";
+  var saved = null;
+  try { saved = localStorage.getItem(key); } catch (e) { saved = null; }
+  if (saved === "light" || saved === "dark") {
+    root.setAttribute("data-theme", saved);
+  } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) {
+    root.setAttribute("data-theme", "light");
+  }
+  var button = document.querySelector("[data-theme-toggle]");
+  function label() {
+    var light = root.getAttribute("data-theme") === "light";
+    button.textContent = light ? "Dark background" : "Light background";
+    button.setAttribute("aria-pressed", light ? "true" : "false");
+  }
+  label();
+  button.addEventListener("click", function () {
+    var next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem(key, next); } catch (e) {}
+    label();
+  });
+})();
+</script>
+</body>
+</html>

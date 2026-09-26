@@ -13,6 +13,7 @@ links:
   - { to: diagram-sequence, rel: relates-to }
   - { to: diagram-class, rel: relates-to }
   - { to: knowledge-hub, rel: relates-to }
+  - { to: journey-case-study, rel: relates-to }
 review-by: 2027-09-02
 summary: >-
   A curated route into the AI-DE documentation for four different readers, rather than a mirror of
@@ -22,7 +23,7 @@ summary: >-
 # AI-DE documentation — map of content
 
 This is a **route**, not an inventory. The complete, typed, machine-navigable form of everything
-below is the **[Docs Explorer](index.html)** — 304 artifacts with their links, health and review
+below is the **[Docs Explorer](index.html)**, with each artifact's links, health and review
 state. Start here if you are a person; start there if you are looking for something specific.
 
 The public presence over this material is the **project site**, authored in `site/` and published
@@ -33,6 +34,7 @@ root and this folder at `/docs/`.
 
 | Read | Why |
 |---|---|
+| [Journey case study](journey/index.html) | How the pack was used, from the sketch on 23 August 2026 to the wind-down on 18 September. |
 | [Architecture](architecture.md) | The component map, trust boundaries, command protocol and delivery semantics — the document everything else refines. |
 | [Component diagram](diagrams/component.md) | What actually depends on what, read from the composition roots. |
 | [Conceptual domain model](design/conceptual-model.md) | Bounded contexts, aggregate invariants, and the declared grain of every fact. |

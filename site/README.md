@@ -10,6 +10,8 @@ Three static pages, no build step, no dependencies, no network calls.
 | `assets/site.css` | The design layer. Tokens copied by value from `DESIGN.md`, with three extensions marked in the file. |
 | `assets/site.js` | The three interactive demos. |
 
+The nav also links the journey case study at `docs/journey/index.html`. That page is a document, not a fourth site page. It uses the same colour tokens, copied by value, and its own stylesheet.
+
 ## Previewing it
 
 Open `site/index.html` in a browser. Everything on the three pages works from a `file://` path,
