@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-18T21:07:50Z",
+  "generated": "2026-09-26T15:17:53Z",
   "audit": [
     {
       "actor": null,
@@ -20825,6 +20825,21 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true
       }
+    },
+    {
+      "id": "al-01M3F4PF2C8J6H8NTE3XRKKVF7",
+      "shortname": "great do the same thing in the AI-DE repo, and then the CFD-Workbench re…",
+      "datetime": "2026-09-26T15:17:47Z",
+      "session": "prompt-log",
+      "prompt": "great do the same thing in the AI-DE repo, and then the CFD-Workbench repo using the same format",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [

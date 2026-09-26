@@ -21290,6 +21290,13 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-first-use-accounts"
     },
     {
+      "id": "surface-case-study",
+      "path": "docs/case-study.html",
+      "title": "AI-DE — From Specification to Implementation: An AI-Forward Case Study",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
       "id": "surface-mockups-solution-tree",
       "path": "docs/mockups/solution-tree.html",
       "title": "AI-DE — Solution tree mockup",

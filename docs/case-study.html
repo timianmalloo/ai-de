@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI-DE — From Specification to Implementation: An AI-Forward Case Study</title>
+<style>
+  :root {
+    --bg-base: #080c14;
+    --bg-surface: #0e1626;
+    --bg-card: #141f36;
+    --bg-card-hover: #1b2a47;
+    --border: #203152;
+    --border-subtle: rgba(255, 255, 255, 0.07);
+    --border-accent: #38bdf8;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-cyan: #38bdf8;
+    --accent-emerald: #34d399;
+    --accent-purple: #a78bfa;
+    --accent-amber: #fbbf24;
+    --accent-rose: #f43f5e;
+    --accent-indigo: #818cf8;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, "Courier New", monospace;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg-base: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-card: #f1f5f9;
+      --bg-card-hover: #e2e8f0;
+      --border: #cbd5e1;
+      --border-subtle: rgba(0, 0, 0, 0.06);
+      --border-accent: #0284c7;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --accent-cyan: #0284c7;
+      --accent-emerald: #059669;
+      --accent-purple: #7c3aed;
+      --accent-amber: #d97706;
+      --accent-rose: #e11d48;
+      --accent-indigo: #4f46e5;
+    }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Layout */
+  .app-container {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* Sidebar */
+  aside.sidebar {
+    width: 290px;
+    background: var(--bg-surface);
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 28px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    flex-shrink: 0;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+  .brand-badge {
+    background: linear-gradient(135deg, #38bdf8, #818cf8);
+    color: #000;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 3px 7px;
+    border-radius: 5px;
+    letter-spacing: 0.05em;
+  }
+  .brand-title {
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+  }
+
+  .nav-group-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-bottom: 8px;
+    padding-left: 10px;
+  }
+  .nav-menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .nav-item a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  .nav-item a:hover {
+    background: var(--bg-card);
+    color: var(--text-primary);
+  }
+  .nav-item a.active {
+    background: rgba(56, 189, 248, 0.12);
+    color: var(--accent-cyan);
+    font-weight: 600;
+    border-left: 3px solid var(--accent-cyan);
+  }
+
+  /* Main content */
+  main.main-content {
+    flex: 1;
+    max-width: 1080px;
+    padding: 48px 56px;
+    margin: 0 auto;
+  }
+
+  /* Hero Banner */
+  .hero {
+    margin-bottom: 48px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-tagline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    color: var(--accent-cyan);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 38px;
+    font-weight: 800;
+    line-height: 1.18;
+    letter-spacing: -0.025em;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  @media (prefers-color-scheme: light) {
+    .hero h1 {
+      background: linear-gradient(135deg, #0f172a 40%, #475569 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+  .hero p.lead {
+    font-size: 18px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 860px;
+  }
+  .hero-meta {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .hero-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-accent);
+  }
+  .stat-val {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    line-height: 1.1;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+  .stat-unit {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .stat-lbl {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  /* Section Styling */
+  section.doc-section {
+    margin-bottom: 64px;
+    scroll-margin-top: 40px;
+  }
+  .section-header {
+    margin-bottom: 24px;
+  }
+  .section-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    margin-bottom: 6px;
+  }
+  h2.section-title {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin-bottom: 10px;
+  }
+  p.section-desc {
+    font-size: 15px;
+    color: var(--text-secondary);
+    max-width: 820px;
+  }
+
+  /* Cards & Callouts */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .badge {
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .badge-cyan { background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.3); }
+  .badge-emerald { background: rgba(52, 211, 153, 0.15); color: var(--accent-emerald); border: 1px solid rgba(52, 211, 153, 0.3); }
+  .badge-purple { background: rgba(167, 139, 250, 0.15); color: var(--accent-purple); border: 1px solid rgba(167, 139, 250, 0.3); }
+  .badge-amber { background: rgba(251, 191, 36, 0.15); color: var(--accent-amber); border: 1px solid rgba(251, 191, 36, 0.3); }
+  .badge-rose { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.3); }
+
+  /* Callout Quote Boxes */
+  .callout-quote {
+    background: rgba(56, 189, 248, 0.05);
+    border-left: 3px solid var(--accent-cyan);
+    padding: 16px 20px;
+    border-radius: 0 10px 10px 0;
+    margin: 16px 0;
+  }
+  .callout-quote p {
+    font-size: 14.5px;
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin-bottom: 6px;
+  }
+  .callout-quote .quote-author {
+    font-size: 12px;
+    color: var(--accent-cyan);
+    font-weight: 600;
+  }
+
+  /* Timeline & Stepper */
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+    margin: 28px 0;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: var(--border);
+  }
+  .timeline-node {
+    position: relative;
+    margin-bottom: 36px;
+  }
+  .timeline-node:last-child {
+    margin-bottom: 0;
+  }
+  .timeline-marker {
+    position: absolute;
+    left: -32px;
+    top: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    border: 2px solid var(--accent-cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+  }
+  .timeline-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .timeline-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .timeline-date {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+  }
+
+  /* Prompt Box */
+  .prompt-box {
+    background: #090e1a;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 12px 0;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: #e2e8f0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .prompt-box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    letter-spacing: 0.05em;
+  }
+  .copy-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    color: var(--text-secondary);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    transition: all 0.15s;
+  }
+  .copy-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+  }
+
+  /* Tables */
+  .table-responsive {
+    overflow-x: auto;
+    margin: 16px 0;
+  }
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    text-align: left;
+  }
+  table.data-table th {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  table.data-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+  }
+  table.data-table tr:hover td {
+    background: rgba(255, 255, 255, 0.015);
+  }
+
+  /* Comparison Side by Side */
+  .diff-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .diff-col {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .diff-col.deprecated { border-top: 3px solid var(--accent-rose); }
+  .diff-col.adopted { border-top: 3px solid var(--accent-emerald); }
+  .diff-col-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Code block */
+  code {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+  }
+
+  /* Grid of Principles */
+  .tenets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+    margin: 20px 0;
+  }
+  .tenet-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .tenet-num {
+    font-size: 32px;
+    font-weight: 900;
+    color: rgba(56, 189, 248, 0.12);
+    position: absolute;
+    right: 16px;
+    top: 12px;
+    line-height: 1;
+    font-family: var(--font-mono);
+  }
+  .tenet-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+  .tenet-body {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  /* Filter buttons */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--accent-cyan);
+    color: #000;
+    border-color: var(--accent-cyan);
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .app-container { flex-direction: column; }
+    aside.sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); }
+    main.main-content { padding: 32px 20px; }
+    .diff-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <a href="#" class="brand">
+      <span class="brand-badge">CASE STUDY</span>
+      <span class="brand-title">AI-DE (.NET 10)</span>
+    </a>
+
+    <div class="nav-section">
+      <div class="nav-group-title">Navigation</div>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="#executive-summary" class="active">Executive Summary</a></li>
+        <li class="nav-item"><a href="#paradigm-shift">The Core Paradigm</a></li>
+        <li class="nav-item"><a href="#chronological-journey">The Journey: 6 Acts</a></li>
+        <li class="nav-item"><a href="#the-great-pivot">The Architecture v2 Pivot</a></li>
+        <li class="nav-item"><a href="#multi-agent-coordination">Multi-Harness Governance</a></li>
+        <li class="nav-item"><a href="#the-rigor-engine">The Rigor Engine &amp; TDD</a></li>
+        <li class="nav-item"><a href="#continuous-improvement">Defect-to-Control Machine</a></li>
+        <li class="nav-item"><a href="#practitioner-playbook">The 6 Core Tenets</a></li>
+        <li class="nav-item"><a href="#prompt-explorer">Interactive Prompt Explorer</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-section" style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border);">
+      <div style="font-size: 11px; color: var(--text-muted);">
+        <strong>Project:</strong> AI-DE (C# .NET 10)<br />
+        <strong>Pack:</strong> AI-Forward<br />
+        <strong>Author:</strong> @timianmalloo
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    
+    <!-- Hero Header -->
+    <header class="hero">
+      <div class="hero-tagline">Autonomous Systems Engineering in Practice</div>
+      <h1>From Specification to Implementation:<br />The AI-DE Case Study</h1>
+      <p class="lead">
+        How an AI-Native Development Environment was conceived, formally specified, architecturally evolved, and implemented across 130 sessions &mdash; reaching 193,000+ lines of C# and 3,810 tests using the AI-Forward Pack.
+      </p>
+      <div class="hero-meta">
+        <span><strong>Timeline:</strong> August 23 &ndash; September 18, 2026 (4 Weeks)</span>
+        <span>&bull;</span>
+        <span><strong>Framework:</strong> AI-Forward Pack + Agent Knowledge Pack</span>
+        <span>&bull;</span>
+        <span><strong>Scale:</strong> 3,810 Tests &bull; 193,853 LoC &bull; 130 Sessions &bull; 155 ADRs/Changes</span>
+      </div>
+    </header>
+
+    <!-- Key Stats Scorecard -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-val">193,853 <span class="stat-unit">lines</span></div>
+        <div class="stat-lbl">Total C# Across App, Core &amp; Tests</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">3,810 <span class="stat-unit">tests</span></div>
+        <div class="stat-lbl">xUnit Tests (1,054 App + 2,756 Core)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">1.06 : 1</div>
+        <div class="stat-lbl">Test-to-Source Ratio (99.8k vs 94.0k)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">130 <span class="stat-unit">sessions</span></div>
+        <div class="stat-lbl">Coordinated Agent Sessions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">155 <span class="stat-unit">decisions</span></div>
+        <div class="stat-lbl">Change-Log &amp; ADR Milestones</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">796 <span class="stat-unit">entries</span></div>
+        <div class="stat-lbl">Durable, Committed Audit Log</div>
+      </div>
+    </section>
+
+    <!-- Section 1: Executive Summary -->
+    <section id="executive-summary" class="doc-section">
+      <div class="section-header">
+        <div class="section-tag">Context &amp; Objectives</div>
+        <h2 class="section-title">The Project Intent: Code is Transient, Navigation is Permanent</h2>
+        <p class="section-desc">
+          Why AI-DE was conceived and how it re-imagines the developer experience for an era of generative code.
+        </p>
+      </div>
+
+      <div class="card">
+        <p style="margin-bottom: 14px;">
+          Traditional IDEs (VS Code, Visual Studio, JetBrains) were built on an implicit assumption: <em>code is precious, written slowly by human fingers, and best browsed as a static tree of text files.</em>
+        </p>
+        <p style="margin-bottom: 14px;">
+          <strong>AI-DE</strong> flips this paradigm upside down:
+        </p>
+        <ul style="padding-left: 20px; margin-bottom: 14px; color: var(--text-secondary);">
+          <li><strong>Generated Code is Transient:</strong> Agents can generate, refactor, and mutate thousands of lines in seconds. Reading raw syntax files becomes a bottleneck.</li>
+          <li><strong>The Repository as a Semantic Model:</strong> Instead of navigating text files, AI-DE loads the entire codebase into a living, queryable semantic model using Roslyn workspaces, AST graphs, and durable fact stores.</li>
+          <li><strong>Multi-Faceted Viewers Over the Model:</strong> The IDE provides high-speed, interactive views: a live Semantic Code Atlas, an infinite reactive Canvas Dock (filling 93.1% of the viewpane), and structured agent conversation streams.</li>
+        </ul>
+        <p>
+          <strong>Engineering Scale:</strong> Over 4 weeks, AI-DE grew from a blank repo to an enterprise-grade WPF desktop application on .NET 10, comprising <strong>596 source files (94,015 LoC)</strong>, <strong>500 test files (99,838 LoC)</strong>, and <strong>3,810 passing xUnit tests</strong>.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 2: The Core Paradigm -->
+    <section id="paradigm-shift" class="doc-section">
+      <div class="section-header">
+        <div class="section-tag">Philosophy &amp; Mindset</div>
+        <h2 class="section-title">The Paradigm Shift: From Ad-Hoc Scripts to Enterprise TDD</h2>
+        <p class="section-desc">
+          How AI-Forward discipline enabled rapid velocity without succumbing to technical debt.
+        </p>
+      </div>
+
+      <div class="diff-grid">
+        <div class="diff-col deprecated">
+          <div class="diff-col-title">
+            <span>Naive Desktop AI Development</span>
+            <span class="badge badge-rose">Fragile</span>
+          </div>
+          <ul style="padding-left: 18px; font-size: 13.5px; color: var(--text-secondary); line-height: 1.7;">
+            <li>Single monolithic WPF window handling UI, state, and compiler invocations.</li>
+            <li>Direct UI thread blocking during long-running Roslyn AST compilations.</li>
+            <li>Manual F5 debugging to see if controls render correctly.</li>
+            <li>Blindly accepting heavy graph database dependencies (e.g. Kuzu).</li>
+            <li>Writing code first, postponing tests until "later".</li>
+          </ul>
+        </div>
+        <div class="diff-col adopted">
+          <div class="diff-col-title">
+            <span>AI-Forward Systems Engineering</span>
+            <span class="badge badge-emerald">Deterministic</span>
+          </div>
+          <ul style="padding-left: 18px; font-size: 13.5px; color: var(--text-secondary); line-height: 1.7;">
+            <li><strong>Strict Domain &amp; Data Modeling (DM1&ndash;DM18):</strong> Fact stores, append-only events, immutable Roslyn snapshots.</li>
+            <li><strong>The "Step Back" Move:</strong> Ruthlessly tearing down flawed drafts (e.g. superseding v1 architecture with v2).</li>
+            <li><strong>Spike-Driven Validation:</strong> Running empirical spikes on MSBuildWorkspaces, DPI awareness, and WebView2 interop.</li>
+            <li><strong>Strict Red-First TDD:</strong> Over 99,800 lines of tests written before implementations were accepted.</li>
+            <li><strong>Multi-Agent Coordination:</strong> 93 parallel coordination runs dividing Atlas, Canvas, and Conductor tracks.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: The Chronological Journey -->
+    <section id="chronological-journey" class="doc-section">
+      <div class="section-header">
+        <div class="section-tag">Trajectory</div>
+        <h2 class="section-title">The Journey in 6 Acts: From Sketch to Live Workbench</h2>
+        <p class="section-desc">
+          How human prompts steered the system across 130 sessions, captured in <code>docs/audit/audit-log.jsonl</code>.
+        </p>
+      </div>
+
+      <div class="timeline">
+        
+        <!-- Act 1 -->
+        <div class="timeline-node">
+          <div class="timeline-marker">1</div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <span class="timeline-title">Act I: Domain Grounding &amp; Pack Inception</span>
+              <span class="timeline-date">2026-08-23 &bull; Skills: collectknowledge, adopt</span>
+            </div>
+            <p style="font-size: 14px; margin-bottom: 8px;">
+              The project opened with domain research rather than immediate code. The user instructed the agent to investigate existing language server architectures, AST indexing engines, and multi-agent coordination.
+            </p>
+            <div class="prompt-box">
+              <div class="prompt-box-header">
+                <span>Human Prompt (Audit ID #3)</span>
+                <button class="copy-btn" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">Copy</button>
+              </div>
+<code>/collectknowledge — i am going to be building a development environment for myself and for how i work with coding agents. it assumes spec-first, tdd, and that generated code is transient. research state of the art in repository-as-a-model, roslyn workspaces, and agent-to-agent collaboration.</code>
+            </div>
+            <p style="font-size: 13.5px; color: var(--text-secondary);">
+              <strong>Deliverable:</strong> Established <code>docs/knowledge/</code>. Investigated and invalidated external graph databases (Kuzu) in favor of lightweight in-memory fact stores and Roslyn's native immutable syntax trees.
+            </p>
+          </div>
+        </div>
+
+        <!-- Act 2 -->
+        <div class="timeline-node">
+          <div class="timeline-marker">2</div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <span class="timeline-title">Act II: The 3-Layer Formal Specification</span>
+              <span class="timeline-date">2026-08-24 &bull; Skill: /specify</span>
+            </div>
+            <p style="font-size: 14px; margin-bottom: 8px;">
+              Enforcing the specification floor before writing architectural blueprints.
+            </p>
+            <div class="prompt-box">
+              <div class="prompt-box-header">
+                <span>Human Prompt (Audit ID #4)</span>
+                <button class="copy-btn" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">Copy</button>
+              </div>
+<code>create a specification (md and html) for my AI-IDE - use this proposal as the seed idea. make sure it has functional requirements, user experience flows, and technical boundaries.</code>
+            </div>
+            <p style="font-size: 13.5px; color: var(--text-secondary);">
+              <strong>Deliverable:</strong> Authored <code>docs/specs/ai-ide-specification.md</code>. Defined the bounded contexts: Workspace Daemon, Semantic Fact Store, Canvas Viewport, and Agent Stream Conductor.
+            </p>
+          </div>
+        </div>
+
+        <!-- Act 3 -->
+        <div class="timeline-node">
+          <div class="timeline-marker">3</div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <span class="timeline-title">Act III: The Critical Architecture Pivot &mdash; "Step Back"</span>
+              <span class="timeline-date">2026-08-25 &ndash; 2026-08-26 &bull; Skill: /define-architecture</span>
+            </div>
+            <p style="font-size: 14px; margin-bottom: 8px;">
+              The first architectural draft (v1) proposed a heavy single-container monolith. The user reviewed the proposal, stepped back, convened adversarial persona critiques, and ordered architecture v2.
+            </p>
+            <div class="prompt-box">
+              <div class="prompt-box-header">
+                <span>Human Prompt (Audit ID #6 &amp; #7 / Change Log #5)</span>
+                <button class="copy-btn" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">Copy</button>
+              </div>
+<code>ground yourself in the repo knowledge and the specs docs/specs, then use our repo personas and do a critique of the architecture.
+
+step back / /define-architecture ai-ide-arch-v2 — use the spec, the original architecture.md and your findings as input; adopt the local workspace daemon and fact-store architecture.</code>
+            </div>
+            <p style="font-size: 13.5px; color: var(--text-secondary);">
+              <strong>The Architecture v2 Pivot:</strong> Completely decoupled the UI presentation layer from the workspace indexing engine. Created an out-of-process Local Workspace Daemon communicating via named pipes/RPC with the WPF shell.
+            </p>
+          </div>
+        </div>
+
+        <!-- Act 4 -->
+        <div class="timeline-node">
+          <div class="timeline-marker">4</div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <span class="timeline-title">Act IV: Slicing the Walking Skeleton</span>
+              <span class="timeline-date">2026-08-26 &bull; Skills: /design-slice, /implement</span>
+            </div>
+            <p style="font-size: 14px; margin-bottom: 8px;">
+              Vertical slicing of Phase 1: proving the end-to-end connection between Roslyn solution loading, daemon fact streaming, and WPF MVVM binding.
+            </p>
+            <div class="prompt-box">
+              <div class="prompt-box-header">
+                <span>Human Prompt (Audit ID #9 &amp; #10)</span>
+                <button class="copy-btn" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">Copy</button>
+              </div>
+<code>design phase-1 the walking skeleton
+then /implement the walking skeleton</code>
+            </div>
+            <p style="font-size: 13.5px; color: var(--text-secondary);">
+              <strong>Deliverable:</strong> First functional desktop build. Verified that opening a <code>.sln</code> asynchronously indexed compilation symbols without freezing the UI dispatcher.
+            </p>
+          </div>
+        </div>
+
+        <!-- Act 5 -->
+        <div class="timeline-node">
+          <div class="timeline-marker">5</div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <span class="timeline-title">Act V: Multi-Agent Coordination at Scale</span>
+              <span class="timeline-date">2026-08-28 &ndash; 2026-09-15 &bull; Skill: /execute-with-coordination</span>
+            </div>
+            <p style="font-size: 14px; margin-bottom: 8px;">
+              Decomposing complex feature epics across parallel worktree tracks (Atlas, Canvas, Sessions, Conductor).
+            </p>
+            <div class="prompt-box">
+              <div class="prompt-box-header">
+                <span>Representative Human Steering</span>
+                <button class="copy-btn" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">Copy</button>
+              </div>
+<code>do the next steps you have listed provide the standard status and next steps tables afterwards</code>
+            </div>
+            <p style="font-size: 13.5px; color: var(--text-secondary);">
+              <strong>Autonomous Rhythm:</strong> This single prompt was repeated 32 times across August, driving a disciplined execution cycle where the agent took the next planned slice, executed red-first TDD, ran join gates, and reported back with status and verified next steps.
+            </p>
+          </div>
+        </div>
+
+        <!-- Act 6 -->
+        <div class="timeline-node">
+          <div class="timeline-marker">6</div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <span class="timeline-title">Act VI: The Code Atlas &amp; Infinite Canvas (P1 Finish)</span>
+              <span class="timeline-date">2026-09-18 &bull; Merge Commit 88e0c33f</span>
+            </div>
+            <p style="font-size: 14px; margin-bottom: 8px;">
+              Delivering the primary visual surface: the Live Semantic Code Atlas and the Canvas Dock, verified with measured pane utilization.
+            </p>
+            <div class="prompt-box">
+              <div class="prompt-box-header">
+                <span>Commit &amp; Proof Summary (88e0c33f)</span>
+                <button class="copy-btn" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">Copy</button>
+              </div>
+<code>merge(canvas-p1): the graph fills the dock — 20.4% to 93.1% of the pane, measured
+All 38 gates passed; 3,810 tests green (1,054 App + 2,756 Core); main sealed.</code>
+            </div>
+            <p style="font-size: 13.5px; color: var(--text-secondary);">
+              <strong>Verification:</strong> Replaced synthetic dummy metrics with real measured values. Verified that the graph visualization fills 93.1% of the dock viewpane with sub-100ms response times.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 4: The Architecture Pivot -->
+    <section id="the-great-pivot" class="doc-section">
+      <div class="section-header">
+        <div class="section-tag">Architectural Mastery</div>
+        <h2 class="section-title">The Architecture v2 Pivot: Decoupling Daemon from Shell</h2>
+        <p class="section-desc">
+          How questioning the initial monolithic design prevented catastrophic UI performance degradation.
+        </p>
+      </div>
+
+      <div class="card">
+        <p style="margin-bottom: 16px;">
+          Early architectural drafts assumed that Roslyn workspace management, AST indexing, and WebView2 canvas rendering could comfortably run in the same process as the WPF application.
+        </p>
+        <p style="margin-bottom: 16px;">
+          In Change Log #5, the user halted execution: <strong>"step back / /define-architecture ai-ide-arch-v2 — use the spec, the original architecture.md and your findings as input; adopt the local workspace daemon and fact-store architecture."</strong>
+        </p>
+
+        <div class="diff-grid">
+          <div class="diff-col deprecated">
+            <div class="diff-col-title">
+              <span>Architecture v1: In-Process Monolith</span>
+              <span class="badge badge-rose">Rejected</span>
+            </div>
+            <ul style="padding-left: 18px; font-size: 13px; color: var(--text-secondary); line-height: 1.6;">
+              <li>Roslyn solution compilation ran in WPF application domain.</li>
+              <li>Garbage collection pauses from Roslyn symbol trees froze UI animation.</li>
+              <li>Crash in Roslyn compiler crashed the entire editor.</li>
+              <li>External graph database (Kuzu) added C++ native binary dependency.</li>
+              <li>No clean separation between agent orchestration and editor state.</li>
+            </ul>
+          </div>
+          <div class="diff-col adopted">
+            <div class="diff-col-title">
+              <span>Architecture v2: Workspace Daemon + Fact Store</span>
+              <span class="badge badge-emerald">Adopted</span>
+            </div>
+            <ul style="padding-left: 18px; font-size: 13px; color: var(--text-secondary); line-height: 1.6;">
+              <li><strong>Local Workspace Daemon:</strong> Runs as an independent background process on .NET 10.</li>
+              <li><strong>Named Pipe RPC:</strong> High-throughput binary messaging with zero UI dispatcher contention.</li>
+              <li><strong>Append-Only Fact Store:</strong> Transient code changes streamed as delta events rather than full solution reloads.</li>
+              <li><strong>Zero Native C++ Bloat:</strong> In-memory indexed relations replace external graph databases.</li>
+              <li><strong>Fault Isolation:</strong> A daemon crash is recovered without losing unsaved editor state.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Multi-Agent Coordination -->
+    <section id="multi-agent-coordination" class="doc-section">
+      <div class="section-header">
+        <div class="section-tag">Orchestration</div>
+        <h2 class="section-title">The Multi-Harness Coordination Model</h2>
+        <p class="section-desc">
+          How 130 sessions were harmonized across worktrees without code overwrites or merge collisions.
+        </p>
+      </div>
+
+      <div class="card">
+        <p style="margin-bottom: 16px;">
+          AI-DE was built using the AI-Forward <strong>Owner / Coordinator / Worker</strong> coordination doctrine:
+        </p>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Seat / Role</th>
+                <th>Model / Harness</th>
+                <th>Domain Ownership</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Owner Seat</strong></td>
+                <td>Claude Fable / Human</td>
+                <td>Authorizes architectural ADRs, resolves scope boundaries, rules on unresolvable seams.</td>
+              </tr>
+              <tr>
+                <td><strong>Conductor / Coordinator</strong></td>
+                <td>Claude Opus</td>
+                <td>Maintains <code>docs/coordination/</code>, supervises worktree dispatches, runs join gates.</td>
+              </tr>
+              <tr>
+                <td><strong>Atlas Worker</strong></td>
+                <td>Codex / Claude Sonnet</td>
+                <td>Roslyn symbol extraction, semantic graph projection, syntax node caching.</td>
+              </tr>
+              <tr>
+                <td><strong>Canvas Worker</strong></td>
+                <td>Claude Sonnet / Grok</td>
+                <td>WPF custom controls, WebView2 reactive visualizer, dock layout mathematics.</td>
+              </tr>
+              <tr>
+                <td><strong>Sessions Worker</strong></td>
+                <td>Claude Sonnet</td>
+                <td>Agent conversation persistence, JSON Lines stream reader, token accounting.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: The Rigor Engine -->
+    <section id="the-rigor-engine" class="doc-section">
+      <div class="section-header">
+        <div class="section-tag">Verification</div>
+        <h2 class="section-title">The Rigor Engine: 3,810 xUnit Tests in Strict TDD</h2>
+        <p class="section-desc">
+          Maintaining an unmatched 1:1.06 test-to-code ratio in enterprise C# WPF.
+        </p>
+      </div>
+
+      <div class="card">
+        <p style="margin-bottom: 14px;">
+          Many teams struggle to test desktop WPF applications, often settling for manual testing. AI-DE rejected this compromise:
+        </p>
+        <ul style="padding-left: 20px; font-size: 13.5px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 18px;">
+          <li><strong>2,756 Core Tests (<code>AiDe.Core.Tests</code>):</strong> Testing Roslyn solution compilation, named pipe RPC protocols, fact-store event sourcing, and AST query resolvers.</li>
+          <li><strong>1,054 App Tests (<code>AiDe.App.Tests</code>):</strong> Testing ViewModels, asynchronous data bindings, command dispatchers, and dock layout algorithms.</li>
+          <li><strong>100% Offline &amp; Hermetic:</strong> Zero external network dependencies. Tests spin up ephemeral in-memory named pipe daemons and tear them down cleanly.</li>
+        </ul>
+
+        <div class="callout-quote" style="border-left-color: var(--accent-emerald);">
+          <p>
+            <strong>The 20.4% &rarr; 93.1% Canvas Verification:</strong> In the final merge (commit <code>88e0c33f</code>), the team rejected synthetic approximations and measured real pixel bounds. A test proved that the graph viewport occupied 93.1% of the dock pane, eliminating two hardcoded layout bugs that had persisted unnoticed.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7: Continuous Improvement -->
+    <section id="continuous-improvement" class="doc-section">
+      <div class="section-header">
+        <div class="section-tag">Defect Prevention</div>
+        <h2 class="section-title">The Defect-to-Control Machine in AI-DE</h2>
+        <p class="section-desc">
+          How real runtime defects were converted into permanent machine gates.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Defect / Finding</th>
+                <th>Failure Mechanism</th>
+                <th>Permanent Machine Control Built</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Analyzer Hangs</strong></td>
+                <td>Third-party Roslyn code analyzers hung during batch compilation of large solutions.</td>
+                <td>Stripped <code>AnalyzerReferences</code> at the workspace loader seam; added build-isolation tests.</td>
+              </tr>
+              <tr>
+                <td><strong>WebView2 Airspace</strong></td>
+                <td>WPF airspace conflict: native controls rendered beneath the browser canvas.</td>
+                <td>Implemented snapshot-swap overlay system: captures bitmap on overlap and routes focus cleanly.</td>
+              </tr>
+              <tr>
+                <td><strong>Stale Audit Drift</strong></td>
+                <td>Parallel worktrees modified audit logs concurrently, causing merge conflicts.</td>
+                <td>Registered <code>coord-register</code> union-merge driver in git config across all trees.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 8: Practitioner Playbook -->
+    <section id="practitioner-playbook" class="doc-section">
+      <div class="section-header">
+        <div class="section-tag">Playbook</div>
+        <h2 class="section-title">The 6 Core Tenets: The AI-DE Blueprint</h2>
+        <p class="section-desc">
+          Essential rules for building large-scale, complex software systems with AI coding agents.
+        </p>
+      </div>
+
+      <div class="tenets-grid">
+        <div class="tenet-card">
+          <div class="tenet-num">01</div>
+          <div class="tenet-title">Ground Before Scaffolding</div>
+          <div class="tenet-body">
+            Invest in domain research (<code>/collectknowledge</code>) before creating project templates. Understanding Roslyn's immutability saved AI-DE from months of synchronization bugs.
+          </div>
+        </div>
+
+        <div class="tenet-card">
+          <div class="tenet-num">02</div>
+          <div class="tenet-title">Specify the Three Layers</div>
+          <div class="tenet-body">
+            Every feature must define Functional boundaries, UX interaction flows, and UI layout constraints. Ambiguity in UX leads to rewritten UI controls.
+          </div>
+        </div>
+
+        <div class="tenet-card">
+          <div class="tenet-num">03</div>
+          <div class="tenet-title">Embrace the "Step Back"</div>
+          <div class="tenet-body">
+            Do not hesitate to tear down a flawed v1 architecture. Sunk cost fallacy is deadlier with AI; discarding a bad draft and regenerating a clean v2 takes hours, not months.
+          </div>
+        </div>
+
+        <div class="tenet-card">
+          <div class="tenet-num">04</div>
+          <div class="tenet-title">Decouple Compute from Shell</div>
+          <div class="tenet-body">
+            In AI tools, semantic indexing and background analysis must be isolated out-of-process. Never let heavy AST traversals block the user interface.
+          </div>
+        </div>
+
+        <div class="tenet-card">
+          <div class="tenet-num">05</div>
+          <div class="tenet-title">Treat Tests as the Primary Asset</div>
+          <div class="tenet-body">
+            In an era where code is transient, your test suite is the only enduring truth. Maintain a 1:1 test-to-source ratio to give agents freedom to refactor fearlessly.
+          </div>
+        </div>
+
+        <div class="tenet-card">
+          <div class="tenet-num">06</div>
+          <div class="tenet-title">Automate the Join Gates</div>
+          <div class="tenet-body">
+            Multi-agent parallelism works only when merge gates are strictly enforced. Never merge unverified code to main.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 9: Interactive Prompt Explorer -->
+    <section id="prompt-explorer" class="doc-section">
+      <div class="section-header">
+        <div class="section-tag">Interactive Archive</div>
+        <h2 class="section-title">Interactive Prompt Explorer</h2>
+        <p class="section-desc">
+          Search and inspect the pivotal steering prompts across the 4-week development of AI-DE.
+        </p>
+      </div>
+
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterPrompts('all', this)">All Key Prompts</button>
+        <button class="filter-btn" onclick="filterPrompts('spec', this)">Specification</button>
+        <button class="filter-btn" onclick="filterPrompts('arch', this)">Architecture</button>
+        <button class="filter-btn" onclick="filterPrompts('coord', this)">Coordination</button>
+        <button class="filter-btn" onclick="filterPrompts('canvas', this)">Canvas &amp; Atlas</button>
+      </div>
+
+      <div id="prompts-list">
+
+        <!-- Card 1 -->
+        <div class="card prompt-card" data-category="spec">
+          <div class="card-header">
+            <span class="card-title">Prompt #3: Establishing the Domain Knowledge Base</span>
+            <span class="badge badge-cyan">Skill: collectknowledge</span>
+          </div>
+          <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 8px;">
+            <strong>Intent:</strong> Grounding the project in repository-as-a-model concepts before any specification.
+          </p>
+          <div class="prompt-box">
+            <div class="prompt-box-header">
+              <span>Prompt Text</span>
+              <button class="copy-btn" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">Copy</button>
+            </div>
+<code>/collectknowledge — i am going to be building a development environment for myself and for how i work with coding agents. it assumes spec-first, tdd, and that generated code is transient. research state of the art in repository-as-a-model, roslyn workspaces, and agent-to-agent collaboration.</code>
+          </div>
+          <p style="font-size: 13px; color: var(--accent-emerald);">
+            &check; <strong>System Action:</strong> Produced domain synthesis in <code>docs/knowledge/</code>; evaluated Kuzu graph DB vs native memory models.
+          </p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="card prompt-card" data-category="spec">
+          <div class="card-header">
+            <span class="card-title">Prompt #4: Authoring the AI-IDE Specification</span>
+            <span class="badge badge-purple">Skill: /specify</span>
+          </div>
+          <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 8px;">
+            <strong>Intent:</strong> Defining the product boundaries, user flows, and acceptance criteria.
+          </p>
+          <div class="prompt-box">
+            <div class="prompt-box-header">
+              <span>Prompt Text</span>
+              <button class="copy-btn" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">Copy</button>
+            </div>
+<code>create a specification (md and html) for my AI-IDE - use this proposal as the seed idea: "C:\Users\malla\Downloads\proposal.md"</code>
+          </div>
+          <p style="font-size: 13px; color: var(--accent-emerald);">
+            &check; <strong>System Action:</strong> Generated <code>docs/specs/ai-ide-specification.md</code> with complete Gherkin criteria.
+          </p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="card prompt-card" data-category="arch">
+          <div class="card-header">
+            <span class="card-title">Prompt #7: The "Step Back" &mdash; Architecture v2</span>
+            <span class="badge badge-amber">Architectural Pivot</span>
+          </div>
+          <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 8px;">
+            <strong>Intent:</strong> Rejecting in-process monolithic architecture in favor of a detached workspace daemon.
+          </p>
+          <div class="prompt-box">
+            <div class="prompt-box-header">
+              <span>Prompt Text</span>
+              <button class="copy-btn" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">Copy</button>
+            </div>
+<code>step back / /define-architecture ai-ide-arch-v2 — use the spec, the original architecture.md and your findings as input; adopt the local workspace daemon and fact-store architecture.</code>
+          </div>
+          <p style="font-size: 13px; color: var(--accent-emerald);">
+            &check; <strong>System Action:</strong> Enacted Architecture v2 (ADR-0001..0013); established named-pipe RPC daemon architecture.
+          </p>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="card prompt-card" data-category="coord">
+          <div class="card-header">
+            <span class="card-title">Prompt Pattern: The Autonomous Coordination Loop</span>
+            <span class="badge badge-cyan">Skill: execute-with-coordination</span>
+          </div>
+          <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 8px;">
+            <strong>Intent:</strong> Driving repetitive, high-velocity TDD cycles without losing rigor.
+          </p>
+          <div class="prompt-box">
+            <div class="prompt-box-header">
+              <span>Prompt Text (Repeated 32 times in August)</span>
+              <button class="copy-btn" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">Copy</button>
+            </div>
+<code>do the next steps you have listed provide the standard status and next steps tables afterwards</code>
+          </div>
+          <p style="font-size: 13px; color: var(--accent-emerald);">
+            &check; <strong>System Action:</strong> Executed planned slices across worktrees; maintained red-first TDD and join gate proofs.
+          </p>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="card prompt-card" data-category="canvas">
+          <div class="card-header">
+            <span class="card-title">Commit 88e0c33f: Canvas-P1 Dock Fill Proof</span>
+            <span class="badge badge-emerald">Measurement Proof</span>
+          </div>
+          <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 8px;">
+            <strong>Intent:</strong> Finalizing the Canvas visualization with measured pixel boundaries.
+          </p>
+          <div class="prompt-box">
+            <div class="prompt-box-header">
+              <span>Merge &amp; Proof Note</span>
+              <button class="copy-btn" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.textContent)">Copy</button>
+            </div>
+<code>merge(canvas-p1): the graph fills the dock — 20.4% to 93.1% of the pane, measured
+All 38 gates passed; 3,810 tests green (1,054 App + 2,756 Core); main sealed.</code>
+          </div>
+          <p style="font-size: 13px; color: var(--accent-emerald);">
+            &check; <strong>System Action:</strong> Proved 93.1% viewport utilization; closed all open canvas defect tickets.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-muted); display: flex; justify-content: space-between; flex-wrap: gap; align-items: center;">
+      <div>
+        Built with the <strong>AI-Forward Pack</strong> &bull; Case Study for <code>AI-DE</code> (.NET 10)
+      </div>
+      <div>
+        <a href="#executive-summary" style="color: var(--accent-cyan); text-decoration: none;">Back to top &uarr;</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  function filterPrompts(category, btn) {
+    const buttons = document.querySelectorAll('.filter-btn');
+    buttons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const cards = document.querySelectorAll('.prompt-card');
+    cards.forEach(card => {
+      if (category === 'all' || card.getAttribute('data-category') === category) {
+        card.style.display = 'block';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  // Smooth scroll highlighting for navigation
+  document.addEventListener('DOMContentLoaded', () => {
+    const links = document.querySelectorAll('.nav-item a');
+    const sections = document.querySelectorAll('section.doc-section');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 80;
+        if (pageYOffset >= sectionTop) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      links.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>
