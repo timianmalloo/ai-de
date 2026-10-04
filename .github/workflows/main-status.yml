@@ -27,9 +27,7 @@ name: main status
 # `needs:` job cannot see.
 
 on:
-  workflow_run:
-    workflows: ["Build"]
-    types: [completed]
+  workflow_dispatch:
 
 permissions:
   contents: read
