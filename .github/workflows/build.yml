@@ -7,8 +7,7 @@ name: Build
 # by the branch that introduced them. A gate that only guards the destination is a gate that reports
 # problems to the wrong person.
 on:
-  push:
-  pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
