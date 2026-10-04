@@ -25,14 +25,8 @@ name: UI craft (mockups)
 # able to fire.
 
 on:
-  pull_request:
-    paths:
-      - 'docs/mockups/**'
-      - 'DESIGN.md'
-      - 'docs/ai-forward-pack/scripts/ui-craft-gate.py'
-  schedule:
-    - cron: '17 6 * * 1'   # Mondays, slow ring
   workflow_dispatch:
+
 
 permissions:
   contents: read
