@@ -1,0 +1,185 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "7262566b49f919d0163c86f29ba6278eeb74ef85",
+  "original_branch": "refs/heads/atlas/e1-budget-lifetime-repair",
+  "archive_sha256": "00fd583506e7e2c5d6517a0ee1b116117ca5cedbfc1619010776aa01ea6fcfc5",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 61706,
+      "sha256": "00fd583506e7e2c5d6517a0ee1b116117ca5cedbfc1619010776aa01ea6fcfc5"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/owner75-budget-lifetime/baseline-44c7db6d.cs.txt",
+      "bytes": 6024,
+      "sha256": "4a560e6f27e4bb7c44383a71e6f79815710d96264cf7494dcb81203f87248b13"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/candidate.patch",
+      "bytes": 17020,
+      "sha256": "8e9d9fc2404dac7633330a19435639b09cafab3d161dbf807686219aff721353"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/committed-receipt.json",
+      "bytes": 28661,
+      "sha256": "87e2903c945d8c5fb4df65f547179a801bbac4d85d0cfdc14ffbb595b046c30b"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/derived-run-receipt.json",
+      "bytes": 28424,
+      "sha256": "5b8e825170566daa09153ff9ec8e04797eb64e75f96f43b53cc8756283937bec"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-final-idle/matched-idle-drain.json",
+      "bytes": 906,
+      "sha256": "fe20324589107af61dc436cbd33b8145dea87a0a1ca4750f7127a9c51987ba80"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-final-publication/completed.json",
+      "bytes": 879,
+      "sha256": "0c3cbd3255d269aab84cac99b125fea9548fe63adb1d5c832094c0499a49335d"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-final-publication/deadline.json",
+      "bytes": 1040,
+      "sha256": "101c736fc90e2cd54a71d003a55a7c8315d182f74edef29b4e2bc69a81342a87"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-final-publication/disconnect.json",
+      "bytes": 878,
+      "sha256": "0bf750a339064d39315423ad4b0b8d71be0a47ee823c8579d16b5ca2106af9b5"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-final-publication/drain-timeout.json",
+      "bytes": 1083,
+      "sha256": "5bd47c7dd8008a99f203ed539f898688f32fe181f5e0debb505215b5ee4ae089"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-final-publication/expire.json",
+      "bytes": 1051,
+      "sha256": "e684a0ce67a3e28ee8d878a879b85f8d797bc2405bf9bb2e7a619dfaccb3d1e6"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-final-publication/ownership.json",
+      "bytes": 857,
+      "sha256": "042ff1a8d814c4d19455b0f5b9243446eaa705acf6e99151cf68fa822fb8f464"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-final-publication/partial.json",
+      "bytes": 998,
+      "sha256": "f49777d7143dcd6d4ca4adacc7183600b328d81ce3bc81afd59a6544b559572a"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-final-publication/repeat.json",
+      "bytes": 1000,
+      "sha256": "d7d1de0eb63ac8a04aa7e874d3b0ec58f9b7da255edf12103cd77f58f4b9365d"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-final-publication/revoke.json",
+      "bytes": 1000,
+      "sha256": "1844bcf0db3cc5cf5fbda182a3675e444e8119a31579c830c11edbe4b56f3db7"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-final-publication/write-timeout.json",
+      "bytes": 992,
+      "sha256": "66f0ab740aeb603b17fecb2b5428fb47acd3bff4bc61202b11d7eac07912f57f"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-final.cs.txt",
+      "bytes": 14625,
+      "sha256": "9c4f5ce3d6fcbc98cc77e4cbdc5474765c902a208943c5cfd31ae01532b42f97"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-final/owner75-green-final.trx",
+      "bytes": 59867,
+      "sha256": "0c9042ceb215ab2fe91e5d0b82d94f5176185f286ad051d8beb8b45d6709c905"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-v1-idle/matched-idle-drain.json",
+      "bytes": 906,
+      "sha256": "0d101e821abd0e52f5ea465f2c362576e702c1825764c15f45efa7b6447d0527"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-v1-publication/completed.json",
+      "bytes": 879,
+      "sha256": "0c3cbd3255d269aab84cac99b125fea9548fe63adb1d5c832094c0499a49335d"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-v1-publication/deadline.json",
+      "bytes": 1040,
+      "sha256": "101c736fc90e2cd54a71d003a55a7c8315d182f74edef29b4e2bc69a81342a87"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-v1-publication/disconnect.json",
+      "bytes": 878,
+      "sha256": "0bf750a339064d39315423ad4b0b8d71be0a47ee823c8579d16b5ca2106af9b5"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-v1-publication/drain-timeout.json",
+      "bytes": 1083,
+      "sha256": "5bd47c7dd8008a99f203ed539f898688f32fe181f5e0debb505215b5ee4ae089"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-v1-publication/expire.json",
+      "bytes": 1051,
+      "sha256": "e684a0ce67a3e28ee8d878a879b85f8d797bc2405bf9bb2e7a619dfaccb3d1e6"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-v1-publication/ownership.json",
+      "bytes": 857,
+      "sha256": "042ff1a8d814c4d19455b0f5b9243446eaa705acf6e99151cf68fa822fb8f464"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-v1-publication/partial.json",
+      "bytes": 998,
+      "sha256": "f49777d7143dcd6d4ca4adacc7183600b328d81ce3bc81afd59a6544b559572a"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-v1-publication/repeat.json",
+      "bytes": 1000,
+      "sha256": "d7d1de0eb63ac8a04aa7e874d3b0ec58f9b7da255edf12103cd77f58f4b9365d"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-v1-publication/revoke.json",
+      "bytes": 1000,
+      "sha256": "1844bcf0db3cc5cf5fbda182a3675e444e8119a31579c830c11edbe4b56f3db7"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-v1-publication/write-timeout.json",
+      "bytes": 992,
+      "sha256": "66f0ab740aeb603b17fecb2b5428fb47acd3bff4bc61202b11d7eac07912f57f"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-v1.cs.txt",
+      "bytes": 14625,
+      "sha256": "9c4f5ce3d6fcbc98cc77e4cbdc5474765c902a208943c5cfd31ae01532b42f97"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/green-v1/owner75-green-v1.trx",
+      "bytes": 59867,
+      "sha256": "20a3f525bbceee4d169d9728fb0b1d84fd2d62f1662aaef9e3f457db525872cb"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/mutant-control/mutant-same-type-replacement.trx",
+      "bytes": 15349,
+      "sha256": "501f603b0f6e481d6fc382197950512c284e33908a74543f8886f873aba920b2"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/mutant-same-type-replacement.cs.txt",
+      "bytes": 14864,
+      "sha256": "7167f16abe4087d2d904a7c635e8e2d0776f29287a1bff8b5fddc4a06c128689"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/red-five-old-helper.cs.txt",
+      "bytes": 7784,
+      "sha256": "6f0f1f3a97256670a360916e5d90f2eec0d751046065a60f3f610c0e8d954532"
+    },
+    {
+      "path": ".artifacts/owner75-budget-lifetime/red-restored/red-five-old-helper-restored.trx",
+      "bytes": 6029,
+      "sha256": "1e787adcb71913ec3bb9c6d4887f436370d4d70374dc14d29c41be2697a1dc52"
+    }
+  ]
+}
