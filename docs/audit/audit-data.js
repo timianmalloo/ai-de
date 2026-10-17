@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-16T03:39:19Z",
+  "generated": "2026-09-16T17:30:46Z",
   "audit": [
     {
       "actor": null,
@@ -24832,6 +24832,251 @@ window.AUDIT_DATA = {
         "sha": "e6aed0857749a1409e5a4d3c704ed131aeea721c",
         "short": "e6aed0857",
         "branch": "integration/atlas-five-gates",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NFDNDH67Y6HRBHNABBHQY5",
+      "shortname": "atlas-native-instance-design",
+      "datetime": "2026-09-16T16:04:58Z",
+      "session": "codex-atlas-native-instance-observer",
+      "prompt": "Design only: smallest test-only same-instance Atlas WPF/UIA observer. Preserve original FromHandle/process/Descendants Name/result/assertions/timeouts. Timestamp owning-dispatcher host/content/view/reader reference identities separately from original MTA query; bounded structural output, unavailable states and original failure preservation. Eight calls/15minutes; proof appendix/own audit only; no GUI/test/product edits, delegates, join or self-clearance.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2NFTY4VPZGDG6R7T877PJYT",
+      "shortname": "atlas-native-instance-observer-design",
+      "datetime": "2026-09-16T16:12:13Z",
+      "session": "codex-atlas-native-instance-observer",
+      "prompt": "Design only: smallest test-only same-instance Atlas WPF/UIA observer. Preserve original FromHandle/process/Descendants Name/result/assertions/timeouts. Timestamp owning-dispatcher host/content/view/reader reference identities separately from original MTA query; bounded structural output, unavailable states and original failure preservation. Eight calls/15minutes; proof appendix/own audit only; no GUI/test/product edits, delegates, join or self-clearance.",
+      "summary": "Design-only Owner-A same-instance observer: exact host/content/view reference and attachment observations, separate wrapper reader/lease IDs, query-after RuntimeId correlation and STA batch brackets. Private generation/view-lease edge explicitly unobserved. No native/test/product source change or tests.8/8 calls; independent Test/SRE review and implementation dispatch pending.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": "codex-astra-native-observer",
+      "artifacts": [
+        "docs/proof/atlas-p1-02-native-uia.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Design the smallest same-instance structural observer around the unchanged original native UIA result.",
+      "done_when": "Commit bounded schema, exact insertion points and non-GUI controls for Owner settlement; preserve original decisive native query.",
+      "tier": "T2",
+      "main_calls": 8,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T16:04:34Z",
+      "duration_seconds": 459.0
+    },
+    {
+      "id": "al-01M2NGMTFQ4NS0GRHT89FJ3P2V",
+      "shortname": "atlas-native-observer-implement",
+      "datetime": "2026-09-16T16:26:21Z",
+      "session": "codex-atlas-native-instance-observer",
+      "prompt": "Implement Owner-A observer from settlede41a176c design and independent CLEAR973afc97. Exact native test/proof only. Preserve original UIA root/query/result/assertions/waits/timeouts and existing helper behavior. ReferenceEquals IDs, bounded actual WPF adapters and real await/finally/sink nonGUI controls; actual release-start event; no private fields, inferred view-lease link, generic framework, native/full/shown tests.18calls25minutes checkpoint12; exact source/proof/audit freeze and independent review.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2NJ0Q105TGFZBAF0HBY7Q5J",
+      "shortname": "atlas-native-instance-observer-implement",
+      "datetime": "2026-09-16T16:50:19Z",
+      "session": "codex-atlas-native-instance-observer",
+      "prompt": "Implement Owner-A observer from settlede41a176c design and independent CLEAR973afc97. Exact native test/proof only. Preserve original UIA root/query/result/assertions/waits/timeouts and existing helper behavior. ReferenceEquals IDs, bounded actual WPF adapters and real await/finally/sink nonGUI controls; actual release-start event; no private fields, inferred view-lease link, generic framework, native/full/shown tests.18calls25minutes checkpoint12; exact source/proof/audit freeze and independent review.",
+      "summary": "Same-file bounded observer and actual adapter/integration controls; initial11-case preimplementation red, final17/17 pass and four killed postimplementation mutants.18/18 author calls; native/UIA execution and independent clearance pending. Null-equality and syntax-kind test defects corrected; administrative path/glob errors recovered.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "codex-astra-native-observer",
+      "artifacts": [
+        "docs/proof/atlas-p1-02-native-uia.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Implement settled same-instance observer without changing original native query outcome.",
+      "done_when": "Freeze exact test/proof delta with normal compilation, actual adapter and await/finally/sink controls and raw evidence for independent review.",
+      "tier": "T2",
+      "main_calls": 18,
+      "main_budget": 18,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T16:25:50Z",
+      "duration_seconds": 1469.0
+    },
+    {
+      "id": "al-01M2NJGDXCBGM5N6C34SWDBQKJ",
+      "shortname": "Owner FR-NO-001 correction only: pre-serialize every new observer payloa…",
+      "datetime": "2026-09-16T16:58:54Z",
+      "session": "prompt-log",
+      "prompt": "Owner FR-NO-001 correction only: pre-serialize every new observer payload with actual Receipt options, publish immutable JSON, preserve original Mark/Save; red-first same shared Receipt before/fault/after and original outcomes; retain17 controls; exact test/proof/audit;8 calls12min.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2NJR89X6QPCERH2AAWT56QD",
+      "shortname": "atlas-native-observer-shared-sink-correction",
+      "datetime": "2026-09-16T17:03:11Z",
+      "session": "codex-atlas-native-instance-observer",
+      "prompt": "Owner FR-NO-001 only: pre-serialize all added observer payloads using actual Receipt options and publish immutable JSON; preserve original Mark/Save. Permanent red-first same shared Receipt before/fault/after and exact original outcomes; retain17 controls; validate-then-publish-original mutant must fail. Exact native test/proof/own audit,8calls12min; no GUI/native/full run or own clearance.",
+      "summary": "Corrected persistent shared receipt poisoning with SerializeToElement before observer admission. Red21/17/4, green21/21, original-object publication mutant21/20/1, restored final21/21. Existing Mark/Save unchanged; four new actual shared-sink/immutable controls. Independent BLOCK retained.8/8 calls; raw/derived retained.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "codex-astra-native-observer",
+      "artifacts": [
+        "docs/proof/atlas-p1-02-native-uia.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Contain observer formatting failures before shared event mutation without changing original receipt behavior.",
+      "done_when": "Freeze minimal corrected observer sink and actual shared Receipt controls with red/green/mutation evidence for independent re-review.",
+      "tier": "T2",
+      "main_calls": 8,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false
+      },
+      "started_at": "2026-09-16T16:58:35Z",
+      "duration_seconds": 276.0
+    },
+    {
+      "id": "al-01M2NKNQH6KDYG9W9JVE2FQVEG",
+      "shortname": "Close only the settled native observer per-view loaded/visible omission …",
+      "datetime": "2026-09-16T17:19:17Z",
+      "session": "prompt-log",
+      "prompt": "Close only the settled native observer per-view loaded/visible omission in AtlasDaemonMainWindowProofTests.cs and atlas-p1-02-native-uia.md. Add red-first JSON evidence, minimal public scalar observation, proof update, own audit, commit, and release exact leases. No GUI/native/full-suite or product paths.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2NKWNHCPV1GDC9VNNDW3NFG",
+      "shortname": "implement-atlas-native-view-state",
+      "datetime": "2026-09-16T17:23:04Z",
+      "session": "codex-atlas-native-instance-observer",
+      "prompt": "Close only the settled native observer per-view loaded/visible omission. In the provisioned author worktree, preserve the cleared shared-receipt correction and all original queries/assertions/timeouts and publication paths. Add a red-first persisted Views JSON oracle, observe actual public per-view IsLoaded/IsVisible with truthful nullable unavailable behavior in the existing unshown STA adapter, run only source-normal bounded non-GUI controls, update the existing proof, commit source/proof/own audit, and release exact leases. No GUI/native/full suite/product paths/private generation or lease reflection/shared register/site/docs-index writes; no join or self-clear.",
+      "summary": "Added nullable per-view IsLoaded/IsVisible observations from the actual AtlasReaderView reference with per-field null plus bounded unavailable reason on read failure. The persisted adapter oracle failed red on missing fields, then the 21-control NativeObserver_NonGui_ filter passed and saved detached false/false values. Updated the existing proof with TRX/receipt hashes and limits. Actual main-line tool use overran the 10-call circuit breaker to 16 because the first coord command was unavailable and the receipt path required correction; no verification gate was dropped. Independent Astra review remains required.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "codex-astra-native-observer",
+      "artifacts": [
+        "tests/AiDe.App.Tests/Workbench/Understanding/AtlasDaemonMainWindowProofTests.cs",
+        "docs/proof/atlas-p1-02-native-uia.md",
+        "docs/audit/audit-log.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Add truthful per-view IsLoaded/IsVisible observation to the existing native observer proof path.",
+      "done_when": "A red-first test fails on omitted JSON fields; the smallest correction passes the unshown STA adapter controls; proof and own audit are updated and committed; exact leases are released.",
+      "tier": "T1",
+      "main_calls": 16,
+      "main_budget": 10,
+      "main_over_budget": true,
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-16T17:19:16Z",
+      "duration_seconds": 228.0,
+      "git": {
+        "sha": "715523d0bef2db92364f73a6d84ac79290ffae13",
+        "short": "715523d0b",
+        "branch": "test/atlas-native-instance-observer",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2NMARWP9Y2K73GTNG1TFG71",
+      "shortname": "atlas-native-view-state-final-review",
+      "datetime": "2026-09-16T17:30:46Z",
+      "session": "codex-atlas-native-view-state-review",
+      "prompt": "Start audit first: audit-log.py start --session codex-atlas-native-view-state-review --skill forensicreview, from the provisioned tree below, then grounding. Independently review final observer source626d16a211757db5e4da7515cf234a686f610e6c in C:/Projects/ai-de-review-atlas-native-view-state, branch review/atlas-native-view-state, session codex-atlas-native-view-state-review, agent codex-astra-native-view-state-review. Conductor provisioned through coord worktree new; no EnterWorktree/install. Read applicable guidance, exact design/proof and delta. Owner Astra, Conductor root; you Astra adversarial reviewer independent of Sol author. Goal: clear or precisely block COMPLETE admitted test-only observer preparation now the per-view fields are present, preserving your FR-NO-001 CLEAR at12c1f883. Done when settled field/lifetime/original-failure/cost/bounds obligations are accounted for by actual source and adapter JSON plus own bounded normal-build controls, with no claim of live native qualification. Budget8tool calls/12min/checkpoint5, tokens not exposed, context400k; cap is defect signal not termination. No subagents. Allowed writes only docs/proof/atlas-native-view-state-review.md (frontmatter use established type: doc; status convention inspect), official own audit, ignored raw evidence; source read-only. Exact short lease for receipt then release. Do not edit shared derived/index/register/site; source author preserved audit-data/.artifacts dirt in own tree.\nInputs: current test tests/AiDe.App.Tests/Workbench/Understanding/AtlasDaemonMainWindowProofTests.cs, design/receipt docs/proof/atlas-p1-02-native-uia.md. Your prior full sink review12c1f883, initial source review4d005a9e and design review973afc97 available via git. Root directly read whole current21line source delta +proof, and actual TRXs: .artifacts/atlas-instance-design/view-state-red.trx1/0/1 KeyNotFound missing property SHA c4be8c0150a9b7962f0486040dec843c8bc4464a1378d57a6c3433f9bf1fce57; final21/21/0 SHA db799ebc38fa0cf866419c8f90828fea8243cf0d6be73e4dba8b3ef2ea0741c9 in author tree. Actual author receipt .artifacts/atlas-observer-controls/ca7aea0fdacf447996174e3a50f62701/receipt.json SHA a4fae674169ed35dc3cef20ece51ec78fbca4f5cbe789a121c7b30d0668347ef. Frozen source SHA6af54fc651f355fbf22a4b17ecb256007fe6fa4ca8061b382cf61a45eb59841a.\nDelta nullable per-view IsLoaded/IsVisible, independent public scalar try reads + bounded unavailable reasons; original methods/queries/timeouts unchanged. New persisted adapter JSON oracle actual detached retained viewId3 bothfalse, not shown/true evidence. Inspect own actual JSON and no guessed unavailable values; no need build unrelatedsuites. No GUI/native/Window.Show/HWND/UIA/focus/layout/refresh/retries; no fresh slot. Verify the full design obligations to finish this existing gate, not merely two fields, using prior exact review evidence where preserved instead of repeating all work. Return receipt commit/verdict actual results/hashes coverage limits original control count/preservation actualcalls time. Hard veto cannot self-clear by author/Owner. Escalate any new source/product requirement; no scope expansion.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M2NMAS232KCXQVRWSPABNSTP",
+      "shortname": "atlas-observer-complete-preparation-clear",
+      "datetime": "2026-09-16T17:30:46Z",
+      "session": "codex-atlas-native-view-state-review",
+      "prompt": "Start audit first: audit-log.py start --session codex-atlas-native-view-state-review --skill forensicreview, from the provisioned tree below, then grounding. Independently review final observer source626d16a211757db5e4da7515cf234a686f610e6c in C:/Projects/ai-de-review-atlas-native-view-state, branch review/atlas-native-view-state, session codex-atlas-native-view-state-review, agent codex-astra-native-view-state-review. Conductor provisioned through coord worktree new; no EnterWorktree/install. Read applicable guidance, exact design/proof and delta. Owner Astra, Conductor root; you Astra adversarial reviewer independent of Sol author. Goal: clear or precisely block COMPLETE admitted test-only observer preparation now the per-view fields are present, preserving your FR-NO-001 CLEAR at12c1f883. Done when settled field/lifetime/original-failure/cost/bounds obligations are accounted for by actual source and adapter JSON plus own bounded normal-build controls, with no claim of live native qualification. Budget8tool calls/12min/checkpoint5, tokens not exposed, context400k; cap is defect signal not termination. No subagents. Allowed writes only docs/proof/atlas-native-view-state-review.md (frontmatter use established type: doc; status convention inspect), official own audit, ignored raw evidence; source read-only. Exact short lease for receipt then release. Do not edit shared derived/index/register/site; source author preserved audit-data/.artifacts dirt in own tree.\nInputs: current test tests/AiDe.App.Tests/Workbench/Understanding/AtlasDaemonMainWindowProofTests.cs, design/receipt docs/proof/atlas-p1-02-native-uia.md. Your prior full sink review12c1f883, initial source review4d005a9e and design review973afc97 available via git. Root directly read whole current21line source delta +proof, and actual TRXs: .artifacts/atlas-instance-design/view-state-red.trx1/0/1 KeyNotFound missing property SHA c4be8c0150a9b7962f0486040dec843c8bc4464a1378d57a6c3433f9bf1fce57; final21/21/0 SHA db799ebc38fa0cf866419c8f90828fea8243cf0d6be73e4dba8b3ef2ea0741c9 in author tree. Actual author receipt .artifacts/atlas-observer-controls/ca7aea0fdacf447996174e3a50f62701/receipt.json SHA a4fae674169ed35dc3cef20ece51ec78fbca4f5cbe789a121c7b30d0668347ef. Frozen source SHA6af54fc651f355fbf22a4b17ecb256007fe6fa4ca8061b382cf61a45eb59841a.\nDelta nullable per-view IsLoaded/IsVisible, independent public scalar try reads + bounded unavailable reasons; original methods/queries/timeouts unchanged. New persisted adapter JSON oracle actual detached retained viewId3 bothfalse, not shown/true evidence. Inspect own actual JSON and no guessed unavailable values; no need build unrelatedsuites. No GUI/native/Window.Show/HWND/UIA/focus/layout/refresh/retries; no fresh slot. Verify the full design obligations to finish this existing gate, not merely two fields, using prior exact review evidence where preserved instead of repeating all work. Return receipt commit/verdict actual results/hashes coverage limits original control count/preservation actualcalls time. Hard veto cannot self-clear by author/Owner. Escalate any new source/product requirement; no scope expansion.",
+      "summary": "Independent complete admitted observer preparation CLEAR: own21/21 plus actual retained-view JSON close IsLoaded/IsVisible floor; FR-NO-001 preserved. Full field/lifetime/bounds/cost/original-operation matrix checked. No live UIA/shown/native qualification or source edits.",
+      "kind": "skill",
+      "skill": "forensicreview",
+      "tool": null,
+      "actor": "codex-astra-native-view-state-review",
+      "artifacts": [
+        "docs/proof/atlas-native-view-state-review.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Independently clear or block complete admitted test-only observer preparation",
+      "done_when": "Settled field/lifetime/original-failure/cost/bounds obligations accounted by source, actual adapter JSON and own bounded normal-build controls; receipt committed",
+      "tier": "T2",
+      "main_calls": 7,
+      "main_budget": 8,
+      "main_over_budget": false,
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-16T17:24:30Z",
+      "duration_seconds": 376.0,
+      "git": {
+        "sha": "626d16a211757db5e4da7515cf234a686f610e6c",
+        "short": "626d16a21",
+        "branch": "review/atlas-native-view-state",
         "pushed": null
       }
     }
