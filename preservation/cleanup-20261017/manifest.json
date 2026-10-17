@@ -1,0 +1,740 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "7d78e773b2e5b7cc5eec2716a30c0fc9c6773128",
+  "original_branch": "refs/heads/atlas/production-core-execution",
+  "archive_sha256": "c1c336178dd73b1573f1341dc73b3ae415972189e337fd43a3ba2d411cd2bdeb",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 1023963,
+      "sha256": "c1c336178dd73b1573f1341dc73b3ae415972189e337fd43a3ba2d411cd2bdeb"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/atlas-reader/nq-first.trx",
+      "bytes": 53836,
+      "sha256": "2e54ed5eddd215d63e846ce0cde7249ba1e2d596560f0c9cba373f76cac0ef90"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner44-diagnostic.trx",
+      "bytes": 36245,
+      "sha256": "82205fcafc38947e4afe1cfd2c0db4dfa40482a3df808a68d197097b27ac4d84"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner44-diagnostics/314b8900edd2451ea2e6b8244964e73c.json",
+      "bytes": 1394,
+      "sha256": "c5323121e3fcc4fcead8f0e1735e0d1c1e6756739cb8cc78d0523ad3fde71cbe"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner44-diagnostics/3ea147a057c240f18bd5eab42f227f05.json",
+      "bytes": 5678,
+      "sha256": "7f9c79d6ca9032a82f41a034df48b95044489d91d609da7c3d6805775a606df5"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner44-diagnostics/4db5840d5cf24871b3467874d115dd19.json",
+      "bytes": 5813,
+      "sha256": "1cbf3700e0d3dbd35618a0d07697e763200e720c8a68841d38338d4cb2544b2c"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner44-diagnostics/92b158c133324b8d82bf5bcc3fc4e28c.json",
+      "bytes": 2417,
+      "sha256": "629ee13d4270dbdc789bae6f276b27f2d21a388831229eaaa3c01e94a43b622a"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner44-diagnostics/c38f337f838e4f5ebe8ec6ed49d46aac.json",
+      "bytes": 5813,
+      "sha256": "099aabf83eeb69049e8c9f3d563d330579b675bbb9e2b01149eff0e8d8b7561c"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner46-diagnostics/086d366306b241e8a0b5967f090559bf.json",
+      "bytes": 94790,
+      "sha256": "2dfecab4b521f441581eb0a5b5489e352df75db845bfbb5d022954ecb169d272"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner46-diagnostics/18b8002cd446447381ac464032eb2cea.json",
+      "bytes": 3457,
+      "sha256": "cd243c66c21a31bdf2e1a65d314da5f952a30cece9a451a870efcb4c57878cbb"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner46-diagnostics/87ddeb4503074aa7bc3c9bac1952be07.json",
+      "bytes": 6039,
+      "sha256": "cf75809c137f384e0dbe37076e5bbf2f18438a6a8733ee3f4ffdcc121bdcc995"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner46-diagnostics/95489f01f3ab4584ba1149f36f9e9114.json",
+      "bytes": 84663,
+      "sha256": "86ec9f1794cd0a6b3485e385e9e5405e85c5920b80b7549b92aa7964bace04c9"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner46-diagnostics/9aa9851f0a3a4eee8522ebc3da9c1c6f.json",
+      "bytes": 74813,
+      "sha256": "ad7a551b9fcd9271e374eb8f9c8146bdabd520d89e0fb28037d7628a0fb7310d"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner46-diagnostics/9acf580d1c3b4fbab19c6292eff1a3df.json",
+      "bytes": 74813,
+      "sha256": "6a15937d31ecd0e3ad25df13d938a5eeedd4cd5ddc09965bce921e58aface0e6"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner46-diagnostics/9dd9e39416ce4f92b71879ae55c8f981.json",
+      "bytes": 1835,
+      "sha256": "07be9b6fd76ca1af33525f6b76c33fbcb3112f63bcbc906067f72fa67e784fe3"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner46-diagnostics/9f427566c7e141d3aaca34a1f7e3071a.json",
+      "bytes": 1827,
+      "sha256": "f5a4b5bfa1e3023dcae0849f9ef8c4f2f1696ec7f21fe2ac64c7f43540b669e6"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner46-diagnostics/c7586399c9534263b756d0e53bc0aefb.json",
+      "bytes": 1827,
+      "sha256": "c3cc02acf61593db375f96a5e66b82a7ae318e99ae4820aa324d1055ffa13ed8"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner46-diagnostics/d1cdd2f7e82b4f3dbd12119de1b43107.json",
+      "bytes": 5110,
+      "sha256": "3d8af238b51d9438cc514b915e42556b3905a48a7e454250e444a48e488c9727"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner46-diagnostics/d83138e0b58a41868843530f05ea208a.json",
+      "bytes": 4328,
+      "sha256": "5229af23112dd4bc9a6b7f64897e999cbb7fe3b8c17706b0db7d144bb632bac7"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner46-diagnostics/e83bd3ca287e45d5ab6548c2f7df22ac.json",
+      "bytes": 94790,
+      "sha256": "b240efefa24a9fe17279b9585aa50a7c0a3dac6552dee3a3e2562e695b56085d"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner46-diagnostics/fc8b5fc736c94a6eb4f108e6df22575a.json",
+      "bytes": 76362,
+      "sha256": "486660814236d7b85b89ce3663f1032a67cf615cfa5d6366538d76c1ca7e8011"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner46-lifetime.trx",
+      "bytes": 77365,
+      "sha256": "1042b3ca83c716aaf6b0c94be5f3bc411f3cd0a7b550266360c25d47b638209f"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-cause.trx",
+      "bytes": 44380,
+      "sha256": "63ed1c76947b71f9b659f010c490c43d4add4f94e06dba473534998e0cfafdc2"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-cause/1a444f2b6523489a844261fc95c3f28a.json",
+      "bytes": 94660,
+      "sha256": "26443c8fb8e99305d1982b6d4050ab53d44e4081e8ccc6d59d1459e591c5067b"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-cause/4cc29e75b90d4ee2baa7e185cf017914.json",
+      "bytes": 84819,
+      "sha256": "e3e340a631dafc0fc95b2d1a32ec38cb85d0e6e8274c052e3c65a35ab6b59b69"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-cause/4e268e1b4e064215beb32b0d2b66dd25.json",
+      "bytes": 94452,
+      "sha256": "e1092a19a7594ce92b433f10057d4405a550310121c99a5dd827a364fe1656d5"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-cause/55fc5803353f4d71ab2a1eef631ce10d.json",
+      "bytes": 3457,
+      "sha256": "91baf0359f3688f827caf38f41dba27f3a11ffb6e0d13452078f613cbcc35a43"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-cause/685d618eacf24394a02ff015173fa32d.json",
+      "bytes": 74964,
+      "sha256": "85d647690d016a1be8af01eacd0912f3cc08533fea25365f66ca1c8aa2e1b47e"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-cause/7737ca86862247c39ff2d5df1368cb65.json",
+      "bytes": 2672,
+      "sha256": "87949e17b17160162974e3d6709262d576c1ef0b1c9d8e23defde100307c5381"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-cause/a60d6e14be454b14814f7e5b0b1732db.json",
+      "bytes": 74576,
+      "sha256": "a44408f0210989b0807d20ed27b8b4df78aee2941183c2ff64859d8fed27ca6b"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-cause/afdb06f39697441d9e4ce1c07a23e8fa.json",
+      "bytes": 4318,
+      "sha256": "af530c5648a0153fbab90dff4f6c1e6c1cfa4e2951a47f15f90fd758fe8126ec"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-cause/b5c4c6e6691241749953b2e5edd636e8.json",
+      "bytes": 10943,
+      "sha256": "43c1627f3ee4234303f3a5521729ed4ff8d140497622c8f552a781e919a7d8ef"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-cause/ba6c04436cc640eebe7defd86c47c0d4.json",
+      "bytes": 76160,
+      "sha256": "15f98e2492f9e42cb4721c0e444192d004080ddedb3e6615bbd1654103285930"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-cause/c158682c01524af3b258547f4639bd7b.json",
+      "bytes": 74625,
+      "sha256": "187a1b395c4295898e4cf8e5fa5afb0bb162313ab4c34d2fcd5dd84971e3984e"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-cause/c4bc1e0c1fb547ef9aa8afda4016e08e.json",
+      "bytes": 6033,
+      "sha256": "2518b4cfe4f5544822ad7a8f949cff5730fb97415b393be163abd8e849b05c34"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-cause/d5f2620ca970424f84aa0cef4beecac3.json",
+      "bytes": 84579,
+      "sha256": "dc1c22ec8d6f21d66d785e25201297127e304155cf72dc41f2e0a569a3956510"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-cause/f749a1de3f484eabb05140a1c6308eaf.json",
+      "bytes": 74936,
+      "sha256": "d3bc98677eff6c0c0c207064e55be78d5735eb1320e9cdf2ddd6595299861aae"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final.trx",
+      "bytes": 525396,
+      "sha256": "c7a99f998fc5c6f3faa7e88ab879df33e6d151956c538bc9ac13faddfdf3113b"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final/102b35dfbc0648cbb0baecf819e6553b.json",
+      "bytes": 95016,
+      "sha256": "d4a0eba28423f203363b5ecf6b3dc37060d07d3fa4969e9ee66c8cf87fa27229"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final/2607f94d699d4c6d83be0e160361866d.json",
+      "bytes": 2681,
+      "sha256": "85ef6897f2864d0d928ce0307e08fa2fa5ab9b88664d324eec6865b513e248aa"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final/2723694127f84e54bc0bf1ef7021b985.json",
+      "bytes": 74989,
+      "sha256": "19a04dcdf18ff4a863d2b43278915465bbc0334f27628e5b12bfce9f5cd05172"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final/2f92c7c3ca6246139bb8ba445ea3c0dc.json",
+      "bytes": 74902,
+      "sha256": "d0a3e65a67b9a80c6c0a7c60e0cd8b7167b25d24622501994f06f837714ce26c"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final/397d68e9d7a74b568d9f0cb5f28189d1.json",
+      "bytes": 10972,
+      "sha256": "19b3c3a6b8447f51366c13f036bae49edf8d49b259715e99a97282095945d8ad"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final/5f3a0f032a2c4dd6a5fd5eeaf0e3377e.json",
+      "bytes": 3449,
+      "sha256": "74026246f9b4d3fa4a4d9648f741148c522d42ed8a81d8237aaea86470b77a14"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final/7451f160cc9244a7b7b5f2f6ea8e1d65.json",
+      "bytes": 76451,
+      "sha256": "c0de581e1ec769fa2dd4b7cb1f333f4d2bdc8b7101e0ead5bc76ac56e1dfde7a"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final/7fe99442d454417ca0b0e545021e7f4b.json",
+      "bytes": 6039,
+      "sha256": "361c70c31f2d4abb6cc6c1733f259e1a24e88820af2f71f1eeadc243cea0c587"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final/851012eabf02496894eaae91900ac7a3.json",
+      "bytes": 74991,
+      "sha256": "f59fc58a9c910c9fbc6fb1371ae9715e2dfd712ce20d5168aa5d77f9bef1a42d"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final/886329470d5644b3a3f4608d69f7247d.json",
+      "bytes": 144840,
+      "sha256": "4a4b36a051cd222c4e4fbf5592563b79d5a2070c5e84028d665dcb70b73ee233"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final/9f82e2f71edb4cceb13e88d04eb1f6d2.json",
+      "bytes": 84865,
+      "sha256": "007191861071ef47ee2e6ec382b4c0fee5bddfebdbd278a74ecbe9034cfa917d"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final/a32457ef3b9a42418654f53ad10f464a.json",
+      "bytes": 1919,
+      "sha256": "a144f98eb4c79a0cfd73f6a8d4b747f135b34171a1b7bb7820a1d4c2133284f5"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final/adfae786c3d945c5876a849b67ced89f.json",
+      "bytes": 4328,
+      "sha256": "e79fef707c68cc4c64554322a842c3d8e353931af43e1664e1c3e9985648a1d1"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final/c53c926ab2094ee0b666a88790010c6f.json",
+      "bytes": 84949,
+      "sha256": "9c9956e513f3682d2e3a1a85d276fb5843128210bc9c29e64d36d584028c8640"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final/f8b1f08b322d4b0c9f3526a907b792c8.json",
+      "bytes": 95016,
+      "sha256": "fafa357d2100c254d48e48511ae3d5d213a427544c9553a7cd72eaf8c31f50c6"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-final/fe8a0fc202404ea2ba54ae4569cbf86f.json",
+      "bytes": 74902,
+      "sha256": "c1804393d58a99882dbba81ddc4038c8d78e27b364c30386a51359ea6d8a20f5"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-full/03b0c39a930b413ea273965df2b5732d.json",
+      "bytes": 84865,
+      "sha256": "8b2db30f744b5de875ec4e32d0cbf59bc2b229f4a47566a2e43b2aa2dd82b9a7"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-full/1c7d030c0d544c2ba1b3579d91b22809.json",
+      "bytes": 2681,
+      "sha256": "5f71cf04f33f32825560d20707411acfa2977d90951623ee1c05f025b27fe24a"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-full/20b3b125def54410a1821e8a961fa897.json",
+      "bytes": 94903,
+      "sha256": "44410efcfb5c91fbde47c4f295e006f1170cc6938c4291d77bafc27c24ae1636"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-full/3b32a99cabaa48fb84e04ff15136d2e0.json",
+      "bytes": 74991,
+      "sha256": "940352211a81cfbd4cff6a581082bd2f080310880b0b4359d0a52eacf3efb17d"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-full/4d3caf3c59054015ada4e550bbf7d163.json",
+      "bytes": 84949,
+      "sha256": "57b18117d4f1f6cc1db602cafc1316344ba75bc22f9057f6e6dad91e9bb902f4"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-full/61eb12787285465ea6cfa561aa09b4ba.json",
+      "bytes": 74991,
+      "sha256": "4b82c2f2a5955906e227238b48f628a1d05c5f02fd4f837034275cbc209fc46e"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-full/68fbc7f13c0f4ed5b3ae566d11c32e7c.json",
+      "bytes": 76540,
+      "sha256": "4638eb5a55cee19d55a09ec368aaaf52ab8da4cb36434af9495056276174c3a4"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-full/743623eb9bc746eb8418375186ba4cee.json",
+      "bytes": 74991,
+      "sha256": "3135b65fded706654c2b41e510d9f1c085c8865d7fc1fc2231229bc679e8a822"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-full/8e57fa49e6e940e6b9da201bde15a95c.json",
+      "bytes": 74991,
+      "sha256": "f78614d374c0df628da81a1922b8f67317b4a11e4715a16f054f05c926090ae0"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-full/a718207824db447b9f6060839cf8bad8.json",
+      "bytes": 145011,
+      "sha256": "e9880f1fe47f0b45abf1a8ef61ad545a9417abdb4e5675a7aea274088723d4b6"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-full/e1557e464e824069ad17484b440c7f6b.json",
+      "bytes": 4328,
+      "sha256": "935e84a0fae228315041f2153d6fbc3f7937f339a9607cb6abd29d59b0a5921e"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-full/e74bed03de3344a5b7bbd0f9c84ba9a9.json",
+      "bytes": 10959,
+      "sha256": "8eec3db87d6606f400bec3ff4def83a6f9f014875c58d1310aac7ebe40bf08ab"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-full/e9f9fe1e3cae4a2e829732102b08781d.json",
+      "bytes": 6045,
+      "sha256": "bf21dfb913da0673375fdc5d5f3de0aa42983eaa8f5b7bd263f7cd3118dcbea9"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-full/ed7313a8026743468fe539db9aa52864.json",
+      "bytes": 95016,
+      "sha256": "8e98994b75b6823812385a9ad0553dcaa69fb756a524fb08fc7e9fb954adae86"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-full/f220b1588e234529a8f2d9f9a03f1b0b.json",
+      "bytes": 3461,
+      "sha256": "1a2e61030a1520e6290d656a2fe9c5eab4ea0e74e16a0732e84b1063300da62a"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-owned.trx",
+      "bytes": 39451,
+      "sha256": "816805580b2559ace21c6cf7bb2ad728753e45eeabcb768a5a42e491b610743e"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-owned/07907b7533394d8484a405d548fada33.json",
+      "bytes": 94903,
+      "sha256": "e43e4a425d94173d3224d99a319c109be0032277aeeae9c9907c1240d9de3f92"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-owned/0990f72e720a498b89141c62c4d65241.json",
+      "bytes": 4328,
+      "sha256": "25d591d927d1359b4d1557becce3428d844cc6a92f92cbe0400dcfeaaa8dce40"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-owned/215f95117de14c12a3f6d64448063b72.json",
+      "bytes": 3457,
+      "sha256": "4ec0cacf2bcf2270441bbdd305eb094acb6eeecfa1a481934624f2faf37fdb4c"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-owned/355cbb7064d34f0e9cb3e5fac2368271.json",
+      "bytes": 74902,
+      "sha256": "9432b3f2920a8212cab40eb34f4386027802defbc08d888615cf04b868c5f228"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-owned/39d16a130fe9402fb41bb6a31fda4812.json",
+      "bytes": 144840,
+      "sha256": "9a3125e914386958ff7eab15a62bc4e14bbf9e777299fd5a046d974ea7ab1693"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-owned/3c912964a14a4540a2d0bdc217642de9.json",
+      "bytes": 74902,
+      "sha256": "62b61b20ae5e3390ebc502b9bd436aa3d354cf6de99b980540a93314d27cc20f"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-owned/485e9489374b4eda8040e312165984d5.json",
+      "bytes": 6033,
+      "sha256": "b7fdbdcd49ff3b10b995999f695e95dc689e5af336421c208e68c16e5209344b"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-owned/610b14b339c64fb099ad36da68aa7d63.json",
+      "bytes": 2678,
+      "sha256": "ef4534485011f616c1cfbec43fed9ab36d19494e460aab7a435513b90ac0b7ec"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-owned/69ea951dec8144528043486491701d9d.json",
+      "bytes": 74902,
+      "sha256": "7077be6abd0fc01dea7b49b49d2cf34981a04a6059899b2995a8b21f6ebacd7c"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-owned/9cd10185df514543876b505a82809d75.json",
+      "bytes": 84848,
+      "sha256": "7bc02180084c0d40a89fa788f6cdacda29807ca6f5e162af0f3bb22f4da3a22b"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-owned/a53dee45e2654afc9fffcd9980ed33c0.json",
+      "bytes": 10959,
+      "sha256": "1e07a3fa116aae322dfd3133bd718383bc29547d421505c3f5946b7326070b40"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-owned/b134c338909c4f29bd304a035ea533bb.json",
+      "bytes": 74813,
+      "sha256": "f53ab6b971444e99ca5be9bb46561e41c2b41aee3c7d01809cdf9f46fa26ad6f"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-owned/bf928c178a8644c39089f8b746b7b4f7.json",
+      "bytes": 76362,
+      "sha256": "141a5352ec9246bd515c80af6e96640ae28d101e32cff1cc06c7b1b087ce593e"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-owned/ede40522950e44588240e2e8f1b8f99a.json",
+      "bytes": 84764,
+      "sha256": "5096d766424d7e3f1c683955639867c3d6da3cbff7cd20bbc3731084a7aa753b"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-owned/f30827a342f34903b49abe5774cd0cdf.json",
+      "bytes": 94903,
+      "sha256": "4ea7f7325cb687b9396c178b379f13b99f451c9f4a44e28c61222bdc92e95f44"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-receipt.txt",
+      "bytes": 9298,
+      "sha256": "71629dcfc19daa3f940ecbed17b0ed716dc109a1f5fd1c896618a3289e46c388"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-owner47-understanding.trx",
+      "bytes": 523694,
+      "sha256": "31439db7fe862ae1c5fa5d544d74a6edd61be087eb8d53debd20d85068916579"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-second.trx",
+      "bytes": 46579,
+      "sha256": "d7c6ce9f0288d1ee0d3f22c4b52604d1fe9ffa535a8e99d2165c0506c431cb98"
+    },
+    {
+      "path": ".artifacts/atlas-reader/nq-understanding.trx",
+      "bytes": 518667,
+      "sha256": "cf350a2beda981e7c13615b713d71265c45ee1b2ea7387cf81180433177e73d8"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner41-reader.trx",
+      "bytes": 71065,
+      "sha256": "27f600958ccf9fc5233238a764e873a56679df9ef21950fe708178b58b1e6e1b"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner41-red.trx",
+      "bytes": 33255,
+      "sha256": "206a52900187655c5920573f4af7af333f30732c452b92a672fa6a815b242601"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner41-understanding.trx",
+      "bytes": 481508,
+      "sha256": "42b55b0ee71a7f2e0e2ff5b2822a0b11fc6f9373bc20de9c804344830e76566b"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner41-window-red.trx",
+      "bytes": 17261,
+      "sha256": "b8c114c1ecf286a90f8afc98cb59cbaef812ff79bce2f191f261a03816bf4ae9"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner42-red.trx",
+      "bytes": 9736,
+      "sha256": "315e0c673e0d2d7d823b096dd269e675fcee470ba20f72103c3a33911885af54"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner42-understanding.trx",
+      "bytes": 485864,
+      "sha256": "c3ba6d0e6016d9b0576bb4209f97e82434cf8655f5f6f871541fbbfce80b5ee2"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-cleanup-receipt.txt",
+      "bytes": 6596,
+      "sha256": "dc35cc7723c65d7efa217b93f08894789fedb7af6725dc7187bc88486b1940e4"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final.trx",
+      "bytes": 533452,
+      "sha256": "fedc49b3ce663c474d2c310f8b1ec202a03bc0dc6d2986f6240dd13c778e725b"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/0443fbce3f4d48269636a5d8e71c5e78.json",
+      "bytes": 74915,
+      "sha256": "aeb84c0e7c394dc224372e94e923e19459e805424d13732de9254839e0bb4c5c"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/090fe340b951430da7a78dda0e6597de.json",
+      "bytes": 1932,
+      "sha256": "926735055cbe564cd982f10c694f13927e23b14523f3803a32c207f7507e9c82"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/0f10fd2dd58844bda769a614c0332c64.json",
+      "bytes": 94916,
+      "sha256": "eb4985fb086700d593c9e82512acf4e94702dd39f29914f7f92e29c22b34b382"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/11511d024a3044bb99b68736f715cca6.json",
+      "bytes": 4194,
+      "sha256": "068ef44e7211121297ac35b66fa7fe1eeb66b74ea43ac495dbd26fce8bf0188b"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/20f1c068f241441e88356cf768befd5d.json",
+      "bytes": 144964,
+      "sha256": "6c4ad179596ed9ef6e604b2ba75a9e1940b1f3b1e5763b851377e28d4c2e3e3b"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/34d97f9e23f642acb76e6af155b5e7ff.json",
+      "bytes": 6052,
+      "sha256": "ed619f9ad9c99fb90f7b425157cb39977835ba571cc1762f7527229c77eadbc5"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/353a0a956c38493cb1479aa63abbafe8.json",
+      "bytes": 76375,
+      "sha256": "3394cdddb19666b53af300c6fd58f1cf201522dcaf95a699bc11e5a205e59304"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/3f1583ab24b94530aa666c1b85656a02.json",
+      "bytes": 75004,
+      "sha256": "5effe2942c3f05d51f0628c60af159c2222c1170aa101a394e056e8e1315c7d0"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/4443a70283904d86b6564614cb21084f.json",
+      "bytes": 69689,
+      "sha256": "2bb0c90fc8b3e12eaa17ff08510535518e9c0c8185dee9bd37234f2c78bdeb51"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/59c15045cecb4ccd97125e9b98ca1d5d.json",
+      "bytes": 84777,
+      "sha256": "ab2d3e1be5a425cf8211f7cbf225e3b89569b3ceaabf382ccece0b3f408520c7"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/634e3af7a8234b7c8a560c10aeff0f67.json",
+      "bytes": 74915,
+      "sha256": "b50601c4c6eb3cd53a1385a1d9aa243d2191b022aba78a4e2231daba30fa86ad"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/7d9b49c0e90d444194f2aa7899c8c242.json",
+      "bytes": 94916,
+      "sha256": "1cb3584cff169f4def8e2fbf13b1abd8281ae220c84f49db927f9716aabe70b8"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/95e471d829d84e9493a6f7b686c8480a.json",
+      "bytes": 71344,
+      "sha256": "b48180840d7a7e3df663695656188ff48a7b5396bbe59f3599556fdf234bb678"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/9fe9ba78177546929652ae27825596d4.json",
+      "bytes": 2691,
+      "sha256": "f189f1c16bb72af142a49f23db6e1aa59bf1d4fc5dfebdfd7f798e9db54c9b7c"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/af1e6f2446ab4cf697123981c7de9c47.json",
+      "bytes": 4336,
+      "sha256": "b05d31c70ed49e9c666d9a0a4c85f55dcd11dfb0f16cd312be7fe36599e75867"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/b7a0bfc094cf46179a5bb898c5fe0aac.json",
+      "bytes": 10968,
+      "sha256": "18fb1d6e19f84d42fc2ee902ec91c7f6818d91e9a3e0f27b0dd95a02c74725e6"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/c58144d1ab9b49a88098acc6ae7b553b.json",
+      "bytes": 877,
+      "sha256": "68d5e145c063dfa2f92394178b738a2aee29cfd25428781a33476f380e2aabb9"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/f59b9e1b59794afda49f5cc4f8927927.json",
+      "bytes": 74915,
+      "sha256": "bd233a88e16c88b9254c9e50529a55da7e181c5aa023b98cd44c4f51e527bbab"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/f63cd675c60549498b771a4ab85cbe67.json",
+      "bytes": 3470,
+      "sha256": "7caf7b7a684844fad73898db7c751002ca1291c117e24e0b50258a5c6843fa58"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-final/fd09fdeedbf7406ab76b35ef990c57bc.json",
+      "bytes": 84861,
+      "sha256": "31b95767bc28cecfd068c73641ef9eda61707707d5ead176d5037308393c4b39"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-red-CanceledCreationCleanupTimeoutRetainsItsIssuerCharge.trx",
+      "bytes": 5390,
+      "sha256": "d2748c0cea82d437b9c49796e50478f55400f42c53478b9af03d4ecd7f6dfb58"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-red-FinalIssuerDrainTimeoutDoesNotReclaimTheLease.trx",
+      "bytes": 5336,
+      "sha256": "1babff1c009b9ebd77985a1227358090ef8ddfde1db7898d5fd98814ae103172"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-red-RetainedPinTimeoutStillReleasesIndependentPins.trx",
+      "bytes": 8059,
+      "sha256": "570866e213df995a41237faeaa6aa4a6566f30622ae341e4d6e8c866e912cd05"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-red/2ff098600d1548488244b80e63c65e4a.json",
+      "bytes": 69123,
+      "sha256": "56806ed57f8ce9a60e8fee50fbbdde18d8b1efbc7145565620aa3155bf1b341b"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-red/69c9a5cd8eb94f80aa979d7fd6daa711.json",
+      "bytes": 388,
+      "sha256": "9f4f942fd6142ddebcddddd2c49ebc2357b114a05596088a85134cd2c76c7d7a"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-red/d51af157c3db4d87af520d21b27c427d.json",
+      "bytes": 75700,
+      "sha256": "ab1c0cb1fc638b6aea7344fc9e25cc0bd44db2b0560eaf4adf1ff87fe2d6869d"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained.trx",
+      "bytes": 46117,
+      "sha256": "3b59523241e5174195ee466fab2a0b5e3eabb31fef547e7f0529413ec5272d02"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/0a64df377fa2409abe95fe80c42eef20.json",
+      "bytes": 3466,
+      "sha256": "89f32a3fecadb3819d96bc3e00d1d122416cfcd1c7dc63b7cf7fd45498615190"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/189c0a6bd46d4b6280c1dadda1d866ca.json",
+      "bytes": 94878,
+      "sha256": "d6b5c8654f8277c1964785edb7cd52495195f9ac25233a36db3e8777c7f94bd2"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/21fece2169914b6ab0f5d9b309596089.json",
+      "bytes": 76360,
+      "sha256": "dde09984b034907f8a9382e42b92a8224714762126e2bd4130949c805914bdf8"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/34f8a3e6154b4c2c85ac2daaeba47331.json",
+      "bytes": 69661,
+      "sha256": "666768424853791d47f58421c8402f485521f75284c69c96f7c3b392a65f4180"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/683e47c4b39741f7812f1c621d3af8eb.json",
+      "bytes": 144929,
+      "sha256": "20f0e11cc8e1d5b8be88e7336dd46538c4d45be31d28a5a832bf9dd5f44eecfc"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/72669abfcf0142f3aec16ebf84e508dc.json",
+      "bytes": 877,
+      "sha256": "a86a619f14e3f6159d8cfb479a80c08639edc9db62be0cc7275603538600c5ae"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/73e2275dfe4440c6ac59c682fd7ba398.json",
+      "bytes": 1932,
+      "sha256": "0422d5e7fa4607f27bf78b025d53ae01cba46c62473ec033f6a28e58e5521c8b"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/90d1f7aa46794bc88a106adfadc93251.json",
+      "bytes": 74871,
+      "sha256": "215820bf403f2e92ea316e954aeeb2e2a51f2c73605af260241762844333ed39"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/9ae8eb74efe6432b9578a306cd5de2ce.json",
+      "bytes": 84611,
+      "sha256": "be670ac59b387ced62f1d8b385659d9c3f8b39151de2367019cf631cbb82d43e"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/9f6cb21ecf904da4b75065ab104aec9b.json",
+      "bytes": 74988,
+      "sha256": "89cd73a519b5fe9fbe399236424374161d45e81064dc427597282c0776b3b43a"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/aa8cc0f93b4041a29b38d9d3392bb8fe.json",
+      "bytes": 74915,
+      "sha256": "30bab5770741d6ea17cd6f02bafdf0be6cb1391ed710b37e590451716c086618"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/b6906db9d3f0450fbab8304116a9e5a9.json",
+      "bytes": 2691,
+      "sha256": "33eafddd776763745494a78e133bc2dfa88032cfe55e85a140ec97eea4fd27f0"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/b7d945c9e7824c03ae9f0172e77b7126.json",
+      "bytes": 71344,
+      "sha256": "713c6d6c9b9f2799fcd2361f5891efb3e25ee05b705a11ceb5bdc19fc069fbd5"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/c978fef41ee34e608d692746c99a4a98.json",
+      "bytes": 74901,
+      "sha256": "7cb510adcfc7d45a7d0b38e7c425c54f4da608b5a0f48a1be78d8e9a3b7e60b4"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/da9d3a5e0a6141109b68f6dec59041ca.json",
+      "bytes": 10968,
+      "sha256": "deb454a60dc6bd300fc597831bc6c27fea168a28cf7b5e8ce1f76f50c8241161"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/dbe59bb282cf4b88b2abaa6de897b271.json",
+      "bytes": 6052,
+      "sha256": "70818c43518b8b6a4e54263315b1056839011f2427c7729301f411eff0b070e9"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/e0643f64c6f94856b9e3cd26e2ab5bfa.json",
+      "bytes": 94896,
+      "sha256": "86b5a1ec0bb62d0f57bd08cd5a70a451e2b5e1836cb5cdc57aa79914a07aaa5d"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/e16ee92d6f8146e0a2abe5b05e27bd6c.json",
+      "bytes": 84759,
+      "sha256": "227d6e0f7a7a743f81faa494376fca828c110f234880a62c0a80d7207bec1033"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner48-retained/fac9d33385584ac4b4f39460a4c12444.json",
+      "bytes": 4341,
+      "sha256": "11a7f655b6bb1d9546c720fcc1aa6391746c4e50bf3d2c1a310a8c38be652a4b"
+    },
+    {
+      "path": ".artifacts/atlas-reader/owner49-runtime-grounding.txt",
+      "bytes": 14025,
+      "sha256": "630cdb6058be3e2e8620b72584080277e75ff7d82adf26ce0e101e0da00debc3"
+    },
+    {
+      "path": ".artifacts/atlas-reader/reader-first.trx",
+      "bytes": 37486,
+      "sha256": "a6c61719a68cd21d3e5ec8f8acf1cfa6ff18b505fddf430831742a9a718a124c"
+    },
+    {
+      "path": ".artifacts/atlas-reader/reader-understanding.trx",
+      "bytes": 447044,
+      "sha256": "bb7466a0f41336f7d02837db8fd4b81148d9753c8a8c938c6fac8cb4a6b83fc8"
+    }
+  ]
+}
