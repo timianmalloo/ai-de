@@ -1,0 +1,150 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "12c1f88336bc6d640c1dfdd6e76929acdda6b6f2",
+  "original_branch": "refs/heads/review/atlas-native-observer-sink",
+  "archive_sha256": "21835d4beaa4c0611f1c7413cb3bac68e12ac4c804cb181975f917ea04aecd2b",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 39173,
+      "sha256": "21835d4beaa4c0611f1c7413cb3bac68e12ac4c804cb181975f917ea04aecd2b"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/atlas-observer-controls/0692563dd0c84f249dd7dfbe88ea7643/receipt.json",
+      "bytes": 3395,
+      "sha256": "dcf857c8642dde676f6c62acdb461abb96e57f91186853f2b3cd3d2868e1665a"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/2c01a44363c2411497fe0596aee5bf78/receipt.json",
+      "bytes": 1842,
+      "sha256": "c97b2b724172272bcbc54d734ec21ecf5826edd61c3f65169fe8903bcbb46d33"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/33450cb2fd4b4de0852c1834673f8c9c/receipt.json",
+      "bytes": 2437,
+      "sha256": "4f2609fb907ce6b3c4c0d8e263c8f2cf82b8ebe6d7ca20d60e27f52036492023"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/57082a1d67d9476987ad4091c3401c9e/receipt.json",
+      "bytes": 2438,
+      "sha256": "8123364ce7f4e687dc7635c28f9d198f6112d21fdcbdceeb8855fd0cb8936d98"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/7fe24e2607324c4cb1a9b99d2c51da80/receipt.json",
+      "bytes": 1003,
+      "sha256": "064776dcab5fecece1e15d92b7296267cad8a52505e84e53763defbd04e1cc49"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/8679305c58a54664aac9c9488acac779/receipt.json",
+      "bytes": 2950,
+      "sha256": "8fed456a09d89c9c9f1bdb9c532feb810de49afaaedb6cbe64de713fa0c34831"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/a4e79c24a5b74d9893eb14ac5b4aec14/receipt.json",
+      "bytes": 564,
+      "sha256": "225cd231ffc6357c76aee21fdbd338ca11ee1b0c2f1cd7cbd8ab700aaeef3ed3"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/b115869e80dc4b56b0178265f92bcff7/receipt.json",
+      "bytes": 3511,
+      "sha256": "52e709fb6f412285ec635cec918c39a3c2a0b6943fba73f867fd831b33862677"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/b36fc943da834724853f2a8ba812c86b/receipt.json",
+      "bytes": 2273,
+      "sha256": "1362a1272cfcaedca7a020a6b1c0ba2cd33ea90a2345d23e6d87f6e466b90c48"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/c78b2ebc281f45f6b9f96d617a60fc87/receipt.json",
+      "bytes": 2892,
+      "sha256": "cc14f6fe6f3a1ec4a067b2be0bc70344fded652829a6a2b05267cbb0ff268db7"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/d4d3418ea9a54f719395932b67bf76db/receipt.json",
+      "bytes": 3391,
+      "sha256": "343d7c58660900f83daf007f9e622c494cf0b79c302823be8c3de9fa6dd62db4"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/d85cdcea322c4dcf862fef66081c8a4d/receipt.json",
+      "bytes": 3390,
+      "sha256": "b5ce57dc48826ef5549e26edb25582ebed2e77a123a3ffc2d7be4bd20a0a3868"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/de42494c5e4a4441b9f81d4a06c57a0d/receipt.json",
+      "bytes": 855,
+      "sha256": "ee9a1e540fcaf235f6fcc0b67876ddb881f2c142a378bcfe5efc9721d103efb3"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/df26aec41eaf4063947051f33a6be34b/receipt.json",
+      "bytes": 564,
+      "sha256": "3f53a4c6cb0832aa064fec19fb3ab8de4b80af609238e020a40685df1fe29c32"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/e6034e9ea0024c7590a5f6d991eb2ce2/receipt.json",
+      "bytes": 10571,
+      "sha256": "65b25361b09fb6195f63df60df8bfc8a9d3e213ab6d6f95479f08e21f55a3330"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/e86a6ff868244fb1a084b4f4f0bd9274/receipt.json",
+      "bytes": 2074,
+      "sha256": "9225f2536710959321ffe42e1f90231bc4e8c948c693f5502b4a702e8c31cdbd"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/ebeeee95d47048bdbdaed71ca89c380a/receipt.json",
+      "bytes": 5763,
+      "sha256": "527d6a3e9884db86753ca0a4d7b728c15699cf7890ca658ec10c060189ba1773"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/ed91cfb9f682481aa8ca42e9802087d8/receipt.json",
+      "bytes": 855,
+      "sha256": "c482f2e554d7d62a1bceaf000b055c081e7ff3c41c0de3000f2494c41029c168"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/fa7c91094d814ae595e096012310673c/receipt.json",
+      "bytes": 855,
+      "sha256": "2225dea2660b29232b73dda8d9133cdf14a76e48f1a0c63a79ea286b1a6ba042"
+    },
+    {
+      "path": ".artifacts/native-sink-review/SinkReplay.cs",
+      "bytes": 2114,
+      "sha256": "8fdbbd9a710e54398c42950fb88aa3cb10dae37d05be0709b6d66be218643141"
+    },
+    {
+      "path": ".artifacts/native-sink-review/SinkReplay.csproj",
+      "bytes": 574,
+      "sha256": "8e3feec2bd39cc7e2620fb09349362381a07091ec234ed4c7d9e81e0f7d10ed4"
+    },
+    {
+      "path": ".artifacts/native-sink-review/close.py",
+      "bytes": 16297,
+      "sha256": "027244af394413d9e24f6fcc997bd6183523fbcca049972c8d9b7453a553100b"
+    },
+    {
+      "path": ".artifacts/native-sink-review/inspect.py",
+      "bytes": 2879,
+      "sha256": "fab85e6b38b8084397c42829cb66c0ea5d3017edfb956305e56abd92d7d59c62"
+    },
+    {
+      "path": ".artifacts/native-sink-review/observed-evidence.json",
+      "bytes": 30073,
+      "sha256": "64af8f288681adc493af2f50bc7ebb461a193972f0d123ba947dcf3bcd7fdbc1"
+    },
+    {
+      "path": ".artifacts/native-sink-review/prompt.txt",
+      "bytes": 1886,
+      "sha256": "aad210aed785c3c0bd3e6d5579fc1349c57bd821f9bb32697f95e192580ff576"
+    },
+    {
+      "path": ".artifacts/native-sink-review/shared-formatter/receipt.json",
+      "bytes": 672,
+      "sha256": "e0b318e29ff33e14063b04faf3a1bce7876f2577e7429578aac55a351f90ad51"
+    },
+    {
+      "path": ".artifacts/native-sink-review/sink-review.trx",
+      "bytes": 32772,
+      "sha256": "be8fa5b35073f991c414e74f779f750294d1a41da65a25b673dded0082819709"
+    }
+  ]
+}
