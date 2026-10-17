@@ -1,0 +1,30 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "973afc97a8bcd981e607aa73be0c89247045a3c5",
+  "original_branch": "refs/heads/review/atlas-native-observer-design",
+  "archive_sha256": "31048adc27b37753e7e078008a0ac2e9f89b62f20c88adcba40c69139c88cd2c",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 9596,
+      "sha256": "31048adc27b37753e7e078008a0ac2e9f89b62f20c88adcba40c69139c88cd2c"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/native-design-review/close.py",
+      "bytes": 17436,
+      "sha256": "97895acb316203b2a9c2cf6ac2078747ccb1702e162cbf10166f3dd5ab0161d0"
+    },
+    {
+      "path": ".artifacts/native-design-review/pins.json",
+      "bytes": 300,
+      "sha256": "c7a88482d93479bcdf21def7ab1aafd88861ff602a9b257eae9f39cc31659a36"
+    },
+    {
+      "path": ".artifacts/native-design-review/prompt.txt",
+      "bytes": 1840,
+      "sha256": "941b3e2d0b166759bf60fa79ea18a422875cabac05a64c8fe03b705952952855"
+    }
+  ]
+}
