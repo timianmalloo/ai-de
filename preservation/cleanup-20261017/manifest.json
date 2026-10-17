@@ -1,0 +1,130 @@
+{
+  "format": "Concatenate evidence.zip.partNNN in numeric order, then unzip; archive member paths are relative to the original worktree.",
+  "original_head": "4d005a9e276cc1c3070005f3bc2ecab7eecde997",
+  "original_branch": "refs/heads/review/atlas-native-instance-observer",
+  "archive_sha256": "0a563228549216ed4a0cddcacecdd4a9b7e7ac331ab250eb13bec8c3641f3cce",
+  "parts": [
+    {
+      "path": "evidence.zip.part001",
+      "bytes": 37611,
+      "sha256": "0a563228549216ed4a0cddcacecdd4a9b7e7ac331ab250eb13bec8c3641f3cce"
+    }
+  ],
+  "files": [
+    {
+      "path": ".artifacts/atlas-observer-controls/0fa0b58e6b324f4a8ea1fcf740fe016e/receipt.json",
+      "bytes": 2427,
+      "sha256": "c4447adb47e8b27c6cd470c401d001f093a593973cbf8bbbf925a6601406e2a7"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/1cc11ce45d1b4437bcd266dc6382256e/receipt.json",
+      "bytes": 2266,
+      "sha256": "f00572af5ae2eaa53a806d10e9511992ef4933f8db8be5d04ee8670fa5ac3a21"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/25f915aff2844edbb691c0d40fd286dc/receipt.json",
+      "bytes": 563,
+      "sha256": "8ea3729496eb52ef9b8cf307d306e6d4ad643da34a1d5b18e29f48a663354422"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/4965884bff4d404cb1e587af49ddb0a6/receipt.json",
+      "bytes": 3369,
+      "sha256": "867ab9dd9e12c6f68546afe2aa383aefed9c2905d196ee6b38f9da5d7626e74f"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/73f97ee9f6a3402ca872fd7dc822d2fd/receipt.json",
+      "bytes": 3487,
+      "sha256": "020e2916879717efe814239f8bfcc2c87600a54b2ae62c4ee23634fbfeba15b0"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/8b2d7bf6862e4027b80c5c15f796429e/receipt.json",
+      "bytes": 1832,
+      "sha256": "4499dd12d8509226890f61b427d7433f98951b5823c582962c1bc3a8c2f6483a"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/9008be29c9fe4a2ea26b460fb4269b80/receipt.json",
+      "bytes": 564,
+      "sha256": "3a65185f212ea70c9e549d18aaa4f6d90a00bbffdb13d53bf494002d68b77e11"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/a739b040bc394f5a859de0a5355aa364/receipt.json",
+      "bytes": 5736,
+      "sha256": "2d89a6945a75628764d52050ea00de7505c8b1ceb968dcbd5a97bd47a85dc61d"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/abd0abdd32a74a7b956c0a00c893f740/receipt.json",
+      "bytes": 3375,
+      "sha256": "21c88fb65f94758acea2956e35380652e1af692a5ed8a6e66c39e6e83d45057d"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/ba12f74e55ae4e5388f79a3557b6b19f/receipt.json",
+      "bytes": 10542,
+      "sha256": "2d3b53311d4890e4b8f4915a19317e3ae2cc6bb575cdadb87fc4adf6a9f1753c"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/e08dff010c834bd3a6a983dc3a8b1d96/receipt.json",
+      "bytes": 2426,
+      "sha256": "c9a9324bee757e6b73e1be69981a0d9687a1aa73e8d60243256ce18ba928c070"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/e5f6f41f9692485386109c472e965742/receipt.json",
+      "bytes": 1003,
+      "sha256": "40802ae0c92a73af583c454e9756b3f41c1c2ee29d4edbd24772cf489dc07054"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/f53c262079d947b2b8e5b787eeb5a139/receipt.json",
+      "bytes": 3370,
+      "sha256": "aed005fad1bc086e46a5ccd4a5854a2c004b099f34ba3514330a8222b8e7c62c"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/f8837e96e4d44c83ba4d6bb51d3f2725/receipt.json",
+      "bytes": 2881,
+      "sha256": "5aae7a68b52d113993fd5cc2bca7e7c78a84962c940bbbf9d488f9ebca7c9048"
+    },
+    {
+      "path": ".artifacts/atlas-observer-controls/fc33a8c7308c46d19f871e2de789f52e/receipt.json",
+      "bytes": 2940,
+      "sha256": "8d3780d09fad529a2394dc6c0d48c9f5485ce9e72568ee38224673a3167c4606"
+    },
+    {
+      "path": ".artifacts/native-instance-review/SinkProbe.cs",
+      "bytes": 2283,
+      "sha256": "bf434e91ae02ef62242a4a7882b607c12537efffe2b89d7b23f3c285e2f3d64c"
+    },
+    {
+      "path": ".artifacts/native-instance-review/SinkProbe.csproj",
+      "bytes": 553,
+      "sha256": "80f49bc927ad45d5527798993c92d4ee6c73d03ad6e62eb38033a7b869d89545"
+    },
+    {
+      "path": ".artifacts/native-instance-review/close-review.py",
+      "bytes": 17489,
+      "sha256": "407e4872bef68ab984c4079ac73e86bfd4c1b0228d30913cc7f42c8778fff985"
+    },
+    {
+      "path": ".artifacts/native-instance-review/observed-results.json",
+      "bytes": 38594,
+      "sha256": "08f6f2da0175f0b2ac50bc20128a1c872db03dd05652706db5d258aeb8e72a84"
+    },
+    {
+      "path": ".artifacts/native-instance-review/read-results.py",
+      "bytes": 1390,
+      "sha256": "5ddc5eb224a68dd5fd7b017680f77e3feae56cd3408d4d4a4941725a44a86f53"
+    },
+    {
+      "path": ".artifacts/native-instance-review/review-observer.trx",
+      "bytes": 26829,
+      "sha256": "5e239d26a78ac5d5f2b6bcff080fac243fda056829c90bf1e62c7b8938e806cd"
+    },
+    {
+      "path": ".artifacts/native-instance-review/review-prompt.txt",
+      "bytes": 2630,
+      "sha256": "86255b384deed6e2a5c95876f4a373251b0c53157492c80de12668cadf3a2b1d"
+    },
+    {
+      "path": ".artifacts/native-instance-review/shared-formatter/receipt.json",
+      "bytes": 527,
+      "sha256": "84283df971cd15c838baa9eb6367461df3012145348537b718926cc620d33981"
+    }
+  ]
+}
